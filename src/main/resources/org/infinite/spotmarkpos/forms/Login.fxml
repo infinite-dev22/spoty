@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.shape.Polygon?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane fx:id="loginScreen" prefHeight="359.0" prefWidth="638.0" style="-fx-background-color: #011718;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.LoginController">
+   <left>
+      <Pane prefHeight="359.0" prefWidth="331.0" style="-fx-background-color: #13171C;" BorderPane.alignment="CENTER">
+         <children>
+            <Pane layoutX="-2.0" layoutY="-97.0" prefHeight="223.0" prefWidth="309.0" rotate="-42.5" style="-fx-background-color: #59171C; -fx-background-radius: 20;">
+               <children>
+                      <Label layoutX="36.0" layoutY="104.0" prefHeight="60.0" prefWidth="100.0" rotate="42.0" text="My POS">
+                          <font>
+                              <Font name="Comic Sans MS Bold Italic" size="24.0" />
+                          </font>
+                      </Label>
+                  <Label layoutX="-62.0" layoutY="193.0" prefHeight="27.0" prefWidth="324.0" rotate="42.0" text="Ultimate solution to Business and Enterprise" textAlignment="CENTER" textFill="#8f9081" underline="true" wrapText="true">
+                     <font>
+                        <Font name="SansSerif Regular" size="14.0" />
+                     </font>
+                  </Label>
+               </children>
+            </Pane>
+            <Circle fill="#25283d" layoutX="282.0" layoutY="123.0" opacity="0.43" radius="22.0" stroke="#25283d" strokeType="INSIDE" />
+            <Circle fill="#19130d" layoutX="203.0" layoutY="178.0" opacity="0.54" radius="16.0" stroke="#19130d" strokeType="INSIDE" />
+            <Pane layoutX="284.0" layoutY="224.0" prefHeight="265.0" prefWidth="360.0" rotate="-45.0" style="-fx-background-color: #59171C; -fx-background-radius: 20;" />
+            <Pane layoutX="-14.0" layoutY="305.0" prefHeight="58.0" prefWidth="309.0" rotate="47.3" style="-fx-background-color: #35280D; -fx-background-radius: 50;" />
+            <Polygon fill="#19280d" layoutX="237.0" layoutY="248.0" opacity="0.48" points="-71.73765563964844, 56.914886474609375, 69.2623291015625, 56.914886474609375, 0.0, -60.0" stroke="#19280d" strokeType="INSIDE" />
+         </children>
+      </Pane>
+   </left>
+   <right>
+      <Pane prefHeight="359.0" prefWidth="306.0">
+         <children>
+            <Circle fill="#3b2c18" layoutY="215.0" radius="43.0" stroke="#3b2c18" strokeType="INSIDE" />
+            <Polygon fill="#19280d" layoutX="247.0" layoutY="142.0" points="-71.73765563964844, 56.914886474609375, 69.2623291015625, 56.914886474609375, 0.0, -60.0" rotate="-74.7" stroke="#19280d" strokeType="INSIDE" />
+            <Pane layoutX="37.0" layoutY="37.0" prefHeight="58.0" prefWidth="318.0" rotate="-26.6" style="-fx-background-color: #2D3128; -fx-background-radius: 50;" />
+            <Circle fill="#57275d" layoutX="28.0" layoutY="57.0" opacity="0.54" radius="28.0" stroke="#57275d" strokeType="INSIDE" />
+            <BorderPane prefHeight="359.0" prefWidth="307.0">
+               <top>
+                  <AnchorPane BorderPane.alignment="CENTER">
+                     <children>
+                        <Button blendMode="SRC_ATOP" layoutX="275.0" layoutY="1.0" mnemonicParsing="false" onMouseClicked="#closeLogin" prefHeight="33.0" prefWidth="31.0" style="-fx-background-radius: 20; -fx-background-insets: 1; -fx-background-color: rgba(0,0,0,0);" AnchorPane.rightAnchor="1.0" AnchorPane.topAnchor="1.0">
+                           <graphic>
+                              <ImageView cache="true" fitHeight="30.0" fitWidth="27.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true" smooth="false">
+                                 <image>
+                                    <Image url="@../images/exit.png" />
+                                 </image>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </ImageView>
+                           </graphic>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                           <padding>
+                              <Insets bottom="0.1" left="0.1" right="0.1" top="0.1" />
+                           </padding>
+                        </Button>
+                        <Label layoutX="82.0" layoutY="1.0" prefHeight="66.0" prefWidth="123.0" text="Login" textFill="#76795d">
+                           <font>
+                              <Font name="Segoe Script" size="36.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </AnchorPane>
+               </top>
+               <center>
+                  <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <Label layoutX="30.0" layoutY="67.0" prefHeight="49.0" prefWidth="74.0" text="Name: " textFill="#aba69e">
+                           <font>
+                              <Font name="Verdana Bold Italic" size="14.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="19.0" layoutY="146.0" prefHeight="49.0" prefWidth="85.0" text="Password:" textFill="#aba69e">
+                           <font>
+                              <Font name="Verdana Bold Italic" size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="usernameTxt" layoutX="114.0" layoutY="79.0" promptText="User name" style="-fx-background-color: rgba(0,0,0,0); -fx-border-color: #120C00; -fx-border-width: 2; -fx-border-radius: 5; -fx-text-fill: #FFFFFF;">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </TextField>
+                        <Button layoutX="108.0" layoutY="237.0" mnemonicParsing="false" onMouseClicked="#authUser" prefHeight="25.0" prefWidth="91.0" style="-fx-background-color: #162211;" text="Login" textFill="#cdb5b5">
+                           <font>
+                              <Font name="SansSerif Regular" size="18.0" />
+                           </font>
+                        </Button>
+                        <PasswordField layoutX="114.0" layoutY="154.0" promptText="Password" style="-fx-background-color: rgba(0,0,0,0); -fx-border-color: #120C00; -fx-border-width: 2; -fx-border-radius: 5; -fx-text-fill: #FFFFFF;">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </PasswordField>
+                     </children>
+                  </AnchorPane>
+               </center>
+            </BorderPane>
+         </children>
+      </Pane>
+   </right>
+</BorderPane>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import io.github.palexdev.materialfx.controls.*?>
+<?import io.github.palexdev.mfxresources.fonts.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane fx:id="rootPane" prefHeight="591.0" prefWidth="786.0" styleClass="rootPane"
+            stylesheets="@../styles/base.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.infinite.spotmarkpos.controller.BaseController">
+    <children>
+        <VBox prefHeight="591.0" prefWidth="197.0" spacing="10.0" AnchorPane.bottomAnchor="0.0"
+              AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="40.0">
+            <children>
+                <Label graphicTextGap="15.0" prefHeight="38.0" prefWidth="204.0" styleClass="header"
+                       text="Spot Mark POS">
+                    <padding>
+                        <Insets left="10.0" right="10.0"/>
+                    </padding>
+                    <font>
+                        <Font size="18.0"/>
+                    </font>
+                </Label>
+                <MFXScrollPane fx:id="scrollPane" fitToWidth="true" VBox.vgrow="ALWAYS">
+                    <content>
+                        <VBox fx:id="navBar" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                              prefWidth="100.0"/>
+                    </content>
+                    <VBox.margin>
+                        <Insets left="10.0"/>
+                    </VBox.margin>
+                </MFXScrollPane>
+            </children>
+        </VBox>
+        <AnchorPane layoutX="203.0" layoutY="20.0" prefWidth="563.0" AnchorPane.leftAnchor="213.0"
+                    AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="40.0">
+            <children>
+                <MFXTextField floatMode="DISABLED" floatingText="Search" layoutX="270.0" prefHeight="38.0"
+                              prefWidth="172.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="121.0"
+                              AnchorPane.topAnchor="0.0"/>
+                <HBox layoutX="451.0" prefHeight="38.0" prefWidth="112.0"/>
+            </children>
+        </AnchorPane>
+        <StackPane fx:id="contentPane" layoutX="223.0" layoutY="88.0" prefHeight="503.0" prefWidth="563.0"
+                   AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="223.0" AnchorPane.rightAnchor="0.0"
+                   AnchorPane.topAnchor="88.0"/>
+        <HBox fx:id="windowHeader" alignment="CENTER_RIGHT" layoutX="165.0" prefHeight="26.0" prefWidth="786.0"
+              spacing="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <MFXFontIcon fx:id="minimizeIcon" description="fas-circle" onMouseClicked="#minimizeIconClicked"
+                             size="15.0" styleClass="minimize-icon"/>
+                <MFXFontIcon fx:id="maximizeIcon" description="fas-circle" onMouseClicked="#maximizeIconClicked"
+                             size="15.0" styleClass="maximize-icon"/>
+                <MFXFontIcon fx:id="closeIcon" description="fas-circle" onMouseClicked="#closeIconClicked" size="15.0"
+                             styleClass="close-icon"/>
+            </children>
+            <padding>
+                <Insets left="10.0" right="10.0"/>
+            </padding>
+        </HBox>
+    </children>
+</AnchorPane>
