@@ -26,7 +26,7 @@ tasks.withType(JavaCompile) {
 
 application {
     mainModule = 'org.infinite.spotmarkpos'
-    mainClass = 'org.infinite.spotmarkpos.HelloApplication'
+    mainClass = 'org.infinite.spotmarkpos.App'
 }
 
 javafx {
@@ -35,22 +35,13 @@ javafx {
 }
 
 dependencies {
-    implementation('org.controlsfx:controlsfx:11.1.2')
-    implementation('com.dlsc.formsfx:formsfx-core:11.5.0') {
-        exclude(group: 'org.openjfx')
-    }
-    implementation('net.synedra:validatorfx:0.4.0') {
-        exclude(group: 'org.openjfx')
-    }
+    implementation 'io.github.palexdev:materialfx:11.16.0'
     implementation('org.kordamp.ikonli:ikonli-javafx:12.3.1')
-    implementation('org.kordamp.bootstrapfx:bootstrapfx-core:0.4.0')
-    implementation('eu.hansolo:tilesfx:17.1.15') {
-        exclude(group: 'org.openjfx')
-    }
-    implementation('com.github.almasb:fxgl:17.2') {
-        exclude(group: 'org.openjfx')
-    }
-
+    implementation "org.kordamp.ikonli:ikonli-core:12.3.1"
+    implementation "org.kordamp.ikonli:ikonli-fontawesome5-pack:12.3.1"
+    implementation "fr.brouillard.oss:cssfx:11.5.1"
+    implementation "io.github.palexdev:scenicview:17.0.2"
+    implementation "io.github.palexdev:virtualizedfx:11.9.0"
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
 }

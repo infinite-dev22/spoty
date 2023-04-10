@@ -3,14 +3,12 @@ module org.infinite.spotmarkpos {
     requires javafx.fxml;
     requires javafx.web;
 
-    requires org.controlsfx.controls;
-    requires com.dlsc.formsfx;
-    requires net.synedra.validatorfx;
     requires org.kordamp.ikonli.javafx;
-    requires org.kordamp.bootstrapfx.core;
-    requires eu.hansolo.tilesfx;
-    requires com.almasb.fxgl.all;
+    requires mfx.resources;
+    requires MaterialFX;
+    requires fr.brouillard.oss.cssfx;
 
     opens org.infinite.spotmarkpos to javafx.fxml;
+    opens org.infinite.spotmarkpos.controller to javafx.fxml;
     exports org.infinite.spotmarkpos;
 }
