@@ -3,6 +3,6 @@
 <?import javafx.scene.layout.*?>
 
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: black;" styleClass="card" stylesheets="@../../../styles/Common.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.infinite.spoty.controller.inventory.adjustment.AdjustmentController">
+<BorderPane fx:id="adjustmentContentPane" prefHeight="400.0" prefWidth="600.0" styleClass="card" stylesheets="@../../../styles/Common.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.infinite.spoty.controller.inventory.adjustment.AdjustmentController">
 
-</AnchorPane>
+</BorderPane>

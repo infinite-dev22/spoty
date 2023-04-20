@@ -28,6 +28,7 @@ public class Main extends Application {
         Parent root = loader.load();
         Scene scene = new Scene(root);
         MFXThemeManager.addOn(scene, Themes.DEFAULT, Themes.LEGACY);
+        io.github.palexdev.mfxcomponents.theming.enums.MFXThemeManager.PURPLE_LIGHT.addOn(scene);
         scene.setFill(Color.TRANSPARENT);
         primaryStage.initStyle(StageStyle.TRANSPARENT);
         primaryStage.setScene(scene);

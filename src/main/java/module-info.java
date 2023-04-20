@@ -16,6 +16,8 @@ module org.infinite.spoty {
     requires org.kordamp.ikonli.fontawesome5;
     requires org.scenicview.scenicview;
     requires lombok;
+    requires org.slf4j;
+    requires mfx.components;
 
     opens org.infinite.spoty;
     opens org.infinite.spoty.controller;
@@ -23,7 +25,6 @@ module org.infinite.spoty {
     opens org.infinite.spoty.controller.dashboard;
     opens org.infinite.spoty.controller.purchases;
     opens org.infinite.spoty.controller.sales;
-    opens org.infinite.spoty.controller.returns;
 
     opens org.infinite.spoty.controller.inventory;
     opens org.infinite.spoty.controller.inventory.category;
@@ -54,4 +55,8 @@ module org.infinite.spoty {
     opens org.infinite.spoty.controller.settings.branches;
     opens org.infinite.spoty.controller.settings.currency;
     opens org.infinite.spoty.controller.settings.export;
+
+    opens org.infinite.spoty.controller.returns;
+    opens org.infinite.spoty.controller.returns.sales;
+    opens org.infinite.spoty.controller.returns.purchases;
 }

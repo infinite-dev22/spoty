@@ -1,0 +1,183 @@
+package org.infinite.spoty.model;
+
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+
+import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Objects;
+
+public class PurchaseReturn implements Serializable {
+    private Date purchaseReturnDate = new Date();
+    private final StringProperty purchaseReturnReference = new SimpleStringProperty("");
+    private final StringProperty purchaseReturnSupplier = new SimpleStringProperty("");
+    private final StringProperty purchaseReturnWarehouse = new SimpleStringProperty("");
+    private final StringProperty purchaseReturnPurchaseRef = new SimpleStringProperty("");
+    private final StringProperty purchaseReturnPurchaseStatus = new SimpleStringProperty("");
+    private final DoubleProperty purchaseReturnGrandTotal = new SimpleDoubleProperty(0);
+    private final DoubleProperty purchaseReturnAmountPaid = new SimpleDoubleProperty(0);
+    private final DoubleProperty purchaseReturnAmountDue = new SimpleDoubleProperty(0);
+    private final StringProperty purchaseReturnPaymentStatus = new SimpleStringProperty("");
+
+    public String getPurchaseReturnDate() {
+        return new SimpleDateFormat("yyyy-MM-dd").format(this.purchaseReturnDate);
+    }
+
+    public String getPurchaseReturnReference() {
+        return this.purchaseReturnReference.get();
+    }
+
+    public String getPurchaseReturnSupplier() {
+        return this.purchaseReturnSupplier.get();
+    }
+
+    public String getPurchaseReturnWarehouse() {
+        return this.purchaseReturnWarehouse.get();
+    }
+
+    public String getPurchaseReturnRef() {
+        return this.purchaseReturnPurchaseRef.get();
+    }
+
+    public String getPurchaseReturnStatus() {
+        return this.purchaseReturnPurchaseStatus.get();
+    }
+
+    public Double getPurchaseReturnGrandTotal() {
+        return this.purchaseReturnGrandTotal.get();
+    }
+
+    public Double getPurchaseReturnAmountPaid() {
+        return this.purchaseReturnAmountPaid.get();
+    }
+
+    public Double getPurchaseReturnAmountDue() {
+        return this.purchaseReturnAmountDue.get();
+    }
+
+    public String getPurchaseReturnPaymentStatus() {
+        return this.purchaseReturnPaymentStatus.get();
+    }
+
+    public void setPurchaseReturnDate(Date date) {
+        this.purchaseReturnDate = date;
+    }
+
+    public void setPurchaseReturnReference(String reference) {
+        this.purchaseReturnReference.set(reference);
+    }
+
+    public void setPurchaseReturnSupplier(String supplier) {
+        this.purchaseReturnSupplier.set(supplier);
+    }
+
+    public void setPurchaseReturnWarehouse(String warehouse) {
+        this.purchaseReturnWarehouse.set(warehouse);
+    }
+
+    public void setPurchaseReturnRef(String purchaseReturnRef) {
+        this.purchaseReturnPurchaseRef.set(purchaseReturnRef);
+    }
+
+    public void setPurchaseReturnStatus(String purchaseReturnStatus) {
+        this.purchaseReturnPurchaseStatus.set(purchaseReturnStatus);
+    }
+
+    public void setPurchaseReturnGrandTotal(double grandTotal) {
+        this.purchaseReturnGrandTotal.set(grandTotal);
+    }
+
+    public void setPurchaseReturnAmountPaid(double amountPaid) {
+        this.purchaseReturnAmountPaid.set(amountPaid);
+    }
+
+    public void setPurchaseReturnAmountDue(double amountDue) {
+        this.purchaseReturnAmountDue.set(amountDue);
+    }
+
+    public void setPurchaseReturnPaymentStatus(String paymentStatus) {
+        this.purchaseReturnPaymentStatus.set(paymentStatus);
+    }
+
+    public boolean equals(final Object o) {
+        if (o == this) return true;
+        if (!(o instanceof final PurchaseReturn other)) return false;
+        if (!other.canEqual(this)) return false;
+        final Object this$purchaseReturnDate = this.getPurchaseReturnDate();
+        final Object other$purchaseReturnDate = other.getPurchaseReturnDate();
+        if (!Objects.equals(this$purchaseReturnDate, other$purchaseReturnDate))
+            return false;
+        final Object this$purchaseReturnReference = this.getPurchaseReturnReference();
+        final Object other$purchaseReturnReference = other.getPurchaseReturnReference();
+        if (!Objects.equals(this$purchaseReturnReference, other$purchaseReturnReference))
+            return false;
+        final Object this$purchaseReturnSupplier = this.getPurchaseReturnSupplier();
+        final Object other$purchaseReturnSupplier = other.getPurchaseReturnSupplier();
+        if (!Objects.equals(this$purchaseReturnSupplier, other$purchaseReturnSupplier))
+            return false;
+        final Object this$purchaseReturnWarehouse = this.getPurchaseReturnWarehouse();
+        final Object other$purchaseReturnWarehouse = other.getPurchaseReturnWarehouse();
+        if (!Objects.equals(this$purchaseReturnWarehouse, other$purchaseReturnWarehouse))
+            return false;
+        final Object this$purchaseReturnRef = this.getPurchaseReturnRef();
+        final Object other$purchaseReturnRef = other.getPurchaseReturnRef();
+        if (!Objects.equals(this$purchaseReturnRef, other$purchaseReturnRef))
+            return false;
+        final Object this$purchaseReturnStatus = this.getPurchaseReturnStatus();
+        final Object other$purchaseReturnStatus = other.getPurchaseReturnStatus();
+        if (!Objects.equals(this$purchaseReturnStatus, other$purchaseReturnStatus))
+            return false;
+        final Object this$purchaseReturnGrandTotal = this.getPurchaseReturnGrandTotal();
+        final Object other$purchaseReturnGrandTotal = other.getPurchaseReturnGrandTotal();
+        if (!Objects.equals(this$purchaseReturnGrandTotal, other$purchaseReturnGrandTotal))
+            return false;
+        final Object this$purchaseReturnAmountPaid = this.getPurchaseReturnAmountPaid();
+        final Object other$purchaseReturnAmountPaid = other.getPurchaseReturnAmountPaid();
+        if (!Objects.equals(this$purchaseReturnAmountPaid, other$purchaseReturnAmountPaid))
+            return false;
+        final Object this$purchaseReturnAmountDue = this.getPurchaseReturnAmountDue();
+        final Object other$purchaseReturnAmountDue = other.getPurchaseReturnAmountDue();
+        if (!Objects.equals(this$purchaseReturnAmountDue, other$purchaseReturnAmountDue))
+            return false;
+        final Object this$purchaseReturnPaymentStatus = this.getPurchaseReturnPaymentStatus();
+        final Object other$purchaseReturnPaymentStatus = other.getPurchaseReturnPaymentStatus();
+        return Objects.equals(this$purchaseReturnPaymentStatus, other$purchaseReturnPaymentStatus);
+    }
+
+    protected boolean canEqual(final Object other) {
+        return other instanceof PurchaseReturn;
+    }
+
+    public int hashCode() {
+        final int PRIME = 59;
+        int result = 1;
+        final Object $purchaseReturnDate = this.getPurchaseReturnDate();
+        result = result * PRIME + ($purchaseReturnDate == null ? 43 : $purchaseReturnDate.hashCode());
+        final Object $purchaseReturnReference = this.getPurchaseReturnReference();
+        result = result * PRIME + ($purchaseReturnReference == null ? 43 : $purchaseReturnReference.hashCode());
+        final Object $purchaseReturnSupplier = this.getPurchaseReturnSupplier();
+        result = result * PRIME + ($purchaseReturnSupplier == null ? 43 : $purchaseReturnSupplier.hashCode());
+        final Object $purchaseReturnWarehouse = this.getPurchaseReturnWarehouse();
+        result = result * PRIME + ($purchaseReturnWarehouse == null ? 43 : $purchaseReturnWarehouse.hashCode());
+        final Object $purchaseReturnRef = this.getPurchaseReturnRef();
+        result = result * PRIME + ($purchaseReturnRef == null ? 43 : $purchaseReturnRef.hashCode());
+        final Object $purchaseReturnStatus = this.getPurchaseReturnStatus();
+        result = result * PRIME + ($purchaseReturnStatus == null ? 43 : $purchaseReturnStatus.hashCode());
+        final Object $purchaseReturnGrandTotal = this.getPurchaseReturnGrandTotal();
+        result = result * PRIME + ($purchaseReturnGrandTotal == null ? 43 : $purchaseReturnGrandTotal.hashCode());
+        final Object $purchaseReturnAmountPaid = this.getPurchaseReturnAmountPaid();
+        result = result * PRIME + ($purchaseReturnAmountPaid == null ? 43 : $purchaseReturnAmountPaid.hashCode());
+        final Object $purchaseReturnAmountDue = this.getPurchaseReturnAmountDue();
+        result = result * PRIME + ($purchaseReturnAmountDue == null ? 43 : $purchaseReturnAmountDue.hashCode());
+        final Object $purchaseReturnPaymentStatus = this.getPurchaseReturnPaymentStatus();
+        result = result * PRIME + ($purchaseReturnPaymentStatus == null ? 43 : $purchaseReturnPaymentStatus.hashCode());
+        return result;
+    }
+
+    public String toString() {
+        return "PurchaseReturn(purchaseReturnDate=" + this.getPurchaseReturnDate() + ", purchaseReturnReference=" + this.getPurchaseReturnReference() + ", purchaseReturnSupplier=" + this.getPurchaseReturnSupplier() + ", purchaseReturnWarehouse=" + this.getPurchaseReturnWarehouse() + ", purchaseReturnRef=" + this.getPurchaseReturnRef() + ", purchaseReturnStatus=" + this.getPurchaseReturnStatus() + ", purchaseReturnGrandTotal=" + this.getPurchaseReturnGrandTotal() + ", purchaseReturnAmountPaid=" + this.getPurchaseReturnAmountPaid() + ", purchaseReturnAmountDue=" + this.getPurchaseReturnAmountDue() + ", purchaseReturnPaymentStatus=" + this.getPurchaseReturnPaymentStatus() + ")";
+    }
+}

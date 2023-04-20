@@ -3,7 +3,7 @@ plugins {
     id 'application'
     id 'org.javamodularity.moduleplugin' version '1.8.12'
     id 'org.openjfx.javafxplugin' version '0.0.13'
-    id 'org.beryx.jlink' version '2.25.0'
+    id 'org.beryx.jlink' version '2.6.5'
 }
 
 group 'org.infinite'
@@ -20,7 +20,7 @@ ext {
 //sourceCompatibility = '20'
 //targetCompatibility = '20'
 
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
 
@@ -28,6 +28,17 @@ application {
     mainModule = 'org.infinite.spoty'
     mainClass = 'org.infinite.spoty.App'
 }
+
+//application {
+//    setMainModule("org.infinite.spoty")
+//    String main = project.findProperty("chooseMain").toString()
+//    if (main != "null" && !main.trim().isEmpty()) {
+//        setMainClassName(main)
+//    } else {
+//        setMainClassName("org.infinite.spoty.App")
+//    }
+//    applicationDefaultJvmArgs = ["-Dglass.disableGrab=true"]
+//}
 
 javafx {
     version = '20-ea+4'
@@ -42,7 +53,12 @@ dependencies {
     implementation "fr.brouillard.oss:cssfx:11.5.1"
     implementation "io.github.palexdev:scenicview:17.0.2"
     implementation "io.github.palexdev:virtualizedfx:11.9.0"
+    implementation "io.github.palexdev:mfxcomponents:11.16.2"
     implementation "org.projectlombok:lombok:1.18.26"
+//    implementation "org.openjfx:javafx:20"
+//    implementation 'org.openjfx:javafx-graphics:20'
+//    implementation 'org.openjfx:javafx-base:20'
+    implementation "org.slf4j:slf4j-simple:2.0.7"
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
 }
@@ -62,3 +78,48 @@ jlink {
 jlinkZip {
     group = 'distribution'
 }
+
+//jlink {
+//    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
+//    launcher {
+//        mainClass = "org.infinite.spoty.App"
+//        name = 'Spoty'
+//        jvmArgs = ['-Dlog4j.configurationFile=./log4j2.xml']
+//    }
+//    jpackage {
+//        imageOptions = ['--icon', 'src/main/resources/logo.ico']
+//    }
+//
+//    targetPlatform("linux-x64") {
+//        jdkHome = jdkDownload("https://cdn.azul.com/zulu/bin/zulu20.28.85-ca-jdk20.0.0-linux_x64.tar.gz")
+//        addExtraModulePath("/home/infinite/Java_FX/javafx-jmods-20/linux_x64")
+//    }
+//
+//    targetPlatform("win") {
+//        jdkHome = jdkDownload("https://cdn.azul.com/zulu/bin/zulu20.28.85-ca-jdk20.0.0-win_x64.zip")
+//        addExtraModulePath("/home/infinite/Java_FX/javafx-jmods-20/win_x64")
+//    }
+//
+//    targetPlatform("mac") {
+//        jdkHome = jdkDownload("https://cdn.azul.com/zulu/bin/zulu20.28.85-ca-jdk20.0.0-macosx_x64.tar.gz")
+//        addExtraModulePath("/home/infinite/Java_FX/javafx-jmods-20/mac_x64")
+//    }
+//
+//    addExtraDependencies('javafx')
+//}
+//
+//tasks.register('doPackageAll') {
+//    doLast {
+//        if (Os.isFamily(Os.FAMILY_UNIX)) {
+//            exec {
+//                mkdir("$buildDir/distributions")
+//                executable "$projectDir/scripts/JLinkPackage.sh"
+//                args = ["$buildDir"]
+//            }
+//        }
+//    }
+//}
+//
+//jlinkZip.doLast {
+//    doPackageAll
+//}

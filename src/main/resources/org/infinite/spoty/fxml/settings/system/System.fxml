@@ -1,8 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import io.github.palexdev.materialfx.controls.*?>
+<?import io.github.palexdev.mfxcomponents.controls.buttons.*?>
+<?import java.net.*?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.layout.*?>
 
-
-<AnchorPane prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: brown;" styleClass="card" stylesheets="@../../../styles/Common.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.infinite.spoty.controller.settings.system.SystemController">
-
-</AnchorPane>
+<GridPane hgap="20.0" styleClass="card" vgap="40.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.infinite.spoty.controller.settings.system.SystemController">
+    <columnConstraints>
+        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints />
+        <RowConstraints />
+        <RowConstraints />
+        <RowConstraints />
+    </rowConstraints>
+    <children>
+        <MFXTextField floatMode="BORDER" floatingText="Default Currency" prefWidth="300.0" />
+        <MFXTextField floatMode="BORDER" floatingText="Default Email" prefWidth="300.0" GridPane.columnIndex="1" />
+        <MFXTextField floatMode="BORDER" floatingText="Default Language" prefWidth="300.0" GridPane.columnIndex="2" />
+        <MFXTextField floatMode="BORDER" floatingText="Company Name" prefWidth="300.0" GridPane.rowIndex="1" />
+        <MFXTextField floatMode="BORDER" floatingText="Company Phone" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+        <MFXTextField floatMode="BORDER" floatingText="Head Branch (Default)" prefWidth="300.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+        <MFXTextField floatMode="BORDER" floatingText="Address" prefWidth="300.0" GridPane.rowIndex="2" />
+        <MFXCheckbox text="Invoice Footer" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+        <MFXTextField floatMode="BORDER" floatingText="Default Currency" layoutX="260.0" layoutY="46.0" prefWidth="300.0" />
+      <HBox alignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="3">
+         <children>
+            <MFXElevatedButton text="Save" />
+         </children>
+      </HBox>
+      <MFXOutlinedButton text="Company Logo" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+    </children>
+    <padding>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+    </padding>
+   <stylesheets>
+      <URL value="@../../../styles/Common.css" />
+      <URL value="@../../../styles/Buttons.css" />
+   </stylesheets>
+</GridPane>

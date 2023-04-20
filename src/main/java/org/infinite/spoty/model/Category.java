@@ -1,26 +1,30 @@
 package org.infinite.spoty.model;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+
 import java.io.Serializable;
 import java.util.Objects;
 
 public class Category implements Serializable {
-    private String code;
-    private String name;
+    private final StringProperty code = new SimpleStringProperty("");
+
+    private final StringProperty name = new SimpleStringProperty("");
 
     public String getCategoryCode() {
-        return this.code;
+        return this.code.get();
     }
 
     public String getCategoryName() {
-        return this.name;
+        return this.name.get();
     }
 
     public void setCategoryCode(String code) {
-        this.code = code;
+        this.code.set(code);
     }
 
     public void setCategoryName(String name) {
-        this.name = name;
+        this.name.set(name);
     }
 
     public boolean equals(final Object o) {
@@ -37,16 +41,6 @@ public class Category implements Serializable {
 
     protected boolean canEqual(final Object other) {
         return other instanceof Category;
-    }
-
-    public int hashCategoryCode() {
-        final int PRIME = 59;
-        int result = 1;
-        final Object $code = this.getCategoryCode();
-        result = result * PRIME + ($code == null ? 43 : $code.hashCode());
-        final Object $name = this.getCategoryName();
-        result = result * PRIME + ($name == null ? 43 : $name.hashCode());
-        return result;
     }
 
     public String toString() {

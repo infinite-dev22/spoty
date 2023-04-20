@@ -1,12 +1,9 @@
 package org.infinite.spoty.controller.inventory;
 
-import io.github.palexdev.materialfx.controls.MFXIconWrapper;
-import io.github.palexdev.materialfx.controls.MFXRectangleToggleNode;
 import io.github.palexdev.materialfx.utils.others.loader.MFXLoader;
 import io.github.palexdev.materialfx.utils.others.loader.MFXLoaderBean;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;

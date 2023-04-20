@@ -119,17 +119,9 @@ public class BaseController implements Initializable {
         loader.addView(MFXLoaderBean.of("INVENTORY", loadURL("fxml/inventory/Inventory.fxml")).setBeanToNodeMapper(() -> createToggle("fas-toggle-on", "Inventory")).get());
         loader.addView(MFXLoaderBean.of("PURCHASES", loadURL("fxml/purchases/Purchases.fxml")).setBeanToNodeMapper(() -> createToggle("fas-square-caret-down", "Purchases")).get());
         loader.addView(MFXLoaderBean.of("SALES", loadURL("fxml/sales/Sales.fxml")).setBeanToNodeMapper(() -> createToggle("fas-square-caret-down", "Sales")).get());
-//        loader.addView(MFXLoaderBean.of("DIALOGS", loadURL("fxml/Dialogs.fxml")).setBeanToNodeMapper(() -> createToggle("fas-comments", "Dialogs")).setControllerFactory(c -> new DialogsController(stage)).get());
         loader.addView(MFXLoaderBean.of("RETURNS", loadURL("fxml/returns/Returns.fxml")).setBeanToNodeMapper(() -> createToggle("fas-italic", "Returns")).get());
         loader.addView(MFXLoaderBean.of("EXPENSES", loadURL("fxml/expenses/Expenses.fxml")).setBeanToNodeMapper(() -> createToggle("fas-rectangle-list", "Expenses")).get());
-//        loader.addView(MFXLoaderBean.of("NOTIFICATIONS", loadURL("fxml/Notifications.fxml")).setBeanToNodeMapper(() -> createToggle("fas-bell", "Notifications")).setControllerFactory(c -> new NotificationsController(stage)).get());
         loader.addView(MFXLoaderBean.of("PEOPLE", loadURL("fxml/people/People.fxml")).setBeanToNodeMapper(() -> createToggle("fas-calendar", "People")).get());
-//        loader.addView(MFXLoaderBean.of("PROGRESS", loadURL("fxml/Progress.fxml")).setBeanToNodeMapper(() -> createToggle("fas-bars-progress", "Progress")).get());
-//        loader.addView(MFXLoaderBean.of("SCROLL-PANES", loadURL("fxml/ScrollPanes.fxml")).setBeanToNodeMapper(() -> createToggle("fas-bars-progress", "Scroll Panes", 90)).get());
-//        loader.addView(MFXLoaderBean.of("SLIDERS", loadURL("fxml/Sliders.fxml")).setBeanToNodeMapper(() -> createToggle("fas-sliders", "Sliders")).get());
-//        loader.addView(MFXLoaderBean.of("STEPPER", loadURL("fxml/Stepper.fxml")).setBeanToNodeMapper(() -> createToggle("fas-stairs", "Stepper")).get());
-//        loader.addView(MFXLoaderBean.of("TABLES", loadURL("fxml/TableViews.fxml")).setBeanToNodeMapper(() -> createToggle("fas-table", "Tables")).get());
-//        loader.addView(MFXLoaderBean.of("FONT-RESOURCES", loadURL("fxml/FontResources.fxml")).setBeanToNodeMapper(() -> createToggle("fas-icons", "Font Resources")).get());
         loader.setOnLoadedAction(beans -> {
             List<ToggleButton> nodes = beans.stream()
                     .map(bean -> {
