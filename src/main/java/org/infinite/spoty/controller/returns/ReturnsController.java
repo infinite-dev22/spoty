@@ -2,6 +2,7 @@ package org.infinite.spoty.controller.returns;
 
 import io.github.palexdev.materialfx.utils.others.loader.MFXLoader;
 import io.github.palexdev.materialfx.utils.others.loader.MFXLoaderBean;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ToggleButton;
@@ -23,15 +24,6 @@ public class ReturnsController implements Initializable {
     @FXML
     public StackPane contentPane;
 
-    /**
-     * Called to initialize a controller after its root element has been
-     * completely processed.
-     *
-     * @param location  The location used to resolve relative paths for the root object, or
-     *                  {@code null} if the location is not known.
-     * @param resources The resources used to localize the root object, or {@code null} if
-     *                  the root object was not localized.
-     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         MFXLoader loader = new MFXLoader();
@@ -51,6 +43,6 @@ public class ReturnsController implements Initializable {
                     .toList();
             returnsNavbar.getChildren().setAll(nodes);
         });
-        loader.start();
+        Platform.runLater(loader::start);
     }
 }

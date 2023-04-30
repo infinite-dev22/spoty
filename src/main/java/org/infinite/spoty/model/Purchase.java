@@ -15,7 +15,7 @@ public class Purchase implements Serializable {
     private Date purchaseDate = new Date();
     private final StringProperty purchaseReference = new SimpleStringProperty("");
     private final StringProperty purchaseSupplier = new SimpleStringProperty("");
-    private final StringProperty purchaseWarehouse = new SimpleStringProperty("");
+    private final StringProperty purchaseBranch = new SimpleStringProperty("");
     private final StringProperty purchasePurchaseStatus = new SimpleStringProperty("");
     private final DoubleProperty purchaseGrandTotal = new SimpleDoubleProperty(0);
     private final DoubleProperty purchaseAmountPaid = new SimpleDoubleProperty(0);
@@ -34,8 +34,8 @@ public class Purchase implements Serializable {
         return this.purchaseSupplier.get();
     }
 
-    public String getPurchaseWarehouse() {
-        return this.purchaseWarehouse.get();
+    public String getPurchaseBranch() {
+        return this.purchaseBranch.get();
     }
 
     public String getPurchaseStatus() {
@@ -70,8 +70,8 @@ public class Purchase implements Serializable {
         this.purchaseSupplier.set(supplier);
     }
 
-    public void setPurchaseWarehouse(String warehouse) {
-        this.purchaseWarehouse.set(warehouse);
+    public void setPurchaseBranch(String warehouse) {
+        this.purchaseBranch.set(warehouse);
     }
 
     public void setPurchaseStatus(String purchaseStatus) {
@@ -110,9 +110,9 @@ public class Purchase implements Serializable {
         final Object other$purchaseSupplier = other.getPurchaseSupplier();
         if (!Objects.equals(this$purchaseSupplier, other$purchaseSupplier))
             return false;
-        final Object this$purchaseWarehouse = this.getPurchaseWarehouse();
-        final Object other$purchaseWarehouse = other.getPurchaseWarehouse();
-        if (!Objects.equals(this$purchaseWarehouse, other$purchaseWarehouse))
+        final Object this$purchaseBranch = this.getPurchaseBranch();
+        final Object other$purchaseBranch = other.getPurchaseBranch();
+        if (!Objects.equals(this$purchaseBranch, other$purchaseBranch))
             return false;
         final Object this$purchaseStatus = this.getPurchaseStatus();
         final Object other$purchaseStatus = other.getPurchaseStatus();
@@ -148,8 +148,8 @@ public class Purchase implements Serializable {
         result = result * PRIME + ($purchaseReference == null ? 43 : $purchaseReference.hashCode());
         final Object $purchaseSupplier = this.getPurchaseSupplier();
         result = result * PRIME + ($purchaseSupplier == null ? 43 : $purchaseSupplier.hashCode());
-        final Object $purchaseWarehouse = this.getPurchaseWarehouse();
-        result = result * PRIME + ($purchaseWarehouse == null ? 43 : $purchaseWarehouse.hashCode());
+        final Object $purchaseBranch = this.getPurchaseBranch();
+        result = result * PRIME + ($purchaseBranch == null ? 43 : $purchaseBranch.hashCode());
         final Object $purchaseStatus = this.getPurchaseStatus();
         result = result * PRIME + ($purchaseStatus == null ? 43 : $purchaseStatus.hashCode());
         final Object $purchaseGrandTotal = this.getPurchaseGrandTotal();
@@ -164,6 +164,6 @@ public class Purchase implements Serializable {
     }
 
     public String toString() {
-        return "Purchase(purchaseDate=" + this.getPurchaseDate() + ", purchaseReference=" + this.getPurchaseReference() + ", purchaseSupplier=" + this.getPurchaseSupplier() + ", purchaseWarehouse=" + this.getPurchaseWarehouse() + ", purchaseStatus=" + this.getPurchaseStatus() + ", purchaseGrandTotal=" + this.getPurchaseGrandTotal() + ", purchaseAmountPaid=" + this.getPurchaseAmountPaid() + ", purchaseAmountDue=" + this.getPurchaseAmountDue() + ", purchasePaymentStatus=" + this.getPurchasePaymentStatus() + ")";
+        return "Purchase(purchaseDate=" + this.getPurchaseDate() + ", purchaseReference=" + this.getPurchaseReference() + ", purchaseSupplier=" + this.getPurchaseSupplier() + ", purchaseBranch=" + this.getPurchaseBranch() + ", purchaseStatus=" + this.getPurchaseStatus() + ", purchaseGrandTotal=" + this.getPurchaseGrandTotal() + ", purchaseAmountPaid=" + this.getPurchaseAmountPaid() + ", purchaseAmountDue=" + this.getPurchaseAmountDue() + ", purchasePaymentStatus=" + this.getPurchasePaymentStatus() + ")";
     }
 }

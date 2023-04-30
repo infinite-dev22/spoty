@@ -1,14 +1,18 @@
 package org.infinite.spoty.controller.returns.sales;
 
+import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXTableColumn;
 import io.github.palexdev.materialfx.controls.MFXTableView;
+import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.filter.DoubleFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import org.infinite.spoty.model.SaleReturn;
 
 import java.net.URL;
@@ -16,60 +20,62 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.data.SampleData.saleReturnSampleData;
-import static org.infinite.spoty.data.SampleData.saleSampleData;
 
 public class SaleReturnsController implements Initializable {
-    
-    private MFXTableView<SaleReturn> saleReturnsTable;
-    
     @FXML
-    public BorderPane saleReturnsContentPane;
+    public BorderPane saleReturnContentPane;
+    @FXML
+    public MFXTextField saleReturnSearchBar;
+    @FXML
+    public HBox saleReturnActionsPane;
+    @FXML
+    public MFXButton saleReturnImportBtn;
+    @FXML
+    private MFXTableView<SaleReturn> saleReturnTable;
 
-    /**
-     * Called to initialize a controller after its root element has been
-     * completely processed.
-     *
-     * @param location  The location used to resolve relative paths for the root object, or
-     *                  {@code null} if the location is not known.
-     * @param resources The resources used to localize the root object, or {@code null} if
-     *                  the root object was not localized.
-     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        new Thread(() -> Platform.runLater(() -> {
-            saleReturnsContentPane.setCenter(getSaleReturnTable());
-            setupTable();
-        })).start();
+        Platform.runLater(this::setupTable);
     }
 
     private void setupTable() {
-        MFXTableColumn<SaleReturn> saleDate = new MFXTableColumn<>("Date", true, Comparator.comparing(SaleReturn::getSaleReturnDate));
-        MFXTableColumn<SaleReturn> saleReference = new MFXTableColumn<>("Ref No.", true, Comparator.comparing(SaleReturn::getSaleReturnReference));
-        MFXTableColumn<SaleReturn> saleCustomer = new MFXTableColumn<>("Customer", true, Comparator.comparing(SaleReturn::getSaleReturnCustomer));
-        MFXTableColumn<SaleReturn> saleWarehouse = new MFXTableColumn<>("Warehouse", true, Comparator.comparing(SaleReturn::getSaleReturnWarehouse));
-        MFXTableColumn<SaleReturn> saleRef = new MFXTableColumn<>("Sale Ref", true, Comparator.comparing(SaleReturn::getSaleReturnStatus));
-        MFXTableColumn<SaleReturn> saleStatus = new MFXTableColumn<>("Status", true, Comparator.comparing(SaleReturn::getSaleReturnStatus));
-        MFXTableColumn<SaleReturn> saleGrandTotal = new MFXTableColumn<>("Total", true, Comparator.comparing(SaleReturn::getSaleReturnGrandTotal));
-        MFXTableColumn<SaleReturn> saleAmountPaid = new MFXTableColumn<>("Paid", true, Comparator.comparing(SaleReturn::getSaleReturnAmountPaid));
-        MFXTableColumn<SaleReturn> saleAmountDue = new MFXTableColumn<>("Due", true, Comparator.comparing(SaleReturn::getSaleReturnAmountDue));
-        MFXTableColumn<SaleReturn> salePaymentStatus = new MFXTableColumn<>("Payment Status", true, Comparator.comparing(SaleReturn::getSaleReturnPaymentStatus));
+        MFXTableColumn<SaleReturn> saleReturnDate = new MFXTableColumn<>("Date", false, Comparator.comparing(SaleReturn::getSaleReturnDate));
+        MFXTableColumn<SaleReturn> saleReturnReference = new MFXTableColumn<>("Ref No.", false, Comparator.comparing(SaleReturn::getSaleReturnReference));
+        MFXTableColumn<SaleReturn> saleReturnCustomer = new MFXTableColumn<>("Customer", false, Comparator.comparing(SaleReturn::getSaleReturnCustomer));
+        MFXTableColumn<SaleReturn> saleReturnBranch = new MFXTableColumn<>("Branch", false, Comparator.comparing(SaleReturn::getSaleReturnBranch));
+        MFXTableColumn<SaleReturn> saleReturnRef = new MFXTableColumn<>("Sale Ref", false, Comparator.comparing(SaleReturn::getSaleReturnStatus));
+        MFXTableColumn<SaleReturn> saleReturnStatus = new MFXTableColumn<>("Status", false, Comparator.comparing(SaleReturn::getSaleReturnStatus));
+        MFXTableColumn<SaleReturn> saleReturnGrandTotal = new MFXTableColumn<>("Total", false, Comparator.comparing(SaleReturn::getSaleReturnGrandTotal));
+        MFXTableColumn<SaleReturn> saleReturnAmountPaid = new MFXTableColumn<>("Paid", false, Comparator.comparing(SaleReturn::getSaleReturnAmountPaid));
+        MFXTableColumn<SaleReturn> saleReturnAmountDue = new MFXTableColumn<>("Due", false, Comparator.comparing(SaleReturn::getSaleReturnAmountDue));
+        MFXTableColumn<SaleReturn> saleReturnPaymentStatus = new MFXTableColumn<>("Payment Status", false, Comparator.comparing(SaleReturn::getSaleReturnPaymentStatus));
 
-        saleDate.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleReturn::getSaleReturnDate));
-        saleReference.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleReturn::getSaleReturnReference));
-        saleCustomer.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleReturn::getSaleReturnCustomer));
-        saleWarehouse.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleReturn::getSaleReturnWarehouse));
-        saleRef.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleReturn::getSaleReturnStatus));
-        saleStatus.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleReturn::getSaleReturnStatus));
-        saleGrandTotal.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleReturn::getSaleReturnGrandTotal));
-        saleAmountPaid.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleReturn::getSaleReturnAmountPaid));
-        saleAmountDue.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleReturn::getSaleReturnAmountDue));
-        salePaymentStatus.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleReturn::getSaleReturnPaymentStatus));
+        saleReturnRef.setTooltip(new Tooltip("Purchase Reference Number"));
+        saleReturnReference.setTooltip(new Tooltip("Purchase Return Reference Number"));
+        saleReturnPaymentStatus.setTooltip(new Tooltip("Purchase Return Payment Status"));
+        saleReturnStatus.setTooltip(new Tooltip("Purchase Return Status"));
+        saleReturnBranch.setTooltip(new Tooltip("Branch, store or warehouse"));
+//        saleReturnPaymentStatus.setPrefWidth(100);
+//        saleReturnAmountDue.setPrefWidth(100);
+//        saleReturnStatus.setPrefWidth(100);
+//        saleReturnCustomer.setPrefWidth(100);
 
-        saleReturnsTable.getTableColumns().addAll(saleDate, saleReference, saleCustomer, saleWarehouse, saleRef, saleStatus, saleGrandTotal, saleAmountPaid, saleAmountDue, salePaymentStatus);
-        saleReturnsTable.getFilters().addAll(
+        saleReturnDate.setRowCellFactory(saleReturn -> new MFXTableRowCell<>(SaleReturn::getSaleReturnDate));
+        saleReturnReference.setRowCellFactory(saleReturn -> new MFXTableRowCell<>(SaleReturn::getSaleReturnReference));
+        saleReturnCustomer.setRowCellFactory(saleReturn -> new MFXTableRowCell<>(SaleReturn::getSaleReturnCustomer));
+        saleReturnBranch.setRowCellFactory(saleReturn -> new MFXTableRowCell<>(SaleReturn::getSaleReturnBranch));
+        saleReturnRef.setRowCellFactory(saleReturn -> new MFXTableRowCell<>(SaleReturn::getSaleReturnStatus));
+        saleReturnStatus.setRowCellFactory(saleReturn -> new MFXTableRowCell<>(SaleReturn::getSaleReturnStatus));
+        saleReturnGrandTotal.setRowCellFactory(saleReturn -> new MFXTableRowCell<>(SaleReturn::getSaleReturnGrandTotal));
+        saleReturnAmountPaid.setRowCellFactory(saleReturn -> new MFXTableRowCell<>(SaleReturn::getSaleReturnAmountPaid));
+        saleReturnAmountDue.setRowCellFactory(saleReturn -> new MFXTableRowCell<>(SaleReturn::getSaleReturnAmountDue));
+        saleReturnPaymentStatus.setRowCellFactory(saleReturn -> new MFXTableRowCell<>(SaleReturn::getSaleReturnPaymentStatus));
+
+        saleReturnTable.getTableColumns().addAll(saleReturnDate, saleReturnReference, saleReturnCustomer, saleReturnBranch, saleReturnRef, saleReturnStatus, saleReturnGrandTotal, saleReturnAmountPaid, saleReturnAmountDue, saleReturnPaymentStatus);
+        saleReturnTable.getFilters().addAll(
                 new StringFilter<>("Reference", SaleReturn::getSaleReturnReference),
                 new StringFilter<>("Customer", SaleReturn::getSaleReturnCustomer),
-                new StringFilter<>("Warehouse", SaleReturn::getSaleReturnWarehouse),
+                new StringFilter<>("Branch", SaleReturn::getSaleReturnBranch),
                 new StringFilter<>("Sale Ref", SaleReturn::getSaleReturnStatus),
                 new StringFilter<>("Status", SaleReturn::getSaleReturnStatus),
                 new DoubleFilter<>("Total", SaleReturn::getSaleReturnGrandTotal),
@@ -77,16 +83,14 @@ public class SaleReturnsController implements Initializable {
                 new DoubleFilter<>("Due", SaleReturn::getSaleReturnAmountDue),
                 new StringFilter<>("Payment Status", SaleReturn::getSaleReturnPaymentStatus)
         );
-
-        saleReturnsTable.setItems(saleReturnSampleData());
+        getSaleReturnTable();
+        saleReturnTable.setItems(saleReturnSampleData());
     }
 
-    private MFXTableView<SaleReturn> getSaleReturnTable() {
-        saleReturnsTable = new MFXTableView<>();
-        saleReturnsTable.setPrefSize(1200, 1000);
-        saleReturnsTable.features().enableBounceEffect();
-        saleReturnsTable.autosizeColumnsOnInitialization();
-        saleReturnsTable.features().enableSmoothScrolling(0.5);
-        return saleReturnsTable;
+    private void getSaleReturnTable() {
+        saleReturnTable.setPrefSize(1200, 1000);
+        saleReturnTable.features().enableBounceEffect();
+        saleReturnTable.autosizeColumnsOnInitialization();
+        saleReturnTable.features().enableSmoothScrolling(0.5);
     }
 }

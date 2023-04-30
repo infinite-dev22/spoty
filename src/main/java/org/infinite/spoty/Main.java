@@ -1,38 +1,27 @@
 package org.infinite.spoty;
 
-import fr.brouillard.oss.cssfx.CSSFX;
-import io.github.palexdev.materialfx.css.themes.MFXThemeManager;
-import io.github.palexdev.materialfx.css.themes.Themes;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-import org.infinite.spoty.controller.BaseController;
+import org.infinite.spoty.controller.splash.LaunchPreloader;
+import org.infinite.spoty.controller.splash.SplashScreenController;
 
 import java.io.IOException;
 
 public class Main extends Application {
+    public static Stage primaryStage = null;
 
-    public static void runApp () {
-        launch();
+    public static void runApp(String... args) {
+        System.setProperty("javafx.preloader", LaunchPreloader.class.getCanonicalName());
+        launch(args);
+    }
+
+    @Override
+    public void init() {
+        SplashScreenController.checkFunctions();
     }
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-        CSSFX.start();
-        FXMLLoader loader = new FXMLLoader(SpotResourceLoader.loadURL("fxml/Base.fxml"));
-        loader.setControllerFactory(c -> new BaseController(primaryStage));
-        Parent root = loader.load();
-        Scene scene = new Scene(root);
-        MFXThemeManager.addOn(scene, Themes.DEFAULT, Themes.LEGACY);
-        io.github.palexdev.mfxcomponents.theming.enums.MFXThemeManager.PURPLE_LIGHT.addOn(scene);
-        scene.setFill(Color.TRANSPARENT);
-        primaryStage.initStyle(StageStyle.TRANSPARENT);
-        primaryStage.setScene(scene);
-        primaryStage.setTitle("MaterialFX Demo");
-        primaryStage.show();
+        Main.primaryStage = primaryStage;
     }
 }

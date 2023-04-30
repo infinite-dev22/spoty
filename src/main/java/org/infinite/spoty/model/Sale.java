@@ -15,7 +15,7 @@ public class Sale implements Serializable {
     private final StringProperty saleReference = new SimpleStringProperty("");
     private final StringProperty saleAddedBy = new SimpleStringProperty("");
     private final StringProperty saleCustomer = new SimpleStringProperty("");
-    private final StringProperty saleWarehouse = new SimpleStringProperty("");
+    private final StringProperty saleBranch = new SimpleStringProperty("");
     private final StringProperty saleSaleStatus = new SimpleStringProperty("");
     private final DoubleProperty saleGrandTotal = new SimpleDoubleProperty(0);
     private final DoubleProperty saleAmountPaid = new SimpleDoubleProperty(0);
@@ -38,8 +38,8 @@ public class Sale implements Serializable {
         return this.saleCustomer.get();
     }
 
-    public String getSaleWarehouse() {
-        return this.saleWarehouse.get();
+    public String getSaleBranch() {
+        return this.saleBranch.get();
     }
 
     public String getSaleStatus() {
@@ -78,8 +78,8 @@ public class Sale implements Serializable {
         this.saleCustomer.set(customer);
     }
 
-    public void setSaleWarehouse(String warehouse) {
-        this.saleWarehouse.set(warehouse);
+    public void setSaleBranch(String warehouse) {
+        this.saleBranch.set(warehouse);
     }
 
     public void setSaleStatus(String saleStatus) {
@@ -122,9 +122,9 @@ public class Sale implements Serializable {
         final Object other$saleCustomer = other.getSaleCustomer();
         if (!Objects.equals(this$saleCustomer, other$saleCustomer))
             return false;
-        final Object this$saleWarehouse = this.getSaleWarehouse();
-        final Object other$saleWarehouse = other.getSaleWarehouse();
-        if (!Objects.equals(this$saleWarehouse, other$saleWarehouse))
+        final Object this$saleBranch = this.getSaleBranch();
+        final Object other$saleBranch = other.getSaleBranch();
+        if (!Objects.equals(this$saleBranch, other$saleBranch))
             return false;
         final Object this$saleSaleStatus = this.getSaleStatus();
         final Object other$saleSaleStatus = other.getSaleStatus();
@@ -162,8 +162,8 @@ public class Sale implements Serializable {
         result = result * PRIME + ($saleAddedBy == null ? 43 : $saleAddedBy.hashCode());
         final Object $saleCustomer = this.getSaleCustomer();
         result = result * PRIME + ($saleCustomer == null ? 43 : $saleCustomer.hashCode());
-        final Object $saleWarehouse = this.getSaleWarehouse();
-        result = result * PRIME + ($saleWarehouse == null ? 43 : $saleWarehouse.hashCode());
+        final Object $saleBranch = this.getSaleBranch();
+        result = result * PRIME + ($saleBranch == null ? 43 : $saleBranch.hashCode());
         final Object $saleSaleStatus = this.getSaleStatus();
         result = result * PRIME + ($saleSaleStatus == null ? 43 : $saleSaleStatus.hashCode());
         final Object $saleGrandTotal = this.getSaleGrandTotal();
@@ -178,6 +178,6 @@ public class Sale implements Serializable {
     }
 
     public String toString() {
-        return "Sale(saleDate=" + this.getSaleDate() + ", saleReference=" + this.getSaleReference() + ", saleAddedBy=" + this.getSaleAddedBy() + ", saleCustomer=" + this.getSaleCustomer() + ", saleWarehouse=" + this.getSaleWarehouse() + ", saleSaleStatus=" + this.getSaleStatus() + ", saleGrandTotal=" + this.getSaleGrandTotal() + ", saleAmountPaid=" + this.getSaleAmountPaid() + ", saleAmountDue=" + this.getSaleAmountDue() + ", salePaymentStatus=" + this.getSalePaymentStatus() + ")";
+        return "Sale(saleDate=" + this.getSaleDate() + ", saleReference=" + this.getSaleReference() + ", saleAddedBy=" + this.getSaleAddedBy() + ", saleCustomer=" + this.getSaleCustomer() + ", saleBranch=" + this.getSaleBranch() + ", saleSaleStatus=" + this.getSaleStatus() + ", saleGrandTotal=" + this.getSaleGrandTotal() + ", saleAmountPaid=" + this.getSaleAmountPaid() + ", saleAmountDue=" + this.getSaleAmountDue() + ", salePaymentStatus=" + this.getSalePaymentStatus() + ")";
     }
 }

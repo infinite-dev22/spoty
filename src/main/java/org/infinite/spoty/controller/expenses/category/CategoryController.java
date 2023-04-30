@@ -1,43 +1,61 @@
 package org.infinite.spoty.controller.expenses.category;
 
+import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXTableColumn;
 import io.github.palexdev.materialfx.controls.MFXTableView;
+import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
+import io.github.palexdev.materialfx.enums.ButtonType;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.infinite.spoty.model.ExpenseCategory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 
+import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 import static org.infinite.spoty.data.SampleData.expenseCategorySampleData;
 
 public class CategoryController implements Initializable {
-
-    private MFXTableView<ExpenseCategory> categoriesTable;
-
+    @FXML
+    public MFXTextField categoryExpenseSearchBar;
+    @FXML
+    public HBox categoryExpenseActionsPane;
+    @FXML
+    public MFXButton categoryExpenseImportBtn;
     @FXML
     public BorderPane categoryContentPane;
+    @FXML
+    private MFXTableView<ExpenseCategory> categoryExpenseTable;
+    private Dialog<ButtonType> dialog;
 
-    /**
-     * Called to initialize a controller after its root element has been
-     * completely processed.
-     *
-     * @param location  The location used to resolve relative paths for the root object, or
-     *                  {@code null} if the location is not known.
-     * @param resources The resources used to localize the root object, or {@code null} if
-     *                  the root object was not localized.
-     */
+    public CategoryController(Stage stage) {
+        Platform.runLater(() -> {
+            Logger logger = LoggerFactory.getLogger(this.getClass());
+            try {
+                expenseCategoryFormDialogPane(stage);
+            } catch (IOException ex) {
+                logger.error(ex.getLocalizedMessage());
+            }
+        });
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        new Thread(() -> Platform.runLater(() -> {
-            categoryContentPane.setCenter(getExpenseCategoryTable());
-            setupTable();
-        })).start();
+        Platform.runLater(this::setupTable);
     }
 
     private void setupTable() {
@@ -47,21 +65,34 @@ public class CategoryController implements Initializable {
         categoryName.setRowCellFactory(category -> new MFXTableRowCell<>(ExpenseCategory::getCategoryName));
         categoryDescription.setRowCellFactory(category -> new MFXTableRowCell<>(ExpenseCategory::getCategoryDescription));
 
-        categoriesTable.getTableColumns().addAll(categoryName, categoryDescription);
-        categoriesTable.getFilters().addAll(
+        categoryExpenseTable.getTableColumns().addAll(categoryName, categoryDescription);
+        categoryExpenseTable.getFilters().addAll(
                 new StringFilter<>("Name", ExpenseCategory::getCategoryName),
                 new StringFilter<>("Description", ExpenseCategory::getCategoryDescription)
         );
 
-        categoriesTable.setItems(expenseCategorySampleData());
+        styleExpenseCategoryTable();
+        categoryExpenseTable.setItems(expenseCategorySampleData());
     }
 
-    private MFXTableView<ExpenseCategory> getExpenseCategoryTable() {
-        categoriesTable = new MFXTableView<>();
-        categoriesTable.setPrefSize(1200, 1000);
-        categoriesTable.features().enableBounceEffect();
-        categoriesTable.autosizeColumnsOnInitialization();
-        categoriesTable.features().enableSmoothScrolling(0.5);
-        return categoriesTable;
+    private void styleExpenseCategoryTable() {
+        categoryExpenseTable.setPrefSize(1200, 1000);
+        categoryExpenseTable.features().enableBounceEffect();
+        categoryExpenseTable.autosizeColumnsOnInitialization();
+        categoryExpenseTable.features().enableSmoothScrolling(0.5);
+    }
+
+    private void expenseCategoryFormDialogPane(Stage stage) throws IOException {
+        DialogPane dialogPane = fxmlLoader("forms/ExpenseCategoryForm.fxml").load();
+
+        dialog = new Dialog<>();
+        dialog.setDialogPane(dialogPane);
+        dialog.initOwner(stage);
+        dialog.initModality(Modality.APPLICATION_MODAL);
+        dialog.initStyle(StageStyle.UNDECORATED);
+    }
+
+    public void categoryExpenseCreateBtnClicked() {
+        dialog.showAndWait();
     }
 }

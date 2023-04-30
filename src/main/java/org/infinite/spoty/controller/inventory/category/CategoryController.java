@@ -1,51 +1,60 @@
 package org.infinite.spoty.controller.inventory.category;
 
+import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXTableColumn;
 import io.github.palexdev.materialfx.controls.MFXTableView;
+import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
+import io.github.palexdev.materialfx.enums.ButtonType;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogPane;
+import javafx.scene.layout.HBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import org.infinite.spoty.SpotResourceLoader;
 import org.infinite.spoty.model.Category;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 
+import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 import static org.infinite.spoty.data.SampleData.categorySampleData;
 
 public class CategoryController implements Initializable {
-
-
-    public MFXTableView<Category> categoryTable;
-
     @FXML
-    public BorderPane categoryContentPane;
+    public MFXTableView<Category> categoryTable;
+    @FXML
+    public MFXTextField categorySearchBar;
+    @FXML
+    public HBox categoryActionsPane;
+    @FXML
+    public MFXButton categoryImportBtn;
+    private Dialog<ButtonType> dialog;
 
+    public CategoryController(Stage stage) {
+        Platform.runLater(() -> {
+            Logger logger = LoggerFactory.getLogger(this.getClass());
+            try {
+                productCategoryDialogPane(stage);
+            } catch (IOException ex) {
+                logger.error(ex.getLocalizedMessage());
+            }
+        });
+    }
 
-    /**
-     * Called to initialize a controller after its root element has been
-     * completely processed.
-     *
-     * @param location  The location used to resolve relative paths for the root object, or
-     *                  {@code null} if the location is not known.
-     * @param resources The resources used to localize the root object, or {@code null} if
-     *                  the root object was not localized.
-     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
-        new Thread(() -> Platform.runLater(() -> {
-            categoryContentPane.setCenter(getCategoryTable());
-            setupTable();
-
-//            When.onChanged(categoryTable.currentPageProperty())
-//                    .then((oldValue, newValue) -> categoryTable.autosizeColumns())
-//                    .listen();
-        })).start();
+        Platform.runLater(this::setupTable);
     }
 
     private void setupTable() {
@@ -60,16 +69,28 @@ public class CategoryController implements Initializable {
                 new StringFilter<>("Category Code", Category::getCategoryCode),
                 new StringFilter<>("Category Name", Category::getCategoryName)
         );
-
+        getCategoryTable();
         categoryTable.setItems(categorySampleData());
     }
 
-    private MFXTableView<Category> getCategoryTable() {
+    private void getCategoryTable() {
         categoryTable = new MFXTableView<>();
         categoryTable.setPrefSize(1000, 1000);
         categoryTable.features().enableBounceEffect();
         categoryTable.features().enableSmoothScrolling(0.5);
         categoryTable.autosizeColumnsOnInitialization();
-        return categoryTable;
+    }
+
+    private void productCategoryDialogPane(Stage stage) throws IOException {
+        DialogPane dialogPane = fxmlLoader("forms/ProductCategoryForm.fxml").load();
+        dialog = new Dialog<>();
+        dialog.setDialogPane(dialogPane);
+        dialog.initOwner(stage);
+        dialog.initModality(Modality.APPLICATION_MODAL);
+        dialog.initStyle(StageStyle.UNDECORATED);
+    }
+
+    public void categoryCreateBtnClicked() {
+        dialog.showAndWait();
     }
 }

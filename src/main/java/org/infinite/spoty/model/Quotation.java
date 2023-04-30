@@ -14,7 +14,7 @@ public class Quotation implements Serializable {
     private Date quotationDate = new Date();
     private final StringProperty quotationReference = new SimpleStringProperty("");
     private final StringProperty quotationCustomer = new SimpleStringProperty("");
-    private final StringProperty quotationWarehouse = new SimpleStringProperty("");
+    private final StringProperty quotationBranch = new SimpleStringProperty("");
     private final StringProperty quotationStatus = new SimpleStringProperty("");
     private final DoubleProperty quotationGrandTotal = new SimpleDoubleProperty(0);
 
@@ -30,8 +30,8 @@ public class Quotation implements Serializable {
         return this.quotationCustomer.get();
     }
 
-    public String getQuotationWarehouse() {
-        return this.quotationWarehouse.get();
+    public String getQuotationBranch() {
+        return this.quotationBranch.get();
     }
 
     public String getQuotationStatus() {
@@ -54,8 +54,8 @@ public class Quotation implements Serializable {
         this.quotationCustomer.set(customer);
     }
 
-    public void setQuotationWarehouse(String warehouse) {
-        this.quotationWarehouse.set(warehouse);
+    public void setQuotationBranch(String warehouse) {
+        this.quotationBranch.set(warehouse);
     }
 
     public void setQuotationStatus(String status) {
@@ -82,9 +82,9 @@ public class Quotation implements Serializable {
         final Object other$quotationCustomer = other.getQuotationCustomer();
         if (!Objects.equals(this$quotationCustomer, other$quotationCustomer))
             return false;
-        final Object this$quotationWarehouse = this.getQuotationWarehouse();
-        final Object other$quotationWarehouse = other.getQuotationWarehouse();
-        if (!Objects.equals(this$quotationWarehouse, other$quotationWarehouse))
+        final Object this$quotationBranch = this.getQuotationBranch();
+        final Object other$quotationBranch = other.getQuotationBranch();
+        if (!Objects.equals(this$quotationBranch, other$quotationBranch))
             return false;
         final Object this$quotationStatus = this.getQuotationStatus();
         final Object other$quotationStatus = other.getQuotationStatus();
@@ -108,8 +108,8 @@ public class Quotation implements Serializable {
         result = result * PRIME + ($quotationReference == null ? 43 : $quotationReference.hashCode());
         final Object $quotationCustomer = this.getQuotationCustomer();
         result = result * PRIME + ($quotationCustomer == null ? 43 : $quotationCustomer.hashCode());
-        final Object $quotationWarehouse = this.getQuotationWarehouse();
-        result = result * PRIME + ($quotationWarehouse == null ? 43 : $quotationWarehouse.hashCode());
+        final Object $quotationBranch = this.getQuotationBranch();
+        result = result * PRIME + ($quotationBranch == null ? 43 : $quotationBranch.hashCode());
         final Object $quotationStatus = this.getQuotationStatus();
         result = result * PRIME + ($quotationStatus == null ? 43 : $quotationStatus.hashCode());
         final Object $quotationGrandTotal = this.getQuotationGrandTotal();
@@ -118,6 +118,6 @@ public class Quotation implements Serializable {
     }
 
     public String toString() {
-        return "Quotation(quotationDate=" + this.getQuotationDate() + ", quotationReference=" + this.getQuotationReference() + ", quotationCustomer=" + this.getQuotationCustomer() + ", quotationWarehouse=" + this.getQuotationWarehouse() + ", quotationStatus=" + this.getQuotationStatus() + ", quotationGrandTotal=" + this.getQuotationGrandTotal() + ")";
+        return "Quotation(quotationDate=" + this.getQuotationDate() + ", quotationReference=" + this.getQuotationReference() + ", quotationCustomer=" + this.getQuotationCustomer() + ", quotationBranch=" + this.getQuotationBranch() + ", quotationStatus=" + this.getQuotationStatus() + ", quotationGrandTotal=" + this.getQuotationGrandTotal() + ")";
     }
 }

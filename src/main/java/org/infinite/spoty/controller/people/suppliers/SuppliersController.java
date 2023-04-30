@@ -1,47 +1,65 @@
 package org.infinite.spoty.controller.people.suppliers;
 
+import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXTableColumn;
 import io.github.palexdev.materialfx.controls.MFXTableView;
+import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
+import io.github.palexdev.materialfx.enums.ButtonType;
 import io.github.palexdev.materialfx.filter.DoubleFilter;
 import io.github.palexdev.materialfx.filter.IntegerFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import org.infinite.spoty.SpotResourceLoader;
 import org.infinite.spoty.model.Supplier;
-import org.infinite.spoty.model.ExpenseCategory;
-import org.infinite.spoty.model.Supplier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 
+import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 import static org.infinite.spoty.data.SampleData.supplierSampleData;
-import static org.infinite.spoty.data.SampleData.expenseCategorySampleData;
 
 public class SuppliersController implements Initializable {
-    private MFXTableView<Supplier> suppliersTable;
-
+    @FXML
+    public MFXTextField supplierSearchBar;
+    @FXML
+    public HBox supplierActionsPane;
+    @FXML
+    public MFXButton supplierImportBtn;
+    @FXML
+    public MFXTableView<Supplier> supplierTable;
     @FXML
     public BorderPane suppliersContentPane;
+    private Dialog<ButtonType> dialog;
 
-    /**
-     * Called to initialize a controller after its root element has been
-     * completely processed.
-     *
-     * @param location  The location used to resolve relative paths for the root object, or
-     *                  {@code null} if the location is not known.
-     * @param resources The resources used to localize the root object, or {@code null} if
-     *                  the root object was not localized.
-     */
+    public SuppliersController(Stage stage) {
+        Platform.runLater(() -> {
+            Logger logger = LoggerFactory.getLogger(this.getClass());
+            try {
+                supplierFormDialogPane(stage);
+            } catch (IOException ex) {
+                logger.error(ex.getLocalizedMessage());
+            }
+        });
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        new Thread(() -> Platform.runLater(() -> {
-            suppliersContentPane.setCenter(getSupplierTable());
-            setupTable();
-        })).start();
+        Platform.runLater(this::setupTable);
     }
 
     private void setupTable() {
@@ -61,8 +79,8 @@ public class SuppliersController implements Initializable {
         supplierPurchasesDue.setRowCellFactory(supplier -> new MFXTableRowCell<>(Supplier::getSupplierTotalPurchaseDue));
         supplierPurchaseReturnDue.setRowCellFactory(supplier -> new MFXTableRowCell<>(Supplier::getSupplierTotalPurchaseReturnDue));
 
-        suppliersTable.getTableColumns().addAll(supplierCode, supplierName, supplierPhone, supplierEmail, supplierTax, supplierPurchasesDue, supplierPurchaseReturnDue);
-        suppliersTable.getFilters().addAll(
+        supplierTable.getTableColumns().addAll(supplierCode, supplierName, supplierPhone, supplierEmail, supplierTax, supplierPurchasesDue, supplierPurchaseReturnDue);
+        supplierTable.getFilters().addAll(
                 new IntegerFilter<>("Code", Supplier::getSupplierCode),
                 new StringFilter<>("Name", Supplier::getSupplierName),
                 new StringFilter<>("Phone", Supplier::getSupplierPhoneNumber),
@@ -71,16 +89,27 @@ public class SuppliersController implements Initializable {
                 new DoubleFilter<>("Purchases Due", Supplier::getSupplierTotalPurchaseDue),
                 new DoubleFilter<>("Returns Due", Supplier::getSupplierTotalPurchaseReturnDue)
         );
-
-        suppliersTable.setItems(supplierSampleData());
+        getSupplierTable();
+        supplierTable.setItems(supplierSampleData());
     }
 
-    private MFXTableView<Supplier> getSupplierTable() {
-        suppliersTable = new MFXTableView<>();
-        suppliersTable.setPrefSize(1000, 1000);
-        suppliersTable.autosizeColumnsOnInitialization();
-        suppliersTable.features().enableBounceEffect();
-        suppliersTable.features().enableSmoothScrolling(0.5);
-        return suppliersTable;
+    private void getSupplierTable() {
+        supplierTable.setPrefSize(1000, 1000);
+        supplierTable.autosizeColumnsOnInitialization();
+        supplierTable.features().enableBounceEffect();
+        supplierTable.features().enableSmoothScrolling(0.5);
+    }
+
+    private void supplierFormDialogPane(Stage stage) throws IOException {
+        DialogPane dialogPane = fxmlLoader("forms/SupplierForm.fxml").load();
+        dialog = new Dialog<>();
+        dialog.setDialogPane(dialogPane);
+        dialog.initOwner(stage);
+        dialog.initModality(Modality.APPLICATION_MODAL);
+        dialog.initStyle(StageStyle.UNDECORATED);
+    }
+
+    public void supplierCreateBtnClicked() {
+        dialog.showAndWait();
     }
 }

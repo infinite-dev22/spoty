@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import io.github.palexdev.materialfx.controls.*?>
+<?import io.github.palexdev.mfxcomponents.controls.buttons.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<DialogPane styleClass="card" stylesheets="@../styles/Common.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.infinite.spoty.forms.SaleProductsFormController">
+   <content>
+      <AnchorPane>
+         <Separator layoutY="25.0" prefWidth="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+         <VBox layoutY="10.0" spacing="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <padding>
+               <Insets left="10.0" right="10.0" top="20.0" />
+            </padding>
+            <MFXTextField fx:id="saleProductsQnty" floatMode="BORDER" floatingText="Quantity" prefWidth="400.0" />
+            <MFXFilterComboBox fx:id="saleProductsPdct" floatMode="BORDER" floatingText="Product" prefWidth="400.0" />
+            <MFXTextField fx:id="saleProductsOrderTax" floatMode="BORDER" floatingText="Order Tax" prefWidth="400.0" />
+            <MFXTextField fx:id="saleProductsDiscount" floatMode="BORDER" floatingText="Discount" prefWidth="400.0" />
+            <HBox alignment="CENTER_RIGHT" spacing="20.0">
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+               <MFXFilledButton fx:id="saleProductsSaveBtn" text="Save" />
+               <MFXOutlinedButton fx:id="saleProductsCancelBtn" text="Cancel" />
+            </HBox>
+         </VBox>
+      </AnchorPane>
+   </content>
+   <header>
+      <Label fx:id="saleProductsTitle" styleClass="card-title" text="Create" />
+   </header>
+   <padding>
+      <Insets left="10.0" right="10.0" top="10.0" />
+   </padding>
+</DialogPane>

@@ -1,47 +1,59 @@
 package org.infinite.spoty.controller.inventory.unit_of_measure;
 
+import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXTableColumn;
 import io.github.palexdev.materialfx.controls.MFXTableView;
+import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
+import io.github.palexdev.materialfx.enums.ButtonType;
 import io.github.palexdev.materialfx.filter.DoubleFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogPane;
+import javafx.scene.layout.HBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.infinite.spoty.model.UnitOfMeasure;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 
-import static org.infinite.spoty.data.SampleData.brandSampleData;
+import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 import static org.infinite.spoty.data.SampleData.uomSampleData;
 
 public class UnitOfMeasureController implements Initializable {
-
-    public MFXTableView<UnitOfMeasure> uomTable;
-    
     @FXML
-    public BorderPane uomContentPane;
+    public MFXTableView<UnitOfMeasure> uomTable;
+    @FXML
+    public MFXTextField uomSearchBar;
+    @FXML
+    public HBox uomActionsPane;
+    @FXML
+    public MFXButton uomImportBtn;
+    private Dialog<ButtonType> dialog;
 
-    /**
-     * Called to initialize a controller after its root element has been
-     * completely processed.
-     *
-     * @param location  The location used to resolve relative paths for the root object, or
-     *                  {@code null} if the location is not known.
-     * @param resources The resources used to localize the root object, or {@code null} if
-     *                  the root object was not localized.
-     */
+    public UnitOfMeasureController(Stage stage) {
+        Platform.runLater(() -> {
+            Logger logger = LoggerFactory.getLogger(this.getClass());
+            try {
+                uomFormDialogPane(stage);
+            } catch (IOException ex) {
+                logger.error(ex.getLocalizedMessage());
+            }
+        });
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        new Thread(() -> Platform.runLater(() -> {
-            uomContentPane.setCenter(getUnitOfMeasureTable());
-            setupTable();
-
-            uomTable.autosizeColumnsOnInitialization();
-        })).start();
+        Platform.runLater(this::setupTable);
     }
 
     private void setupTable() {
@@ -65,15 +77,27 @@ public class UnitOfMeasureController implements Initializable {
                 new StringFilter<>("Operator", UnitOfMeasure::getUomOperator),
                 new DoubleFilter<>("Operation Value", UnitOfMeasure::getUomOperationValue)
         );
-
+        getUnitOfMeasureTable();
         uomTable.setItems(uomSampleData());
     }
 
-    private MFXTableView<UnitOfMeasure> getUnitOfMeasureTable() {
-        uomTable = new MFXTableView<>();
+    private void getUnitOfMeasureTable() {
         uomTable.setPrefSize(1000, 1000);
         uomTable.features().enableBounceEffect();
         uomTable.features().enableSmoothScrolling(0.5);
-        return uomTable;
+        uomTable.autosizeColumnsOnInitialization();
+    }
+
+    private void uomFormDialogPane(Stage stage) throws IOException {
+        DialogPane dialogPane = fxmlLoader("forms/UOMForm.fxml").load();
+        dialog = new Dialog<>();
+        dialog.setDialogPane(dialogPane);
+        dialog.initOwner(stage);
+        dialog.initModality(Modality.APPLICATION_MODAL);
+        dialog.initStyle(StageStyle.UNDECORATED);
+    }
+
+    public void uomCreateBtnClicked() {
+        dialog.showAndWait();
     }
 }

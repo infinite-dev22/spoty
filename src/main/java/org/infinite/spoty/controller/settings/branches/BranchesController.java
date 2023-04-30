@@ -1,43 +1,63 @@
 package org.infinite.spoty.controller.settings.branches;
 
+import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXTableColumn;
 import io.github.palexdev.materialfx.controls.MFXTableView;
+import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
+import io.github.palexdev.materialfx.enums.ButtonType;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import org.infinite.spoty.SpotResourceLoader;
 import org.infinite.spoty.model.Branch;
-import org.infinite.spoty.model.Branch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 
+import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 import static org.infinite.spoty.data.SampleData.branchSampleData;
 
 public class BranchesController implements Initializable {
-    private MFXTableView<Branch> branchesTable;
-    
+    @FXML
+    public MFXTextField branchSearchBar;
+    @FXML
+    public HBox branchActionsPane;
+    @FXML
+    public MFXButton branchImportBtn;
+    @FXML
+    public MFXTableView<Branch> branchTable;
     @FXML
     public BorderPane branchContentPane;
+    private Dialog<ButtonType> dialog;
 
-    /**
-     * Called to initialize a controller after its root element has been
-     * completely processed.
-     *
-     * @param location  The location used to resolve relative paths for the root object, or
-     *                  {@code null} if the location is not known.
-     * @param resources The resources used to localize the root object, or {@code null} if
-     *                  the root object was not localized.
-     */
+    public BranchesController(Stage stage) {
+        Platform.runLater(() -> {
+            Logger logger = LoggerFactory.getLogger(this.getClass());
+            try {
+                branchFormDialogPane(stage);
+            } catch (IOException ex) {
+                logger.error(ex.getLocalizedMessage());
+            }
+        });
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        new Thread(() -> Platform.runLater(() -> {
-            branchContentPane.setCenter(getBranchTable());
-            setupTable();
-        })).start();
+        Platform.runLater(this::setupTable);
     }
 
     private void setupTable() {
@@ -55,8 +75,8 @@ public class BranchesController implements Initializable {
         branchLocation.setRowCellFactory(branch -> new MFXTableRowCell<>(Branch::getBranchLocation));
         branchEmail.setRowCellFactory(branch -> new MFXTableRowCell<>(Branch::getBranchEmail));
 
-        branchesTable.getTableColumns().addAll(branchName, branchPhone, branchCity, branchTown, branchLocation, branchEmail);
-        branchesTable.getFilters().addAll(
+        branchTable.getTableColumns().addAll(branchName, branchPhone, branchCity, branchTown, branchLocation, branchEmail);
+        branchTable.getFilters().addAll(
                 new StringFilter<>("Name", Branch::getBranchName),
                 new StringFilter<>("Phone", Branch::getBranchPhoneNumber),
                 new StringFilter<>("City", Branch::getBranchCity),
@@ -64,16 +84,28 @@ public class BranchesController implements Initializable {
                 new StringFilter<>("Location", Branch::getBranchLocation),
                 new StringFilter<>("Email", Branch::getBranchEmail)
         );
-
-        branchesTable.setItems(branchSampleData());
+        getBranchTable();
+        branchTable.setItems(branchSampleData());
     }
 
-    private MFXTableView<Branch> getBranchTable() {
-        branchesTable = new MFXTableView<>();
-        branchesTable.setPrefSize(1200, 1000);
-        branchesTable.features().enableBounceEffect();
-        branchesTable.autosizeColumnsOnInitialization();
-        branchesTable.features().enableSmoothScrolling(0.5);
-        return branchesTable;
+    private void getBranchTable() {
+        branchTable.setPrefSize(1200, 1000);
+        branchTable.features().enableBounceEffect();
+        branchTable.autosizeColumnsOnInitialization();
+        branchTable.features().enableSmoothScrolling(0.5);
+    }
+
+    @FXML
+    private void branchCreateBtnClicked() {
+        dialog.showAndWait();
+    }
+
+    private void branchFormDialogPane(Stage stage) throws IOException {
+        DialogPane dialogPane = fxmlLoader("forms/BranchForm.fxml").load();
+        dialog = new Dialog<>();
+        dialog.setDialogPane(dialogPane);
+        dialog.initOwner(stage);
+        dialog.initModality(Modality.APPLICATION_MODAL);
+        dialog.initStyle(StageStyle.UNDECORATED);
     }
 }

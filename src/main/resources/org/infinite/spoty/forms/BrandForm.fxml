@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import io.github.palexdev.materialfx.controls.*?>
+<?import io.github.palexdev.mfxcomponents.controls.buttons.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<DialogPane styleClass="card" stylesheets="@../styles/Common.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.infinite.spoty.forms.BrandFormController">
+   <content>
+       <VBox spacing="20.0">
+           <MFXTextField fx:id="brandFormName" floatMode="BORDER" floatingText="Brand Name" prefWidth="400.0" />
+           <MFXTextField fx:id="brandFormDescription" floatMode="BORDER" floatingText="Brand Description" prefWidth="400.0" />
+           <HBox alignment="CENTER_RIGHT" spacing="20.0">
+               <VBox.margin>
+                   <Insets top="10.0" />
+               </VBox.margin>
+               <padding>
+                   <Insets top="10.0" />
+               </padding>
+               <MFXFilledButton fx:id="brandFormSaveBtn" text="Save" />
+               <MFXOutlinedButton fx:id="brandFormCancelBtn" text="Cancel" />
+           </HBox>
+       </VBox>
+   </content>
+   <padding>
+      <Insets left="10.0" right="10.0" top="10.0" />
+   </padding>
+   <header>
+      <VBox spacing="5.0">
+         <children>
+            <Label fx:id="brandFormTitle" text="Create" />
+            <Separator prefWidth="200.0" />
+         </children>
+      </VBox>
+   </header>
+</DialogPane>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import io.github.palexdev.materialfx.controls.*?>
+<?import io.github.palexdev.mfxresources.fonts.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane fx:id="roleSettings" styleClass="card" stylesheets="@../styles/Common.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.infinite.spoty.forms.RoleSettingsFormController">
+    <center>
+        <AnchorPane BorderPane.alignment="CENTER">
+            <MFXStepper fx:id="roleSettingsStepper" cache="true" cacheHint="SPEED" layoutX="32.0" layoutY="6.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" />
+         </padding>
+        </AnchorPane>
+    </center>
+   <top>
+      <AnchorPane BorderPane.alignment="CENTER">
+         <children>
+               <MFXFontIcon description="fas-circle" onMouseClicked="#closeRoleStepper" styleClass="close-icon" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="8.0" />
+         </children>
+      </AnchorPane>
+   </top>
+</BorderPane>

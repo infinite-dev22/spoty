@@ -14,7 +14,7 @@ public class SaleReturn implements Serializable {
     private Date saleReturnDate = new Date();
     private final StringProperty saleReturnReference = new SimpleStringProperty("");
     private final StringProperty saleReturnCustomer = new SimpleStringProperty("");
-    private final StringProperty saleReturnWarehouse = new SimpleStringProperty("");
+    private final StringProperty saleReturnBranch = new SimpleStringProperty("");
     private final StringProperty saleReturnSaleRef = new SimpleStringProperty("");
     private final StringProperty saleReturnStatus = new SimpleStringProperty("");
     private final DoubleProperty saleReturnGrandTotal = new SimpleDoubleProperty(0);
@@ -34,8 +34,8 @@ public class SaleReturn implements Serializable {
         return this.saleReturnCustomer.get();
     }
 
-    public String getSaleReturnWarehouse() {
-        return this.saleReturnWarehouse.get();
+    public String getSaleReturnBranch() {
+        return this.saleReturnBranch.get();
     }
 
     public String getSaleReturnSaleRef() {
@@ -74,8 +74,8 @@ public class SaleReturn implements Serializable {
         this.saleReturnCustomer.set(customer);
     }
 
-    public void setSaleReturnWarehouse(String warehouse) {
-        this.saleReturnWarehouse.set(warehouse);
+    public void setSaleReturnBranch(String warehouse) {
+        this.saleReturnBranch.set(warehouse);
     }
 
     public void setSaleReturnSaleRef(String saleReturnSaleRef) {
@@ -118,9 +118,9 @@ public class SaleReturn implements Serializable {
         final Object other$saleReturnCustomer = other.getSaleReturnCustomer();
         if (!Objects.equals(this$saleReturnCustomer, other$saleReturnCustomer))
             return false;
-        final Object this$saleReturnWarehouse = this.getSaleReturnWarehouse();
-        final Object other$saleReturnWarehouse = other.getSaleReturnWarehouse();
-        if (!Objects.equals(this$saleReturnWarehouse, other$saleReturnWarehouse))
+        final Object this$saleReturnBranch = this.getSaleReturnBranch();
+        final Object other$saleReturnBranch = other.getSaleReturnBranch();
+        if (!Objects.equals(this$saleReturnBranch, other$saleReturnBranch))
             return false;
         final Object this$saleReturnSaleRef = this.getSaleReturnSaleRef();
         final Object other$saleReturnSaleRef = other.getSaleReturnSaleRef();
@@ -160,8 +160,8 @@ public class SaleReturn implements Serializable {
         result = result * PRIME + ($saleReturnReference == null ? 43 : $saleReturnReference.hashCode());
         final Object $saleReturnCustomer = this.getSaleReturnCustomer();
         result = result * PRIME + ($saleReturnCustomer == null ? 43 : $saleReturnCustomer.hashCode());
-        final Object $saleReturnWarehouse = this.getSaleReturnWarehouse();
-        result = result * PRIME + ($saleReturnWarehouse == null ? 43 : $saleReturnWarehouse.hashCode());
+        final Object $saleReturnBranch = this.getSaleReturnBranch();
+        result = result * PRIME + ($saleReturnBranch == null ? 43 : $saleReturnBranch.hashCode());
         final Object $saleReturnSaleRef = this.getSaleReturnSaleRef();
         result = result * PRIME + ($saleReturnSaleRef == null ? 43 : $saleReturnSaleRef.hashCode());
         final Object $saleReturnStatus = this.getSaleReturnStatus();
@@ -178,6 +178,6 @@ public class SaleReturn implements Serializable {
     }
 
     public String toString() {
-        return "SaleReturn(saleReturnDate=" + this.getSaleReturnDate() + ", saleReturnReference=" + this.getSaleReturnReference() + ", saleReturnCustomer=" + this.getSaleReturnCustomer() + ", saleReturnWarehouse=" + this.getSaleReturnWarehouse() + ", saleReturnAddedBy=" + this.getSaleReturnSaleRef() + ", saleReturnStatus=" + this.getSaleReturnStatus() + ", saleReturnGrandTotal=" + this.getSaleReturnGrandTotal() + ", saleReturnAmountPaid=" + this.getSaleReturnAmountPaid() + ", saleReturnAmountDue=" + this.getSaleReturnAmountDue() + ", saleReturnPaymentStatus=" + this.getSaleReturnPaymentStatus() + ")";
+        return "SaleReturn(saleReturnDate=" + this.getSaleReturnDate() + ", saleReturnReference=" + this.getSaleReturnReference() + ", saleReturnCustomer=" + this.getSaleReturnCustomer() + ", saleReturnBranch=" + this.getSaleReturnBranch() + ", saleReturnAddedBy=" + this.getSaleReturnSaleRef() + ", saleReturnStatus=" + this.getSaleReturnStatus() + ", saleReturnGrandTotal=" + this.getSaleReturnGrandTotal() + ", saleReturnAmountPaid=" + this.getSaleReturnAmountPaid() + ", saleReturnAmountDue=" + this.getSaleReturnAmountDue() + ", saleReturnPaymentStatus=" + this.getSaleReturnPaymentStatus() + ")";
     }
 }

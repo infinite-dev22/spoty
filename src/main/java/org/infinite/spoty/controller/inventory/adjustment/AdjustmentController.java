@@ -1,75 +1,95 @@
 package org.infinite.spoty.controller.inventory.adjustment;
 
+import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXTableColumn;
 import io.github.palexdev.materialfx.controls.MFXTableView;
+import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.filter.DoubleFilter;
-import io.github.palexdev.materialfx.filter.IntegerFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
+import org.infinite.spoty.forms.AdjustmentFormController;
 import org.infinite.spoty.model.Adjustment;
-import org.infinite.spoty.model.Adjustment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 
+import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 import static org.infinite.spoty.data.SampleData.adjustmentSampleData;
 
 public class AdjustmentController implements Initializable {
-    
-    private MFXTableView<Adjustment> adjustmentsTable;
-    
+    private final Stage stage;
     @FXML
     public BorderPane adjustmentContentPane;
+    @FXML
+    public MFXTextField adjustmentSearchBar;
+    @FXML
+    public HBox adjustmentActionsPane;
+    @FXML
+    public MFXButton adjustmentImportBtn;
+    @FXML
+    private MFXTableView<Adjustment> adjustmentsTable;
 
-    /**
-     * Called to initialize a controller after its root element has been
-     * completely processed.
-     *
-     * @param location  The location used to resolve relative paths for the root object, or
-     *                  {@code null} if the location is not known.
-     * @param resources The resources used to localize the root object, or {@code null} if
-     *                  the root object was not localized.
-     */
+    public AdjustmentController(Stage stage) {
+        this.stage = stage;
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        new Thread(() -> Platform.runLater(() -> {
-            adjustmentContentPane.setCenter(getAdjustmentTable());
-            setupTable();
-        })).start();
+        Platform.runLater(this::setupTable);
     }
 
     private void setupTable() {
         MFXTableColumn<Adjustment> adjustmentDate = new MFXTableColumn<>("Date", true, Comparator.comparing(Adjustment::getAdjustmentDate));
         MFXTableColumn<Adjustment> adjustmentReference = new MFXTableColumn<>("Reference", true, Comparator.comparing(Adjustment::getAdjustmentReference));
-        MFXTableColumn<Adjustment> adjustmentWarehouse = new MFXTableColumn<>("Warehouse", true, Comparator.comparing(Adjustment::getAdjustmentWarehouse));
+        MFXTableColumn<Adjustment> adjustmentBranch = new MFXTableColumn<>("Branch", true, Comparator.comparing(Adjustment::getAdjustmentBranch));
         MFXTableColumn<Adjustment> adjustmentTotalProducts = new MFXTableColumn<>("Total Products", true, Comparator.comparing(Adjustment::getAdjustmentTotalProducts));
 
         adjustmentDate.setRowCellFactory(adjustment -> new MFXTableRowCell<>(Adjustment::getAdjustmentDate));
         adjustmentReference.setRowCellFactory(adjustment -> new MFXTableRowCell<>(Adjustment::getAdjustmentReference));
-        adjustmentWarehouse.setRowCellFactory(adjustment -> new MFXTableRowCell<>(Adjustment::getAdjustmentWarehouse));
+        adjustmentBranch.setRowCellFactory(adjustment -> new MFXTableRowCell<>(Adjustment::getAdjustmentBranch));
         adjustmentTotalProducts.setRowCellFactory(adjustment -> new MFXTableRowCell<>(Adjustment::getAdjustmentTotalProducts));
 
-        adjustmentsTable.getTableColumns().addAll(adjustmentDate, adjustmentReference, adjustmentWarehouse, adjustmentTotalProducts);
+        adjustmentsTable.getTableColumns().addAll(adjustmentDate, adjustmentReference, adjustmentBranch, adjustmentTotalProducts);
         adjustmentsTable.getFilters().addAll(
                 new StringFilter<>("Reference", Adjustment::getAdjustmentReference),
-                new StringFilter<>("Warehouse", Adjustment::getAdjustmentWarehouse),
+                new StringFilter<>("Branch", Adjustment::getAdjustmentBranch),
                 new DoubleFilter<>("Total Products", Adjustment::getAdjustmentTotalProducts)
         );
-
+        getAdjustmentTable();
         adjustmentsTable.setItems(adjustmentSampleData());
     }
 
-    private MFXTableView<Adjustment> getAdjustmentTable() {
-        adjustmentsTable = new MFXTableView<>();
+    private void getAdjustmentTable() {
         adjustmentsTable.setPrefSize(1000, 1000);
         adjustmentsTable.features().enableBounceEffect();
         adjustmentsTable.autosizeColumnsOnInitialization();
         adjustmentsTable.features().enableSmoothScrolling(0.5);
-        return adjustmentsTable;
+    }
+
+    public void adjustmentCreateBtnClicked() {
+        FXMLLoader loader = fxmlLoader("forms/AdjustmentForm.fxml");
+        loader.setControllerFactory(c -> new AdjustmentFormController(stage));
+        Logger logger = LoggerFactory.getLogger(this.getClass());
+
+        try {
+            AnchorPane productFormPane = loader.load();
+            ((StackPane) adjustmentContentPane.getParent()).getChildren().add(productFormPane);
+            ((StackPane) adjustmentContentPane.getParent()).getChildren().get(0).setVisible(false);
+        } catch (IOException ex) {
+            logger.error(ex.getLocalizedMessage());
+        }
     }
 }

@@ -12,6 +12,7 @@ import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @EqualsAndHashCode
@@ -276,28 +277,28 @@ public class SampleData implements Serializable {
             Adjustment adjustment = new Adjustment();
             adjustment.setAdjustmentDate(new SimpleDateFormat(dateFormat).parse("2023-04-14"));
             adjustment.setAdjustmentReference("AD_1114");
-            adjustment.setAdjustmentWarehouse("Warehouse 2");
+            adjustment.setAdjustmentBranch("Branch 2");
             adjustment.setAdjustmentTotalProducts(6.00);
             adjustmentList.add(adjustment);
 
             adjustment = new Adjustment();
             adjustment.setAdjustmentDate(new SimpleDateFormat(dateFormat).parse("2023-04-15"));
             adjustment.setAdjustmentReference("AD_1113");
-            adjustment.setAdjustmentWarehouse("Warehouse 1");
+            adjustment.setAdjustmentBranch("Branch 1");
             adjustment.setAdjustmentTotalProducts(1.00);
             adjustmentList.add(adjustment);
 
             adjustment = new Adjustment();
             adjustment.setAdjustmentDate(new SimpleDateFormat(dateFormat).parse("2023-04-16"));
             adjustment.setAdjustmentReference("AD_1112");
-            adjustment.setAdjustmentWarehouse("Warehouse 1");
+            adjustment.setAdjustmentBranch("Branch 1");
             adjustment.setAdjustmentTotalProducts(6.00);
             adjustmentList.add(adjustment);
 
             adjustment = new Adjustment();
             adjustment.setAdjustmentDate(new SimpleDateFormat(dateFormat).parse("2023-04-17"));
             adjustment.setAdjustmentReference("AD_1111");
-            adjustment.setAdjustmentWarehouse("Warehouse 1");
+            adjustment.setAdjustmentBranch("Branch 1");
             adjustment.setAdjustmentTotalProducts(1.00);
             adjustmentList.add(adjustment);
         } catch(ParseException e){
@@ -317,7 +318,7 @@ public class SampleData implements Serializable {
             quotation.setQuotationDate(new SimpleDateFormat(dateFormat).parse("2023-04-13"));
             quotation.setQuotationReference("QT_1115");
             quotation.setQuotationCustomer("Fred C. Rasmussen");
-            quotation.setQuotationWarehouse("Warehouse 1");
+            quotation.setQuotationBranch("Branch 1");
             quotation.setQuotationStatus("Sent");
             quotation.setQuotationGrandTotal(322.00);
             quotationList.add(quotation);
@@ -326,7 +327,7 @@ public class SampleData implements Serializable {
             quotation.setQuotationDate(new SimpleDateFormat(dateFormat).parse("2023-04-14"));
             quotation.setQuotationReference("QT_1114");
             quotation.setQuotationCustomer("Phyliss J. Polite");
-            quotation.setQuotationWarehouse("Warehouse 1");
+            quotation.setQuotationBranch("Branch 1");
             quotation.setQuotationStatus("Pending");
             quotation.setQuotationGrandTotal(680.00);
             quotationList.add(quotation);
@@ -335,7 +336,7 @@ public class SampleData implements Serializable {
             quotation.setQuotationDate(new SimpleDateFormat(dateFormat).parse("2023-04-15"));
             quotation.setQuotationReference("QT_1113");
             quotation.setQuotationCustomer("Thomas M. Martin");
-            quotation.setQuotationWarehouse("Warehouse 1");
+            quotation.setQuotationBranch("Branch 1");
             quotation.setQuotationStatus("Sent");
             quotation.setQuotationGrandTotal(1500.00);
             quotationList.add(quotation);
@@ -344,7 +345,7 @@ public class SampleData implements Serializable {
             quotation.setQuotationDate(new SimpleDateFormat(dateFormat).parse("2023-04-16"));
             quotation.setQuotationReference("QT_1112");
             quotation.setQuotationCustomer("Beverly B. Huber");
-            quotation.setQuotationWarehouse("Warehouse 2");
+            quotation.setQuotationBranch("Branch 2");
             quotation.setQuotationStatus("Pending");
             quotation.setQuotationGrandTotal(34.00);
             quotationList.add(quotation);
@@ -353,7 +354,7 @@ public class SampleData implements Serializable {
             quotation.setQuotationDate(new SimpleDateFormat(dateFormat).parse("2023-04-17"));
             quotation.setQuotationReference("QT_1111");
             quotation.setQuotationCustomer("walk-in-customer");
-            quotation.setQuotationWarehouse("Warehouse 1");
+            quotation.setQuotationBranch("Branch 1");
             quotation.setQuotationStatus("Sent");
             quotation.setQuotationGrandTotal(1000.00);
             quotationList.add(quotation);
@@ -374,7 +375,7 @@ public class SampleData implements Serializable {
             purchase.setPurchaseDate(new SimpleDateFormat(dateFormat).parse("2023-04-10"));
             purchase.setPurchaseReference("PR_1118");
             purchase.setPurchaseSupplier("IT Supply");
-            purchase.setPurchaseWarehouse("Warehouse 1");
+            purchase.setPurchaseBranch("Branch 1");
             purchase.setPurchaseStatus("Received");
             purchase.setPurchaseGrandTotal(1888.00);
             purchase.setPurchaseAmountPaid(1888.00);
@@ -386,7 +387,7 @@ public class SampleData implements Serializable {
             purchase.setPurchaseDate(new SimpleDateFormat(dateFormat).parse("2023-04-11"));
             purchase.setPurchaseReference("PR_1117");
             purchase.setPurchaseSupplier("Corwin-Pfeffer");
-            purchase.setPurchaseWarehouse("Warehouse 1");
+            purchase.setPurchaseBranch("Branch 1");
             purchase.setPurchaseStatus("Pending");
             purchase.setPurchaseGrandTotal(2243.00);
             purchase.setPurchaseAmountPaid(0.00);
@@ -398,7 +399,7 @@ public class SampleData implements Serializable {
             purchase.setPurchaseDate(new SimpleDateFormat(dateFormat).parse("2023-04-12"));
             purchase.setPurchaseReference("PR_1116");
             purchase.setPurchaseSupplier("IT Supply");
-            purchase.setPurchaseWarehouse("Warehouse 2");
+            purchase.setPurchaseBranch("Branch 2");
             purchase.setPurchaseStatus("Ordered");
             purchase.setPurchaseGrandTotal(2304.00);
             purchase.setPurchaseAmountPaid(0.00);
@@ -410,7 +411,7 @@ public class SampleData implements Serializable {
             purchase.setPurchaseDate(new SimpleDateFormat(dateFormat).parse("2023-04-13"));
             purchase.setPurchaseReference("PR_1115");
             purchase.setPurchaseSupplier("IT Supply");
-            purchase.setPurchaseWarehouse("Warehouse 2");
+            purchase.setPurchaseBranch("Branch 2");
             purchase.setPurchaseStatus("Received");
             purchase.setPurchaseGrandTotal(2960.00);
             purchase.setPurchaseAmountPaid(2960.00);
@@ -422,7 +423,7 @@ public class SampleData implements Serializable {
             purchase.setPurchaseDate(new SimpleDateFormat(dateFormat).parse("2023-04-14"));
             purchase.setPurchaseReference("PR_1114");
             purchase.setPurchaseSupplier("Fruits Supply");
-            purchase.setPurchaseWarehouse("Warehouse 1");
+            purchase.setPurchaseBranch("Branch 1");
             purchase.setPurchaseStatus("Received");
             purchase.setPurchaseGrandTotal(2716.00);
             purchase.setPurchaseAmountPaid(2716.00);
@@ -434,7 +435,7 @@ public class SampleData implements Serializable {
             purchase.setPurchaseDate(new SimpleDateFormat(dateFormat).parse("2023-04-15"));
             purchase.setPurchaseReference("PR_1113");
             purchase.setPurchaseSupplier("Fruits Supply");
-            purchase.setPurchaseWarehouse("Warehouse 1");
+            purchase.setPurchaseBranch("Branch 1");
             purchase.setPurchaseStatus("Pending");
             purchase.setPurchaseGrandTotal(2640.00);
             purchase.setPurchaseAmountPaid(0.00);
@@ -446,7 +447,7 @@ public class SampleData implements Serializable {
             purchase.setPurchaseDate(new SimpleDateFormat(dateFormat).parse("2023-04-16"));
             purchase.setPurchaseReference("PR_1112");
             purchase.setPurchaseSupplier("Schulist-Hickle");
-            purchase.setPurchaseWarehouse("Warehouse 2");
+            purchase.setPurchaseBranch("Branch 2");
             purchase.setPurchaseStatus("Received");
             purchase.setPurchaseGrandTotal(2270.00);
             purchase.setPurchaseAmountPaid(2270.00);
@@ -458,7 +459,7 @@ public class SampleData implements Serializable {
             purchase.setPurchaseDate(new SimpleDateFormat(dateFormat).parse("2023-04-17"));
             purchase.setPurchaseReference("PR_1111");
             purchase.setPurchaseSupplier("Corwin-Pfeffer");
-            purchase.setPurchaseWarehouse("Warehouse 1");
+            purchase.setPurchaseBranch("Branch 1");
             purchase.setPurchaseStatus("Received");
             purchase.setPurchaseGrandTotal(1160.00);
             purchase.setPurchaseAmountPaid(1000.00);
@@ -483,7 +484,7 @@ public class SampleData implements Serializable {
             sale.setSaleReference("SL_1117");
             sale.setSaleAddedBy("William Castillo");
             sale.setSaleCustomer("Thomas M. Martin");
-            sale.setSaleWarehouse("Warehouse 1");
+            sale.setSaleBranch("Branch 1");
             sale.setSaleStatus("Pending");
             sale.setSaleGrandTotal(1780.00);
             sale.setSaleAmountPaid(1780.00);
@@ -496,7 +497,7 @@ public class SampleData implements Serializable {
             sale.setSaleReference("SL_1116");
             sale.setSaleAddedBy("William Castillo");
             sale.setSaleCustomer("walk-in-customer");
-            sale.setSaleWarehouse("Warehouse 2");
+            sale.setSaleBranch("Branch 2");
             sale.setSaleStatus("Completed");
             sale.setSaleGrandTotal(1650.00);
             sale.setSaleAmountPaid(1000.00);
@@ -509,7 +510,7 @@ public class SampleData implements Serializable {
             sale.setSaleReference("SL_1115");
             sale.setSaleAddedBy("William Castillo");
             sale.setSaleCustomer("Fred C. Rasmussen");
-            sale.setSaleWarehouse("Warehouse 2");
+            sale.setSaleBranch("Branch 2");
             sale.setSaleStatus("Ordered");
             sale.setSaleGrandTotal(1874.80);
             sale.setSaleAmountPaid(1874.80);
@@ -522,7 +523,7 @@ public class SampleData implements Serializable {
             sale.setSaleReference("SL_1114");
             sale.setSaleAddedBy("William Castillo");
             sale.setSaleCustomer("Phyliss J. Polite");
-            sale.setSaleWarehouse("Warehouse 2");
+            sale.setSaleBranch("Branch 2");
             sale.setSaleStatus("Completed");
             sale.setSaleGrandTotal(1792.80);
             sale.setSaleAmountPaid(1792.80);
@@ -535,7 +536,7 @@ public class SampleData implements Serializable {
             sale.setSaleReference("SL_1113");
             sale.setSaleAddedBy("William Castillo");
             sale.setSaleCustomer("Thomas M. Martin");
-            sale.setSaleWarehouse("Warehouse 1");
+            sale.setSaleBranch("Branch 1");
             sale.setSaleStatus("Pending");
             sale.setSaleGrandTotal(2648.00);
             sale.setSaleAmountPaid(2648.00);
@@ -548,7 +549,7 @@ public class SampleData implements Serializable {
             sale.setSaleReference("SL_1112");
             sale.setSaleAddedBy("William Castillo");
             sale.setSaleCustomer("Beverly B. Huber");
-            sale.setSaleWarehouse("Warehouse 2");
+            sale.setSaleBranch("Branch 2");
             sale.setSaleStatus("Completed");
             sale.setSaleGrandTotal(2520.00);
             sale.setSaleAmountPaid(2000.00);
@@ -561,7 +562,7 @@ public class SampleData implements Serializable {
             sale.setSaleReference("SL_1111");
             sale.setSaleAddedBy("William Castillo");
             sale.setSaleCustomer("walk-in-customer");
-            sale.setSaleWarehouse("Warehouse 1");
+            sale.setSaleBranch("Branch 1");
             sale.setSaleStatus("Completed");
             sale.setSaleGrandTotal(1780.00);
             sale.setSaleAmountPaid(1780.00);
@@ -585,7 +586,7 @@ public class SampleData implements Serializable {
             saleReturn.setSaleReturnDate(new SimpleDateFormat(dateFormat).parse("2023-04-12"));
             saleReturn.setSaleReturnReference("SR_1111");
             saleReturn.setSaleReturnCustomer("Thomas M. Martin");
-            saleReturn.setSaleReturnWarehouse("Warehouse 1");
+            saleReturn.setSaleReturnBranch("Branch 1");
             saleReturn.setSaleReturnSaleRef("SL_1115");
             saleReturn.setSaleReturnStatus("Pending");
             saleReturn.setSaleReturnGrandTotal(1780.00);
@@ -598,7 +599,7 @@ public class SampleData implements Serializable {
             saleReturn.setSaleReturnDate(new SimpleDateFormat(dateFormat).parse("2023-04-13"));
             saleReturn.setSaleReturnReference("SR_1112");
             saleReturn.setSaleReturnCustomer("walk-in-customer");
-            saleReturn.setSaleReturnWarehouse("Warehouse 2");
+            saleReturn.setSaleReturnBranch("Branch 2");
             saleReturn.setSaleReturnSaleRef("SL_1117");
             saleReturn.setSaleReturnStatus("Completed");
             saleReturn.setSaleReturnGrandTotal(1650.00);
@@ -611,7 +612,7 @@ public class SampleData implements Serializable {
             saleReturn.setSaleReturnDate(new SimpleDateFormat(dateFormat).parse("2023-04-14"));
             saleReturn.setSaleReturnReference("SR_1113");
             saleReturn.setSaleReturnCustomer("Fred C. Rasmussen");
-            saleReturn.setSaleReturnWarehouse("Warehouse 2");
+            saleReturn.setSaleReturnBranch("Branch 2");
             saleReturn.setSaleReturnSaleRef("SL_1113");
             saleReturn.setSaleReturnStatus("Ordered");
             saleReturn.setSaleReturnGrandTotal(1874.80);
@@ -624,7 +625,7 @@ public class SampleData implements Serializable {
             saleReturn.setSaleReturnDate(new SimpleDateFormat(dateFormat).parse("2023-04-15"));
             saleReturn.setSaleReturnReference("SR_1114");
             saleReturn.setSaleReturnCustomer("Phyliss J. Polite");
-            saleReturn.setSaleReturnWarehouse("Warehouse 2");
+            saleReturn.setSaleReturnBranch("Branch 2");
             saleReturn.setSaleReturnSaleRef("SL_1114");
             saleReturn.setSaleReturnStatus("Completed");
             saleReturn.setSaleReturnGrandTotal(1792.80);
@@ -649,7 +650,7 @@ public class SampleData implements Serializable {
             purchaseReturn.setPurchaseReturnDate(new SimpleDateFormat(dateFormat).parse("2023-04-10"));
             purchaseReturn.setPurchaseReturnReference("PR_1118");
             purchaseReturn.setPurchaseReturnSupplier("IT Supply");
-            purchaseReturn.setPurchaseReturnWarehouse("Warehouse 1");
+            purchaseReturn.setPurchaseReturnBranch("Branch 1");
             purchaseReturn.setPurchaseReturnRef("PL_1118");
             purchaseReturn.setPurchaseReturnStatus("Received");
             purchaseReturn.setPurchaseReturnGrandTotal(1888.00);
@@ -662,7 +663,7 @@ public class SampleData implements Serializable {
             purchaseReturn.setPurchaseReturnDate(new SimpleDateFormat(dateFormat).parse("2023-04-11"));
             purchaseReturn.setPurchaseReturnReference("PR_1117");
             purchaseReturn.setPurchaseReturnSupplier("Corwin-Pfeffer");
-            purchaseReturn.setPurchaseReturnWarehouse("Warehouse 1");
+            purchaseReturn.setPurchaseReturnBranch("Branch 1");
             purchaseReturn.setPurchaseReturnRef("PL_1117");
             purchaseReturn.setPurchaseReturnStatus("Pending");
             purchaseReturn.setPurchaseReturnGrandTotal(2243.00);
@@ -675,7 +676,7 @@ public class SampleData implements Serializable {
             purchaseReturn.setPurchaseReturnDate(new SimpleDateFormat(dateFormat).parse("2023-04-12"));
             purchaseReturn.setPurchaseReturnReference("PR_1116");
             purchaseReturn.setPurchaseReturnSupplier("IT Supply");
-            purchaseReturn.setPurchaseReturnWarehouse("Warehouse 2");
+            purchaseReturn.setPurchaseReturnBranch("Branch 2");
             purchaseReturn.setPurchaseReturnRef("PL_1112");
             purchaseReturn.setPurchaseReturnStatus("Ordered");
             purchaseReturn.setPurchaseReturnGrandTotal(2304.00);
@@ -688,7 +689,7 @@ public class SampleData implements Serializable {
             purchaseReturn.setPurchaseReturnDate(new SimpleDateFormat(dateFormat).parse("2023-04-13"));
             purchaseReturn.setPurchaseReturnReference("PR_1115");
             purchaseReturn.setPurchaseReturnSupplier("IT Supply");
-            purchaseReturn.setPurchaseReturnWarehouse("Warehouse 2");
+            purchaseReturn.setPurchaseReturnBranch("Branch 2");
             purchaseReturn.setPurchaseReturnRef("PL_1114");
             purchaseReturn.setPurchaseReturnStatus("Received");
             purchaseReturn.setPurchaseReturnGrandTotal(2960.00);
@@ -715,7 +716,7 @@ public class SampleData implements Serializable {
             expense.setExpenseName("Petrol");
             expense.setExpenseAmount(50.00);
             expense.setExpenseCategory("Petrol");
-            expense.setExpenseWarehouse("Warehouse 1");
+            expense.setExpenseBranch("Branch 1");
             expenseList.add(expense);
 
             expense = new Expense();
@@ -724,7 +725,7 @@ public class SampleData implements Serializable {
             expense.setExpenseName("Office Supplies");
             expense.setExpenseAmount(200.00);
             expense.setExpenseCategory("Office Expenses & Postage");
-            expense.setExpenseWarehouse("Warehouse 1");
+            expense.setExpenseBranch("Branch 1");
             expenseList.add(expense);
 
             expense = new Expense();
@@ -733,7 +734,7 @@ public class SampleData implements Serializable {
             expense.setExpenseName("Petrol for vehicle");
             expense.setExpenseAmount(100.00);
             expense.setExpenseCategory("Petrol");
-            expense.setExpenseWarehouse("Warehouse 1");
+            expense.setExpenseBranch("Branch 1");
             expenseList.add(expense);
         } catch (ParseException e){
             logger.error(e.getLocalizedMessage());
@@ -932,5 +933,33 @@ public class SampleData implements Serializable {
         currencyList.add(currency);
 
         return currencyList;
+    }
+
+    public static ObservableList<Requisition> requisitionSampleData() {
+        ObservableList<Requisition> requisitionList = FXCollections.observableArrayList();
+        String dateFormat = "yyyy-MM-dd";
+
+        try {
+            Requisition requisition = new Requisition(
+                    new SimpleDateFormat(dateFormat).parse("2023-04-15"),
+                    "RQ_1114",
+                    "Branch 1",
+                    "Officer 1",
+                    "Nomi",
+                    new SimpleDateFormat(dateFormat).parse("2023-04-16"),
+                    "Officer 54",
+                    1,
+                    "Nomi Powdered Soap",
+                    "Nomi Powder",
+                    53,
+                    "Kg",
+                    6000,
+                    540000
+            );
+            requisitionList.add(requisition);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+        return requisitionList;
     }
 }

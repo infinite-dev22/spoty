@@ -47,3 +47,13 @@
 	-fx-background-radius: 10;
 	-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0.12, -1.0, 2.0);
 }
+
+.title {
+	-fx-font-size: 13;
+	-fx-font-weight: bold;
+}
+
+.danger-validation-label {
+    -fx-text-fill: -mfx-danger-red;
+	-fx-font-size: 13;
+}

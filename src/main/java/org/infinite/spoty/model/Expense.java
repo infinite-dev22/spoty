@@ -16,7 +16,7 @@ public class Expense implements Serializable {
     private final StringProperty expenseName = new SimpleStringProperty("");
     private final DoubleProperty expenseAmount = new SimpleDoubleProperty(0);
     private final StringProperty expenseCategory = new SimpleStringProperty("");
-    private final StringProperty expenseWarehouse = new SimpleStringProperty("");
+    private final StringProperty expenseBranch = new SimpleStringProperty("");
 
     public String getExpenseDate() {
         return new SimpleDateFormat("yyyy-MM-dd").format(this.expenseDate);
@@ -38,8 +38,8 @@ public class Expense implements Serializable {
         return this.expenseCategory.get();
     }
 
-    public String getExpenseWarehouse() {
-        return this.expenseWarehouse.get();
+    public String getExpenseBranch() {
+        return this.expenseBranch.get();
     }
 
     public void setExpenseDate(Date expenseDate) {
@@ -62,8 +62,8 @@ public class Expense implements Serializable {
         this.expenseCategory.set(expenseCategory);
     }
 
-    public void setExpenseWarehouse(String expenseWarehouse) {
-        this.expenseWarehouse.set(expenseWarehouse);
+    public void setExpenseBranch(String expenseBranch) {
+        this.expenseBranch.set(expenseBranch);
     }
 
     public boolean equals(final Object o) {
@@ -90,9 +90,9 @@ public class Expense implements Serializable {
         final Object other$expenseCategory = other.getExpenseCategory();
         if (!Objects.equals(this$expenseCategory, other$expenseCategory))
             return false;
-        final Object this$expenseWarehouse = this.getExpenseWarehouse();
-        final Object other$expenseWarehouse = other.getExpenseWarehouse();
-        return Objects.equals(this$expenseWarehouse, other$expenseWarehouse);
+        final Object this$expenseBranch = this.getExpenseBranch();
+        final Object other$expenseBranch = other.getExpenseBranch();
+        return Objects.equals(this$expenseBranch, other$expenseBranch);
     }
 
     protected boolean canEqual(final Object other) {
@@ -112,12 +112,12 @@ public class Expense implements Serializable {
         result = result * PRIME + ($expenseAmount == null ? 43 : $expenseAmount.hashCode());
         final Object $expenseCategory = this.getExpenseCategory();
         result = result * PRIME + ($expenseCategory == null ? 43 : $expenseCategory.hashCode());
-        final Object $expenseWarehouse = this.getExpenseWarehouse();
-        result = result * PRIME + ($expenseWarehouse == null ? 43 : $expenseWarehouse.hashCode());
+        final Object $expenseBranch = this.getExpenseBranch();
+        result = result * PRIME + ($expenseBranch == null ? 43 : $expenseBranch.hashCode());
         return result;
     }
 
     public String toString() {
-        return "Expense(expenseDate=" + this.getExpenseDate() + ", expenseName=" + this.getExpenseName() + ", expenseAmount=" + this.getExpenseAmount() + ", expenseCategory=" + this.getExpenseCategory() + ", expenseWarehouse=" + this.getExpenseWarehouse() + ")";
+        return "Expense(expenseDate=" + this.getExpenseDate() + ", expenseName=" + this.getExpenseName() + ", expenseAmount=" + this.getExpenseAmount() + ", expenseCategory=" + this.getExpenseCategory() + ", expenseBranch=" + this.getExpenseBranch() + ")";
     }
 }

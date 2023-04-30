@@ -21,24 +21,20 @@
         </Label>
         <MFXScrollPane fx:id="scrollPane" fitToWidth="true" VBox.vgrow="ALWAYS">
             <VBox.margin>
-                <Insets left="20.0" />
+                <Insets left="20.0" right="-1.0" />
             </VBox.margin>
             <VBox fx:id="navBar" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="navbar" />
         </MFXScrollPane>
       <VBox fx:id="settingsHolder" styleClass="navbar">
          <VBox.margin>
             <Insets bottom="20.0" left="20.0" />
-         </VBox.margin>
-         <padding>
-            <Insets right="1.0" />
-         </padding></VBox>
+         </VBox.margin></VBox>
     </VBox>
     <StackPane fx:id="contentPane" layoutX="226.0" layoutY="45.0" prefHeight="604.0" prefWidth="1053.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="203.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="70.0" />
     <HBox fx:id="windowHeader" alignment="CENTER_RIGHT" layoutX="201.0" layoutY="7.0" prefHeight="64.0" prefWidth="1077.0" spacing="10.0" AnchorPane.leftAnchor="210.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="6.0">
         <padding>
             <Insets bottom="2.0" left="10.0" right="10.0" top="2.0" />
         </padding>
-        <MFXTextField floatMode="DISABLED" floatingText="Search" prefHeight="31.0" prefWidth="307.0" />
       <Pane prefHeight="200.0" prefWidth="200.0" />
         <HBox spacing="10.0">
             <padding>

@@ -25,16 +25,15 @@ module org.infinite.spoty {
     opens org.infinite.spoty.controller.dashboard;
     opens org.infinite.spoty.controller.purchases;
     opens org.infinite.spoty.controller.sales;
+    opens org.infinite.spoty.controller.requisition;
+    opens org.infinite.spoty.controller.stock_in;
+    opens org.infinite.spoty.controller.transfer;
 
     opens org.infinite.spoty.controller.inventory;
     opens org.infinite.spoty.controller.inventory.category;
     opens org.infinite.spoty.controller.inventory.brand;
     opens org.infinite.spoty.controller.inventory.unit_of_measure;
     opens org.infinite.spoty.controller.inventory.products;
-    opens org.infinite.spoty.controller.inventory.requisition;
-    opens org.infinite.spoty.controller.inventory.orders;
-    opens org.infinite.spoty.controller.inventory.stock_in;
-    opens org.infinite.spoty.controller.inventory.transfer;
     opens org.infinite.spoty.controller.inventory.adjustment;
     opens org.infinite.spoty.controller.inventory.quotation;
 
@@ -50,7 +49,6 @@ module org.infinite.spoty {
     opens org.infinite.spoty.controller.settings;
     opens org.infinite.spoty.controller.settings.system;
     opens org.infinite.spoty.controller.settings.pos;
-    opens org.infinite.spoty.controller.settings.payments;
     opens org.infinite.spoty.controller.settings.roles;
     opens org.infinite.spoty.controller.settings.branches;
     opens org.infinite.spoty.controller.settings.currency;
@@ -59,4 +57,8 @@ module org.infinite.spoty {
     opens org.infinite.spoty.controller.returns;
     opens org.infinite.spoty.controller.returns.sales;
     opens org.infinite.spoty.controller.returns.purchases;
+
+    opens org.infinite.spoty.forms;
+
+    opens org.infinite.spoty.controller.splash;
 }

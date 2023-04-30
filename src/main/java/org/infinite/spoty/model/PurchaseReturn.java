@@ -14,7 +14,7 @@ public class PurchaseReturn implements Serializable {
     private Date purchaseReturnDate = new Date();
     private final StringProperty purchaseReturnReference = new SimpleStringProperty("");
     private final StringProperty purchaseReturnSupplier = new SimpleStringProperty("");
-    private final StringProperty purchaseReturnWarehouse = new SimpleStringProperty("");
+    private final StringProperty purchaseReturnBranch = new SimpleStringProperty("");
     private final StringProperty purchaseReturnPurchaseRef = new SimpleStringProperty("");
     private final StringProperty purchaseReturnPurchaseStatus = new SimpleStringProperty("");
     private final DoubleProperty purchaseReturnGrandTotal = new SimpleDoubleProperty(0);
@@ -34,8 +34,8 @@ public class PurchaseReturn implements Serializable {
         return this.purchaseReturnSupplier.get();
     }
 
-    public String getPurchaseReturnWarehouse() {
-        return this.purchaseReturnWarehouse.get();
+    public String getPurchaseReturnBranch() {
+        return this.purchaseReturnBranch.get();
     }
 
     public String getPurchaseReturnRef() {
@@ -74,8 +74,8 @@ public class PurchaseReturn implements Serializable {
         this.purchaseReturnSupplier.set(supplier);
     }
 
-    public void setPurchaseReturnWarehouse(String warehouse) {
-        this.purchaseReturnWarehouse.set(warehouse);
+    public void setPurchaseReturnBranch(String warehouse) {
+        this.purchaseReturnBranch.set(warehouse);
     }
 
     public void setPurchaseReturnRef(String purchaseReturnRef) {
@@ -118,9 +118,9 @@ public class PurchaseReturn implements Serializable {
         final Object other$purchaseReturnSupplier = other.getPurchaseReturnSupplier();
         if (!Objects.equals(this$purchaseReturnSupplier, other$purchaseReturnSupplier))
             return false;
-        final Object this$purchaseReturnWarehouse = this.getPurchaseReturnWarehouse();
-        final Object other$purchaseReturnWarehouse = other.getPurchaseReturnWarehouse();
-        if (!Objects.equals(this$purchaseReturnWarehouse, other$purchaseReturnWarehouse))
+        final Object this$purchaseReturnBranch = this.getPurchaseReturnBranch();
+        final Object other$purchaseReturnBranch = other.getPurchaseReturnBranch();
+        if (!Objects.equals(this$purchaseReturnBranch, other$purchaseReturnBranch))
             return false;
         final Object this$purchaseReturnRef = this.getPurchaseReturnRef();
         final Object other$purchaseReturnRef = other.getPurchaseReturnRef();
@@ -160,8 +160,8 @@ public class PurchaseReturn implements Serializable {
         result = result * PRIME + ($purchaseReturnReference == null ? 43 : $purchaseReturnReference.hashCode());
         final Object $purchaseReturnSupplier = this.getPurchaseReturnSupplier();
         result = result * PRIME + ($purchaseReturnSupplier == null ? 43 : $purchaseReturnSupplier.hashCode());
-        final Object $purchaseReturnWarehouse = this.getPurchaseReturnWarehouse();
-        result = result * PRIME + ($purchaseReturnWarehouse == null ? 43 : $purchaseReturnWarehouse.hashCode());
+        final Object $purchaseReturnBranch = this.getPurchaseReturnBranch();
+        result = result * PRIME + ($purchaseReturnBranch == null ? 43 : $purchaseReturnBranch.hashCode());
         final Object $purchaseReturnRef = this.getPurchaseReturnRef();
         result = result * PRIME + ($purchaseReturnRef == null ? 43 : $purchaseReturnRef.hashCode());
         final Object $purchaseReturnStatus = this.getPurchaseReturnStatus();
@@ -178,6 +178,6 @@ public class PurchaseReturn implements Serializable {
     }
 
     public String toString() {
-        return "PurchaseReturn(purchaseReturnDate=" + this.getPurchaseReturnDate() + ", purchaseReturnReference=" + this.getPurchaseReturnReference() + ", purchaseReturnSupplier=" + this.getPurchaseReturnSupplier() + ", purchaseReturnWarehouse=" + this.getPurchaseReturnWarehouse() + ", purchaseReturnRef=" + this.getPurchaseReturnRef() + ", purchaseReturnStatus=" + this.getPurchaseReturnStatus() + ", purchaseReturnGrandTotal=" + this.getPurchaseReturnGrandTotal() + ", purchaseReturnAmountPaid=" + this.getPurchaseReturnAmountPaid() + ", purchaseReturnAmountDue=" + this.getPurchaseReturnAmountDue() + ", purchaseReturnPaymentStatus=" + this.getPurchaseReturnPaymentStatus() + ")";
+        return "PurchaseReturn(purchaseReturnDate=" + this.getPurchaseReturnDate() + ", purchaseReturnReference=" + this.getPurchaseReturnReference() + ", purchaseReturnSupplier=" + this.getPurchaseReturnSupplier() + ", purchaseReturnBranch=" + this.getPurchaseReturnBranch() + ", purchaseReturnRef=" + this.getPurchaseReturnRef() + ", purchaseReturnStatus=" + this.getPurchaseReturnStatus() + ", purchaseReturnGrandTotal=" + this.getPurchaseReturnGrandTotal() + ", purchaseReturnAmountPaid=" + this.getPurchaseReturnAmountPaid() + ", purchaseReturnAmountDue=" + this.getPurchaseReturnAmountDue() + ", purchaseReturnPaymentStatus=" + this.getPurchaseReturnPaymentStatus() + ")";
     }
 }

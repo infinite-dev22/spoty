@@ -13,7 +13,7 @@ import java.util.Objects;
 public class Adjustment implements Serializable {
     private Date adjustmentDate = new Date();
     private final StringProperty adjustmentReference = new SimpleStringProperty("");
-    private final StringProperty adjustmentWarehouse = new SimpleStringProperty("");
+    private final StringProperty adjustmentBranch = new SimpleStringProperty("");
     private final DoubleProperty adjustmentTotalProducts = new SimpleDoubleProperty(0);
 
     public String getAdjustmentDate() {
@@ -24,8 +24,8 @@ public class Adjustment implements Serializable {
         return this.adjustmentReference.get();
     }
 
-    public String getAdjustmentWarehouse() {
-        return this.adjustmentWarehouse.get();
+    public String getAdjustmentBranch() {
+        return this.adjustmentBranch.get();
     }
 
     public double getAdjustmentTotalProducts() {
@@ -42,8 +42,8 @@ public class Adjustment implements Serializable {
         this.adjustmentReference.set(adjustmentReference);
     }
 
-    public void setAdjustmentWarehouse(String adjustmentWarehouse) {
-        this.adjustmentWarehouse.set(adjustmentWarehouse);
+    public void setAdjustmentBranch(String adjustmentBranch) {
+        this.adjustmentBranch.set(adjustmentBranch);
     }
 
     public void setAdjustmentTotalProducts(double adjustmentTotalProducts) {
@@ -62,9 +62,9 @@ public class Adjustment implements Serializable {
         final Object other$adjustmentReference = other.getAdjustmentReference();
         if (!Objects.equals(this$adjustmentReference, other$adjustmentReference))
             return false;
-        final Object this$adjustmentWarehouse = this.getAdjustmentWarehouse();
-        final Object other$adjustmentWarehouse = other.getAdjustmentWarehouse();
-        if (!Objects.equals(this$adjustmentWarehouse, other$adjustmentWarehouse))
+        final Object this$adjustmentBranch = this.getAdjustmentBranch();
+        final Object other$adjustmentBranch = other.getAdjustmentBranch();
+        if (!Objects.equals(this$adjustmentBranch, other$adjustmentBranch))
             return false;
         final Object this$adjustmentTotalProducts = this.getAdjustmentTotalProducts();
         final Object other$adjustmentTotalProducts = other.getAdjustmentTotalProducts();
@@ -82,14 +82,14 @@ public class Adjustment implements Serializable {
         result = result * PRIME + ($adjustmentDate == null ? 43 : $adjustmentDate.hashCode());
         final Object $adjustmentReference = this.getAdjustmentReference();
         result = result * PRIME + ($adjustmentReference == null ? 43 : $adjustmentReference.hashCode());
-        final Object $adjustmentWarehouse = this.getAdjustmentWarehouse();
-        result = result * PRIME + ($adjustmentWarehouse == null ? 43 : $adjustmentWarehouse.hashCode());
+        final Object $adjustmentBranch = this.getAdjustmentBranch();
+        result = result * PRIME + ($adjustmentBranch == null ? 43 : $adjustmentBranch.hashCode());
         final Object $adjustmentTotalProducts = this.getAdjustmentTotalProducts();
         result = result * PRIME + ($adjustmentTotalProducts == null ? 43 : $adjustmentTotalProducts.hashCode());
         return result;
     }
 
     public String toString() {
-        return "Adjustment(adjustmentDate=" + this.getAdjustmentDate() + ", adjustmentReference=" + this.getAdjustmentReference() + ", adjustmentWarehouse=" + this.getAdjustmentWarehouse() + ", adjustmentTotalProducts=" + this.getAdjustmentTotalProducts() + ")";
+        return "Adjustment(adjustmentDate=" + this.getAdjustmentDate() + ", adjustmentReference=" + this.getAdjustmentReference() + ", adjustmentBranch=" + this.getAdjustmentBranch() + ", adjustmentTotalProducts=" + this.getAdjustmentTotalProducts() + ")";
     }
 }
