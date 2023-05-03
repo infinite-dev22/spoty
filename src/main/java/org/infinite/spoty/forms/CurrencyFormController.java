@@ -37,6 +37,7 @@ public class CurrencyFormController implements Initializable {
             final Stage stage = (Stage) source.getScene().getWindow();
             stage.close();
         });
-        currencyFormSaveBtn.setOnAction((e) -> {});
+        currencyFormSaveBtn.setOnAction((e) -> {
+        });
     }
 }

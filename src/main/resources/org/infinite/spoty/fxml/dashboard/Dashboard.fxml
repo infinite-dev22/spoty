@@ -3,8 +3,8 @@
 <?import io.github.palexdev.materialfx.controls.MFXScrollPane?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.*?>
-<AnchorPane prefHeight="569.0" prefWidth="728.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="org.infinite.spoty.controller.dashboard.DashboardController">
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="569.0" prefWidth="728.0" xmlns="http://javafx.com/javafx/19"
+            fx:controller="org.infinite.spoty.views.dashboard.DashboardController">
     <MFXScrollPane hbarPolicy="NEVER" style="-fx-border-radius: 10; -fx-background-radius: 10;"
                    AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
                    AnchorPane.topAnchor="0.0">

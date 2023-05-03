@@ -1,21 +1,20 @@
 package org.infinite.spoty.forms;
 
-import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
-import io.github.palexdev.materialfx.controls.MFXPasswordField;
-import io.github.palexdev.materialfx.controls.MFXTextField;
-import io.github.palexdev.materialfx.controls.MFXToggleButton;
+import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.stage.Stage;
-import org.infinite.spoty.model.Branch;
-import org.infinite.spoty.model.RoleMaster;
+import javafx.scene.paint.Color;
+import org.infinite.spoty.models.Branch;
+import org.infinite.spoty.models.RoleMaster;
+import org.infinite.spoty.models.User;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import static org.infinite.spoty.GlobalActions.closeDialog;
 
 public class UserFormController implements Initializable {
     @FXML
@@ -46,15 +45,101 @@ public class UserFormController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         dialogOnActions();
+        userFormFirstname.textProperty().addListener((observable, oldValue, newValue) -> userFormFirstname.setTrailingIcon(null));
+        userFormLastname.textProperty().addListener((observable, oldValue, newValue) -> userFormLastname.setTrailingIcon(null));
+        userFormLastname.textProperty().addListener((observable, oldValue, newValue) -> userFormUsername.setTrailingIcon(null));
+//        userFormEmail.textProperty().addListener((observable, oldValue, newValue) -> userFormEmail.setTrailingIcon(null));
+//        userFormPhone.textProperty().addListener((observable, oldValue, newValue) -> userFormPhone.setTrailingIcon(null));
+//        userFormTown.textProperty().addListener((observable, oldValue, newValue) -> userFormTown.setTrailingIcon(null));
+//        userFormCity.textProperty().addListener((observable, oldValue, newValue) -> userFormCity.setTrailingIcon(null));
+//        userFormTaxNumber.textProperty().addListener((observable, oldValue, newValue) -> userFormTaxNumber.setTrailingIcon(null));
+//        userFormAddress.textProperty().addListener((observable, oldValue, newValue) -> userFormAddress.setTrailingIcon(null));
+
+        dialogOnActions();
     }
 
     private void dialogOnActions() {
         userFormCancelBtn.setOnAction((e) -> {
-            final Node source = (Node) e.getSource();
-            final Stage stage = (Stage) source.getScene().getWindow();
-            stage.close();
+            closeDialog(e);
+            userFormFirstname.setText("");
+            userFormLastname.setText("");
+            userFormUsername.setText("");
+            userFormEmail.setText("");
+            userFormPhone.setText("");
+            userFormPassword.setText("");
+            userFormRole.setText("");
+            userFormBranches.setText("");
+            userFormActive.setSelected(true);
+
+            userFormFirstname.setTrailingIcon(null);
+            userFormLastname.setTrailingIcon(null);
+            userFormUsername.setTrailingIcon(null);
+            userFormEmail.setTrailingIcon(null);
+            userFormPhone.setTrailingIcon(null);
+            userFormPassword.setLeadingIcon(null);
+            userFormRole.setLeadingIcon(null);
+            userFormBranches.setLeadingIcon(null);
         });
         userFormSaveBtn.setOnAction((e) -> {
+            User brand = new User();
+            MFXIconWrapper icon = new MFXIconWrapper("fas-circle-exclamation", 20, Color.RED, 20);
+
+            if (userFormFirstname.getText().length() == 0) {
+                userFormFirstname.setTrailingIcon(icon);
+            }
+            if (userFormLastname.getText().length() == 0) {
+                userFormLastname.setTrailingIcon(icon);
+            }
+            if (userFormUsername.getText().length() == 0) {
+                userFormUsername.setTrailingIcon(icon);
+            }
+//            if (userFormEmail.getText().length() == 0) {
+//                userFormEmail.setTrailingIcon(icon);
+//            }
+//            if (userFormPhone.getText().length() == 0) {
+//                userFormPhone.setTrailingIcon(icon);
+//            }
+            // Should be set by user i.e.
+            // User is created by admin, User tries to log in and is asked to set a password.
+            if (userFormPassword.getText().length() == 0) {
+                userFormPassword.setLeadingIcon(icon);
+            }
+            if (userFormRole.getText().length() == 0) {
+                userFormRole.setLeadingIcon(icon);
+            }
+            if (userFormBranches.getText().length() == 0) {
+                userFormBranches.setLeadingIcon(icon);
+            }
+            if (userFormFirstname.getText().length() > 0
+                    && userFormLastname.getText().length() > 0
+                    && userFormUsername.getText().length() > 0
+                    && userFormEmail.getText().length() > 0
+                    && userFormPhone.getText().length() > 0
+                    && userFormPassword.getText().length() > 0
+                    && userFormRole.getText().length() > 0
+                    && userFormBranches.getText().length() > 0) {
+                brand.setUserName(userFormFirstname.getText());
+                brand.setUserName(userFormLastname.getText());
+                brand.setUserName(userFormUsername.getText());
+                brand.setUserEmail(userFormEmail.getText());
+                brand.setUserPhoneNumber(userFormPhone.getText());
+//                To be set when database included.
+//                brand.setUser(userFormPassword.getText());
+//                brand.setUserCity(userFormRole.getText());
+//                brand.setUserTaxNumber(userFormBranches.getText());
+
+                closeDialog(e);
+
+                userFormFirstname.setText("");
+                userFormLastname.setText("");
+                userFormUsername.setText("");
+                userFormEmail.setText("");
+                userFormPhone.setText("");
+                userFormPassword.setText("");
+                userFormRole.setText("");
+                userFormBranches.setText("");
+                userFormActive.setSelected(true);
+            }
         });
     }
 }

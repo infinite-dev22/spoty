@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import io.github.palexdev.materialfx.controls.*?>
-<?import io.github.palexdev.mfxcomponents.controls.buttons.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-
-<DialogPane headerText="Create" styleClass="card" stylesheets="@../styles/Common.css"
-            xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1"
+<?import io.github.palexdev.materialfx.controls.MFXTextField?>
+<?import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton?>
+<?import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.DialogPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<DialogPane xmlns:fx="http://javafx.com/fxml/1" headerText="Create" styleClass="card"
+            stylesheets="@../styles/Common.css" xmlns="http://javafx.com/javafx/19"
             fx:controller="org.infinite.spoty.forms.ProductCategoryFormController">
     <content>
         <VBox spacing="20.0">

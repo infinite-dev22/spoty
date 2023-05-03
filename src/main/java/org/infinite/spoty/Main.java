@@ -2,8 +2,8 @@ package org.infinite.spoty;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import org.infinite.spoty.controller.splash.LaunchPreloader;
-import org.infinite.spoty.controller.splash.SplashScreenController;
+import org.infinite.spoty.views.splash.LaunchPreloader;
+import org.infinite.spoty.views.splash.SplashScreenController;
 
 import java.io.IOException;
 

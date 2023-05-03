@@ -2,21 +2,14 @@ package org.infinite.spoty.data;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
-import org.infinite.spoty.model.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.infinite.spoty.models.*;
 
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-@EqualsAndHashCode
-@ToString
 public class SampleData implements Serializable {
     public static List<QuickStats> quickStatsSampleData() {
         List<QuickStats> samples = new ArrayList<>();
@@ -170,9 +163,6 @@ public class SampleData implements Serializable {
         product.setProductCode(71934224);
         product.setProductCategory("Fruits");
         product.setProductBrand("N/D");
-        product.setProductPrice(20.00);
-        product.setProductUnit("kg");
-        product.setProductQuantity(50.00);
         productList.add(product);
 
         product = new Product();
@@ -180,9 +170,6 @@ public class SampleData implements Serializable {
         product.setProductCode(80256894);
         product.setProductCategory("Fruits");
         product.setProductBrand("N/D");
-        product.setProductPrice(23.00);
-        product.setProductUnit("pc");
-        product.setProductQuantity(94.00);
         productList.add(product);
 
         product = new Product();
@@ -190,79 +177,6 @@ public class SampleData implements Serializable {
         product.setProductCode(53755440);
         product.setProductCategory("Fruits");
         product.setProductBrand("N/D");
-        product.setProductPrice(10.00);
-        product.setProductUnit("kg");
-        product.setProductQuantity(102.00);
-        productList.add(product);
-
-        product = new Product();
-        product.setProductName("Unpaired Gray");
-        product.setProductCode(69311349);
-        product.setProductCategory("Shoes");
-        product.setProductBrand("Adidas");
-        product.setProductPrice(25.00);
-        product.setProductUnit("pc");
-        product.setProductQuantity(101.00);
-        productList.add(product);
-
-        product = new Product();
-        product.setProductName("Sun Glasses");
-        product.setProductCode(87716743);
-        product.setProductCategory("Accessories");
-        product.setProductBrand("N/D");
-        product.setProductPrice(34.00);
-        product.setProductUnit("pc");
-        product.setProductQuantity(92.00);
-        productList.add(product);
-
-        product = new Product();
-        product.setProductName("Banana");
-        product.setProductCode(70171027);
-        product.setProductCategory("Fruits");
-        product.setProductBrand("N/D");
-        product.setProductPrice(7.00);
-        product.setProductUnit("kg");
-        product.setProductQuantity(60.00);
-        productList.add(product);
-
-        product = new Product();
-        product.setProductName("Macbook pro");
-        product.setProductCode(86102192);
-        product.setProductCategory("Computers");
-        product.setProductBrand("Apple");
-        product.setProductPrice(1500.00);
-        product.setProductUnit("pc");
-        product.setProductQuantity(41.00);
-        productList.add(product);
-
-        product = new Product();
-        product.setProductName("Earphones");
-        product.setProductCode(63417341);
-        product.setProductCategory("Computers Accessories");
-        product.setProductBrand("Dr. Lee");
-        product.setProductPrice(34.00);
-        product.setProductUnit("pc");
-        product.setProductQuantity(101.00);
-        productList.add(product);
-
-        product = new Product();
-        product.setProductName("Lime");
-        product.setProductCode(82747852);
-        product.setProductCategory("Fruits");
-        product.setProductBrand("N/D");
-        product.setProductPrice(20.00);
-        product.setProductUnit("kg");
-        product.setProductQuantity(63.00);
-        productList.add(product);
-
-        product = new Product();
-        product.setProductName("Avocado");
-        product.setProductCode(71087180);
-        product.setProductCategory("Vegetables");
-        product.setProductBrand("N/D");
-        product.setProductPrice(15.00);
-        product.setProductUnit("kg");
-        product.setProductQuantity(100.00);
         productList.add(product);
 
         return productList;
@@ -270,7 +184,6 @@ public class SampleData implements Serializable {
 
     public static ObservableList<Adjustment> adjustmentSampleData() {
         ObservableList<Adjustment> adjustmentList = FXCollections.observableArrayList();
-        Logger logger = LoggerFactory.getLogger(SampleData.class);
         String dateFormat = "yyyy-MM-dd";
 
         try {
@@ -301,8 +214,8 @@ public class SampleData implements Serializable {
             adjustment.setAdjustmentBranch("Branch 1");
             adjustment.setAdjustmentTotalProducts(1.00);
             adjustmentList.add(adjustment);
-        } catch(ParseException e){
-            logger.error(e.getLocalizedMessage());
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
         }
 
         return adjustmentList;
@@ -310,7 +223,6 @@ public class SampleData implements Serializable {
 
     public static ObservableList<Quotation> quotationSampleData() {
         ObservableList<Quotation> quotationList = FXCollections.observableArrayList();
-        Logger logger = LoggerFactory.getLogger(SampleData.class);
         String dateFormat = "yyyy-MM-dd";
 
         try {
@@ -359,7 +271,7 @@ public class SampleData implements Serializable {
             quotation.setQuotationGrandTotal(1000.00);
             quotationList.add(quotation);
         } catch (ParseException e) {
-            logger.error(e.getLocalizedMessage());
+            throw new RuntimeException(e);
         }
 
         return quotationList;
@@ -367,7 +279,6 @@ public class SampleData implements Serializable {
 
     public static ObservableList<Purchase> purchaseSampleData() {
         ObservableList<Purchase> purchaseList = FXCollections.observableArrayList();
-        Logger logger = LoggerFactory.getLogger(SampleData.class);
         String dateFormat = "yyyy-MM-dd";
 
         try {
@@ -467,7 +378,7 @@ public class SampleData implements Serializable {
             purchase.setPurchasePaymentStatus("Partial");
             purchaseList.add(purchase);
         } catch (ParseException e) {
-            logger.error(e.getLocalizedMessage());
+            throw new RuntimeException(e);
         }
 
         return purchaseList;
@@ -475,7 +386,6 @@ public class SampleData implements Serializable {
 
     public static ObservableList<Sale> saleSampleData() {
         ObservableList<Sale> saleList = FXCollections.observableArrayList();
-        Logger logger = LoggerFactory.getLogger(SampleData.class);
         String dateFormat = "yyyy-MM-dd";
 
         try {
@@ -570,7 +480,7 @@ public class SampleData implements Serializable {
             sale.setSalePaymentStatus("Paid");
             saleList.add(sale);
         } catch (ParseException e) {
-            logger.error(e.getLocalizedMessage());
+            throw new RuntimeException(e);
         }
 
         return saleList;
@@ -578,7 +488,6 @@ public class SampleData implements Serializable {
 
     public static ObservableList<SaleReturn> saleReturnSampleData() {
         ObservableList<SaleReturn> saleReturnList = FXCollections.observableArrayList();
-        Logger logger = LoggerFactory.getLogger(SampleData.class);
         String dateFormat = "yyyy-MM-dd";
 
         try {
@@ -634,7 +543,7 @@ public class SampleData implements Serializable {
             saleReturn.setSaleReturnPaymentStatus("Paid");
             saleReturnList.add(saleReturn);
         } catch (ParseException e) {
-            logger.error(e.getLocalizedMessage());
+            throw new RuntimeException(e);
         }
 
         return saleReturnList;
@@ -642,7 +551,6 @@ public class SampleData implements Serializable {
 
     public static ObservableList<PurchaseReturn> purchaseReturnSampleData() {
         ObservableList<PurchaseReturn> purchaseReturnList = FXCollections.observableArrayList();
-        Logger logger = LoggerFactory.getLogger(SampleData.class);
         String dateFormat = "yyyy-MM-dd";
 
         try {
@@ -698,7 +606,7 @@ public class SampleData implements Serializable {
             purchaseReturn.setPurchaseReturnPaymentStatus("Paid");
             purchaseReturnList.add(purchaseReturn);
         } catch (ParseException e) {
-            logger.error(e.getLocalizedMessage());
+            throw new RuntimeException(e);
         }
 
         return purchaseReturnList;
@@ -706,7 +614,6 @@ public class SampleData implements Serializable {
 
     public static ObservableList<Expense> expenseSampleData() {
         ObservableList<Expense> expenseList = FXCollections.observableArrayList();
-        Logger logger = LoggerFactory.getLogger(SampleData.class);
         String dateFormat = "yyyy-MM-dd";
 
         try {
@@ -736,8 +643,8 @@ public class SampleData implements Serializable {
             expense.setExpenseCategory("Petrol");
             expense.setExpenseBranch("Branch 1");
             expenseList.add(expense);
-        } catch (ParseException e){
-            logger.error(e.getLocalizedMessage());
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
         }
 
         return expenseList;
@@ -897,7 +804,7 @@ public class SampleData implements Serializable {
         return userList;
     }
 
-    public static ObservableList<RoleMaster> roleMasterSampleData () {
+    public static ObservableList<RoleMaster> roleMasterSampleData() {
         ObservableList<RoleMaster> roleMasterList = FXCollections.observableArrayList();
 
         RoleMaster roleMaster = new RoleMaster();
@@ -933,33 +840,5 @@ public class SampleData implements Serializable {
         currencyList.add(currency);
 
         return currencyList;
-    }
-
-    public static ObservableList<Requisition> requisitionSampleData() {
-        ObservableList<Requisition> requisitionList = FXCollections.observableArrayList();
-        String dateFormat = "yyyy-MM-dd";
-
-        try {
-            Requisition requisition = new Requisition(
-                    new SimpleDateFormat(dateFormat).parse("2023-04-15"),
-                    "RQ_1114",
-                    "Branch 1",
-                    "Officer 1",
-                    "Nomi",
-                    new SimpleDateFormat(dateFormat).parse("2023-04-16"),
-                    "Officer 54",
-                    1,
-                    "Nomi Powdered Soap",
-                    "Nomi Powder",
-                    53,
-                    "Kg",
-                    6000,
-                    540000
-            );
-            requisitionList.add(requisition);
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
-        return requisitionList;
     }
 }
