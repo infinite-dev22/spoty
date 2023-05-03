@@ -25,7 +25,7 @@
         <MFXFilterComboBox fx:id="quotationCustomerId" floatMode="BORDER" floatingText="Customer" prefWidth="400.0" GridPane.columnIndex="1" />
         <MFXFilterComboBox fx:id="quotationBranchId" floatMode="BORDER" floatingText="Branch" layoutX="10.0" layoutY="12.0" prefWidth="400.0" GridPane.columnIndex="2" />
     </GridPane>
-    <MFXElevatedButton fx:id="quotationAddBtn" layoutX="500.0" layoutY="110.0" text="Add" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="90.0" />
+    <MFXElevatedButton layoutX="500.0" layoutY="110.0" onMouseClicked="#addBtnClicked" text="Add" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="90.0" />
     <MFXTableView fx:id="quotationProductsTable" AnchorPane.bottomAnchor="120.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="140.0" />
     <GridPane hgap="20.0" layoutX="20.0" layoutY="60.0" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
         <columnConstraints>
@@ -39,7 +39,7 @@
         <MFXFilterComboBox fx:id="quotationStatus" floatMode="BORDER" floatingText="Status" layoutX="10.0" layoutY="12.0" prefWidth="400.0" GridPane.columnIndex="1" />
     </GridPane>
     <HBox alignment="CENTER_RIGHT" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
-        <MFXFilledButton fx:id="quotationSaveBtn" text="Save" />
-        <MFXOutlinedButton fx:id="quotationCancelBtn" text="Cancel" />
+        <MFXFilledButton onMouseClicked="#saveBtnClicked" text="Save" />
+        <MFXOutlinedButton onMouseClicked="#cancelBtnClicked" text="Cancel" />
     </HBox>
 </AnchorPane>
