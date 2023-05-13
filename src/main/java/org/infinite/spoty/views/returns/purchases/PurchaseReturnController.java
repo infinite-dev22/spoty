@@ -50,10 +50,10 @@ public class PurchaseReturnController implements Initializable {
         MFXTableColumn<PurchaseReturn> purchaseReturnAmountDue = new MFXTableColumn<>("Due", false, Comparator.comparing(PurchaseReturn::getPurchaseReturnAmountDue));
         MFXTableColumn<PurchaseReturn> purchaseReturnPaymentStatus = new MFXTableColumn<>("Payment Status", false, Comparator.comparing(PurchaseReturn::getPurchaseReturnPaymentStatus));
 
-        purchaseReturnReturnRef.setTooltip(new Tooltip("Purchase Reference Number"));
-        purchaseReturnReference.setTooltip(new Tooltip("Purchase Return Reference Number"));
-        purchaseReturnPaymentStatus.setTooltip(new Tooltip("Purchase Return Payment Status"));
-        purchaseReturnStatus.setTooltip(new Tooltip("Purchase Return Status"));
+        purchaseReturnReturnRef.setTooltip(new Tooltip("PurchaseMaster Reference Number"));
+        purchaseReturnReference.setTooltip(new Tooltip("PurchaseMaster Return Reference Number"));
+        purchaseReturnPaymentStatus.setTooltip(new Tooltip("PurchaseMaster Return Payment Status"));
+        purchaseReturnStatus.setTooltip(new Tooltip("PurchaseMaster Return Status"));
         purchaseReturnBranch.setTooltip(new Tooltip("Branch, store or warehouse"));
 //        purchaseReturnPaymentStatus.setPrefWidth(100);
 //        purchaseReturnAmountDue.setPrefWidth(100);
@@ -71,7 +71,7 @@ public class PurchaseReturnController implements Initializable {
         purchaseReturnPaymentStatus.setRowCellFactory(purchaseReturn -> new MFXTableRowCell<>(PurchaseReturn::getPurchaseReturnPaymentStatus));
 
         purchaseReturnTable.getTableColumns().addAll(purchaseReturnDate, purchaseReturnReference, purchaseReturnSupplier, purchaseReturnBranch, purchaseReturnReturnRef, purchaseReturnStatus, purchaseReturnGrandTotal, purchaseReturnAmountPaid, purchaseReturnAmountDue, purchaseReturnPaymentStatus);
-        purchaseReturnTable.getFilters().addAll(new StringFilter<>("Ref No.", PurchaseReturn::getPurchaseReturnReference), new StringFilter<>("Supplier", PurchaseReturn::getPurchaseReturnSupplier), new StringFilter<>("Branch", PurchaseReturn::getPurchaseReturnBranch), new StringFilter<>("Purchase Ref", PurchaseReturn::getPurchaseReturnRef), new StringFilter<>("Status", PurchaseReturn::getPurchaseReturnStatus), new DoubleFilter<>("Total", PurchaseReturn::getPurchaseReturnGrandTotal), new DoubleFilter<>("Paid", PurchaseReturn::getPurchaseReturnAmountPaid), new DoubleFilter<>("Due", PurchaseReturn::getPurchaseReturnAmountDue), new StringFilter<>("Payment Status", PurchaseReturn::getPurchaseReturnPaymentStatus));
+        purchaseReturnTable.getFilters().addAll(new StringFilter<>("Ref No.", PurchaseReturn::getPurchaseReturnReference), new StringFilter<>("Supplier", PurchaseReturn::getPurchaseReturnSupplier), new StringFilter<>("Branch", PurchaseReturn::getPurchaseReturnBranch), new StringFilter<>("PurchaseMaster Ref", PurchaseReturn::getPurchaseReturnRef), new StringFilter<>("Status", PurchaseReturn::getPurchaseReturnStatus), new DoubleFilter<>("Total", PurchaseReturn::getPurchaseReturnGrandTotal), new DoubleFilter<>("Paid", PurchaseReturn::getPurchaseReturnAmountPaid), new DoubleFilter<>("Due", PurchaseReturn::getPurchaseReturnAmountDue), new StringFilter<>("Payment Status", PurchaseReturn::getPurchaseReturnPaymentStatus));
 
         stylePurchaseReturnTable();
         purchaseReturnTable.setItems(purchaseReturnSampleData());

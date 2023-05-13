@@ -56,7 +56,7 @@ public class SalesController implements Initializable {
         MFXTableColumn<Sale> saleAddedBy = new MFXTableColumn<>("Added By", false, Comparator.comparing(Sale::getSaleAddedBy));
         MFXTableColumn<Sale> saleCustomer = new MFXTableColumn<>("Customer", false, Comparator.comparing(Sale::getSaleCustomer));
         MFXTableColumn<Sale> saleBranch = new MFXTableColumn<>("Branch", false, Comparator.comparing(Sale::getSaleBranch));
-        MFXTableColumn<Sale> saleStatus = new MFXTableColumn<>("Sale Status", false, Comparator.comparing(Sale::getSaleStatus));
+        MFXTableColumn<Sale> saleStatus = new MFXTableColumn<>("SaleMaster Status", false, Comparator.comparing(Sale::getSaleStatus));
         MFXTableColumn<Sale> saleGrandTotal = new MFXTableColumn<>("Total", false, Comparator.comparing(Sale::getSaleGrandTotal));
         MFXTableColumn<Sale> saleAmountPaid = new MFXTableColumn<>("Paid", false, Comparator.comparing(Sale::getSaleAmountPaid));
         MFXTableColumn<Sale> saleAmountDue = new MFXTableColumn<>("Amount Due", false, Comparator.comparing(Sale::getSaleAmountDue));
@@ -79,7 +79,7 @@ public class SalesController implements Initializable {
                 new StringFilter<>("Added By", Sale::getSaleAddedBy),
                 new StringFilter<>("Customer", Sale::getSaleCustomer),
                 new StringFilter<>("Branch", Sale::getSaleBranch),
-                new StringFilter<>("Sale Status", Sale::getSaleStatus),
+                new StringFilter<>("SaleMaster Status", Sale::getSaleStatus),
                 new DoubleFilter<>("Grand Total", Sale::getSaleGrandTotal),
                 new DoubleFilter<>("Amount Paid", Sale::getSaleAmountPaid),
                 new DoubleFilter<>("Amount Due", Sale::getSaleAmountDue),

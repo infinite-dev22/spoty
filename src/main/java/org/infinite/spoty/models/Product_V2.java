@@ -91,7 +91,7 @@ public class Product_V2 implements Serializable {
     public boolean equals(final Object o) {
         if (o == this) return true;
         if (!(o instanceof final Product_V2 other)) return false;
-        if (!other.canEqual((Object) this)) return false;
+        if (!other.canEqual(this)) return false;
         final Object this$productName = this.getProductName();
         final Object other$productName = other.getProductName();
         if (!Objects.equals(this$productName, other$productName))

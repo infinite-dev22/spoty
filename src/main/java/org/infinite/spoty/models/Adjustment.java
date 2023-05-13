@@ -51,7 +51,7 @@ public class Adjustment implements Serializable {
     public boolean equals(final Object o) {
         if (o == this) return true;
         if (!(o instanceof final Adjustment other)) return false;
-        if (!other.canEqual((Object) this)) return false;
+        if (!other.canEqual(this)) return false;
         final Object this$adjustmentDate = this.getAdjustmentDate();
         final Object other$adjustmentDate = other.getAdjustmentDate();
         if (!Objects.equals(this$adjustmentDate, other$adjustmentDate))

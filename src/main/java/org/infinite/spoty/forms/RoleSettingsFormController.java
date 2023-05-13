@@ -81,12 +81,12 @@ public class RoleSettingsFormController implements Initializable {
     private final MFXCheckbox editQuotationsCheckbox;
     private final MFXCheckbox createQuotationCheckbox;
     private final MFXCheckbox deleteQuotationCheckbox;
-    // Sale Returns
+    // SaleMaster Returns
     private final MFXCheckbox viewSaleReturnsCheckbox;
     private final MFXCheckbox editSaleReturnsCheckbox;
     private final MFXCheckbox createSaleReturnCheckbox;
     private final MFXCheckbox deleteSaleReturnCheckbox;
-    // Purchase Returns
+    // PurchaseMaster Returns
     private final MFXCheckbox viewPurchaseReturnsCheckbox;
     private final MFXCheckbox editPurchaseReturnsCheckbox;
     private final MFXCheckbox createPurchaseReturnCheckbox;
@@ -468,7 +468,7 @@ public class RoleSettingsFormController implements Initializable {
     }
 
     private VBox getTransferSetting() {
-        // Controls CRUD operations on Transfer.
+        // Controls CRUD operations on TransferMaster.
         VBox transferSetting = new VBox();
         transferSetting.getStyleClass().add("card");
         transferSetting.setPadding(new Insets(10));
@@ -484,7 +484,7 @@ public class RoleSettingsFormController implements Initializable {
 
         transferSettingCheckboxes.setHgap(20);
 
-        transferSetting.getChildren().addAll(title("Transfer"), transferSettingCheckboxes);
+        transferSetting.getChildren().addAll(title("TransferMaster"), transferSettingCheckboxes);
         return transferSetting;
     }
 
@@ -510,7 +510,7 @@ public class RoleSettingsFormController implements Initializable {
     }
 
     private VBox getSaleSetting() {
-        // Controls CRUD operations on Sale.
+        // Controls CRUD operations on SaleMaster.
         VBox saleSetting = new VBox();
         saleSetting.getStyleClass().add("card");
         saleSetting.setPadding(new Insets(10));
@@ -520,7 +520,7 @@ public class RoleSettingsFormController implements Initializable {
         editSalesCheckbox.setText("Edit");
         createSaleCheckbox.setText("Create");
         deleteSaleCheckbox.setText("Delete");
-        accessPOSCheckbox.setText("Point Of Sale");
+        accessPOSCheckbox.setText("Point Of SaleMaster");
 
         saleSettingCheckboxes.addColumn(0, viewSalesCheckbox, editSalesCheckbox, accessPOSCheckbox);
         saleSettingCheckboxes.addColumn(1, createSaleCheckbox, deleteSaleCheckbox);
@@ -532,7 +532,7 @@ public class RoleSettingsFormController implements Initializable {
     }
 
     private VBox getPurchaseSetting() {
-        // Controls CRUD operations on Purchase.
+        // Controls CRUD operations on PurchaseMaster.
         VBox purchaseSetting = new VBox();
         purchaseSetting.getStyleClass().add("card");
         purchaseSetting.setPadding(new Insets(10));
@@ -574,7 +574,7 @@ public class RoleSettingsFormController implements Initializable {
     }
 
     private VBox getSaleReturnSetting() {
-        // Controls CRUD operations on SaleReturn.
+        // Controls CRUD operations on SaleReturnMaster.
         VBox saleReturnSetting = new VBox();
         saleReturnSetting.getStyleClass().add("card");
         saleReturnSetting.setPadding(new Insets(10));
@@ -590,12 +590,12 @@ public class RoleSettingsFormController implements Initializable {
 
         saleReturnSettingCheckboxes.setHgap(20);
 
-        saleReturnSetting.getChildren().addAll(title("Sale Returns"), saleReturnSettingCheckboxes);
+        saleReturnSetting.getChildren().addAll(title("SaleMaster Returns"), saleReturnSettingCheckboxes);
         return saleReturnSetting;
     }
 
     private VBox getPurchaseReturnSetting() {
-        // Controls CRUD operations on PurchaseReturn.
+        // Controls CRUD operations on PurchaseReturnMaster.
         VBox purchaseReturnSetting = new VBox();
         purchaseReturnSetting.getStyleClass().add("card");
         purchaseReturnSetting.setPadding(new Insets(10));
@@ -611,12 +611,12 @@ public class RoleSettingsFormController implements Initializable {
 
         purchaseReturnSettingCheckboxes.setHgap(20);
 
-        purchaseReturnSetting.getChildren().addAll(title("Purchase Returns"), purchaseReturnSettingCheckboxes);
+        purchaseReturnSetting.getChildren().addAll(title("PurchaseMaster Returns"), purchaseReturnSettingCheckboxes);
         return purchaseReturnSetting;
     }
 
     private VBox getPaymentSaleSetting() {
-        // Controls CRUD operations on Payment Sale.
+        // Controls CRUD operations on Payment SaleMaster.
         VBox paymentSaleSetting = new VBox();
         paymentSaleSetting.getStyleClass().add("card");
         paymentSaleSetting.setPadding(new Insets(10));
@@ -637,7 +637,7 @@ public class RoleSettingsFormController implements Initializable {
     }
 
     private VBox getPaymentPurchaseSetting() {
-        // Controls CRUD operations on Payment Purchase.
+        // Controls CRUD operations on Payment PurchaseMaster.
         VBox paymentPurchaseSetting = new VBox();
         paymentPurchaseSetting.getStyleClass().add("card");
         paymentPurchaseSetting.setPadding(new Insets(10));
@@ -658,7 +658,7 @@ public class RoleSettingsFormController implements Initializable {
     }
 
     private VBox getPaymentReturnSetting() {
-        // Controls CRUD operations on Payment Purchase.
+        // Controls CRUD operations on Payment PurchaseMaster.
         VBox paymentReturnSetting = new VBox();
         paymentReturnSetting.getStyleClass().add("card");
         paymentReturnSetting.setPadding(new Insets(10));
@@ -679,7 +679,7 @@ public class RoleSettingsFormController implements Initializable {
     }
 
     private VBox getCustomerSetting() {
-        // Controls CRUD operations on Payment Purchase.
+        // Controls CRUD operations on Payment PurchaseMaster.
         VBox customerSetting = new VBox();
         customerSetting.getStyleClass().add("card");
         customerSetting.setPadding(new Insets(10));
@@ -739,8 +739,8 @@ public class RoleSettingsFormController implements Initializable {
         paymentPurchasesCheckbox.setText("Reports payment purchases");
         saleReturnPaymentsCheckbox.setText("Reports sale return payments");
         purchaseReturnPaymentsCheckbox.setText("Reports purchase return payments");
-        saleReportCheckbox.setText("Sale Report");
-        purchaseReportCheckbox.setText("Purchase Report");
+        saleReportCheckbox.setText("SaleMaster Report");
+        purchaseReportCheckbox.setText("PurchaseMaster Report");
         customerReportCheckbox.setText("Customer Report");
         supplierReportCheckbox.setText("Supplier Report");
         profitAndLossCheckbox.setText("Profit and Loss Report");
@@ -752,7 +752,7 @@ public class RoleSettingsFormController implements Initializable {
         stockReportCheckbox.setText("Stock Report");
         productReportCheckbox.setText("Product Report");
         productSalesReportCheckbox.setText("Product Sales Report");
-        productPurchasesReportCheckbox.setText("Product Purchase Reports");
+        productPurchasesReportCheckbox.setText("Product PurchaseMaster Reports");
 
         reportSettingCheckboxes.addColumn(0, paymentSalesCheckbox, paymentPurchasesCheckbox,
                 saleReturnPaymentsCheckbox, purchaseReturnPaymentsCheckbox, saleReportCheckbox,

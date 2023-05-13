@@ -46,7 +46,20 @@ dependencies {
     implementation "org.kordamp.ikonli:ikonli-fontawesome5-pack:12.3.1"
     // JDBC database drivers.
     implementation 'com.oracle.database.jdbc:ojdbc11-production:23.2.0.0'
-//    implementation 'com.dua3.fx:fx-icons-ikonli:0.26.0'
+    // DATABASE.
+    // Hibernate.
+    implementation 'org.hibernate:hibernate-core:5.3.29.Final'
+    // Connector/Driver
+    implementation 'org.xerial:sqlite-jdbc:3.41.2.1'
+    // Hibernate Dialects
+    implementation("com.github.gwenn:sqlite-dialect:0.1.2")
+    // Persistance API
+    implementation 'javax.persistence:javax.persistence-api:2.2'
+    // JAXB XML Binding API
+    implementation 'javax.xml.bind:jaxb-api:2.3.0'
+    // JAXB XML Binding Runtime
+    implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.0'
+    // CSSFX.
     implementation "fr.brouillard.oss:cssfx:11.5.1"
     // Libraries for Material FX.
     implementation "io.github.palexdev:scenicview:17.0.2"
@@ -55,8 +68,11 @@ dependencies {
     // SLF4J Logger.
     implementation "org.slf4j:slf4j-simple:2.0.7"
     // JUnit test framework.
-    testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+    implementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+    implementation "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
+//
+//    testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
+//    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
 }
 
 test {

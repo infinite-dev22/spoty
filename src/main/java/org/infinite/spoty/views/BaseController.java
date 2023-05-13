@@ -8,12 +8,15 @@ import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import org.infinite.spoty.values.strings.Labels;
 import org.infinite.spoty.views.expenses.ExpensesController;
 import org.infinite.spoty.views.inventory.InventoryController;
 import org.infinite.spoty.views.people.PeopleController;
@@ -48,6 +51,8 @@ public class BaseController implements Initializable {
     public AnchorPane rootPane;
     @FXML
     public VBox settingsHolder;
+    @FXML
+    public Label appNameLabel;
     private double xOffset;
     private double yOffset;
 
@@ -72,6 +77,8 @@ public class BaseController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        appNameLabel.setText(Labels.APP_NAME);
+        appNameLabel.setFont(new Font(48));
         windowHeader.setOnMousePressed(event -> {
             xOffset = stage.getX() - event.getScreenX();
             yOffset = stage.getY() - event.getScreenY();
@@ -92,7 +99,7 @@ public class BaseController implements Initializable {
         loader.addView(MFXLoaderBean.of("INVENTORY", loadURL("fxml/inventory/Inventory.fxml")).setBeanToNodeMapper(() -> createToggle("fas-cubes", "Inventory")).setControllerFactory(c -> new InventoryController(stage)).get());
         loader.addView(MFXLoaderBean.of("REQUISITIONS", loadURL("fxml/requisition/Requisition.fxml")).setBeanToNodeMapper(() -> createToggle("fas-hand-holding", "Requisitions")).get());
         loader.addView(MFXLoaderBean.of("PURCHASES", loadURL("fxml/purchases/Purchases.fxml")).setBeanToNodeMapper(() -> createToggle("fas-cart-plus", "Purchases")).setControllerFactory(c -> new PurchasesController(stage)).get());
-        loader.addView(MFXLoaderBean.of("TRANSFERS", loadURL("fxml/transfer/Transfer.fxml")).setBeanToNodeMapper(() -> createToggle("fas-arrow-right-arrow-left", "Transfers")).get());
+        loader.addView(MFXLoaderBean.of("TRANSFERS", loadURL("fxml/transfer/TransferMaster.fxml")).setBeanToNodeMapper(() -> createToggle("fas-arrow-right-arrow-left", "Transfers")).get());
         loader.addView(MFXLoaderBean.of("STOCK IN", loadURL("fxml/stock_in/StockIn.fxml")).setBeanToNodeMapper(() -> createToggle("fas-cart-flatbed", "Stock In")).get());
         loader.addView(MFXLoaderBean.of("SALES", loadURL("fxml/sales/Sales.fxml")).setBeanToNodeMapper(() -> createToggle("fas-cash-register", "Sales")).setControllerFactory(c -> new SalesController(stage)).get());
         loader.addView(MFXLoaderBean.of("RETURNS", loadURL("fxml/returns/Returns.fxml")).setBeanToNodeMapper(() -> createToggle("fas-retweet", "Returns")).get());

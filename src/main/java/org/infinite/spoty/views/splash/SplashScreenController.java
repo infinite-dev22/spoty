@@ -15,6 +15,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.infinite.spoty.values.strings.Labels;
 import org.infinite.spoty.views.BaseController;
 
 import java.io.IOException;
@@ -49,7 +50,7 @@ public class SplashScreenController implements Initializable {
                 stage.setScene(scene);
                 stage.initStyle(StageStyle.TRANSPARENT);
                 stage.setMaximized(true);
-                stage.setTitle("Zenmat ERP");
+                stage.setTitle(Labels.APP_NAME);
                 stage.show();
             } catch (IOException | InterruptedException e) {
                 throw new RuntimeException(e);
@@ -59,7 +60,7 @@ public class SplashScreenController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        companyName.setText("Nameless Systems Corp");
-        applicationName.setText("Zenmat ERP");
+        companyName.setText(Labels.COMPANY_NAME);
+        applicationName.setText(Labels.APP_NAME);
     }
 }

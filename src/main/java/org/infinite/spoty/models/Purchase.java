@@ -164,6 +164,6 @@ public class Purchase implements Serializable {
     }
 
     public String toString() {
-        return "Purchase(purchaseDate=" + this.getPurchaseDate() + ", purchaseReference=" + this.getPurchaseReference() + ", purchaseSupplier=" + this.getPurchaseSupplier() + ", purchaseBranch=" + this.getPurchaseBranch() + ", purchaseStatus=" + this.getPurchaseStatus() + ", purchaseGrandTotal=" + this.getPurchaseGrandTotal() + ", purchaseAmountPaid=" + this.getPurchaseAmountPaid() + ", purchaseAmountDue=" + this.getPurchaseAmountDue() + ", purchasePaymentStatus=" + this.getPurchasePaymentStatus() + ")";
+        return "PurchaseMaster(purchaseDate=" + this.getPurchaseDate() + ", purchaseReference=" + this.getPurchaseReference() + ", purchaseSupplier=" + this.getPurchaseSupplier() + ", purchaseBranch=" + this.getPurchaseBranch() + ", purchaseStatus=" + this.getPurchaseStatus() + ", purchaseGrandTotal=" + this.getPurchaseGrandTotal() + ", purchaseAmountPaid=" + this.getPurchaseAmountPaid() + ", purchaseAmountDue=" + this.getPurchaseAmountDue() + ", purchasePaymentStatus=" + this.getPurchasePaymentStatus() + ")";
     }
 }

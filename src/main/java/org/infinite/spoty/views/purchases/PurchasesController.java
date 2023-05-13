@@ -53,7 +53,7 @@ public class PurchasesController implements Initializable {
         MFXTableColumn<Purchase> purchaseReference = new MFXTableColumn<>("Reference", true, Comparator.comparing(Purchase::getPurchaseReference));
         MFXTableColumn<Purchase> purchaseSupplier = new MFXTableColumn<>("Supplier", true, Comparator.comparing(Purchase::getPurchaseSupplier));
         MFXTableColumn<Purchase> purchaseBranch = new MFXTableColumn<>("Branch", true, Comparator.comparing(Purchase::getPurchaseBranch));
-        MFXTableColumn<Purchase> purchaseStatus = new MFXTableColumn<>("Purchase Status", true, Comparator.comparing(Purchase::getPurchaseStatus));
+        MFXTableColumn<Purchase> purchaseStatus = new MFXTableColumn<>("PurchaseMaster Status", true, Comparator.comparing(Purchase::getPurchaseStatus));
         MFXTableColumn<Purchase> purchaseGrandTotal = new MFXTableColumn<>("Grand Total", true, Comparator.comparing(Purchase::getPurchaseGrandTotal));
         MFXTableColumn<Purchase> purchaseAmountPaid = new MFXTableColumn<>("Amount Paid", true, Comparator.comparing(Purchase::getPurchaseAmountPaid));
         MFXTableColumn<Purchase> purchaseAmountDue = new MFXTableColumn<>("Amount Due", true, Comparator.comparing(Purchase::getPurchaseAmountDue));
@@ -74,7 +74,7 @@ public class PurchasesController implements Initializable {
                 new StringFilter<>("Reference", Purchase::getPurchaseReference),
                 new StringFilter<>("Supplier", Purchase::getPurchaseSupplier),
                 new StringFilter<>("Branch", Purchase::getPurchaseBranch),
-                new StringFilter<>("Purchase Status", Purchase::getPurchaseStatus),
+                new StringFilter<>("PurchaseMaster Status", Purchase::getPurchaseStatus),
                 new DoubleFilter<>("Grand Total", Purchase::getPurchaseGrandTotal),
                 new DoubleFilter<>("Amount Paid", Purchase::getPurchaseAmountPaid),
                 new DoubleFilter<>("Amount Due", Purchase::getPurchaseAmountDue),

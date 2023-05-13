@@ -178,6 +178,6 @@ public class Sale implements Serializable {
     }
 
     public String toString() {
-        return "Sale(saleDate=" + this.getSaleDate() + ", saleReference=" + this.getSaleReference() + ", saleAddedBy=" + this.getSaleAddedBy() + ", saleCustomer=" + this.getSaleCustomer() + ", saleBranch=" + this.getSaleBranch() + ", saleSaleStatus=" + this.getSaleStatus() + ", saleGrandTotal=" + this.getSaleGrandTotal() + ", saleAmountPaid=" + this.getSaleAmountPaid() + ", saleAmountDue=" + this.getSaleAmountDue() + ", salePaymentStatus=" + this.getSalePaymentStatus() + ")";
+        return "SaleMaster(saleDate=" + this.getSaleDate() + ", saleReference=" + this.getSaleReference() + ", saleAddedBy=" + this.getSaleAddedBy() + ", saleCustomer=" + this.getSaleCustomer() + ", saleBranch=" + this.getSaleBranch() + ", saleSaleStatus=" + this.getSaleStatus() + ", saleGrandTotal=" + this.getSaleGrandTotal() + ", saleAmountPaid=" + this.getSaleAmountPaid() + ", saleAmountDue=" + this.getSaleAmountDue() + ", salePaymentStatus=" + this.getSalePaymentStatus() + ")";
     }
 }

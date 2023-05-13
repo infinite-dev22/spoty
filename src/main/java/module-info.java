@@ -18,6 +18,18 @@ module org.infinite.spoty {
     requires org.slf4j;
     requires mfx.components;
 
+    requires org.hibernate.orm.core;
+    requires java.persistence;
+    requires java.naming;
+    requires java.xml.bind;
+    requires net.bytebuddy;
+    requires com.fasterxml.classmate;
+    requires java.sql;
+    requires org.jboss.logging;
+    requires java.logging;
+
+    requires org.junit.jupiter.api;
+
     opens org.infinite.spoty;
     opens org.infinite.spoty.views;
     opens org.infinite.spoty.views.components;
@@ -60,4 +72,8 @@ module org.infinite.spoty {
     opens org.infinite.spoty.forms;
 
     opens org.infinite.spoty.views.splash;
+
+    opens org.infinite.spoty.database.models;
+
+    exports org.infinite.spoty;
 }

@@ -178,6 +178,6 @@ public class SaleReturn implements Serializable {
     }
 
     public String toString() {
-        return "SaleReturn(saleReturnDate=" + this.getSaleReturnDate() + ", saleReturnReference=" + this.getSaleReturnReference() + ", saleReturnCustomer=" + this.getSaleReturnCustomer() + ", saleReturnBranch=" + this.getSaleReturnBranch() + ", saleReturnAddedBy=" + this.getSaleReturnSaleRef() + ", saleReturnStatus=" + this.getSaleReturnStatus() + ", saleReturnGrandTotal=" + this.getSaleReturnGrandTotal() + ", saleReturnAmountPaid=" + this.getSaleReturnAmountPaid() + ", saleReturnAmountDue=" + this.getSaleReturnAmountDue() + ", saleReturnPaymentStatus=" + this.getSaleReturnPaymentStatus() + ")";
+        return "SaleReturnMaster(saleReturnDate=" + this.getSaleReturnDate() + ", saleReturnReference=" + this.getSaleReturnReference() + ", saleReturnCustomer=" + this.getSaleReturnCustomer() + ", saleReturnBranch=" + this.getSaleReturnBranch() + ", saleReturnAddedBy=" + this.getSaleReturnSaleRef() + ", saleReturnStatus=" + this.getSaleReturnStatus() + ", saleReturnGrandTotal=" + this.getSaleReturnGrandTotal() + ", saleReturnAmountPaid=" + this.getSaleReturnAmountPaid() + ", saleReturnAmountDue=" + this.getSaleReturnAmountDue() + ", saleReturnPaymentStatus=" + this.getSaleReturnPaymentStatus() + ")";
     }
 }

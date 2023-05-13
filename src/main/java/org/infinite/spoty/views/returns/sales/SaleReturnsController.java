@@ -43,17 +43,17 @@ public class SaleReturnsController implements Initializable {
         MFXTableColumn<SaleReturn> saleReturnReference = new MFXTableColumn<>("Ref No.", false, Comparator.comparing(SaleReturn::getSaleReturnReference));
         MFXTableColumn<SaleReturn> saleReturnCustomer = new MFXTableColumn<>("Customer", false, Comparator.comparing(SaleReturn::getSaleReturnCustomer));
         MFXTableColumn<SaleReturn> saleReturnBranch = new MFXTableColumn<>("Branch", false, Comparator.comparing(SaleReturn::getSaleReturnBranch));
-        MFXTableColumn<SaleReturn> saleReturnRef = new MFXTableColumn<>("Sale Ref", false, Comparator.comparing(SaleReturn::getSaleReturnStatus));
+        MFXTableColumn<SaleReturn> saleReturnRef = new MFXTableColumn<>("SaleMaster Ref", false, Comparator.comparing(SaleReturn::getSaleReturnStatus));
         MFXTableColumn<SaleReturn> saleReturnStatus = new MFXTableColumn<>("Status", false, Comparator.comparing(SaleReturn::getSaleReturnStatus));
         MFXTableColumn<SaleReturn> saleReturnGrandTotal = new MFXTableColumn<>("Total", false, Comparator.comparing(SaleReturn::getSaleReturnGrandTotal));
         MFXTableColumn<SaleReturn> saleReturnAmountPaid = new MFXTableColumn<>("Paid", false, Comparator.comparing(SaleReturn::getSaleReturnAmountPaid));
         MFXTableColumn<SaleReturn> saleReturnAmountDue = new MFXTableColumn<>("Due", false, Comparator.comparing(SaleReturn::getSaleReturnAmountDue));
         MFXTableColumn<SaleReturn> saleReturnPaymentStatus = new MFXTableColumn<>("Payment Status", false, Comparator.comparing(SaleReturn::getSaleReturnPaymentStatus));
 
-        saleReturnRef.setTooltip(new Tooltip("Purchase Reference Number"));
-        saleReturnReference.setTooltip(new Tooltip("Purchase Return Reference Number"));
-        saleReturnPaymentStatus.setTooltip(new Tooltip("Purchase Return Payment Status"));
-        saleReturnStatus.setTooltip(new Tooltip("Purchase Return Status"));
+        saleReturnRef.setTooltip(new Tooltip("PurchaseMaster Reference Number"));
+        saleReturnReference.setTooltip(new Tooltip("PurchaseMaster Return Reference Number"));
+        saleReturnPaymentStatus.setTooltip(new Tooltip("PurchaseMaster Return Payment Status"));
+        saleReturnStatus.setTooltip(new Tooltip("PurchaseMaster Return Status"));
         saleReturnBranch.setTooltip(new Tooltip("Branch, store or warehouse"));
 //        saleReturnPaymentStatus.setPrefWidth(100);
 //        saleReturnAmountDue.setPrefWidth(100);
@@ -76,7 +76,7 @@ public class SaleReturnsController implements Initializable {
                 new StringFilter<>("Reference", SaleReturn::getSaleReturnReference),
                 new StringFilter<>("Customer", SaleReturn::getSaleReturnCustomer),
                 new StringFilter<>("Branch", SaleReturn::getSaleReturnBranch),
-                new StringFilter<>("Sale Ref", SaleReturn::getSaleReturnStatus),
+                new StringFilter<>("SaleMaster Ref", SaleReturn::getSaleReturnStatus),
                 new StringFilter<>("Status", SaleReturn::getSaleReturnStatus),
                 new DoubleFilter<>("Total", SaleReturn::getSaleReturnGrandTotal),
                 new DoubleFilter<>("Paid", SaleReturn::getSaleReturnAmountPaid),

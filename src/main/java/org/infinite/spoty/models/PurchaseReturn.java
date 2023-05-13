@@ -178,6 +178,6 @@ public class PurchaseReturn implements Serializable {
     }
 
     public String toString() {
-        return "PurchaseReturn(purchaseReturnDate=" + this.getPurchaseReturnDate() + ", purchaseReturnReference=" + this.getPurchaseReturnReference() + ", purchaseReturnSupplier=" + this.getPurchaseReturnSupplier() + ", purchaseReturnBranch=" + this.getPurchaseReturnBranch() + ", purchaseReturnRef=" + this.getPurchaseReturnRef() + ", purchaseReturnStatus=" + this.getPurchaseReturnStatus() + ", purchaseReturnGrandTotal=" + this.getPurchaseReturnGrandTotal() + ", purchaseReturnAmountPaid=" + this.getPurchaseReturnAmountPaid() + ", purchaseReturnAmountDue=" + this.getPurchaseReturnAmountDue() + ", purchaseReturnPaymentStatus=" + this.getPurchaseReturnPaymentStatus() + ")";
+        return "PurchaseReturnMaster(purchaseReturnDate=" + this.getPurchaseReturnDate() + ", purchaseReturnReference=" + this.getPurchaseReturnReference() + ", purchaseReturnSupplier=" + this.getPurchaseReturnSupplier() + ", purchaseReturnBranch=" + this.getPurchaseReturnBranch() + ", purchaseReturnRef=" + this.getPurchaseReturnRef() + ", purchaseReturnStatus=" + this.getPurchaseReturnStatus() + ", purchaseReturnGrandTotal=" + this.getPurchaseReturnGrandTotal() + ", purchaseReturnAmountPaid=" + this.getPurchaseReturnAmountPaid() + ", purchaseReturnAmountDue=" + this.getPurchaseReturnAmountDue() + ", purchaseReturnPaymentStatus=" + this.getPurchaseReturnPaymentStatus() + ")";
     }
 }
