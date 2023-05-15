@@ -815,20 +815,20 @@ public class SampleData implements Serializable {
         return roleMasterList;
     }
 
-    public static ObservableList<Branch> branchSampleData() {
-        ObservableList<Branch> branchList = FXCollections.observableArrayList();
-
-        Branch branch = new Branch();
-        branch.setBranchName("Branch 1");
-        branch.setBranchPhoneNumber("0987886768");
-        branch.setBranchCity("Kampala City");
-        branch.setBranchTown("Kampala");
-        branch.setBranchLocation("Mabirizi Complex");
-        branch.setBranchEmail("branchone@email.com");
-        branchList.add(branch);
-
-        return branchList;
-    }
+//    public static ObservableList<Branch> branchSampleData() {
+//        ObservableList<Branch> branchList = FXCollections.observableArrayList();
+//
+//        Branch branch = new Branch();
+//        branch.setBranchName("Branch 1");
+//        branch.setBranchPhoneNumber("0987886768");
+//        branch.setBranchCity("Kampala City");
+//        branch.setBranchTown("Kampala");
+//        branch.setBranchLocation("Mabirizi Complex");
+//        branch.setBranchEmail("branchone@email.com");
+//        branchList.add(branch);
+//
+//        return branchList;
+//    }
 
     public static ObservableList<Currency> currencySampleData() {
         ObservableList<Currency> currencyList = FXCollections.observableArrayList();

@@ -99,7 +99,7 @@ public class BaseController implements Initializable {
         loader.addView(MFXLoaderBean.of("INVENTORY", loadURL("fxml/inventory/Inventory.fxml")).setBeanToNodeMapper(() -> createToggle("fas-cubes", "Inventory")).setControllerFactory(c -> new InventoryController(stage)).get());
         loader.addView(MFXLoaderBean.of("REQUISITIONS", loadURL("fxml/requisition/Requisition.fxml")).setBeanToNodeMapper(() -> createToggle("fas-hand-holding", "Requisitions")).get());
         loader.addView(MFXLoaderBean.of("PURCHASES", loadURL("fxml/purchases/Purchases.fxml")).setBeanToNodeMapper(() -> createToggle("fas-cart-plus", "Purchases")).setControllerFactory(c -> new PurchasesController(stage)).get());
-        loader.addView(MFXLoaderBean.of("TRANSFERS", loadURL("fxml/transfer/TransferMaster.fxml")).setBeanToNodeMapper(() -> createToggle("fas-arrow-right-arrow-left", "Transfers")).get());
+        loader.addView(MFXLoaderBean.of("TRANSFERS", loadURL("fxml/transfer/Transfer.fxml")).setBeanToNodeMapper(() -> createToggle("fas-arrow-right-arrow-left", "Transfers")).get());
         loader.addView(MFXLoaderBean.of("STOCK IN", loadURL("fxml/stock_in/StockIn.fxml")).setBeanToNodeMapper(() -> createToggle("fas-cart-flatbed", "Stock In")).get());
         loader.addView(MFXLoaderBean.of("SALES", loadURL("fxml/sales/Sales.fxml")).setBeanToNodeMapper(() -> createToggle("fas-cash-register", "Sales")).setControllerFactory(c -> new SalesController(stage)).get());
         loader.addView(MFXLoaderBean.of("RETURNS", loadURL("fxml/returns/Returns.fxml")).setBeanToNodeMapper(() -> createToggle("fas-retweet", "Returns")).get());

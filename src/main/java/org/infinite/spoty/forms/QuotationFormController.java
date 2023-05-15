@@ -17,10 +17,9 @@ import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.models.QuotationProduct;
-import org.infinite.spoty.models.Branch;
 import org.infinite.spoty.models.Customer;
-import org.infinite.spoty.models.Product;
 
 import java.io.IOException;
 import java.net.URL;
@@ -28,7 +27,6 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
-import static org.infinite.spoty.dataShare.DataShare.getQuotationProducts;
 import static org.infinite.spoty.dataShare.DataShare.getQuotationProducts;
 
 public class QuotationFormController implements Initializable {

@@ -18,8 +18,8 @@ import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.models.AdjustmentProduct;
-import org.infinite.spoty.models.Branch;
 
 import java.io.IOException;
 import java.net.URL;

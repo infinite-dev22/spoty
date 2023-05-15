@@ -21,17 +21,9 @@ public class ProductCategory {
     private String updatedBy = null;
 
     public ProductCategory(String code,
-                           String name,
-                           Date createdAt,
-                           String createdBy,
-                           Date updatedAt,
-                           String updatedBy) {
+                           String name) {
         this.code = code;
         this.name = name;
-        this.createdAt = createdAt;
-        this.createdBy = createdBy;
-        this.updatedAt = updatedAt;
-        this.updatedBy = updatedBy;
     }
 
     public ProductCategory() {

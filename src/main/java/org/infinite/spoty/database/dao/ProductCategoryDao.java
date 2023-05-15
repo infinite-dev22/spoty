@@ -27,7 +27,7 @@ public class ProductCategoryDao {
         return 1;
     }
 
-    public static int updateProductCategory(ProductCategory obj, long id) {
+    public static int updateProductCategory(ProductCategory obj, int id) {
         Transaction transaction = null;
         ProductCategory productCategory;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
@@ -47,7 +47,7 @@ public class ProductCategoryDao {
         return 1;
     }
 
-    public static ProductCategory findProductCategory(long id) {
+    public static ProductCategory findProductCategory(int id) {
         Transaction transaction = null;
         ProductCategory productCategory;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
@@ -61,7 +61,7 @@ public class ProductCategoryDao {
         return productCategory;
     }
 
-    public static ObservableList<ProductCategory> getProductCategory() {
+    public static ObservableList<ProductCategory> getProductCategories() {
         Transaction transaction = null;
         ObservableList<ProductCategory> productCategories;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
@@ -74,7 +74,7 @@ public class ProductCategoryDao {
         }
         return productCategories;
     }
-    public static int deleteProductCategory(long id) {
+    public static int deleteProductCategory(int id) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();

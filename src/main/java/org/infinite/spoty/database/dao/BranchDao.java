@@ -27,9 +27,9 @@ public class BranchDao {
         return 1;
     }
 
-    public static int updateBranch(Branch obj, long id) {
+    public static int updateBranch(Branch obj, int id) {
         Transaction transaction = null;
-        Branch branch = null;
+        Branch branch;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             branch = session.load(Branch.class, id);
@@ -37,7 +37,7 @@ public class BranchDao {
             branch.setCity(obj.getCity());
             branch.setPhone(obj.getPhone());
             branch.setEmail(obj.getEmail());
-            branch.setCountry(obj.getCountry());
+            branch.setTown(obj.getTown());
             branch.setUpdatedAt(new Date());
             // TODO: updated by should be a system user.
             // branch.setUpdatedBy();
@@ -50,12 +50,12 @@ public class BranchDao {
         return 1;
     }
 
-    public static Branch findBranch(long id) {
+    public static Branch findBranch(int id) {
         Transaction transaction = null;
         Branch branch;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            branch = session.load(Branch.class, id);
+            branch = session.get(Branch.class, id);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -64,12 +64,12 @@ public class BranchDao {
         return branch;
     }
 
-    public static ObservableList<Branch> getBranch() {
+    public static ObservableList<Branch> getBranches() {
         Transaction transaction = null;
         ObservableList<Branch> branches;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            branches = FXCollections.observableList(session.createQuery("from Branch").stream().toList());
+            branches = FXCollections.observableList(session.createQuery("from Branch").list());
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -77,7 +77,7 @@ public class BranchDao {
         }
         return branches;
     }
-    public static int deleteBranch(long id) {
+    public static int deleteBranch(int id) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();

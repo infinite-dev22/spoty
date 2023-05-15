@@ -13,35 +13,36 @@ public class Branch {
     private String city;
     private String phone;
     private String email;
-    private String country;
+    private String town;
+    private String zipCode;
     //    @ManyToMany(targetEntity = ProductDetail.class)
 //    private List<ProductDetail> productDetails;
     private Date createdAt;
     private String createdBy;
     private Date updatedAt;
     private String updatedBy;
-
     public Branch(String name,
                   String city,
                   String phone,
                   String email,
-                  String country,
-                  Date createdAt,
-                  String createdBy,
-                  Date updatedAt,
-                  String updatedBy) {
+                  String town,
+                  String zipCode) {
         this.name = name;
         this.city = city;
         this.phone = phone;
         this.email = email;
-        this.country = country;
-        this.createdAt = createdAt;
-        this.createdBy = createdBy;
-        this.updatedAt = updatedAt;
-        this.updatedBy = updatedBy;
+        this.town = town;
+        this.zipCode = zipCode;
+    }
+    public Branch() {
     }
 
-    public Branch() {
+    public String getZipCode() {
+        return zipCode;
+    }
+
+    public void setZipCode(String zipCode) {
+        this.zipCode = zipCode;
     }
 
     public int getId() {
@@ -84,12 +85,12 @@ public class Branch {
         this.email = email;
     }
 
-    public String getCountry() {
-        return country;
+    public String getTown() {
+        return town;
     }
 
-    public void setCountry(String country) {
-        this.country = country;
+    public void setTown(String town) {
+        this.town = town;
     }
 
     public Date getCreatedAt() {

@@ -7,7 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
-import org.infinite.spoty.models.Branch;
+import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.models.RoleMaster;
 import org.infinite.spoty.models.User;
 

@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.*?>
 <BorderPane xmlns:fx="http://javafx.com/fxml/1" stylesheets="@../../../styles/Common.css"
             xmlns="http://javafx.com/javafx/19"
-            fx:controller="org.infinite.spoty.views.inventory.category.CategoryController">
+            fx:controller="org.infinite.spoty.views.inventory.category.ProductCategoryController">
     <top>
         <AnchorPane styleClass="card" BorderPane.alignment="CENTER">
             <padding>

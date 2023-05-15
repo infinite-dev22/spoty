@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.paint.Color;
 import org.infinite.spoty.models.Category;
+import org.infinite.spoty.viewModels.ProductCategoryFormViewModel;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -28,6 +29,9 @@ public class ProductCategoryFormController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         dialogCategoryCode.textProperty().addListener((observable, oldValue, newValue) -> dialogCategoryCode.setTrailingIcon(null));
         dialogCategoryName.textProperty().addListener((observable, oldValue, newValue) -> dialogCategoryName.setTrailingIcon(null));
+
+        dialogCategoryCode.textProperty().bindBidirectional(ProductCategoryFormViewModel.codeProperty());
+        dialogCategoryName.textProperty().bindBidirectional(ProductCategoryFormViewModel.nameProperty());
 
         dialogOnActions();
     }

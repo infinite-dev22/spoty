@@ -8,6 +8,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
+import org.infinite.spoty.viewModels.BranchFormViewModel;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -35,6 +36,14 @@ public class BranchFormController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         dialogOnActions();
+
+        branchFormTitle.textProperty().bindBidirectional(BranchFormViewModel.titleProperty());
+        branchFormName.textProperty().bindBidirectional(BranchFormViewModel.nameProperty());
+        branchFormEmail.textProperty().bindBidirectional(BranchFormViewModel.emailProperty());
+        branchFormPhone.textProperty().bindBidirectional(BranchFormViewModel.phoneProperty());
+        branchFormTown.textProperty().bindBidirectional(BranchFormViewModel.townProperty());
+        branchFormCity.textProperty().bindBidirectional(BranchFormViewModel.cityProperty());
+        branchFormZipCode.textProperty().bindBidirectional(BranchFormViewModel.zipcodeProperty());
     }
 
     private void dialogOnActions() {
@@ -44,6 +53,11 @@ public class BranchFormController implements Initializable {
             stage.close();
         });
         branchFormSaveBtn.setOnAction((e) -> {
+            BranchFormViewModel.saveBranch();
+
+            final Node source = (Node) e.getSource();
+            final Stage stage = (Stage) source.getScene().getWindow();
+            stage.close();
         });
     }
 }

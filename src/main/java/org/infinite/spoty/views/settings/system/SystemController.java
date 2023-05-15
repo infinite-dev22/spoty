@@ -7,7 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
-import org.infinite.spoty.models.Branch;
+import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.models.Currency;
 
 import java.io.File;

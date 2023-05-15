@@ -16,7 +16,8 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.infinite.spoty.models.Category;
+import org.infinite.spoty.database.models.ProductCategory;
+import org.infinite.spoty.viewModels.ProductCategoryFormViewModel;
 
 import java.io.IOException;
 import java.net.URL;
@@ -26,9 +27,9 @@ import java.util.ResourceBundle;
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 import static org.infinite.spoty.data.SampleData.categorySampleData;
 
-public class CategoryController implements Initializable {
+public class ProductCategoryController implements Initializable {
     @FXML
-    public MFXTableView<Category> categoryTable;
+    public MFXTableView<ProductCategory> categoryTable;
     @FXML
     public MFXTextField categorySearchBar;
     @FXML
@@ -37,10 +38,10 @@ public class CategoryController implements Initializable {
     public MFXButton categoryImportBtn;
     private Dialog<ButtonType> dialog;
 
-    public CategoryController(Stage stage) {
+    public ProductCategoryController(Stage stage) {
         Platform.runLater(() -> {
             try {
-                productCategoryDialogPane(stage);
+                productProductCategoryDialogPane(stage);
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
@@ -53,22 +54,22 @@ public class CategoryController implements Initializable {
     }
 
     private void setupTable() {
-        MFXTableColumn<Category> categoryCode = new MFXTableColumn<>("Category Code", true, Comparator.comparing(Category::getCategoryCode));
-        MFXTableColumn<Category> categoryName = new MFXTableColumn<>("Category Name", true, Comparator.comparing(Category::getCategoryName));
+        MFXTableColumn<ProductCategory> categoryCode = new MFXTableColumn<>("ProductCategory Code", true, Comparator.comparing(ProductCategory::getCode));
+        MFXTableColumn<ProductCategory> categoryName = new MFXTableColumn<>("ProductCategory Name", true, Comparator.comparing(ProductCategory::getName));
 
-        categoryCode.setRowCellFactory(category -> new MFXTableRowCell<>(Category::getCategoryCode));
-        categoryName.setRowCellFactory(category -> new MFXTableRowCell<>(Category::getCategoryName));
+        categoryCode.setRowCellFactory(category -> new MFXTableRowCell<>(ProductCategory::getCode));
+        categoryName.setRowCellFactory(category -> new MFXTableRowCell<>(ProductCategory::getName));
 
         categoryTable.getTableColumns().addAll(categoryCode, categoryName);
         categoryTable.getFilters().addAll(
-                new StringFilter<>("Category Code", Category::getCategoryCode),
-                new StringFilter<>("Category Name", Category::getCategoryName)
+                new StringFilter<>("ProductCategory Code", ProductCategory::getCode),
+                new StringFilter<>("ProductCategory Name", ProductCategory::getName)
         );
-        getCategoryTable();
-        categoryTable.setItems(categorySampleData());
+        getProductCategoryTable();
+        categoryTable.setItems(ProductCategoryFormViewModel.getItems());
     }
 
-    private void getCategoryTable() {
+    private void getProductCategoryTable() {
         categoryTable = new MFXTableView<>();
         categoryTable.setPrefSize(1000, 1000);
         categoryTable.features().enableBounceEffect();
@@ -76,7 +77,7 @@ public class CategoryController implements Initializable {
         categoryTable.autosizeColumnsOnInitialization();
     }
 
-    private void productCategoryDialogPane(Stage stage) throws IOException {
+    private void productProductCategoryDialogPane(Stage stage) throws IOException {
         DialogPane dialogPane = fxmlLoader("forms/ProductCategoryForm.fxml").load();
         dialog = new Dialog<>();
         dialog.setDialogPane(dialogPane);
