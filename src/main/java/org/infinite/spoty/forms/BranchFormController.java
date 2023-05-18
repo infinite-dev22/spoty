@@ -13,6 +13,9 @@ import org.infinite.spoty.viewModels.BranchFormViewModel;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import static org.infinite.spoty.GlobalActions.closeDialog;
+import static org.infinite.spoty.viewModels.BranchFormViewModel.*;
+
 public class BranchFormController implements Initializable {
     @FXML
     public MFXFilledButton branchFormSaveBtn;
@@ -48,16 +51,12 @@ public class BranchFormController implements Initializable {
 
     private void dialogOnActions() {
         branchFormCancelBtn.setOnAction((e) -> {
-            final Node source = (Node) e.getSource();
-            final Stage stage = (Stage) source.getScene().getWindow();
-            stage.close();
+            clearBranchData();
+            closeDialog(e);
         });
         branchFormSaveBtn.setOnAction((e) -> {
-            BranchFormViewModel.saveBranch();
-
-            final Node source = (Node) e.getSource();
-            final Stage stage = (Stage) source.getScene().getWindow();
-            stage.close();
+            saveBranch();
+            closeDialog(e);
         });
     }
 }

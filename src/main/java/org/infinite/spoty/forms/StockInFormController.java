@@ -6,9 +6,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
-import org.infinite.spoty.models.Brand;
-import org.infinite.spoty.models.Category;
-import org.infinite.spoty.models.UnitOfMeasure;
+import org.infinite.spoty.database.models.Brand;
+import org.infinite.spoty.database.models.ProductCategory;
+import org.infinite.spoty.database.models.UnitOfMeasure;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -27,7 +27,7 @@ public class StockInFormController implements Initializable {
     @FXML
     public MFXTextField productDescription;
     @FXML
-    public MFXComboBox<Category> productCategory;
+    public MFXComboBox<ProductCategory> productCategory;
     @FXML
     public MFXComboBox<Brand> productBrand;
     @FXML
@@ -40,16 +40,6 @@ public class StockInFormController implements Initializable {
     public MFXComboBox<UnitOfMeasure> productPurchaseUnit;
     @FXML
     public MFXComboBox<?> productTaxType;
-
-    /**
-     * Called to initialize a views after its root element has been
-     * completely processed.
-     *
-     * @param location  The location used to resolve relative paths for the root object, or
-     *                  {@code null} if the location is not known.
-     * @param resources The resources used to localize the root object, or {@code null} if
-     *                  the root object was not localized.
-     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 

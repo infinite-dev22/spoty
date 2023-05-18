@@ -64,17 +64,18 @@ public class UnitOfMeasureDao {
         return unitOfMeasure;
     }
 
-    public static ObservableList<UnitOfMeasure> getUnitOfMeasure() {
+    public static ObservableList<UnitOfMeasure> getUnitsOfMeasure() {
         Transaction transaction = null;
         ObservableList<UnitOfMeasure> purchaseCategories;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            purchaseCategories = FXCollections.observableList(session.createQuery("from UnitOfMeasure").stream().toList());
+            purchaseCategories = FXCollections.observableList(session.createQuery("from UnitOfMeasure").list());
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
+        purchaseCategories.forEach(System.out::println);
         return purchaseCategories;
     }
 

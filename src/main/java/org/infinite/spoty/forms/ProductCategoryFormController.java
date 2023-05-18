@@ -6,14 +6,16 @@ import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
-import org.infinite.spoty.models.Category;
 import org.infinite.spoty.viewModels.ProductCategoryFormViewModel;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.GlobalActions.closeDialog;
+import static org.infinite.spoty.viewModels.ProductCategoryFormViewModel.clearProductCategoryData;
+import static org.infinite.spoty.viewModels.ProductCategoryFormViewModel.saveProductCategory;
 
 public class ProductCategoryFormController implements Initializable {
     @FXML
@@ -24,6 +26,8 @@ public class ProductCategoryFormController implements Initializable {
     public MFXFilledButton dialogSaveBtn;
     @FXML
     public MFXOutlinedButton dialogCancelBtn;
+    @FXML
+    public static Label formTitle;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -39,13 +43,11 @@ public class ProductCategoryFormController implements Initializable {
     private void dialogOnActions() {
         dialogCancelBtn.setOnAction((e) -> {
             closeDialog(e);
-            dialogCategoryCode.setText("");
-            dialogCategoryName.setText("");
+            clearProductCategoryData();
             dialogCategoryCode.setTrailingIcon(null);
             dialogCategoryName.setTrailingIcon(null);
         });
         dialogSaveBtn.setOnAction((e) -> {
-            Category category = new Category();
             MFXIconWrapper icon = new MFXIconWrapper("fas-circle-exclamation", 20, Color.RED, 20);
 
             if (dialogCategoryName.getText().length() == 0) {
@@ -55,11 +57,7 @@ public class ProductCategoryFormController implements Initializable {
                 dialogCategoryCode.setTrailingIcon(icon);
             }
             if (dialogCategoryName.getText().length() > 0 && dialogCategoryCode.getText().length() > 0) {
-                category.setCategoryCode(dialogCategoryCode.getText());
-                category.setCategoryName(dialogCategoryName.getText());
-                dialogCategoryCode.setText("");
-                dialogCategoryName.setText("");
-
+                saveProductCategory();
                 closeDialog(e);
             }
         });

@@ -16,7 +16,8 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.infinite.spoty.models.Brand;
+import org.infinite.spoty.database.models.Brand;
+import org.infinite.spoty.values.strings.Labels;
 
 import java.io.IOException;
 import java.net.URL;
@@ -24,7 +25,7 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
-import static org.infinite.spoty.data.SampleData.brandSampleData;
+import static org.infinite.spoty.viewModels.BrandFormViewModel.getItems;
 
 public class BrandController implements Initializable {
     @FXML
@@ -53,25 +54,26 @@ public class BrandController implements Initializable {
     }
 
     private void setupTable() {
-        MFXTableColumn<Brand> brandName = new MFXTableColumn<>("Name", true, Comparator.comparing(Brand::getBrandName));
-        MFXTableColumn<Brand> brandDescription = new MFXTableColumn<>("Description", true, Comparator.comparing(Brand::getBrandDescription));
+        MFXTableColumn<Brand> brandName = new MFXTableColumn<>("Name", true, Comparator.comparing(Brand::getName));
+        MFXTableColumn<Brand> brandDescription = new MFXTableColumn<>("Description", true, Comparator.comparing(Brand::getDescription));
 
-        brandName.setRowCellFactory(brand -> new MFXTableRowCell<>(Brand::getBrandName));
-        brandName.setRowCellFactory(brand -> new MFXTableRowCell<>(Brand::getBrandDescription));
+        brandName.setRowCellFactory(brand -> new MFXTableRowCell<>(Brand::getName));
+        brandDescription.setRowCellFactory(brand -> new MFXTableRowCell<>(Brand::getDescription));
+
+        brandName.prefWidthProperty().bind(brandTable.widthProperty().multiply(.5));
+        brandDescription.prefWidthProperty().bind(brandTable.widthProperty().multiply(.5));
 
         brandTable.getTableColumns().addAll(brandName, brandDescription);
         brandTable.getFilters().addAll(
-                new StringFilter<>("Name", Brand::getBrandName),
-                new StringFilter<>("Description", Brand::getBrandDescription)
+                new StringFilter<>("Name", Brand::getName),
+                new StringFilter<>("Description", Brand::getDescription)
         );
         getBrandTable();
-        brandTable.setItems(brandSampleData());
+        brandTable.setItems(getItems());
     }
 
     private void getBrandTable() {
-        brandTable = new MFXTableView<>();
         brandTable.setPrefSize(1000, 1000);
-        brandTable.autosizeColumnsOnInitialization();
         brandTable.features().enableBounceEffect();
         brandTable.features().enableSmoothScrolling(0.5);
     }

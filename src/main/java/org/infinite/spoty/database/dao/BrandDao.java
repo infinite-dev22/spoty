@@ -11,7 +11,9 @@ import org.infinite.spoty.database.util.HibernateUtil;
 import java.util.Date;
 
 public class BrandDao {
-    public static int saveBrand(Brand obj) {
+    // Image is a byte use file handling.
+    // TODO: Store files in a folder and keep the path reference as a string in the DB for performance.
+    public static void saveBrand(Brand obj) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
@@ -24,7 +26,6 @@ public class BrandDao {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
     public static int updateBrand(Brand obj, long id) {
@@ -35,7 +36,7 @@ public class BrandDao {
             brand = session.load(Brand.class, id);
             brand.setName(obj.getName());
             brand.setDescription(obj.getDescription());
-            brand.setImage(obj.getImage());
+//            brand.setImage(obj.getImage());
             brand.setUpdatedAt(new Date());
             // TODO: updated by should be a system user.
             // brand.setUpdatedBy();
@@ -62,12 +63,12 @@ public class BrandDao {
         return brand;
     }
 
-    public static ObservableList<Brand> getBrand() {
+    public static ObservableList<Brand> getBrands() {
         Transaction transaction = null;
         ObservableList<Brand> brands;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            brands = FXCollections.observableList(session.createQuery("from Brand").stream().toList());
+            brands = FXCollections.observableList(session.createQuery("from Brand").list());
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();

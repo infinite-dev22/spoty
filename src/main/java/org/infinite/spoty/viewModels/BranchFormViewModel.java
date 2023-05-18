@@ -119,14 +119,18 @@ public class BranchFormViewModel {
     public static void saveBranch() {
         Branch branch = new Branch(getName(), getCity(), getPhone(), getEmail(), getTown(), getZipcode());
         BranchDao.saveBranch(branch);
+        branchesList.clear();
+        clearBranchData();
+        getItems();
+    }
+
+    public static void clearBranchData() {
         setName("");
         setCity("");
         setPhone("");
         setEmail("");
         setTown("");
         setZipcode("");
-        branchesList.clear();
-        getItems();
     }
 
     public static ObservableList<Branch> getItems() {

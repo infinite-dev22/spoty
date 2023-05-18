@@ -4,33 +4,26 @@ import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.enums.ButtonType;
 import io.github.palexdev.materialfx.filter.StringFilter;
-import io.github.palexdev.virtualizedfx.table.TableRow;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ContextMenu;
+import javafx.geometry.Pos;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
-import javafx.scene.control.MenuItem;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.util.Callback;
-import org.infinite.spoty.database.dao.BranchDao;
 import org.infinite.spoty.database.models.Branch;
+import org.infinite.spoty.values.strings.Labels;
 import org.infinite.spoty.viewModels.BranchFormViewModel;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
@@ -79,6 +72,13 @@ public class BranchesController implements Initializable {
         branchLocation.setRowCellFactory(branch -> new MFXTableRowCell<>(Branch::getZipCode));
         branchEmail.setRowCellFactory(branch -> new MFXTableRowCell<>(Branch::getEmail));
 
+        branchName.prefWidthProperty().bind(branchTable.widthProperty().multiply(.2));
+        branchPhone.prefWidthProperty().bind(branchTable.widthProperty().multiply(.14));
+        branchCity.prefWidthProperty().bind(branchTable.widthProperty().multiply(.16));
+        branchTown.prefWidthProperty().bind(branchTable.widthProperty().multiply(.16));
+        branchLocation.prefWidthProperty().bind(branchTable.widthProperty().multiply(.16));
+        branchEmail.prefWidthProperty().bind(branchTable.widthProperty().multiply(.18));
+
         branchTable.getTableColumns().addAll(branchName, branchPhone, branchCity, branchTown, branchLocation, branchEmail);
         branchTable.getFilters().addAll(
                 new StringFilter<>("Name", Branch::getName),
@@ -90,29 +90,40 @@ public class BranchesController implements Initializable {
         );
         getBranchTable();
         branchTable.setItems(BranchFormViewModel.getItems());
-
-
-        BranchFormViewModel.branchesList.addListener((ListChangeListener<Branch>) c -> {
-            // DO NOT TEMPER WITH THE LINES BELOW.
-            // Basically just prints out to STDIO but seems to be the real deal. Not sure why it even works.
-            System.out.println("List updated");
-            // Fetches new data from the database, runs multiple times till StackoverFlow Exception. not sure why.
-            // branchTable.setItems(BranchFormViewModel.getItems());
-            // Doesn't clear the ObservableList, not sure why.
-            // BranchFormViewModel.branchesList.clear();
-        });
     }
 
     private void getBranchTable() {
         branchTable.setPrefSize(1200, 1000);
         branchTable.features().enableBounceEffect();
-        branchTable.autosizeColumnsOnInitialization();
         branchTable.features().enableSmoothScrolling(0.5);
+
+        branchTable.setTableRowFactory(t -> {
+            MFXTableRow<Branch> row = new MFXTableRow<>(branchTable, t);
+//            row.setOnMouseClicked(e -> {
+//                if (e.getButton().equals(MouseButton.SECONDARY)) {
+//                    showContextMenu().show(branchTable);
+//                }
+//            });
+            // Context menu doesn't show, not yet figured out why but must be coz show() ain't called on it yet.
+            // which when done results into an error.
+            EventHandler<ContextMenuEvent> eventHandler = event -> showContextMenu();
+            row.setOnContextMenuRequested(eventHandler);
+            return row;
+        });
+    }
+
+    private void showContextMenu() {
+        MFXContextMenu contextMenu = new MFXContextMenu(branchTable);
+
+        MFXContextMenuItem view = new MFXContextMenuItem("View");
+        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
+        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+        contextMenu.addItems(view, edit, delete);
     }
 
     @FXML
     private void branchCreateBtnClicked() {
-        BranchFormViewModel.setTitle("Create Branch");
+        BranchFormViewModel.setTitle(Labels.CREATE);
         dialog.showAndWait();
     }
 

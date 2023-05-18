@@ -63,6 +63,7 @@ public class BaseController implements Initializable {
     @FXML
     void closeIconClicked() {
         Platform.exit();
+        System.exit(0);
     }
 
     @FXML

@@ -64,13 +64,17 @@ public class ProductCategoryFormViewModel {
         ProductCategoryFormViewModel.name.set(name);
     }
 
-    public static void saveCategory() {
+    public static void saveProductCategory() {
         ProductCategory productCategory = new ProductCategory(getCode(), getName());
         ProductCategoryDao.saveProductCategory(productCategory);
+        categoriesList.clear();
+        clearProductCategoryData();
+        getItems();
+    }
+
+    public static void clearProductCategoryData() {
         setCode("");
         setName("");
-        categoriesList.clear();
-        getItems();
     }
 
     public static ObservableList<ProductCategory> getItems() {

@@ -5,14 +5,13 @@ import java.sql.Blob;
 import java.util.Date;
 
 @Entity
-@Table(name = "brand")
 public class Brand {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
     private String name;
     private String description;
-    private Blob image;
+    private byte[] image;
     private Date createdAt;
     private String createdBy;
     private Date updatedAt;
@@ -22,19 +21,9 @@ public class Brand {
     }
 
     public Brand(String name,
-                 String description,
-                 Blob image,
-                 Date createdAt,
-                 String createdBy,
-                 Date updatedAt,
-                 String updatedBy) {
+                 String description) {
         this.name = name;
         this.description = description;
-        this.image = image;
-        this.createdAt = createdAt;
-        this.createdBy = createdBy;
-        this.updatedBy = updatedBy;
-        this.updatedAt = updatedAt;
     }
 
     public Date getCreatedAt() {
@@ -93,11 +82,11 @@ public class Brand {
         this.description = description;
     }
 
-    public Blob getImage() {
+    public byte[] getImage() {
         return image;
     }
 
-    public void setImage(Blob image) {
+    public void setImage(byte[] image) {
         this.image = image;
     }
 }

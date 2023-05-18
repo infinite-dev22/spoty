@@ -9,9 +9,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
+import org.infinite.spoty.database.models.Brand;
+import org.infinite.spoty.database.models.ProductCategory;
 import org.infinite.spoty.models.Product;
-import org.infinite.spoty.models.Brand;
-import org.infinite.spoty.models.Category;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -22,7 +22,7 @@ public class ProductFormController implements Initializable {
     @FXML
     public MFXTextField productFormName;
     @FXML
-    public MFXComboBox<Category> productFormCategory;
+    public MFXComboBox<ProductCategory> productFormCategory;
     @FXML
     public MFXComboBox<Brand> productFormBrand;
     @FXML

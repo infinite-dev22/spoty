@@ -25,20 +25,12 @@ public class UnitOfMeasure {
                          String shortName,
                          UnitOfMeasure baseUnit,
                          String operator,
-                         double operatorValue,
-                         Date createdAt,
-                         String createdBy,
-                         Date updatedAt,
-                         String updatedBy) {
+                         double operatorValue) {
         this.name = name;
         this.shortName = shortName;
         this.baseUnit = baseUnit;
         this.operator = operator;
         this.operatorValue = operatorValue;
-        this.createdAt = createdAt;
-        this.createdBy = createdBy;
-        this.updatedAt = updatedAt;
-        this.updatedBy = updatedBy;
     }
 
     public UnitOfMeasure() {
@@ -70,6 +62,10 @@ public class UnitOfMeasure {
 
     public UnitOfMeasure getBaseUnit() {
         return baseUnit;
+    }
+
+    public String getBaseUnitName() {
+        return baseUnit.name;
     }
 
     public void setBaseUnit(UnitOfMeasure baseUnit) {

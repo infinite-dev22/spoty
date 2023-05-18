@@ -17,6 +17,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.infinite.spoty.database.models.ProductCategory;
+import org.infinite.spoty.forms.ProductCategoryFormController;
+import org.infinite.spoty.values.strings.Labels;
 import org.infinite.spoty.viewModels.ProductCategoryFormViewModel;
 
 import java.io.IOException;
@@ -25,7 +27,6 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
-import static org.infinite.spoty.data.SampleData.categorySampleData;
 
 public class ProductCategoryController implements Initializable {
     @FXML
@@ -54,27 +55,28 @@ public class ProductCategoryController implements Initializable {
     }
 
     private void setupTable() {
-        MFXTableColumn<ProductCategory> categoryCode = new MFXTableColumn<>("ProductCategory Code", true, Comparator.comparing(ProductCategory::getCode));
-        MFXTableColumn<ProductCategory> categoryName = new MFXTableColumn<>("ProductCategory Name", true, Comparator.comparing(ProductCategory::getName));
+        MFXTableColumn<ProductCategory> categoryCode = new MFXTableColumn<>("Code", true, Comparator.comparing(ProductCategory::getCode));
+        MFXTableColumn<ProductCategory> categoryName = new MFXTableColumn<>("Name", true, Comparator.comparing(ProductCategory::getName));
 
         categoryCode.setRowCellFactory(category -> new MFXTableRowCell<>(ProductCategory::getCode));
         categoryName.setRowCellFactory(category -> new MFXTableRowCell<>(ProductCategory::getName));
 
+        categoryCode.prefWidthProperty().bind(categoryTable.widthProperty().multiply(.5));
+        categoryName.prefWidthProperty().bind(categoryTable.widthProperty().multiply(.5));
+
         categoryTable.getTableColumns().addAll(categoryCode, categoryName);
         categoryTable.getFilters().addAll(
-                new StringFilter<>("ProductCategory Code", ProductCategory::getCode),
-                new StringFilter<>("ProductCategory Name", ProductCategory::getName)
+                new StringFilter<>("Code", ProductCategory::getCode),
+                new StringFilter<>("Name", ProductCategory::getName)
         );
         getProductCategoryTable();
         categoryTable.setItems(ProductCategoryFormViewModel.getItems());
     }
 
     private void getProductCategoryTable() {
-        categoryTable = new MFXTableView<>();
         categoryTable.setPrefSize(1000, 1000);
         categoryTable.features().enableBounceEffect();
         categoryTable.features().enableSmoothScrolling(0.5);
-        categoryTable.autosizeColumnsOnInitialization();
     }
 
     private void productProductCategoryDialogPane(Stage stage) throws IOException {
@@ -84,6 +86,8 @@ public class ProductCategoryController implements Initializable {
         dialog.initOwner(stage);
         dialog.initModality(Modality.APPLICATION_MODAL);
         dialog.initStyle(StageStyle.UNDECORATED);
+        // To update dialog title dynamically, create a bind in the viewModel with the formTile.
+        // ProductCategoryFormController.formTitle.setText(Labels.CREATE);
     }
 
     public void categoryCreateBtnClicked() {
