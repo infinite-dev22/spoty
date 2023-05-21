@@ -17,7 +17,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.infinite.spoty.database.models.Brand;
-import org.infinite.spoty.values.strings.Labels;
 
 import java.io.IOException;
 import java.net.URL;
@@ -25,7 +24,7 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
-import static org.infinite.spoty.viewModels.BrandFormViewModel.getItems;
+import static org.infinite.spoty.viewModels.BrandViewModel.getItems;
 
 public class BrandController implements Initializable {
     @FXML

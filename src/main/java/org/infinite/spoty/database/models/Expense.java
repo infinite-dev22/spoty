@@ -9,6 +9,8 @@ import javax.persistence.ManyToOne;
 import java.io.Serializable;
 import java.util.Date;
 
+// TODO: Remove uUser Property.
+
 @Entity
 public class Expense implements Serializable {
     @Id
@@ -34,56 +36,14 @@ public class Expense implements Serializable {
     private String updatedBy;
 
     public Expense(Date date,
-                   String ref,
-                   User user,
-                   ExpenseCategory expenseCategory,
-                   Branch branch,
-                   String details,
-                   double amount,
-                   Date createdAt,
-                   String createdBy,
-                   Date updatedAt,
-                   String updatedBy) {
-        this.date = date;
-        this.ref = ref;
-        this.user = user;
-        this.expenseCategory = expenseCategory;
-        this.branch = branch;
-        this.details = details;
-        this.amount = amount;
-        this.createdAt = createdAt;
-        this.createdBy = createdBy;
-        this.updatedAt = updatedAt;
-        this.updatedBy = updatedBy;
-    }
-
-    public Expense(Date date,
-                   String ref,
-                   User user,
                    ExpenseCategory expenseCategory,
                    Branch branch,
                    String details,
                    double amount) {
         this.date = date;
-        this.ref = ref;
-        this.user = user;
         this.expenseCategory = expenseCategory;
         this.branch = branch;
         this.details = details;
-        this.amount = amount;
-    }
-
-    public Expense(Date date,
-                   String ref,
-                   User user,
-                   ExpenseCategory expenseCategory,
-                   Branch branch,
-                   double amount) {
-        this.date = date;
-        this.ref = ref;
-        this.user = user;
-        this.expenseCategory = expenseCategory;
-        this.branch = branch;
         this.amount = amount;
     }
 
@@ -126,12 +86,20 @@ public class Expense implements Serializable {
         return expenseCategory;
     }
 
+    public String getExpenseCategoryName() {
+        return expenseCategory.getName();
+    }
+
     public void setExpenseCategory(ExpenseCategory expenseCategory) {
         this.expenseCategory = expenseCategory;
     }
 
     public Branch getBranch() {
         return branch;
+    }
+
+    public String getBranchName() {
+        return branch.getName();
     }
 
     public void setBranch(Branch branch) {

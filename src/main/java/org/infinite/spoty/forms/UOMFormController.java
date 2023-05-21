@@ -3,26 +3,27 @@ package org.infinite.spoty.forms;
 import io.github.palexdev.materialfx.controls.MFXComboBox;
 import io.github.palexdev.materialfx.controls.MFXIconWrapper;
 import io.github.palexdev.materialfx.controls.MFXTextField;
-import io.github.palexdev.materialfx.enums.FloatMode;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
-import javafx.beans.binding.Binding;
-import javafx.beans.binding.Bindings;
+import io.github.palexdev.virtualizedfx.cell.Cell;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.DialogPane;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import org.infinite.spoty.database.models.Brand;
+import javafx.util.Callback;
+import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.database.models.UnitOfMeasure;
-import org.infinite.spoty.viewModels.UOMFormViewModel;
+import org.infinite.spoty.viewModels.UOMViewModel;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.GlobalActions.closeDialog;
-import static org.infinite.spoty.viewModels.BrandFormViewModel.saveBrand;
 
 public class UOMFormController implements Initializable {
     @FXML
@@ -37,7 +38,9 @@ public class UOMFormController implements Initializable {
     public Label uomFormTitle;
     @FXML
     public MFXComboBox<UnitOfMeasure> uomFormBaseUnit;
+    @FXML
     public MFXTextField uomFormOperator;
+    @FXML
     public MFXTextField uomFormOperatorValue;
     @FXML
     public VBox formsHolder;
@@ -46,34 +49,38 @@ public class UOMFormController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         uomFormName.textProperty().addListener((observable, oldValue, newValue) -> uomFormName.setTrailingIcon(null));
         uomFormShortName.textProperty().addListener((observable, oldValue, newValue) -> uomFormShortName.setTrailingIcon(null));
-        uomFormBaseUnit.setItems(UOMFormViewModel.getItems());
+//        uomFormBaseUnit.setItems(UOMViewModel.getItems());
+        uomFormBaseUnit.setCellFactory(t -> new Cell<>() {
+            @Override
+            public Node getNode() {
+                return null;
+            }
 
-        uomFormName.textProperty().bindBidirectional(UOMFormViewModel.nameProperty());
-        uomFormShortName.textProperty().bindBidirectional(UOMFormViewModel.shortNameProperty());
-        uomFormBaseUnit.valueProperty().bindBidirectional(UOMFormViewModel.baseUnitProperty());
+            @Override
+            public void updateItem(UnitOfMeasure item) {
+                item.getName();
+            }
+        });
+
+        uomFormName.textProperty().bindBidirectional(UOMViewModel.nameProperty());
+        uomFormShortName.textProperty().bindBidirectional(UOMViewModel.shortNameProperty());
+        uomFormBaseUnit.valueProperty().bindBidirectional(UOMViewModel.baseUnitProperty());
+        uomFormOperator.textProperty().bindBidirectional(UOMViewModel.operatorProperty());
+
+        // bind text and double property.
+//                uomFormOperatorValue.textProperty().bind(Bindings.createStringBinding(
+//                        () -> Double.toString(UOMViewModel.operatorValueProperty().get()),
+//                        UOMViewModel.operatorValueProperty()
+//                ));
+        uomFormOperatorValue.textProperty().bindBidirectional(UOMViewModel.operatorValueProperty(), new NumberStringConverter());
 
         uomFormBaseUnit.valueProperty().addListener(e -> {
             if (!uomFormBaseUnit.getItems().isEmpty()) {
-                uomFormOperator = new MFXTextField("Operator");
-                uomFormOperatorValue = new MFXTextField("Operator Value");
-
-                uomFormOperator.setPrefWidth(400);
-                uomFormOperatorValue.setPrefWidth(400);
-
-                uomFormOperator.setFloatMode(FloatMode.BORDER);
-                uomFormOperatorValue.setFloatMode(FloatMode.BORDER);
-
-                formsHolder.getChildren().addAll(uomFormOperator, uomFormOperatorValue);
-
-                uomFormOperator.textProperty().bindBidirectional(UOMFormViewModel.operatorProperty());
-
-                // bind text and double property.
-                uomFormOperatorValue.textProperty().bind(Bindings.createStringBinding(
-                        () -> Double.toString(UOMFormViewModel.operatorValueProperty().get()),
-                        UOMFormViewModel.operatorValueProperty()
-                ));
+                formsHolder.setVisible(true);
+                formsHolder.setManaged(true);
             } else {
-                formsHolder.getChildren().removeAll(uomFormOperator, uomFormOperatorValue);
+                formsHolder.setManaged(false);
+                formsHolder.setVisible(false);
             }
         });
 
@@ -83,9 +90,11 @@ public class UOMFormController implements Initializable {
     private void setUomFormDialogOnActions() {
         uomFormCancelBtn.setOnAction((e) -> {
             closeDialog(e);
-            UOMFormViewModel.resetUOMProperties();
+            UOMViewModel.resetUOMProperties();
             uomFormName.setTrailingIcon(null);
             uomFormShortName.setTrailingIcon(null);
+            formsHolder.setVisible(false);
+            formsHolder.setManaged(false);
         });
         uomFormSaveBtn.setOnAction((e) -> {
             MFXIconWrapper icon = new MFXIconWrapper("fas-circle-exclamation", 20, Color.RED, 20);
@@ -97,7 +106,7 @@ public class UOMFormController implements Initializable {
                 uomFormShortName.setTrailingIcon(icon);
             }
             if (uomFormName.getText().length() > 0 && uomFormShortName.getText().length() > 0) {
-                UOMFormViewModel.saveUOM();
+                UOMViewModel.saveUOM();
                 closeDialog(e);
             }
         });

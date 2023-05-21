@@ -27,22 +27,15 @@ public class ExpenseCategory implements Serializable {
     @Column(name = "updated_by")
     private String updatedBy;
 
-    public ExpenseCategory(User user,
-                           String name,
+    public ExpenseCategory() {
+    }
+
+    public ExpenseCategory(String name,
+                           User user,
                            String description) {
         this.user = user;
         this.name = name;
         this.description = description;
-    }
-
-    public ExpenseCategory(User user, String name, String description, Date createdAt, String createdBy, Date updatedAt, String updatedBy) {
-        this.user = user;
-        this.name = name;
-        this.description = description;
-        this.createdAt = createdAt;
-        this.createdBy = createdBy;
-        this.updatedAt = updatedAt;
-        this.updatedBy = updatedBy;
     }
 
     public long getId() {

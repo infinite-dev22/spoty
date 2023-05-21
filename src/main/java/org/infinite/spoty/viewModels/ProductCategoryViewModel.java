@@ -9,7 +9,7 @@ import javafx.collections.ObservableList;
 import org.infinite.spoty.database.dao.ProductCategoryDao;
 import org.infinite.spoty.database.models.ProductCategory;
 
-public class ProductCategoryFormViewModel {
+public class ProductCategoryViewModel {
     private static final IntegerProperty id = new SimpleIntegerProperty(0);
     private static final StringProperty code = new SimpleStringProperty("");
     private static final StringProperty title = new SimpleStringProperty("");
@@ -25,7 +25,7 @@ public class ProductCategoryFormViewModel {
     }
 
     public static void setId(Integer id) {
-        ProductCategoryFormViewModel.id.set(id);
+        ProductCategoryViewModel.id.set(id);
     }
 
     public static String getTitle() {
@@ -37,7 +37,7 @@ public class ProductCategoryFormViewModel {
     }
 
     public static void setTitle(String title) {
-        ProductCategoryFormViewModel.title.set(title);
+        ProductCategoryViewModel.title.set(title);
     }
 
     public static String getCode() {
@@ -49,7 +49,7 @@ public class ProductCategoryFormViewModel {
     }
 
     public static void setCode(String code) {
-        ProductCategoryFormViewModel.code.set(code);
+        ProductCategoryViewModel.code.set(code);
     }
 
     public static String getName() {
@@ -61,7 +61,7 @@ public class ProductCategoryFormViewModel {
     }
 
     public static void setName(String name) {
-        ProductCategoryFormViewModel.name.set(name);
+        ProductCategoryViewModel.name.set(name);
     }
 
     public static void saveProductCategory() {

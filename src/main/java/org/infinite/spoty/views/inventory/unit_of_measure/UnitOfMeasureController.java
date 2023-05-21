@@ -18,7 +18,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.infinite.spoty.database.models.UnitOfMeasure;
-import org.infinite.spoty.viewModels.UOMFormViewModel;
+import org.infinite.spoty.viewModels.UOMViewModel;
 
 import java.io.IOException;
 import java.net.URL;
@@ -75,8 +75,7 @@ public class UnitOfMeasureController implements Initializable {
                 new DoubleFilter<>("Operation Value", UnitOfMeasure::getOperatorValue)
         );
         getUnitOfMeasureTable();
-        uomTable.setItems(UOMFormViewModel.getItems());
-        System.out.println(UOMFormViewModel.getItems());
+        uomTable.setItems(UOMViewModel.getItems());
     }
 
     private void getUnitOfMeasureTable() {

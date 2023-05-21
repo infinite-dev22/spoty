@@ -8,12 +8,14 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
-import org.infinite.spoty.models.ExpenseCategory;
+import org.infinite.spoty.viewModels.ExpenseCategoryViewModel;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.GlobalActions.closeDialog;
+import static org.infinite.spoty.viewModels.ExpenseCategoryViewModel.resetProperties;
+import static org.infinite.spoty.viewModels.ExpenseCategoryViewModel.saveExpenseCategory;
 
 public class ExpenseCategoryFormController implements Initializable {
     @FXML
@@ -29,19 +31,19 @@ public class ExpenseCategoryFormController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        categoryExpenseFormName.textProperty().bindBidirectional(ExpenseCategoryViewModel.nameProperty());
+        categoryExpenseFormDescription.textProperty().bindBidirectional(ExpenseCategoryViewModel.descriptionProperty());
         dialogOnActions();
     }
 
     private void dialogOnActions() {
         categoryExpenseFormCancelBtn.setOnAction((e) -> {
             closeDialog(e);
-            categoryExpenseFormName.setText("");
-            categoryExpenseFormDescription.setText("");
+            resetProperties();
             categoryExpenseFormName.setTrailingIcon(null);
             categoryExpenseFormDescription.setTrailingIcon(null);
         });
         categoryExpenseFormSaveBtn.setOnAction((e) -> {
-            ExpenseCategory expenseCategory = new ExpenseCategory();
             MFXIconWrapper icon = new MFXIconWrapper("fas-circle-exclamation", 20, Color.RED, 20);
 
             if (categoryExpenseFormName.getText().length() == 0) {
@@ -51,11 +53,8 @@ public class ExpenseCategoryFormController implements Initializable {
                 categoryExpenseFormDescription.setTrailingIcon(icon);
             }
             if (categoryExpenseFormName.getText().length() > 0 && categoryExpenseFormDescription.getText().length() > 0) {
-                expenseCategory.setCategoryName(categoryExpenseFormName.getText());
-                expenseCategory.setCategoryDescription(categoryExpenseFormDescription.getText());
-                categoryExpenseFormName.setText("");
-                categoryExpenseFormDescription.setText("");
-
+                saveExpenseCategory();
+                resetProperties();
                 closeDialog(e);
             }
         });

@@ -7,14 +7,14 @@ import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
-import org.infinite.spoty.viewModels.BrandFormViewModel;
+import org.infinite.spoty.viewModels.BrandViewModel;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.GlobalActions.closeDialog;
-import static org.infinite.spoty.viewModels.BrandFormViewModel.clearBrandData;
-import static org.infinite.spoty.viewModels.BrandFormViewModel.saveBrand;
+import static org.infinite.spoty.viewModels.BrandViewModel.clearBrandData;
+import static org.infinite.spoty.viewModels.BrandViewModel.saveBrand;
 
 public class BrandFormController implements Initializable {
     public Label brandFormTitle;
@@ -28,8 +28,8 @@ public class BrandFormController implements Initializable {
         brandFormName.textProperty().addListener((observable, oldValue, newValue) -> brandFormName.setTrailingIcon(null));
         brandFormDescription.textProperty().addListener((observable, oldValue, newValue) -> brandFormDescription.setTrailingIcon(null));
 
-        brandFormName.textProperty().bindBidirectional(BrandFormViewModel.nameProperty());
-        brandFormDescription.textProperty().bindBidirectional(BrandFormViewModel.descriptionProperty());
+        brandFormName.textProperty().bindBidirectional(BrandViewModel.nameProperty());
+        brandFormDescription.textProperty().bindBidirectional(BrandViewModel.descriptionProperty());
 
         dialogOnActions();
     }

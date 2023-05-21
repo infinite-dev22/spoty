@@ -14,8 +14,8 @@
     <content>
         <VBox spacing="20.0">
             <MFXDatePicker fx:id="expenseFormDate" floatMode="BORDER" floatingText="Date" prefWidth="400.0"/>
-            <MFXComboBox fx:id="expenseFormWarehouse" floatMode="BORDER" floatingText="Warehouse" prefWidth="400.0"/>
-            <MFXComboBox fx:id="expenseFormCategory" floatMode="BORDER" floatingText="Expense Category" layoutX="21.0"
+            <MFXComboBox fx:id="expenseFormBranch" floatMode="BORDER" floatingText="Branch" prefWidth="400.0"/>
+            <MFXComboBox fx:id="expenseFormCategory" floatMode="BORDER" floatingText="Category" layoutX="21.0"
                          layoutY="79.0" prefWidth="400.0"/>
             <MFXTextField fx:id="expenseFormAmount" floatMode="BORDER" floatingText="Amount" prefWidth="400.0"/>
             <MFXTextField fx:id="expenseFormDetails" floatMode="BORDER" floatingText="Details" prefWidth="400.0"/>
@@ -36,10 +36,8 @@
     </padding>
     <header>
         <VBox spacing="5.0">
-            <children>
-                <Label fx:id="expenseFormTitle" text="Create"/>
-                <Separator prefWidth="200.0"/>
-            </children>
+            <Label fx:id="expenseFormTitle" text="Create"/>
+            <Separator prefWidth="200.0"/>
         </VBox>
     </header>
 </DialogPane>

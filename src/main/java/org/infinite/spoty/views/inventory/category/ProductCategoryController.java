@@ -17,9 +17,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.infinite.spoty.database.models.ProductCategory;
-import org.infinite.spoty.forms.ProductCategoryFormController;
-import org.infinite.spoty.values.strings.Labels;
-import org.infinite.spoty.viewModels.ProductCategoryFormViewModel;
+import org.infinite.spoty.viewModels.ProductCategoryViewModel;
 
 import java.io.IOException;
 import java.net.URL;
@@ -70,7 +68,7 @@ public class ProductCategoryController implements Initializable {
                 new StringFilter<>("Name", ProductCategory::getName)
         );
         getProductCategoryTable();
-        categoryTable.setItems(ProductCategoryFormViewModel.getItems());
+        categoryTable.setItems(ProductCategoryViewModel.getItems());
     }
 
     private void getProductCategoryTable() {

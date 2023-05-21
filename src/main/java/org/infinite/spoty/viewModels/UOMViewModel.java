@@ -6,7 +6,7 @@ import javafx.collections.ObservableList;
 import org.infinite.spoty.database.dao.UnitOfMeasureDao;
 import org.infinite.spoty.database.models.UnitOfMeasure;
 
-public class UOMFormViewModel {
+public class UOMViewModel {
     private static final IntegerProperty id = new SimpleIntegerProperty(0);
     private static final StringProperty name = new SimpleStringProperty("");
     private static final StringProperty shortName = new SimpleStringProperty("");
@@ -15,13 +15,14 @@ public class UOMFormViewModel {
     private static final DoubleProperty operatorValue = new SimpleDoubleProperty(0);
 
     private static final ObservableList<UnitOfMeasure> uomList = FXCollections.observableArrayList();
+    private static final ObservableList<UnitOfMeasure> uomNameList = FXCollections.observableArrayList();
 
     public static int getId() {
         return id.get();
     }
 
     public static void setId(int id) {
-        UOMFormViewModel.id.set(id);
+        UOMViewModel.id.set(id);
     }
 
     public static IntegerProperty idProperty() {
@@ -33,7 +34,7 @@ public class UOMFormViewModel {
     }
 
     public static void setName(String name) {
-        UOMFormViewModel.name.set(name);
+        UOMViewModel.name.set(name);
     }
 
     public static StringProperty nameProperty() {
@@ -45,7 +46,7 @@ public class UOMFormViewModel {
     }
 
     public static void setShortName(String shortName) {
-        UOMFormViewModel.shortName.set(shortName);
+        UOMViewModel.shortName.set(shortName);
     }
 
     public static StringProperty shortNameProperty() {
@@ -57,7 +58,7 @@ public class UOMFormViewModel {
     }
 
     public static void setBaseUnit(UnitOfMeasure baseUnit) {
-        UOMFormViewModel.baseUnit.set(baseUnit);
+        UOMViewModel.baseUnit.set(baseUnit);
     }
 
     public static ObjectProperty<UnitOfMeasure> baseUnitProperty() {
@@ -69,7 +70,7 @@ public class UOMFormViewModel {
     }
 
     public static void setOperator(String operator) {
-        UOMFormViewModel.operator.set(operator);
+        UOMViewModel.operator.set(operator);
     }
 
     public static StringProperty operatorProperty() {
@@ -81,7 +82,7 @@ public class UOMFormViewModel {
     }
 
     public static void setOperatorValue(double operatorValue) {
-        UOMFormViewModel.operatorValue.set(operatorValue);
+        UOMViewModel.operatorValue.set(operatorValue);
     }
 
     public static DoubleProperty operatorValueProperty() {
@@ -109,4 +110,9 @@ public class UOMFormViewModel {
         uomList.addAll(UnitOfMeasureDao.getUnitsOfMeasure());
         return uomList;
     }
+
+//    public static ObservableList<UnitOfMeasure> getItemNames() {
+//        uomNameList.addAll(UnitOfMeasureDao.getUnitsOfMeasure());
+//        return uomNameList;
+//    }
 }

@@ -18,7 +18,8 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.infinite.spoty.models.Expense;
+import org.infinite.spoty.database.models.Expense;
+import org.infinite.spoty.viewModels.ExpenseViewModel;
 
 import java.io.IOException;
 import java.net.URL;
@@ -26,7 +27,6 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
-import static org.infinite.spoty.data.SampleData.expenseSampleData;
 
 public class ExpenseController implements Initializable {
     @FXML
@@ -57,30 +57,37 @@ public class ExpenseController implements Initializable {
     }
 
     private void setupTable() {
-        MFXTableColumn<Expense> expenseDate = new MFXTableColumn<>("Date", true, Comparator.comparing(Expense::getExpenseDate));
-        MFXTableColumn<Expense> expenseReference = new MFXTableColumn<>("Ref No.", true, Comparator.comparing(Expense::getExpenseReference));
-        MFXTableColumn<Expense> expenseName = new MFXTableColumn<>("Name", true, Comparator.comparing(Expense::getExpenseName));
-        MFXTableColumn<Expense> expenseAmount = new MFXTableColumn<>("Amount", true, Comparator.comparing(Expense::getExpenseAmount));
-        MFXTableColumn<Expense> expenseCategory = new MFXTableColumn<>("Category", true, Comparator.comparing(Expense::getExpenseCategory));
-        MFXTableColumn<Expense> expenseBranch = new MFXTableColumn<>("Branch", true, Comparator.comparing(Expense::getExpenseBranch));
+        MFXTableColumn<Expense> expenseDate = new MFXTableColumn<>("Date", true, Comparator.comparing(Expense::getDate));
+        MFXTableColumn<Expense> expenseRef = new MFXTableColumn<>("Reference No.", true, Comparator.comparing(Expense::getRef));
+        MFXTableColumn<Expense> expenseName = new MFXTableColumn<>("Name", true, Comparator.comparing(Expense::getBranchName));
+        MFXTableColumn<Expense> expenseAmount = new MFXTableColumn<>("Amount", true, Comparator.comparing(Expense::getAmount));
+        MFXTableColumn<Expense> expenseCategory = new MFXTableColumn<>("Category", true, Comparator.comparing(Expense::getExpenseCategoryName));
+        MFXTableColumn<Expense> expenseBranch = new MFXTableColumn<>("Branch", true, Comparator.comparing(Expense::getBranchName));
 
-        expenseDate.setRowCellFactory(expense -> new MFXTableRowCell<>(Expense::getExpenseDate));
-        expenseReference.setRowCellFactory(expense -> new MFXTableRowCell<>(Expense::getExpenseReference));
-        expenseName.setRowCellFactory(expense -> new MFXTableRowCell<>(Expense::getExpenseName));
-        expenseAmount.setRowCellFactory(expense -> new MFXTableRowCell<>(Expense::getExpenseAmount));
-        expenseCategory.setRowCellFactory(expense -> new MFXTableRowCell<>(Expense::getExpenseCategory));
-        expenseBranch.setRowCellFactory(expense -> new MFXTableRowCell<>(Expense::getExpenseBranch));
+        expenseDate.setRowCellFactory(expense -> new MFXTableRowCell<>(Expense::getDate));
+        expenseRef.setRowCellFactory(expense -> new MFXTableRowCell<>(Expense::getRef));
+        expenseName.setRowCellFactory(expense -> new MFXTableRowCell<>(Expense::getBranchName));
+        expenseAmount.setRowCellFactory(expense -> new MFXTableRowCell<>(Expense::getAmount));
+        expenseCategory.setRowCellFactory(expense -> new MFXTableRowCell<>(Expense::getExpenseCategoryName));
+        expenseBranch.setRowCellFactory(expense -> new MFXTableRowCell<>(Expense::getBranchName));
 
-        expenseTable.getTableColumns().addAll(expenseDate, expenseReference, expenseName, expenseAmount, expenseCategory, expenseBranch);
+        expenseDate.prefWidthProperty().bind(expenseTable.widthProperty().multiply(.1));
+        expenseRef.prefWidthProperty().bind(expenseTable.widthProperty().multiply(.16));
+        expenseName.prefWidthProperty().bind(expenseTable.widthProperty().multiply(.2));
+        expenseAmount.prefWidthProperty().bind(expenseTable.widthProperty().multiply(.2));
+        expenseCategory.prefWidthProperty().bind(expenseTable.widthProperty().multiply(.2));
+        expenseBranch.prefWidthProperty().bind(expenseTable.widthProperty().multiply(.2));
+
+        expenseTable.getTableColumns().addAll(expenseDate, expenseRef, expenseName, expenseAmount, expenseCategory, expenseBranch);
         expenseTable.getFilters().addAll(
-                new StringFilter<>("Reference", Expense::getExpenseReference),
-                new StringFilter<>("Name", Expense::getExpenseName),
-                new DoubleFilter<>("Amount", Expense::getExpenseAmount),
-                new StringFilter<>("Category", Expense::getExpenseCategory),
-                new StringFilter<>("Branch", Expense::getExpenseBranch)
+                new StringFilter<>("Reference No.", Expense::getRef),
+                new StringFilter<>("Name", Expense::getBranchName),
+                new DoubleFilter<>("Amount", Expense::getAmount),
+                new StringFilter<>("Category", Expense::getExpenseCategoryName),
+                new StringFilter<>("Branch", Expense::getBranchName)
         );
         styleExpenseTable();
-        expenseTable.setItems(expenseSampleData());
+        expenseTable.setItems(ExpenseViewModel.getExpenses());
     }
 
     private void styleExpenseTable() {

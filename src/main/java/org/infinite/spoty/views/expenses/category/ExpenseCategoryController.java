@@ -17,7 +17,8 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.infinite.spoty.models.ExpenseCategory;
+import org.infinite.spoty.database.models.ExpenseCategory;
+import org.infinite.spoty.viewModels.ExpenseCategoryViewModel;
 
 import java.io.IOException;
 import java.net.URL;
@@ -25,9 +26,8 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
-import static org.infinite.spoty.data.SampleData.expenseCategorySampleData;
 
-public class CategoryController implements Initializable {
+public class ExpenseCategoryController implements Initializable {
     @FXML
     public MFXTextField categoryExpenseSearchBar;
     @FXML
@@ -40,7 +40,7 @@ public class CategoryController implements Initializable {
     private MFXTableView<ExpenseCategory> categoryExpenseTable;
     private Dialog<ButtonType> dialog;
 
-    public CategoryController(Stage stage) {
+    public ExpenseCategoryController(Stage stage) {
         Platform.runLater(() -> {
             try {
                 expenseCategoryFormDialogPane(stage);
@@ -56,26 +56,28 @@ public class CategoryController implements Initializable {
     }
 
     private void setupTable() {
-        MFXTableColumn<ExpenseCategory> categoryName = new MFXTableColumn<>("Name", true, Comparator.comparing(ExpenseCategory::getCategoryName));
-        MFXTableColumn<ExpenseCategory> categoryDescription = new MFXTableColumn<>("Description", true, Comparator.comparing(ExpenseCategory::getCategoryDescription));
+        MFXTableColumn<ExpenseCategory> categoryName = new MFXTableColumn<>("Name", true, Comparator.comparing(ExpenseCategory::getName));
+        MFXTableColumn<ExpenseCategory> categoryDescription = new MFXTableColumn<>("Description", true, Comparator.comparing(ExpenseCategory::getDescription));
 
-        categoryName.setRowCellFactory(category -> new MFXTableRowCell<>(ExpenseCategory::getCategoryName));
-        categoryDescription.setRowCellFactory(category -> new MFXTableRowCell<>(ExpenseCategory::getCategoryDescription));
+        categoryName.setRowCellFactory(category -> new MFXTableRowCell<>(ExpenseCategory::getName));
+        categoryDescription.setRowCellFactory(category -> new MFXTableRowCell<>(ExpenseCategory::getDescription));
+
+        categoryName.prefWidthProperty().bind(categoryExpenseTable.widthProperty().multiply(.5));
+        categoryDescription.prefWidthProperty().bind(categoryExpenseTable.widthProperty().multiply(.5));
 
         categoryExpenseTable.getTableColumns().addAll(categoryName, categoryDescription);
         categoryExpenseTable.getFilters().addAll(
-                new StringFilter<>("Name", ExpenseCategory::getCategoryName),
-                new StringFilter<>("Description", ExpenseCategory::getCategoryDescription)
+                new StringFilter<>("Name", ExpenseCategory::getName),
+                new StringFilter<>("Description", ExpenseCategory::getDescription)
         );
 
         styleExpenseCategoryTable();
-        categoryExpenseTable.setItems(expenseCategorySampleData());
+        categoryExpenseTable.setItems(ExpenseCategoryViewModel.getCategories());
     }
 
     private void styleExpenseCategoryTable() {
         categoryExpenseTable.setPrefSize(1200, 1000);
         categoryExpenseTable.features().enableBounceEffect();
-        categoryExpenseTable.autosizeColumnsOnInitialization();
         categoryExpenseTable.features().enableSmoothScrolling(0.5);
     }
 

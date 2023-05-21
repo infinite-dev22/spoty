@@ -18,7 +18,10 @@
                 <MFXTextField fx:id="uomFormName" floatMode="BORDER" floatingText="Name" prefWidth="400.0"/>
                 <MFXTextField fx:id="uomFormShortName" floatMode="BORDER" floatingText="Short Name" prefWidth="400.0"/>
                 <MFXComboBox fx:id="uomFormBaseUnit" floatMode="BORDER" floatingText="Base Unit" prefWidth="400.0"/>
-                <VBox fx:id="formsHolder" spacing="20.0"/>
+                <VBox fx:id="formsHolder" spacing="20.0" visible="false" managed="false">
+                    <MFXTextField fx:id="uomFormOperator" floatMode="BORDER" floatingText="Operator" prefWidth="400.0"/>
+                    <MFXTextField fx:id="uomFormOperatorValue" floatMode="BORDER" floatingText="Operator Value" prefWidth="400.0"/>
+                </VBox>
                 <HBox alignment="CENTER_RIGHT" spacing="20.0">
                     <VBox.margin>
                         <Insets top="10.0"/>

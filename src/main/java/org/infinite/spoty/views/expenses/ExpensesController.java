@@ -9,7 +9,7 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.infinite.spoty.views.expenses.category.CategoryController;
+import org.infinite.spoty.views.expenses.category.ExpenseCategoryController;
 import org.infinite.spoty.views.expenses.expense.ExpenseController;
 
 import java.net.URL;
@@ -34,7 +34,7 @@ public class ExpensesController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         MFXLoader loader = new MFXLoader();
-        loader.addView(MFXLoaderBean.of("CATEGORY", loadURL("fxml/expenses/category/Category.fxml")).setBeanToNodeMapper(() -> createToggle("fas-cubes-stacked", "Category")).setControllerFactory(c1 -> new CategoryController(stage)).get());
+        loader.addView(MFXLoaderBean.of("CATEGORY", loadURL("fxml/expenses/category/Category.fxml")).setBeanToNodeMapper(() -> createToggle("fas-cubes-stacked", "Category")).setControllerFactory(c1 -> new ExpenseCategoryController(stage)).get());
         loader.addView(MFXLoaderBean.of("EXPENSE", loadURL("fxml/expenses/expense/Expense.fxml")).setBeanToNodeMapper(() -> createToggle("fas-money-check-dollar", "Expense")).setControllerFactory(c1 -> new ExpenseController(stage)).setDefaultRoot(true).get());
         loader.setOnLoadedAction(beans -> {
             List<ToggleButton> nodes = beans.stream()

@@ -8,7 +8,6 @@ import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.input.ContextMenuEvent;
@@ -19,7 +18,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.values.strings.Labels;
-import org.infinite.spoty.viewModels.BranchFormViewModel;
+import org.infinite.spoty.viewModels.BranchViewModel;
 
 import java.io.IOException;
 import java.net.URL;
@@ -89,7 +88,7 @@ public class BranchesController implements Initializable {
                 new StringFilter<>("Email", Branch::getEmail)
         );
         getBranchTable();
-        branchTable.setItems(BranchFormViewModel.getItems());
+        branchTable.setItems(BranchViewModel.getBranches());
     }
 
     private void getBranchTable() {
@@ -123,7 +122,7 @@ public class BranchesController implements Initializable {
 
     @FXML
     private void branchCreateBtnClicked() {
-        BranchFormViewModel.setTitle(Labels.CREATE);
+        BranchViewModel.setTitle(Labels.CREATE);
         dialog.showAndWait();
     }
 

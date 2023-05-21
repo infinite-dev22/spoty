@@ -9,7 +9,7 @@ import javafx.collections.ObservableList;
 import org.infinite.spoty.database.dao.BrandDao;
 import org.infinite.spoty.database.models.Brand;
 
-public class BrandFormViewModel {
+public class BrandViewModel {
     private static final IntegerProperty id = new SimpleIntegerProperty(0);
     private static final StringProperty name = new SimpleStringProperty("");
     private static final StringProperty description = new SimpleStringProperty("");
@@ -19,7 +19,7 @@ public class BrandFormViewModel {
         return id.get();
     }
     public static void setId(int id) {
-        BrandFormViewModel.id.set(id);
+        BrandViewModel.id.set(id);
     }
     public static IntegerProperty idProperty() {
         return id;
@@ -30,7 +30,7 @@ public class BrandFormViewModel {
     }
 
     public static void setName(String name) {
-        BrandFormViewModel.name.set(name);
+        BrandViewModel.name.set(name);
     }
 
     public static StringProperty nameProperty() {
@@ -42,7 +42,7 @@ public class BrandFormViewModel {
     }
 
     public static void setDescription(String description) {
-        BrandFormViewModel.description.set(description);
+        BrandViewModel.description.set(description);
     }
 
     public static StringProperty descriptionProperty() {

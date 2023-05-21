@@ -8,14 +8,14 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
-import org.infinite.spoty.viewModels.ProductCategoryFormViewModel;
+import org.infinite.spoty.viewModels.ProductCategoryViewModel;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.GlobalActions.closeDialog;
-import static org.infinite.spoty.viewModels.ProductCategoryFormViewModel.clearProductCategoryData;
-import static org.infinite.spoty.viewModels.ProductCategoryFormViewModel.saveProductCategory;
+import static org.infinite.spoty.viewModels.ProductCategoryViewModel.clearProductCategoryData;
+import static org.infinite.spoty.viewModels.ProductCategoryViewModel.saveProductCategory;
 
 public class ProductCategoryFormController implements Initializable {
     @FXML
@@ -34,8 +34,8 @@ public class ProductCategoryFormController implements Initializable {
         dialogCategoryCode.textProperty().addListener((observable, oldValue, newValue) -> dialogCategoryCode.setTrailingIcon(null));
         dialogCategoryName.textProperty().addListener((observable, oldValue, newValue) -> dialogCategoryName.setTrailingIcon(null));
 
-        dialogCategoryCode.textProperty().bindBidirectional(ProductCategoryFormViewModel.codeProperty());
-        dialogCategoryName.textProperty().bindBidirectional(ProductCategoryFormViewModel.nameProperty());
+        dialogCategoryCode.textProperty().bindBidirectional(ProductCategoryViewModel.codeProperty());
+        dialogCategoryName.textProperty().bindBidirectional(ProductCategoryViewModel.nameProperty());
 
         dialogOnActions();
     }

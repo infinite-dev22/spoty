@@ -66,7 +66,7 @@ public class ExpenseDao {
         return expense;
     }
 
-    public static ObservableList<Expense> getExpense() {
+    public static ObservableList<Expense> getExpenses() {
         Transaction transaction = null;
         ObservableList<Expense> expenses;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {

@@ -5,16 +5,14 @@ import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.stage.Stage;
-import org.infinite.spoty.viewModels.BranchFormViewModel;
+import org.infinite.spoty.viewModels.BranchViewModel;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.GlobalActions.closeDialog;
-import static org.infinite.spoty.viewModels.BranchFormViewModel.*;
+import static org.infinite.spoty.viewModels.BranchViewModel.*;
 
 public class BranchFormController implements Initializable {
     @FXML
@@ -40,13 +38,13 @@ public class BranchFormController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         dialogOnActions();
 
-        branchFormTitle.textProperty().bindBidirectional(BranchFormViewModel.titleProperty());
-        branchFormName.textProperty().bindBidirectional(BranchFormViewModel.nameProperty());
-        branchFormEmail.textProperty().bindBidirectional(BranchFormViewModel.emailProperty());
-        branchFormPhone.textProperty().bindBidirectional(BranchFormViewModel.phoneProperty());
-        branchFormTown.textProperty().bindBidirectional(BranchFormViewModel.townProperty());
-        branchFormCity.textProperty().bindBidirectional(BranchFormViewModel.cityProperty());
-        branchFormZipCode.textProperty().bindBidirectional(BranchFormViewModel.zipcodeProperty());
+        branchFormTitle.textProperty().bindBidirectional(BranchViewModel.titleProperty());
+        branchFormName.textProperty().bindBidirectional(BranchViewModel.nameProperty());
+        branchFormEmail.textProperty().bindBidirectional(BranchViewModel.emailProperty());
+        branchFormPhone.textProperty().bindBidirectional(BranchViewModel.phoneProperty());
+        branchFormTown.textProperty().bindBidirectional(BranchViewModel.townProperty());
+        branchFormCity.textProperty().bindBidirectional(BranchViewModel.cityProperty());
+        branchFormZipCode.textProperty().bindBidirectional(BranchViewModel.zipcodeProperty());
     }
 
     private void dialogOnActions() {

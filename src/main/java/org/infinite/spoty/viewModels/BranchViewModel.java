@@ -9,7 +9,7 @@ import javafx.collections.ObservableList;
 import org.infinite.spoty.database.dao.BranchDao;
 import org.infinite.spoty.database.models.Branch;
 
-public class BranchFormViewModel {
+public class BranchViewModel {
     private static final IntegerProperty id = new SimpleIntegerProperty(0);
     private static final StringProperty title = new SimpleStringProperty("");
     private static final StringProperty name = new SimpleStringProperty("");
@@ -29,7 +29,7 @@ public class BranchFormViewModel {
     }
 
     public static void setId(Integer id) {
-        BranchFormViewModel.id.set(id);
+        BranchViewModel.id.set(id);
     }
 
     public static String getName() {
@@ -41,7 +41,7 @@ public class BranchFormViewModel {
     }
 
     public static void setName(String name) {
-        BranchFormViewModel.name.set(name);
+        BranchViewModel.name.set(name);
     }
 
     public static String getEmail() {
@@ -53,7 +53,7 @@ public class BranchFormViewModel {
     }
 
     public static void setEmail(String email) {
-        BranchFormViewModel.email.set(email);
+        BranchViewModel.email.set(email);
     }
 
     public static String getPhone() {
@@ -65,7 +65,7 @@ public class BranchFormViewModel {
     }
 
     public static void setPhone(String phone) {
-        BranchFormViewModel.phone.set(phone);
+        BranchViewModel.phone.set(phone);
     }
 
     public static String getTown() {
@@ -77,7 +77,7 @@ public class BranchFormViewModel {
     }
 
     public static void setTown(String town) {
-        BranchFormViewModel.town.set(town);
+        BranchViewModel.town.set(town);
     }
 
     public static String getCity() {
@@ -89,7 +89,7 @@ public class BranchFormViewModel {
     }
 
     public static void setCity(String city) {
-        BranchFormViewModel.city.set(city);
+        BranchViewModel.city.set(city);
     }
 
     public static String getZipcode() {
@@ -101,7 +101,7 @@ public class BranchFormViewModel {
     }
 
     public static void setZipcode(String zipcode) {
-        BranchFormViewModel.zipcode.set(zipcode);
+        BranchViewModel.zipcode.set(zipcode);
     }
 
     public static String getTitle() {
@@ -113,7 +113,7 @@ public class BranchFormViewModel {
     }
 
     public static void setTitle(String title) {
-        BranchFormViewModel.title.set(title);
+        BranchViewModel.title.set(title);
     }
 
     public static void saveBranch() {
@@ -121,7 +121,7 @@ public class BranchFormViewModel {
         BranchDao.saveBranch(branch);
         branchesList.clear();
         clearBranchData();
-        getItems();
+        getBranches();
     }
 
     public static void clearBranchData() {
@@ -133,7 +133,7 @@ public class BranchFormViewModel {
         setZipcode("");
     }
 
-    public static ObservableList<Branch> getItems() {
+    public static ObservableList<Branch> getBranches() {
         branchesList.addAll(BranchDao.getBranches());
         return branchesList;
     }

@@ -6,13 +6,18 @@ import io.github.palexdev.materialfx.controls.MFXIconWrapper;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
+import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
+import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.database.models.Branch;
-import org.infinite.spoty.models.Expense;
-import org.infinite.spoty.models.ExpenseCategory;
+import org.infinite.spoty.database.models.Expense;
+import org.infinite.spoty.database.models.ExpenseCategory;
+import org.infinite.spoty.viewModels.BranchViewModel;
+import org.infinite.spoty.viewModels.ExpenseCategoryViewModel;
+import org.infinite.spoty.viewModels.ExpenseViewModel;
 
 import java.net.URL;
 import java.text.ParseException;
@@ -41,21 +46,24 @@ public class ExpenseFormController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        expenseFormBranch.setItems(BranchViewModel.getBranches());
+        expenseFormCategory.setItems(ExpenseCategoryViewModel.getCategories());
+
+        expenseFormDate.textProperty().bindBidirectional(ExpenseViewModel.dateProperty());
+        expenseFormBranch.valueProperty().bindBidirectional(ExpenseViewModel.branchProperty());
+        expenseFormCategory.valueProperty().bindBidirectional(ExpenseViewModel.categoryProperty());
+        expenseFormAmount.textProperty().bindBidirectional(ExpenseViewModel.amountProperty(), new NumberStringConverter());
+        expenseFormDetails.textProperty().bindBidirectional(ExpenseViewModel.detailsProperty());
+
         dialogOnActions();
     }
 
     private void dialogOnActions() {
         expenseFormCancelBtn.setOnAction((e) -> {
             closeDialog(e);
-            expenseFormDate.setText("");
-            expenseFormBranch.setText("");
-            expenseFormCategory.setText("");
-            expenseFormAmount.setText("");
-            expenseFormDetails.setText("");
+            ExpenseViewModel.resetProperties();
         });
         expenseFormSaveBtn.setOnAction((e) -> {
-            Expense expense = new Expense();
-            String dateFormat = "yyyy-MM-dd";
             MFXIconWrapper icon = new MFXIconWrapper("fas-circle-exclamation", 20, Color.RED, 20);
 
             if (expenseFormDate.getText().length() == 0) {
@@ -78,16 +86,7 @@ public class ExpenseFormController implements Initializable {
                     && expenseFormCategory.getText().length() > 0
                     && expenseFormAmount.getText().length() > 0
                     && expenseFormDetails.getText().length() > 0) {
-                try {
-                    expense.setExpenseDate(new SimpleDateFormat(dateFormat).parse(expenseFormDate.getText()));
-                } catch (ParseException ex) {
-                    throw new RuntimeException(ex);
-                }
-                expense.setExpenseBranch(expenseFormBranch.getText());
-                expense.setExpenseCategory(expenseFormCategory.getText());
-                expense.setExpenseAmount(Double.parseDouble(expenseFormAmount.getText()));
-                expense.setExpenseDetails(expenseFormDetails.getText());
-
+                ExpenseViewModel.saveExpense();
                 closeDialog(e);
             }
         });

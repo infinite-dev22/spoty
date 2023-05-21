@@ -11,7 +11,8 @@ public class UnitOfMeasure {
     private int id;
     private String name;
     private String shortName;
-    @ManyToOne
+    @OneToOne
+    @JoinColumn(referencedColumnName = "id")
     private UnitOfMeasure baseUnit;
     private String operator;
     @Column(name = "operator_value")
