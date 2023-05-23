@@ -9,7 +9,7 @@ import java.util.List;
 public class ProductDetail implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    private int id;
     @ManyToOne
     private ProductMaster product;
     @ManyToMany(targetEntity = Branch.class)
@@ -21,14 +21,14 @@ public class ProductDetail implements Serializable {
     @ManyToOne
     private UnitOfMeasure purchaseUnit;
     private String name;
-    private long quantity;
+    private int quantity;
     private double cost;
     private double price;
     private double netTax;
     @Column(name = "tax_type")
     private String taxType;
     @Column(name = "stock_alert")
-    private long stockAlert;
+    private int stockAlert;
     private String serialNumber;
     @Column(name = "created_at")
     private Date createdAt;
@@ -47,12 +47,12 @@ public class ProductDetail implements Serializable {
                          UnitOfMeasure saleUnit,
                          UnitOfMeasure purchaseUnit,
                          String name,
-                         long quantity,
+                         int quantity,
                          double cost,
                          double price,
                          double netTax,
                          String taxType,
-                         long stockAlert,
+                         int stockAlert,
                          String serialNumber) {
         this.product = product;
         this.branch = branch;
@@ -69,11 +69,11 @@ public class ProductDetail implements Serializable {
         this.serialNumber = serialNumber;
     }
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -93,11 +93,11 @@ public class ProductDetail implements Serializable {
         this.name = name;
     }
 
-    public long getQuantity() {
+    public int getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(long quantity) {
+    public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
 
@@ -165,11 +165,11 @@ public class ProductDetail implements Serializable {
         this.taxType = taxType;
     }
 
-    public long getStockAlert() {
+    public int getStockAlert() {
         return stockAlert;
     }
 
-    public void setStockAlert(long stockAlert) {
+    public void setStockAlert(int stockAlert) {
         this.stockAlert = stockAlert;
     }
 

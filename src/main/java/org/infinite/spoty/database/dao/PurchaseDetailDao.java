@@ -69,7 +69,7 @@ public class PurchaseDetailDao {
         return purchaseDetail;
     }
 
-    public static ObservableList<PurchaseDetail> getPurchaseDetail() {
+    public static ObservableList<PurchaseDetail> fetchPurchaseDetails() {
         Transaction transaction = null;
         ObservableList<PurchaseDetail> purchaseCategories;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {

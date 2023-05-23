@@ -33,8 +33,8 @@ public class PurchaseDetail implements Serializable {
     private String updatedBy;
     public PurchaseDetail() {
     }
-    public PurchaseDetail(double cost,
-                          PurchaseMaster purchase,
+    public PurchaseDetail(PurchaseMaster purchase,
+                          double cost,
                           double netTax,
                           String taxType,
                           double discount,
