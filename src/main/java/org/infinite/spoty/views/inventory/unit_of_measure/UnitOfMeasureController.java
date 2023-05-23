@@ -62,9 +62,15 @@ public class UnitOfMeasureController implements Initializable {
 
         uomName.setRowCellFactory(brand -> new MFXTableRowCell<>(UnitOfMeasure::getName));
         uomShortName.setRowCellFactory(brand -> new MFXTableRowCell<>(UnitOfMeasure::getShortName));
-        uomBaseUnit.setRowCellFactory(brand -> new MFXTableRowCell<>(UnitOfMeasure::getBaseUnit));
+        uomBaseUnit.setRowCellFactory(brand -> new MFXTableRowCell<>(UnitOfMeasure::getBaseUnitName));
         uomOperator.setRowCellFactory(brand -> new MFXTableRowCell<>(UnitOfMeasure::getOperator));
         uomOperationValue.setRowCellFactory(brand -> new MFXTableRowCell<>(UnitOfMeasure::getOperatorValue));
+
+        uomName.prefWidthProperty().bind(uomTable.widthProperty().multiply(.25));
+        uomShortName.prefWidthProperty().bind(uomTable.widthProperty().multiply(.25));
+        uomBaseUnit.prefWidthProperty().bind(uomTable.widthProperty().multiply(.25));
+        uomOperator.prefWidthProperty().bind(uomTable.widthProperty().multiply(.2));
+        uomOperationValue.prefWidthProperty().bind(uomTable.widthProperty().multiply(.15));
 
         uomTable.getTableColumns().addAll(uomName, uomShortName, uomBaseUnit, uomOperator, uomOperationValue);
         uomTable.getFilters().addAll(

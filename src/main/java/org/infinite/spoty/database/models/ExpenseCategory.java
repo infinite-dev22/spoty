@@ -10,7 +10,6 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Entity
-@Table(name = "expense_category")
 public class ExpenseCategory implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

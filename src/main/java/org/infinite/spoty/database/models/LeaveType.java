@@ -8,7 +8,6 @@ import javax.persistence.GenerationType;
 import java.util.Date;
 
 @Entity
-@Table(name = "leave_type")
 public class LeaveType {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

@@ -12,7 +12,7 @@ public class ExpenseCategoryViewModel {
     private static final StringProperty name = new SimpleStringProperty("");
     private static final ObjectProperty<User> user = new SimpleObjectProperty<>(null);
     private static final StringProperty description = new SimpleStringProperty("");
-    private static final ObservableList<ExpenseCategory> categoryList = FXCollections.observableArrayList();
+    public static final ObservableList<ExpenseCategory> categoryList = FXCollections.observableArrayList();
 
     public static int getId() {
         return id.get();

@@ -10,12 +10,10 @@ public class UOMViewModel {
     private static final IntegerProperty id = new SimpleIntegerProperty(0);
     private static final StringProperty name = new SimpleStringProperty("");
     private static final StringProperty shortName = new SimpleStringProperty("");
-    private static final ObjectProperty<UnitOfMeasure> baseUnit = new SimpleObjectProperty<>(null);
-    private static final StringProperty operator = new SimpleStringProperty("");
-    private static final DoubleProperty operatorValue = new SimpleDoubleProperty(0);
-
-    private static final ObservableList<UnitOfMeasure> uomList = FXCollections.observableArrayList();
-    private static final ObservableList<UnitOfMeasure> uomNameList = FXCollections.observableArrayList();
+    private static final ObjectProperty<UnitOfMeasure> baseUnit = new SimpleObjectProperty<>();
+    private static final StringProperty operator = new SimpleStringProperty("*");
+    private static final DoubleProperty operatorValue = new SimpleDoubleProperty(1);
+    public static final ObservableList<UnitOfMeasure> uomList = FXCollections.observableArrayList();
 
     public static int getId() {
         return id.get();
@@ -102,17 +100,13 @@ public class UOMViewModel {
         setName("");
         setShortName("");
         setBaseUnit(null);
-        setOperator("");
-        setOperatorValue(0);
+        setOperator("*");
+        setOperatorValue(1);
     }
 
     public static ObservableList<UnitOfMeasure> getItems() {
+        uomList.clear();
         uomList.addAll(UnitOfMeasureDao.getUnitsOfMeasure());
         return uomList;
     }
-
-//    public static ObservableList<UnitOfMeasure> getItemNames() {
-//        uomNameList.addAll(UnitOfMeasureDao.getUnitsOfMeasure());
-//        return uomNameList;
-//    }
 }

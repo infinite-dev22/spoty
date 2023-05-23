@@ -10,7 +10,6 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name = "permission")
 public class Permission {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -18,7 +17,7 @@ public class Permission {
     private String name;
     private String label;
     private String description;
-    @ManyToMany(targetEntity = Permission.class)
+    @ManyToMany(targetEntity = Role.class)
     private List<Role> role;
     private Date createdAt;
     private String createdBy;

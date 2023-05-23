@@ -6,8 +6,6 @@ import io.github.palexdev.materialfx.controls.MFXTableView;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.enums.ButtonType;
-import io.github.palexdev.materialfx.filter.DoubleFilter;
-import io.github.palexdev.materialfx.filter.IntegerFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -19,7 +17,8 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.infinite.spoty.models.Customer;
+import org.infinite.spoty.database.models.Customer;
+import org.infinite.spoty.viewModels.CustomerVewModel;
 
 import java.io.IOException;
 import java.net.URL;
@@ -27,7 +26,6 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
-import static org.infinite.spoty.data.SampleData.customerSampleData;
 
 public class CustomersController implements Initializable {
     @FXML
@@ -58,39 +56,42 @@ public class CustomersController implements Initializable {
     }
 
     private void setupTable() {
-        MFXTableColumn<Customer> customerCode = new MFXTableColumn<>("Code", true, Comparator.comparing(Customer::getCustomerCode));
-        MFXTableColumn<Customer> customerName = new MFXTableColumn<>("Name", true, Comparator.comparing(Customer::getCustomerName));
-        MFXTableColumn<Customer> customerPhone = new MFXTableColumn<>("Phone", true, Comparator.comparing(Customer::getCustomerPhoneNumber));
-        MFXTableColumn<Customer> customerEmail = new MFXTableColumn<>("Email", true, Comparator.comparing(Customer::getCustomerEmail));
-        MFXTableColumn<Customer> customerTax = new MFXTableColumn<>("Tax No.", true, Comparator.comparing(Customer::getCustomerTaxNumber));
-        MFXTableColumn<Customer> customerSalesDue = new MFXTableColumn<>("Sales Due", true, Comparator.comparing(Customer::getCustomerTotalSaleDue));
-        MFXTableColumn<Customer> customerSellReturnDue = new MFXTableColumn<>("Returns Due", true, Comparator.comparing(Customer::getCustomerTotalSellReturnDue));
+        MFXTableColumn<Customer> customerCode = new MFXTableColumn<>("Code", true, Comparator.comparing(Customer::getCode));
+        MFXTableColumn<Customer> customerName = new MFXTableColumn<>("Name", true, Comparator.comparing(Customer::getName));
+        MFXTableColumn<Customer> customerPhone = new MFXTableColumn<>("Phone", true, Comparator.comparing(Customer::getPhone));
+        MFXTableColumn<Customer> customerEmail = new MFXTableColumn<>("Email", true, Comparator.comparing(Customer::getEmail));
+        MFXTableColumn<Customer> customerTax = new MFXTableColumn<>("Tax No.", true, Comparator.comparing(Customer::getTaxNumber));
+//        MFXTableColumn<Customer> customerSalesDue = new MFXTableColumn<>("Sales Due", true, Comparator.comparing(Customer::getTotalSaleDue));
+//        MFXTableColumn<Customer> customerSellReturnDue = new MFXTableColumn<>("Returns Due", true, Comparator.comparing(Customer::getTotalSellReturnDue));
 
-        customerCode.setRowCellFactory(customer -> new MFXTableRowCell<>(Customer::getCustomerCode));
-        customerName.setRowCellFactory(customer -> new MFXTableRowCell<>(Customer::getCustomerName));
-        customerPhone.setRowCellFactory(customer -> new MFXTableRowCell<>(Customer::getCustomerPhoneNumber));
-        customerEmail.setRowCellFactory(customer -> new MFXTableRowCell<>(Customer::getCustomerEmail));
-        customerTax.setRowCellFactory(customer -> new MFXTableRowCell<>(Customer::getCustomerTaxNumber));
-        customerSalesDue.setRowCellFactory(customer -> new MFXTableRowCell<>(Customer::getCustomerTotalSaleDue));
-        customerSellReturnDue.setRowCellFactory(customer -> new MFXTableRowCell<>(Customer::getCustomerTotalSellReturnDue));
+        customerCode.setRowCellFactory(customer -> new MFXTableRowCell<>(Customer::getCode));
+        customerName.setRowCellFactory(customer -> new MFXTableRowCell<>(Customer::getName));
+        customerPhone.setRowCellFactory(customer -> new MFXTableRowCell<>(Customer::getPhone));
+        customerEmail.setRowCellFactory(customer -> new MFXTableRowCell<>(Customer::getEmail));
+        customerTax.setRowCellFactory(customer -> new MFXTableRowCell<>(Customer::getTaxNumber));
+//        customerSalesDue.setRowCellFactory(customer -> new MFXTableRowCell<>(Customer::getTotalSaleDue));
+//        customerSellReturnDue.setRowCellFactory(customer -> new MFXTableRowCell<>(Customer::getTotalSellReturnDue));
 
-        customersTable.getTableColumns().addAll(customerCode, customerName, customerPhone, customerEmail, customerTax, customerSalesDue, customerSellReturnDue);
+        customerCode.prefWidthProperty().bind(customersTable.widthProperty().multiply(.1));
+        customerName.prefWidthProperty().bind(customersTable.widthProperty().multiply(.3));
+        customerPhone.prefWidthProperty().bind(customersTable.widthProperty().multiply(.2));
+        customerEmail.prefWidthProperty().bind(customersTable.widthProperty().multiply(.2));
+        customerTax.prefWidthProperty().bind(customersTable.widthProperty().multiply(.2));
+
+        customersTable.getTableColumns().addAll(customerCode, customerName, customerPhone, customerEmail, customerTax);
         customersTable.getFilters().addAll(
-                new IntegerFilter<>("Code", Customer::getCustomerCode),
-                new StringFilter<>("Name", Customer::getCustomerName),
-                new StringFilter<>("Phone", Customer::getCustomerPhoneNumber),
-                new StringFilter<>("Email", Customer::getCustomerEmail),
-                new StringFilter<>("Tax No.", Customer::getCustomerTaxNumber),
-                new DoubleFilter<>("Sales Due", Customer::getCustomerTotalSaleDue),
-                new DoubleFilter<>("Returns Due", Customer::getCustomerTotalSellReturnDue)
+                new StringFilter<>("Code", Customer::getCode),
+                new StringFilter<>("Name", Customer::getName),
+                new StringFilter<>("Phone", Customer::getPhone),
+                new StringFilter<>("Email", Customer::getEmail),
+                new StringFilter<>("Tax No.", Customer::getTaxNumber)
         );
         styleCustomerTable();
-        customersTable.setItems(customerSampleData());
+        customersTable.setItems(CustomerVewModel.getCustomers());
     }
 
     private void styleCustomerTable() {
         customersTable.setPrefSize(1000, 1000);
-        customersTable.autosizeColumnsOnInitialization();
         customersTable.features().enableBounceEffect();
         customersTable.features().enableSmoothScrolling(0.5);
     }

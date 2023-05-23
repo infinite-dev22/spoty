@@ -6,8 +6,6 @@ import io.github.palexdev.materialfx.controls.MFXTableView;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.enums.ButtonType;
-import io.github.palexdev.materialfx.filter.DoubleFilter;
-import io.github.palexdev.materialfx.filter.IntegerFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -19,7 +17,8 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.infinite.spoty.models.Supplier;
+import org.infinite.spoty.database.models.Supplier;
+import org.infinite.spoty.viewModels.SupplierVewModel;
 
 import java.io.IOException;
 import java.net.URL;
@@ -27,7 +26,6 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
-import static org.infinite.spoty.data.SampleData.supplierSampleData;
 
 public class SuppliersController implements Initializable {
     @FXML
@@ -37,7 +35,7 @@ public class SuppliersController implements Initializable {
     @FXML
     public MFXButton supplierImportBtn;
     @FXML
-    public MFXTableView<Supplier> supplierTable;
+    public MFXTableView<Supplier> suppliersTable;
     @FXML
     public BorderPane suppliersContentPane;
     private Dialog<ButtonType> dialog;
@@ -58,41 +56,44 @@ public class SuppliersController implements Initializable {
     }
 
     private void setupTable() {
-        MFXTableColumn<Supplier> supplierCode = new MFXTableColumn<>("Code", true, Comparator.comparing(Supplier::getSupplierCode));
-        MFXTableColumn<Supplier> supplierName = new MFXTableColumn<>("Name", true, Comparator.comparing(Supplier::getSupplierName));
-        MFXTableColumn<Supplier> supplierPhone = new MFXTableColumn<>("Phone", true, Comparator.comparing(Supplier::getSupplierPhoneNumber));
-        MFXTableColumn<Supplier> supplierEmail = new MFXTableColumn<>("Email", true, Comparator.comparing(Supplier::getSupplierEmail));
-        MFXTableColumn<Supplier> supplierTax = new MFXTableColumn<>("Tax No.", true, Comparator.comparing(Supplier::getSupplierTaxNumber));
-        MFXTableColumn<Supplier> supplierPurchasesDue = new MFXTableColumn<>("Purchases Due", true, Comparator.comparing(Supplier::getSupplierTotalPurchaseDue));
-        MFXTableColumn<Supplier> supplierPurchaseReturnDue = new MFXTableColumn<>("Returns Due", true, Comparator.comparing(Supplier::getSupplierTotalPurchaseReturnDue));
+        MFXTableColumn<Supplier> supplierCode = new MFXTableColumn<>("Code", true, Comparator.comparing(Supplier::getCode));
+        MFXTableColumn<Supplier> supplierName = new MFXTableColumn<>("Name", true, Comparator.comparing(Supplier::getName));
+        MFXTableColumn<Supplier> supplierPhone = new MFXTableColumn<>("Phone", true, Comparator.comparing(Supplier::getPhone));
+        MFXTableColumn<Supplier> supplierEmail = new MFXTableColumn<>("Email", true, Comparator.comparing(Supplier::getEmail));
+        MFXTableColumn<Supplier> supplierTax = new MFXTableColumn<>("Tax No.", true, Comparator.comparing(Supplier::getTaxNumber));
+//        MFXTableColumn<Supplier> supplierPurchasesDue = new MFXTableColumn<>("Purchases Due", true, Comparator.comparing(Supplier::getTotalPurchaseDue));
+//        MFXTableColumn<Supplier> supplierPurchaseReturnDue = new MFXTableColumn<>("Returns Due", true, Comparator.comparing(Supplier::getTotalPurchaseReturnDue));
 
-        supplierCode.setRowCellFactory(supplier -> new MFXTableRowCell<>(Supplier::getSupplierCode));
-        supplierName.setRowCellFactory(supplier -> new MFXTableRowCell<>(Supplier::getSupplierName));
-        supplierPhone.setRowCellFactory(supplier -> new MFXTableRowCell<>(Supplier::getSupplierPhoneNumber));
-        supplierEmail.setRowCellFactory(supplier -> new MFXTableRowCell<>(Supplier::getSupplierEmail));
-        supplierTax.setRowCellFactory(supplier -> new MFXTableRowCell<>(Supplier::getSupplierTaxNumber));
-        supplierPurchasesDue.setRowCellFactory(supplier -> new MFXTableRowCell<>(Supplier::getSupplierTotalPurchaseDue));
-        supplierPurchaseReturnDue.setRowCellFactory(supplier -> new MFXTableRowCell<>(Supplier::getSupplierTotalPurchaseReturnDue));
+        supplierCode.setRowCellFactory(supplier -> new MFXTableRowCell<>(Supplier::getCode));
+        supplierName.setRowCellFactory(supplier -> new MFXTableRowCell<>(Supplier::getName));
+        supplierPhone.setRowCellFactory(supplier -> new MFXTableRowCell<>(Supplier::getPhone));
+        supplierEmail.setRowCellFactory(supplier -> new MFXTableRowCell<>(Supplier::getEmail));
+        supplierTax.setRowCellFactory(supplier -> new MFXTableRowCell<>(Supplier::getTaxNumber));
+//        supplierPurchasesDue.setRowCellFactory(supplier -> new MFXTableRowCell<>(Supplier::getTotalPurchaseDue));
+//        supplierPurchaseReturnDue.setRowCellFactory(supplier -> new MFXTableRowCell<>(Supplier::getTotalPurchaseReturnDue));
 
-        supplierTable.getTableColumns().addAll(supplierCode, supplierName, supplierPhone, supplierEmail, supplierTax, supplierPurchasesDue, supplierPurchaseReturnDue);
-        supplierTable.getFilters().addAll(
-                new IntegerFilter<>("Code", Supplier::getSupplierCode),
-                new StringFilter<>("Name", Supplier::getSupplierName),
-                new StringFilter<>("Phone", Supplier::getSupplierPhoneNumber),
-                new StringFilter<>("Email", Supplier::getSupplierEmail),
-                new StringFilter<>("Tax No.", Supplier::getSupplierTaxNumber),
-                new DoubleFilter<>("Purchases Due", Supplier::getSupplierTotalPurchaseDue),
-                new DoubleFilter<>("Returns Due", Supplier::getSupplierTotalPurchaseReturnDue)
+        supplierCode.prefWidthProperty().bind(suppliersTable.widthProperty().multiply(.1));
+        supplierName.prefWidthProperty().bind(suppliersTable.widthProperty().multiply(.3));
+        supplierPhone.prefWidthProperty().bind(suppliersTable.widthProperty().multiply(.2));
+        supplierEmail.prefWidthProperty().bind(suppliersTable.widthProperty().multiply(.2));
+        supplierTax.prefWidthProperty().bind(suppliersTable.widthProperty().multiply(.2));
+
+        suppliersTable.getTableColumns().addAll(supplierCode, supplierName, supplierPhone, supplierEmail, supplierTax);
+        suppliersTable.getFilters().addAll(
+                new StringFilter<>("Code", Supplier::getCode),
+                new StringFilter<>("Name", Supplier::getName),
+                new StringFilter<>("Phone", Supplier::getPhone),
+                new StringFilter<>("Email", Supplier::getEmail),
+                new StringFilter<>("Tax No.", Supplier::getTaxNumber)
         );
-        getSupplierTable();
-        supplierTable.setItems(supplierSampleData());
+        getTable();
+        suppliersTable.setItems(SupplierVewModel.getSuppliers());
     }
 
-    private void getSupplierTable() {
-        supplierTable.setPrefSize(1000, 1000);
-        supplierTable.autosizeColumnsOnInitialization();
-        supplierTable.features().enableBounceEffect();
-        supplierTable.features().enableSmoothScrolling(0.5);
+    private void getTable() {
+        suppliersTable.setPrefSize(1000, 1000);
+        suppliersTable.features().enableBounceEffect();
+        suppliersTable.features().enableSmoothScrolling(0.5);
     }
 
     private void supplierFormDialogPane(Stage stage) throws IOException {

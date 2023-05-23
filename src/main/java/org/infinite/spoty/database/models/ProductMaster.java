@@ -2,11 +2,8 @@ package org.infinite.spoty.database.models;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.sql.Blob;
 import java.util.Date;
-
-// TODO: Add Bi-Directional referencing between ProductMaster and ProductDetail.
-// TODO: Remove cost, taxes, stock alerts, serials, price and the units from ProductMaster, add them to ProductDetail.
+import java.util.List;
 
 @Entity
 public class ProductMaster implements Serializable {
@@ -18,31 +15,16 @@ public class ProductMaster implements Serializable {
     @Column(name = "barcode_type")
     private String barcodeType;
     private String name;
-    private double cost;
-    private double price;
     @ManyToOne
     private ProductCategory category;
     @ManyToOne
     private Brand brand;
-    @ManyToOne
-    private UnitOfMeasure unit;
-    @ManyToOne
-    private UnitOfMeasure saleUnit;
-    @ManyToOne
-    private UnitOfMeasure purchaseUnit;
-    private double netTax;
-    @Column(name = "tax_type")
-    private String taxType;
-    private Blob image;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "product")
+    private List<ProductDetail> productDetails;
+    private byte[] image;
     private String note;
-    @Column(name = "stock_alert")
-    private long stockAlert;
-    @Column(nullable = false, name = "has_serial")
-    private boolean hasSerial;
     @Column(nullable = false, name = "not_sale")
     private boolean notForSale;
-    @Column(nullable = false, name = "is_variant")
-    private boolean isVariant;
     @Column(nullable = false, name = "is_active")
     private boolean isActive;
     @Column(name = "created_at")
@@ -53,27 +35,24 @@ public class ProductMaster implements Serializable {
     private Date updatedAt;
     @Column(name = "updated_by")
     private String updatedBy;
-    public ProductMaster(String code, String barcodeType, String name, double cost, double price, ProductCategory category, Brand brand, UnitOfMeasure unit, UnitOfMeasure saleUnit, UnitOfMeasure purchaseUnit, double netTax, String taxType, Blob image, String note, long stockAlert, boolean hasSerial, boolean notForSale, boolean isVariant, boolean isActive) {
-        this.code = code;
+
+    public ProductMaster(String barcodeType,
+                         String name,
+                         double price,
+                         ProductCategory category,
+                         Brand brand,
+                         String note,
+                         boolean notForSale,
+                         boolean isActive) {
         this.barcodeType = barcodeType;
         this.name = name;
-        this.cost = cost;
-        this.price = price;
         this.category = category;
         this.brand = brand;
-        this.unit = unit;
-        this.saleUnit = saleUnit;
-        this.purchaseUnit = purchaseUnit;
-        this.netTax = netTax;
-        this.taxType = taxType;
-        this.image = image;
         this.note = note;
-        this.stockAlert = stockAlert;
-        this.hasSerial = hasSerial;
         this.notForSale = notForSale;
-        this.isVariant = isVariant;
         this.isActive = isActive;
     }
+
     public ProductMaster() {
     }
 
@@ -109,24 +88,12 @@ public class ProductMaster implements Serializable {
         this.name = name;
     }
 
-    public double getCost() {
-        return cost;
-    }
-
-    public void setCost(double cost) {
-        this.cost = cost;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
     public ProductCategory getCategory() {
         return category;
+    }
+
+    public String getCategoryName() {
+        return category.getName();
     }
 
     public void setCategory(ProductCategory category) {
@@ -137,55 +104,19 @@ public class ProductMaster implements Serializable {
         return brand;
     }
 
+    public String getBrandName() {
+        return brand.getName();
+    }
+
     public void setBrand(Brand brand) {
         this.brand = brand;
     }
 
-    public UnitOfMeasure getUnit() {
-        return unit;
-    }
-
-    public void setUnit(UnitOfMeasure unit) {
-        this.unit = unit;
-    }
-
-    public UnitOfMeasure getSaleUnit() {
-        return saleUnit;
-    }
-
-    public void setSaleUnit(UnitOfMeasure saleUnit) {
-        this.saleUnit = saleUnit;
-    }
-
-    public UnitOfMeasure getPurchaseUnit() {
-        return purchaseUnit;
-    }
-
-    public void setPurchaseUnit(UnitOfMeasure purchaseUnit) {
-        this.purchaseUnit = purchaseUnit;
-    }
-
-    public double getNetTax() {
-        return netTax;
-    }
-
-    public void setNetTax(double netTax) {
-        this.netTax = netTax;
-    }
-
-    public String getTaxType() {
-        return taxType;
-    }
-
-    public void setTaxType(String taxType) {
-        this.taxType = taxType;
-    }
-
-    public Blob getImage() {
+    public byte[] getImage() {
         return image;
     }
 
-    public void setImage(Blob image) {
+    public void setImage(byte[] image) {
         this.image = image;
     }
 
@@ -197,20 +128,12 @@ public class ProductMaster implements Serializable {
         this.note = note;
     }
 
-    public long getStockAlert() {
-        return stockAlert;
+    public List<ProductDetail> getProductDetails() {
+        return productDetails;
     }
 
-    public void setStockAlert(long stockAlert) {
-        this.stockAlert = stockAlert;
-    }
-
-    public boolean isHasSerial() {
-        return hasSerial;
-    }
-
-    public void setHasSerial(boolean hasSerial) {
-        this.hasSerial = hasSerial;
+    public void setProductDetails(List<ProductDetail> productDetails) {
+        this.productDetails = productDetails;
     }
 
     public boolean isNotForSale() {
@@ -219,14 +142,6 @@ public class ProductMaster implements Serializable {
 
     public void setNotForSale(boolean notForSale) {
         this.notForSale = notForSale;
-    }
-
-    public boolean isVariant() {
-        return isVariant;
-    }
-
-    public void setVariant(boolean variant) {
-        isVariant = variant;
     }
 
     public boolean isActive() {

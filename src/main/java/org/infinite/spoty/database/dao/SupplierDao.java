@@ -67,7 +67,7 @@ public class SupplierDao {
         return supplier;
     }
 
-    public static ObservableList<Supplier> getSupplier() {
+    public static ObservableList<Supplier> fetchSuppliers() {
         Transaction transaction = null;
         ObservableList<Supplier> purchaseCategories;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {

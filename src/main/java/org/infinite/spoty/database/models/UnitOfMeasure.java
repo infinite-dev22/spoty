@@ -4,7 +4,6 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "unit_of_measure")
 public class UnitOfMeasure {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -12,7 +11,6 @@ public class UnitOfMeasure {
     private String name;
     private String shortName;
     @OneToOne
-    @JoinColumn(referencedColumnName = "id")
     private UnitOfMeasure baseUnit;
     private String operator;
     @Column(name = "operator_value")
@@ -66,7 +64,10 @@ public class UnitOfMeasure {
     }
 
     public String getBaseUnitName() {
-        return baseUnit.name;
+        if (baseUnit != null)
+            return baseUnit.name;
+        else
+            return null;
     }
 
     public void setBaseUnit(UnitOfMeasure baseUnit) {

@@ -28,13 +28,13 @@
                               GridPane.columnIndex="1"/>
                 <MFXTextField fx:id="customerFormPhone" floatMode="BORDER" floatingText="Phone" prefWidth="300.0"
                               GridPane.rowIndex="1"/>
-                <MFXTextField fx:id="customerFormTown" floatMode="BORDER" floatingText="Town" prefWidth="300.0"
-                              GridPane.columnIndex="1" GridPane.rowIndex="1"/>
                 <MFXTextField fx:id="customerFormCity" floatMode="BORDER" floatingText="City" prefWidth="300.0"
+                              GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                <MFXTextField fx:id="customerFormCountry" floatMode="BORDER" floatingText="Country" prefWidth="300.0"
                               GridPane.rowIndex="2"/>
-                <MFXTextField fx:id="customerFormTaxNumber" floatMode="BORDER" floatingText="Tax No." prefWidth="300.0"
-                              GridPane.columnIndex="1" GridPane.rowIndex="2"/>
                 <MFXTextField fx:id="customerFormAddress" floatMode="BORDER" floatingText="Address" prefWidth="300.0"
+                              GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                <MFXTextField fx:id="customerFormTaxNumber" floatMode="BORDER" floatingText="Tax No." prefWidth="300.0"
                               GridPane.rowIndex="3"/>
             </GridPane>
             <HBox alignment="CENTER_RIGHT" spacing="20.0">

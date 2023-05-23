@@ -9,7 +9,6 @@ import javax.persistence.GenerationType;
 import java.util.Date;
 
 @Entity
-@Table(name = "supplier")
 public class Supplier {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -29,29 +28,19 @@ public class Supplier {
     private String updatedBy;
 
     public Supplier(String name,
-                    String code,
                     String email,
                     String phone,
                     String taxNumber,
                     String address,
                     String city,
-                    String country,
-                    Date createdAt,
-                    String createdBy,
-                    Date updatedAt,
-                    String updatedBy) {
+                    String country) {
         this.name = name;
-        this.code = code;
         this.email = email;
         this.phone = phone;
         this.taxNumber = taxNumber;
         this.address = address;
         this.city = city;
         this.country = country;
-        this.createdAt = createdAt;
-        this.createdBy = createdBy;
-        this.updatedAt = updatedAt;
-        this.updatedBy = updatedBy;
     }
 
     public Supplier() {

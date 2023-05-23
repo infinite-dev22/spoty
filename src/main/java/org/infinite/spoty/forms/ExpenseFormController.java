@@ -6,22 +6,19 @@ import io.github.palexdev.materialfx.controls.MFXIconWrapper;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
-import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
+import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.database.models.Branch;
-import org.infinite.spoty.database.models.Expense;
 import org.infinite.spoty.database.models.ExpenseCategory;
 import org.infinite.spoty.viewModels.BranchViewModel;
 import org.infinite.spoty.viewModels.ExpenseCategoryViewModel;
 import org.infinite.spoty.viewModels.ExpenseViewModel;
 
 import java.net.URL;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.GlobalActions.closeDialog;
@@ -46,8 +43,38 @@ public class ExpenseFormController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        expenseFormBranch.setItems(BranchViewModel.getBranches());
-        expenseFormCategory.setItems(ExpenseCategoryViewModel.getCategories());
+        expenseFormBranch.setItems(BranchViewModel.branchesList);
+        expenseFormCategory.setItems(ExpenseCategoryViewModel.categoryList);
+
+        // Set Object property as combo display name.
+        expenseFormBranch.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(Branch object) {
+                if (object != null)
+                    return object.getName();
+                else
+                    return null;
+            }
+
+            @Override
+            public Branch fromString(String string) {
+                return null;
+            }
+        });
+        expenseFormCategory.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(ExpenseCategory object) {
+                if (object != null)
+                    return object.getName();
+                else
+                    return null;
+            }
+
+            @Override
+            public ExpenseCategory fromString(String string) {
+                return null;
+            }
+        });
 
         expenseFormDate.textProperty().bindBidirectional(ExpenseViewModel.dateProperty());
         expenseFormBranch.valueProperty().bindBidirectional(ExpenseViewModel.branchProperty());

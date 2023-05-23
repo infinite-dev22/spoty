@@ -9,7 +9,6 @@ import javax.persistence.GenerationType;
 import java.util.Date;
 
 @Entity
-@Table(name = "currency")
 public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -20,7 +19,6 @@ public class Customer {
     private String phone;
     private String city;
     private String address;
-    @Column(name = "customer")
     private String taxNumber;
     private String country;
     private Date createdAt = null;
@@ -29,29 +27,19 @@ public class Customer {
     private String updatedBy = null;
 
     public Customer(String name,
-                    String code,
                     String email,
                     String phone,
                     String city,
                     String address,
                     String taxNumber,
-                    String country,
-                    Date createdAt,
-                    String createdBy,
-                    Date updatedAt,
-                    String updatedBy) {
+                    String country) {
         this.name = name;
-        this.code = code;
         this.email = email;
         this.phone = phone;
         this.city = city;
         this.address = address;
         this.taxNumber = taxNumber;
         this.country = country;
-        this.createdAt = createdAt;
-        this.createdBy = createdBy;
-        this.updatedAt = updatedAt;
-        this.updatedBy = updatedBy;
     }
 
     public Customer() {

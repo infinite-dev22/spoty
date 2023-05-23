@@ -75,7 +75,6 @@ public class UnitOfMeasureDao {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        purchaseCategories.forEach(System.out::println);
         return purchaseCategories;
     }
 

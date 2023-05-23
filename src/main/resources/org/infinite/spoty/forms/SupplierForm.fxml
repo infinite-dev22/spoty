@@ -28,13 +28,13 @@
                               GridPane.columnIndex="1"/>
                 <MFXTextField fx:id="supplierFormPhone" floatMode="BORDER" floatingText="Phone" prefWidth="300.0"
                               GridPane.rowIndex="1"/>
-                <MFXTextField fx:id="supplierFormTown" floatMode="BORDER" floatingText="Town" prefWidth="300.0"
-                              GridPane.columnIndex="1" GridPane.rowIndex="1"/>
                 <MFXTextField fx:id="supplierFormCity" floatMode="BORDER" floatingText="City" prefWidth="300.0"
+                              GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                <MFXTextField fx:id="supplierFormCountry" floatMode="BORDER" floatingText="Country" prefWidth="300.0"
                               GridPane.rowIndex="2"/>
-                <MFXTextField fx:id="supplierFormTaxNumber" floatMode="BORDER" floatingText="Tax No." prefWidth="300.0"
-                              GridPane.columnIndex="1" GridPane.rowIndex="2"/>
                 <MFXTextField fx:id="supplierFormAddress" floatMode="BORDER" floatingText="Address" prefWidth="300.0"
+                              GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                <MFXTextField fx:id="supplierFormTaxNumber" floatMode="BORDER" floatingText="Tax No." prefWidth="300.0"
                               GridPane.rowIndex="3"/>
             </GridPane>
             <HBox alignment="CENTER_RIGHT" spacing="20.0">
@@ -51,10 +51,8 @@
     </padding>
     <header>
         <VBox spacing="5.0">
-            <children>
-                <Label fx:id="supplierFormTitle" text="Create"/>
-                <Separator prefWidth="200.0"/>
-            </children>
+            <Label fx:id="supplierFormTitle" text="Create"/>
+            <Separator prefWidth="200.0"/>
         </VBox>
     </header>
 </DialogPane>

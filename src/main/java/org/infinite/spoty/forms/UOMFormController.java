@@ -16,7 +16,9 @@ import javafx.scene.control.ListView;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
+import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
+import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.UnitOfMeasure;
 import org.infinite.spoty.viewModels.UOMViewModel;
 
@@ -49,16 +51,19 @@ public class UOMFormController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         uomFormName.textProperty().addListener((observable, oldValue, newValue) -> uomFormName.setTrailingIcon(null));
         uomFormShortName.textProperty().addListener((observable, oldValue, newValue) -> uomFormShortName.setTrailingIcon(null));
-//        uomFormBaseUnit.setItems(UOMViewModel.getItems());
-        uomFormBaseUnit.setCellFactory(t -> new Cell<>() {
+        uomFormBaseUnit.setItems(UOMViewModel.uomList);
+        uomFormBaseUnit.setConverter(new StringConverter<>() {
             @Override
-            public Node getNode() {
-                return null;
+            public String toString(UnitOfMeasure object) {
+                if (object != null)
+                    return object.getName();
+                else
+                    return null;
             }
 
             @Override
-            public void updateItem(UnitOfMeasure item) {
-                item.getName();
+            public UnitOfMeasure fromString(String string) {
+                return null;
             }
         });
 
@@ -67,11 +72,6 @@ public class UOMFormController implements Initializable {
         uomFormBaseUnit.valueProperty().bindBidirectional(UOMViewModel.baseUnitProperty());
         uomFormOperator.textProperty().bindBidirectional(UOMViewModel.operatorProperty());
 
-        // bind text and double property.
-//                uomFormOperatorValue.textProperty().bind(Bindings.createStringBinding(
-//                        () -> Double.toString(UOMViewModel.operatorValueProperty().get()),
-//                        UOMViewModel.operatorValueProperty()
-//                ));
         uomFormOperatorValue.textProperty().bindBidirectional(UOMViewModel.operatorValueProperty(), new NumberStringConverter());
 
         uomFormBaseUnit.valueProperty().addListener(e -> {

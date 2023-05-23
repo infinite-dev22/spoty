@@ -6,7 +6,6 @@ import io.github.palexdev.materialfx.controls.MFXTableView;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.enums.ButtonType;
-import io.github.palexdev.materialfx.filter.IntegerFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -17,7 +16,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.infinite.spoty.models.Product;
+import org.infinite.spoty.database.models.ProductMaster;
+import org.infinite.spoty.viewModels.ProductMasterViewModel;
 
 import java.io.IOException;
 import java.net.URL;
@@ -25,11 +25,10 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
-import static org.infinite.spoty.data.SampleData.productSampleData;
 
 public class ProductsController implements Initializable {
     @FXML
-    public MFXTableView<Product> productsTable;
+    public MFXTableView<ProductMaster> productsTable;
     @FXML
     public BorderPane productsContentPane;
     @FXML
@@ -54,28 +53,33 @@ public class ProductsController implements Initializable {
     }
 
     private void setupTable() {
-        MFXTableColumn<Product> productName = new MFXTableColumn<>("Name", true, Comparator.comparing(Product::getProductName));
-        MFXTableColumn<Product> productCode = new MFXTableColumn<>("Code", true, Comparator.comparing(Product::getProductCode));
-        MFXTableColumn<Product> productCategory = new MFXTableColumn<>("Category", true, Comparator.comparing(Product::getProductCategory));
-        MFXTableColumn<Product> productBrand = new MFXTableColumn<>("Brand", true, Comparator.comparing(Product::getProductBrand));
+        MFXTableColumn<ProductMaster> productName = new MFXTableColumn<>("Name", true, Comparator.comparing(ProductMaster::getName));
+        MFXTableColumn<ProductMaster> productCode = new MFXTableColumn<>("Code", true, Comparator.comparing(ProductMaster::getCode));
+        MFXTableColumn<ProductMaster> productCategory = new MFXTableColumn<>("Category", true, Comparator.comparing(ProductMaster::getCategoryName));
+        MFXTableColumn<ProductMaster> productBrand = new MFXTableColumn<>("Brand", true, Comparator.comparing(ProductMaster::getBrandName));
 
-        productName.setRowCellFactory(product -> new MFXTableRowCell<>(Product::getProductName));
-        productCode.setRowCellFactory(product -> new MFXTableRowCell<>(Product::getProductCode));
-        productCategory.setRowCellFactory(product -> new MFXTableRowCell<>(Product::getProductCategory));
-        productBrand.setRowCellFactory(product -> new MFXTableRowCell<>(Product::getProductBrand));
+        productName.setRowCellFactory(product -> new MFXTableRowCell<>(ProductMaster::getName));
+        productCode.setRowCellFactory(product -> new MFXTableRowCell<>(ProductMaster::getCode));
+        productCategory.setRowCellFactory(product -> new MFXTableRowCell<>(ProductMaster::getCategoryName));
+        productBrand.setRowCellFactory(product -> new MFXTableRowCell<>(ProductMaster::getBrandName));
+
+        productName.prefWidthProperty().bind(productsTable.widthProperty().multiply(.25));
+        productCode.prefWidthProperty().bind(productsTable.widthProperty().multiply(.25));
+        productCategory.prefWidthProperty().bind(productsTable.widthProperty().multiply(.25));
+        productBrand.prefWidthProperty().bind(productsTable.widthProperty().multiply(.25));
 
         productsTable.getTableColumns().addAll(productName, productCode, productCategory, productBrand);
         productsTable.getFilters().addAll(
-                new StringFilter<>("Name", Product::getProductName),
-                new IntegerFilter<>("Code", Product::getProductCode),
-                new StringFilter<>("Category", Product::getProductCategory),
-                new StringFilter<>("Brand", Product::getProductBrand)
+                new StringFilter<>("Name", ProductMaster::getName),
+                new StringFilter<>("Code", ProductMaster::getCode),
+                new StringFilter<>("Category", ProductMaster::getCategoryName),
+                new StringFilter<>("Brand", ProductMaster::getBrandName)
         );
-        getProductTable();
-        productsTable.setItems(productSampleData());
+        getTable();
+        productsTable.setItems(ProductMasterViewModel.getProductMasters());
     }
 
-    private void getProductTable() {
+    private void getTable() {
         productsTable.setPrefSize(1000, 1000);
         productsTable.features().enableBounceEffect();
         productsTable.autosizeColumnsOnInitialization();

@@ -37,7 +37,7 @@ public class ExpenseViewModel {
 
     public static Date getDate() {
         try {
-            return new SimpleDateFormat("yyyy-MM-dd").parse(date.get());
+            return new SimpleDateFormat("MMM dd, yyyy").parse(date.get());
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }

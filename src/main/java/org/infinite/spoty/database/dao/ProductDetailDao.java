@@ -76,6 +76,7 @@ public class ProductDetailDao {
         }
         return productCategories;
     }
+
     public static int deleteProductDetail(long id) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {

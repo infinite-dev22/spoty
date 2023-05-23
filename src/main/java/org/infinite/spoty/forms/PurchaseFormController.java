@@ -16,7 +16,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.models.Product;
-import org.infinite.spoty.models.Supplier;
+import org.infinite.spoty.database.models.Supplier;
 
 import java.io.IOException;
 import java.net.URL;

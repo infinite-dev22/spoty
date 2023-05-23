@@ -8,7 +8,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
-import org.infinite.spoty.models.Customer;
+import org.infinite.spoty.viewModels.SupplierVewModel;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -29,9 +29,9 @@ public class SupplierFormController implements Initializable {
     @FXML
     public MFXTextField supplierFormPhone;
     @FXML
-    public MFXTextField supplierFormTown;
-    @FXML
     public MFXTextField supplierFormCity;
+    @FXML
+    public MFXTextField supplierFormCountry;
     @FXML
     public MFXTextField supplierFormTaxNumber;
     @FXML
@@ -48,30 +48,31 @@ public class SupplierFormController implements Initializable {
 //        supplierFormTaxNumber.textProperty().addListener((observable, oldValue, newValue) -> supplierFormTaxNumber.setTrailingIcon(null));
 //        supplierFormAddress.textProperty().addListener((observable, oldValue, newValue) -> supplierFormAddress.setTrailingIcon(null));
 
+        supplierFormName.textProperty().bindBidirectional(SupplierVewModel.nameProperty());
+        supplierFormEmail.textProperty().bindBidirectional(SupplierVewModel.emailProperty());
+        supplierFormPhone.textProperty().bindBidirectional(SupplierVewModel.phoneProperty());
+        supplierFormCity.textProperty().bindBidirectional(SupplierVewModel.cityProperty());
+        supplierFormCountry.textProperty().bindBidirectional(SupplierVewModel.countryProperty());
+        supplierFormTaxNumber.textProperty().bindBidirectional(SupplierVewModel.taxNumberProperty());
+        supplierFormAddress.textProperty().bindBidirectional(SupplierVewModel.addressProperty());
+
         dialogOnActions();
     }
 
     private void dialogOnActions() {
         supplierFormCancelBtn.setOnAction((e) -> {
             closeDialog(e);
-            supplierFormName.setText("");
-            supplierFormEmail.setText("");
-            supplierFormPhone.setText("");
-            supplierFormTown.setText("");
-            supplierFormCity.setText("");
-            supplierFormTaxNumber.setText("");
-            supplierFormAddress.setText("");
+            SupplierVewModel.resetProperties();
 
             supplierFormName.setTrailingIcon(null);
             supplierFormEmail.setTrailingIcon(null);
             supplierFormPhone.setTrailingIcon(null);
-            supplierFormTown.setTrailingIcon(null);
             supplierFormCity.setTrailingIcon(null);
+            supplierFormCountry.setTrailingIcon(null);
             supplierFormTaxNumber.setTrailingIcon(null);
             supplierFormAddress.setTrailingIcon(null);
         });
         supplierFormSaveBtn.setOnAction((e) -> {
-            Customer brand = new Customer();
             MFXIconWrapper icon = new MFXIconWrapper("fas-circle-exclamation", 20, Color.RED, 20);
 
             if (supplierFormName.getText().length() == 0) {
@@ -83,11 +84,11 @@ public class SupplierFormController implements Initializable {
             if (supplierFormPhone.getText().length() == 0) {
                 supplierFormPhone.setTrailingIcon(icon);
             }
-            if (supplierFormTown.getText().length() == 0) {
-                supplierFormTown.setTrailingIcon(icon);
-            }
             if (supplierFormCity.getText().length() == 0) {
                 supplierFormCity.setTrailingIcon(icon);
+            }
+            if (supplierFormCountry.getText().length() == 0) {
+                supplierFormCountry.setTrailingIcon(icon);
             }
             if (supplierFormTaxNumber.getText().length() == 0) {
                 supplierFormTaxNumber.setTrailingIcon(icon);
@@ -98,27 +99,13 @@ public class SupplierFormController implements Initializable {
             if (supplierFormName.getText().length() > 0
                     && supplierFormEmail.getText().length() > 0
                     && supplierFormPhone.getText().length() > 0
-                    && supplierFormTown.getText().length() > 0
                     && supplierFormCity.getText().length() > 0
+                    && supplierFormCountry.getText().length() > 0
                     && supplierFormTaxNumber.getText().length() > 0
                     && supplierFormAddress.getText().length() > 0) {
-                brand.setCustomerName(supplierFormName.getText());
-                brand.setCustomerEmail(supplierFormEmail.getText());
-                brand.setCustomerPhoneNumber(supplierFormPhone.getText());
-                brand.setCustomerTown(supplierFormTown.getText());
-                brand.setCustomerCity(supplierFormCity.getText());
-                brand.setCustomerTaxNumber(supplierFormTaxNumber.getText());
-                brand.setCustomerAddress(supplierFormAddress.getText());
-
+                SupplierVewModel.saveSupplier();
+                SupplierVewModel.resetProperties();
                 closeDialog(e);
-
-                supplierFormName.setText("");
-                supplierFormEmail.setText("");
-                supplierFormPhone.setText("");
-                supplierFormTown.setText("");
-                supplierFormCity.setText("");
-                supplierFormTaxNumber.setText("");
-                supplierFormAddress.setText("");
             }
         });
     }

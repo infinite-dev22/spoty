@@ -33,13 +33,13 @@
                     <MFXOutlinedButton fx:id="uomFormCancelBtn" text="Cancel"/>
                 </HBox>
                 <padding>
-                    <Insets right="10.0"/>
+                    <Insets left="5.0" right="10.0" top="10.0"/>
                 </padding>
             </VBox>
         </MFXScrollPane>
     </content>
     <padding>
-        <Insets left="10.0" top="10.0"/>
+        <Insets left="5.0" top="10.0"/>
     </padding>
     <header>
         <Label fx:id="uomFormTitle" text="Create"/>

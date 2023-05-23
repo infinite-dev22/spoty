@@ -67,7 +67,7 @@ public class CustomerDao {
         return customer;
     }
 
-    public static ObservableList<Customer> getCustomer() {
+    public static ObservableList<Customer> fetchCustomers() {
         Transaction transaction = null;
         ObservableList<Customer> customers;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {

@@ -6,7 +6,6 @@ import java.sql.Blob;
 import java.util.Date;
 
 @Entity
-@Table(name = "user")
 public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

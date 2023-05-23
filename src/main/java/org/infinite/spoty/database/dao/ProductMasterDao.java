@@ -36,8 +36,6 @@ public class ProductMasterDao {
             productMaster.setCode(obj.getCode());
             productMaster.setBarcodeType(obj.getBarcodeType());
             productMaster.setName(obj.getName());
-            productMaster.setCost(obj.getCost());
-            productMaster.setPrice(obj.getPrice());
             productMaster.setCategory(obj.getCategory());
             productMaster.setBrand(obj.getBrand());
             productMaster.setActive(obj.isActive());

@@ -8,7 +8,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
-import org.infinite.spoty.models.Customer;
+import org.infinite.spoty.database.models.Customer;
+import org.infinite.spoty.viewModels.CustomerVewModel;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -29,9 +30,9 @@ public class CustomerFormController implements Initializable {
     @FXML
     public MFXTextField customerFormPhone;
     @FXML
-    public MFXTextField customerFormTown;
-    @FXML
     public MFXTextField customerFormCity;
+    @FXML
+    public MFXTextField customerFormCountry;
     @FXML
     public MFXTextField customerFormTaxNumber;
     @FXML
@@ -47,25 +48,27 @@ public class CustomerFormController implements Initializable {
 //        customerFormTaxNumber.textProperty().addListener((observable, oldValue, newValue) -> customerFormTaxNumber.setTrailingIcon(null));
 //        customerFormAddress.textProperty().addListener((observable, oldValue, newValue) -> customerFormAddress.setTrailingIcon(null));
 
+        customerFormName.textProperty().bindBidirectional(CustomerVewModel.nameProperty());
+        customerFormEmail.textProperty().bindBidirectional(CustomerVewModel.emailProperty());
+        customerFormPhone.textProperty().bindBidirectional(CustomerVewModel.phoneProperty());
+        customerFormCity.textProperty().bindBidirectional(CustomerVewModel.cityProperty());
+        customerFormCountry.textProperty().bindBidirectional(CustomerVewModel.countryProperty());
+        customerFormTaxNumber.textProperty().bindBidirectional(CustomerVewModel.taxNumberProperty());
+        customerFormAddress.textProperty().bindBidirectional(CustomerVewModel.addressProperty());
+
         dialogOnActions();
     }
 
     private void dialogOnActions() {
         customerFormCancelBtn.setOnAction((e) -> {
             closeDialog(e);
-            customerFormName.setText("");
-            customerFormEmail.setText("");
-            customerFormPhone.setText("");
-            customerFormTown.setText("");
-            customerFormCity.setText("");
-            customerFormTaxNumber.setText("");
-            customerFormAddress.setText("");
+            CustomerVewModel.resetProperties();
 
             customerFormName.setTrailingIcon(null);
             customerFormEmail.setTrailingIcon(null);
             customerFormPhone.setTrailingIcon(null);
-            customerFormTown.setTrailingIcon(null);
             customerFormCity.setTrailingIcon(null);
+            customerFormCountry.setTrailingIcon(null);
             customerFormTaxNumber.setTrailingIcon(null);
             customerFormAddress.setTrailingIcon(null);
         });
@@ -82,11 +85,11 @@ public class CustomerFormController implements Initializable {
             if (customerFormPhone.getText().length() == 0) {
                 customerFormPhone.setTrailingIcon(icon);
             }
-            if (customerFormTown.getText().length() == 0) {
-                customerFormTown.setTrailingIcon(icon);
-            }
             if (customerFormCity.getText().length() == 0) {
                 customerFormCity.setTrailingIcon(icon);
+            }
+            if (customerFormCountry.getText().length() == 0) {
+                customerFormCountry.setTrailingIcon(icon);
             }
             if (customerFormTaxNumber.getText().length() == 0) {
                 customerFormTaxNumber.setTrailingIcon(icon);
@@ -97,27 +100,13 @@ public class CustomerFormController implements Initializable {
             if (customerFormName.getText().length() > 0
                     && customerFormEmail.getText().length() > 0
                     && customerFormPhone.getText().length() > 0
-                    && customerFormTown.getText().length() > 0
                     && customerFormCity.getText().length() > 0
+                    && customerFormCountry.getText().length() > 0
                     && customerFormTaxNumber.getText().length() > 0
                     && customerFormAddress.getText().length() > 0) {
-                brand.setCustomerName(customerFormName.getText());
-                brand.setCustomerEmail(customerFormEmail.getText());
-                brand.setCustomerPhoneNumber(customerFormPhone.getText());
-                brand.setCustomerTown(customerFormTown.getText());
-                brand.setCustomerCity(customerFormCity.getText());
-                brand.setCustomerTaxNumber(customerFormTaxNumber.getText());
-                brand.setCustomerAddress(customerFormAddress.getText());
-
+                CustomerVewModel.saveCustomer();
+                CustomerVewModel.resetProperties();
                 closeDialog(e);
-
-                customerFormName.setText("");
-                customerFormEmail.setText("");
-                customerFormPhone.setText("");
-                customerFormTown.setText("");
-                customerFormCity.setText("");
-                customerFormTaxNumber.setText("");
-                customerFormAddress.setText("");
             }
         });
     }

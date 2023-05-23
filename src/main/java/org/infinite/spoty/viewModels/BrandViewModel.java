@@ -50,7 +50,7 @@ public class BrandViewModel {
     }
 
     public static void saveBrand() {
-        Brand brand = new Brand(getDescription(), getDescription());
+        Brand brand = new Brand(getName(), getDescription());
         BrandDao.saveBrand(brand);
         brandsList.clear();
         clearBrandData();

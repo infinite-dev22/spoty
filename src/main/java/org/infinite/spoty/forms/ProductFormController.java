@@ -3,17 +3,30 @@ package org.infinite.spoty.forms;
 import io.github.palexdev.materialfx.controls.MFXComboBox;
 import io.github.palexdev.materialfx.controls.MFXIconWrapper;
 import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.controls.MFXToggleButton;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
+import javafx.util.StringConverter;
+import org.infinite.spoty.database.dao.ProductCategoryDao;
+import org.infinite.spoty.database.dao.ProductMasterDao;
+import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.Brand;
 import org.infinite.spoty.database.models.ProductCategory;
+import org.infinite.spoty.database.models.ProductMaster;
 import org.infinite.spoty.models.Product;
+import org.infinite.spoty.values.strings.Values;
+import org.infinite.spoty.viewModels.BrandViewModel;
+import org.infinite.spoty.viewModels.ProductCategoryViewModel;
+import org.infinite.spoty.viewModels.ProductMasterViewModel;
 
 import java.net.URL;
+import java.util.LinkedList;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.GlobalActions.closeDialog;
@@ -26,20 +39,63 @@ public class ProductFormController implements Initializable {
     @FXML
     public MFXComboBox<Brand> productFormBrand;
     @FXML
-    public MFXComboBox<?> productFormBarCodeType;
+    public MFXComboBox<String> productFormBarCodeType;
     @FXML
     public MFXFilledButton productFormSaveBtn;
     @FXML
     public MFXOutlinedButton productFormCancelBtn;
     @FXML
     public Label productFormTitle;
+    @FXML
+    public MFXToggleButton notForSaleToggle;
+    @FXML
+    public MFXToggleButton activeToggle;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        ObservableList<String> barCodeTypes = FXCollections.observableArrayList(Values.BARCODETYPES);
+
         productFormName.textProperty().addListener((observable, oldValue, newValue) -> productFormName.setTrailingIcon(null));
-        productFormCategory.textProperty().addListener((observable, oldValue, newValue) -> productFormCategory.setTrailingIcon(null));
-        productFormBrand.textProperty().addListener((observable, oldValue, newValue) -> productFormBrand.setTrailingIcon(null));
-        productFormBarCodeType.textProperty().addListener((observable, oldValue, newValue) -> productFormBarCodeType.setTrailingIcon(null));
+        productFormCategory.textProperty().addListener((observable, oldValue, newValue) -> productFormCategory.setLeadingIcon(null));
+        productFormBrand.textProperty().addListener((observable, oldValue, newValue) -> productFormBrand.setLeadingIcon(null));
+        productFormBarCodeType.textProperty().addListener((observable, oldValue, newValue) -> productFormBarCodeType.setLeadingIcon(null));
+
+        productFormName.textProperty().bindBidirectional(ProductMasterViewModel.nameProperty());
+        productFormCategory.valueProperty().bindBidirectional(ProductMasterViewModel.categoryProperty());
+        productFormBrand.valueProperty().bindBidirectional(ProductMasterViewModel.brandProperty());
+        productFormBarCodeType.textProperty().bindBidirectional(ProductMasterViewModel.barcodeTypeProperty());
+        notForSaleToggle.selectedProperty().bindBidirectional(ProductMasterViewModel.notForSaleProperty());
+        activeToggle.selectedProperty().bindBidirectional(ProductMasterViewModel.isActiveProperty());
+
+        productFormCategory.setItems(ProductCategoryViewModel.categoriesList);
+        productFormCategory.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(ProductCategory object) {
+                if (object != null)
+                    return object.getName();
+                else
+                    return null;
+            }
+            @Override
+            public ProductCategory fromString(String string) {
+                return null;
+            }
+        });
+        productFormBrand.setItems(BrandViewModel.brandsList);
+        productFormBrand.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(Brand object) {
+                if (object != null)
+                    return object.getName();
+                else
+                    return null;
+            }
+            @Override
+            public Brand fromString(String string) {
+                return null;
+            }
+        });
+        productFormBarCodeType.setItems(barCodeTypes);
 
         dialogOnActions();
     }
@@ -47,54 +103,36 @@ public class ProductFormController implements Initializable {
     private void dialogOnActions() {
         productFormCancelBtn.setOnAction((e) -> {
             closeDialog(e);
-            productFormName.setText("");
-            productFormCategory.setText("");
-            productFormBrand.setText("");
-            productFormBarCodeType.setText("");
+            ProductMasterViewModel.resetProperties();
 
             productFormName.setTrailingIcon(null);
-            productFormCategory.setTrailingIcon(null);
-            productFormBrand.setTrailingIcon(null);
-            productFormBarCodeType.setTrailingIcon(null);
+            productFormCategory.setLeadingIcon(null);
+            productFormBrand.setLeadingIcon(null);
+            productFormBarCodeType.setLeadingIcon(null);
         });
         productFormSaveBtn.setOnAction((e) -> {
-            Product product = new Product();
             MFXIconWrapper icon = new MFXIconWrapper("fas-circle-exclamation", 20, Color.RED, 20);
 
             if (productFormName.getText().length() == 0) {
                 productFormName.setTrailingIcon(icon);
             }
             if (productFormCategory.getText().length() == 0) {
-                productFormCategory.setTrailingIcon(icon);
+                productFormCategory.setLeadingIcon(icon);
             }
             if (productFormBrand.getText().length() == 0) {
-                productFormBrand.setTrailingIcon(icon);
+                productFormBrand.setLeadingIcon(icon);
             }
             if (productFormBarCodeType.getText().length() == 0) {
-                productFormBarCodeType.setTrailingIcon(icon);
+                productFormBarCodeType.setLeadingIcon(icon);
             }
             if (productFormName.getText().length() > 0
                     && productFormCategory.getText().length() > 0
                     && productFormBrand.getText().length() > 0
                     && productFormBarCodeType.getText().length() > 0) {
-                product.setProductName(productFormName.getText());
-                product.setProductCategory(productFormCategory.getText());
-                product.setProductBrand(productFormBrand.getText());
-                product.setProductBarcodeType(productFormBarCodeType.getText());
-
-                productFormName.setText("");
-                productFormCategory.setText("");
-                productFormBrand.setText("");
-                productFormBarCodeType.setText("");
-
+                ProductMasterViewModel.save();
+                ProductMasterViewModel.resetProperties();
                 closeDialog(e);
             }
         });
-    }
-
-    public void productFormSaveBtnClicked() {
-    }
-
-    public void productFormCancelBtnClicked() {
     }
 }
