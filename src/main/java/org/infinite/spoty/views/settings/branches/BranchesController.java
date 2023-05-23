@@ -105,19 +105,21 @@ public class BranchesController implements Initializable {
 //            });
             // Context menu doesn't show, not yet figured out why but must be coz show() ain't called on it yet.
             // which when done results into an error.
-            EventHandler<ContextMenuEvent> eventHandler = event -> showContextMenu();
+            EventHandler<ContextMenuEvent> eventHandler = event -> showContextMenu().show(branchContentPane.getParent(), event.getScreenX(), event.getScreenY());
             row.setOnContextMenuRequested(eventHandler);
             return row;
         });
     }
 
-    private void showContextMenu() {
+    private MFXContextMenu showContextMenu() {
         MFXContextMenu contextMenu = new MFXContextMenu(branchTable);
 
         MFXContextMenuItem view = new MFXContextMenuItem("View");
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
         contextMenu.addItems(view, edit, delete);
+
+        return contextMenu;
     }
 
     @FXML
