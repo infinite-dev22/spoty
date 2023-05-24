@@ -7,17 +7,17 @@ import org.infinite.spoty.database.dao.PurchaseDetailDao;
 import org.infinite.spoty.database.models.*;
 
 public class PurchaseDetailsViewModel {
-    private static final IntegerProperty id = new SimpleIntegerProperty(0);
+    private static final IntegerProperty id = new SimpleIntegerProperty();
     private static final ObjectProperty<PurchaseMaster> purchase = new SimpleObjectProperty<>(null);
-    private static final DoubleProperty cost = new SimpleDoubleProperty(0);
-    private static final DoubleProperty netTax = new SimpleDoubleProperty(0);
-    private static final StringProperty taxType = new SimpleStringProperty(null);
-    private static final DoubleProperty discount = new SimpleDoubleProperty(0);
-    private static final StringProperty discountType = new SimpleStringProperty(null);
+    private static final StringProperty cost = new SimpleStringProperty();
+    private static final StringProperty netTax = new SimpleStringProperty();
+    private static final StringProperty taxType = new SimpleStringProperty();
+    private static final StringProperty discount = new SimpleStringProperty();
+    private static final StringProperty discountType = new SimpleStringProperty();
     private static final ObjectProperty<ProductDetail> product = new SimpleObjectProperty<>(null);
-    private static final StringProperty serial = new SimpleStringProperty(null);
-    private static final DoubleProperty total = new SimpleDoubleProperty(0);
-    private static final IntegerProperty quantity = new SimpleIntegerProperty(0);
+    private static final StringProperty serial = new SimpleStringProperty();
+    private static final StringProperty total = new SimpleStringProperty();
+    private static final StringProperty quantity = new SimpleStringProperty();
     public static final ObservableList<PurchaseDetail> purchaseDetailsList = FXCollections.observableArrayList();
     public static final ObservableList<PurchaseDetail> purchaseTempList = FXCollections.observableArrayList();
 
@@ -45,39 +45,39 @@ public class PurchaseDetailsViewModel {
         return purchase;
     }
 
-    public static int getQuantity() {
+    public static String getQuantity() {
         return quantity.get();
     }
 
-    public static void setQuantity(int quantity) {
+    public static void setQuantity(String quantity) {
         PurchaseDetailsViewModel.quantity.set(quantity);
     }
 
-    public static IntegerProperty quantityProperty() {
+    public static StringProperty quantityProperty() {
         return quantity;
     }
 
-    public static double getCost() {
+    public static String getCost() {
         return cost.get();
     }
 
-    public static void setCost(double cost) {
+    public static void setCost(String cost) {
         PurchaseDetailsViewModel.cost.set(cost);
     }
 
-    public static DoubleProperty costProperty() {
+    public static StringProperty costProperty() {
         return cost;
     }
 
-    public static double getNetTax() {
+    public static String getNetTax() {
         return netTax.get();
     }
 
-    public static void setNetTax(double netTax) {
+    public static void setNetTax(String netTax) {
         PurchaseDetailsViewModel.netTax.set(netTax);
     }
 
-    public static DoubleProperty netTaxProperty() {
+    public static StringProperty netTaxProperty() {
         return netTax;
     }
 
@@ -105,15 +105,15 @@ public class PurchaseDetailsViewModel {
         return serial;
     }
 
-    public static double getDiscount() {
+    public static String getDiscount() {
         return discount.get();
     }
 
-    public static void setDiscount(double discount) {
+    public static void setDiscount(String discount) {
         PurchaseDetailsViewModel.discount.set(discount);
     }
 
-    public static DoubleProperty discountProperty() {
+    public static StringProperty discountProperty() {
         return discount;
     }
 
@@ -141,43 +141,43 @@ public class PurchaseDetailsViewModel {
         return product;
     }
 
-    public static double getTotal() {
+    public static String getTotal() {
         return total.get();
     }
 
-    public static void setTotal(double total) {
+    public static void setTotal(String total) {
         PurchaseDetailsViewModel.total.set(total);
     }
 
-    public static DoubleProperty totalProperty() {
+    public static StringProperty totalProperty() {
         return total;
     }
 
     public static void addPurchaseDetail() {
         PurchaseDetail purchaseDetail = new PurchaseDetail(getPurchase(),
-                getCost(),
-                getNetTax(),
+                Double.parseDouble(getCost()),
+                Double.parseDouble(getNetTax()),
                 getTaxType(),
-                getDiscount(),
+                Double.parseDouble(getDiscount()),
                 getDiscountType(),
                 getProduct(),
                 getSerial(),
-                getTotal(),
-                getQuantity());
+                Double.parseDouble(getTotal()),
+                Integer.parseInt(getQuantity()));
         purchaseTempList.add(purchaseDetail);
     }
 
     public static void resetProperties() {
         setId(0);
         setPurchase(null);
-        setCost(0);
-        setNetTax(0);
+        setCost("");
+        setNetTax("");
         setTaxType(null);
-        setDiscount(0);
+        setDiscount("");
         setDiscountType(null);
         setSerial(null);
-        setTotal(0);
-        setQuantity(0);
+        setTotal("");
+        setQuantity("");
     }
 
     public static void resetTempList() {
