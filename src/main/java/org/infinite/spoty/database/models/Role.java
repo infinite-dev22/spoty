@@ -13,8 +13,11 @@ public class Role {
     private String label;
     private boolean status;
     private String description;
-    @ManyToMany(targetEntity = Permission.class)
-    private List<Permission> permission;
+    @ManyToMany
+    @JoinTable(name = "Role_Permission",
+            joinColumns = {@JoinColumn(name = "role_id")},
+            inverseJoinColumns = {@JoinColumn(name = "Permission_id")})
+    private List<Permission> permissions;
     private Date createdAt;
     private String createdBy;
     private Date updatedAt;
@@ -24,7 +27,7 @@ public class Role {
                 String label,
                 boolean status,
                 String description,
-                List<Permission> permission,
+                List<Permission> permissions,
                 Date createdAt,
                 String createdBy,
                 Date updatedAt,
@@ -32,7 +35,7 @@ public class Role {
         this.name = name;
         this.label = label;
         this.status = status;
-        this.permission = permission;
+        this.permissions = permissions;
         this.description = description;
         this.createdAt = createdAt;
         this.createdBy = createdBy;
@@ -116,10 +119,10 @@ public class Role {
     }
 
     public List<Permission> getPermission() {
-        return permission;
+        return permissions;
     }
 
-    public void setPermission(List<Permission> permission) {
-        this.permission = permission;
+    public void setPermission(List<Permission> permissions) {
+        this.permissions = permissions;
     }
 }

@@ -1,11 +1,6 @@
 package org.infinite.spoty.database.models;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Id;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.ManyToMany;
+import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 
@@ -17,8 +12,8 @@ public class Permission {
     private String name;
     private String label;
     private String description;
-    @ManyToMany(targetEntity = Role.class)
-    private List<Role> role;
+    @ManyToMany(mappedBy = "permissions")
+    private List<Role> roles;
     private Date createdAt;
     private String createdBy;
     private Date updatedAt;
@@ -27,7 +22,7 @@ public class Permission {
     public Permission(String name,
                       String label,
                       String description,
-                      List<Role> role,
+                      List<Role> roles,
                       Date createdAt,
                       String createdBy,
                       Date updatedAt,
@@ -35,7 +30,7 @@ public class Permission {
         this.name = name;
         this.label = label;
         this.description = description;
-        this.role = role;
+        this.roles = roles;
         this.createdAt = createdAt;
         this.createdBy = createdBy;
         this.updatedAt = updatedAt;
@@ -110,10 +105,10 @@ public class Permission {
     }
 
     public List<Role> getRole() {
-        return role;
+        return roles;
     }
 
-    public void setRole(List<Role> role) {
-        this.role = role;
+    public void setRole(List<Role> roles) {
+        this.roles = roles;
     }
 }
