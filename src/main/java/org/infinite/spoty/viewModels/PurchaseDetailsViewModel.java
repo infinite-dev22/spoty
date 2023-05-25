@@ -1,6 +1,7 @@
 package org.infinite.spoty.viewModels;
 
 import javafx.beans.property.*;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.infinite.spoty.database.dao.PurchaseDetailDao;
@@ -9,15 +10,15 @@ import org.infinite.spoty.database.models.*;
 public class PurchaseDetailsViewModel {
     private static final IntegerProperty id = new SimpleIntegerProperty();
     private static final ObjectProperty<PurchaseMaster> purchase = new SimpleObjectProperty<>(null);
-    private static final StringProperty cost = new SimpleStringProperty();
-    private static final StringProperty netTax = new SimpleStringProperty();
-    private static final StringProperty taxType = new SimpleStringProperty();
-    private static final StringProperty discount = new SimpleStringProperty();
-    private static final StringProperty discountType = new SimpleStringProperty();
+    private static final StringProperty cost = new SimpleStringProperty("");
+    private static final StringProperty netTax = new SimpleStringProperty("");
+    private static final StringProperty taxType = new SimpleStringProperty("");
+    private static final StringProperty discount = new SimpleStringProperty("");
+    private static final StringProperty discountType = new SimpleStringProperty("");
     private static final ObjectProperty<ProductDetail> product = new SimpleObjectProperty<>(null);
-    private static final StringProperty serial = new SimpleStringProperty();
-    private static final StringProperty total = new SimpleStringProperty();
-    private static final StringProperty quantity = new SimpleStringProperty();
+    private static final StringProperty serial = new SimpleStringProperty("");
+    private static final StringProperty total = new SimpleStringProperty("");
+    private static final StringProperty quantity = new SimpleStringProperty("");
     public static final ObservableList<PurchaseDetail> purchaseDetailsList = FXCollections.observableArrayList();
     public static final ObservableList<PurchaseDetail> purchaseTempList = FXCollections.observableArrayList();
 
@@ -154,6 +155,8 @@ public class PurchaseDetailsViewModel {
     }
 
     public static void addPurchaseDetail() {
+        setCost("0");
+        setTotal("0");
         PurchaseDetail purchaseDetail = new PurchaseDetail(getPurchase(),
                 Double.parseDouble(getCost()),
                 Double.parseDouble(getNetTax()),
@@ -165,6 +168,11 @@ public class PurchaseDetailsViewModel {
                 Double.parseDouble(getTotal()),
                 Integer.parseInt(getQuantity()));
         purchaseTempList.add(purchaseDetail);
+    }
+
+    public static ObservableList<PurchaseDetail> getTempList() {
+        purchaseTempList.forEach(System.out::println);
+        return purchaseTempList;
     }
 
     public static void resetProperties() {

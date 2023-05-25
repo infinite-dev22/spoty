@@ -1,7 +1,11 @@
 package org.infinite.spoty.forms;
 
 import io.github.palexdev.materialfx.controls.*;
+import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.enums.ButtonType;
+import io.github.palexdev.materialfx.filter.DoubleFilter;
+import io.github.palexdev.materialfx.filter.IntegerFilter;
+import io.github.palexdev.materialfx.filter.StringFilter;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -15,11 +19,15 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.infinite.spoty.database.models.Branch;
+import org.infinite.spoty.database.models.PurchaseDetail;
+import org.infinite.spoty.database.models.PurchaseDetail;
 import org.infinite.spoty.models.Product;
 import org.infinite.spoty.database.models.Supplier;
+import org.infinite.spoty.viewModels.PurchaseDetailsViewModel;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Comparator;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
@@ -35,7 +43,7 @@ public class PurchaseFormController implements Initializable {
     @FXML
     public MFXFilterComboBox<Branch> purchaseBranchId;
     @FXML
-    public MFXTableView<Product> purchaseProductsTable;
+    public MFXTableView<PurchaseDetail> purchaseProductsTable;
     @FXML
     public MFXTextField purchaseNote;
     @FXML
@@ -60,6 +68,7 @@ public class PurchaseFormController implements Initializable {
         purchaseSupplierId.textProperty().addListener((observable, oldValue, newValue) -> purchaseSupplierId.setTrailingIcon(null));
         purchaseBranchId.textProperty().addListener((observable, oldValue, newValue) -> purchaseBranchId.setTrailingIcon(null));
         purchaseStatus.textProperty().addListener((observable, oldValue, newValue) -> purchaseStatus.setTrailingIcon(null));
+        setupTable();
     }
 
     private void purchaseProductDialogPane(Stage stage) throws IOException {
@@ -109,6 +118,39 @@ public class PurchaseFormController implements Initializable {
             purchaseProductsTable.getTableColumns().clear();
             getPurchaseProducts().clear();
         }
+    }
+    
+    private void setupTable() {
+        MFXTableColumn<PurchaseDetail> product = new MFXTableColumn<>("Product", false, Comparator.comparing(PurchaseDetail::getProductName));
+        MFXTableColumn<PurchaseDetail> quantity = new MFXTableColumn<>("Quantity", false, Comparator.comparing(PurchaseDetail::getQuantity));
+        MFXTableColumn<PurchaseDetail> tax = new MFXTableColumn<>("Tax", false, Comparator.comparing(PurchaseDetail::getNetTax));
+        MFXTableColumn<PurchaseDetail> discount = new MFXTableColumn<>("Discount", false, Comparator.comparing(PurchaseDetail::getDiscount));
+        
+        product.setRowCellFactory(purchaseDetail -> new MFXTableRowCell<>(PurchaseDetail::getProductName));
+        quantity.setRowCellFactory(purchaseDetail -> new MFXTableRowCell<>(PurchaseDetail::getQuantity));
+        tax.setRowCellFactory(purchaseDetail -> new MFXTableRowCell<>(PurchaseDetail::getNetTax));
+        discount.setRowCellFactory(purchaseDetail -> new MFXTableRowCell<>(PurchaseDetail::getDiscount));
+
+        product.prefWidthProperty().bind(purchaseProductsTable.widthProperty().multiply(.25));
+        quantity.prefWidthProperty().bind(purchaseProductsTable.widthProperty().multiply(.25));
+        tax.prefWidthProperty().bind(purchaseProductsTable.widthProperty().multiply(.25));
+        discount.prefWidthProperty().bind(purchaseProductsTable.widthProperty().multiply(.25));
+
+        purchaseProductsTable.getTableColumns().addAll(product, quantity, tax, discount);
+        purchaseProductsTable.getFilters().addAll(
+                new StringFilter<>("Product", PurchaseDetail::getProductName),
+                new IntegerFilter<>("Quantity", PurchaseDetail::getQuantity),
+                new DoubleFilter<>("Tax", PurchaseDetail::getNetTax),
+                new DoubleFilter<>("Discount", PurchaseDetail::getDiscount)
+        );
+        getTable();
+        purchaseProductsTable.setItems(PurchaseDetailsViewModel.getTempList());
+    }
+
+    private void getTable() {
+        purchaseProductsTable.setPrefSize(1000, 1000);
+        purchaseProductsTable.features().enableBounceEffect();
+        purchaseProductsTable.features().enableSmoothScrolling(0.5);
     }
 
     public void cancelBtnClicked() {

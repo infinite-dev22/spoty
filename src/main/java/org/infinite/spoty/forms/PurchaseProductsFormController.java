@@ -9,9 +9,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
+import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
+import org.infinite.spoty.database.models.Brand;
 import org.infinite.spoty.database.models.ProductDetail;
+import org.infinite.spoty.database.models.PurchaseDetail;
 import org.infinite.spoty.models.Product;
+import org.infinite.spoty.viewModels.ProductDetailViewModel;
 import org.infinite.spoty.viewModels.PurchaseDetailsViewModel;
 
 import java.net.URL;
@@ -48,6 +52,21 @@ public class PurchaseProductsFormController implements Initializable {
         purchaseProductsPdct.valueProperty().bindBidirectional(PurchaseDetailsViewModel.productProperty());
         purchaseProductsOrderTax.textProperty().bindBidirectional(PurchaseDetailsViewModel.netTaxProperty());
         purchaseProductsDiscount.textProperty().bindBidirectional(PurchaseDetailsViewModel.discountProperty());
+        purchaseProductsPdct.setItems(ProductDetailViewModel.purchaseDetailsList);
+        purchaseProductsPdct.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(ProductDetail object) {
+                if (object != null)
+                    return object.getProduct().getName() + " " + object.getName();
+                else
+                    return null;
+            }
+            @Override
+            public ProductDetail fromString(String string) {
+                return null;
+            }
+        });
+
 
         dialogOnActions();
     }
@@ -67,9 +86,9 @@ public class PurchaseProductsFormController implements Initializable {
             if (purchaseProductsQnty.getText().length() == 0) {
                 purchaseProductsQnty.setTrailingIcon(icon);
             }
-            if (purchaseProductsPdct.getText().length() == 0) {
-                purchaseProductsPdct.setLeadingIcon(icon);
-            }
+//            if (purchaseProductsPdct.getText().length() == 0) {
+//                purchaseProductsPdct.setLeadingIcon(icon);
+//            }
             if (purchaseProductsOrderTax.getText().length() == 0) {
                 purchaseProductsOrderTax.setLeadingIcon(icon);
             }
@@ -77,7 +96,7 @@ public class PurchaseProductsFormController implements Initializable {
                 purchaseProductsDiscount.setLeadingIcon(icon);
             }
             if (purchaseProductsQnty.getText().length() > 0
-                    && purchaseProductsPdct.getText().length() > 0
+//                    && purchaseProductsPdct.getText().length() > 0
                     && purchaseProductsOrderTax.getText().length() > 0
                     && purchaseProductsDiscount.getText().length() > 0) {
                 PurchaseDetailsViewModel.addPurchaseDetail();

@@ -13,6 +13,7 @@ public class PurchaseDetail implements Serializable {
     private long id;
     private double cost;
     @ManyToOne
+    @JoinColumn(name = "productMaster_id")
     private PurchaseMaster purchase;
     private double netTax;
     private String taxType;
@@ -113,6 +114,12 @@ public class PurchaseDetail implements Serializable {
 
     public ProductDetail getProduct() {
         return product;
+    }
+    public String getProductName() {
+        if (product != null)
+            return product.getProduct().getName() + " " + product.getName();
+        else
+            return null;
     }
 
     public void setProduct(ProductDetail product) {

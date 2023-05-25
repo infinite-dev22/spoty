@@ -3,6 +3,7 @@ package org.infinite.spoty.database.models;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 public class PurchaseMaster implements Serializable {
@@ -17,6 +18,8 @@ public class PurchaseMaster implements Serializable {
     private Supplier supplier;
     @ManyToOne
     private Branch branch;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "purchase")
+    private List<PurchaseDetail> purchaseDetails;
     private double taxRate;
     private double netTax;
     private double discount;

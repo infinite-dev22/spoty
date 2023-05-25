@@ -15,15 +15,13 @@ import javafx.scene.paint.Color;
 import javafx.util.StringConverter;
 import org.infinite.spoty.database.dao.ProductCategoryDao;
 import org.infinite.spoty.database.dao.ProductMasterDao;
-import org.infinite.spoty.database.models.Branch;
-import org.infinite.spoty.database.models.Brand;
-import org.infinite.spoty.database.models.ProductCategory;
-import org.infinite.spoty.database.models.ProductMaster;
+import org.infinite.spoty.database.models.*;
 import org.infinite.spoty.models.Product;
 import org.infinite.spoty.values.strings.Values;
 import org.infinite.spoty.viewModels.BrandViewModel;
 import org.infinite.spoty.viewModels.ProductCategoryViewModel;
 import org.infinite.spoty.viewModels.ProductMasterViewModel;
+import org.infinite.spoty.viewModels.PurchaseDetailsViewModel;
 
 import java.net.URL;
 import java.util.LinkedList;
@@ -81,6 +79,7 @@ public class ProductFormController implements Initializable {
                 return null;
             }
         });
+
         productFormBrand.setItems(BrandViewModel.brandsList);
         productFormBrand.setConverter(new StringConverter<>() {
             @Override

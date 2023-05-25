@@ -53,10 +53,10 @@ public class ProductsController implements Initializable {
     }
 
     private void setupTable() {
-        MFXTableColumn<ProductMaster> productName = new MFXTableColumn<>("Name", true, Comparator.comparing(ProductMaster::getName));
-        MFXTableColumn<ProductMaster> productCode = new MFXTableColumn<>("Code", true, Comparator.comparing(ProductMaster::getCode));
-        MFXTableColumn<ProductMaster> productCategory = new MFXTableColumn<>("Category", true, Comparator.comparing(ProductMaster::getCategoryName));
-        MFXTableColumn<ProductMaster> productBrand = new MFXTableColumn<>("Brand", true, Comparator.comparing(ProductMaster::getBrandName));
+        MFXTableColumn<ProductMaster> productName = new MFXTableColumn<>("Name", false, Comparator.comparing(ProductMaster::getName));
+        MFXTableColumn<ProductMaster> productCode = new MFXTableColumn<>("Code", false, Comparator.comparing(ProductMaster::getCode));
+        MFXTableColumn<ProductMaster> productCategory = new MFXTableColumn<>("Category", false, Comparator.comparing(ProductMaster::getCategoryName));
+        MFXTableColumn<ProductMaster> productBrand = new MFXTableColumn<>("Brand", false, Comparator.comparing(ProductMaster::getBrandName));
 
         productName.setRowCellFactory(product -> new MFXTableRowCell<>(ProductMaster::getName));
         productCode.setRowCellFactory(product -> new MFXTableRowCell<>(ProductMaster::getCode));
@@ -82,7 +82,6 @@ public class ProductsController implements Initializable {
     private void getTable() {
         productsTable.setPrefSize(1000, 1000);
         productsTable.features().enableBounceEffect();
-        productsTable.autosizeColumnsOnInitialization();
         productsTable.features().enableSmoothScrolling(0.5);
     }
 
