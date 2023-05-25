@@ -41,33 +41,15 @@ public class PurchaseMaster implements Serializable {
     public PurchaseMaster() {
     }
 
-    public PurchaseMaster(User user,
-                          String ref,
-                          Date date,
-                          Supplier supplier,
+    public PurchaseMaster(Supplier supplier,
                           Branch branch,
-                          double taxRate,
-                          double netTax,
-                          double discount,
-                          String shipping,
-                          double paid,
-                          double total,
                           String status,
-                          String paymentStatus,
-                          String notes) {
-        this.user = user;
-        this.ref = ref;
+                          String notes,
+                          Date date) {
         this.date = date;
         this.supplier = supplier;
         this.branch = branch;
-        this.taxRate = taxRate;
-        this.netTax = netTax;
-        this.discount = discount;
-        this.shipping = shipping;
-        this.paid = paid;
-        this.total = total;
         this.status = status;
-        this.paymentStatus = paymentStatus;
         this.notes = notes;
     }
 
@@ -221,5 +203,13 @@ public class PurchaseMaster implements Serializable {
 
     public void setUpdatedBy(String updatedBy) {
         this.updatedBy = updatedBy;
+    }
+
+    public List<PurchaseDetail> getPurchaseDetails() {
+        return purchaseDetails;
+    }
+
+    public void setPurchaseDetails(List<PurchaseDetail> purchaseDetails) {
+        this.purchaseDetails = purchaseDetails;
     }
 }
