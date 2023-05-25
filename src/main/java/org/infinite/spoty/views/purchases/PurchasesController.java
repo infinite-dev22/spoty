@@ -16,7 +16,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import org.infinite.spoty.forms.PurchaseFormController;
-import org.infinite.spoty.models.Purchase;
+import org.infinite.spoty.database.models.PurchaseMaster;
 
 import java.io.IOException;
 import java.net.URL;
@@ -24,7 +24,7 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
-import static org.infinite.spoty.data.SampleData.purchaseSampleData;
+import static org.infinite.spoty.viewModels.PurchaseMasterViewModel.getPurchaseMasters;
 
 public class PurchasesController implements Initializable {
     private final Stage stage;
@@ -37,7 +37,7 @@ public class PurchasesController implements Initializable {
     @FXML
     public BorderPane purchaseContentPane;
     @FXML
-    private MFXTableView<Purchase> purchaseTable;
+    private MFXTableView<PurchaseMaster> purchaseTable;
 
     public PurchasesController(Stage stage) {
         this.stage = stage;
@@ -49,42 +49,52 @@ public class PurchasesController implements Initializable {
     }
 
     private void setupTable() {
-        MFXTableColumn<Purchase> purchaseDate = new MFXTableColumn<>("Date", true, Comparator.comparing(Purchase::getPurchaseDate));
-        MFXTableColumn<Purchase> purchaseReference = new MFXTableColumn<>("Reference", true, Comparator.comparing(Purchase::getPurchaseReference));
-        MFXTableColumn<Purchase> purchaseSupplier = new MFXTableColumn<>("Supplier", true, Comparator.comparing(Purchase::getPurchaseSupplier));
-        MFXTableColumn<Purchase> purchaseBranch = new MFXTableColumn<>("Branch", true, Comparator.comparing(Purchase::getPurchaseBranch));
-        MFXTableColumn<Purchase> purchaseStatus = new MFXTableColumn<>("PurchaseMaster Status", true, Comparator.comparing(Purchase::getPurchaseStatus));
-        MFXTableColumn<Purchase> purchaseGrandTotal = new MFXTableColumn<>("Grand Total", true, Comparator.comparing(Purchase::getPurchaseGrandTotal));
-        MFXTableColumn<Purchase> purchaseAmountPaid = new MFXTableColumn<>("Amount Paid", true, Comparator.comparing(Purchase::getPurchaseAmountPaid));
-        MFXTableColumn<Purchase> purchaseAmountDue = new MFXTableColumn<>("Amount Due", true, Comparator.comparing(Purchase::getPurchaseAmountDue));
-        MFXTableColumn<Purchase> purchasePaymentStatus = new MFXTableColumn<>("Payment Status", true, Comparator.comparing(Purchase::getPurchasePaymentStatus));
+        MFXTableColumn<PurchaseMaster> purchaseMasterDate = new MFXTableColumn<>("Date", false, Comparator.comparing(PurchaseMaster::getDate));
+        MFXTableColumn<PurchaseMaster> purchaseMasterReference = new MFXTableColumn<>("Reference", false, Comparator.comparing(PurchaseMaster::getRef));
+        MFXTableColumn<PurchaseMaster> purchaseMasterSupplier = new MFXTableColumn<>("Supplier", false, Comparator.comparing(PurchaseMaster::getSupplierName));
+        MFXTableColumn<PurchaseMaster> purchaseMasterBranch = new MFXTableColumn<>("Branch", false, Comparator.comparing(PurchaseMaster::getBranchName));
+        MFXTableColumn<PurchaseMaster> purchaseMasterStatus = new MFXTableColumn<>("Status", false, Comparator.comparing(PurchaseMaster::getStatus));
+        MFXTableColumn<PurchaseMaster> purchaseMasterGrandTotal = new MFXTableColumn<>("Total", false, Comparator.comparing(PurchaseMaster::getTotal));
+        MFXTableColumn<PurchaseMaster> purchaseMasterAmountPaid = new MFXTableColumn<>("Paid", false, Comparator.comparing(PurchaseMaster::getPaid));
+        MFXTableColumn<PurchaseMaster> purchaseMasterAmountDue = new MFXTableColumn<>("Due", false, Comparator.comparing(PurchaseMaster::getDue));
+        MFXTableColumn<PurchaseMaster> purchaseMasterPaymentStatus = new MFXTableColumn<>("Pay Status", false, Comparator.comparing(PurchaseMaster::getPaymentStatus));
 
-        purchaseDate.setRowCellFactory(purchase -> new MFXTableRowCell<>(Purchase::getPurchaseDate));
-        purchaseReference.setRowCellFactory(purchase -> new MFXTableRowCell<>(Purchase::getPurchaseReference));
-        purchaseSupplier.setRowCellFactory(purchase -> new MFXTableRowCell<>(Purchase::getPurchaseSupplier));
-        purchaseBranch.setRowCellFactory(purchase -> new MFXTableRowCell<>(Purchase::getPurchaseBranch));
-        purchaseStatus.setRowCellFactory(purchase -> new MFXTableRowCell<>(Purchase::getPurchaseStatus));
-        purchaseGrandTotal.setRowCellFactory(purchase -> new MFXTableRowCell<>(Purchase::getPurchaseGrandTotal));
-        purchaseAmountPaid.setRowCellFactory(purchase -> new MFXTableRowCell<>(Purchase::getPurchaseAmountPaid));
-        purchaseAmountDue.setRowCellFactory(purchase -> new MFXTableRowCell<>(Purchase::getPurchaseAmountDue));
-        purchasePaymentStatus.setRowCellFactory(purchase -> new MFXTableRowCell<>(Purchase::getPurchasePaymentStatus));
+        purchaseMasterDate.setRowCellFactory(purchaseMaster -> new MFXTableRowCell<>(PurchaseMaster::getDate));
+        purchaseMasterReference.setRowCellFactory(purchaseMaster -> new MFXTableRowCell<>(PurchaseMaster::getRef));
+        purchaseMasterSupplier.setRowCellFactory(purchaseMaster -> new MFXTableRowCell<>(PurchaseMaster::getSupplierName));
+        purchaseMasterBranch.setRowCellFactory(purchaseMaster -> new MFXTableRowCell<>(PurchaseMaster::getBranchName));
+        purchaseMasterStatus.setRowCellFactory(purchaseMaster -> new MFXTableRowCell<>(PurchaseMaster::getStatus));
+        purchaseMasterGrandTotal.setRowCellFactory(purchaseMaster -> new MFXTableRowCell<>(PurchaseMaster::getTotal));
+        purchaseMasterAmountPaid.setRowCellFactory(purchaseMaster -> new MFXTableRowCell<>(PurchaseMaster::getPaid));
+        purchaseMasterAmountDue.setRowCellFactory(purchaseMaster -> new MFXTableRowCell<>(PurchaseMaster::getDue));
+        purchaseMasterPaymentStatus.setRowCellFactory(purchaseMaster -> new MFXTableRowCell<>(PurchaseMaster::getPaymentStatus));
 
-        purchaseTable.getTableColumns().addAll(purchaseDate, purchaseReference, purchaseSupplier, purchaseBranch, purchaseStatus, purchaseGrandTotal, purchaseAmountPaid, purchaseAmountDue, purchasePaymentStatus);
+        purchaseMasterDate.prefWidthProperty().bind(purchaseTable.widthProperty().multiply(.1));
+        purchaseMasterReference.prefWidthProperty().bind(purchaseTable.widthProperty().multiply(.1));
+        purchaseMasterSupplier.prefWidthProperty().bind(purchaseTable.widthProperty().multiply(.15));
+        purchaseMasterBranch.prefWidthProperty().bind(purchaseTable.widthProperty().multiply(.15));
+        purchaseMasterStatus.prefWidthProperty().bind(purchaseTable.widthProperty().multiply(.1));
+        purchaseMasterGrandTotal.prefWidthProperty().bind(purchaseTable.widthProperty().multiply(.1));
+        purchaseMasterAmountPaid.prefWidthProperty().bind(purchaseTable.widthProperty().multiply(.1));
+        purchaseMasterAmountDue.prefWidthProperty().bind(purchaseTable.widthProperty().multiply(.1));
+        purchaseMasterPaymentStatus.prefWidthProperty().bind(purchaseTable.widthProperty().multiply(.1));
+
+        purchaseTable.getTableColumns().addAll(purchaseMasterDate, purchaseMasterReference, purchaseMasterSupplier, purchaseMasterBranch, purchaseMasterStatus, purchaseMasterGrandTotal, purchaseMasterAmountPaid, purchaseMasterAmountDue, purchaseMasterPaymentStatus);
         purchaseTable.getFilters().addAll(
-                new StringFilter<>("Reference", Purchase::getPurchaseReference),
-                new StringFilter<>("Supplier", Purchase::getPurchaseSupplier),
-                new StringFilter<>("Branch", Purchase::getPurchaseBranch),
-                new StringFilter<>("PurchaseMaster Status", Purchase::getPurchaseStatus),
-                new DoubleFilter<>("Grand Total", Purchase::getPurchaseGrandTotal),
-                new DoubleFilter<>("Amount Paid", Purchase::getPurchaseAmountPaid),
-                new DoubleFilter<>("Amount Due", Purchase::getPurchaseAmountDue),
-                new StringFilter<>("Payment Status", Purchase::getPurchasePaymentStatus)
+                new StringFilter<>("Reference", PurchaseMaster::getRef),
+                new StringFilter<>("Supplier", PurchaseMaster::getSupplierName),
+                new StringFilter<>("Branch", PurchaseMaster::getBranchName),
+                new StringFilter<>("Status", PurchaseMaster::getStatus),
+                new DoubleFilter<>("Total", PurchaseMaster::getTotal),
+                new DoubleFilter<>("Paid", PurchaseMaster::getPaid),
+                new DoubleFilter<>("Due", PurchaseMaster::getDue),
+                new StringFilter<>("Pay Status", PurchaseMaster::getPaymentStatus)
         );
-        getPurchaseTable();
-        purchaseTable.setItems(purchaseSampleData());
+        getTable();
+        purchaseTable.setItems(getPurchaseMasters());
     }
 
-    private void getPurchaseTable() {
+    private void getTable() {
         purchaseTable.setPrefSize(1200, 1000);
         purchaseTable.features().enableBounceEffect();
         purchaseTable.autosizeColumnsOnInitialization();

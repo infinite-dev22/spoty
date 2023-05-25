@@ -26,6 +26,7 @@ public class PurchaseMaster implements Serializable {
     private String shipping;
     private double paid;
     private double total;
+    private double due;
     private String status;
     private String paymentStatus;
     private String notes;
@@ -89,12 +90,26 @@ public class PurchaseMaster implements Serializable {
         return supplier;
     }
 
+    public String getSupplierName() {
+        if (supplier != null)
+            return supplier.getName();
+        else
+            return null;
+    }
+
     public void setSupplier(Supplier supplier) {
         this.supplier = supplier;
     }
 
     public Branch getBranch() {
         return branch;
+    }
+
+    public String getBranchName() {
+        if (branch != null)
+            return branch.getName();
+        else
+            return null;
     }
 
     public void setBranch(Branch branch) {
@@ -211,5 +226,13 @@ public class PurchaseMaster implements Serializable {
 
     public void setPurchaseDetails(List<PurchaseDetail> purchaseDetails) {
         this.purchaseDetails = purchaseDetails;
+    }
+
+    public double getDue() {
+        return due;
+    }
+
+    public void setDue(double due) {
+        this.due = due;
     }
 }
