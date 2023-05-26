@@ -2,6 +2,7 @@ package org.infinite.spoty.models;
 
 import java.util.Date;
 
+@Deprecated
 public record Requisition(
         Date requestDate,
         String requestRef,

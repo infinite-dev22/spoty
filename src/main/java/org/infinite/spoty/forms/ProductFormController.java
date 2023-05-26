@@ -7,24 +7,19 @@ import io.github.palexdev.materialfx.controls.MFXToggleButton;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.util.StringConverter;
-import org.infinite.spoty.database.dao.ProductCategoryDao;
-import org.infinite.spoty.database.dao.ProductMasterDao;
-import org.infinite.spoty.database.models.*;
-import org.infinite.spoty.models.Product;
+import org.infinite.spoty.database.models.Brand;
+import org.infinite.spoty.database.models.ProductCategory;
 import org.infinite.spoty.values.strings.Values;
 import org.infinite.spoty.viewModels.BrandViewModel;
 import org.infinite.spoty.viewModels.ProductCategoryViewModel;
 import org.infinite.spoty.viewModels.ProductMasterViewModel;
-import org.infinite.spoty.viewModels.PurchaseDetailsViewModel;
 
 import java.net.URL;
-import java.util.LinkedList;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.GlobalActions.closeDialog;

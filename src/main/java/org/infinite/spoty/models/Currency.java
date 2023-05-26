@@ -6,6 +6,7 @@ import javafx.beans.property.StringProperty;
 import java.io.Serializable;
 import java.util.Objects;
 
+@Deprecated
 public class Currency implements Serializable {
     private final StringProperty currencyName = new SimpleStringProperty("");
     private final StringProperty currencyCode = new SimpleStringProperty("");

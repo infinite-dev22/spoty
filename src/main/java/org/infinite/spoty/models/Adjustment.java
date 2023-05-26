@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 
+@Deprecated
 public class Adjustment implements Serializable {
     private final StringProperty adjustmentReference = new SimpleStringProperty("");
     private final StringProperty adjustmentBranch = new SimpleStringProperty("");

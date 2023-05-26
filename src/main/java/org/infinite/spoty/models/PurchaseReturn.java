@@ -9,7 +9,7 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
-
+@Deprecated
 public class PurchaseReturn implements Serializable {
     private final StringProperty purchaseReturnReference = new SimpleStringProperty("");
     private final StringProperty purchaseReturnSupplier = new SimpleStringProperty("");

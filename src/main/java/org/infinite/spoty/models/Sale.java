@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 
+@Deprecated
 public class Sale implements Serializable {
     private final StringProperty saleReference = new SimpleStringProperty("");
     private final StringProperty saleAddedBy = new SimpleStringProperty("");

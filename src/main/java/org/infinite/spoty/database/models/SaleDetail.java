@@ -35,7 +35,18 @@ public class SaleDetail implements Serializable {
     public SaleDetail() {
     }
 
-    public SaleDetail(Date date, String ref, ProductDetail product, String serialNumber, double price, UnitOfMeasure saleUnit, double netTax, String taxType, double discount, String discountType, double total, int quantity) {
+    public SaleDetail(Date date,
+                      String ref,
+                      ProductDetail product,
+                      String serialNumber,
+                      double price,
+                      UnitOfMeasure saleUnit,
+                      double netTax,
+                      String taxType,
+                      double discount,
+                      String discountType,
+                      double total,
+                      int quantity) {
         this.date = date;
         this.ref = ref;
         this.product = product;

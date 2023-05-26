@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 
+@Deprecated
 public class Quotation implements Serializable {
     private final StringProperty quotationReference = new SimpleStringProperty("");
     private final StringProperty quotationCustomer = new SimpleStringProperty("");

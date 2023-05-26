@@ -3,6 +3,7 @@ package org.infinite.spoty.models;
 import java.io.Serializable;
 import java.util.Objects;
 
+@Deprecated
 public class QuickStats implements Serializable {
     private String title;
     private String subtitle;

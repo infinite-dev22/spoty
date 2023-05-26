@@ -10,11 +10,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.util.StringConverter;
-import javafx.util.converter.NumberStringConverter;
-import org.infinite.spoty.database.models.Brand;
 import org.infinite.spoty.database.models.ProductDetail;
-import org.infinite.spoty.database.models.PurchaseDetail;
-import org.infinite.spoty.models.Product;
 import org.infinite.spoty.viewModels.ProductDetailViewModel;
 import org.infinite.spoty.viewModels.PurchaseDetailsViewModel;
 
@@ -22,7 +18,6 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.GlobalActions.closeDialog;
-import static org.infinite.spoty.dataShare.DataShare.createPurchaseProduct;
 import static org.infinite.spoty.dataShare.DataShare.getAdjustmentProducts;
 
 public class PurchaseProductsFormController implements Initializable {

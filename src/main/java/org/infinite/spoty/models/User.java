@@ -6,6 +6,7 @@ import javafx.beans.property.StringProperty;
 import java.io.Serializable;
 import java.util.Objects;
 
+@Deprecated
 public class User implements Serializable {
     private final StringProperty firstName = new SimpleStringProperty("");
     private final StringProperty lastName = new SimpleStringProperty("");

@@ -8,6 +8,7 @@ import javafx.beans.property.StringProperty;
 import java.io.Serializable;
 import java.util.Objects;
 
+@Deprecated
 public class Product implements Serializable {
     private final StringProperty productName = new SimpleStringProperty("");
     private final IntegerProperty productCode = new SimpleIntegerProperty(0);

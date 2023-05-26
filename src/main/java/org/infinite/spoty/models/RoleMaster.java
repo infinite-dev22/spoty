@@ -6,6 +6,7 @@ import javafx.beans.property.StringProperty;
 import java.io.Serializable;
 import java.util.Objects;
 
+@Deprecated
 public class RoleMaster implements Serializable {
     private final StringProperty role = new SimpleStringProperty("");
     private final StringProperty description = new SimpleStringProperty("");

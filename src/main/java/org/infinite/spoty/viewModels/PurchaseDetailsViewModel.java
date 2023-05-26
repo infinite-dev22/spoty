@@ -1,11 +1,12 @@
 package org.infinite.spoty.viewModels;
 
 import javafx.beans.property.*;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.infinite.spoty.database.dao.PurchaseDetailDao;
-import org.infinite.spoty.database.models.*;
+import org.infinite.spoty.database.models.ProductDetail;
+import org.infinite.spoty.database.models.PurchaseDetail;
+import org.infinite.spoty.database.models.PurchaseMaster;
 
 public class PurchaseDetailsViewModel {
     private static final IntegerProperty id = new SimpleIntegerProperty();
@@ -186,10 +187,6 @@ public class PurchaseDetailsViewModel {
         setSerial(null);
         setTotal("");
         setQuantity("");
-    }
-
-    public static void resetTempList() {
-        purchaseDetailsList.clear();
     }
 
     public static ObservableList<PurchaseDetail> getPurchaseDetail() {
