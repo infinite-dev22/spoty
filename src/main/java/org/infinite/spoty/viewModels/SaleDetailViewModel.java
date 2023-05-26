@@ -3,29 +3,23 @@ package org.infinite.spoty.viewModels;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.database.dao.SaleDetailDao;
 import org.infinite.spoty.database.models.ProductDetail;
 import org.infinite.spoty.database.models.SaleDetail;
 import org.infinite.spoty.database.models.UnitOfMeasure;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 public class SaleDetailViewModel {
     private static final IntegerProperty id = new SimpleIntegerProperty();
-    private static final StringProperty date = new SimpleStringProperty();
     private static final StringProperty ref = new SimpleStringProperty();
     private static final ObjectProperty<ProductDetail> product = new SimpleObjectProperty<>();
     private static final StringProperty serial = new SimpleStringProperty();
-    private static final DoubleProperty price = new SimpleDoubleProperty();
+    private static final StringProperty price = new SimpleStringProperty();
     private static final ObjectProperty<UnitOfMeasure> saleUnit = new SimpleObjectProperty<>();
-    private static final DoubleProperty netTax = new SimpleDoubleProperty();
+    private static final StringProperty netTax = new SimpleStringProperty();
     private static final StringProperty taxType = new SimpleStringProperty();
-    private static final DoubleProperty discount = new SimpleDoubleProperty();
+    private static final StringProperty discount = new SimpleStringProperty();
     private static final StringProperty discountType = new SimpleStringProperty();
-    private static final DoubleProperty total = new SimpleDoubleProperty();
-    private static final IntegerProperty quantity = new SimpleIntegerProperty();
+    private static final StringProperty total = new SimpleStringProperty();
+    private static final StringProperty quantity = new SimpleStringProperty();
     private static final ObservableList<SaleDetail> saleDetailList = FXCollections.observableArrayList();
     private static final ObservableList<SaleDetail> saleDetailTempList = FXCollections.observableArrayList();
 
@@ -39,24 +33,6 @@ public class SaleDetailViewModel {
 
     public static IntegerProperty idProperty() {
         return id;
-    }
-
-    public static Date getDate() {
-        Date formatedDate;
-        try {
-            formatedDate = new SimpleDateFormat("MMM dd, yyyy").parse(date.get());
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
-        return formatedDate;
-    }
-
-    public static void setDate(String date) {
-        SaleDetailViewModel.date.set(date);
-    }
-
-    public static StringProperty dateProperty() {
-        return date;
     }
 
     public static String getRef() {
@@ -95,15 +71,15 @@ public class SaleDetailViewModel {
         return serial;
     }
 
-    public static double getPrice() {
+    public static String getPrice() {
         return price.get();
     }
 
-    public static void setPrice(double price) {
+    public static void setPrice(String price) {
         SaleDetailViewModel.price.set(price);
     }
 
-    public static DoubleProperty priceProperty() {
+    public static StringProperty priceProperty() {
         return price;
     }
 
@@ -119,15 +95,15 @@ public class SaleDetailViewModel {
         return saleUnit;
     }
 
-    public static double getNetTax() {
+    public static String getNetTax() {
         return netTax.get();
     }
 
-    public static void setNetTax(double netTax) {
+    public static void setNetTax(String netTax) {
         SaleDetailViewModel.netTax.set(netTax);
     }
 
-    public static DoubleProperty netTaxProperty() {
+    public static StringProperty netTaxProperty() {
         return netTax;
     }
 
@@ -143,15 +119,15 @@ public class SaleDetailViewModel {
         return taxType;
     }
 
-    public static double getDiscount() {
+    public static String getDiscount() {
         return discount.get();
     }
 
-    public static void setDiscount(double discount) {
+    public static void setDiscount(String discount) {
         SaleDetailViewModel.discount.set(discount);
     }
 
-    public static DoubleProperty discountProperty() {
+    public static StringProperty discountProperty() {
         return discount;
     }
 
@@ -167,59 +143,51 @@ public class SaleDetailViewModel {
         return discountType;
     }
 
-    public static double getTotal() {
+    public static String getTotal() {
         return total.get();
     }
 
-    public static void setTotal(double total) {
+    public static void setTotal(String total) {
         SaleDetailViewModel.total.set(total);
     }
 
-    public static DoubleProperty totalProperty() {
+    public static StringProperty totalProperty() {
         return total;
     }
 
-    public static int getQuantity() {
+    public static String getQuantity() {
         return quantity.get();
     }
 
-    public static void setQuantity(int quantity) {
+    public static void setQuantity(String quantity) {
         SaleDetailViewModel.quantity.set(quantity);
     }
 
-    public static IntegerProperty quantityProperty() {
+    public static StringProperty quantityProperty() {
         return quantity;
     }
 
     public static void resetProperties() {
         setId(0);
-        setDate(null);
-        setRef(null);
         setProduct(null);
-        setSerial(null);
-        setPrice(0);
+        setSerial("");
         setSaleUnit(null);
-        setNetTax(0);
-        setTaxType(null);
-        setDiscount(0);
-        setDiscountType(null);
-        setTotal(0);
-        setQuantity(0);
+        setNetTax("");
+        setTaxType("");
+        setDiscount("null");
+        setDiscountType("null");
     }
 
     public static void addSaleDetail() {
-        SaleDetail saleDetail = new SaleDetail(getDate(),
-                getRef(),
-                getProduct(),
+        SaleDetail saleDetail = new SaleDetail(getProduct(),
                 getSerial(),
-                getPrice(),
                 getSaleUnit(),
-                getNetTax(),
+                Double.parseDouble(getNetTax()),
                 getTaxType(),
-                getDiscount(),
-                getDiscountType(),
-                getTotal(),
-                getQuantity());
+                Double.parseDouble(getDiscount()),
+                getDiscountType());
         saleDetailTempList.add(saleDetail);
+        saleDetailTempList.forEach(System.out::println);
         resetProperties();
-    }}
+    }
+}

@@ -9,7 +9,6 @@ public class SaleDetail implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-    private Date date;
     private String ref;
     @ManyToOne
     private ProductDetail product;
@@ -35,30 +34,20 @@ public class SaleDetail implements Serializable {
     public SaleDetail() {
     }
 
-    public SaleDetail(Date date,
-                      String ref,
-                      ProductDetail product,
+    public SaleDetail(ProductDetail product,
                       String serialNumber,
-                      double price,
                       UnitOfMeasure saleUnit,
                       double netTax,
                       String taxType,
                       double discount,
-                      String discountType,
-                      double total,
-                      int quantity) {
-        this.date = date;
-        this.ref = ref;
+                      String discountType) {
         this.product = product;
         this.serialNumber = serialNumber;
-        this.price = price;
         this.saleUnit = saleUnit;
         this.netTax = netTax;
         this.taxType = taxType;
         this.discount = discount;
         this.discountType = discountType;
-        this.total = total;
-        this.quantity = quantity;
     }
 
     public long getId() {
@@ -67,14 +56,6 @@ public class SaleDetail implements Serializable {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
     }
 
     public String getRef() {

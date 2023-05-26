@@ -33,7 +33,6 @@ public class SaleDetailDao {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             saleDetail = session.load(SaleDetail.class, id);
-            saleDetail.setDate(obj.getDate());
             saleDetail.setRef(obj.getRef());
             saleDetail.setProduct(obj.getProduct());
             saleDetail.setSerialNumber(obj.getSerialNumber());

@@ -23,7 +23,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
-import static org.infinite.spoty.dataShare.DataShare.getPurchaseProducts;
+import static org.infinite.spoty.dataShare.DataShare.getSaleProducts;
 
 public class SaleFormController implements Initializable {
     @FXML
@@ -65,7 +65,7 @@ public class SaleFormController implements Initializable {
     }
 
     private void saleProductDialogPane(Stage stage) throws IOException {
-        DialogPane dialogPane = fxmlLoader("forms/PurchaseProductsForm.fxml").load();
+        DialogPane dialogPane = fxmlLoader("forms/SaleProductsForm.fxml").load();
         dialog = new Dialog<>();
         dialog.setDialogPane(dialogPane);
         dialog.initOwner(stage);
@@ -109,7 +109,7 @@ public class SaleFormController implements Initializable {
             saleStatus.setText("");
             saleNote.setText("");
             saleProductsTable.getTableColumns().clear();
-            getPurchaseProducts().clear();
+            getSaleProducts().clear();
         }
     }
 
