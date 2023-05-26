@@ -19,7 +19,7 @@ public class SupplierVewModel {
     private static final StringProperty address = new SimpleStringProperty("");
     private static final StringProperty taxNumber = new SimpleStringProperty("");
     private static final StringProperty country = new SimpleStringProperty("");
-    private static final ObservableList<Supplier> customersList= FXCollections.observableArrayList();
+    public static final ObservableList<Supplier> suppliersList= FXCollections.observableArrayList();
 
     public static int getId() {
         return id.get();
@@ -143,15 +143,15 @@ public class SupplierVewModel {
     }
 
     public static void saveSupplier() {
-        Supplier customer = new Supplier(getName(), getEmail(), getPhone(), getCity(), getAddress(), getTaxNumber(), getCountry());
-        SupplierDao.saveSupplier(customer);
+        Supplier supplier = new Supplier(getName(), getEmail(), getPhone(), getCity(), getAddress(), getTaxNumber(), getCountry());
+        SupplierDao.saveSupplier(supplier);
         resetProperties();
         getSuppliers();
     }
 
     public static ObservableList<Supplier> getSuppliers() {
-        customersList.clear();
-        customersList.addAll(SupplierDao.fetchSuppliers());
-        return customersList;
+        suppliersList.clear();
+        suppliersList.addAll(SupplierDao.fetchSuppliers());
+        return suppliersList;
     }
 }

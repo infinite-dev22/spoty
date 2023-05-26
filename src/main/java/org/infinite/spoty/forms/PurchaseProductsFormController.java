@@ -86,9 +86,9 @@ public class PurchaseProductsFormController implements Initializable {
             if (purchaseProductsQnty.getText().length() == 0) {
                 purchaseProductsQnty.setTrailingIcon(icon);
             }
-//            if (purchaseProductsPdct.getText().length() == 0) {
-//                purchaseProductsPdct.setLeadingIcon(icon);
-//            }
+            if (purchaseProductsPdct.getText().length() == 0) {
+                purchaseProductsPdct.setLeadingIcon(icon);
+            }
             if (purchaseProductsOrderTax.getText().length() == 0) {
                 purchaseProductsOrderTax.setLeadingIcon(icon);
             }
@@ -96,7 +96,7 @@ public class PurchaseProductsFormController implements Initializable {
                 purchaseProductsDiscount.setLeadingIcon(icon);
             }
             if (purchaseProductsQnty.getText().length() > 0
-//                    && purchaseProductsPdct.getText().length() > 0
+                    && purchaseProductsPdct.getText().length() > 0
                     && purchaseProductsOrderTax.getText().length() > 0
                     && purchaseProductsDiscount.getText().length() > 0) {
                 PurchaseDetailsViewModel.addPurchaseDetail();

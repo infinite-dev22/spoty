@@ -51,8 +51,6 @@ public class ProductFormController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        ObservableList<String> barCodeTypes = FXCollections.observableArrayList(Values.BARCODETYPES);
-
         productFormName.textProperty().addListener((observable, oldValue, newValue) -> productFormName.setTrailingIcon(null));
         productFormCategory.textProperty().addListener((observable, oldValue, newValue) -> productFormCategory.setLeadingIcon(null));
         productFormBrand.textProperty().addListener((observable, oldValue, newValue) -> productFormBrand.setLeadingIcon(null));
@@ -94,7 +92,7 @@ public class ProductFormController implements Initializable {
                 return null;
             }
         });
-        productFormBarCodeType.setItems(barCodeTypes);
+        productFormBarCodeType.setItems(FXCollections.observableArrayList(Values.BARCODETYPES));
 
         dialogOnActions();
     }

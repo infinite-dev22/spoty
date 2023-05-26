@@ -7,6 +7,7 @@ import io.github.palexdev.materialfx.filter.DoubleFilter;
 import io.github.palexdev.materialfx.filter.IntegerFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Dialog;
@@ -18,12 +19,15 @@ import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.StringConverter;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.PurchaseDetail;
-import org.infinite.spoty.database.models.PurchaseDetail;
-import org.infinite.spoty.models.Product;
 import org.infinite.spoty.database.models.Supplier;
+import org.infinite.spoty.values.strings.Values;
+import org.infinite.spoty.viewModels.BranchViewModel;
 import org.infinite.spoty.viewModels.PurchaseDetailsViewModel;
+import org.infinite.spoty.viewModels.PurchaseMasterViewModel;
+import org.infinite.spoty.viewModels.SupplierVewModel;
 
 import java.io.IOException;
 import java.net.URL;
@@ -49,13 +53,13 @@ public class PurchaseFormController implements Initializable {
     @FXML
     public AnchorPane purchaseFormContentPane;
     @FXML
-    public MFXFilterComboBox<?> purchaseStatus;
+    public MFXFilterComboBox<String> purchaseStatus;
     private Dialog<ButtonType> dialog;
 
     public PurchaseFormController(Stage stage) {
         Platform.runLater(() -> {
             try {
-                purchaseProductDialogPane(stage);
+                createPurchaseProductDialog(stage);
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
@@ -64,14 +68,53 @@ public class PurchaseFormController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // Add event listeners on form inputs
         purchaseDate.textProperty().addListener((observable, oldValue, newValue) -> purchaseDate.setTrailingIcon(null));
         purchaseSupplierId.textProperty().addListener((observable, oldValue, newValue) -> purchaseSupplierId.setTrailingIcon(null));
         purchaseBranchId.textProperty().addListener((observable, oldValue, newValue) -> purchaseBranchId.setTrailingIcon(null));
         purchaseStatus.textProperty().addListener((observable, oldValue, newValue) -> purchaseStatus.setTrailingIcon(null));
+        // Set items to combo boxes and display custom text.
+        purchaseSupplierId.setItems(SupplierVewModel.suppliersList);
+        purchaseSupplierId.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(Supplier object) {
+                if (object != null)
+                    return object.getName();
+                else
+                    return null;
+            }
+
+            @Override
+            public Supplier fromString(String string) {
+                return null;
+            }
+        });
+        purchaseBranchId.setItems(BranchViewModel.branchesList);
+        purchaseBranchId.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(Branch object) {
+                if (object != null)
+                    return object.getName();
+                else
+                    return null;
+            }
+
+            @Override
+            public Branch fromString(String string) {
+                return null;
+            }
+        });
+        purchaseStatus.setItems(FXCollections.observableArrayList(Values.PURCHASESTATUSES));
+        // Bi~Directional Binding.
+        purchaseDate.textProperty().bindBidirectional(PurchaseMasterViewModel.dateProperty());
+        purchaseSupplierId.valueProperty().bindBidirectional(PurchaseMasterViewModel.supplierProperty());
+        purchaseBranchId.valueProperty().bindBidirectional(PurchaseMasterViewModel.branchProperty());
+        purchaseStatus.textProperty().bindBidirectional(PurchaseMasterViewModel.statusProperty());
+
         setupTable();
     }
 
-    private void purchaseProductDialogPane(Stage stage) throws IOException {
+    private void createPurchaseProductDialog(Stage stage) throws IOException {
         DialogPane dialogPane = fxmlLoader("forms/PurchaseProductsForm.fxml").load();
         dialog = new Dialog<>();
         dialog.setDialogPane(dialogPane);
@@ -104,38 +147,30 @@ public class PurchaseFormController implements Initializable {
                 && purchaseBranchId.getText().length() > 0
                 && purchaseStatus.getText().length() > 0
                 && !purchaseProductsTable.getTableColumns().isEmpty()) {
-            purchaseDate.getText();
-            purchaseSupplierId.getText();
-            purchaseBranchId.getText();
-            purchaseStatus.getText();
-            purchaseNote.getText();
-
-            purchaseDate.setText("");
-            purchaseSupplierId.setText("");
-            purchaseBranchId.setText("");
-            purchaseStatus.setText("");
-            purchaseNote.setText("");
             purchaseProductsTable.getTableColumns().clear();
+            PurchaseMasterViewModel.savePurchaseMaster();
+            PurchaseMasterViewModel.resetProperties();
             getPurchaseProducts().clear();
         }
     }
-    
+
     private void setupTable() {
+        // Set table column titles.
         MFXTableColumn<PurchaseDetail> product = new MFXTableColumn<>("Product", false, Comparator.comparing(PurchaseDetail::getProductName));
         MFXTableColumn<PurchaseDetail> quantity = new MFXTableColumn<>("Quantity", false, Comparator.comparing(PurchaseDetail::getQuantity));
         MFXTableColumn<PurchaseDetail> tax = new MFXTableColumn<>("Tax", false, Comparator.comparing(PurchaseDetail::getNetTax));
         MFXTableColumn<PurchaseDetail> discount = new MFXTableColumn<>("Discount", false, Comparator.comparing(PurchaseDetail::getDiscount));
-        
+        // Set table column data.
         product.setRowCellFactory(purchaseDetail -> new MFXTableRowCell<>(PurchaseDetail::getProductName));
         quantity.setRowCellFactory(purchaseDetail -> new MFXTableRowCell<>(PurchaseDetail::getQuantity));
         tax.setRowCellFactory(purchaseDetail -> new MFXTableRowCell<>(PurchaseDetail::getNetTax));
         discount.setRowCellFactory(purchaseDetail -> new MFXTableRowCell<>(PurchaseDetail::getDiscount));
-
+        //Set table column width.
         product.prefWidthProperty().bind(purchaseProductsTable.widthProperty().multiply(.25));
         quantity.prefWidthProperty().bind(purchaseProductsTable.widthProperty().multiply(.25));
         tax.prefWidthProperty().bind(purchaseProductsTable.widthProperty().multiply(.25));
         discount.prefWidthProperty().bind(purchaseProductsTable.widthProperty().multiply(.25));
-
+        // Set table filter.
         purchaseProductsTable.getTableColumns().addAll(product, quantity, tax, discount);
         purchaseProductsTable.getFilters().addAll(
                 new StringFilter<>("Product", PurchaseDetail::getProductName),
@@ -143,11 +178,12 @@ public class PurchaseFormController implements Initializable {
                 new DoubleFilter<>("Tax", PurchaseDetail::getNetTax),
                 new DoubleFilter<>("Discount", PurchaseDetail::getDiscount)
         );
-        getTable();
+        styleTable();
+        // Populate table.
         purchaseProductsTable.setItems(PurchaseDetailsViewModel.getTempList());
     }
 
-    private void getTable() {
+    private void styleTable() {
         purchaseProductsTable.setPrefSize(1000, 1000);
         purchaseProductsTable.features().enableBounceEffect();
         purchaseProductsTable.features().enableSmoothScrolling(0.5);
@@ -156,6 +192,8 @@ public class PurchaseFormController implements Initializable {
     public void cancelBtnClicked() {
         ((StackPane) purchaseFormContentPane.getParent().getParent()).getChildren().get(0).setVisible(true);
         ((StackPane) purchaseFormContentPane.getParent().getParent()).getChildren().remove(1);
+        purchaseProductsTable.getTableColumns().clear();
+        PurchaseMasterViewModel.resetProperties();
     }
 
     public void addBtnClicked() {
