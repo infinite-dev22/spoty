@@ -174,8 +174,9 @@ public class SaleDetailViewModel {
         setSaleUnit(null);
         setNetTax("");
         setTaxType("");
-        setDiscount("null");
-        setDiscountType("null");
+        setDiscount("");
+        setQuantity("");
+        setDiscountType("");
     }
 
     public static void addSaleDetail() {

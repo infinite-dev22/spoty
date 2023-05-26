@@ -5,7 +5,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.infinite.spoty.database.dao.SaleMasterDao;
 import org.infinite.spoty.database.models.Branch;
-import org.infinite.spoty.database.models.Client;
+import org.infinite.spoty.database.models.Customer;
 import org.infinite.spoty.database.models.SaleMaster;
 
 import java.text.ParseException;
@@ -17,7 +17,7 @@ public class SaleMasterViewModel {
     private static final IntegerProperty id = new SimpleIntegerProperty(0);
     private static final StringProperty date = new SimpleStringProperty("");
     private static final StringProperty ref = new SimpleStringProperty("");
-    private static final ObjectProperty<Client> client = new SimpleObjectProperty<>(null);
+    private static final ObjectProperty<Customer> customer = new SimpleObjectProperty<>(null);
     private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>(null);
     private static final StringProperty status = new SimpleStringProperty("");
     private static final StringProperty note = new SimpleStringProperty("");
@@ -50,16 +50,16 @@ public class SaleMasterViewModel {
         return date;
     }
 
-    public static Client getClient() {
-        return client.get();
+    public static Customer getCustomer() {
+        return customer.get();
     }
 
-    public static void setClient(Client client) {
-        SaleMasterViewModel.client.set(client);
+    public static void setCustomer(Customer customer) {
+        SaleMasterViewModel.customer.set(customer);
     }
 
-    public static ObjectProperty<Client> clientProperty() {
-        return client;
+    public static ObjectProperty<Customer> customerProperty() {
+        return customer;
     }
 
     public static Branch getBranch() {
@@ -101,14 +101,14 @@ public class SaleMasterViewModel {
     public static void resetProperties() {
         setId(0);
         setDate("");
-        setClient(null);
+        setCustomer(null);
         setBranch(null);
         setStatus("");
         setNote("");
     }
 
     public static void saveSaleMaster() {
-        SaleMaster saleMaster = new SaleMaster(getClient(), getBranch(), getStatus(), getNote(), getDate());
+        SaleMaster saleMaster = new SaleMaster(getCustomer(), getBranch(), getStatus(), getNote(), getDate());
         saleMaster.setSaleDetails(SaleDetailViewModel.saleDetailTempList);
         SaleMasterDao.saveSaleMaster(saleMaster);
         resetProperties();

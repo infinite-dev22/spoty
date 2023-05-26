@@ -15,7 +15,7 @@ public class SaleMaster implements Serializable {
     private Date date;
     private String ref;
     @ManyToOne
-    private Client client;
+    private Customer customer;
     @ManyToOne
     private Branch branch;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "sale")
@@ -38,13 +38,13 @@ public class SaleMaster implements Serializable {
     @Column(name = "updated_by")
     private String updatedBy;
 
-    public SaleMaster(Client client,
+    public SaleMaster(Customer customer,
                       Branch branch,
                       String saleStatus,
                       String notes,
                       Date date) {
         this.date = date;
-        this.client = client;
+        this.customer = customer;
         this.branch = branch;
         this.saleStatus = saleStatus;
         this.notes = notes;
@@ -85,12 +85,12 @@ public class SaleMaster implements Serializable {
         this.ref = ref;
     }
 
-    public Client getClient() {
-        return client;
+    public Customer getCustomer() {
+        return customer;
     }
 
-    public void setClient(Client client) {
-        this.client = client;
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
     public Branch getBranch() {

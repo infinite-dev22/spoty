@@ -8,20 +8,18 @@ import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.PurchaseMaster;
 import org.infinite.spoty.database.models.Supplier;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class PurchaseMasterViewModel {
+    public static final ObservableList<PurchaseMaster> purchaseMasterList = FXCollections.observableArrayList();
     private static final IntegerProperty id = new SimpleIntegerProperty(0);
     private static final StringProperty date = new SimpleStringProperty("");
     private static final ObjectProperty<Supplier> supplier = new SimpleObjectProperty<>(null);
     private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>(null);
     private static final StringProperty status = new SimpleStringProperty("");
     private static final StringProperty note = new SimpleStringProperty("");
-    public static final ObservableList<PurchaseMaster> purchaseMasterList = FXCollections.observableArrayList();
 
     public static int getId() {
         return id.get();

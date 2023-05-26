@@ -10,6 +10,7 @@ import org.infinite.spoty.database.dao.CustomerDao;
 import org.infinite.spoty.database.models.Customer;
 
 public class CustomerVewModel {
+    public static final ObservableList<Customer> customersList = FXCollections.observableArrayList();
     private static final IntegerProperty id = new SimpleIntegerProperty(0);
     private static final StringProperty name = new SimpleStringProperty("");
     private static final StringProperty code = new SimpleStringProperty("");
@@ -19,7 +20,6 @@ public class CustomerVewModel {
     private static final StringProperty address = new SimpleStringProperty("");
     private static final StringProperty taxNumber = new SimpleStringProperty("");
     private static final StringProperty country = new SimpleStringProperty("");
-    private static final ObservableList<Customer> customersList= FXCollections.observableArrayList();
 
     public static int getId() {
         return id.get();

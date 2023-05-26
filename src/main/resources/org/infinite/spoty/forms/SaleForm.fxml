@@ -24,7 +24,7 @@
                     <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                 </rowConstraints>
                 <MFXDatePicker fx:id="saleDate" floatMode="BORDER" floatingText="Date" prefWidth="400.0" />
-                <MFXFilterComboBox fx:id="saleSupplierId" floatMode="BORDER" floatingText="Supplier" prefWidth="400.0" GridPane.columnIndex="1" />
+                <MFXFilterComboBox fx:id="saleCustomerId" floatMode="BORDER" floatingText="Customer" prefWidth="400.0" GridPane.columnIndex="1" />
                 <MFXFilterComboBox fx:id="saleBranchId" floatMode="BORDER" floatingText="Branch" layoutX="10.0" layoutY="12.0" prefWidth="400.0" GridPane.columnIndex="2" />
             </GridPane>
             <MFXElevatedButton layoutX="500.0" layoutY="110.0" onMouseClicked="#addBtnClicked" text="Add" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="90.0" />

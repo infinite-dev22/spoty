@@ -3,6 +3,7 @@ package org.infinite.spoty.forms;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.enums.ButtonType;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Dialog;
@@ -14,9 +15,14 @@ import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.StringConverter;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.Customer;
-import org.infinite.spoty.models.Product;
+import org.infinite.spoty.database.models.ProductDetail;
+import org.infinite.spoty.values.strings.Values;
+import org.infinite.spoty.viewModels.BranchViewModel;
+import org.infinite.spoty.viewModels.CustomerVewModel;
+import org.infinite.spoty.viewModels.SaleMasterViewModel;
 
 import java.io.IOException;
 import java.net.URL;
@@ -31,19 +37,19 @@ public class SaleFormController implements Initializable {
     @FXML
     public MFXDatePicker saleDate;
     @FXML
-    public MFXFilterComboBox<Customer> saleSupplierId;
+    public MFXFilterComboBox<Customer> saleCustomerId;
     @FXML
     public MFXFilterComboBox<Branch> saleBranchId;
     @FXML
-    public MFXTableView<Product> saleProductsTable;
+    public MFXTableView<ProductDetail> saleProductsTable;
     @FXML
     public MFXTextField saleNote;
     @FXML
     public AnchorPane saleFormContentPane;
     @FXML
-    public MFXFilterComboBox<?> saleStatus;
+    public MFXFilterComboBox<String> saleStatus;
     @FXML
-    public MFXFilterComboBox<?> salePaymentStatus;
+    public MFXFilterComboBox<String> salePaymentStatus;
     private Dialog<ButtonType> dialog;
 
     public SaleFormController(Stage stage) {
@@ -58,10 +64,49 @@ public class SaleFormController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // Add form input event listeners.
         saleDate.textProperty().addListener((observable, oldValue, newValue) -> saleDate.setTrailingIcon(null));
-        saleSupplierId.textProperty().addListener((observable, oldValue, newValue) -> saleSupplierId.setTrailingIcon(null));
+        saleCustomerId.textProperty().addListener((observable, oldValue, newValue) -> saleCustomerId.setTrailingIcon(null));
         saleBranchId.textProperty().addListener((observable, oldValue, newValue) -> saleBranchId.setTrailingIcon(null));
         saleStatus.textProperty().addListener((observable, oldValue, newValue) -> saleStatus.setTrailingIcon(null));
+        // Set items to combo boxes and display custom text.
+        saleCustomerId.setItems(CustomerVewModel.customersList);
+        saleCustomerId.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(Customer object) {
+                if (object != null)
+                    return object.getName();
+                else
+                    return null;
+            }
+
+            @Override
+            public Customer fromString(String string) {
+                return null;
+            }
+        });
+        saleBranchId.setItems(BranchViewModel.branchesList);
+        saleBranchId.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(Branch object) {
+                if (object != null)
+                    return object.getName();
+                else
+                    return null;
+            }
+
+            @Override
+            public Branch fromString(String string) {
+                return null;
+            }
+        });
+        saleStatus.setItems(FXCollections.observableArrayList(Values.SALESTATUSES));
+        salePaymentStatus.setItems(FXCollections.observableArrayList(Values.PAYMENTSTATUSES));
+        // Bi~Directional Binding.
+        saleDate.textProperty().bindBidirectional(SaleMasterViewModel.dateProperty());
+        saleCustomerId.valueProperty().bindBidirectional(SaleMasterViewModel.customerProperty());
+        saleBranchId.valueProperty().bindBidirectional(SaleMasterViewModel.branchProperty());
+        saleStatus.textProperty().bindBidirectional(SaleMasterViewModel.statusProperty());
     }
 
     private void saleProductDialogPane(Stage stage) throws IOException {
@@ -79,8 +124,8 @@ public class SaleFormController implements Initializable {
         if (saleDate.getText().length() == 0) {
             saleDate.setTrailingIcon(icon);
         }
-        if (saleSupplierId.getText().length() == 0) {
-            saleSupplierId.setTrailingIcon(icon);
+        if (saleCustomerId.getText().length() == 0) {
+            saleCustomerId.setTrailingIcon(icon);
         }
         if (saleBranchId.getText().length() == 0) {
             saleBranchId.setTrailingIcon(icon);
@@ -93,21 +138,12 @@ public class SaleFormController implements Initializable {
             System.out.println("Table can't be empty");
         }
         if (saleDate.getText().length() > 0
-                && saleSupplierId.getText().length() > 0
+                && saleCustomerId.getText().length() > 0
                 && saleBranchId.getText().length() > 0
                 && saleStatus.getText().length() > 0
                 && !saleProductsTable.getTableColumns().isEmpty()) {
-            saleDate.getText();
-            saleSupplierId.getText();
-            saleBranchId.getText();
-            saleStatus.getText();
-            saleNote.getText();
-
-            saleDate.setText("");
-            saleSupplierId.setText("");
-            saleBranchId.setText("");
-            saleStatus.setText("");
-            saleNote.setText("");
+            SaleMasterViewModel.saveSaleMaster();
+            SaleMasterViewModel.resetProperties();
             saleProductsTable.getTableColumns().clear();
             getSaleProducts().clear();
         }
@@ -116,6 +152,8 @@ public class SaleFormController implements Initializable {
     public void cancelBtnClicked() {
         ((StackPane) saleFormContentPane.getParent().getParent()).getChildren().get(0).setVisible(true);
         ((StackPane) saleFormContentPane.getParent().getParent()).getChildren().remove(1);
+        SaleMasterViewModel.resetProperties();
+        saleProductsTable.getTableColumns().clear();
     }
 
     public void addBtnClicked() {

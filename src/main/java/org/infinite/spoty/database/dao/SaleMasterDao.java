@@ -36,7 +36,7 @@ public class SaleMasterDao {
             saleMaster.setUser(obj.getUser());
             saleMaster.setRef(obj.getRef());
             saleMaster.setDate(obj.getDate());
-            saleMaster.setClient(obj.getClient());
+            saleMaster.setCustomer(obj.getCustomer());
             saleMaster.setBranch(obj.getBranch());
             saleMaster.setTaxRate(obj.getTaxRate());
             saleMaster.setNetTax(obj.getNetTax());
