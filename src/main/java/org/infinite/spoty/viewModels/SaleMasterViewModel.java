@@ -112,6 +112,7 @@ public class SaleMasterViewModel {
         saleMaster.setSaleDetails(SaleDetailViewModel.saleDetailTempList);
         SaleMasterDao.saveSaleMaster(saleMaster);
         resetProperties();
+        SaleDetailViewModel.saleDetailTempList.clear();
         getSaleMasters();
     }
 

@@ -1,7 +1,11 @@
 package org.infinite.spoty.forms;
 
 import io.github.palexdev.materialfx.controls.*;
+import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.enums.ButtonType;
+import io.github.palexdev.materialfx.filter.DoubleFilter;
+import io.github.palexdev.materialfx.filter.IntegerFilter;
+import io.github.palexdev.materialfx.filter.StringFilter;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -18,14 +22,16 @@ import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.Customer;
-import org.infinite.spoty.database.models.ProductDetail;
+import org.infinite.spoty.database.models.SaleDetail;
 import org.infinite.spoty.values.strings.Values;
 import org.infinite.spoty.viewModels.BranchViewModel;
 import org.infinite.spoty.viewModels.CustomerVewModel;
+import org.infinite.spoty.viewModels.SaleDetailViewModel;
 import org.infinite.spoty.viewModels.SaleMasterViewModel;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Comparator;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
@@ -41,7 +47,7 @@ public class SaleFormController implements Initializable {
     @FXML
     public MFXFilterComboBox<Branch> saleBranchId;
     @FXML
-    public MFXTableView<ProductDetail> saleProductsTable;
+    public MFXTableView<SaleDetail> saleProductsTable;
     @FXML
     public MFXTextField saleNote;
     @FXML
@@ -107,6 +113,7 @@ public class SaleFormController implements Initializable {
         saleCustomerId.valueProperty().bindBidirectional(SaleMasterViewModel.customerProperty());
         saleBranchId.valueProperty().bindBidirectional(SaleMasterViewModel.branchProperty());
         saleStatus.textProperty().bindBidirectional(SaleMasterViewModel.statusProperty());
+        setupTable();
     }
 
     private void saleProductDialogPane(Stage stage) throws IOException {
@@ -158,5 +165,40 @@ public class SaleFormController implements Initializable {
 
     public void addBtnClicked() {
         dialog.showAndWait();
+    }
+
+    private void setupTable() {
+        // Set table column titles.
+        MFXTableColumn<SaleDetail> product = new MFXTableColumn<>("Product", false, Comparator.comparing(SaleDetail::getProductName));
+        MFXTableColumn<SaleDetail> quantity = new MFXTableColumn<>("Quantity", false, Comparator.comparing(SaleDetail::getQuantity));
+        MFXTableColumn<SaleDetail> tax = new MFXTableColumn<>("Tax", false, Comparator.comparing(SaleDetail::getNetTax));
+        MFXTableColumn<SaleDetail> discount = new MFXTableColumn<>("Discount", false, Comparator.comparing(SaleDetail::getDiscount));
+        // Set table column data.
+        product.setRowCellFactory(purchaseDetail -> new MFXTableRowCell<>(SaleDetail::getProductName));
+        quantity.setRowCellFactory(purchaseDetail -> new MFXTableRowCell<>(SaleDetail::getQuantity));
+        tax.setRowCellFactory(purchaseDetail -> new MFXTableRowCell<>(SaleDetail::getNetTax));
+        discount.setRowCellFactory(purchaseDetail -> new MFXTableRowCell<>(SaleDetail::getDiscount));
+        //Set table column width.
+        product.prefWidthProperty().bind(saleProductsTable.widthProperty().multiply(.25));
+        quantity.prefWidthProperty().bind(saleProductsTable.widthProperty().multiply(.25));
+        tax.prefWidthProperty().bind(saleProductsTable.widthProperty().multiply(.25));
+        discount.prefWidthProperty().bind(saleProductsTable.widthProperty().multiply(.25));
+        // Set table filter.
+        saleProductsTable.getTableColumns().addAll(product, quantity, tax, discount);
+        saleProductsTable.getFilters().addAll(
+                new StringFilter<>("Product", SaleDetail::getProductName),
+                new IntegerFilter<>("Quantity", SaleDetail::getQuantity),
+                new DoubleFilter<>("Tax", SaleDetail::getNetTax),
+                new DoubleFilter<>("Discount", SaleDetail::getDiscount)
+        );
+        styleTable();
+        // Populate table.
+        saleProductsTable.setItems(SaleDetailViewModel.saleDetailTempList);
+    }
+
+    private void styleTable() {
+        saleProductsTable.setPrefSize(1000, 1000);
+        saleProductsTable.features().enableBounceEffect();
+        saleProductsTable.features().enableSmoothScrolling(0.5);
     }
 }

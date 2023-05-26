@@ -16,7 +16,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import org.infinite.spoty.forms.SaleFormController;
-import org.infinite.spoty.models.Sale;
+import org.infinite.spoty.database.models.SaleMaster;
+import org.infinite.spoty.viewModels.SaleMasterViewModel;
 
 import java.io.IOException;
 import java.net.URL;
@@ -39,7 +40,7 @@ public class SalesController implements Initializable {
     @FXML
     public BorderPane saleContentPane;
     @FXML
-    private MFXTableView<Sale> saleTable;
+    private MFXTableView<SaleMaster> saleTable;
 
     public SalesController(Stage stage) {
         this.stage = stage;
@@ -51,45 +52,56 @@ public class SalesController implements Initializable {
     }
 
     private void setupTable() {
-        MFXTableColumn<Sale> saleDate = new MFXTableColumn<>("Date", false, Comparator.comparing(Sale::getSaleDate));
-        MFXTableColumn<Sale> saleReference = new MFXTableColumn<>("Reference", false, Comparator.comparing(Sale::getSaleReference));
-        MFXTableColumn<Sale> saleAddedBy = new MFXTableColumn<>("Added By", false, Comparator.comparing(Sale::getSaleAddedBy));
-        MFXTableColumn<Sale> saleCustomer = new MFXTableColumn<>("Customer", false, Comparator.comparing(Sale::getSaleCustomer));
-        MFXTableColumn<Sale> saleBranch = new MFXTableColumn<>("Branch", false, Comparator.comparing(Sale::getSaleBranch));
-        MFXTableColumn<Sale> saleStatus = new MFXTableColumn<>("SaleMaster Status", false, Comparator.comparing(Sale::getSaleStatus));
-        MFXTableColumn<Sale> saleGrandTotal = new MFXTableColumn<>("Total", false, Comparator.comparing(Sale::getSaleGrandTotal));
-        MFXTableColumn<Sale> saleAmountPaid = new MFXTableColumn<>("Paid", false, Comparator.comparing(Sale::getSaleAmountPaid));
-        MFXTableColumn<Sale> saleAmountDue = new MFXTableColumn<>("Amount Due", false, Comparator.comparing(Sale::getSaleAmountDue));
-        MFXTableColumn<Sale> salePaymentStatus = new MFXTableColumn<>("Pay Status", false, Comparator.comparing(Sale::getSalePaymentStatus));
+        MFXTableColumn<SaleMaster> saleDate = new MFXTableColumn<>("Date", false, Comparator.comparing(SaleMaster::getDate));
+        MFXTableColumn<SaleMaster> saleReference = new MFXTableColumn<>("Reference", false, Comparator.comparing(SaleMaster::getRef));
+        MFXTableColumn<SaleMaster> saleAddedBy = new MFXTableColumn<>("Added By", false, Comparator.comparing(SaleMaster::getAddedBy));
+        MFXTableColumn<SaleMaster> saleCustomer = new MFXTableColumn<>("Customer", false, Comparator.comparing(SaleMaster::getCustomerName));
+        MFXTableColumn<SaleMaster> saleBranch = new MFXTableColumn<>("Branch", false, Comparator.comparing(SaleMaster::getBranchName));
+        MFXTableColumn<SaleMaster> saleStatus = new MFXTableColumn<>("Sale Status", false, Comparator.comparing(SaleMaster::getSaleStatus));
+        MFXTableColumn<SaleMaster> saleGrandTotal = new MFXTableColumn<>("Total", false, Comparator.comparing(SaleMaster::getTotal));
+        MFXTableColumn<SaleMaster> saleAmountPaid = new MFXTableColumn<>("Paid", false, Comparator.comparing(SaleMaster::getAmountPaid));
+        MFXTableColumn<SaleMaster> saleAmountDue = new MFXTableColumn<>("Amount Due", false, Comparator.comparing(SaleMaster::getAmountDue));
+        MFXTableColumn<SaleMaster> salePaymentStatus = new MFXTableColumn<>("Pay Status", false, Comparator.comparing(SaleMaster::getPaymentStatus));
 
-        saleDate.setRowCellFactory(sale -> new MFXTableRowCell<>(Sale::getSaleDate));
-        saleReference.setRowCellFactory(sale -> new MFXTableRowCell<>(Sale::getSaleReference));
-        saleAddedBy.setRowCellFactory(sale -> new MFXTableRowCell<>(Sale::getSaleAddedBy));
-        saleCustomer.setRowCellFactory(sale -> new MFXTableRowCell<>(Sale::getSaleCustomer));
-        saleBranch.setRowCellFactory(sale -> new MFXTableRowCell<>(Sale::getSaleBranch));
-        saleStatus.setRowCellFactory(sale -> new MFXTableRowCell<>(Sale::getSaleStatus));
-        saleGrandTotal.setRowCellFactory(sale -> new MFXTableRowCell<>(Sale::getSaleGrandTotal));
-        saleAmountPaid.setRowCellFactory(sale -> new MFXTableRowCell<>(Sale::getSaleAmountPaid));
-        saleAmountDue.setRowCellFactory(sale -> new MFXTableRowCell<>(Sale::getSaleAmountDue));
-        salePaymentStatus.setRowCellFactory(sale -> new MFXTableRowCell<>(Sale::getSalePaymentStatus));
+        saleDate.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleMaster::getDate));
+        saleReference.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleMaster::getRef));
+        saleAddedBy.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleMaster::getAddedBy));
+        saleCustomer.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleMaster::getCustomerName));
+        saleBranch.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleMaster::getBranchName));
+        saleStatus.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleMaster::getSaleStatus));
+        saleGrandTotal.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleMaster::getTotal));
+        saleAmountPaid.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleMaster::getAmountPaid));
+        saleAmountDue.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleMaster::getAmountDue));
+        salePaymentStatus.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleMaster::getPaymentStatus));
+
+        saleDate.prefWidthProperty().bind(saleTable.widthProperty().multiply(.1));
+        saleReference.prefWidthProperty().bind(saleTable.widthProperty().multiply(.1));
+        saleAddedBy.prefWidthProperty().bind(saleTable.widthProperty().multiply(.1));
+        saleCustomer.prefWidthProperty().bind(saleTable.widthProperty().multiply(.1));
+        saleBranch.prefWidthProperty().bind(saleTable.widthProperty().multiply(.1));
+        saleStatus.prefWidthProperty().bind(saleTable.widthProperty().multiply(.1));
+        saleGrandTotal.prefWidthProperty().bind(saleTable.widthProperty().multiply(.1));
+        saleAmountPaid.prefWidthProperty().bind(saleTable.widthProperty().multiply(.1));
+        saleAmountDue.prefWidthProperty().bind(saleTable.widthProperty().multiply(.1));
+        salePaymentStatus.prefWidthProperty().bind(saleTable.widthProperty().multiply(.1));
 
         saleTable.getTableColumns().addAll(saleDate, saleReference, saleAddedBy, saleCustomer, saleBranch, saleStatus, saleGrandTotal, saleAmountPaid, saleAmountDue, salePaymentStatus);
         saleTable.getFilters().addAll(
-                new StringFilter<>("Reference", Sale::getSaleReference),
-                new StringFilter<>("Added By", Sale::getSaleAddedBy),
-                new StringFilter<>("Customer", Sale::getSaleCustomer),
-                new StringFilter<>("Branch", Sale::getSaleBranch),
-                new StringFilter<>("SaleMaster Status", Sale::getSaleStatus),
-                new DoubleFilter<>("Grand Total", Sale::getSaleGrandTotal),
-                new DoubleFilter<>("Amount Paid", Sale::getSaleAmountPaid),
-                new DoubleFilter<>("Amount Due", Sale::getSaleAmountDue),
-                new StringFilter<>("Payment Status", Sale::getSalePaymentStatus)
+                new StringFilter<>("Reference", SaleMaster::getRef),
+                new StringFilter<>("Added By", SaleMaster::getAddedBy),
+                new StringFilter<>("Customer", SaleMaster::getCustomerName),
+                new StringFilter<>("Branch", SaleMaster::getBranchName),
+                new StringFilter<>("Sale Status", SaleMaster::getSaleStatus),
+                new DoubleFilter<>("Grand Total", SaleMaster::getTotal),
+                new DoubleFilter<>("Amount Paid", SaleMaster::getAmountPaid),
+                new DoubleFilter<>("Amount Due", SaleMaster::getAmountDue),
+                new StringFilter<>("Payment Status", SaleMaster::getPaymentStatus)
         );
-        styleSaleTable();
-        saleTable.setItems(saleSampleData());
+        styleSaleMasterTable();
+        saleTable.setItems(SaleMasterViewModel.getSaleMasters());
     }
 
-    private void styleSaleTable() {
+    private void styleSaleMasterTable() {
         saleTable.setPrefSize(1200, 1000);
         saleTable.features().enableBounceEffect();
         saleTable.autosizeColumnsOnInitialization();

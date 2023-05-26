@@ -43,6 +43,7 @@ public class SaleMasterDao {
             saleMaster.setDiscount(obj.getDiscount());
             saleMaster.setTotal(obj.getTotal());
             saleMaster.setAmountPaid(obj.getAmountPaid());
+            saleMaster.setAmountDue(obj.getAmountDue());
             saleMaster.setPaymentStatus(obj.getPaymentStatus());
             saleMaster.setSaleStatus(obj.getSaleStatus());
             saleMaster.setNotes(obj.getNotes());

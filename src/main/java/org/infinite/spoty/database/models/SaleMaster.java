@@ -26,6 +26,7 @@ public class SaleMaster implements Serializable {
     private double discount;
     private double total;
     private double amountPaid;
+    private double amountDue;
     private String paymentStatus;
     private String saleStatus;
     private String notes;
@@ -65,6 +66,13 @@ public class SaleMaster implements Serializable {
         return user;
     }
 
+    public String getAddedBy() {
+        if (user != null)
+            return user.getFirstName() + " " + user.getLastName();
+        else
+            return null;
+    }
+
     public void setUser(User user) {
         this.user = user;
     }
@@ -89,12 +97,24 @@ public class SaleMaster implements Serializable {
         return customer;
     }
 
+    public String getCustomerName() {
+        if (customer != null)
+            return customer.getName();
+        else
+            return null;
+    }
+
     public void setCustomer(Customer customer) {
         this.customer = customer;
     }
-
     public Branch getBranch() {
         return branch;
+    }
+    public String getBranchName() {
+        if (branch != null)
+            return branch.getName();
+        else
+            return null;
     }
 
     public void setBranch(Branch branch) {
@@ -139,6 +159,14 @@ public class SaleMaster implements Serializable {
 
     public void setAmountPaid(double amountPaid) {
         this.amountPaid = amountPaid;
+    }
+
+    public double getAmountDue() {
+        return amountDue;
+    }
+
+    public void setAmountDue(double amountDue) {
+        this.amountDue = amountDue;
     }
 
     public String getPaymentStatus() {

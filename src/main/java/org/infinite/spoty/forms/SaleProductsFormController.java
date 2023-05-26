@@ -99,6 +99,7 @@ public class SaleProductsFormController implements Initializable {
                 SaleDetailViewModel.resetProperties();
                 System.out.println(getAdjustmentProducts());
                 closeDialog(e);
+//                SaleFormController.setupTable();
             }
         });
     }

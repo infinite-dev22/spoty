@@ -36,12 +36,14 @@ public class SaleDetail implements Serializable {
     }
 
     public SaleDetail(ProductDetail product,
+                      int quantity,
                       String serialNumber,
                       double netTax,
                       String taxType,
                       double discount,
                       String discountType) {
         this.product = product;
+        this.quantity = quantity;
         this.serialNumber = serialNumber;
         this.netTax = netTax;
         this.taxType = taxType;
@@ -67,6 +69,12 @@ public class SaleDetail implements Serializable {
 
     public ProductDetail getProduct() {
         return product;
+    }
+    public String getProductName() {
+        if (product != null)
+            return product.getProduct().getName() + " " + product.getName();
+        else
+            return null;
     }
 
     public void setProduct(ProductDetail product) {

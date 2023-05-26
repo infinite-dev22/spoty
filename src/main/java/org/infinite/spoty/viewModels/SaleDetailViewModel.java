@@ -181,6 +181,7 @@ public class SaleDetailViewModel {
 
     public static void addSaleDetail() {
         SaleDetail saleDetail = new SaleDetail(getProduct(),
+                Integer.parseInt(getQuantity()),
                 getSerial(),
                 Double.parseDouble(getNetTax()),
                 getTaxType(),
