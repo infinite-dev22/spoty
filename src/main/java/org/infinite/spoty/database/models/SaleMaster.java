@@ -3,6 +3,7 @@ package org.infinite.spoty.database.models;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 public class SaleMaster implements Serializable {
@@ -13,10 +14,12 @@ public class SaleMaster implements Serializable {
     private User user;
     private Date date;
     private String ref;
-    @ManyToOne(optional = true)
+    @ManyToOne
     private Client client;
     @ManyToOne
     private Branch branch;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sale")
+    private List<SaleDetail> saleDetails;
     @Column(name = "tax_rate")
     private double taxRate;
     private double netTax;
@@ -35,21 +38,18 @@ public class SaleMaster implements Serializable {
     @Column(name = "updated_by")
     private String updatedBy;
 
-    public SaleMaster(User user, Date date, String ref, Client client, Branch branch, double taxRate, double netTax, double discount, double total, double amountPaid, String paymentStatus, String saleStatus, String notes) {
-        this.user = user;
+    public SaleMaster(Client client,
+                      Branch branch,
+                      String saleStatus,
+                      String notes,
+                      Date date) {
         this.date = date;
-        this.ref = ref;
         this.client = client;
         this.branch = branch;
-        this.taxRate = taxRate;
-        this.netTax = netTax;
-        this.discount = discount;
-        this.total = total;
-        this.amountPaid = amountPaid;
-        this.paymentStatus = paymentStatus;
         this.saleStatus = saleStatus;
         this.notes = notes;
     }
+
     public SaleMaster() {
     }
 
@@ -195,5 +195,13 @@ public class SaleMaster implements Serializable {
 
     public void setUpdatedBy(String updatedBy) {
         this.updatedBy = updatedBy;
+    }
+
+    public List<SaleDetail> getSaleDetails() {
+        return saleDetails;
+    }
+
+    public void setSaleDetails(List<SaleDetail> saleDetails) {
+        this.saleDetails = saleDetails;
     }
 }

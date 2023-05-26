@@ -72,7 +72,7 @@ public class SaleMasterDao {
         return saleMaster;
     }
 
-    public static ObservableList<SaleMaster> getSaleMaster() {
+    public static ObservableList<SaleMaster> fetchSaleMasters() {
         Transaction transaction = null;
         ObservableList<SaleMaster> purchaseCategories;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {

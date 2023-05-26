@@ -13,7 +13,7 @@ public class PurchaseDetail implements Serializable {
     private long id;
     private double cost;
     @ManyToOne
-    @JoinColumn(name = "productMaster_id")
+    @JoinColumn(name = "purchaseMaster_id")
     private PurchaseMaster purchase;
     private double netTax;
     private String taxType;

@@ -37,7 +37,6 @@ public class SaleDetailDao {
             saleDetail.setProduct(obj.getProduct());
             saleDetail.setSerialNumber(obj.getSerialNumber());
             saleDetail.setPrice(obj.getPrice());
-            saleDetail.setSaleUnit(obj.getSaleUnit());
             saleDetail.setTaxType(obj.getTaxType());
             saleDetail.setNetTax(obj.getNetTax());
             saleDetail.setDiscount(obj.getDiscount());

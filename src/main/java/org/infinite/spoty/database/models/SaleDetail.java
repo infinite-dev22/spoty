@@ -11,11 +11,12 @@ public class SaleDetail implements Serializable {
     private long id;
     private String ref;
     @ManyToOne
+    @JoinColumn(name = "saleMaster_id")
+    private SaleMaster sale;
+    @ManyToOne
     private ProductDetail product;
     private String serialNumber;
     private double price;
-    @ManyToOne
-    private UnitOfMeasure saleUnit;
     private double netTax;
     private String taxType;
     private double discount;
@@ -36,14 +37,12 @@ public class SaleDetail implements Serializable {
 
     public SaleDetail(ProductDetail product,
                       String serialNumber,
-                      UnitOfMeasure saleUnit,
                       double netTax,
                       String taxType,
                       double discount,
                       String discountType) {
         this.product = product;
         this.serialNumber = serialNumber;
-        this.saleUnit = saleUnit;
         this.netTax = netTax;
         this.taxType = taxType;
         this.discount = discount;
@@ -88,14 +87,6 @@ public class SaleDetail implements Serializable {
 
     public void setPrice(double price) {
         this.price = price;
-    }
-
-    public UnitOfMeasure getSaleUnit() {
-        return saleUnit;
-    }
-
-    public void setSaleUnit(UnitOfMeasure saleUnit) {
-        this.saleUnit = saleUnit;
     }
 
     public double getNetTax() {
@@ -176,5 +167,13 @@ public class SaleDetail implements Serializable {
 
     public void setUpdatedBy(String updatedBy) {
         this.updatedBy = updatedBy;
+    }
+
+    public SaleMaster getSaleMaster() {
+        return sale;
+    }
+
+    public void setSaleMaster(SaleMaster sale) {
+        this.sale = sale;
     }
 }

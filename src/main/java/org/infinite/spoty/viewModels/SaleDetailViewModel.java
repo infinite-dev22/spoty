@@ -21,7 +21,7 @@ public class SaleDetailViewModel {
     private static final StringProperty total = new SimpleStringProperty();
     private static final StringProperty quantity = new SimpleStringProperty();
     private static final ObservableList<SaleDetail> saleDetailList = FXCollections.observableArrayList();
-    private static final ObservableList<SaleDetail> saleDetailTempList = FXCollections.observableArrayList();
+    public static final ObservableList<SaleDetail> saleDetailTempList = FXCollections.observableArrayList();
 
     public static int getId() {
         return id.get();
@@ -181,7 +181,6 @@ public class SaleDetailViewModel {
     public static void addSaleDetail() {
         SaleDetail saleDetail = new SaleDetail(getProduct(),
                 getSerial(),
-                getSaleUnit(),
                 Double.parseDouble(getNetTax()),
                 getTaxType(),
                 Double.parseDouble(getDiscount()),
