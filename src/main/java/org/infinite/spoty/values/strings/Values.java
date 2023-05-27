@@ -8,4 +8,5 @@ public class Values {
     public static final LinkedList<String> PURCHASESTATUSES = new LinkedList<>(Arrays.stream(new String[]{"Ordered", "Pending", "Received"}).toList());
     public static final LinkedList<String> SALESTATUSES = new LinkedList<>(Arrays.stream(new String[]{"Ordered", "Pending", "Completed"}).toList());
     public static final LinkedList<String> PAYMENTSTATUSES = new LinkedList<>(Arrays.stream(new String[]{"Partial", "Pending", "Paid"}).toList());
+    public static final LinkedList<String> ADJUSTMENTTYPE = new LinkedList<>(Arrays.stream(new String[]{"Increment", "Decrement"}).toList());
 }

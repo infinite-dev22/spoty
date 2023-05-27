@@ -6,24 +6,27 @@ import io.github.palexdev.materialfx.controls.MFXIconWrapper;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
-import org.infinite.spoty.models.Product;
+import javafx.util.StringConverter;
+import org.infinite.spoty.database.models.ProductDetail;
+import org.infinite.spoty.values.strings.Values;
+import org.infinite.spoty.viewModels.AdjustmentDetailViewModel;
+import org.infinite.spoty.viewModels.ProductDetailViewModel;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.GlobalActions.closeDialog;
-import static org.infinite.spoty.dataShare.DataShare.createAdjustmentProduct;
-import static org.infinite.spoty.dataShare.DataShare.getAdjustmentProducts;
 
 public class AdjustmentProductsFormController implements Initializable {
     @FXML
     public MFXTextField adjustmentProductsQnty;
     @FXML
-    public MFXFilterComboBox<Product> adjustmentProductsPdct;
+    public MFXFilterComboBox<ProductDetail> adjustmentProductsPdct;
     @FXML
     public MFXFilledButton adjustmentProductsSaveBtn;
     @FXML
@@ -31,30 +34,48 @@ public class AdjustmentProductsFormController implements Initializable {
     @FXML
     public Label adjustmentProductsTitle;
     @FXML
-    public MFXComboBox<?> adjustmentType;
+    public MFXComboBox<String> adjustmentType;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // Add form input listeners.
         adjustmentProductsPdct.textProperty().addListener((observable, oldValue, newValue) -> adjustmentProductsPdct.setLeadingIcon(null));
         adjustmentProductsQnty.textProperty().addListener((observable, oldValue, newValue) -> adjustmentProductsQnty.setTrailingIcon(null));
         adjustmentType.textProperty().addListener((observable, oldValue, newValue) -> adjustmentType.setLeadingIcon(null));
+        // Bind form input value to property value.
+        adjustmentProductsPdct.valueProperty().bindBidirectional(AdjustmentDetailViewModel.productProperty());
+        adjustmentProductsQnty.textProperty().bindBidirectional(AdjustmentDetailViewModel.quantityProperty());
+        adjustmentType.textProperty().bindBidirectional(AdjustmentDetailViewModel.adjustmentTypeProperty());
+        // AdjustmentType combo box properties.
+        adjustmentProductsPdct.setItems(ProductDetailViewModel.purchaseDetailsList);
+        adjustmentProductsPdct.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(ProductDetail object) {
+                if (object != null)
+                    return object.getProduct().getName() + " " + object.getName();
+                else
+                    return null;
+            }
 
+            @Override
+            public ProductDetail fromString(String string) {
+                return null;
+            }
+        });
+        adjustmentType.setItems(FXCollections.observableArrayList(Values.ADJUSTMENTTYPE));
         dialogOnActions();
     }
 
     private void dialogOnActions() {
         adjustmentProductsCancelBtn.setOnAction((e) -> {
             closeDialog(e);
-            adjustmentProductsPdct.setText("");
-            adjustmentProductsQnty.setText("");
-            adjustmentType.setText("");
+            AdjustmentDetailViewModel.resetProperties();
             adjustmentProductsPdct.setLeadingIcon(null);
             adjustmentProductsQnty.setTrailingIcon(null);
             adjustmentType.setLeadingIcon(null);
         });
         adjustmentProductsSaveBtn.setOnAction((e) -> {
             MFXIconWrapper icon = new MFXIconWrapper("fas-circle-exclamation", 20, Color.RED, 20);
-
             if (adjustmentProductsPdct.getText().length() == 0) {
                 adjustmentProductsPdct.setLeadingIcon(icon);
             }
@@ -67,15 +88,8 @@ public class AdjustmentProductsFormController implements Initializable {
             if (adjustmentProductsPdct.getText().length() > 0
                     && adjustmentProductsQnty.getText().length() > 0
                     && adjustmentType.getText().length() > 0) {
-                createAdjustmentProduct(adjustmentProductsPdct.getText(),
-                        Double.parseDouble(adjustmentProductsQnty.getText()),
-                        adjustmentType.getText());
-
-                adjustmentProductsPdct.setText("");
-                adjustmentProductsQnty.setText("");
-                adjustmentType.setText("");
-                System.out.println(getAdjustmentProducts());
-
+                AdjustmentDetailViewModel.addAdjustmentDetails();
+                AdjustmentDetailViewModel.resetProperties();
                 closeDialog(e);
             }
         });
