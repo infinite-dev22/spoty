@@ -82,9 +82,9 @@ public class SaleProductsFormController implements Initializable {
             if (saleProductsQnty.getText().length() == 0) {
                 saleProductsQnty.setTrailingIcon(icon);
             }
-//            if (saleProductsPdct.getText().length() == 0) {
-//                saleProductsPdct.setLeadingIcon(icon);
-//            }
+            if (saleProductsPdct.getText().length() == 0) {
+                saleProductsPdct.setLeadingIcon(icon);
+            }
             if (saleProductsOrderTax.getText().length() == 0) {
                 saleProductsOrderTax.setLeadingIcon(icon);
             }
@@ -92,7 +92,7 @@ public class SaleProductsFormController implements Initializable {
                 saleProductsDiscount.setLeadingIcon(icon);
             }
             if (saleProductsQnty.getText().length() > 0
-//                    && saleProductsPdct.getText().length() > 0
+                    && saleProductsPdct.getText().length() > 0
                     && saleProductsOrderTax.getText().length() > 0
                     && saleProductsDiscount.getText().length() > 0) {
                 SaleDetailViewModel.addSaleDetail();

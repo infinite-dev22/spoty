@@ -171,11 +171,6 @@ public class PurchaseDetailsViewModel {
         purchaseTempList.add(purchaseDetail);
     }
 
-    public static ObservableList<PurchaseDetail> getTempList() {
-        purchaseTempList.forEach(System.out::println);
-        return purchaseTempList;
-    }
-
     public static void resetProperties() {
         setId(0);
         setPurchase(null);

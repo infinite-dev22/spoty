@@ -180,7 +180,7 @@ public class PurchaseFormController implements Initializable {
         );
         styleTable();
         // Populate table.
-        purchaseProductsTable.setItems(PurchaseDetailsViewModel.getTempList());
+        purchaseProductsTable.setItems(PurchaseDetailsViewModel.purchaseTempList);
     }
 
     private void styleTable() {

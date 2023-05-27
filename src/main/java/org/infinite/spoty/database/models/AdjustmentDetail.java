@@ -11,7 +11,8 @@ public class AdjustmentDetail implements Serializable {
     private long id;
     @OneToOne
     private ProductDetail productDetail;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "adjustment_id")
     private AdjustmentMaster adjustment;
     private int quantity;
     private String adjustmentType;

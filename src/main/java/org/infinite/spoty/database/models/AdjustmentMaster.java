@@ -3,6 +3,7 @@ package org.infinite.spoty.database.models;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 public class AdjustmentMaster implements Serializable {
@@ -15,8 +16,8 @@ public class AdjustmentMaster implements Serializable {
     private String ref;
     @ManyToOne
     private Branch branch;
-    // TODO: Remove the items property as  it's inappropriate.
-    private String items;
+    @OneToMany(mappedBy = "adjustment")
+    private List<AdjustmentDetail> adjustmentDetails;
     private String notes;
     @Column(name = "created_at")
     private Date createdAt;
@@ -31,16 +32,14 @@ public class AdjustmentMaster implements Serializable {
     }
 
     public AdjustmentMaster(User user,
-                      Date date,
-                      String ref,
-                      Branch branch,
-                      String items,
-                      String notes) {
+                            Date date,
+                            String ref,
+                            Branch branch,
+                            String notes) {
         this.user = user;
         this.date = date;
         this.ref = ref;
         this.branch = branch;
-        this.items = items;
         this.notes = notes;
     }
 
@@ -84,12 +83,12 @@ public class AdjustmentMaster implements Serializable {
         this.branch = branch;
     }
 
-    public String getItems() {
-        return items;
+    public List<AdjustmentDetail> getAdjustment() {
+        return adjustmentDetails;
     }
 
-    public void setItems(String items) {
-        this.items = items;
+    public void setAdjustment(List<AdjustmentDetail> adjustmentDetails) {
+        this.adjustmentDetails = adjustmentDetails;
     }
 
     public String getNotes() {
