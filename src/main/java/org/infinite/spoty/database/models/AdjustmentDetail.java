@@ -50,6 +50,13 @@ public class AdjustmentDetail implements Serializable {
         return productDetail;
     }
 
+    public String getProductDetailName() {
+        if (productDetail != null)
+            return productDetail.getProduct().getName() + " " + productDetail.getName();
+        else
+            return null;
+    }
+
     public void setProductDetail(ProductDetail productDetail) {
         this.productDetail = productDetail;
     }

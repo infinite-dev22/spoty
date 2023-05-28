@@ -76,21 +76,22 @@ public class AdjustmentProductsFormController implements Initializable {
         });
         adjustmentProductsSaveBtn.setOnAction((e) -> {
             MFXIconWrapper icon = new MFXIconWrapper("fas-circle-exclamation", 20, Color.RED, 20);
-            if (adjustmentProductsPdct.getText().length() == 0) {
-                adjustmentProductsPdct.setLeadingIcon(icon);
-            }
+//            if (adjustmentProductsPdct.getText().length() == 0) {
+//                adjustmentProductsPdct.setLeadingIcon(icon);
+//            }
             if (adjustmentProductsQnty.getText().length() == 0) {
                 adjustmentProductsQnty.setTrailingIcon(icon);
             }
             if (adjustmentType.getText().length() == 0) {
                 adjustmentType.setLeadingIcon(icon);
             }
-            if (adjustmentProductsPdct.getText().length() > 0
-                    && adjustmentProductsQnty.getText().length() > 0
+            if (adjustmentProductsQnty.getText().length() > 0
+//                    && adjustmentProductsPdct.getText().length() > 0
                     && adjustmentType.getText().length() > 0) {
                 AdjustmentDetailViewModel.addAdjustmentDetails();
                 AdjustmentDetailViewModel.resetProperties();
                 closeDialog(e);
+                AdjustmentDetailViewModel.adjustmentDetailsTempList.forEach(System.out::println);
             }
         });
     }
