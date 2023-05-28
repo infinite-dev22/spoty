@@ -64,7 +64,7 @@ public class AdjustmentMasterDao {
         return adjustmentMaster;
     }
 
-    public static ObservableList<AdjustmentMaster> getAdjustmentMaster() {
+    public static ObservableList<AdjustmentMaster> fetchAdjustmentMasters() {
         Transaction transaction = null;
         ObservableList<AdjustmentMaster> adjustmentMasters = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {

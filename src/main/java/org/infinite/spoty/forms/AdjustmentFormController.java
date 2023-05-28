@@ -3,7 +3,7 @@ package org.infinite.spoty.forms;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.enums.ButtonType;
-import io.github.palexdev.materialfx.filter.IntegerFilter;
+import io.github.palexdev.materialfx.filter.DoubleFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXElevatedButton;
 import javafx.application.Platform;
@@ -18,9 +18,8 @@ import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.infinite.spoty.database.models.AdjustmentDetail;
 import org.infinite.spoty.database.models.Branch;
-import org.infinite.spoty.viewModels.AdjustmentDetailViewModel;
+import org.infinite.spoty.models.AdjustmentProduct;
 
 import java.io.IOException;
 import java.net.URL;
@@ -28,6 +27,7 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
+import static org.infinite.spoty.dataShare.DataShare.getAdjustmentProducts;
 
 public class AdjustmentFormController implements Initializable {
     @FXML
@@ -35,7 +35,7 @@ public class AdjustmentFormController implements Initializable {
     @FXML
     public MFXDatePicker adjustmentDate;
     @FXML
-    public MFXTableView<AdjustmentDetail> adjustmentProductsTable;
+    public MFXTableView<AdjustmentProduct> adjustmentProductsTable;
     @FXML
     public MFXTextField adjustmentNote;
     @FXML
@@ -66,31 +66,28 @@ public class AdjustmentFormController implements Initializable {
     }
 
     private void setupTable() {
-        MFXTableColumn<AdjustmentDetail> productName = new MFXTableColumn<>("Product", true, Comparator.comparing(AdjustmentDetail::getProductDetailName));
-        MFXTableColumn<AdjustmentDetail> productQuantity = new MFXTableColumn<>("Quantity", true, Comparator.comparing(AdjustmentDetail::getQuantity));
-        MFXTableColumn<AdjustmentDetail> adjustmentType = new MFXTableColumn<>("Adjustment Type", true, Comparator.comparing(AdjustmentDetail::getAdjustmentType));
+        MFXTableColumn<AdjustmentProduct> productName = new MFXTableColumn<>("Product", true, Comparator.comparing(AdjustmentProduct::product));
+        MFXTableColumn<AdjustmentProduct> productQuantity = new MFXTableColumn<>("Quantity", true, Comparator.comparing(AdjustmentProduct::quantity));
+        MFXTableColumn<AdjustmentProduct> adjustmentType = new MFXTableColumn<>("Adjustment Type", true, Comparator.comparing(AdjustmentProduct::adjustmentType));
 
-        productName.setRowCellFactory(product -> new MFXTableRowCell<>(AdjustmentDetail::getProductDetailName));
-        productQuantity.setRowCellFactory(product -> new MFXTableRowCell<>(AdjustmentDetail::getQuantity));
-        adjustmentType.setRowCellFactory(product -> new MFXTableRowCell<>(AdjustmentDetail::getAdjustmentType));
-
-        productName.prefWidthProperty().bind(adjustmentProductsTable.widthProperty().multiply(.4));
-        productQuantity.prefWidthProperty().bind(adjustmentProductsTable.widthProperty().multiply(.4));
-        adjustmentType.prefWidthProperty().bind(adjustmentProductsTable.widthProperty().multiply(.4));
+        productName.setRowCellFactory(product -> new MFXTableRowCell<>(AdjustmentProduct::product));
+        productQuantity.setRowCellFactory(product -> new MFXTableRowCell<>(AdjustmentProduct::quantity));
+        adjustmentType.setRowCellFactory(product -> new MFXTableRowCell<>(AdjustmentProduct::adjustmentType));
 
         adjustmentProductsTable.getTableColumns().addAll(productName, productQuantity, adjustmentType);
         adjustmentProductsTable.getFilters().addAll(
-                new StringFilter<>("Name", AdjustmentDetail::getProductDetailName),
-                new IntegerFilter<>("Quantity", AdjustmentDetail::getQuantity),
-                new StringFilter<>("Category", AdjustmentDetail::getAdjustmentType)
+                new StringFilter<>("Name", AdjustmentProduct::product),
+                new DoubleFilter<>("Code", AdjustmentProduct::quantity),
+                new StringFilter<>("Category", AdjustmentProduct::adjustmentType)
         );
-        getAdjustmentDetailTable();
-        adjustmentProductsTable.setItems(AdjustmentDetailViewModel.adjustmentDetailsTempList);
+        getAdjustmentProductTable();
+        adjustmentProductsTable.setItems(getAdjustmentProducts());
     }
 
-    private void getAdjustmentDetailTable() {
+    private void getAdjustmentProductTable() {
         adjustmentProductsTable.setPrefSize(1000, 1000);
         adjustmentProductsTable.features().enableBounceEffect();
+        adjustmentProductsTable.autosizeColumnsOnInitialization();
         adjustmentProductsTable.features().enableSmoothScrolling(0.5);
     }
 
@@ -99,7 +96,7 @@ public class AdjustmentFormController implements Initializable {
     }
 
     private void quotationProductDialogPane(Stage stage) throws IOException {
-        DialogPane dialogPane = fxmlLoader("forms/AdjustmentDetailsForm.fxml").load();
+        DialogPane dialogPane = fxmlLoader("forms/AdjustmentProductsForm.fxml").load();
         dialog = new Dialog<>();
         dialog.setDialogPane(dialogPane);
         dialog.initOwner(stage);
@@ -124,12 +121,13 @@ public class AdjustmentFormController implements Initializable {
             adjustmentBranchId.getText();
             adjustmentDate.getText();
             adjustmentNote.getText();
-//            getAdjustmentDetails();
+//            getAdjustmentProducts();
 
             adjustmentBranchId.setText("");
             adjustmentDate.setText("");
             adjustmentNote.setText("");
             adjustmentProductsTable.getTableColumns().clear();
+            getAdjustmentProducts().clear();
         }
     }
 

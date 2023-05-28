@@ -31,14 +31,10 @@ public class AdjustmentMaster implements Serializable {
     public AdjustmentMaster() {
     }
 
-    public AdjustmentMaster(User user,
-                            Date date,
-                            String ref,
-                            Branch branch,
-                            String notes) {
-        this.user = user;
+    public AdjustmentMaster(Branch branch,
+                            String notes,
+                            Date date) {
         this.date = date;
-        this.ref = ref;
         this.branch = branch;
         this.notes = notes;
     }
@@ -83,11 +79,11 @@ public class AdjustmentMaster implements Serializable {
         this.branch = branch;
     }
 
-    public List<AdjustmentDetail> getAdjustment() {
+    public List<AdjustmentDetail> getAdjustmentDetails() {
         return adjustmentDetails;
     }
 
-    public void setAdjustment(List<AdjustmentDetail> adjustmentDetails) {
+    public void setAdjustmentDetails(List<AdjustmentDetail> adjustmentDetails) {
         this.adjustmentDetails = adjustmentDetails;
     }
 
