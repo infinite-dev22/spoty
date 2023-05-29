@@ -16,7 +16,7 @@ public class AdjustmentMaster implements Serializable {
     private String ref;
     @ManyToOne
     private Branch branch;
-    @OneToMany(mappedBy = "adjustment")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "adjustment")
     private List<AdjustmentDetail> adjustmentDetails;
     private String notes;
     @Column(name = "created_at")
@@ -73,6 +73,13 @@ public class AdjustmentMaster implements Serializable {
 
     public Branch getBranch() {
         return branch;
+    }
+
+    public String getBranchName() {
+        if (branch != null)
+            return branch.getName();
+        else
+            return null;
     }
 
     public void setBranch(Branch branch) {

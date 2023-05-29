@@ -81,6 +81,7 @@ public class AdjustmentMasterViewModel {
     public static void saveAdjustmentMaster() {
         AdjustmentMaster adjustmentMaster = new AdjustmentMaster(getBranch(), getNote(), getDate());
         adjustmentMaster.setAdjustmentDetails(AdjustmentDetailViewModel.adjustmentDetailsTempList);
+        AdjustmentDetailViewModel.adjustmentDetailsTempList.forEach(System.out::println);
         AdjustmentMasterDao.saveAdjustmentMaster(adjustmentMaster);
         resetProperties();
         AdjustmentDetailViewModel.adjustmentDetailsTempList.clear();

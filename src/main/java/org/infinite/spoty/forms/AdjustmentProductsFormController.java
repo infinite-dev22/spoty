@@ -91,7 +91,6 @@ public class AdjustmentProductsFormController implements Initializable {
                 AdjustmentDetailViewModel.addAdjustmentDetails();
                 AdjustmentDetailViewModel.resetProperties();
                 closeDialog(e);
-                AdjustmentDetailViewModel.adjustmentDetailsTempList.forEach(System.out::println);
             }
         });
     }
