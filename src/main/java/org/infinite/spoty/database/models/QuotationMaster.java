@@ -3,6 +3,7 @@ package org.infinite.spoty.database.models;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 public class QuotationMaster implements Serializable {
@@ -14,12 +15,11 @@ public class QuotationMaster implements Serializable {
     private Date date;
     private String ref;
     @ManyToOne
-    private Client client;
+    private Customer customer;
     @ManyToOne
     private Branch branch;
-    private double taxRate;
-    private double netTax;
-    private double discount;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quotation")
+    private List<QuotationDetail> quotationDetails;
     private String shipping;
     private double total;
     private String status;
@@ -32,19 +32,18 @@ public class QuotationMaster implements Serializable {
     private Date updatedAt;
     @Column(name = "updated_by")
     private String updatedBy;
+
     public QuotationMaster() {
     }
-    public QuotationMaster(User user, Date date, String ref, Client client, Branch branch, double taxRate, double netTax, double discount, String shipping, double total, String status, String notes) {
-        this.user = user;
+
+    public QuotationMaster(Date date,
+                           Customer customer,
+                           Branch branch,
+                           String status,
+                           String notes) {
         this.date = date;
-        this.ref = ref;
-        this.client = client;
+        this.customer = customer;
         this.branch = branch;
-        this.taxRate = taxRate;
-        this.netTax = netTax;
-        this.discount = discount;
-        this.shipping = shipping;
-        this.total = total;
         this.status = status;
         this.notes = notes;
     }
@@ -81,12 +80,12 @@ public class QuotationMaster implements Serializable {
         this.ref = ref;
     }
 
-    public Client getClient() {
-        return client;
+    public Customer getCustomer() {
+        return customer;
     }
 
-    public void setClient(Client client) {
-        this.client = client;
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
     public Branch getBranch() {
@@ -97,28 +96,12 @@ public class QuotationMaster implements Serializable {
         this.branch = branch;
     }
 
-    public double getTaxRate() {
-        return taxRate;
+    public List<QuotationDetail> getQuotationDetails() {
+        return quotationDetails;
     }
 
-    public void setTaxRate(double taxRate) {
-        this.taxRate = taxRate;
-    }
-
-    public double getNetTax() {
-        return netTax;
-    }
-
-    public void setNetTax(double netTax) {
-        this.netTax = netTax;
-    }
-
-    public double getDiscount() {
-        return discount;
-    }
-
-    public void setDiscount(double discount) {
-        this.discount = discount;
+    public void setQuotationDetails(List<QuotationDetail> quotationDetails) {
+        this.quotationDetails = quotationDetails;
     }
 
     public String getShipping() {

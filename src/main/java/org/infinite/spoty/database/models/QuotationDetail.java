@@ -14,7 +14,8 @@ public class QuotationDetail implements Serializable {
     private UnitOfMeasure saleUnit;
     @ManyToOne
     private ProductDetail product;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "quotation_id")
     private QuotationMaster quotation;
     private double netTax;
     private String taxType;

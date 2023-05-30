@@ -11,7 +11,7 @@ import org.infinite.spoty.database.util.HibernateUtil;
 import java.util.Date;
 
 public class QuotationMasterDao {
-    public static int saveQuotationMaster(QuotationMaster obj) {
+    public static void saveQuotationMaster(QuotationMaster obj) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
@@ -24,7 +24,6 @@ public class QuotationMasterDao {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
     public static int updateQuotationMaster(QuotationMaster obj, long id) {
@@ -36,11 +35,8 @@ public class QuotationMasterDao {
             quotationMaster.setUser(obj.getUser());
             quotationMaster.setRef(obj.getRef());
             quotationMaster.setDate(obj.getDate());
-            quotationMaster.setClient(obj.getClient());
+            quotationMaster.setCustomer(obj.getCustomer());
             quotationMaster.setBranch(obj.getBranch());
-            quotationMaster.setTaxRate(obj.getTaxRate());
-            quotationMaster.setNetTax(obj.getNetTax());
-            quotationMaster.setDiscount(obj.getDiscount());
             quotationMaster.setShipping(obj.getShipping());
             quotationMaster.setTotal(obj.getTotal());
             quotationMaster.setStatus(obj.getStatus());
@@ -71,7 +67,7 @@ public class QuotationMasterDao {
         return quotationMaster;
     }
 
-    public static ObservableList<QuotationMaster> getQuotationMaster() {
+    public static ObservableList<QuotationMaster> fetchQuotationMasters() {
         Transaction transaction = null;
         ObservableList<QuotationMaster> purchaseCategories;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
@@ -84,6 +80,7 @@ public class QuotationMasterDao {
         }
         return purchaseCategories;
     }
+
     public static int deleteQuotationMaster(long id) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
