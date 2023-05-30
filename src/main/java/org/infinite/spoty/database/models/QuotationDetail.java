@@ -31,18 +31,14 @@ public class QuotationDetail implements Serializable {
     private Date updatedAt;
     @Column(name = "updated_by")
     private String updatedBy;
-    public QuotationDetail(double price, UnitOfMeasure saleUnit, ProductDetail product, QuotationMaster quotation, double netTax, String taxType, double discount, String discountType, double total, int quantity, String serialNumber) {
-        this.price = price;
-        this.saleUnit = saleUnit;
+    public QuotationDetail(ProductDetail product,
+                           double netTax,
+                           double discount,
+                           int quantity) {
         this.product = product;
-        this.quotation = quotation;
         this.netTax = netTax;
-        this.taxType = taxType;
         this.discount = discount;
-        this.discountType = discountType;
-        this.total = total;
         this.quantity = quantity;
-        this.serialNumber = serialNumber;
     }
 
     public QuotationDetail() {
