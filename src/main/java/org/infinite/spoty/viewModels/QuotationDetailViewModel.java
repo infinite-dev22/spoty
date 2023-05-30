@@ -104,6 +104,7 @@ public class QuotationDetailViewModel {
                 Integer.parseInt(getQuantity()));
         quotationDetailsTempList.add(quotationDetail);
         resetProperties();
+        quotationDetailsTempList.forEach(System.out::println);
     }
 
     public static ObservableList<QuotationDetail> getQuotationDetails() {

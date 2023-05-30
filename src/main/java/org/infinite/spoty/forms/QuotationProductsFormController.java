@@ -9,20 +9,21 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
-import org.infinite.spoty.models.Product;
+import javafx.util.StringConverter;
+import org.infinite.spoty.database.models.ProductDetail;
+import org.infinite.spoty.viewModels.ProductDetailViewModel;
+import org.infinite.spoty.viewModels.QuotationDetailViewModel;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.GlobalActions.closeDialog;
-import static org.infinite.spoty.dataShare.DataShare.createQuotationProduct;
-import static org.infinite.spoty.dataShare.DataShare.getAdjustmentProducts;
 
 public class QuotationProductsFormController implements Initializable {
     @FXML
     public MFXTextField quotationProductsQnty;
     @FXML
-    public MFXFilterComboBox<Product> quotationProductsPdct;
+    public MFXFilterComboBox<ProductDetail> quotationProductsPdct;
     @FXML
     public MFXTextField quotationProductsOrderTax;
     @FXML
@@ -36,21 +37,39 @@ public class QuotationProductsFormController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // Add form input listeners.
         quotationProductsQnty.textProperty().addListener((observable, oldValue, newValue) -> quotationProductsQnty.setTrailingIcon(null));
         quotationProductsPdct.textProperty().addListener((observable, oldValue, newValue) -> quotationProductsPdct.setLeadingIcon(null));
         quotationProductsOrderTax.textProperty().addListener((observable, oldValue, newValue) -> quotationProductsOrderTax.setLeadingIcon(null));
         quotationProductsDiscount.textProperty().addListener((observable, oldValue, newValue) -> quotationProductsDiscount.setLeadingIcon(null));
+        // Bind form input values.
+        quotationProductsQnty.textProperty().bindBidirectional(QuotationDetailViewModel.quantityProperty());
+        quotationProductsPdct.valueProperty().bindBidirectional(QuotationDetailViewModel.productProperty());
+        quotationProductsOrderTax.textProperty().bindBidirectional(QuotationDetailViewModel.taxProperty());
+        quotationProductsDiscount.textProperty().bindBidirectional(QuotationDetailViewModel.discountProperty());
+        // Combo box properties.
+        quotationProductsPdct.setItems(ProductDetailViewModel.purchaseDetailsList);
+        quotationProductsPdct.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(ProductDetail object) {
+                if (object != null)
+                    return object.getProduct().getName() + " " + object.getName();
+                else
+                    return null;
+            }
 
+            @Override
+            public ProductDetail fromString(String string) {
+                return null;
+            }
+        });
         dialogOnActions();
     }
 
     private void dialogOnActions() {
         quotationProductsCancelBtn.setOnAction((e) -> {
             closeDialog(e);
-            quotationProductsQnty.setText("");
-            quotationProductsPdct.setText("");
-            quotationProductsOrderTax.setText("");
-            quotationProductsDiscount.setText("");
+            QuotationDetailViewModel.resetProperties();
             quotationProductsQnty.setTrailingIcon(null);
             quotationProductsPdct.setLeadingIcon(null);
             quotationProductsOrderTax.setLeadingIcon(null);
@@ -62,9 +81,9 @@ public class QuotationProductsFormController implements Initializable {
             if (quotationProductsQnty.getText().length() == 0) {
                 quotationProductsQnty.setTrailingIcon(icon);
             }
-            if (quotationProductsPdct.getText().length() == 0) {
-                quotationProductsPdct.setLeadingIcon(icon);
-            }
+//            if (quotationProductsPdct.getText().length() == 0) {
+//                quotationProductsPdct.setLeadingIcon(icon);
+//            }
             if (quotationProductsOrderTax.getText().length() == 0) {
                 quotationProductsOrderTax.setLeadingIcon(icon);
             }
@@ -72,20 +91,11 @@ public class QuotationProductsFormController implements Initializable {
                 quotationProductsDiscount.setLeadingIcon(icon);
             }
             if (quotationProductsQnty.getText().length() > 0
-                    && quotationProductsPdct.getText().length() > 0
+//                    && quotationProductsPdct.getText().length() > 0
                     && quotationProductsOrderTax.getText().length() > 0
                     && quotationProductsDiscount.getText().length() > 0) {
-                createQuotationProduct(Double.parseDouble(quotationProductsQnty.getText()),
-                        quotationProductsPdct.getText(),
-                        Double.parseDouble(quotationProductsOrderTax.getText()),
-                        Double.parseDouble(quotationProductsDiscount.getText()));
-
-                quotationProductsQnty.setText("");
-                quotationProductsPdct.setText("");
-                quotationProductsOrderTax.setText("");
-                quotationProductsDiscount.setText("");
-                System.out.println(getAdjustmentProducts());
-
+                QuotationDetailViewModel.addQuotationDetails();
+                QuotationDetailViewModel.resetProperties();
                 closeDialog(e);
             }
         });
