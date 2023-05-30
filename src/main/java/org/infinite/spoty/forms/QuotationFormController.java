@@ -4,6 +4,7 @@ import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.enums.ButtonType;
 import io.github.palexdev.materialfx.filter.DoubleFilter;
+import io.github.palexdev.materialfx.filter.IntegerFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -18,8 +19,9 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.infinite.spoty.database.models.Branch;
-import org.infinite.spoty.models.QuotationProduct;
 import org.infinite.spoty.database.models.Customer;
+import org.infinite.spoty.database.models.QuotationDetail;
+import org.infinite.spoty.viewModels.QuotationDetailViewModel;
 
 import java.io.IOException;
 import java.net.URL;
@@ -27,7 +29,6 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
-import static org.infinite.spoty.dataShare.DataShare.getQuotationProducts;
 
 public class QuotationFormController implements Initializable {
     @FXML
@@ -39,7 +40,7 @@ public class QuotationFormController implements Initializable {
     @FXML
     public MFXFilterComboBox<Branch> quotationBranchId;
     @FXML
-    public MFXTableView<QuotationProduct> quotationProductsTable;
+    public MFXTableView<QuotationDetail> quotationProductsTable;
     @FXML
     public MFXTextField quotationNote;
     @FXML
@@ -69,28 +70,33 @@ public class QuotationFormController implements Initializable {
     }
 
     private void setupTable() {
-        MFXTableColumn<QuotationProduct> productName = new MFXTableColumn<>("Product", true, Comparator.comparing(QuotationProduct::product));
-        MFXTableColumn<QuotationProduct> productQuantity = new MFXTableColumn<>("Quantity", true, Comparator.comparing(QuotationProduct::quantity));
-        MFXTableColumn<QuotationProduct> productDiscount = new MFXTableColumn<>("Discount", true, Comparator.comparing(QuotationProduct::discount));
-        MFXTableColumn<QuotationProduct> productTax = new MFXTableColumn<>("Tax", true, Comparator.comparing(QuotationProduct::tax));
+        MFXTableColumn<QuotationDetail> productName = new MFXTableColumn<>("Product", true, Comparator.comparing(QuotationDetail::getProductName));
+        MFXTableColumn<QuotationDetail> productQuantity = new MFXTableColumn<>("Quantity", true, Comparator.comparing(QuotationDetail::getQuantity));
+        MFXTableColumn<QuotationDetail> productDiscount = new MFXTableColumn<>("Discount", true, Comparator.comparing(QuotationDetail::getDiscount));
+        MFXTableColumn<QuotationDetail> productTax = new MFXTableColumn<>("Tax", true, Comparator.comparing(QuotationDetail::getNetTax));
 
-        productName.setRowCellFactory(product -> new MFXTableRowCell<>(QuotationProduct::product));
-        productQuantity.setRowCellFactory(product -> new MFXTableRowCell<>(QuotationProduct::quantity));
-        productDiscount.setRowCellFactory(product -> new MFXTableRowCell<>(QuotationProduct::discount));
-        productTax.setRowCellFactory(product -> new MFXTableRowCell<>(QuotationProduct::tax));
+        productName.setRowCellFactory(product -> new MFXTableRowCell<>(QuotationDetail::getProductName));
+        productQuantity.setRowCellFactory(product -> new MFXTableRowCell<>(QuotationDetail::getQuantity));
+        productDiscount.setRowCellFactory(product -> new MFXTableRowCell<>(QuotationDetail::getDiscount));
+        productTax.setRowCellFactory(product -> new MFXTableRowCell<>(QuotationDetail::getNetTax));
+
+        productName.prefWidthProperty().bind(quotationProductsTable.widthProperty().multiply(.25));
+        productQuantity.prefWidthProperty().bind(quotationProductsTable.widthProperty().multiply(.25));
+        productDiscount.prefWidthProperty().bind(quotationProductsTable.widthProperty().multiply(.25));
+        productTax.prefWidthProperty().bind(quotationProductsTable.widthProperty().multiply(.25));
 
         quotationProductsTable.getTableColumns().addAll(productName, productQuantity, productDiscount, productTax);
         quotationProductsTable.getFilters().addAll(
-                new StringFilter<>("Product", QuotationProduct::product),
-                new DoubleFilter<>("Quantity", QuotationProduct::quantity),
-                new DoubleFilter<>("Discount", QuotationProduct::discount),
-                new DoubleFilter<>("Tax", QuotationProduct::tax)
+                new StringFilter<>("Product", QuotationDetail::getProductName),
+                new IntegerFilter<>("Quantity", QuotationDetail::getQuantity),
+                new DoubleFilter<>("Discount", QuotationDetail::getDiscount),
+                new DoubleFilter<>("Tax", QuotationDetail::getNetTax)
         );
-        getQuotationProductTable();
-        quotationProductsTable.setItems(getQuotationProducts());
+        getQuotationDetailTable();
+        quotationProductsTable.setItems(QuotationDetailViewModel.quotationDetailsTempList);
     }
 
-    private void getQuotationProductTable() {
+    private void getQuotationDetailTable() {
         quotationProductsTable.setPrefSize(1000, 1000);
         quotationProductsTable.features().enableBounceEffect();
         quotationProductsTable.autosizeColumnsOnInitialization();
@@ -142,7 +148,6 @@ public class QuotationFormController implements Initializable {
             quotationStatus.setText("");
             quotationNote.setText("");
             quotationProductsTable.getTableColumns().clear();
-            getQuotationProducts().clear();
         }
     }
 

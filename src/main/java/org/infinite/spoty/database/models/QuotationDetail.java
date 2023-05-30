@@ -72,6 +72,13 @@ public class QuotationDetail implements Serializable {
         return product;
     }
 
+    public String getProductName() {
+        if (product != null)
+            return product.getProduct().getName() + " " + product.getName();
+        else
+            return null;
+    }
+
     public void setProduct(ProductDetail product) {
         this.product = product;
     }
