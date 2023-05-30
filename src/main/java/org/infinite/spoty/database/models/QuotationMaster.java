@@ -84,12 +84,26 @@ public class QuotationMaster implements Serializable {
         return customer;
     }
 
+    public String getCustomerName() {
+        if (customer != null)
+            return customer.getName();
+        else
+            return null;
+    }
+
     public void setCustomer(Customer customer) {
         this.customer = customer;
     }
 
     public Branch getBranch() {
         return branch;
+    }
+
+    public String getBranchName() {
+        if (branch != null)
+            return branch.getName();
+        else
+            return null;
     }
 
     public void setBranch(Branch branch) {

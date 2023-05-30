@@ -49,10 +49,10 @@ public class AdjustmentController implements Initializable {
     }
 
     private void setupTable() {
-        MFXTableColumn<AdjustmentMaster> adjustmentDate = new MFXTableColumn<>("Date", true, Comparator.comparing(AdjustmentMaster::getDate));
-        MFXTableColumn<AdjustmentMaster> adjustmentReference = new MFXTableColumn<>("Reference", true, Comparator.comparing(AdjustmentMaster::getRef));
-        MFXTableColumn<AdjustmentMaster> adjustmentBranch = new MFXTableColumn<>("Branch", true, Comparator.comparing(AdjustmentMaster::getBranchName));
-//        MFXTableColumn<AdjustmentMaster> adjustmentTotalProducts = new MFXTableColumn<>("Total Products", true, Comparator.comparing(AdjustmentMaster::getAdjustmentMasterTotalProducts));
+        MFXTableColumn<AdjustmentMaster> adjustmentDate = new MFXTableColumn<>("Date", false, Comparator.comparing(AdjustmentMaster::getDate));
+        MFXTableColumn<AdjustmentMaster> adjustmentReference = new MFXTableColumn<>("Reference", false, Comparator.comparing(AdjustmentMaster::getRef));
+        MFXTableColumn<AdjustmentMaster> adjustmentBranch = new MFXTableColumn<>("Branch", false, Comparator.comparing(AdjustmentMaster::getBranchName));
+//        MFXTableColumn<AdjustmentMaster> adjustmentTotalProducts = new MFXTableColumn<>("Total Products", false, Comparator.comparing(AdjustmentMaster::getAdjustmentMasterTotalProducts));
 
         adjustmentDate.setRowCellFactory(adjustment -> new MFXTableRowCell<>(AdjustmentMaster::getDate));
         adjustmentReference.setRowCellFactory(adjustment -> new MFXTableRowCell<>(AdjustmentMaster::getRef));

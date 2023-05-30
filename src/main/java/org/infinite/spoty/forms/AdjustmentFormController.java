@@ -88,9 +88,9 @@ public class AdjustmentFormController implements Initializable {
     }
 
     private void setupTable() {
-        MFXTableColumn<AdjustmentDetail> productName = new MFXTableColumn<>("Product", true, Comparator.comparing(AdjustmentDetail::getProductDetailName));
-        MFXTableColumn<AdjustmentDetail> productQuantity = new MFXTableColumn<>("Quantity", true, Comparator.comparing(AdjustmentDetail::getQuantity));
-        MFXTableColumn<AdjustmentDetail> adjustmentType = new MFXTableColumn<>("Adjustment Type", true, Comparator.comparing(AdjustmentDetail::getAdjustmentType));
+        MFXTableColumn<AdjustmentDetail> productName = new MFXTableColumn<>("Product", false, Comparator.comparing(AdjustmentDetail::getProductDetailName));
+        MFXTableColumn<AdjustmentDetail> productQuantity = new MFXTableColumn<>("Quantity", false, Comparator.comparing(AdjustmentDetail::getQuantity));
+        MFXTableColumn<AdjustmentDetail> adjustmentType = new MFXTableColumn<>("Adjustment Type", false, Comparator.comparing(AdjustmentDetail::getAdjustmentType));
 
         productName.setRowCellFactory(product -> new MFXTableRowCell<>(AdjustmentDetail::getProductDetailName));
         productQuantity.setRowCellFactory(product -> new MFXTableRowCell<>(AdjustmentDetail::getQuantity));

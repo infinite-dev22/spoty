@@ -53,8 +53,8 @@ public class ProductCategoryController implements Initializable {
     }
 
     private void setupTable() {
-        MFXTableColumn<ProductCategory> categoryCode = new MFXTableColumn<>("Code", true, Comparator.comparing(ProductCategory::getCode));
-        MFXTableColumn<ProductCategory> categoryName = new MFXTableColumn<>("Name", true, Comparator.comparing(ProductCategory::getName));
+        MFXTableColumn<ProductCategory> categoryCode = new MFXTableColumn<>("Code", false, Comparator.comparing(ProductCategory::getCode));
+        MFXTableColumn<ProductCategory> categoryName = new MFXTableColumn<>("Name", false, Comparator.comparing(ProductCategory::getName));
 
         categoryCode.setRowCellFactory(category -> new MFXTableRowCell<>(ProductCategory::getCode));
         categoryName.setRowCellFactory(category -> new MFXTableRowCell<>(ProductCategory::getName));

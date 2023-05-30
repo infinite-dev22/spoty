@@ -16,8 +16,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import org.infinite.spoty.database.models.QuotationMaster;
 import org.infinite.spoty.forms.QuotationFormController;
-import org.infinite.spoty.models.Quotation;
+import org.infinite.spoty.viewModels.QuotationMasterViewModel;
 
 import java.io.IOException;
 import java.net.URL;
@@ -25,7 +26,6 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
-import static org.infinite.spoty.data.SampleData.quotationSampleData;
 
 public class QuotationController implements Initializable {
     private final Stage stage;
@@ -38,7 +38,7 @@ public class QuotationController implements Initializable {
     @FXML
     public BorderPane quotationContentPane;
     @FXML
-    private MFXTableView<Quotation> quotationsTable;
+    private MFXTableView<QuotationMaster> quotationsTable;
 
     public QuotationController(Stage stage) {
         this.stage = stage;
@@ -50,33 +50,40 @@ public class QuotationController implements Initializable {
     }
 
     private void setupTable() {
-        MFXTableColumn<Quotation> quotationDate = new MFXTableColumn<>("Date", true, Comparator.comparing(Quotation::getQuotationDate));
-        MFXTableColumn<Quotation> quotationReference = new MFXTableColumn<>("Reference", true, Comparator.comparing(Quotation::getQuotationReference));
-        MFXTableColumn<Quotation> quotationCustomer = new MFXTableColumn<>("Customer", true, Comparator.comparing(Quotation::getQuotationCustomer));
-        MFXTableColumn<Quotation> quotationBranch = new MFXTableColumn<>("Branch", true, Comparator.comparing(Quotation::getQuotationBranch));
-        MFXTableColumn<Quotation> quotationStatus = new MFXTableColumn<>("Status", true, Comparator.comparing(Quotation::getQuotationStatus));
-        MFXTableColumn<Quotation> quotationGrandTotal = new MFXTableColumn<>("Grand Total", true, Comparator.comparing(Quotation::getQuotationGrandTotal));
+        MFXTableColumn<QuotationMaster> quotationDate = new MFXTableColumn<>("Date", false, Comparator.comparing(QuotationMaster::getDate));
+        MFXTableColumn<QuotationMaster> quotationReference = new MFXTableColumn<>("Reference", false, Comparator.comparing(QuotationMaster::getRef));
+        MFXTableColumn<QuotationMaster> quotationCustomer = new MFXTableColumn<>("Customer", false, Comparator.comparing(QuotationMaster::getCustomerName));
+        MFXTableColumn<QuotationMaster> quotationBranch = new MFXTableColumn<>("Branch", false, Comparator.comparing(QuotationMaster::getBranchName));
+        MFXTableColumn<QuotationMaster> quotationStatus = new MFXTableColumn<>("Status", false, Comparator.comparing(QuotationMaster::getStatus));
+        MFXTableColumn<QuotationMaster> quotationGrandTotal = new MFXTableColumn<>("Grand Total", false, Comparator.comparing(QuotationMaster::getTotal));
 
-        quotationDate.setRowCellFactory(quotation -> new MFXTableRowCell<>(Quotation::getQuotationDate));
-        quotationReference.setRowCellFactory(quotation -> new MFXTableRowCell<>(Quotation::getQuotationReference));
-        quotationCustomer.setRowCellFactory(quotation -> new MFXTableRowCell<>(Quotation::getQuotationCustomer));
-        quotationBranch.setRowCellFactory(quotation -> new MFXTableRowCell<>(Quotation::getQuotationBranch));
-        quotationStatus.setRowCellFactory(quotation -> new MFXTableRowCell<>(Quotation::getQuotationStatus));
-        quotationGrandTotal.setRowCellFactory(quotation -> new MFXTableRowCell<>(Quotation::getQuotationGrandTotal));
+        quotationDate.setRowCellFactory(quotation -> new MFXTableRowCell<>(QuotationMaster::getDate));
+        quotationReference.setRowCellFactory(quotation -> new MFXTableRowCell<>(QuotationMaster::getRef));
+        quotationCustomer.setRowCellFactory(quotation -> new MFXTableRowCell<>(QuotationMaster::getCustomerName));
+        quotationBranch.setRowCellFactory(quotation -> new MFXTableRowCell<>(QuotationMaster::getBranchName));
+        quotationStatus.setRowCellFactory(quotation -> new MFXTableRowCell<>(QuotationMaster::getStatus));
+        quotationGrandTotal.setRowCellFactory(quotation -> new MFXTableRowCell<>(QuotationMaster::getTotal));
+
+        quotationDate.prefWidthProperty().bind(quotationsTable.widthProperty().multiply(.17));
+        quotationReference.prefWidthProperty().bind(quotationsTable.widthProperty().multiply(.17));
+        quotationCustomer.prefWidthProperty().bind(quotationsTable.widthProperty().multiply(.17));
+        quotationBranch.prefWidthProperty().bind(quotationsTable.widthProperty().multiply(.17));
+        quotationStatus.prefWidthProperty().bind(quotationsTable.widthProperty().multiply(.17));
+        quotationGrandTotal.prefWidthProperty().bind(quotationsTable.widthProperty().multiply(.17));
 
         quotationsTable.getTableColumns().addAll(quotationDate, quotationReference, quotationCustomer, quotationBranch, quotationStatus, quotationGrandTotal);
         quotationsTable.getFilters().addAll(
-                new StringFilter<>("Reference", Quotation::getQuotationReference),
-                new StringFilter<>("Customer", Quotation::getQuotationCustomer),
-                new StringFilter<>("Branch", Quotation::getQuotationBranch),
-                new StringFilter<>("Status", Quotation::getQuotationStatus),
-                new DoubleFilter<>("Grand Total", Quotation::getQuotationGrandTotal)
+                new StringFilter<>("Reference", QuotationMaster::getRef),
+                new StringFilter<>("Customer", QuotationMaster::getCustomerName),
+                new StringFilter<>("Branch", QuotationMaster::getBranchName),
+                new StringFilter<>("Status", QuotationMaster::getStatus),
+                new DoubleFilter<>("Grand Total", QuotationMaster::getTotal)
         );
-        getQuotationTable();
-        quotationsTable.setItems(quotationSampleData());
+        getQuotationMasterTable();
+        quotationsTable.setItems(QuotationMasterViewModel.getQuotationMasters());
     }
 
-    private void getQuotationTable() {
+    private void getQuotationMasterTable() {
         quotationsTable.setPrefSize(1000, 1000);
         quotationsTable.features().enableBounceEffect();
         quotationsTable.autosizeColumnsOnInitialization();

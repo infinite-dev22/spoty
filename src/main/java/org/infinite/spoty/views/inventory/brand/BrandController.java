@@ -53,8 +53,8 @@ public class BrandController implements Initializable {
     }
 
     private void setupTable() {
-        MFXTableColumn<Brand> brandName = new MFXTableColumn<>("Name", true, Comparator.comparing(Brand::getName));
-        MFXTableColumn<Brand> brandDescription = new MFXTableColumn<>("Description", true, Comparator.comparing(Brand::getDescription));
+        MFXTableColumn<Brand> brandName = new MFXTableColumn<>("Name", false, Comparator.comparing(Brand::getName));
+        MFXTableColumn<Brand> brandDescription = new MFXTableColumn<>("Description", false, Comparator.comparing(Brand::getDescription));
 
         brandName.setRowCellFactory(brand -> new MFXTableRowCell<>(Brand::getName));
         brandDescription.setRowCellFactory(brand -> new MFXTableRowCell<>(Brand::getDescription));

@@ -114,10 +114,10 @@ public class QuotationFormController implements Initializable {
     }
 
     private void setupTable() {
-        MFXTableColumn<QuotationDetail> productName = new MFXTableColumn<>("Product", true, Comparator.comparing(QuotationDetail::getProductName));
-        MFXTableColumn<QuotationDetail> productQuantity = new MFXTableColumn<>("Quantity", true, Comparator.comparing(QuotationDetail::getQuantity));
-        MFXTableColumn<QuotationDetail> productDiscount = new MFXTableColumn<>("Discount", true, Comparator.comparing(QuotationDetail::getDiscount));
-        MFXTableColumn<QuotationDetail> productTax = new MFXTableColumn<>("Tax", true, Comparator.comparing(QuotationDetail::getNetTax));
+        MFXTableColumn<QuotationDetail> productName = new MFXTableColumn<>("Product", false, Comparator.comparing(QuotationDetail::getProductName));
+        MFXTableColumn<QuotationDetail> productQuantity = new MFXTableColumn<>("Quantity", false, Comparator.comparing(QuotationDetail::getQuantity));
+        MFXTableColumn<QuotationDetail> productDiscount = new MFXTableColumn<>("Discount", false, Comparator.comparing(QuotationDetail::getDiscount));
+        MFXTableColumn<QuotationDetail> productTax = new MFXTableColumn<>("Tax", false, Comparator.comparing(QuotationDetail::getNetTax));
 
         productName.setRowCellFactory(product -> new MFXTableRowCell<>(QuotationDetail::getProductName));
         productQuantity.setRowCellFactory(product -> new MFXTableRowCell<>(QuotationDetail::getQuantity));
