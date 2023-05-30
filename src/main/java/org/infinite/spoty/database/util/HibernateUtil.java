@@ -46,7 +46,7 @@ public class HibernateUtil {
                 settings.put(Environment.DIALECT, "org.sqlite.hibernate.dialect.SQLiteDialect");
                 settings.put(Environment.SHOW_SQL, "false");
                 settings.put(Environment.CURRENT_SESSION_CONTEXT_CLASS, "thread");
-                settings.put(Environment.HBM2DDL_AUTO, "create-only");
+                settings.put(Environment.HBM2DDL_AUTO, "update");
                 // create-drop
                 // create-only
                 // validate

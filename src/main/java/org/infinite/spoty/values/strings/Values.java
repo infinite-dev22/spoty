@@ -9,4 +9,5 @@ public class Values {
     public static final LinkedList<String> SALESTATUSES = new LinkedList<>(Arrays.stream(new String[]{"Ordered", "Pending", "Completed"}).toList());
     public static final LinkedList<String> PAYMENTSTATUSES = new LinkedList<>(Arrays.stream(new String[]{"Partial", "Pending", "Paid"}).toList());
     public static final LinkedList<String> ADJUSTMENTTYPE = new LinkedList<>(Arrays.stream(new String[]{"Increment", "Decrement"}).toList());
+    public static final LinkedList<String> QUOTATIONTYPE = new LinkedList<>(Arrays.stream(new String[]{"Sent", "Pending"}).toList());
 }

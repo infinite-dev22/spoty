@@ -7,6 +7,7 @@ import io.github.palexdev.materialfx.filter.DoubleFilter;
 import io.github.palexdev.materialfx.filter.IntegerFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Dialog;
@@ -18,10 +19,15 @@ import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.StringConverter;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.Customer;
 import org.infinite.spoty.database.models.QuotationDetail;
+import org.infinite.spoty.values.strings.Values;
+import org.infinite.spoty.viewModels.BranchViewModel;
+import org.infinite.spoty.viewModels.CustomerVewModel;
 import org.infinite.spoty.viewModels.QuotationDetailViewModel;
+import org.infinite.spoty.viewModels.QuotationMasterViewModel;
 
 import java.io.IOException;
 import java.net.URL;
@@ -46,7 +52,7 @@ public class QuotationFormController implements Initializable {
     @FXML
     public AnchorPane quotationFormContentPane;
     @FXML
-    public MFXFilterComboBox<?> quotationStatus;
+    public MFXFilterComboBox<String> quotationStatus;
     private Dialog<ButtonType> dialog;
 
     public QuotationFormController(Stage stage) {
@@ -61,10 +67,48 @@ public class QuotationFormController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // Form input listeners.
         quotationDate.textProperty().addListener((observable, oldValue, newValue) -> quotationDate.setTrailingIcon(null));
         quotationCustomerId.textProperty().addListener((observable, oldValue, newValue) -> quotationCustomerId.setTrailingIcon(null));
         quotationBranchId.textProperty().addListener((observable, oldValue, newValue) -> quotationBranchId.setTrailingIcon(null));
         quotationStatus.textProperty().addListener((observable, oldValue, newValue) -> quotationStatus.setTrailingIcon(null));
+        // Combo box properties.
+        quotationCustomerId.setItems(CustomerVewModel.customersList);
+        quotationCustomerId.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(Customer object) {
+                if (object != null)
+                    return object.getName();
+                else
+                    return null;
+            }
+
+            @Override
+            public Customer fromString(String string) {
+                return null;
+            }
+        });
+        quotationBranchId.setItems(BranchViewModel.branchesList);
+        quotationBranchId.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(Branch object) {
+                if (object != null)
+                    return object.getName();
+                else
+                    return null;
+            }
+
+            @Override
+            public Branch fromString(String string) {
+                return null;
+            }
+        });
+        quotationStatus.setItems(FXCollections.observableArrayList(Values.QUOTATIONTYPE));
+        // Form input binding.
+        quotationDate.textProperty().bindBidirectional(QuotationMasterViewModel.dateProperty());
+        quotationCustomerId.valueProperty().bindBidirectional(QuotationMasterViewModel.customerProperty());
+        quotationBranchId.valueProperty().bindBidirectional(QuotationMasterViewModel.branchProperty());
+        quotationStatus.textProperty().bindBidirectional(QuotationMasterViewModel.statusProperty());
 
         Platform.runLater(this::setupTable);
     }
@@ -136,22 +180,15 @@ public class QuotationFormController implements Initializable {
                 && quotationBranchId.getText().length() > 0
                 && quotationStatus.getText().length() > 0
                 && !quotationProductsTable.getTableColumns().isEmpty()) {
-            quotationDate.getText();
-            quotationCustomerId.getText();
-            quotationBranchId.getText();
-            quotationStatus.getText();
-            quotationNote.getText();
-
-            quotationDate.setText("");
-            quotationCustomerId.setText("");
-            quotationBranchId.setText("");
-            quotationStatus.setText("");
-            quotationNote.setText("");
+            QuotationMasterViewModel.saveQuotationMaster();
+            QuotationMasterViewModel.resetProperties();
             quotationProductsTable.getTableColumns().clear();
         }
     }
 
     public void cancelBtnClicked() {
+        QuotationMasterViewModel.resetProperties();
+        quotationProductsTable.getTableColumns().clear();
         ((StackPane) quotationFormContentPane.getParent()).getChildren().get(0).setVisible(true);
         ((StackPane) quotationFormContentPane.getParent()).getChildren().remove(1);
     }
