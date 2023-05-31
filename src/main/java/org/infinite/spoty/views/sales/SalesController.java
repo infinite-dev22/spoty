@@ -15,8 +15,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import org.infinite.spoty.forms.SaleFormController;
 import org.infinite.spoty.database.models.SaleMaster;
+import org.infinite.spoty.forms.SaleFormController;
 import org.infinite.spoty.viewModels.SaleMasterViewModel;
 
 import java.io.IOException;
@@ -25,7 +25,6 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
-import static org.infinite.spoty.data.SampleData.saleSampleData;
 
 public class SalesController implements Initializable {
     private final Stage stage;

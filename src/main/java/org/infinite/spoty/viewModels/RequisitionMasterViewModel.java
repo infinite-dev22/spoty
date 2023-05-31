@@ -155,7 +155,7 @@ public class RequisitionMasterViewModel {
     }
 
     public static double getTotalCost() {
-        return Double.parseDouble(totalCost.get());
+        return Double.parseDouble(!totalCost.get().isEmpty() ? totalCost.get() : "0");
     }
 
     public static void setTotalCost(String totalCost) {

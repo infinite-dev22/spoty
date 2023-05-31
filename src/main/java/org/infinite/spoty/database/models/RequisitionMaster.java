@@ -5,6 +5,8 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import static org.infinite.spoty.GlobalActions.fineDate;
+
 @Entity
 public class RequisitionMaster implements Serializable {
     @Id
@@ -18,7 +20,7 @@ public class RequisitionMaster implements Serializable {
     private Supplier supplier;
     @ManyToOne
     private Branch branch;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "adjustment")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "requisition")
     private List<RequisitionDetail> requisitionDetails;
     private String shipVia;
     private String shipMethod;
@@ -98,15 +100,15 @@ public class RequisitionMaster implements Serializable {
         return branch;
     }
 
+    public void setBranch(Branch branch) {
+        this.branch = branch;
+    }
+
     public String getBranchName() {
         if (branch != null)
             return branch.getName();
         else
             return null;
-    }
-
-    public void setBranch(Branch branch) {
-        this.branch = branch;
     }
 
     public List<RequisitionDetail> getRequisitionDetails() {
@@ -165,6 +167,10 @@ public class RequisitionMaster implements Serializable {
         this.supplier = supplier;
     }
 
+    public String getSupplierName() {
+        return (supplier != null) ? supplier.getName() : null;
+    }
+
     public String getShipVia() {
         return shipVia;
     }
@@ -195,6 +201,10 @@ public class RequisitionMaster implements Serializable {
 
     public void setDeliveryDate(Date deliveryDate) {
         this.deliveryDate = deliveryDate;
+    }
+
+    public String getDeliveryDateString() {
+        return fineDate(deliveryDate.toString()).toString();
     }
 
     public String getStatus() {

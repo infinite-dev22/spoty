@@ -21,6 +21,7 @@ import org.infinite.spoty.views.expenses.ExpensesController;
 import org.infinite.spoty.views.inventory.InventoryController;
 import org.infinite.spoty.views.people.PeopleController;
 import org.infinite.spoty.views.purchases.PurchasesController;
+import org.infinite.spoty.views.requisition.RequisitionController;
 import org.infinite.spoty.views.sales.SalesController;
 import org.infinite.spoty.views.settings.SettingsController;
 
@@ -98,7 +99,7 @@ public class BaseController implements Initializable {
         MFXLoader loader = new MFXLoader();
         loader.addView(MFXLoaderBean.of("DASHBOARD", loadURL("fxml/dashboard/Dashboard.fxml")).setBeanToNodeMapper(() -> createToggle("fas-chart-simple", "Dashboard")).setDefaultRoot(true).get());
         loader.addView(MFXLoaderBean.of("INVENTORY", loadURL("fxml/inventory/Inventory.fxml")).setBeanToNodeMapper(() -> createToggle("fas-cubes", "Inventory")).setControllerFactory(c -> new InventoryController(stage)).get());
-        loader.addView(MFXLoaderBean.of("REQUISITIONS", loadURL("fxml/requisition/Requisition.fxml")).setBeanToNodeMapper(() -> createToggle("fas-hand-holding", "Requisitions")).get());
+        loader.addView(MFXLoaderBean.of("REQUISITIONS", loadURL("fxml/requisition/Requisition.fxml")).setBeanToNodeMapper(() -> createToggle("fas-hand-holding", "Requisitions")).setControllerFactory(c -> new RequisitionController(stage)).get());
         loader.addView(MFXLoaderBean.of("PURCHASES", loadURL("fxml/purchases/Purchases.fxml")).setBeanToNodeMapper(() -> createToggle("fas-cart-plus", "Purchases")).setControllerFactory(c -> new PurchasesController(stage)).get());
         loader.addView(MFXLoaderBean.of("TRANSFERS", loadURL("fxml/transfer/Transfer.fxml")).setBeanToNodeMapper(() -> createToggle("fas-arrow-right-arrow-left", "Transfers")).get());
         loader.addView(MFXLoaderBean.of("STOCK IN", loadURL("fxml/stock_in/StockIn.fxml")).setBeanToNodeMapper(() -> createToggle("fas-cart-flatbed", "Stock In")).get());

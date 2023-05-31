@@ -71,7 +71,7 @@ public class RequisitionMasterDao {
 
     public static ObservableList<RequisitionMaster> fetchRequisitionMasters() {
         Transaction transaction = null;
-        ObservableList<RequisitionMaster> requisitionMasters = null;
+        ObservableList<RequisitionMaster> requisitionMasters;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             requisitionMasters = FXCollections.observableList(session.createQuery("from RequisitionMaster").stream().toList());

@@ -46,7 +46,7 @@ public class HibernateUtil {
                 settings.put(Environment.DIALECT, "org.sqlite.hibernate.dialect.SQLiteDialect");
                 settings.put(Environment.SHOW_SQL, "false");
                 settings.put(Environment.CURRENT_SESSION_CONTEXT_CLASS, "thread");
-                settings.put(Environment.HBM2DDL_AUTO, "update");
+                settings.put(Environment.HBM2DDL_AUTO, "create-only");
                 // create-drop
                 // create-only
                 // validate
@@ -92,6 +92,8 @@ public class HibernateUtil {
                 configuration.addAnnotatedClass(TransferDetail.class);
                 configuration.addAnnotatedClass(UnitOfMeasure.class);
                 configuration.addAnnotatedClass(User.class);
+                configuration.addAnnotatedClass(RequisitionMaster.class);
+                configuration.addAnnotatedClass(RequisitionDetail.class);
 //                configuration.addAnnotatedClass();
 
                 ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()

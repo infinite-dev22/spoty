@@ -18,7 +18,6 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.GlobalActions.closeDialog;
-import static org.infinite.spoty.dataShare.DataShare.getAdjustmentProducts;
 
 public class PurchaseProductsFormController implements Initializable {
     @FXML
@@ -56,6 +55,7 @@ public class PurchaseProductsFormController implements Initializable {
                 else
                     return null;
             }
+
             @Override
             public ProductDetail fromString(String string) {
                 return null;
@@ -96,8 +96,6 @@ public class PurchaseProductsFormController implements Initializable {
                     && purchaseProductsDiscount.getText().length() > 0) {
                 PurchaseDetailsViewModel.addPurchaseDetail();
                 PurchaseDetailsViewModel.resetProperties();
-                System.out.println(getAdjustmentProducts());
-
                 closeDialog(e);
             }
         });

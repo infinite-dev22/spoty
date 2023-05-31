@@ -81,7 +81,7 @@ public class AdjustmentController implements Initializable {
     }
 
     public void adjustmentCreateBtnClicked() {
-        FXMLLoader loader = fxmlLoader("forms/AdjustmentMasterForm.fxml");
+        FXMLLoader loader = fxmlLoader("forms/AdjustmentForm.fxml");
         loader.setControllerFactory(c -> new AdjustmentFormController(stage));
 
         try {

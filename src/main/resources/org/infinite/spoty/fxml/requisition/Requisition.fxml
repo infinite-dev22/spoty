@@ -5,7 +5,7 @@
 <?import io.github.palexdev.materialfx.controls.MFXTextField?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.*?>
-<BorderPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="400.0" prefWidth="600.0"
+<BorderPane fx:id="requisitionContentPane" xmlns:fx="http://javafx.com/fxml/1" prefHeight="400.0" prefWidth="600.0"
             stylesheets="@../../styles/Common.css" xmlns="http://javafx.com/javafx/19"
             fx:controller="org.infinite.spoty.views.requisition.RequisitionController">
     <top>

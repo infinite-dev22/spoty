@@ -76,9 +76,9 @@ public class AdjustmentProductsFormController implements Initializable {
         });
         adjustmentProductsSaveBtn.setOnAction((e) -> {
             MFXIconWrapper icon = new MFXIconWrapper("fas-circle-exclamation", 20, Color.RED, 20);
-//            if (adjustmentProductsPdct.getText().length() == 0) {
-//                adjustmentProductsPdct.setLeadingIcon(icon);
-//            }
+            if (adjustmentProductsPdct.getText().length() == 0) {
+                adjustmentProductsPdct.setLeadingIcon(icon);
+            }
             if (adjustmentProductsQnty.getText().length() == 0) {
                 adjustmentProductsQnty.setTrailingIcon(icon);
             }
@@ -86,7 +86,7 @@ public class AdjustmentProductsFormController implements Initializable {
                 adjustmentType.setLeadingIcon(icon);
             }
             if (adjustmentProductsQnty.getText().length() > 0
-//                    && adjustmentProductsPdct.getText().length() > 0
+                    && adjustmentProductsPdct.getText().length() > 0
                     && adjustmentType.getText().length() > 0) {
                 AdjustmentDetailViewModel.addAdjustmentDetails();
                 AdjustmentDetailViewModel.resetProperties();
