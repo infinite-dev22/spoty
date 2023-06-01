@@ -13,14 +13,10 @@ public class TransferDetail implements Serializable {
     private TransferMaster transfer;
     @ManyToOne
     private ProductDetail product;
-    private double cost;
-    @ManyToOne
-    private UnitOfMeasure purchaseUnit;
-    private double netTax;
-    private String taxType;
-    private double discount;
-    private String discountType;
     private int quantity;
+    private String serialNo;
+    private String description;
+    private double price;
     private double total;
     @Column(name = "created_at")
     private Date createdAt;
@@ -30,20 +26,22 @@ public class TransferDetail implements Serializable {
     private Date updatedAt;
     @Column(name = "updated_by")
     private String updatedBy;
-    public TransferDetail(TransferMaster transfer, ProductDetail product, double cost, UnitOfMeasure purchaseUnit, double netTax, String taxType, double discount, String discountType, int quantity, double total) {
-        this.transfer = transfer;
-        this.product = product;
-        this.cost = cost;
-        this.purchaseUnit = purchaseUnit;
-        this.netTax = netTax;
-        this.taxType = taxType;
-        this.discount = discount;
-        this.discountType = discountType;
-        this.quantity = quantity;
-        this.total = total;
-    }
 
     public TransferDetail() {
+    }
+
+    public TransferDetail(ProductDetail product,
+                          int quantity,
+                          String serialNo,
+                          String description,
+                          double price,
+                          double total) {
+        this.product = product;
+        this.quantity = quantity;
+        this.serialNo = serialNo;
+        this.description = description;
+        this.price = price;
+        this.total = total;
     }
 
     public long getId() {
@@ -70,60 +68,36 @@ public class TransferDetail implements Serializable {
         this.product = product;
     }
 
-    public double getCost() {
-        return cost;
-    }
-
-    public void setCost(double cost) {
-        this.cost = cost;
-    }
-
-    public UnitOfMeasure getPurchaseUnit() {
-        return purchaseUnit;
-    }
-
-    public void setPurchaseUnit(UnitOfMeasure purchaseUnit) {
-        this.purchaseUnit = purchaseUnit;
-    }
-
-    public double getNetTax() {
-        return netTax;
-    }
-
-    public void setNetTax(double netTax) {
-        this.netTax = netTax;
-    }
-
-    public String getTaxType() {
-        return taxType;
-    }
-
-    public void setTaxType(String taxType) {
-        this.taxType = taxType;
-    }
-
-    public double getDiscount() {
-        return discount;
-    }
-
-    public void setDiscount(double discount) {
-        this.discount = discount;
-    }
-
-    public String getDiscountType() {
-        return discountType;
-    }
-
-    public void setDiscountType(String discountType) {
-        this.discountType = discountType;
-    }
-
     public int getQuantity() {
         return quantity;
     }
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public String getSerialNo() {
+        return serialNo;
+    }
+
+    public void setSerialNo(String serialNo) {
+        this.serialNo = serialNo;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
     }
 
     public double getTotal() {
