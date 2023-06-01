@@ -3,6 +3,7 @@ package org.infinite.spoty.database.models;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 // TODO: Make items a TransferDetail List.
 
@@ -19,14 +20,15 @@ public class TransferMaster implements Serializable {
     private Branch fromBranch;
     @ManyToOne
     private Branch toBranch;
-    private String items;
-    @Column(name = "tax_rate")
-    private double taxRate;
-    private double tax;
-    private double discount;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "transfer")
+    private List<TransferDetail> transferDetails;
     private String shipping;
     private double total;
-    private int status;
+    private String status;
+    private User approvedBy;
+    private User receivedBy;
+    private Date approvalDate;
+    private Date receiveDate;
     private String notes;
     @Column(name = "created_at")
     private Date createdAt;
@@ -36,19 +38,19 @@ public class TransferMaster implements Serializable {
     private Date updatedAt;
     @Column(name = "updated_by")
     private String updatedBy;
+
     public TransferMaster() {
     }
-    public TransferMaster(User user, String ref, Date date, Branch fromBranch, Branch toBranch, String items, double taxRate, double tax, double discount, String shipping, double total, int status, String notes) {
-        this.user = user;
-        this.ref = ref;
+
+    public TransferMaster(Date date,
+                          Branch fromBranch,
+                          Branch toBranch,
+                          double total,
+                          String status,
+                          String notes) {
         this.date = date;
         this.fromBranch = fromBranch;
         this.toBranch = toBranch;
-        this.items = items;
-        this.taxRate = taxRate;
-        this.tax = tax;
-        this.discount = discount;
-        this.shipping = shipping;
         this.total = total;
         this.status = status;
         this.notes = notes;
@@ -102,38 +104,6 @@ public class TransferMaster implements Serializable {
         this.toBranch = toBranch;
     }
 
-    public String getItems() {
-        return items;
-    }
-
-    public void setItems(String items) {
-        this.items = items;
-    }
-
-    public double getTaxRate() {
-        return taxRate;
-    }
-
-    public void setTaxRate(double taxRate) {
-        this.taxRate = taxRate;
-    }
-
-    public double getTax() {
-        return tax;
-    }
-
-    public void setTax(double tax) {
-        this.tax = tax;
-    }
-
-    public double getDiscount() {
-        return discount;
-    }
-
-    public void setDiscount(double discount) {
-        this.discount = discount;
-    }
-
     public String getShipping() {
         return shipping;
     }
@@ -150,11 +120,11 @@ public class TransferMaster implements Serializable {
         this.total = total;
     }
 
-    public int getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
@@ -164,6 +134,46 @@ public class TransferMaster implements Serializable {
 
     public void setNotes(String notes) {
         this.notes = notes;
+    }
+
+    public List<TransferDetail> getTransferDetails() {
+        return transferDetails;
+    }
+
+    public void setTransferDetails(List<TransferDetail> transferDetails) {
+        this.transferDetails = transferDetails;
+    }
+
+    public User getApprovedBy() {
+        return approvedBy;
+    }
+
+    public void setApprovedBy(User approvedBy) {
+        this.approvedBy = approvedBy;
+    }
+
+    public User getReceivedBy() {
+        return receivedBy;
+    }
+
+    public void setReceivedBy(User receivedBy) {
+        this.receivedBy = receivedBy;
+    }
+
+    public Date getApprovalDate() {
+        return approvalDate;
+    }
+
+    public void setApprovalDate(Date approvalDate) {
+        this.approvalDate = approvalDate;
+    }
+
+    public Date getReceiveDate() {
+        return receiveDate;
+    }
+
+    public void setReceiveDate(Date receiveDate) {
+        this.receiveDate = receiveDate;
     }
 
     public Date getCreatedAt() {
