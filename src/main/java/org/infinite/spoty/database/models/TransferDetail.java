@@ -64,6 +64,9 @@ public class TransferDetail implements Serializable {
     public ProductDetail getProduct() {
         return product;
     }
+    public String  getProductDetailName() {
+        return (product != null) ? product.getProduct().getName() + " " + product.getSaleUnit() : null;
+    }
 
     public void setProduct(ProductDetail product) {
         this.product = product;
