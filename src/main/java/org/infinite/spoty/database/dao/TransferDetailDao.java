@@ -35,13 +35,10 @@ public class TransferDetailDao {
             transferDetail = session.load(TransferDetail.class, id);
             transferDetail.setTransfer(obj.getTransfer());
             transferDetail.setProduct(obj.getProduct());
-            transferDetail.setCost(obj.getCost());
-            transferDetail.setPurchaseUnit(obj.getPurchaseUnit());
-            transferDetail.setNetTax(obj.getNetTax());
-            transferDetail.setTaxType(obj.getTaxType());
-            transferDetail.setDiscount(obj.getDiscount());
-            transferDetail.setDiscountType(obj.getDiscountType());
             transferDetail.setQuantity(obj.getQuantity());
+            transferDetail.setSerialNo(obj.getSerialNo());
+            transferDetail.setDescription(obj.getDescription());
+            transferDetail.setPrice(obj.getPrice());
             transferDetail.setTotal(obj.getTotal());
             transferDetail.setUpdatedAt(new Date());
             // TODO: updated by should be a system user.
