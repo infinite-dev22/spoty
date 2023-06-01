@@ -9,7 +9,8 @@ public class TransferDetail implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "transfer_id")
     private TransferMaster transfer;
     @ManyToOne
     private ProductDetail product;
