@@ -67,6 +67,8 @@ dependencies {
     implementation "io.github.palexdev:mfxcomponents:11.16.2"
     // SLF4J Logger.
     implementation "org.slf4j:slf4j-simple:2.0.7"
+    // FXML Compiler
+    implementation "io.github.paullo612.mlfx.api:micronaut:0.6.1"
     // JUnit test framework.
     implementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
     implementation "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"

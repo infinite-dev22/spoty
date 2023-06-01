@@ -13,11 +13,11 @@ public class TransferDetailViewModel {
     private static final IntegerProperty id = new SimpleIntegerProperty();
     private static final ObjectProperty<ProductDetail> product = new SimpleObjectProperty<>();
     private static final ObjectProperty<TransferMaster> transfer = new SimpleObjectProperty<>();
-    private static final StringProperty quantity = new SimpleStringProperty();
-    private static final StringProperty serial = new SimpleStringProperty();
-    private static final StringProperty description = new SimpleStringProperty();
-    private static final StringProperty price = new SimpleStringProperty();
-    private static final StringProperty total = new SimpleStringProperty();
+    private static final StringProperty quantity = new SimpleStringProperty("");
+    private static final StringProperty serial = new SimpleStringProperty("");
+    private static final StringProperty description = new SimpleStringProperty("");
+    private static final StringProperty price = new SimpleStringProperty("");
+    private static final StringProperty total = new SimpleStringProperty("");
 
     public static int getId() {
         return id.get();
@@ -92,7 +92,7 @@ public class TransferDetailViewModel {
     }
 
     public static double getPrice() {
-        return Double.parseDouble(price.get());
+        return Double.parseDouble(!price.get().isEmpty() ? price.get() : "0");
     }
 
     public static void setPrice(String price) {
@@ -104,7 +104,7 @@ public class TransferDetailViewModel {
     }
 
     public static double getTotal() {
-        return Double.parseDouble(total.get());
+        return Double.parseDouble(!total.get().isEmpty() ? total.get() : "0");
     }
 
     public static void setTotal(String total) {

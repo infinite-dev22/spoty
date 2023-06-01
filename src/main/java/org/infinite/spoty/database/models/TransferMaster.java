@@ -92,12 +92,20 @@ public class TransferMaster implements Serializable {
         return fromBranch;
     }
 
+    public String  getFromBranchName() {
+        return (fromBranch != null) ? fromBranch.getName() : null;
+    }
+
     public void setFromBranch(Branch fromBranch) {
         this.fromBranch = fromBranch;
     }
 
     public Branch getToBranch() {
         return toBranch;
+    }
+
+    public String  getToBranchName() {
+        return (toBranch != null) ? toBranch.getName() : null;
     }
 
     public void setToBranch(Branch toBranch) {

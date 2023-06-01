@@ -98,7 +98,6 @@ public class RequisitionController implements Initializable {
     private void getRequisitionMasterTable() {
         requisitionsTable.setPrefSize(1000, 1000);
         requisitionsTable.features().enableBounceEffect();
-        requisitionsTable.autosizeColumnsOnInitialization();
         requisitionsTable.features().enableSmoothScrolling(0.5);
     }
 
