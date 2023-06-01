@@ -73,7 +73,7 @@ public class TransferMasterDao {
         return transferMaster;
     }
 
-    public static ObservableList<TransferMaster> getTransferMaster() {
+    public static ObservableList<TransferMaster> fetchTransferMasters() {
         Transaction transaction = null;
         ObservableList<TransferMaster> saleCategories;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
