@@ -5,8 +5,6 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-// TODO: Make items a TransferDetail List.
-
 @Entity
 public class TransferMaster implements Serializable {
     @Id
