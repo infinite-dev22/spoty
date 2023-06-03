@@ -13,17 +13,16 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import org.infinite.spoty.models.PurchaseReturn;
+import org.infinite.spoty.database.models.PurchaseReturnMaster;
+import org.infinite.spoty.viewModels.PurchaseReturnMasterViewModel;
 
 import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 
-import static org.infinite.spoty.data.SampleData.purchaseReturnSampleData;
-
 public class PurchaseReturnController implements Initializable {
     @FXML
-    public MFXTableView<PurchaseReturn> purchaseReturnTable;
+    public MFXTableView<PurchaseReturnMaster> purchaseReturnTable;
     @FXML
     public BorderPane purchaseReturnContentPane;
     @FXML
@@ -39,18 +38,15 @@ public class PurchaseReturnController implements Initializable {
     }
 
     private void setupTable() {
-        MFXTableColumn<PurchaseReturn> purchaseReturnDate = new MFXTableColumn<>("Date", false, Comparator.comparing(PurchaseReturn::getPurchaseReturnDate));
-        MFXTableColumn<PurchaseReturn> purchaseReturnReference = new MFXTableColumn<>("Ref No.", false, Comparator.comparing(PurchaseReturn::getPurchaseReturnReference));
-        MFXTableColumn<PurchaseReturn> purchaseReturnSupplier = new MFXTableColumn<>("Supplier", false, Comparator.comparing(PurchaseReturn::getPurchaseReturnSupplier));
-        MFXTableColumn<PurchaseReturn> purchaseReturnBranch = new MFXTableColumn<>("Branch", false, Comparator.comparing(PurchaseReturn::getPurchaseReturnBranch));
-        MFXTableColumn<PurchaseReturn> purchaseReturnReturnRef = new MFXTableColumn<>("Purch Ref", false, Comparator.comparing(PurchaseReturn::getPurchaseReturnRef));
-        MFXTableColumn<PurchaseReturn> purchaseReturnStatus = new MFXTableColumn<>("Status", false, Comparator.comparing(PurchaseReturn::getPurchaseReturnStatus));
-        MFXTableColumn<PurchaseReturn> purchaseReturnGrandTotal = new MFXTableColumn<>("Total", false, Comparator.comparing(PurchaseReturn::getPurchaseReturnGrandTotal));
-        MFXTableColumn<PurchaseReturn> purchaseReturnAmountPaid = new MFXTableColumn<>("Paid", false, Comparator.comparing(PurchaseReturn::getPurchaseReturnAmountPaid));
-        MFXTableColumn<PurchaseReturn> purchaseReturnAmountDue = new MFXTableColumn<>("Due", false, Comparator.comparing(PurchaseReturn::getPurchaseReturnAmountDue));
-        MFXTableColumn<PurchaseReturn> purchaseReturnPaymentStatus = new MFXTableColumn<>("Payment Status", false, Comparator.comparing(PurchaseReturn::getPurchaseReturnPaymentStatus));
+        MFXTableColumn<PurchaseReturnMaster> purchaseReturnDate = new MFXTableColumn<>("Date", false, Comparator.comparing(PurchaseReturnMaster::getDate));
+        MFXTableColumn<PurchaseReturnMaster> purchaseReturnReference = new MFXTableColumn<>("Ref No.", false, Comparator.comparing(PurchaseReturnMaster::getRef));
+        MFXTableColumn<PurchaseReturnMaster> purchaseReturnSupplier = new MFXTableColumn<>("Supplier", false, Comparator.comparing(PurchaseReturnMaster::getSupplierName));
+        MFXTableColumn<PurchaseReturnMaster> purchaseReturnBranch = new MFXTableColumn<>("Branch", false, Comparator.comparing(PurchaseReturnMaster::getBranchName));
+        MFXTableColumn<PurchaseReturnMaster> purchaseReturnStatus = new MFXTableColumn<>("Status", false, Comparator.comparing(PurchaseReturnMaster::getStatus));
+        MFXTableColumn<PurchaseReturnMaster> purchaseReturnGrandTotal = new MFXTableColumn<>("Total", false, Comparator.comparing(PurchaseReturnMaster::getTotal));
+        MFXTableColumn<PurchaseReturnMaster> purchaseReturnAmountPaid = new MFXTableColumn<>("Paid", false, Comparator.comparing(PurchaseReturnMaster::getPaid));
+        MFXTableColumn<PurchaseReturnMaster> purchaseReturnPaymentStatus = new MFXTableColumn<>("Pay Status", false, Comparator.comparing(PurchaseReturnMaster::getPaymentStatus));
 
-        purchaseReturnReturnRef.setTooltip(new Tooltip("PurchaseMaster Reference Number"));
         purchaseReturnReference.setTooltip(new Tooltip("PurchaseMaster Return Reference Number"));
         purchaseReturnPaymentStatus.setTooltip(new Tooltip("PurchaseMaster Return Payment Status"));
         purchaseReturnStatus.setTooltip(new Tooltip("PurchaseMaster Return Status"));
@@ -59,25 +55,39 @@ public class PurchaseReturnController implements Initializable {
 //        purchaseReturnAmountDue.setPrefWidth(100);
 //        purchaseReturnSupplier.setPrefWidth(100);
 
-        purchaseReturnDate.setRowCellFactory(purchaseReturn -> new MFXTableRowCell<>(PurchaseReturn::getPurchaseReturnDate));
-        purchaseReturnReference.setRowCellFactory(purchaseReturn -> new MFXTableRowCell<>(PurchaseReturn::getPurchaseReturnReference));
-        purchaseReturnSupplier.setRowCellFactory(purchaseReturn -> new MFXTableRowCell<>(PurchaseReturn::getPurchaseReturnSupplier));
-        purchaseReturnBranch.setRowCellFactory(purchaseReturn -> new MFXTableRowCell<>(PurchaseReturn::getPurchaseReturnBranch));
-        purchaseReturnReturnRef.setRowCellFactory(purchaseReturn -> new MFXTableRowCell<>(PurchaseReturn::getPurchaseReturnRef));
-        purchaseReturnStatus.setRowCellFactory(purchaseReturn -> new MFXTableRowCell<>(PurchaseReturn::getPurchaseReturnStatus));
-        purchaseReturnGrandTotal.setRowCellFactory(purchaseReturn -> new MFXTableRowCell<>(PurchaseReturn::getPurchaseReturnGrandTotal));
-        purchaseReturnAmountPaid.setRowCellFactory(purchaseReturn -> new MFXTableRowCell<>(PurchaseReturn::getPurchaseReturnAmountPaid));
-        purchaseReturnAmountDue.setRowCellFactory(purchaseReturn -> new MFXTableRowCell<>(PurchaseReturn::getPurchaseReturnAmountDue));
-        purchaseReturnPaymentStatus.setRowCellFactory(purchaseReturn -> new MFXTableRowCell<>(PurchaseReturn::getPurchaseReturnPaymentStatus));
+        purchaseReturnDate.prefWidthProperty().bind(purchaseReturnTable.widthProperty().multiply(.13));
+        purchaseReturnReference.prefWidthProperty().bind(purchaseReturnTable.widthProperty().multiply(.13));
+        purchaseReturnSupplier.prefWidthProperty().bind(purchaseReturnTable.widthProperty().multiply(.13));
+        purchaseReturnBranch.prefWidthProperty().bind(purchaseReturnTable.widthProperty().multiply(.13));
+        purchaseReturnStatus.prefWidthProperty().bind(purchaseReturnTable.widthProperty().multiply(.13));
+        purchaseReturnGrandTotal.prefWidthProperty().bind(purchaseReturnTable.widthProperty().multiply(.13));
+        purchaseReturnAmountPaid.prefWidthProperty().bind(purchaseReturnTable.widthProperty().multiply(.13));
+        purchaseReturnPaymentStatus.prefWidthProperty().bind(purchaseReturnTable.widthProperty().multiply(.13));
 
-        purchaseReturnTable.getTableColumns().addAll(purchaseReturnDate, purchaseReturnReference, purchaseReturnSupplier, purchaseReturnBranch, purchaseReturnReturnRef, purchaseReturnStatus, purchaseReturnGrandTotal, purchaseReturnAmountPaid, purchaseReturnAmountDue, purchaseReturnPaymentStatus);
-        purchaseReturnTable.getFilters().addAll(new StringFilter<>("Ref No.", PurchaseReturn::getPurchaseReturnReference), new StringFilter<>("Supplier", PurchaseReturn::getPurchaseReturnSupplier), new StringFilter<>("Branch", PurchaseReturn::getPurchaseReturnBranch), new StringFilter<>("PurchaseMaster Ref", PurchaseReturn::getPurchaseReturnRef), new StringFilter<>("Status", PurchaseReturn::getPurchaseReturnStatus), new DoubleFilter<>("Total", PurchaseReturn::getPurchaseReturnGrandTotal), new DoubleFilter<>("Paid", PurchaseReturn::getPurchaseReturnAmountPaid), new DoubleFilter<>("Due", PurchaseReturn::getPurchaseReturnAmountDue), new StringFilter<>("Payment Status", PurchaseReturn::getPurchaseReturnPaymentStatus));
+        purchaseReturnDate.setRowCellFactory(purchaseReturn -> new MFXTableRowCell<>(PurchaseReturnMaster::getDate));
+        purchaseReturnReference.setRowCellFactory(purchaseReturn -> new MFXTableRowCell<>(PurchaseReturnMaster::getRef));
+        purchaseReturnSupplier.setRowCellFactory(purchaseReturn -> new MFXTableRowCell<>(PurchaseReturnMaster::getSupplierName));
+        purchaseReturnBranch.setRowCellFactory(purchaseReturn -> new MFXTableRowCell<>(PurchaseReturnMaster::getBranchName));
+        purchaseReturnStatus.setRowCellFactory(purchaseReturn -> new MFXTableRowCell<>(PurchaseReturnMaster::getStatus));
+        purchaseReturnGrandTotal.setRowCellFactory(purchaseReturn -> new MFXTableRowCell<>(PurchaseReturnMaster::getTotal));
+        purchaseReturnAmountPaid.setRowCellFactory(purchaseReturn -> new MFXTableRowCell<>(PurchaseReturnMaster::getPaid));
+        purchaseReturnPaymentStatus.setRowCellFactory(purchaseReturn -> new MFXTableRowCell<>(PurchaseReturnMaster::getPaymentStatus));
 
-        stylePurchaseReturnTable();
-        purchaseReturnTable.setItems(purchaseReturnSampleData());
+        purchaseReturnTable.getTableColumns().addAll(purchaseReturnDate, purchaseReturnReference, purchaseReturnSupplier, purchaseReturnBranch, purchaseReturnStatus, purchaseReturnGrandTotal, purchaseReturnAmountPaid, purchaseReturnPaymentStatus);
+        purchaseReturnTable.getFilters().addAll(new StringFilter<>("Ref No.", PurchaseReturnMaster::getRef),
+                new StringFilter<>("Supplier", PurchaseReturnMaster::getSupplierName),
+                new StringFilter<>("Branch", PurchaseReturnMaster::getBranchName),
+                new StringFilter<>("PurchaseMaster Ref", PurchaseReturnMaster::getRef),
+                new StringFilter<>("Status", PurchaseReturnMaster::getStatus),
+                new DoubleFilter<>("Total", PurchaseReturnMaster::getTotal),
+                new DoubleFilter<>("Paid", PurchaseReturnMaster::getPaid),
+                new StringFilter<>("Pay Status", PurchaseReturnMaster::getPaymentStatus));
+
+        stylePurchaseReturnMasterTable();
+        purchaseReturnTable.setItems(PurchaseReturnMasterViewModel.getPurchaseReturnMasters());
     }
 
-    private void stylePurchaseReturnTable() {
+    private void stylePurchaseReturnMasterTable() {
         purchaseReturnTable.setPrefSize(1200, 1000);
         purchaseReturnTable.features().enableBounceEffect();
         purchaseReturnTable.autosizeColumnsOnInitialization();

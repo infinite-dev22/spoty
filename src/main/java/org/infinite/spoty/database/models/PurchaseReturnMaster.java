@@ -3,6 +3,7 @@ package org.infinite.spoty.database.models;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 public class PurchaseReturnMaster implements Serializable {
@@ -14,11 +15,11 @@ public class PurchaseReturnMaster implements Serializable {
     private String ref;
     private Date date;
     @ManyToOne
-    private PurchaseMaster purchase;
-    @ManyToOne
     private Supplier supplier;
     @ManyToOne
     private Branch branch;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "purchaseReturn")
+    private List<PurchaseReturnDetail> purchaseReturnDetails;
     private double taxRate;
     private double netTax;
     private double discount;
@@ -40,7 +41,6 @@ public class PurchaseReturnMaster implements Serializable {
     public PurchaseReturnMaster(User user,
                                 String ref,
                                 Date date,
-                                PurchaseMaster purchase,
                                 Supplier supplier,
                                 Branch branch,
                                 double taxRate,
@@ -55,7 +55,6 @@ public class PurchaseReturnMaster implements Serializable {
         this.user = user;
         this.ref = ref;
         this.date = date;
-        this.purchase = purchase;
         this.supplier = supplier;
         this.branch = branch;
         this.taxRate = taxRate;
@@ -104,16 +103,12 @@ public class PurchaseReturnMaster implements Serializable {
         this.date = date;
     }
 
-    public PurchaseMaster getPurchase() {
-        return purchase;
-    }
-
-    public void setPurchase(PurchaseMaster purchase) {
-        this.purchase = purchase;
-    }
-
     public Supplier getSupplier() {
         return supplier;
+    }
+
+    public String getSupplierName() {
+        return (supplier != null) ? supplier.getName() : null;
     }
 
     public void setSupplier(Supplier supplier) {
@@ -124,8 +119,20 @@ public class PurchaseReturnMaster implements Serializable {
         return branch;
     }
 
+    public String getBranchName() {
+        return (branch != null) ? branch.getName() : null;
+    }
+
     public void setBranch(Branch branch) {
         this.branch = branch;
+    }
+
+    public List<PurchaseReturnDetail> getPurchaseReturnDetails() {
+        return purchaseReturnDetails;
+    }
+
+    public void setPurchaseReturnDetails(List<PurchaseReturnDetail> purchaseReturnDetails) {
+        this.purchaseReturnDetails = purchaseReturnDetails;
     }
 
     public double getTaxRate() {

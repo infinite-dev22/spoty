@@ -36,7 +36,7 @@ public class PurchaseReturnMasterDao {
             purchaseReturnMaster.setUser(obj.getUser());
             purchaseReturnMaster.setRef(obj.getRef());
             purchaseReturnMaster.setDate(obj.getDate());
-            purchaseReturnMaster.setPurchase(obj.getPurchase());
+            purchaseReturnMaster.setPurchaseReturnDetails(obj.getPurchaseReturnDetails());
             purchaseReturnMaster.setSupplier(obj.getSupplier());
             purchaseReturnMaster.setBranch(obj.getBranch());
             purchaseReturnMaster.setTaxRate(obj.getTaxRate());
@@ -74,7 +74,7 @@ public class PurchaseReturnMasterDao {
         return purchaseReturnMaster;
     }
 
-    public static ObservableList<PurchaseReturnMaster> getPurchaseReturnMaster() {
+    public static ObservableList<PurchaseReturnMaster> fetchPurchaseReturnMasters() {
         Transaction transaction = null;
         ObservableList<PurchaseReturnMaster> purchaseCategories;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {

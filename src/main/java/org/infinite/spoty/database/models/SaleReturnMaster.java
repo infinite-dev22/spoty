@@ -3,6 +3,7 @@ package org.infinite.spoty.database.models;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 public class SaleReturnMaster implements Serializable {
@@ -14,19 +15,18 @@ public class SaleReturnMaster implements Serializable {
     private Date date;
     private String ref;
     @ManyToOne
-    private SaleMaster sale;
-    @ManyToOne
-    private Client client;
+    private Customer customer;
     @ManyToOne
     private Branch branch;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "saleReturn")
+    private List<SaleReturnDetail> saleReturnDetails;
     private double taxRate;
     private double netTax;
     private double discount;
-    private String shipping;
     private double total;
     private double paid;
     private String paymentStatus;
-    private String returnStatus;
+    private String status;
     private String notes;
     @Column(name = "created_at")
     private Date createdAt;
@@ -40,21 +40,27 @@ public class SaleReturnMaster implements Serializable {
     public SaleReturnMaster() {
     }
 
-    public SaleReturnMaster(User user, Date date, String ref, SaleMaster sale, Client client, Branch branch, double taxRate, double netTax, double discount, String shipping, double total, double paid, String paymentStatus, String returnStatus, String notes) {
-        this.user = user;
+    public SaleReturnMaster(Date date,
+                            Customer customer,
+                            Branch branch,
+                            double taxRate,
+                            double netTax,
+                            double discount,
+                            double total,
+                            double paid,
+                            String paymentStatus,
+                            String status,
+                            String notes) {
         this.date = date;
-        this.ref = ref;
-        this.sale = sale;
-        this.client = client;
+        this.customer = customer;
         this.branch = branch;
         this.taxRate = taxRate;
         this.netTax = netTax;
         this.discount = discount;
-        this.shipping = shipping;
         this.total = total;
         this.paid = paid;
         this.paymentStatus = paymentStatus;
-        this.returnStatus = returnStatus;
+        this.status = status;
         this.notes = notes;
     }
 
@@ -82,28 +88,44 @@ public class SaleReturnMaster implements Serializable {
         this.ref = ref;
     }
 
-    public SaleMaster getSale() {
-        return sale;
+    public Customer getCustomer() {
+        return customer;
     }
 
-    public void setSale(SaleMaster sale) {
-        this.sale = sale;
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
-    public Client getClient() {
-        return client;
-    }
-
-    public void setClient(Client client) {
-        this.client = client;
+    public String getCustomerName() {
+        return (customer != null) ? customer.getName() : null;
     }
 
     public Branch getBranch() {
         return branch;
     }
 
+    public String getBranchName() {
+        return (branch != null) ? branch.getName() : null;
+    }
+
     public void setBranch(Branch branch) {
         this.branch = branch;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public List<SaleReturnDetail> getSaleReturnDetails() {
+        return saleReturnDetails;
+    }
+
+    public void setSaleReturnDetails(List<SaleReturnDetail> saleReturnDetails) {
+        this.saleReturnDetails = saleReturnDetails;
     }
 
     public double getTaxRate() {
@@ -130,14 +152,6 @@ public class SaleReturnMaster implements Serializable {
         this.discount = discount;
     }
 
-    public String getShipping() {
-        return shipping;
-    }
-
-    public void setShipping(String shipping) {
-        this.shipping = shipping;
-    }
-
     public double getTotal() {
         return total;
     }
@@ -162,12 +176,12 @@ public class SaleReturnMaster implements Serializable {
         this.paymentStatus = paymentStatus;
     }
 
-    public String getReturnStatus() {
-        return returnStatus;
+    public String getStatus() {
+        return status;
     }
 
-    public void setReturnStatus(String returnStatus) {
-        this.returnStatus = returnStatus;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getNotes() {

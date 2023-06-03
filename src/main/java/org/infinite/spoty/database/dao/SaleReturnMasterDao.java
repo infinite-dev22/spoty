@@ -36,17 +36,15 @@ public class SaleReturnMasterDao {
             saleReturnMaster.setUser(obj.getUser());
             saleReturnMaster.setDate(obj.getDate());
             saleReturnMaster.setRef(obj.getRef());
-            saleReturnMaster.setSale(obj.getSale());
-            saleReturnMaster.setClient(obj.getClient());
+            saleReturnMaster.setCustomer(obj.getCustomer());
             saleReturnMaster.setBranch(obj.getBranch());
             saleReturnMaster.setTaxRate(obj.getTaxRate());
             saleReturnMaster.setNetTax(obj.getNetTax());
             saleReturnMaster.setDiscount(obj.getDiscount());
-            saleReturnMaster.setShipping(obj.getShipping());
             saleReturnMaster.setTotal(obj.getTotal());
             saleReturnMaster.setPaid(obj.getPaid());
             saleReturnMaster.setPaymentStatus(obj.getPaymentStatus());
-            saleReturnMaster.setReturnStatus(obj.getReturnStatus());
+            saleReturnMaster.setStatus(obj.getStatus());
             saleReturnMaster.setNotes(obj.getNotes());
             saleReturnMaster.setUpdatedAt(new Date());
             // TODO: updated by should be a system user.
@@ -74,7 +72,7 @@ public class SaleReturnMasterDao {
         return saleReturnMaster;
     }
 
-    public static ObservableList<SaleReturnMaster> getSaleReturnMaster() {
+    public static ObservableList<SaleReturnMaster> fetchSaleReturnMasters() {
         Transaction transaction = null;
         ObservableList<SaleReturnMaster> saleCategories;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {

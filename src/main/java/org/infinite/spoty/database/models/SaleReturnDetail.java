@@ -10,6 +10,7 @@ public class SaleReturnDetail implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     @ManyToOne
+    @JoinColumn(name = "saleReturnMaster_id")
     private SaleReturnMaster saleReturn;
     @ManyToOne
     private ProductDetail product;
@@ -20,7 +21,6 @@ public class SaleReturnDetail implements Serializable {
     private String taxType;
     private double discount;
     private String discountType;
-    // IMEI or Serial. For products with a serial or an imei.
     private String serialNumber;
     private int quantity;
     private double total;
@@ -32,9 +32,21 @@ public class SaleReturnDetail implements Serializable {
     private Date updatedAt;
     @Column(name = "updated_by")
     private String updatedBy;
+
     public SaleReturnDetail() {
     }
-    public SaleReturnDetail(SaleReturnMaster saleReturn, ProductDetail product, double price, UnitOfMeasure saleUnit, double netTax, String taxType, double discount, String discountType, String serialNumber, int quantity, double total) {
+
+    public SaleReturnDetail(SaleReturnMaster saleReturn,
+                            ProductDetail product,
+                            double price,
+                            UnitOfMeasure saleUnit,
+                            double netTax,
+                            String taxType,
+                            double discount,
+                            String discountType,
+                            String serialNumber,
+                            int quantity,
+                            double total) {
         this.saleReturn = saleReturn;
         this.product = product;
         this.price = price;
