@@ -1,22 +1,23 @@
 package org.infinite.spoty.views.inventory.brand;
 
-import io.github.palexdev.materialfx.controls.MFXButton;
-import io.github.palexdev.materialfx.controls.MFXTableColumn;
-import io.github.palexdev.materialfx.controls.MFXTableView;
-import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.enums.ButtonType;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.infinite.spoty.database.dao.BrandDao;
 import org.infinite.spoty.database.models.Brand;
+import org.infinite.spoty.viewModels.BrandViewModel;
 
 import java.io.IOException;
 import java.net.URL;
@@ -75,6 +76,42 @@ public class BrandController implements Initializable {
         brandTable.setPrefSize(1000, 1000);
         brandTable.features().enableBounceEffect();
         brandTable.features().enableSmoothScrolling(0.5);
+
+        brandTable.setTableRowFactory(t -> {
+            MFXTableRow<Brand> row = new MFXTableRow<>(brandTable, t);
+            EventHandler<ContextMenuEvent> eventHandler = event -> {
+                showContextMenu(event.getSource()).show(brandTable.getParent(), event.getScreenX(), event.getScreenY());
+                event.consume();
+            };
+            row.setOnContextMenuRequested(eventHandler);
+            return row;
+        });
+    }
+
+    private MFXContextMenu showContextMenu(Object obj) {
+        MFXContextMenu contextMenu = new MFXContextMenu(brandTable);
+        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
+        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+
+        // Actions
+        // Delete
+        delete.setOnAction(e -> {
+            MFXTableRow<Brand> onj = (MFXTableRow) obj;
+            BrandDao.deleteBrand(onj.getData().getId());
+            BrandViewModel.getItems();
+            e.consume();
+        });
+        // Edit
+        edit.setOnAction(e -> {
+            MFXTableRow<Brand> onj = (MFXTableRow) obj;
+            BrandViewModel.getItem(onj.getData().getId());
+            dialog.showAndWait();
+            e.consume();
+        });
+
+        contextMenu.addItems(edit, delete);
+
+        return contextMenu;
     }
 
     private void brandFormDialogPane(Stage stage) throws IOException {
