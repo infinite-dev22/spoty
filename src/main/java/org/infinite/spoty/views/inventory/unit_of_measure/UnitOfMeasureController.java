@@ -1,22 +1,22 @@
 package org.infinite.spoty.views.inventory.unit_of_measure;
 
-import io.github.palexdev.materialfx.controls.MFXButton;
-import io.github.palexdev.materialfx.controls.MFXTableColumn;
-import io.github.palexdev.materialfx.controls.MFXTableView;
-import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.enums.ButtonType;
 import io.github.palexdev.materialfx.filter.DoubleFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.infinite.spoty.database.dao.UnitOfMeasureDao;
 import org.infinite.spoty.database.models.UnitOfMeasure;
 import org.infinite.spoty.viewModels.UOMViewModel;
 
@@ -54,11 +54,11 @@ public class UnitOfMeasureController implements Initializable {
     }
 
     private void setupTable() {
-        MFXTableColumn<UnitOfMeasure> uomName = new MFXTableColumn<>("Name", true, Comparator.comparing(UnitOfMeasure::getName));
-        MFXTableColumn<UnitOfMeasure> uomShortName = new MFXTableColumn<>("Short Name", true, Comparator.comparing(UnitOfMeasure::getShortName));
-        MFXTableColumn<UnitOfMeasure> uomBaseUnit = new MFXTableColumn<>("Base Unit", true, Comparator.comparing(UnitOfMeasure::getBaseUnitName));
-        MFXTableColumn<UnitOfMeasure> uomOperator = new MFXTableColumn<>("Operator", true, Comparator.comparing(UnitOfMeasure::getOperator));
-        MFXTableColumn<UnitOfMeasure> uomOperationValue = new MFXTableColumn<>("Operation Value", true, Comparator.comparing(UnitOfMeasure::getOperatorValue));
+        MFXTableColumn<UnitOfMeasure> uomName = new MFXTableColumn<>("Name", false, Comparator.comparing(UnitOfMeasure::getName));
+        MFXTableColumn<UnitOfMeasure> uomShortName = new MFXTableColumn<>("Short Name", false, Comparator.comparing(UnitOfMeasure::getShortName));
+        MFXTableColumn<UnitOfMeasure> uomBaseUnit = new MFXTableColumn<>("Base Unit", false, Comparator.comparing(UnitOfMeasure::getBaseUnitName));
+        MFXTableColumn<UnitOfMeasure> uomOperator = new MFXTableColumn<>("Operator", false, Comparator.comparing(UnitOfMeasure::getOperator));
+        MFXTableColumn<UnitOfMeasure> uomOperationValue = new MFXTableColumn<>("Operation Value", false, Comparator.comparing(UnitOfMeasure::getOperatorValue));
 
         uomName.setRowCellFactory(brand -> new MFXTableRowCell<>(UnitOfMeasure::getName));
         uomShortName.setRowCellFactory(brand -> new MFXTableRowCell<>(UnitOfMeasure::getShortName));
@@ -88,7 +88,42 @@ public class UnitOfMeasureController implements Initializable {
         uomTable.setPrefSize(1000, 1000);
         uomTable.features().enableBounceEffect();
         uomTable.features().enableSmoothScrolling(0.5);
-        uomTable.autosizeColumnsOnInitialization();
+
+        uomTable.setTableRowFactory(t -> {
+            MFXTableRow<UnitOfMeasure> row = new MFXTableRow<>(uomTable, t);
+            EventHandler<ContextMenuEvent> eventHandler = event -> {
+                showContextMenu(event.getSource()).show(uomTable.getParent(), event.getScreenX(), event.getScreenY());
+                event.consume();
+            };
+            row.setOnContextMenuRequested(eventHandler);
+            return row;
+        });
+    }
+
+    private MFXContextMenu showContextMenu(Object obj) {
+        MFXContextMenu contextMenu = new MFXContextMenu(uomTable);
+        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
+        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+
+        // Actions
+        // Delete
+        delete.setOnAction(e -> {
+            MFXTableRow<UnitOfMeasure> onj = (MFXTableRow) obj;
+            UnitOfMeasureDao.deleteUnitOfMeasure(onj.getData().getId());
+            UOMViewModel.getItems();
+            e.consume();
+        });
+        // Edit
+        edit.setOnAction(e -> {
+            MFXTableRow<UnitOfMeasure> onj = (MFXTableRow) obj;
+            UOMViewModel.getItem(onj.getData().getId());
+            dialog.showAndWait();
+            e.consume();
+        });
+
+        contextMenu.addItems(edit, delete);
+
+        return contextMenu;
     }
 
     private void uomFormDialogPane(Stage stage) throws IOException {
