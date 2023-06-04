@@ -74,7 +74,8 @@ public class ProductCategoryDao {
         }
         return productCategories;
     }
-    public static int deleteProductCategory(int id) {
+
+    public static void deleteProductCategory(int id) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
@@ -84,6 +85,5 @@ public class ProductCategoryDao {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 }
