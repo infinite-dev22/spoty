@@ -8,16 +8,17 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
+import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.viewModels.ProductCategoryViewModel;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.GlobalActions.closeDialog;
-import static org.infinite.spoty.viewModels.ProductCategoryViewModel.clearProductCategoryData;
-import static org.infinite.spoty.viewModels.ProductCategoryViewModel.saveProductCategory;
+import static org.infinite.spoty.viewModels.ProductCategoryViewModel.*;
 
 public class ProductCategoryFormController implements Initializable {
+    public MFXTextField dialogCategoryID = new MFXTextField();
     @FXML
     public MFXTextField dialogCategoryCode;
     @FXML
@@ -34,6 +35,7 @@ public class ProductCategoryFormController implements Initializable {
         dialogCategoryCode.textProperty().addListener((observable, oldValue, newValue) -> dialogCategoryCode.setTrailingIcon(null));
         dialogCategoryName.textProperty().addListener((observable, oldValue, newValue) -> dialogCategoryName.setTrailingIcon(null));
 
+        dialogCategoryID.textProperty().bindBidirectional(ProductCategoryViewModel.idProperty(), new NumberStringConverter());
         dialogCategoryCode.textProperty().bindBidirectional(ProductCategoryViewModel.codeProperty());
         dialogCategoryName.textProperty().bindBidirectional(ProductCategoryViewModel.nameProperty());
 
@@ -57,7 +59,10 @@ public class ProductCategoryFormController implements Initializable {
                 dialogCategoryCode.setTrailingIcon(icon);
             }
             if (dialogCategoryName.getText().length() > 0 && dialogCategoryCode.getText().length() > 0) {
-                saveProductCategory();
+                if (!dialogCategoryID.getText().isEmpty())
+                    updateItem(Integer.parseInt(dialogCategoryID.getText()));
+                else
+                    saveProductCategory();
                 closeDialog(e);
             }
         });
