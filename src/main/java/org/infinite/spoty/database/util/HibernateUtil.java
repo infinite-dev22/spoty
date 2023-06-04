@@ -96,7 +96,6 @@ public class HibernateUtil {
                 configuration.addAnnotatedClass(RequisitionDetail.class);
                 configuration.addAnnotatedClass(StockInMaster.class);
                 configuration.addAnnotatedClass(StockInDetail.class);
-//                configuration.addAnnotatedClass();
 
                 ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
                         .applySettings(configuration.getProperties()).build();

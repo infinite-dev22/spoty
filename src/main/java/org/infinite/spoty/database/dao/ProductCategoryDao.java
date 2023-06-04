@@ -52,7 +52,7 @@ public class ProductCategoryDao {
         ProductCategory productCategory;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            productCategory = session.load(ProductCategory.class, id);
+            productCategory = session.get(ProductCategory.class, id);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
