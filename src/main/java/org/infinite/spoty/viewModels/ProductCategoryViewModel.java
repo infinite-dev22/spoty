@@ -73,12 +73,28 @@ public class ProductCategoryViewModel {
     }
 
     public static void clearProductCategoryData() {
+        setId(0);
         setCode("");
         setName("");
     }
 
     public static ObservableList<ProductCategory> getItems() {
+        categoriesList.clear();
         categoriesList.addAll(ProductCategoryDao.getProductCategories());
         return categoriesList;
+    }
+
+    public static void getItem(int productCategoryID) {
+        ProductCategory productCategory = ProductCategoryDao.findProductCategory(productCategoryID);
+        setId(productCategory.getId());
+        setCode(productCategory.getCode());
+        setName(productCategory.getName());
+        getItems();
+    }
+
+    public static void updateItem(int productCategoryID) {
+        ProductCategory productCategory = new ProductCategory(getCode(), getName());
+        ProductCategoryDao.updateProductCategory(productCategory, productCategoryID);
+        getItems();
     }
 }
