@@ -59,7 +59,7 @@ public class ProductCategoryFormController implements Initializable {
                 dialogCategoryCode.setTrailingIcon(icon);
             }
             if (dialogCategoryName.getText().length() > 0 && dialogCategoryCode.getText().length() > 0) {
-                if (!dialogCategoryID.getText().isEmpty())
+                if (Integer.parseInt(dialogCategoryID.getText()) > 0)
                     updateItem(Integer.parseInt(dialogCategoryID.getText()));
                 else
                     saveProductCategory();
