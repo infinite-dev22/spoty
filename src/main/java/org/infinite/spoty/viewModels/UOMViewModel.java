@@ -7,13 +7,13 @@ import org.infinite.spoty.database.dao.UnitOfMeasureDao;
 import org.infinite.spoty.database.models.UnitOfMeasure;
 
 public class UOMViewModel {
+    public static final ObservableList<UnitOfMeasure> uomList = FXCollections.observableArrayList();
     private static final IntegerProperty id = new SimpleIntegerProperty(0);
     private static final StringProperty name = new SimpleStringProperty("");
     private static final StringProperty shortName = new SimpleStringProperty("");
     private static final ObjectProperty<UnitOfMeasure> baseUnit = new SimpleObjectProperty<>();
-    private static final StringProperty operator = new SimpleStringProperty("*");
-    private static final DoubleProperty operatorValue = new SimpleDoubleProperty(1);
-    public static final ObservableList<UnitOfMeasure> uomList = FXCollections.observableArrayList();
+    private static final StringProperty operator = new SimpleStringProperty("");
+    private static final StringProperty operatorValue = new SimpleStringProperty("");
 
     public static int getId() {
         return id.get();
@@ -76,14 +76,14 @@ public class UOMViewModel {
     }
 
     public static double getOperatorValue() {
-        return operatorValue.get();
+        return Double.parseDouble((!operatorValue.get().isEmpty()) ? operatorValue.get() : "0");
     }
 
-    public static void setOperatorValue(double operatorValue) {
+    public static void setOperatorValue(String operatorValue) {
         UOMViewModel.operatorValue.set(operatorValue);
     }
 
-    public static DoubleProperty operatorValueProperty() {
+    public static StringProperty operatorValueProperty() {
         return operatorValue;
     }
 
@@ -100,13 +100,30 @@ public class UOMViewModel {
         setName("");
         setShortName("");
         setBaseUnit(null);
-        setOperator("*");
-        setOperatorValue(1);
+        setOperator("");
+        setOperatorValue("");
     }
 
     public static ObservableList<UnitOfMeasure> getItems() {
         uomList.clear();
         uomList.addAll(UnitOfMeasureDao.getUnitsOfMeasure());
         return uomList;
+    }
+
+    public static void getItem(int uomID) {
+        UnitOfMeasure uom = UnitOfMeasureDao.findUnitOfMeasure(uomID);
+        setId(uom.getId());
+        setName(uom.getName());
+        setShortName(uom.getShortName());
+        setBaseUnit(uom.getBaseUnit());
+        setOperator(uom.getOperator());
+        setOperatorValue(String.valueOf(uom.getOperatorValue()));
+        getItems();
+    }
+
+    public static void updateItem(int uomID) {
+        UnitOfMeasure uom = new UnitOfMeasure(getName(), getShortName(), getBaseUnit(), getOperator(), getOperatorValue());
+        UnitOfMeasureDao.updateUnitOfMeasure(uom, uomID);
+        getItems();
     }
 }
