@@ -7,6 +7,7 @@ import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
+import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.viewModels.BrandViewModel;
 
 import java.net.URL;
@@ -17,6 +18,7 @@ import static org.infinite.spoty.viewModels.BrandViewModel.clearBrandData;
 import static org.infinite.spoty.viewModels.BrandViewModel.saveBrand;
 
 public class BrandFormController implements Initializable {
+    public MFXTextField brandID = new MFXTextField();
     public Label brandFormTitle;
     public MFXTextField brandFormName;
     public MFXTextField brandFormDescription;
@@ -28,6 +30,7 @@ public class BrandFormController implements Initializable {
         brandFormName.textProperty().addListener((observable, oldValue, newValue) -> brandFormName.setTrailingIcon(null));
         brandFormDescription.textProperty().addListener((observable, oldValue, newValue) -> brandFormDescription.setTrailingIcon(null));
 
+        brandID.textProperty().bindBidirectional(BrandViewModel.idProperty(), new NumberStringConverter());
         brandFormName.textProperty().bindBidirectional(BrandViewModel.nameProperty());
         brandFormDescription.textProperty().bindBidirectional(BrandViewModel.descriptionProperty());
 
@@ -51,7 +54,10 @@ public class BrandFormController implements Initializable {
                 brandFormDescription.setTrailingIcon(icon);
             }
             if (brandFormName.getText().length() > 0 && brandFormDescription.getText().length() > 0) {
-                saveBrand();
+                if (Integer.parseInt(brandID.getText()) > 0)
+                    BrandViewModel.updateItem(Integer.parseInt(brandID.getText()));
+                else
+                    saveBrand();
                 clearBrandData();
                 closeDialog(e);
             }
