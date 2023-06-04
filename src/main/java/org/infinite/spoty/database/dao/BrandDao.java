@@ -28,7 +28,7 @@ public class BrandDao {
         }
     }
 
-    public static int updateBrand(Brand obj, long id) {
+    public static int updateBrand(Brand obj, int id) {
         Transaction transaction = null;
         Brand brand;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
@@ -49,12 +49,12 @@ public class BrandDao {
         return 1;
     }
 
-    public static Brand findBrand(long id) {
+    public static Brand findBrand(int id) {
         Transaction transaction = null;
         Brand brand = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            brand = session.load(Brand.class, id);
+            brand = session.get(Brand.class, id);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -76,7 +76,8 @@ public class BrandDao {
         }
         return brands;
     }
-    public static int deleteBrand(long id) {
+
+    public static void deleteBrand(int id) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
@@ -86,6 +87,5 @@ public class BrandDao {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 }
