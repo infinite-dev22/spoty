@@ -11,7 +11,7 @@ import org.infinite.spoty.database.util.HibernateUtil;
 import java.util.Date;
 
 public class UnitOfMeasureDao {
-    public static int saveUnitOfMeasure(UnitOfMeasure obj) {
+    public static void saveUnitOfMeasure(UnitOfMeasure obj) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
@@ -24,10 +24,9 @@ public class UnitOfMeasureDao {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
-    public static int updateUnitOfMeasure(UnitOfMeasure obj, long id) {
+    public static void updateUnitOfMeasure(UnitOfMeasure obj, int id) {
         Transaction transaction = null;
         UnitOfMeasure unitOfMeasure;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
@@ -47,15 +46,14 @@ public class UnitOfMeasureDao {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
-    public static UnitOfMeasure findUnitOfMeasure(long id) {
+    public static UnitOfMeasure findUnitOfMeasure(int id) {
         Transaction transaction = null;
         UnitOfMeasure unitOfMeasure;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            unitOfMeasure = session.load(UnitOfMeasure.class, id);
+            unitOfMeasure = session.get(UnitOfMeasure.class, id);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -78,7 +76,7 @@ public class UnitOfMeasureDao {
         return purchaseCategories;
     }
 
-    public static int deleteUnitOfMeasure(long id) {
+    public static void deleteUnitOfMeasure(int id) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
@@ -88,6 +86,5 @@ public class UnitOfMeasureDao {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 }
