@@ -5,20 +5,13 @@ import io.github.palexdev.materialfx.controls.MFXIconWrapper;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
-import io.github.palexdev.virtualizedfx.cell.Cell;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.util.Callback;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
-import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.UnitOfMeasure;
 import org.infinite.spoty.viewModels.UOMViewModel;
 
@@ -28,6 +21,7 @@ import java.util.ResourceBundle;
 import static org.infinite.spoty.GlobalActions.closeDialog;
 
 public class UOMFormController implements Initializable {
+    public MFXTextField uomID = new MFXTextField();
     @FXML
     public MFXTextField uomFormName;
     @FXML
@@ -67,12 +61,13 @@ public class UOMFormController implements Initializable {
             }
         });
 
+        uomID.textProperty().bindBidirectional(UOMViewModel.idProperty(), new NumberStringConverter());
         uomFormName.textProperty().bindBidirectional(UOMViewModel.nameProperty());
         uomFormShortName.textProperty().bindBidirectional(UOMViewModel.shortNameProperty());
         uomFormBaseUnit.valueProperty().bindBidirectional(UOMViewModel.baseUnitProperty());
         uomFormOperator.textProperty().bindBidirectional(UOMViewModel.operatorProperty());
 
-        uomFormOperatorValue.textProperty().bindBidirectional(UOMViewModel.operatorValueProperty(), new NumberStringConverter());
+        uomFormOperatorValue.textProperty().bindBidirectional(UOMViewModel.operatorValueProperty());
 
         uomFormBaseUnit.valueProperty().addListener(e -> {
             if (!uomFormBaseUnit.getItems().isEmpty()) {
@@ -106,7 +101,10 @@ public class UOMFormController implements Initializable {
                 uomFormShortName.setTrailingIcon(icon);
             }
             if (uomFormName.getText().length() > 0 && uomFormShortName.getText().length() > 0) {
-                UOMViewModel.saveUOM();
+                if (Integer.parseInt(uomID.getText()) > 0)
+                    UOMViewModel.updateItem(Integer.parseInt(uomID.getText()));
+                else
+                    UOMViewModel.saveUOM();
                 closeDialog(e);
             }
         });
