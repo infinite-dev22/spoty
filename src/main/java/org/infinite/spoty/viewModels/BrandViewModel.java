@@ -62,9 +62,24 @@ public class BrandViewModel {
         setName("");
         setDescription("");
     }
-    
+
     public static ObservableList<Brand> getItems() {
+        brandsList.clear();
         brandsList.addAll(BrandDao.getBrands());
         return brandsList;
+    }
+
+    public static void getItem(int brandID) {
+        Brand brand = BrandDao.findBrand(brandID);
+        setId(brand.getId());
+        setName(brand.getName());
+        setDescription(brand.getDescription());
+        getItems();
+    }
+
+    public static void updateItem(int brandID) {
+        Brand brand = new Brand(getName(), getDescription());
+        BrandDao.updateBrand(brand, brandID);
+        getItems();
     }
 }
