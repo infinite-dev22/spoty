@@ -10,7 +10,7 @@ public class UnitOfMeasure {
     private int id;
     private String name;
     private String shortName;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private UnitOfMeasure baseUnit;
     private String operator;
     @Column(name = "operator_value")
