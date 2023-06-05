@@ -1,23 +1,23 @@
 package org.infinite.spoty.views.expenses.expense;
 
-import io.github.palexdev.materialfx.controls.MFXButton;
-import io.github.palexdev.materialfx.controls.MFXTableColumn;
-import io.github.palexdev.materialfx.controls.MFXTableView;
-import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.enums.ButtonType;
 import io.github.palexdev.materialfx.filter.DoubleFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.infinite.spoty.database.dao.ExpenseDao;
 import org.infinite.spoty.database.models.Expense;
 import org.infinite.spoty.viewModels.ExpenseViewModel;
 
@@ -57,16 +57,16 @@ public class ExpenseController implements Initializable {
     }
 
     private void setupTable() {
-        MFXTableColumn<Expense> expenseDate = new MFXTableColumn<>("Date", true, Comparator.comparing(Expense::getDate));
-        MFXTableColumn<Expense> expenseRef = new MFXTableColumn<>("Reference No.", true, Comparator.comparing(Expense::getRef));
-        MFXTableColumn<Expense> expenseName = new MFXTableColumn<>("Name", true, Comparator.comparing(Expense::getBranchName));
-        MFXTableColumn<Expense> expenseAmount = new MFXTableColumn<>("Amount", true, Comparator.comparing(Expense::getAmount));
-        MFXTableColumn<Expense> expenseCategory = new MFXTableColumn<>("Category", true, Comparator.comparing(Expense::getExpenseCategoryName));
-        MFXTableColumn<Expense> expenseBranch = new MFXTableColumn<>("Branch", true, Comparator.comparing(Expense::getBranchName));
+        MFXTableColumn<Expense> expenseDate = new MFXTableColumn<>("Date", false, Comparator.comparing(Expense::getDate));
+        MFXTableColumn<Expense> expenseRef = new MFXTableColumn<>("Reference No.", false, Comparator.comparing(Expense::getRef));
+        MFXTableColumn<Expense> expenseName = new MFXTableColumn<>("Name", false, Comparator.comparing(Expense::getName));
+        MFXTableColumn<Expense> expenseAmount = new MFXTableColumn<>("Amount", false, Comparator.comparing(Expense::getAmount));
+        MFXTableColumn<Expense> expenseCategory = new MFXTableColumn<>("Category", false, Comparator.comparing(Expense::getExpenseCategoryName));
+        MFXTableColumn<Expense> expenseBranch = new MFXTableColumn<>("Branch", false, Comparator.comparing(Expense::getBranchName));
 
-        expenseDate.setRowCellFactory(expense -> new MFXTableRowCell<>(Expense::getDate));
+        expenseDate.setRowCellFactory(expense -> new MFXTableRowCell<>(Expense::getLocaleDate));
         expenseRef.setRowCellFactory(expense -> new MFXTableRowCell<>(Expense::getRef));
-        expenseName.setRowCellFactory(expense -> new MFXTableRowCell<>(Expense::getBranchName));
+        expenseName.setRowCellFactory(expense -> new MFXTableRowCell<>(Expense::getName));
         expenseAmount.setRowCellFactory(expense -> new MFXTableRowCell<>(Expense::getAmount));
         expenseCategory.setRowCellFactory(expense -> new MFXTableRowCell<>(Expense::getExpenseCategoryName));
         expenseBranch.setRowCellFactory(expense -> new MFXTableRowCell<>(Expense::getBranchName));
@@ -81,7 +81,7 @@ public class ExpenseController implements Initializable {
         expenseTable.getTableColumns().addAll(expenseDate, expenseRef, expenseName, expenseAmount, expenseCategory, expenseBranch);
         expenseTable.getFilters().addAll(
                 new StringFilter<>("Reference No.", Expense::getRef),
-                new StringFilter<>("Name", Expense::getBranchName),
+                new StringFilter<>("Name", Expense::getName),
                 new DoubleFilter<>("Amount", Expense::getAmount),
                 new StringFilter<>("Category", Expense::getExpenseCategoryName),
                 new StringFilter<>("Branch", Expense::getBranchName)
@@ -93,8 +93,43 @@ public class ExpenseController implements Initializable {
     private void styleExpenseTable() {
         expenseTable.setPrefSize(1200, 1000);
         expenseTable.features().enableBounceEffect();
-        expenseTable.autosizeColumnsOnInitialization();
         expenseTable.features().enableSmoothScrolling(0.5);
+
+        expenseTable.setTableRowFactory(t -> {
+            MFXTableRow<Expense> row = new MFXTableRow<>(expenseTable, t);
+            EventHandler<ContextMenuEvent> eventHandler = event -> {
+                showContextMenu(event.getSource()).show(expenseTable.getParent(), event.getScreenX(), event.getScreenY());
+                event.consume();
+            };
+            row.setOnContextMenuRequested(eventHandler);
+            return row;
+        });
+    }
+
+    private MFXContextMenu showContextMenu(Object obj) {
+        MFXContextMenu contextMenu = new MFXContextMenu(expenseTable);
+        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
+        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+
+        // Actions
+        // Delete
+        delete.setOnAction(e -> {
+            MFXTableRow<Expense> onj = (MFXTableRow) obj;
+            ExpenseDao.deleteExpense(onj.getData().getId());
+            ExpenseViewModel.getExpenses();
+            e.consume();
+        });
+        // Edit
+        edit.setOnAction(e -> {
+            MFXTableRow<Expense> onj = (MFXTableRow) obj;
+            ExpenseViewModel.getItem(onj.getData().getId());
+            dialog.showAndWait();
+            e.consume();
+        });
+
+        contextMenu.addItems(edit, delete);
+
+        return contextMenu;
     }
 
     private void expenseFormDialogPane(Stage stage) throws IOException {
