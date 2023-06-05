@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
+import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.viewModels.ExpenseCategoryViewModel;
 
 import java.net.URL;
@@ -18,6 +19,7 @@ import static org.infinite.spoty.viewModels.ExpenseCategoryViewModel.resetProper
 import static org.infinite.spoty.viewModels.ExpenseCategoryViewModel.saveExpenseCategory;
 
 public class ExpenseCategoryFormController implements Initializable {
+    public MFXTextField expenseCategoryID = new MFXTextField();
     @FXML
     public MFXTextField categoryExpenseFormName;
     @FXML
@@ -31,6 +33,7 @@ public class ExpenseCategoryFormController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        expenseCategoryID.textProperty().bindBidirectional(ExpenseCategoryViewModel.idProperty(), new NumberStringConverter());
         categoryExpenseFormName.textProperty().bindBidirectional(ExpenseCategoryViewModel.nameProperty());
         categoryExpenseFormDescription.textProperty().bindBidirectional(ExpenseCategoryViewModel.descriptionProperty());
         dialogOnActions();
@@ -53,7 +56,10 @@ public class ExpenseCategoryFormController implements Initializable {
                 categoryExpenseFormDescription.setTrailingIcon(icon);
             }
             if (categoryExpenseFormName.getText().length() > 0 && categoryExpenseFormDescription.getText().length() > 0) {
-                saveExpenseCategory();
+                if (Integer.parseInt(expenseCategoryID.getText()) > 0)
+                    ExpenseCategoryViewModel.updateItem(Integer.parseInt(expenseCategoryID.getText()));
+                else
+                    saveExpenseCategory();
                 resetProperties();
                 closeDialog(e);
             }
