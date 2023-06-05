@@ -66,7 +66,21 @@ public class ExpenseCategoryViewModel {
 
     public static ObservableList<ExpenseCategory> getCategories() {
         categoryList.clear();
-        categoryList.addAll(ExpenseCategoryDao.getExpenseCategories());
+        categoryList.addAll(ExpenseCategoryDao.fetchExpenseCategories());
         return categoryList;
+    }
+
+    public static void getItem(int expenseCategoryID) {
+        ExpenseCategory expenseCategory = ExpenseCategoryDao.findExpenseCategory(expenseCategoryID);
+        setId(expenseCategory.getId());
+        setName(expenseCategory.getName());
+        setDescription(expenseCategory.getDescription());
+        getCategories();
+    }
+
+    public static void updateItem(int expenseCategoryID) {
+        ExpenseCategory expenseCategory = new ExpenseCategory(getName(), getDescription());
+        ExpenseCategoryDao.updateExpenseCategory(expenseCategory, expenseCategoryID);
+        getCategories();
     }
 }
