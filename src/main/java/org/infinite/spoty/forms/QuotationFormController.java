@@ -25,7 +25,7 @@ import org.infinite.spoty.database.models.Customer;
 import org.infinite.spoty.database.models.QuotationDetail;
 import org.infinite.spoty.values.strings.Values;
 import org.infinite.spoty.viewModels.BranchViewModel;
-import org.infinite.spoty.viewModels.CustomerVewModel;
+import org.infinite.spoty.viewModels.CustomerViewModel;
 import org.infinite.spoty.viewModels.QuotationDetailViewModel;
 import org.infinite.spoty.viewModels.QuotationMasterViewModel;
 
@@ -73,7 +73,7 @@ public class QuotationFormController implements Initializable {
         quotationBranchId.textProperty().addListener((observable, oldValue, newValue) -> quotationBranchId.setTrailingIcon(null));
         quotationStatus.textProperty().addListener((observable, oldValue, newValue) -> quotationStatus.setTrailingIcon(null));
         // Combo box properties.
-        quotationCustomerId.setItems(CustomerVewModel.customersList);
+        quotationCustomerId.setItems(CustomerViewModel.customersList);
         quotationCustomerId.setConverter(new StringConverter<>() {
             @Override
             public String toString(Customer object) {

@@ -25,7 +25,7 @@ import org.infinite.spoty.database.models.Customer;
 import org.infinite.spoty.database.models.SaleDetail;
 import org.infinite.spoty.values.strings.Values;
 import org.infinite.spoty.viewModels.BranchViewModel;
-import org.infinite.spoty.viewModels.CustomerVewModel;
+import org.infinite.spoty.viewModels.CustomerViewModel;
 import org.infinite.spoty.viewModels.SaleDetailViewModel;
 import org.infinite.spoty.viewModels.SaleMasterViewModel;
 
@@ -76,7 +76,7 @@ public class SaleFormController implements Initializable {
         saleBranchId.textProperty().addListener((observable, oldValue, newValue) -> saleBranchId.setTrailingIcon(null));
         saleStatus.textProperty().addListener((observable, oldValue, newValue) -> saleStatus.setTrailingIcon(null));
         // Set items to combo boxes and display custom text.
-        saleCustomerId.setItems(CustomerVewModel.customersList);
+        saleCustomerId.setItems(CustomerViewModel.customersList);
         saleCustomerId.setConverter(new StringConverter<>() {
             @Override
             public String toString(Customer object) {

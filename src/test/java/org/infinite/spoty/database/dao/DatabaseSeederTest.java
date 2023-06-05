@@ -65,4 +65,19 @@ class DatabaseSeederTest {
             throw new AssertionError();
         }
     }
+
+    @Test
+    @Order(5)
+    void customerInsert() {
+        try {
+            var customer = new Customer("Test Customer 1", "test1@email.com", "+1234567890",
+                    "Test City 1", "Test Address 1", "TXN-5685655555555",
+                    "Test Country 1");
+            customer.setCreatedAt(new Date());
+            customer.setCreatedBy("Tester One");
+            CustomerDao.saveCustomer(customer);
+        } catch (Exception e) {
+            throw new AssertionError();
+        }
+    }
 }

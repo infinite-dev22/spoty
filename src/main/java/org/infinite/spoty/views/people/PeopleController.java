@@ -9,7 +9,7 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.infinite.spoty.views.people.customers.CustomersController;
+import org.infinite.spoty.views.people.customers.CustomerController;
 import org.infinite.spoty.views.people.suppliers.SuppliersController;
 import org.infinite.spoty.views.people.users.UsersController;
 
@@ -35,7 +35,7 @@ public class PeopleController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         MFXLoader loader = new MFXLoader();
-        loader.addView(MFXLoaderBean.of("CUSTOMERS", loadURL("fxml/people/customers/Customers.fxml")).setBeanToNodeMapper(() -> createToggle("fas-user-tie", "Customers")).setControllerFactory(c -> new CustomersController(stage)).setDefaultRoot(true).get());
+        loader.addView(MFXLoaderBean.of("CUSTOMERS", loadURL("fxml/people/customers/Customers.fxml")).setBeanToNodeMapper(() -> createToggle("fas-user-tie", "Customers")).setControllerFactory(c -> new CustomerController(stage)).setDefaultRoot(true).get());
         loader.addView(MFXLoaderBean.of("SUPPLIERS", loadURL("fxml/people/suppliers/Suppliers.fxml")).setBeanToNodeMapper(() -> createToggle("fas-truck", "Suppliers")).setControllerFactory(c -> new SuppliersController(stage)).get());
         loader.addView(MFXLoaderBean.of("USERS", loadURL("fxml/people/users/Users.fxml")).setBeanToNodeMapper(() -> createToggle("fas-user", "Users")).setControllerFactory(c -> new UsersController(stage)).get());
         loader.setOnLoadedAction(beans -> {
