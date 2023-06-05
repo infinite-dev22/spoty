@@ -2,6 +2,7 @@ package org.infinite.spoty.database.models;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.text.DateFormat;
 import java.util.Date;
 
 // TODO: Remove uUser Property.
@@ -13,6 +14,7 @@ public class Expense implements Serializable {
     private int id;
     private Date date;
     private String ref;
+    private String name;
     @ManyToOne
     private User user;
     @ManyToOne
@@ -31,11 +33,13 @@ public class Expense implements Serializable {
     private String updatedBy;
 
     public Expense(Date date,
+                   String name,
                    ExpenseCategory expenseCategory,
                    Branch branch,
                    String details,
                    double amount) {
         this.date = date;
+        this.name = name;
         this.expenseCategory = expenseCategory;
         this.branch = branch;
         this.details = details;
@@ -69,12 +73,24 @@ public class Expense implements Serializable {
         this.date = date;
     }
 
+    public String getLocaleDate() {
+        return DateFormat.getDateInstance().format(date);
+    }
+
     public String getRef() {
         return ref;
     }
 
     public void setRef(String ref) {
         this.ref = ref;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public User getUser() {
@@ -89,24 +105,24 @@ public class Expense implements Serializable {
         return expenseCategory;
     }
 
-    public String getExpenseCategoryName() {
-        return expenseCategory.getName();
-    }
-
     public void setExpenseCategory(ExpenseCategory expenseCategory) {
         this.expenseCategory = expenseCategory;
+    }
+
+    public String getExpenseCategoryName() {
+        return expenseCategory.getName();
     }
 
     public Branch getBranch() {
         return branch;
     }
 
-    public String getBranchName() {
-        return (branch != null) ? branch.getName() : null;
-    }
-
     public void setBranch(Branch branch) {
         this.branch = branch;
+    }
+
+    public String getBranchName() {
+        return (branch != null) ? branch.getName() : null;
     }
 
     public String getDetails() {
