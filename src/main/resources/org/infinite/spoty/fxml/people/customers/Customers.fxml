@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.*?>
 <BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:id="customersContentPane" prefHeight="400.0" prefWidth="600.0"
             stylesheets="@../../../styles/Common.css" xmlns="http://javafx.com/javafx/19"
-            fx:controller="org.infinite.spoty.views.people.customers.CustomersController">
+            fx:controller="org.infinite.spoty.views.people.customers.CustomerController">
     <top>
         <AnchorPane styleClass="card" BorderPane.alignment="CENTER">
             <padding>
