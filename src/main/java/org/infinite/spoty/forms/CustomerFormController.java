@@ -8,8 +8,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
-import org.infinite.spoty.database.models.Customer;
-import org.infinite.spoty.viewModels.CustomerVewModel;
+import javafx.util.converter.NumberStringConverter;
+import org.infinite.spoty.viewModels.CustomerViewModel;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -17,6 +17,7 @@ import java.util.ResourceBundle;
 import static org.infinite.spoty.GlobalActions.closeDialog;
 
 public class CustomerFormController implements Initializable {
+    public MFXTextField customerID = new MFXTextField();
     @FXML
     public MFXFilledButton customerFormSaveBtn;
     @FXML
@@ -40,21 +41,17 @@ public class CustomerFormController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        customerFormName.textProperty().addListener((observable, oldValue, newValue) -> customerFormName.setTrailingIcon(null));
-//        customerFormEmail.textProperty().addListener((observable, oldValue, newValue) -> customerFormEmail.setTrailingIcon(null));
-//        customerFormPhone.textProperty().addListener((observable, oldValue, newValue) -> customerFormPhone.setTrailingIcon(null));
-//        customerFormTown.textProperty().addListener((observable, oldValue, newValue) -> customerFormTown.setTrailingIcon(null));
-//        customerFormCity.textProperty().addListener((observable, oldValue, newValue) -> customerFormCity.setTrailingIcon(null));
-//        customerFormTaxNumber.textProperty().addListener((observable, oldValue, newValue) -> customerFormTaxNumber.setTrailingIcon(null));
-//        customerFormAddress.textProperty().addListener((observable, oldValue, newValue) -> customerFormAddress.setTrailingIcon(null));
-
-        customerFormName.textProperty().bindBidirectional(CustomerVewModel.nameProperty());
-        customerFormEmail.textProperty().bindBidirectional(CustomerVewModel.emailProperty());
-        customerFormPhone.textProperty().bindBidirectional(CustomerVewModel.phoneProperty());
-        customerFormCity.textProperty().bindBidirectional(CustomerVewModel.cityProperty());
-        customerFormCountry.textProperty().bindBidirectional(CustomerVewModel.countryProperty());
-        customerFormTaxNumber.textProperty().bindBidirectional(CustomerVewModel.taxNumberProperty());
-        customerFormAddress.textProperty().bindBidirectional(CustomerVewModel.addressProperty());
+        // Form input listener.
+        customerFormName.textProperty().addListener((observable, oldValue, newValue) -> customerFormName.setStyle("-fx-border-color: red:"));
+        // Form input binding.
+        customerID.textProperty().bindBidirectional(CustomerViewModel.idProperty(), new NumberStringConverter());
+        customerFormName.textProperty().bindBidirectional(CustomerViewModel.nameProperty());
+        customerFormEmail.textProperty().bindBidirectional(CustomerViewModel.emailProperty());
+        customerFormPhone.textProperty().bindBidirectional(CustomerViewModel.phoneProperty());
+        customerFormCity.textProperty().bindBidirectional(CustomerViewModel.cityProperty());
+        customerFormCountry.textProperty().bindBidirectional(CustomerViewModel.countryProperty());
+        customerFormTaxNumber.textProperty().bindBidirectional(CustomerViewModel.taxNumberProperty());
+        customerFormAddress.textProperty().bindBidirectional(CustomerViewModel.addressProperty());
 
         dialogOnActions();
     }
@@ -62,50 +59,22 @@ public class CustomerFormController implements Initializable {
     private void dialogOnActions() {
         customerFormCancelBtn.setOnAction((e) -> {
             closeDialog(e);
-            CustomerVewModel.resetProperties();
+            CustomerViewModel.resetProperties();
 
-            customerFormName.setTrailingIcon(null);
-            customerFormEmail.setTrailingIcon(null);
-            customerFormPhone.setTrailingIcon(null);
-            customerFormCity.setTrailingIcon(null);
-            customerFormCountry.setTrailingIcon(null);
-            customerFormTaxNumber.setTrailingIcon(null);
-            customerFormAddress.setTrailingIcon(null);
+            customerFormName.setStyle("-fx-border-color: red:");
         });
         customerFormSaveBtn.setOnAction((e) -> {
-            Customer brand = new Customer();
             MFXIconWrapper icon = new MFXIconWrapper("fas-circle-exclamation", 20, Color.RED, 20);
 
             if (customerFormName.getText().length() == 0) {
-                customerFormName.setTrailingIcon(icon);
+                customerFormName.setStyle("-fx-border-color: red:");
             }
-            if (customerFormEmail.getText().length() == 0) {
-                customerFormEmail.setTrailingIcon(icon);
-            }
-            if (customerFormPhone.getText().length() == 0) {
-                customerFormPhone.setTrailingIcon(icon);
-            }
-            if (customerFormCity.getText().length() == 0) {
-                customerFormCity.setTrailingIcon(icon);
-            }
-            if (customerFormCountry.getText().length() == 0) {
-                customerFormCountry.setTrailingIcon(icon);
-            }
-            if (customerFormTaxNumber.getText().length() == 0) {
-                customerFormTaxNumber.setTrailingIcon(icon);
-            }
-            if (customerFormAddress.getText().length() == 0) {
-                customerFormAddress.setTrailingIcon(icon);
-            }
-            if (customerFormName.getText().length() > 0
-                    && customerFormEmail.getText().length() > 0
-                    && customerFormPhone.getText().length() > 0
-                    && customerFormCity.getText().length() > 0
-                    && customerFormCountry.getText().length() > 0
-                    && customerFormTaxNumber.getText().length() > 0
-                    && customerFormAddress.getText().length() > 0) {
-                CustomerVewModel.saveCustomer();
-                CustomerVewModel.resetProperties();
+            if (customerFormName.getText().length() > 0) {
+                if (Integer.parseInt(customerID.getText()) > 0)
+                    CustomerViewModel.updateItem(Integer.parseInt(customerID.getText()));
+                else
+                    CustomerViewModel.saveCustomer();
+                CustomerViewModel.resetProperties();
                 closeDialog(e);
             }
         });
