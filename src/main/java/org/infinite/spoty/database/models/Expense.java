@@ -1,11 +1,6 @@
 package org.infinite.spoty.database.models;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Column;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -44,6 +39,14 @@ public class Expense implements Serializable {
         this.expenseCategory = expenseCategory;
         this.branch = branch;
         this.details = details;
+        this.amount = amount;
+    }
+
+    public Expense(Date date,
+                   ExpenseCategory expenseCategory,
+                   double amount) {
+        this.date = date;
+        this.expenseCategory = expenseCategory;
         this.amount = amount;
     }
 
@@ -99,7 +102,7 @@ public class Expense implements Serializable {
     }
 
     public String getBranchName() {
-        return branch.getName();
+        return (branch != null) ? branch.getName() : null;
     }
 
     public void setBranch(Branch branch) {
