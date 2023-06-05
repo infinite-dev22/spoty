@@ -1,8 +1,6 @@
 package org.infinite.spoty.database.dao;
 
-import org.infinite.spoty.database.models.Brand;
-import org.infinite.spoty.database.models.ProductCategory;
-import org.infinite.spoty.database.models.UnitOfMeasure;
+import org.infinite.spoty.database.models.*;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -52,13 +50,18 @@ class DatabaseSeederTest {
     }
 
     @Test
-    @Order(3)
-    void productCategoryGet() {
+    @Order(4)
+    void expenseInsert() {
         try {
-            var pc = ProductCategoryDao.findProductCategory(19);
-            System.out.println(pc.getName());
+            var expenseCategory = new ExpenseCategory("Test Category 1", "This is the first test category");
+            expenseCategory.setCreatedAt(new Date());
+            expenseCategory.setCreatedBy("Tester One");
+            ExpenseCategoryDao.saveExpenseCategory(expenseCategory);
+            var expense = new Expense(new Date(), expenseCategory, 1560.95);
+            expense.setCreatedAt(new Date());
+            expense.setCreatedBy("Tester One");
+            ExpenseDao.saveExpense(expense);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
             throw new AssertionError();
         }
     }
