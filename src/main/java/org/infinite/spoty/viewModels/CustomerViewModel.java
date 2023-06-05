@@ -9,7 +9,7 @@ import javafx.collections.ObservableList;
 import org.infinite.spoty.database.dao.CustomerDao;
 import org.infinite.spoty.database.models.Customer;
 
-public class CustomerVewModel {
+public class CustomerViewModel {
     public static final ObservableList<Customer> customersList = FXCollections.observableArrayList();
     private static final IntegerProperty id = new SimpleIntegerProperty(0);
     private static final StringProperty name = new SimpleStringProperty("");
@@ -26,7 +26,7 @@ public class CustomerVewModel {
     }
 
     public static void setId(int id) {
-        CustomerVewModel.id.set(id);
+        CustomerViewModel.id.set(id);
     }
 
     public static IntegerProperty idProperty() {
@@ -38,7 +38,7 @@ public class CustomerVewModel {
     }
 
     public static void setName(String name) {
-        CustomerVewModel.name.set(name);
+        CustomerViewModel.name.set(name);
     }
 
     public static StringProperty nameProperty() {
@@ -50,7 +50,7 @@ public class CustomerVewModel {
     }
 
     public static void setCode(String code) {
-        CustomerVewModel.code.set(code);
+        CustomerViewModel.code.set(code);
     }
 
     public static StringProperty codeProperty() {
@@ -62,7 +62,7 @@ public class CustomerVewModel {
     }
 
     public static void setEmail(String email) {
-        CustomerVewModel.email.set(email);
+        CustomerViewModel.email.set(email);
     }
 
     public static StringProperty emailProperty() {
@@ -74,7 +74,7 @@ public class CustomerVewModel {
     }
 
     public static void setPhone(String phone) {
-        CustomerVewModel.phone.set(phone);
+        CustomerViewModel.phone.set(phone);
     }
 
     public static StringProperty phoneProperty() {
@@ -86,7 +86,7 @@ public class CustomerVewModel {
     }
 
     public static void setCity(String city) {
-        CustomerVewModel.city.set(city);
+        CustomerViewModel.city.set(city);
     }
 
     public static StringProperty cityProperty() {
@@ -98,7 +98,7 @@ public class CustomerVewModel {
     }
 
     public static void setAddress(String address) {
-        CustomerVewModel.address.set(address);
+        CustomerViewModel.address.set(address);
     }
 
     public static StringProperty addressProperty() {
@@ -110,7 +110,7 @@ public class CustomerVewModel {
     }
 
     public static void setTaxNumber(String taxNumber) {
-        CustomerVewModel.taxNumber.set(taxNumber);
+        CustomerViewModel.taxNumber.set(taxNumber);
     }
 
     public static StringProperty taxNumberProperty() {
@@ -122,7 +122,7 @@ public class CustomerVewModel {
     }
 
     public static void setCountry(String country) {
-        CustomerVewModel.country.set(country);
+        CustomerViewModel.country.set(country);
     }
 
     public static StringProperty countryProperty() {
@@ -153,5 +153,25 @@ public class CustomerVewModel {
         customersList.clear();
         customersList.addAll(CustomerDao.fetchCustomers());
         return customersList;
+    }
+
+    public static void getItem(int customerID) {
+        Customer customer = CustomerDao.findCustomer(customerID);
+        setId(customer.getId());
+        setName(customer.getName());
+        setEmail(customer.getEmail());
+        setPhone(customer.getPhone());
+        setCity(customer.getCity());
+        setCountry(customer.getCountry());
+        setAddress(customer.getAddress());
+        setTaxNumber(customer.getTaxNumber());
+        getCustomers();
+    }
+
+    public static void updateItem(int customerID) {
+        Customer customer = new Customer(getName(), getEmail(), getPhone(), getCity(), getAddress(), getTaxNumber(),
+                getCountry());
+        CustomerDao.updateCustomer(customer, customerID);
+        getCustomers();
     }
 }
