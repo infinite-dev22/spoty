@@ -11,7 +11,7 @@ import org.infinite.spoty.database.util.HibernateUtil;
 import java.util.Date;
 
 public class ExpenseCategoryDao {
-    public static int saveExpenseCategory(ExpenseCategory obj) {
+    public static void saveExpenseCategory(ExpenseCategory obj) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
@@ -24,15 +24,14 @@ public class ExpenseCategoryDao {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
-    public static int updateExpenseCategory(ExpenseCategory obj, long id) {
+    public static void updateExpenseCategory(ExpenseCategory obj, int id) {
         Transaction transaction = null;
         ExpenseCategory expenseCategory;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            expenseCategory = session.load(ExpenseCategory.class, id);
+            expenseCategory = session.get(ExpenseCategory.class, id);
             expenseCategory.setUser(obj.getUser());
             expenseCategory.setName(obj.getName());
             expenseCategory.setDescription(obj.getDescription());
@@ -45,15 +44,14 @@ public class ExpenseCategoryDao {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
-    public static ExpenseCategory findExpenseCategory(long id) {
+    public static ExpenseCategory findExpenseCategory(int id) {
         Transaction transaction = null;
         ExpenseCategory expenseCategory;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            expenseCategory = session.load(ExpenseCategory.class, id);
+            expenseCategory = session.get(ExpenseCategory.class, id);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -62,7 +60,7 @@ public class ExpenseCategoryDao {
         return expenseCategory;
     }
 
-    public static ObservableList<ExpenseCategory> getExpenseCategories() {
+    public static ObservableList<ExpenseCategory> fetchExpenseCategories() {
         Transaction transaction = null;
         ObservableList<ExpenseCategory> expenseCategorys;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
@@ -75,16 +73,16 @@ public class ExpenseCategoryDao {
         }
         return expenseCategorys;
     }
-    public static int deleteExpenseCategory(long id) {
+
+    public static void deleteExpenseCategory(int id) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.delete(session.load(ExpenseCategory.class, id));
+            session.delete(session.get(ExpenseCategory.class, id));
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 }
