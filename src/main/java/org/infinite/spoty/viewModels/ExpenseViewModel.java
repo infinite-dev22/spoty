@@ -17,7 +17,7 @@ public class ExpenseViewModel {
     private static final StringProperty date = new SimpleStringProperty("");
     private static final StringProperty reference = new SimpleStringProperty("");
     private static final StringProperty name = new SimpleStringProperty("");
-    private static final DoubleProperty amount = new SimpleDoubleProperty(0);
+    private static final StringProperty amount = new SimpleStringProperty("");
     private static final ObjectProperty<ExpenseCategory> category = new SimpleObjectProperty<>(null);
     private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>(null);
     private static final StringProperty details = new SimpleStringProperty("");
@@ -76,14 +76,14 @@ public class ExpenseViewModel {
     }
 
     public static double getAmount() {
-        return amount.get();
+        return Double.parseDouble(!amount.get().isEmpty() ? amount.get() : "0");
     }
 
     public static void setAmount(double amount) {
-        ExpenseViewModel.amount.set(amount);
+        ExpenseViewModel.amount.set(amount > 0 ? Double.toString(amount) : "");
     }
 
-    public static DoubleProperty amountProperty() {
+    public static StringProperty amountProperty() {
         return amount;
     }
 
@@ -135,7 +135,7 @@ public class ExpenseViewModel {
     }
 
     public static void saveExpense() {
-        Expense expense = new Expense(getDate(), getCategory(), getBranch(), getDetails(), getAmount());
+        Expense expense = new Expense(getDate(), getName(), getCategory(), getBranch(), getDetails(), getAmount());
         ExpenseDao.saveExpense(expense);
         getExpenses();
         resetProperties();
@@ -145,5 +145,23 @@ public class ExpenseViewModel {
         expenseList.clear();
         expenseList.addAll(ExpenseDao.getExpenses());
         return expenseList;
+    }
+
+    public static void getItem(int expenseID) {
+        Expense expense = ExpenseDao.findExpense(expenseID);
+        setId(expense.getId());
+        setDate(expense.getLocaleDate());
+        setName(expense.getName());
+        setBranch(expense.getBranch());
+        setCategory(expense.getExpenseCategory());
+        setAmount(expense.getAmount());
+        setDetails(expense.getDetails());
+        getExpenses();
+    }
+
+    public static void updateItem(int expenseID) {
+        Expense expense = new Expense(getDate(), getName(), getCategory(), getBranch(), getDetails(), getAmount());
+        ExpenseDao.updateExpense(expense, expenseID);
+        getExpenses();
     }
 }
