@@ -11,7 +11,7 @@ import org.infinite.spoty.database.util.HibernateUtil;
 import java.util.Date;
 
 public class CustomerDao {
-    public static int saveCustomer(Customer obj) {
+    public static void saveCustomer(Customer obj) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
@@ -24,15 +24,14 @@ public class CustomerDao {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
-    public static int updateCustomer(Customer obj, long id) {
+    public static void updateCustomer(Customer obj, int id) {
         Transaction transaction = null;
         Customer customer = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            customer = session.load(Customer.class, id);
+            customer = session.get(Customer.class, id);
             customer.setName(obj.getName());
             customer.setCode(obj.getCode());
             customer.setEmail(obj.getEmail());
@@ -50,15 +49,14 @@ public class CustomerDao {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
-    public static Customer findCustomer(long id) {
+    public static Customer findCustomer(int id) {
         Transaction transaction = null;
         Customer customer;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            customer = session.load(Customer.class, id);
+            customer = session.get(Customer.class, id);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -80,11 +78,12 @@ public class CustomerDao {
         }
         return customers;
     }
-    public static int deleteCustomer(long id) {
+
+    public static int deleteCustomer(int id) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.delete(session.load(Customer.class, id));
+            session.delete(session.get(Customer.class, id));
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
