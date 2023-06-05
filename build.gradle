@@ -1,49 +1,39 @@
+buildscript {
+    ext {
+        junitVersion = '5.9.2'
+    }
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+}
+
 plugins {
     id 'java'
+    id 'org.javamodularity.moduleplugin' version "1.8.12"
     id 'application'
-    id 'org.javamodularity.moduleplugin' version '1.8.12'
     id 'org.openjfx.javafxplugin' version '0.0.13'
     id 'org.beryx.jlink' version '2.25.0'
 }
 
-project.description = "Zenmart ERP - Fintech Software."
-project.ext.buildDate = new Date()
-group 'org.infinite'
-version '1.0-SNAPSHOT'
+apply plugin: 'java'
+
+jar {
+    version = '0.0.1-beta'
+}
 
 repositories {
+    mavenLocal()
     mavenCentral()
 }
 
-ext {
-    junitVersion = '5.9.2'
-}
+targetCompatibility = "17"
+sourceCompatibility = "17"
 
-tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8'
-}
-
-tasks.withType(Javadoc).configureEach {
-    options.encoding = 'UTF-8'
-}
-
-application {
-//    mainModule = 'org.infinite.spoty'
-//    mainClass = 'org.infinite.spoty.App'
-    setMainModule("org.infinite.spoty")
-    String main = project.findProperty("chooseMain").toString()
-    if (main != "null" && !main.trim().isEmpty()) {
-        setMainClassName(main)
-    } else {
-        setMainClassName("org.infinite.spoty.App")
-    }
-    applicationDefaultJvmArgs = ["-Dglass.disableGrab=true"]
-}
-
-javafx {
-    version = '20'
-    modules = ['javafx.controls', 'javafx.fxml', 'javafx.web', 'javafx.media', 'javafx.graphics']
-}
+project.description = "Zenmart ERP - Fintech Software."
+project.ext.buildDate = new Date()
+project.version = "1.0.0"
+group = "org.infinite.spoty"
 
 dependencies {
     // Material FX.
@@ -58,9 +48,9 @@ dependencies {
     // Hibernate.
     implementation 'org.hibernate:hibernate-core:5.3.29.Final'
     // Connector/Driver
-    implementation 'org.xerial:sqlite-jdbc:3.41.2.1'
+    implementation 'org.xerial:sqlite-jdbc:3.42.0.0'
     // Hibernate Dialects
-    implementation("com.github.gwenn:sqlite-dialect:0.1.2")
+    implementation("com.github.gwenn:sqlite-dialect:0.1.4")
     // Persistance API
     implementation 'javax.persistence:javax.persistence-api:2.2'
     // JAXB XML Binding API
@@ -76,26 +66,44 @@ dependencies {
     // SLF4J Logger.
     implementation "org.slf4j:slf4j-simple:2.0.7"
     // FXML Compiler
-    implementation "io.github.paullo612.mlfx.api:micronaut:0.6.1"
-    // https://mvnrepository.com/artifact/com.sun.activation/javax.activation
+    // implementation "io.github.paullo612.mlfx.api:micronaut:0.6.1"
+    // java.activation
     implementation group: 'com.sun.activation', name: 'javax.activation', version: '1.2.0'
     // JUnit test framework.
     implementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
     implementation "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
+    // Log4J
+//    implementation 'org.apache.logging.log4j:log4j-api:2.17.1'
+//    implementation 'org.apache.logging.log4j:log4j-core:2.17.1'
+//    implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.17.1'
+//    implementation 'org.apache.commons:commons-lang3:3.12.0'
 }
 
-test {
-    useJUnitPlatform()
+javafx {
+    version = "20"
+    modules = ['javafx.controls', 'javafx.fxml', 'javafx.web', 'javafx.media', 'javafx.graphics']
+}
+
+application {
+    mainModule = 'org.infinite.spoty'
+    mainClass = 'org.infinite.spoty.App'
+}
+
+run {
+    jvmArgs = ['-Djdk.gtk.version=3']
 }
 
 jlink {
     imageZip = project.file("${buildDir}/distributions/app-${javafx.platform.classifier}.zip")
-    def javaHome = System.properties.'java.home'
     options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
-
-    forceMerge 'istack', 'stax'
+    launcher {
+        name = 'Zenmart ERP'
+        jvmArgs = ['-Djdk.gtk.version=3']
+    }
+    // forceMerge('log4j-api')
 
     mergedModule {
+        requires 'javafx.graphics'
         requires 'java.logging'
         requires 'java.sql'
         requires 'jdk.jdi'
@@ -112,32 +120,82 @@ jlink {
         requires 'java.transaction.xa'
         requires 'com.sun.xml.fastinfoset'
         requires 'java.instrument'
+        requires 'net.bytebuddy'
+        requires 'com.fasterxml.classmate'
 
         uses 'org.jboss.logging.LoggerProvider'
         uses 'javax.persistence.spi.PersistenceProvider'
+        uses 'org.hibernate.integrator.spi.Integrator'
+        uses 'org.hibernate.boot.registry.selector.StrategyRegistrationProvider'
+        uses 'org.hibernate.service.spi.ServiceContributor'
+        uses 'org.hibernate.boot.spi.MetadataSourcesContributor'
+        uses 'org.hibernate.boot.spi.MetadataBuilderInitializer'
+        uses 'org.hibernate.boot.spi.MetadataBuilderFactory'
+        uses 'org.hibernate.boot.model.TypeContributor'
         provides 'javax.persistence.spi.PersistenceProvider' with 'org.hibernate.jpa.HibernatePersistenceProvider'
-    }
-    launcher {
-        name = 'spoty'
     }
 
     jpackage {
-        installerOptions += '--verbose'
-    }
-    launcher {
-        mainClass = "org.infinite.spoty.App"
-        name = 'Zenmart ERP'
-    }
-    jpackage {
-        imageOptions = ['--icon', 'src/main/resources/logo.png']
-        installerOptions += [
-                '--name', 'Zenmart ERP',
-                '--app-version', version.replace('-', '.'),
+        // Could be taken from command line, here it is defined statically
+        // project.findProperty('installerOs')
+        //    (example: -PinstallerOs=mac)
+        targetPlatformName = 'linux-x64'
+        // Resource directory for native package overrides,
+        // you can do lots of magic here too...
+        // resourceDir = file('package/')
+
+        if (targetPlatformName == 'mac') { // we are on mac
+            targetPlatform("mac") {
+                // Use downloaded Eclipse Temurin JDK
+                jdkHome = '/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home'
+                // Use another local JDK
+                //jdkHome = '/Library/Java/JavaVirtualMachines/jdk-17.0.2.jdk/Contents/Home'
+            }
+            installerType = 'pkg' // we want to have macOS PKG
+        }
+        if (targetPlatformName == 'win') { // we are on Windows
+            targetPlatform("win") {
+                jdkHome = 'C:/Applications/JDKs/Adoptium/temurin-17.jdk'
+            }
+            installerType = 'exe'
+        }
+        if (targetPlatformName == 'linux-x64') { // we are on linux
+            targetPlatform("linux-x64") {
+                addExtraModulePath("/home/infinite/Java_FX/javafx-jmods-20/linux_x64")
+            }
+            installerType = 'deb'
+        }
+
+        // Add jpackage-specific options
+        installerOptions = [
+                '--name', 'Zenmart-ERP', // installer name
+                // '--app-version', version.replace('-', '.'),
                 '--description', project.description,
                 '--copyright', 'Copyrigth 2023 infinite Studios',
                 '--vendor', 'infinite Studios'
         ]
-        installerType = 'deb'
+
+        // We also could take the installer type from comand line
+        // installerType = project.findProperty('installerType')
+        // We would pass this from the command line
+        //    (example: -PinstallerType=msi)
+
+        // Add platform-specific options for the target image and for jpackage
+        if (installerType == 'pkg') {
+            imageOptions += ['--icon', 'src/main/resources/icon.icns']
+            installerOptions += [
+                    '--license-file', 'package/LICENSE-OS-Installer.txt'
+            ]
+        }
+        if (installerType == 'exe') {
+            imageOptions += ['--icon', 'src/main/resources/icon.ico']
+            installerOptions += [
+                    // '--win-per-user-install', // Install only for current user
+                    // '--win-console', // Shows what Java outputs to the console
+                    '--win-dir-chooser',
+                    '--win-menu', '--win-shortcut'
+            ]
+        }
         if (installerType in ['deb', 'rpm']) {
             imageOptions += ['--icon', 'src/main/resources/logo.png']
             installerOptions += [
@@ -150,23 +208,12 @@ jlink {
                     '--linux-deb-maintainer', 'info@codecellar.com'
             ]
         }
+        if (installerType == 'rpm') {
+            installerOptions += [
+                    '--linux-rpm-license-type', 'GPLv3'
+            ]
+        }
     }
-
-    targetPlatform("linux-x64") {
-//        jdkHome = jdkDownload("https://cdn.azul.com/zulu/bin/zulu19.32.13-ca-jdk19.0.2-linux_x64.tar.gz")
-        addExtraModulePath("/home/infinite/Java_FX/javafx-jmods-20/linux_x64")
-    }
-
-//    targetPlatform("win") {
-//        jdkHome = jdkDownload("https://cdn.azul.com/zulu/bin/zulu19.32.13-ca-jdk19.0.2-win_x64.zip")
-//        addExtraModulePath("/home/infinite/Java_FX/javafx-jmods-20/win_x64")
-//    }
-
-//    targetPlatform("mac") {
-//        jdkHome = jdkDownload("https://cdn.azul.com/zulu/bin/zulu19.32.13-ca-jdk19.0.2-macosx_x64.tar.gz")
-//        addExtraModulePath("/home/infinite/Java_FX/javafx-jmods-20/mac_x64")
-//    }
-
     addExtraDependencies('javafx')
 }
 

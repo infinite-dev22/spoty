@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Properties;
-import java.util.logging.Level;
 
 public class HibernateUtil {
     private static SessionFactory sessionFactory;
@@ -19,7 +18,7 @@ public class HibernateUtil {
     public static SessionFactory getSessionFactory() {
 //        getDatabaseConnection();
 //        createDB();
-        java.util.logging.Logger.getLogger("org.hibernate").setLevel(Level.OFF);
+//        java.util.logging.Logger.getLogger("org.hibernate").setLevel(Level.OFF);
         try {
             Files.createDirectories(Paths.get(System.getProperty("user.home") + "/.config/ZenmartERP/datastores/databases/sqlite3"));
         } catch (IOException e) {
@@ -35,18 +34,20 @@ public class HibernateUtil {
                 if (System.getProperty("os.name").contains("Linux")) {
                     settings.put(Environment.URL, "jdbc:sqlite:" + System.getProperty("user.home") + "/.config/ZenmartERP/datastores/databases/sqlite3/database.sqlite3");
                 }
-//                if (System.getProperty("os.name").contains("mac")) {
-//                    settings.put(Environment.URL, "jdbc:sqlite:" + System.getProperty("user.home") + "/.config/ZenmartERP/database.sqlite");
-//                }
+                if (System.getProperty("os.name").contains("mac")) {
+                    settings.put(Environment.URL, "jdbc:sqlite:" + System.getProperty("user.home") + "/.config/ZenmartERP/database.sqlite");
+                }
                 if (System.getProperty("os.name").contains("Windows")) {
                     settings.put(Environment.URL, "jdbc:sqlite:" + System.getenv("APPDATA") + "/datastores/databases/sqlite3/database.sqlite3");
                 }
                 settings.put(Environment.USER, "zenmart_erp");
                 settings.put(Environment.PASS, "zenmart_erp");
+                settings.put(Environment.DRIVER, "org.sqlite.JDBC");
                 settings.put(Environment.DIALECT, "org.sqlite.hibernate.dialect.SQLiteDialect");
                 settings.put(Environment.SHOW_SQL, "false");
                 settings.put(Environment.CURRENT_SESSION_CONTEXT_CLASS, "thread");
                 settings.put(Environment.HBM2DDL_AUTO, "create-only");
+                settings.put(Environment.POOL_SIZE, "5");
                 // create-drop
                 // create-only
                 // validate
