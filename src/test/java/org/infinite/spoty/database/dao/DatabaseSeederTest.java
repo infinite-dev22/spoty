@@ -80,4 +80,19 @@ class DatabaseSeederTest {
             throw new AssertionError();
         }
     }
+
+    @Test
+    @Order(6)
+    void supplierInsert() {
+        try {
+            var supplier = new Supplier("Test Supplier 1", "test1@email.com", "+1234567890",
+                    "Test City 1", "Test Address 1", "TXN-5685655555555",
+                    "Test Country 1");
+            supplier.setCreatedAt(new Date());
+            supplier.setCreatedBy("Tester One");
+            SupplierDao.saveSupplier(supplier);
+        } catch (Exception e) {
+            throw new AssertionError();
+        }
+    }
 }
