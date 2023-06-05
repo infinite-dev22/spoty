@@ -24,6 +24,7 @@ import java.util.ResourceBundle;
 import static org.infinite.spoty.GlobalActions.closeDialog;
 
 public class ExpenseFormController implements Initializable {
+    public MFXTextField expenseID = new MFXTextField();
     @FXML
     public MFXTextField expenseFormAmount;
     @FXML
@@ -40,12 +41,21 @@ public class ExpenseFormController implements Initializable {
     public MFXComboBox<Branch> expenseFormBranch;
     @FXML
     public MFXComboBox<ExpenseCategory> expenseFormCategory;
+    @FXML
+    public MFXTextField expenseFormName;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // Form event listeners.
+        expenseFormName.textProperty().addListener((observable, oldValue, newValue) -> expenseFormName.setTrailingIcon(null));
+        expenseFormDate.textProperty().addListener((observable, oldValue, newValue) -> expenseFormDate.setLeadingIcon(null));
+        expenseFormBranch.textProperty().addListener((observable, oldValue, newValue) -> expenseFormBranch.setLeadingIcon(null));
+        expenseFormCategory.textProperty().addListener((observable, oldValue, newValue) -> expenseFormCategory.setLeadingIcon(null));
+        expenseFormAmount.textProperty().addListener((observable, oldValue, newValue) -> expenseFormAmount.setTrailingIcon(null));
+        expenseFormDetails.textProperty().addListener((observable, oldValue, newValue) -> expenseFormDetails.setTrailingIcon(null));
+        // Combo box properties.
         expenseFormBranch.setItems(BranchViewModel.branchesList);
         expenseFormCategory.setItems(ExpenseCategoryViewModel.categoryList);
-
         // Set Object property as combo display name.
         expenseFormBranch.setConverter(new StringConverter<>() {
             @Override
@@ -75,13 +85,14 @@ public class ExpenseFormController implements Initializable {
                 return null;
             }
         });
-
+        // Form Bindings.
+        expenseID.textProperty().bindBidirectional(ExpenseViewModel.idProperty(), new NumberStringConverter());
+        expenseFormName.textProperty().bindBidirectional(ExpenseViewModel.nameProperty());
         expenseFormDate.textProperty().bindBidirectional(ExpenseViewModel.dateProperty());
         expenseFormBranch.valueProperty().bindBidirectional(ExpenseViewModel.branchProperty());
         expenseFormCategory.valueProperty().bindBidirectional(ExpenseViewModel.categoryProperty());
-        expenseFormAmount.textProperty().bindBidirectional(ExpenseViewModel.amountProperty(), new NumberStringConverter());
+        expenseFormAmount.textProperty().bindBidirectional(ExpenseViewModel.amountProperty());
         expenseFormDetails.textProperty().bindBidirectional(ExpenseViewModel.detailsProperty());
-
         dialogOnActions();
     }
 
@@ -113,7 +124,10 @@ public class ExpenseFormController implements Initializable {
                     && expenseFormCategory.getText().length() > 0
                     && expenseFormAmount.getText().length() > 0
                     && expenseFormDetails.getText().length() > 0) {
-                ExpenseViewModel.saveExpense();
+                if (Integer.parseInt(expenseID.getText()) > 0)
+                    ExpenseViewModel.updateItem(Integer.parseInt(expenseID.getText()));
+                else
+                    ExpenseViewModel.saveExpense();
                 closeDialog(e);
             }
         });

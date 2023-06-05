@@ -13,6 +13,7 @@
             xmlns="http://javafx.com/javafx/19" fx:controller="org.infinite.spoty.forms.ExpenseFormController">
     <content>
         <VBox spacing="20.0">
+            <MFXTextField fx:id="expenseFormName" floatMode="BORDER" floatingText="Name" prefWidth="400.0"/>
             <MFXDatePicker fx:id="expenseFormDate" floatMode="BORDER" floatingText="Date" prefWidth="400.0"/>
             <MFXComboBox fx:id="expenseFormBranch" floatMode="BORDER" floatingText="Branch" prefWidth="400.0"/>
             <MFXComboBox fx:id="expenseFormCategory" floatMode="BORDER" floatingText="Category" layoutX="21.0"
