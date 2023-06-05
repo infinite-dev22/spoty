@@ -40,14 +40,15 @@ public class HibernateUtil {
                 if (System.getProperty("os.name").contains("Windows")) {
                     settings.put(Environment.URL, "jdbc:sqlite:" + System.getenv("APPDATA") + "/datastores/databases/sqlite3/database.sqlite3");
                 }
-                settings.put(Environment.USER, "zenmart_erp");
-                settings.put(Environment.PASS, "zenmart_erp");
+                settings.put(Environment.USER, "");
+                settings.put(Environment.PASS, "");
                 settings.put(Environment.DRIVER, "org.sqlite.JDBC");
                 settings.put(Environment.DIALECT, "org.sqlite.hibernate.dialect.SQLiteDialect");
                 settings.put(Environment.SHOW_SQL, "false");
                 settings.put(Environment.CURRENT_SESSION_CONTEXT_CLASS, "thread");
                 settings.put(Environment.HBM2DDL_AUTO, "create-only");
                 settings.put(Environment.POOL_SIZE, "5");
+                settings.put(Environment.AUTOCOMMIT, "true");
                 // create-drop
                 // create-only
                 // validate

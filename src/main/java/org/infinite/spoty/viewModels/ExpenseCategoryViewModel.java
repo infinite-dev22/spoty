@@ -1,18 +1,19 @@
 package org.infinite.spoty.viewModels;
 
-import javafx.beans.property.*;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.infinite.spoty.database.dao.ExpenseCategoryDao;
 import org.infinite.spoty.database.models.ExpenseCategory;
-import org.infinite.spoty.database.models.User;
 
 public class ExpenseCategoryViewModel {
+    public static final ObservableList<ExpenseCategory> categoryList = FXCollections.observableArrayList();
     private static final IntegerProperty id = new SimpleIntegerProperty(0);
     private static final StringProperty name = new SimpleStringProperty("");
-    private static final ObjectProperty<User> user = new SimpleObjectProperty<>(null);
     private static final StringProperty description = new SimpleStringProperty("");
-    public static final ObservableList<ExpenseCategory> categoryList = FXCollections.observableArrayList();
 
     public static int getId() {
         return id.get();
@@ -38,18 +39,6 @@ public class ExpenseCategoryViewModel {
         return name;
     }
 
-    public static User getUser() {
-        return user.get();
-    }
-
-    public static void setUser(User user) {
-        ExpenseCategoryViewModel.user.set(user);
-    }
-
-    public static ObjectProperty<User> userProperty() {
-        return user;
-    }
-
     public static String getDescription() {
         return description.get();
     }
@@ -65,12 +54,11 @@ public class ExpenseCategoryViewModel {
     public static void resetProperties() {
         setId(0);
         setName("");
-        setUser(null);
         setDescription("");
     }
 
     public static void saveExpenseCategory() {
-        ExpenseCategory expenseCategory = new ExpenseCategory(getName(), getUser(), getDescription());
+        ExpenseCategory expenseCategory = new ExpenseCategory(getName(), getDescription());
         ExpenseCategoryDao.saveExpenseCategory(expenseCategory);
         resetProperties();
         getCategories();
