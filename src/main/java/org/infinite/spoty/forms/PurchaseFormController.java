@@ -27,7 +27,7 @@ import org.infinite.spoty.values.strings.Values;
 import org.infinite.spoty.viewModels.BranchViewModel;
 import org.infinite.spoty.viewModels.PurchaseDetailsViewModel;
 import org.infinite.spoty.viewModels.PurchaseMasterViewModel;
-import org.infinite.spoty.viewModels.SupplierVewModel;
+import org.infinite.spoty.viewModels.SupplierViewModel;
 
 import java.io.IOException;
 import java.net.URL;
@@ -74,7 +74,7 @@ public class PurchaseFormController implements Initializable {
         purchaseBranchId.textProperty().addListener((observable, oldValue, newValue) -> purchaseBranchId.setTrailingIcon(null));
         purchaseStatus.textProperty().addListener((observable, oldValue, newValue) -> purchaseStatus.setTrailingIcon(null));
         // Set items to combo boxes and display custom text.
-        purchaseSupplierId.setItems(SupplierVewModel.suppliersList);
+        purchaseSupplierId.setItems(SupplierViewModel.suppliersList);
         purchaseSupplierId.setConverter(new StringConverter<>() {
             @Override
             public String toString(Supplier object) {
