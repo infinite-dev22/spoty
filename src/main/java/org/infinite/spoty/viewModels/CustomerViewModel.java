@@ -143,7 +143,7 @@ public class CustomerViewModel {
     }
 
     public static void saveCustomer() {
-        Customer customer = new Customer(getName(), getEmail(), getPhone(), getCity(), getAddress(), getTaxNumber(), getCountry());
+        Customer customer = new Customer(getName(), getEmail(), "+" + getPhone(), getCity(), getAddress(), getTaxNumber(), getCountry());
         CustomerDao.saveCustomer(customer);
         resetProperties();
         getCustomers();
