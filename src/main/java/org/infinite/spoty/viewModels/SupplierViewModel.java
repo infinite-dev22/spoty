@@ -9,7 +9,7 @@ import javafx.collections.ObservableList;
 import org.infinite.spoty.database.dao.SupplierDao;
 import org.infinite.spoty.database.models.Supplier;
 
-public class SupplierVewModel {
+public class SupplierViewModel {
     private static final IntegerProperty id = new SimpleIntegerProperty(0);
     private static final StringProperty name = new SimpleStringProperty("");
     private static final StringProperty code = new SimpleStringProperty("");
@@ -19,14 +19,14 @@ public class SupplierVewModel {
     private static final StringProperty address = new SimpleStringProperty("");
     private static final StringProperty taxNumber = new SimpleStringProperty("");
     private static final StringProperty country = new SimpleStringProperty("");
-    public static final ObservableList<Supplier> suppliersList= FXCollections.observableArrayList();
+    public static final ObservableList<Supplier> suppliersList = FXCollections.observableArrayList();
 
     public static int getId() {
         return id.get();
     }
 
     public static void setId(int id) {
-        SupplierVewModel.id.set(id);
+        SupplierViewModel.id.set(id);
     }
 
     public static IntegerProperty idProperty() {
@@ -38,7 +38,7 @@ public class SupplierVewModel {
     }
 
     public static void setName(String name) {
-        SupplierVewModel.name.set(name);
+        SupplierViewModel.name.set(name);
     }
 
     public static StringProperty nameProperty() {
@@ -50,7 +50,7 @@ public class SupplierVewModel {
     }
 
     public static void setCode(String code) {
-        SupplierVewModel.code.set(code);
+        SupplierViewModel.code.set(code);
     }
 
     public static StringProperty codeProperty() {
@@ -62,7 +62,7 @@ public class SupplierVewModel {
     }
 
     public static void setEmail(String email) {
-        SupplierVewModel.email.set(email);
+        SupplierViewModel.email.set(email);
     }
 
     public static StringProperty emailProperty() {
@@ -74,7 +74,7 @@ public class SupplierVewModel {
     }
 
     public static void setPhone(String phone) {
-        SupplierVewModel.phone.set(phone);
+        SupplierViewModel.phone.set(phone);
     }
 
     public static StringProperty phoneProperty() {
@@ -86,7 +86,7 @@ public class SupplierVewModel {
     }
 
     public static void setCity(String city) {
-        SupplierVewModel.city.set(city);
+        SupplierViewModel.city.set(city);
     }
 
     public static StringProperty cityProperty() {
@@ -98,7 +98,7 @@ public class SupplierVewModel {
     }
 
     public static void setAddress(String address) {
-        SupplierVewModel.address.set(address);
+        SupplierViewModel.address.set(address);
     }
 
     public static StringProperty addressProperty() {
@@ -110,7 +110,7 @@ public class SupplierVewModel {
     }
 
     public static void setTaxNumber(String taxNumber) {
-        SupplierVewModel.taxNumber.set(taxNumber);
+        SupplierViewModel.taxNumber.set(taxNumber);
     }
 
     public static StringProperty taxNumberProperty() {
@@ -122,7 +122,7 @@ public class SupplierVewModel {
     }
 
     public static void setCountry(String country) {
-        SupplierVewModel.country.set(country);
+        SupplierViewModel.country.set(country);
     }
 
     public static StringProperty countryProperty() {
@@ -153,5 +153,25 @@ public class SupplierVewModel {
         suppliersList.clear();
         suppliersList.addAll(SupplierDao.fetchSuppliers());
         return suppliersList;
+    }
+
+    public static void getItem(int supplierID) {
+        Supplier supplier = SupplierDao.findSupplier(supplierID);
+        setId(supplier.getId());
+        setName(supplier.getName());
+        setEmail(supplier.getEmail());
+        setPhone(supplier.getPhone());
+        setCity(supplier.getCity());
+        setCountry(supplier.getCountry());
+        setAddress(supplier.getAddress());
+        setTaxNumber(supplier.getTaxNumber());
+        getSuppliers();
+    }
+
+    public static void updateItem(int supplierID) {
+        Supplier supplier = new Supplier(getName(), getEmail(), getPhone(), getTaxNumber(), getAddress(), getCity(),
+                getCountry());
+        SupplierDao.updateSupplier(supplier, supplierID);
+        getSuppliers();
     }
 }
