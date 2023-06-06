@@ -11,7 +11,7 @@ import org.infinite.spoty.database.util.HibernateUtil;
 import java.util.Date;
 
 public class SupplierDao {
-    public static int saveSupplier(Supplier obj) {
+    public static void saveSupplier(Supplier obj) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
@@ -24,15 +24,14 @@ public class SupplierDao {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
-    public static int updateSupplier(Supplier obj, long id) {
+    public static void updateSupplier(Supplier obj, int id) {
         Transaction transaction = null;
         Supplier supplier;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            supplier = session.load(Supplier.class, id);
+            supplier = session.get(Supplier.class, id);
             supplier.setName(obj.getName());
             supplier.setCode(obj.getCode());
             supplier.setEmail(obj.getEmail());
@@ -50,15 +49,14 @@ public class SupplierDao {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
-    public static Supplier findSupplier(long id) {
+    public static Supplier findSupplier(int id) {
         Transaction transaction = null;
         Supplier supplier;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            supplier = session.load(Supplier.class, id);
+            supplier = session.get(Supplier.class, id);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -81,16 +79,15 @@ public class SupplierDao {
         return purchaseCategories;
     }
 
-    public static int deleteSupplier(long id) {
+    public static void deleteSupplier(int id) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.delete(session.load(Supplier.class, id));
+            session.delete(session.get(Supplier.class, id));
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 }
