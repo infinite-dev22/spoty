@@ -7,11 +7,13 @@ import io.github.palexdev.materialfx.filter.IntegerFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXElevatedButton;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -19,6 +21,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
+import org.infinite.spoty.database.dao.AdjustmentDetailDao;
 import org.infinite.spoty.database.models.AdjustmentDetail;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.viewModels.AdjustmentDetailViewModel;
@@ -32,13 +35,15 @@ import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 
-public class AdjustmentFormController implements Initializable {
+@SuppressWarnings("unchecked")
+public class AdjustmentMasterFormController implements Initializable {
+    public MFXTextField adjustmentDetailID = new MFXTextField();
     @FXML
     public MFXFilterComboBox<Branch> adjustmentBranchId;
     @FXML
     public MFXDatePicker adjustmentDate;
     @FXML
-    public MFXTableView<AdjustmentDetail> adjustmentProductsTable;
+    public MFXTableView<AdjustmentDetail> adjustmentDetailTable;
     @FXML
     public MFXTextField adjustmentNote;
     @FXML
@@ -49,7 +54,7 @@ public class AdjustmentFormController implements Initializable {
     public MFXElevatedButton adjustmentProductAddBtn;
     private Dialog<ButtonType> dialog;
 
-    public AdjustmentFormController(Stage stage) {
+    public AdjustmentMasterFormController(Stage stage) {
         Platform.runLater(() -> {
             try {
                 quotationProductDialogPane(stage);
@@ -61,9 +66,10 @@ public class AdjustmentFormController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // Input listener.
         adjustmentBranchId.textProperty().addListener((observable, oldValue, newValue) -> adjustmentBranchId.setTrailingIcon(null));
         adjustmentDate.textProperty().addListener((observable, oldValue, newValue) -> adjustmentDate.setTrailingIcon(null));
-
+        // Input binding.
         adjustmentBranchId.valueProperty().bindBidirectional(AdjustmentMasterViewModel.branchProperty());
         adjustmentBranchId.setItems(BranchViewModel.branchesList);
         adjustmentBranchId.setConverter(new StringConverter<>() {
@@ -96,24 +102,65 @@ public class AdjustmentFormController implements Initializable {
         productQuantity.setRowCellFactory(product -> new MFXTableRowCell<>(AdjustmentDetail::getQuantity));
         adjustmentType.setRowCellFactory(product -> new MFXTableRowCell<>(AdjustmentDetail::getAdjustmentType));
 
-        productName.prefWidthProperty().bind(adjustmentProductsTable.widthProperty().multiply(.4));
-        productQuantity.prefWidthProperty().bind(adjustmentProductsTable.widthProperty().multiply(.4));
-        adjustmentType.prefWidthProperty().bind(adjustmentProductsTable.widthProperty().multiply(.4));
+        adjustmentDetailID.textProperty().bindBidirectional(AdjustmentDetailViewModel.idProperty());
+        productName.prefWidthProperty().bind(adjustmentDetailTable.widthProperty().multiply(.4));
+        productQuantity.prefWidthProperty().bind(adjustmentDetailTable.widthProperty().multiply(.4));
+        adjustmentType.prefWidthProperty().bind(adjustmentDetailTable.widthProperty().multiply(.4));
 
-        adjustmentProductsTable.getTableColumns().addAll(productName, productQuantity, adjustmentType);
-        adjustmentProductsTable.getFilters().addAll(
+        adjustmentDetailTable.getTableColumns().addAll(productName, productQuantity, adjustmentType);
+        adjustmentDetailTable.getFilters().addAll(
                 new StringFilter<>("Name", AdjustmentDetail::getProductDetailName),
                 new IntegerFilter<>("Quantity", AdjustmentDetail::getQuantity),
                 new StringFilter<>("Category", AdjustmentDetail::getAdjustmentType)
         );
         getAdjustmentDetailTable();
-        adjustmentProductsTable.setItems(AdjustmentDetailViewModel.adjustmentDetailsTempList);
+        adjustmentDetailTable.setItems(AdjustmentDetailViewModel.adjustmentDetailsTempList);
     }
 
     private void getAdjustmentDetailTable() {
-        adjustmentProductsTable.setPrefSize(1000, 1000);
-        adjustmentProductsTable.features().enableBounceEffect();
-        adjustmentProductsTable.features().enableSmoothScrolling(0.5);
+        adjustmentDetailTable.setPrefSize(1000, 1000);
+        adjustmentDetailTable.features().enableBounceEffect();
+        adjustmentDetailTable.features().enableSmoothScrolling(0.5);
+
+        adjustmentDetailTable.setTableRowFactory(t -> {
+            MFXTableRow<AdjustmentDetail> row = new MFXTableRow<>(adjustmentDetailTable, t);
+            EventHandler<ContextMenuEvent> eventHandler = event -> {
+                showContextMenu((MFXTableRow<AdjustmentDetail>) event.getSource()).show(adjustmentDetailTable.getParent(), event.getScreenX(), event.getScreenY());
+                event.consume();
+            };
+            row.setOnContextMenuRequested(eventHandler);
+            return row;
+        });
+    }
+
+    private MFXContextMenu showContextMenu(MFXTableRow<AdjustmentDetail> obj) {
+        MFXContextMenu contextMenu = new MFXContextMenu(adjustmentDetailTable);
+        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
+        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+
+        // Actions
+        // Delete
+        delete.setOnAction(e -> {
+            AdjustmentDetailViewModel.getItem(obj.getData(), AdjustmentDetailViewModel.adjustmentDetailsTempList.indexOf(obj.getData()));
+            try {
+                if (Integer.parseInt(adjustmentDetailID.getText()) > 0)
+                    AdjustmentDetailDao.deleteAdjustmentDetail(Integer.parseInt(adjustmentDetailID.getText()));
+            } catch (NumberFormatException ignored) {
+                AdjustmentDetailViewModel.removeAdjustmentDetail(AdjustmentDetailViewModel.adjustmentDetailsTempList.indexOf(obj.getData()));
+            }
+            AdjustmentDetailViewModel.getAdjustmentDetails();
+            e.consume();
+        });
+        // Edit
+        edit.setOnAction(e -> {
+            AdjustmentDetailViewModel.getItem(obj.getData(), AdjustmentDetailViewModel.adjustmentDetailsTempList.indexOf(obj.getData()));
+            dialog.showAndWait();
+            e.consume();
+        });
+
+        contextMenu.addItems(edit, delete);
+
+        return contextMenu;
     }
 
     private void adjustmentAddProductBtnClicked() {
@@ -138,11 +185,11 @@ public class AdjustmentFormController implements Initializable {
         if (adjustmentDate.getText().length() == 0) {
             adjustmentDate.setTrailingIcon(icon);
         }
-        if (adjustmentProductsTable.getTableColumns().isEmpty()) {
+        if (adjustmentDetailTable.getTableColumns().isEmpty()) {
             // Notify table can't be empty
             System.out.println("Table can't be empty");
         }
-        if (adjustmentBranchId.getText().length() > 0 && adjustmentDate.getText().length() > 0 && !adjustmentProductsTable.getTableColumns().isEmpty()) {
+        if (adjustmentBranchId.getText().length() > 0 && adjustmentDate.getText().length() > 0 && !adjustmentDetailTable.getTableColumns().isEmpty()) {
             AdjustmentMasterViewModel.saveAdjustmentMaster();
             AdjustmentMasterViewModel.resetProperties();
             AdjustmentDetailViewModel.adjustmentDetailsTempList.clear();
@@ -151,7 +198,7 @@ public class AdjustmentFormController implements Initializable {
 
     public void adjustmentCancelBtnClicked() {
         AdjustmentMasterViewModel.resetProperties();
-        AdjustmentDetailViewModel.adjustmentDetailsTempList.clear();
+//        AdjustmentDetailViewModel.adjustmentDetailsTempList.clear();
         ((StackPane) adjustmentFormContentPane.getParent()).getChildren().get(0).setVisible(true);
         ((StackPane) adjustmentFormContentPane.getParent()).getChildren().remove(1);
     }

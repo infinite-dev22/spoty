@@ -16,7 +16,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import org.infinite.spoty.database.models.AdjustmentMaster;
-import org.infinite.spoty.forms.AdjustmentFormController;
+import org.infinite.spoty.forms.AdjustmentMasterFormController;
 import org.infinite.spoty.viewModels.AdjustmentMasterViewModel;
 
 import java.io.IOException;
@@ -81,8 +81,8 @@ public class AdjustmentController implements Initializable {
     }
 
     public void adjustmentCreateBtnClicked() {
-        FXMLLoader loader = fxmlLoader("forms/AdjustmentForm.fxml");
-        loader.setControllerFactory(c -> new AdjustmentFormController(stage));
+        FXMLLoader loader = fxmlLoader("forms/AdjustmentMasterForm.fxml");
+        loader.setControllerFactory(c -> new AdjustmentMasterFormController(stage));
 
         try {
             AnchorPane productFormPane = loader.load();
