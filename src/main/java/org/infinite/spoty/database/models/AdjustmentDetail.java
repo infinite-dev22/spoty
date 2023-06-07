@@ -12,7 +12,7 @@ public class AdjustmentDetail implements Serializable {
     @OneToOne
     private ProductDetail productDetail;
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "adjustment_id")
+    @JoinColumn(name = "adjustment_id", nullable = false)
     private AdjustmentMaster adjustment;
     private int quantity;
     private String adjustmentType;
