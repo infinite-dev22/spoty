@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
 import java.util.Date;
+import java.util.List;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class DatabaseSeederTest {
@@ -91,6 +92,23 @@ class DatabaseSeederTest {
             supplier.setCreatedAt(new Date());
             supplier.setCreatedBy("Tester One");
             SupplierDao.saveSupplier(supplier);
+        } catch (Exception e) {
+            throw new AssertionError();
+        }
+    }
+
+    @Test
+    @Order(7)
+    void adjustmentInsert() {
+        try {
+            var adjustmentDetail = new AdjustmentDetail(null, 12, "Increment");
+            adjustmentDetail.setCreatedAt(new Date());
+            adjustmentDetail.setCreatedBy("Tester One");
+            var adjustmentMaster = new AdjustmentMaster(null, "Test Adjustment Master", new Date());
+            adjustmentMaster.setAdjustmentDetails(List.of(adjustmentDetail));
+            adjustmentMaster.setCreatedAt(new Date());
+            adjustmentMaster.setCreatedBy("Tester One");
+            AdjustmentMasterDao.saveAdjustmentMaster(adjustmentMaster);
         } catch (Exception e) {
             throw new AssertionError();
         }
