@@ -21,12 +21,14 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
+import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.database.dao.AdjustmentDetailDao;
 import org.infinite.spoty.database.models.AdjustmentDetail;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.viewModels.AdjustmentDetailViewModel;
 import org.infinite.spoty.viewModels.AdjustmentMasterViewModel;
 import org.infinite.spoty.viewModels.BranchViewModel;
+import org.infinite.spoty.viewModels.BrandViewModel;
 
 import java.io.IOException;
 import java.net.URL;
@@ -38,6 +40,7 @@ import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 @SuppressWarnings("unchecked")
 public class AdjustmentMasterFormController implements Initializable {
     public MFXTextField adjustmentDetailID = new MFXTextField();
+    public MFXTextField adjustmentMasterID = new MFXTextField();
     @FXML
     public MFXFilterComboBox<Branch> adjustmentBranchId;
     @FXML
@@ -70,6 +73,7 @@ public class AdjustmentMasterFormController implements Initializable {
         adjustmentBranchId.textProperty().addListener((observable, oldValue, newValue) -> adjustmentBranchId.setTrailingIcon(null));
         adjustmentDate.textProperty().addListener((observable, oldValue, newValue) -> adjustmentDate.setTrailingIcon(null));
         // Input binding.
+        adjustmentMasterID.textProperty().bindBidirectional(AdjustmentMasterViewModel.idProperty(), new NumberStringConverter());
         adjustmentBranchId.valueProperty().bindBidirectional(AdjustmentMasterViewModel.branchProperty());
         adjustmentBranchId.setItems(BranchViewModel.branchesList);
         adjustmentBranchId.setConverter(new StringConverter<>() {
@@ -189,8 +193,13 @@ public class AdjustmentMasterFormController implements Initializable {
             // Notify table can't be empty
             System.out.println("Table can't be empty");
         }
-        if (adjustmentBranchId.getText().length() > 0 && adjustmentDate.getText().length() > 0 && !adjustmentDetailTable.getTableColumns().isEmpty()) {
-            AdjustmentMasterViewModel.saveAdjustmentMaster();
+        if (adjustmentBranchId.getText().length() > 0
+                && adjustmentDate.getText().length() > 0
+                && !adjustmentDetailTable.getTableColumns().isEmpty()) {
+            if (Integer.parseInt(adjustmentDetailID.getText()) > 0)
+                BrandViewModel.updateItem(Integer.parseInt(adjustmentDetailID.getText()));
+            else
+                AdjustmentMasterViewModel.saveAdjustmentMaster();
             AdjustmentMasterViewModel.resetProperties();
             AdjustmentDetailViewModel.adjustmentDetailsTempList.clear();
         }
@@ -198,7 +207,7 @@ public class AdjustmentMasterFormController implements Initializable {
 
     public void adjustmentCancelBtnClicked() {
         AdjustmentMasterViewModel.resetProperties();
-//        AdjustmentDetailViewModel.adjustmentDetailsTempList.clear();
+        AdjustmentDetailViewModel.adjustmentDetailsTempList.clear();
         ((StackPane) adjustmentFormContentPane.getParent()).getChildren().get(0).setVisible(true);
         ((StackPane) adjustmentFormContentPane.getParent()).getChildren().remove(1);
     }
