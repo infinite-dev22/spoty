@@ -3,13 +3,14 @@ package org.infinite.spoty.database.models;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 @Entity
 public class AdjustmentMaster implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    private int id;
     @ManyToOne
     private User user;
     private Date date;
@@ -17,7 +18,7 @@ public class AdjustmentMaster implements Serializable {
     @ManyToOne
     private Branch branch;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "adjustment")
-    private List<AdjustmentDetail> adjustmentDetails;
+    private List<AdjustmentDetail> adjustmentDetails = new LinkedList<>();
     private String notes;
     @Column(name = "created_at")
     private Date createdAt;
@@ -39,11 +40,11 @@ public class AdjustmentMaster implements Serializable {
         this.notes = notes;
     }
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -75,15 +76,15 @@ public class AdjustmentMaster implements Serializable {
         return branch;
     }
 
+    public void setBranch(Branch branch) {
+        this.branch = branch;
+    }
+
     public String getBranchName() {
         if (branch != null)
             return branch.getName();
         else
             return null;
-    }
-
-    public void setBranch(Branch branch) {
-        this.branch = branch;
     }
 
     public List<AdjustmentDetail> getAdjustmentDetails() {
