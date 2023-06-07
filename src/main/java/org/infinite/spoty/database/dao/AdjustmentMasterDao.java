@@ -10,8 +10,9 @@ import org.infinite.spoty.database.util.HibernateUtil;
 
 import java.util.Date;
 
+@SuppressWarnings("unchecked")
 public class AdjustmentMasterDao {
-    public static int saveAdjustmentMaster(AdjustmentMaster obj) {
+    public static void saveAdjustmentMaster(AdjustmentMaster obj) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
@@ -24,15 +25,14 @@ public class AdjustmentMasterDao {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
-    public static int updateAdjustmentMaster(AdjustmentMaster obj, long id) {
+    public static void updateAdjustmentMaster(AdjustmentMaster obj, int id) {
         Transaction transaction = null;
         AdjustmentMaster adjustmentMaster;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            adjustmentMaster = session.load(AdjustmentMaster.class, id);
+            adjustmentMaster = session.get(AdjustmentMaster.class, id);
             adjustmentMaster.setUser(obj.getUser());
             adjustmentMaster.setDate(obj.getDate());
             adjustmentMaster.setRef(obj.getRef());
@@ -47,15 +47,14 @@ public class AdjustmentMasterDao {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
-    public static AdjustmentMaster findAdjustmentMaster(long id) {
+    public static AdjustmentMaster findAdjustmentMaster(int id) {
         Transaction transaction = null;
         AdjustmentMaster adjustmentMaster;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            adjustmentMaster = session.load(AdjustmentMaster.class, id);
+            adjustmentMaster = session.get(AdjustmentMaster.class, id);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -66,7 +65,7 @@ public class AdjustmentMasterDao {
 
     public static ObservableList<AdjustmentMaster> fetchAdjustmentMasters() {
         Transaction transaction = null;
-        ObservableList<AdjustmentMaster> adjustmentMasters = null;
+        ObservableList<AdjustmentMaster> adjustmentMasters;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             adjustmentMasters = FXCollections.observableList(session.createQuery("from AdjustmentMaster").stream().toList());
@@ -77,16 +76,16 @@ public class AdjustmentMasterDao {
         }
         return adjustmentMasters;
     }
-    public static int deleteAdjustmentMaster(long id) {
+
+    public static void deleteAdjustmentMaster(int id) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.delete(session.load(AdjustmentMaster.class, id));
+            session.delete(session.get(AdjustmentMaster.class, id));
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 }
