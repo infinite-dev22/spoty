@@ -168,7 +168,7 @@ public class AdjustmentMasterFormController implements Initializable {
     }
 
     private void quotationProductDialogPane(Stage stage) throws IOException {
-        DialogPane dialogPane = fxmlLoader("forms/AdjustmentProductsForm.fxml").load();
+        DialogPane dialogPane = fxmlLoader("forms/AdjustmentDetailForm.fxml").load();
         dialog = new Dialog<>();
         dialog.setDialogPane(dialogPane);
         dialog.initOwner(stage);
