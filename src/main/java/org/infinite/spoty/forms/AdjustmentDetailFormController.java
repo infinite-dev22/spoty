@@ -22,7 +22,8 @@ import java.util.ResourceBundle;
 
 import static org.infinite.spoty.GlobalActions.closeDialog;
 
-public class AdjustmentProductsFormController implements Initializable {
+public class AdjustmentDetailFormController implements Initializable {
+    public MFXTextField adjustmentDetailID = new MFXTextField();
     @FXML
     public MFXTextField adjustmentProductsQnty;
     @FXML
@@ -43,6 +44,7 @@ public class AdjustmentProductsFormController implements Initializable {
         adjustmentProductsQnty.textProperty().addListener((observable, oldValue, newValue) -> adjustmentProductsQnty.setTrailingIcon(null));
         adjustmentType.textProperty().addListener((observable, oldValue, newValue) -> adjustmentType.setLeadingIcon(null));
         // Bind form input value to property value.
+        adjustmentDetailID.textProperty().bindBidirectional(AdjustmentDetailViewModel.idProperty());
         adjustmentProductsPdct.valueProperty().bindBidirectional(AdjustmentDetailViewModel.productProperty());
         adjustmentProductsQnty.textProperty().bindBidirectional(AdjustmentDetailViewModel.quantityProperty());
         adjustmentType.textProperty().bindBidirectional(AdjustmentDetailViewModel.adjustmentTypeProperty());
@@ -69,16 +71,16 @@ public class AdjustmentProductsFormController implements Initializable {
     private void dialogOnActions() {
         adjustmentProductsCancelBtn.setOnAction((e) -> {
             closeDialog(e);
-            AdjustmentDetailViewModel.resetProperties();
+//            AdjustmentDetailViewModel.resetProperties();
             adjustmentProductsPdct.setLeadingIcon(null);
             adjustmentProductsQnty.setTrailingIcon(null);
             adjustmentType.setLeadingIcon(null);
         });
         adjustmentProductsSaveBtn.setOnAction((e) -> {
             MFXIconWrapper icon = new MFXIconWrapper("fas-circle-exclamation", 20, Color.RED, 20);
-            if (adjustmentProductsPdct.getText().length() == 0) {
-                adjustmentProductsPdct.setLeadingIcon(icon);
-            }
+//            if (adjustmentProductsPdct.getText().length() == 0) {
+//                adjustmentProductsPdct.setLeadingIcon(icon);
+//            }
             if (adjustmentProductsQnty.getText().length() == 0) {
                 adjustmentProductsQnty.setTrailingIcon(icon);
             }
@@ -86,9 +88,18 @@ public class AdjustmentProductsFormController implements Initializable {
                 adjustmentType.setLeadingIcon(icon);
             }
             if (adjustmentProductsQnty.getText().length() > 0
-                    && adjustmentProductsPdct.getText().length() > 0
+//                    && adjustmentProductsPdct.getText().length() > 0
                     && adjustmentType.getText().length() > 0) {
-                AdjustmentDetailViewModel.addAdjustmentDetails();
+                if (!adjustmentDetailID.getText().isEmpty()) {
+                    try {
+                        if (Integer.parseInt(adjustmentDetailID.getText()) > 0)
+                            AdjustmentDetailViewModel.updateItem(Integer.parseInt(adjustmentDetailID.getText()));
+                    } catch (NumberFormatException ignored) {
+                        AdjustmentDetailViewModel.updateAdjustmentDetail(Integer.parseInt(adjustmentDetailID.getText()
+                                .substring(adjustmentDetailID.getText().lastIndexOf(':') + 1,
+                                        adjustmentDetailID.getText().indexOf(';'))));
+                    }
+                } else AdjustmentDetailViewModel.addAdjustmentDetails();
                 AdjustmentDetailViewModel.resetProperties();
                 closeDialog(e);
             }
