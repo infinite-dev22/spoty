@@ -11,9 +11,13 @@ import org.infinite.spoty.database.models.AdjustmentDetail;
 import org.infinite.spoty.database.models.AdjustmentMaster;
 import org.infinite.spoty.database.models.ProductDetail;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public class AdjustmentDetailViewModel {
     public static final ObservableList<AdjustmentDetail> adjustmentDetailsList = FXCollections.observableArrayList();
     public static final ObservableList<AdjustmentDetail> adjustmentDetailsTempList = FXCollections.observableArrayList();
+    public static final List<AdjustmentDetail> adjustmentDetailsTempLinkedList = new LinkedList<>(adjustmentDetailsTempList);
     private static final StringProperty id = new SimpleStringProperty("");
     private static final ObjectProperty<ProductDetail> product = new SimpleObjectProperty<>();
     private static final ObjectProperty<AdjustmentMaster> adjustment = new SimpleObjectProperty<>();
