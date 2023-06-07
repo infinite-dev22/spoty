@@ -8,7 +8,7 @@ import java.util.Date;
 public class AdjustmentDetail implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    private int id;
     @OneToOne
     private ProductDetail productDetail;
     @ManyToOne(cascade = CascadeType.ALL)
@@ -29,20 +29,18 @@ public class AdjustmentDetail implements Serializable {
     }
 
     public AdjustmentDetail(ProductDetail productDetail,
-                            AdjustmentMaster adjustment,
                             int quantity,
                             String adjustmentType) {
         this.productDetail = productDetail;
-        this.adjustment = adjustment;
         this.quantity = quantity;
         this.adjustmentType = adjustmentType;
     }
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
