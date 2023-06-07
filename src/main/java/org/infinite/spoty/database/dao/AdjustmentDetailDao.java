@@ -11,7 +11,7 @@ import org.infinite.spoty.database.util.HibernateUtil;
 import java.util.Date;
 
 public class AdjustmentDetailDao {
-    public static int saveAdjustmentDetail(AdjustmentDetail obj) {
+    public static void saveAdjustmentDetail(AdjustmentDetail obj) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
@@ -24,15 +24,14 @@ public class AdjustmentDetailDao {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
-    public static int updateAdjustmentDetail(AdjustmentDetail obj, long id) {
+    public static void updateAdjustmentDetail(AdjustmentDetail obj, int id) {
         Transaction transaction = null;
         AdjustmentDetail adjustmentDetail;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            adjustmentDetail = session.load(AdjustmentDetail.class, id);
+            adjustmentDetail = session.get(AdjustmentDetail.class, id);
             adjustmentDetail.setAdjustment(obj.getAdjustment());
             adjustmentDetail.setProductDetail(obj.getProductDetail());
             adjustmentDetail.setAdjustmentType(obj.getAdjustmentType());
@@ -46,15 +45,14 @@ public class AdjustmentDetailDao {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
-    public static AdjustmentDetail findAdjustmentDetail(long id) {
+    public static AdjustmentDetail findAdjustmentDetail(int id) {
         Transaction transaction = null;
         AdjustmentDetail adjustmentDetail = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            adjustmentDetail = session.load(AdjustmentDetail.class, id);
+            adjustmentDetail = session.get(AdjustmentDetail.class, id);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -76,16 +74,16 @@ public class AdjustmentDetailDao {
         }
         return adjustmentDetails;
     }
-    public static int deleteAdjustmentDetail(long id) {
+
+    public static void deleteAdjustmentDetail(int id) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.delete(session.load(AdjustmentDetail.class, id));
+            session.delete(session.get(AdjustmentDetail.class, id));
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 }
