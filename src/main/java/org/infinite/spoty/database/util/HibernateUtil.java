@@ -11,14 +11,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Properties;
+import java.util.logging.Level;
 
 public class HibernateUtil {
     private static SessionFactory sessionFactory;
 
     public static SessionFactory getSessionFactory() {
-//        getDatabaseConnection();
-//        createDB();
-//        java.util.logging.Logger.getLogger("org.hibernate").setLevel(Level.OFF);
+        java.util.logging.Logger.getLogger("org.hibernate").setLevel(Level.OFF);
         try {
             Files.createDirectories(Paths.get(System.getProperty("user.home") + "/.config/ZenmartERP/datastores/databases/sqlite3"));
         } catch (IOException e) {
@@ -49,6 +48,7 @@ public class HibernateUtil {
                 settings.put(Environment.HBM2DDL_AUTO, "create-only");
                 settings.put(Environment.POOL_SIZE, "5");
                 settings.put(Environment.AUTOCOMMIT, "true");
+                settings.put(Environment.ENABLE_LAZY_LOAD_NO_TRANS, "true");
                 // create-drop
                 // create-only
                 // validate
