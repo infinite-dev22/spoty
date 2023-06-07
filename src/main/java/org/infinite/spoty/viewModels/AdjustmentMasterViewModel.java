@@ -4,9 +4,8 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.infinite.spoty.database.dao.AdjustmentMasterDao;
-import org.infinite.spoty.database.models.Branch;
-import org.infinite.spoty.database.models.Customer;
 import org.infinite.spoty.database.models.AdjustmentMaster;
+import org.infinite.spoty.database.models.Branch;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -80,10 +79,11 @@ public class AdjustmentMasterViewModel {
 
     public static void saveAdjustmentMaster() {
         AdjustmentMaster adjustmentMaster = new AdjustmentMaster(getBranch(), getNote(), getDate());
-        adjustmentMaster.setAdjustmentDetails(AdjustmentDetailViewModel.adjustmentDetailsTempList);
+        AdjustmentDetailViewModel.adjustmentDetailsTempLinkedList.forEach(e -> e.setAdjustment(adjustmentMaster));
+        adjustmentMaster.setAdjustmentDetails(AdjustmentDetailViewModel.adjustmentDetailsTempLinkedList);
         AdjustmentMasterDao.saveAdjustmentMaster(adjustmentMaster);
         resetProperties();
-        AdjustmentDetailViewModel.adjustmentDetailsTempList.clear();
+        AdjustmentDetailViewModel.adjustmentDetailsTempLinkedList.clear();
         getAdjustmentMasters();
     }
 
@@ -93,4 +93,23 @@ public class AdjustmentMasterViewModel {
         return adjustmentMasterList;
     }
 
+    public static void getItem(int adjustmentMasterID) {
+        AdjustmentMaster adjustmentMaster = AdjustmentMasterDao.findAdjustmentMaster(adjustmentMasterID);
+        setId(adjustmentMaster.getId());
+        setBranch(adjustmentMaster.getBranch());
+        setNote(adjustmentMaster.getNotes());
+        setDate(adjustmentMaster.getDate().toString());
+        AdjustmentDetailViewModel.adjustmentDetailsTempList.addAll(adjustmentMaster.getAdjustmentDetails());
+        adjustmentMaster.getAdjustmentDetails().forEach(System.out::println);
+        getAdjustmentMasters();
+    }
+
+    public static void updateItem(int adjustmentMasterID) {
+        AdjustmentMaster adjustmentMaster = new AdjustmentMaster(getBranch(), getNote(), getDate());
+        adjustmentMaster.setAdjustmentDetails(AdjustmentDetailViewModel.adjustmentDetailsTempList);
+        AdjustmentMasterDao.updateAdjustmentMaster(adjustmentMaster, adjustmentMasterID);
+        resetProperties();
+        AdjustmentDetailViewModel.adjustmentDetailsTempList.clear();
+        getAdjustmentMasters();
+    }
 }
