@@ -36,7 +36,7 @@ import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 
-@SuppressWarnings("unchecked")
+//@SuppressWarnings("unchecked")
 public class AdjustmentMasterFormController implements Initializable {
     public MFXTextField adjustmentDetailID = new MFXTextField();
     public MFXTextField adjustmentMasterID = new MFXTextField();
