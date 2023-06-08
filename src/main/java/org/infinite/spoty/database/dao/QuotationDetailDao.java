@@ -27,12 +27,12 @@ public class QuotationDetailDao {
         return 1;
     }
 
-    public static int updateQuotationDetail(QuotationDetail obj, long id) {
+    public static void updateQuotationDetail(QuotationDetail obj, int id) {
         Transaction transaction = null;
         QuotationDetail quotationDetail;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            quotationDetail = session.load(QuotationDetail.class, id);
+            quotationDetail = session.get(QuotationDetail.class, id);
             quotationDetail.setPrice(obj.getPrice());
             quotationDetail.setSaleUnit(obj.getSaleUnit());
             quotationDetail.setProduct(obj.getProduct());
@@ -53,15 +53,14 @@ public class QuotationDetailDao {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
-    public static QuotationDetail findQuotationDetail(long id) {
+    public static QuotationDetail findQuotationDetail(int id) {
         Transaction transaction = null;
         QuotationDetail quotationDetail;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            quotationDetail = session.load(QuotationDetail.class, id);
+            quotationDetail = session.get(QuotationDetail.class, id);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -70,7 +69,7 @@ public class QuotationDetailDao {
         return quotationDetail;
     }
 
-    public static ObservableList<QuotationDetail> getQuotationDetail() {
+    public static ObservableList<QuotationDetail> fetchQuotationDetails() {
         Transaction transaction = null;
         ObservableList<QuotationDetail> purchaseCategories;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
@@ -83,16 +82,16 @@ public class QuotationDetailDao {
         }
         return purchaseCategories;
     }
-    public static int deleteQuotationDetail(long id) {
+
+    public static void deleteQuotationDetail(int id) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.delete(session.load(QuotationDetail.class, id));
+            session.delete(session.get(QuotationDetail.class, id));
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 }
