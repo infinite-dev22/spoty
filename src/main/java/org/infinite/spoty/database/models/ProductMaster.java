@@ -9,7 +9,7 @@ import java.util.List;
 public class ProductMaster implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String code;
     @Column(name = "barcode_type")

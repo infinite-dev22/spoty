@@ -7,7 +7,7 @@ import java.util.Date;
 @Entity
 public class StockInDetail implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "stockIn_id")

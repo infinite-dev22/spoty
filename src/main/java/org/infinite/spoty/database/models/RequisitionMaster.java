@@ -10,7 +10,7 @@ import static org.infinite.spoty.GlobalActions.fineDate;
 @Entity
 public class RequisitionMaster implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String ref;
     private Date date;

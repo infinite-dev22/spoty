@@ -27,6 +27,7 @@ import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 
+@SuppressWarnings("unchecked")
 public class QuotationController implements Initializable {
     private final Stage stage;
     @FXML
@@ -57,7 +58,7 @@ public class QuotationController implements Initializable {
         MFXTableColumn<QuotationMaster> quotationStatus = new MFXTableColumn<>("Status", false, Comparator.comparing(QuotationMaster::getStatus));
         MFXTableColumn<QuotationMaster> quotationGrandTotal = new MFXTableColumn<>("Grand Total", false, Comparator.comparing(QuotationMaster::getTotal));
 
-        quotationDate.setRowCellFactory(quotation -> new MFXTableRowCell<>(QuotationMaster::getDate));
+        quotationDate.setRowCellFactory(quotation -> new MFXTableRowCell<>(QuotationMaster::getLocaleDate));
         quotationReference.setRowCellFactory(quotation -> new MFXTableRowCell<>(QuotationMaster::getRef));
         quotationCustomer.setRowCellFactory(quotation -> new MFXTableRowCell<>(QuotationMaster::getCustomerName));
         quotationBranch.setRowCellFactory(quotation -> new MFXTableRowCell<>(QuotationMaster::getBranchName));

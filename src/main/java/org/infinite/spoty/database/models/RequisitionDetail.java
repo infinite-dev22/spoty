@@ -7,7 +7,7 @@ import java.util.Date;
 @Entity
 public class RequisitionDetail implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @OneToOne
     private ProductDetail productDetail;

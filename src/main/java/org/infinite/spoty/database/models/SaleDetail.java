@@ -7,7 +7,7 @@ import java.util.Date;
 @Entity
 public class SaleDetail implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String ref;
     @ManyToOne

@@ -1,31 +1,35 @@
 package org.infinite.spoty.viewModels;
 
-import javafx.beans.property.*;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.infinite.spoty.database.dao.QuotationDetailDao;
+import org.infinite.spoty.database.models.ProductDetail;
 import org.infinite.spoty.database.models.QuotationDetail;
 import org.infinite.spoty.database.models.QuotationMaster;
-import org.infinite.spoty.database.models.ProductDetail;
 
 public class QuotationDetailViewModel {
-    private static final IntegerProperty id = new SimpleIntegerProperty();
+    public static final ObservableList<QuotationDetail> quotationDetailsList = FXCollections.observableArrayList();
+    public static final ObservableList<QuotationDetail> quotationDetailsTempList = FXCollections.observableArrayList();
+    private static final StringProperty id = new SimpleStringProperty();
     private static final ObjectProperty<ProductDetail> product = new SimpleObjectProperty<>();
     private static final ObjectProperty<QuotationMaster> quotation = new SimpleObjectProperty<>();
     private static final StringProperty quantity = new SimpleStringProperty();
     private static final StringProperty tax = new SimpleStringProperty();
     private static final StringProperty discount = new SimpleStringProperty();
-    public static final ObservableList<QuotationDetail> quotationDetailsList = FXCollections.observableArrayList();
-    public static final ObservableList<QuotationDetail> quotationDetailsTempList = FXCollections.observableArrayList();
 
-    public static int getId() {
+    public static String getId() {
         return id.get();
     }
 
-    public static void setId(int id) {
+    public static void setId(String id) {
         QuotationDetailViewModel.id.set(id);
     }
 
-    public static IntegerProperty idProperty() {
+    public static StringProperty idProperty() {
         return id;
     }
 
@@ -53,8 +57,8 @@ public class QuotationDetailViewModel {
         return quotation;
     }
 
-    public static String getQuantity() {
-        return quantity.get();
+    public static int getQuantity() {
+        return Integer.parseInt(quantity.get());
     }
 
     public static void setQuantity(String quantity) {
@@ -65,8 +69,8 @@ public class QuotationDetailViewModel {
         return quantity;
     }
 
-    public static String getTax() {
-        return tax.get();
+    public static double getTax() {
+        return Double.parseDouble(tax.get());
     }
 
     public static void setTax(String tax) {
@@ -77,8 +81,8 @@ public class QuotationDetailViewModel {
         return tax;
     }
 
-    public static String getDiscount() {
-        return discount.get();
+    public static double getDiscount() {
+        return Double.parseDouble(discount.get());
     }
 
     public static void setDiscount(String discount) {
@@ -90,7 +94,7 @@ public class QuotationDetailViewModel {
     }
 
     public static void resetProperties() {
-        setId(0);
+        setId("");
         setProduct(null);
         setTax("");
         setDiscount("");
@@ -98,18 +102,53 @@ public class QuotationDetailViewModel {
     }
 
     public static void addQuotationDetails() {
-        QuotationDetail quotationDetail = new QuotationDetail(getProduct(),
-                Double.parseDouble(getTax()),
-                Double.parseDouble(getDiscount()),
-                Integer.parseInt(getQuantity()));
+        QuotationDetail quotationDetail = new QuotationDetail(getProduct(), getTax(), getDiscount(), getQuantity());
         quotationDetailsTempList.add(quotationDetail);
         resetProperties();
         quotationDetailsTempList.forEach(System.out::println);
+    }
+
+    public static void updateQuotationDetail(int index) {
+        QuotationDetail quotationDetail = new QuotationDetail(getProduct(),
+                getTax(),
+                getDiscount(),
+                getQuantity());
+        quotationDetailsTempList.remove(index);
+        quotationDetailsTempList.add(index, quotationDetail);
+        resetProperties();
     }
 
     public static ObservableList<QuotationDetail> getQuotationDetails() {
         quotationDetailsList.clear();
         quotationDetailsList.addAll(QuotationDetailViewModel.getQuotationDetails());
         return quotationDetailsList;
+    }
+
+    public static void getItem(int quotationDetailID) {
+        QuotationDetail quotationDetail = QuotationDetailDao.findQuotationDetail(quotationDetailID);
+        setId(String.valueOf(quotationDetail.getId()));
+        setProduct(quotationDetail.getProduct());
+        setTax(String.valueOf(quotationDetail.getNetTax()));
+        setDiscount(String.valueOf(quotationDetail.getDiscount()));
+        setQuantity(String.valueOf(quotationDetail.getQuantity()));
+        getQuotationDetails();
+    }
+
+    public static void getItem(QuotationDetail quotationDetail, int index) {
+        setId("index:" + index + ";");
+        setProduct(quotationDetail.getProduct());
+        setTax(String.valueOf(quotationDetail.getNetTax()));
+        setDiscount(String.valueOf(quotationDetail.getDiscount()));
+        setQuantity(String.valueOf(quotationDetail.getQuantity()));
+    }
+
+    public static void updateItem(int quotationDetailID) {
+        QuotationDetail quotationDetail = new QuotationDetail(getProduct(), getTax(), getDiscount(), getQuantity());
+        QuotationDetailDao.updateQuotationDetail(quotationDetail, quotationDetailID);
+        getQuotationDetails();
+    }
+
+    public static void removeQuotationDetail(int index) {
+        quotationDetailsTempList.remove(index);
     }
 }

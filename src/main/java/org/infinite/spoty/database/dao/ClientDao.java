@@ -9,7 +9,7 @@ import org.infinite.spoty.database.models.Client;
 import org.infinite.spoty.database.util.HibernateUtil;
 
 import java.util.Date;
-
+@Deprecated
 public class ClientDao {
     public static int saveClient(Client obj) {
         Transaction transaction = null;

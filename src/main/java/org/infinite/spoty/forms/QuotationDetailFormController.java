@@ -19,7 +19,8 @@ import java.util.ResourceBundle;
 
 import static org.infinite.spoty.GlobalActions.closeDialog;
 
-public class QuotationProductsFormController implements Initializable {
+public class QuotationDetailFormController implements Initializable {
+    public MFXTextField quotationDetailID = new MFXTextField();
     @FXML
     public MFXTextField quotationProductsQnty;
     @FXML
@@ -43,6 +44,7 @@ public class QuotationProductsFormController implements Initializable {
         quotationProductsOrderTax.textProperty().addListener((observable, oldValue, newValue) -> quotationProductsOrderTax.setLeadingIcon(null));
         quotationProductsDiscount.textProperty().addListener((observable, oldValue, newValue) -> quotationProductsDiscount.setLeadingIcon(null));
         // Bind form input values.
+        quotationDetailID.textProperty().bindBidirectional(QuotationDetailViewModel.idProperty());
         quotationProductsQnty.textProperty().bindBidirectional(QuotationDetailViewModel.quantityProperty());
         quotationProductsPdct.valueProperty().bindBidirectional(QuotationDetailViewModel.productProperty());
         quotationProductsOrderTax.textProperty().bindBidirectional(QuotationDetailViewModel.taxProperty());
@@ -94,7 +96,17 @@ public class QuotationProductsFormController implements Initializable {
 //                    && quotationProductsPdct.getText().length() > 0
                     && quotationProductsOrderTax.getText().length() > 0
                     && quotationProductsDiscount.getText().length() > 0) {
-                QuotationDetailViewModel.addQuotationDetails();
+                if (!quotationDetailID.getText().isEmpty()) {
+                    try {
+                        if (Integer.parseInt(quotationDetailID.getText()) > 0)
+                            QuotationDetailViewModel.updateItem(Integer.parseInt(quotationDetailID.getText()));
+                    } catch (NumberFormatException ignored) {
+                        QuotationDetailViewModel.updateQuotationDetail(Integer.parseInt(quotationDetailID.getText()
+                                .substring(quotationDetailID.getText().lastIndexOf(':') + 1,
+                                        quotationDetailID.getText().indexOf(';'))));
+                    }
+                } else
+                    QuotationDetailViewModel.addQuotationDetails();
                 QuotationDetailViewModel.resetProperties();
                 closeDialog(e);
             }

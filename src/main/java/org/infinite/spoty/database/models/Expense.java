@@ -10,7 +10,7 @@ import java.util.Date;
 @Entity
 public class Expense implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private Date date;
     private String ref;

@@ -6,6 +6,42 @@ import java.util.Date;
 
 @Entity
 public class PaymentSale implements Serializable {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+    @ManyToOne
+    private User user;
+    private Date date;
+    private String ref;
+    @ManyToOne
+    private SaleMaster sale;
+    private String paymentMethod;
+    private double amount;
+    private double change;
+    private String notes;
+    @Column(name = "created_at")
+    private Date createdAt;
+    @Column(name = "created_by")
+    private String createdBy;
+    @Column(name = "updated_at")
+    private Date updatedAt;
+    @Column(name = "updated_by")
+    private String updatedBy;
+
+    public PaymentSale(User user, Date date, String ref, SaleMaster sale, String paymentMethod, double amount, double change, String notes) {
+        this.user = user;
+        this.date = date;
+        this.ref = ref;
+        this.sale = sale;
+        this.paymentMethod = paymentMethod;
+        this.amount = amount;
+        this.change = change;
+        this.notes = notes;
+    }
+
+    public PaymentSale() {
+    }
+
     public long getId() {
         return id;
     }
@@ -30,17 +66,6 @@ public class PaymentSale implements Serializable {
         this.date = date;
     }
 
-    public PaymentSale(User user, Date date, String ref, SaleMaster sale, String paymentMethod, double amount, double change, String notes) {
-        this.user = user;
-        this.date = date;
-        this.ref = ref;
-        this.sale = sale;
-        this.paymentMethod = paymentMethod;
-        this.amount = amount;
-        this.change = change;
-        this.notes = notes;
-    }
-
     public String getRef() {
         return ref;
     }
@@ -51,9 +76,6 @@ public class PaymentSale implements Serializable {
 
     public SaleMaster getSale() {
         return sale;
-    }
-
-    public PaymentSale() {
     }
 
     public void setSale(SaleMaster sale) {
@@ -123,26 +145,4 @@ public class PaymentSale implements Serializable {
     public void setUpdatedBy(String updatedBy) {
         this.updatedBy = updatedBy;
     }
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
-    @ManyToOne
-    private User user;
-    private Date date;
-    private String ref;
-    @ManyToOne
-    private SaleMaster sale;
-    private String paymentMethod;
-    private double amount;
-    private double change;
-    private String notes;
-    @Column(name = "created_at")
-    private Date createdAt;
-    @Column(name = "created_by")
-    private String createdBy;
-    @Column(name = "updated_at")
-    private Date updatedAt;
-    @Column(name = "updated_by")
-    private String updatedBy;
 }

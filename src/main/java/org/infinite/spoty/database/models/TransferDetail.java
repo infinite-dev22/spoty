@@ -7,7 +7,7 @@ import java.util.Date;
 @Entity
 public class TransferDetail implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "transfer_id")

@@ -7,7 +7,7 @@ import java.util.Date;
 @Entity
 public class SaleReturnDetail implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @ManyToOne
     @JoinColumn(name = "saleReturnMaster_id")

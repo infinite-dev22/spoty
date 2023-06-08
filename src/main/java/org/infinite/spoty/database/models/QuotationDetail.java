@@ -7,7 +7,7 @@ import java.util.Date;
 @Entity
 public class QuotationDetail implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private double price;
     @ManyToOne

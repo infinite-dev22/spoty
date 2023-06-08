@@ -7,7 +7,7 @@ import java.util.Date;
 @Entity
 public class PurchaseReturnDetail implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private double cost;
     @ManyToOne
