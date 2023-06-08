@@ -4,9 +4,9 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.infinite.spoty.database.dao.QuotationMasterDao;
+import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.Customer;
 import org.infinite.spoty.database.models.QuotationMaster;
-import org.infinite.spoty.database.models.Branch;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -121,4 +121,25 @@ public class QuotationMasterViewModel {
         return quotationMasterList;
     }
 
+    public static void getItem(int quotationMasterID) {
+        QuotationMaster quotationMaster = QuotationMasterDao.findQuotationMaster(quotationMasterID);
+        setId(quotationMaster.getId());
+        setDate(quotationMaster.getLocaleDate());
+        setCustomer(quotationMaster.getCustomer());
+        setBranch(quotationMaster.getBranch());
+        setStatus(quotationMaster.getStatus());
+        setNote(quotationMaster.getNotes());
+        QuotationDetailViewModel.quotationDetailsTempList.addAll(quotationMaster.getQuotationDetails());
+        quotationMaster.getQuotationDetails().forEach(System.out::println);
+        getQuotationMasters();
+    }
+
+    public static void updateItem(int quotationMasterID) {
+        QuotationMaster quotationMaster = new QuotationMaster(getDate(), getCustomer(), getBranch(), getStatus(), getNote());
+        quotationMaster.setQuotationDetails(QuotationDetailViewModel.quotationDetailsTempList);
+        QuotationMasterDao.updateQuotationMaster(quotationMaster, quotationMasterID);
+        resetProperties();
+        QuotationDetailViewModel.quotationDetailsTempList.clear();
+        getQuotationMasters();
+    }
 }
