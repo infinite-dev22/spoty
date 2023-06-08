@@ -39,7 +39,7 @@ public class QuotationMasterDao {
             quotationMaster.setCustomer(obj.getCustomer());
             quotationMaster.setBranch(obj.getBranch());
             quotationMaster.setShipping(obj.getShipping());
-            quotationMaster.setQuotationDetails(obj.getQuotationDetails());
+            // quotationMaster.setQuotationDetails(obj.getQuotationDetails());
             quotationMaster.setTotal(obj.getTotal());
             quotationMaster.setStatus(obj.getStatus());
             quotationMaster.setNotes(obj.getNotes());
