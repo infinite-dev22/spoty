@@ -10,6 +10,7 @@ import org.infinite.spoty.database.util.HibernateUtil;
 
 import java.util.Date;
 
+@SuppressWarnings("unchecked")
 public class QuotationMasterDao {
     public static void saveQuotationMaster(QuotationMaster obj) {
         Transaction transaction = null;
@@ -26,12 +27,12 @@ public class QuotationMasterDao {
         }
     }
 
-    public static int updateQuotationMaster(QuotationMaster obj, long id) {
+    public static void updateQuotationMaster(QuotationMaster obj, int id) {
         Transaction transaction = null;
         QuotationMaster quotationMaster;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            quotationMaster = session.load(QuotationMaster.class, id);
+            quotationMaster = session.get(QuotationMaster.class, id);
             quotationMaster.setUser(obj.getUser());
             quotationMaster.setRef(obj.getRef());
             quotationMaster.setDate(obj.getDate());
@@ -50,15 +51,14 @@ public class QuotationMasterDao {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
-    public static QuotationMaster findQuotationMaster(long id) {
+    public static QuotationMaster findQuotationMaster(int id) {
         Transaction transaction = null;
         QuotationMaster quotationMaster;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            quotationMaster = session.load(QuotationMaster.class, id);
+            quotationMaster = session.get(QuotationMaster.class, id);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -81,16 +81,15 @@ public class QuotationMasterDao {
         return purchaseCategories;
     }
 
-    public static int deleteQuotationMaster(long id) {
+    public static void deleteQuotationMaster(int id) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.delete(session.load(QuotationMaster.class, id));
+            session.delete(session.get(QuotationMaster.class, id));
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 }
