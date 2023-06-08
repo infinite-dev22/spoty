@@ -2,14 +2,16 @@ package org.infinite.spoty.database.models;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.text.DateFormat;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 @Entity
 public class QuotationMaster implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    private int id;
     @ManyToOne
     private User user;
     private Date date;
@@ -19,7 +21,7 @@ public class QuotationMaster implements Serializable {
     @ManyToOne
     private Branch branch;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "quotation")
-    private List<QuotationDetail> quotationDetails;
+    private List<QuotationDetail> quotationDetails = new LinkedList<>();
     private String shipping;
     private double total;
     private String status;
@@ -48,11 +50,11 @@ public class QuotationMaster implements Serializable {
         this.notes = notes;
     }
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -180,5 +182,9 @@ public class QuotationMaster implements Serializable {
 
     public void setUpdatedBy(String updatedBy) {
         this.updatedBy = updatedBy;
+    }
+
+    public String getLocaleDate() {
+        return DateFormat.getDateInstance().format(date);
     }
 }
