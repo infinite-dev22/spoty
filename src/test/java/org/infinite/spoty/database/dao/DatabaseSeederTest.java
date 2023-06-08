@@ -124,6 +124,30 @@ class DatabaseSeederTest {
 
     @Test
     @Order(7)
+    void quotationInsert() {
+        try {
+            var quotationDetail = new QuotationDetail(null, 6.54, 25, 29898);
+            var quotationMaster = new QuotationMaster(new Date(), null, null, "Pending", "No customer yet.");
+            List<QuotationDetail> list = new LinkedList<>();
+
+            quotationDetail.setCreatedAt(new Date());
+            quotationDetail.setCreatedBy("Tester One");
+            quotationDetail.setQuotation(quotationMaster);
+
+            list.add(quotationDetail);
+
+            quotationMaster.setQuotationDetails(list);
+            quotationMaster.setCreatedAt(new Date());
+            quotationMaster.setCreatedBy("Tester One");
+
+            QuotationMasterDao.saveQuotationMaster(quotationMaster);
+        } catch (Exception e) {
+            throw new AssertionError();
+        }
+    }
+
+    @Test
+    @Order(8)
     void branchInsert() {
         try {
             var branch = new Branch("Test Branch One",
