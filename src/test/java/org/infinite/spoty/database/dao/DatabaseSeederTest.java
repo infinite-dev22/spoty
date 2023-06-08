@@ -121,4 +121,19 @@ class DatabaseSeederTest {
             throw new AssertionError();
         }
     }
+
+    @Test
+    @Order(7)
+    void branchInsert() {
+        try {
+            var branch = new Branch("Test Branch One",
+                    "Test City 1", "123456789012",
+                    "test1.branch@email.com", "Test Town 1", "5675676");
+            branch.setCreatedAt(new Date());
+            branch.setCreatedBy("Tester One");
+            BranchDao.saveBranch(branch);
+        } catch (Exception e) {
+            throw new AssertionError();
+        }
+    }
 }
