@@ -1,21 +1,21 @@
 package org.infinite.spoty.views.inventory.quotation;
 
-import io.github.palexdev.materialfx.controls.MFXButton;
-import io.github.palexdev.materialfx.controls.MFXTableColumn;
-import io.github.palexdev.materialfx.controls.MFXTableView;
-import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.filter.DoubleFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import org.infinite.spoty.database.dao.QuotationMasterDao;
 import org.infinite.spoty.database.models.QuotationMaster;
 import org.infinite.spoty.forms.QuotationFormController;
 import org.infinite.spoty.viewModels.QuotationMasterViewModel;
@@ -86,8 +86,42 @@ public class QuotationController implements Initializable {
     private void getQuotationMasterTable() {
         quotationsTable.setPrefSize(1000, 1000);
         quotationsTable.features().enableBounceEffect();
-        quotationsTable.autosizeColumnsOnInitialization();
         quotationsTable.features().enableSmoothScrolling(0.5);
+
+        quotationsTable.setTableRowFactory(t -> {
+            MFXTableRow<QuotationMaster> row = new MFXTableRow<>(quotationsTable, t);
+            EventHandler<ContextMenuEvent> eventHandler = event -> {
+                showContextMenu((MFXTableRow<QuotationMaster>) event.getSource()).show(quotationsTable.getParent(), event.getScreenX(), event.getScreenY());
+                event.consume();
+            };
+            row.setOnContextMenuRequested(eventHandler);
+            return row;
+        });
+    }
+
+    private MFXContextMenu showContextMenu(MFXTableRow<QuotationMaster> obj) {
+        MFXContextMenu contextMenu = new MFXContextMenu(quotationsTable);
+        MFXContextMenuItem view = new MFXContextMenuItem("View");
+        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
+        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+
+        // Actions
+        // Delete
+        delete.setOnAction(e -> {
+            QuotationMasterDao.deleteQuotationMaster(obj.getData().getId());
+            QuotationMasterViewModel.getQuotationMasters();
+            e.consume();
+        });
+        // Edit
+        edit.setOnAction(e -> {
+            QuotationMasterViewModel.getItem(obj.getData().getId());
+            quotationCreateBtnClicked();
+            e.consume();
+        });
+
+        contextMenu.addItems(view, edit, delete);
+
+        return contextMenu;
     }
 
     public void quotationCreateBtnClicked() {
