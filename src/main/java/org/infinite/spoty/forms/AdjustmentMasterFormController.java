@@ -28,7 +28,6 @@ import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.viewModels.AdjustmentDetailViewModel;
 import org.infinite.spoty.viewModels.AdjustmentMasterViewModel;
 import org.infinite.spoty.viewModels.BranchViewModel;
-import org.infinite.spoty.viewModels.BrandViewModel;
 
 import java.io.IOException;
 import java.net.URL;
@@ -70,8 +69,8 @@ public class AdjustmentMasterFormController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Input listener.
-        adjustmentBranchId.textProperty().addListener((observable, oldValue, newValue) -> adjustmentBranchId.setTrailingIcon(null));
-        adjustmentDate.textProperty().addListener((observable, oldValue, newValue) -> adjustmentDate.setTrailingIcon(null));
+//        adjustmentBranchId.textProperty().addListener((observable, oldValue, newValue) -> adjustmentBranchId.setTrailingIcon(null));
+//        adjustmentDate.textProperty().addListener((observable, oldValue, newValue) -> adjustmentDate.setTrailingIcon(null));
         // Input binding.
         adjustmentMasterID.textProperty().bindBidirectional(AdjustmentMasterViewModel.idProperty(), new NumberStringConverter());
         adjustmentBranchId.valueProperty().bindBidirectional(AdjustmentMasterViewModel.branchProperty());
@@ -196,9 +195,10 @@ public class AdjustmentMasterFormController implements Initializable {
         if (adjustmentBranchId.getText().length() > 0
                 && adjustmentDate.getText().length() > 0
                 && !adjustmentDetailTable.getTableColumns().isEmpty()) {
-            if (Integer.parseInt(adjustmentDetailID.getText()) > 0)
-                BrandViewModel.updateItem(Integer.parseInt(adjustmentDetailID.getText()));
-            else
+            if (Integer.parseInt(adjustmentMasterID.getText()) > 0) {
+                AdjustmentMasterViewModel.updateItem(Integer.parseInt(adjustmentMasterID.getText()));
+                adjustmentCancelBtnClicked();
+            } else
                 AdjustmentMasterViewModel.saveAdjustmentMaster();
             AdjustmentMasterViewModel.resetProperties();
             AdjustmentDetailViewModel.adjustmentDetailsTempList.clear();
