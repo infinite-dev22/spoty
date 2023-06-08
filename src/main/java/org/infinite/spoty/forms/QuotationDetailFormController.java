@@ -101,9 +101,7 @@ public class QuotationDetailFormController implements Initializable {
                         if (Integer.parseInt(quotationDetailID.getText()) > 0)
                             QuotationDetailViewModel.updateItem(Integer.parseInt(quotationDetailID.getText()));
                     } catch (NumberFormatException ignored) {
-                        QuotationDetailViewModel.updateQuotationDetail(Integer.parseInt(quotationDetailID.getText()
-                                .substring(quotationDetailID.getText().lastIndexOf(':') + 1,
-                                        quotationDetailID.getText().indexOf(';'))));
+                        QuotationDetailViewModel.updateQuotationDetail();
                     }
                 } else
                     QuotationDetailViewModel.addQuotationDetails();
