@@ -20,6 +20,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
+import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.Customer;
 import org.infinite.spoty.database.models.QuotationDetail;
@@ -36,7 +37,8 @@ import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 
-public class QuotationFormController implements Initializable {
+public class QuotationMasterFormController implements Initializable {
+    public MFXTextField quotationMasterID = new MFXTextField();
     @FXML
     public Label quotationFormTitle;
     @FXML
@@ -55,7 +57,7 @@ public class QuotationFormController implements Initializable {
     public MFXFilterComboBox<String> quotationStatus;
     private Dialog<ButtonType> dialog;
 
-    public QuotationFormController(Stage stage) {
+    public QuotationMasterFormController(Stage stage) {
         Platform.runLater(() -> {
             try {
                 quotationProductDialogPane(stage);
@@ -68,10 +70,11 @@ public class QuotationFormController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Form input listeners.
-        quotationDate.textProperty().addListener((observable, oldValue, newValue) -> quotationDate.setTrailingIcon(null));
-        quotationCustomerId.textProperty().addListener((observable, oldValue, newValue) -> quotationCustomerId.setTrailingIcon(null));
-        quotationBranchId.textProperty().addListener((observable, oldValue, newValue) -> quotationBranchId.setTrailingIcon(null));
-        quotationStatus.textProperty().addListener((observable, oldValue, newValue) -> quotationStatus.setTrailingIcon(null));
+//        quotationDate.textProperty().addListener((observable, oldValue, newValue) -> quotationDate.setTrailingIcon(null));
+//        quotationCustomerId.textProperty().addListener((observable, oldValue, newValue) -> quotationCustomerId.setTrailingIcon(null));
+//        quotationBranchId.textProperty().addListener((observable, oldValue, newValue) -> quotationBranchId.setTrailingIcon(null));
+//        quotationStatus.textProperty().addListener((observable, oldValue, newValue) -> quotationStatus.setTrailingIcon(null));
+//        quotationNote.textProperty().addListener((observable, oldValue, newValue) -> quotationNote.setTrailingIcon(null));
         // Combo box properties.
         quotationCustomerId.setItems(CustomerViewModel.customersList);
         quotationCustomerId.setConverter(new StringConverter<>() {
@@ -105,10 +108,12 @@ public class QuotationFormController implements Initializable {
         });
         quotationStatus.setItems(FXCollections.observableArrayList(Values.QUOTATIONTYPE));
         // Form input binding.
+        quotationMasterID.textProperty().bindBidirectional(QuotationMasterViewModel.idProperty(), new NumberStringConverter());
         quotationDate.textProperty().bindBidirectional(QuotationMasterViewModel.dateProperty());
         quotationCustomerId.valueProperty().bindBidirectional(QuotationMasterViewModel.customerProperty());
         quotationBranchId.valueProperty().bindBidirectional(QuotationMasterViewModel.branchProperty());
         quotationStatus.textProperty().bindBidirectional(QuotationMasterViewModel.statusProperty());
+        quotationNote.textProperty().bindBidirectional(QuotationMasterViewModel.noteProperty());
 
         Platform.runLater(this::setupTable);
     }
@@ -180,7 +185,11 @@ public class QuotationFormController implements Initializable {
                 && quotationBranchId.getText().length() > 0
                 && quotationStatus.getText().length() > 0
                 && !quotationProductsTable.getTableColumns().isEmpty()) {
-            QuotationMasterViewModel.saveQuotationMaster();
+            if (Integer.parseInt(quotationMasterID.getText()) > 0) {
+                QuotationMasterViewModel.updateItem(Integer.parseInt(quotationMasterID.getText()));
+                cancelBtnClicked();
+            } else
+                QuotationMasterViewModel.saveQuotationMaster();
             QuotationMasterViewModel.resetProperties();
             quotationProductsTable.getTableColumns().clear();
         }

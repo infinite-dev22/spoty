@@ -17,7 +17,7 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import org.infinite.spoty.database.dao.QuotationMasterDao;
 import org.infinite.spoty.database.models.QuotationMaster;
-import org.infinite.spoty.forms.QuotationFormController;
+import org.infinite.spoty.forms.QuotationMasterFormController;
 import org.infinite.spoty.viewModels.QuotationMasterViewModel;
 
 import java.io.IOException;
@@ -125,8 +125,8 @@ public class QuotationController implements Initializable {
     }
 
     public void quotationCreateBtnClicked() {
-        FXMLLoader loader = fxmlLoader("forms/QuotationForm.fxml");
-        loader.setControllerFactory(c -> new QuotationFormController(stage));
+        FXMLLoader loader = fxmlLoader("forms/QuotationMasterForm.fxml");
+        loader.setControllerFactory(c -> new QuotationMasterFormController(stage));
         try {
             AnchorPane productFormPane = loader.load();
             ((StackPane) quotationContentPane.getParent()).getChildren().add(productFormPane);
