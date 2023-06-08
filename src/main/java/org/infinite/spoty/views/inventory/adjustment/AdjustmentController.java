@@ -54,7 +54,7 @@ public class AdjustmentController implements Initializable {
         MFXTableColumn<AdjustmentMaster> adjustmentReference = new MFXTableColumn<>("Reference", false, Comparator.comparing(AdjustmentMaster::getRef));
         MFXTableColumn<AdjustmentMaster> adjustmentBranch = new MFXTableColumn<>("Branch", false, Comparator.comparing(AdjustmentMaster::getBranchName));
 
-        adjustmentDate.setRowCellFactory(adjustment -> new MFXTableRowCell<>(AdjustmentMaster::getDate));
+        adjustmentDate.setRowCellFactory(adjustment -> new MFXTableRowCell<>(AdjustmentMaster::getLocaleDate));
         adjustmentReference.setRowCellFactory(adjustment -> new MFXTableRowCell<>(AdjustmentMaster::getRef));
         adjustmentBranch.setRowCellFactory(adjustment -> new MFXTableRowCell<>(AdjustmentMaster::getBranchName));
 

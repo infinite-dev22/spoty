@@ -2,6 +2,7 @@ package org.infinite.spoty.database.models;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.text.DateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -58,6 +59,10 @@ public class AdjustmentMaster implements Serializable {
 
     public Date getDate() {
         return date;
+    }
+
+    public String getLocaleDate() {
+        return DateFormat.getDateInstance().format(date);
     }
 
     public void setDate(Date date) {
