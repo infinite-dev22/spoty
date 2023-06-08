@@ -27,6 +27,7 @@ import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 
+@SuppressWarnings("unchecked")
 public class CustomerController implements Initializable {
     @FXML
     public MFXTextField customerSearchBar;
