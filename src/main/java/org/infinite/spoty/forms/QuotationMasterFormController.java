@@ -8,11 +8,13 @@ import io.github.palexdev.materialfx.filter.IntegerFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -21,6 +23,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
+import org.infinite.spoty.database.dao.QuotationDetailDao;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.Customer;
 import org.infinite.spoty.database.models.QuotationDetail;
@@ -37,7 +40,9 @@ import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 
+@SuppressWarnings("unchecked")
 public class QuotationMasterFormController implements Initializable {
+    public MFXTextField quotationDetailID = new MFXTextField();
     public MFXTextField quotationMasterID = new MFXTextField();
     @FXML
     public Label quotationFormTitle;
@@ -129,6 +134,7 @@ public class QuotationMasterFormController implements Initializable {
         productDiscount.setRowCellFactory(product -> new MFXTableRowCell<>(QuotationDetail::getDiscount));
         productTax.setRowCellFactory(product -> new MFXTableRowCell<>(QuotationDetail::getNetTax));
 
+        quotationDetailID.textProperty().bindBidirectional(QuotationDetailViewModel.idProperty());
         productName.prefWidthProperty().bind(quotationProductsTable.widthProperty().multiply(.25));
         productQuantity.prefWidthProperty().bind(quotationProductsTable.widthProperty().multiply(.25));
         productDiscount.prefWidthProperty().bind(quotationProductsTable.widthProperty().multiply(.25));
@@ -148,12 +154,51 @@ public class QuotationMasterFormController implements Initializable {
     private void getQuotationDetailTable() {
         quotationProductsTable.setPrefSize(1000, 1000);
         quotationProductsTable.features().enableBounceEffect();
-        quotationProductsTable.autosizeColumnsOnInitialization();
         quotationProductsTable.features().enableSmoothScrolling(0.5);
+
+        quotationProductsTable.setTableRowFactory(t -> {
+            MFXTableRow<QuotationDetail> row = new MFXTableRow<>(quotationProductsTable, t);
+            EventHandler<ContextMenuEvent> eventHandler = event -> {
+                showContextMenu((MFXTableRow<QuotationDetail>) event.getSource()).show(quotationProductsTable.getParent(), event.getScreenX(), event.getScreenY());
+                event.consume();
+            };
+            row.setOnContextMenuRequested(eventHandler);
+            return row;
+        });
+    }
+
+    private MFXContextMenu showContextMenu(MFXTableRow<QuotationDetail> obj) {
+        MFXContextMenu contextMenu = new MFXContextMenu(quotationProductsTable);
+        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
+        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+
+        // Actions
+        // Delete
+        delete.setOnAction(e -> {
+            QuotationDetailViewModel.getItem(obj.getData().getId());
+            try {
+                if (Integer.parseInt(quotationDetailID.getText()) > 0)
+                    QuotationDetailDao.deleteQuotationDetail(Integer.parseInt(quotationDetailID.getText()));
+            } catch (NumberFormatException ignored) {
+                QuotationDetailViewModel.removeQuotationDetail(QuotationDetailViewModel.quotationDetailsTempList.indexOf(obj.getData()));
+            }
+            QuotationDetailViewModel.getQuotationDetails();
+            e.consume();
+        });
+        // Edit
+        edit.setOnAction(e -> {
+            QuotationDetailViewModel.getItem(obj.getData().getId());
+            dialog.showAndWait();
+            e.consume();
+        });
+
+        contextMenu.addItems(edit, delete);
+
+        return contextMenu;
     }
 
     private void quotationProductDialogPane(Stage stage) throws IOException {
-        DialogPane dialogPane = fxmlLoader("forms/QuotationProductsForm.fxml").load();
+        DialogPane dialogPane = fxmlLoader("forms/QuotationDetailForm.fxml").load();
         dialog = new Dialog<>();
         dialog.setDialogPane(dialogPane);
         dialog.initOwner(stage);
