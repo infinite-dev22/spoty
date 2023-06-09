@@ -58,7 +58,7 @@ public class RequisitionController implements Initializable {
         MFXTableColumn<RequisitionMaster> requisitionShippingMethod = new MFXTableColumn<>("Shipping Method", false, Comparator.comparing(RequisitionMaster::getShipMethod));
 //        MFXTableColumn<RequisitionMaster> requisitionTotalProducts = new MFXTableColumn<>("Total Products", false, Comparator.comparing(RequisitionMaster::getRequisitionMasterTotalProducts));
 
-        requisitionDate.setRowCellFactory(requisition -> new MFXTableRowCell<>(RequisitionMaster::getDate));
+        requisitionDate.setRowCellFactory(requisition -> new MFXTableRowCell<>(RequisitionMaster::getLocaleDate));
         requisitionReference.setRowCellFactory(requisition -> new MFXTableRowCell<>(RequisitionMaster::getRef));
         requisitionBranch.setRowCellFactory(requisition -> new MFXTableRowCell<>(RequisitionMaster::getBranchName));
         requisitionSupplier.setRowCellFactory(requisition -> new MFXTableRowCell<>(RequisitionMaster::getSupplierName));
