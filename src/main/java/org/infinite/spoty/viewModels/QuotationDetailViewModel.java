@@ -23,9 +23,7 @@ public class QuotationDetailViewModel {
     private static final StringProperty discount = new SimpleStringProperty();
 
     public static int getId() {
-        return Integer.parseInt(id.get()
-                .substring(id.get().lastIndexOf(':') + 1,
-                        id.get().indexOf(';')));
+        return Integer.parseInt(id.get());
     }
 
     public static void setId(String id) {

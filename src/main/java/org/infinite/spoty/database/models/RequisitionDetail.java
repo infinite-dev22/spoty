@@ -29,7 +29,7 @@ public class RequisitionDetail implements Serializable {
     }
 
     public RequisitionDetail(ProductDetail productDetail,
-                             RequisitionMaster requisition,
+                             RequisitionMaster requisition, // TODO: Remove this line as it ain't good being here. can't get RequisitionMaster here. use setter.
                              int quantity,
                              String description) {
         this.productDetail = productDetail;
