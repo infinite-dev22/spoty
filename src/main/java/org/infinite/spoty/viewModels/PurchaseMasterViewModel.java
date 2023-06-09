@@ -119,4 +119,26 @@ public class PurchaseMasterViewModel {
         purchaseMasterList.addAll(PurchaseMasterDao.fetchPurchaseMasters());
         return purchaseMasterList;
     }
+
+    public static void getItem(int purchaseMasterID) {
+        PurchaseMaster purchaseMaster = PurchaseMasterDao.findPurchaseMaster(purchaseMasterID);
+        setId(purchaseMaster.getId());
+        setDate(purchaseMaster.getLocaleDate());
+        setSupplier(purchaseMaster.getSupplier());
+        setBranch(purchaseMaster.getBranch());
+        setStatus(purchaseMaster.getStatus());
+        setNote(purchaseMaster.getNotes());
+        PurchaseDetailViewModel.purchaseDetailTempList.addAll(purchaseMaster.getPurchaseDetails());
+        purchaseMaster.getPurchaseDetails().forEach(System.out::println);
+        getPurchaseMasters();
+    }
+
+    public static void updateItem(int purchaseMasterID) {
+        PurchaseMaster purchaseMaster = new PurchaseMaster(getSupplier(), getBranch(), getStatus(), getNote(), getDate());
+        purchaseMaster.setPurchaseDetails(PurchaseDetailViewModel.purchaseDetailTempList);
+        PurchaseMasterDao.updatePurchaseMaster(purchaseMaster, purchaseMasterID);
+        resetProperties();
+        PurchaseDetailViewModel.purchaseDetailTempList.clear();
+        getPurchaseMasters();
+    }
 }
