@@ -10,7 +10,7 @@ import java.util.Date;
 public class PurchaseDetail implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private int id;
     private double cost;
     @ManyToOne
     @JoinColumn(name = "purchaseMaster_id")
@@ -32,8 +32,10 @@ public class PurchaseDetail implements Serializable {
     private Date updatedAt;
     @Column(name = "updated_by")
     private String updatedBy;
+
     public PurchaseDetail() {
     }
+
     public PurchaseDetail(PurchaseMaster purchase,
                           double cost,
                           double netTax,
@@ -56,11 +58,11 @@ public class PurchaseDetail implements Serializable {
         this.quantity = quantity;
     }
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -115,15 +117,16 @@ public class PurchaseDetail implements Serializable {
     public ProductDetail getProduct() {
         return product;
     }
+
+    public void setProduct(ProductDetail product) {
+        this.product = product;
+    }
+
     public String getProductName() {
         if (product != null)
             return product.getProduct().getName() + " " + product.getName();
         else
             return null;
-    }
-
-    public void setProduct(ProductDetail product) {
-        this.product = product;
     }
 
     public String getSerialNumber() {
