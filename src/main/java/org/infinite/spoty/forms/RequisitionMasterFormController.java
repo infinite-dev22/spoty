@@ -7,11 +7,13 @@ import io.github.palexdev.materialfx.filter.IntegerFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXElevatedButton;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -19,6 +21,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
+import javafx.util.converter.NumberStringConverter;
+import org.infinite.spoty.database.dao.RequisitionDetailDao;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.RequisitionDetail;
 import org.infinite.spoty.viewModels.BranchViewModel;
@@ -33,12 +37,14 @@ import java.util.ResourceBundle;
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 
 public class RequisitionMasterFormController implements Initializable {
+    public MFXTextField requisitionDetailID = new MFXTextField();
+    public MFXTextField requisitionMasterID = new MFXTextField();
     @FXML
     public MFXFilterComboBox<Branch> requisitionMasterBranchId;
     @FXML
     public MFXDatePicker requisitionMasterDate;
     @FXML
-    public MFXTableView<RequisitionDetail> requisitionMasterProductsTable;
+    public MFXTableView<RequisitionDetail> requisitionDetailTable;
     @FXML
     public MFXTextField requisitionMasterNote;
     @FXML
@@ -61,9 +67,11 @@ public class RequisitionMasterFormController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // Input listeners.
         requisitionMasterBranchId.textProperty().addListener((observable, oldValue, newValue) -> requisitionMasterBranchId.setTrailingIcon(null));
         requisitionMasterDate.textProperty().addListener((observable, oldValue, newValue) -> requisitionMasterDate.setTrailingIcon(null));
-
+        // Input binding.
+        requisitionMasterID.textProperty().bindBidirectional(RequisitionMasterViewModel.idProperty(), new NumberStringConverter());
         requisitionMasterBranchId.valueProperty().bindBidirectional(RequisitionMasterViewModel.branchProperty());
         requisitionMasterBranchId.setItems(BranchViewModel.branchesList);
         requisitionMasterBranchId.setConverter(new StringConverter<>() {
@@ -82,7 +90,6 @@ public class RequisitionMasterFormController implements Initializable {
         });
         requisitionMasterDate.textProperty().bindBidirectional(RequisitionMasterViewModel.dateProperty());
         requisitionMasterNote.textProperty().bindBidirectional(RequisitionMasterViewModel.noteProperty());
-
         requisitionMasterAddProductBtnClicked();
         Platform.runLater(this::setupTable);
     }
@@ -96,24 +103,64 @@ public class RequisitionMasterFormController implements Initializable {
         productQuantity.setRowCellFactory(product -> new MFXTableRowCell<>(RequisitionDetail::getQuantity));
 //        requisitionMasterType.setRowCellFactory(product -> new MFXTableRowCell<>(RequisitionDetail::getRequisitionType));
 
-        productName.prefWidthProperty().bind(requisitionMasterProductsTable.widthProperty().multiply(.4));
-        productQuantity.prefWidthProperty().bind(requisitionMasterProductsTable.widthProperty().multiply(.4));
+        productName.prefWidthProperty().bind(requisitionDetailTable.widthProperty().multiply(.4));
+        productQuantity.prefWidthProperty().bind(requisitionDetailTable.widthProperty().multiply(.4));
 //        requisitionMasterType.prefWidthProperty().bind(requisitionMasterProductsTable.widthProperty().multiply(.4));
 
-        requisitionMasterProductsTable.getTableColumns().addAll(productName, productQuantity); // , requisitionMasterType);
-        requisitionMasterProductsTable.getFilters().addAll(
+        requisitionDetailTable.getTableColumns().addAll(productName, productQuantity); // , requisitionMasterType);
+        requisitionDetailTable.getFilters().addAll(
                 new StringFilter<>("Name", RequisitionDetail::getProductDetailName),
                 new IntegerFilter<>("Quantity", RequisitionDetail::getQuantity)
 //                new StringFilter<>("Category", RequisitionDetail::getRequisitionType)
         );
         getRequisitionDetailTable();
-        requisitionMasterProductsTable.setItems(RequisitionDetailViewModel.requisitionDetailsTempList);
+        requisitionDetailTable.setItems(RequisitionDetailViewModel.requisitionDetailsTempList);
     }
 
     private void getRequisitionDetailTable() {
-        requisitionMasterProductsTable.setPrefSize(1000, 1000);
-        requisitionMasterProductsTable.features().enableBounceEffect();
-        requisitionMasterProductsTable.features().enableSmoothScrolling(0.5);
+        requisitionDetailTable.setPrefSize(1000, 1000);
+        requisitionDetailTable.features().enableBounceEffect();
+        requisitionDetailTable.features().enableSmoothScrolling(0.5);
+
+        requisitionDetailTable.setTableRowFactory(t -> {
+            MFXTableRow<RequisitionDetail> row = new MFXTableRow<>(requisitionDetailTable, t);
+            EventHandler<ContextMenuEvent> eventHandler = event -> {
+                showContextMenu((MFXTableRow<RequisitionDetail>) event.getSource()).show(requisitionDetailTable.getParent(), event.getScreenX(), event.getScreenY());
+                event.consume();
+            };
+            row.setOnContextMenuRequested(eventHandler);
+            return row;
+        });
+    }
+
+    private MFXContextMenu showContextMenu(MFXTableRow<RequisitionDetail> obj) {
+        MFXContextMenu contextMenu = new MFXContextMenu(requisitionDetailTable);
+        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
+        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+
+        // Actions
+        // Delete
+        delete.setOnAction(e -> {
+            RequisitionDetailViewModel.getItem(obj.getData(), RequisitionDetailViewModel.requisitionDetailsTempList.indexOf(obj.getData()));
+            try {
+                if (Integer.parseInt(requisitionDetailID.getText()) > 0)
+                    RequisitionDetailDao.deleteRequisitionDetail(Integer.parseInt(requisitionDetailID.getText()));
+            } catch (NumberFormatException ignored) {
+                RequisitionDetailViewModel.removeRequisitionDetail(RequisitionDetailViewModel.requisitionDetailsTempList.indexOf(obj.getData()));
+            }
+            RequisitionDetailViewModel.getRequisitionDetails();
+            e.consume();
+        });
+        // Edit
+        edit.setOnAction(e -> {
+            RequisitionDetailViewModel.getItem(obj.getData(), RequisitionDetailViewModel.requisitionDetailsTempList.indexOf(obj.getData()));
+            dialog.showAndWait();
+            e.consume();
+        });
+
+        contextMenu.addItems(edit, delete);
+
+        return contextMenu;
     }
 
     private void requisitionMasterAddProductBtnClicked() {
@@ -138,12 +185,18 @@ public class RequisitionMasterFormController implements Initializable {
         if (requisitionMasterDate.getText().length() == 0) {
             requisitionMasterDate.setTrailingIcon(icon);
         }
-        if (requisitionMasterProductsTable.getTableColumns().isEmpty()) {
+        if (requisitionDetailTable.getTableColumns().isEmpty()) {
             // Notify table can't be empty
             System.out.println("Table can't be empty");
         }
-        if (requisitionMasterBranchId.getText().length() > 0 && requisitionMasterDate.getText().length() > 0 && !requisitionMasterProductsTable.getTableColumns().isEmpty()) {
-            RequisitionMasterViewModel.saveRequisitionMaster();
+        if (requisitionMasterBranchId.getText().length() > 0
+                && requisitionMasterDate.getText().length() > 0
+                && !requisitionDetailTable.getTableColumns().isEmpty()) {
+            if (Integer.parseInt(requisitionMasterID.getText()) > 0) {
+                RequisitionMasterViewModel.updateItem(Integer.parseInt(requisitionMasterID.getText()));
+                requisitionMasterCancelBtnClicked();
+            } else
+                RequisitionMasterViewModel.saveRequisitionMaster();
             RequisitionMasterViewModel.resetProperties();
             RequisitionDetailViewModel.requisitionDetailsTempList.clear();
         }
