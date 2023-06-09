@@ -2,7 +2,9 @@ package org.infinite.spoty.database.models;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.text.DateFormat;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import static org.infinite.spoty.GlobalActions.fineDate;
@@ -11,7 +13,7 @@ import static org.infinite.spoty.GlobalActions.fineDate;
 public class RequisitionMaster implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private int id;
     private String ref;
     private Date date;
     @ManyToOne
@@ -21,7 +23,7 @@ public class RequisitionMaster implements Serializable {
     @ManyToOne
     private Branch branch;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "requisition")
-    private List<RequisitionDetail> requisitionDetails;
+    private List<RequisitionDetail> requisitionDetails = new LinkedList<>();
     private String shipVia;
     private String shipMethod;
     private String shippingTerms;
@@ -51,7 +53,6 @@ public class RequisitionMaster implements Serializable {
                              String notes,
                              String status,
                              double totalCost) {
-        this.ref = ref;
         this.date = date;
         this.supplier = supplier;
         this.branch = branch;
@@ -64,11 +65,11 @@ public class RequisitionMaster implements Serializable {
         this.totalCost = totalCost;
     }
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -199,6 +200,10 @@ public class RequisitionMaster implements Serializable {
         return deliveryDate;
     }
 
+    public String getDeliveryLocaleDate() {
+        return DateFormat.getDateInstance().format(deliveryDate);
+    }
+
     public void setDeliveryDate(Date deliveryDate) {
         this.deliveryDate = deliveryDate;
     }
@@ -221,5 +226,9 @@ public class RequisitionMaster implements Serializable {
 
     public void setTotalCost(double totalCost) {
         this.totalCost = totalCost;
+    }
+
+    public String getLocaleDate() {
+        return DateFormat.getDateInstance().format(date);
     }
 }
