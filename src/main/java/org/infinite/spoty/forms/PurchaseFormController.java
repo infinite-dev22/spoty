@@ -25,7 +25,7 @@ import org.infinite.spoty.database.models.PurchaseDetail;
 import org.infinite.spoty.database.models.Supplier;
 import org.infinite.spoty.values.strings.Values;
 import org.infinite.spoty.viewModels.BranchViewModel;
-import org.infinite.spoty.viewModels.PurchaseDetailsViewModel;
+import org.infinite.spoty.viewModels.PurchaseDetailViewModel;
 import org.infinite.spoty.viewModels.PurchaseMasterViewModel;
 import org.infinite.spoty.viewModels.SupplierViewModel;
 
@@ -180,7 +180,7 @@ public class PurchaseFormController implements Initializable {
         );
         styleTable();
         // Populate table.
-        purchaseProductsTable.setItems(PurchaseDetailsViewModel.purchaseTempList);
+        purchaseProductsTable.setItems(PurchaseDetailViewModel.purchaseDetailTempList);
     }
 
     private void styleTable() {

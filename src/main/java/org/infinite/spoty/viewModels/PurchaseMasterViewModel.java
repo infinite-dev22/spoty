@@ -108,7 +108,7 @@ public class PurchaseMasterViewModel {
 
     public static void savePurchaseMaster() {
         PurchaseMaster purchaseMaster = new PurchaseMaster(getSupplier(), getBranch(), getStatus(), getNote(), getDate());
-        purchaseMaster.setPurchaseDetails(PurchaseDetailsViewModel.purchaseTempList);
+        purchaseMaster.setPurchaseDetails(PurchaseDetailViewModel.purchaseDetailTempList);
         PurchaseMasterDao.savePurchaseMaster(purchaseMaster);
         resetProperties();
         getPurchaseMasters();
