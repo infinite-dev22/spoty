@@ -96,14 +96,9 @@ public class QuotationDetailFormController implements Initializable {
 //                    && quotationProductsPdct.getText().length() > 0
                     && quotationProductsOrderTax.getText().length() > 0
                     && quotationProductsDiscount.getText().length() > 0) {
-                if (!quotationDetailID.getText().isEmpty()) {
-                    try {
-                        if (Integer.parseInt(quotationDetailID.getText()) > 0)
-                            QuotationDetailViewModel.updateItem(Integer.parseInt(quotationDetailID.getText()));
-                    } catch (NumberFormatException ignored) {
-                        QuotationDetailViewModel.updateQuotationDetail();
-                    }
-                } else
+                if (!quotationDetailID.getText().isEmpty() && Integer.parseInt(quotationDetailID.getText()) > 0)
+                    QuotationDetailViewModel.updateQuotationDetail();
+                else
                     QuotationDetailViewModel.addQuotationDetails();
                 QuotationDetailViewModel.resetProperties();
                 closeDialog(e);
