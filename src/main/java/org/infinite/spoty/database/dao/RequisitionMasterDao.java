@@ -26,12 +26,12 @@ public class RequisitionMasterDao {
         }
     }
 
-    public static int updateRequisitionMaster(RequisitionMaster obj, long id) {
+    public static void updateRequisitionMaster(RequisitionMaster obj, int id) {
         Transaction transaction = null;
         RequisitionMaster requisitionMaster;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            requisitionMaster = session.load(RequisitionMaster.class, id);
+            requisitionMaster = session.get(RequisitionMaster.class, id);
             requisitionMaster.setDate(obj.getDate());
             requisitionMaster.setSupplier(obj.getSupplier());
             requisitionMaster.setUser(obj.getUser());
@@ -52,15 +52,14 @@ public class RequisitionMasterDao {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
-    public static RequisitionMaster findRequisitionMaster(long id) {
+    public static RequisitionMaster findRequisitionMaster(int id) {
         Transaction transaction = null;
         RequisitionMaster requisitionMaster;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            requisitionMaster = session.load(RequisitionMaster.class, id);
+            requisitionMaster = session.get(RequisitionMaster.class, id);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -82,16 +81,16 @@ public class RequisitionMasterDao {
         }
         return requisitionMasters;
     }
-    public static int deleteRequisitionMaster(long id) {
+
+    public static void deleteRequisitionMaster(int id) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.delete(session.load(RequisitionMaster.class, id));
+            session.delete(session.get(RequisitionMaster.class, id));
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 }
