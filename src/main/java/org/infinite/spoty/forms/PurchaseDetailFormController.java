@@ -12,7 +12,7 @@ import javafx.scene.paint.Color;
 import javafx.util.StringConverter;
 import org.infinite.spoty.database.models.ProductDetail;
 import org.infinite.spoty.viewModels.ProductDetailViewModel;
-import org.infinite.spoty.viewModels.PurchaseDetailsViewModel;
+import org.infinite.spoty.viewModels.PurchaseDetailViewModel;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -20,6 +20,7 @@ import java.util.ResourceBundle;
 import static org.infinite.spoty.GlobalActions.closeDialog;
 
 public class PurchaseDetailFormController implements Initializable {
+    public MFXTextField purchaseDetailID = new MFXTextField();
     @FXML
     public MFXTextField purchaseDetailQnty;
     @FXML
@@ -37,15 +38,16 @@ public class PurchaseDetailFormController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        purchaseDetailQnty.textProperty().addListener((observable, oldValue, newValue) -> purchaseDetailQnty.setTrailingIcon(null));
-        purchaseDetail.textProperty().addListener((observable, oldValue, newValue) -> purchaseDetail.setLeadingIcon(null));
-        purchaseDetailOrderTax.textProperty().addListener((observable, oldValue, newValue) -> purchaseDetailOrderTax.setLeadingIcon(null));
-        purchaseDetailDiscount.textProperty().addListener((observable, oldValue, newValue) -> purchaseDetailDiscount.setLeadingIcon(null));
+//        purchaseDetailQnty.textProperty().addListener((observable, oldValue, newValue) -> purchaseDetailQnty.setTrailingIcon(null));
+//        purchaseDetail.textProperty().addListener((observable, oldValue, newValue) -> purchaseDetail.setLeadingIcon(null));
+//        purchaseDetailOrderTax.textProperty().addListener((observable, oldValue, newValue) -> purchaseDetailOrderTax.setLeadingIcon(null));
+//        purchaseDetailDiscount.textProperty().addListener((observable, oldValue, newValue) -> purchaseDetailDiscount.setLeadingIcon(null));
 
-        purchaseDetailQnty.textProperty().bindBidirectional(PurchaseDetailsViewModel.quantityProperty());
-        purchaseDetail.valueProperty().bindBidirectional(PurchaseDetailsViewModel.productProperty());
-        purchaseDetailOrderTax.textProperty().bindBidirectional(PurchaseDetailsViewModel.netTaxProperty());
-        purchaseDetailDiscount.textProperty().bindBidirectional(PurchaseDetailsViewModel.discountProperty());
+        purchaseDetailID.textProperty().bindBidirectional(PurchaseDetailViewModel.idProperty());
+        purchaseDetailQnty.textProperty().bindBidirectional(PurchaseDetailViewModel.quantityProperty());
+        purchaseDetail.valueProperty().bindBidirectional(PurchaseDetailViewModel.productProperty());
+        purchaseDetailOrderTax.textProperty().bindBidirectional(PurchaseDetailViewModel.netTaxProperty());
+        purchaseDetailDiscount.textProperty().bindBidirectional(PurchaseDetailViewModel.discountProperty());
         purchaseDetail.setItems(ProductDetailViewModel.purchaseDetailsList);
         purchaseDetail.setConverter(new StringConverter<>() {
             @Override
@@ -69,7 +71,7 @@ public class PurchaseDetailFormController implements Initializable {
     private void dialogOnActions() {
         purchaseDetailCancelBtn.setOnAction((e) -> {
             closeDialog(e);
-            PurchaseDetailsViewModel.resetProperties();
+            PurchaseDetailViewModel.resetProperties();
             purchaseDetailQnty.setTrailingIcon(null);
             purchaseDetail.setLeadingIcon(null);
             purchaseDetailOrderTax.setLeadingIcon(null);
@@ -94,8 +96,17 @@ public class PurchaseDetailFormController implements Initializable {
                     && purchaseDetail.getText().length() > 0
                     && purchaseDetailOrderTax.getText().length() > 0
                     && purchaseDetailDiscount.getText().length() > 0) {
-                PurchaseDetailsViewModel.addPurchaseDetail();
-                PurchaseDetailsViewModel.resetProperties();
+                if (!purchaseDetailID.getText().isEmpty()) {
+                    try {
+                        if (Integer.parseInt(purchaseDetailID.getText()) > 0)
+                            PurchaseDetailViewModel.updateItem(Integer.parseInt(purchaseDetailID.getText()));
+                    } catch (NumberFormatException ignored) {
+                        PurchaseDetailViewModel.updatePurchaseDetail(Integer.parseInt(purchaseDetailID.getText()
+                                .substring(purchaseDetailID.getText().lastIndexOf(':') + 1,
+                                        purchaseDetailID.getText().indexOf(';'))));
+                    }
+                } else PurchaseDetailViewModel.addPurchaseDetail();
+                PurchaseDetailViewModel.resetProperties();
                 closeDialog(e);
             }
         });
