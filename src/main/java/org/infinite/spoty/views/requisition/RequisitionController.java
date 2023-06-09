@@ -1,20 +1,20 @@
 package org.infinite.spoty.views.requisition;
 
-import io.github.palexdev.materialfx.controls.MFXButton;
-import io.github.palexdev.materialfx.controls.MFXTableColumn;
-import io.github.palexdev.materialfx.controls.MFXTableView;
-import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import org.infinite.spoty.database.dao.RequisitionMasterDao;
 import org.infinite.spoty.database.models.RequisitionMaster;
 import org.infinite.spoty.forms.RequisitionMasterFormController;
 import org.infinite.spoty.viewModels.RequisitionMasterViewModel;
@@ -35,7 +35,7 @@ public class RequisitionController implements Initializable {
     @FXML
     public MFXButton requisitionImportBtn;
     @FXML
-    public MFXTableView<RequisitionMaster> requisitionsTable;
+    public MFXTableView<RequisitionMaster> requisitionMasterTable;
     @FXML
     public BorderPane requisitionContentPane;
 
@@ -66,23 +66,23 @@ public class RequisitionController implements Initializable {
         requisitionStatus.setRowCellFactory(requisition -> new MFXTableRowCell<>(RequisitionMaster::getStatus));
         requisitionShippingMethod.setRowCellFactory(requisition -> new MFXTableRowCell<>(RequisitionMaster::getShipMethod));
 
-        requisitionDate.prefWidthProperty().bind(requisitionsTable.widthProperty().multiply(.15));
-        requisitionReference.prefWidthProperty().bind(requisitionsTable.widthProperty().multiply(.15));
-        requisitionBranch.prefWidthProperty().bind(requisitionsTable.widthProperty().multiply(.15));
-        requisitionSupplier.prefWidthProperty().bind(requisitionsTable.widthProperty().multiply(.15));
-        requisitionDelivery.prefWidthProperty().bind(requisitionsTable.widthProperty().multiply(.15));
-        requisitionStatus.prefWidthProperty().bind(requisitionsTable.widthProperty().multiply(.15));
-        requisitionShippingMethod.prefWidthProperty().bind(requisitionsTable.widthProperty().multiply(.15));
+        requisitionDate.prefWidthProperty().bind(requisitionMasterTable.widthProperty().multiply(.15));
+        requisitionReference.prefWidthProperty().bind(requisitionMasterTable.widthProperty().multiply(.15));
+        requisitionBranch.prefWidthProperty().bind(requisitionMasterTable.widthProperty().multiply(.15));
+        requisitionSupplier.prefWidthProperty().bind(requisitionMasterTable.widthProperty().multiply(.15));
+        requisitionDelivery.prefWidthProperty().bind(requisitionMasterTable.widthProperty().multiply(.15));
+        requisitionStatus.prefWidthProperty().bind(requisitionMasterTable.widthProperty().multiply(.15));
+        requisitionShippingMethod.prefWidthProperty().bind(requisitionMasterTable.widthProperty().multiply(.15));
 //        requisitionTotalProducts.setRowCellFactory(requisition -> new MFXTableRowCell<>(RequisitionMaster::getRequisitionMasterTotalProducts));
 
-        requisitionsTable.getTableColumns().addAll(requisitionDate,
+        requisitionMasterTable.getTableColumns().addAll(requisitionDate,
                 requisitionReference,
                 requisitionBranch,
                 requisitionSupplier,
                 requisitionDelivery,
                 requisitionStatus,
                 requisitionShippingMethod); //, requisitionTotalProducts);
-        requisitionsTable.getFilters().addAll(
+        requisitionMasterTable.getFilters().addAll(
                 new StringFilter<>("Reference", RequisitionMaster::getRef),
                 new StringFilter<>("Branch", RequisitionMaster::getBranchName),
                 new StringFilter<>("Supplier", RequisitionMaster::getSupplierName),
@@ -92,13 +92,47 @@ public class RequisitionController implements Initializable {
 //                new DoubleFilter<>("Total Products", RequisitionMaster::getRequisitionMasterTotalProducts)
         );
         getRequisitionMasterTable();
-        requisitionsTable.setItems(RequisitionMasterViewModel.getRequisitionMasters());
+        requisitionMasterTable.setItems(RequisitionMasterViewModel.getRequisitionMasters());
     }
 
     private void getRequisitionMasterTable() {
-        requisitionsTable.setPrefSize(1000, 1000);
-        requisitionsTable.features().enableBounceEffect();
-        requisitionsTable.features().enableSmoothScrolling(0.5);
+        requisitionMasterTable.setPrefSize(1000, 1000);
+        requisitionMasterTable.features().enableBounceEffect();
+        requisitionMasterTable.features().enableSmoothScrolling(0.5);
+
+        requisitionMasterTable.setTableRowFactory(t -> {
+            MFXTableRow<RequisitionMaster> row = new MFXTableRow<>(requisitionMasterTable, t);
+            EventHandler<ContextMenuEvent> eventHandler = event -> {
+                showContextMenu((MFXTableRow<RequisitionMaster>) event.getSource()).show(requisitionMasterTable.getParent(), event.getScreenX(), event.getScreenY());
+                event.consume();
+            };
+            row.setOnContextMenuRequested(eventHandler);
+            return row;
+        });
+    }
+
+    private MFXContextMenu showContextMenu(MFXTableRow<RequisitionMaster> obj) {
+        MFXContextMenu contextMenu = new MFXContextMenu(requisitionMasterTable);
+        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
+        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+
+        // Actions
+        // Delete
+        delete.setOnAction(e -> {
+            RequisitionMasterDao.deleteRequisitionMaster(obj.getData().getId());
+            RequisitionMasterViewModel.getRequisitionMasters();
+            e.consume();
+        });
+        // Edit
+        edit.setOnAction(e -> {
+            RequisitionMasterViewModel.getItem(obj.getData().getId());
+            requisitionCreateBtnClicked();
+            e.consume();
+        });
+
+        contextMenu.addItems(edit, delete);
+
+        return contextMenu;
     }
 
     public void requisitionCreateBtnClicked() {
