@@ -11,7 +11,7 @@ import org.infinite.spoty.database.util.HibernateUtil;
 import java.util.Date;
 
 public class RequisitionDetailDao {
-    public static int saveRequisitionDetail(RequisitionDetail obj) {
+    public static void saveRequisitionDetail(RequisitionDetail obj) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
@@ -24,15 +24,14 @@ public class RequisitionDetailDao {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
-    public static int updateRequisitionDetail(RequisitionDetail obj, long id) {
+    public static void updateRequisitionDetail(RequisitionDetail obj, int id) {
         Transaction transaction = null;
         RequisitionDetail requisitionDetail;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            requisitionDetail = session.load(RequisitionDetail.class, id);
+            requisitionDetail = session.get(RequisitionDetail.class, id);
             requisitionDetail.setRequisition(obj.getRequisition());
             requisitionDetail.setProductDetail(obj.getProductDetail());
             requisitionDetail.setDescription(obj.getDescription());
@@ -46,15 +45,14 @@ public class RequisitionDetailDao {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
-    public static RequisitionDetail findRequisitionDetail(long id) {
+    public static RequisitionDetail findRequisitionDetail(int id) {
         Transaction transaction = null;
-        RequisitionDetail requisitionDetail = null;
+        RequisitionDetail requisitionDetail;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            requisitionDetail = session.load(RequisitionDetail.class, id);
+            requisitionDetail = session.get(RequisitionDetail.class, id);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -63,7 +61,7 @@ public class RequisitionDetailDao {
         return requisitionDetail;
     }
 
-    public static ObservableList<RequisitionDetail> getRequisitionDetail() {
+    public static ObservableList<RequisitionDetail> fetchRequisitionDetails() {
         Transaction transaction = null;
         ObservableList<RequisitionDetail> requisitionDetails = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
@@ -77,16 +75,15 @@ public class RequisitionDetailDao {
         return requisitionDetails;
     }
 
-    public static int deleteRequisitionDetail(long id) {
+    public static void deleteRequisitionDetail(int id) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.delete(session.load(RequisitionDetail.class, id));
+            session.delete(session.get(RequisitionDetail.class, id));
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 }
