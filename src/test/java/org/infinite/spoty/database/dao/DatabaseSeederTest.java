@@ -123,7 +123,7 @@ class DatabaseSeederTest {
     }
 
     @Test
-    @Order(7)
+    @Order(8)
     void quotationInsert() {
         try {
             var quotationDetail = new QuotationDetail(null, 6.54, 25, 29898);
@@ -147,7 +147,35 @@ class DatabaseSeederTest {
     }
 
     @Test
-    @Order(8)
+    @Order(9)
+    void requisitionInsert() {
+        try {
+            var requisitionMaster = new RequisitionMaster(new Date(), null, null, "TTF",
+                    "Air", "Secure", new Date(), "Confirmed", "Approved", 15647765.0843);
+            var requisitionDetail = new RequisitionDetail(null,
+                    requisitionMaster,
+                    13234,
+                    "This is a Test Product 1");
+            List<RequisitionDetail> list = new LinkedList<>();
+
+            requisitionDetail.setCreatedAt(new Date());
+            requisitionDetail.setCreatedBy("Tester One");
+            requisitionDetail.setRequisition(requisitionMaster);
+
+            list.add(requisitionDetail);
+
+            requisitionMaster.setRequisitionDetails(list);
+            requisitionMaster.setCreatedAt(new Date());
+            requisitionMaster.setCreatedBy("Tester One");
+
+            RequisitionMasterDao.saveRequisitionMaster(requisitionMaster);
+        } catch (Exception e) {
+            throw new AssertionError();
+        }
+    }
+
+    @Test
+    @Order(10)
     void branchInsert() {
         try {
             var branch = new Branch("Test Branch One",
