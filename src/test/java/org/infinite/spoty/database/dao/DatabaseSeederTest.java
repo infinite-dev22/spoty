@@ -188,4 +188,39 @@ class DatabaseSeederTest {
             throw new AssertionError();
         }
     }
+
+    @Test
+    @Order(11)
+    void purchaseInsert() {
+        try {
+            var purchaseMaster = new PurchaseMaster(null, null, "Confirmed",
+                    "Approved", new Date());
+
+            var purchaseDetail = new PurchaseDetail(purchaseMaster,
+                    13234,
+                    554,
+                    "VAT",
+                    20,
+                    "Customer",
+                    null,
+                    "",
+                    13788,
+                    1);
+            List<PurchaseDetail> list = new LinkedList<>();
+
+            purchaseDetail.setCreatedAt(new Date());
+            purchaseDetail.setCreatedBy("Tester One");
+            purchaseDetail.setPurchase(purchaseMaster);
+
+            list.add(purchaseDetail);
+
+            purchaseMaster.setPurchaseDetails(list);
+            purchaseMaster.setCreatedAt(new Date());
+            purchaseMaster.setCreatedBy("Tester One");
+
+            PurchaseMasterDao.savePurchaseMaster(purchaseMaster);
+        } catch (Exception e) {
+            throw new AssertionError();
+        }
+    }
 }
