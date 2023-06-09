@@ -37,7 +37,7 @@ import java.util.ResourceBundle;
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 import static org.infinite.spoty.dataShare.DataShare.getPurchaseProducts;
 
-public class PurchaseFormController implements Initializable {
+public class PurchaseMasterFormController implements Initializable {
     @FXML
     public Label purchaseFormTitle;
     @FXML
@@ -56,7 +56,7 @@ public class PurchaseFormController implements Initializable {
     public MFXFilterComboBox<String> purchaseStatus;
     private Dialog<ButtonType> dialog;
 
-    public PurchaseFormController(Stage stage) {
+    public PurchaseMasterFormController(Stage stage) {
         Platform.runLater(() -> {
             try {
                 createPurchaseProductDialog(stage);
