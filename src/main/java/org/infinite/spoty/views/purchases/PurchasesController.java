@@ -1,22 +1,23 @@
 package org.infinite.spoty.views.purchases;
 
-import io.github.palexdev.materialfx.controls.MFXButton;
-import io.github.palexdev.materialfx.controls.MFXTableColumn;
-import io.github.palexdev.materialfx.controls.MFXTableView;
-import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.filter.DoubleFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import org.infinite.spoty.forms.PurchaseFormController;
+import org.infinite.spoty.database.dao.PurchaseMasterDao;
 import org.infinite.spoty.database.models.PurchaseMaster;
+import org.infinite.spoty.forms.PurchaseMasterFormController;
+import org.infinite.spoty.viewModels.PurchaseMasterViewModel;
 
 import java.io.IOException;
 import java.net.URL;
@@ -37,7 +38,7 @@ public class PurchasesController implements Initializable {
     @FXML
     public BorderPane purchaseContentPane;
     @FXML
-    private MFXTableView<PurchaseMaster> purchaseTable;
+    private MFXTableView<PurchaseMaster> purchaseMasterTable;
 
     public PurchasesController(Stage stage) {
         this.stage = stage;
@@ -59,7 +60,7 @@ public class PurchasesController implements Initializable {
         MFXTableColumn<PurchaseMaster> purchaseMasterAmountDue = new MFXTableColumn<>("Due", false, Comparator.comparing(PurchaseMaster::getDue));
         MFXTableColumn<PurchaseMaster> purchaseMasterPaymentStatus = new MFXTableColumn<>("Pay Status", false, Comparator.comparing(PurchaseMaster::getPaymentStatus));
 
-        purchaseMasterDate.setRowCellFactory(purchaseMaster -> new MFXTableRowCell<>(PurchaseMaster::getDate));
+        purchaseMasterDate.setRowCellFactory(purchaseMaster -> new MFXTableRowCell<>(PurchaseMaster::getLocaleDate));
         purchaseMasterReference.setRowCellFactory(purchaseMaster -> new MFXTableRowCell<>(PurchaseMaster::getRef));
         purchaseMasterSupplier.setRowCellFactory(purchaseMaster -> new MFXTableRowCell<>(PurchaseMaster::getSupplierName));
         purchaseMasterBranch.setRowCellFactory(purchaseMaster -> new MFXTableRowCell<>(PurchaseMaster::getBranchName));
@@ -69,18 +70,18 @@ public class PurchasesController implements Initializable {
         purchaseMasterAmountDue.setRowCellFactory(purchaseMaster -> new MFXTableRowCell<>(PurchaseMaster::getDue));
         purchaseMasterPaymentStatus.setRowCellFactory(purchaseMaster -> new MFXTableRowCell<>(PurchaseMaster::getPaymentStatus));
 
-        purchaseMasterDate.prefWidthProperty().bind(purchaseTable.widthProperty().multiply(.1));
-        purchaseMasterReference.prefWidthProperty().bind(purchaseTable.widthProperty().multiply(.1));
-        purchaseMasterSupplier.prefWidthProperty().bind(purchaseTable.widthProperty().multiply(.15));
-        purchaseMasterBranch.prefWidthProperty().bind(purchaseTable.widthProperty().multiply(.15));
-        purchaseMasterStatus.prefWidthProperty().bind(purchaseTable.widthProperty().multiply(.1));
-        purchaseMasterGrandTotal.prefWidthProperty().bind(purchaseTable.widthProperty().multiply(.1));
-        purchaseMasterAmountPaid.prefWidthProperty().bind(purchaseTable.widthProperty().multiply(.1));
-        purchaseMasterAmountDue.prefWidthProperty().bind(purchaseTable.widthProperty().multiply(.1));
-        purchaseMasterPaymentStatus.prefWidthProperty().bind(purchaseTable.widthProperty().multiply(.1));
+        purchaseMasterDate.prefWidthProperty().bind(purchaseMasterTable.widthProperty().multiply(.1));
+        purchaseMasterReference.prefWidthProperty().bind(purchaseMasterTable.widthProperty().multiply(.1));
+        purchaseMasterSupplier.prefWidthProperty().bind(purchaseMasterTable.widthProperty().multiply(.15));
+        purchaseMasterBranch.prefWidthProperty().bind(purchaseMasterTable.widthProperty().multiply(.15));
+        purchaseMasterStatus.prefWidthProperty().bind(purchaseMasterTable.widthProperty().multiply(.1));
+        purchaseMasterGrandTotal.prefWidthProperty().bind(purchaseMasterTable.widthProperty().multiply(.1));
+        purchaseMasterAmountPaid.prefWidthProperty().bind(purchaseMasterTable.widthProperty().multiply(.1));
+        purchaseMasterAmountDue.prefWidthProperty().bind(purchaseMasterTable.widthProperty().multiply(.1));
+        purchaseMasterPaymentStatus.prefWidthProperty().bind(purchaseMasterTable.widthProperty().multiply(.1));
 
-        purchaseTable.getTableColumns().addAll(purchaseMasterDate, purchaseMasterReference, purchaseMasterSupplier, purchaseMasterBranch, purchaseMasterStatus, purchaseMasterGrandTotal, purchaseMasterAmountPaid, purchaseMasterAmountDue, purchaseMasterPaymentStatus);
-        purchaseTable.getFilters().addAll(
+        purchaseMasterTable.getTableColumns().addAll(purchaseMasterDate, purchaseMasterReference, purchaseMasterSupplier, purchaseMasterBranch, purchaseMasterStatus, purchaseMasterGrandTotal, purchaseMasterAmountPaid, purchaseMasterAmountDue, purchaseMasterPaymentStatus);
+        purchaseMasterTable.getFilters().addAll(
                 new StringFilter<>("Reference", PurchaseMaster::getRef),
                 new StringFilter<>("Supplier", PurchaseMaster::getSupplierName),
                 new StringFilter<>("Branch", PurchaseMaster::getBranchName),
@@ -91,19 +92,52 @@ public class PurchasesController implements Initializable {
                 new StringFilter<>("Pay Status", PurchaseMaster::getPaymentStatus)
         );
         getTable();
-        purchaseTable.setItems(getPurchaseMasters());
+        purchaseMasterTable.setItems(getPurchaseMasters());
     }
 
     private void getTable() {
-        purchaseTable.setPrefSize(1200, 1000);
-        purchaseTable.features().enableBounceEffect();
-        purchaseTable.autosizeColumnsOnInitialization();
-        purchaseTable.features().enableSmoothScrolling(0.5);
+        purchaseMasterTable.setPrefSize(1200, 1000);
+        purchaseMasterTable.features().enableBounceEffect();
+        purchaseMasterTable.features().enableSmoothScrolling(0.5);
+
+        purchaseMasterTable.setTableRowFactory(t -> {
+            MFXTableRow<PurchaseMaster> row = new MFXTableRow<>(purchaseMasterTable, t);
+            EventHandler<ContextMenuEvent> eventHandler = event -> {
+                showContextMenu((MFXTableRow<PurchaseMaster>) event.getSource()).show(purchaseMasterTable.getParent(), event.getScreenX(), event.getScreenY());
+                event.consume();
+            };
+            row.setOnContextMenuRequested(eventHandler);
+            return row;
+        });
+    }
+
+    private MFXContextMenu showContextMenu(MFXTableRow<PurchaseMaster> obj) {
+        MFXContextMenu contextMenu = new MFXContextMenu(purchaseMasterTable);
+        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
+        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+
+        // Actions
+        // Delete
+        delete.setOnAction(e -> {
+            PurchaseMasterDao.deletePurchaseMaster(obj.getData().getId());
+            PurchaseMasterViewModel.getPurchaseMasters();
+            e.consume();
+        });
+        // Edit
+        edit.setOnAction(e -> {
+            PurchaseMasterViewModel.getItem(obj.getData().getId());
+            purchaseCreateBtnClicked();
+            e.consume();
+        });
+
+        contextMenu.addItems(edit, delete);
+
+        return contextMenu;
     }
 
     public void purchaseCreateBtnClicked() {
-        FXMLLoader loader = fxmlLoader("forms/PurchaseForm.fxml");
-        loader.setControllerFactory(c -> new PurchaseFormController(stage));
+        FXMLLoader loader = fxmlLoader("forms/PurchaseMasterForm.fxml");
+        loader.setControllerFactory(c -> new PurchaseMasterFormController(stage));
         try {
             BorderPane productFormPane = loader.load();
             ((StackPane) purchaseContentPane.getParent()).getChildren().add(productFormPane);
