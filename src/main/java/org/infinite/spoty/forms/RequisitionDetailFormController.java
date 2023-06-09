@@ -20,6 +20,7 @@ import java.util.ResourceBundle;
 import static org.infinite.spoty.GlobalActions.closeDialog;
 
 public class RequisitionDetailFormController implements Initializable {
+    public MFXTextField requisitionDetailID = new MFXTextField();
     @FXML
     public MFXTextField requisitionDetailQnty;
     @FXML
@@ -40,6 +41,7 @@ public class RequisitionDetailFormController implements Initializable {
         requisitionDetailQnty.textProperty().addListener((observable, oldValue, newValue) -> requisitionDetailQnty.setTrailingIcon(null));
         requisitionDetailDescription.textProperty().addListener((observable, oldValue, newValue) -> requisitionDetailDescription.setLeadingIcon(null));
         // Form input binding.
+        requisitionDetailID.textProperty().bindBidirectional(RequisitionDetailViewModel.idProperty());
         requisitionDetailPdct.valueProperty().bindBidirectional(RequisitionDetailViewModel.productProperty());
         requisitionDetailQnty.textProperty().bindBidirectional(RequisitionDetailViewModel.quantityProperty());
         requisitionDetailDescription.textProperty().bindBidirectional(RequisitionDetailViewModel.descriptionProperty());
@@ -84,7 +86,16 @@ public class RequisitionDetailFormController implements Initializable {
             if (requisitionDetailQnty.getText().length() > 0
                     && requisitionDetailPdct.getText().length() > 0
                     && requisitionDetailDescription.getText().length() > 0) {
-                RequisitionDetailViewModel.addRequisitionDetails();
+                if (!requisitionDetailID.getText().isEmpty()) {
+                    try {
+                        if (Integer.parseInt(requisitionDetailID.getText()) > 0)
+                            RequisitionDetailViewModel.updateItem(Integer.parseInt(requisitionDetailID.getText()));
+                    } catch (NumberFormatException ignored) {
+                        RequisitionDetailViewModel.updateRequisitionDetail(Integer.parseInt(requisitionDetailID.getText()
+                                .substring(requisitionDetailID.getText().lastIndexOf(':') + 1,
+                                        requisitionDetailID.getText().indexOf(';'))));
+                    }
+                } else RequisitionDetailViewModel.addRequisitionDetails();
                 RequisitionDetailViewModel.resetProperties();
                 closeDialog(e);
             }
