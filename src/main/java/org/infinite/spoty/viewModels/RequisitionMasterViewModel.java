@@ -204,4 +204,38 @@ public class RequisitionMasterViewModel {
         return requisitionMasterList;
     }
 
+    public static void getItem(int requisitionMasterID) {
+        RequisitionMaster requisitionMaster = RequisitionMasterDao.findRequisitionMaster(requisitionMasterID);
+        setId(requisitionMaster.getId());
+        setSupplier(requisitionMaster.getSupplier());
+        setBranch(requisitionMaster.getBranch());
+        setShipVia(requisitionMaster.getShipVia());
+        setShipMethod(requisitionMaster.getShipMethod());
+        setDeliveryDate(requisitionMaster.getDeliveryLocaleDate());
+        setNote(requisitionMaster.getNotes());
+        setStatus(requisitionMaster.getStatus());
+        setTotalCost(String.valueOf(requisitionMaster.getTotalCost()));
+        setDate(requisitionMaster.getLocaleDate());
+        RequisitionDetailViewModel.requisitionDetailsTempList.addAll(requisitionMaster.getRequisitionDetails());
+        requisitionMaster.getRequisitionDetails().forEach(System.out::println);
+        getRequisitionMasters();
+    }
+
+    public static void updateItem(int requisitionMasterID) {
+        RequisitionMaster requisitionMaster = new RequisitionMaster(getDate(),
+                getSupplier(),
+                getBranch(),
+                getShipVia(),
+                getShipMethod(),
+                getShippingTerms(),
+                getDeliveryDate(),
+                getNote(),
+                getStatus(),
+                getTotalCost());
+        requisitionMaster.setRequisitionDetails(RequisitionDetailViewModel.requisitionDetailsTempList);
+        RequisitionMasterDao.updateRequisitionMaster(requisitionMaster, requisitionMasterID);
+        resetProperties();
+        RequisitionDetailViewModel.requisitionDetailsTempList.clear();
+        getRequisitionMasters();
+    }
 }
