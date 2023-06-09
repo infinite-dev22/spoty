@@ -11,7 +11,7 @@ import org.infinite.spoty.database.util.HibernateUtil;
 import java.util.Date;
 
 public class PurchaseDetailDao {
-    public static int savePurchaseDetail(PurchaseDetail obj) {
+    public static void savePurchaseDetail(PurchaseDetail obj) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
@@ -24,15 +24,14 @@ public class PurchaseDetailDao {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
-    public static int updatePurchaseDetail(PurchaseDetail obj, long id) {
+    public static void updatePurchaseDetail(PurchaseDetail obj, int id) {
         Transaction transaction = null;
         PurchaseDetail purchaseDetail;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            purchaseDetail = session.load(PurchaseDetail.class, id);
+            purchaseDetail = session.get(PurchaseDetail.class, id);
             purchaseDetail.setCost(obj.getCost());
             purchaseDetail.setPurchase(obj.getPurchase());
             purchaseDetail.setNetTax(obj.getNetTax());
@@ -52,15 +51,14 @@ public class PurchaseDetailDao {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
-    public static PurchaseDetail findPurchaseDetail(long id) {
+    public static PurchaseDetail findPurchaseDetail(int id) {
         Transaction transaction = null;
         PurchaseDetail purchaseDetail;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            purchaseDetail = session.load(PurchaseDetail.class, id);
+            purchaseDetail = session.get(PurchaseDetail.class, id);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -82,16 +80,16 @@ public class PurchaseDetailDao {
         }
         return purchaseCategories;
     }
-    public static int deletePurchaseDetail(long id) {
+
+    public static void deletePurchaseDetail(int id) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.delete(session.load(PurchaseDetail.class, id));
+            session.delete(session.get(PurchaseDetail.class, id));
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 }
