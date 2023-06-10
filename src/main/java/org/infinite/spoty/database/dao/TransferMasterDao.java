@@ -38,7 +38,7 @@ public class TransferMasterDao {
             transferMaster.setDate(obj.getDate());
             transferMaster.setFromBranch(obj.getFromBranch());
             transferMaster.setToBranch(obj.getToBranch());
-            transferMaster.setTransferDetails(obj.getTransferDetails());
+//            transferMaster.setTransferDetails(obj.getTransferDetails());
             transferMaster.setShipping(obj.getShipping());
             transferMaster.setTotal(obj.getTotal());
             transferMaster.setStatus(obj.getStatus());

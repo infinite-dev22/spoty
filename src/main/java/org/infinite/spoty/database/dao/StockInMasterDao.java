@@ -37,7 +37,7 @@ public class StockInMasterDao {
             stockInMaster.setRef(obj.getRef());
             stockInMaster.setDate(obj.getDate());
             stockInMaster.setBranch(obj.getBranch());
-            stockInMaster.setStockInDetails(obj.getStockInDetails());
+//            stockInMaster.setStockInDetails(obj.getStockInDetails());
             stockInMaster.setShipping(obj.getShipping());
             stockInMaster.setTotal(obj.getTotal());
             stockInMaster.setStatus(obj.getStatus());
