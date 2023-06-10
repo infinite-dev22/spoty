@@ -6,7 +6,6 @@ import javafx.collections.ObservableList;
 import org.infinite.spoty.database.dao.TransferMasterDao;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.TransferMaster;
-import org.infinite.spoty.database.models.Supplier;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -140,4 +139,31 @@ public class TransferMasterViewModel {
         return transferMasterList;
     }
 
+    public static void getItem(int transferMasterID) {
+        TransferMaster transferMaster = TransferMasterDao.findTransferMaster(transferMasterID);
+        setId(transferMaster.getId());
+        setDate(transferMaster.getLocaleDate());
+        setFromBranch(transferMaster.getFromBranch());
+        setToBranch(transferMaster.getToBranch());
+        setTotalCost(String.valueOf(transferMaster.getTotal()));
+        setNote(transferMaster.getNotes());
+        setStatus(transferMaster.getStatus());
+        TransferDetailViewModel.transferDetailsTempList.addAll(transferMaster.getTransferDetails());
+        transferMaster.getTransferDetails().forEach(System.out::println);
+        getTransferMasters();
+    }
+
+    public static void updateItem(int transferMasterID) {
+        TransferMaster transferMaster = new TransferMaster(getDate(),
+                getFromBranch(),
+                getToBranch(),
+                getTotalCost(),
+                getStatus(),
+                getNote());
+        transferMaster.setTransferDetails(TransferDetailViewModel.transferDetailsTempList);
+        TransferMasterDao.updateTransferMaster(transferMaster, transferMasterID);
+        resetProperties();
+        TransferDetailViewModel.transferDetailsTempList.clear();
+        getTransferMasters();
+    }
 }
