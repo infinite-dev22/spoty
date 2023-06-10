@@ -20,6 +20,7 @@ import java.util.ResourceBundle;
 import static org.infinite.spoty.GlobalActions.closeDialog;
 
 public class TransferDetailFormController implements Initializable {
+    public MFXTextField transferDetailID = new MFXTextField();
     @FXML
     public MFXTextField transferDetailQnty;
     @FXML
@@ -40,6 +41,7 @@ public class TransferDetailFormController implements Initializable {
         transferDetailQnty.textProperty().addListener((observable, oldValue, newValue) -> transferDetailQnty.setTrailingIcon(null));
         transferDetailDescription.textProperty().addListener((observable, oldValue, newValue) -> transferDetailDescription.setLeadingIcon(null));
         // Form input binding.
+        transferDetailID.textProperty().bindBidirectional(TransferDetailViewModel.idProperty());
         transferDetailPdct.valueProperty().bindBidirectional(TransferDetailViewModel.productProperty());
         transferDetailQnty.textProperty().bindBidirectional(TransferDetailViewModel.quantityProperty());
         transferDetailDescription.textProperty().bindBidirectional(TransferDetailViewModel.descriptionProperty());
@@ -84,7 +86,16 @@ public class TransferDetailFormController implements Initializable {
             if (transferDetailQnty.getText().length() > 0
                     && transferDetailPdct.getText().length() > 0
                     && transferDetailDescription.getText().length() > 0) {
-                TransferDetailViewModel.addTransferDetails();
+                if (!transferDetailID.getText().isEmpty()) {
+                    try {
+                        if (Integer.parseInt(transferDetailID.getText()) > 0)
+                            TransferDetailViewModel.updateItem(Integer.parseInt(transferDetailID.getText()));
+                    } catch (NumberFormatException ignored) {
+                        TransferDetailViewModel.updateTransferDetail(Integer.parseInt(transferDetailID.getText()
+                                .substring(transferDetailID.getText().lastIndexOf(':') + 1,
+                                        transferDetailID.getText().indexOf(';'))));
+                    }
+                } else TransferDetailViewModel.addTransferDetails();
                 TransferDetailViewModel.resetProperties();
                 closeDialog(e);
             }
