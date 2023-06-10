@@ -258,4 +258,36 @@ class DatabaseSeederTest {
             throw new AssertionError();
         }
     }
+
+    @Test
+    @Order(13)
+    void stockInInsert() {
+        try {
+            var stockInMaster = new StockInMaster(new Date(),
+                    null,
+                    "Pending",
+                    "Not Approved Yet.");
+
+            var stockInDetail = new StockInDetail(null,
+                    1,
+                    "",
+                    "Test Description",
+                    "Shelf A");
+            List<StockInDetail> list = new LinkedList<>();
+
+            stockInDetail.setCreatedAt(new Date());
+            stockInDetail.setCreatedBy("Tester One");
+            stockInDetail.setStockIn(stockInMaster);
+
+            list.add(stockInDetail);
+
+            stockInMaster.setStockInDetails(list);
+            stockInMaster.setCreatedAt(new Date());
+            stockInMaster.setCreatedBy("Tester One");
+
+            StockInMasterDao.saveStockInMaster(stockInMaster);
+        } catch (Exception e) {
+            throw new AssertionError();
+        }
+    }
 }
