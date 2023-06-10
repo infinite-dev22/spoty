@@ -1,21 +1,21 @@
 package org.infinite.spoty.views.stock_in;
 
-import io.github.palexdev.materialfx.controls.MFXButton;
-import io.github.palexdev.materialfx.controls.MFXTableColumn;
-import io.github.palexdev.materialfx.controls.MFXTableView;
-import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.filter.DoubleFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import org.infinite.spoty.database.dao.StockInMasterDao;
 import org.infinite.spoty.database.models.StockInMaster;
 import org.infinite.spoty.forms.StockInMasterFormController;
 import org.infinite.spoty.viewModels.StockInMasterViewModel;
@@ -27,6 +27,7 @@ import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 
+@SuppressWarnings("unchecked")
 public class StockInController implements Initializable {
     private final Stage stage;
     @FXML
@@ -36,7 +37,7 @@ public class StockInController implements Initializable {
     @FXML
     public MFXButton stockInImportBtn;
     @FXML
-    public MFXTableView<StockInMaster> stockInTable;
+    public MFXTableView<StockInMaster> stockInMasterTable;
     @FXML
     public BorderPane stockInContentPane;
 
@@ -50,43 +51,77 @@ public class StockInController implements Initializable {
     }
 
     private void setupTable() {
-        MFXTableColumn<StockInMaster> requisitionDate = new MFXTableColumn<>("Date", false, Comparator.comparing(StockInMaster::getDate));
-        MFXTableColumn<StockInMaster> requisitionReference = new MFXTableColumn<>("Reference", false, Comparator.comparing(StockInMaster::getRef));
-        MFXTableColumn<StockInMaster> requisitionBranch = new MFXTableColumn<>("Branch", false, Comparator.comparing(StockInMaster::getBranchName));
-        MFXTableColumn<StockInMaster> requisitionStatus = new MFXTableColumn<>("Status", false, Comparator.comparing(StockInMaster::getStatus));
-        MFXTableColumn<StockInMaster> requisitionTotalCost = new MFXTableColumn<>("Total Cost", false, Comparator.comparing(StockInMaster::getTotal));
+        MFXTableColumn<StockInMaster> stockInDate = new MFXTableColumn<>("Date", false, Comparator.comparing(StockInMaster::getDate));
+        MFXTableColumn<StockInMaster> stockInReference = new MFXTableColumn<>("Reference", false, Comparator.comparing(StockInMaster::getRef));
+        MFXTableColumn<StockInMaster> stockInBranch = new MFXTableColumn<>("Branch", false, Comparator.comparing(StockInMaster::getBranchName));
+        MFXTableColumn<StockInMaster> stockInStatus = new MFXTableColumn<>("Status", false, Comparator.comparing(StockInMaster::getStatus));
+        MFXTableColumn<StockInMaster> stockInTotalCost = new MFXTableColumn<>("Total Cost", false, Comparator.comparing(StockInMaster::getTotal));
 
-        requisitionDate.setRowCellFactory(requisition -> new MFXTableRowCell<>(StockInMaster::getDate));
-        requisitionReference.setRowCellFactory(requisition -> new MFXTableRowCell<>(StockInMaster::getRef));
-        requisitionBranch.setRowCellFactory(requisition -> new MFXTableRowCell<>(StockInMaster::getBranchName));
-        requisitionStatus.setRowCellFactory(requisition -> new MFXTableRowCell<>(StockInMaster::getStatus));
-        requisitionTotalCost.setRowCellFactory(requisition -> new MFXTableRowCell<>(StockInMaster::getTotal));
+        stockInDate.setRowCellFactory(stockIn -> new MFXTableRowCell<>(StockInMaster::getDate));
+        stockInReference.setRowCellFactory(stockIn -> new MFXTableRowCell<>(StockInMaster::getRef));
+        stockInBranch.setRowCellFactory(stockIn -> new MFXTableRowCell<>(StockInMaster::getBranchName));
+        stockInStatus.setRowCellFactory(stockIn -> new MFXTableRowCell<>(StockInMaster::getStatus));
+        stockInTotalCost.setRowCellFactory(stockIn -> new MFXTableRowCell<>(StockInMaster::getTotal));
 
-        requisitionDate.prefWidthProperty().bind(stockInTable.widthProperty().multiply(.2));
-        requisitionReference.prefWidthProperty().bind(stockInTable.widthProperty().multiply(.2));
-        requisitionBranch.prefWidthProperty().bind(stockInTable.widthProperty().multiply(.2));
-        requisitionStatus.prefWidthProperty().bind(stockInTable.widthProperty().multiply(.2));
-        requisitionTotalCost.prefWidthProperty().bind(stockInTable.widthProperty().multiply(.2));
+        stockInDate.prefWidthProperty().bind(stockInMasterTable.widthProperty().multiply(.2));
+        stockInReference.prefWidthProperty().bind(stockInMasterTable.widthProperty().multiply(.2));
+        stockInBranch.prefWidthProperty().bind(stockInMasterTable.widthProperty().multiply(.2));
+        stockInStatus.prefWidthProperty().bind(stockInMasterTable.widthProperty().multiply(.2));
+        stockInTotalCost.prefWidthProperty().bind(stockInMasterTable.widthProperty().multiply(.2));
 
-        stockInTable.getTableColumns().addAll(requisitionDate,
-                requisitionReference,
-                requisitionBranch,
-                requisitionStatus,
-                requisitionTotalCost);
-        stockInTable.getFilters().addAll(
+        stockInMasterTable.getTableColumns().addAll(stockInDate,
+                stockInReference,
+                stockInBranch,
+                stockInStatus,
+                stockInTotalCost);
+        stockInMasterTable.getFilters().addAll(
                 new StringFilter<>("Reference", StockInMaster::getRef),
                 new StringFilter<>("Branch", StockInMaster::getBranchName),
                 new StringFilter<>("Status", StockInMaster::getStatus),
                 new DoubleFilter<>("Total Cost", StockInMaster::getTotal)
         );
         getStockInMasterTable();
-        stockInTable.setItems(StockInMasterViewModel.getStockInMasters());
+        stockInMasterTable.setItems(StockInMasterViewModel.getStockInMasters());
     }
 
     private void getStockInMasterTable() {
-        stockInTable.setPrefSize(1000, 1000);
-        stockInTable.features().enableBounceEffect();
-        stockInTable.features().enableSmoothScrolling(0.5);
+        stockInMasterTable.setPrefSize(1000, 1000);
+        stockInMasterTable.features().enableBounceEffect();
+        stockInMasterTable.features().enableSmoothScrolling(0.5);
+
+        stockInMasterTable.setTableRowFactory(t -> {
+            MFXTableRow<StockInMaster> row = new MFXTableRow<>(stockInMasterTable, t);
+            EventHandler<ContextMenuEvent> eventHandler = event -> {
+                showContextMenu((MFXTableRow<StockInMaster>) event.getSource()).show(stockInMasterTable.getParent(), event.getScreenX(), event.getScreenY());
+                event.consume();
+            };
+            row.setOnContextMenuRequested(eventHandler);
+            return row;
+        });
+    }
+
+    private MFXContextMenu showContextMenu(MFXTableRow<StockInMaster> obj) {
+        MFXContextMenu contextMenu = new MFXContextMenu(stockInMasterTable);
+        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
+        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+
+        // Actions
+        // Delete
+        delete.setOnAction(e -> {
+            StockInMasterDao.deleteStockInMaster(obj.getData().getId());
+            StockInMasterViewModel.getStockInMasters();
+            e.consume();
+        });
+        // Edit
+        edit.setOnAction(e -> {
+            StockInMasterViewModel.getItem(obj.getData().getId());
+            stockInCreateBtnClicked();
+            e.consume();
+        });
+
+        contextMenu.addItems(edit, delete);
+
+        return contextMenu;
     }
 
     @FXML

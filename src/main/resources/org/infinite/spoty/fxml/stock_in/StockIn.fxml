@@ -28,7 +28,7 @@
             <BorderPane.margin>
                 <Insets top="20.0"/>
             </BorderPane.margin>
-            <MFXTableView fx:id="stockInTable" styleClass="card" AnchorPane.bottomAnchor="0.0"
+            <MFXTableView fx:id="stockInMasterTable" styleClass="card" AnchorPane.bottomAnchor="0.0"
                           AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
         </AnchorPane>
     </center>
