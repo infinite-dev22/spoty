@@ -10,8 +10,9 @@ import org.infinite.spoty.database.util.HibernateUtil;
 
 import java.util.Date;
 
+@SuppressWarnings("unchecked")
 public class TransferMasterDao {
-    public static int saveTransferMaster(TransferMaster obj) {
+    public static void saveTransferMaster(TransferMaster obj) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
@@ -24,15 +25,14 @@ public class TransferMasterDao {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
-    public static int updateTransferMaster(TransferMaster obj, long id) {
+    public static void updateTransferMaster(TransferMaster obj, int id) {
         Transaction transaction = null;
         TransferMaster transferMaster;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            transferMaster = session.load(TransferMaster.class, id);
+            transferMaster = session.get(TransferMaster.class, id);
             transferMaster.setUser(obj.getUser());
             transferMaster.setRef(obj.getRef());
             transferMaster.setDate(obj.getDate());
@@ -56,15 +56,14 @@ public class TransferMasterDao {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
-    public static TransferMaster findTransferMaster(long id) {
+    public static TransferMaster findTransferMaster(int id) {
         Transaction transaction = null;
         TransferMaster transferMaster;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            transferMaster = session.load(TransferMaster.class, id);
+            transferMaster = session.get(TransferMaster.class, id);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -87,16 +86,15 @@ public class TransferMasterDao {
         return saleCategories;
     }
 
-    public static int deleteTransferMaster(long id) {
+    public static void deleteTransferMaster(int id) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.delete(session.load(TransferMaster.class, id));
+            session.delete(session.get(TransferMaster.class, id));
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 }
