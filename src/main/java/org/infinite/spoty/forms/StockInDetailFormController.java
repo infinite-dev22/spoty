@@ -20,6 +20,7 @@ import java.util.ResourceBundle;
 import static org.infinite.spoty.GlobalActions.closeDialog;
 
 public class StockInDetailFormController implements Initializable {
+    public MFXTextField stockInDetailID = new MFXTextField();
     @FXML
     public MFXTextField stockInDetailQnty;
     @FXML
@@ -40,6 +41,7 @@ public class StockInDetailFormController implements Initializable {
         stockInDetailQnty.textProperty().addListener((observable, oldValue, newValue) -> stockInDetailQnty.setTrailingIcon(null));
         stockInDetailDescription.textProperty().addListener((observable, oldValue, newValue) -> stockInDetailDescription.setLeadingIcon(null));
         // Form input binding.
+        stockInDetailID.textProperty().bindBidirectional(StockInDetailViewModel.idProperty());
         stockInDetailPdct.valueProperty().bindBidirectional(StockInDetailViewModel.productProperty());
         stockInDetailQnty.textProperty().bindBidirectional(StockInDetailViewModel.quantityProperty());
         stockInDetailDescription.textProperty().bindBidirectional(StockInDetailViewModel.descriptionProperty());
@@ -84,7 +86,16 @@ public class StockInDetailFormController implements Initializable {
             if (stockInDetailQnty.getText().length() > 0
                     && stockInDetailPdct.getText().length() > 0
                     && stockInDetailDescription.getText().length() > 0) {
-                StockInDetailViewModel.addStockInDetails();
+                if (!stockInDetailID.getText().isEmpty()) {
+                    try {
+                        if (Integer.parseInt(stockInDetailID.getText()) > 0)
+                            StockInDetailViewModel.updateItem(Integer.parseInt(stockInDetailID.getText()));
+                    } catch (NumberFormatException ignored) {
+                        StockInDetailViewModel.updateStockInDetail(Integer.parseInt(stockInDetailID.getText()
+                                .substring(stockInDetailID.getText().lastIndexOf(':') + 1,
+                                        stockInDetailID.getText().indexOf(';'))));
+                    }
+                } else StockInDetailViewModel.addStockInDetails();
                 StockInDetailViewModel.resetProperties();
                 closeDialog(e);
             }
