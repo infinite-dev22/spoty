@@ -2,6 +2,7 @@ package org.infinite.spoty.database.models;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -218,5 +219,9 @@ public class StockInMaster implements Serializable {
 
     public void setUpdatedBy(String updatedBy) {
         this.updatedBy = updatedBy;
+    }
+
+    public String getLocaleDate() {
+        return DateFormat.getDateInstance().format(date);
     }
 }
