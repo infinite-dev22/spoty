@@ -223,4 +223,39 @@ class DatabaseSeederTest {
             throw new AssertionError();
         }
     }
+
+    @Test
+    @Order(12)
+    void transferInsert() {
+        try {
+            var transferMaster = new TransferMaster(new Date(),
+                    null,
+                    null,
+                    234889,
+                    "Pending",
+                    "Not Approved Yet.");
+
+            var transferDetail = new TransferDetail(null,
+                    1,
+                    "",
+                    "Test Description",
+                    25645,
+                    23645);
+            List<TransferDetail> list = new LinkedList<>();
+
+            transferDetail.setCreatedAt(new Date());
+            transferDetail.setCreatedBy("Tester One");
+            transferDetail.setTransfer(transferMaster);
+
+            list.add(transferDetail);
+
+            transferMaster.setTransferDetails(list);
+            transferMaster.setCreatedAt(new Date());
+            transferMaster.setCreatedBy("Tester One");
+
+            TransferMasterDao.saveTransferMaster(transferMaster);
+        } catch (Exception e) {
+            throw new AssertionError();
+        }
+    }
 }
