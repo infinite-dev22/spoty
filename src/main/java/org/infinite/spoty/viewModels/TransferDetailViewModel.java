@@ -1,8 +1,12 @@
 package org.infinite.spoty.viewModels;
 
-import javafx.beans.property.*;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.infinite.spoty.database.dao.TransferDetailDao;
 import org.infinite.spoty.database.models.ProductDetail;
 import org.infinite.spoty.database.models.TransferDetail;
 import org.infinite.spoty.database.models.TransferMaster;
@@ -10,7 +14,7 @@ import org.infinite.spoty.database.models.TransferMaster;
 public class TransferDetailViewModel {
     public static final ObservableList<TransferDetail> transferDetailsList = FXCollections.observableArrayList();
     public static final ObservableList<TransferDetail> transferDetailsTempList = FXCollections.observableArrayList();
-    private static final IntegerProperty id = new SimpleIntegerProperty();
+    private static final StringProperty id = new SimpleStringProperty();
     private static final ObjectProperty<ProductDetail> product = new SimpleObjectProperty<>();
     private static final ObjectProperty<TransferMaster> transfer = new SimpleObjectProperty<>();
     private static final StringProperty quantity = new SimpleStringProperty("");
@@ -19,15 +23,15 @@ public class TransferDetailViewModel {
     private static final StringProperty price = new SimpleStringProperty("");
     private static final StringProperty total = new SimpleStringProperty("");
 
-    public static int getId() {
+    public static String getId() {
         return id.get();
     }
 
-    public static void setId(int id) {
+    public static void setId(String id) {
         TransferDetailViewModel.id.set(id);
     }
 
-    public static IntegerProperty idProperty() {
+    public static StringProperty idProperty() {
         return id;
     }
 
@@ -116,7 +120,7 @@ public class TransferDetailViewModel {
     }
 
     public static void resetProperties() {
-        setId(0);
+        setId("");
         setProduct(null);
         setQuantity("");
         setSerial("");
@@ -138,7 +142,56 @@ public class TransferDetailViewModel {
 
     public static ObservableList<TransferDetail> getTransferDetails() {
         transferDetailsList.clear();
-        transferDetailsList.addAll(TransferDetailViewModel.getTransferDetails());
+        transferDetailsList.addAll(TransferDetailDao.fetchTransferDetails());
         return transferDetailsList;
+    }
+
+    public static void updateTransferDetail(int index) {
+        TransferDetail transferDetail = new TransferDetail(getProduct(),
+                getQuantity(),
+                getSerial(),
+                getDescription(),
+                getPrice(),
+                getTotal());
+        transferDetailsTempList.remove(index);
+        transferDetailsTempList.add(index, transferDetail);
+        resetProperties();
+    }
+
+    public static void getItem(int transferDetailID) {
+        TransferDetail transferDetail = TransferDetailDao.findTransferDetail(transferDetailID);
+        setId(String.valueOf(transferDetail.getId()));
+        setProduct(transferDetail.getProduct());
+        setQuantity(String.valueOf(transferDetail.getQuantity()));
+        setSerial(transferDetail.getSerialNo());
+        setDescription(transferDetail.getDescription());
+        setPrice(String.valueOf(transferDetail.getPrice()));
+        setTotal(String.valueOf(transferDetail.getTotal()));
+        getTransferDetails();
+    }
+
+    public static void getItem(TransferDetail transferDetail, int index) {
+        setId("index:" + index + ";");
+        setProduct(transferDetail.getProduct());
+        setQuantity(String.valueOf(transferDetail.getQuantity()));
+        setSerial(transferDetail.getSerialNo());
+        setDescription(transferDetail.getDescription());
+        setPrice(String.valueOf(transferDetail.getPrice()));
+        setTotal(String.valueOf(transferDetail.getTotal()));
+    }
+
+    public static void updateItem(int transferDetailID) {
+        TransferDetail transferDetail = new TransferDetail(getProduct(),
+                getQuantity(),
+                getSerial(),
+                getDescription(),
+                getPrice(),
+                getTotal());
+        TransferDetailDao.updateTransferDetail(transferDetail, transferDetailID);
+        getTransferDetails();
+    }
+
+    public static void removeTransferDetail(int index) {
+        transferDetailsTempList.remove(index);
     }
 }
