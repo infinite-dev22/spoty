@@ -10,8 +10,9 @@ import org.infinite.spoty.database.util.HibernateUtil;
 
 import java.util.Date;
 
+@SuppressWarnings("unchecked")
 public class StocKInDetailDao {
-    public static int saveStockInDetail(StockInDetail obj) {
+    public static void saveStockInDetail(StockInDetail obj) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
@@ -24,15 +25,14 @@ public class StocKInDetailDao {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
-    public static int updateStockInDetail(StockInDetail obj, long id) {
+    public static void updateStockInDetail(StockInDetail obj, int id) {
         Transaction transaction = null;
         StockInDetail stockInDetail;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            stockInDetail = session.load(StockInDetail.class, id);
+            stockInDetail = session.get(StockInDetail.class, id);
             stockInDetail.setStockIn(obj.getStockIn());
             stockInDetail.setProduct(obj.getProduct());
             stockInDetail.setQuantity(obj.getQuantity());
@@ -48,15 +48,14 @@ public class StocKInDetailDao {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
-    public static StockInDetail findStockInDetail(long id) {
+    public static StockInDetail findStockInDetail(int id) {
         Transaction transaction = null;
         StockInDetail stockInDetail;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            stockInDetail = session.load(StockInDetail.class, id);
+            stockInDetail = session.get(StockInDetail.class, id);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -79,16 +78,15 @@ public class StocKInDetailDao {
         return saleCategories;
     }
 
-    public static int deleteStockInDetail(long id) {
+    public static void deleteStockInDetail(int id) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.delete(session.load(StockInDetail.class, id));
+            session.delete(session.get(StockInDetail.class, id));
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 }

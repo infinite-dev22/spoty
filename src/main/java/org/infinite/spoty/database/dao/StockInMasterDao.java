@@ -10,8 +10,9 @@ import org.infinite.spoty.database.util.HibernateUtil;
 
 import java.util.Date;
 
+@SuppressWarnings("unchecked")
 public class StockInMasterDao {
-    public static int saveStockInMaster(StockInMaster obj) {
+    public static void saveStockInMaster(StockInMaster obj) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
@@ -24,15 +25,14 @@ public class StockInMasterDao {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
-    public static int updateStockInMaster(StockInMaster obj, long id) {
+    public static void updateStockInMaster(StockInMaster obj, int id) {
         Transaction transaction = null;
         StockInMaster stockInMaster;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            stockInMaster = session.load(StockInMaster.class, id);
+            stockInMaster = session.get(StockInMaster.class, id);
             stockInMaster.setUser(obj.getUser());
             stockInMaster.setRef(obj.getRef());
             stockInMaster.setDate(obj.getDate());
@@ -55,15 +55,14 @@ public class StockInMasterDao {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
-    public static StockInMaster findStockInMaster(long id) {
+    public static StockInMaster findStockInMaster(int id) {
         Transaction transaction = null;
         StockInMaster stockInMaster;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            stockInMaster = session.load(StockInMaster.class, id);
+            stockInMaster = session.get(StockInMaster.class, id);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -86,16 +85,15 @@ public class StockInMasterDao {
         return saleCategories;
     }
 
-    public static int deleteStockInMaster(long id) {
+    public static void deleteStockInMaster(int id) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.delete(session.load(StockInMaster.class, id));
+            session.delete(session.get(StockInMaster.class, id));
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 }
