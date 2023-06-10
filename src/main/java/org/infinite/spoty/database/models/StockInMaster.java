@@ -9,7 +9,7 @@ import java.util.List;
 public class StockInMaster implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private int id;
     @ManyToOne
     private User user;
     private String ref;
@@ -48,11 +48,11 @@ public class StockInMaster implements Serializable {
         this.notes = notes;
     }
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
