@@ -193,7 +193,11 @@ public class StockInMasterFormController implements Initializable {
         if (stockInMasterBranchId.getText().length() > 0
                 && stockInMasterDate.getText().length() > 0
                 && !stockInDetailTable.getTableColumns().isEmpty()) {
-            StockInMasterViewModel.saveStockInMaster();
+            if (Integer.parseInt(stockInMasterID.getText()) > 0) {
+                StockInMasterViewModel.updateItem(Integer.parseInt(stockInMasterID.getText()));
+                stockInMasterCancelBtnClicked();
+            } else
+                StockInMasterViewModel.saveStockInMaster();
             StockInMasterViewModel.resetProperties();
             StockInDetailViewModel.stockInDetailsTempList.clear();
         }
