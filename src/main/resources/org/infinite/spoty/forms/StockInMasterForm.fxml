@@ -36,7 +36,7 @@
     </GridPane>
     <MFXElevatedButton fx:id="stockInMasterProductAddBtn" layoutX="930.0" layoutY="80.0" text="Add Product"
                        AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="90.0"/>
-    <MFXTableView fx:id="stockInMasterProductsTable" AnchorPane.bottomAnchor="120.0" AnchorPane.leftAnchor="0.0"
+    <MFXTableView fx:id="stockInDetailTable" AnchorPane.bottomAnchor="120.0" AnchorPane.leftAnchor="0.0"
                   AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="140.0"/>
     <MFXTextField fx:id="stockInMasterNote" floatMode="BORDER" floatingText="Note" prefWidth="1000.0"
                   AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"/>

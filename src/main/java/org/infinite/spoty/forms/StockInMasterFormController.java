@@ -7,11 +7,13 @@ import io.github.palexdev.materialfx.filter.IntegerFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXElevatedButton;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -19,6 +21,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
+import javafx.util.converter.NumberStringConverter;
+import org.infinite.spoty.database.dao.StocKInDetailDao;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.StockInDetail;
 import org.infinite.spoty.viewModels.BranchViewModel;
@@ -32,13 +36,16 @@ import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 
+@SuppressWarnings("unchecked")
 public class StockInMasterFormController implements Initializable {
+    public MFXTextField stockInDetailID = new MFXTextField();
+    public MFXTextField stockInMasterID = new MFXTextField();
     @FXML
     public MFXFilterComboBox<Branch> stockInMasterBranchId;
     @FXML
     public MFXDatePicker stockInMasterDate;
     @FXML
-    public MFXTableView<StockInDetail> stockInMasterProductsTable;
+    public MFXTableView<StockInDetail> stockInDetailTable;
     @FXML
     public MFXTextField stockInMasterNote;
     @FXML
@@ -61,9 +68,11 @@ public class StockInMasterFormController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // Input listeners.
         stockInMasterBranchId.textProperty().addListener((observable, oldValue, newValue) -> stockInMasterBranchId.setTrailingIcon(null));
         stockInMasterDate.textProperty().addListener((observable, oldValue, newValue) -> stockInMasterDate.setTrailingIcon(null));
-
+        // Input binding.
+        stockInMasterID.textProperty().bindBidirectional(StockInMasterViewModel.idProperty(), new NumberStringConverter());
         stockInMasterBranchId.valueProperty().bindBidirectional(StockInMasterViewModel.branchProperty());
         stockInMasterBranchId.setItems(BranchViewModel.branchesList);
         stockInMasterBranchId.setConverter(new StringConverter<>() {
@@ -82,7 +91,6 @@ public class StockInMasterFormController implements Initializable {
         });
         stockInMasterDate.textProperty().bindBidirectional(StockInMasterViewModel.dateProperty());
         stockInMasterNote.textProperty().bindBidirectional(StockInMasterViewModel.noteProperty());
-
         stockInMasterAddProductBtnClicked();
         Platform.runLater(this::setupTable);
     }
@@ -96,24 +104,64 @@ public class StockInMasterFormController implements Initializable {
         productQuantity.setRowCellFactory(product -> new MFXTableRowCell<>(StockInDetail::getQuantity));
 //        stockInMasterType.setRowCellFactory(product -> new MFXTableRowCell<>(StockInDetail::getStockInType));
 
-        productName.prefWidthProperty().bind(stockInMasterProductsTable.widthProperty().multiply(.4));
-        productQuantity.prefWidthProperty().bind(stockInMasterProductsTable.widthProperty().multiply(.4));
+        productName.prefWidthProperty().bind(stockInDetailTable.widthProperty().multiply(.4));
+        productQuantity.prefWidthProperty().bind(stockInDetailTable.widthProperty().multiply(.4));
 //        stockInMasterType.prefWidthProperty().bind(stockInMasterProductsTable.widthProperty().multiply(.4));
 
-        stockInMasterProductsTable.getTableColumns().addAll(productName, productQuantity); // , stockInMasterType);
-        stockInMasterProductsTable.getFilters().addAll(
+        stockInDetailTable.getTableColumns().addAll(productName, productQuantity); // , stockInMasterType);
+        stockInDetailTable.getFilters().addAll(
                 new StringFilter<>("Name", StockInDetail::getProductDetailName),
                 new IntegerFilter<>("Quantity", StockInDetail::getQuantity)
 //                new StringFilter<>("Category", StockInDetail::getStockInType)
         );
         getStockInDetailTable();
-        stockInMasterProductsTable.setItems(StockInDetailViewModel.stockInDetailsTempList);
+        stockInDetailTable.setItems(StockInDetailViewModel.stockInDetailsTempList);
     }
 
     private void getStockInDetailTable() {
-        stockInMasterProductsTable.setPrefSize(1000, 1000);
-        stockInMasterProductsTable.features().enableBounceEffect();
-        stockInMasterProductsTable.features().enableSmoothScrolling(0.5);
+        stockInDetailTable.setPrefSize(1000, 1000);
+        stockInDetailTable.features().enableBounceEffect();
+        stockInDetailTable.features().enableSmoothScrolling(0.5);
+
+        stockInDetailTable.setTableRowFactory(t -> {
+            MFXTableRow<StockInDetail> row = new MFXTableRow<>(stockInDetailTable, t);
+            EventHandler<ContextMenuEvent> eventHandler = event -> {
+                showContextMenu((MFXTableRow<StockInDetail>) event.getSource()).show(stockInDetailTable.getParent(), event.getScreenX(), event.getScreenY());
+                event.consume();
+            };
+            row.setOnContextMenuRequested(eventHandler);
+            return row;
+        });
+    }
+
+    private MFXContextMenu showContextMenu(MFXTableRow<StockInDetail> obj) {
+        MFXContextMenu contextMenu = new MFXContextMenu(stockInDetailTable);
+        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
+        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+
+        // Actions
+        // Delete
+        delete.setOnAction(e -> {
+            StockInDetailViewModel.getItem(obj.getData(), StockInDetailViewModel.stockInDetailsTempList.indexOf(obj.getData()));
+            try {
+                if (Integer.parseInt(stockInDetailID.getText()) > 0)
+                    StocKInDetailDao.deleteStockInDetail(Integer.parseInt(stockInDetailID.getText()));
+            } catch (NumberFormatException ignored) {
+                StockInDetailViewModel.removeStockInDetail(StockInDetailViewModel.stockInDetailsTempList.indexOf(obj.getData()));
+            }
+            StockInDetailViewModel.getStockInDetails();
+            e.consume();
+        });
+        // Edit
+        edit.setOnAction(e -> {
+            StockInDetailViewModel.getItem(obj.getData(), StockInDetailViewModel.stockInDetailsTempList.indexOf(obj.getData()));
+            dialog.showAndWait();
+            e.consume();
+        });
+
+        contextMenu.addItems(edit, delete);
+
+        return contextMenu;
     }
 
     private void stockInMasterAddProductBtnClicked() {
@@ -138,13 +186,13 @@ public class StockInMasterFormController implements Initializable {
         if (stockInMasterDate.getText().length() == 0) {
             stockInMasterDate.setTrailingIcon(icon);
         }
-        if (stockInMasterProductsTable.getTableColumns().isEmpty()) {
+        if (stockInDetailTable.getTableColumns().isEmpty()) {
             // Notify table can't be empty
             System.out.println("Table can't be empty");
         }
         if (stockInMasterBranchId.getText().length() > 0
                 && stockInMasterDate.getText().length() > 0
-                && !stockInMasterProductsTable.getTableColumns().isEmpty()) {
+                && !stockInDetailTable.getTableColumns().isEmpty()) {
             StockInMasterViewModel.saveStockInMaster();
             StockInMasterViewModel.resetProperties();
             StockInDetailViewModel.stockInDetailsTempList.clear();
