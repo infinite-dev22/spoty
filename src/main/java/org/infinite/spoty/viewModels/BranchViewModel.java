@@ -24,96 +24,96 @@ public class BranchViewModel {
         return id.get();
     }
 
-    public static IntegerProperty idProperty() {
-        return id;
-    }
-
     public static void setId(Integer id) {
         BranchViewModel.id.set(id);
+    }
+
+    public static IntegerProperty idProperty() {
+        return id;
     }
 
     public static String getName() {
         return name.get();
     }
 
-    public static StringProperty nameProperty() {
-        return name;
-    }
-
     public static void setName(String name) {
         BranchViewModel.name.set(name);
+    }
+
+    public static StringProperty nameProperty() {
+        return name;
     }
 
     public static String getEmail() {
         return email.get();
     }
 
-    public static StringProperty emailProperty() {
-        return email;
-    }
-
     public static void setEmail(String email) {
         BranchViewModel.email.set(email);
+    }
+
+    public static StringProperty emailProperty() {
+        return email;
     }
 
     public static String getPhone() {
         return phone.get();
     }
 
-    public static StringProperty phoneProperty() {
-        return phone;
-    }
-
     public static void setPhone(String phone) {
         BranchViewModel.phone.set(phone);
+    }
+
+    public static StringProperty phoneProperty() {
+        return phone;
     }
 
     public static String getTown() {
         return town.get();
     }
 
-    public static StringProperty townProperty() {
-        return town;
-    }
-
     public static void setTown(String town) {
         BranchViewModel.town.set(town);
+    }
+
+    public static StringProperty townProperty() {
+        return town;
     }
 
     public static String getCity() {
         return city.get();
     }
 
-    public static StringProperty cityProperty() {
-        return city;
-    }
-
     public static void setCity(String city) {
         BranchViewModel.city.set(city);
+    }
+
+    public static StringProperty cityProperty() {
+        return city;
     }
 
     public static String getZipcode() {
         return zipcode.get();
     }
 
-    public static StringProperty zipcodeProperty() {
-        return zipcode;
-    }
-
     public static void setZipcode(String zipcode) {
         BranchViewModel.zipcode.set(zipcode);
+    }
+
+    public static StringProperty zipcodeProperty() {
+        return zipcode;
     }
 
     public static String getTitle() {
         return title.get();
     }
 
-    public static StringProperty titleProperty() {
-        return title;
-    }
-
     public static void setTitle(String title) {
         BranchViewModel.title.set(title);
+    }
+
+    public static StringProperty titleProperty() {
+        return title;
     }
 
     public static void saveBranch() {
@@ -125,6 +125,7 @@ public class BranchViewModel {
     }
 
     public static void clearBranchData() {
+        setId(0);
         setName("");
         setCity("");
         setPhone("");
@@ -134,7 +135,27 @@ public class BranchViewModel {
     }
 
     public static ObservableList<Branch> getBranches() {
+        branchesList.clear();
         branchesList.addAll(BranchDao.getBranches());
         return branchesList;
+    }
+
+    public static void getItem(int branchID) {
+        Branch branch = BranchDao.findBranch(branchID);
+        setId(branch.getId());
+        setName(branch.getName());
+        setEmail(branch.getEmail());
+        setPhone(branch.getPhone());
+        setCity(branch.getCity());
+        setTown(branch.getTown());
+        setZipcode(branch.getZipCode());
+        getBranches();
+    }
+
+    public static void updateItem(int branchID) {
+        Branch branch = new Branch(getName(), getCity(), getPhone(), getEmail(), getTown(), getZipcode());
+        BranchDao.updateBranch(branch, branchID);
+        clearBranchData();
+        getBranches();
     }
 }
