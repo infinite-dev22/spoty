@@ -10,6 +10,7 @@ import org.infinite.spoty.database.util.HibernateUtil;
 
 import java.util.Date;
 
+@SuppressWarnings("unchecked")
 public class AdjustmentDetailDao {
     public static void saveAdjustmentDetail(AdjustmentDetail obj) {
         Transaction transaction = null;
@@ -49,7 +50,7 @@ public class AdjustmentDetailDao {
 
     public static AdjustmentDetail findAdjustmentDetail(int id) {
         Transaction transaction = null;
-        AdjustmentDetail adjustmentDetail = null;
+        AdjustmentDetail adjustmentDetail;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             adjustmentDetail = session.get(AdjustmentDetail.class, id);
@@ -63,7 +64,7 @@ public class AdjustmentDetailDao {
 
     public static ObservableList<AdjustmentDetail> getAdjustmentDetail() {
         Transaction transaction = null;
-        ObservableList<AdjustmentDetail> adjustmentDetails = null;
+        ObservableList<AdjustmentDetail> adjustmentDetails;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             adjustmentDetails = FXCollections.observableList(session.createQuery("from AdjustmentDetail").stream().toList());

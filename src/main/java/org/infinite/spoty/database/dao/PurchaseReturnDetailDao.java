@@ -70,7 +70,7 @@ public class PurchaseReturnDetailDao {
         return purchaseReturnDetail;
     }
 
-    public static ObservableList<PurchaseReturnDetail> getPurchaseReturnDetail() {
+    public static ObservableList<PurchaseReturnDetail> fetchPurchaseReturnDetails() {
         Transaction transaction = null;
         ObservableList<PurchaseReturnDetail> purchaseCategories;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {

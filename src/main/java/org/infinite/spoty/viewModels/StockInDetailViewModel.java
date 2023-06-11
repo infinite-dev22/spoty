@@ -127,7 +127,7 @@ public class StockInDetailViewModel {
 
     public static ObservableList<StockInDetail> getStockInDetails() {
         stockInDetailsList.clear();
-        stockInDetailsList.addAll(StockInDetailViewModel.getStockInDetails());
+        stockInDetailsList.addAll(StocKInDetailDao.fetchStockInDetails());
         return stockInDetailsList;
     }
 

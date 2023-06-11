@@ -10,6 +10,7 @@ import org.infinite.spoty.database.util.HibernateUtil;
 
 import java.util.Date;
 
+@SuppressWarnings("unchecked")
 public class CustomerDao {
     public static void saveCustomer(Customer obj) {
         Transaction transaction = null;
@@ -28,7 +29,7 @@ public class CustomerDao {
 
     public static void updateCustomer(Customer obj, int id) {
         Transaction transaction = null;
-        Customer customer = null;
+        Customer customer;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             customer = session.get(Customer.class, id);

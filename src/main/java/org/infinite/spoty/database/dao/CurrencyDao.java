@@ -10,6 +10,7 @@ import org.infinite.spoty.database.util.HibernateUtil;
 
 import java.util.Date;
 
+@SuppressWarnings("unchecked")
 public class CurrencyDao {
     public static int saveCurrency(Currency obj) {
         Transaction transaction = null;
@@ -50,7 +51,7 @@ public class CurrencyDao {
 
     public static Currency findCurrency(long id) {
         Transaction transaction = null;
-        Currency currency = null;
+        Currency currency;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             currency = session.load(Currency.class, id);
@@ -75,6 +76,7 @@ public class CurrencyDao {
         }
         return currencys;
     }
+
     public static int deleteCurrency(long id) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {

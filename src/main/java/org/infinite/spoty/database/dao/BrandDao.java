@@ -10,6 +10,7 @@ import org.infinite.spoty.database.util.HibernateUtil;
 
 import java.util.Date;
 
+@SuppressWarnings("unchecked")
 public class BrandDao {
     // Image is a byte use file handling.
     // TODO: Store files in a folder and keep the path reference as a string in the DB for performance.
@@ -51,7 +52,7 @@ public class BrandDao {
 
     public static Brand findBrand(int id) {
         Transaction transaction = null;
-        Brand brand = null;
+        Brand brand;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             brand = session.get(Brand.class, id);

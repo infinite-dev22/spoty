@@ -64,7 +64,7 @@ public class StocKInDetailDao {
         return stockInDetail;
     }
 
-    public static ObservableList<StockInDetail> getStockInDetail() {
+    public static ObservableList<StockInDetail> fetchStockInDetails() {
         Transaction transaction = null;
         ObservableList<StockInDetail> saleCategories;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {

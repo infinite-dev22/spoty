@@ -27,6 +27,7 @@ import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 
+@SuppressWarnings("unchecked")
 public class ExpenseCategoryController implements Initializable {
     @FXML
     public MFXTextField categoryExpenseSearchBar;
@@ -83,7 +84,7 @@ public class ExpenseCategoryController implements Initializable {
         categoryExpenseTable.setTableRowFactory(t -> {
             MFXTableRow<ExpenseCategory> row = new MFXTableRow<>(categoryExpenseTable, t);
             EventHandler<ContextMenuEvent> eventHandler = event -> {
-                showContextMenu(event.getSource()).
+                showContextMenu((MFXTableRow<ExpenseCategory>) event.getSource()).
                         show(categoryExpenseTable.getScene().getWindow(), event.getScreenX(), event.getScreenY());
                 event.consume();
             };
@@ -92,7 +93,7 @@ public class ExpenseCategoryController implements Initializable {
         });
     }
 
-    private MFXContextMenu showContextMenu(Object obj) {
+    private MFXContextMenu showContextMenu(MFXTableRow<ExpenseCategory> obj) {
         MFXContextMenu contextMenu = new MFXContextMenu(categoryExpenseTable);
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
@@ -100,15 +101,13 @@ public class ExpenseCategoryController implements Initializable {
         // Actions
         // Delete
         delete.setOnAction(e -> {
-            MFXTableRow<ExpenseCategory> onj = (MFXTableRow) obj;
-            ExpenseCategoryDao.deleteExpenseCategory(onj.getData().getId());
+            ExpenseCategoryDao.deleteExpenseCategory(obj.getData().getId());
             ExpenseCategoryViewModel.getCategories();
             e.consume();
         });
         // Edit
         edit.setOnAction(e -> {
-            MFXTableRow<ExpenseCategory> onj = (MFXTableRow) obj;
-            ExpenseCategoryViewModel.getItem(onj.getData().getId());
+            ExpenseCategoryViewModel.getItem(obj.getData().getId());
             dialog.showAndWait();
             e.consume();
         });

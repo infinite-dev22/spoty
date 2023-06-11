@@ -26,7 +26,7 @@ public class User implements Serializable {
     private String status;
     @Column(name = "access_all_branches", nullable = false)
     private boolean accessAllBranches;
-    @Column(unique = true, nullable = true)
+    @Column(unique = true)
     private Blob avatar;
     private Date createdAt;
     private String createdBy;

@@ -10,6 +10,7 @@ import org.infinite.spoty.database.util.HibernateUtil;
 
 import java.util.Date;
 
+@SuppressWarnings("unchecked")
 public class CompanyDao {
     public static int saveCompany(Company obj) {
         Transaction transaction = null;
@@ -52,7 +53,7 @@ public class CompanyDao {
 
     public static Company findCompany(long id) {
         Transaction transaction = null;
-        Company company = null;
+        Company company;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             company = session.load(Company.class, id);
@@ -77,6 +78,7 @@ public class CompanyDao {
         }
         return companys;
     }
+
     public static int deleteCompany(long id) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {

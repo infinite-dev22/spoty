@@ -5,8 +5,6 @@ import javafx.stage.Stage;
 import org.infinite.spoty.views.splash.LaunchPreloader;
 import org.infinite.spoty.views.splash.SplashScreenController;
 
-import java.io.IOException;
-
 public class Main extends Application {
     public static Stage primaryStage = null;
 
@@ -21,7 +19,7 @@ public class Main extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) throws IOException {
+    public void start(Stage primaryStage) {
         Main.primaryStage = primaryStage;
     }
 }

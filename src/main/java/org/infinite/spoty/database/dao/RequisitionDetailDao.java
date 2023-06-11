@@ -10,6 +10,7 @@ import org.infinite.spoty.database.util.HibernateUtil;
 
 import java.util.Date;
 
+@SuppressWarnings("unchecked")
 public class RequisitionDetailDao {
     public static void saveRequisitionDetail(RequisitionDetail obj) {
         Transaction transaction = null;
@@ -63,7 +64,7 @@ public class RequisitionDetailDao {
 
     public static ObservableList<RequisitionDetail> fetchRequisitionDetails() {
         Transaction transaction = null;
-        ObservableList<RequisitionDetail> requisitionDetails = null;
+        ObservableList<RequisitionDetail> requisitionDetails;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             requisitionDetails = FXCollections.observableList(session.createQuery("from RequisitionDetail").stream().toList());

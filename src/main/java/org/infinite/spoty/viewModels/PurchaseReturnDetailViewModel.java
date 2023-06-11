@@ -3,6 +3,7 @@ package org.infinite.spoty.viewModels;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.infinite.spoty.database.dao.PurchaseReturnDetailDao;
 import org.infinite.spoty.database.models.ProductDetail;
 import org.infinite.spoty.database.models.PurchaseReturnDetail;
 import org.infinite.spoty.database.models.PurchaseReturnMaster;
@@ -123,7 +124,7 @@ public class PurchaseReturnDetailViewModel {
 
     public static ObservableList<PurchaseReturnDetail> getPurchaseReturnDetails() {
         purchaseReturnDetailsList.clear();
-        purchaseReturnDetailsList.addAll(PurchaseReturnDetailViewModel.getPurchaseReturnDetails());
+        purchaseReturnDetailsList.addAll(PurchaseReturnDetailDao.fetchPurchaseReturnDetails());
         return purchaseReturnDetailsList;
     }
 }

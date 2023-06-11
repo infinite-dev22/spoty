@@ -43,9 +43,7 @@
         <MFXToggleButton layoutX="10.0" layoutY="202.0" text="Customer Message" GridPane.columnIndex="1"
                          GridPane.rowIndex="2"/>
         <HBox alignment="TOP_CENTER" GridPane.columnIndex="2" GridPane.rowIndex="4">
-            <children>
-                <MFXElevatedButton text="Save"/>
-            </children>
+            <MFXElevatedButton text="Save"/>
         </HBox>
         <MFXToggleButton layoutX="410.0" layoutY="117.0" text="Auto Print Receipt" GridPane.columnIndex="2"
                          GridPane.rowIndex="2"/>

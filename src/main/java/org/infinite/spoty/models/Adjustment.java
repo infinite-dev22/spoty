@@ -84,7 +84,7 @@ public class Adjustment implements Serializable {
         final Object $adjustmentBranch = this.getAdjustmentBranch();
         result = result * PRIME + ($adjustmentBranch == null ? 43 : $adjustmentBranch.hashCode());
         final Object $adjustmentTotalProducts = this.getAdjustmentTotalProducts();
-        result = result * PRIME + ($adjustmentTotalProducts == null ? 43 : $adjustmentTotalProducts.hashCode());
+        result = result * PRIME + $adjustmentTotalProducts.hashCode();
         return result;
     }
 
