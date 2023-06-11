@@ -10,8 +10,9 @@ import org.infinite.spoty.database.util.HibernateUtil;
 
 import java.util.Date;
 
+@SuppressWarnings("unchecked")
 public class SaleMasterDao {
-    public static int saveSaleMaster(SaleMaster obj) {
+    public static void saveSaleMaster(SaleMaster obj) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
@@ -24,15 +25,14 @@ public class SaleMasterDao {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
-    public static int updateSaleMaster(SaleMaster obj, long id) {
+    public static void updateSaleMaster(SaleMaster obj, int id) {
         Transaction transaction = null;
         SaleMaster saleMaster;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            saleMaster = session.load(SaleMaster.class, id);
+            saleMaster = session.get(SaleMaster.class, id);
             saleMaster.setUser(obj.getUser());
             saleMaster.setRef(obj.getRef());
             saleMaster.setDate(obj.getDate());
@@ -56,15 +56,14 @@ public class SaleMasterDao {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
-    public static SaleMaster findSaleMaster(long id) {
+    public static SaleMaster findSaleMaster(int id) {
         Transaction transaction = null;
         SaleMaster saleMaster;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            saleMaster = session.load(SaleMaster.class, id);
+            saleMaster = session.get(SaleMaster.class, id);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -86,16 +85,16 @@ public class SaleMasterDao {
         }
         return purchaseCategories;
     }
-    public static int deleteSaleMaster(long id) {
+
+    public static void deleteSaleMaster(int id) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.delete(session.load(SaleMaster.class, id));
+            session.delete(session.get(SaleMaster.class, id));
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 }

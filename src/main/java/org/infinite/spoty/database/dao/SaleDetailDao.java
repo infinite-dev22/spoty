@@ -10,8 +10,9 @@ import org.infinite.spoty.database.util.HibernateUtil;
 
 import java.util.Date;
 
+@SuppressWarnings("unchecked")
 public class SaleDetailDao {
-    public static int saveSaleDetail(SaleDetail obj) {
+    public static void saveSaleDetail(SaleDetail obj) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
@@ -24,15 +25,14 @@ public class SaleDetailDao {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
-    public static int updateSaleDetail(SaleDetail obj, long id) {
+    public static void updateSaleDetail(SaleDetail obj, int id) {
         Transaction transaction = null;
         SaleDetail saleDetail;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            saleDetail = session.load(SaleDetail.class, id);
+            saleDetail = session.get(SaleDetail.class, id);
             saleDetail.setRef(obj.getRef());
             saleDetail.setProduct(obj.getProduct());
             saleDetail.setSerialNumber(obj.getSerialNumber());
@@ -52,15 +52,14 @@ public class SaleDetailDao {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
-    public static SaleDetail findSaleDetail(long id) {
+    public static SaleDetail findSaleDetail(int id) {
         Transaction transaction = null;
         SaleDetail saleDetail;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            saleDetail = session.load(SaleDetail.class, id);
+            saleDetail = session.get(SaleDetail.class, id);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -69,7 +68,7 @@ public class SaleDetailDao {
         return saleDetail;
     }
 
-    public static ObservableList<SaleDetail> getSaleDetail() {
+    public static ObservableList<SaleDetail> fetchSaleDetails() {
         Transaction transaction = null;
         ObservableList<SaleDetail> purchaseCategories;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
@@ -82,16 +81,16 @@ public class SaleDetailDao {
         }
         return purchaseCategories;
     }
-    public static int deleteSaleDetail(long id) {
+
+    public static void deleteSaleDetail(int id) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.delete(session.load(SaleDetail.class, id));
+            session.delete(session.get(SaleDetail.class, id));
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 }
