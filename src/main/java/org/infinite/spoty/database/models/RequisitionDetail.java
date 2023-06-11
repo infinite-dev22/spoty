@@ -8,7 +8,7 @@ import java.util.Date;
 public class RequisitionDetail implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private int id;
     @OneToOne
     private ProductDetail productDetail;
     @ManyToOne(cascade = CascadeType.ALL)
@@ -38,11 +38,11 @@ public class RequisitionDetail implements Serializable {
         this.description = description;
     }
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 

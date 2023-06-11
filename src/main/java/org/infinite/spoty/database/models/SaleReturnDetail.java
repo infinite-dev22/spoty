@@ -8,7 +8,7 @@ import java.util.Date;
 public class SaleReturnDetail implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private int id;
     @ManyToOne
     @JoinColumn(name = "saleReturnMaster_id")
     private SaleReturnMaster saleReturn;
@@ -60,11 +60,11 @@ public class SaleReturnDetail implements Serializable {
         this.total = total;
     }
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 

@@ -2,6 +2,7 @@ package org.infinite.spoty.database.models;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -9,7 +10,7 @@ import java.util.List;
 public class SaleMaster implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private int id;
     @ManyToOne
     private User user;
     private Date date;
@@ -54,11 +55,11 @@ public class SaleMaster implements Serializable {
     public SaleMaster() {
     }
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -66,6 +67,7 @@ public class SaleMaster implements Serializable {
         return user;
     }
 
+    // TODO: Remove addedBy.
     public String getAddedBy() {
         if (user != null)
             return user.getFirstName() + " " + user.getLastName();
@@ -231,5 +233,9 @@ public class SaleMaster implements Serializable {
 
     public void setSaleDetails(List<SaleDetail> saleDetails) {
         this.saleDetails = saleDetails;
+    }
+
+    public String getLocaleDate() {
+        return DateFormat.getDateInstance().format(date);
     }
 }
