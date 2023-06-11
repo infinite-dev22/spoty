@@ -53,7 +53,7 @@ public class SalesController implements Initializable {
     private void setupTable() {
         MFXTableColumn<SaleMaster> saleDate = new MFXTableColumn<>("Date", false, Comparator.comparing(SaleMaster::getDate));
         MFXTableColumn<SaleMaster> saleReference = new MFXTableColumn<>("Reference", false, Comparator.comparing(SaleMaster::getRef));
-        MFXTableColumn<SaleMaster> saleAddedBy = new MFXTableColumn<>("Added By", false, Comparator.comparing(SaleMaster::getAddedBy));
+//        MFXTableColumn<SaleMaster> saleAddedBy = new MFXTableColumn<>("Added By", false, Comparator.comparing(SaleMaster::getAddedBy));
         MFXTableColumn<SaleMaster> saleCustomer = new MFXTableColumn<>("Customer", false, Comparator.comparing(SaleMaster::getCustomerName));
         MFXTableColumn<SaleMaster> saleBranch = new MFXTableColumn<>("Branch", false, Comparator.comparing(SaleMaster::getBranchName));
         MFXTableColumn<SaleMaster> saleStatus = new MFXTableColumn<>("Sale Status", false, Comparator.comparing(SaleMaster::getSaleStatus));
@@ -64,7 +64,7 @@ public class SalesController implements Initializable {
 
         saleDate.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleMaster::getDate));
         saleReference.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleMaster::getRef));
-        saleAddedBy.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleMaster::getAddedBy));
+//        saleAddedBy.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleMaster::getAddedBy));
         saleCustomer.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleMaster::getCustomerName));
         saleBranch.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleMaster::getBranchName));
         saleStatus.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleMaster::getSaleStatus));
@@ -75,7 +75,7 @@ public class SalesController implements Initializable {
 
         saleDate.prefWidthProperty().bind(saleTable.widthProperty().multiply(.1));
         saleReference.prefWidthProperty().bind(saleTable.widthProperty().multiply(.1));
-        saleAddedBy.prefWidthProperty().bind(saleTable.widthProperty().multiply(.1));
+//        saleAddedBy.prefWidthProperty().bind(saleTable.widthProperty().multiply(.1));
         saleCustomer.prefWidthProperty().bind(saleTable.widthProperty().multiply(.1));
         saleBranch.prefWidthProperty().bind(saleTable.widthProperty().multiply(.1));
         saleStatus.prefWidthProperty().bind(saleTable.widthProperty().multiply(.1));
@@ -84,10 +84,10 @@ public class SalesController implements Initializable {
         saleAmountDue.prefWidthProperty().bind(saleTable.widthProperty().multiply(.1));
         salePaymentStatus.prefWidthProperty().bind(saleTable.widthProperty().multiply(.1));
 
-        saleTable.getTableColumns().addAll(saleDate, saleReference, saleAddedBy, saleCustomer, saleBranch, saleStatus, saleGrandTotal, saleAmountPaid, saleAmountDue, salePaymentStatus);
+        saleTable.getTableColumns().addAll(saleDate, saleReference, saleCustomer, saleBranch, saleStatus, saleGrandTotal, saleAmountPaid, saleAmountDue, salePaymentStatus);
         saleTable.getFilters().addAll(
                 new StringFilter<>("Reference", SaleMaster::getRef),
-                new StringFilter<>("Added By", SaleMaster::getAddedBy),
+//                new StringFilter<>("Added By", SaleMaster::getAddedBy),
                 new StringFilter<>("Customer", SaleMaster::getCustomerName),
                 new StringFilter<>("Branch", SaleMaster::getBranchName),
                 new StringFilter<>("Sale Status", SaleMaster::getSaleStatus),

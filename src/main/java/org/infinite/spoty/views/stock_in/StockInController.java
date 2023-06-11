@@ -57,7 +57,7 @@ public class StockInController implements Initializable {
         MFXTableColumn<StockInMaster> stockInStatus = new MFXTableColumn<>("Status", false, Comparator.comparing(StockInMaster::getStatus));
         MFXTableColumn<StockInMaster> stockInTotalCost = new MFXTableColumn<>("Total Cost", false, Comparator.comparing(StockInMaster::getTotal));
 
-        stockInDate.setRowCellFactory(stockIn -> new MFXTableRowCell<>(StockInMaster::getDate));
+        stockInDate.setRowCellFactory(stockIn -> new MFXTableRowCell<>(StockInMaster::getLocaleDate));
         stockInReference.setRowCellFactory(stockIn -> new MFXTableRowCell<>(StockInMaster::getRef));
         stockInBranch.setRowCellFactory(stockIn -> new MFXTableRowCell<>(StockInMaster::getBranchName));
         stockInStatus.setRowCellFactory(stockIn -> new MFXTableRowCell<>(StockInMaster::getStatus));
