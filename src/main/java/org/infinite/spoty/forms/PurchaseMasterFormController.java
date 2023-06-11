@@ -204,7 +204,8 @@ public class PurchaseMasterFormController implements Initializable {
         purchaseDetailTable.setTableRowFactory(t -> {
             MFXTableRow<PurchaseDetail> row = new MFXTableRow<>(purchaseDetailTable, t);
             EventHandler<ContextMenuEvent> eventHandler = event -> {
-                showContextMenu((MFXTableRow<PurchaseDetail>) event.getSource()).show(purchaseDetailTable.getParent(), event.getScreenX(), event.getScreenY());
+                showContextMenu((MFXTableRow<PurchaseDetail>) event.getSource())
+                        .show(purchaseDetailTable.getScene().getWindow(), event.getScreenX(), event.getScreenY());
                 event.consume();
             };
             row.setOnContextMenuRequested(eventHandler);

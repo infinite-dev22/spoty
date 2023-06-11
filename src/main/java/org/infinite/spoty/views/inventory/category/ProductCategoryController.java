@@ -26,6 +26,7 @@ import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 
+@SuppressWarnings("unchecked")
 public class ProductCategoryController implements Initializable {
     @FXML
     public MFXTableView<ProductCategory> categoryTable;
@@ -53,8 +54,10 @@ public class ProductCategoryController implements Initializable {
     }
 
     private void setupTable() {
-        MFXTableColumn<ProductCategory> categoryCode = new MFXTableColumn<>("Code", false, Comparator.comparing(ProductCategory::getCode));
-        MFXTableColumn<ProductCategory> categoryName = new MFXTableColumn<>("Name", false, Comparator.comparing(ProductCategory::getName));
+        MFXTableColumn<ProductCategory> categoryCode =
+                new MFXTableColumn<>("Code", false, Comparator.comparing(ProductCategory::getCode));
+        MFXTableColumn<ProductCategory> categoryName =
+                new MFXTableColumn<>("Name", false, Comparator.comparing(ProductCategory::getName));
 
         categoryCode.setRowCellFactory(category -> new MFXTableRowCell<>(ProductCategory::getCode));
         categoryName.setRowCellFactory(category -> new MFXTableRowCell<>(ProductCategory::getName));
@@ -79,7 +82,8 @@ public class ProductCategoryController implements Initializable {
         categoryTable.setTableRowFactory(t -> {
             MFXTableRow<ProductCategory> row = new MFXTableRow<>(categoryTable, t);
             EventHandler<ContextMenuEvent> eventHandler = event -> {
-                showContextMenu(event.getSource()).show(categoryTable.getParent(), event.getScreenX(), event.getScreenY());
+                showContextMenu((MFXTableRow<ProductCategory>) event.getSource())
+                        .show(categoryTable.getScene().getWindow(), event.getScreenX(), event.getScreenY());
                 event.consume();
             };
             row.setOnContextMenuRequested(eventHandler);
@@ -87,7 +91,7 @@ public class ProductCategoryController implements Initializable {
         });
     }
 
-    private MFXContextMenu showContextMenu(Object obj) {
+    private MFXContextMenu showContextMenu(MFXTableRow<ProductCategory> obj) {
         MFXContextMenu contextMenu = new MFXContextMenu(categoryTable);
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
@@ -95,15 +99,13 @@ public class ProductCategoryController implements Initializable {
         // Actions
         // Delete
         delete.setOnAction(e -> {
-            MFXTableRow<ProductCategory> onj = (MFXTableRow) obj;
-            ProductCategoryDao.deleteProductCategory(onj.getData().getId());
+            ProductCategoryDao.deleteProductCategory(obj.getData().getId());
             ProductCategoryViewModel.getItems();
             e.consume();
         });
         // Edit
         edit.setOnAction(e -> {
-            MFXTableRow<ProductCategory> onj = (MFXTableRow) obj;
-            ProductCategoryViewModel.getItem(onj.getData().getId());
+            ProductCategoryViewModel.getItem(obj.getData().getId());
             dialog.showAndWait();
             e.consume();
         });

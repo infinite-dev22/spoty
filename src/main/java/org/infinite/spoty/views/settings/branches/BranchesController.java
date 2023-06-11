@@ -57,12 +57,12 @@ public class BranchesController implements Initializable {
 
     public void setupTable() {
         // TODO: Create ZipCode and Country Columns.
-        MFXTableColumn<Branch> branchName = new MFXTableColumn<>("Name", true, Comparator.comparing(Branch::getName));
-        MFXTableColumn<Branch> branchPhone = new MFXTableColumn<>("Phone", true, Comparator.comparing(Branch::getPhone));
-        MFXTableColumn<Branch> branchCity = new MFXTableColumn<>("City", true, Comparator.comparing(Branch::getCity));
-        MFXTableColumn<Branch> branchTown = new MFXTableColumn<>("Town", true, Comparator.comparing(Branch::getTown));
-        MFXTableColumn<Branch> branchLocation = new MFXTableColumn<>("Location", true, Comparator.comparing(Branch::getZipCode));
-        MFXTableColumn<Branch> branchEmail = new MFXTableColumn<>("Email", true, Comparator.comparing(Branch::getEmail));
+        MFXTableColumn<Branch> branchName = new MFXTableColumn<>("Name", false, Comparator.comparing(Branch::getName));
+        MFXTableColumn<Branch> branchPhone = new MFXTableColumn<>("Phone", false, Comparator.comparing(Branch::getPhone));
+        MFXTableColumn<Branch> branchCity = new MFXTableColumn<>("City", false, Comparator.comparing(Branch::getCity));
+        MFXTableColumn<Branch> branchTown = new MFXTableColumn<>("Town", false, Comparator.comparing(Branch::getTown));
+        MFXTableColumn<Branch> branchLocation = new MFXTableColumn<>("Location", false, Comparator.comparing(Branch::getZipCode));
+        MFXTableColumn<Branch> branchEmail = new MFXTableColumn<>("Email", false, Comparator.comparing(Branch::getEmail));
 
         branchName.setRowCellFactory(branch -> new MFXTableRowCell<>(Branch::getName));
         branchPhone.setRowCellFactory(branch -> new MFXTableRowCell<>(Branch::getPhone));
@@ -98,14 +98,8 @@ public class BranchesController implements Initializable {
 
         branchTable.setTableRowFactory(t -> {
             MFXTableRow<Branch> row = new MFXTableRow<>(branchTable, t);
-//            row.setOnMouseClicked(e -> {
-//                if (e.getButton().equals(MouseButton.SECONDARY)) {
-//                    showContextMenu().show(branchTable);
-//                }
-//            });
-            // Context menu doesn't show, not yet figured out why but must be coz show() ain't called on it yet.
-            // which when done results into an error.
-            EventHandler<ContextMenuEvent> eventHandler = event -> showContextMenu().show(branchContentPane.getParent(), event.getScreenX(), event.getScreenY());
+            EventHandler<ContextMenuEvent> eventHandler = event -> showContextMenu()
+                    .show(branchContentPane.getScene().getWindow(), event.getScreenX(), event.getScreenY());
             row.setOnContextMenuRequested(eventHandler);
             return row;
         });

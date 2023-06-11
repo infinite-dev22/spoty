@@ -83,7 +83,8 @@ public class ExpenseCategoryController implements Initializable {
         categoryExpenseTable.setTableRowFactory(t -> {
             MFXTableRow<ExpenseCategory> row = new MFXTableRow<>(categoryExpenseTable, t);
             EventHandler<ContextMenuEvent> eventHandler = event -> {
-                showContextMenu(event.getSource()).show(categoryExpenseTable.getParent(), event.getScreenX(), event.getScreenY());
+                showContextMenu(event.getSource()).
+                        show(categoryExpenseTable.getScene().getWindow(), event.getScreenX(), event.getScreenY());
                 event.consume();
             };
             row.setOnContextMenuRequested(eventHandler);

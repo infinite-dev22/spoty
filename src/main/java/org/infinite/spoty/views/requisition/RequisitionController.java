@@ -26,6 +26,7 @@ import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 
+@SuppressWarnings("unchecked")
 public class RequisitionController implements Initializable {
     private final Stage stage;
     @FXML
@@ -103,7 +104,8 @@ public class RequisitionController implements Initializable {
         requisitionMasterTable.setTableRowFactory(t -> {
             MFXTableRow<RequisitionMaster> row = new MFXTableRow<>(requisitionMasterTable, t);
             EventHandler<ContextMenuEvent> eventHandler = event -> {
-                showContextMenu((MFXTableRow<RequisitionMaster>) event.getSource()).show(requisitionMasterTable.getParent(), event.getScreenX(), event.getScreenY());
+                showContextMenu((MFXTableRow<RequisitionMaster>) event.getSource())
+                        .show(requisitionMasterTable.getScene().getWindow(), event.getScreenX(), event.getScreenY());
                 event.consume();
             };
             row.setOnContextMenuRequested(eventHandler);

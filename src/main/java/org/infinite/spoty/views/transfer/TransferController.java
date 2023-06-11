@@ -97,7 +97,8 @@ public class TransferController implements Initializable {
         transferMasterTable.setTableRowFactory(t -> {
             MFXTableRow<TransferMaster> row = new MFXTableRow<>(transferMasterTable, t);
             EventHandler<ContextMenuEvent> eventHandler = event -> {
-                showContextMenu((MFXTableRow<TransferMaster>) event.getSource()).show(transferMasterTable.getParent(), event.getScreenX(), event.getScreenY());
+                showContextMenu((MFXTableRow<TransferMaster>) event.getSource())
+                        .show(transferMasterTable.getScene().getWindow(), event.getScreenX(), event.getScreenY());
                 event.consume();
             };
             row.setOnContextMenuRequested(eventHandler);

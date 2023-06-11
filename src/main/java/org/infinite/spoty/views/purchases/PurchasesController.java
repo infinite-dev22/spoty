@@ -27,6 +27,7 @@ import java.util.ResourceBundle;
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 import static org.infinite.spoty.viewModels.PurchaseMasterViewModel.getPurchaseMasters;
 
+@SuppressWarnings("unchecked")
 public class PurchasesController implements Initializable {
     private final Stage stage;
     @FXML
@@ -103,7 +104,8 @@ public class PurchasesController implements Initializable {
         purchaseMasterTable.setTableRowFactory(t -> {
             MFXTableRow<PurchaseMaster> row = new MFXTableRow<>(purchaseMasterTable, t);
             EventHandler<ContextMenuEvent> eventHandler = event -> {
-                showContextMenu((MFXTableRow<PurchaseMaster>) event.getSource()).show(purchaseMasterTable.getParent(), event.getScreenX(), event.getScreenY());
+                showContextMenu((MFXTableRow<PurchaseMaster>) event.getSource())
+                        .show(purchaseMasterTable.getScene().getWindow(), event.getScreenX(), event.getScreenY());
                 event.consume();
             };
             row.setOnContextMenuRequested(eventHandler);

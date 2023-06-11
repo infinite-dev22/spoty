@@ -16,7 +16,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import org.infinite.spoty.database.models.SaleMaster;
-import org.infinite.spoty.forms.SaleFormController;
+import org.infinite.spoty.forms.SaleMasterFormController;
 import org.infinite.spoty.viewModels.SaleMasterViewModel;
 
 import java.io.IOException;
@@ -103,13 +103,12 @@ public class SalesController implements Initializable {
     private void styleSaleMasterTable() {
         saleTable.setPrefSize(1200, 1000);
         saleTable.features().enableBounceEffect();
-        saleTable.autosizeColumnsOnInitialization();
         saleTable.features().enableSmoothScrolling(0.5);
     }
 
     public void saleCreateBtnClicked() {
         FXMLLoader loader = fxmlLoader("forms/SaleForm.fxml");
-        loader.setControllerFactory(c -> new SaleFormController(stage));
+        loader.setControllerFactory(c -> new SaleMasterFormController(stage));
         try {
             BorderPane productFormPane = loader.load();
             ((StackPane) saleContentPane.getParent()).getChildren().add(productFormPane);

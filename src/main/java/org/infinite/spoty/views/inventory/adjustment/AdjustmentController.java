@@ -79,7 +79,8 @@ public class AdjustmentController implements Initializable {
         adjustmentMasterTable.setTableRowFactory(t -> {
             MFXTableRow<AdjustmentMaster> row = new MFXTableRow<>(adjustmentMasterTable, t);
             EventHandler<ContextMenuEvent> eventHandler = event -> {
-                showContextMenu((MFXTableRow<AdjustmentMaster>) event.getSource()).show(adjustmentMasterTable.getParent(), event.getScreenX(), event.getScreenY());
+                showContextMenu((MFXTableRow<AdjustmentMaster>) event.getSource())
+                        .show(adjustmentMasterTable.getScene().getWindow(), event.getScreenX(), event.getScreenY());
                 event.consume();
             };
             row.setOnContextMenuRequested(eventHandler);

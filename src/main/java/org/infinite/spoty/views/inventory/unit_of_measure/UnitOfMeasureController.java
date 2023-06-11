@@ -27,6 +27,7 @@ import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 
+@SuppressWarnings("unchecked")
 public class UnitOfMeasureController implements Initializable {
     @FXML
     public MFXTableView<UnitOfMeasure> uomTable;
@@ -92,7 +93,8 @@ public class UnitOfMeasureController implements Initializable {
         uomTable.setTableRowFactory(t -> {
             MFXTableRow<UnitOfMeasure> row = new MFXTableRow<>(uomTable, t);
             EventHandler<ContextMenuEvent> eventHandler = event -> {
-                showContextMenu(event.getSource()).show(uomTable.getParent(), event.getScreenX(), event.getScreenY());
+                showContextMenu((MFXTableRow<UnitOfMeasure>) event.getSource())
+                        .show(uomTable.getScene().getWindow(), event.getScreenX(), event.getScreenY());
                 event.consume();
             };
             row.setOnContextMenuRequested(eventHandler);
@@ -100,7 +102,7 @@ public class UnitOfMeasureController implements Initializable {
         });
     }
 
-    private MFXContextMenu showContextMenu(Object obj) {
+    private MFXContextMenu showContextMenu(MFXTableRow<UnitOfMeasure> obj) {
         MFXContextMenu contextMenu = new MFXContextMenu(uomTable);
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
@@ -108,15 +110,13 @@ public class UnitOfMeasureController implements Initializable {
         // Actions
         // Delete
         delete.setOnAction(e -> {
-            MFXTableRow<UnitOfMeasure> onj = (MFXTableRow) obj;
-            UnitOfMeasureDao.deleteUnitOfMeasure(onj.getData().getId());
+            UnitOfMeasureDao.deleteUnitOfMeasure(obj.getData().getId());
             UOMViewModel.getItems();
             e.consume();
         });
         // Edit
         edit.setOnAction(e -> {
-            MFXTableRow<UnitOfMeasure> onj = (MFXTableRow) obj;
-            UOMViewModel.getItem(onj.getData().getId());
+            UOMViewModel.getItem(obj.getData().getId());
             dialog.showAndWait();
             e.consume();
         });

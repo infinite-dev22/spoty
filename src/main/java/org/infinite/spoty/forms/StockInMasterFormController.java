@@ -126,7 +126,8 @@ public class StockInMasterFormController implements Initializable {
         stockInDetailTable.setTableRowFactory(t -> {
             MFXTableRow<StockInDetail> row = new MFXTableRow<>(stockInDetailTable, t);
             EventHandler<ContextMenuEvent> eventHandler = event -> {
-                showContextMenu((MFXTableRow<StockInDetail>) event.getSource()).show(stockInDetailTable.getParent(), event.getScreenX(), event.getScreenY());
+                showContextMenu((MFXTableRow<StockInDetail>) event.getSource())
+                        .show(stockInDetailTable.getScene().getWindow(), event.getScreenX(), event.getScreenY());
                 event.consume();
             };
             row.setOnContextMenuRequested(eventHandler);

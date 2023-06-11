@@ -27,6 +27,7 @@ import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 
+@SuppressWarnings("unchecked")
 public class SupplierController implements Initializable {
     @FXML
     public MFXTextField supplierSearchBar;
@@ -94,7 +95,8 @@ public class SupplierController implements Initializable {
         suppliersTable.setTableRowFactory(t -> {
             MFXTableRow<Supplier> row = new MFXTableRow<>(suppliersTable, t);
             EventHandler<ContextMenuEvent> eventHandler = event -> {
-                showContextMenu((MFXTableRow<Supplier>) event.getSource()).show(suppliersTable.getParent(), event.getScreenX(), event.getScreenY());
+                showContextMenu((MFXTableRow<Supplier>) event.getSource())
+                        .show(suppliersTable.getScene().getWindow(), event.getScreenX(), event.getScreenY());
                 event.consume();
             };
             row.setOnContextMenuRequested(eventHandler);

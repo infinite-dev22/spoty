@@ -28,6 +28,7 @@ import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 
+@SuppressWarnings("unchecked")
 public class ExpenseController implements Initializable {
     @FXML
     public MFXTextField expenseSearchBar;
@@ -98,7 +99,8 @@ public class ExpenseController implements Initializable {
         expenseTable.setTableRowFactory(t -> {
             MFXTableRow<Expense> row = new MFXTableRow<>(expenseTable, t);
             EventHandler<ContextMenuEvent> eventHandler = event -> {
-                showContextMenu(event.getSource()).show(expenseTable.getParent(), event.getScreenX(), event.getScreenY());
+                showContextMenu((MFXTableRow<Expense>) event.getSource())
+                        .show(expenseTable.getScene().getWindow(), event.getScreenX(), event.getScreenY());
                 event.consume();
             };
             row.setOnContextMenuRequested(eventHandler);
@@ -106,7 +108,7 @@ public class ExpenseController implements Initializable {
         });
     }
 
-    private MFXContextMenu showContextMenu(Object obj) {
+    private MFXContextMenu showContextMenu(MFXTableRow<Expense> obj) {
         MFXContextMenu contextMenu = new MFXContextMenu(expenseTable);
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
@@ -114,15 +116,13 @@ public class ExpenseController implements Initializable {
         // Actions
         // Delete
         delete.setOnAction(e -> {
-            MFXTableRow<Expense> onj = (MFXTableRow) obj;
-            ExpenseDao.deleteExpense(onj.getData().getId());
+            ExpenseDao.deleteExpense(obj.getData().getId());
             ExpenseViewModel.getExpenses();
             e.consume();
         });
         // Edit
         edit.setOnAction(e -> {
-            MFXTableRow<Expense> onj = (MFXTableRow) obj;
-            ExpenseViewModel.getItem(onj.getData().getId());
+            ExpenseViewModel.getItem(obj.getData().getId());
             dialog.showAndWait();
             e.consume();
         });

@@ -159,7 +159,8 @@ public class QuotationMasterFormController implements Initializable {
         quotationProductsTable.setTableRowFactory(t -> {
             MFXTableRow<QuotationDetail> row = new MFXTableRow<>(quotationProductsTable, t);
             EventHandler<ContextMenuEvent> eventHandler = event -> {
-                showContextMenu((MFXTableRow<QuotationDetail>) event.getSource()).show(quotationProductsTable.getParent(), event.getScreenX(), event.getScreenY());
+                showContextMenu((MFXTableRow<QuotationDetail>) event.getSource())
+                        .show(quotationProductsTable.getScene().getWindow(), event.getScreenX(), event.getScreenY());
                 event.consume();
             };
             row.setOnContextMenuRequested(eventHandler);

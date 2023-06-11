@@ -20,7 +20,7 @@ import java.util.ResourceBundle;
 import static org.infinite.spoty.GlobalActions.closeDialog;
 import static org.infinite.spoty.dataShare.DataShare.getAdjustmentProducts;
 
-public class SaleProductsFormController implements Initializable {
+public class SaleDetailFormController implements Initializable {
     @FXML
     public MFXTextField saleProductsQnty;
     @FXML
@@ -99,7 +99,7 @@ public class SaleProductsFormController implements Initializable {
                 SaleDetailViewModel.resetProperties();
                 System.out.println(getAdjustmentProducts());
                 closeDialog(e);
-//                SaleFormController.setupTable();
+//                SaleMasterFormController.setupTable();
             }
         });
     }

@@ -36,7 +36,7 @@ import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 
-//@SuppressWarnings("unchecked")
+@SuppressWarnings("unchecked")
 public class AdjustmentMasterFormController implements Initializable {
     public MFXTextField adjustmentDetailID = new MFXTextField();
     public MFXTextField adjustmentMasterID = new MFXTextField();
@@ -128,7 +128,8 @@ public class AdjustmentMasterFormController implements Initializable {
         adjustmentDetailTable.setTableRowFactory(t -> {
             MFXTableRow<AdjustmentDetail> row = new MFXTableRow<>(adjustmentDetailTable, t);
             EventHandler<ContextMenuEvent> eventHandler = event -> {
-                showContextMenu((MFXTableRow<AdjustmentDetail>) event.getSource()).show(adjustmentDetailTable.getParent(), event.getScreenX(), event.getScreenY());
+                showContextMenu((MFXTableRow<AdjustmentDetail>) event.getSource())
+                        .show(adjustmentDetailTable.getScene().getWindow(), event.getScreenX(), event.getScreenY());
                 event.consume();
             };
             row.setOnContextMenuRequested(eventHandler);

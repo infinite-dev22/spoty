@@ -95,7 +95,7 @@ public class CustomerController implements Initializable {
         customersTable.setTableRowFactory(t -> {
             MFXTableRow<Customer> row = new MFXTableRow<>(customersTable, t);
             EventHandler<ContextMenuEvent> eventHandler = event -> {
-                showContextMenu((MFXTableRow<Customer>) event.getSource()).show(customersTable.getParent(), event.getScreenX(), event.getScreenY());
+                showContextMenu((MFXTableRow<Customer>) event.getSource()).show(customersTable.getScene().getWindow(), event.getScreenX(), event.getScreenY());
                 event.consume();
             };
             row.setOnContextMenuRequested(eventHandler);
@@ -124,6 +124,8 @@ public class CustomerController implements Initializable {
 
         contextMenu.addItems(edit, delete);
 
+        if (contextMenu.isShowing())
+            contextMenu.hide();
         return contextMenu;
     }
 

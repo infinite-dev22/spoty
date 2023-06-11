@@ -10,7 +10,7 @@
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.layout.*?>
 <DialogPane xmlns:fx="http://javafx.com/fxml/1" styleClass="card" stylesheets="@../styles/Common.css"
-            xmlns="http://javafx.com/javafx/19" fx:controller="org.infinite.spoty.forms.SaleProductsFormController">
+            xmlns="http://javafx.com/javafx/19" fx:controller="org.infinite.spoty.forms.SaleDetailFormController">
     <content>
         <AnchorPane>
             <Separator layoutY="25.0" prefWidth="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"

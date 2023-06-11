@@ -87,7 +87,6 @@ public class SaleReturnsController implements Initializable {
     private void getSaleReturnMasterTable() {
         saleReturnTable.setPrefSize(1200, 1000);
         saleReturnTable.features().enableBounceEffect();
-        saleReturnTable.autosizeColumnsOnInitialization();
         saleReturnTable.features().enableSmoothScrolling(0.5);
     }
 }

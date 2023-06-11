@@ -125,7 +125,8 @@ public class RequisitionMasterFormController implements Initializable {
         requisitionDetailTable.setTableRowFactory(t -> {
             MFXTableRow<RequisitionDetail> row = new MFXTableRow<>(requisitionDetailTable, t);
             EventHandler<ContextMenuEvent> eventHandler = event -> {
-                showContextMenu((MFXTableRow<RequisitionDetail>) event.getSource()).show(requisitionDetailTable.getParent(), event.getScreenX(), event.getScreenY());
+                showContextMenu((MFXTableRow<RequisitionDetail>) event.getSource())
+                        .show(requisitionDetailTable.getScene().getWindow(), event.getScreenX(), event.getScreenY());
                 event.consume();
             };
             row.setOnContextMenuRequested(eventHandler);

@@ -27,6 +27,7 @@ import java.util.ResourceBundle;
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 import static org.infinite.spoty.viewModels.BrandViewModel.getItems;
 
+@SuppressWarnings("unchecked")
 public class BrandController implements Initializable {
     @FXML
     public MFXTableView<Brand> brandTable;
@@ -80,7 +81,8 @@ public class BrandController implements Initializable {
         brandTable.setTableRowFactory(t -> {
             MFXTableRow<Brand> row = new MFXTableRow<>(brandTable, t);
             EventHandler<ContextMenuEvent> eventHandler = event -> {
-                showContextMenu(event.getSource()).show(brandTable.getParent(), event.getScreenX(), event.getScreenY());
+                showContextMenu((MFXTableRow<Brand>) event.getSource())
+                        .show(brandTable.getScene().getWindow(), event.getScreenX(), event.getScreenY());
                 event.consume();
             };
             row.setOnContextMenuRequested(eventHandler);
@@ -88,7 +90,7 @@ public class BrandController implements Initializable {
         });
     }
 
-    private MFXContextMenu showContextMenu(Object obj) {
+    private MFXContextMenu showContextMenu(MFXTableRow<Brand> obj) {
         MFXContextMenu contextMenu = new MFXContextMenu(brandTable);
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
@@ -96,15 +98,13 @@ public class BrandController implements Initializable {
         // Actions
         // Delete
         delete.setOnAction(e -> {
-            MFXTableRow<Brand> onj = (MFXTableRow) obj;
-            BrandDao.deleteBrand(onj.getData().getId());
+            BrandDao.deleteBrand(obj.getData().getId());
             BrandViewModel.getItems();
             e.consume();
         });
         // Edit
         edit.setOnAction(e -> {
-            MFXTableRow<Brand> onj = (MFXTableRow) obj;
-            BrandViewModel.getItem(onj.getData().getId());
+            BrandViewModel.getItem(obj.getData().getId());
             dialog.showAndWait();
             e.consume();
         });

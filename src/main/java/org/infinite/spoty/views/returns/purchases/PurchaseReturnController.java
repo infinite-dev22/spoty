@@ -90,7 +90,6 @@ public class PurchaseReturnController implements Initializable {
     private void stylePurchaseReturnMasterTable() {
         purchaseReturnTable.setPrefSize(1200, 1000);
         purchaseReturnTable.features().enableBounceEffect();
-        purchaseReturnTable.autosizeColumnsOnInitialization();
         purchaseReturnTable.features().enableSmoothScrolling(0.5);
     }
 }
