@@ -10,7 +10,6 @@ import org.infinite.spoty.database.util.HibernateUtil;
 
 import java.util.Date;
 
-@SuppressWarnings("unchecked")
 public class SaleDetailDao {
     public static void saveSaleDetail(SaleDetail obj) {
         Transaction transaction = null;
@@ -19,7 +18,7 @@ public class SaleDetailDao {
             obj.setCreatedAt(new Date());
             // TODO: created by should be a system user.
             // obj.setCreatedBy();
-            session.save(obj);
+            session.persist(obj);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -46,7 +45,7 @@ public class SaleDetailDao {
             saleDetail.setUpdatedAt(new Date());
             // TODO: updated by should be a system user.
             // saleDetail.setUpdatedBy();
-            session.update(saleDetail);
+            session.merge(saleDetail);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -73,7 +72,8 @@ public class SaleDetailDao {
         ObservableList<SaleDetail> purchaseCategories;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            purchaseCategories = FXCollections.observableList(session.createQuery("from SaleDetail").stream().toList());
+            purchaseCategories = FXCollections.observableList(
+                    session.createQuery("from SaleDetail", SaleDetail.class).stream().toList());
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -86,7 +86,7 @@ public class SaleDetailDao {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.delete(session.get(SaleDetail.class, id));
+            session.remove(session.getReference(SaleDetail.class, id));
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();

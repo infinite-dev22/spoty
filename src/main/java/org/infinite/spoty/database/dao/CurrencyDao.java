@@ -10,51 +10,48 @@ import org.infinite.spoty.database.util.HibernateUtil;
 
 import java.util.Date;
 
-@SuppressWarnings("unchecked")
 public class CurrencyDao {
-    public static int saveCurrency(Currency obj) {
+    public static void saveCurrency(Currency obj) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             obj.setCreatedAt(new Date());
             // TODO: created by should be a system user.
             // obj.setCreatedBy();
-            session.save(obj);
+            session.persist(obj);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
-    public static int updateCurrency(Currency obj, long id) {
+    public static void updateCurrency(Currency obj, int id) {
         Transaction transaction = null;
         Currency currency;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            currency = session.load(Currency.class, id);
+            currency = session.get(Currency.class, id);
             currency.setCode(obj.getCode());
             currency.setName(obj.getName());
             currency.setSymbol(obj.getSymbol());
             currency.setUpdatedAt(new Date());
             // TODO: updated by should be a system user.
             // currency.setUpdatedBy();
-            session.update(currency);
+            session.merge(currency);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
-    public static Currency findCurrency(long id) {
+    public static Currency findCurrency(int id) {
         Transaction transaction = null;
         Currency currency;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            currency = session.load(Currency.class, id);
+            currency = session.get(Currency.class, id);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -68,7 +65,7 @@ public class CurrencyDao {
         ObservableList<Currency> currencys;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            currencys = FXCollections.observableList(session.createQuery("from Currency").stream().toList());
+            currencys = FXCollections.observableList(session.createQuery("from Currency", Currency.class).stream().toList());
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -77,16 +74,15 @@ public class CurrencyDao {
         return currencys;
     }
 
-    public static int deleteCurrency(long id) {
+    public static void deleteCurrency(int id) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.delete(session.load(Currency.class, id));
+            session.remove(session.getReference(Currency.class, id));
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 }

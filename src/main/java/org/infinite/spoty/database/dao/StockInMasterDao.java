@@ -10,7 +10,6 @@ import org.infinite.spoty.database.util.HibernateUtil;
 
 import java.util.Date;
 
-@SuppressWarnings("unchecked")
 public class StockInMasterDao {
     public static void saveStockInMaster(StockInMaster obj) {
         Transaction transaction = null;
@@ -19,7 +18,7 @@ public class StockInMasterDao {
             obj.setCreatedAt(new Date());
             // TODO: created by should be a system user.
             // obj.setCreatedBy();
-            session.save(obj);
+            session.persist(obj);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -49,7 +48,7 @@ public class StockInMasterDao {
             stockInMaster.setUpdatedAt(new Date());
             // TODO: updated by should be a system user.
             // stockInMaster.setUpdatedBy();
-            session.update(stockInMaster);
+            session.merge(stockInMaster);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -76,7 +75,8 @@ public class StockInMasterDao {
         ObservableList<StockInMaster> saleCategories;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            saleCategories = FXCollections.observableList(session.createQuery("from StockInMaster").stream().toList());
+            saleCategories = FXCollections.observableList(
+                    session.createQuery("from StockInMaster", StockInMaster.class).stream().toList());
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -89,7 +89,7 @@ public class StockInMasterDao {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.delete(session.get(StockInMaster.class, id));
+            session.remove(session.getReference(StockInMaster.class, id));
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();

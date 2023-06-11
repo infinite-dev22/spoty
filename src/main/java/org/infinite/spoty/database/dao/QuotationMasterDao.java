@@ -10,7 +10,6 @@ import org.infinite.spoty.database.util.HibernateUtil;
 
 import java.util.Date;
 
-@SuppressWarnings("unchecked")
 public class QuotationMasterDao {
     public static void saveQuotationMaster(QuotationMaster obj) {
         Transaction transaction = null;
@@ -19,7 +18,7 @@ public class QuotationMasterDao {
             obj.setCreatedAt(new Date());
             // TODO: created by should be a system user.
             // obj.setCreatedBy();
-            session.save(obj);
+            session.persist(obj);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -46,7 +45,7 @@ public class QuotationMasterDao {
             quotationMaster.setUpdatedAt(new Date());
             // TODO: updated by should be a system user.
             // quotationMaster.setUpdatedBy();
-            session.update(quotationMaster);
+            session.merge(quotationMaster);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -73,7 +72,7 @@ public class QuotationMasterDao {
         ObservableList<QuotationMaster> purchaseCategories;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            purchaseCategories = FXCollections.observableList(session.createQuery("from QuotationMaster").stream().toList());
+            purchaseCategories = FXCollections.observableList(session.createQuery("from QuotationMaster", QuotationMaster.class).stream().toList());
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -86,7 +85,7 @@ public class QuotationMasterDao {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.delete(session.get(QuotationMaster.class, id));
+            session.remove(session.getReference(QuotationMaster.class, id));
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();

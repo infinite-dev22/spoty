@@ -18,7 +18,7 @@ public class RequisitionMasterDao {
             obj.setCreatedAt(new Date());
             // TODO: created by should be a system user.
             // obj.setCreatedBy();
-            session.save(obj);
+            session.persist(obj);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -46,7 +46,7 @@ public class RequisitionMasterDao {
             requisitionMaster.setUpdatedAt(new Date());
             // TODO: updated by should be a system user.
             // requisitionMaster.setUpdatedBy();
-            session.update(requisitionMaster);
+            session.merge(requisitionMaster);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -73,7 +73,8 @@ public class RequisitionMasterDao {
         ObservableList<RequisitionMaster> requisitionMasters;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            requisitionMasters = FXCollections.observableList(session.createQuery("from RequisitionMaster").stream().toList());
+            requisitionMasters = FXCollections.observableList(
+                    session.createQuery("from RequisitionMaster", RequisitionMaster.class).stream().toList());
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -86,7 +87,7 @@ public class RequisitionMasterDao {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.delete(session.get(RequisitionMaster.class, id));
+            session.remove(session.getReference(RequisitionMaster.class, id));
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();

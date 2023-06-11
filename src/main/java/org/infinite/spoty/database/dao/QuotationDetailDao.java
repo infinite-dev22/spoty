@@ -11,20 +11,19 @@ import org.infinite.spoty.database.util.HibernateUtil;
 import java.util.Date;
 
 public class QuotationDetailDao {
-    public static int saveQuotationDetail(QuotationDetail obj) {
+    public static void saveQuotationDetail(QuotationDetail obj) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             obj.setCreatedAt(new Date());
             // TODO: created by should be a system user.
             // obj.setCreatedBy();
-            session.save(obj);
+            session.persist(obj);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
     public static void updateQuotationDetail(QuotationDetail obj, int id) {
@@ -47,7 +46,7 @@ public class QuotationDetailDao {
             quotationDetail.setUpdatedAt(new Date());
             // TODO: updated by should be a system user.
             // quotationDetail.setUpdatedBy();
-            session.update(quotationDetail);
+            session.merge(quotationDetail);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -74,7 +73,8 @@ public class QuotationDetailDao {
         ObservableList<QuotationDetail> purchaseCategories;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            purchaseCategories = FXCollections.observableList(session.createQuery("from QuotationDetail").stream().toList());
+            purchaseCategories = FXCollections.observableList(
+                    session.createQuery("from QuotationDetail", QuotationDetail.class).stream().toList());
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -87,7 +87,7 @@ public class QuotationDetailDao {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.delete(session.get(QuotationDetail.class, id));
+            session.remove(session.getReference(QuotationDetail.class, id));
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();

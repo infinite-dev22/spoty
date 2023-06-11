@@ -18,7 +18,7 @@ public class SupplierDao {
             obj.setCreatedAt(new Date());
             // TODO: created by should be a system user.
             // obj.setCreatedBy();
-            session.save(obj);
+            session.persist(obj);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -43,7 +43,7 @@ public class SupplierDao {
             supplier.setUpdatedAt(new Date());
             // TODO: updated by should be a system user.
             // supplier.setUpdatedBy();
-            session.update(supplier);
+            session.merge(supplier);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -70,7 +70,8 @@ public class SupplierDao {
         ObservableList<Supplier> purchaseCategories;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            purchaseCategories = FXCollections.observableList(session.createQuery("from Supplier").stream().toList());
+            purchaseCategories = FXCollections.observableList(
+                    session.createQuery("from Supplier", Supplier.class).stream().toList());
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -83,7 +84,7 @@ public class SupplierDao {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.delete(session.get(Supplier.class, id));
+            session.remove(session.getReference(Supplier.class, id));
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();

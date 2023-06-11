@@ -1,5 +1,6 @@
 module org.infinite.spoty {
     requires MaterialFX;
+    requires VirtualizedFX;
 
     requires javafx.controls;
     requires javafx.fxml;
@@ -12,10 +13,20 @@ module org.infinite.spoty {
     requires mfx.resources;
 
     requires org.hibernate.orm.core;
+    requires org.hibernate.commons.annotations;
+
+    requires net.bytebuddy;
+
+    requires org.jboss.logging;
 
     requires jakarta.persistence;
+    requires jakarta.transaction;
+    requires jakarta.xml.bind;
+    requires com.fasterxml.classmate;
+
     requires java.sql;
     requires java.logging;
+    requires java.naming;
 
     opens org.infinite.spoty.views;
     opens org.infinite.spoty.views.components;

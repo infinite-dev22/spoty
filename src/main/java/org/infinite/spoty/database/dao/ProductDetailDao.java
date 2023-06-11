@@ -11,28 +11,27 @@ import org.infinite.spoty.database.util.HibernateUtil;
 import java.util.Date;
 
 public class ProductDetailDao {
-    public static int saveProductDetail(ProductDetail obj) {
+    public static void saveProductDetail(ProductDetail obj) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             obj.setCreatedAt(new Date());
             // TODO: created by should be a system user.
             // obj.setCreatedBy();
-            session.save(obj);
+            session.persist(obj);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
-    public static int updateProductDetail(ProductDetail obj, long id) {
+    public static void updateProductDetail(ProductDetail obj, int id) {
         Transaction transaction = null;
         ProductDetail productDetail;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            productDetail = session.load(ProductDetail.class, id);
+            productDetail = session.get(ProductDetail.class, id);
             productDetail.setProduct(obj.getProduct());
             productDetail.setName(obj.getName());
             productDetail.setQuantity(obj.getQuantity());
@@ -40,21 +39,20 @@ public class ProductDetailDao {
             productDetail.setUpdatedAt(new Date());
             // TODO: updated by should be a system user.
             // productDetail.setUpdatedBy();
-            session.update(productDetail);
+            session.merge(productDetail);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
-    public static ProductDetail findProductDetail(long id) {
+    public static ProductDetail findProductDetail(int id) {
         Transaction transaction = null;
         ProductDetail productDetail;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            productDetail = session.load(ProductDetail.class, id);
+            productDetail = session.get(ProductDetail.class, id);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -68,7 +66,8 @@ public class ProductDetailDao {
         ObservableList<ProductDetail> productCategories;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            productCategories = FXCollections.observableList(session.createQuery("from ProductDetail").stream().toList());
+            productCategories = FXCollections.observableList(
+                    session.createQuery("from ProductDetail", ProductDetail.class).stream().toList());
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -77,16 +76,15 @@ public class ProductDetailDao {
         return productCategories;
     }
 
-    public static int deleteProductDetail(long id) {
+    public static void deleteProductDetail(int id) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.delete(session.load(ProductDetail.class, id));
+            session.remove(session.getReference(ProductDetail.class, id));
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 }

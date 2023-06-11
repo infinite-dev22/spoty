@@ -11,28 +11,27 @@ import org.infinite.spoty.database.util.HibernateUtil;
 import java.util.Date;
 
 public class PermissionDao {
-    public static int savePermission(Permission obj) {
+    public static void savePermission(Permission obj) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             obj.setCreatedAt(new Date());
             // TODO: created by should be a system user.
             // obj.setCreatedBy();
-            session.save(obj);
+            session.persist(obj);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
-    public static int updatePermission(Permission obj, long id) {
+    public static void updatePermission(Permission obj, int id) {
         Transaction transaction = null;
         Permission permission;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            permission = session.load(Permission.class, id);
+            permission = session.get(Permission.class, id);
             permission.setName(obj.getName());
             permission.setLabel(obj.getLabel());
             permission.setDescription(obj.getDescription());
@@ -40,21 +39,20 @@ public class PermissionDao {
             permission.setUpdatedAt(new Date());
             // TODO: updated by should be a system user.
             // permission.setUpdatedBy();
-            session.update(permission);
+            session.merge(permission);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
-    public static Permission findPermission(long id) {
+    public static Permission findPermission(int id) {
         Transaction transaction = null;
         Permission permission;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            permission = session.load(Permission.class, id);
+            permission = session.get(Permission.class, id);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -68,7 +66,8 @@ public class PermissionDao {
         ObservableList<Permission> permissions;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            permissions = FXCollections.observableList(session.createQuery("from Permission").stream().toList());
+            permissions = FXCollections.observableList(
+                    session.createQuery("from Permission", Permission.class).stream().toList());
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -76,16 +75,16 @@ public class PermissionDao {
         }
         return permissions;
     }
-    public static int deletePermission(long id) {
+
+    public static void deletePermission(int id) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.delete(session.load(Permission.class, id));
+            session.remove(session.getReference(Permission.class, id));
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 }

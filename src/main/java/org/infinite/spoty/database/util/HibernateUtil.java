@@ -6,18 +6,18 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
 import org.hibernate.service.ServiceRegistry;
 import org.infinite.spoty.database.models.*;
+import org.jboss.logging.Logger;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Properties;
-import java.util.logging.Level;
 
 public class HibernateUtil {
     private static SessionFactory sessionFactory;
 
     public static SessionFactory getSessionFactory() {
-        java.util.logging.Logger.getLogger("org.hibernate").setLevel(Level.OFF);
+        org.jboss.logging.Logger.getLogger("org.hibernate").isEnabled(Logger.Level.DEBUG);
         try {
             Files.createDirectories(Paths.get(System.getProperty("user.home") + "/.config/ZenmartERP/datastores/databases/sqlite3"));
         } catch (IOException e) {
@@ -42,8 +42,8 @@ public class HibernateUtil {
                 settings.put(Environment.USER, "");
                 settings.put(Environment.PASS, "");
                 settings.put(Environment.DRIVER, "org.sqlite.JDBC");
-                settings.put(Environment.DIALECT, "org.sqlite.hibernate.dialect.SQLiteDialect");
-                settings.put(Environment.SHOW_SQL, "false");
+                settings.put(Environment.DIALECT, "org.hibernate.community.dialect.SQLiteDialect");
+                settings.put(Environment.SHOW_SQL, "true");
                 settings.put(Environment.CURRENT_SESSION_CONTEXT_CLASS, "thread");
                 settings.put(Environment.HBM2DDL_AUTO, "create-only");
                 settings.put(Environment.POOL_SIZE, "5");

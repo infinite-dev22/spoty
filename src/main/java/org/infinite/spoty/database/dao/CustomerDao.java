@@ -10,7 +10,6 @@ import org.infinite.spoty.database.util.HibernateUtil;
 
 import java.util.Date;
 
-@SuppressWarnings("unchecked")
 public class CustomerDao {
     public static void saveCustomer(Customer obj) {
         Transaction transaction = null;
@@ -19,7 +18,7 @@ public class CustomerDao {
             obj.setCreatedAt(new Date());
             // TODO: created by should be a system user.
             // obj.setCreatedBy();
-            session.save(obj);
+            session.persist(obj);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -44,7 +43,7 @@ public class CustomerDao {
             customer.setUpdatedAt(new Date());
             // TODO: updated by should be a system user.
             // customer.setUpdatedBy();
-            session.update(customer);
+            session.merge(customer);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -71,7 +70,7 @@ public class CustomerDao {
         ObservableList<Customer> customers;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            customers = FXCollections.observableList(session.createQuery("from Customer").stream().toList());
+            customers = FXCollections.observableList(session.createQuery("from Customer", Customer.class).stream().toList());
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -80,16 +79,15 @@ public class CustomerDao {
         return customers;
     }
 
-    public static int deleteCustomer(int id) {
+    public static void deleteCustomer(int id) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.delete(session.get(Customer.class, id));
+            session.remove(session.getReference(Customer.class, id));
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 }

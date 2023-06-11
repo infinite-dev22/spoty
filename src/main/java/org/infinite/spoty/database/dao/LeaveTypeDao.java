@@ -11,47 +11,45 @@ import org.infinite.spoty.database.util.HibernateUtil;
 import java.util.Date;
 
 public class LeaveTypeDao {
-    public static int saveLeaveType(LeaveType obj) {
+    public static void saveLeaveType(LeaveType obj) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             obj.setCreatedAt(new Date());
             // TODO: created by should be a system user.
             // obj.setCreatedBy();
-            session.save(obj);
+            session.persist(obj);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
-    public static int updateLeaveType(LeaveType obj, long id) {
+    public static void updateLeaveType(LeaveType obj, int id) {
         Transaction transaction = null;
         LeaveType leaveType;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            leaveType = session.load(LeaveType.class, id);
+            leaveType = session.get(LeaveType.class, id);
             leaveType.setName(obj.getName());
             leaveType.setUpdatedAt(new Date());
             // TODO: updated by should be a system user.
             // leaveType.setUpdatedBy();
-            session.update(leaveType);
+            session.merge(leaveType);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
-    public static LeaveType findLeaveType(long id) {
+    public static LeaveType findLeaveType(int id) {
         Transaction transaction = null;
         LeaveType leaveType;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            leaveType = session.load(LeaveType.class, id);
+            leaveType = session.get(LeaveType.class, id);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -65,7 +63,7 @@ public class LeaveTypeDao {
         ObservableList<LeaveType> leaveTypes;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            leaveTypes = FXCollections.observableList(session.createQuery("from LeaveType").stream().toList());
+            leaveTypes = FXCollections.observableList(session.createQuery("from LeaveType", LeaveType.class).stream().toList());
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -73,16 +71,16 @@ public class LeaveTypeDao {
         }
         return leaveTypes;
     }
-    public static int deleteLeaveType(long id) {
+
+    public static void deleteLeaveType(int id) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.delete(session.load(LeaveType.class, id));
+            session.remove(session.getReference(LeaveType.class, id));
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 }

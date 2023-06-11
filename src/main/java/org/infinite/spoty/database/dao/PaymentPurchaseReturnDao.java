@@ -11,28 +11,27 @@ import org.infinite.spoty.database.util.HibernateUtil;
 import java.util.Date;
 
 public class PaymentPurchaseReturnDao {
-    public static int savePaymentPurchaseReturn(PaymentPurchaseReturn obj) {
+    public static void savePaymentPurchaseReturn(PaymentPurchaseReturn obj) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             obj.setCreatedAt(new Date());
             // TODO: created by should be a system user.
             // obj.setCreatedBy();
-            session.save(obj);
+            session.persist(obj);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
-    public static int updatePaymentPurchaseReturn(PaymentPurchaseReturn obj, long id) {
+    public static void updatePaymentPurchaseReturn(PaymentPurchaseReturn obj, int id) {
         Transaction transaction = null;
         PaymentPurchaseReturn paymentPurchaseReturn;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            paymentPurchaseReturn = session.load(PaymentPurchaseReturn.class, id);
+            paymentPurchaseReturn = session.get(PaymentPurchaseReturn.class, id);
             paymentPurchaseReturn.setUser(obj.getUser());
             paymentPurchaseReturn.setDate(obj.getDate());
             paymentPurchaseReturn.setRef(obj.getRef());
@@ -44,21 +43,20 @@ public class PaymentPurchaseReturnDao {
             paymentPurchaseReturn.setUpdatedAt(new Date());
             // TODO: updated by should be a system user.
             // paymentPurchaseReturn.setUpdatedBy();
-            session.update(paymentPurchaseReturn);
+            session.merge(paymentPurchaseReturn);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
-    public static PaymentPurchaseReturn findPaymentPurchaseReturn(long id) {
+    public static PaymentPurchaseReturn findPaymentPurchaseReturn(int id) {
         Transaction transaction = null;
         PaymentPurchaseReturn paymentPurchaseReturn;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            paymentPurchaseReturn = session.load(PaymentPurchaseReturn.class, id);
+            paymentPurchaseReturn = session.get(PaymentPurchaseReturn.class, id);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -72,7 +70,8 @@ public class PaymentPurchaseReturnDao {
         ObservableList<PaymentPurchaseReturn> paymentPurchaseReturns;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            paymentPurchaseReturns = FXCollections.observableList(session.createQuery("from PaymentPurchaseReturn").stream().toList());
+            paymentPurchaseReturns = FXCollections.observableList(
+                    session.createQuery("from PaymentPurchaseReturn", PaymentPurchaseReturn.class).stream().toList());
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -80,16 +79,16 @@ public class PaymentPurchaseReturnDao {
         }
         return paymentPurchaseReturns;
     }
-    public static int deletePaymentPurchaseReturn(long id) {
+
+    public static void deletePaymentPurchaseReturn(int id) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.delete(session.load(PaymentPurchaseReturn.class, id));
+            session.remove(session.getReference(PaymentPurchaseReturn.class, id));
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 }

@@ -10,7 +10,6 @@ import org.infinite.spoty.database.util.HibernateUtil;
 
 import java.util.Date;
 
-@SuppressWarnings("unchecked")
 public class TransferMasterDao {
     public static void saveTransferMaster(TransferMaster obj) {
         Transaction transaction = null;
@@ -19,7 +18,7 @@ public class TransferMasterDao {
             obj.setCreatedAt(new Date());
             // TODO: created by should be a system user.
             // obj.setCreatedBy();
-            session.save(obj);
+            session.persist(obj);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -50,7 +49,7 @@ public class TransferMasterDao {
             transferMaster.setUpdatedAt(new Date());
             // TODO: updated by should be a system user.
             // transferMaster.setUpdatedBy();
-            session.update(transferMaster);
+            session.merge(transferMaster);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -77,7 +76,8 @@ public class TransferMasterDao {
         ObservableList<TransferMaster> saleCategories;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            saleCategories = FXCollections.observableList(session.createQuery("from TransferMaster").stream().toList());
+            saleCategories = FXCollections.observableList(
+                    session.createQuery("from TransferMaster", TransferMaster.class).stream().toList());
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -90,7 +90,7 @@ public class TransferMasterDao {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.delete(session.get(TransferMaster.class, id));
+            session.remove(session.getReference(TransferMaster.class, id));
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();

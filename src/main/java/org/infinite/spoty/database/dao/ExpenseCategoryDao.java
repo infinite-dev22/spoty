@@ -18,7 +18,7 @@ public class ExpenseCategoryDao {
             obj.setCreatedAt(new Date());
             // TODO: created by should be a system user.
             // obj.setCreatedBy();
-            session.save(obj);
+            session.persist(obj);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -38,7 +38,7 @@ public class ExpenseCategoryDao {
             expenseCategory.setUpdatedAt(new Date());
             // TODO: updated by should be a system user.
             // expenseCategory.setUpdatedBy();
-            session.update(expenseCategory);
+            session.merge(expenseCategory);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -65,7 +65,7 @@ public class ExpenseCategoryDao {
         ObservableList<ExpenseCategory> expenseCategorys;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            expenseCategorys = FXCollections.observableList(session.createQuery("from ExpenseCategory").stream().toList());
+            expenseCategorys = FXCollections.observableList(session.createQuery("from ExpenseCategory", ExpenseCategory.class).stream().toList());
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -78,7 +78,7 @@ public class ExpenseCategoryDao {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.delete(session.get(ExpenseCategory.class, id));
+            session.remove(session.getReference(ExpenseCategory.class, id));
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();

@@ -10,30 +10,28 @@ import org.infinite.spoty.database.util.HibernateUtil;
 
 import java.util.Date;
 
-@SuppressWarnings("unchecked")
 public class CompanyDao {
-    public static int saveCompany(Company obj) {
+    public static void saveCompany(Company obj) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             obj.setCreatedAt(new Date());
             // TODO: created by should be a system user.
             // obj.setCreatedBy();
-            session.save(obj);
+            session.persist(obj);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
-    public static int updateCompany(Company obj, long id) {
+    public static void updateCompany(Company obj, int id) {
         Transaction transaction = null;
         Company company;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            company = session.load(Company.class, id);
+            company = session.get(Company.class, id);
             company.setName(obj.getName());
             company.setPhone(obj.getPhone());
             company.setEmail(obj.getEmail());
@@ -42,21 +40,20 @@ public class CompanyDao {
             company.setUpdatedAt(new Date());
             // TODO: updated by should be a system user.
             // company.setUpdatedBy();
-            session.update(company);
+            session.merge(company);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
-    public static Company findCompany(long id) {
+    public static Company findCompany(int id) {
         Transaction transaction = null;
         Company company;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            company = session.load(Company.class, id);
+            company = session.get(Company.class, id);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -70,7 +67,7 @@ public class CompanyDao {
         ObservableList<Company> companys;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            companys = FXCollections.observableList(session.createQuery("from Company").stream().toList());
+            companys = FXCollections.observableList(session.createQuery("from Company", Company.class).stream().toList());
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -79,16 +76,15 @@ public class CompanyDao {
         return companys;
     }
 
-    public static int deleteCompany(long id) {
+    public static void deleteCompany(int id) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.delete(session.load(Company.class, id));
+            session.remove(session.getReference(Company.class, id));
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 }

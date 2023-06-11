@@ -11,28 +11,27 @@ import org.infinite.spoty.database.util.HibernateUtil;
 import java.util.Date;
 
 public class HolidayDao {
-    public static int saveHoliday(Holiday obj) {
+    public static void saveHoliday(Holiday obj) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             obj.setCreatedAt(new Date());
             // TODO: created by should be a system user.
             // obj.setCreatedBy();
-            session.save(obj);
+            session.persist(obj);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
-    public static int updateHoliday(Holiday obj, long id) {
+    public static void updateHoliday(Holiday obj, int id) {
         Transaction transaction = null;
         Holiday holiday;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            holiday = session.load(Holiday.class, id);
+            holiday = session.get(Holiday.class, id);
             holiday.setTitle(obj.getTitle());
             holiday.setCompany(obj.getCompany());
             holiday.setStartDate(obj.getStartDate());
@@ -41,21 +40,20 @@ public class HolidayDao {
             holiday.setUpdatedAt(new Date());
             // TODO: updated by should be a system user.
             // holiday.setUpdatedBy();
-            session.update(holiday);
+            session.merge(holiday);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
-    public static Holiday findHoliday(long id) {
+    public static Holiday findHoliday(int id) {
         Transaction transaction = null;
         Holiday holiday;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            holiday = session.load(Holiday.class, id);
+            holiday = session.get(Holiday.class, id);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -69,7 +67,7 @@ public class HolidayDao {
         ObservableList<Holiday> holidays;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            holidays = FXCollections.observableList(session.createQuery("from Holiday").stream().toList());
+            holidays = FXCollections.observableList(session.createQuery("from Holiday", Holiday.class).stream().toList());
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -77,16 +75,16 @@ public class HolidayDao {
         }
         return holidays;
     }
-    public static int deleteHoliday(long id) {
+
+    public static void deleteHoliday(int id) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.delete(session.load(Holiday.class, id));
+            session.remove(session.getReference(Holiday.class, id));
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 }

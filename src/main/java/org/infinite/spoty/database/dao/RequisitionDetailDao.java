@@ -10,7 +10,6 @@ import org.infinite.spoty.database.util.HibernateUtil;
 
 import java.util.Date;
 
-@SuppressWarnings("unchecked")
 public class RequisitionDetailDao {
     public static void saveRequisitionDetail(RequisitionDetail obj) {
         Transaction transaction = null;
@@ -19,7 +18,7 @@ public class RequisitionDetailDao {
             obj.setCreatedAt(new Date());
             // TODO: created by should be a system user.
             // obj.setCreatedBy();
-            session.save(obj);
+            session.persist(obj);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -40,7 +39,7 @@ public class RequisitionDetailDao {
             requisitionDetail.setUpdatedAt(new Date());
             // TODO: updated by should be a system user.
             // requisitionDetail.setUpdatedBy();
-            session.update(requisitionDetail);
+            session.merge(requisitionDetail);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -67,7 +66,8 @@ public class RequisitionDetailDao {
         ObservableList<RequisitionDetail> requisitionDetails;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            requisitionDetails = FXCollections.observableList(session.createQuery("from RequisitionDetail").stream().toList());
+            requisitionDetails = FXCollections.observableList(
+                    session.createQuery("from RequisitionDetail", RequisitionDetail.class).stream().toList());
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -80,7 +80,7 @@ public class RequisitionDetailDao {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.delete(session.get(RequisitionDetail.class, id));
+            session.remove(session.getReference(RequisitionDetail.class, id));
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();

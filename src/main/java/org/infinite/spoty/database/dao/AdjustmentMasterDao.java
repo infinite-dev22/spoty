@@ -10,7 +10,6 @@ import org.infinite.spoty.database.util.HibernateUtil;
 
 import java.util.Date;
 
-@SuppressWarnings("unchecked")
 public class AdjustmentMasterDao {
     public static void saveAdjustmentMaster(AdjustmentMaster obj) {
         Transaction transaction = null;
@@ -19,7 +18,7 @@ public class AdjustmentMasterDao {
             obj.setCreatedAt(new Date());
             // TODO: created by should be a system user.
             // obj.setCreatedBy();
-            session.save(obj);
+            session.persist(obj);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -41,7 +40,7 @@ public class AdjustmentMasterDao {
             adjustmentMaster.setUpdatedAt(new Date());
             // TODO: updated by should be a system user.
             // adjustmentMaster.setUpdatedBy();
-            session.update(adjustmentMaster);
+            session.merge(adjustmentMaster);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -68,7 +67,7 @@ public class AdjustmentMasterDao {
         ObservableList<AdjustmentMaster> adjustmentMasters;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            adjustmentMasters = FXCollections.observableList(session.createQuery("from AdjustmentMaster").stream().toList());
+            adjustmentMasters = FXCollections.observableList(session.createQuery("from AdjustmentMaster", AdjustmentMaster.class).stream().toList());
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -81,7 +80,7 @@ public class AdjustmentMasterDao {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.delete(session.get(AdjustmentMaster.class, id));
+            session.remove(session.getReference(AdjustmentMaster.class, id));
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();

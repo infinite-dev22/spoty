@@ -11,28 +11,27 @@ import org.infinite.spoty.database.util.HibernateUtil;
 import java.util.Date;
 
 public class PaymentPurchaseDao {
-    public static int savePaymentPurchase(PaymentPurchase obj) {
+    public static void savePaymentPurchase(PaymentPurchase obj) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             obj.setCreatedAt(new Date());
             // TODO: created by should be a system user.
             // obj.setCreatedBy();
-            session.save(obj);
+            session.persist(obj);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
-    public static int updatePaymentPurchase(PaymentPurchase obj, long id) {
+    public static int updatePaymentPurchase(PaymentPurchase obj, int id) {
         Transaction transaction = null;
         PaymentPurchase paymentPurchase;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            paymentPurchase = session.load(PaymentPurchase.class, id);
+            paymentPurchase = session.get(PaymentPurchase.class, id);
             paymentPurchase.setUser(obj.getUser());
             paymentPurchase.setDate(obj.getDate());
             paymentPurchase.setRef(obj.getRef());
@@ -44,7 +43,7 @@ public class PaymentPurchaseDao {
             paymentPurchase.setUpdatedAt(new Date());
             // TODO: updated by should be a system user.
             // paymentPurchase.setUpdatedBy();
-            session.update(paymentPurchase);
+            session.merge(paymentPurchase);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -53,12 +52,12 @@ public class PaymentPurchaseDao {
         return 1;
     }
 
-    public static PaymentPurchase findPaymentPurchase(long id) {
+    public static PaymentPurchase findPaymentPurchase(int id) {
         Transaction transaction = null;
         PaymentPurchase paymentPurchase;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            paymentPurchase = session.load(PaymentPurchase.class, id);
+            paymentPurchase = session.get(PaymentPurchase.class, id);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -72,7 +71,8 @@ public class PaymentPurchaseDao {
         ObservableList<PaymentPurchase> paymentPurchases;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            paymentPurchases = FXCollections.observableList(session.createQuery("from PaymentPurchase").stream().toList());
+            paymentPurchases = FXCollections.observableList(
+                    session.createQuery("from PaymentPurchase", PaymentPurchase.class).stream().toList());
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -80,16 +80,16 @@ public class PaymentPurchaseDao {
         }
         return paymentPurchases;
     }
-    public static int deletePaymentPurchase(long id) {
+
+    public static void deletePaymentPurchase(int id) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.delete(session.load(PaymentPurchase.class, id));
+            session.remove(session.getReference(PaymentPurchase.class, id));
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 }

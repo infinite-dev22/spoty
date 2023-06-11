@@ -11,28 +11,27 @@ import org.infinite.spoty.database.util.HibernateUtil;
 import java.util.Date;
 
 public class PaymentSaleReturnDao {
-    public static int savePaymentSaleReturn(PaymentSaleReturn obj) {
+    public static void savePaymentSaleReturn(PaymentSaleReturn obj) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             obj.setCreatedAt(new Date());
             // TODO: created by should be a system user.
             // obj.setCreatedBy();
-            session.save(obj);
+            session.persist(obj);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
-    public static int updatePaymentSaleReturn(PaymentSaleReturn obj, long id) {
+    public static void updatePaymentSaleReturn(PaymentSaleReturn obj, int id) {
         Transaction transaction = null;
         PaymentSaleReturn paymentSaleReturn;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            paymentSaleReturn = session.load(PaymentSaleReturn.class, id);
+            paymentSaleReturn = session.getReference(PaymentSaleReturn.class, id);
             paymentSaleReturn.setUser(obj.getUser());
             paymentSaleReturn.setDate(obj.getDate());
             paymentSaleReturn.setRef(obj.getRef());
@@ -44,21 +43,20 @@ public class PaymentSaleReturnDao {
             paymentSaleReturn.setUpdatedAt(new Date());
             // TODO: updated by should be a system user.
             // paymentSaleReturn.setUpdatedBy();
-            session.update(paymentSaleReturn);
+            session.merge(paymentSaleReturn);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
-    public static PaymentSaleReturn findPaymentSaleReturn(long id) {
+    public static PaymentSaleReturn findPaymentSaleReturn(int id) {
         Transaction transaction = null;
         PaymentSaleReturn paymentSaleReturn;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            paymentSaleReturn = session.load(PaymentSaleReturn.class, id);
+            paymentSaleReturn = session.get(PaymentSaleReturn.class, id);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -72,7 +70,8 @@ public class PaymentSaleReturnDao {
         ObservableList<PaymentSaleReturn> paymentSaleReturns;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            paymentSaleReturns = FXCollections.observableList(session.createQuery("from PaymentSaleReturn").stream().toList());
+            paymentSaleReturns = FXCollections.observableList(
+                    session.createQuery("from PaymentSaleReturn", PaymentSaleReturn.class).stream().toList());
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -80,16 +79,16 @@ public class PaymentSaleReturnDao {
         }
         return paymentSaleReturns;
     }
-    public static int deletePaymentSaleReturn(long id) {
+
+    public static void deletePaymentSaleReturn(int id) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.delete(session.load(PaymentSaleReturn.class, id));
+            session.remove(session.getReference(PaymentSaleReturn.class, id));
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 }

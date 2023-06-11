@@ -11,28 +11,27 @@ import org.infinite.spoty.database.util.HibernateUtil;
 import java.util.Date;
 
 public class PaymentSaleDao {
-    public static int savePaymentSale(PaymentSale obj) {
+    public static void savePaymentSale(PaymentSale obj) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             obj.setCreatedAt(new Date());
             // TODO: created by should be a system user.
             // obj.setCreatedBy();
-            session.save(obj);
+            session.persist(obj);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
-    public static int updatePaymentSale(PaymentSale obj, long id) {
+    public static void updatePaymentSale(PaymentSale obj, int id) {
         Transaction transaction = null;
         PaymentSale paymentSale;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            paymentSale = session.load(PaymentSale.class, id);
+            paymentSale = session.get(PaymentSale.class, id);
             paymentSale.setUser(obj.getUser());
             paymentSale.setDate(obj.getDate());
             paymentSale.setRef(obj.getRef());
@@ -44,21 +43,20 @@ public class PaymentSaleDao {
             paymentSale.setUpdatedAt(new Date());
             // TODO: updated by should be a system user.
             // paymentSale.setUpdatedBy();
-            session.update(paymentSale);
+            session.merge(paymentSale);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
-    public static PaymentSale findPaymentSale(long id) {
+    public static PaymentSale findPaymentSale(int id) {
         Transaction transaction = null;
         PaymentSale paymentSale;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            paymentSale = session.load(PaymentSale.class, id);
+            paymentSale = session.get(PaymentSale.class, id);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -72,7 +70,8 @@ public class PaymentSaleDao {
         ObservableList<PaymentSale> paymentSales;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            paymentSales = FXCollections.observableList(session.createQuery("from PaymentSale").stream().toList());
+            paymentSales = FXCollections.observableList(
+                    session.createQuery("from PaymentSale", PaymentSale.class).stream().toList());
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -80,16 +79,16 @@ public class PaymentSaleDao {
         }
         return paymentSales;
     }
-    public static int deletePaymentSale(long id) {
+
+    public static void deletePaymentSale(int id) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.delete(session.load(PaymentSale.class, id));
+            session.remove(session.getReference(PaymentSale.class, id));
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 }

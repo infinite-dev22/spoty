@@ -10,7 +10,6 @@ import org.infinite.spoty.database.util.HibernateUtil;
 
 import java.util.Date;
 
-@SuppressWarnings("unchecked")
 public class PurchaseMasterDao {
     public static void savePurchaseMaster(PurchaseMaster obj) {
         Transaction transaction = null;
@@ -19,7 +18,7 @@ public class PurchaseMasterDao {
             obj.setCreatedAt(new Date());
             // TODO: created by should be a system user.
             // obj.setCreatedBy();
-            session.save(obj);
+            session.persist(obj);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -50,7 +49,7 @@ public class PurchaseMasterDao {
             purchaseMaster.setUpdatedAt(new Date());
             // TODO: updated by should be a system user.
             // purchaseMaster.setUpdatedBy();
-            session.update(purchaseMaster);
+            session.merge(purchaseMaster);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -77,7 +76,8 @@ public class PurchaseMasterDao {
         ObservableList<PurchaseMaster> purchaseCategories;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            purchaseCategories = FXCollections.observableList(session.createQuery("from PurchaseMaster").stream().toList());
+            purchaseCategories = FXCollections.observableList(
+                    session.createQuery("from PurchaseMaster", PurchaseMaster.class).stream().toList());
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -90,7 +90,7 @@ public class PurchaseMasterDao {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.delete(session.get(PurchaseMaster.class, id));
+            session.remove(session.getReference(PurchaseMaster.class, id));
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();

@@ -10,7 +10,6 @@ import org.infinite.spoty.database.util.HibernateUtil;
 
 import java.util.Date;
 
-@SuppressWarnings("unchecked")
 public class AdjustmentDetailDao {
     public static void saveAdjustmentDetail(AdjustmentDetail obj) {
         Transaction transaction = null;
@@ -19,7 +18,7 @@ public class AdjustmentDetailDao {
             obj.setCreatedAt(new Date());
             // TODO: created by should be a system user.
             // obj.setCreatedBy();
-            session.save(obj);
+            session.persist(obj);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -40,7 +39,7 @@ public class AdjustmentDetailDao {
             adjustmentDetail.setUpdatedAt(new Date());
             // TODO: updated by should be a system user.
             // adjustmentDetail.setUpdatedBy();
-            session.update(adjustmentDetail);
+            session.merge(adjustmentDetail);
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -67,7 +66,7 @@ public class AdjustmentDetailDao {
         ObservableList<AdjustmentDetail> adjustmentDetails;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            adjustmentDetails = FXCollections.observableList(session.createQuery("from AdjustmentDetail").stream().toList());
+            adjustmentDetails = FXCollections.observableList(session.createQuery("from AdjustmentDetail", AdjustmentDetail.class).stream().toList());
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
@@ -80,7 +79,7 @@ public class AdjustmentDetailDao {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.delete(session.get(AdjustmentDetail.class, id));
+            session.remove(session.getReference(AdjustmentDetail.class, id));
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
