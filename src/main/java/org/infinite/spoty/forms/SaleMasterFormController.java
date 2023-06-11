@@ -8,11 +8,13 @@ import io.github.palexdev.materialfx.filter.IntegerFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -20,6 +22,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
+import org.infinite.spoty.database.dao.SaleDetailDao;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.Customer;
 import org.infinite.spoty.database.models.SaleDetail;
@@ -35,9 +38,11 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
-import static org.infinite.spoty.dataShare.DataShare.getSaleProducts;
 
+@SuppressWarnings("unchecked")
 public class SaleMasterFormController implements Initializable {
+    public MFXTextField saleDetailID = new MFXTextField();
+    public MFXTextField saleMasterID = new MFXTextField();
     @FXML
     public Label saleFormTitle;
     @FXML
@@ -47,7 +52,7 @@ public class SaleMasterFormController implements Initializable {
     @FXML
     public MFXFilterComboBox<Branch> saleBranchId;
     @FXML
-    public MFXTableView<SaleDetail> saleProductsTable;
+    public MFXTableView<SaleDetail> saleDetailTable;
     @FXML
     public MFXTextField saleNote;
     @FXML
@@ -109,6 +114,7 @@ public class SaleMasterFormController implements Initializable {
         saleStatus.setItems(FXCollections.observableArrayList(Values.SALESTATUSES));
         salePaymentStatus.setItems(FXCollections.observableArrayList(Values.PAYMENTSTATUSES));
         // Bi~Directional Binding.
+        saleMasterID.textProperty().bindBidirectional(SaleMasterViewModel.idProperty());
         saleDate.textProperty().bindBidirectional(SaleMasterViewModel.dateProperty());
         saleCustomerId.valueProperty().bindBidirectional(SaleMasterViewModel.customerProperty());
         saleBranchId.valueProperty().bindBidirectional(SaleMasterViewModel.branchProperty());
@@ -117,7 +123,7 @@ public class SaleMasterFormController implements Initializable {
     }
 
     private void saleProductDialogPane(Stage stage) throws IOException {
-        DialogPane dialogPane = fxmlLoader("forms/SaleProductsForm.fxml").load();
+        DialogPane dialogPane = fxmlLoader("forms/SaleDetailForm.fxml").load();
         dialog = new Dialog<>();
         dialog.setDialogPane(dialogPane);
         dialog.initOwner(stage);
@@ -140,7 +146,7 @@ public class SaleMasterFormController implements Initializable {
         if (saleStatus.getText().length() == 0) {
             saleStatus.setTrailingIcon(icon);
         }
-        if (saleProductsTable.getTableColumns().isEmpty()) {
+        if (saleDetailTable.getTableColumns().isEmpty()) {
             // Notify table can't be empty
             System.out.println("Table can't be empty");
         }
@@ -148,11 +154,14 @@ public class SaleMasterFormController implements Initializable {
                 && saleCustomerId.getText().length() > 0
                 && saleBranchId.getText().length() > 0
                 && saleStatus.getText().length() > 0
-                && !saleProductsTable.getTableColumns().isEmpty()) {
-            SaleMasterViewModel.saveSaleMaster();
+                && !saleDetailTable.getTableColumns().isEmpty()) {
+            if (Integer.parseInt(saleMasterID.getText()) > 0) {
+                SaleMasterViewModel.updateItem(Integer.parseInt(saleMasterID.getText()));
+                cancelBtnClicked();
+            } else
+                SaleMasterViewModel.saveSaleMaster();
             SaleMasterViewModel.resetProperties();
-            saleProductsTable.getTableColumns().clear();
-            getSaleProducts().clear();
+            SaleDetailViewModel.saleDetailTempList.clear();
         }
     }
 
@@ -160,7 +169,7 @@ public class SaleMasterFormController implements Initializable {
         ((StackPane) saleFormContentPane.getParent().getParent()).getChildren().get(0).setVisible(true);
         ((StackPane) saleFormContentPane.getParent().getParent()).getChildren().remove(1);
         SaleMasterViewModel.resetProperties();
-        saleProductsTable.getTableColumns().clear();
+        saleDetailTable.getTableColumns().clear();
     }
 
     public void addBtnClicked() {
@@ -179,13 +188,13 @@ public class SaleMasterFormController implements Initializable {
         tax.setRowCellFactory(purchaseDetail -> new MFXTableRowCell<>(SaleDetail::getNetTax));
         discount.setRowCellFactory(purchaseDetail -> new MFXTableRowCell<>(SaleDetail::getDiscount));
         //Set table column width.
-        product.prefWidthProperty().bind(saleProductsTable.widthProperty().multiply(.25));
-        quantity.prefWidthProperty().bind(saleProductsTable.widthProperty().multiply(.25));
-        tax.prefWidthProperty().bind(saleProductsTable.widthProperty().multiply(.25));
-        discount.prefWidthProperty().bind(saleProductsTable.widthProperty().multiply(.25));
+        product.prefWidthProperty().bind(saleDetailTable.widthProperty().multiply(.25));
+        quantity.prefWidthProperty().bind(saleDetailTable.widthProperty().multiply(.25));
+        tax.prefWidthProperty().bind(saleDetailTable.widthProperty().multiply(.25));
+        discount.prefWidthProperty().bind(saleDetailTable.widthProperty().multiply(.25));
         // Set table filter.
-        saleProductsTable.getTableColumns().addAll(product, quantity, tax, discount);
-        saleProductsTable.getFilters().addAll(
+        saleDetailTable.getTableColumns().addAll(product, quantity, tax, discount);
+        saleDetailTable.getFilters().addAll(
                 new StringFilter<>("Product", SaleDetail::getProductName),
                 new IntegerFilter<>("Quantity", SaleDetail::getQuantity),
                 new DoubleFilter<>("Tax", SaleDetail::getNetTax),
@@ -193,12 +202,53 @@ public class SaleMasterFormController implements Initializable {
         );
         styleTable();
         // Populate table.
-        saleProductsTable.setItems(SaleDetailViewModel.saleDetailTempList);
+        saleDetailTable.setItems(SaleDetailViewModel.saleDetailTempList);
     }
 
     private void styleTable() {
-        saleProductsTable.setPrefSize(1000, 1000);
-        saleProductsTable.features().enableBounceEffect();
-        saleProductsTable.features().enableSmoothScrolling(0.5);
+        saleDetailTable.setPrefSize(1000, 1000);
+        saleDetailTable.features().enableBounceEffect();
+        saleDetailTable.features().enableSmoothScrolling(0.5);
+
+        saleDetailTable.setTableRowFactory(t -> {
+            MFXTableRow<SaleDetail> row = new MFXTableRow<>(saleDetailTable, t);
+            EventHandler<ContextMenuEvent> eventHandler = event -> {
+                showContextMenu((MFXTableRow<SaleDetail>) event.getSource())
+                        .show(saleDetailTable.getScene().getWindow(), event.getScreenX(), event.getScreenY());
+                event.consume();
+            };
+            row.setOnContextMenuRequested(eventHandler);
+            return row;
+        });
+    }
+
+    private MFXContextMenu showContextMenu(MFXTableRow<SaleDetail> obj) {
+        MFXContextMenu contextMenu = new MFXContextMenu(saleDetailTable);
+        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
+        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+
+        // Actions
+        // Delete
+        delete.setOnAction(e -> {
+            SaleDetailViewModel.getItem(obj.getData(), SaleDetailViewModel.saleDetailTempList.indexOf(obj.getData()));
+            try {
+                if (Integer.parseInt(saleDetailID.getText()) > 0)
+                    SaleDetailDao.deleteSaleDetail(Integer.parseInt(saleDetailID.getText()));
+            } catch (NumberFormatException ignored) {
+                SaleDetailViewModel.removeSaleDetail(SaleDetailViewModel.saleDetailTempList.indexOf(obj.getData()));
+            }
+            SaleDetailViewModel.getSaleDetails();
+            e.consume();
+        });
+        // Edit
+        edit.setOnAction(e -> {
+            SaleDetailViewModel.getItem(obj.getData(), SaleDetailViewModel.saleDetailTempList.indexOf(obj.getData()));
+            dialog.showAndWait();
+            e.consume();
+        });
+
+        contextMenu.addItems(edit, delete);
+
+        return contextMenu;
     }
 }
