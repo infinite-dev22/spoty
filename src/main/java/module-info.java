@@ -1,8 +1,5 @@
 module org.infinite.spoty {
     requires MaterialFX;
-    requires VirtualizedFX;
-
-    requires jdk.localedata;
 
     requires javafx.controls;
     requires javafx.fxml;
@@ -10,30 +7,15 @@ module org.infinite.spoty {
     requires javafx.media;
 
     requires fr.brouillard.oss.cssfx;
-    requires org.kordamp.ikonli.javafx;
-    requires org.kordamp.ikonli.fontawesome5;
-    requires org.scenicview.scenicview;
-
-    requires org.slf4j;
 
     requires mfx.components;
     requires mfx.resources;
 
     requires org.hibernate.orm.core;
 
-    requires java.persistence;
-    requires java.naming;
-    requires java.xml.bind;
+    requires jakarta.persistence;
     requires java.sql;
     requires java.logging;
-
-    requires net.bytebuddy;
-
-    requires com.fasterxml.classmate;
-
-    requires org.jboss.logging;
-
-    requires org.junit.jupiter.api;
 
     opens org.infinite.spoty.views;
     opens org.infinite.spoty.views.components;
