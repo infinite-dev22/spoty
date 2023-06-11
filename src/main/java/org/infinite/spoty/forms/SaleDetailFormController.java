@@ -18,9 +18,9 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.GlobalActions.closeDialog;
-import static org.infinite.spoty.dataShare.DataShare.getAdjustmentProducts;
 
 public class SaleDetailFormController implements Initializable {
+    public MFXTextField saleDetailID = new MFXTextField();
     @FXML
     public MFXTextField saleProductsQnty;
     @FXML
@@ -60,6 +60,7 @@ public class SaleDetailFormController implements Initializable {
             }
         });
         // Property binding.
+        saleDetailID.textProperty().bindBidirectional(SaleDetailViewModel.idProperty());
         saleProductsQnty.textProperty().bindBidirectional(SaleDetailViewModel.quantityProperty());
         saleProductsPdct.valueProperty().bindBidirectional(SaleDetailViewModel.productProperty());
         saleProductsOrderTax.textProperty().bindBidirectional(SaleDetailViewModel.netTaxProperty());
@@ -95,11 +96,19 @@ public class SaleDetailFormController implements Initializable {
                     && saleProductsPdct.getText().length() > 0
                     && saleProductsOrderTax.getText().length() > 0
                     && saleProductsDiscount.getText().length() > 0) {
-                SaleDetailViewModel.addSaleDetail();
+                if (!saleDetailID.getText().isEmpty()) {
+                    try {
+                        if (Integer.parseInt(saleDetailID.getText()) > 0)
+                            SaleDetailViewModel.updateItem(Integer.parseInt(saleDetailID.getText()));
+                    } catch (NumberFormatException ignored) {
+                        SaleDetailViewModel.updateSaleDetail(Integer.parseInt(saleDetailID.getText()
+                                .substring(saleDetailID.getText().lastIndexOf(':') + 1,
+                                        saleDetailID.getText().indexOf(';'))));
+                    }
+                } else
+                    SaleDetailViewModel.addSaleDetail();
                 SaleDetailViewModel.resetProperties();
-                System.out.println(getAdjustmentProducts());
                 closeDialog(e);
-//                SaleMasterFormController.setupTable();
             }
         });
     }
