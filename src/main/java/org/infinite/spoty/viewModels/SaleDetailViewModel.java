@@ -1,14 +1,19 @@
 package org.infinite.spoty.viewModels;
 
-import javafx.beans.property.*;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.infinite.spoty.database.dao.SaleDetailDao;
 import org.infinite.spoty.database.models.ProductDetail;
 import org.infinite.spoty.database.models.SaleDetail;
 import org.infinite.spoty.database.models.UnitOfMeasure;
 
 public class SaleDetailViewModel {
-    private static final IntegerProperty id = new SimpleIntegerProperty();
+    public static final ObservableList<SaleDetail> saleDetailTempList = FXCollections.observableArrayList();
+    private static final StringProperty id = new SimpleStringProperty();
     private static final StringProperty ref = new SimpleStringProperty();
     private static final ObjectProperty<ProductDetail> product = new SimpleObjectProperty<>();
     private static final StringProperty serial = new SimpleStringProperty();
@@ -21,17 +26,16 @@ public class SaleDetailViewModel {
     private static final StringProperty total = new SimpleStringProperty();
     private static final StringProperty quantity = new SimpleStringProperty();
     private static final ObservableList<SaleDetail> saleDetailList = FXCollections.observableArrayList();
-    public static final ObservableList<SaleDetail> saleDetailTempList = FXCollections.observableArrayList();
 
-    public static int getId() {
+    public static String getId() {
         return id.get();
     }
 
-    public static void setId(int id) {
+    public static void setId(String id) {
         SaleDetailViewModel.id.set(id);
     }
 
-    public static IntegerProperty idProperty() {
+    public static StringProperty idProperty() {
         return id;
     }
 
@@ -168,7 +172,7 @@ public class SaleDetailViewModel {
     }
 
     public static void resetProperties() {
-        setId(0);
+        setId("");
         setProduct(null);
         setSerial("");
         setSaleUnit(null);
@@ -190,5 +194,72 @@ public class SaleDetailViewModel {
         saleDetailTempList.add(saleDetail);
         saleDetailTempList.forEach(System.out::println);
         resetProperties();
+    }
+
+    public static void updateSaleDetail(int index) {
+        SaleDetail saleDetail = new SaleDetail(getProduct(),
+                Integer.parseInt(getQuantity()),
+                getSerial(),
+                Double.parseDouble(getNetTax()),
+                getTaxType(),
+                Double.parseDouble(getDiscount()),
+                getDiscountType());
+        saleDetailTempList.remove(index);
+        saleDetailTempList.add(index, saleDetail);
+        resetProperties();
+    }
+
+    public static void getItem(int saleDetailID) {
+        SaleDetail saleDetail = SaleDetailDao.findSaleDetail(saleDetailID);
+        setId(String.valueOf(saleDetail.getId()));
+        setProduct(saleDetail.getProduct());
+        setSerial(saleDetail.getSerialNumber());
+        setNetTax(String.valueOf(saleDetail.getNetTax()));
+        setTaxType(saleDetail.getTaxType());
+        setDiscount(String.valueOf(saleDetail.getDiscount()));
+        setDiscountType(saleDetail.getDiscountType());
+        setQuantity(String.valueOf(saleDetail.getQuantity()));
+        setProduct(saleDetail.getProduct());
+        setTotal(String.valueOf(saleDetail.getTotal()));
+        setQuantity(String.valueOf(saleDetail.getQuantity()));
+        setPrice(String.valueOf(saleDetail.getPrice()));
+        getSaleDetails();
+    }
+
+    public static void getItem(SaleDetail saleDetail, int index) {
+        setId("index:" + index + ";");
+        setProduct(saleDetail.getProduct());
+        setSerial(saleDetail.getSerialNumber());
+        setNetTax(String.valueOf(saleDetail.getNetTax()));
+        setTaxType(saleDetail.getTaxType());
+        setDiscount(String.valueOf(saleDetail.getDiscount()));
+        setDiscountType(saleDetail.getDiscountType());
+        setQuantity(String.valueOf(saleDetail.getQuantity()));
+        setProduct(saleDetail.getProduct());
+        setTotal(String.valueOf(saleDetail.getTotal()));
+        setQuantity(String.valueOf(saleDetail.getQuantity()));
+        setPrice(String.valueOf(saleDetail.getPrice()));
+    }
+
+    public static void updateItem(int saleDetailID) {
+        SaleDetail saleDetail = new SaleDetail(getProduct(),
+                Integer.parseInt(getQuantity()),
+                getSerial(),
+                Double.parseDouble(getNetTax()),
+                getTaxType(),
+                Double.parseDouble(getDiscount()),
+                getDiscountType());
+        SaleDetailDao.updateSaleDetail(saleDetail, saleDetailID);
+        getSaleDetails();
+    }
+
+    public static ObservableList<SaleDetail> getSaleDetails() {
+        saleDetailList.clear();
+        saleDetailList.addAll(SaleDetailDao.fetchSaleDetails());
+        return saleDetailList;
+    }
+
+    public static void removeSaleDetail(int index) {
+        saleDetailTempList.remove(index);
     }
 }
