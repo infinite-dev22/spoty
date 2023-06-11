@@ -80,6 +80,7 @@ public class BrandViewModel {
     public static void updateItem(int brandID) {
         Brand brand = new Brand(getName(), getDescription());
         BrandDao.updateBrand(brand, brandID);
+        clearBrandData();
         getItems();
     }
 }

@@ -172,6 +172,7 @@ public class CustomerViewModel {
         Customer customer = new Customer(getName(), getEmail(), getPhone(), getCity(), getAddress(), getTaxNumber(),
                 getCountry());
         CustomerDao.updateCustomer(customer, customerID);
+        resetProperties();
         getCustomers();
     }
 }

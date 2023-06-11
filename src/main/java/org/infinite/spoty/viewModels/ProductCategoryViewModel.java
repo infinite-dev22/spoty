@@ -95,6 +95,7 @@ public class ProductCategoryViewModel {
     public static void updateItem(int productCategoryID) {
         ProductCategory productCategory = new ProductCategory(getCode(), getName());
         ProductCategoryDao.updateProductCategory(productCategory, productCategoryID);
+        clearProductCategoryData();
         getItems();
     }
 }

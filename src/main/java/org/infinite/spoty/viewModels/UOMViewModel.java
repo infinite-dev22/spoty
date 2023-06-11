@@ -124,6 +124,7 @@ public class UOMViewModel {
     public static void updateItem(int uomID) {
         UnitOfMeasure uom = new UnitOfMeasure(getName(), getShortName(), getBaseUnit(), getOperator(), getOperatorValue());
         UnitOfMeasureDao.updateUnitOfMeasure(uom, uomID);
+        resetUOMProperties();
         getItems();
     }
 }

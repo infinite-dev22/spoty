@@ -172,6 +172,7 @@ public class SupplierViewModel {
         Supplier supplier = new Supplier(getName(), getEmail(), getPhone(), getTaxNumber(), getAddress(), getCity(),
                 getCountry());
         SupplierDao.updateSupplier(supplier, supplierID);
+        resetProperties();
         getSuppliers();
     }
 }
