@@ -1,20 +1,20 @@
 package org.infinite.spoty.views.sales;
 
-import io.github.palexdev.materialfx.controls.MFXButton;
-import io.github.palexdev.materialfx.controls.MFXTableColumn;
-import io.github.palexdev.materialfx.controls.MFXTableView;
-import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.filter.DoubleFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import org.infinite.spoty.database.dao.SaleMasterDao;
 import org.infinite.spoty.database.models.SaleMaster;
 import org.infinite.spoty.forms.SaleMasterFormController;
 import org.infinite.spoty.viewModels.SaleMasterViewModel;
@@ -26,6 +26,7 @@ import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 
+@SuppressWarnings("unchecked")
 public class SalesController implements Initializable {
     private final Stage stage;
     @FXML
@@ -39,7 +40,7 @@ public class SalesController implements Initializable {
     @FXML
     public BorderPane saleContentPane;
     @FXML
-    private MFXTableView<SaleMaster> saleTable;
+    private MFXTableView<SaleMaster> saleMasterTable;
 
     public SalesController(Stage stage) {
         this.stage = stage;
@@ -62,7 +63,7 @@ public class SalesController implements Initializable {
         MFXTableColumn<SaleMaster> saleAmountDue = new MFXTableColumn<>("Amount Due", false, Comparator.comparing(SaleMaster::getAmountDue));
         MFXTableColumn<SaleMaster> salePaymentStatus = new MFXTableColumn<>("Pay Status", false, Comparator.comparing(SaleMaster::getPaymentStatus));
 
-        saleDate.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleMaster::getDate));
+        saleDate.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleMaster::getLocaleDate));
         saleReference.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleMaster::getRef));
 //        saleAddedBy.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleMaster::getAddedBy));
         saleCustomer.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleMaster::getCustomerName));
@@ -73,19 +74,19 @@ public class SalesController implements Initializable {
         saleAmountDue.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleMaster::getAmountDue));
         salePaymentStatus.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleMaster::getPaymentStatus));
 
-        saleDate.prefWidthProperty().bind(saleTable.widthProperty().multiply(.1));
-        saleReference.prefWidthProperty().bind(saleTable.widthProperty().multiply(.1));
+        saleDate.prefWidthProperty().bind(saleMasterTable.widthProperty().multiply(.1));
+        saleReference.prefWidthProperty().bind(saleMasterTable.widthProperty().multiply(.1));
 //        saleAddedBy.prefWidthProperty().bind(saleTable.widthProperty().multiply(.1));
-        saleCustomer.prefWidthProperty().bind(saleTable.widthProperty().multiply(.1));
-        saleBranch.prefWidthProperty().bind(saleTable.widthProperty().multiply(.1));
-        saleStatus.prefWidthProperty().bind(saleTable.widthProperty().multiply(.1));
-        saleGrandTotal.prefWidthProperty().bind(saleTable.widthProperty().multiply(.1));
-        saleAmountPaid.prefWidthProperty().bind(saleTable.widthProperty().multiply(.1));
-        saleAmountDue.prefWidthProperty().bind(saleTable.widthProperty().multiply(.1));
-        salePaymentStatus.prefWidthProperty().bind(saleTable.widthProperty().multiply(.1));
+        saleCustomer.prefWidthProperty().bind(saleMasterTable.widthProperty().multiply(.1));
+        saleBranch.prefWidthProperty().bind(saleMasterTable.widthProperty().multiply(.1));
+        saleStatus.prefWidthProperty().bind(saleMasterTable.widthProperty().multiply(.1));
+        saleGrandTotal.prefWidthProperty().bind(saleMasterTable.widthProperty().multiply(.1));
+        saleAmountPaid.prefWidthProperty().bind(saleMasterTable.widthProperty().multiply(.1));
+        saleAmountDue.prefWidthProperty().bind(saleMasterTable.widthProperty().multiply(.1));
+        salePaymentStatus.prefWidthProperty().bind(saleMasterTable.widthProperty().multiply(.1));
 
-        saleTable.getTableColumns().addAll(saleDate, saleReference, saleCustomer, saleBranch, saleStatus, saleGrandTotal, saleAmountPaid, saleAmountDue, salePaymentStatus);
-        saleTable.getFilters().addAll(
+        saleMasterTable.getTableColumns().addAll(saleDate, saleReference, saleCustomer, saleBranch, saleStatus, saleGrandTotal, saleAmountPaid, saleAmountDue, salePaymentStatus);
+        saleMasterTable.getFilters().addAll(
                 new StringFilter<>("Reference", SaleMaster::getRef),
 //                new StringFilter<>("Added By", SaleMaster::getAddedBy),
                 new StringFilter<>("Customer", SaleMaster::getCustomerName),
@@ -97,17 +98,52 @@ public class SalesController implements Initializable {
                 new StringFilter<>("Payment Status", SaleMaster::getPaymentStatus)
         );
         styleSaleMasterTable();
-        saleTable.setItems(SaleMasterViewModel.getSaleMasters());
+        saleMasterTable.setItems(SaleMasterViewModel.getSaleMasters());
     }
 
     private void styleSaleMasterTable() {
-        saleTable.setPrefSize(1200, 1000);
-        saleTable.features().enableBounceEffect();
-        saleTable.features().enableSmoothScrolling(0.5);
+        saleMasterTable.setPrefSize(1200, 1000);
+        saleMasterTable.features().enableBounceEffect();
+        saleMasterTable.features().enableSmoothScrolling(0.5);
+
+        saleMasterTable.setTableRowFactory(t -> {
+            MFXTableRow<SaleMaster> row = new MFXTableRow<>(saleMasterTable, t);
+            EventHandler<ContextMenuEvent> eventHandler = event -> {
+                showContextMenu((MFXTableRow<SaleMaster>) event.getSource())
+                        .show(saleMasterTable.getScene().getWindow(), event.getScreenX(), event.getScreenY());
+                event.consume();
+            };
+            row.setOnContextMenuRequested(eventHandler);
+            return row;
+        });
+    }
+
+    private MFXContextMenu showContextMenu(MFXTableRow<SaleMaster> obj) {
+        MFXContextMenu contextMenu = new MFXContextMenu(saleMasterTable);
+        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
+        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+
+        // Actions
+        // Delete
+        delete.setOnAction(e -> {
+            SaleMasterDao.deleteSaleMaster(obj.getData().getId());
+            SaleMasterViewModel.getSaleMasters();
+            e.consume();
+        });
+        // Edit
+        edit.setOnAction(e -> {
+            SaleMasterViewModel.getItem(obj.getData().getId());
+            saleCreateBtnClicked();
+            e.consume();
+        });
+
+        contextMenu.addItems(edit, delete);
+
+        return contextMenu;
     }
 
     public void saleCreateBtnClicked() {
-        FXMLLoader loader = fxmlLoader("forms/SaleForm.fxml");
+        FXMLLoader loader = fxmlLoader("forms/SaleMasterForm.fxml");
         loader.setControllerFactory(c -> new SaleMasterFormController(stage));
         try {
             BorderPane productFormPane = loader.load();
