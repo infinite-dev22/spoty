@@ -16,6 +16,7 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.infinite.spoty.database.dao.BranchDao;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.values.strings.Labels;
 import org.infinite.spoty.viewModels.BranchViewModel;
@@ -27,6 +28,7 @@ import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 
+@SuppressWarnings("unchecked")
 public class BranchesController implements Initializable {
     @FXML
     public MFXTextField branchSearchBar;
@@ -98,20 +100,34 @@ public class BranchesController implements Initializable {
 
         branchTable.setTableRowFactory(t -> {
             MFXTableRow<Branch> row = new MFXTableRow<>(branchTable, t);
-            EventHandler<ContextMenuEvent> eventHandler = event -> showContextMenu()
+            EventHandler<ContextMenuEvent> eventHandler = event -> showContextMenu((MFXTableRow<Branch>) event.getSource())
                     .show(branchContentPane.getScene().getWindow(), event.getScreenX(), event.getScreenY());
             row.setOnContextMenuRequested(eventHandler);
             return row;
         });
     }
 
-    private MFXContextMenu showContextMenu() {
+    private MFXContextMenu showContextMenu(MFXTableRow<Branch> obj) {
         MFXContextMenu contextMenu = new MFXContextMenu(branchTable);
 
-        MFXContextMenuItem view = new MFXContextMenuItem("View");
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
-        contextMenu.addItems(view, edit, delete);
+
+        // Actions
+        // Delete
+        delete.setOnAction(e -> {
+            BranchDao.deleteBranch(obj.getData().getId());
+            BranchViewModel.getBranches();
+            e.consume();
+        });
+        // Edit
+        edit.setOnAction(e -> {
+            BranchViewModel.getItem(obj.getData().getId());
+            branchCreateBtnClicked();
+            e.consume();
+        });
+
+        contextMenu.addItems(edit, delete);
 
         return contextMenu;
     }
