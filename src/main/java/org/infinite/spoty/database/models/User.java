@@ -1,6 +1,7 @@
 package org.infinite.spoty.database.models;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
+
 import java.io.Serializable;
 import java.sql.Blob;
 import java.util.Date;
