@@ -1,6 +1,9 @@
 package org.infinite.spoty.viewModels;
 
-import javafx.beans.property.*;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.infinite.spoty.database.dao.SaleMasterDao;
@@ -14,23 +17,24 @@ import java.util.Date;
 
 public class SaleMasterViewModel {
     public static final ObservableList<SaleMaster> saleMasterList = FXCollections.observableArrayList();
-    private static final IntegerProperty id = new SimpleIntegerProperty(0);
+    private static final StringProperty id = new SimpleStringProperty("");
     private static final StringProperty date = new SimpleStringProperty("");
     private static final StringProperty ref = new SimpleStringProperty("");
     private static final ObjectProperty<Customer> customer = new SimpleObjectProperty<>(null);
     private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>(null);
-    private static final StringProperty status = new SimpleStringProperty("");
+    private static final StringProperty saleStatus = new SimpleStringProperty("");
+    private static final StringProperty payStatus = new SimpleStringProperty("");
     private static final StringProperty note = new SimpleStringProperty("");
 
-    public static int getId() {
+    public static String getId() {
         return id.get();
     }
 
-    public static void setId(int id) {
+    public static void setId(String id) {
         SaleMasterViewModel.id.set(id);
     }
 
-    public static IntegerProperty idProperty() {
+    public static StringProperty idProperty() {
         return id;
     }
 
@@ -74,16 +78,28 @@ public class SaleMasterViewModel {
         return branch;
     }
 
-    public static String getStatus() {
-        return status.get();
+    public static String getSaleStatus() {
+        return saleStatus.get();
     }
 
-    public static void setStatus(String status) {
-        SaleMasterViewModel.status.set(status);
+    public static void setSaleStatus(String saleStatus) {
+        SaleMasterViewModel.saleStatus.set(saleStatus);
     }
 
-    public static StringProperty statusProperty() {
-        return status;
+    public static StringProperty saleStatusProperty() {
+        return saleStatus;
+    }
+
+    public static String getPayStatus() {
+        return payStatus.get();
+    }
+
+    public static void setPayStatus(String payStatus) {
+        SaleMasterViewModel.payStatus.set(payStatus);
+    }
+
+    public static StringProperty payStatusProperty() {
+        return payStatus;
     }
 
     public static String getNote() {
@@ -99,16 +115,16 @@ public class SaleMasterViewModel {
     }
 
     public static void resetProperties() {
-        setId(0);
+        setId("");
         setDate("");
         setCustomer(null);
         setBranch(null);
-        setStatus("");
+        setSaleStatus("");
         setNote("");
     }
 
     public static void saveSaleMaster() {
-        SaleMaster saleMaster = new SaleMaster(getCustomer(), getBranch(), getStatus(), getNote(), getDate());
+        SaleMaster saleMaster = new SaleMaster(getCustomer(), getBranch(), getSaleStatus(), getNote(), getDate());
         saleMaster.setSaleDetails(SaleDetailViewModel.saleDetailTempList);
         SaleMasterDao.saveSaleMaster(saleMaster);
         resetProperties();
@@ -122,4 +138,25 @@ public class SaleMasterViewModel {
         return saleMasterList;
     }
 
+    public static void getItem(int saleMasterID) {
+        SaleMaster saleMaster = SaleMasterDao.findSaleMaster(saleMasterID);
+        setId(String.valueOf(saleMaster.getId()));
+        setDate(saleMaster.getLocaleDate());
+        setCustomer(saleMaster.getCustomer());
+        setBranch(saleMaster.getBranch());
+        setNote(saleMaster.getNotes());
+        setSaleStatus(saleMaster.getSaleStatus());
+        setPayStatus(saleMaster.getPaymentStatus());
+        SaleDetailViewModel.saleDetailTempList.addAll(saleMaster.getSaleDetails());
+        getSaleMasters();
+    }
+
+    public static void updateItem(int saleMasterID) {
+        SaleMaster saleMaster = new SaleMaster(getCustomer(), getBranch(), getSaleStatus(), getNote(), getDate());
+        saleMaster.setSaleDetails(SaleDetailViewModel.saleDetailTempList);
+        SaleMasterDao.updateSaleMaster(saleMaster, saleMasterID);
+        resetProperties();
+        SaleDetailViewModel.saleDetailTempList.clear();
+        getSaleMasters();
+    }
 }
