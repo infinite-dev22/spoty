@@ -60,7 +60,6 @@ public class HibernateUtil {
                 configuration.addAnnotatedClass(AdjustmentDetail.class);
                 configuration.addAnnotatedClass(Branch.class);
                 configuration.addAnnotatedClass(Brand.class);
-                configuration.addAnnotatedClass(Client.class);
                 configuration.addAnnotatedClass(Company.class);
                 configuration.addAnnotatedClass(Currency.class);
                 configuration.addAnnotatedClass(Customer.class);
