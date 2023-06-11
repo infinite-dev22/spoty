@@ -19,10 +19,8 @@
     </center>
     <top>
         <AnchorPane BorderPane.alignment="CENTER">
-            <children>
-                <MFXFontIcon description="fas-circle" onMouseClicked="#closeRoleStepper" styleClass="close-icon"
-                             AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="8.0"/>
-            </children>
+            <MFXFontIcon description="fas-circle" onMouseClicked="#closeRoleStepper" styleClass="close-icon"
+                         AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="8.0"/>
         </AnchorPane>
     </top>
 </BorderPane>

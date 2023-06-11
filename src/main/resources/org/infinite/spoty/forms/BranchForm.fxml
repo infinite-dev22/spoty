@@ -48,10 +48,8 @@
     </padding>
     <header>
         <VBox spacing="5.0">
-            <children>
-                <Label fx:id="branchFormTitle" text="Create"/>
-                <Separator prefWidth="200.0"/>
-            </children>
+            <Label fx:id="branchFormTitle" text="Create"/>
+            <Separator prefWidth="200.0"/>
         </VBox>
     </header>
 </DialogPane>
