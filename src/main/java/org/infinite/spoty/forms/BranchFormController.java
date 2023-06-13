@@ -14,21 +14,26 @@
 
 package org.infinite.spoty.forms;
 
+import io.github.palexdev.materialfx.controls.MFXIconWrapper;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.scene.paint.Color;
+import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.viewModels.BranchViewModel;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.GlobalActions.closeDialog;
-import static org.infinite.spoty.viewModels.BranchViewModel.*;
+import static org.infinite.spoty.viewModels.BranchViewModel.clearBranchData;
+import static org.infinite.spoty.viewModels.BranchViewModel.saveBranch;
 
 public class BranchFormController implements Initializable {
+    public MFXTextField branchFormID = new MFXTextField();
     @FXML
     public MFXFilledButton branchFormSaveBtn;
     @FXML
@@ -50,15 +55,16 @@ public class BranchFormController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        dialogOnActions();
-
-        branchFormTitle.textProperty().bindBidirectional(BranchViewModel.titleProperty());
+        // Input listeners.
+        // Input bindings.
+        branchFormID.textProperty().bindBidirectional(BranchViewModel.idProperty(), new NumberStringConverter());
         branchFormName.textProperty().bindBidirectional(BranchViewModel.nameProperty());
         branchFormEmail.textProperty().bindBidirectional(BranchViewModel.emailProperty());
         branchFormPhone.textProperty().bindBidirectional(BranchViewModel.phoneProperty());
         branchFormTown.textProperty().bindBidirectional(BranchViewModel.townProperty());
         branchFormCity.textProperty().bindBidirectional(BranchViewModel.cityProperty());
         branchFormZipCode.textProperty().bindBidirectional(BranchViewModel.zipcodeProperty());
+        dialogOnActions();
     }
 
     private void dialogOnActions() {
@@ -67,8 +73,38 @@ public class BranchFormController implements Initializable {
             closeDialog(e);
         });
         branchFormSaveBtn.setOnAction((e) -> {
-            saveBranch();
-            closeDialog(e);
+            MFXIconWrapper icon = new MFXIconWrapper("fas-circle-exclamation", 20, Color.RED, 20);
+
+            if (branchFormName.getText().length() == 0) {
+                branchFormName.setTrailingIcon(icon);
+            }
+            if (branchFormEmail.getText().length() == 0) {
+                branchFormEmail.setTrailingIcon(icon);
+            }
+            if (branchFormPhone.getText().length() == 0) {
+                branchFormPhone.setTrailingIcon(icon);
+            }
+            if (branchFormTown.getText().length() == 0) {
+                branchFormTown.setTrailingIcon(icon);
+            }
+            if (branchFormCity.getText().length() == 0) {
+                branchFormCity.setTrailingIcon(icon);
+            }
+            if (branchFormZipCode.getText().length() == 0) {
+                branchFormZipCode.setTrailingIcon(icon);
+            }
+            if (branchFormName.getText().length() > 0
+                    && branchFormEmail.getText().length() > 0
+                    && branchFormPhone.getText().length() > 0
+                    && branchFormTown.getText().length() > 0
+                    && branchFormCity.getText().length() > 0
+                    && branchFormZipCode.getText().length() > 0) {
+                if (Integer.parseInt(branchFormID.getText()) > 0)
+                    BranchViewModel.updateItem(Integer.parseInt(branchFormID.getText()));
+                else
+                    saveBranch();
+                closeDialog(e);
+            }
         });
     }
 }
