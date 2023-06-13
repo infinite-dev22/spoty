@@ -21,8 +21,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
+import javafx.util.StringConverter;
 import org.infinite.spoty.database.models.Branch;
-import org.infinite.spoty.models.Currency;
+import org.infinite.spoty.database.models.Currency;
+import org.infinite.spoty.viewModels.BranchViewModel;
+import org.infinite.spoty.viewModels.CurrencyViewModel;
 
 import java.io.File;
 import java.net.URL;
@@ -50,7 +53,39 @@ public class SystemController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // Input listeners.
+        // Input bindings.
+        // Combo box properties.
+        defaultCurrency.setItems(CurrencyViewModel.currenciesList);
+        defaultCurrency.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(Currency object) {
+                if (object != null)
+                    return object.getName() + " " + object.getSymbol();
+                else
+                    return null;
+            }
 
+            @Override
+            public Currency fromString(String string) {
+                return null;
+            }
+        });
+        defaultBranch.setItems(BranchViewModel.branchesList);
+        defaultBranch.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(Branch object) {
+                if (object != null)
+                    return object.getName();
+                else
+                    return null;
+            }
+
+            @Override
+            public Branch fromString(String string) {
+                return null;
+            }
+        });
     }
 
     @FXML
