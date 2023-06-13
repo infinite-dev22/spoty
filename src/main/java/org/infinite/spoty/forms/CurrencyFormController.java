@@ -14,19 +14,26 @@
 
 package org.infinite.spoty.forms;
 
+import io.github.palexdev.materialfx.controls.MFXIconWrapper;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.stage.Stage;
+import javafx.scene.paint.Color;
+import javafx.util.converter.NumberStringConverter;
+import org.infinite.spoty.viewModels.CurrencyViewModel;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import static org.infinite.spoty.GlobalActions.closeDialog;
+import static org.infinite.spoty.viewModels.CurrencyViewModel.clearCurrencyData;
+import static org.infinite.spoty.viewModels.CurrencyViewModel.saveCurrency;
+
 public class CurrencyFormController implements Initializable {
+    public MFXTextField currencyFormID = new MFXTextField();
     @FXML
     public Label currencyFormTitle;
     @FXML
@@ -42,16 +49,40 @@ public class CurrencyFormController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // Input listeners.
+        // Input bindings.
+        currencyFormID.textProperty().bindBidirectional(CurrencyViewModel.idProperty(), new NumberStringConverter());
+        currencyFormCode.textProperty().bindBidirectional(CurrencyViewModel.codeProperty());
+        currencyFormName.textProperty().bindBidirectional(CurrencyViewModel.nameProperty());
+        currencyFormSymbol.textProperty().bindBidirectional(CurrencyViewModel.symbolProperty());
         dialogOnActions();
     }
 
     private void dialogOnActions() {
         currencyFormCancelBtn.setOnAction((e) -> {
-            final Node source = (Node) e.getSource();
-            final Stage stage = (Stage) source.getScene().getWindow();
-            stage.close();
+            clearCurrencyData();
+            closeDialog(e);
         });
         currencyFormSaveBtn.setOnAction((e) -> {
+            MFXIconWrapper icon = new MFXIconWrapper("fas-circle-exclamation", 20, Color.RED, 20);
+
+            if (currencyFormCode.getText().length() == 0) {
+                currencyFormCode.setTrailingIcon(icon);
+            }
+            if (currencyFormName.getText().length() == 0) {
+                currencyFormName.setTrailingIcon(icon);
+            }
+            if (currencyFormSymbol.getText().length() == 0) {
+                currencyFormSymbol.setTrailingIcon(icon);
+            }
+            if (currencyFormCode.getText().length() > 0 && currencyFormName.getText().length() > 0 && currencyFormSymbol.getText().length() > 0) {
+                if (Integer.parseInt(currencyFormID.getText()) > 0)
+                    CurrencyViewModel.updateItem(Integer.parseInt(currencyFormID.getText()));
+                else
+                    saveCurrency();
+                clearCurrencyData();
+                closeDialog(e);
+            }
         });
     }
 }
