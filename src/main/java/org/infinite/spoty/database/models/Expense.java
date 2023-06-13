@@ -17,7 +17,7 @@ public class Expense implements Serializable {
     private String ref;
     private String name;
     @ManyToOne
-    private User user;
+    private User user_detail;
     @ManyToOne
     private ExpenseCategory expenseCategory;
     @ManyToOne
@@ -94,12 +94,12 @@ public class Expense implements Serializable {
         this.name = name;
     }
 
-    public User getUser() {
-        return user;
+    public User getUser_detail() {
+        return user_detail;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser_detail(User user_detail) {
+        this.user_detail = user_detail;
     }
 
     public ExpenseCategory getExpenseCategory() {

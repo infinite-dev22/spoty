@@ -3,10 +3,10 @@ package org.infinite.spoty.database.models;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
-import java.sql.Blob;
 import java.util.Date;
 
 @Entity
+@Table(name = "user_account")
 public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +27,7 @@ public class User implements Serializable {
     @Column(name = "access_all_branches", nullable = false)
     private boolean accessAllBranches;
     @Column(unique = true)
-    private Blob avatar;
+    private byte[] avatar;
     private Date createdAt;
     private String createdBy;
     private Date updatedAt;
@@ -42,7 +42,7 @@ public class User implements Serializable {
                 Role role,
                 String status,
                 boolean accessAllBranches,
-                Blob avatar,
+                byte[] avatar,
                 Date createdAt,
                 String createdBy,
                 Date updatedAt,
@@ -72,7 +72,7 @@ public class User implements Serializable {
                 Role role,
                 String status,
                 boolean accessAllBranches,
-                Blob avatar) {
+                byte[] avatar) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.userName = userName;
@@ -179,11 +179,11 @@ public class User implements Serializable {
         this.accessAllBranches = accessAllBranches;
     }
 
-    public Blob getAvatar() {
+    public byte[] getAvatar() {
         return avatar;
     }
 
-    public void setAvatar(Blob avatar) {
+    public void setAvatar(byte[] avatar) {
         this.avatar = avatar;
     }
 

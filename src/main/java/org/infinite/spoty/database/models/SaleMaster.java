@@ -13,7 +13,7 @@ public class SaleMaster implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @ManyToOne
-    private User user;
+    private User user_detail;
     private Date date;
     private String ref;
     @ManyToOne
@@ -65,19 +65,19 @@ public class SaleMaster implements Serializable {
     }
 
     public User getUser() {
-        return user;
+        return user_detail;
     }
 
     // TODO: Remove addedBy.
     public String getAddedBy() {
-        if (user != null)
-            return user.getFirstName() + " " + user.getLastName();
+        if (user_detail != null)
+            return user_detail.getFirstName() + " " + user_detail.getLastName();
         else
             return null;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(User user_detail) {
+        this.user_detail = user_detail;
     }
 
     public Date getDate() {

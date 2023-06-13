@@ -12,7 +12,7 @@ public class SaleReturnMaster implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @ManyToOne
-    private User user;
+    private User user_detail;
     private Date date;
     private String ref;
     @ManyToOne
@@ -66,11 +66,11 @@ public class SaleReturnMaster implements Serializable {
     }
 
     public User getUser() {
-        return user;
+        return user_detail;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(User user_detail) {
+        this.user_detail = user_detail;
     }
 
     public Date getDate() {

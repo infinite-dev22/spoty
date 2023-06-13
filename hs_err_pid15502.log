@@ -3376,7 +3376,7 @@ Dynamic libraries:
 7ff1e54e2000-7ff1e54e3000 rw-p 00011000 08:02 1057651                    /usr/lib/x86_64-linux-gnu/libcanberra.so.0.2.5
 7ff1e54e3000-7ff1e54e4000 r--s 00000000 08:02 4326789                    /var/cache/fontconfig/ef0c4ef1-02ac-4651-81a7-eb97fd83244c-le64.cache-7
 7ff1e54e4000-7ff1e54e7000 r--s 00000000 08:02 4326721                    /var/cache/fontconfig/217ef4b8-89a0-425f-85c0-2d87efe94c09-le64.cache-7
-7ff1e54e7000-7ff1e54f1000 r--p 00000000 08:02 6130824                    /home/infinite/.config/dconf/user
+7ff1e54e7000-7ff1e54f1000 r--p 00000000 08:02 6130824                    /home/infinite/.config/dconf/user_detail
 7ff1e54f1000-7ff1e54f5000 r--p 00000000 08:02 1707115                    /usr/lib/x86_64-linux-gnu/gio/modules/libdconfsettings.so
 7ff1e54f5000-7ff1e54fd000 r-xp 00004000 08:02 1707115                    /usr/lib/x86_64-linux-gnu/gio/modules/libdconfsettings.so
 7ff1e54fd000-7ff1e5500000 r--p 0000c000 08:02 1707115                    /usr/lib/x86_64-linux-gnu/gio/modules/libdconfsettings.so
@@ -4057,7 +4057,7 @@ Dynamic libraries:
 7ff25eb83000-7ff268000000 r--s 00000000 08:02 1054923                    /usr/lib/jvm/zulu-fx-20-amd64/lib/modules
 7ff268000000-7ff2683ba000 rw-p 00000000 00:00 0 
 7ff2683ba000-7ff26c000000 ---p 00000000 00:00 0 
-7ff26c000000-7ff26c001000 r--s 00000000 00:3b 143                        /run/user/1000/dconf/user
+7ff26c000000-7ff26c001000 r--s 00000000 00:3b 143                        /run/user_detail/1000/dconf/user_detail
 7ff26c001000-7ff26c014000 r-xp 00000000 08:02 1054944                    /usr/lib/jvm/zulu-fx-20-amd64/lib/libnio.so
 7ff26c014000-7ff26c015000 ---p 00013000 08:02 1054944                    /usr/lib/jvm/zulu-fx-20-amd64/lib/libnio.so
 7ff26c015000-7ff26c016000 r--p 00013000 08:02 1054944                    /usr/lib/jvm/zulu-fx-20-amd64/lib/libnio.so

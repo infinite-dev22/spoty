@@ -12,7 +12,7 @@ public class PurchaseReturnMaster implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @ManyToOne
-    private User user;
+    private User user_detail;
     private String ref;
     private Date date;
     @ManyToOne
@@ -39,7 +39,7 @@ public class PurchaseReturnMaster implements Serializable {
     @Column(name = "updated_by")
     private String updatedBy;
 
-    public PurchaseReturnMaster(User user,
+    public PurchaseReturnMaster(User user_detail,
                                 String ref,
                                 Date date,
                                 Supplier supplier,
@@ -53,7 +53,7 @@ public class PurchaseReturnMaster implements Serializable {
                                 String status,
                                 String paymentStatus,
                                 String notes) {
-        this.user = user;
+        this.user_detail = user_detail;
         this.ref = ref;
         this.date = date;
         this.supplier = supplier;
@@ -81,11 +81,11 @@ public class PurchaseReturnMaster implements Serializable {
     }
 
     public User getUser() {
-        return user;
+        return user_detail;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(User user_detail) {
+        this.user_detail = user_detail;
     }
 
     public String getRef() {

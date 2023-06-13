@@ -124,7 +124,7 @@ public class UserFormController implements Initializable {
                 brand.setUserEmail(userFormEmail.getText());
                 brand.setUserPhoneNumber(userFormPhone.getText());
 //                To be set when database included.
-//                brand.setUser(userFormPassword.getText());
+//                brand.setUser_detail(userFormPassword.getText());
 //                brand.setUserCity(userFormRole.getText());
 //                brand.setUserTaxNumber(userFormBranches.getText());
 

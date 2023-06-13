@@ -14,7 +14,7 @@ public class QuotationMaster implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @ManyToOne
-    private User user;
+    private User user_detail;
     private Date date;
     private String ref;
     @ManyToOne
@@ -60,11 +60,11 @@ public class QuotationMaster implements Serializable {
     }
 
     public User getUser() {
-        return user;
+        return user_detail;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(User user_detail) {
+        this.user_detail = user_detail;
     }
 
     public Date getDate() {

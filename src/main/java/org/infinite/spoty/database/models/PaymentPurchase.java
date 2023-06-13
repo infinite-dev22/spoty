@@ -11,7 +11,7 @@ public class PaymentPurchase implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @ManyToOne
-    private User user;
+    private User user_detail;
     private Date date;
     private String ref;
     @ManyToOne
@@ -32,8 +32,8 @@ public class PaymentPurchase implements Serializable {
     public PaymentPurchase() {
     }
 
-    public PaymentPurchase(User user, Date date, String ref, PurchaseMaster purchase, String paymentMethod, double amount, double change, String notes) {
-        this.user = user;
+    public PaymentPurchase(User user_detail, Date date, String ref, PurchaseMaster purchase, String paymentMethod, double amount, double change, String notes) {
+        this.user_detail = user_detail;
         this.date = date;
         this.ref = ref;
         this.purchase = purchase;
@@ -52,11 +52,11 @@ public class PaymentPurchase implements Serializable {
     }
 
     public User getUser() {
-        return user;
+        return user_detail;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(User user_detail) {
+        this.user_detail = user_detail;
     }
 
     public Date getDate() {

@@ -35,7 +35,7 @@ public class ExpenseDao {
             expense.setDate(obj.getDate());
             expense.setRef(obj.getRef());
             expense.setName(obj.getName());
-            expense.setUser(obj.getUser());
+            expense.setUser_detail(obj.getUser_detail());
             expense.setExpenseCategory(obj.getExpenseCategory());
             expense.setBranch(obj.getBranch());
             expense.setDetails(obj.getDetails());

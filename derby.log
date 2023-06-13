@@ -1,0 +1,13 @@
+----------------------------------------------------------------
+Tue Jun 13 08:13:57 EAT 2023:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.16.1.1 - (1901046): instance a816c00e-0188-b32c-cc22-000001ba4718 
+on database directory /home/infinite/.config/ZenmartERP/datastores/databases/derby/database with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@56ef9176 
+Loaded from file:/home/infinite/.gradle/caches/modules-2/files-2.1/org.apache.derby/derby/10.16.1.1/f9ca2054b3e33ec3f3f19df4a7490352d82de54a/derby-10.16.1.1.jar
+java.vendor=GraalVM Community
+java.runtime.version=19.0.1+10-jvmci-22.3-b08
+user.dir=/home/infinite/IdeaProjects
+os.name=Linux
+os.arch=amd64
+os.version=6.3.7-060307-generic
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''

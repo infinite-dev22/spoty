@@ -62,16 +62,16 @@ public class ExpenseCategoryDao {
 
     public static ObservableList<ExpenseCategory> fetchExpenseCategories() {
         Transaction transaction = null;
-        ObservableList<ExpenseCategory> expenseCategorys;
+        ObservableList<ExpenseCategory> expenseCategories;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            expenseCategorys = FXCollections.observableList(session.createQuery("from ExpenseCategory", ExpenseCategory.class).stream().toList());
+            expenseCategories = FXCollections.observableList(session.createQuery("from ExpenseCategory", ExpenseCategory.class).stream().toList());
             transaction.commit();
         } catch (HibernateError ex) {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return expenseCategorys;
+        return expenseCategories;
     }
 
     public static void deleteExpenseCategory(int id) {

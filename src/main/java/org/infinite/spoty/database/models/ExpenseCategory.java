@@ -10,7 +10,7 @@ public class ExpenseCategory implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private User user;
+    private User user_detail;
     private String name;
     private String description;
     @Column(name = "created_at")
@@ -40,11 +40,11 @@ public class ExpenseCategory implements Serializable {
     }
 
     public User getUser() {
-        return user;
+        return user_detail;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(User user_detail) {
+        this.user_detail = user_detail;
     }
 
     public String getName() {

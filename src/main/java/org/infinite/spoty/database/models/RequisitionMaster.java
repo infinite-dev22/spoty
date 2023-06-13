@@ -18,7 +18,7 @@ public class RequisitionMaster implements Serializable {
     private String ref;
     private Date date;
     @ManyToOne
-    private User user;
+    private User user_detail;
     @OneToOne
     private Supplier supplier;
     @ManyToOne
@@ -75,11 +75,11 @@ public class RequisitionMaster implements Serializable {
     }
 
     public User getUser() {
-        return user;
+        return user_detail;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(User user_detail) {
+        this.user_detail = user_detail;
     }
 
     public Date getDate() {
