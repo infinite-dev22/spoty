@@ -28,7 +28,7 @@ public class CurrencyViewModel {
     private static final StringProperty code = new SimpleStringProperty("");
     private static final StringProperty name = new SimpleStringProperty("");
     private static final StringProperty symbol = new SimpleStringProperty("");
-    public static ObservableList<Currency> currencyesList = FXCollections.observableArrayList();
+    public static ObservableList<Currency> currenciesList = FXCollections.observableArrayList();
 
     public static Integer getId() {
         return id.get();
@@ -81,7 +81,7 @@ public class CurrencyViewModel {
     public static void saveCurrency() {
         Currency currency = new Currency(getCode(), getName(), getSymbol());
         CurrencyDao.saveCurrency(currency);
-        currencyesList.clear();
+        currenciesList.clear();
         clearCurrencyData();
         getCurrencies();
     }
@@ -94,9 +94,9 @@ public class CurrencyViewModel {
     }
 
     public static ObservableList<Currency> getCurrencies() {
-        currencyesList.clear();
-        currencyesList.addAll(CurrencyDao.fetchCurrencies());
-        return currencyesList;
+        currenciesList.clear();
+        currenciesList.addAll(CurrencyDao.fetchCurrencies());
+        return currenciesList;
     }
 
     public static void getItem(int currencyID) {
