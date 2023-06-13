@@ -74,7 +74,7 @@ public class CurrencyDao {
         return currency;
     }
 
-    public static ObservableList<Currency> getCurrency() {
+    public static ObservableList<Currency> fetchCurrencies() {
         Transaction transaction = null;
         ObservableList<Currency> currencys;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
