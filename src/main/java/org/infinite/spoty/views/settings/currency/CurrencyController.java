@@ -31,7 +31,8 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.infinite.spoty.models.Currency;
+import org.infinite.spoty.database.models.Currency;
+import org.infinite.spoty.viewModels.CurrencyViewModel;
 
 import java.io.IOException;
 import java.net.URL;
@@ -39,7 +40,6 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
-import static org.infinite.spoty.data.SampleData.currencySampleData;
 
 public class CurrencyController implements Initializable {
     @FXML
@@ -70,28 +70,31 @@ public class CurrencyController implements Initializable {
     }
 
     private void setupTable() {
-        MFXTableColumn<Currency> currencyName = new MFXTableColumn<>("Name", true, Comparator.comparing(Currency::getCurrencyName));
-        MFXTableColumn<Currency> currencyCode = new MFXTableColumn<>("Code", true, Comparator.comparing(Currency::getCurrencyCode));
-        MFXTableColumn<Currency> currencySymbol = new MFXTableColumn<>("Symbol", true, Comparator.comparing(Currency::getCurrencySymbol));
+        MFXTableColumn<Currency> currencyName = new MFXTableColumn<>("Name", false, Comparator.comparing(Currency::getName));
+        MFXTableColumn<Currency> currencyCode = new MFXTableColumn<>("Code", false, Comparator.comparing(Currency::getCode));
+        MFXTableColumn<Currency> currencySymbol = new MFXTableColumn<>("Symbol", false, Comparator.comparing(Currency::getSymbol));
 
-        currencyName.setRowCellFactory(currency -> new MFXTableRowCell<>(Currency::getCurrencyName));
-        currencyCode.setRowCellFactory(currency -> new MFXTableRowCell<>(Currency::getCurrencyCode));
-        currencySymbol.setRowCellFactory(currency -> new MFXTableRowCell<>(Currency::getCurrencySymbol));
+        currencyName.setRowCellFactory(currency -> new MFXTableRowCell<>(Currency::getName));
+        currencyCode.setRowCellFactory(currency -> new MFXTableRowCell<>(Currency::getCode));
+        currencySymbol.setRowCellFactory(currency -> new MFXTableRowCell<>(Currency::getSymbol));
+
+        currencyName.prefWidthProperty().bind(currencyTable.widthProperty().multiply(.34));
+        currencyCode.prefWidthProperty().bind(currencyTable.widthProperty().multiply(.34));
+        currencySymbol.prefWidthProperty().bind(currencyTable.widthProperty().multiply(.34));
 
         currencyTable.getTableColumns().addAll(currencyName, currencyCode, currencySymbol);
         currencyTable.getFilters().addAll(
-                new StringFilter<>("Name", Currency::getCurrencyName),
-                new StringFilter<>("Code", Currency::getCurrencyCode),
-                new StringFilter<>("Symbol", Currency::getCurrencySymbol)
+                new StringFilter<>("Name", Currency::getName),
+                new StringFilter<>("Code", Currency::getCode),
+                new StringFilter<>("Symbol", Currency::getSymbol)
         );
         getCurrencyTable();
-        currencyTable.setItems(currencySampleData());
+        currencyTable.setItems(CurrencyViewModel.getCurrencies());
     }
 
     private void getCurrencyTable() {
         currencyTable.setPrefSize(1200, 1000);
         currencyTable.features().enableBounceEffect();
-        currencyTable.autosizeColumnsOnInitialization();
         currencyTable.features().enableSmoothScrolling(0.5);
     }
 
