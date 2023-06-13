@@ -20,18 +20,18 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
 import org.hibernate.service.ServiceRegistry;
 import org.infinite.spoty.database.models.*;
-import org.jboss.logging.Logger;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Properties;
+import java.util.logging.Level;
 
 public class HibernateUtil {
     private static SessionFactory sessionFactory;
 
     public static SessionFactory getSessionFactory() {
-        org.jboss.logging.Logger.getLogger("org.hibernate").isEnabled(Logger.Level.DEBUG);
+        java.util.logging.Logger.getLogger("org.hibernate").setLevel(Level.OFF);
         try {
             Files.createDirectories(Paths.get(System.getProperty("user.home") + "/.config/ZenmartERP/datastores/databases/derby"));
         } catch (IOException e) {
@@ -47,7 +47,7 @@ public class HibernateUtil {
                 settings.put(Environment.PASS, "password");
                 settings.put(Environment.DRIVER, "org.apache.derby.jdbc.EmbeddedDriver");
                 settings.put(Environment.DIALECT, "org.hibernate.dialect.DerbyDialect");
-                settings.put(Environment.SHOW_SQL, "true");
+                settings.put(Environment.SHOW_SQL, "false");
                 settings.put(Environment.CURRENT_SESSION_CONTEXT_CLASS, "thread");
                 settings.put(Environment.HBM2DDL_AUTO, "update");
                 settings.put(Environment.POOL_SIZE, "20");
