@@ -36,18 +36,10 @@ public class Currency {
 
     public Currency(String code,
                     String name,
-                    String symbol,
-                    Date createdAt,
-                    String createdBy,
-                    Date updatedAt,
-                    String updatedBy) {
+                    String symbol) {
         this.code = code;
         this.name = name;
         this.symbol = symbol;
-        this.createdAt = createdAt;
-        this.createdBy = createdBy;
-        this.updatedAt = updatedAt;
-        this.updatedBy = updatedBy;
     }
 
     public Currency() {
