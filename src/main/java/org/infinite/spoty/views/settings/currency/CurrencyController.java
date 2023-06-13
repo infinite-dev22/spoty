@@ -14,24 +14,25 @@
 
 package org.infinite.spoty.views.settings.currency;
 
-import io.github.palexdev.materialfx.controls.MFXButton;
-import io.github.palexdev.materialfx.controls.MFXTableColumn;
-import io.github.palexdev.materialfx.controls.MFXTableView;
-import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.enums.ButtonType;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.infinite.spoty.models.Currency;
+import org.infinite.spoty.database.dao.CurrencyDao;
+import org.infinite.spoty.database.models.Currency;
+import org.infinite.spoty.viewModels.CurrencyViewModel;
 
 import java.io.IOException;
 import java.net.URL;
@@ -39,8 +40,8 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
-import static org.infinite.spoty.data.SampleData.currencySampleData;
 
+@SuppressWarnings("unchecked")
 public class CurrencyController implements Initializable {
     @FXML
     public MFXTextField currencySearchBar;
@@ -70,29 +71,65 @@ public class CurrencyController implements Initializable {
     }
 
     private void setupTable() {
-        MFXTableColumn<Currency> currencyName = new MFXTableColumn<>("Name", true, Comparator.comparing(Currency::getCurrencyName));
-        MFXTableColumn<Currency> currencyCode = new MFXTableColumn<>("Code", true, Comparator.comparing(Currency::getCurrencyCode));
-        MFXTableColumn<Currency> currencySymbol = new MFXTableColumn<>("Symbol", true, Comparator.comparing(Currency::getCurrencySymbol));
+        MFXTableColumn<Currency> currencyName = new MFXTableColumn<>("Name", false, Comparator.comparing(Currency::getName));
+        MFXTableColumn<Currency> currencyCode = new MFXTableColumn<>("Code", false, Comparator.comparing(Currency::getCode));
+        MFXTableColumn<Currency> currencySymbol = new MFXTableColumn<>("Symbol", false, Comparator.comparing(Currency::getSymbol));
 
-        currencyName.setRowCellFactory(currency -> new MFXTableRowCell<>(Currency::getCurrencyName));
-        currencyCode.setRowCellFactory(currency -> new MFXTableRowCell<>(Currency::getCurrencyCode));
-        currencySymbol.setRowCellFactory(currency -> new MFXTableRowCell<>(Currency::getCurrencySymbol));
+        currencyName.setRowCellFactory(currency -> new MFXTableRowCell<>(Currency::getName));
+        currencyCode.setRowCellFactory(currency -> new MFXTableRowCell<>(Currency::getCode));
+        currencySymbol.setRowCellFactory(currency -> new MFXTableRowCell<>(Currency::getSymbol));
+
+        currencyName.prefWidthProperty().bind(currencyTable.widthProperty().multiply(.34));
+        currencyCode.prefWidthProperty().bind(currencyTable.widthProperty().multiply(.34));
+        currencySymbol.prefWidthProperty().bind(currencyTable.widthProperty().multiply(.34));
 
         currencyTable.getTableColumns().addAll(currencyName, currencyCode, currencySymbol);
         currencyTable.getFilters().addAll(
-                new StringFilter<>("Name", Currency::getCurrencyName),
-                new StringFilter<>("Code", Currency::getCurrencyCode),
-                new StringFilter<>("Symbol", Currency::getCurrencySymbol)
+                new StringFilter<>("Name", Currency::getName),
+                new StringFilter<>("Code", Currency::getCode),
+                new StringFilter<>("Symbol", Currency::getSymbol)
         );
         getCurrencyTable();
-        currencyTable.setItems(currencySampleData());
+        currencyTable.setItems(CurrencyViewModel.getCurrencies());
     }
 
     private void getCurrencyTable() {
         currencyTable.setPrefSize(1200, 1000);
         currencyTable.features().enableBounceEffect();
-        currencyTable.autosizeColumnsOnInitialization();
         currencyTable.features().enableSmoothScrolling(0.5);
+
+        currencyTable.setTableRowFactory(t -> {
+            MFXTableRow<Currency> row = new MFXTableRow<>(currencyTable, t);
+            EventHandler<ContextMenuEvent> eventHandler = event -> showContextMenu((MFXTableRow<Currency>) event.getSource())
+                    .show(currencyContentPane.getScene().getWindow(), event.getScreenX(), event.getScreenY());
+            row.setOnContextMenuRequested(eventHandler);
+            return row;
+        });
+    }
+
+    private MFXContextMenu showContextMenu(MFXTableRow<Currency> obj) {
+        MFXContextMenu contextMenu = new MFXContextMenu(currencyTable);
+
+        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
+        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+
+        // Actions
+        // Delete
+        delete.setOnAction(e -> {
+            CurrencyDao.deleteCurrency(obj.getData().getId());
+            CurrencyViewModel.getCurrencies();
+            e.consume();
+        });
+        // Edit
+        edit.setOnAction(e -> {
+            CurrencyViewModel.getItem(obj.getData().getId());
+            currencyCreateBtnClicked();
+            e.consume();
+        });
+
+        contextMenu.addItems(edit, delete);
+
+        return contextMenu;
     }
 
     @FXML

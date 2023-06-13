@@ -95,16 +95,4 @@ public class SampleData implements Serializable {
 
         return roleMasterList;
     }
-
-    public static ObservableList<Currency> currencySampleData() {
-        ObservableList<Currency> currencyList = FXCollections.observableArrayList();
-
-        Currency currency = new Currency();
-        currency.setCurrencyName("US Dollar");
-        currency.setCurrencySymbol("$");
-        currency.setCurrencyCode("USD");
-        currencyList.add(currency);
-
-        return currencyList;
-    }
 }
