@@ -27,17 +27,18 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
+import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
+import static org.infinite.spoty.values.numbers.Constants.GRID_HGAP;
+import static org.infinite.spoty.values.numbers.Constants.GRID_VGAP;
 
 public class RoleSettingsFormController implements Initializable {
     private final MFXTextField roleNameInputField;
@@ -340,8 +341,14 @@ public class RoleSettingsFormController implements Initializable {
         roleDescriptionInputField.setFloatingText("Role description");
         roleDescriptionInputField.setPrefWidth(400);
 
-        List<MFXStepperToggle> stepperToggle = getSteps();
+        List<MFXStepperToggle> stepperToggle;
+        try {
+            stepperToggle = getSteps();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         roleSettingsStepper.getStepperToggles().addAll(stepperToggle);
+        roleSettingsStepper.setAnimated(true);
         roleSettingsStepper.setOnLastNext(e -> roleSettingsStepper.setMouseTransparent(true));
     }
 
@@ -405,7 +412,8 @@ public class RoleSettingsFormController implements Initializable {
         userMgtSettingCheckboxes.addColumn(0, viewUsersCheckbox, editUsersCheckbox, viewAllUserRecordsCheckbox);
         userMgtSettingCheckboxes.addColumn(1, createUserCheckbox, deleteUserCheckbox);
 
-        userMgtSettingCheckboxes.setHgap(20);
+        userMgtSettingCheckboxes.setHgap(GRID_HGAP);
+        userMgtSettingCheckboxes.setVgap(GRID_VGAP);
 
         userMgtSetting.getChildren().addAll(title("User Management"), userMgtSettingCheckboxes);
         return userMgtSetting;
@@ -426,7 +434,8 @@ public class RoleSettingsFormController implements Initializable {
         userPermissionsSettingCheckboxes.addColumn(0, viewUserPermissionsCheckbox, editUserPermissionsCheckbox);
         userPermissionsSettingCheckboxes.addColumn(1, createUserPermissionCheckbox, deleteUserPermissionCheckbox);
 
-        userPermissionsSettingCheckboxes.setHgap(20);
+        userPermissionsSettingCheckboxes.setHgap(GRID_HGAP);
+        userPermissionsSettingCheckboxes.setVgap(GRID_VGAP);
 
         userPermissionsSetting.getChildren().addAll(title("User Permissions"), userPermissionsSettingCheckboxes);
         return userPermissionsSetting;
@@ -454,7 +463,8 @@ public class RoleSettingsFormController implements Initializable {
         productsSettingCheckboxes.addColumn(1, createProductCheckbox, deleteProductCheckbox,
                 productImportsCheckbox, productBrandsCheckbox);
 
-        productsSettingCheckboxes.setHgap(20);
+        productsSettingCheckboxes.setHgap(GRID_HGAP);
+        productsSettingCheckboxes.setVgap(GRID_VGAP);
 
         productsSetting.getChildren().addAll(title("Products"), productsSettingCheckboxes);
         return productsSetting;
@@ -475,7 +485,8 @@ public class RoleSettingsFormController implements Initializable {
         adjustmentSettingCheckboxes.addColumn(0, viewAdjustmentsCheckbox, editAdjustmentsCheckbox);
         adjustmentSettingCheckboxes.addColumn(1, createAdjustmentCheckbox, deleteAdjustmentCheckbox);
 
-        adjustmentSettingCheckboxes.setHgap(20);
+        adjustmentSettingCheckboxes.setHgap(GRID_HGAP);
+        adjustmentSettingCheckboxes.setVgap(GRID_VGAP);
 
         adjustmentSetting.getChildren().addAll(title("Adjustment"), adjustmentSettingCheckboxes);
         return adjustmentSetting;
@@ -496,7 +507,8 @@ public class RoleSettingsFormController implements Initializable {
         transferSettingCheckboxes.addColumn(0, viewTransfersCheckbox, editTransfersCheckbox);
         transferSettingCheckboxes.addColumn(1, createTransferCheckbox, deleteTransferCheckbox);
 
-        transferSettingCheckboxes.setHgap(20);
+        transferSettingCheckboxes.setHgap(GRID_HGAP);
+        transferSettingCheckboxes.setVgap(GRID_VGAP);
 
         transferSetting.getChildren().addAll(title("TransferMaster"), transferSettingCheckboxes);
         return transferSetting;
@@ -517,7 +529,8 @@ public class RoleSettingsFormController implements Initializable {
         expenseSettingCheckboxes.addColumn(0, viewExpensesCheckbox, editExpensesCheckbox);
         expenseSettingCheckboxes.addColumn(1, createExpenseCheckbox, deleteExpenseCheckbox);
 
-        expenseSettingCheckboxes.setHgap(20);
+        expenseSettingCheckboxes.setHgap(GRID_HGAP);
+        expenseSettingCheckboxes.setVgap(GRID_VGAP);
 
         expenseSetting.getChildren().addAll(title("Expenses"), expenseSettingCheckboxes);
         return expenseSetting;
@@ -539,7 +552,8 @@ public class RoleSettingsFormController implements Initializable {
         saleSettingCheckboxes.addColumn(0, viewSalesCheckbox, editSalesCheckbox, accessPOSCheckbox);
         saleSettingCheckboxes.addColumn(1, createSaleCheckbox, deleteSaleCheckbox);
 
-        saleSettingCheckboxes.setHgap(20);
+        saleSettingCheckboxes.setHgap(GRID_HGAP);
+        saleSettingCheckboxes.setVgap(GRID_VGAP);
 
         saleSetting.getChildren().addAll(title("Sales"), saleSettingCheckboxes);
         return saleSetting;
@@ -560,7 +574,8 @@ public class RoleSettingsFormController implements Initializable {
         purchaseSettingCheckboxes.addColumn(0, viewPurchasesCheckbox, editPurchasesCheckbox);
         purchaseSettingCheckboxes.addColumn(1, createPurchaseCheckbox, deletePurchaseCheckbox);
 
-        purchaseSettingCheckboxes.setHgap(20);
+        purchaseSettingCheckboxes.setHgap(GRID_HGAP);
+        purchaseSettingCheckboxes.setVgap(GRID_VGAP);
 
         purchaseSetting.getChildren().addAll(title("Purchases"), purchaseSettingCheckboxes);
         return purchaseSetting;
@@ -581,7 +596,8 @@ public class RoleSettingsFormController implements Initializable {
         quotationSettingCheckboxes.addColumn(0, viewQuotationsCheckbox, editQuotationsCheckbox);
         quotationSettingCheckboxes.addColumn(1, createQuotationCheckbox, deleteQuotationCheckbox);
 
-        quotationSettingCheckboxes.setHgap(20);
+        quotationSettingCheckboxes.setHgap(GRID_VGAP);
+        quotationSettingCheckboxes.setVgap(GRID_HGAP);
 
         quotationSetting.getChildren().addAll(title("Quotations"), quotationSettingCheckboxes);
         return quotationSetting;
@@ -602,7 +618,8 @@ public class RoleSettingsFormController implements Initializable {
         saleReturnSettingCheckboxes.addColumn(0, viewSaleReturnsCheckbox, editSaleReturnsCheckbox);
         saleReturnSettingCheckboxes.addColumn(1, createSaleReturnCheckbox, deleteSaleReturnCheckbox);
 
-        saleReturnSettingCheckboxes.setHgap(20);
+        saleReturnSettingCheckboxes.setHgap(GRID_HGAP);
+        saleReturnSettingCheckboxes.setVgap(GRID_VGAP);
 
         saleReturnSetting.getChildren().addAll(title("SaleMaster Returns"), saleReturnSettingCheckboxes);
         return saleReturnSetting;
@@ -623,7 +640,8 @@ public class RoleSettingsFormController implements Initializable {
         purchaseReturnSettingCheckboxes.addColumn(0, viewPurchaseReturnsCheckbox, editPurchaseReturnsCheckbox);
         purchaseReturnSettingCheckboxes.addColumn(1, createPurchaseReturnCheckbox, deletePurchaseReturnCheckbox);
 
-        purchaseReturnSettingCheckboxes.setHgap(20);
+        purchaseReturnSettingCheckboxes.setHgap(GRID_HGAP);
+        purchaseReturnSettingCheckboxes.setVgap(GRID_VGAP);
 
         purchaseReturnSetting.getChildren().addAll(title("PurchaseMaster Returns"), purchaseReturnSettingCheckboxes);
         return purchaseReturnSetting;
@@ -644,7 +662,8 @@ public class RoleSettingsFormController implements Initializable {
         paymentSaleSettingCheckboxes.addColumn(0, viewPaymentSalesCheckbox, editPaymentSalesCheckbox);
         paymentSaleSettingCheckboxes.addColumn(1, createPaymentSaleCheckbox, deletePaymentSaleCheckbox);
 
-        paymentSaleSettingCheckboxes.setHgap(20);
+        paymentSaleSettingCheckboxes.setHgap(GRID_HGAP);
+        paymentSaleSettingCheckboxes.setVgap(GRID_VGAP);
 
         paymentSaleSetting.getChildren().addAll(title("Payment Sales"), paymentSaleSettingCheckboxes);
         return paymentSaleSetting;
@@ -665,7 +684,8 @@ public class RoleSettingsFormController implements Initializable {
         paymentPurchaseSettingCheckboxes.addColumn(0, viewPaymentPurchasesCheckbox, editPaymentPurchasesCheckbox);
         paymentPurchaseSettingCheckboxes.addColumn(1, createPaymentPurchaseCheckbox, deletePaymentPurchaseCheckbox);
 
-        paymentPurchaseSettingCheckboxes.setHgap(20);
+        paymentPurchaseSettingCheckboxes.setHgap(GRID_HGAP);
+        paymentPurchaseSettingCheckboxes.setVgap(GRID_VGAP);
 
         paymentPurchaseSetting.getChildren().addAll(title("Payment Purchases"), paymentPurchaseSettingCheckboxes);
         return paymentPurchaseSetting;
@@ -686,7 +706,8 @@ public class RoleSettingsFormController implements Initializable {
         paymentReturnSettingCheckboxes.addColumn(0, viewPaymentReturnsCheckbox, editPaymentReturnsCheckbox);
         paymentReturnSettingCheckboxes.addColumn(1, createPaymentReturnCheckbox, deletePaymentReturnCheckbox);
 
-        paymentReturnSettingCheckboxes.setHgap(20);
+        paymentReturnSettingCheckboxes.setHgap(GRID_HGAP);
+        paymentReturnSettingCheckboxes.setVgap(GRID_VGAP);
 
         paymentReturnSetting.getChildren().addAll(title("Payment Returns"), paymentReturnSettingCheckboxes);
         return paymentReturnSetting;
@@ -711,7 +732,8 @@ public class RoleSettingsFormController implements Initializable {
                 importCustomersCheckbox, payAllSellDueCheckbox, payAllSellReturnDueCheckbox);
         customerSettingCheckboxes.addColumn(1, createCustomerCheckbox, deleteCustomerCheckbox);
 
-        customerSettingCheckboxes.setHgap(20);
+        customerSettingCheckboxes.setHgap(GRID_HGAP);
+        customerSettingCheckboxes.setVgap(GRID_VGAP);
 
         customerSetting.getChildren().addAll(title("Customers"), customerSettingCheckboxes);
         return customerSetting;
@@ -736,7 +758,8 @@ public class RoleSettingsFormController implements Initializable {
                 importSuppliersCheckbox, payAllPurchaseDueCheckbox, payAllPurchaseReturnDueCheckbox);
         supplierSettingCheckboxes.addColumn(1, createSupplierCheckbox, deleteSupplierCheckbox);
 
-        supplierSettingCheckboxes.setHgap(20);
+        supplierSettingCheckboxes.setHgap(GRID_HGAP);
+        supplierSettingCheckboxes.setVgap(GRID_VGAP);
 
         supplierSetting.getChildren().addAll(title("Suppliers"), supplierSettingCheckboxes);
         return supplierSetting;
@@ -777,7 +800,8 @@ public class RoleSettingsFormController implements Initializable {
                 usersReportCheckbox, stockReportCheckbox, productReportCheckbox,
                 productSalesReportCheckbox, productPurchasesReportCheckbox);
 
-        reportSettingCheckboxes.setHgap(20);
+        reportSettingCheckboxes.setHgap(GRID_HGAP);
+        reportSettingCheckboxes.setVgap(GRID_VGAP);
 
         reportSetting.getChildren().addAll(title("Reports"), reportSettingCheckboxes);
         return reportSetting;
@@ -830,7 +854,24 @@ public class RoleSettingsFormController implements Initializable {
                 viewBackupCheckbox);
         settingSettingCheckboxes.addColumn(1, viewPOSSettingsCheckbox, viewBranchCheckbox);
 
-        settingSettingCheckboxes.setHgap(20);
+        settingSettingCheckboxes.setHgap(GRID_HGAP);
+        settingSettingCheckboxes.setVgap(GRID_VGAP);
+//        settingSettingCheckboxes.getColumnConstraints().add(0, new ColumnConstraints(
+//                60,
+//                100,
+//                100,
+//                Priority.ALWAYS,
+//                HPos.LEFT,
+//                true
+//        ));
+//        settingSettingCheckboxes.getColumnConstraints().add(1, new ColumnConstraints(
+//                60,
+//                10,
+//                100,
+//                Priority.ALWAYS,
+//                HPos.LEFT,
+//                true
+//        ));
 
         settingSetting.getChildren().addAll(title("Settings"), settingSettingCheckboxes);
         return settingSetting;
@@ -842,16 +883,28 @@ public class RoleSettingsFormController implements Initializable {
         roleSettings.setPadding(new Insets(10));
         roleSettingsScrollPane.setContent(roleSettings);
 
-        roleSettings.addRow(0, getDashboardRoleSetting(), getUserMgtSetting());
-        roleSettings.addRow(1, getUserPermissionsSetting(), getProductsSetting());
-        roleSettings.addRow(2, getAdjustmentSetting(), getTransferSetting());
-        roleSettings.addRow(3, getExpenseSetting(), getSaleSetting());
-        roleSettings.addRow(4, getPurchaseSetting(), getQuotationSetting());
-        roleSettings.addRow(5, getSaleReturnSetting(), getPurchaseReturnSetting());
-        roleSettings.addRow(6, getPaymentSaleSetting(), getPaymentPurchaseSetting());
-        roleSettings.addRow(7, getPaymentReturnSetting(), getCustomerSetting());
-        roleSettings.addRow(8, getSupplierSetting(), getReportSetting());
-        roleSettings.addRow(9, getHRMSetting(), getSettingSetting());
+//        roleSettings.addRow(0, getDashboardRoleSetting(), getUserMgtSetting());
+//        roleSettings.addRow(1, getUserPermissionsSetting(), getProductsSetting());
+//        roleSettings.addRow(2, getAdjustmentSetting(), getTransferSetting());
+//        roleSettings.addRow(3, getExpenseSetting(), getSaleSetting());
+//        roleSettings.addRow(4, getPurchaseSetting(), getQuotationSetting());
+//        roleSettings.addRow(5, getSaleReturnSetting(), getPurchaseReturnSetting());
+//        roleSettings.addRow(6, getPaymentSaleSetting(), getPaymentPurchaseSetting());
+//        roleSettings.addRow(7, getPaymentReturnSetting(), getCustomerSetting());
+//        roleSettings.addRow(8, getSupplierSetting(), getReportSetting());
+//        roleSettings.addRow(9, getHRMSetting(), getSettingSetting());
+
+        roleSettings.addRow(0, getDashboardRoleSetting(), getPurchaseSetting());
+        roleSettings.addRow(1, getAdjustmentSetting(), getTransferSetting());
+        roleSettings.addRow(2, getQuotationSetting(), getSaleReturnSetting());
+        roleSettings.addRow(3, getPaymentSaleSetting(), getPaymentPurchaseSetting());
+        roleSettings.addRow(4, getPurchaseReturnSetting(), getPaymentReturnSetting());
+        roleSettings.addRow(5, getExpenseSetting(), getUserPermissionsSetting());
+        roleSettings.addRow(6, getUserMgtSetting(), getSaleSetting());
+        roleSettings.addRow(7, getSupplierSetting(), getCustomerSetting());
+        roleSettings.addRow(8, getProductsSetting(), getSettingSetting());
+        roleSettings.add(getReportSetting(), 0, 9, 2, 1);
+//        roleSettings.addRow(7, getProductsSetting(), getHRMSetting());
 
         roleSettings.setHgap(20);
         roleSettings.setVgap(40);
@@ -859,17 +912,25 @@ public class RoleSettingsFormController implements Initializable {
         return roleSettingsScrollPane;
     }
 
-    private List<MFXStepperToggle> getSteps() {
-        MFXStepperToggle step1 = new MFXStepperToggle("Role", new MFXFontIcon("fas-lock", 16, Color.web("#f1c40f")));
+    private List<MFXStepperToggle> getSteps() throws IOException {
+        MFXStepperToggle step1 = new MFXStepperToggle("Role Wizard", new MFXFontIcon("fas-lock", 12, Color.web("#f1c40f")));
+        AnchorPane roleInit = fxmlLoader("components/role_init/role_creator_intro.fxml").load();
+        step1.setContent(roleInit);
+
+        MFXStepperToggle step2 = new MFXStepperToggle("Role Details", new MFXFontIcon("fas-lock", 12, Color.web("#f1c40f")));
         VBox roleNamingStep = new VBox(20, validationWrapper(roleNameInputField), roleDescriptionInputField);
         roleNamingStep.setAlignment(Pos.CENTER);
-        step1.setContent(roleNamingStep);
-        step1.getValidator().dependsOn(roleNameInputField.getValidator());
+        step2.setContent(roleNamingStep);
+        step2.getValidator().dependsOn(roleNameInputField.getValidator());
 
-        MFXStepperToggle step2 = new MFXStepperToggle("Permissions", new MFXFontIcon("fas-check", 16, Color.web("#f1c40f")));
-        Platform.runLater(() -> step2.setContent(getRoleSettings()));
+        MFXStepperToggle step3 = new MFXStepperToggle("Permissions", new MFXFontIcon("fas-check", 12, Color.web("#f1c40f")));
+        Platform.runLater(() -> step3.setContent(getRoleSettings()));
 
-        return List.of(step1, step2);
+        MFXStepperToggle step4 = new MFXStepperToggle("Confirming", new MFXFontIcon("fas-check", 12, Color.web("#f1c40f")));
+        AnchorPane roleInit2 = fxmlLoader("components/role_init/role_creator_confirm.fxml").load();
+        step4.setContent(roleInit2);
+
+        return List.of(step1, step2, step3, step4);
     }
 
     private VBox title(String labelText) {
