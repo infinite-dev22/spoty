@@ -25,7 +25,7 @@ public class ProductMaster implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private int id;
     private String code;
     @Column(name = "barcode_type")
     private String barcodeType;
@@ -71,11 +71,11 @@ public class ProductMaster implements Serializable {
     public ProductMaster() {
     }
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -107,24 +107,30 @@ public class ProductMaster implements Serializable {
         return category;
     }
 
-    public String getCategoryName() {
-        return category.getName();
-    }
-
     public void setCategory(ProductCategory category) {
         this.category = category;
+    }
+
+    public String getCategoryName() {
+        if (category != null)
+            return category.getName();
+        else
+            return null;
     }
 
     public Brand getBrand() {
         return brand;
     }
 
-    public String getBrandName() {
-        return brand.getName();
-    }
-
     public void setBrand(Brand brand) {
         this.brand = brand;
+    }
+
+    public String getBrandName() {
+        if (brand != null)
+            return brand.getName();
+        else
+            return null;
     }
 
     public byte[] getImage() {
