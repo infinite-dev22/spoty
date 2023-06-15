@@ -18,15 +18,16 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.infinite.spoty.database.dao.ProductDetailDao;
+import org.infinite.spoty.database.dao.ProductDetailDao;
 import org.infinite.spoty.database.models.*;
 
 public class ProductDetailViewModel {
-    private static final IntegerProperty id = new SimpleIntegerProperty(0);
-    private static final ObjectProperty<ProductMaster> purchase = new SimpleObjectProperty<>(null);
+    private static final StringProperty id = new SimpleStringProperty("");
+    private static final ObjectProperty<ProductMaster> product = new SimpleObjectProperty<>(null);
     private static final ListProperty<Branch> branches = new SimpleListProperty<>(null);
     private static final ObjectProperty<UnitOfMeasure> unit = new SimpleObjectProperty<>(null);
     private static final ObjectProperty<UnitOfMeasure> saleUnit = new SimpleObjectProperty<>(null);
-    private static final ObjectProperty<UnitOfMeasure> purchaseUnit = new SimpleObjectProperty<>(null);
+    private static final ObjectProperty<UnitOfMeasure> productUnit = new SimpleObjectProperty<>(null);
     private static final StringProperty name = new SimpleStringProperty(null);
     private static final IntegerProperty quantity = new SimpleIntegerProperty(0);
     private static final DoubleProperty cost = new SimpleDoubleProperty(0);
@@ -35,31 +36,31 @@ public class ProductDetailViewModel {
     private static final StringProperty taxType = new SimpleStringProperty(null);
     private static final IntegerProperty stockAlert = new SimpleIntegerProperty(0);
     private static final StringProperty serial = new SimpleStringProperty(null);
-    public static final ObservableList<ProductDetail> purchaseDetailsList = FXCollections.observableArrayList();
-    public static final ObservableList<ProductDetail> purchaseTempList = FXCollections.observableArrayList();
+    public static final ObservableList<ProductDetail> productDetailsList = FXCollections.observableArrayList();
+    public static final ObservableList<ProductDetail> productDetailTempList = FXCollections.observableArrayList();
 
-    public static int getId() {
+    public static String getId() {
         return id.get();
     }
 
-    public static void setId(int id) {
+    public static void setId(String id) {
         ProductDetailViewModel.id.set(id);
     }
 
-    public static IntegerProperty idProperty() {
+    public static StringProperty idProperty() {
         return id;
     }
 
     public static ProductMaster getProduct() {
-        return purchase.get();
+        return product.get();
     }
 
-    public static void setProduct(ProductMaster purchase) {
-        ProductDetailViewModel.purchase.set(purchase);
+    public static void setProduct(ProductMaster product) {
+        ProductDetailViewModel.product.set(product);
     }
 
-    public static ObjectProperty<ProductMaster> purchaseProperty() {
-        return purchase;
+    public static ObjectProperty<ProductMaster> productProperty() {
+        return product;
     }
 
     public static ObservableList<Branch> getBranches() {
@@ -99,15 +100,15 @@ public class ProductDetailViewModel {
     }
 
     public static UnitOfMeasure getProductUnit() {
-        return purchaseUnit.get();
+        return productUnit.get();
     }
 
-    public static void setProductUnit(UnitOfMeasure purchaseUnit) {
-        ProductDetailViewModel.purchaseUnit.set(purchaseUnit);
+    public static void setProductUnit(UnitOfMeasure productUnit) {
+        ProductDetailViewModel.productUnit.set(productUnit);
     }
 
-    public static ObjectProperty<UnitOfMeasure> purchaseUnitProperty() {
-        return purchaseUnit;
+    public static ObjectProperty<UnitOfMeasure> productUnitProperty() {
+        return productUnit;
     }
 
     public static String getName() {
@@ -207,14 +208,14 @@ public class ProductDetailViewModel {
     }
 
     public static void addProductDetail() {
-        ProductDetail purchaseDetail = new ProductDetail(getProduct(), getBranches(), getUnit(),getSaleUnit(),
+        ProductDetail productDetail = new ProductDetail(getProduct(), getBranches(), getUnit(),getSaleUnit(),
                 getProductUnit(), getName(), getQuantity(), getCost(), getPrice(), getNetTax(), getTaxType(),
                 getStockAlert(), getSerial());
-        purchaseTempList.add(purchaseDetail);
+        productDetailTempList.add(productDetail);
     }
 
     public static void resetProperties() {
-        setId(0);
+        setId("");
         setProduct(null);
         setBranches(null);
         setUnit(null);
@@ -231,12 +232,69 @@ public class ProductDetailViewModel {
     }
 
     public static void resetTempList() {
-        purchaseDetailsList.clear();
+        productDetailsList.clear();
     }
 
-    public static ObservableList<ProductDetail> getProductDetail() {
-        purchaseDetailsList.clear();
-        purchaseDetailsList.addAll(ProductDetailDao.fetchProductDetails());
-        return purchaseDetailsList;
+    public static ObservableList<ProductDetail> getProductDetails() {
+        productDetailsList.clear();
+        productDetailsList.addAll(ProductDetailDao.fetchProductDetails());
+        return productDetailsList;
+    }
+
+    public static void updateProductDetail(int index) {
+        ProductDetail productDetail = new ProductDetail(getProduct(), getBranches(), getUnit(),getSaleUnit(),
+                getProductUnit(), getName(), getQuantity(), getCost(), getPrice(), getNetTax(), getTaxType(),
+                getStockAlert(), getSerial());
+        productDetailTempList.remove(index);
+        productDetailTempList.add(index, productDetail);
+        resetProperties();
+    }
+
+    public static void getItem(int productDetailID) {
+        ProductDetail productDetail = ProductDetailDao.findProductDetail(productDetailID);
+        setId(String.valueOf(productDetail.getId()));
+        setProduct(productDetail.getProduct());
+        setBranches(FXCollections.observableArrayList(productDetail.getBranch()));
+        setUnit(productDetail.getUnit());
+        setSaleUnit(productDetail.getSaleUnit());
+        setProductUnit(productDetail.getSaleUnit());
+        setName(productDetail.getName());
+        setQuantity(productDetail.getQuantity());
+        setCost(productDetail.getCost());
+        setPrice(productDetail.getPrice());
+        setNetTax(productDetail.getNetTax());
+        setTaxType(productDetail.getTaxType());
+        setStockAlert(productDetail.getStockAlert());
+        setSerial(productDetail.getSerialNumber());
+        getProductDetails();
+    }
+
+    public static void getItem(ProductDetail productDetail, int index) {
+        setId("index:" + index + ";");
+        setProduct(productDetail.getProduct());
+        setBranches(FXCollections.observableArrayList(productDetail.getBranch()));
+        setUnit(productDetail.getUnit());
+        setSaleUnit(productDetail.getSaleUnit());
+        setProductUnit(productDetail.getSaleUnit());
+        setName(productDetail.getName());
+        setQuantity(productDetail.getQuantity());
+        setCost(productDetail.getCost());
+        setPrice(productDetail.getPrice());
+        setNetTax(productDetail.getNetTax());
+        setTaxType(productDetail.getTaxType());
+        setStockAlert(productDetail.getStockAlert());
+        setSerial(productDetail.getSerialNumber());
+    }
+
+    public static void updateItem(int productDetailID) {
+        ProductDetail productDetail = new ProductDetail(getProduct(), getBranches(), getUnit(),getSaleUnit(),
+                getProductUnit(), getName(), getQuantity(), getCost(), getPrice(), getNetTax(), getTaxType(),
+                getStockAlert(), getSerial());
+        ProductDetailDao.updateProductDetail(productDetail, productDetailID);
+        getProductDetails();
+    }
+
+    public static void removeProductDetail(int index) {
+        productDetailTempList.remove(index);
     }
 }
