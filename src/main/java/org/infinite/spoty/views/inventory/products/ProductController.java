@@ -14,23 +14,22 @@
 
 package org.infinite.spoty.views.inventory.products;
 
-import io.github.palexdev.materialfx.controls.MFXButton;
-import io.github.palexdev.materialfx.controls.MFXTableColumn;
-import io.github.palexdev.materialfx.controls.MFXTableView;
-import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
-import io.github.palexdev.materialfx.enums.ButtonType;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.DialogPane;
+import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.Modality;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
+import org.infinite.spoty.database.dao.ProductMasterDao;
 import org.infinite.spoty.database.models.ProductMaster;
+import org.infinite.spoty.forms.ProductMasterFormController;
 import org.infinite.spoty.viewModels.ProductMasterViewModel;
 
 import java.io.IOException;
@@ -40,25 +39,20 @@ import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 
-public class ProductsController implements Initializable {
+@SuppressWarnings("unchecked")
+public class ProductController implements Initializable {
+    private final Stage stage;
     @FXML
-    public MFXTableView<ProductMaster> productsTable;
+    public MFXTableView<ProductMaster> productMasterTable;
     @FXML
     public BorderPane productsContentPane;
     @FXML
     public MFXTextField productsSearchBar;
     @FXML
     public MFXButton productImportBtn;
-    private Dialog<ButtonType> dialog;
 
-    public ProductsController(Stage stage) {
-        Platform.runLater(() -> {
-            try {
-                productFormDialogPane(stage);
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
-        });
+    public ProductController(Stage stage) {
+        this.stage = stage;
     }
 
     @Override
@@ -77,38 +71,73 @@ public class ProductsController implements Initializable {
         productCategory.setRowCellFactory(product -> new MFXTableRowCell<>(ProductMaster::getCategoryName));
         productBrand.setRowCellFactory(product -> new MFXTableRowCell<>(ProductMaster::getBrandName));
 
-        productName.prefWidthProperty().bind(productsTable.widthProperty().multiply(.25));
-        productCode.prefWidthProperty().bind(productsTable.widthProperty().multiply(.25));
-        productCategory.prefWidthProperty().bind(productsTable.widthProperty().multiply(.25));
-        productBrand.prefWidthProperty().bind(productsTable.widthProperty().multiply(.25));
+        productName.prefWidthProperty().bind(productMasterTable.widthProperty().multiply(.25));
+        productCode.prefWidthProperty().bind(productMasterTable.widthProperty().multiply(.25));
+        productCategory.prefWidthProperty().bind(productMasterTable.widthProperty().multiply(.25));
+        productBrand.prefWidthProperty().bind(productMasterTable.widthProperty().multiply(.25));
 
-        productsTable.getTableColumns().addAll(productName, productCode, productCategory, productBrand);
-        productsTable.getFilters().addAll(
+        productMasterTable.getTableColumns().addAll(productName, productCode, productCategory, productBrand);
+        productMasterTable.getFilters().addAll(
                 new StringFilter<>("Name", ProductMaster::getName),
                 new StringFilter<>("Code", ProductMaster::getCode),
                 new StringFilter<>("Category", ProductMaster::getCategoryName),
                 new StringFilter<>("Brand", ProductMaster::getBrandName)
         );
         getTable();
-        productsTable.setItems(ProductMasterViewModel.getProductMasters());
+        productMasterTable.setItems(ProductMasterViewModel.getProductMasters());
     }
 
     private void getTable() {
-        productsTable.setPrefSize(1000, 1000);
-        productsTable.features().enableBounceEffect();
-        productsTable.features().enableSmoothScrolling(0.5);
+        productMasterTable.setPrefSize(1000, 1000);
+        productMasterTable.features().enableBounceEffect();
+        productMasterTable.features().enableSmoothScrolling(0.5);
+
+        productMasterTable.setTableRowFactory(t -> {
+            MFXTableRow<ProductMaster> row = new MFXTableRow<>(productMasterTable, t);
+            EventHandler<ContextMenuEvent> eventHandler = event -> {
+                showContextMenu((MFXTableRow<ProductMaster>) event.getSource())
+                        .show(productMasterTable.getScene().getWindow(), event.getScreenX(), event.getScreenY());
+                event.consume();
+            };
+            row.setOnContextMenuRequested(eventHandler);
+            return row;
+        });
     }
 
-    private void productFormDialogPane(Stage stage) throws IOException {
-        DialogPane dialogPane = fxmlLoader("forms/ProductForm.fxml").load();
-        dialog = new Dialog<>();
-        dialog.setDialogPane(dialogPane);
-        dialog.initOwner(stage);
-        dialog.initModality(Modality.APPLICATION_MODAL);
-        dialog.initStyle(StageStyle.UNDECORATED);
+    private MFXContextMenu showContextMenu(MFXTableRow<ProductMaster> obj) {
+        MFXContextMenu contextMenu = new MFXContextMenu(productMasterTable);
+        MFXContextMenuItem view = new MFXContextMenuItem("View");
+        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
+        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+
+        // Actions
+        // Delete
+        delete.setOnAction(e -> {
+            ProductMasterDao.deleteProductMaster(obj.getData().getId());
+            ProductMasterViewModel.getProductMasters();
+            e.consume();
+        });
+        // Edit
+        edit.setOnAction(e -> {
+            ProductMasterViewModel.getItem(obj.getData().getId());
+            productCreateBtnClicked();
+            e.consume();
+        });
+
+        contextMenu.addItems(view, edit, delete);
+
+        return contextMenu;
     }
 
     public void productCreateBtnClicked() {
-        dialog.showAndWait();
+        FXMLLoader loader = fxmlLoader("forms/ProductMasterForm.fxml");
+        loader.setControllerFactory(c -> new ProductMasterFormController(stage));
+        try {
+            AnchorPane productFormPane = loader.load();
+            ((StackPane) productsContentPane.getParent()).getChildren().add(productFormPane);
+            ((StackPane) productsContentPane.getParent()).getChildren().get(0).setVisible(false);
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 }

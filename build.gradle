@@ -60,40 +60,6 @@ jlink {
         name = 'Zenmart ERP'
         jvmArgs = ['-Djdk.gtk.version=3']
     }
-    // forceMerge('log4j-api')
-
-    mergedModule {
-        requires 'javafx.graphics'
-        requires 'java.logging'
-        requires 'java.sql'
-        requires 'jdk.jdi'
-        requires 'java.rmi'
-        requires 'java.xml'
-        requires 'com.sun.xml.txw2'
-        requires 'java.desktop'
-        requires 'java.management'
-        requires 'java.naming'
-        requires 'jdk.attach'
-        requires 'java.scripting'
-        requires 'java.datatransfer'
-        requires 'java.compiler'
-        requires 'java.transaction.xa'
-        requires 'com.sun.xml.fastinfoset'
-        requires 'java.instrument'
-        requires 'net.bytebuddy'
-        requires 'com.fasterxml.classmate'
-
-        uses 'org.jboss.logging.LoggerProvider'
-        uses 'javax.persistence.spi.PersistenceProvider'
-//        uses 'org.hibernate.integrator.spi.Integrator'
-//        uses 'org.hibernate.boot.registry.selector.StrategyRegistrationProvider'
-//        uses 'org.hibernate.service.spi.ServiceContributor'
-//        uses 'org.hibernate.boot.spi.MetadataSourcesContributor'
-//        uses 'org.hibernate.boot.spi.MetadataBuilderInitializer'
-//        uses 'org.hibernate.boot.spi.MetadataBuilderFactory'
-//        uses 'org.hibernate.boot.model.TypeContributor'
-        provides 'javax.persistence.spi.PersistenceProvider' with 'org.hibernate.jpa.HibernatePersistenceProvider'
-    }
 
     jpackage {
         // Could be taken from command line, here it is defined statically

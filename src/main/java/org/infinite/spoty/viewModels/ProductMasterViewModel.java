@@ -18,11 +18,11 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.infinite.spoty.database.dao.ProductMasterDao;
-import org.infinite.spoty.database.models.Brand;
-import org.infinite.spoty.database.models.ProductCategory;
-import org.infinite.spoty.database.models.ProductMaster;
+import org.infinite.spoty.database.dao.ProductMasterDao;
+import org.infinite.spoty.database.models.*;
 
 public class ProductMasterViewModel {
+    public static final ObservableList<ProductMaster> productMasterList = FXCollections.observableArrayList();
     private static final IntegerProperty id = new SimpleIntegerProperty(0);
     private static final StringProperty barcodeType = new SimpleStringProperty("");
     private static final StringProperty name = new SimpleStringProperty("");
@@ -31,8 +31,8 @@ public class ProductMasterViewModel {
     private static final BooleanProperty notForSale = new SimpleBooleanProperty(false);
     private static final BooleanProperty isActive = new SimpleBooleanProperty(true);
     private static final ObjectProperty<ProductCategory> category = new SimpleObjectProperty<>(null);
+    private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>(null);
     private static final ObjectProperty<Brand> brand = new SimpleObjectProperty<>(null);
-    public static final ObservableList<ProductMaster> productMasterList = FXCollections.observableArrayList();
 
     public static int getId() {
         return id.get();
@@ -118,6 +118,18 @@ public class ProductMasterViewModel {
         return isActive;
     }
 
+    public static Branch getBranch() {
+        return branch.get();
+    }
+
+    public static void setBranch(Branch branch) {
+        ProductMasterViewModel.branch.set(branch);
+    }
+
+    public static ObjectProperty<Branch> branchProperty() {
+        return branch;
+    }
+
     public static ProductCategory getCategory() {
         return category.get();
     }
@@ -154,8 +166,8 @@ public class ProductMasterViewModel {
         setBrand(null);
     }
 
-    public static void save() {
-        ProductMaster productMaster = new ProductMaster(getBarcodeType(), getName(),getPrice(), getCategory(),
+    public static void saveProductMaster() {
+        ProductMaster productMaster = new ProductMaster(getBarcodeType(), getName(), getPrice(), getCategory(),
                 getBrand(), getNote(), isNotForSale(), isIsActive());
         ProductMasterDao.saveProductMaster(productMaster);
         resetProperties();
@@ -166,5 +178,31 @@ public class ProductMasterViewModel {
         productMasterList.clear();
         productMasterList.addAll(ProductMasterDao.getProductMaster());
         return productMasterList;
+    }
+
+    public static void getItem(int productMasterID) {
+        ProductMaster productMaster = ProductMasterDao.findProductMaster(productMasterID);
+        setId(productMaster.getId());
+        setBarcodeType(productMaster.getBarcodeType());
+//        setBranch(productMaster.getBranch());
+        setName(productMaster.getName());
+//        setPrice(productMaster.getPrice());
+        setCategory(productMaster.getCategory());
+        setBrand(productMaster.getBrand());
+        setNote(productMaster.getNote());
+        setNotForSale(productMaster.isNotForSale());
+        setIsActive(productMaster.isActive());
+        ProductDetailViewModel.productDetailTempList.addAll(productMaster.getProductDetails());
+        getProductMasters();
+    }
+
+    public static void updateItem(int productMasterID) {
+        ProductMaster productMaster = new ProductMaster(getBarcodeType(), getName(), getPrice(), getCategory(),
+                getBrand(), getNote(), isNotForSale(), isIsActive());
+        productMaster.setProductDetails(ProductDetailViewModel.productDetailTempList);
+        ProductMasterDao.updateProductMaster(productMaster, productMasterID);
+        resetProperties();
+        ProductDetailViewModel.productDetailTempList.clear();
+        getProductMasters();
     }
 }

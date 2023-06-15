@@ -60,7 +60,7 @@ public class RequisitionDetailFormController implements Initializable {
         requisitionDetailQnty.textProperty().bindBidirectional(RequisitionDetailViewModel.quantityProperty());
         requisitionDetailDescription.textProperty().bindBidirectional(RequisitionDetailViewModel.descriptionProperty());
         // Combo box properties.
-        requisitionDetailPdct.setItems(ProductDetailViewModel.purchaseDetailsList);
+        requisitionDetailPdct.setItems(ProductDetailViewModel.productDetailsList);
         requisitionDetailPdct.setConverter(new StringConverter<>() {
             @Override
             public String toString(ProductDetail object) {

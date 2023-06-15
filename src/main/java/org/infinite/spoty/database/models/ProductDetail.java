@@ -56,9 +56,7 @@ public class ProductDetail implements Serializable {
 
     public ProductDetail() {}
 
-    public ProductDetail(ProductMaster product,
-                         List<Branch> branch,
-                         UnitOfMeasure unit,
+    public ProductDetail(UnitOfMeasure unit,
                          UnitOfMeasure saleUnit,
                          UnitOfMeasure purchaseUnit,
                          String name,
@@ -69,8 +67,6 @@ public class ProductDetail implements Serializable {
                          String taxType,
                          int stockAlert,
                          String serialNumber) {
-        this.product = product;
-        this.branch = branch;
         this.unit = unit;
         this.saleUnit = saleUnit;
         this.purchaseUnit = purchaseUnit;

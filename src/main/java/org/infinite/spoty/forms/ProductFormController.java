@@ -135,7 +135,7 @@ public class ProductFormController implements Initializable {
                     && productFormCategory.getText().length() > 0
                     && productFormBrand.getText().length() > 0
                     && productFormBarCodeType.getText().length() > 0) {
-                ProductMasterViewModel.save();
+                ProductMasterViewModel.saveProductMaster();
                 ProductMasterViewModel.resetProperties();
                 closeDialog(e);
             }
