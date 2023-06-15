@@ -21,7 +21,7 @@
 
 <BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:id="productsContentPane" stylesheets="@../../../styles/Common.css"
             xmlns="http://javafx.com/javafx/19"
-            fx:controller="org.infinite.spoty.views.inventory.products.ProductsController">
+            fx:controller="org.infinite.spoty.views.inventory.products.ProductController">
     <top>
         <AnchorPane styleClass="card" BorderPane.alignment="CENTER">
             <padding>

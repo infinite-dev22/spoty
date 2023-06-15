@@ -23,14 +23,18 @@ import io.github.palexdev.materialfx.enums.ButtonType;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.infinite.spoty.database.models.ProductMaster;
+import org.infinite.spoty.forms.ProductMasterFormController;
 import org.infinite.spoty.viewModels.ProductMasterViewModel;
 
 import java.io.IOException;
@@ -40,7 +44,8 @@ import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 
-public class ProductsController implements Initializable {
+public class ProductController implements Initializable {
+    private final Stage stage;
     @FXML
     public MFXTableView<ProductMaster> productsTable;
     @FXML
@@ -51,7 +56,8 @@ public class ProductsController implements Initializable {
     public MFXButton productImportBtn;
     private Dialog<ButtonType> dialog;
 
-    public ProductsController(Stage stage) {
+    public ProductController(Stage stage) {
+        this.stage = stage;
         Platform.runLater(() -> {
             try {
                 productFormDialogPane(stage);
@@ -109,6 +115,15 @@ public class ProductsController implements Initializable {
     }
 
     public void productCreateBtnClicked() {
-        dialog.showAndWait();
+//        dialog.showAndWait();
+        FXMLLoader loader = fxmlLoader("forms/ProductMasterForm.fxml");
+        loader.setControllerFactory(c -> new ProductMasterFormController(stage));
+        try {
+            AnchorPane productFormPane = loader.load();
+            ((StackPane) productsContentPane.getParent()).getChildren().add(productFormPane);
+            ((StackPane) productsContentPane.getParent()).getChildren().get(0).setVisible(false);
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 }

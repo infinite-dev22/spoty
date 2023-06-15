@@ -26,7 +26,7 @@ import javafx.stage.Stage;
 import org.infinite.spoty.views.inventory.adjustment.AdjustmentController;
 import org.infinite.spoty.views.inventory.brand.BrandController;
 import org.infinite.spoty.views.inventory.category.ProductCategoryController;
-import org.infinite.spoty.views.inventory.products.ProductsController;
+import org.infinite.spoty.views.inventory.products.ProductController;
 import org.infinite.spoty.views.inventory.quotation.QuotationController;
 import org.infinite.spoty.views.inventory.unit_of_measure.UnitOfMeasureController;
 
@@ -56,7 +56,7 @@ public class InventoryController implements Initializable {
         loader.addView(MFXLoaderBean.of("CATEGORY", loadURL("fxml/inventory/category/ProductCategory.fxml")).setBeanToNodeMapper(() -> createToggle("fas-cubes-stacked", "Category")).setControllerFactory(c -> new ProductCategoryController(stage)).get());
         loader.addView(MFXLoaderBean.of("BRAND", loadURL("fxml/inventory/brand/Brand.fxml")).setBeanToNodeMapper(() -> createToggle("fas-tags", "Brand")).setControllerFactory(c -> new BrandController(stage)).get());
         loader.addView(MFXLoaderBean.of("UNIT", loadURL("fxml/inventory/unit_of_measure/UnitOfMeasure.fxml")).setBeanToNodeMapper(() -> createToggle("fas-weight-hanging", "Unit")).setControllerFactory(c -> new UnitOfMeasureController(stage)).get());
-        loader.addView(MFXLoaderBean.of("PRODUCTS", loadURL("fxml/inventory/products/Products.fxml")).setBeanToNodeMapper(() -> createToggle("fas-box", "Products")).setControllerFactory(c -> new ProductsController(stage)).setDefaultRoot(true).get());
+        loader.addView(MFXLoaderBean.of("PRODUCTS", loadURL("fxml/inventory/products/Products.fxml")).setBeanToNodeMapper(() -> createToggle("fas-box", "Products")).setControllerFactory(c -> new ProductController(stage)).setDefaultRoot(true).get());
         loader.addView(MFXLoaderBean.of("ADJUSTMENT", loadURL("fxml/inventory/adjustment/Adjustment.fxml")).setBeanToNodeMapper(() -> createToggle("fas-sliders", "Adjustment")).setControllerFactory(c -> new AdjustmentController(stage)).get());
         loader.addView(MFXLoaderBean.of("QUOTATION", loadURL("fxml/inventory/quotation/Quotation.fxml")).setBeanToNodeMapper(() -> createToggle("fas-money-bill-1", "Quotation")).setControllerFactory(c -> new QuotationController(stage)).get());
         loader.setOnLoadedAction(beans -> {
