@@ -58,7 +58,7 @@ public class SaleDetailFormController implements Initializable {
         saleProductsOrderTax.textProperty().addListener((observable, oldValue, newValue) -> saleProductsOrderTax.setLeadingIcon(null));
         saleProductsDiscount.textProperty().addListener((observable, oldValue, newValue) -> saleProductsDiscount.setLeadingIcon(null));
         // Set combo box options.
-        saleProductsPdct.setItems(ProductDetailViewModel.purchaseDetailsList);
+        saleProductsPdct.setItems(ProductDetailViewModel.productDetailsList);
         saleProductsPdct.setConverter(new StringConverter<>() {
             @Override
             public String toString(ProductDetail object) {

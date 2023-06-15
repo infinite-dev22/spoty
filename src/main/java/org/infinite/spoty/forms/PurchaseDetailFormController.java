@@ -62,7 +62,7 @@ public class PurchaseDetailFormController implements Initializable {
         purchaseDetail.valueProperty().bindBidirectional(PurchaseDetailViewModel.productProperty());
         purchaseDetailOrderTax.textProperty().bindBidirectional(PurchaseDetailViewModel.netTaxProperty());
         purchaseDetailDiscount.textProperty().bindBidirectional(PurchaseDetailViewModel.discountProperty());
-        purchaseDetail.setItems(ProductDetailViewModel.purchaseDetailsList);
+        purchaseDetail.setItems(ProductDetailViewModel.productDetailsList);
         purchaseDetail.setConverter(new StringConverter<>() {
             @Override
             public String toString(ProductDetail object) {
