@@ -23,7 +23,7 @@ import org.infinite.spoty.database.models.*;
 
 public class ProductDetailViewModel {
     private static final StringProperty id = new SimpleStringProperty("");
-    private static final ObjectProperty<ProductMaster> product = new SimpleObjectProperty<>(null);
+    private static final ObjectProperty<ProductDetail> product = new SimpleObjectProperty<>(null);
     private static final ListProperty<Branch> branches = new SimpleListProperty<>(null);
     private static final ObjectProperty<UnitOfMeasure> unit = new SimpleObjectProperty<>(null);
     private static final ObjectProperty<UnitOfMeasure> saleUnit = new SimpleObjectProperty<>(null);
@@ -51,15 +51,15 @@ public class ProductDetailViewModel {
         return id;
     }
 
-    public static ProductMaster getProduct() {
+    public static ProductDetail getProduct() {
         return product.get();
     }
 
-    public static void setProduct(ProductMaster product) {
+    public static void setProduct(ProductDetail product) {
         ProductDetailViewModel.product.set(product);
     }
 
-    public static ObjectProperty<ProductMaster> productProperty() {
+    public static ObjectProperty<ProductDetail> productProperty() {
         return product;
     }
 
@@ -208,7 +208,7 @@ public class ProductDetailViewModel {
     }
 
     public static void addProductDetail() {
-        ProductDetail productDetail = new ProductDetail(getProduct(), getBranches(), getUnit(),getSaleUnit(),
+        ProductDetail productDetail = new ProductDetail(getUnit(),getSaleUnit(),
                 getProductUnit(), getName(), getQuantity(), getCost(), getPrice(), getNetTax(), getTaxType(),
                 getStockAlert(), getSerial());
         productDetailTempList.add(productDetail);
@@ -242,7 +242,7 @@ public class ProductDetailViewModel {
     }
 
     public static void updateProductDetail(int index) {
-        ProductDetail productDetail = new ProductDetail(getProduct(), getBranches(), getUnit(),getSaleUnit(),
+        ProductDetail productDetail = new ProductDetail(getUnit(),getSaleUnit(),
                 getProductUnit(), getName(), getQuantity(), getCost(), getPrice(), getNetTax(), getTaxType(),
                 getStockAlert(), getSerial());
         productDetailTempList.remove(index);
@@ -253,7 +253,6 @@ public class ProductDetailViewModel {
     public static void getItem(int productDetailID) {
         ProductDetail productDetail = ProductDetailDao.findProductDetail(productDetailID);
         setId(String.valueOf(productDetail.getId()));
-        setProduct(productDetail.getProduct());
         setBranches(FXCollections.observableArrayList(productDetail.getBranch()));
         setUnit(productDetail.getUnit());
         setSaleUnit(productDetail.getSaleUnit());
@@ -271,7 +270,6 @@ public class ProductDetailViewModel {
 
     public static void getItem(ProductDetail productDetail, int index) {
         setId("index:" + index + ";");
-        setProduct(productDetail.getProduct());
         setBranches(FXCollections.observableArrayList(productDetail.getBranch()));
         setUnit(productDetail.getUnit());
         setSaleUnit(productDetail.getSaleUnit());
@@ -287,7 +285,7 @@ public class ProductDetailViewModel {
     }
 
     public static void updateItem(int productDetailID) {
-        ProductDetail productDetail = new ProductDetail(getProduct(), getBranches(), getUnit(),getSaleUnit(),
+        ProductDetail productDetail = new ProductDetail(getUnit(),getSaleUnit(),
                 getProductUnit(), getName(), getQuantity(), getCost(), getPrice(), getNetTax(), getTaxType(),
                 getStockAlert(), getSerial());
         ProductDetailDao.updateProductDetail(productDetail, productDetailID);

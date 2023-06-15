@@ -28,7 +28,7 @@ import javafx.scene.paint.Color;
 import javafx.util.StringConverter;
 import org.infinite.spoty.database.models.ProductDetail;
 import org.infinite.spoty.values.strings.Values;
-import org.infinite.spoty.viewModels.AdjustmentDetailViewModel;
+import org.infinite.spoty.viewModels.ProductDetailViewModel;
 import org.infinite.spoty.viewModels.ProductDetailViewModel;
 
 import java.net.URL;
@@ -37,34 +37,34 @@ import java.util.ResourceBundle;
 import static org.infinite.spoty.GlobalActions.closeDialog;
 
 public class ProductDetailFormController implements Initializable {
-    public MFXTextField adjustmentDetailID = new MFXTextField();
+    public MFXTextField productDetailID = new MFXTextField();
     @FXML
-    public MFXTextField adjustmentProductsQnty;
+    public MFXTextField productProductsQnty;
     @FXML
-    public MFXFilterComboBox<ProductDetail> adjustmentProductsPdct;
+    public MFXFilterComboBox<ProductDetail> productProductsPdct;
     @FXML
-    public MFXFilledButton adjustmentProductsSaveBtn;
+    public MFXFilledButton productProductsSaveBtn;
     @FXML
-    public MFXOutlinedButton adjustmentProductsCancelBtn;
+    public MFXOutlinedButton productProductsCancelBtn;
     @FXML
-    public Label adjustmentProductsTitle;
+    public Label productProductsTitle;
     @FXML
-    public MFXComboBox<String> adjustmentType;
+    public MFXComboBox<String> productType;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Add form input listeners.
-        adjustmentProductsPdct.textProperty().addListener((observable, oldValue, newValue) -> adjustmentProductsPdct.setLeadingIcon(null));
-        adjustmentProductsQnty.textProperty().addListener((observable, oldValue, newValue) -> adjustmentProductsQnty.setTrailingIcon(null));
-        adjustmentType.textProperty().addListener((observable, oldValue, newValue) -> adjustmentType.setLeadingIcon(null));
+        productProductsPdct.textProperty().addListener((observable, oldValue, newValue) -> productProductsPdct.setLeadingIcon(null));
+        productProductsQnty.textProperty().addListener((observable, oldValue, newValue) -> productProductsQnty.setTrailingIcon(null));
+        productType.textProperty().addListener((observable, oldValue, newValue) -> productType.setLeadingIcon(null));
         // Bind form input value to property value.
-        adjustmentDetailID.textProperty().bindBidirectional(AdjustmentDetailViewModel.idProperty());
-        adjustmentProductsPdct.valueProperty().bindBidirectional(AdjustmentDetailViewModel.productProperty());
-        adjustmentProductsQnty.textProperty().bindBidirectional(AdjustmentDetailViewModel.quantityProperty());
-        adjustmentType.textProperty().bindBidirectional(AdjustmentDetailViewModel.adjustmentTypeProperty());
-        // AdjustmentType combo box properties.
-        adjustmentProductsPdct.setItems(ProductDetailViewModel.productDetailsList);
-        adjustmentProductsPdct.setConverter(new StringConverter<>() {
+        productDetailID.textProperty().bindBidirectional(ProductDetailViewModel.idProperty());
+        productProductsPdct.valueProperty().bindBidirectional(ProductDetailViewModel.productProperty());
+//        productProductsQnty.textProperty().bindBidirectional(ProductDetailViewModel.quantityProperty());/
+//        productType.textProperty().bindBidirectional(ProductDetailViewModel.productTypeProperty());
+        // ProductType combo box properties.
+        productProductsPdct.setItems(ProductDetailViewModel.productDetailsList);
+        productProductsPdct.setConverter(new StringConverter<>() {
             @Override
             public String toString(ProductDetail object) {
                 if (object != null)
@@ -78,43 +78,43 @@ public class ProductDetailFormController implements Initializable {
                 return null;
             }
         });
-        adjustmentType.setItems(FXCollections.observableArrayList(Values.ADJUSTMENTTYPE));
+        productType.setItems(FXCollections.observableArrayList(Values.ADJUSTMENTTYPE));
         dialogOnActions();
     }
 
     private void dialogOnActions() {
-        adjustmentProductsCancelBtn.setOnAction((e) -> {
+        productProductsCancelBtn.setOnAction((e) -> {
             closeDialog(e);
-            AdjustmentDetailViewModel.resetProperties();
-            adjustmentProductsPdct.setLeadingIcon(null);
-            adjustmentProductsQnty.setTrailingIcon(null);
-            adjustmentType.setLeadingIcon(null);
+            ProductDetailViewModel.resetProperties();
+            productProductsPdct.setLeadingIcon(null);
+            productProductsQnty.setTrailingIcon(null);
+            productType.setLeadingIcon(null);
         });
-        adjustmentProductsSaveBtn.setOnAction((e) -> {
+        productProductsSaveBtn.setOnAction((e) -> {
             MFXIconWrapper icon = new MFXIconWrapper("fas-circle-exclamation", 20, Color.RED, 20);
-            if (adjustmentProductsPdct.getText().length() == 0) {
-                adjustmentProductsPdct.setLeadingIcon(icon);
+            if (productProductsPdct.getText().length() == 0) {
+                productProductsPdct.setLeadingIcon(icon);
             }
-            if (adjustmentProductsQnty.getText().length() == 0) {
-                adjustmentProductsQnty.setTrailingIcon(icon);
+            if (productProductsQnty.getText().length() == 0) {
+                productProductsQnty.setTrailingIcon(icon);
             }
-            if (adjustmentType.getText().length() == 0) {
-                adjustmentType.setLeadingIcon(icon);
+            if (productType.getText().length() == 0) {
+                productType.setLeadingIcon(icon);
             }
-            if (adjustmentProductsQnty.getText().length() > 0
-                    && adjustmentProductsPdct.getText().length() > 0
-                    && adjustmentType.getText().length() > 0) {
-                if (!adjustmentDetailID.getText().isEmpty()) {
+            if (productProductsQnty.getText().length() > 0
+                    && productProductsPdct.getText().length() > 0
+                    && productType.getText().length() > 0) {
+                if (!productDetailID.getText().isEmpty()) {
                     try {
-                        if (Integer.parseInt(adjustmentDetailID.getText()) > 0)
-                            AdjustmentDetailViewModel.updateItem(Integer.parseInt(adjustmentDetailID.getText()));
+                        if (Integer.parseInt(productDetailID.getText()) > 0)
+                            ProductDetailViewModel.updateItem(Integer.parseInt(productDetailID.getText()));
                     } catch (NumberFormatException ignored) {
-                        AdjustmentDetailViewModel.updateAdjustmentDetail(Integer.parseInt(adjustmentDetailID.getText()
-                                .substring(adjustmentDetailID.getText().lastIndexOf(':') + 1,
-                                        adjustmentDetailID.getText().indexOf(';'))));
+                        ProductDetailViewModel.updateProductDetail(Integer.parseInt(productDetailID.getText()
+                                .substring(productDetailID.getText().lastIndexOf(':') + 1,
+                                        productDetailID.getText().indexOf(';'))));
                     }
-                } else AdjustmentDetailViewModel.addAdjustmentDetails();
-                AdjustmentDetailViewModel.resetProperties();
+                } else ProductDetailViewModel.addProductDetail();
+                ProductDetailViewModel.resetProperties();
                 closeDialog(e);
             }
         });

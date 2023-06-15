@@ -89,6 +89,7 @@ public class ProductMasterFormController implements Initializable {
         productDetailID.textProperty().bindBidirectional(ProductDetailViewModel.idProperty());
         productMasterID.textProperty().bindBidirectional(ProductMasterViewModel.idProperty(), new NumberStringConverter());
         productBranchId.valueProperty().bindBidirectional(ProductMasterViewModel.branchProperty());
+        // TODO: Add multiple selection for branches.
         productBranchId.setItems(BranchViewModel.branchesList);
         productBranchId.setConverter(new StringConverter<>() {
             @Override
