@@ -15,9 +15,9 @@ module org.infinite.spoty {
     requires org.hibernate.orm.core;
     requires org.hibernate.commons.annotations;
 
-    requires net.bytebuddy;
-
     requires org.jboss.logging;
+
+    requires net.bytebuddy;
 
     requires jakarta.persistence;
     requires jakarta.transaction;
@@ -27,6 +27,11 @@ module org.infinite.spoty {
     requires java.sql;
     requires java.logging;
     requires java.naming;
+    requires org.apache.derby.tools;
+    requires org.apache.derby.commons;
+    requires org.apache.derby.engine;
+
+    requires org.apache.commons.compress;
 
     opens org.infinite.spoty.views;
     opens org.infinite.spoty.views.components;
@@ -72,6 +77,7 @@ module org.infinite.spoty {
 
     opens org.infinite.spoty.database.models;
 
+    opens org.infinite.spoty;
+
     exports org.infinite.spoty;
-    opens org.infinite.spoty to javafx.graphics;
 }

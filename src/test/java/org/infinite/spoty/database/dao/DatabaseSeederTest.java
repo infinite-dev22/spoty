@@ -345,7 +345,7 @@ class DatabaseSeederTest {
     void productInsert() {
         try {
             var productMaster = new ProductMaster("Type 01",
-                    "",
+                    "Product Master",
                     20,
                     null,
                     null,
@@ -356,16 +356,14 @@ class DatabaseSeederTest {
             var productDetail = new ProductDetail(null,
                     null,
                     null,
-                    null,
-                    null,
-                    "",
+                    "Product Detail",
                     2,
                     20.09,
                     50,
                     0.09,
                     "VAT",
                     20,
-                    "Test.");
+                    "Test2342");
             List<ProductDetail> list = new LinkedList<>();
 
             productDetail.setCreatedAt(new Date());
@@ -380,6 +378,25 @@ class DatabaseSeederTest {
 
             ProductMasterDao.saveProductMaster(productMaster);
         } catch (Exception e) {
+            throw new AssertionError();
+        }
+    }
+
+    @Test
+    @Order(16)
+    void userInsert() {
+        try {
+            var user = new User("Test",
+                    "One",
+                    "User_0ne",
+                    null,
+            true,
+            true);
+            user.setCreatedAt(new Date());
+            user.setCreatedBy("Tester One");
+            UserDao.saveUser(user);
+        } catch (Exception e) {
+            e.printStackTrace();
             throw new AssertionError();
         }
     }

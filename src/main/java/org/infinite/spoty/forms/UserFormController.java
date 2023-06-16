@@ -21,9 +21,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
+import javafx.util.StringConverter;
+import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.database.models.Branch;
-import org.infinite.spoty.models.RoleMaster;
-import org.infinite.spoty.models.User;
+import org.infinite.spoty.database.models.Role;
+import org.infinite.spoty.viewModels.BranchViewModel;
+import org.infinite.spoty.viewModels.UserViewModel;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -31,6 +34,7 @@ import java.util.ResourceBundle;
 import static org.infinite.spoty.GlobalActions.closeDialog;
 
 public class UserFormController implements Initializable {
+    public MFXTextField userID = new MFXTextField();
     @FXML
     public MFXFilledButton userFormSaveBtn;
     @FXML
@@ -50,25 +54,65 @@ public class UserFormController implements Initializable {
     @FXML
     public MFXPasswordField userFormPassword;
     @FXML
-    public MFXFilterComboBox<RoleMaster> userFormRole;
+    public MFXFilterComboBox<Role> userFormRole;
     @FXML
-    public MFXFilterComboBox<Branch> userFormBranches;
+    public MFXFilterComboBox<Branch> userFormBranch;
     @FXML
     public MFXToggleButton userFormActive;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        dialogOnActions();
+        // Input listeners.
         userFormFirstname.textProperty().addListener((observable, oldValue, newValue) -> userFormFirstname.setTrailingIcon(null));
         userFormLastname.textProperty().addListener((observable, oldValue, newValue) -> userFormLastname.setTrailingIcon(null));
-        userFormLastname.textProperty().addListener((observable, oldValue, newValue) -> userFormUsername.setTrailingIcon(null));
+        userFormUsername.textProperty().addListener((observable, oldValue, newValue) -> userFormUsername.setTrailingIcon(null));
 //        userFormEmail.textProperty().addListener((observable, oldValue, newValue) -> userFormEmail.setTrailingIcon(null));
 //        userFormPhone.textProperty().addListener((observable, oldValue, newValue) -> userFormPhone.setTrailingIcon(null));
 //        userFormTown.textProperty().addListener((observable, oldValue, newValue) -> userFormTown.setTrailingIcon(null));
 //        userFormCity.textProperty().addListener((observable, oldValue, newValue) -> userFormCity.setTrailingIcon(null));
 //        userFormTaxNumber.textProperty().addListener((observable, oldValue, newValue) -> userFormTaxNumber.setTrailingIcon(null));
 //        userFormAddress.textProperty().addListener((observable, oldValue, newValue) -> userFormAddress.setTrailingIcon(null));
+        // Input bindings.
+        userID.textProperty().bindBidirectional(UserViewModel.idProperty(), new NumberStringConverter());
+        userFormFirstname.textProperty().bindBidirectional(UserViewModel.firstNameProperty());
+        userFormLastname.textProperty().bindBidirectional(UserViewModel.lastNameProperty());
+        userFormUsername.textProperty().bindBidirectional(UserViewModel.userNameProperty());
+        userFormEmail.textProperty().bindBidirectional(UserViewModel.emailProperty());
+        userFormPhone.textProperty().bindBidirectional(UserViewModel.phoneProperty());
+        userFormRole.valueProperty().bindBidirectional(UserViewModel.roleProperty());
+//        userFormBranch.valueProperty().bindBidirectional(UserViewModel.roleProperty());
+        userFormActive.selectedProperty().bindBidirectional(UserViewModel.activeProperty());
+        // Combo box properties.
+//        userFormRole.setItems(UserViewModel.usersList);
+        userFormRole.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(Role object) {
+                if (object != null)
+                    return object.getName();
+                else
+                    return null;
+            }
 
+            @Override
+            public Role fromString(String string) {
+                return null;
+            }
+        });
+        userFormBranch.setItems(BranchViewModel.branchesList);
+        userFormBranch.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(Branch object) {
+                if (object != null)
+                    return object.getName();
+                else
+                    return null;
+            }
+
+            @Override
+            public Branch fromString(String string) {
+                return null;
+            }
+        });
         dialogOnActions();
     }
 
@@ -82,7 +126,7 @@ public class UserFormController implements Initializable {
             userFormPhone.setText("");
             userFormPassword.setText("");
             userFormRole.setText("");
-            userFormBranches.setText("");
+            userFormBranch.setText("");
             userFormActive.setSelected(true);
 
             userFormFirstname.setTrailingIcon(null);
@@ -92,10 +136,9 @@ public class UserFormController implements Initializable {
             userFormPhone.setTrailingIcon(null);
             userFormPassword.setLeadingIcon(null);
             userFormRole.setLeadingIcon(null);
-            userFormBranches.setLeadingIcon(null);
+            userFormBranch.setLeadingIcon(null);
         });
         userFormSaveBtn.setOnAction((e) -> {
-            User brand = new User();
             MFXIconWrapper icon = new MFXIconWrapper("fas-circle-exclamation", 20, Color.RED, 20);
 
             if (userFormFirstname.getText().length() == 0) {
@@ -121,8 +164,8 @@ public class UserFormController implements Initializable {
             if (userFormRole.getText().length() == 0) {
                 userFormRole.setLeadingIcon(icon);
             }
-            if (userFormBranches.getText().length() == 0) {
-                userFormBranches.setLeadingIcon(icon);
+            if (userFormBranch.getText().length() == 0) {
+                userFormBranch.setLeadingIcon(icon);
             }
             if (userFormFirstname.getText().length() > 0
                     && userFormLastname.getText().length() > 0
@@ -131,28 +174,13 @@ public class UserFormController implements Initializable {
                     && userFormPhone.getText().length() > 0
                     && userFormPassword.getText().length() > 0
                     && userFormRole.getText().length() > 0
-                    && userFormBranches.getText().length() > 0) {
-                brand.setUserName(userFormFirstname.getText());
-                brand.setUserName(userFormLastname.getText());
-                brand.setUserName(userFormUsername.getText());
-                brand.setUserEmail(userFormEmail.getText());
-                brand.setUserPhoneNumber(userFormPhone.getText());
-//                To be set when database included.
-//                brand.setUser_detail(userFormPassword.getText());
-//                brand.setUserCity(userFormRole.getText());
-//                brand.setUserTaxNumber(userFormBranches.getText());
-
+                    && userFormBranch.getText().length() > 0) {
+                if (Integer.parseInt(userID.getText()) > 0)
+                    UserViewModel.updateItem(Integer.parseInt(userID.getText()));
+                else
+                    UserViewModel.saveUser();
                 closeDialog(e);
-
-                userFormFirstname.setText("");
-                userFormLastname.setText("");
-                userFormUsername.setText("");
-                userFormEmail.setText("");
-                userFormPhone.setText("");
-                userFormPassword.setText("");
-                userFormRole.setText("");
-                userFormBranches.setText("");
-                userFormActive.setSelected(true);
+                UserViewModel.resetProperties();
             }
         });
     }

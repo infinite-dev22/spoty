@@ -13,7 +13,7 @@ plugins {
     id 'org.javamodularity.moduleplugin' version "1.8.12"
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.13'
-    id 'org.beryx.jlink' version '2.25.0'
+    id 'org.beryx.jlink' version '2.26.0'
 }
 
 apply plugin: 'java'
@@ -40,7 +40,7 @@ test {
 }
 
 javafx {
-    version = "20.0.1"
+    version = "20"
     modules = ['javafx.controls', 'javafx.fxml', 'javafx.web', 'javafx.media', 'javafx.graphics']
 }
 
@@ -61,42 +61,53 @@ jlink {
         jvmArgs = ['-Djdk.gtk.version=3']
     }
 
-    forceMerge 'istack', 'stax'
+//    forceMerge 'istack', 'stax'
 
     mergedModule {
-        requires 'org.hibernate.commons.annotations'
-        requires 'jakarta.persistence'
-        requires 'com.fasterxml.classmate'
-        requires 'org.jboss.logging'
+//        additive = true
         requires 'javafx.controls';
         requires 'javafx.fxml';
         requires 'javafx.graphics';
         requires 'javafx.media';
         requires 'java.logging';
         requires 'java.sql';
-        requires 'jdk.jdi';
-        requires 'java.rmi';
+//        requires 'jdk.jdi';
+//        requires 'java.rmi';
         requires 'java.xml';
-        requires 'java.desktop';
-        requires 'java.management';
+//        requires 'java.desktop';
+//        requires 'java.management';
         requires 'java.naming';
-        requires 'jdk.attach';
-        requires 'java.scripting';
-        requires 'java.datatransfer';
-        requires 'java.compiler';
-        requires 'java.transaction.xa';
-        requires 'java.instrument';
+//        requires 'jdk.attach';
+//        requires 'java.scripting';
+//        requires 'java.datatransfer';
+//        requires 'java.compiler';
+//        requires 'java.transaction.xa';
+//        requires 'java.instrument';
+        requires 'net.bytebuddy'
+        requires 'org.hibernate.commons.annotations'
+        requires 'jakarta.persistence'
+        requires 'org.jboss.logging'
+        requires 'com.fasterxml.classmate'
 
         uses 'org.hibernate.integrator.spi.Integrator'
+        uses 'org.hibernate.boot.registry.selector.spi.DialectSelector'
         uses 'org.hibernate.boot.registry.selector.StrategyRegistrationProvider'
         uses 'org.hibernate.service.spi.ServiceContributor'
+        uses 'org.hibernate.id.factory.spi.GenerationTypeStrategyRegistration'
         uses 'org.hibernate.boot.spi.MetadataSourcesContributor'
         uses 'org.hibernate.boot.spi.MetadataBuilderInitializer'
         uses 'org.hibernate.boot.spi.MetadataBuilderFactory'
-        uses 'org.hibernate.id.factory.spi.GenerationTypeStrategyRegistration'
-        uses 'org.hibernate.boot.model.TypeContributor'
-        uses 'org.hibernate.boot.registry.selector.spi.DialectSelector'
         uses 'org.hibernate.engine.jdbc.dialect.spi.DialectResolver'
+        uses 'org.hibernate.boot.model.TypeContributor'
+        uses 'org.hibernate.boot.spi.MetadataContributor'
+        uses 'org.hibernate.boot.spi.AdditionalMappingContributor'
+        uses 'org.hibernate.boot.spi.AdditionalJaxbMappingProducer'
+        uses 'org.hibernate.boot.spi.SessionFactoryBuilderFactory'
+        uses 'org.hibernate.service.spi.SessionFactoryServiceContributor'
+        uses 'org.hibernate.event.spi.EventEngineContributor'
+        uses 'org.hibernate.boot.model.FunctionContributor'
+        uses 'org.hibernate.query.criteria.spi.CriteriaBuilderExtension'
+        provides 'jakarta.persistence.spi.PersistenceProvider' with 'org.hibernate.jpa.HibernatePersistenceProvider'
     }
 
     jpackage {
@@ -198,61 +209,30 @@ jlinkZip.doLast {
 }
 
 dependencies {
-    // Material FX.
+    implementation 'com.clickhouse:org.apache.commons.compress:1.9.1'
     implementation 'io.github.palexdev:materialfx:11.16.0'
-    // Icons.
     implementation('org.kordamp.ikonli:ikonli-javafx:12.3.1')
     implementation "org.kordamp.ikonli:ikonli-core:12.3.1"
     implementation "org.kordamp.ikonli:ikonli-fontawesome5-pack:12.3.1"
-    // JDBC database drivers.
     implementation 'com.oracle.database.jdbc:ojdbc11-production:23.2.0.0'
-    // DATABASE.
-    // Hibernate.
     implementation 'org.hibernate:hibernate-core:6.2.4.Final'
     implementation 'org.hibernate.common:hibernate-commons-annotations:6.0.6.Final'
-    // Connector/Driver
-//    implementation 'org.xerial:sqlite-jdbc:3.42.0.0'
-    // Derby DB.
     implementation 'org.apache.derby:derby:10.16.1.1'
     implementation 'org.apache.derby:derbytools:10.16.1.1'
-    // Hibernate Dialects
-//    implementation("com.github.gwenn:sqlite-dialect:0.1.4")
     implementation 'org.hibernate:hibernate-community-dialects:6.2.4.Final'
-    // ByteBuddy
     implementation 'net.bytebuddy:byte-buddy:1.14.5'
-    // Persistance API
-    // implementation 'javax.persistence:javax.persistence-api:2.2'
     implementation 'jakarta.persistence:jakarta.persistence-api:3.1.0'
-    // Jakarta CDI.
     implementation 'jakarta.enterprise:jakarta.enterprise.cdi-api:4.0.1'
-    // FasterXML
     implementation 'com.fasterxml:classmate:1.5.1'
-    // JAXB XML Binding API
     implementation 'javax.xml.bind:jaxb-api:2.4.0-b180830.0359'
-    // JAXB XML Binding Runtime
     implementation 'org.glassfish.jaxb:jaxb-runtime:4.0.3'
-    // CSSFX.
     implementation "fr.brouillard.oss:cssfx:11.5.1"
-    // Libraries for Material FX.
     implementation "io.github.palexdev:scenicview:17.0.2"
     implementation "io.github.palexdev:virtualizedfx:11.9.0"
     implementation "io.github.palexdev:mfxcomponents:11.16.2"
-    // SLF4J Logger.
     implementation "org.slf4j:slf4j-simple:2.0.7"
-    // JBOSS Logger.
     implementation 'org.jboss.logging:jboss-logging:3.5.1.Final'
-    // FXML Compiler
-    // implementation "io.github.paullo612.mlfx.api:micronaut:0.6.1"
-    // java.activation
-//    implementation 'com.sun.xml.fastinfoset:FastInfoset:2.1.0'
-//    implementation 'com.sun.xml.txw2:txw2:20110809'
     implementation group: 'com.sun.activation', name: 'javax.activation', version: '1.2.0'
-    // JUnit test framework.
     implementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
     implementation "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
-    // Log4J
-//    implementation 'org.apache.logging.log4j:log4j-api:2.17.1'
-//    implementation 'org.apache.logging.log4j:log4j-core:2.17.1'
-//    implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.17.1'
-//    implementation 'org.apache.commons:commons-lang3:3.12.0'
 }

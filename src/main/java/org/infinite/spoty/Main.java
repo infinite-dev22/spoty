@@ -24,7 +24,7 @@ public class Main extends Application {
 
     public static void runApp(String... args) {
         System.setProperty("javafx.preloader", LaunchPreloader.class.getCanonicalName());
-        launch(args);
+        Application.launch(Main.class, args);
     }
 
     @Override
