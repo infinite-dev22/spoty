@@ -34,6 +34,10 @@ import static org.infinite.spoty.GlobalActions.closeDialog;
 import static org.infinite.spoty.Validators.requiredValidator;
 
 public class UOMFormController implements Initializable {
+    /**
+     * =>When editing a row, the extra fields won't display even though the row clearly has a BaseUnit filled in its combo.
+     * =>The dialog should animate to expand and contract when a BaseUnit is present i.e. not just have a scroll view.
+     */
     public MFXTextField uomID = new MFXTextField();
     @FXML
     public MFXTextField uomFormName;
