@@ -339,4 +339,65 @@ class DatabaseSeederTest {
             throw new AssertionError();
         }
     }
+
+    @Test
+    @Order(15)
+    void productInsert() {
+        try {
+            var productMaster = new ProductMaster("Type 01",
+                    "Product Master",
+                    20,
+                    null,
+                    null,
+                    "Testing.",
+                    false,
+                    true);
+
+            var productDetail = new ProductDetail(null,
+                    null,
+                    null,
+                    "Product Detail",
+                    2,
+                    20.09,
+                    50,
+                    0.09,
+                    "VAT",
+                    20,
+                    "Test2342");
+            List<ProductDetail> list = new LinkedList<>();
+
+            productDetail.setCreatedAt(new Date());
+            productDetail.setCreatedBy("Tester One");
+            productDetail.setProduct(productMaster);
+
+            list.add(productDetail);
+
+            productMaster.setProductDetails(list);
+            productMaster.setCreatedAt(new Date());
+            productMaster.setCreatedBy("Tester One");
+
+            ProductMasterDao.saveProductMaster(productMaster);
+        } catch (Exception e) {
+            throw new AssertionError();
+        }
+    }
+
+    @Test
+    @Order(16)
+    void userInsert() {
+        try {
+            var user = new User("Test",
+                    "One",
+                    "User_0ne",
+                    null,
+            true,
+            true);
+            user.setCreatedAt(new Date());
+            user.setCreatedBy("Tester One");
+            UserDao.saveUser(user);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new AssertionError();
+        }
+    }
 }
