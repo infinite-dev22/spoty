@@ -66,11 +66,11 @@ public class ProductFormController implements Initializable {
         productFormBarCodeType.textProperty().addListener((observable, oldValue, newValue) -> productFormBarCodeType.setLeadingIcon(null));
 
         productFormName.textProperty().bindBidirectional(ProductMasterViewModel.nameProperty());
-        productFormCategory.valueProperty().bindBidirectional(ProductMasterViewModel.categoryProperty());
-        productFormBrand.valueProperty().bindBidirectional(ProductMasterViewModel.brandProperty());
+//        productFormCategory.valueProperty().bindBidirectional(ProductMasterViewModel.categoryProperty());
+//        productFormBrand.valueProperty().bindBidirectional(ProductMasterViewModel.brandProperty());
         productFormBarCodeType.textProperty().bindBidirectional(ProductMasterViewModel.barcodeTypeProperty());
         notForSaleToggle.selectedProperty().bindBidirectional(ProductMasterViewModel.notForSaleProperty());
-        activeToggle.selectedProperty().bindBidirectional(ProductMasterViewModel.isActiveProperty());
+        activeToggle.selectedProperty().bindBidirectional(ProductMasterViewModel.hasVariantsProperty());
 
         productFormCategory.setItems(ProductCategoryViewModel.categoriesList);
         productFormCategory.setConverter(new StringConverter<>() {

@@ -18,8 +18,10 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.infinite.spoty.database.dao.ProductMasterDao;
-import org.infinite.spoty.database.dao.ProductMasterDao;
-import org.infinite.spoty.database.models.*;
+import org.infinite.spoty.database.models.Branch;
+import org.infinite.spoty.database.models.Brand;
+import org.infinite.spoty.database.models.ProductCategory;
+import org.infinite.spoty.database.models.ProductMaster;
 
 public class ProductMasterViewModel {
     public static final ObservableList<ProductMaster> productMasterList = FXCollections.observableArrayList();
@@ -29,7 +31,7 @@ public class ProductMasterViewModel {
     private static final DoubleProperty price = new SimpleDoubleProperty(0);
     private static final StringProperty note = new SimpleStringProperty("");
     private static final BooleanProperty notForSale = new SimpleBooleanProperty(false);
-    private static final BooleanProperty isActive = new SimpleBooleanProperty(true);
+    private static final BooleanProperty hasVariants = new SimpleBooleanProperty(false);
     private static final ObjectProperty<ProductCategory> category = new SimpleObjectProperty<>(null);
     private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>(null);
     private static final ObjectProperty<Brand> brand = new SimpleObjectProperty<>(null);
@@ -106,16 +108,16 @@ public class ProductMasterViewModel {
         return notForSale;
     }
 
-    public static boolean isIsActive() {
-        return isActive.get();
+    public static boolean getHasVariants() {
+        return hasVariants.get();
     }
 
-    public static void setIsActive(boolean isActive) {
-        ProductMasterViewModel.isActive.set(isActive);
+    public static void setHasVariants(boolean hasVariants) {
+        ProductMasterViewModel.hasVariants.set(hasVariants);
     }
 
-    public static BooleanProperty isActiveProperty() {
-        return isActive;
+    public static BooleanProperty hasVariantsProperty() {
+        return hasVariants;
     }
 
     public static Branch getBranch() {
@@ -161,14 +163,21 @@ public class ProductMasterViewModel {
         setPrice(0);
         setNote("");
         setNotForSale(false);
-        setIsActive(true);
+        setHasVariants(false);
         setCategory(null);
         setBrand(null);
     }
 
     public static void saveProductMaster() {
         ProductMaster productMaster = new ProductMaster(getBarcodeType(), getName(), getPrice(), getCategory(),
-                getBrand(), getNote(), isNotForSale(), isIsActive());
+                getBrand(), getNote(), isNotForSale(), getHasVariants());
+        // Add product master to product details.
+        if (!ProductDetailViewModel.productDetailTempList.isEmpty()) {
+            ProductDetailViewModel.productDetailTempList.forEach(
+                    productDetail -> productDetail.setProduct(productMaster)
+            );
+            productMaster.setProductDetails(ProductDetailViewModel.productDetailTempList);
+        }
         ProductMasterDao.saveProductMaster(productMaster);
         resetProperties();
         getProductMasters();
@@ -184,21 +193,20 @@ public class ProductMasterViewModel {
         ProductMaster productMaster = ProductMasterDao.findProductMaster(productMasterID);
         setId(productMaster.getId());
         setBarcodeType(productMaster.getBarcodeType());
-//        setBranch(productMaster.getBranch());
         setName(productMaster.getName());
-//        setPrice(productMaster.getPrice());
         setCategory(productMaster.getCategory());
         setBrand(productMaster.getBrand());
         setNote(productMaster.getNote());
         setNotForSale(productMaster.isNotForSale());
-        setIsActive(productMaster.isActive());
+        setHasVariants(productMaster.isActive());
+        setBarcodeType(productMaster.getBarcodeType());
         ProductDetailViewModel.productDetailTempList.addAll(productMaster.getProductDetails());
         getProductMasters();
     }
 
     public static void updateItem(int productMasterID) {
         ProductMaster productMaster = new ProductMaster(getBarcodeType(), getName(), getPrice(), getCategory(),
-                getBrand(), getNote(), isNotForSale(), isIsActive());
+                getBrand(), getNote(), isNotForSale(), getHasVariants());
         productMaster.setProductDetails(ProductDetailViewModel.productDetailTempList);
         ProductMasterDao.updateProductMaster(productMaster, productMasterID);
         resetProperties();
