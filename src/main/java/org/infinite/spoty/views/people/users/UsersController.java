@@ -14,24 +14,26 @@
 
 package org.infinite.spoty.views.people.users;
 
-import io.github.palexdev.materialfx.controls.MFXButton;
-import io.github.palexdev.materialfx.controls.MFXTableColumn;
-import io.github.palexdev.materialfx.controls.MFXTableView;
-import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.enums.ButtonType;
+import io.github.palexdev.materialfx.filter.BooleanFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.infinite.spoty.models.User;
+import org.infinite.spoty.database.dao.UserDao;
+import org.infinite.spoty.database.models.User;
+import org.infinite.spoty.viewModels.UserViewModel;
 
 import java.io.IOException;
 import java.net.URL;
@@ -39,8 +41,8 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
-import static org.infinite.spoty.data.SampleData.userSampleData;
 
+@SuppressWarnings("unchecked")
 public class UsersController implements Initializable {
     @FXML
     public MFXTextField userSearchBar;
@@ -51,7 +53,7 @@ public class UsersController implements Initializable {
     @FXML
     public BorderPane userContentPane;
     @FXML
-    private MFXTableView<User> usersTable;
+    private MFXTableView<User> userTable;
     private Dialog<ButtonType> dialog;
 
     public UsersController(Stage stage) {
@@ -70,38 +72,79 @@ public class UsersController implements Initializable {
     }
 
     private void setupTable() {
-        MFXTableColumn<User> firstName = new MFXTableColumn<>("First Name", true, Comparator.comparing(User::getFirstName));
-        MFXTableColumn<User> lastName = new MFXTableColumn<>("Last Name", true, Comparator.comparing(User::getLastName));
-        MFXTableColumn<User> userName = new MFXTableColumn<>("User Name", true, Comparator.comparing(User::getUserName));
-        MFXTableColumn<User> userEmail = new MFXTableColumn<>("Email", true, Comparator.comparing(User::getUserEmail));
-        MFXTableColumn<User> userPhone = new MFXTableColumn<>("Phone", true, Comparator.comparing(User::getUserPhoneNumber));
-        MFXTableColumn<User> status = new MFXTableColumn<>("Status", true, Comparator.comparing(User::getUserStatus));
+        MFXTableColumn<User> firstName = new MFXTableColumn<>("First Name", false, Comparator.comparing(User::getFirstName));
+        MFXTableColumn<User> lastName = new MFXTableColumn<>("Last Name", false, Comparator.comparing(User::getLastName));
+        MFXTableColumn<User> userName = new MFXTableColumn<>("User Name", false, Comparator.comparing(User::getUserName));
+        MFXTableColumn<User> userEmail = new MFXTableColumn<>("Email", false, Comparator.comparing(User::getEmail));
+        MFXTableColumn<User> userPhone = new MFXTableColumn<>("Phone", false, Comparator.comparing(User::getPhone));
+        MFXTableColumn<User> status = new MFXTableColumn<>("Status", false, Comparator.comparing(User::isActive));
 
         firstName.setRowCellFactory(user -> new MFXTableRowCell<>(User::getFirstName));
         lastName.setRowCellFactory(user -> new MFXTableRowCell<>(User::getLastName));
         userName.setRowCellFactory(user -> new MFXTableRowCell<>(User::getUserName));
-        userEmail.setRowCellFactory(user -> new MFXTableRowCell<>(User::getUserEmail));
-        userPhone.setRowCellFactory(user -> new MFXTableRowCell<>(User::getUserPhoneNumber));
-        status.setRowCellFactory(user -> new MFXTableRowCell<>(User::getUserStatus));
+        userEmail.setRowCellFactory(user -> new MFXTableRowCell<>(User::getEmail));
+        userPhone.setRowCellFactory(user -> new MFXTableRowCell<>(User::getPhone));
+        status.setRowCellFactory(user -> new MFXTableRowCell<>(User::isActive));
 
-        usersTable.getTableColumns().addAll(firstName, lastName, userName, userEmail, userPhone, status);
-        usersTable.getFilters().addAll(
+        firstName.prefWidthProperty().bind(userTable.widthProperty().multiply(.167));
+        lastName.prefWidthProperty().bind(userTable.widthProperty().multiply(.167));
+        userName.prefWidthProperty().bind(userTable.widthProperty().multiply(.167));
+        userEmail.prefWidthProperty().bind(userTable.widthProperty().multiply(.167));
+        userPhone.prefWidthProperty().bind(userTable.widthProperty().multiply(.167));
+        status.prefWidthProperty().bind(userTable.widthProperty().multiply(.167));
+
+        userTable.getTableColumns().addAll(firstName, lastName, userName, userEmail, userPhone, status);
+        userTable.getFilters().addAll(
                 new StringFilter<>("First Name", User::getFirstName),
                 new StringFilter<>("Last Name", User::getLastName),
                 new StringFilter<>("User Name", User::getUserName),
-                new StringFilter<>("Email", User::getUserEmail),
-                new StringFilter<>("Phone", User::getUserPhoneNumber),
-                new StringFilter<>("Status", User::getUserStatus)
+                new StringFilter<>("Email", User::getEmail),
+                new StringFilter<>("Phone", User::getPhone),
+                new BooleanFilter<>("Status", User::isActive)
         );
         styleUserTable();
-        usersTable.setItems(userSampleData());
+        userTable.setItems(UserViewModel.getUsers());
     }
 
     private void styleUserTable() {
-        usersTable.setPrefSize(1000, 1000);
-        usersTable.autosizeColumnsOnInitialization();
-        usersTable.features().enableBounceEffect();
-        usersTable.features().enableSmoothScrolling(0.5);
+        userTable.setPrefSize(1000, 1000);
+        userTable.features().enableBounceEffect();
+        userTable.features().enableSmoothScrolling(0.5);
+
+        userTable.setTableRowFactory(t -> {
+            MFXTableRow<User> row = new MFXTableRow<>(userTable, t);
+            EventHandler<ContextMenuEvent> eventHandler = event -> {
+                showContextMenu((MFXTableRow<User>) event.getSource())
+                        .show(userTable.getScene().getWindow(), event.getScreenX(), event.getScreenY());
+                event.consume();
+            };
+            row.setOnContextMenuRequested(eventHandler);
+            return row;
+        });
+    }
+
+    private MFXContextMenu showContextMenu(MFXTableRow<User> obj) {
+        MFXContextMenu contextMenu = new MFXContextMenu(userTable);
+        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
+        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+
+        // Actions
+        // Delete
+        delete.setOnAction(e -> {
+            UserDao.deleteUser(obj.getData().getId());
+            UserViewModel.getUsers();
+            e.consume();
+        });
+        // Edit
+        edit.setOnAction(e -> {
+            UserViewModel.getItem(obj.getData().getId());
+            dialog.showAndWait();
+            e.consume();
+        });
+
+        contextMenu.addItems(edit, delete);
+
+        return contextMenu;
     }
 
     private void userFormDialogPane(Stage stage) throws IOException {
