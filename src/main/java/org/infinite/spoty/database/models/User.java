@@ -37,7 +37,7 @@ public class User implements Serializable {
     @ManyToOne(optional = false)
     private Role role;
     @Column(nullable = false)
-    private String status;
+    private boolean active;
     @Column(name = "access_all_branches", nullable = false)
     private boolean accessAllBranches;
     @Column(unique = true)
@@ -47,69 +47,20 @@ public class User implements Serializable {
     private Date updatedAt;
     private String updatedBy;
 
-    public User(String firstName,
-                String lastName,
-                String userName,
-                String email,
-                String password,
-                String phone,
-                Role role,
-                String status,
-                boolean accessAllBranches,
-                byte[] avatar,
-                Date createdAt,
-                String createdBy,
-                Date updatedAt,
-                String updatedBy) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.userName = userName;
-        this.email = email;
-        this.password = password;
-        this.phone = phone;
-        this.role = role;
-        this.status = status;
-        this.accessAllBranches = accessAllBranches;
-        this.avatar = avatar;
-        this.createdAt = createdAt;
-        this.createdBy = createdBy;
-        this.updatedAt = updatedAt;
-        this.updatedBy = updatedBy;
-    }
-
-    public User(String firstName,
-                String lastName,
-                String userName,
-                String email,
-                String password,
-                String phone,
-                Role role,
-                String status,
-                boolean accessAllBranches,
-                byte[] avatar) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.userName = userName;
-        this.email = email;
-        this.password = password;
-        this.phone = phone;
-        this.role = role;
-        this.status = status;
-        this.accessAllBranches = accessAllBranches;
-        this.avatar = avatar;
+    public User() {
     }
 
     public User(String firstName,
                 String lastName,
                 String userName,
                 Role role,
-                String status,
+                boolean active,
                 boolean accessAllBranches) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.userName = userName;
         this.role = role;
-        this.status = status;
+        this.active = active;
         this.accessAllBranches = accessAllBranches;
     }
 
@@ -177,15 +128,15 @@ public class User implements Serializable {
         this.role = role;
     }
 
-    public String getStatus() {
-        return status;
+    public boolean isActive() {
+        return active;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
-    public boolean isAccessAllBranches() {
+    public boolean canAccessAllBranches() {
         return accessAllBranches;
     }
 
