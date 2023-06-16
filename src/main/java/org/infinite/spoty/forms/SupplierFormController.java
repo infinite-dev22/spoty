@@ -29,6 +29,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.GlobalActions.closeDialog;
+import static org.infinite.spoty.Validators.*;
 
 public class SupplierFormController implements Initializable {
     public MFXTextField supplierID = new MFXTextField();
@@ -52,9 +53,24 @@ public class SupplierFormController implements Initializable {
     public MFXTextField supplierFormTaxNumber;
     @FXML
     public MFXTextField supplierFormAddress;
+    @FXML
+    public Label supplierFormNameValidationLabel;
+    @FXML
+    public Label supplierFormEmailValidationLabel;
+    @FXML
+    public Label supplierFormPhoneValidationLabel;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // Input listeners.
+        supplierFormPhone.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*"))
+                supplierFormPhone.setText(newValue.replaceAll("\\D", ""));
+        });
+        supplierFormPhone.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != oldValue) supplierFormPhone.setLeadingIcon(new Label("+"));
+            System.out.println("newValue oldValue");
+        });
         // Form input binding.
         supplierID.textProperty().bindBidirectional(SupplierViewModel.idProperty(), new NumberStringConverter());
         supplierFormName.textProperty().bindBidirectional(SupplierViewModel.nameProperty());
@@ -64,7 +80,13 @@ public class SupplierFormController implements Initializable {
         supplierFormCountry.textProperty().bindBidirectional(SupplierViewModel.countryProperty());
         supplierFormTaxNumber.textProperty().bindBidirectional(SupplierViewModel.taxNumberProperty());
         supplierFormAddress.textProperty().bindBidirectional(SupplierViewModel.addressProperty());
-
+        // Input validations.
+        // Name input validation.
+        requiredValidator(supplierFormName, "Name field is required.", supplierFormNameValidationLabel);
+        // Email input validation.
+        emailValidator(supplierFormEmail, supplierFormEmailValidationLabel);
+        // Phone input validation.
+        lengthValidator(supplierFormPhone, 11, "Invalid length", supplierFormPhoneValidationLabel);
         dialogOnActions();
     }
 
@@ -75,12 +97,9 @@ public class SupplierFormController implements Initializable {
             supplierFormName.setStyle("-fx-border-color: red;");
         });
         supplierFormSaveBtn.setOnAction((e) -> {
-            MFXIconWrapper icon = new MFXIconWrapper("fas-circle-exclamation", 20, Color.RED, 20);
-
-            if (supplierFormName.getText().length() == 0) {
-                supplierFormName.setStyle("-fx-border-color: red;");
-            }
-            if (supplierFormName.getText().length() > 0) {
+            if (!supplierFormNameValidationLabel.isVisible()
+                    && !supplierFormEmailValidationLabel.isVisible()
+                    && !supplierFormPhoneValidationLabel.isVisible()) {
                 if (Integer.parseInt(supplierID.getText()) > 0)
                     SupplierViewModel.updateItem(Integer.parseInt(supplierID.getText()));
                 else
