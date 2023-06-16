@@ -74,9 +74,9 @@ public class CustomerFormController implements Initializable {
             System.out.println("newValue oldValue");
         });
         // Label sizing.
-        validationLabel1.setStyle("-fx-font-size: 8;");
-        validationLabel2.setStyle("-fx-font-size: 8;");
-        validationLabel3.setStyle("-fx-font-size: 8;");
+        validationLabel1.setStyle("-fx-font-size: 10; -fx-padding: 0 0 0 5;");
+        validationLabel2.setStyle("-fx-font-size: 10; -fx-padding: 0 0 0 5;");
+        validationLabel3.setStyle("-fx-font-size: 10; -fx-padding: 0 0 0 5;");
         // Form input binding.
         customerID.textProperty().bindBidirectional(CustomerViewModel.idProperty(), new NumberStringConverter());
         customerFormName.textProperty().bindBidirectional(CustomerViewModel.nameProperty());
