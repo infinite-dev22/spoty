@@ -22,6 +22,7 @@ import org.infinite.spoty.database.models.UnitOfMeasure;
 
 public class UOMViewModel {
     public static final ObservableList<UnitOfMeasure> uomList = FXCollections.observableArrayList();
+    public static final ObservableList<UnitOfMeasure> uomComboList = FXCollections.observableArrayList();
     private static final IntegerProperty id = new SimpleIntegerProperty(0);
     private static final StringProperty name = new SimpleStringProperty("");
     private static final StringProperty shortName = new SimpleStringProperty("");
@@ -120,7 +121,10 @@ public class UOMViewModel {
 
     public static ObservableList<UnitOfMeasure> getItems() {
         uomList.clear();
+        uomComboList.clear();
+        uomComboList.add(null);
         uomList.addAll(UnitOfMeasureDao.getUnitsOfMeasure());
+        uomComboList.addAll(uomList);
         return uomList;
     }
 
@@ -131,7 +135,7 @@ public class UOMViewModel {
         setShortName(uom.getShortName());
         setBaseUnit(uom.getBaseUnit());
         setOperator(uom.getOperator());
-        setOperatorValue(String.valueOf(uom.getOperatorValue()));
+        setOperatorValue(String.valueOf(uom.getOperatorValue() == 0 ? "" : uom.getOperatorValue()));
         getItems();
     }
 

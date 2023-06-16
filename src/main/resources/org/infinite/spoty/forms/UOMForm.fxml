@@ -1,15 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import io.github.palexdev.materialfx.controls.MFXComboBox?>
-<?import io.github.palexdev.materialfx.controls.MFXTextField?>
-<?import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton?>
-<?import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.DialogPane?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<?import io.github.palexdev.materialfx.controls.MFXScrollPane?>
 <!--
   ~ Copyright (c) 2023, Jonathan Mark Mwigo. All rights reserved.
   ~
@@ -24,17 +14,66 @@
   ~ Jonathan Mark Mwigo makes no warranties, express or implied, with respect to the computer system code. Jonathan Mark Mwigo shall not be liable for any damages, including, but not limited to, direct, indirect, incidental, special, consequential, or punitive damages, arising out of or in connection with the use of the computer system code.
   -->
 
+<?import io.github.palexdev.materialfx.controls.*?>
+<?import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton?>
+<?import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <DialogPane xmlns:fx="http://javafx.com/fxml/1" styleClass="card" stylesheets="@../styles/Common.css"
             xmlns="http://javafx.com/javafx/19" fx:controller="org.infinite.spoty.forms.UOMFormController">
     <content>
         <MFXScrollPane fitToWidth="true" VBox.vgrow="ALWAYS">
-            <VBox spacing="20.0">
-                <MFXTextField fx:id="uomFormName" floatMode="BORDER" floatingText="Name" prefWidth="400.0"/>
-                <MFXTextField fx:id="uomFormShortName" floatMode="BORDER" floatingText="Short Name" prefWidth="400.0"/>
-                <MFXComboBox fx:id="uomFormBaseUnit" floatMode="BORDER" floatingText="Base Unit" prefWidth="400.0"/>
-                <VBox fx:id="formsHolder" spacing="20.0" visible="false" managed="false">
-                    <MFXTextField fx:id="uomFormOperator" floatMode="BORDER" floatingText="Operator" prefWidth="400.0"/>
-                    <MFXTextField fx:id="uomFormOperatorValue" floatMode="BORDER" floatingText="Operator Value" prefWidth="400.0"/>
+            <VBox stylesheets="@../styles/TextFields.css">
+                <VBox spacing="5.0">
+                    <padding>
+                        <Insets right="10.0" top="10.0"/>
+                    </padding>
+                    <MFXTextField fx:id="uomFormName" floatMode="BORDER" floatingText="Name" prefWidth="400.0"/>
+                    <Label id="validationLabel" fx:id="uomFormNameValidationLabel"
+                           maxWidth="1.7976931348623157E308"
+                           minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true"/>
+                </VBox>
+                <VBox spacing="5.0">
+                    <padding>
+                        <Insets right="10.0" top="10.0"/>
+                    </padding>
+                    <MFXTextField fx:id="uomFormShortName" floatMode="BORDER" floatingText="Short Name" prefWidth="400.0"/>
+                    <Label id="validationLabel" fx:id="uomFormShortNameValidationLabel"
+                           maxWidth="1.7976931348623157E308"
+                           minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true"/>
+                </VBox>
+                <VBox spacing="5.0">
+                    <padding>
+                        <Insets right="10.0" top="10.0"/>
+                    </padding>
+                    <MFXComboBox fx:id="uomFormBaseUnit" floatMode="BORDER" floatingText="Base Unit" prefWidth="400.0"/>
+                </VBox>
+                <VBox fx:id="formsHolder" visible="false" managed="false">
+                    <VBox spacing="5.0">
+                        <padding>
+                            <Insets right="10.0" top="5.0"/>
+                        </padding>
+                        <MFXTextField fx:id="uomFormOperator" floatMode="BORDER" floatingText="Operator" prefWidth="400.0"/>
+                        <Label id="validationLabel" fx:id="uomFormOperatorValidationLabel"
+                               maxWidth="1.7976931348623157E308"
+                               minHeight="-Infinity" styleClass="input-validation-error" visible="false"
+                               wrapText="true"/>
+                    </VBox>
+                    <VBox spacing="5.0">
+                        <padding>
+                            <Insets right="10.0" top="5.0"/>
+                        </padding>
+                        <MFXTextField fx:id="uomFormOperatorValue" floatMode="BORDER" floatingText="Operator Value"
+                                      prefWidth="400.0"/>
+                        <Label id="validationLabel" fx:id="uomFormOperatorValueValidationLabel"
+                               maxWidth="1.7976931348623157E308"
+                               minHeight="-Infinity" styleClass="input-validation-error" visible="false"
+                               wrapText="true"/>
+                    </VBox>
+                    <padding>
+                        <Insets top="15.0"/>
+                    </padding>
                 </VBox>
                 <HBox alignment="CENTER_RIGHT" spacing="20.0">
                     <VBox.margin>
