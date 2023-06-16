@@ -124,6 +124,10 @@ public class ProductDetail implements Serializable {
         return unit;
     }
 
+    public String getUnitName() {
+        return unit != null ? unit.getName() : null;
+    }
+
     public void setUnit(UnitOfMeasure unit) {
         this.unit = unit;
     }
