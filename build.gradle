@@ -61,6 +61,44 @@ jlink {
         jvmArgs = ['-Djdk.gtk.version=3']
     }
 
+    forceMerge 'istack', 'stax'
+
+    mergedModule {
+        requires 'org.hibernate.commons.annotations'
+        requires 'jakarta.persistence'
+        requires 'com.fasterxml.classmate'
+        requires 'org.jboss.logging'
+        requires 'javafx.controls';
+        requires 'javafx.fxml';
+        requires 'javafx.graphics';
+        requires 'javafx.media';
+        requires 'java.logging';
+        requires 'java.sql';
+        requires 'jdk.jdi';
+        requires 'java.rmi';
+        requires 'java.xml';
+        requires 'java.desktop';
+        requires 'java.management';
+        requires 'java.naming';
+        requires 'jdk.attach';
+        requires 'java.scripting';
+        requires 'java.datatransfer';
+        requires 'java.compiler';
+        requires 'java.transaction.xa';
+        requires 'java.instrument';
+
+        uses 'org.hibernate.integrator.spi.Integrator'
+        uses 'org.hibernate.boot.registry.selector.StrategyRegistrationProvider'
+        uses 'org.hibernate.service.spi.ServiceContributor'
+        uses 'org.hibernate.boot.spi.MetadataSourcesContributor'
+        uses 'org.hibernate.boot.spi.MetadataBuilderInitializer'
+        uses 'org.hibernate.boot.spi.MetadataBuilderFactory'
+        uses 'org.hibernate.id.factory.spi.GenerationTypeStrategyRegistration'
+        uses 'org.hibernate.boot.model.TypeContributor'
+        uses 'org.hibernate.boot.registry.selector.spi.DialectSelector'
+        uses 'org.hibernate.engine.jdbc.dialect.spi.DialectResolver'
+    }
+
     jpackage {
         // Could be taken from command line, here it is defined statically
         // project.findProperty('installerOs')
@@ -206,6 +244,8 @@ dependencies {
     // FXML Compiler
     // implementation "io.github.paullo612.mlfx.api:micronaut:0.6.1"
     // java.activation
+//    implementation 'com.sun.xml.fastinfoset:FastInfoset:2.1.0'
+//    implementation 'com.sun.xml.txw2:txw2:20110809'
     implementation group: 'com.sun.activation', name: 'javax.activation', version: '1.2.0'
     // JUnit test framework.
     implementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"

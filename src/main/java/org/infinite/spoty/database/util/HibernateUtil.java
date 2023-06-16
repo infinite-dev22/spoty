@@ -45,8 +45,8 @@ public class HibernateUtil {
                 Properties settings = new Properties();
                 settings.put(Environment.USER, "admin");
                 settings.put(Environment.PASS, "password");
-                settings.put(Environment.DRIVER, "org.apache.derby.jdbc.EmbeddedDriver");
                 settings.put(Environment.DIALECT, "org.hibernate.dialect.DerbyDialect");
+                settings.put(Environment.DRIVER, "org.apache.derby.jdbc.EmbeddedDriver");
                 settings.put(Environment.SHOW_SQL, "false");
                 settings.put(Environment.CURRENT_SESSION_CONTEXT_CLASS, "thread");
                 settings.put(Environment.HBM2DDL_AUTO, "update");
