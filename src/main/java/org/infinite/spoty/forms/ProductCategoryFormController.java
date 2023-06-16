@@ -14,14 +14,12 @@
 
 package org.infinite.spoty.forms;
 
-import io.github.palexdev.materialfx.controls.MFXIconWrapper;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.scene.paint.Color;
 import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.viewModels.ProductCategoryViewModel;
 
@@ -29,9 +27,12 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.GlobalActions.closeDialog;
+import static org.infinite.spoty.Validators.requiredValidator;
 import static org.infinite.spoty.viewModels.ProductCategoryViewModel.*;
 
 public class ProductCategoryFormController implements Initializable {
+    @FXML
+    public static Label formTitle;
     public MFXTextField dialogCategoryID = new MFXTextField();
     @FXML
     public MFXTextField dialogCategoryCode;
@@ -42,17 +43,19 @@ public class ProductCategoryFormController implements Initializable {
     @FXML
     public MFXOutlinedButton dialogCancelBtn;
     @FXML
-    public static Label formTitle;
+    public Label dialogCategoryCodeValidationLabel;
+    @FXML
+    public Label dialogCategoryNameValidationLabel;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        dialogCategoryCode.textProperty().addListener((observable, oldValue, newValue) -> dialogCategoryCode.setTrailingIcon(null));
-        dialogCategoryName.textProperty().addListener((observable, oldValue, newValue) -> dialogCategoryName.setTrailingIcon(null));
-
+        // Input bindings.
         dialogCategoryID.textProperty().bindBidirectional(ProductCategoryViewModel.idProperty(), new NumberStringConverter());
         dialogCategoryCode.textProperty().bindBidirectional(ProductCategoryViewModel.codeProperty());
         dialogCategoryName.textProperty().bindBidirectional(ProductCategoryViewModel.nameProperty());
-
+        //Input validators.
+        requiredValidator(dialogCategoryCode, "Name field is required.", dialogCategoryCodeValidationLabel);
+        requiredValidator(dialogCategoryName, "Name field is required.", dialogCategoryNameValidationLabel);
         dialogOnActions();
     }
 
@@ -60,19 +63,12 @@ public class ProductCategoryFormController implements Initializable {
         dialogCancelBtn.setOnAction((e) -> {
             closeDialog(e);
             clearProductCategoryData();
-            dialogCategoryCode.setTrailingIcon(null);
-            dialogCategoryName.setTrailingIcon(null);
+            dialogCategoryCodeValidationLabel.setVisible(false);
+            dialogCategoryNameValidationLabel.setVisible(false);
         });
         dialogSaveBtn.setOnAction((e) -> {
-            MFXIconWrapper icon = new MFXIconWrapper("fas-circle-exclamation", 20, Color.RED, 20);
-
-            if (dialogCategoryName.getText().length() == 0) {
-                dialogCategoryName.setTrailingIcon(icon);
-            }
-            if (dialogCategoryCode.getText().length() == 0) {
-                dialogCategoryCode.setTrailingIcon(icon);
-            }
-            if (dialogCategoryName.getText().length() > 0 && dialogCategoryCode.getText().length() > 0) {
+            if (!dialogCategoryCodeValidationLabel.isVisible()
+                    && !dialogCategoryNameValidationLabel.isVisible()) {
                 if (Integer.parseInt(dialogCategoryID.getText()) > 0)
                     updateItem(Integer.parseInt(dialogCategoryID.getText()));
                 else
