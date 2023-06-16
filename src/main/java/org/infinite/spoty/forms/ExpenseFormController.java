@@ -16,14 +16,12 @@ package org.infinite.spoty.forms;
 
 import io.github.palexdev.materialfx.controls.MFXComboBox;
 import io.github.palexdev.materialfx.controls.MFXDatePicker;
-import io.github.palexdev.materialfx.controls.MFXIconWrapper;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.scene.paint.Color;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.database.models.Branch;
@@ -36,6 +34,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.GlobalActions.closeDialog;
+import static org.infinite.spoty.Validators.requiredValidator;
 
 public class ExpenseFormController implements Initializable {
     public MFXTextField expenseID = new MFXTextField();
@@ -57,16 +56,19 @@ public class ExpenseFormController implements Initializable {
     public MFXComboBox<ExpenseCategory> expenseFormCategory;
     @FXML
     public MFXTextField expenseFormName;
+    @FXML
+    public Label expenseFormNameValidationLabel;
+    @FXML
+    public Label expenseFormDateValidationLabel;
+    @FXML
+    public Label expenseFormBranchValidationLabel;
+    @FXML
+    public Label expenseFormCategoryValidationLabel;
+    @FXML
+    public Label expenseFormAmountValidationLabel;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Form event listeners.
-        expenseFormName.textProperty().addListener((observable, oldValue, newValue) -> expenseFormName.setTrailingIcon(null));
-        expenseFormDate.textProperty().addListener((observable, oldValue, newValue) -> expenseFormDate.setLeadingIcon(null));
-        expenseFormBranch.textProperty().addListener((observable, oldValue, newValue) -> expenseFormBranch.setLeadingIcon(null));
-        expenseFormCategory.textProperty().addListener((observable, oldValue, newValue) -> expenseFormCategory.setLeadingIcon(null));
-        expenseFormAmount.textProperty().addListener((observable, oldValue, newValue) -> expenseFormAmount.setTrailingIcon(null));
-        expenseFormDetails.textProperty().addListener((observable, oldValue, newValue) -> expenseFormDetails.setTrailingIcon(null));
         // Combo box properties.
         expenseFormBranch.setItems(BranchViewModel.branchesList);
         expenseFormCategory.setItems(ExpenseCategoryViewModel.categoryList);
@@ -107,6 +109,12 @@ public class ExpenseFormController implements Initializable {
         expenseFormCategory.valueProperty().bindBidirectional(ExpenseViewModel.categoryProperty());
         expenseFormAmount.textProperty().bindBidirectional(ExpenseViewModel.amountProperty());
         expenseFormDetails.textProperty().bindBidirectional(ExpenseViewModel.detailsProperty());
+        // Input listeners.
+        requiredValidator(expenseFormName, "Name is required.", expenseFormNameValidationLabel);
+        requiredValidator(expenseFormDate, "Date is required.", expenseFormDateValidationLabel);
+        requiredValidator(expenseFormBranch, "Branch is required.", expenseFormBranchValidationLabel);
+        requiredValidator(expenseFormCategory, "Category is required.", expenseFormCategoryValidationLabel);
+        requiredValidator(expenseFormAmount, "Amount can't be empty.", expenseFormAmountValidationLabel);
         dialogOnActions();
     }
 
@@ -114,30 +122,18 @@ public class ExpenseFormController implements Initializable {
         expenseFormCancelBtn.setOnAction((e) -> {
             closeDialog(e);
             ExpenseViewModel.resetProperties();
+            expenseFormNameValidationLabel.setVisible(false);
+            expenseFormDateValidationLabel.setVisible(false);
+            expenseFormBranchValidationLabel.setVisible(false);
+            expenseFormCategoryValidationLabel.setVisible(false);
+            expenseFormAmountValidationLabel.setVisible(false);
         });
         expenseFormSaveBtn.setOnAction((e) -> {
-            MFXIconWrapper icon = new MFXIconWrapper("fas-circle-exclamation", 20, Color.RED, 20);
-
-            if (expenseFormDate.getText().length() == 0) {
-                expenseFormDate.setTrailingIcon(icon);
-            }
-            if (expenseFormBranch.getText().length() == 0) {
-                expenseFormBranch.setLeadingIcon(icon);
-            }
-            if (expenseFormCategory.getText().length() == 0) {
-                expenseFormCategory.setLeadingIcon(icon);
-            }
-            if (expenseFormAmount.getText().length() == 0) {
-                expenseFormAmount.setTrailingIcon(icon);
-            }
-            if (expenseFormDetails.getText().length() == 0) {
-                expenseFormDetails.setTrailingIcon(icon);
-            }
-            if (expenseFormDate.getText().length() > 0
-                    && expenseFormBranch.getText().length() > 0
-                    && expenseFormCategory.getText().length() > 0
-                    && expenseFormAmount.getText().length() > 0
-                    && expenseFormDetails.getText().length() > 0) {
+            if (!expenseFormNameValidationLabel.isVisible()
+                    && !expenseFormDateValidationLabel.isVisible()
+                    && !expenseFormBranchValidationLabel.isVisible()
+                    && !expenseFormCategoryValidationLabel.isVisible()
+                    && !expenseFormAmountValidationLabel.isVisible()) {
                 if (Integer.parseInt(expenseID.getText()) > 0)
                     ExpenseViewModel.updateItem(Integer.parseInt(expenseID.getText()));
                 else
