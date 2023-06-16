@@ -94,7 +94,9 @@ public class SupplierFormController implements Initializable {
         supplierFormCancelBtn.setOnAction((e) -> {
             closeDialog(e);
             SupplierViewModel.resetProperties();
-            supplierFormName.setStyle("-fx-border-color: red;");
+            supplierFormNameValidationLabel.setVisible(false);
+            supplierFormEmailValidationLabel.setVisible(false);
+            supplierFormPhoneValidationLabel.setVisible(false);
         });
         supplierFormSaveBtn.setOnAction((e) -> {
             if (!supplierFormNameValidationLabel.isVisible()
