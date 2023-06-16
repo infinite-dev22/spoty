@@ -53,8 +53,8 @@ public class UserDao {
             user.setPassword(obj.getPassword());
             user.setPhone(obj.getPhone());
             user.setRole(obj.getRole());
-            user.setStatus(obj.getStatus());
-            user.setAccessAllBranches(obj.isAccessAllBranches());
+            user.setActive(obj.isActive());
+            user.setAccessAllBranches(obj.canAccessAllBranches());
             user.setAvatar(obj.getAvatar());
             user.setUpdatedAt(new Date());
             // TODO: updated by should be a system user.
@@ -81,7 +81,7 @@ public class UserDao {
         return user;
     }
 
-    public static ObservableList<User> getUser() {
+    public static ObservableList<User> fetchUsers() {
         Transaction transaction = null;
         ObservableList<User> purchaseCategories;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
