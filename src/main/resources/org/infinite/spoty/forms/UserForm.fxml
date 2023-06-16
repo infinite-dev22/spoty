@@ -49,7 +49,7 @@
                                   GridPane.columnIndex="1" GridPane.rowIndex="2"/>
                 <MFXFilterComboBox fx:id="userFormRole" floatMode="BORDER" floatingText="Role" prefWidth="300.0"
                                    GridPane.rowIndex="3"/>
-                <MFXFilterComboBox fx:id="userFormBranches" floatMode="BORDER" floatingText="Branches" prefWidth="300.0"
+                <MFXFilterComboBox fx:id="userFormBranch" floatMode="BORDER" floatingText="Branches" prefWidth="300.0"
                                    GridPane.columnIndex="1" GridPane.rowIndex="3"/>
             </GridPane>
             <MFXToggleButton fx:id="userFormActive" text="Active"/>
