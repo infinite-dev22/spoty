@@ -24,7 +24,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.input.ContextMenuEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -144,7 +143,7 @@ public class StockInController implements Initializable {
         FXMLLoader loader = fxmlLoader("forms/StockInMasterForm.fxml");
         loader.setControllerFactory(c -> new StockInMasterFormController(stage));
         try {
-            AnchorPane productFormPane = loader.load();
+            BorderPane productFormPane = loader.load();
             ((StackPane) stockInContentPane.getParent()).getChildren().add(productFormPane);
             ((StackPane) stockInContentPane.getParent()).getChildren().get(0).setVisible(false);
         } catch (IOException ex) {

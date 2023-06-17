@@ -221,7 +221,7 @@ public class StockInMasterFormController implements Initializable {
     public void stockInMasterCancelBtnClicked() {
         StockInMasterViewModel.resetProperties();
         StockInDetailViewModel.stockInDetailsTempList.clear();
-        ((StackPane) stockInMasterFormContentPane.getParent()).getChildren().get(0).setVisible(true);
-        ((StackPane) stockInMasterFormContentPane.getParent()).getChildren().remove(1);
+        ((StackPane) stockInMasterFormContentPane.getParent().getParent()).getChildren().get(0).setVisible(true);
+        ((StackPane) stockInMasterFormContentPane.getParent().getParent()).getChildren().remove(1);
     }
 }
