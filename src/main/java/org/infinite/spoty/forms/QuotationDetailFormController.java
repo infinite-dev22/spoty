@@ -15,14 +15,12 @@
 package org.infinite.spoty.forms;
 
 import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
-import io.github.palexdev.materialfx.controls.MFXIconWrapper;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.scene.paint.Color;
 import javafx.util.StringConverter;
 import org.infinite.spoty.database.models.ProductDetail;
 import org.infinite.spoty.viewModels.ProductDetailViewModel;
@@ -32,13 +30,14 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.GlobalActions.closeDialog;
+import static org.infinite.spoty.Validators.requiredValidator;
 
 public class QuotationDetailFormController implements Initializable {
     public MFXTextField quotationDetailID = new MFXTextField();
     @FXML
-    public MFXTextField quotationProductsQnty;
+    public MFXTextField quotationProductQnty;
     @FXML
-    public MFXFilterComboBox<ProductDetail> quotationProductsPdct;
+    public MFXFilterComboBox<ProductDetail> quotationProductPdct;
     @FXML
     public MFXTextField quotationProductsOrderTax;
     @FXML
@@ -49,23 +48,22 @@ public class QuotationDetailFormController implements Initializable {
     public MFXOutlinedButton quotationProductsCancelBtn;
     @FXML
     public Label quotationProductsTitle;
+    @FXML
+    public Label quotationProductPdctValidationLabel;
+    @FXML
+    public Label quotationProductQntyValidationLabel;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Add form input listeners.
-        quotationProductsQnty.textProperty().addListener((observable, oldValue, newValue) -> quotationProductsQnty.setTrailingIcon(null));
-        quotationProductsPdct.textProperty().addListener((observable, oldValue, newValue) -> quotationProductsPdct.setLeadingIcon(null));
-        quotationProductsOrderTax.textProperty().addListener((observable, oldValue, newValue) -> quotationProductsOrderTax.setLeadingIcon(null));
-        quotationProductsDiscount.textProperty().addListener((observable, oldValue, newValue) -> quotationProductsDiscount.setLeadingIcon(null));
         // Bind form input values.
         quotationDetailID.textProperty().bindBidirectional(QuotationDetailViewModel.idProperty());
-        quotationProductsQnty.textProperty().bindBidirectional(QuotationDetailViewModel.quantityProperty());
-        quotationProductsPdct.valueProperty().bindBidirectional(QuotationDetailViewModel.productProperty());
+        quotationProductQnty.textProperty().bindBidirectional(QuotationDetailViewModel.quantityProperty());
+        quotationProductPdct.valueProperty().bindBidirectional(QuotationDetailViewModel.productProperty());
         quotationProductsOrderTax.textProperty().bindBidirectional(QuotationDetailViewModel.taxProperty());
         quotationProductsDiscount.textProperty().bindBidirectional(QuotationDetailViewModel.discountProperty());
         // Combo box properties.
-        quotationProductsPdct.setItems(ProductDetailViewModel.productDetailsList);
-        quotationProductsPdct.setConverter(new StringConverter<>() {
+        quotationProductPdct.setItems(ProductDetailViewModel.productDetailsList);
+        quotationProductPdct.setConverter(new StringConverter<>() {
             @Override
             public String toString(ProductDetail object) {
                 if (object != null)
@@ -79,6 +77,9 @@ public class QuotationDetailFormController implements Initializable {
                 return null;
             }
         });
+        // Input validators.
+        requiredValidator(quotationProductPdct, "Product is required.", quotationProductPdctValidationLabel);
+        requiredValidator(quotationProductQnty, "Quantity is required.", quotationProductQntyValidationLabel);
         dialogOnActions();
     }
 
@@ -86,30 +87,12 @@ public class QuotationDetailFormController implements Initializable {
         quotationProductsCancelBtn.setOnAction((e) -> {
             closeDialog(e);
             QuotationDetailViewModel.resetProperties();
-            quotationProductsQnty.setTrailingIcon(null);
-            quotationProductsPdct.setLeadingIcon(null);
-            quotationProductsOrderTax.setLeadingIcon(null);
-            quotationProductsDiscount.setLeadingIcon(null);
+            quotationProductPdctValidationLabel.setVisible(false);
+            quotationProductQntyValidationLabel.setVisible(false);
         });
         quotationProductsSaveBtn.setOnAction((e) -> {
-            MFXIconWrapper icon = new MFXIconWrapper("fas-circle-exclamation", 20, Color.RED, 20);
-
-            if (quotationProductsQnty.getText().length() == 0) {
-                quotationProductsQnty.setTrailingIcon(icon);
-            }
-//            if (quotationProductsPdct.getText().length() == 0) {
-//                quotationProductsPdct.setLeadingIcon(icon);
-//            }
-            if (quotationProductsOrderTax.getText().length() == 0) {
-                quotationProductsOrderTax.setLeadingIcon(icon);
-            }
-            if (quotationProductsDiscount.getText().length() == 0) {
-                quotationProductsDiscount.setLeadingIcon(icon);
-            }
-            if (quotationProductsQnty.getText().length() > 0
-//                    && quotationProductsPdct.getText().length() > 0
-                    && quotationProductsOrderTax.getText().length() > 0
-                    && quotationProductsDiscount.getText().length() > 0) {
+            if (!quotationProductPdctValidationLabel.isVisible()
+                    && !quotationProductQntyValidationLabel.isVisible()) {
                 if (!quotationDetailID.getText().isEmpty() && Integer.parseInt(quotationDetailID.getText()) > 0)
                     QuotationDetailViewModel.updateQuotationDetail();
                 else
