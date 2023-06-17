@@ -218,6 +218,8 @@ public class AdjustmentMasterFormController implements Initializable {
     public void adjustmentCancelBtnClicked() {
         AdjustmentMasterViewModel.resetProperties();
         AdjustmentDetailViewModel.adjustmentDetailsTempList.clear();
+        adjustmentBranchValidationLabel.setVisible(false);
+        adjustmentDateValidationLabel.setVisible(false);
         ((StackPane) adjustmentFormContentPane.getParent()).getChildren().get(0).setVisible(true);
         ((StackPane) adjustmentFormContentPane.getParent()).getChildren().remove(1);
     }
