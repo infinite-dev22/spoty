@@ -43,20 +43,21 @@
                 <columnConstraints>
                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"/>
                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"/>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"/>
                 </columnConstraints>
                 <rowConstraints>
                     <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
                 </rowConstraints>
-                <MFXFilterComboBox fx:id="stockInMasterBranchId" floatMode="BORDER" floatingText="From Branch"
-                                   prefWidth="400.0"
+                <MFXFilterComboBox fx:id="stockInMasterBranchId" floatMode="BORDER" floatingText="Branch"
+                                   prefWidth="450.0"
                                    GridPane.columnIndex="0"/>
-                <MFXDatePicker fx:id="stockInMasterDate" floatMode="BORDER" floatingText="Date" prefWidth="400.0"
+                <MFXDatePicker fx:id="stockInMasterDate" floatMode="BORDER" floatingText="Date" prefWidth="450.0"
                                GridPane.columnIndex="2"/>
+                <MFXElevatedButton fx:id="stockInMasterProductAddBtn" layoutX="930.0" layoutY="80.0" text="Add Product"
+                                   GridPane.columnIndex="3"/>
             </GridPane>
-            <MFXElevatedButton fx:id="stockInMasterProductAddBtn" layoutX="930.0" layoutY="80.0" text="Add Product"
-                               AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="90.0"/>
             <MFXTableView fx:id="stockInDetailTable" AnchorPane.bottomAnchor="120.0" AnchorPane.leftAnchor="0.0"
-                          AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="140.0"/>
+                          AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="100.0"/>
             <MFXTextField fx:id="stockInMasterNote" floatMode="BORDER" floatingText="Note" prefWidth="1000.0"
                           AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"/>
             <HBox alignment="CENTER_RIGHT" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
