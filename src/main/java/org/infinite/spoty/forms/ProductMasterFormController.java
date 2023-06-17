@@ -21,6 +21,7 @@ import io.github.palexdev.materialfx.filter.IntegerFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXElevatedButton;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -30,18 +31,20 @@ import javafx.scene.control.Label;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.database.dao.ProductDetailDao;
+import org.infinite.spoty.database.models.Brand;
+import org.infinite.spoty.database.models.ProductCategory;
 import org.infinite.spoty.database.models.ProductDetail;
-import org.infinite.spoty.database.models.Branch;
+import org.infinite.spoty.values.strings.Values;
+import org.infinite.spoty.viewModels.BrandViewModel;
+import org.infinite.spoty.viewModels.ProductCategoryViewModel;
 import org.infinite.spoty.viewModels.ProductDetailViewModel;
 import org.infinite.spoty.viewModels.ProductMasterViewModel;
-import org.infinite.spoty.viewModels.BranchViewModel;
 
 import java.io.IOException;
 import java.net.URL;
@@ -49,25 +52,44 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
+import static org.infinite.spoty.Validators.requiredValidator;
 
 @SuppressWarnings("unchecked")
 public class ProductMasterFormController implements Initializable {
+    /**
+     * TODO: Add has variants toggle.
+     * TODO: Products can be assigned to specific branches by the head branch, Add this possibility.
+     * TODO: Make Branch combo multi-choice.
+     * TODO: Product variants can later have images. Same as to Products without variants.
+     */
     public MFXTextField productDetailID = new MFXTextField();
     public MFXTextField productMasterID = new MFXTextField();
     @FXML
-    public MFXFilterComboBox<Branch> productBranchId;
-    @FXML
-    public MFXDatePicker productDate;
+    public MFXTextField productFormName;
     @FXML
     public MFXTableView<ProductDetail> productDetailTable;
-    @FXML
-    public MFXTextField productNote;
     @FXML
     public AnchorPane productFormContentPane;
     @FXML
     public Label productFormTitle;
     @FXML
-    public MFXElevatedButton productProductAddBtn;
+    public MFXElevatedButton productVariantAddBtn;
+    @FXML
+    public MFXFilterComboBox<ProductCategory> productFormCategory;
+    @FXML
+    public MFXFilterComboBox<Brand> productFormBrand;
+    @FXML
+    public MFXComboBox<String> productFormBarCodeType;
+    @FXML
+    public MFXToggleButton notForSaleToggle;
+    @FXML
+    public MFXToggleButton hasVariantToggle;
+    @FXML
+    public Label productFormNameValidationLabel;
+    @FXML
+    public Label productFormCategoryValidationLabel;
+    @FXML
+    public Label productFormBrandValidationLabel;
     private Dialog<ButtonType> dialog;
 
     public ProductMasterFormController(Stage stage) {
@@ -82,18 +104,28 @@ public class ProductMasterFormController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Input listener.
-//        productBranchId.textProperty().addListener((observable, oldValue, newValue) -> productBranchId.setTrailingIcon(null));
-//        productDate.textProperty().addListener((observable, oldValue, newValue) -> productDate.setTrailingIcon(null));
+        // Input listeners.
+        hasVariantToggle.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            productVariantAddBtn.setDisable(!ProductMasterViewModel.getHasVariants());
+            productDetailTable.setDisable(!ProductMasterViewModel.getHasVariants());
+        });
+        // input validators.
+        requiredValidator(productFormCategory, "Category is required.", productFormCategoryValidationLabel);
+        requiredValidator(productFormBrand, "Brand is required.", productFormBrandValidationLabel);
+        requiredValidator(productFormName, "Name is required.", productFormNameValidationLabel);
         // Input binding.
         productDetailID.textProperty().bindBidirectional(ProductDetailViewModel.idProperty());
         productMasterID.textProperty().bindBidirectional(ProductMasterViewModel.idProperty(), new NumberStringConverter());
-        productBranchId.valueProperty().bindBidirectional(ProductMasterViewModel.branchProperty());
-        // TODO: Add multiple selection for branches.
-        productBranchId.setItems(BranchViewModel.branchesList);
-        productBranchId.setConverter(new StringConverter<>() {
+        productFormCategory.valueProperty().bindBidirectional(ProductMasterViewModel.categoryProperty());
+        productFormBrand.valueProperty().bindBidirectional(ProductMasterViewModel.brandProperty());
+        productFormName.textProperty().bindBidirectional(ProductMasterViewModel.nameProperty());
+        hasVariantToggle.selectedProperty().bindBidirectional(ProductMasterViewModel.hasVariantsProperty());
+        notForSaleToggle.selectedProperty().bindBidirectional(ProductMasterViewModel.notForSaleProperty());
+
+        productFormCategory.setItems(ProductCategoryViewModel.categoriesList);
+        productFormCategory.setConverter(new StringConverter<>() {
             @Override
-            public String toString(Branch object) {
+            public String toString(ProductCategory object) {
                 if (object != null)
                     return object.getName();
                 else
@@ -101,30 +133,49 @@ public class ProductMasterFormController implements Initializable {
             }
 
             @Override
-            public Branch fromString(String string) {
+            public ProductCategory fromString(String string) {
                 return null;
             }
         });
-//        productDate.textProperty().bindBidirectional(ProductMasterViewModel.dateProperty());
-        productNote.textProperty().bindBidirectional(ProductMasterViewModel.noteProperty());
+
+        productFormBrand.setItems(BrandViewModel.brandsList);
+        productFormBrand.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(Brand object) {
+                if (object != null)
+                    return object.getName();
+                else
+                    return null;
+            }
+
+            @Override
+            public Brand fromString(String string) {
+                return null;
+            }
+        });
+        productFormBarCodeType.setItems(FXCollections.observableArrayList(Values.BARCODETYPES));
 
         productAddProductBtnClicked();
         Platform.runLater(this::setupTable);
     }
 
     private void setupTable() {
-        MFXTableColumn<ProductDetail> productQuantity = new MFXTableColumn<>("Quantity", false, Comparator.comparing(ProductDetail::getQuantity));
+        MFXTableColumn<ProductDetail> productName = new MFXTableColumn<>("Name", false, Comparator.comparing(ProductDetail::getName));
+        MFXTableColumn<ProductDetail> productUOM = new MFXTableColumn<>("Unit Of Measure", false, Comparator.comparing(ProductDetail::getUnitName));
         MFXTableColumn<ProductDetail> productSerial = new MFXTableColumn<>("Serial", false, Comparator.comparing(ProductDetail::getSerialNumber));
 
-        productQuantity.setRowCellFactory(product -> new MFXTableRowCell<>(ProductDetail::getQuantity));
+        productName.setRowCellFactory(product -> new MFXTableRowCell<>(ProductDetail::getName));
+        productUOM.setRowCellFactory(product -> new MFXTableRowCell<>(ProductDetail::getUnitName));
         productSerial.setRowCellFactory(product -> new MFXTableRowCell<>(ProductDetail::getSerialNumber));
 
-        productQuantity.prefWidthProperty().bind(productDetailTable.widthProperty().multiply(.4));
+        productName.prefWidthProperty().bind(productDetailTable.widthProperty().multiply(.4));
+        productUOM.prefWidthProperty().bind(productDetailTable.widthProperty().multiply(.4));
         productSerial.prefWidthProperty().bind(productDetailTable.widthProperty().multiply(.4));
 
-        productDetailTable.getTableColumns().addAll(productQuantity, productSerial);
+        productDetailTable.getTableColumns().addAll(productName, productUOM, productSerial);
         productDetailTable.getFilters().addAll(
-                new IntegerFilter<>("Quantity", ProductDetail::getQuantity),
+                new IntegerFilter<>("Name", ProductDetail::getQuantity),
+                new StringFilter<>("Unit Of Measure", ProductDetail::getUnitName),
                 new StringFilter<>("Serial", ProductDetail::getSerialNumber)
         );
         getProductDetailTable();
@@ -179,7 +230,7 @@ public class ProductMasterFormController implements Initializable {
     }
 
     private void productAddProductBtnClicked() {
-        productProductAddBtn.setOnAction(e -> dialog.showAndWait());
+        productVariantAddBtn.setOnAction(e -> dialog.showAndWait());
     }
 
     private void quotationProductDialogPane(Stage stage) throws IOException {
@@ -192,21 +243,14 @@ public class ProductMasterFormController implements Initializable {
     }
 
     public void productSaveBtnClicked() {
-        MFXIconWrapper icon = new MFXIconWrapper("fas-circle-exclamation", 20, Color.RED, 20);
-
-        if (productBranchId.getText().length() == 0) {
-            productBranchId.setTrailingIcon(icon);
-        }
-        if (productDate.getText().length() == 0) {
-            productDate.setTrailingIcon(icon);
-        }
-        if (productDetailTable.getTableColumns().isEmpty()) {
+        if (!productDetailTable.isDisabled() && ProductDetailViewModel.productDetailTempList.isEmpty()) {
             // Notify table can't be empty
             System.out.println("Table can't be empty");
+            return;
         }
-        if (productBranchId.getText().length() > 0
-                && productDate.getText().length() > 0
-                && !productDetailTable.getTableColumns().isEmpty()) {
+        if (!productFormCategoryValidationLabel.isVisible()
+                && !productFormBrandValidationLabel.isVisible()
+                && !productFormNameValidationLabel.isVisible()) {
             if (Integer.parseInt(productMasterID.getText()) > 0) {
                 ProductMasterViewModel.updateItem(Integer.parseInt(productMasterID.getText()));
                 productCancelBtnClicked();
@@ -220,6 +264,9 @@ public class ProductMasterFormController implements Initializable {
     public void productCancelBtnClicked() {
         ProductMasterViewModel.resetProperties();
         ProductDetailViewModel.productDetailTempList.clear();
+        productFormCategoryValidationLabel.setVisible(false);
+        productFormBrandValidationLabel.setVisible(false);
+        productFormNameValidationLabel.setVisible(false);
         ((StackPane) productFormContentPane.getParent()).getChildren().get(0).setVisible(true);
         ((StackPane) productFormContentPane.getParent()).getChildren().remove(1);
     }

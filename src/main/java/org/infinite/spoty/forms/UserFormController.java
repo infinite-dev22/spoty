@@ -14,13 +14,14 @@
 
 package org.infinite.spoty.forms;
 
-import io.github.palexdev.materialfx.controls.*;
+import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
+import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.controls.MFXToggleButton;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.scene.paint.Color;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.database.models.Branch;
@@ -32,6 +33,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.GlobalActions.closeDialog;
+import static org.infinite.spoty.Validators.*;
 
 public class UserFormController implements Initializable {
     public MFXTextField userID = new MFXTextField();
@@ -52,26 +54,37 @@ public class UserFormController implements Initializable {
     @FXML
     public MFXTextField userFormUsername;
     @FXML
-    public MFXPasswordField userFormPassword;
-    @FXML
     public MFXFilterComboBox<Role> userFormRole;
     @FXML
     public MFXFilterComboBox<Branch> userFormBranch;
     @FXML
     public MFXToggleButton userFormActive;
+    @FXML
+    public Label userFormFirstNameValidationLabel;
+    @FXML
+    public Label userFormEmailValidationLabel;
+    @FXML
+    public Label userFormPhoneValidationLabel;
+    @FXML
+    public Label userFormLastNameValidationLabel;
+    @FXML
+    public Label userFormUserNameValidationLabel;
+    @FXML
+    public Label userFormBranchValidationLabel;
+    @FXML
+    public Label userFormRoleValidationLabel;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Input listeners.
-        userFormFirstname.textProperty().addListener((observable, oldValue, newValue) -> userFormFirstname.setTrailingIcon(null));
-        userFormLastname.textProperty().addListener((observable, oldValue, newValue) -> userFormLastname.setTrailingIcon(null));
-        userFormUsername.textProperty().addListener((observable, oldValue, newValue) -> userFormUsername.setTrailingIcon(null));
-//        userFormEmail.textProperty().addListener((observable, oldValue, newValue) -> userFormEmail.setTrailingIcon(null));
-//        userFormPhone.textProperty().addListener((observable, oldValue, newValue) -> userFormPhone.setTrailingIcon(null));
-//        userFormTown.textProperty().addListener((observable, oldValue, newValue) -> userFormTown.setTrailingIcon(null));
-//        userFormCity.textProperty().addListener((observable, oldValue, newValue) -> userFormCity.setTrailingIcon(null));
-//        userFormTaxNumber.textProperty().addListener((observable, oldValue, newValue) -> userFormTaxNumber.setTrailingIcon(null));
-//        userFormAddress.textProperty().addListener((observable, oldValue, newValue) -> userFormAddress.setTrailingIcon(null));
+        userFormPhone.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*"))
+                userFormPhone.setText(newValue.replaceAll("\\D", ""));
+        });
+        userFormPhone.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != oldValue) userFormPhone.setLeadingIcon(new Label("+"));
+            System.out.println("newValue oldValue");
+        });
         // Input bindings.
         userID.textProperty().bindBidirectional(UserViewModel.idProperty(), new NumberStringConverter());
         userFormFirstname.textProperty().bindBidirectional(UserViewModel.firstNameProperty());
@@ -113,68 +126,41 @@ public class UserFormController implements Initializable {
                 return null;
             }
         });
+        // Input validations.
+        // Name input validation.
+        requiredValidator(userFormFirstname, "First name is required.", userFormFirstNameValidationLabel);
+        requiredValidator(userFormLastname, "Last name is required.", userFormLastNameValidationLabel);
+        requiredValidator(userFormUsername, "Username is required.", userFormUserNameValidationLabel);
+        requiredValidator(userFormBranch, "Branch is required.", userFormBranchValidationLabel);
+        requiredValidator(userFormRole, "User role is required.", userFormRoleValidationLabel);
+        // Email input validation.
+        emailValidator(userFormEmail, userFormEmailValidationLabel);
+        // Phone input validation.
+        lengthValidator(userFormPhone, 11, "Invalid Phone length", userFormPhoneValidationLabel);
         dialogOnActions();
     }
 
     private void dialogOnActions() {
         userFormCancelBtn.setOnAction((e) -> {
             closeDialog(e);
-            userFormFirstname.setText("");
-            userFormLastname.setText("");
-            userFormUsername.setText("");
-            userFormEmail.setText("");
-            userFormPhone.setText("");
-            userFormPassword.setText("");
-            userFormRole.setText("");
-            userFormBranch.setText("");
-            userFormActive.setSelected(true);
+            UserViewModel.resetProperties();
 
-            userFormFirstname.setTrailingIcon(null);
-            userFormLastname.setTrailingIcon(null);
-            userFormUsername.setTrailingIcon(null);
-            userFormEmail.setTrailingIcon(null);
-            userFormPhone.setTrailingIcon(null);
-            userFormPassword.setLeadingIcon(null);
-            userFormRole.setLeadingIcon(null);
-            userFormBranch.setLeadingIcon(null);
+            userFormFirstNameValidationLabel.setVisible(false);
+            userFormLastNameValidationLabel.setVisible(false);
+            userFormUserNameValidationLabel.setVisible(false);
+            userFormBranchValidationLabel.setVisible(false);
+            userFormRoleValidationLabel.setVisible(false);
+            userFormEmailValidationLabel.setVisible(false);
+            userFormPhoneValidationLabel.setVisible(false);
         });
         userFormSaveBtn.setOnAction((e) -> {
-            MFXIconWrapper icon = new MFXIconWrapper("fas-circle-exclamation", 20, Color.RED, 20);
-
-            if (userFormFirstname.getText().length() == 0) {
-                userFormFirstname.setTrailingIcon(icon);
-            }
-            if (userFormLastname.getText().length() == 0) {
-                userFormLastname.setTrailingIcon(icon);
-            }
-            if (userFormUsername.getText().length() == 0) {
-                userFormUsername.setTrailingIcon(icon);
-            }
-//            if (userFormEmail.getText().length() == 0) {
-//                userFormEmail.setTrailingIcon(icon);
-//            }
-//            if (userFormPhone.getText().length() == 0) {
-//                userFormPhone.setTrailingIcon(icon);
-//            }
-            // Should be set by user i.e.
-            // User is created by admin, User tries to log in and is asked to set a password.
-            if (userFormPassword.getText().length() == 0) {
-                userFormPassword.setLeadingIcon(icon);
-            }
-            if (userFormRole.getText().length() == 0) {
-                userFormRole.setLeadingIcon(icon);
-            }
-            if (userFormBranch.getText().length() == 0) {
-                userFormBranch.setLeadingIcon(icon);
-            }
-            if (userFormFirstname.getText().length() > 0
-                    && userFormLastname.getText().length() > 0
-                    && userFormUsername.getText().length() > 0
-                    && userFormEmail.getText().length() > 0
-                    && userFormPhone.getText().length() > 0
-                    && userFormPassword.getText().length() > 0
-                    && userFormRole.getText().length() > 0
-                    && userFormBranch.getText().length() > 0) {
+            if (!userFormFirstNameValidationLabel.isVisible()
+                    && !userFormLastNameValidationLabel.isVisible()
+                    && !userFormUserNameValidationLabel.isVisible()
+                    && !userFormBranchValidationLabel.isVisible()
+                    && !userFormRoleValidationLabel.isVisible()
+                    && !userFormEmailValidationLabel.isVisible()
+                    && !userFormPhoneValidationLabel.isVisible()) {
                 if (Integer.parseInt(userID.getText()) > 0)
                     UserViewModel.updateItem(Integer.parseInt(userID.getText()));
                 else

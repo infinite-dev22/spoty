@@ -1,0 +1,5 @@
+.input-validation-error {
+    -fx-font-size: 10;
+    -fx-padding-left: 10;
+    -fx-text-fill: #ef6e6b;
+}

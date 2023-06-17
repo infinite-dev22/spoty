@@ -15,7 +15,6 @@
 package org.infinite.spoty.forms;
 
 import io.github.palexdev.materialfx.controls.MFXComboBox;
-import io.github.palexdev.materialfx.controls.MFXIconWrapper;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
@@ -23,7 +22,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.database.models.UnitOfMeasure;
@@ -33,8 +31,13 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.GlobalActions.closeDialog;
+import static org.infinite.spoty.Validators.requiredValidator;
 
 public class UOMFormController implements Initializable {
+    /**
+     * =>When editing a row, the extra fields won't display even though the row clearly has a BaseUnit filled in its combo.
+     * =>The dialog should animate to expand and contract when a BaseUnit is present i.e. not just have a scroll view.
+     */
     public MFXTextField uomID = new MFXTextField();
     @FXML
     public MFXTextField uomFormName;
@@ -54,19 +57,25 @@ public class UOMFormController implements Initializable {
     public MFXTextField uomFormOperatorValue;
     @FXML
     public VBox formsHolder;
+    @FXML
+    public Label uomFormNameValidationLabel;
+    @FXML
+    public Label uomFormShortNameValidationLabel;
+    @FXML
+    public Label uomFormOperatorValidationLabel;
+    @FXML
+    public Label uomFormOperatorValueValidationLabel;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        uomFormName.textProperty().addListener((observable, oldValue, newValue) -> uomFormName.setTrailingIcon(null));
-        uomFormShortName.textProperty().addListener((observable, oldValue, newValue) -> uomFormShortName.setTrailingIcon(null));
-        uomFormBaseUnit.setItems(UOMViewModel.uomList);
+        uomFormBaseUnit.setItems(UOMViewModel.uomComboList);
         uomFormBaseUnit.setConverter(new StringConverter<>() {
             @Override
             public String toString(UnitOfMeasure object) {
                 if (object != null)
                     return object.getName();
                 else
-                    return null;
+                    return "--Select--";
             }
 
             @Override
@@ -80,19 +89,24 @@ public class UOMFormController implements Initializable {
         uomFormShortName.textProperty().bindBidirectional(UOMViewModel.shortNameProperty());
         uomFormBaseUnit.valueProperty().bindBidirectional(UOMViewModel.baseUnitProperty());
         uomFormOperator.textProperty().bindBidirectional(UOMViewModel.operatorProperty());
-
         uomFormOperatorValue.textProperty().bindBidirectional(UOMViewModel.operatorValueProperty());
 
         uomFormBaseUnit.valueProperty().addListener(e -> {
-            if (!uomFormBaseUnit.getItems().isEmpty()) {
+            if (uomFormBaseUnit.getSelectedItem() != null) {
                 formsHolder.setVisible(true);
                 formsHolder.setManaged(true);
             } else {
                 formsHolder.setManaged(false);
                 formsHolder.setVisible(false);
+                uomFormOperatorValidationLabel.setVisible(false);
+                uomFormOperatorValueValidationLabel.setVisible(false);
             }
         });
-
+        // Input listeners.
+        requiredValidator(uomFormName, "Name is required.", uomFormNameValidationLabel);
+        requiredValidator(uomFormShortName, "Short name field is required.", uomFormShortNameValidationLabel);
+        requiredValidator(uomFormOperator, "Operator is required.", uomFormOperatorValidationLabel);
+        requiredValidator(uomFormOperatorValue, "Operator value is required.", uomFormOperatorValueValidationLabel);
         setUomFormDialogOnActions();
     }
 
@@ -100,21 +114,18 @@ public class UOMFormController implements Initializable {
         uomFormCancelBtn.setOnAction((e) -> {
             closeDialog(e);
             UOMViewModel.resetUOMProperties();
-            uomFormName.setTrailingIcon(null);
-            uomFormShortName.setTrailingIcon(null);
+            uomFormNameValidationLabel.setVisible(false);
+            uomFormShortNameValidationLabel.setVisible(false);
+            uomFormOperatorValidationLabel.setVisible(false);
+            uomFormOperatorValueValidationLabel.setVisible(false);
             formsHolder.setVisible(false);
             formsHolder.setManaged(false);
         });
         uomFormSaveBtn.setOnAction((e) -> {
-            MFXIconWrapper icon = new MFXIconWrapper("fas-circle-exclamation", 20, Color.RED, 20);
-
-            if (uomFormName.getText().length() == 0) {
-                uomFormName.setTrailingIcon(icon);
-            }
-            if (uomFormShortName.getText().length() == 0) {
-                uomFormShortName.setTrailingIcon(icon);
-            }
-            if (uomFormName.getText().length() > 0 && uomFormShortName.getText().length() > 0) {
+            if (!uomFormNameValidationLabel.isVisible()
+                    && !uomFormShortNameValidationLabel.isVisible()
+                    && !uomFormOperatorValidationLabel.isVisible()
+                    && !uomFormOperatorValueValidationLabel.isVisible()) {
                 if (Integer.parseInt(uomID.getText()) > 0)
                     UOMViewModel.updateItem(Integer.parseInt(uomID.getText()));
                 else

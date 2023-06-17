@@ -26,13 +26,48 @@
 <DialogPane xmlns:fx="http://javafx.com/fxml/1" styleClass="card" stylesheets="@../styles/Common.css"
             xmlns="http://javafx.com/javafx/19" fx:controller="org.infinite.spoty.forms.ExpenseFormController">
     <content>
-        <VBox spacing="20.0">
-            <MFXTextField fx:id="expenseFormName" floatMode="BORDER" floatingText="Name" prefWidth="400.0"/>
-            <MFXDatePicker fx:id="expenseFormDate" floatMode="BORDER" floatingText="Date" prefWidth="400.0"/>
-            <MFXComboBox fx:id="expenseFormBranch" floatMode="BORDER" floatingText="Branch" prefWidth="400.0"/>
-            <MFXComboBox fx:id="expenseFormCategory" floatMode="BORDER" floatingText="Category" layoutX="21.0"
-                         layoutY="79.0" prefWidth="400.0"/>
-            <MFXTextField fx:id="expenseFormAmount" floatMode="BORDER" floatingText="Amount" prefWidth="400.0"/>
+        <VBox spacing="8.0" stylesheets="@../styles/TextFields.css">
+            <VBox spacing="2.0">
+                <padding>
+                    <Insets right="10.0" top="2.5"/>
+                </padding>
+                <MFXTextField fx:id="expenseFormName" floatMode="BORDER" floatingText="Name" prefWidth="400.0"/>
+                <Label id="validationLabel" fx:id="expenseFormNameValidationLabel" maxWidth="1.7976931348623157E308"
+                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true"/>
+            </VBox>
+            <VBox spacing="2.0">
+                <padding>
+                    <Insets right="10.0" top="2.5"/>
+                </padding>
+                <MFXDatePicker fx:id="expenseFormDate" floatMode="BORDER" floatingText="Date" prefWidth="400.0"/>
+                <Label id="validationLabel" fx:id="expenseFormDateValidationLabel" maxWidth="1.7976931348623157E308"
+                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true"/>
+            </VBox>
+            <VBox spacing="2.0">
+                <padding>
+                    <Insets right="10.0" top="2.5"/>
+                </padding>
+                <MFXComboBox fx:id="expenseFormBranch" floatMode="BORDER" floatingText="Branch" prefWidth="400.0"/>
+                <Label id="validationLabel" fx:id="expenseFormBranchValidationLabel" maxWidth="1.7976931348623157E308"
+                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true"/>
+            </VBox>
+            <VBox spacing="2.0">
+                <padding>
+                    <Insets right="10.0" top="2.5"/>
+                </padding>
+                <MFXComboBox fx:id="expenseFormCategory" floatMode="BORDER" floatingText="Category" layoutX="21.0"
+                             layoutY="79.0" prefWidth="400.0"/>
+                <Label id="validationLabel" fx:id="expenseFormCategoryValidationLabel" maxWidth="1.7976931348623157E308"
+                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true"/>
+            </VBox>
+            <VBox spacing="2.0">
+                <padding>
+                    <Insets right="10.0" top="2.5"/>
+                </padding>
+                <MFXTextField fx:id="expenseFormAmount" floatMode="BORDER" floatingText="Amount" prefWidth="400.0"/>
+                <Label id="validationLabel" fx:id="expenseFormAmountValidationLabel" maxWidth="1.7976931348623157E308"
+                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true"/>
+            </VBox>
             <MFXTextField fx:id="expenseFormDetails" floatMode="BORDER" floatingText="Details" prefWidth="400.0"/>
             <HBox alignment="CENTER_RIGHT" spacing="20.0">
                 <VBox.margin>

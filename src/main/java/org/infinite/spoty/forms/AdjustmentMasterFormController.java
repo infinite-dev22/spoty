@@ -30,7 +30,6 @@ import javafx.scene.control.Label;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -49,13 +48,14 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
+import static org.infinite.spoty.Validators.requiredValidator;
 
 @SuppressWarnings("unchecked")
 public class AdjustmentMasterFormController implements Initializable {
     public MFXTextField adjustmentDetailID = new MFXTextField();
     public MFXTextField adjustmentMasterID = new MFXTextField();
     @FXML
-    public MFXFilterComboBox<Branch> adjustmentBranchId;
+    public MFXFilterComboBox<Branch> adjustmentBranch;
     @FXML
     public MFXDatePicker adjustmentDate;
     @FXML
@@ -68,6 +68,10 @@ public class AdjustmentMasterFormController implements Initializable {
     public Label adjustmentFormTitle;
     @FXML
     public MFXElevatedButton adjustmentProductAddBtn;
+    @FXML
+    public Label adjustmentBranchValidationLabel;
+    @FXML
+    public Label adjustmentDateValidationLabel;
     private Dialog<ButtonType> dialog;
 
     public AdjustmentMasterFormController(Stage stage) {
@@ -82,14 +86,12 @@ public class AdjustmentMasterFormController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Input listener.
-//        adjustmentBranchId.textProperty().addListener((observable, oldValue, newValue) -> adjustmentBranchId.setTrailingIcon(null));
-//        adjustmentDate.textProperty().addListener((observable, oldValue, newValue) -> adjustmentDate.setTrailingIcon(null));
         // Input binding.
+        adjustmentDetailID.textProperty().bindBidirectional(AdjustmentDetailViewModel.idProperty());
         adjustmentMasterID.textProperty().bindBidirectional(AdjustmentMasterViewModel.idProperty(), new NumberStringConverter());
-        adjustmentBranchId.valueProperty().bindBidirectional(AdjustmentMasterViewModel.branchProperty());
-        adjustmentBranchId.setItems(BranchViewModel.branchesList);
-        adjustmentBranchId.setConverter(new StringConverter<>() {
+        adjustmentBranch.valueProperty().bindBidirectional(AdjustmentMasterViewModel.branchProperty());
+        adjustmentBranch.setItems(BranchViewModel.branchesList);
+        adjustmentBranch.setConverter(new StringConverter<>() {
             @Override
             public String toString(Branch object) {
                 if (object != null)
@@ -105,7 +107,9 @@ public class AdjustmentMasterFormController implements Initializable {
         });
         adjustmentDate.textProperty().bindBidirectional(AdjustmentMasterViewModel.dateProperty());
         adjustmentNote.textProperty().bindBidirectional(AdjustmentMasterViewModel.noteProperty());
-
+        // input validators.
+        requiredValidator(adjustmentBranch, "Branch is required.", adjustmentBranchValidationLabel);
+        requiredValidator(adjustmentDate, "Date is required.", adjustmentDateValidationLabel);
         adjustmentAddProductBtnClicked();
         Platform.runLater(this::setupTable);
     }
@@ -119,7 +123,6 @@ public class AdjustmentMasterFormController implements Initializable {
         productQuantity.setRowCellFactory(product -> new MFXTableRowCell<>(AdjustmentDetail::getQuantity));
         adjustmentType.setRowCellFactory(product -> new MFXTableRowCell<>(AdjustmentDetail::getAdjustmentType));
 
-        adjustmentDetailID.textProperty().bindBidirectional(AdjustmentDetailViewModel.idProperty());
         productName.prefWidthProperty().bind(adjustmentDetailTable.widthProperty().multiply(.4));
         productQuantity.prefWidthProperty().bind(adjustmentDetailTable.widthProperty().multiply(.4));
         adjustmentType.prefWidthProperty().bind(adjustmentDetailTable.widthProperty().multiply(.4));
@@ -128,7 +131,7 @@ public class AdjustmentMasterFormController implements Initializable {
         adjustmentDetailTable.getFilters().addAll(
                 new StringFilter<>("Name", AdjustmentDetail::getProductDetailName),
                 new IntegerFilter<>("Quantity", AdjustmentDetail::getQuantity),
-                new StringFilter<>("Category", AdjustmentDetail::getAdjustmentType)
+                new StringFilter<>("Adjustment Type", AdjustmentDetail::getAdjustmentType)
         );
         getAdjustmentDetailTable();
         adjustmentDetailTable.setItems(AdjustmentDetailViewModel.adjustmentDetailsTempList);
@@ -195,21 +198,13 @@ public class AdjustmentMasterFormController implements Initializable {
     }
 
     public void adjustmentSaveBtnClicked() {
-        MFXIconWrapper icon = new MFXIconWrapper("fas-circle-exclamation", 20, Color.RED, 20);
-
-        if (adjustmentBranchId.getText().length() == 0) {
-            adjustmentBranchId.setTrailingIcon(icon);
-        }
-        if (adjustmentDate.getText().length() == 0) {
-            adjustmentDate.setTrailingIcon(icon);
-        }
-        if (adjustmentDetailTable.getTableColumns().isEmpty()) {
+        if (!adjustmentDetailTable.isDisabled() && AdjustmentDetailViewModel.adjustmentDetailsTempList.isEmpty()) {
             // Notify table can't be empty
             System.out.println("Table can't be empty");
+            return;
         }
-        if (adjustmentBranchId.getText().length() > 0
-                && adjustmentDate.getText().length() > 0
-                && !adjustmentDetailTable.getTableColumns().isEmpty()) {
+        if (!adjustmentBranchValidationLabel.isVisible()
+                && !adjustmentDateValidationLabel.isVisible()) {
             if (Integer.parseInt(adjustmentMasterID.getText()) > 0) {
                 AdjustmentMasterViewModel.updateItem(Integer.parseInt(adjustmentMasterID.getText()));
                 adjustmentCancelBtnClicked();
@@ -223,6 +218,8 @@ public class AdjustmentMasterFormController implements Initializable {
     public void adjustmentCancelBtnClicked() {
         AdjustmentMasterViewModel.resetProperties();
         AdjustmentDetailViewModel.adjustmentDetailsTempList.clear();
+        adjustmentBranchValidationLabel.setVisible(false);
+        adjustmentDateValidationLabel.setVisible(false);
         ((StackPane) adjustmentFormContentPane.getParent()).getChildren().get(0).setVisible(true);
         ((StackPane) adjustmentFormContentPane.getParent()).getChildren().remove(1);
     }

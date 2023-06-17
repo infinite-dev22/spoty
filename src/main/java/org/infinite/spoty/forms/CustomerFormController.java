@@ -15,11 +15,8 @@
 package org.infinite.spoty.forms;
 
 import io.github.palexdev.materialfx.controls.MFXTextField;
-import io.github.palexdev.materialfx.validation.Constraint;
-import io.github.palexdev.materialfx.validation.Severity;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
-import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -27,17 +24,12 @@ import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.viewModels.CustomerViewModel;
 
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
 
-import static io.github.palexdev.materialfx.utils.StringUtils.containsAll;
-import static io.github.palexdev.materialfx.utils.StringUtils.containsAny;
-import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
 import static org.infinite.spoty.GlobalActions.closeDialog;
+import static org.infinite.spoty.Validators.*;
 
 public class CustomerFormController implements Initializable {
-    private static final String[] SPECIALS = "@ . ".split(" ");
-    private static final String[] ALPHANUMERICS = "A B C D E F G H I J K L M N O P Q R S T U V W X Y Z a b c d e f g h i j k l m n o p q r s t u v w x y z 0 1 2 3 4 5 6 7 8 9".split(" ");
     public MFXTextField customerID = new MFXTextField();
     @FXML
     public MFXFilledButton customerFormSaveBtn;
@@ -65,6 +57,8 @@ public class CustomerFormController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Form input listeners.
+        // These don't work, not sure why.
+        // TODO: Get a better way for input filtering.
         customerFormPhone.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("\\d*"))
                 customerFormPhone.setText(newValue.replaceAll("\\D", ""));
@@ -73,10 +67,6 @@ public class CustomerFormController implements Initializable {
             if (newValue != oldValue) customerFormPhone.setLeadingIcon(new Label("+"));
             System.out.println("newValue oldValue");
         });
-        // Label sizing.
-        validationLabel1.setStyle("-fx-font-size: 8;");
-        validationLabel2.setStyle("-fx-font-size: 8;");
-        validationLabel3.setStyle("-fx-font-size: 8;");
         // Form input binding.
         customerID.textProperty().bindBidirectional(CustomerViewModel.idProperty(), new NumberStringConverter());
         customerFormName.textProperty().bindBidirectional(CustomerViewModel.nameProperty());
@@ -87,85 +77,11 @@ public class CustomerFormController implements Initializable {
         customerFormTaxNumber.textProperty().bindBidirectional(CustomerViewModel.taxNumberProperty());
         customerFormAddress.textProperty().bindBidirectional(CustomerViewModel.addressProperty());
         // Name input validation.
-        Constraint lengthConstraint = Constraint.Builder.build()
-                .setSeverity(Severity.ERROR)
-                .setMessage("Name field is required.")
-                .setCondition(customerFormName.textProperty().length().greaterThan(0))
-                .get();
-        customerFormName.getValidator().constraint(lengthConstraint);
-        customerFormName.getValidator().validProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                validationLabel1.setVisible(false);
-                customerFormName.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-            }
-        });
-        customerFormName.delegateFocusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (oldValue && !newValue) {
-                List<Constraint> constraints = customerFormName.validate();
-                if (!constraints.isEmpty()) {
-                    customerFormName.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                    validationLabel1.setText(constraints.get(0).getMessage());
-                    validationLabel1.setVisible(true);
-                }
-            }
-        });
+        requiredValidator(customerFormName, "Name field is required.", validationLabel1);
         // Email input validation.
-        Constraint alphaCharsConstraint = Constraint.Builder.build()
-                .setSeverity(Severity.ERROR)
-                .setMessage("Invalid email")
-                .setCondition(Bindings.createBooleanBinding(
-                        () -> containsAny(customerFormEmail.getText(), "", ALPHANUMERICS),
-                        customerFormEmail.textProperty()
-                ))
-                .get();
-        Constraint specialCharsConstraint = Constraint.Builder.build()
-                .setSeverity(Severity.ERROR)
-                .setMessage("Invalid email")
-                .setCondition(Bindings.createBooleanBinding(
-                        () -> containsAll(customerFormEmail.getText(), "", SPECIALS),
-                        customerFormEmail.textProperty()
-                ))
-                .get();
-        customerFormEmail.getValidator().constraint(alphaCharsConstraint).constraint(specialCharsConstraint);
-        customerFormEmail.getValidator().validProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                validationLabel2.setVisible(false);
-                customerFormEmail.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-            }
-        });
-        customerFormEmail.delegateFocusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (oldValue && !newValue) {
-                List<Constraint> constraints = customerFormEmail.validate();
-                if (!constraints.isEmpty()) {
-                    customerFormEmail.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                    validationLabel2.setText(constraints.get(0).getMessage());
-                    validationLabel2.setVisible(true);
-                }
-            }
-        });
+        emailValidator(customerFormEmail, validationLabel2);
         // Phone input validation.
-        Constraint phoneLength = Constraint.Builder.build()
-                .setSeverity(Severity.ERROR)
-                .setMessage("Invalid length")
-                .setCondition(customerFormName.textProperty().length().lessThan(11))
-                .get();
-        customerFormPhone.getValidator().constraint(phoneLength);
-        customerFormPhone.getValidator().validProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                validationLabel3.setVisible(false);
-                customerFormPhone.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-            }
-        });
-        customerFormPhone.delegateFocusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (oldValue && !newValue) {
-                List<Constraint> constraints = customerFormPhone.validate();
-                if (!constraints.isEmpty()) {
-                    customerFormPhone.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                    validationLabel3.setText(constraints.get(0).getMessage());
-                    validationLabel3.setVisible(true);
-                }
-            }
-        });
+        lengthValidator(customerFormPhone, 11, "Invalid length", validationLabel3);
         dialogOnActions();
     }
 

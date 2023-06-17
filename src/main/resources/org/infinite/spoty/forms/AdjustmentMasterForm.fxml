@@ -1,16 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import io.github.palexdev.materialfx.controls.MFXDatePicker?>
-<?import io.github.palexdev.materialfx.controls.MFXFilterComboBox?>
-<?import io.github.palexdev.materialfx.controls.MFXTableView?>
-<?import io.github.palexdev.materialfx.controls.MFXTextField?>
-<?import io.github.palexdev.mfxcomponents.controls.buttons.MFXElevatedButton?>
-<?import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton?>
-<?import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.layout.*?>
 <!--
   ~ Copyright (c) 2023, Jonathan Mark Mwigo. All rights reserved.
   ~
@@ -25,6 +14,17 @@
   ~ Jonathan Mark Mwigo makes no warranties, express or implied, with respect to the computer system code. Jonathan Mark Mwigo shall not be liable for any damages, including, but not limited to, direct, indirect, incidental, special, consequential, or punitive damages, arising out of or in connection with the use of the computer system code.
   -->
 
+<?import io.github.palexdev.materialfx.controls.MFXDatePicker?>
+<?import io.github.palexdev.materialfx.controls.MFXFilterComboBox?>
+<?import io.github.palexdev.materialfx.controls.MFXTableView?>
+<?import io.github.palexdev.materialfx.controls.MFXTextField?>
+<?import io.github.palexdev.mfxcomponents.controls.buttons.MFXElevatedButton?>
+<?import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton?>
+<?import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.*?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="adjustmentFormContentPane" cache="true" cacheHint="SPEED"
             styleClass="card" stylesheets="@../styles/Common.css" xmlns="http://javafx.com/javafx/19"
             fx:controller="org.infinite.spoty.forms.AdjustmentMasterFormController">
@@ -34,24 +34,41 @@
     <Label fx:id="adjustmentFormTitle" text="Create" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
            AnchorPane.topAnchor="0.0"/>
     <Separator prefWidth="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0"/>
-    <GridPane hgap="20.0" layoutX="10.0" layoutY="50.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-              AnchorPane.topAnchor="40.0">
+    <GridPane hgap="20.0" layoutX="10.0" layoutY="50.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="180.0"
+              AnchorPane.topAnchor="40.0" stylesheets="@../styles/TextFields.css">
         <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"/>
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"/>
         </columnConstraints>
         <rowConstraints>
-            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
         </rowConstraints>
-        <MFXFilterComboBox fx:id="adjustmentBranchId" floatMode="BORDER" floatingText="Branch" prefWidth="400.0" />
-        <MFXDatePicker fx:id="adjustmentDate" floatMode="BORDER" floatingText="Date" prefWidth="400.0" GridPane.columnIndex="1" />
+        <VBox spacing="5.0">
+            <padding>
+                <Insets right="10.0" top="5.0"/>
+            </padding>
+            <MFXFilterComboBox fx:id="adjustmentBranch" floatMode="BORDER" floatingText="Branch" prefWidth="400.0"/>
+            <Label id="validationLabel" fx:id="adjustmentBranchValidationLabel" maxWidth="1.7976931348623157E308"
+                   minHeight="-Infinity" visible="false" wrapText="true" styleClass="input-validation-error"/>
+        </VBox>
+        <VBox spacing="5.0" GridPane.columnIndex="1">
+            <padding>
+                <Insets right="10.0" top="5.0"/>
+            </padding>
+            <MFXDatePicker fx:id="adjustmentDate" floatMode="BORDER" floatingText="Date" prefWidth="400.0"/>
+            <Label id="validationLabel" fx:id="adjustmentDateValidationLabel" maxWidth="1.7976931348623157E308"
+                   minHeight="-Infinity" visible="false" wrapText="true" styleClass="input-validation-error"/>
+        </VBox>
     </GridPane>
-    <MFXElevatedButton fx:id="adjustmentProductAddBtn" layoutX="930.0" layoutY="80.0" text="Add Product" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="90.0" />
+    <MFXElevatedButton fx:id="adjustmentProductAddBtn" layoutX="930.0" layoutY="80.0" text="Add Product"
+                       AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0"/>
     <MFXTableView fx:id="adjustmentDetailTable" AnchorPane.bottomAnchor="120.0" AnchorPane.leftAnchor="0.0"
-                  AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="140.0"/>
-    <MFXTextField fx:id="adjustmentNote" floatMode="BORDER" floatingText="Note" prefWidth="1000.0" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
-    <HBox alignment="CENTER_RIGHT" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
-        <MFXFilledButton onMouseClicked="#adjustmentSaveBtnClicked" text="Save" />
-        <MFXOutlinedButton onMouseClicked="#adjustmentCancelBtnClicked" text="Cancel" />
+                  AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="120.0"/>
+    <MFXTextField fx:id="adjustmentNote" floatMode="BORDER" floatingText="Note" prefWidth="1000.0"
+                  AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"/>
+    <HBox alignment="CENTER_RIGHT" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+          AnchorPane.rightAnchor="0.0">
+        <MFXFilledButton onMouseClicked="#adjustmentSaveBtnClicked" text="Save"/>
+        <MFXOutlinedButton onMouseClicked="#adjustmentCancelBtnClicked" text="Cancel"/>
     </HBox>
 </AnchorPane>

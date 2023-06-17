@@ -26,8 +26,15 @@
 <DialogPane xmlns:fx="http://javafx.com/fxml/1" styleClass="card" stylesheets="@../styles/Common.css"
             xmlns="http://javafx.com/javafx/19" fx:controller="org.infinite.spoty.forms.ExpenseCategoryFormController">
     <content>
-        <VBox spacing="20.0">
-            <MFXTextField fx:id="categoryExpenseFormName" floatMode="BORDER" floatingText="Name" prefWidth="400.0"/>
+        <VBox spacing="20.0" stylesheets="@../styles/TextFields.css">
+            <VBox spacing="5.0">
+                <padding>
+                    <Insets right="10.0" top="5.0"/>
+                </padding>
+                <MFXTextField fx:id="categoryExpenseFormName" floatMode="BORDER" floatingText="Name" prefWidth="400.0"/>
+                <Label id="validationLabel" fx:id="categoryExpenseFormNameValidationLabel" maxWidth="1.7976931348623157E308"
+                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true"/>
+            </VBox>
             <MFXTextField fx:id="categoryExpenseFormDescription" floatMode="BORDER" floatingText="Description"
                           prefWidth="400.0"/>
             <HBox alignment="CENTER_RIGHT" spacing="20.0">

@@ -28,7 +28,7 @@ import org.infinite.spoty.database.models.QuotationMaster;
 public class QuotationDetailViewModel {
     // TODO: Add more fields according to DB design and necessity.
     public static final ObservableList<QuotationDetail> quotationDetailsList = FXCollections.observableArrayList();
-    public static final ObservableList<QuotationDetail> quotationDetailsTempList = FXCollections.observableArrayList();
+    public static final ObservableList<QuotationDetail> quotationDetailTempList = FXCollections.observableArrayList();
     private static final StringProperty id = new SimpleStringProperty();
     private static final ObjectProperty<ProductDetail> product = new SimpleObjectProperty<>();
     private static final ObjectProperty<QuotationMaster> quotation = new SimpleObjectProperty<>();
@@ -118,9 +118,9 @@ public class QuotationDetailViewModel {
 
     public static void addQuotationDetails() {
         QuotationDetail quotationDetail = new QuotationDetail(getProduct(), getTax(), getDiscount(), getQuantity());
-        quotationDetailsTempList.add(quotationDetail);
+        quotationDetailTempList.add(quotationDetail);
         resetProperties();
-        quotationDetailsTempList.forEach(System.out::println);
+        quotationDetailTempList.forEach(System.out::println);
     }
 
     public static void updateQuotationDetail() {
@@ -131,7 +131,7 @@ public class QuotationDetailViewModel {
         quotationDetail.setId(getId());
         quotationDetail.setQuotation(getQuotation());
         QuotationDetailDao.updateQuotationDetail(quotationDetail, getId());
-        quotationDetailsTempList.addAll(getQuotationDetails());
+        quotationDetailTempList.addAll(getQuotationDetails());
         resetProperties();
     }
 
@@ -159,6 +159,6 @@ public class QuotationDetailViewModel {
     }
 
     public static void removeQuotationDetail(int index) {
-        quotationDetailsTempList.remove(index);
+        quotationDetailTempList.remove(index);
     }
 }
