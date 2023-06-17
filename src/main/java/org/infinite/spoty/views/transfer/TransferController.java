@@ -149,7 +149,7 @@ public class TransferController implements Initializable {
         FXMLLoader loader = fxmlLoader("forms/TransferMasterForm.fxml");
         loader.setControllerFactory(c -> new TransferMasterFormController(stage));
         try {
-            AnchorPane productFormPane = loader.load();
+            BorderPane productFormPane = loader.load();
             ((StackPane) transferContentPane.getParent()).getChildren().add(productFormPane);
             ((StackPane) transferContentPane.getParent()).getChildren().get(0).setVisible(false);
         } catch (IOException ex) {
