@@ -50,6 +50,7 @@ import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 
+@SuppressWarnings("unchecked")
 public class RequisitionMasterFormController implements Initializable {
     public MFXTextField requisitionDetailID = new MFXTextField();
     public MFXTextField requisitionMasterID = new MFXTextField();
@@ -220,7 +221,7 @@ public class RequisitionMasterFormController implements Initializable {
     public void requisitionMasterCancelBtnClicked() {
         RequisitionMasterViewModel.resetProperties();
         RequisitionDetailViewModel.requisitionDetailsTempList.clear();
-        ((StackPane) requisitionMasterFormContentPane.getParent()).getChildren().get(0).setVisible(true);
-        ((StackPane) requisitionMasterFormContentPane.getParent()).getChildren().remove(1);
+        ((StackPane) requisitionMasterFormContentPane.getParent().getParent()).getChildren().get(0).setVisible(true);
+        ((StackPane) requisitionMasterFormContentPane.getParent().getParent()).getChildren().remove(1);
     }
 }
