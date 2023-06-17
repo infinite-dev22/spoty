@@ -144,7 +144,7 @@ public class StockInController implements Initializable {
         FXMLLoader loader = fxmlLoader("forms/StockInMasterForm.fxml");
         loader.setControllerFactory(c -> new StockInMasterFormController(stage));
         try {
-            AnchorPane productFormPane = loader.load();
+            BorderPane productFormPane = loader.load();
             ((StackPane) stockInContentPane.getParent()).getChildren().add(productFormPane);
             ((StackPane) stockInContentPane.getParent()).getChildren().get(0).setVisible(false);
         } catch (IOException ex) {
