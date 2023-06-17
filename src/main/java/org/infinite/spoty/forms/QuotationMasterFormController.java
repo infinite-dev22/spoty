@@ -31,7 +31,6 @@ import javafx.scene.control.Label;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -53,6 +52,7 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
+import static org.infinite.spoty.Validators.requiredValidator;
 
 @SuppressWarnings("unchecked")
 public class QuotationMasterFormController implements Initializable {
@@ -63,17 +63,25 @@ public class QuotationMasterFormController implements Initializable {
     @FXML
     public MFXDatePicker quotationDate;
     @FXML
-    public MFXFilterComboBox<Customer> quotationCustomerId;
+    public MFXFilterComboBox<Customer> quotationCustomer;
     @FXML
-    public MFXFilterComboBox<Branch> quotationBranchId;
+    public MFXFilterComboBox<Branch> quotationBranch;
     @FXML
-    public MFXTableView<QuotationDetail> quotationProductsTable;
+    public MFXTableView<QuotationDetail> quotationDetailTable;
     @FXML
     public MFXTextField quotationNote;
     @FXML
     public AnchorPane quotationFormContentPane;
     @FXML
     public MFXFilterComboBox<String> quotationStatus;
+    @FXML
+    public Label quotationDateValidationLabel;
+    @FXML
+    public Label quotationCustomerValidationLabel;
+    @FXML
+    public Label quotationBranchValidationLabel;
+    @FXML
+    public Label quotationStatusValidationLabel;
     private Dialog<ButtonType> dialog;
 
     public QuotationMasterFormController(Stage stage) {
@@ -88,15 +96,16 @@ public class QuotationMasterFormController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Form input listeners.
-//        quotationDate.textProperty().addListener((observable, oldValue, newValue) -> quotationDate.setTrailingIcon(null));
-//        quotationCustomerId.textProperty().addListener((observable, oldValue, newValue) -> quotationCustomerId.setTrailingIcon(null));
-//        quotationBranchId.textProperty().addListener((observable, oldValue, newValue) -> quotationBranchId.setTrailingIcon(null));
-//        quotationStatus.textProperty().addListener((observable, oldValue, newValue) -> quotationStatus.setTrailingIcon(null));
-//        quotationNote.textProperty().addListener((observable, oldValue, newValue) -> quotationNote.setTrailingIcon(null));
+        // Form input binding.
+        quotationMasterID.textProperty().bindBidirectional(QuotationMasterViewModel.idProperty(), new NumberStringConverter());
+        quotationDate.textProperty().bindBidirectional(QuotationMasterViewModel.dateProperty());
+        quotationCustomer.valueProperty().bindBidirectional(QuotationMasterViewModel.customerProperty());
+        quotationBranch.valueProperty().bindBidirectional(QuotationMasterViewModel.branchProperty());
+        quotationStatus.textProperty().bindBidirectional(QuotationMasterViewModel.statusProperty());
+        quotationNote.textProperty().bindBidirectional(QuotationMasterViewModel.noteProperty());
         // Combo box properties.
-        quotationCustomerId.setItems(CustomerViewModel.customersList);
-        quotationCustomerId.setConverter(new StringConverter<>() {
+        quotationCustomer.setItems(CustomerViewModel.customersList);
+        quotationCustomer.setConverter(new StringConverter<>() {
             @Override
             public String toString(Customer object) {
                 if (object != null)
@@ -110,8 +119,8 @@ public class QuotationMasterFormController implements Initializable {
                 return null;
             }
         });
-        quotationBranchId.setItems(BranchViewModel.branchesList);
-        quotationBranchId.setConverter(new StringConverter<>() {
+        quotationBranch.setItems(BranchViewModel.branchesList);
+        quotationBranch.setConverter(new StringConverter<>() {
             @Override
             public String toString(Branch object) {
                 if (object != null)
@@ -126,14 +135,11 @@ public class QuotationMasterFormController implements Initializable {
             }
         });
         quotationStatus.setItems(FXCollections.observableArrayList(Values.QUOTATIONTYPE));
-        // Form input binding.
-        quotationMasterID.textProperty().bindBidirectional(QuotationMasterViewModel.idProperty(), new NumberStringConverter());
-        quotationDate.textProperty().bindBidirectional(QuotationMasterViewModel.dateProperty());
-        quotationCustomerId.valueProperty().bindBidirectional(QuotationMasterViewModel.customerProperty());
-        quotationBranchId.valueProperty().bindBidirectional(QuotationMasterViewModel.branchProperty());
-        quotationStatus.textProperty().bindBidirectional(QuotationMasterViewModel.statusProperty());
-        quotationNote.textProperty().bindBidirectional(QuotationMasterViewModel.noteProperty());
-
+        // input validators.
+        requiredValidator(quotationBranch, "Branch is required.", quotationBranchValidationLabel);
+        requiredValidator(quotationCustomer, "Customer is required.", quotationCustomerValidationLabel);
+        requiredValidator(quotationDate, "Date is required.", quotationDateValidationLabel);
+        requiredValidator(quotationStatus, "Status is required.", quotationStatusValidationLabel);
         Platform.runLater(this::setupTable);
     }
 
@@ -149,32 +155,32 @@ public class QuotationMasterFormController implements Initializable {
         productTax.setRowCellFactory(product -> new MFXTableRowCell<>(QuotationDetail::getNetTax));
 
         quotationDetailID.textProperty().bindBidirectional(QuotationDetailViewModel.idProperty());
-        productName.prefWidthProperty().bind(quotationProductsTable.widthProperty().multiply(.25));
-        productQuantity.prefWidthProperty().bind(quotationProductsTable.widthProperty().multiply(.25));
-        productDiscount.prefWidthProperty().bind(quotationProductsTable.widthProperty().multiply(.25));
-        productTax.prefWidthProperty().bind(quotationProductsTable.widthProperty().multiply(.25));
+        productName.prefWidthProperty().bind(quotationDetailTable.widthProperty().multiply(.25));
+        productQuantity.prefWidthProperty().bind(quotationDetailTable.widthProperty().multiply(.25));
+        productDiscount.prefWidthProperty().bind(quotationDetailTable.widthProperty().multiply(.25));
+        productTax.prefWidthProperty().bind(quotationDetailTable.widthProperty().multiply(.25));
 
-        quotationProductsTable.getTableColumns().addAll(productName, productQuantity, productDiscount, productTax);
-        quotationProductsTable.getFilters().addAll(
+        quotationDetailTable.getTableColumns().addAll(productName, productQuantity, productDiscount, productTax);
+        quotationDetailTable.getFilters().addAll(
                 new StringFilter<>("Product", QuotationDetail::getProductName),
                 new IntegerFilter<>("Quantity", QuotationDetail::getQuantity),
                 new DoubleFilter<>("Discount", QuotationDetail::getDiscount),
                 new DoubleFilter<>("Tax", QuotationDetail::getNetTax)
         );
         getQuotationDetailTable();
-        quotationProductsTable.setItems(QuotationDetailViewModel.quotationDetailsTempList);
+        quotationDetailTable.setItems(QuotationDetailViewModel.quotationDetailTempList);
     }
 
     private void getQuotationDetailTable() {
-        quotationProductsTable.setPrefSize(1000, 1000);
-        quotationProductsTable.features().enableBounceEffect();
-        quotationProductsTable.features().enableSmoothScrolling(0.5);
+        quotationDetailTable.setPrefSize(1000, 1000);
+        quotationDetailTable.features().enableBounceEffect();
+        quotationDetailTable.features().enableSmoothScrolling(0.5);
 
-        quotationProductsTable.setTableRowFactory(t -> {
-            MFXTableRow<QuotationDetail> row = new MFXTableRow<>(quotationProductsTable, t);
+        quotationDetailTable.setTableRowFactory(t -> {
+            MFXTableRow<QuotationDetail> row = new MFXTableRow<>(quotationDetailTable, t);
             EventHandler<ContextMenuEvent> eventHandler = event -> {
                 showContextMenu((MFXTableRow<QuotationDetail>) event.getSource())
-                        .show(quotationProductsTable.getScene().getWindow(), event.getScreenX(), event.getScreenY());
+                        .show(quotationDetailTable.getScene().getWindow(), event.getScreenX(), event.getScreenY());
                 event.consume();
             };
             row.setOnContextMenuRequested(eventHandler);
@@ -183,7 +189,7 @@ public class QuotationMasterFormController implements Initializable {
     }
 
     private MFXContextMenu showContextMenu(MFXTableRow<QuotationDetail> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(quotationProductsTable);
+        MFXContextMenu contextMenu = new MFXContextMenu(quotationDetailTable);
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
 
@@ -195,7 +201,7 @@ public class QuotationMasterFormController implements Initializable {
                 if (Integer.parseInt(quotationDetailID.getText()) > 0)
                     QuotationDetailDao.deleteQuotationDetail(Integer.parseInt(quotationDetailID.getText()));
             } catch (NumberFormatException ignored) {
-                QuotationDetailViewModel.removeQuotationDetail(QuotationDetailViewModel.quotationDetailsTempList.indexOf(obj.getData()));
+                QuotationDetailViewModel.removeQuotationDetail(QuotationDetailViewModel.quotationDetailTempList.indexOf(obj.getData()));
             }
             QuotationDetailViewModel.getQuotationDetails();
             e.consume();
@@ -222,42 +228,32 @@ public class QuotationMasterFormController implements Initializable {
     }
 
     public void saveBtnClicked() {
-        MFXIconWrapper icon = new MFXIconWrapper("fas-circle-exclamation", 20, Color.RED, 20);
-
-        if (quotationDate.getText().length() == 0) {
-            quotationDate.setTrailingIcon(icon);
-        }
-        if (quotationCustomerId.getText().length() == 0) {
-            quotationCustomerId.setTrailingIcon(icon);
-        }
-        if (quotationBranchId.getText().length() == 0) {
-            quotationBranchId.setTrailingIcon(icon);
-        }
-        if (quotationStatus.getText().length() == 0) {
-            quotationStatus.setTrailingIcon(icon);
-        }
-        if (quotationProductsTable.getTableColumns().isEmpty()) {
+        if (!quotationDetailTable.isDisabled() && QuotationDetailViewModel.quotationDetailTempList.isEmpty()) {
             // Notify table can't be empty
             System.out.println("Table can't be empty");
+            return;
         }
-        if (quotationDate.getText().length() > 0
-                && quotationCustomerId.getText().length() > 0
-                && quotationBranchId.getText().length() > 0
-                && quotationStatus.getText().length() > 0
-                && !quotationProductsTable.getTableColumns().isEmpty()) {
+        if (!quotationBranchValidationLabel.isVisible()
+                && !quotationCustomerValidationLabel.isVisible()
+                && !quotationDateValidationLabel.isVisible()
+                && !quotationStatusValidationLabel.isVisible()) {
             if (Integer.parseInt(quotationMasterID.getText()) > 0) {
                 QuotationMasterViewModel.updateItem(Integer.parseInt(quotationMasterID.getText()));
                 cancelBtnClicked();
             } else
                 QuotationMasterViewModel.saveQuotationMaster();
             QuotationMasterViewModel.resetProperties();
-            quotationProductsTable.getTableColumns().clear();
+            quotationDetailTable.getTableColumns().clear();
         }
     }
 
     public void cancelBtnClicked() {
         QuotationMasterViewModel.resetProperties();
-        quotationProductsTable.getTableColumns().clear();
+        quotationDetailTable.getTableColumns().clear();
+        quotationBranchValidationLabel.setVisible(false);
+        quotationCustomerValidationLabel.setVisible(false);
+        quotationDateValidationLabel.setVisible(false);
+        quotationStatusValidationLabel.setVisible(false);
         ((StackPane) quotationFormContentPane.getParent()).getChildren().get(0).setVisible(true);
         ((StackPane) quotationFormContentPane.getParent()).getChildren().remove(1);
     }

@@ -122,10 +122,10 @@ public class QuotationMasterViewModel {
 
     public static void saveQuotationMaster() {
         QuotationMaster quotationMaster = new QuotationMaster(getDate(), getCustomer(), getBranch(), getStatus(), getNote());
-        quotationMaster.setQuotationDetails(QuotationDetailViewModel.quotationDetailsTempList);
+        quotationMaster.setQuotationDetails(QuotationDetailViewModel.quotationDetailTempList);
         QuotationMasterDao.saveQuotationMaster(quotationMaster);
         resetProperties();
-        QuotationDetailViewModel.quotationDetailsTempList.clear();
+        QuotationDetailViewModel.quotationDetailTempList.clear();
         getQuotationMasters();
     }
 
@@ -143,17 +143,17 @@ public class QuotationMasterViewModel {
         setBranch(quotationMaster.getBranch());
         setStatus(quotationMaster.getStatus());
         setNote(quotationMaster.getNotes());
-        QuotationDetailViewModel.quotationDetailsTempList.addAll(quotationMaster.getQuotationDetails());
+        QuotationDetailViewModel.quotationDetailTempList.addAll(quotationMaster.getQuotationDetails());
         quotationMaster.getQuotationDetails().forEach(System.out::println);
         getQuotationMasters();
     }
 
     public static void updateItem(int quotationMasterID) {
         QuotationMaster quotationMaster = new QuotationMaster(getDate(), getCustomer(), getBranch(), getStatus(), getNote());
-        quotationMaster.setQuotationDetails(QuotationDetailViewModel.quotationDetailsTempList);
+        quotationMaster.setQuotationDetails(QuotationDetailViewModel.quotationDetailTempList);
         QuotationMasterDao.updateQuotationMaster(quotationMaster, quotationMasterID);
         resetProperties();
-        QuotationDetailViewModel.quotationDetailsTempList.clear();
+        QuotationDetailViewModel.quotationDetailTempList.clear();
         getQuotationMasters();
     }
 }
