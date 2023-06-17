@@ -243,7 +243,7 @@ public class TransferMasterFormController implements Initializable {
     public void transferMasterCancelBtnClicked() {
         TransferMasterViewModel.resetProperties();
         TransferDetailViewModel.transferDetailsTempList.clear();
-        ((StackPane) transferMasterFormContentPane.getParent()).getChildren().get(0).setVisible(true);
-        ((StackPane) transferMasterFormContentPane.getParent()).getChildren().remove(1);
+        ((StackPane) transferMasterFormContentPane.getParent().getParent()).getChildren().get(0).setVisible(true);
+        ((StackPane) transferMasterFormContentPane.getParent().getParent()).getChildren().remove(1);
     }
 }
