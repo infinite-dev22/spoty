@@ -225,13 +225,12 @@ public class RequisitionMasterViewModel {
         setBranch(requisitionMaster.getBranch());
         setShipVia(requisitionMaster.getShipVia());
         setShipMethod(requisitionMaster.getShipMethod());
-        setDeliveryDate(requisitionMaster.getDeliveryLocaleDate());
+        setShippingTerms(requisitionMaster.getShippingTerms());
         setNote(requisitionMaster.getNotes());
         setStatus(requisitionMaster.getStatus());
         setTotalCost(String.valueOf(requisitionMaster.getTotalCost()));
         setDate(requisitionMaster.getLocaleDate());
         RequisitionDetailViewModel.requisitionDetailsTempList.addAll(requisitionMaster.getRequisitionDetails());
-        requisitionMaster.getRequisitionDetails().forEach(System.out::println);
         getRequisitionMasters();
     }
 

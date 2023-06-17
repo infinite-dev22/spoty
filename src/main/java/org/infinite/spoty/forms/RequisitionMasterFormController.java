@@ -39,9 +39,11 @@ import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.database.dao.RequisitionDetailDao;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.RequisitionDetail;
+import org.infinite.spoty.database.models.Supplier;
 import org.infinite.spoty.viewModels.BranchViewModel;
 import org.infinite.spoty.viewModels.RequisitionDetailViewModel;
 import org.infinite.spoty.viewModels.RequisitionMasterViewModel;
+import org.infinite.spoty.viewModels.SupplierViewModel;
 
 import java.io.IOException;
 import java.net.URL;
@@ -68,6 +70,14 @@ public class RequisitionMasterFormController implements Initializable {
     public Label requisitionMasterFormTitle;
     @FXML
     public MFXElevatedButton requisitionMasterProductAddBtn;
+    @FXML
+    public MFXFilterComboBox<Supplier> requisitionMasterSupplier;
+    @FXML
+    public MFXTextField requisitionMasterShipVia;
+    @FXML
+    public MFXTextField requisitionMasterShipMthd;
+    @FXML
+    public MFXTextField requisitionMasterShipTerms;
     private Dialog<ButtonType> dialog;
 
     public RequisitionMasterFormController(Stage stage) {
@@ -82,9 +92,6 @@ public class RequisitionMasterFormController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Input listeners.
-        requisitionMasterBranchId.textProperty().addListener((observable, oldValue, newValue) -> requisitionMasterBranchId.setTrailingIcon(null));
-        requisitionMasterDate.textProperty().addListener((observable, oldValue, newValue) -> requisitionMasterDate.setTrailingIcon(null));
         // Input binding.
         requisitionMasterID.textProperty().bindBidirectional(RequisitionMasterViewModel.idProperty(), new NumberStringConverter());
         requisitionMasterBranchId.valueProperty().bindBidirectional(RequisitionMasterViewModel.branchProperty());
@@ -103,7 +110,25 @@ public class RequisitionMasterFormController implements Initializable {
                 return null;
             }
         });
+        requisitionMasterSupplier.setItems(SupplierViewModel.suppliersList);
+        requisitionMasterSupplier.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(Supplier object) {
+                if (object != null)
+                    return object.getName();
+                else
+                    return null;
+            }
+
+            @Override
+            public Supplier fromString(String string) {
+                return null;
+            }
+        });
         requisitionMasterDate.textProperty().bindBidirectional(RequisitionMasterViewModel.dateProperty());
+        requisitionMasterShipVia.textProperty().bindBidirectional(RequisitionMasterViewModel.shipViaProperty());
+        requisitionMasterShipMthd.textProperty().bindBidirectional(RequisitionMasterViewModel.shipMethodProperty());
+        requisitionMasterShipTerms.textProperty().bindBidirectional(RequisitionMasterViewModel.shippingTermsProperty());
         requisitionMasterNote.textProperty().bindBidirectional(RequisitionMasterViewModel.noteProperty());
         requisitionMasterAddProductBtnClicked();
         Platform.runLater(this::setupTable);
@@ -112,21 +137,17 @@ public class RequisitionMasterFormController implements Initializable {
     private void setupTable() {
         MFXTableColumn<RequisitionDetail> productName = new MFXTableColumn<>("Product", false, Comparator.comparing(RequisitionDetail::getProductDetailName));
         MFXTableColumn<RequisitionDetail> productQuantity = new MFXTableColumn<>("Quantity", false, Comparator.comparing(RequisitionDetail::getQuantity));
-//        MFXTableColumn<RequisitionDetail> requisitionMasterType = new MFXTableColumn<>("Requisition Type", false, Comparator.comparing(RequisitionDetail::getRequisitionType));
 
         productName.setRowCellFactory(product -> new MFXTableRowCell<>(RequisitionDetail::getProductDetailName));
         productQuantity.setRowCellFactory(product -> new MFXTableRowCell<>(RequisitionDetail::getQuantity));
-//        requisitionMasterType.setRowCellFactory(product -> new MFXTableRowCell<>(RequisitionDetail::getRequisitionType));
 
         productName.prefWidthProperty().bind(requisitionDetailTable.widthProperty().multiply(.4));
         productQuantity.prefWidthProperty().bind(requisitionDetailTable.widthProperty().multiply(.4));
-//        requisitionMasterType.prefWidthProperty().bind(requisitionMasterProductsTable.widthProperty().multiply(.4));
 
-        requisitionDetailTable.getTableColumns().addAll(productName, productQuantity); // , requisitionMasterType);
+        requisitionDetailTable.getTableColumns().addAll(productName, productQuantity);
         requisitionDetailTable.getFilters().addAll(
                 new StringFilter<>("Name", RequisitionDetail::getProductDetailName),
                 new IntegerFilter<>("Quantity", RequisitionDetail::getQuantity)
-//                new StringFilter<>("Category", RequisitionDetail::getRequisitionType)
         );
         getRequisitionDetailTable();
         requisitionDetailTable.setItems(RequisitionDetailViewModel.requisitionDetailsTempList);
