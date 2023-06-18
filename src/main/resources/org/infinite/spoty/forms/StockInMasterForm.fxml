@@ -25,8 +25,13 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.layout.*?>
+<?import java.net.URL?>
 <BorderPane xmlns:fx="http://javafx.com/fxml/1" cache="true" cacheHint="SPEED" xmlns="http://javafx.com/javafx/19"
             fx:controller="org.infinite.spoty.forms.StockInMasterFormController">
+    <stylesheets>
+        <URL value="@../styles/Common.css"/>
+        <URL value="@../styles/TextFields.css"/>
+    </stylesheets>
     <center>
         <AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="stockInMasterFormContentPane" cache="true"
                     cacheHint="SPEED"
@@ -48,16 +53,30 @@
                 <rowConstraints>
                     <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
                 </rowConstraints>
-                <MFXFilterComboBox fx:id="stockInMasterBranchId" floatMode="BORDER" floatingText="Branch"
-                                   prefWidth="450.0"
-                                   GridPane.columnIndex="0"/>
-                <MFXDatePicker fx:id="stockInMasterDate" floatMode="BORDER" floatingText="Date" prefWidth="450.0"
-                               GridPane.columnIndex="2"/>
-                <MFXElevatedButton fx:id="stockInMasterProductAddBtn" layoutX="930.0" layoutY="80.0" text="Add Product"
+                <VBox spacing="5.0" GridPane.columnIndex="0">
+                    <padding>
+                        <Insets right="10.0" top="5.0"/>
+                    </padding>
+                    <MFXFilterComboBox fx:id="stockInMasterBranch" floatMode="BORDER" floatingText="Branch"
+                                       prefWidth="450.0"/>
+                    <Label id="validationLabel" fx:id="stockInMasterBranchValidationLabel"
+                           maxWidth="1.7976931348623157E308"
+                           minHeight="-Infinity" visible="false" wrapText="true" styleClass="input-validation-error"/>
+                </VBox>
+                <VBox spacing="5.0" GridPane.columnIndex="1">
+                    <padding>
+                        <Insets right="10.0" top="5.0"/>
+                    </padding>
+                    <MFXDatePicker fx:id="stockInMasterDate" floatMode="BORDER" floatingText="Date" prefWidth="450.0"/>
+                    <Label id="validationLabel" fx:id="stockInMasterDateValidationLabel"
+                           maxWidth="1.7976931348623157E308"
+                           minHeight="-Infinity" visible="false" wrapText="true" styleClass="input-validation-error"/>
+                </VBox>
+                <MFXElevatedButton fx:id="stockInMasterProductAddBtn" layoutX="930.0" layoutY="80.0" text="Add Item"
                                    GridPane.columnIndex="3"/>
             </GridPane>
             <MFXTableView fx:id="stockInDetailTable" AnchorPane.bottomAnchor="120.0" AnchorPane.leftAnchor="0.0"
-                          AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="100.0"/>
+                          AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="110.0"/>
             <MFXTextField fx:id="stockInMasterNote" floatMode="BORDER" floatingText="Note" prefWidth="1000.0"
                           AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"/>
             <HBox alignment="CENTER_RIGHT" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
