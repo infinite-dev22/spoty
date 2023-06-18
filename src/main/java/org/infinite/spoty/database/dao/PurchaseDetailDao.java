@@ -58,7 +58,7 @@ public class PurchaseDetailDao {
             purchaseDetail.setQuantity(obj.getQuantity());
             purchaseDetail.setUpdatedAt(new Date());
             // TODO: updated by should be a system user.
-            // purchaseDetail.setUpdatedBy();
+            // purchaseDetailPdct.setUpdatedBy();
             session.merge(purchaseDetail);
             transaction.commit();
         } catch (HibernateError ex) {
