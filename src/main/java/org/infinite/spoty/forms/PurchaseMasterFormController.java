@@ -31,7 +31,6 @@ import javafx.scene.control.Label;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -53,6 +52,7 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
+import static org.infinite.spoty.Validators.requiredValidator;
 import static org.infinite.spoty.dataShare.DataShare.getPurchaseProducts;
 
 @SuppressWarnings("unchecked")
@@ -64,9 +64,9 @@ public class PurchaseMasterFormController implements Initializable {
     @FXML
     public MFXDatePicker purchaseDate;
     @FXML
-    public MFXFilterComboBox<Supplier> purchaseSupplierId;
+    public MFXFilterComboBox<Supplier> purchaseSupplier;
     @FXML
-    public MFXFilterComboBox<Branch> purchaseBranchId;
+    public MFXFilterComboBox<Branch> purchaseBranch;
     @FXML
     public MFXTableView<PurchaseDetail> purchaseDetailTable;
     @FXML
@@ -75,6 +75,14 @@ public class PurchaseMasterFormController implements Initializable {
     public AnchorPane purchaseFormContentPane;
     @FXML
     public MFXFilterComboBox<String> purchaseStatus;
+    @FXML
+    public Label purchaseBranchValidationLabel;
+    @FXML
+    public Label purchaseSupplierValidationLabel;
+    @FXML
+    public Label purchaseDateValidationLabel;
+    @FXML
+    public Label purchaseStatusValidationLabel;
     private Dialog<ButtonType> dialog;
 
     public PurchaseMasterFormController(Stage stage) {
@@ -89,14 +97,9 @@ public class PurchaseMasterFormController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Add event listeners on form inputs
-//        purchaseDate.textProperty().addListener((observable, oldValue, newValue) -> purchaseDate.setTrailingIcon(null));
-//        purchaseSupplierId.textProperty().addListener((observable, oldValue, newValue) -> purchaseSupplierId.setTrailingIcon(null));
-//        purchaseBranchId.textProperty().addListener((observable, oldValue, newValue) -> purchaseBranchId.setTrailingIcon(null));
-//        purchaseStatus.textProperty().addListener((observable, oldValue, newValue) -> purchaseStatus.setTrailingIcon(null));
         // Set items to combo boxes and display custom text.
-        purchaseSupplierId.setItems(SupplierViewModel.suppliersList);
-        purchaseSupplierId.setConverter(new StringConverter<>() {
+        purchaseSupplier.setItems(SupplierViewModel.suppliersList);
+        purchaseSupplier.setConverter(new StringConverter<>() {
             @Override
             public String toString(Supplier object) {
                 if (object != null)
@@ -110,8 +113,8 @@ public class PurchaseMasterFormController implements Initializable {
                 return null;
             }
         });
-        purchaseBranchId.setItems(BranchViewModel.branchesList);
-        purchaseBranchId.setConverter(new StringConverter<>() {
+        purchaseBranch.setItems(BranchViewModel.branchesList);
+        purchaseBranch.setConverter(new StringConverter<>() {
             @Override
             public String toString(Branch object) {
                 if (object != null)
@@ -129,16 +132,20 @@ public class PurchaseMasterFormController implements Initializable {
         // Bi~Directional Binding.
         purchaseMasterID.textProperty().bindBidirectional(PurchaseMasterViewModel.idProperty(), new NumberStringConverter());
         purchaseDate.textProperty().bindBidirectional(PurchaseMasterViewModel.dateProperty());
-        purchaseSupplierId.valueProperty().bindBidirectional(PurchaseMasterViewModel.supplierProperty());
-        purchaseBranchId.valueProperty().bindBidirectional(PurchaseMasterViewModel.branchProperty());
+        purchaseSupplier.valueProperty().bindBidirectional(PurchaseMasterViewModel.supplierProperty());
+        purchaseBranch.valueProperty().bindBidirectional(PurchaseMasterViewModel.branchProperty());
         purchaseStatus.textProperty().bindBidirectional(PurchaseMasterViewModel.statusProperty());
         purchaseNote.textProperty().bindBidirectional(PurchaseMasterViewModel.noteProperty());
-
+        // input validators.
+        requiredValidator(purchaseBranch, "Branch is required.", purchaseBranchValidationLabel);
+        requiredValidator(purchaseSupplier, "Supplier is required.", purchaseSupplierValidationLabel);
+        requiredValidator(purchaseDate, "Date is required.", purchaseDateValidationLabel);
+        requiredValidator(purchaseStatus, "Status is required.", purchaseStatusValidationLabel);
         setupTable();
     }
 
     private void createPurchaseProductDialog(Stage stage) throws IOException {
-        DialogPane dialogPane = fxmlLoader("forms/PurchaseProductsForm.fxml").load();
+        DialogPane dialogPane = fxmlLoader("forms/PurchaseDetailForm.fxml").load();
         dialog = new Dialog<>();
         dialog.setDialogPane(dialogPane);
         dialog.initOwner(stage);
@@ -147,29 +154,14 @@ public class PurchaseMasterFormController implements Initializable {
     }
 
     public void saveBtnClicked() {
-        MFXIconWrapper icon = new MFXIconWrapper("fas-circle-exclamation", 20, Color.RED, 20);
-
-        if (purchaseDate.getText().length() == 0) {
-            purchaseDate.setTrailingIcon(icon);
-        }
-        if (purchaseSupplierId.getText().length() == 0) {
-            purchaseSupplierId.setTrailingIcon(icon);
-        }
-        if (purchaseBranchId.getText().length() == 0) {
-            purchaseBranchId.setTrailingIcon(icon);
-        }
-        if (purchaseStatus.getText().length() == 0) {
-            purchaseStatus.setTrailingIcon(icon);
-        }
-        if (purchaseDetailTable.getTableColumns().isEmpty()) {
+        if (!purchaseDetailTable.isDisabled() && PurchaseDetailViewModel.purchaseDetailTempList.isEmpty()) {
             // Notify table can't be empty
             System.out.println("Table can't be empty");
         }
-        if (purchaseDate.getText().length() > 0
-                && purchaseSupplierId.getText().length() > 0
-                && purchaseBranchId.getText().length() > 0
-                && purchaseStatus.getText().length() > 0
-                && !purchaseDetailTable.getTableColumns().isEmpty()) {
+        if (!purchaseBranchValidationLabel.isVisible()
+                && !purchaseSupplierValidationLabel.isVisible()
+                && !purchaseDateValidationLabel.isVisible()
+                && !purchaseStatusValidationLabel.isVisible()) {
             if (Integer.parseInt(purchaseMasterID.getText()) > 0) {
                 PurchaseMasterViewModel.updateItem(Integer.parseInt(purchaseMasterID.getText()));
                 cancelBtnClicked();
@@ -258,10 +250,14 @@ public class PurchaseMasterFormController implements Initializable {
     }
 
     public void cancelBtnClicked() {
-        ((StackPane) purchaseFormContentPane.getParent().getParent()).getChildren().get(0).setVisible(true);
-        ((StackPane) purchaseFormContentPane.getParent().getParent()).getChildren().remove(1);
         purchaseDetailTable.getTableColumns().clear();
         PurchaseMasterViewModel.resetProperties();
+        purchaseBranchValidationLabel.setVisible(false);
+        purchaseSupplierValidationLabel.setVisible(false);
+        purchaseDateValidationLabel.setVisible(false);
+        purchaseStatusValidationLabel.setVisible(false);
+        ((StackPane) purchaseFormContentPane.getParent().getParent()).getChildren().get(0).setVisible(true);
+        ((StackPane) purchaseFormContentPane.getParent().getParent()).getChildren().remove(1);
     }
 
     public void addBtnClicked() {
