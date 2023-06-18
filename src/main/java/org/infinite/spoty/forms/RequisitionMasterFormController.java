@@ -30,7 +30,6 @@ import javafx.scene.control.Label;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -51,13 +50,14 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
+import static org.infinite.spoty.Validators.requiredValidator;
 
 @SuppressWarnings("unchecked")
 public class RequisitionMasterFormController implements Initializable {
     public MFXTextField requisitionDetailID = new MFXTextField();
     public MFXTextField requisitionMasterID = new MFXTextField();
     @FXML
-    public MFXFilterComboBox<Branch> requisitionMasterBranchId;
+    public MFXFilterComboBox<Branch> requisitionMasterBranch;
     @FXML
     public MFXDatePicker requisitionMasterDate;
     @FXML
@@ -78,6 +78,12 @@ public class RequisitionMasterFormController implements Initializable {
     public MFXTextField requisitionMasterShipMthd;
     @FXML
     public MFXTextField requisitionMasterShipTerms;
+    @FXML
+    public Label requisitionMasterBranchValidationLabel;
+    @FXML
+    public Label requisitionMasterSupplierValidationLabel;
+    @FXML
+    public Label requisitionMasterDateValidationLabel;
     private Dialog<ButtonType> dialog;
 
     public RequisitionMasterFormController(Stage stage) {
@@ -94,9 +100,9 @@ public class RequisitionMasterFormController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         // Input binding.
         requisitionMasterID.textProperty().bindBidirectional(RequisitionMasterViewModel.idProperty(), new NumberStringConverter());
-        requisitionMasterBranchId.valueProperty().bindBidirectional(RequisitionMasterViewModel.branchProperty());
-        requisitionMasterBranchId.setItems(BranchViewModel.branchesList);
-        requisitionMasterBranchId.setConverter(new StringConverter<>() {
+        requisitionMasterBranch.valueProperty().bindBidirectional(RequisitionMasterViewModel.branchProperty());
+        requisitionMasterBranch.setItems(BranchViewModel.branchesList);
+        requisitionMasterBranch.setConverter(new StringConverter<>() {
             @Override
             public String toString(Branch object) {
                 if (object != null)
@@ -130,6 +136,10 @@ public class RequisitionMasterFormController implements Initializable {
         requisitionMasterShipMthd.textProperty().bindBidirectional(RequisitionMasterViewModel.shipMethodProperty());
         requisitionMasterShipTerms.textProperty().bindBidirectional(RequisitionMasterViewModel.shippingTermsProperty());
         requisitionMasterNote.textProperty().bindBidirectional(RequisitionMasterViewModel.noteProperty());
+        // input validators.
+        requiredValidator(requisitionMasterBranch, "Branch is required.", requisitionMasterBranchValidationLabel);
+        requiredValidator(requisitionMasterSupplier, "Supplier is required.", requisitionMasterSupplierValidationLabel);
+        requiredValidator(requisitionMasterDate, "Date is required.", requisitionMasterDateValidationLabel);
         requisitionMasterAddProductBtnClicked();
         Platform.runLater(this::setupTable);
     }
@@ -150,7 +160,7 @@ public class RequisitionMasterFormController implements Initializable {
                 new IntegerFilter<>("Quantity", RequisitionDetail::getQuantity)
         );
         getRequisitionDetailTable();
-        requisitionDetailTable.setItems(RequisitionDetailViewModel.requisitionDetailsTempList);
+        requisitionDetailTable.setItems(RequisitionDetailViewModel.requisitionDetailTempList);
     }
 
     private void getRequisitionDetailTable() {
@@ -178,19 +188,19 @@ public class RequisitionMasterFormController implements Initializable {
         // Actions
         // Delete
         delete.setOnAction(e -> {
-            RequisitionDetailViewModel.getItem(obj.getData(), RequisitionDetailViewModel.requisitionDetailsTempList.indexOf(obj.getData()));
+            RequisitionDetailViewModel.getItem(obj.getData(), RequisitionDetailViewModel.requisitionDetailTempList.indexOf(obj.getData()));
             try {
                 if (Integer.parseInt(requisitionDetailID.getText()) > 0)
                     RequisitionDetailDao.deleteRequisitionDetail(Integer.parseInt(requisitionDetailID.getText()));
             } catch (NumberFormatException ignored) {
-                RequisitionDetailViewModel.removeRequisitionDetail(RequisitionDetailViewModel.requisitionDetailsTempList.indexOf(obj.getData()));
+                RequisitionDetailViewModel.removeRequisitionDetail(RequisitionDetailViewModel.requisitionDetailTempList.indexOf(obj.getData()));
             }
             RequisitionDetailViewModel.getRequisitionDetails();
             e.consume();
         });
         // Edit
         edit.setOnAction(e -> {
-            RequisitionDetailViewModel.getItem(obj.getData(), RequisitionDetailViewModel.requisitionDetailsTempList.indexOf(obj.getData()));
+            RequisitionDetailViewModel.getItem(obj.getData(), RequisitionDetailViewModel.requisitionDetailTempList.indexOf(obj.getData()));
             dialog.showAndWait();
             e.consume();
         });
@@ -214,34 +224,29 @@ public class RequisitionMasterFormController implements Initializable {
     }
 
     public void requisitionMasterSaveBtnClicked() {
-        MFXIconWrapper icon = new MFXIconWrapper("fas-circle-exclamation", 20, Color.RED, 20);
-
-        if (requisitionMasterBranchId.getText().length() == 0) {
-            requisitionMasterBranchId.setTrailingIcon(icon);
-        }
-        if (requisitionMasterDate.getText().length() == 0) {
-            requisitionMasterDate.setTrailingIcon(icon);
-        }
-        if (requisitionDetailTable.getTableColumns().isEmpty()) {
+        if (!requisitionDetailTable.isDisabled() && RequisitionDetailViewModel.requisitionDetailTempList.isEmpty()) {
             // Notify table can't be empty
             System.out.println("Table can't be empty");
         }
-        if (requisitionMasterBranchId.getText().length() > 0
-                && requisitionMasterDate.getText().length() > 0
-                && !requisitionDetailTable.getTableColumns().isEmpty()) {
+        if (!requisitionMasterSupplierValidationLabel.isVisible()
+                && !requisitionMasterDateValidationLabel.isVisible()
+                && !requisitionMasterBranchValidationLabel.isVisible()) {
             if (Integer.parseInt(requisitionMasterID.getText()) > 0) {
                 RequisitionMasterViewModel.updateItem(Integer.parseInt(requisitionMasterID.getText()));
                 requisitionMasterCancelBtnClicked();
             } else
                 RequisitionMasterViewModel.saveRequisitionMaster();
             RequisitionMasterViewModel.resetProperties();
-            RequisitionDetailViewModel.requisitionDetailsTempList.clear();
+            RequisitionDetailViewModel.requisitionDetailTempList.clear();
         }
     }
 
     public void requisitionMasterCancelBtnClicked() {
         RequisitionMasterViewModel.resetProperties();
-        RequisitionDetailViewModel.requisitionDetailsTempList.clear();
+        RequisitionDetailViewModel.requisitionDetailTempList.clear();
+        requisitionMasterBranchValidationLabel.setVisible(false);
+        requisitionMasterSupplierValidationLabel.setVisible(false);
+        requisitionMasterDateValidationLabel.setVisible(false);
         ((StackPane) requisitionMasterFormContentPane.getParent().getParent()).getChildren().get(0).setVisible(true);
         ((StackPane) requisitionMasterFormContentPane.getParent().getParent()).getChildren().remove(1);
     }
