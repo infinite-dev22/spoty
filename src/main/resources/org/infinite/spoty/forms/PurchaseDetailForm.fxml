@@ -22,8 +22,8 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import java.net.URL?>
-<DialogPane xmlns:fx="http://javafx.com/fxml/1" styleClass="card" stylesheets="@../styles/Common.css"
-            xmlns="http://javafx.com/javafx/19" fx:controller="org.infinite.spoty.forms.PurchaseDetailFormController">
+<DialogPane xmlns:fx="http://javafx.com/fxml/1" styleClass="card" xmlns="http://javafx.com/javafx/19"
+            fx:controller="org.infinite.spoty.forms.PurchaseDetailFormController">
     <stylesheets>
         <URL value="@../styles/Common.css"/>
         <URL value="@../styles/TextFields.css"/>
