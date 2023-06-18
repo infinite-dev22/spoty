@@ -126,8 +126,8 @@ public class TransferMasterFormController implements Initializable {
         transferMasterDate.textProperty().bindBidirectional(TransferMasterViewModel.dateProperty());
         transferMasterNote.textProperty().bindBidirectional(TransferMasterViewModel.noteProperty());
         // input validators.
-        requiredValidator(transferMasterToBranch, "Branch is required.", transferMasterToBranchValidationLabel);
-        requiredValidator(transferMasterFromBranch, "Supplier is required.", transferMasterFromBranchValidationLabel);
+        requiredValidator(transferMasterToBranch, "Receiving branch is required.", transferMasterToBranchValidationLabel);
+        requiredValidator(transferMasterFromBranch, "Supplying branch is required.", transferMasterFromBranchValidationLabel);
         requiredValidator(transferMasterDate, "Date is required.", transferMasterDateValidationLabel);
         transferMasterAddProductBtnClicked();
         Platform.runLater(this::setupTable);
@@ -136,21 +136,17 @@ public class TransferMasterFormController implements Initializable {
     private void setupTable() {
         MFXTableColumn<TransferDetail> productName = new MFXTableColumn<>("Product", false, Comparator.comparing(TransferDetail::getProductDetailName));
         MFXTableColumn<TransferDetail> productQuantity = new MFXTableColumn<>("Quantity", false, Comparator.comparing(TransferDetail::getQuantity));
-//        MFXTableColumn<TransferDetail> transferMasterType = new MFXTableColumn<>("Transfer Type", false, Comparator.comparing(TransferDetail::getTransferType));
 
         productName.setRowCellFactory(product -> new MFXTableRowCell<>(TransferDetail::getProductDetailName));
         productQuantity.setRowCellFactory(product -> new MFXTableRowCell<>(TransferDetail::getQuantity));
-//        transferMasterType.setRowCellFactory(product -> new MFXTableRowCell<>(TransferDetail::getTransferType));
 
         productName.prefWidthProperty().bind(transferDetailTable.widthProperty().multiply(.4));
         productQuantity.prefWidthProperty().bind(transferDetailTable.widthProperty().multiply(.4));
-//        transferMasterType.prefWidthProperty().bind(transferMasterProductsTable.widthProperty().multiply(.4));
 
-        transferDetailTable.getTableColumns().addAll(productName, productQuantity); // , transferMasterType);
+        transferDetailTable.getTableColumns().addAll(productName, productQuantity);
         transferDetailTable.getFilters().addAll(
                 new StringFilter<>("Name", TransferDetail::getProductDetailName),
                 new IntegerFilter<>("Quantity", TransferDetail::getQuantity)
-//                new StringFilter<>("Category", TransferDetail::getTransferType)
         );
         getTransferDetailTable();
         transferDetailTable.setItems(TransferDetailViewModel.transferDetailsTempList);
