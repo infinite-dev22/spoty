@@ -15,14 +15,12 @@
 package org.infinite.spoty.forms;
 
 import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
-import io.github.palexdev.materialfx.controls.MFXIconWrapper;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.scene.paint.Color;
 import javafx.util.StringConverter;
 import org.infinite.spoty.database.models.ProductDetail;
 import org.infinite.spoty.viewModels.ProductDetailViewModel;
@@ -32,6 +30,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.GlobalActions.closeDialog;
+import static org.infinite.spoty.Validators.requiredValidator;
 
 public class StockInDetailFormController implements Initializable {
     public MFXTextField stockInDetailID = new MFXTextField();
@@ -47,13 +46,13 @@ public class StockInDetailFormController implements Initializable {
     public Label stockInDetailTitle;
     @FXML
     public MFXTextField stockInDetailDescription;
+    @FXML
+    public Label stockInDetailPdctValidationLabel;
+    @FXML
+    public Label stockInDetailQntyValidationLabel;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Form input listeners.
-        stockInDetailPdct.textProperty().addListener((observable, oldValue, newValue) -> stockInDetailPdct.setLeadingIcon(null));
-        stockInDetailQnty.textProperty().addListener((observable, oldValue, newValue) -> stockInDetailQnty.setTrailingIcon(null));
-        stockInDetailDescription.textProperty().addListener((observable, oldValue, newValue) -> stockInDetailDescription.setLeadingIcon(null));
         // Form input binding.
         stockInDetailID.textProperty().bindBidirectional(StockInDetailViewModel.idProperty());
         stockInDetailPdct.valueProperty().bindBidirectional(StockInDetailViewModel.productProperty());
@@ -75,6 +74,9 @@ public class StockInDetailFormController implements Initializable {
                 return null;
             }
         });
+        // Input validators.
+        requiredValidator(stockInDetailPdct, "Product is required.", stockInDetailPdctValidationLabel);
+        requiredValidator(stockInDetailQnty, "Quantity is required.", stockInDetailQntyValidationLabel);
         dialogOnActions();
     }
 
@@ -82,24 +84,12 @@ public class StockInDetailFormController implements Initializable {
         stockInDetailCancelBtn.setOnAction((e) -> {
             closeDialog(e);
             StockInDetailViewModel.resetProperties();
-            stockInDetailPdct.setLeadingIcon(null);
-            stockInDetailQnty.setTrailingIcon(null);
-            stockInDetailDescription.setLeadingIcon(null);
+            stockInDetailPdctValidationLabel.setVisible(false);
+            stockInDetailQntyValidationLabel.setVisible(false);
         });
         stockInDetailSaveBtn.setOnAction((e) -> {
-            MFXIconWrapper icon = new MFXIconWrapper("fas-circle-exclamation", 20, Color.RED, 20);
-            if (stockInDetailPdct.getText().length() == 0) {
-                stockInDetailPdct.setLeadingIcon(icon);
-            }
-            if (stockInDetailQnty.getText().length() == 0) {
-                stockInDetailQnty.setTrailingIcon(icon);
-            }
-            if (stockInDetailDescription.getText().length() == 0) {
-                stockInDetailDescription.setLeadingIcon(icon);
-            }
-            if (stockInDetailQnty.getText().length() > 0
-                    && stockInDetailPdct.getText().length() > 0
-                    && stockInDetailDescription.getText().length() > 0) {
+            if (!stockInDetailPdctValidationLabel.isVisible()
+                    && !stockInDetailQntyValidationLabel.isVisible()) {
                 if (!stockInDetailID.getText().isEmpty()) {
                     try {
                         if (Integer.parseInt(stockInDetailID.getText()) > 0)
