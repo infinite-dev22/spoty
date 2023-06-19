@@ -41,6 +41,7 @@ import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.viewModels.AdjustmentDetailViewModel;
 import org.infinite.spoty.viewModels.AdjustmentMasterViewModel;
 import org.infinite.spoty.viewModels.BranchViewModel;
+import org.infinite.spoty.viewModels.ProductDetailViewModel;
 
 import java.io.IOException;
 import java.net.URL;

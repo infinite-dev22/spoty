@@ -64,14 +64,13 @@ public class AdjustmentDetailFormController implements Initializable {
         adjustmentProductsQnty.textProperty().bindBidirectional(AdjustmentDetailViewModel.quantityProperty());
         adjustmentType.textProperty().bindBidirectional(AdjustmentDetailViewModel.adjustmentTypeProperty());
         // AdjustmentType combo box properties.
-        adjustmentProductVariant.setItems(ProductDetailViewModel.productDetailsList);
+        adjustmentProductVariant.setItems(ProductDetailViewModel.getProductDetails());
         adjustmentProductVariant.setConverter(new StringConverter<>() {
             @Override
             public String toString(ProductDetail object) {
-                if (object != null)
-                    return object.getProduct().getName() + " " + object.getName();
-                else
-                    return null;
+                return object != null ? object.getProduct().getName()
+                        + " " + (object.getUnit() != null ? (object.getName().isEmpty() ? "" : object.getName())
+                        + " " + object.getUnit().getName() : object.getName()) : null;
             }
 
             @Override

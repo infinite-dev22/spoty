@@ -88,6 +88,12 @@ public class ProductDetailFormController implements Initializable {
             productVariantNameValidationLabel.setVisible(false);
         });
         productProductsSaveBtn.setOnAction((e) -> {
+            // TODO: Find better logic for this.
+            // If one of productVariantUOM or productVariantName is provide can save the product.
+            if (productVariantName.getText().isEmpty() && !productVariantUOM.getText().isEmpty())
+                productVariantNameValidationLabel.setVisible(false);
+            if (productVariantUOM.getText().isEmpty() && !productVariantName.getText().isEmpty())
+                productVariantUOMValidationLabel.setVisible(false);
             if (!productVariantUOMValidationLabel.isVisible()
                     && !productVariantNameValidationLabel.isVisible()) {
                 if (!productDetailID.getText().isEmpty()) {

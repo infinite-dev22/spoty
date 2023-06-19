@@ -18,10 +18,13 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.infinite.spoty.database.dao.ProductDetailDao;
-import org.infinite.spoty.database.dao.ProductDetailDao;
-import org.infinite.spoty.database.models.*;
+import org.infinite.spoty.database.models.Branch;
+import org.infinite.spoty.database.models.ProductDetail;
+import org.infinite.spoty.database.models.UnitOfMeasure;
 
 public class ProductDetailViewModel {
+    public static final ObservableList<ProductDetail> productDetailsList = FXCollections.observableArrayList();
+    public static final ObservableList<ProductDetail> productDetailTempList = FXCollections.observableArrayList();
     private static final StringProperty id = new SimpleStringProperty("");
     private static final ObjectProperty<ProductDetail> product = new SimpleObjectProperty<>(null);
     private static final ListProperty<Branch> branches = new SimpleListProperty<>(null);
@@ -36,8 +39,6 @@ public class ProductDetailViewModel {
     private static final StringProperty taxType = new SimpleStringProperty(null);
     private static final IntegerProperty stockAlert = new SimpleIntegerProperty(0);
     private static final StringProperty serial = new SimpleStringProperty(null);
-    public static final ObservableList<ProductDetail> productDetailsList = FXCollections.observableArrayList();
-    public static final ObservableList<ProductDetail> productDetailTempList = FXCollections.observableArrayList();
 
     public static String getId() {
         return id.get();
@@ -116,7 +117,7 @@ public class ProductDetailViewModel {
     }
 
     public static void setName(String name) {
-        ProductDetailViewModel.name.set(name);
+        ProductDetailViewModel.name.set(name != null ? name : "");
     }
 
     public static StringProperty nameProperty() {
@@ -208,7 +209,7 @@ public class ProductDetailViewModel {
     }
 
     public static void addProductDetail() {
-        ProductDetail productDetail = new ProductDetail(getUnit(),getSaleUnit(),
+        ProductDetail productDetail = new ProductDetail(getUnit(), getSaleUnit(),
                 getProductUnit(), getName(), getQuantity(), getCost(), getPrice(), getNetTax(), getTaxType(),
                 getStockAlert(), getSerial());
         productDetailTempList.add(productDetail);
@@ -242,7 +243,7 @@ public class ProductDetailViewModel {
     }
 
     public static void updateProductDetail(int index) {
-        ProductDetail productDetail = new ProductDetail(getUnit(),getSaleUnit(),
+        ProductDetail productDetail = new ProductDetail(getUnit(), getSaleUnit(),
                 getProductUnit(), getName(), getQuantity(), getCost(), getPrice(), getNetTax(), getTaxType(),
                 getStockAlert(), getSerial());
         productDetailTempList.remove(index);
@@ -285,7 +286,7 @@ public class ProductDetailViewModel {
     }
 
     public static void updateItem(int productDetailID) {
-        ProductDetail productDetail = new ProductDetail(getUnit(),getSaleUnit(),
+        ProductDetail productDetail = new ProductDetail(getUnit(), getSaleUnit(),
                 getProductUnit(), getName(), getQuantity(), getCost(), getPrice(), getNetTax(), getTaxType(),
                 getStockAlert(), getSerial());
         ProductDetailDao.updateProductDetail(productDetail, productDetailID);
