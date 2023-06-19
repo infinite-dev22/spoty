@@ -43,6 +43,7 @@ import static org.infinite.spoty.viewModels.BrandViewModel.getItems;
 
 @SuppressWarnings("unchecked")
 public class BrandController implements Initializable {
+    private static BrandController instance;
     @FXML
     public MFXTableView<Brand> brandTable;
     @FXML
@@ -53,7 +54,7 @@ public class BrandController implements Initializable {
     public MFXButton brandImportBtn;
     private Dialog<ButtonType> dialog;
 
-    public BrandController(Stage stage) {
+    private BrandController(Stage stage) {
         Platform.runLater(() -> {
             try {
                 brandFormDialogPane(stage);
@@ -61,6 +62,12 @@ public class BrandController implements Initializable {
                 throw new RuntimeException(ex);
             }
         });
+    }
+
+    public static BrandController getInstance(Stage stage) {
+        if (instance == null)
+            instance = new BrandController(stage);
+        return instance;
     }
 
     @Override

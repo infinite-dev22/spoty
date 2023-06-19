@@ -26,7 +26,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import org.infinite.spoty.models.RoleMaster;
+import org.infinite.spoty.database.models.Role;
 
 import java.io.IOException;
 import java.net.URL;
@@ -36,7 +36,7 @@ import java.util.ResourceBundle;
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 import static org.infinite.spoty.data.SampleData.roleMasterSampleData;
 
-public class RoleMasterController implements Initializable {
+public class RoleController implements Initializable {
     @FXML
     public MFXButton roleImportBtn;
     @FXML
@@ -46,7 +46,7 @@ public class RoleMasterController implements Initializable {
     @FXML
     public BorderPane roleContentPane;
     @FXML
-    private MFXTableView<RoleMaster> roleMasterTable;
+    private MFXTableView<Role> roleMasterTable;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -54,22 +54,22 @@ public class RoleMasterController implements Initializable {
     }
 
     private void setupTable() {
-        MFXTableColumn<RoleMaster> roleMasterRole = new MFXTableColumn<>("Role", true, Comparator.comparing(RoleMaster::getRole));
-        MFXTableColumn<RoleMaster> roleMasterDescription = new MFXTableColumn<>("Description", true, Comparator.comparing(RoleMaster::getDescription));
+        MFXTableColumn<Role> roleMasterRole = new MFXTableColumn<>("Name", true, Comparator.comparing(Role::getName));
+        MFXTableColumn<Role> roleMasterDescription = new MFXTableColumn<>("Description", true, Comparator.comparing(Role::getDescription));
 
-        roleMasterRole.setRowCellFactory(roleMaster -> new MFXTableRowCell<>(RoleMaster::getRole));
-        roleMasterDescription.setRowCellFactory(roleMaster -> new MFXTableRowCell<>(RoleMaster::getDescription));
+        roleMasterRole.setRowCellFactory(roleMaster -> new MFXTableRowCell<>(Role::getName));
+        roleMasterDescription.setRowCellFactory(roleMaster -> new MFXTableRowCell<>(Role::getDescription));
 
         roleMasterTable.getTableColumns().addAll(roleMasterRole, roleMasterDescription);
         roleMasterTable.getFilters().addAll(
-                new StringFilter<>("Role", RoleMaster::getRole),
-                new StringFilter<>("Description", RoleMaster::getDescription)
+                new StringFilter<>("Name", Role::getName),
+                new StringFilter<>("Description", Role::getDescription)
         );
-        getRoleMasterTable();
+        getNameTable();
         roleMasterTable.setItems(roleMasterSampleData());
     }
 
-    private void getRoleMasterTable() {
+    private void getNameTable() {
         roleMasterTable.setPrefSize(1200, 1000);
         roleMasterTable.features().enableBounceEffect();
         roleMasterTable.autosizeColumnsOnInitialization();

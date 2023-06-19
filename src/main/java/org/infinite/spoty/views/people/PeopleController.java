@@ -35,23 +35,29 @@ import static org.infinite.spoty.SpotResourceLoader.loadURL;
 import static org.infinite.spoty.Utils.createToggle;
 
 public class PeopleController implements Initializable {
+    private static PeopleController instance;
     private final Stage stage;
     @FXML
     public VBox peopleNavbar;
-
     @FXML
     public StackPane contentPane;
 
-    public PeopleController(Stage stage) {
+    private PeopleController(Stage stage) {
         this.stage = stage;
+    }
+
+    public static PeopleController getInstance(Stage stage) {
+        if (instance == null)
+            instance = new PeopleController(stage);
+        return instance;
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         MFXLoader loader = new MFXLoader();
-        loader.addView(MFXLoaderBean.of("CUSTOMERS", loadURL("fxml/people/customers/Customers.fxml")).setBeanToNodeMapper(() -> createToggle("fas-user-tie", "Customers")).setControllerFactory(c -> new CustomerController(stage)).setDefaultRoot(true).get());
-        loader.addView(MFXLoaderBean.of("SUPPLIERS", loadURL("fxml/people/suppliers/Suppliers.fxml")).setBeanToNodeMapper(() -> createToggle("fas-truck", "Suppliers")).setControllerFactory(c -> new SupplierController(stage)).get());
-        loader.addView(MFXLoaderBean.of("USERS", loadURL("fxml/people/users/Users.fxml")).setBeanToNodeMapper(() -> createToggle("fas-user", "Users")).setControllerFactory(c -> new UsersController(stage)).get());
+        loader.addView(MFXLoaderBean.of("CUSTOMERS", loadURL("fxml/people/customers/Customers.fxml")).setBeanToNodeMapper(() -> createToggle("fas-user-tie", "Customers")).setControllerFactory(c -> CustomerController.getInstance(stage)).setDefaultRoot(true).get());
+        loader.addView(MFXLoaderBean.of("SUPPLIERS", loadURL("fxml/people/suppliers/Suppliers.fxml")).setBeanToNodeMapper(() -> createToggle("fas-truck", "Suppliers")).setControllerFactory(c -> SupplierController.getInstance(stage)).get());
+        loader.addView(MFXLoaderBean.of("USERS", loadURL("fxml/people/users/Users.fxml")).setBeanToNodeMapper(() -> createToggle("fas-user", "Users")).setControllerFactory(c -> UsersController.getInstance(stage)).get());
         loader.setOnLoadedAction(beans -> {
             List<ToggleButton> nodes = beans.stream()
                     .map(bean -> {

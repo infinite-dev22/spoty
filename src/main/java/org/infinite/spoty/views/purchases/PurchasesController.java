@@ -43,6 +43,7 @@ import static org.infinite.spoty.viewModels.PurchaseMasterViewModel.getPurchaseM
 
 @SuppressWarnings("unchecked")
 public class PurchasesController implements Initializable {
+    private static PurchasesController instance;
     private final Stage stage;
     @FXML
     public MFXTextField purchaseSearchBar;
@@ -55,8 +56,14 @@ public class PurchasesController implements Initializable {
     @FXML
     private MFXTableView<PurchaseMaster> purchaseMasterTable;
 
-    public PurchasesController(Stage stage) {
+    private PurchasesController(Stage stage) {
         this.stage = stage;
+    }
+
+    public static PurchasesController getInstance(Stage stage) {
+        if (instance == null)
+            instance = new PurchasesController(stage);
+        return instance;
     }
 
     @Override
@@ -153,7 +160,7 @@ public class PurchasesController implements Initializable {
 
     public void purchaseCreateBtnClicked() {
         FXMLLoader loader = fxmlLoader("forms/PurchaseMasterForm.fxml");
-        loader.setControllerFactory(c -> new PurchaseMasterFormController(stage));
+        loader.setControllerFactory(c -> PurchaseMasterFormController.getInstance(stage));
         try {
             BorderPane productFormPane = loader.load();
             ((StackPane) purchaseContentPane.getParent()).getChildren().add(productFormPane);

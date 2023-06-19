@@ -42,6 +42,7 @@ import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 
 @SuppressWarnings("unchecked")
 public class SalesController implements Initializable {
+    private static SalesController instance;
     private final Stage stage;
     @FXML
     public MFXTextField saleSearchBar;
@@ -56,8 +57,14 @@ public class SalesController implements Initializable {
     @FXML
     private MFXTableView<SaleMaster> saleMasterTable;
 
-    public SalesController(Stage stage) {
+    private SalesController(Stage stage) {
         this.stage = stage;
+    }
+
+    public static SalesController getInstance(Stage stage) {
+        if (instance == null)
+            instance = new SalesController(stage);
+        return instance;
     }
 
     @Override
@@ -68,7 +75,6 @@ public class SalesController implements Initializable {
     private void setupTable() {
         MFXTableColumn<SaleMaster> saleDate = new MFXTableColumn<>("Date", false, Comparator.comparing(SaleMaster::getDate));
         MFXTableColumn<SaleMaster> saleReference = new MFXTableColumn<>("Reference", false, Comparator.comparing(SaleMaster::getRef));
-//        MFXTableColumn<SaleMaster> saleAddedBy = new MFXTableColumn<>("Added By", false, Comparator.comparing(SaleMaster::getAddedBy));
         MFXTableColumn<SaleMaster> saleCustomer = new MFXTableColumn<>("Customer", false, Comparator.comparing(SaleMaster::getCustomerName));
         MFXTableColumn<SaleMaster> saleBranch = new MFXTableColumn<>("Branch", false, Comparator.comparing(SaleMaster::getBranchName));
         MFXTableColumn<SaleMaster> saleStatus = new MFXTableColumn<>("Sale Status", false, Comparator.comparing(SaleMaster::getSaleStatus));
@@ -79,7 +85,6 @@ public class SalesController implements Initializable {
 
         saleDate.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleMaster::getLocaleDate));
         saleReference.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleMaster::getRef));
-//        saleAddedBy.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleMaster::getAddedBy));
         saleCustomer.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleMaster::getCustomerName));
         saleBranch.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleMaster::getBranchName));
         saleStatus.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleMaster::getSaleStatus));
@@ -90,7 +95,6 @@ public class SalesController implements Initializable {
 
         saleDate.prefWidthProperty().bind(saleMasterTable.widthProperty().multiply(.1));
         saleReference.prefWidthProperty().bind(saleMasterTable.widthProperty().multiply(.1));
-//        saleAddedBy.prefWidthProperty().bind(saleTable.widthProperty().multiply(.1));
         saleCustomer.prefWidthProperty().bind(saleMasterTable.widthProperty().multiply(.1));
         saleBranch.prefWidthProperty().bind(saleMasterTable.widthProperty().multiply(.1));
         saleStatus.prefWidthProperty().bind(saleMasterTable.widthProperty().multiply(.1));
@@ -102,7 +106,6 @@ public class SalesController implements Initializable {
         saleMasterTable.getTableColumns().addAll(saleDate, saleReference, saleCustomer, saleBranch, saleStatus, saleGrandTotal, saleAmountPaid, saleAmountDue, salePaymentStatus);
         saleMasterTable.getFilters().addAll(
                 new StringFilter<>("Reference", SaleMaster::getRef),
-//                new StringFilter<>("Added By", SaleMaster::getAddedBy),
                 new StringFilter<>("Customer", SaleMaster::getCustomerName),
                 new StringFilter<>("Branch", SaleMaster::getBranchName),
                 new StringFilter<>("Sale Status", SaleMaster::getSaleStatus),
@@ -158,7 +161,7 @@ public class SalesController implements Initializable {
 
     public void saleCreateBtnClicked() {
         FXMLLoader loader = fxmlLoader("forms/SaleMasterForm.fxml");
-        loader.setControllerFactory(c -> new SaleMasterFormController(stage));
+        loader.setControllerFactory(c -> SaleMasterFormController.getInstance(stage));
         try {
             BorderPane productFormPane = loader.load();
             ((StackPane) saleContentPane.getParent()).getChildren().add(productFormPane);

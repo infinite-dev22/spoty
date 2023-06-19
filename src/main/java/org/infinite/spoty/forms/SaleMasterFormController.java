@@ -55,6 +55,7 @@ import static org.infinite.spoty.Validators.requiredValidator;
 
 @SuppressWarnings("unchecked")
 public class SaleMasterFormController implements Initializable {
+    private static SaleMasterFormController instance;
     public MFXTextField saleDetailID = new MFXTextField();
     public MFXTextField saleMasterID = new MFXTextField();
     @FXML
@@ -87,7 +88,7 @@ public class SaleMasterFormController implements Initializable {
     public Label salePaymentStatusValidationLabel;
     private Dialog<ButtonType> dialog;
 
-    public SaleMasterFormController(Stage stage) {
+    private SaleMasterFormController(Stage stage) {
         Platform.runLater(() -> {
             try {
                 saleProductDialogPane(stage);
@@ -95,6 +96,12 @@ public class SaleMasterFormController implements Initializable {
                 throw new RuntimeException(ex);
             }
         });
+    }
+
+    public static SaleMasterFormController getInstance(Stage stage) {
+        if (instance == null)
+            instance = new SaleMasterFormController(stage);
+        return instance;
     }
 
     @Override

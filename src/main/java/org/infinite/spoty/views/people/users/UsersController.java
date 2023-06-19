@@ -44,6 +44,7 @@ import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 
 @SuppressWarnings("unchecked")
 public class UsersController implements Initializable {
+    private static UsersController instance;
     @FXML
     public MFXTextField userSearchBar;
     @FXML
@@ -56,7 +57,7 @@ public class UsersController implements Initializable {
     private MFXTableView<User> userTable;
     private Dialog<ButtonType> dialog;
 
-    public UsersController(Stage stage) {
+    private UsersController(Stage stage) {
         Platform.runLater(() -> {
             try {
                 userFormDialogPane(stage);
@@ -64,6 +65,12 @@ public class UsersController implements Initializable {
                 throw new RuntimeException(ex);
             }
         });
+    }
+
+    public static UsersController getInstance(Stage stage) {
+        if (instance == null)
+            instance = new UsersController(stage);
+        return instance;
     }
 
     @Override

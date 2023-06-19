@@ -44,6 +44,7 @@ import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 
 @SuppressWarnings("unchecked")
 public class BranchesController implements Initializable {
+    private static BranchesController instance;
     @FXML
     public MFXTextField branchSearchBar;
     @FXML
@@ -56,7 +57,7 @@ public class BranchesController implements Initializable {
     public BorderPane branchContentPane;
     private Dialog<ButtonType> dialog;
 
-    public BranchesController(Stage stage) {
+    private BranchesController(Stage stage) {
         Platform.runLater(() -> {
             try {
                 branchFormDialogPane(stage);
@@ -64,6 +65,12 @@ public class BranchesController implements Initializable {
                 throw new RuntimeException(ex);
             }
         });
+    }
+
+    public static BranchesController getInstance(Stage stage) {
+        if (instance == null)
+            instance = new BranchesController(stage);
+        return instance;
     }
 
     @Override

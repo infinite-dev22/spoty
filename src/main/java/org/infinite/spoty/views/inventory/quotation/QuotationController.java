@@ -43,6 +43,7 @@ import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 
 @SuppressWarnings("unchecked")
 public class QuotationController implements Initializable {
+    private static QuotationController instance;
     private final Stage stage;
     @FXML
     public MFXTextField quotationSearchBar;
@@ -55,8 +56,14 @@ public class QuotationController implements Initializable {
     @FXML
     private MFXTableView<QuotationMaster> quotationsTable;
 
-    public QuotationController(Stage stage) {
+    private QuotationController(Stage stage) {
         this.stage = stage;
+    }
+
+    public static QuotationController getInstance(Stage stage) {
+        if (instance == null)
+            instance = new QuotationController(stage);
+        return instance;
     }
 
     @Override
