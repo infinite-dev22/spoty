@@ -30,7 +30,6 @@ import javafx.scene.control.Label;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -49,14 +48,15 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
+import static org.infinite.spoty.Validators.requiredValidator;
 
 @SuppressWarnings("unchecked")
 public class TransferMasterFormController implements Initializable {
     public MFXTextField transferDetailID = new MFXTextField();
     public MFXTextField transferMasterID = new MFXTextField();
     @FXML
-    public MFXFilterComboBox<Branch> transferMasterFromBranchId;
-    public MFXFilterComboBox<Branch> transferMasterToBranchId;
+    public MFXFilterComboBox<Branch> transferMasterFromBranch;
+    public MFXFilterComboBox<Branch> transferMasterToBranch;
     @FXML
     public MFXDatePicker transferMasterDate;
     @FXML
@@ -69,6 +69,12 @@ public class TransferMasterFormController implements Initializable {
     public Label transferMasterFormTitle;
     @FXML
     public MFXElevatedButton transferMasterProductAddBtn;
+    @FXML
+    public Label transferMasterDateValidationLabel;
+    @FXML
+    public Label transferMasterToBranchValidationLabel;
+    @FXML
+    public Label transferMasterFromBranchValidationLabel;
     private Dialog<ButtonType> dialog;
 
     public TransferMasterFormController(Stage stage) {
@@ -83,15 +89,11 @@ public class TransferMasterFormController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Input listeners.
-        transferMasterFromBranchId.textProperty().addListener((observable, oldValue, newValue) -> transferMasterFromBranchId.setTrailingIcon(null));
-        transferMasterToBranchId.textProperty().addListener((observable, oldValue, newValue) -> transferMasterToBranchId.setTrailingIcon(null));
-        transferMasterDate.textProperty().addListener((observable, oldValue, newValue) -> transferMasterDate.setTrailingIcon(null));
         // Input binding.
         transferMasterID.textProperty().bindBidirectional(TransferMasterViewModel.idProperty(), new NumberStringConverter());
-        transferMasterFromBranchId.valueProperty().bindBidirectional(TransferMasterViewModel.fromBranchProperty());
-        transferMasterFromBranchId.setItems(BranchViewModel.branchesList);
-        transferMasterFromBranchId.setConverter(new StringConverter<>() {
+        transferMasterFromBranch.valueProperty().bindBidirectional(TransferMasterViewModel.fromBranchProperty());
+        transferMasterFromBranch.setItems(BranchViewModel.branchesList);
+        transferMasterFromBranch.setConverter(new StringConverter<>() {
             @Override
             public String toString(Branch object) {
                 if (object != null)
@@ -105,9 +107,9 @@ public class TransferMasterFormController implements Initializable {
                 return null;
             }
         });
-        transferMasterToBranchId.valueProperty().bindBidirectional(TransferMasterViewModel.toBranchProperty());
-        transferMasterToBranchId.setItems(BranchViewModel.branchesList);
-        transferMasterToBranchId.setConverter(new StringConverter<>() {
+        transferMasterToBranch.valueProperty().bindBidirectional(TransferMasterViewModel.toBranchProperty());
+        transferMasterToBranch.setItems(BranchViewModel.branchesList);
+        transferMasterToBranch.setConverter(new StringConverter<>() {
             @Override
             public String toString(Branch object) {
                 if (object != null)
@@ -123,6 +125,10 @@ public class TransferMasterFormController implements Initializable {
         });
         transferMasterDate.textProperty().bindBidirectional(TransferMasterViewModel.dateProperty());
         transferMasterNote.textProperty().bindBidirectional(TransferMasterViewModel.noteProperty());
+        // input validators.
+        requiredValidator(transferMasterToBranch, "Receiving branch is required.", transferMasterToBranchValidationLabel);
+        requiredValidator(transferMasterFromBranch, "Supplying branch is required.", transferMasterFromBranchValidationLabel);
+        requiredValidator(transferMasterDate, "Date is required.", transferMasterDateValidationLabel);
         transferMasterAddProductBtnClicked();
         Platform.runLater(this::setupTable);
     }
@@ -130,21 +136,17 @@ public class TransferMasterFormController implements Initializable {
     private void setupTable() {
         MFXTableColumn<TransferDetail> productName = new MFXTableColumn<>("Product", false, Comparator.comparing(TransferDetail::getProductDetailName));
         MFXTableColumn<TransferDetail> productQuantity = new MFXTableColumn<>("Quantity", false, Comparator.comparing(TransferDetail::getQuantity));
-//        MFXTableColumn<TransferDetail> transferMasterType = new MFXTableColumn<>("Transfer Type", false, Comparator.comparing(TransferDetail::getTransferType));
 
         productName.setRowCellFactory(product -> new MFXTableRowCell<>(TransferDetail::getProductDetailName));
         productQuantity.setRowCellFactory(product -> new MFXTableRowCell<>(TransferDetail::getQuantity));
-//        transferMasterType.setRowCellFactory(product -> new MFXTableRowCell<>(TransferDetail::getTransferType));
 
         productName.prefWidthProperty().bind(transferDetailTable.widthProperty().multiply(.4));
         productQuantity.prefWidthProperty().bind(transferDetailTable.widthProperty().multiply(.4));
-//        transferMasterType.prefWidthProperty().bind(transferMasterProductsTable.widthProperty().multiply(.4));
 
-        transferDetailTable.getTableColumns().addAll(productName, productQuantity); // , transferMasterType);
+        transferDetailTable.getTableColumns().addAll(productName, productQuantity);
         transferDetailTable.getFilters().addAll(
                 new StringFilter<>("Name", TransferDetail::getProductDetailName),
                 new IntegerFilter<>("Quantity", TransferDetail::getQuantity)
-//                new StringFilter<>("Category", TransferDetail::getTransferType)
         );
         getTransferDetailTable();
         transferDetailTable.setItems(TransferDetailViewModel.transferDetailsTempList);
@@ -211,25 +213,13 @@ public class TransferMasterFormController implements Initializable {
     }
 
     public void transferMasterSaveBtnClicked() {
-        MFXIconWrapper icon = new MFXIconWrapper("fas-circle-exclamation", 20, Color.RED, 20);
-
-        if (transferMasterFromBranchId.getText().length() == 0) {
-            transferMasterFromBranchId.setTrailingIcon(icon);
-        }
-        if (transferMasterToBranchId.getText().length() == 0) {
-            transferMasterToBranchId.setTrailingIcon(icon);
-        }
-        if (transferMasterDate.getText().length() == 0) {
-            transferMasterDate.setTrailingIcon(icon);
-        }
-        if (transferDetailTable.getTableColumns().isEmpty()) {
+        if (!transferDetailTable.isDisabled() && TransferDetailViewModel.transferDetailsTempList.isEmpty()) {
             // Notify table can't be empty
             System.out.println("Table can't be empty");
         }
-        if (transferMasterFromBranchId.getText().length() > 0
-                && transferMasterToBranchId.getText().length() > 0
-                && transferMasterDate.getText().length() > 0
-                && !transferDetailTable.getTableColumns().isEmpty()) {
+        if (!transferMasterToBranchValidationLabel.isVisible()
+                && !transferMasterFromBranchValidationLabel.isVisible()
+                && !transferMasterDateValidationLabel.isVisible()) {
             if (Integer.parseInt(transferMasterID.getText()) > 0) {
                 TransferMasterViewModel.updateItem(Integer.parseInt(transferMasterID.getText()));
                 transferMasterCancelBtnClicked();
@@ -243,6 +233,9 @@ public class TransferMasterFormController implements Initializable {
     public void transferMasterCancelBtnClicked() {
         TransferMasterViewModel.resetProperties();
         TransferDetailViewModel.transferDetailsTempList.clear();
+        transferMasterToBranchValidationLabel.setVisible(false);
+        transferMasterFromBranchValidationLabel.setVisible(false);
+        transferMasterDateValidationLabel.setVisible(false);
         ((StackPane) transferMasterFormContentPane.getParent().getParent()).getChildren().get(0).setVisible(true);
         ((StackPane) transferMasterFormContentPane.getParent().getParent()).getChildren().remove(1);
     }

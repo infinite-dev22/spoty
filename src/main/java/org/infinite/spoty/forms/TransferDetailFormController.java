@@ -15,14 +15,12 @@
 package org.infinite.spoty.forms;
 
 import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
-import io.github.palexdev.materialfx.controls.MFXIconWrapper;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.scene.paint.Color;
 import javafx.util.StringConverter;
 import org.infinite.spoty.database.models.ProductDetail;
 import org.infinite.spoty.viewModels.ProductDetailViewModel;
@@ -32,6 +30,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.GlobalActions.closeDialog;
+import static org.infinite.spoty.Validators.requiredValidator;
 
 public class TransferDetailFormController implements Initializable {
     public MFXTextField transferDetailID = new MFXTextField();
@@ -47,13 +46,13 @@ public class TransferDetailFormController implements Initializable {
     public Label transferDetailTitle;
     @FXML
     public MFXTextField transferDetailDescription;
+    @FXML
+    public Label transferDetailQntyValidationLabel;
+    @FXML
+    public Label transferDetailPdctValidationLabel;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Form input listeners.
-        transferDetailPdct.textProperty().addListener((observable, oldValue, newValue) -> transferDetailPdct.setLeadingIcon(null));
-        transferDetailQnty.textProperty().addListener((observable, oldValue, newValue) -> transferDetailQnty.setTrailingIcon(null));
-        transferDetailDescription.textProperty().addListener((observable, oldValue, newValue) -> transferDetailDescription.setLeadingIcon(null));
         // Form input binding.
         transferDetailID.textProperty().bindBidirectional(TransferDetailViewModel.idProperty());
         transferDetailPdct.valueProperty().bindBidirectional(TransferDetailViewModel.productProperty());
@@ -75,6 +74,9 @@ public class TransferDetailFormController implements Initializable {
                 return null;
             }
         });
+        // Input validators.
+        requiredValidator(transferDetailPdct, "Product is required.", transferDetailPdctValidationLabel);
+        requiredValidator(transferDetailQnty, "Quantity is required.", transferDetailQntyValidationLabel);
         dialogOnActions();
     }
 
@@ -82,24 +84,12 @@ public class TransferDetailFormController implements Initializable {
         transferDetailCancelBtn.setOnAction((e) -> {
             closeDialog(e);
             TransferDetailViewModel.resetProperties();
-            transferDetailPdct.setLeadingIcon(null);
-            transferDetailQnty.setTrailingIcon(null);
-            transferDetailDescription.setLeadingIcon(null);
+            transferDetailPdctValidationLabel.setVisible(false);
+            transferDetailQntyValidationLabel.setVisible(false);
         });
         transferDetailSaveBtn.setOnAction((e) -> {
-            MFXIconWrapper icon = new MFXIconWrapper("fas-circle-exclamation", 20, Color.RED, 20);
-            if (transferDetailPdct.getText().length() == 0) {
-                transferDetailPdct.setLeadingIcon(icon);
-            }
-            if (transferDetailQnty.getText().length() == 0) {
-                transferDetailQnty.setTrailingIcon(icon);
-            }
-            if (transferDetailDescription.getText().length() == 0) {
-                transferDetailDescription.setLeadingIcon(icon);
-            }
-            if (transferDetailQnty.getText().length() > 0
-                    && transferDetailPdct.getText().length() > 0
-                    && transferDetailDescription.getText().length() > 0) {
+            if (!transferDetailPdctValidationLabel.isVisible()
+                    && !transferDetailQntyValidationLabel.isVisible()) {
                 if (!transferDetailID.getText().isEmpty()) {
                     try {
                         if (Integer.parseInt(transferDetailID.getText()) > 0)

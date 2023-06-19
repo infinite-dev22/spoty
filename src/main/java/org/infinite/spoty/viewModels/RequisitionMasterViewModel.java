@@ -205,10 +205,10 @@ public class RequisitionMasterViewModel {
                 getNote(),
                 getStatus(),
                 getTotalCost());
-        requisitionMaster.setRequisitionDetails(RequisitionDetailViewModel.requisitionDetailsTempList);
+        requisitionMaster.setRequisitionDetails(RequisitionDetailViewModel.requisitionDetailTempList);
         RequisitionMasterDao.saveRequisitionMaster(requisitionMaster);
         resetProperties();
-        RequisitionDetailViewModel.requisitionDetailsTempList.clear();
+        RequisitionDetailViewModel.requisitionDetailTempList.clear();
         getRequisitionMasters();
     }
 
@@ -230,7 +230,7 @@ public class RequisitionMasterViewModel {
         setStatus(requisitionMaster.getStatus());
         setTotalCost(String.valueOf(requisitionMaster.getTotalCost()));
         setDate(requisitionMaster.getLocaleDate());
-        RequisitionDetailViewModel.requisitionDetailsTempList.addAll(requisitionMaster.getRequisitionDetails());
+        RequisitionDetailViewModel.requisitionDetailTempList.addAll(requisitionMaster.getRequisitionDetails());
         getRequisitionMasters();
     }
 
@@ -245,10 +245,10 @@ public class RequisitionMasterViewModel {
                 getNote(),
                 getStatus(),
                 getTotalCost());
-        requisitionMaster.setRequisitionDetails(RequisitionDetailViewModel.requisitionDetailsTempList);
+        requisitionMaster.setRequisitionDetails(RequisitionDetailViewModel.requisitionDetailTempList);
         RequisitionMasterDao.updateRequisitionMaster(requisitionMaster, requisitionMasterID);
         resetProperties();
-        RequisitionDetailViewModel.requisitionDetailsTempList.clear();
+        RequisitionDetailViewModel.requisitionDetailTempList.clear();
         getRequisitionMasters();
     }
 }

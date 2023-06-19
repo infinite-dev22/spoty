@@ -18,12 +18,16 @@
 <?import io.github.palexdev.mfxcomponents.controls.buttons.MFXElevatedButton?>
 <?import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton?>
 <?import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Separator?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import java.net.URL?>
 <BorderPane xmlns:fx="http://javafx.com/fxml/1" cache="true" cacheHint="SPEED" xmlns="http://javafx.com/javafx/19"
             fx:controller="org.infinite.spoty.forms.RequisitionMasterFormController">
+    <stylesheets>
+        <URL value="@../styles/Common.css"/>
+        <URL value="@../styles/TextFields.css"/>
+    </stylesheets>
     <center>
         <AnchorPane fx:id="requisitionMasterFormContentPane" cache="true" cacheHint="SPEED" styleClass="card"
                     stylesheets="@../styles/Common.css" xmlns="http://javafx.com/javafx/19"
@@ -36,7 +40,7 @@
                    AnchorPane.topAnchor="0.0"/>
             <Separator prefWidth="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
                        AnchorPane.topAnchor="20.0"/>
-            <GridPane hgap="20.0" vgap="20.0" layoutX="10.0" layoutY="50.0" AnchorPane.leftAnchor="0.0"
+            <GridPane hgap="20.0" vgap="5.0" layoutX="10.0" layoutY="50.0" AnchorPane.leftAnchor="0.0"
                       AnchorPane.rightAnchor="0.0"
                       AnchorPane.topAnchor="40.0">
                 <columnConstraints>
@@ -45,15 +49,39 @@
                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"/>
                 </columnConstraints>
                 <rowConstraints>
-                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
-                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="5.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="5.0" vgrow="SOMETIMES"/>
                 </rowConstraints>
-                <MFXFilterComboBox fx:id="requisitionMasterBranchId" floatMode="BORDER" floatingText="Branch"
+                <VBox spacing="2.0">
+                    <padding>
+                        <Insets top="5.0"/>
+                    </padding>
+                    <MFXFilterComboBox fx:id="requisitionMasterBranch" floatMode="BORDER" floatingText="Branch"
+                                       prefWidth="400.0"/>
+                    <Label id="validationLabel" fx:id="requisitionMasterBranchValidationLabel"
+                           maxWidth="1.7976931348623157E308" minHeight="-Infinity" visible="false" wrapText="true"
+                           styleClass="input-validation-error"/>
+                </VBox>
+                <VBox spacing="2.0" GridPane.columnIndex="1">
+                    <padding>
+                        <Insets top="5.0"/>
+                    </padding>
+                    <MFXFilterComboBox fx:id="requisitionMasterSupplier" floatMode="BORDER" floatingText="Supplier"
+                                       prefWidth="400.0"/>
+                    <Label id="validationLabel" fx:id="requisitionMasterSupplierValidationLabel"
+                           maxWidth="1.7976931348623157E308" minHeight="-Infinity" visible="false" wrapText="true"
+                           styleClass="input-validation-error"/>
+                </VBox>
+                <VBox spacing="2.0" GridPane.columnIndex="2">
+                    <padding>
+                        <Insets top="5.0"/>
+                    </padding>
+                    <MFXDatePicker fx:id="requisitionMasterDate" floatMode="BORDER" floatingText="Date"
                                    prefWidth="400.0"/>
-                <MFXFilterComboBox fx:id="requisitionMasterSupplier" floatMode="BORDER" floatingText="Supplier"
-                                   prefWidth="400.0" GridPane.columnIndex="1"/>
-                <MFXDatePicker fx:id="requisitionMasterDate" floatMode="BORDER" floatingText="Date" prefWidth="400.0"
-                               GridPane.columnIndex="2"/>
+                    <Label id="validationLabel" fx:id="requisitionMasterDateValidationLabel"
+                           maxWidth="1.7976931348623157E308" minHeight="-Infinity" visible="false" wrapText="true"
+                           styleClass="input-validation-error"/>
+                </VBox>
                 <MFXTextField fx:id="requisitionMasterShipVia" floatMode="BORDER" floatingText="Ship via"
                               prefWidth="400.0" GridPane.rowIndex="1"/>
                 <MFXTextField fx:id="requisitionMasterShipMthd" floatMode="BORDER" floatingText="Ship method"
@@ -61,10 +89,10 @@
                 <MFXTextField fx:id="requisitionMasterShipTerms" floatMode="BORDER" floatingText="Shipping terms"
                               prefWidth="400.0" GridPane.rowIndex="1" GridPane.columnIndex="2"/>
             </GridPane>
-            <MFXElevatedButton fx:id="requisitionMasterProductAddBtn" layoutX="930.0" layoutY="80.0" text="Add Product"
-                               AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="150.0"/>
             <MFXTableView fx:id="requisitionDetailTable" AnchorPane.bottomAnchor="110.0" AnchorPane.leftAnchor="0.0"
-                          AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="200.0"/>
+                          AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="160.0"/>
+            <MFXElevatedButton fx:id="requisitionMasterProductAddBtn" layoutX="930.0" layoutY="70.0" text="Add Product"
+                               AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="162.0"/>
             <MFXTextField fx:id="requisitionMasterNote" floatMode="BORDER" floatingText="Note" prefWidth="1000.0"
                           AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"/>
             <HBox alignment="CENTER_RIGHT" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"

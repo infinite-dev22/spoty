@@ -15,14 +15,12 @@
 package org.infinite.spoty.forms;
 
 import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
-import io.github.palexdev.materialfx.controls.MFXIconWrapper;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.scene.paint.Color;
 import javafx.util.StringConverter;
 import org.infinite.spoty.database.models.ProductDetail;
 import org.infinite.spoty.viewModels.ProductDetailViewModel;
@@ -32,6 +30,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.GlobalActions.closeDialog;
+import static org.infinite.spoty.Validators.requiredValidator;
 
 public class RequisitionDetailFormController implements Initializable {
     public MFXTextField requisitionDetailID = new MFXTextField();
@@ -47,13 +46,13 @@ public class RequisitionDetailFormController implements Initializable {
     public Label requisitionDetailTitle;
     @FXML
     public MFXTextField requisitionDetailDescription;
+    @FXML
+    public Label requisitionDetailPdctValidationLabel;
+    @FXML
+    public Label requisitionDetailQntyValidationLabel;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Form input listeners.
-        requisitionDetailPdct.textProperty().addListener((observable, oldValue, newValue) -> requisitionDetailPdct.setLeadingIcon(null));
-        requisitionDetailQnty.textProperty().addListener((observable, oldValue, newValue) -> requisitionDetailQnty.setTrailingIcon(null));
-        requisitionDetailDescription.textProperty().addListener((observable, oldValue, newValue) -> requisitionDetailDescription.setLeadingIcon(null));
         // Form input binding.
         requisitionDetailID.textProperty().bindBidirectional(RequisitionDetailViewModel.idProperty());
         requisitionDetailPdct.valueProperty().bindBidirectional(RequisitionDetailViewModel.productProperty());
@@ -75,6 +74,9 @@ public class RequisitionDetailFormController implements Initializable {
                 return null;
             }
         });
+        // Input validators.
+        requiredValidator(requisitionDetailPdct, "Product is required.", requisitionDetailPdctValidationLabel);
+        requiredValidator(requisitionDetailQnty, "Quantity is required.", requisitionDetailQntyValidationLabel);
         dialogOnActions();
     }
 
@@ -82,24 +84,12 @@ public class RequisitionDetailFormController implements Initializable {
         requisitionDetailCancelBtn.setOnAction((e) -> {
             closeDialog(e);
             RequisitionDetailViewModel.resetProperties();
-            requisitionDetailPdct.setLeadingIcon(null);
-            requisitionDetailQnty.setTrailingIcon(null);
-            requisitionDetailDescription.setLeadingIcon(null);
+            requisitionDetailPdctValidationLabel.setVisible(false);
+            requisitionDetailQntyValidationLabel.setVisible(false);
         });
         requisitionDetailSaveBtn.setOnAction((e) -> {
-            MFXIconWrapper icon = new MFXIconWrapper("fas-circle-exclamation", 20, Color.RED, 20);
-            if (requisitionDetailPdct.getText().length() == 0) {
-                requisitionDetailPdct.setLeadingIcon(icon);
-            }
-            if (requisitionDetailQnty.getText().length() == 0) {
-                requisitionDetailQnty.setTrailingIcon(icon);
-            }
-            if (requisitionDetailDescription.getText().length() == 0) {
-                requisitionDetailDescription.setLeadingIcon(icon);
-            }
-            if (requisitionDetailQnty.getText().length() > 0
-                    && requisitionDetailPdct.getText().length() > 0
-                    && requisitionDetailDescription.getText().length() > 0) {
+            if (!requisitionDetailPdctValidationLabel.isVisible()
+                    && !requisitionDetailQntyValidationLabel.isVisible()) {
                 if (!requisitionDetailID.getText().isEmpty()) {
                     try {
                         if (Integer.parseInt(requisitionDetailID.getText()) > 0)

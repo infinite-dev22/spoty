@@ -18,12 +18,16 @@
 <?import io.github.palexdev.mfxcomponents.controls.buttons.MFXElevatedButton?>
 <?import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton?>
 <?import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Separator?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import java.net.URL?>
 <BorderPane xmlns:fx="http://javafx.com/fxml/1" cache="true" cacheHint="SPEED" xmlns="http://javafx.com/javafx/19"
             fx:controller="org.infinite.spoty.forms.TransferMasterFormController">
+    <stylesheets>
+        <URL value="@../styles/Common.css"/>
+        <URL value="@../styles/TextFields.css"/>
+    </stylesheets>
     <center>
         <AnchorPane fx:id="transferMasterFormContentPane" cache="true" cacheHint="SPEED" styleClass="card"
                     stylesheets="@../styles/Common.css" xmlns="http://javafx.com/javafx/19"
@@ -45,17 +49,40 @@
                 <rowConstraints>
                     <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
                 </rowConstraints>
-                <MFXFilterComboBox fx:id="transferMasterFromBranchId" floatMode="BORDER" floatingText="From Branch"
-                                   prefWidth="400.0" GridPane.columnIndex="0"/>
-                <MFXFilterComboBox fx:id="transferMasterToBranchId" floatMode="BORDER" floatingText="To Branch"
-                                   prefWidth="400.0" GridPane.columnIndex="1"/>
-                <MFXDatePicker fx:id="transferMasterDate" floatMode="BORDER" floatingText="Date" prefWidth="400.0"
-                               GridPane.columnIndex="2"/>
+                <VBox spacing="5.0" GridPane.columnIndex="0">
+                    <padding>
+                        <Insets right="10.0" top="5.0"/>
+                    </padding>
+                    <MFXFilterComboBox fx:id="transferMasterFromBranch" floatMode="BORDER" floatingText="From Branch"
+                                       prefWidth="400.0"/>
+                    <Label id="validationLabel" fx:id="transferMasterFromBranchValidationLabel"
+                           maxWidth="1.7976931348623157E308"
+                           minHeight="-Infinity" visible="false" wrapText="true" styleClass="input-validation-error"/>
+                </VBox>
+                <VBox spacing="5.0" GridPane.columnIndex="1">
+                    <padding>
+                        <Insets right="10.0" top="5.0"/>
+                    </padding>
+                    <MFXFilterComboBox fx:id="transferMasterToBranch" floatMode="BORDER" floatingText="To Branch"
+                                       prefWidth="400.0"/>
+                    <Label id="validationLabel" fx:id="transferMasterToBranchValidationLabel"
+                           maxWidth="1.7976931348623157E308"
+                           minHeight="-Infinity" visible="false" wrapText="true" styleClass="input-validation-error"/>
+                </VBox>
+                <VBox spacing="5.0" GridPane.columnIndex="2">
+                    <padding>
+                        <Insets right="10.0" top="5.0"/>
+                    </padding>
+                    <MFXDatePicker fx:id="transferMasterDate" floatMode="BORDER" floatingText="Date" prefWidth="400.0"/>
+                    <Label id="validationLabel" fx:id="transferMasterDateValidationLabel"
+                           maxWidth="1.7976931348623157E308"
+                           minHeight="-Infinity" visible="false" wrapText="true" styleClass="input-validation-error"/>
+                </VBox>
             </GridPane>
-            <MFXElevatedButton fx:id="transferMasterProductAddBtn" layoutX="930.0" layoutY="80.0" text="Add Product"
-                               AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="90.0"/>
             <MFXTableView fx:id="transferDetailTable" AnchorPane.bottomAnchor="120.0" AnchorPane.leftAnchor="0.0"
-                          AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="140.0"/>
+                          AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="110.0"/>
+            <MFXElevatedButton fx:id="transferMasterProductAddBtn" layoutX="930.0" layoutY="80.0" text="Add Item"
+                               AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="111.0"/>
             <MFXTextField fx:id="transferMasterNote" floatMode="BORDER" floatingText="Note" prefWidth="1000.0"
                           AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"/>
             <HBox alignment="CENTER_RIGHT" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"

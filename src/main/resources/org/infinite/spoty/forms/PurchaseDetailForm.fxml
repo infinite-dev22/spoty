@@ -23,25 +23,27 @@
 <?import javafx.scene.layout.*?>
 <?import java.net.URL?>
 <DialogPane xmlns:fx="http://javafx.com/fxml/1" styleClass="card" xmlns="http://javafx.com/javafx/19"
-            fx:controller="org.infinite.spoty.forms.StockInDetailFormController">
+            fx:controller="org.infinite.spoty.forms.PurchaseDetailFormController">
     <stylesheets>
         <URL value="@../styles/Common.css"/>
         <URL value="@../styles/TextFields.css"/>
     </stylesheets>
     <content>
         <AnchorPane>
-            <VBox layoutY="10.0" spacing="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                  AnchorPane.topAnchor="20.0">
+            <Separator layoutY="25.0" prefWidth="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                       AnchorPane.topAnchor="0.0"/>
+            <VBox layoutY="10.0" spacing="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                  AnchorPane.topAnchor="0.0">
                 <padding>
-                    <Insets left="10.0" right="10.0"/>
+                    <Insets left="10.0" right="10.0" top="20.0"/>
                 </padding>
                 <VBox spacing="2.0">
                     <padding>
                         <Insets right="10.0" top="2.5"/>
                     </padding>
-                    <MFXFilterComboBox fx:id="stockInDetailPdct" floatMode="BORDER" floatingText="Product"
+                    <MFXFilterComboBox fx:id="purchaseDetailPdct" floatMode="BORDER" floatingText="Product"
                                        prefWidth="400.0"/>
-                    <Label id="validationLabel" fx:id="stockInDetailPdctValidationLabel"
+                    <Label id="validationLabel" fx:id="purchaseDetailPdctValidationLabel"
                            maxWidth="1.7976931348623157E308"
                            minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true"/>
                 </VBox>
@@ -49,9 +51,9 @@
                     <padding>
                         <Insets right="10.0" top="2.5"/>
                     </padding>
-                    <MFXTextField fx:id="stockInDetailQnty" floatMode="BORDER" floatingText="Quantity"
+                    <MFXTextField fx:id="purchaseDetailQnty" floatMode="BORDER" floatingText="Quantity"
                                   prefWidth="400.0"/>
-                    <Label id="validationLabel" fx:id="stockInDetailQntyValidationLabel"
+                    <Label id="validationLabel" fx:id="purchaseDetailQntyValidationLabel"
                            maxWidth="1.7976931348623157E308"
                            minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true"/>
                 </VBox>
@@ -59,24 +61,32 @@
                     <padding>
                         <Insets right="10.0" top="2.5"/>
                     </padding>
-                    <MFXTextField fx:id="stockInDetailDescription" floatMode="BORDER" floatingText="Description"
+                    <MFXTextField fx:id="purchaseDetailOrderTax" floatMode="BORDER" floatingText="Order Tax"
                                   prefWidth="400.0"/>
+                    <Label id="validationLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+                           styleClass="input-validation-error" visible="false" wrapText="true"/>
+                </VBox>
+                <VBox spacing="2.0">
+                    <padding>
+                        <Insets right="10.0" top="2.5"/>
+                    </padding>
+                    <MFXTextField fx:id="purchaseDetailDiscount" floatMode="BORDER" floatingText="Discount"
+                                  prefWidth="400.0"/>
+                    <Label id="validationLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+                           styleClass="input-validation-error" visible="false" wrapText="true"/>
                 </VBox>
                 <HBox alignment="CENTER_RIGHT" spacing="20.0">
                     <VBox.margin>
                         <Insets top="10.0"/>
                     </VBox.margin>
-                    <MFXFilledButton fx:id="stockInDetailSaveBtn" text="Save"/>
-                    <MFXOutlinedButton fx:id="stockInDetailCancelBtn" text="Cancel"/>
+                    <MFXFilledButton fx:id="purchaseDetailSaveBtn" text="Save"/>
+                    <MFXOutlinedButton fx:id="purchaseDetailCancelBtn" text="Cancel"/>
                 </HBox>
             </VBox>
         </AnchorPane>
     </content>
     <header>
-        <VBox spacing="5.0">
-            <Label fx:id="stockInDetailTitle" styleClass="card-title" text="Create"/>
-            <Separator prefWidth="200.0"/>
-        </VBox>
+        <Label fx:id="purchaseDetailTitle" styleClass="card-title" text="Create"/>
     </header>
     <padding>
         <Insets left="10.0" right="10.0" top="10.0"/>

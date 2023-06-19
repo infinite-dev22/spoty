@@ -26,8 +26,8 @@ import org.infinite.spoty.database.models.RequisitionDetail;
 import org.infinite.spoty.database.models.RequisitionMaster;
 
 public class RequisitionDetailViewModel {
-    public static final ObservableList<RequisitionDetail> requisitionDetailsList = FXCollections.observableArrayList();
-    public static final ObservableList<RequisitionDetail> requisitionDetailsTempList = FXCollections.observableArrayList();
+    public static final ObservableList<RequisitionDetail> requisitionDetailList = FXCollections.observableArrayList();
+    public static final ObservableList<RequisitionDetail> requisitionDetailTempList = FXCollections.observableArrayList();
     private static final StringProperty id = new SimpleStringProperty();
     private static final ObjectProperty<ProductDetail> product = new SimpleObjectProperty<>();
     private static final ObjectProperty<RequisitionMaster> requisition = new SimpleObjectProperty<>();
@@ -107,14 +107,14 @@ public class RequisitionDetailViewModel {
                 getRequisition(),
                 Integer.parseInt(getQuantity()),
                 getDescription());
-        requisitionDetailsTempList.add(requisitionDetail);
+        requisitionDetailTempList.add(requisitionDetail);
         resetProperties();
     }
 
     public static ObservableList<RequisitionDetail> getRequisitionDetails() {
-        requisitionDetailsList.clear();
-        requisitionDetailsList.addAll(RequisitionDetailDao.fetchRequisitionDetails());
-        return requisitionDetailsList;
+        requisitionDetailList.clear();
+        requisitionDetailList.addAll(RequisitionDetailDao.fetchRequisitionDetails());
+        return requisitionDetailList;
     }
 
     public static void updateRequisitionDetail(int index) {
@@ -122,8 +122,8 @@ public class RequisitionDetailViewModel {
                 getRequisition(),
                 Integer.parseInt(getQuantity()),
                 getDescription());
-        requisitionDetailsTempList.remove(index);
-        requisitionDetailsTempList.add(index, requisitionDetail);
+        requisitionDetailTempList.remove(index);
+        requisitionDetailTempList.add(index, requisitionDetail);
         resetProperties();
     }
 
@@ -151,6 +151,6 @@ public class RequisitionDetailViewModel {
     }
 
     public static void removeRequisitionDetail(int index) {
-        requisitionDetailsTempList.remove(index);
+        requisitionDetailTempList.remove(index);
     }
 }

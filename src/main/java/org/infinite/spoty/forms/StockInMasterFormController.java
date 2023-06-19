@@ -30,7 +30,6 @@ import javafx.scene.control.Label;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -49,13 +48,14 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
+import static org.infinite.spoty.Validators.requiredValidator;
 
 @SuppressWarnings("unchecked")
 public class StockInMasterFormController implements Initializable {
     public MFXTextField stockInDetailID = new MFXTextField();
     public MFXTextField stockInMasterID = new MFXTextField();
     @FXML
-    public MFXFilterComboBox<Branch> stockInMasterBranchId;
+    public MFXFilterComboBox<Branch> stockInMasterBranch;
     @FXML
     public MFXDatePicker stockInMasterDate;
     @FXML
@@ -68,6 +68,10 @@ public class StockInMasterFormController implements Initializable {
     public Label stockInMasterFormTitle;
     @FXML
     public MFXElevatedButton stockInMasterProductAddBtn;
+    @FXML
+    public Label stockInMasterDateValidationLabel;
+    @FXML
+    public Label stockInMasterBranchValidationLabel;
     private Dialog<ButtonType> dialog;
 
     public StockInMasterFormController(Stage stage) {
@@ -82,14 +86,11 @@ public class StockInMasterFormController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Input listeners.
-        stockInMasterBranchId.textProperty().addListener((observable, oldValue, newValue) -> stockInMasterBranchId.setTrailingIcon(null));
-        stockInMasterDate.textProperty().addListener((observable, oldValue, newValue) -> stockInMasterDate.setTrailingIcon(null));
         // Input binding.
         stockInMasterID.textProperty().bindBidirectional(StockInMasterViewModel.idProperty(), new NumberStringConverter());
-        stockInMasterBranchId.valueProperty().bindBidirectional(StockInMasterViewModel.branchProperty());
-        stockInMasterBranchId.setItems(BranchViewModel.branchesList);
-        stockInMasterBranchId.setConverter(new StringConverter<>() {
+        stockInMasterBranch.valueProperty().bindBidirectional(StockInMasterViewModel.branchProperty());
+        stockInMasterBranch.setItems(BranchViewModel.branchesList);
+        stockInMasterBranch.setConverter(new StringConverter<>() {
             @Override
             public String toString(Branch object) {
                 if (object != null)
@@ -105,6 +106,9 @@ public class StockInMasterFormController implements Initializable {
         });
         stockInMasterDate.textProperty().bindBidirectional(StockInMasterViewModel.dateProperty());
         stockInMasterNote.textProperty().bindBidirectional(StockInMasterViewModel.noteProperty());
+        // input validators.
+        requiredValidator(stockInMasterBranch, "Branch is required.", stockInMasterBranchValidationLabel);
+        requiredValidator(stockInMasterDate, "Date is required.", stockInMasterDateValidationLabel);
         stockInMasterAddProductBtnClicked();
         Platform.runLater(this::setupTable);
     }
@@ -112,21 +116,17 @@ public class StockInMasterFormController implements Initializable {
     private void setupTable() {
         MFXTableColumn<StockInDetail> productName = new MFXTableColumn<>("Product", false, Comparator.comparing(StockInDetail::getProductDetailName));
         MFXTableColumn<StockInDetail> productQuantity = new MFXTableColumn<>("Quantity", false, Comparator.comparing(StockInDetail::getQuantity));
-//        MFXTableColumn<StockInDetail> stockInMasterType = new MFXTableColumn<>("StockIn Type", false, Comparator.comparing(StockInDetail::getStockInType));
 
         productName.setRowCellFactory(product -> new MFXTableRowCell<>(StockInDetail::getProductDetailName));
         productQuantity.setRowCellFactory(product -> new MFXTableRowCell<>(StockInDetail::getQuantity));
-//        stockInMasterType.setRowCellFactory(product -> new MFXTableRowCell<>(StockInDetail::getStockInType));
 
         productName.prefWidthProperty().bind(stockInDetailTable.widthProperty().multiply(.4));
         productQuantity.prefWidthProperty().bind(stockInDetailTable.widthProperty().multiply(.4));
-//        stockInMasterType.prefWidthProperty().bind(stockInMasterProductsTable.widthProperty().multiply(.4));
 
-        stockInDetailTable.getTableColumns().addAll(productName, productQuantity); // , stockInMasterType);
+        stockInDetailTable.getTableColumns().addAll(productName, productQuantity);
         stockInDetailTable.getFilters().addAll(
                 new StringFilter<>("Name", StockInDetail::getProductDetailName),
                 new IntegerFilter<>("Quantity", StockInDetail::getQuantity)
-//                new StringFilter<>("Category", StockInDetail::getStockInType)
         );
         getStockInDetailTable();
         stockInDetailTable.setItems(StockInDetailViewModel.stockInDetailsTempList);
@@ -193,21 +193,12 @@ public class StockInMasterFormController implements Initializable {
     }
 
     public void stockInMasterSaveBtnClicked() {
-        MFXIconWrapper icon = new MFXIconWrapper("fas-circle-exclamation", 20, Color.RED, 20);
-
-        if (stockInMasterBranchId.getText().length() == 0) {
-            stockInMasterBranchId.setTrailingIcon(icon);
-        }
-        if (stockInMasterDate.getText().length() == 0) {
-            stockInMasterDate.setTrailingIcon(icon);
-        }
-        if (stockInDetailTable.getTableColumns().isEmpty()) {
+        if (!stockInDetailTable.isDisabled() && StockInDetailViewModel.stockInDetailsTempList.isEmpty()) {
             // Notify table can't be empty
             System.out.println("Table can't be empty");
         }
-        if (stockInMasterBranchId.getText().length() > 0
-                && stockInMasterDate.getText().length() > 0
-                && !stockInDetailTable.getTableColumns().isEmpty()) {
+        if (!stockInMasterBranchValidationLabel.isVisible()
+                && !stockInMasterDateValidationLabel.isVisible()) {
             if (Integer.parseInt(stockInMasterID.getText()) > 0) {
                 StockInMasterViewModel.updateItem(Integer.parseInt(stockInMasterID.getText()));
                 stockInMasterCancelBtnClicked();
@@ -221,6 +212,8 @@ public class StockInMasterFormController implements Initializable {
     public void stockInMasterCancelBtnClicked() {
         StockInMasterViewModel.resetProperties();
         StockInDetailViewModel.stockInDetailsTempList.clear();
+        stockInMasterBranchValidationLabel.setVisible(false);
+        stockInMasterDateValidationLabel.setVisible(false);
         ((StackPane) stockInMasterFormContentPane.getParent().getParent()).getChildren().get(0).setVisible(true);
         ((StackPane) stockInMasterFormContentPane.getParent().getParent()).getChildren().remove(1);
     }

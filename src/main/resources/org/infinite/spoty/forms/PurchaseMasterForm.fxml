@@ -18,12 +18,16 @@
 <?import io.github.palexdev.mfxcomponents.controls.buttons.MFXElevatedButton?>
 <?import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton?>
 <?import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Separator?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import java.net.URL?>
 <BorderPane xmlns:fx="http://javafx.com/fxml/1" cache="true" cacheHint="SPEED" xmlns="http://javafx.com/javafx/19"
             fx:controller="org.infinite.spoty.forms.PurchaseMasterFormController">
+    <stylesheets>
+        <URL value="@../styles/Common.css"/>
+        <URL value="@../styles/TextFields.css"/>
+    </stylesheets>
     <center>
         <AnchorPane fx:id="purchaseFormContentPane" prefHeight="400.0" prefWidth="600.0" styleClass="card"
                     stylesheets="@../styles/Common.css">
@@ -43,17 +47,39 @@
                 <rowConstraints>
                     <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
                 </rowConstraints>
-                <MFXDatePicker fx:id="purchaseDate" floatMode="BORDER" floatingText="Date" prefWidth="400.0"/>
-                <MFXFilterComboBox fx:id="purchaseSupplierId" floatMode="BORDER" floatingText="Supplier"
-                                   prefWidth="400.0" GridPane.columnIndex="1"/>
-                <MFXFilterComboBox fx:id="purchaseBranchId" floatMode="BORDER" floatingText="Branch" layoutX="10.0"
-                                   layoutY="12.0" prefWidth="400.0" GridPane.columnIndex="2"/>
+                <VBox spacing="5.0">
+                    <padding>
+                        <Insets right="10.0" top="5.0"/>
+                    </padding>
+                    <MFXDatePicker fx:id="purchaseDate" floatMode="BORDER" floatingText="Date" prefWidth="400.0"/>
+                    <Label id="validationLabel" fx:id="purchaseDateValidationLabel" maxWidth="1.7976931348623157E308"
+                           minHeight="-Infinity" visible="false" wrapText="true" styleClass="input-validation-error"/>
+                </VBox>
+                <VBox spacing="5.0" GridPane.columnIndex="1">
+                    <padding>
+                        <Insets right="10.0" top="5.0"/>
+                    </padding>
+                    <MFXFilterComboBox fx:id="purchaseSupplier" floatMode="BORDER" floatingText="Supplier"
+                                       prefWidth="400.0"/>
+                    <Label id="validationLabel" fx:id="purchaseSupplierValidationLabel"
+                           maxWidth="1.7976931348623157E308"
+                           minHeight="-Infinity" visible="false" wrapText="true" styleClass="input-validation-error"/>
+                </VBox>
+                <VBox spacing="5.0" GridPane.columnIndex="2">
+                    <padding>
+                        <Insets right="10.0" top="5.0"/>
+                    </padding>
+                    <MFXFilterComboBox fx:id="purchaseBranch" floatMode="BORDER" floatingText="Branch" layoutX="10.0"
+                                       layoutY="12.0" prefWidth="400.0"/>
+                    <Label id="validationLabel" fx:id="purchaseBranchValidationLabel" maxWidth="1.7976931348623157E308"
+                           minHeight="-Infinity" visible="false" wrapText="true" styleClass="input-validation-error"/>
+                </VBox>
             </GridPane>
             <MFXElevatedButton layoutX="500.0" layoutY="110.0" onMouseClicked="#addBtnClicked" text="Add"
                                AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="90.0"/>
             <MFXTableView fx:id="purchaseDetailTable" AnchorPane.bottomAnchor="120.0" AnchorPane.leftAnchor="0.0"
                           AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="140.0"/>
-            <GridPane hgap="20.0" layoutX="20.0" layoutY="60.0" AnchorPane.bottomAnchor="60.0"
+            <GridPane hgap="20.0" layoutX="20.0" layoutY="60.0" AnchorPane.bottomAnchor="40.0"
                       AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                 <columnConstraints>
                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"/>
@@ -62,9 +88,21 @@
                 <rowConstraints>
                     <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
                 </rowConstraints>
-                <MFXTextField fx:id="purchaseNote" floatMode="BORDER" floatingText="Note" prefWidth="800.0"/>
-                <MFXFilterComboBox fx:id="purchaseStatus" floatMode="BORDER" floatingText="Status" layoutX="10.0"
-                                   layoutY="12.0" prefWidth="400.0" GridPane.columnIndex="1"/>
+                <VBox spacing="5.0">
+                    <padding>
+                        <Insets right="10.0" top="5.0"/>
+                    </padding>
+                    <MFXTextField fx:id="purchaseNote" floatMode="BORDER" floatingText="Note" prefWidth="800.0"/>
+                </VBox>
+                <VBox spacing="5.0" GridPane.columnIndex="1">
+                    <padding>
+                        <Insets right="10.0" top="5.0"/>
+                    </padding>
+                    <MFXFilterComboBox fx:id="purchaseStatus" floatMode="BORDER" floatingText="Status" layoutX="10.0"
+                                       layoutY="12.0" prefWidth="400.0"/>
+                    <Label id="validationLabel" fx:id="purchaseStatusValidationLabel" maxWidth="1.7976931348623157E308"
+                           minHeight="-Infinity" visible="false" wrapText="true" styleClass="input-validation-error"/>
+                </VBox>
             </GridPane>
             <HBox alignment="CENTER_RIGHT" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                   AnchorPane.rightAnchor="0.0">

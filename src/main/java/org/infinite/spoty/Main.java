@@ -22,7 +22,7 @@ import org.infinite.spoty.views.splash.SplashScreenController;
 public class Main extends Application {
     public static Stage primaryStage = null;
 
-    public static void runApp(String... args) {
+    public static void main(String... args) {
         System.setProperty("javafx.preloader", LaunchPreloader.class.getCanonicalName());
         Application.launch(Main.class, args);
     }
