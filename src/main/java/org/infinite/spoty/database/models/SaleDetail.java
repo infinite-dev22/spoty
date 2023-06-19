@@ -26,7 +26,7 @@ public class SaleDetail implements Serializable {
     private long id;
     private String ref;
     @ManyToOne
-    @JoinColumn(name = "saleMaster_id")
+    @JoinColumn(name = "saleMaster_id", nullable = false)
     private SaleMaster sale;
     @ManyToOne
     private ProductDetail product;

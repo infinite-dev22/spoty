@@ -28,7 +28,7 @@ public class PurchaseDetail implements Serializable {
     private int id;
     private double cost;
     @ManyToOne
-    @JoinColumn(name = "purchaseMaster_id")
+    @JoinColumn(name = "purchaseMaster_id", nullable = false)
     private PurchaseMaster purchase;
     private double netTax;
     private String taxType;
