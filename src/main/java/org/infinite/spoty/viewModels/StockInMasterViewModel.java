@@ -124,7 +124,12 @@ public class StockInMasterViewModel {
                 getBranch(),
                 getStatus(),
                 getNote());
-        stockInMaster.setStockInDetails(StockInDetailViewModel.stockInDetailsTempList);
+        if (!StockInDetailViewModel.stockInDetailsTempList.isEmpty()) {
+            StockInDetailViewModel.stockInDetailsTempList.forEach(
+                    stockInDetail -> stockInDetail.setStockIn(stockInMaster)
+            );
+            stockInMaster.setStockInDetails(StockInDetailViewModel.stockInDetailsTempList);
+        }
         StockInMasterDao.saveStockInMaster(stockInMaster);
         resetProperties();
         StockInDetailViewModel.stockInDetailsTempList.clear();
