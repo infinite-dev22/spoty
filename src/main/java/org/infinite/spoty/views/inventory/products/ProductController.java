@@ -41,6 +41,7 @@ import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 
 @SuppressWarnings("unchecked")
 public class ProductController implements Initializable {
+    private static ProductController instance;
     private final Stage stage;
     @FXML
     public MFXTableView<ProductMaster> productMasterTable;
@@ -51,8 +52,14 @@ public class ProductController implements Initializable {
     @FXML
     public MFXButton productImportBtn;
 
-    public ProductController(Stage stage) {
+    private ProductController(Stage stage) {
         this.stage = stage;
+    }
+
+    public static ProductController getInstance(Stage stage) {
+        if (instance == null)
+            instance = new ProductController(stage);
+        return instance;
     }
 
     @Override

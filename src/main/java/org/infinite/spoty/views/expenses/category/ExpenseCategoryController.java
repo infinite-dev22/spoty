@@ -43,6 +43,7 @@ import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 
 @SuppressWarnings("unchecked")
 public class ExpenseCategoryController implements Initializable {
+    private static ExpenseCategoryController instance;
     @FXML
     public MFXTextField categoryExpenseSearchBar;
     @FXML
@@ -55,7 +56,7 @@ public class ExpenseCategoryController implements Initializable {
     private MFXTableView<ExpenseCategory> categoryExpenseTable;
     private Dialog<ButtonType> dialog;
 
-    public ExpenseCategoryController(Stage stage) {
+    private ExpenseCategoryController(Stage stage) {
         Platform.runLater(() -> {
             try {
                 expenseCategoryFormDialogPane(stage);
@@ -63,6 +64,12 @@ public class ExpenseCategoryController implements Initializable {
                 throw new RuntimeException(ex);
             }
         });
+    }
+
+    public static ExpenseCategoryController getInstance(Stage stage) {
+        if (instance == null)
+            instance = new ExpenseCategoryController(stage);
+        return instance;
     }
 
     @Override

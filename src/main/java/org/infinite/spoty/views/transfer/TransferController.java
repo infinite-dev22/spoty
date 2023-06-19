@@ -24,7 +24,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.input.ContextMenuEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -43,6 +42,7 @@ import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 
 @SuppressWarnings("unchecked")
 public class TransferController implements Initializable {
+    private static TransferController instance;
     private final Stage stage;
     @FXML
     public MFXTextField transferSearchBar;
@@ -55,8 +55,14 @@ public class TransferController implements Initializable {
     @FXML
     public BorderPane transferContentPane;
 
-    public TransferController(Stage stage) {
+    private TransferController(Stage stage) {
         this.stage = stage;
+    }
+
+    public static TransferController getInstance(Stage stage) {
+        if (instance == null)
+            instance = new TransferController(stage);
+        return instance;
     }
 
     @Override
@@ -147,7 +153,7 @@ public class TransferController implements Initializable {
     @FXML
     private void transferCreateBtnClicked() {
         FXMLLoader loader = fxmlLoader("forms/TransferMasterForm.fxml");
-        loader.setControllerFactory(c -> new TransferMasterFormController(stage));
+        loader.setControllerFactory(c -> TransferMasterFormController.getInstance(stage));
         try {
             BorderPane productFormPane = loader.load();
             ((StackPane) transferContentPane.getParent()).getChildren().add(productFormPane);

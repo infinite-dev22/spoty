@@ -41,6 +41,7 @@ import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 
 @SuppressWarnings("unchecked")
 public class RequisitionController implements Initializable {
+    private static RequisitionController instance;
     private final Stage stage;
     @FXML
     public MFXTextField requisitionSearchBar;
@@ -53,8 +54,14 @@ public class RequisitionController implements Initializable {
     @FXML
     public BorderPane requisitionContentPane;
 
-    public RequisitionController(Stage stage) {
+    private RequisitionController(Stage stage) {
         this.stage = stage;
+    }
+
+    public static RequisitionController getInstance(Stage stage) {
+        if (instance == null)
+            instance = new RequisitionController(stage);
+        return instance;
     }
 
     @Override
@@ -70,7 +77,6 @@ public class RequisitionController implements Initializable {
         MFXTableColumn<RequisitionMaster> requisitionDelivery = new MFXTableColumn<>("Delivery Date", false, Comparator.comparing(RequisitionMaster::getDeliveryDate));
         MFXTableColumn<RequisitionMaster> requisitionStatus = new MFXTableColumn<>("Status", false, Comparator.comparing(RequisitionMaster::getStatus));
         MFXTableColumn<RequisitionMaster> requisitionShippingMethod = new MFXTableColumn<>("Shipping Method", false, Comparator.comparing(RequisitionMaster::getShipMethod));
-//        MFXTableColumn<RequisitionMaster> requisitionTotalProducts = new MFXTableColumn<>("Total Products", false, Comparator.comparing(RequisitionMaster::getRequisitionMasterTotalProducts));
 
         requisitionDate.setRowCellFactory(requisition -> new MFXTableRowCell<>(RequisitionMaster::getLocaleDate));
         requisitionReference.setRowCellFactory(requisition -> new MFXTableRowCell<>(RequisitionMaster::getRef));
@@ -87,7 +93,6 @@ public class RequisitionController implements Initializable {
         requisitionDelivery.prefWidthProperty().bind(requisitionMasterTable.widthProperty().multiply(.15));
         requisitionStatus.prefWidthProperty().bind(requisitionMasterTable.widthProperty().multiply(.15));
         requisitionShippingMethod.prefWidthProperty().bind(requisitionMasterTable.widthProperty().multiply(.15));
-//        requisitionTotalProducts.setRowCellFactory(requisition -> new MFXTableRowCell<>(RequisitionMaster::getRequisitionMasterTotalProducts));
 
         requisitionMasterTable.getTableColumns().addAll(requisitionDate,
                 requisitionReference,
@@ -95,7 +100,7 @@ public class RequisitionController implements Initializable {
                 requisitionSupplier,
                 requisitionDelivery,
                 requisitionStatus,
-                requisitionShippingMethod); //, requisitionTotalProducts);
+                requisitionShippingMethod);
         requisitionMasterTable.getFilters().addAll(
                 new StringFilter<>("Reference", RequisitionMaster::getRef),
                 new StringFilter<>("Branch", RequisitionMaster::getBranchName),
@@ -103,7 +108,6 @@ public class RequisitionController implements Initializable {
                 new StringFilter<>("Delivery Date", RequisitionMaster::getDeliveryDateString),
                 new StringFilter<>("Status", RequisitionMaster::getStatus),
                 new StringFilter<>("Shipping Method", RequisitionMaster::getShipMethod)
-//                new DoubleFilter<>("Total Products", RequisitionMaster::getRequisitionMasterTotalProducts)
         );
         getRequisitionMasterTable();
         requisitionMasterTable.setItems(RequisitionMasterViewModel.getRequisitionMasters());
@@ -151,14 +155,21 @@ public class RequisitionController implements Initializable {
     }
 
     public void requisitionCreateBtnClicked() {
-        FXMLLoader loader = fxmlLoader("forms/RequisitionMasterForm.fxml");
-        loader.setControllerFactory(c -> new RequisitionMasterFormController(stage));
         try {
-            BorderPane productFormPane = loader.load();
-            ((StackPane) requisitionContentPane.getParent()).getChildren().add(productFormPane);
+            ((StackPane) requisitionContentPane.getParent()).getChildren().get(1).setVisible(true);
             ((StackPane) requisitionContentPane.getParent()).getChildren().get(0).setVisible(false);
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
+        } catch (Exception ex1) {
+            FXMLLoader loader = fxmlLoader("forms/RequisitionMasterForm.fxml");
+            loader.setControllerFactory(c -> RequisitionMasterFormController.getInstance(stage));
+            try {
+                BorderPane productFormPane = loader.load();
+                ((StackPane) requisitionContentPane.getParent()).getChildren().add(productFormPane);
+                ((StackPane) requisitionContentPane.getParent()).getChildren().get(0).setVisible(false);
+            } catch (IOException ex2) {
+                throw new RuntimeException(ex2);
+            }
         }
+        System.out.println(((StackPane) requisitionContentPane.getParent()).getChildren());
+        System.out.println(requisitionContentPane.getParent().getParent().getChildrenUnmodifiable());
     }
 }

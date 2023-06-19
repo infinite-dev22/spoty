@@ -43,6 +43,7 @@ import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 
 @SuppressWarnings("unchecked")
 public class SupplierController implements Initializable {
+    private static SupplierController instance;
     @FXML
     public MFXTextField supplierSearchBar;
     @FXML
@@ -55,7 +56,7 @@ public class SupplierController implements Initializable {
     public BorderPane suppliersContentPane;
     private Dialog<ButtonType> dialog;
 
-    public SupplierController(Stage stage) {
+    private SupplierController(Stage stage) {
         Platform.runLater(() -> {
             try {
                 supplierFormDialogPane(stage);
@@ -63,6 +64,12 @@ public class SupplierController implements Initializable {
                 throw new RuntimeException(ex);
             }
         });
+    }
+
+    public static SupplierController getInstance(Stage stage) {
+        if (instance == null)
+            instance = new SupplierController(stage);
+        return instance;
     }
 
     @Override

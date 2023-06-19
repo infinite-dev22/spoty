@@ -39,8 +39,15 @@ public class SettingsController implements Initializable {
     public VBox settingsNavbar;
     @FXML
     public StackPane contentPane;
+    private static SettingsController instance;
 
-    public SettingsController(Stage stage) {
+    public static SettingsController getInstance(Stage stage) {
+        if (instance == null)
+            instance = new SettingsController(stage);
+        return instance;
+    }
+
+    private SettingsController(Stage stage) {
         this.stage = stage;
     }
 
@@ -50,8 +57,8 @@ public class SettingsController implements Initializable {
         loader.addView(MFXLoaderBean.of("SYSTEM", loadURL("fxml/settings/system/System.fxml")).setBeanToNodeMapper(() -> createToggle("fas-computer", "System")).setDefaultRoot(true).get());
         loader.addView(MFXLoaderBean.of("POS", loadURL("fxml/settings/pos/POS.fxml")).setBeanToNodeMapper(() -> createToggle("fas-bag-shopping", "POS")).get());
         loader.addView(MFXLoaderBean.of("ROLES", loadURL("fxml/settings/roles/Roles.fxml")).setBeanToNodeMapper(() -> createToggle("fas-user-shield", "Roles")).get());
-        loader.addView(MFXLoaderBean.of("BRANCHES", loadURL("fxml/settings/branches/Branches.fxml")).setBeanToNodeMapper(() -> createToggle("fas-store", "Branches")).setControllerFactory(c -> new BranchesController(stage)).get());
-        loader.addView(MFXLoaderBean.of("CURRENCY", loadURL("fxml/settings/currency/Currency.fxml")).setBeanToNodeMapper(() -> createToggle("fas-dollar-sign", "Currency")).setControllerFactory(c -> new CurrencyController(stage)).get());
+        loader.addView(MFXLoaderBean.of("BRANCHES", loadURL("fxml/settings/branches/Branches.fxml")).setBeanToNodeMapper(() -> createToggle("fas-store", "Branches")).setControllerFactory(c -> BranchesController.getInstance(stage)).get());
+        loader.addView(MFXLoaderBean.of("CURRENCY", loadURL("fxml/settings/currency/Currency.fxml")).setBeanToNodeMapper(() -> createToggle("fas-dollar-sign", "Currency")).setControllerFactory(c -> CurrencyController.getInstance(stage)).get());
         loader.addView(MFXLoaderBean.of("EXPORT", loadURL("fxml/settings/export/Export.fxml")).setBeanToNodeMapper(() -> createToggle("fas-arrow-up-from-bracket", "Export")).get());
         loader.setOnLoadedAction(beans -> {
             List<ToggleButton> nodes = beans.stream()
