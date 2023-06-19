@@ -42,6 +42,7 @@ import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 
 @SuppressWarnings("unchecked")
 public class StockInController implements Initializable {
+    private static StockInController instance;
     private final Stage stage;
     @FXML
     public MFXTextField stockInSearchBar;
@@ -54,8 +55,14 @@ public class StockInController implements Initializable {
     @FXML
     public BorderPane stockInContentPane;
 
-    public StockInController(Stage stage) {
+    private StockInController(Stage stage) {
         this.stage = stage;
+    }
+
+    public static StockInController getInstance(Stage stage) {
+        if (instance == null)
+            instance = new StockInController(stage);
+        return instance;
     }
 
     @Override
@@ -141,7 +148,7 @@ public class StockInController implements Initializable {
     @FXML
     private void stockInCreateBtnClicked() {
         FXMLLoader loader = fxmlLoader("forms/StockInMasterForm.fxml");
-        loader.setControllerFactory(c -> new StockInMasterFormController(stage));
+        loader.setControllerFactory(c -> StockInMasterFormController.getInstance(stage));
         try {
             BorderPane productFormPane = loader.load();
             ((StackPane) stockInContentPane.getParent()).getChildren().add(productFormPane);

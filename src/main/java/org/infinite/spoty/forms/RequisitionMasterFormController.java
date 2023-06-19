@@ -29,6 +29,7 @@ import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -54,6 +55,7 @@ import static org.infinite.spoty.Validators.requiredValidator;
 
 @SuppressWarnings("unchecked")
 public class RequisitionMasterFormController implements Initializable {
+    private static RequisitionMasterFormController instance;
     public MFXTextField requisitionDetailID = new MFXTextField();
     public MFXTextField requisitionMasterID = new MFXTextField();
     @FXML
@@ -86,7 +88,7 @@ public class RequisitionMasterFormController implements Initializable {
     public Label requisitionMasterDateValidationLabel;
     private Dialog<ButtonType> dialog;
 
-    public RequisitionMasterFormController(Stage stage) {
+    private RequisitionMasterFormController(Stage stage) {
         Platform.runLater(() -> {
             try {
                 quotationProductDialogPane(stage);
@@ -94,6 +96,12 @@ public class RequisitionMasterFormController implements Initializable {
                 throw new RuntimeException(ex);
             }
         });
+    }
+
+    public static RequisitionMasterFormController getInstance(Stage stage) {
+        if (instance == null)
+            instance = new RequisitionMasterFormController(stage);
+        return instance;
     }
 
     @Override
@@ -248,6 +256,6 @@ public class RequisitionMasterFormController implements Initializable {
         requisitionMasterSupplierValidationLabel.setVisible(false);
         requisitionMasterDateValidationLabel.setVisible(false);
         ((StackPane) requisitionMasterFormContentPane.getParent().getParent()).getChildren().get(0).setVisible(true);
-        ((StackPane) requisitionMasterFormContentPane.getParent().getParent()).getChildren().remove(1);
+        ((StackPane) requisitionMasterFormContentPane.getParent().getParent()).getChildren().get(1).setVisible(false);
     }
 }

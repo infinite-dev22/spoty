@@ -52,6 +52,7 @@ import static org.infinite.spoty.Validators.requiredValidator;
 
 @SuppressWarnings("unchecked")
 public class TransferMasterFormController implements Initializable {
+    private static TransferMasterFormController instance;
     public MFXTextField transferDetailID = new MFXTextField();
     public MFXTextField transferMasterID = new MFXTextField();
     @FXML
@@ -77,7 +78,7 @@ public class TransferMasterFormController implements Initializable {
     public Label transferMasterFromBranchValidationLabel;
     private Dialog<ButtonType> dialog;
 
-    public TransferMasterFormController(Stage stage) {
+    private TransferMasterFormController(Stage stage) {
         Platform.runLater(() -> {
             try {
                 quotationProductDialogPane(stage);
@@ -85,6 +86,12 @@ public class TransferMasterFormController implements Initializable {
                 throw new RuntimeException(ex);
             }
         });
+    }
+
+    public static TransferMasterFormController getInstance(Stage stage) {
+        if (instance == null)
+            instance = new TransferMasterFormController(stage);
+        return instance;
     }
 
     @Override

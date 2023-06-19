@@ -43,6 +43,7 @@ import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 
 @SuppressWarnings("unchecked")
 public class CurrencyController implements Initializable {
+    private static CurrencyController instance;
     @FXML
     public MFXTextField currencySearchBar;
     @FXML
@@ -55,7 +56,7 @@ public class CurrencyController implements Initializable {
     public BorderPane currencyContentPane;
     private Dialog<ButtonType> dialog;
 
-    public CurrencyController(Stage stage) {
+    private CurrencyController(Stage stage) {
         Platform.runLater(() -> {
             try {
                 currencyFormDialogPane(stage);
@@ -63,6 +64,12 @@ public class CurrencyController implements Initializable {
                 throw new RuntimeException(ex);
             }
         });
+    }
+
+    public static CurrencyController getInstance(Stage stage) {
+        if (instance == null)
+            instance = new CurrencyController(stage);
+        return instance;
     }
 
     @Override

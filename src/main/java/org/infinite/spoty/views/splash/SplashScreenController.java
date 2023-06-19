@@ -55,7 +55,7 @@ public class SplashScreenController implements Initializable {
                 CSSFX.start();
                 FXMLLoader loader = fxmlLoader("fxml/Base.fxml");
                 Stage stage = new Stage();
-                loader.setControllerFactory(c -> new BaseController(stage));
+                loader.setControllerFactory(c -> BaseController.getInstance(stage));
                 Parent root = loader.load();
                 Scene scene = new Scene(root);
                 MFXThemeManager.addOn(scene, Themes.DEFAULT, Themes.LEGACY);

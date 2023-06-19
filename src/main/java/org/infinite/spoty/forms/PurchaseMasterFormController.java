@@ -57,6 +57,7 @@ import static org.infinite.spoty.dataShare.DataShare.getPurchaseProducts;
 
 @SuppressWarnings("unchecked")
 public class PurchaseMasterFormController implements Initializable {
+    private static PurchaseMasterFormController instance;
     public MFXTextField purchaseDetailID = new MFXTextField();
     public MFXTextField purchaseMasterID = new MFXTextField();
     @FXML
@@ -85,7 +86,7 @@ public class PurchaseMasterFormController implements Initializable {
     public Label purchaseStatusValidationLabel;
     private Dialog<ButtonType> dialog;
 
-    public PurchaseMasterFormController(Stage stage) {
+    private PurchaseMasterFormController(Stage stage) {
         Platform.runLater(() -> {
             try {
                 createPurchaseProductDialog(stage);
@@ -93,6 +94,12 @@ public class PurchaseMasterFormController implements Initializable {
                 throw new RuntimeException(ex);
             }
         });
+    }
+
+    public static PurchaseMasterFormController getInstance(Stage stage) {
+        if (instance == null)
+            instance = new PurchaseMasterFormController(stage);
+        return instance;
     }
 
     @Override

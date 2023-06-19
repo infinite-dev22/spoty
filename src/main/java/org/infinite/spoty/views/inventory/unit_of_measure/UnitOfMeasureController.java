@@ -43,6 +43,7 @@ import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 
 @SuppressWarnings("unchecked")
 public class UnitOfMeasureController implements Initializable {
+    private static UnitOfMeasureController instance;
     @FXML
     public MFXTableView<UnitOfMeasure> uomTable;
     @FXML
@@ -61,6 +62,12 @@ public class UnitOfMeasureController implements Initializable {
                 throw new RuntimeException(ex);
             }
         });
+    }
+
+    public static UnitOfMeasureController getInstance(Stage stage) {
+        if (instance == null)
+            instance = new UnitOfMeasureController(stage);
+        return instance;
     }
 
     @Override

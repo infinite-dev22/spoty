@@ -34,22 +34,28 @@ import static org.infinite.spoty.SpotResourceLoader.loadURL;
 import static org.infinite.spoty.Utils.createToggle;
 
 public class ExpensesController implements Initializable {
+    private static ExpensesController instance;
     private final Stage stage;
     @FXML
     public VBox expensesNavbar;
-
     @FXML
     public StackPane contentPane;
 
-    public ExpensesController(Stage stage) {
+    private ExpensesController(Stage stage) {
         this.stage = stage;
+    }
+
+    public static ExpensesController getInstance(Stage stage) {
+        if (instance == null)
+            instance = new ExpensesController(stage);
+        return instance;
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         MFXLoader loader = new MFXLoader();
-        loader.addView(MFXLoaderBean.of("CATEGORY", loadURL("fxml/expenses/category/Category.fxml")).setBeanToNodeMapper(() -> createToggle("fas-cubes-stacked", "Category")).setControllerFactory(c1 -> new ExpenseCategoryController(stage)).get());
-        loader.addView(MFXLoaderBean.of("EXPENSE", loadURL("fxml/expenses/expense/Expense.fxml")).setBeanToNodeMapper(() -> createToggle("fas-money-check-dollar", "Expense")).setControllerFactory(c1 -> new ExpenseController(stage)).setDefaultRoot(true).get());
+        loader.addView(MFXLoaderBean.of("CATEGORY", loadURL("fxml/expenses/category/Category.fxml")).setBeanToNodeMapper(() -> createToggle("fas-cubes-stacked", "Category")).setControllerFactory(c1 -> ExpenseCategoryController.getInstance(stage)).get());
+        loader.addView(MFXLoaderBean.of("EXPENSE", loadURL("fxml/expenses/expense/Expense.fxml")).setBeanToNodeMapper(() -> createToggle("fas-money-check-dollar", "Expense")).setControllerFactory(c1 -> ExpenseController.getInstance(stage)).setDefaultRoot(true).get());
         loader.setOnLoadedAction(beans -> {
             List<ToggleButton> nodes = beans.stream()
                     .map(bean -> {

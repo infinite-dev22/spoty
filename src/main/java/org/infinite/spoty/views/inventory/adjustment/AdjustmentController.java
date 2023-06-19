@@ -42,6 +42,7 @@ import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 
 @SuppressWarnings("unchecked")
 public class AdjustmentController implements Initializable {
+    private static AdjustmentController instance;
     private final Stage stage;
     @FXML
     public BorderPane adjustmentContentPane;
@@ -54,8 +55,14 @@ public class AdjustmentController implements Initializable {
     @FXML
     private MFXTableView<AdjustmentMaster> adjustmentMasterTable;
 
-    public AdjustmentController(Stage stage) {
+    private AdjustmentController(Stage stage) {
         this.stage = stage;
+    }
+
+    public static AdjustmentController getInstance(Stage stage) {
+        if (instance == null)
+            instance = new AdjustmentController(stage);
+        return instance;
     }
 
     @Override

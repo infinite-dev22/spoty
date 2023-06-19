@@ -42,6 +42,7 @@ import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 
 @SuppressWarnings("unchecked")
 public class ProductCategoryController implements Initializable {
+    private static ProductCategoryController instance;
     @FXML
     public MFXTableView<ProductCategory> categoryTable;
     @FXML
@@ -52,7 +53,7 @@ public class ProductCategoryController implements Initializable {
     public MFXButton categoryImportBtn;
     private Dialog<ButtonType> dialog;
 
-    public ProductCategoryController(Stage stage) {
+    private ProductCategoryController(Stage stage) {
         Platform.runLater(() -> {
             try {
                 productProductCategoryDialogPane(stage);
@@ -60,6 +61,12 @@ public class ProductCategoryController implements Initializable {
                 throw new RuntimeException(ex);
             }
         });
+    }
+
+    public static ProductCategoryController getInstance(Stage stage) {
+        if (instance == null)
+            instance = new ProductCategoryController(stage);
+        return instance;
     }
 
     @Override
