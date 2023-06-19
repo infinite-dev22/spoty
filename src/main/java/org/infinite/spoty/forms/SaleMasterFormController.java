@@ -31,7 +31,6 @@ import javafx.scene.control.Label;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -52,6 +51,7 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
+import static org.infinite.spoty.Validators.requiredValidator;
 
 @SuppressWarnings("unchecked")
 public class SaleMasterFormController implements Initializable {
@@ -62,9 +62,9 @@ public class SaleMasterFormController implements Initializable {
     @FXML
     public MFXDatePicker saleDate;
     @FXML
-    public MFXFilterComboBox<Customer> saleCustomerId;
+    public MFXFilterComboBox<Customer> saleCustomer;
     @FXML
-    public MFXFilterComboBox<Branch> saleBranchId;
+    public MFXFilterComboBox<Branch> saleBranch;
     @FXML
     public MFXTableView<SaleDetail> saleDetailTable;
     @FXML
@@ -75,6 +75,16 @@ public class SaleMasterFormController implements Initializable {
     public MFXFilterComboBox<String> saleStatus;
     @FXML
     public MFXFilterComboBox<String> salePaymentStatus;
+    @FXML
+    public Label saleBranchValidationLabel;
+    @FXML
+    public Label saleCustomerValidationLabel;
+    @FXML
+    public Label saleDateValidationLabel;
+    @FXML
+    public Label saleStatusValidationLabel;
+    @FXML
+    public Label salePaymentStatusValidationLabel;
     private Dialog<ButtonType> dialog;
 
     public SaleMasterFormController(Stage stage) {
@@ -89,14 +99,9 @@ public class SaleMasterFormController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Add form input event listeners.
-        saleDate.textProperty().addListener((observable, oldValue, newValue) -> saleDate.setTrailingIcon(null));
-        saleCustomerId.textProperty().addListener((observable, oldValue, newValue) -> saleCustomerId.setTrailingIcon(null));
-        saleBranchId.textProperty().addListener((observable, oldValue, newValue) -> saleBranchId.setTrailingIcon(null));
-        saleStatus.textProperty().addListener((observable, oldValue, newValue) -> saleStatus.setTrailingIcon(null));
         // Set items to combo boxes and display custom text.
-        saleCustomerId.setItems(CustomerViewModel.customersList);
-        saleCustomerId.setConverter(new StringConverter<>() {
+        saleCustomer.setItems(CustomerViewModel.customersList);
+        saleCustomer.setConverter(new StringConverter<>() {
             @Override
             public String toString(Customer object) {
                 if (object != null)
@@ -110,8 +115,8 @@ public class SaleMasterFormController implements Initializable {
                 return null;
             }
         });
-        saleBranchId.setItems(BranchViewModel.branchesList);
-        saleBranchId.setConverter(new StringConverter<>() {
+        saleBranch.setItems(BranchViewModel.branchesList);
+        saleBranch.setConverter(new StringConverter<>() {
             @Override
             public String toString(Branch object) {
                 if (object != null)
@@ -130,9 +135,15 @@ public class SaleMasterFormController implements Initializable {
         // Bi~Directional Binding.
         saleMasterID.textProperty().bindBidirectional(SaleMasterViewModel.idProperty());
         saleDate.textProperty().bindBidirectional(SaleMasterViewModel.dateProperty());
-        saleCustomerId.valueProperty().bindBidirectional(SaleMasterViewModel.customerProperty());
-        saleBranchId.valueProperty().bindBidirectional(SaleMasterViewModel.branchProperty());
+        saleCustomer.valueProperty().bindBidirectional(SaleMasterViewModel.customerProperty());
+        saleBranch.valueProperty().bindBidirectional(SaleMasterViewModel.branchProperty());
         saleStatus.textProperty().bindBidirectional(SaleMasterViewModel.saleStatusProperty());
+        // input validators.
+        requiredValidator(saleBranch, "Branch is required.", saleBranchValidationLabel);
+        requiredValidator(saleCustomer, "Customer is required.", saleCustomerValidationLabel);
+        requiredValidator(saleDate, "Date is required.", saleDateValidationLabel);
+        requiredValidator(saleStatus, "Sale Status is required.", saleStatusValidationLabel);
+        requiredValidator(salePaymentStatus, "Payment status is required.", salePaymentStatusValidationLabel);
         setupTable();
     }
 
@@ -146,29 +157,15 @@ public class SaleMasterFormController implements Initializable {
     }
 
     public void saveBtnClicked() {
-        MFXIconWrapper icon = new MFXIconWrapper("fas-circle-exclamation", 20, Color.RED, 20);
-
-        if (saleDate.getText().length() == 0) {
-            saleDate.setTrailingIcon(icon);
-        }
-        if (saleCustomerId.getText().length() == 0) {
-            saleCustomerId.setTrailingIcon(icon);
-        }
-        if (saleBranchId.getText().length() == 0) {
-            saleBranchId.setTrailingIcon(icon);
-        }
-        if (saleStatus.getText().length() == 0) {
-            saleStatus.setTrailingIcon(icon);
-        }
-        if (saleDetailTable.getTableColumns().isEmpty()) {
+        if (!saleDetailTable.isDisabled() && SaleDetailViewModel.saleDetailTempList.isEmpty()) {
             // Notify table can't be empty
             System.out.println("Table can't be empty");
         }
-        if (saleDate.getText().length() > 0
-                && saleCustomerId.getText().length() > 0
-                && saleBranchId.getText().length() > 0
-                && saleStatus.getText().length() > 0
-                && !saleDetailTable.getTableColumns().isEmpty()) {
+        if (!saleCustomerValidationLabel.isVisible()
+                && !saleDateValidationLabel.isVisible()
+                && !saleBranchValidationLabel.isVisible()
+                && !saleStatusValidationLabel.isVisible()
+                && !salePaymentStatusValidationLabel.isVisible()) {
             if (Integer.parseInt(saleMasterID.getText()) > 0) {
                 SaleMasterViewModel.updateItem(Integer.parseInt(saleMasterID.getText()));
                 cancelBtnClicked();
@@ -180,10 +177,15 @@ public class SaleMasterFormController implements Initializable {
     }
 
     public void cancelBtnClicked() {
-        ((StackPane) saleFormContentPane.getParent().getParent()).getChildren().get(0).setVisible(true);
-        ((StackPane) saleFormContentPane.getParent().getParent()).getChildren().remove(1);
         SaleMasterViewModel.resetProperties();
         saleDetailTable.getTableColumns().clear();
+        saleBranchValidationLabel.setVisible(false);
+        saleCustomerValidationLabel.setVisible(false);
+        saleDateValidationLabel.setVisible(false);
+        saleStatusValidationLabel.setVisible(false);
+        salePaymentStatusValidationLabel.setVisible(false);
+        ((StackPane) saleFormContentPane.getParent().getParent()).getChildren().get(0).setVisible(true);
+        ((StackPane) saleFormContentPane.getParent().getParent()).getChildren().remove(1);
     }
 
     public void addBtnClicked() {
