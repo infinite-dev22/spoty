@@ -34,14 +34,14 @@ public class ProductMaster implements Serializable {
     private ProductCategory category;
     @ManyToOne
     private Brand brand;
-    @OneToMany(mappedBy = "product")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "product")
     private List<ProductDetail> productDetails;
     private byte[] image;
     private String note;
     @Column(nullable = false, name = "not_sale")
     private boolean notForSale;
     @Column(nullable = false, name = "is_active")
-    private boolean isActive;
+    private boolean hasVariants;
     @Column(name = "created_at")
     private Date createdAt;
     @Column(name = "created_by")
@@ -58,14 +58,14 @@ public class ProductMaster implements Serializable {
                          Brand brand,
                          String note,
                          boolean notForSale,
-                         boolean isActive) {
+                         boolean hasVariants) {
         this.barcodeType = barcodeType;
         this.name = name;
         this.category = category;
         this.brand = brand;
         this.note = note;
         this.notForSale = notForSale;
-        this.isActive = isActive;
+        this.hasVariants = hasVariants;
     }
 
     public ProductMaster() {
@@ -165,12 +165,12 @@ public class ProductMaster implements Serializable {
         this.notForSale = notForSale;
     }
 
-    public boolean isActive() {
-        return isActive;
+    public boolean hasVariant() {
+        return hasVariants;
     }
 
-    public void setActive(boolean active) {
-        isActive = active;
+    public void canHaveVariants(boolean hasVariants) {
+        this.hasVariants = hasVariants;
     }
 
     public Date getCreatedAt() {

@@ -51,7 +51,7 @@ public class ProductMasterDao {
             productMaster.setName(obj.getName());
             productMaster.setCategory(obj.getCategory());
             productMaster.setBrand(obj.getBrand());
-            productMaster.setActive(obj.isActive());
+            productMaster.canHaveVariants(obj.hasVariant());
             productMaster.setNotForSale(obj.isNotForSale());
             productMaster.setProductDetails(obj.getProductDetails());
             obj.getProductDetails().forEach(productDetail -> {
