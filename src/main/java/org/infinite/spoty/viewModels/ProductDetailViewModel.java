@@ -20,47 +20,65 @@ import javafx.collections.ObservableList;
 import org.infinite.spoty.database.dao.ProductDetailDao;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.ProductDetail;
+import org.infinite.spoty.database.models.ProductMaster;
 import org.infinite.spoty.database.models.UnitOfMeasure;
+
+import java.util.List;
+
+import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
 
 public class ProductDetailViewModel {
     public static final ObservableList<ProductDetail> productDetailsList = FXCollections.observableArrayList();
     public static final ObservableList<ProductDetail> productDetailTempList = FXCollections.observableArrayList();
-    private static final StringProperty id = new SimpleStringProperty("");
-    private static final ObjectProperty<ProductDetail> product = new SimpleObjectProperty<>(null);
+    private static final IntegerProperty id = new SimpleIntegerProperty(0);
+    private static final IntegerProperty tempId = new SimpleIntegerProperty(-1);
+    private static final ObjectProperty<ProductMaster> product = new SimpleObjectProperty<>(null);
     private static final ListProperty<Branch> branches = new SimpleListProperty<>(null);
     private static final ObjectProperty<UnitOfMeasure> unit = new SimpleObjectProperty<>(null);
-    private static final ObjectProperty<UnitOfMeasure> saleUnit = new SimpleObjectProperty<>(null);
-    private static final ObjectProperty<UnitOfMeasure> productUnit = new SimpleObjectProperty<>(null);
-    private static final StringProperty name = new SimpleStringProperty(null);
+    //    private static final ObjectProperty<UnitOfMeasure> saleUnit = new SimpleObjectProperty<>(null);
+//    private static final ObjectProperty<UnitOfMeasure> productUnit = new SimpleObjectProperty<>(null);
+    private static final StringProperty name = new SimpleStringProperty("");
     private static final IntegerProperty quantity = new SimpleIntegerProperty(0);
     private static final DoubleProperty cost = new SimpleDoubleProperty(0);
     private static final DoubleProperty price = new SimpleDoubleProperty(0);
     private static final DoubleProperty netTax = new SimpleDoubleProperty(0);
-    private static final StringProperty taxType = new SimpleStringProperty(null);
+    private static final StringProperty taxType = new SimpleStringProperty("");
     private static final IntegerProperty stockAlert = new SimpleIntegerProperty(0);
-    private static final StringProperty serial = new SimpleStringProperty(null);
+    private static final StringProperty serial = new SimpleStringProperty("");
 
-    public static String getId() {
+    public static Integer getId() {
         return id.get();
     }
 
-    public static void setId(String id) {
+    public static void setId(int id) {
         ProductDetailViewModel.id.set(id);
     }
 
-    public static StringProperty idProperty() {
+    public static IntegerProperty idProperty() {
         return id;
     }
 
-    public static ProductDetail getProduct() {
+    public static Integer getTempId() {
+        return tempId.get();
+    }
+
+    public static void setTempId(int tempId) {
+        ProductDetailViewModel.tempId.set(tempId);
+    }
+
+    public static IntegerProperty tempIdProperty() {
+        return tempId;
+    }
+
+    public static ProductMaster getProduct() {
         return product.get();
     }
 
-    public static void setProduct(ProductDetail product) {
+    public static void setProduct(ProductMaster product) {
         ProductDetailViewModel.product.set(product);
     }
 
-    public static ObjectProperty<ProductDetail> productProperty() {
+    public static ObjectProperty<ProductMaster> productProperty() {
         return product;
     }
 
@@ -88,29 +106,29 @@ public class ProductDetailViewModel {
         return unit;
     }
 
-    public static UnitOfMeasure getSaleUnit() {
-        return saleUnit.get();
-    }
-
-    public static void setSaleUnit(UnitOfMeasure saleUnit) {
-        ProductDetailViewModel.saleUnit.set(saleUnit);
-    }
-
-    public static ObjectProperty<UnitOfMeasure> saleUnitProperty() {
-        return saleUnit;
-    }
-
-    public static UnitOfMeasure getProductUnit() {
-        return productUnit.get();
-    }
-
-    public static void setProductUnit(UnitOfMeasure productUnit) {
-        ProductDetailViewModel.productUnit.set(productUnit);
-    }
-
-    public static ObjectProperty<UnitOfMeasure> productUnitProperty() {
-        return productUnit;
-    }
+//    public static UnitOfMeasure getSaleUnit() {
+//        return saleUnit.get();
+//    }
+//
+//    public static void setSaleUnit(UnitOfMeasure saleUnit) {
+//        ProductDetailViewModel.saleUnit.set(saleUnit);
+//    }
+//
+//    public static ObjectProperty<UnitOfMeasure> saleUnitProperty() {
+//        return saleUnit;
+//    }
+//
+//    public static UnitOfMeasure getProductUnit() {
+//        return productUnit.get();
+//    }
+//
+//    public static void setProductUnit(UnitOfMeasure productUnit) {
+//        ProductDetailViewModel.productUnit.set(productUnit);
+//    }
+//
+//    public static ObjectProperty<UnitOfMeasure> productUnitProperty() {
+//        return productUnit;
+//    }
 
     public static String getName() {
         return name.get();
@@ -209,27 +227,26 @@ public class ProductDetailViewModel {
     }
 
     public static void addProductDetail() {
-        ProductDetail productDetail = new ProductDetail(getUnit(), getSaleUnit(),
-                getProductUnit(), getName(), getQuantity(), getCost(), getPrice(), getNetTax(), getTaxType(),
+        ProductDetail productDetail = new ProductDetail(getUnit(), getName(), getQuantity(), getCost(), getPrice(),
+                getNetTax(), getTaxType(),
                 getStockAlert(), getSerial());
         productDetailTempList.add(productDetail);
     }
 
     public static void resetProperties() {
-        setId("");
+        setId(0);
+        setTempId(-1);
         setProduct(null);
         setBranches(null);
         setUnit(null);
-        setSaleUnit(null);
-        setProductUnit(null);
-        setName(null);
+        setName("");
         setQuantity(0);
         setCost(0);
         setPrice(0);
         setNetTax(0);
-        setTaxType(null);
+        setTaxType("");
         setStockAlert(0);
-        setSerial(null);
+        setSerial("");
     }
 
     public static void resetTempList() {
@@ -243,21 +260,21 @@ public class ProductDetailViewModel {
     }
 
     public static void updateProductDetail(int index) {
-        ProductDetail productDetail = new ProductDetail(getUnit(), getSaleUnit(),
-                getProductUnit(), getName(), getQuantity(), getCost(), getPrice(), getNetTax(), getTaxType(),
-                getStockAlert(), getSerial());
-        productDetailTempList.remove(index);
-        productDetailTempList.add(index, productDetail);
+        ProductDetail productDetail = ProductDetailDao.findProductDetail(index);
+        productDetail.setUnit(getUnit());
+        productDetail.setName(getName());
+        productDetail.setSerialNumber(getSerial());
+        productDetailTempList.remove((int) getTempId());
+        productDetailTempList.add(getTempId(), productDetail);
         resetProperties();
     }
 
-    public static void getItem(int productDetailID) {
-        ProductDetail productDetail = ProductDetailDao.findProductDetail(productDetailID);
-        setId(String.valueOf(productDetail.getId()));
+    public static void getItem(int index, int tempIndex) {
+        setTempId(tempIndex);
+        ProductDetail productDetail = ProductDetailDao.findProductDetail(index);
+        setId(productDetail.getId());
         setBranches(FXCollections.observableArrayList(productDetail.getBranch()));
         setUnit(productDetail.getUnit());
-        setSaleUnit(productDetail.getSaleUnit());
-        setProductUnit(productDetail.getSaleUnit());
         setName(productDetail.getName());
         setQuantity(productDetail.getQuantity());
         setCost(productDetail.getCost());
@@ -266,34 +283,23 @@ public class ProductDetailViewModel {
         setTaxType(productDetail.getTaxType());
         setStockAlert(productDetail.getStockAlert());
         setSerial(productDetail.getSerialNumber());
-        getProductDetails();
-    }
-
-    public static void getItem(ProductDetail productDetail, int index) {
-        setId("index:" + index + ";");
-        setBranches(FXCollections.observableArrayList(productDetail.getBranch()));
-        setUnit(productDetail.getUnit());
-        setSaleUnit(productDetail.getSaleUnit());
-        setProductUnit(productDetail.getSaleUnit());
-        setName(productDetail.getName());
-        setQuantity(productDetail.getQuantity());
-        setCost(productDetail.getCost());
-        setPrice(productDetail.getPrice());
-        setNetTax(productDetail.getNetTax());
-        setTaxType(productDetail.getTaxType());
-        setStockAlert(productDetail.getStockAlert());
-        setSerial(productDetail.getSerialNumber());
+        setProduct(productDetail.getProduct());
     }
 
     public static void updateItem(int productDetailID) {
-        ProductDetail productDetail = new ProductDetail(getUnit(), getSaleUnit(),
-                getProductUnit(), getName(), getQuantity(), getCost(), getPrice(), getNetTax(), getTaxType(),
+        ProductDetail productDetail = new ProductDetail(getUnit(), getName(), getQuantity(), getCost(), getPrice(),
+                getNetTax(), getTaxType(),
                 getStockAlert(), getSerial());
         ProductDetailDao.updateProductDetail(productDetail, productDetailID);
         getProductDetails();
     }
 
-    public static void removeProductDetail(int index) {
-        productDetailTempList.remove(index);
+    public static void removeProductDetail(int index, int tempIndex) {
+        productDetailTempList.remove(tempIndex);
+        PENDING_DELETES.add(index);
+    }
+
+    public static void deleteProductDetails(List<Integer> indexes) {
+        indexes.forEach(ProductDetailDao::deleteProductDetail);
     }
 }
