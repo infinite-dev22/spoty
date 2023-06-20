@@ -26,6 +26,7 @@ public class ProductDetail implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @ManyToOne
+    @JoinColumn(name = "product_id", nullable = false)
     private ProductMaster product;
     @ManyToMany(targetEntity = Branch.class)
     private List<Branch> branch;

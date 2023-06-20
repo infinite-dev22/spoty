@@ -122,7 +122,12 @@ public class QuotationMasterViewModel {
 
     public static void saveQuotationMaster() {
         QuotationMaster quotationMaster = new QuotationMaster(getDate(), getCustomer(), getBranch(), getStatus(), getNote());
-        quotationMaster.setQuotationDetails(QuotationDetailViewModel.quotationDetailTempList);
+        if (!QuotationDetailViewModel.quotationDetailTempList.isEmpty()) {
+            QuotationDetailViewModel.quotationDetailTempList.forEach(
+                    quotationDetail -> quotationDetail.setQuotation(quotationMaster)
+            );
+            quotationMaster.setQuotationDetails(QuotationDetailViewModel.quotationDetailTempList);
+        }
         QuotationMasterDao.saveQuotationMaster(quotationMaster);
         resetProperties();
         QuotationDetailViewModel.quotationDetailTempList.clear();

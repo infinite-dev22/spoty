@@ -93,11 +93,15 @@ public class AdjustmentMasterViewModel {
 
     public static void saveAdjustmentMaster() {
         AdjustmentMaster adjustmentMaster = new AdjustmentMaster(getBranch(), getNote(), getDate());
-        AdjustmentDetailViewModel.adjustmentDetailsTempLinkedList.forEach(e -> e.setAdjustment(adjustmentMaster));
-        adjustmentMaster.setAdjustmentDetails(AdjustmentDetailViewModel.adjustmentDetailsTempLinkedList);
+        if (!AdjustmentDetailViewModel.adjustmentDetailsTempList.isEmpty()) {
+            AdjustmentDetailViewModel.adjustmentDetailTempLinkedList.forEach(
+                    adjustmentDetail -> adjustmentDetail.setAdjustment(adjustmentMaster)
+            );
+            adjustmentMaster.setAdjustmentDetails(AdjustmentDetailViewModel.adjustmentDetailTempLinkedList);
+        }
         AdjustmentMasterDao.saveAdjustmentMaster(adjustmentMaster);
         resetProperties();
-        AdjustmentDetailViewModel.adjustmentDetailsTempLinkedList.clear();
+        AdjustmentDetailViewModel.adjustmentDetailTempLinkedList.clear();
         getAdjustmentMasters();
     }
 

@@ -30,7 +30,7 @@ public class Role {
     private String description;
     @ManyToMany
     @JoinTable(name = "Role_Permission",
-            joinColumns = {@JoinColumn(name = "role_id")},
+            joinColumns = {@JoinColumn(name = "role_id", nullable = false)},
             inverseJoinColumns = {@JoinColumn(name = "Permission_id")})
     private List<Permission> permissions;
     private Date createdAt;

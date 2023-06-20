@@ -28,7 +28,7 @@ public class PurchaseReturnDetail implements Serializable {
     @ManyToOne
     private UnitOfMeasure purchaseUnit;
     @ManyToOne
-    @JoinColumn(name = "purchaseReturnMaster_id")
+    @JoinColumn(name = "purchaseReturnMaster_id", nullable = false)
     private PurchaseReturnMaster purchaseReturn;
     @OneToOne
     private ProductDetail product;

@@ -24,8 +24,8 @@ public class StockInDetail implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "stockIn_id")
+    @ManyToOne
+    @JoinColumn(name = "stockIn_id", nullable = false)
     private StockInMaster stockIn;
     @ManyToOne
     private ProductDetail product;

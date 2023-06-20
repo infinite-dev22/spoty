@@ -25,7 +25,7 @@ public class SaleReturnDetail implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @ManyToOne
-    @JoinColumn(name = "saleReturnMaster_id")
+    @JoinColumn(name = "saleReturnMaster_id", nullable = false)
     private SaleReturnMaster saleReturn;
     @ManyToOne
     private ProductDetail product;

@@ -140,7 +140,12 @@ public class TransferMasterViewModel {
                 getTotalCost(),
                 getStatus(),
                 getNote());
-        transferMaster.setTransferDetails(TransferDetailViewModel.transferDetailsTempList);
+        if (!TransferDetailViewModel.transferDetailsTempList.isEmpty()) {
+            TransferDetailViewModel.transferDetailsTempList.forEach(
+                    transferDetail -> transferDetail.setTransfer(transferMaster)
+            );
+            transferMaster.setTransferDetails(TransferDetailViewModel.transferDetailsTempList);
+        }
         TransferMasterDao.saveTransferMaster(transferMaster);
         resetProperties();
         TransferDetailViewModel.transferDetailsTempList.clear();

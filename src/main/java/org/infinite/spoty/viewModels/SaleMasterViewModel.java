@@ -139,7 +139,12 @@ public class SaleMasterViewModel {
 
     public static void saveSaleMaster() {
         SaleMaster saleMaster = new SaleMaster(getCustomer(), getBranch(), getSaleStatus(), getNote(), getDate());
-        saleMaster.setSaleDetails(SaleDetailViewModel.saleDetailTempList);
+        if (!SaleDetailViewModel.saleDetailTempList.isEmpty()) {
+            SaleDetailViewModel.saleDetailTempList.forEach(
+                    saleDetail -> saleDetail.setSaleMaster(saleMaster)
+            );
+            saleMaster.setSaleDetails(SaleDetailViewModel.saleDetailTempList);
+        }
         SaleMasterDao.saveSaleMaster(saleMaster);
         resetProperties();
         SaleDetailViewModel.saleDetailTempList.clear();

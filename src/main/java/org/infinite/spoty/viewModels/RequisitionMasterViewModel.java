@@ -205,7 +205,12 @@ public class RequisitionMasterViewModel {
                 getNote(),
                 getStatus(),
                 getTotalCost());
-        requisitionMaster.setRequisitionDetails(RequisitionDetailViewModel.requisitionDetailTempList);
+        if (!RequisitionDetailViewModel.requisitionDetailTempList.isEmpty()) {
+            RequisitionDetailViewModel.requisitionDetailTempList.forEach(
+                    requisitionDetail -> requisitionDetail.setRequisition(requisitionMaster)
+            );
+            requisitionMaster.setRequisitionDetails(RequisitionDetailViewModel.requisitionDetailTempList);
+        }
         RequisitionMasterDao.saveRequisitionMaster(requisitionMaster);
         resetProperties();
         RequisitionDetailViewModel.requisitionDetailTempList.clear();

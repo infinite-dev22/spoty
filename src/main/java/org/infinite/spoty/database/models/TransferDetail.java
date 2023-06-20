@@ -24,8 +24,8 @@ public class TransferDetail implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "transfer_id")
+    @ManyToOne
+    @JoinColumn(name = "transfer_id", nullable = false)
     private TransferMaster transfer;
     @ManyToOne
     private ProductDetail product;

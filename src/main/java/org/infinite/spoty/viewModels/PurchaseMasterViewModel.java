@@ -122,7 +122,11 @@ public class PurchaseMasterViewModel {
 
     public static void savePurchaseMaster() {
         PurchaseMaster purchaseMaster = new PurchaseMaster(getSupplier(), getBranch(), getStatus(), getNote(), getDate());
-        purchaseMaster.setPurchaseDetails(PurchaseDetailViewModel.purchaseDetailTempList);
+        if (!PurchaseDetailViewModel.purchaseDetailTempList.isEmpty()) {
+            PurchaseDetailViewModel.purchaseDetailTempList.forEach(
+                    purchaseDetail -> purchaseDetail.setPurchase(purchaseMaster));
+            purchaseMaster.setPurchaseDetails(PurchaseDetailViewModel.purchaseDetailTempList);
+        }
         PurchaseMasterDao.savePurchaseMaster(purchaseMaster);
         resetProperties();
         getPurchaseMasters();

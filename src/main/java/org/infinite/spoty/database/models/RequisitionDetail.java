@@ -26,8 +26,8 @@ public class RequisitionDetail implements Serializable {
     private int id;
     @OneToOne
     private ProductDetail productDetail;
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "requisition_id")
+    @ManyToOne
+    @JoinColumn(name = "requisition_id", nullable = false)
     private RequisitionMaster requisition;
     private int quantity;
     private String description;

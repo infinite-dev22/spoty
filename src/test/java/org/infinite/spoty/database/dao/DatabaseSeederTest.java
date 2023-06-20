@@ -26,11 +26,18 @@ import java.util.List;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class DatabaseSeederTest {
+    ProductCategory productCategory;
+    Brand brand;
+    UnitOfMeasure uom;
+    ExpenseCategory expenseCategory;
+    Customer customer;
+    Supplier supplier;
+    Branch branch;
     @Test
     @Order(1)
     void productCategoryInsert() {
         try {
-            var productCategory = new ProductCategory("PC-001", "Test Product Category 1");
+            productCategory = new ProductCategory("PC-001", "Test Product Category 1");
             productCategory.setCreatedAt(new Date());
             productCategory.setCreatedBy("Tester One");
             ProductCategoryDao.saveProductCategory(productCategory);
@@ -43,7 +50,7 @@ class DatabaseSeederTest {
     @Order(2)
     void brandInsert() {
         try {
-            var brand = new Brand("Test Brand 1", "This is a test brand.");
+            brand = new Brand("Test Brand 1", "This is a test brand.");
             brand.setCreatedAt(new Date());
             brand.setCreatedBy("Tester One");
             BrandDao.saveBrand(brand);
@@ -56,7 +63,7 @@ class DatabaseSeederTest {
     @Order(3)
     void uomInsert() {
         try {
-            var uom = new UnitOfMeasure("Test UOM 1", "TUOM1", null, "", 0);
+            uom = new UnitOfMeasure("Test UOM 1", "TUOM1", null, "", 0);
             uom.setCreatedAt(new Date());
             uom.setCreatedBy("Tester One");
             UnitOfMeasureDao.saveUnitOfMeasure(uom);
@@ -69,7 +76,7 @@ class DatabaseSeederTest {
     @Order(4)
     void expenseInsert() {
         try {
-            var expenseCategory = new ExpenseCategory("Test Category 1", "This is the first test category");
+            expenseCategory = new ExpenseCategory("Test Category 1", "This is the first test category");
             expenseCategory.setCreatedAt(new Date());
             expenseCategory.setCreatedBy("Tester One");
             ExpenseCategoryDao.saveExpenseCategory(expenseCategory);
@@ -86,7 +93,7 @@ class DatabaseSeederTest {
     @Order(5)
     void customerInsert() {
         try {
-            var customer = new Customer("Test Customer 1", "test1@email.com", "+1234567890",
+            customer = new Customer("Test Customer 1", "test1@email.com", "+1234567890",
                     "Test City 1", "Test Address 1", "TXN-5685655555555",
                     "Test Country 1");
             customer.setCreatedAt(new Date());
@@ -101,7 +108,7 @@ class DatabaseSeederTest {
     @Order(6)
     void supplierInsert() {
         try {
-            var supplier = new Supplier("Test Supplier 1", "test1@email.com", "+123456789012",
+            supplier = new Supplier("Test Supplier 1", "test1@email.com", "+123456789012",
                     "TXN-5685655555555", "Test Address 1", "Test City 1",
                     "Test Country 1");
             supplier.setCreatedAt(new Date());
@@ -192,7 +199,7 @@ class DatabaseSeederTest {
     @Order(10)
     void branchInsert() {
         try {
-            var branch = new Branch("Test Branch One",
+            branch = new Branch("Test Branch One",
                     "Test City 1", "123456789012",
                     "test1.branch@email.com", "Test Town 1", "5675676");
             branch.setCreatedAt(new Date());
