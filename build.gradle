@@ -27,13 +27,14 @@ repositories {
     mavenCentral()
 }
 
-targetCompatibility = "17"
-sourceCompatibility = "17"
+compileJava {
+    targetCompatibility = "17"
+    sourceCompatibility = "17"
+}
 
 project.description = "Zenmart ERP - Fintech Software."
 project.ext.buildDate = new Date()
 project.version = "1.0.0"
-group = "org.infinite.spoty"
 
 test {
     useJUnitPlatform()
@@ -49,9 +50,6 @@ application {
     mainClass = 'org.infinite.spoty.Main'
 }
 
-run {
-    jvmArgs = ['-Djdk.gtk.version=3']
-}
 
 jlink {
     imageZip = project.file("${buildDir}/distributions/app-${javafx.platform.classifier}.zip")
@@ -65,24 +63,24 @@ jlink {
 
     mergedModule {
 //        additive = true
-        requires 'javafx.controls';
-        requires 'javafx.fxml';
-        requires 'javafx.graphics';
-        requires 'javafx.media';
-        requires 'java.logging';
-        requires 'java.sql';
-//        requires 'jdk.jdi';
-//        requires 'java.rmi';
-        requires 'java.xml';
-//        requires 'java.desktop';
-//        requires 'java.management';
-        requires 'java.naming';
-//        requires 'jdk.attach';
-//        requires 'java.scripting';
-//        requires 'java.datatransfer';
-//        requires 'java.compiler';
-//        requires 'java.transaction.xa';
-//        requires 'java.instrument';
+        requires 'javafx.controls'
+        requires 'javafx.fxml'
+        requires 'javafx.graphics'
+        requires 'javafx.media'
+        requires 'java.logging'
+        requires 'java.sql'
+//        requires 'jdk.jdi'
+//        requires 'java.rmi'
+        requires 'java.xml'
+//        requires 'java.desktop'
+//        requires 'java.management'
+        requires 'java.naming'
+//        requires 'jdk.attach'
+//        requires 'java.scripting'
+//        requires 'java.datatransfer'
+//        requires 'java.compiler'
+//        requires 'java.transaction.xa'
+//        requires 'java.instrument'
         requires 'net.bytebuddy'
         requires 'org.hibernate.commons.annotations'
         requires 'jakarta.persistence'
