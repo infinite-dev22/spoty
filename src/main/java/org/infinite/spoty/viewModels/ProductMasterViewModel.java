@@ -23,6 +23,8 @@ import org.infinite.spoty.database.models.Brand;
 import org.infinite.spoty.database.models.ProductCategory;
 import org.infinite.spoty.database.models.ProductMaster;
 
+import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
+
 public class ProductMasterViewModel {
     public static final ObservableList<ProductMaster> productMasterList = FXCollections.observableArrayList();
     private static final IntegerProperty id = new SimpleIntegerProperty(0);
@@ -166,6 +168,7 @@ public class ProductMasterViewModel {
         setHasVariants(false);
         setCategory(null);
         setBrand(null);
+        PENDING_DELETES.clear();
     }
 
     public static void saveProductMaster() {
@@ -189,8 +192,8 @@ public class ProductMasterViewModel {
         return productMasterList;
     }
 
-    public static void getItem(int productMasterID) {
-        ProductMaster productMaster = ProductMasterDao.findProductMaster(productMasterID);
+    public static void getItem(int index) {
+        ProductMaster productMaster = ProductMasterDao.findProductMaster(index);
         setId(productMaster.getId());
         setBarcodeType(productMaster.getBarcodeType());
         setName(productMaster.getName());
@@ -198,17 +201,24 @@ public class ProductMasterViewModel {
         setBrand(productMaster.getBrand());
         setNote(productMaster.getNote());
         setNotForSale(productMaster.isNotForSale());
-        setHasVariants(productMaster.isActive());
+        setHasVariants(productMaster.hasVariant());
         setBarcodeType(productMaster.getBarcodeType());
         ProductDetailViewModel.productDetailTempList.addAll(productMaster.getProductDetails());
         getProductMasters();
     }
 
-    public static void updateItem(int productMasterID) {
-        ProductMaster productMaster = new ProductMaster(getBarcodeType(), getName(), getPrice(), getCategory(),
-                getBrand(), getNote(), isNotForSale(), getHasVariants());
+    public static void updateItem(int index) {
+        ProductMaster productMaster = ProductMasterDao.findProductMaster(index);
+        productMaster.setBarcodeType(getBarcodeType());
+        productMaster.setName(getName());
+        productMaster.setCategory(getCategory());
+        productMaster.setBrand(getBrand());
+        productMaster.setNote(getNote());
+        productMaster.setNotForSale(isNotForSale());
+        productMaster.canHaveVariants(getHasVariants());
+        ProductDetailViewModel.deleteProductDetails(PENDING_DELETES);
         productMaster.setProductDetails(ProductDetailViewModel.productDetailTempList);
-        ProductMasterDao.updateProductMaster(productMaster, productMasterID);
+        ProductMasterDao.updateProductMaster(productMaster, index);
         resetProperties();
         ProductDetailViewModel.productDetailTempList.clear();
         getProductMasters();
