@@ -33,7 +33,6 @@ import static org.infinite.spoty.GlobalActions.closeDialog;
 import static org.infinite.spoty.Validators.requiredValidator;
 
 public class ProductDetailFormController implements Initializable {
-    public MFXTextField productDetailID = new MFXTextField();
     @FXML
     public MFXFilledButton productProductsSaveBtn;
     @FXML
@@ -54,19 +53,17 @@ public class ProductDetailFormController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Bind form input value to property value.
-        productDetailID.textProperty().bindBidirectional(ProductDetailViewModel.idProperty());
         productVariantUOM.valueProperty().bindBidirectional(ProductDetailViewModel.unitProperty());
         productVariantSerial.textProperty().bindBidirectional(ProductDetailViewModel.serialProperty());
         productVariantName.textProperty().bindBidirectional(ProductDetailViewModel.nameProperty());
         // ProductType combo box properties.
         productVariantUOM.setItems(UOMViewModel.uomComboList);
+        productVariantUOM.setResetOnPopupHidden(true);
+        productVariantUOM.setAnimated(true);
         productVariantUOM.setConverter(new StringConverter<>() {
             @Override
             public String toString(UnitOfMeasure object) {
-                if (object != null)
-                    return object.getName();
-                else
-                    return null;
+                return (object != null) ? object.getName() : "--Unit Of Measure--";
             }
 
             @Override
@@ -96,16 +93,11 @@ public class ProductDetailFormController implements Initializable {
                 productVariantUOMValidationLabel.setVisible(false);
             if (!productVariantUOMValidationLabel.isVisible()
                     && !productVariantNameValidationLabel.isVisible()) {
-                if (!productDetailID.getText().isEmpty()) {
-                    try {
-                        if (Integer.parseInt(productDetailID.getText()) > 0)
-                            ProductDetailViewModel.updateItem(Integer.parseInt(productDetailID.getText()));
-                    } catch (NumberFormatException ignored) {
-                        ProductDetailViewModel.updateProductDetail(Integer.parseInt(productDetailID.getText()
-                                .substring(productDetailID.getText().lastIndexOf(':') + 1,
-                                        productDetailID.getText().indexOf(';'))));
-                    }
-                } else ProductDetailViewModel.addProductDetail();
+                if (ProductDetailViewModel.tempIdProperty().get() > -1) {
+                    ProductDetailViewModel.updateProductDetail(ProductDetailViewModel.idProperty().get());
+                } else {
+                    ProductDetailViewModel.addProductDetail();
+                }
                 ProductDetailViewModel.resetProperties();
                 closeDialog(e);
             }
