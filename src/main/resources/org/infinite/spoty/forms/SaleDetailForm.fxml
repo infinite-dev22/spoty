@@ -61,7 +61,7 @@
                     <padding>
                         <Insets right="10.0" top="2.5"/>
                     </padding>
-                    <MFXTextField fx:id="saleDeatilOrderTax" floatMode="BORDER" floatingText="Order Tax"
+                    <MFXTextField fx:id="saleDetailOrderTax" floatMode="BORDER" floatingText="Order Tax"
                                   prefWidth="400.0"/>
                 </VBox>
                 <VBox spacing="2.0">
