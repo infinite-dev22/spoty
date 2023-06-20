@@ -31,6 +31,7 @@ import java.util.ResourceBundle;
 
 import static org.infinite.spoty.GlobalActions.closeDialog;
 import static org.infinite.spoty.Validators.requiredValidator;
+import static org.infinite.spoty.values.SharedResources.tempIdProperty;
 
 public class ProductDetailFormController implements Initializable {
     @FXML
@@ -93,11 +94,10 @@ public class ProductDetailFormController implements Initializable {
                 productVariantUOMValidationLabel.setVisible(false);
             if (!productVariantUOMValidationLabel.isVisible()
                     && !productVariantNameValidationLabel.isVisible()) {
-                if (ProductDetailViewModel.tempIdProperty().get() > -1) {
-                    ProductDetailViewModel.updateProductDetail(ProductDetailViewModel.idProperty().get());
-                } else {
+                if (tempIdProperty().get() > -1)
+                    ProductDetailViewModel.updateProductDetail(ProductDetailViewModel.getId());
+                else
                     ProductDetailViewModel.addProductDetail();
-                }
                 ProductDetailViewModel.resetProperties();
                 closeDialog(e);
             }
