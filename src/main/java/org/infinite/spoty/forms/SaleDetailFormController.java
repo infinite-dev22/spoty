@@ -39,7 +39,7 @@ public class SaleDetailFormController implements Initializable {
     @FXML
     public MFXFilterComboBox<ProductDetail> saleDetailPdct;
     @FXML
-    public MFXTextField saleDeatilOrderTax;
+    public MFXTextField saleDetailOrderTax;
     @FXML
     public MFXTextField saleDetailDiscount;
     @FXML
@@ -56,14 +56,13 @@ public class SaleDetailFormController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Set combo box options.
-        saleDetailPdct.setItems(ProductDetailViewModel.productDetailsList);
+        saleDetailPdct.setItems(ProductDetailViewModel.getProductDetails());
         saleDetailPdct.setConverter(new StringConverter<>() {
             @Override
             public String toString(ProductDetail object) {
-                if (object != null)
-                    return object.getProduct().getName() + " " + object.getName();
-                else
-                    return "Empty, Add products";
+                return object != null ? object.getProduct().getName()
+                        + " " + (object.getUnit() != null ? (object.getName().isEmpty() ? "" : object.getName())
+                        + " " + object.getUnit().getName() : object.getName()) : "No products";
             }
 
             @Override
@@ -75,7 +74,7 @@ public class SaleDetailFormController implements Initializable {
         saleDetailID.textProperty().bindBidirectional(SaleDetailViewModel.idProperty());
         saleDetailQnty.textProperty().bindBidirectional(SaleDetailViewModel.quantityProperty());
         saleDetailPdct.valueProperty().bindBidirectional(SaleDetailViewModel.productProperty());
-        saleDeatilOrderTax.textProperty().bindBidirectional(SaleDetailViewModel.netTaxProperty());
+        saleDetailOrderTax.textProperty().bindBidirectional(SaleDetailViewModel.netTaxProperty());
         saleDetailDiscount.textProperty().bindBidirectional(SaleDetailViewModel.discountProperty());
         // Input validators.
         requiredValidator(saleDetailPdct, "Product is required.", saleDetailPdctValidationLabel);
