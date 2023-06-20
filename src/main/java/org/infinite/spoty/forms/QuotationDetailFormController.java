@@ -62,14 +62,13 @@ public class QuotationDetailFormController implements Initializable {
         quotationProductsOrderTax.textProperty().bindBidirectional(QuotationDetailViewModel.taxProperty());
         quotationProductsDiscount.textProperty().bindBidirectional(QuotationDetailViewModel.discountProperty());
         // Combo box properties.
-        quotationProductPdct.setItems(ProductDetailViewModel.productDetailsList);
+        quotationProductPdct.setItems(ProductDetailViewModel.getProductDetails());
         quotationProductPdct.setConverter(new StringConverter<>() {
             @Override
             public String toString(ProductDetail object) {
-                if (object != null)
-                    return object.getProduct().getName() + " " + object.getName();
-                else
-                    return null;
+                return object != null ? object.getProduct().getName()
+                        + " " + (object.getUnit() != null ? (object.getName().isEmpty() ? "" : object.getName())
+                        + " " + object.getUnit().getName() : object.getName()) : "No products";
             }
 
             @Override

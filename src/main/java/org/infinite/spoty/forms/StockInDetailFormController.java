@@ -59,14 +59,13 @@ public class StockInDetailFormController implements Initializable {
         stockInDetailQnty.textProperty().bindBidirectional(StockInDetailViewModel.quantityProperty());
         stockInDetailDescription.textProperty().bindBidirectional(StockInDetailViewModel.descriptionProperty());
         // Combo box properties.
-        stockInDetailPdct.setItems(ProductDetailViewModel.productDetailsList);
+        stockInDetailPdct.setItems(ProductDetailViewModel.getProductDetails());
         stockInDetailPdct.setConverter(new StringConverter<>() {
             @Override
             public String toString(ProductDetail object) {
-                if (object != null)
-                    return object.getProduct().getName() + " " + object.getName();
-                else
-                    return null;
+                return object != null ? object.getProduct().getName()
+                        + " " + (object.getUnit() != null ? (object.getName().isEmpty() ? "" : object.getName())
+                        + " " + object.getUnit().getName() : object.getName()) : "No products";
             }
 
             @Override
