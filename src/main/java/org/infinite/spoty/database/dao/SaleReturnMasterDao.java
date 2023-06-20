@@ -59,6 +59,10 @@ public class SaleReturnMasterDao {
             saleReturnMaster.setPaymentStatus(obj.getPaymentStatus());
             saleReturnMaster.setStatus(obj.getStatus());
             saleReturnMaster.setNotes(obj.getNotes());
+            saleReturnMaster.setSaleReturnDetails(obj.getSaleReturnDetails());
+            obj.getSaleReturnDetails().forEach(saleReturnDetail -> {
+                if (saleReturnDetail.getSaleReturn() == null) saleReturnDetail.setSaleReturn(saleReturnMaster);
+            });
             saleReturnMaster.setUpdatedAt(new Date());
             // TODO: updated by should be a system user.
             // saleReturnMaster.setUpdatedBy();

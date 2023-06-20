@@ -52,10 +52,13 @@ public class QuotationMasterDao {
             quotationMaster.setCustomer(obj.getCustomer());
             quotationMaster.setBranch(obj.getBranch());
             quotationMaster.setShipping(obj.getShipping());
-            // quotationMaster.setQuotationDetails(obj.getQuotationDetails());
             quotationMaster.setTotal(obj.getTotal());
             quotationMaster.setStatus(obj.getStatus());
             quotationMaster.setNotes(obj.getNotes());
+            quotationMaster.setQuotationDetails(obj.getQuotationDetails());
+            obj.getQuotationDetails().forEach(quotationDetail -> {
+                if (quotationDetail.getQuotation() == null) quotationDetail.setQuotation(quotationMaster);
+            });
             quotationMaster.setUpdatedAt(new Date());
             // TODO: updated by should be a system user.
             // quotationMaster.setUpdatedBy();

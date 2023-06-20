@@ -40,7 +40,7 @@ public class ProductMasterDao {
         }
     }
 
-    public static int updateProductMaster(ProductMaster obj, int id) {
+    public static void updateProductMaster(ProductMaster obj, int id) {
         Transaction transaction = null;
         ProductMaster productMaster;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
@@ -53,6 +53,10 @@ public class ProductMasterDao {
             productMaster.setBrand(obj.getBrand());
             productMaster.setActive(obj.isActive());
             productMaster.setNotForSale(obj.isNotForSale());
+            productMaster.setProductDetails(obj.getProductDetails());
+            obj.getProductDetails().forEach(productDetail -> {
+                if (productDetail.getProduct() == null) productDetail.setProduct(productMaster);
+            });
             productMaster.setUpdatedAt(new Date());
             // TODO: updated by should be a system user.
             // productMaster.setUpdatedBy();
@@ -62,7 +66,6 @@ public class ProductMasterDao {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 
     public static ProductMaster findProductMaster(int id) {
@@ -94,7 +97,7 @@ public class ProductMasterDao {
         return productCategories;
     }
 
-    public static int deleteProductMaster(int id) {
+    public static void deleteProductMaster(int id) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
@@ -104,6 +107,5 @@ public class ProductMasterDao {
             if (transaction != null) transaction.rollback();
             throw new RuntimeException(ex);
         }
-        return 1;
     }
 }

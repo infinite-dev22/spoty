@@ -61,6 +61,7 @@ public class PurchaseReturnMasterDao {
             purchaseReturnMaster.setStatus(obj.getStatus());
             purchaseReturnMaster.setPaymentStatus(obj.getPaymentStatus());
             purchaseReturnMaster.setNotes(obj.getNotes());
+            purchaseReturnMaster.setPurchaseReturnDetails(obj.getPurchaseReturnDetails());
             purchaseReturnMaster.setUpdatedAt(new Date());
             // TODO: updated by should be a system user.
             // purchaseReturnMaster.setUpdatedBy();

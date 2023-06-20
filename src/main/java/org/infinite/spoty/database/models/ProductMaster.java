@@ -34,7 +34,7 @@ public class ProductMaster implements Serializable {
     private ProductCategory category;
     @ManyToOne
     private Brand brand;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "product")
+    @OneToMany(mappedBy = "product")
     private List<ProductDetail> productDetails;
     private byte[] image;
     private String note;
