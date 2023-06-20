@@ -36,7 +36,6 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
-import org.infinite.spoty.database.dao.ProductDetailDao;
 import org.infinite.spoty.database.models.Brand;
 import org.infinite.spoty.database.models.ProductCategory;
 import org.infinite.spoty.database.models.ProductDetail;
@@ -114,7 +113,7 @@ public class ProductMasterFormController implements Initializable {
         requiredValidator(productFormBrand, "Brand is required.", productFormBrandValidationLabel);
         requiredValidator(productFormName, "Name is required.", productFormNameValidationLabel);
         // Input binding.
-        productDetailID.textProperty().bindBidirectional(ProductDetailViewModel.idProperty());
+        productDetailID.textProperty().bindBidirectional(ProductDetailViewModel.idProperty(), new NumberStringConverter());
         productMasterID.textProperty().bindBidirectional(ProductMasterViewModel.idProperty(), new NumberStringConverter());
         productFormCategory.valueProperty().bindBidirectional(ProductMasterViewModel.categoryProperty());
         productFormBrand.valueProperty().bindBidirectional(ProductMasterViewModel.brandProperty());
@@ -207,19 +206,14 @@ public class ProductMasterFormController implements Initializable {
         // Actions
         // Delete
         delete.setOnAction(e -> {
-            ProductDetailViewModel.getItem(obj.getData(), ProductDetailViewModel.productDetailTempList.indexOf(obj.getData()));
-            try {
-                if (Integer.parseInt(productDetailID.getText()) > 0)
-                    ProductDetailDao.deleteProductDetail(Integer.parseInt(productDetailID.getText()));
-            } catch (NumberFormatException ignored) {
-                ProductDetailViewModel.removeProductDetail(ProductDetailViewModel.productDetailTempList.indexOf(obj.getData()));
-            }
+            ProductDetailViewModel.getItem(obj.getData().getId(), ProductDetailViewModel.productDetailTempList.indexOf(obj.getData()));
+            ProductDetailViewModel.removeProductDetail(obj.getData().getId(), ProductDetailViewModel.productDetailTempList.indexOf(obj.getData()));
             ProductDetailViewModel.getProductDetails();
             e.consume();
         });
         // Edit
         edit.setOnAction(e -> {
-            ProductDetailViewModel.getItem(obj.getData(), ProductDetailViewModel.productDetailTempList.indexOf(obj.getData()));
+            ProductDetailViewModel.getItem(obj.getData().getId(), ProductDetailViewModel.productDetailTempList.indexOf(obj.getData()));
             dialog.showAndWait();
             e.consume();
         });
