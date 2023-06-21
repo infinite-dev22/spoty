@@ -14,10 +14,7 @@
 
 package org.infinite.spoty.viewModels;
 
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.infinite.spoty.database.dao.AdjustmentDetailDao;
@@ -26,27 +23,27 @@ import org.infinite.spoty.database.models.AdjustmentMaster;
 import org.infinite.spoty.database.models.ProductDetail;
 
 import java.util.LinkedList;
-import java.util.List;
+
+import static org.infinite.spoty.values.SharedResources.*;
 
 public class AdjustmentDetailViewModel {
     public static final ObservableList<AdjustmentDetail> adjustmentDetailsList = FXCollections.observableArrayList();
     public static final ObservableList<AdjustmentDetail> adjustmentDetailsTempList = FXCollections.observableArrayList();
-    public static final List<AdjustmentDetail> adjustmentDetailTempLinkedList = new LinkedList<>(adjustmentDetailsTempList);
-    private static final StringProperty id = new SimpleStringProperty("");
+    private static final IntegerProperty id = new SimpleIntegerProperty(0);
     private static final ObjectProperty<ProductDetail> product = new SimpleObjectProperty<>();
     private static final ObjectProperty<AdjustmentMaster> adjustment = new SimpleObjectProperty<>();
     private static final StringProperty quantity = new SimpleStringProperty("");
     private static final StringProperty adjustmentType = new SimpleStringProperty("");
 
     public static int getId() {
-        return Integer.parseInt(id.get());
+        return id.get();
     }
 
-    public static void setId(String id) {
+    public static void setId(int id) {
         AdjustmentDetailViewModel.id.set(id);
     }
 
-    public static StringProperty idProperty() {
+    public static IntegerProperty idProperty() {
         return id;
     }
 
@@ -99,7 +96,8 @@ public class AdjustmentDetailViewModel {
     }
 
     public static void resetProperties() {
-        setId("");
+        setId(0);
+        setTempId(-1);
         setProduct(null);
         setAdjustment(null);
         setAdjustmentType("");
@@ -115,11 +113,12 @@ public class AdjustmentDetailViewModel {
     }
 
     public static void updateAdjustmentDetail(int index) {
-        AdjustmentDetail adjustmentDetail = new AdjustmentDetail(getProduct(),
-                getQuantity(),
-                getAdjustmentType());
-        adjustmentDetailsTempList.remove(index);
-        adjustmentDetailsTempList.add(index, adjustmentDetail);
+        AdjustmentDetail adjustmentDetail = AdjustmentDetailDao.findAdjustmentDetail(index);
+        adjustmentDetail.setProductDetail(getProduct());
+        adjustmentDetail.setQuantity(getQuantity());
+        adjustmentDetail.setAdjustmentType(getAdjustmentType());
+        adjustmentDetailsTempList.remove((int) getTempId());
+        adjustmentDetailsTempList.add(getTempId(), adjustmentDetail);
         resetProperties();
     }
 
@@ -129,17 +128,10 @@ public class AdjustmentDetailViewModel {
         return adjustmentDetailsList;
     }
 
-    public static void getItem(int adjustmentDetailID) {
-        AdjustmentDetail adjustmentDetail = AdjustmentDetailDao.findAdjustmentDetail(adjustmentDetailID);
-        setId(String.valueOf(adjustmentDetail.getId()));
-        setProduct(adjustmentDetail.getProductDetail());
-        setQuantity(String.valueOf(adjustmentDetail.getQuantity()));
-        setAdjustmentType(adjustmentDetail.getAdjustmentType());
-        getAdjustmentDetails();
-    }
-
-    public static void getItem(AdjustmentDetail adjustmentDetail, int index) {
-        setId("index:" + index + ";");
+    public static void getItem(int index, int tempIndex) {
+        AdjustmentDetail adjustmentDetail = AdjustmentDetailDao.findAdjustmentDetail(index);
+        setTempId(tempIndex);
+        setId(adjustmentDetail.getId());
         setProduct(adjustmentDetail.getProductDetail());
         setQuantity(String.valueOf(adjustmentDetail.getQuantity()));
         setAdjustmentType(adjustmentDetail.getAdjustmentType());
@@ -151,7 +143,12 @@ public class AdjustmentDetailViewModel {
         getAdjustmentDetails();
     }
 
-    public static void removeAdjustmentDetail(int index) {
-        adjustmentDetailsTempList.remove(index);
+    public static void removeAdjustmentDetail(int index, int tempIndex) {
+        adjustmentDetailsTempList.remove(tempIndex);
+        PENDING_DELETES.add(index);
+    }
+
+    public static void deleteAdjustmentDetails(LinkedList<Integer> indexes) {
+        indexes.forEach(AdjustmentDetailDao::deleteAdjustmentDetail);
     }
 }

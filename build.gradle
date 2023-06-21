@@ -50,7 +50,6 @@ application {
     mainClass = 'org.infinite.spoty.Main'
 }
 
-
 jlink {
     imageZip = project.file("${buildDir}/distributions/app-${javafx.platform.classifier}.zip")
     options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']

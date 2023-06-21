@@ -169,6 +169,7 @@ public class ProductMasterViewModel {
         setCategory(null);
         setBrand(null);
         PENDING_DELETES.clear();
+        ProductDetailViewModel.productDetailTempList.clear();
     }
 
     public static void saveProductMaster() {
@@ -220,7 +221,6 @@ public class ProductMasterViewModel {
         productMaster.setProductDetails(ProductDetailViewModel.productDetailTempList);
         ProductMasterDao.updateProductMaster(productMaster, index);
         resetProperties();
-        ProductDetailViewModel.productDetailTempList.clear();
         getProductMasters();
     }
 }

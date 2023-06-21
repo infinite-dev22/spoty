@@ -25,13 +25,12 @@ import org.infinite.spoty.database.models.UnitOfMeasure;
 
 import java.util.List;
 
-import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
+import static org.infinite.spoty.values.SharedResources.*;
 
 public class ProductDetailViewModel {
     public static final ObservableList<ProductDetail> productDetailsList = FXCollections.observableArrayList();
     public static final ObservableList<ProductDetail> productDetailTempList = FXCollections.observableArrayList();
     private static final IntegerProperty id = new SimpleIntegerProperty(0);
-    private static final IntegerProperty tempId = new SimpleIntegerProperty(-1);
     private static final ObjectProperty<ProductMaster> product = new SimpleObjectProperty<>(null);
     private static final ListProperty<Branch> branches = new SimpleListProperty<>(null);
     private static final ObjectProperty<UnitOfMeasure> unit = new SimpleObjectProperty<>(null);
@@ -56,18 +55,6 @@ public class ProductDetailViewModel {
 
     public static IntegerProperty idProperty() {
         return id;
-    }
-
-    public static Integer getTempId() {
-        return tempId.get();
-    }
-
-    public static void setTempId(int tempId) {
-        ProductDetailViewModel.tempId.set(tempId);
-    }
-
-    public static IntegerProperty tempIdProperty() {
-        return tempId;
     }
 
     public static ProductMaster getProduct() {
@@ -247,6 +234,7 @@ public class ProductDetailViewModel {
         setTaxType("");
         setStockAlert(0);
         setSerial("");
+        setTempId(-1);
     }
 
     public static void resetTempList() {
