@@ -14,8 +14,24 @@
 
 package org.infinite.spoty.values;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+
 import java.util.LinkedList;
 
 public class SharedResources {
     public static final LinkedList<Integer> PENDING_DELETES = new LinkedList<>();
+    private static final IntegerProperty TEMP_ID = new SimpleIntegerProperty(-1);
+
+    public static Integer getTempId() {
+        return TEMP_ID.get();
+    }
+
+    public static void setTempId(int tempId) {
+        SharedResources.TEMP_ID.set(tempId);
+    }
+
+    public static IntegerProperty tempIdProperty() {
+        return TEMP_ID;
+    }
 }

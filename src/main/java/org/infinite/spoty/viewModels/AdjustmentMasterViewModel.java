@@ -25,6 +25,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
+
 public class AdjustmentMasterViewModel {
     public static final ObservableList<AdjustmentMaster> adjustmentMasterList = FXCollections.observableArrayList();
     private static final IntegerProperty id = new SimpleIntegerProperty(0);
@@ -89,19 +91,20 @@ public class AdjustmentMasterViewModel {
         setDate("");
         setBranch(null);
         setNote("");
+        PENDING_DELETES.clear();
+        AdjustmentDetailViewModel.adjustmentDetailsTempList.clear();
     }
 
     public static void saveAdjustmentMaster() {
         AdjustmentMaster adjustmentMaster = new AdjustmentMaster(getBranch(), getNote(), getDate());
         if (!AdjustmentDetailViewModel.adjustmentDetailsTempList.isEmpty()) {
-            AdjustmentDetailViewModel.adjustmentDetailTempLinkedList.forEach(
+            AdjustmentDetailViewModel.adjustmentDetailsTempList.forEach(
                     adjustmentDetail -> adjustmentDetail.setAdjustment(adjustmentMaster)
             );
-            adjustmentMaster.setAdjustmentDetails(AdjustmentDetailViewModel.adjustmentDetailTempLinkedList);
+            adjustmentMaster.setAdjustmentDetails(AdjustmentDetailViewModel.adjustmentDetailsTempList);
         }
         AdjustmentMasterDao.saveAdjustmentMaster(adjustmentMaster);
         resetProperties();
-        AdjustmentDetailViewModel.adjustmentDetailTempLinkedList.clear();
         getAdjustmentMasters();
     }
 
@@ -111,23 +114,25 @@ public class AdjustmentMasterViewModel {
         return adjustmentMasterList;
     }
 
-    public static void getItem(int adjustmentMasterID) {
-        AdjustmentMaster adjustmentMaster = AdjustmentMasterDao.findAdjustmentMaster(adjustmentMasterID);
+    public static void getItem(int index) {
+        AdjustmentMaster adjustmentMaster = AdjustmentMasterDao.findAdjustmentMaster(index);
         setId(adjustmentMaster.getId());
         setBranch(adjustmentMaster.getBranch());
         setNote(adjustmentMaster.getNotes());
         setDate(adjustmentMaster.getLocaleDate());
         AdjustmentDetailViewModel.adjustmentDetailsTempList.addAll(adjustmentMaster.getAdjustmentDetails());
-        adjustmentMaster.getAdjustmentDetails().forEach(System.out::println);
         getAdjustmentMasters();
     }
 
-    public static void updateItem(int adjustmentMasterID) {
-        AdjustmentMaster adjustmentMaster = new AdjustmentMaster(getBranch(), getNote(), getDate());
+    public static void updateItem(int index) {
+        AdjustmentMaster adjustmentMaster = AdjustmentMasterDao.findAdjustmentMaster(index);
+        adjustmentMaster.setBranch(getBranch());
+        adjustmentMaster.setNotes(getNote());
+        adjustmentMaster.setDate(getDate());
+        AdjustmentDetailViewModel.deleteAdjustmentDetails(PENDING_DELETES);
         adjustmentMaster.setAdjustmentDetails(AdjustmentDetailViewModel.adjustmentDetailsTempList);
-        AdjustmentMasterDao.updateAdjustmentMaster(adjustmentMaster, adjustmentMasterID);
+        AdjustmentMasterDao.updateAdjustmentMaster(adjustmentMaster, index);
         resetProperties();
-        AdjustmentDetailViewModel.adjustmentDetailsTempList.clear();
         getAdjustmentMasters();
     }
 }

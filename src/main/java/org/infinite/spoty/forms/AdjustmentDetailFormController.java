@@ -24,6 +24,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.util.StringConverter;
+import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.database.models.ProductDetail;
 import org.infinite.spoty.values.strings.Values;
 import org.infinite.spoty.viewModels.AdjustmentDetailViewModel;
@@ -34,6 +35,7 @@ import java.util.ResourceBundle;
 
 import static org.infinite.spoty.GlobalActions.closeDialog;
 import static org.infinite.spoty.Validators.requiredValidator;
+import static org.infinite.spoty.values.SharedResources.tempIdProperty;
 
 public class AdjustmentDetailFormController implements Initializable {
     public MFXTextField adjustmentDetailID = new MFXTextField();
@@ -59,7 +61,8 @@ public class AdjustmentDetailFormController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Bind form input value to property value.
-        adjustmentDetailID.textProperty().bindBidirectional(AdjustmentDetailViewModel.idProperty());
+        adjustmentDetailID.textProperty()
+                .bindBidirectional(AdjustmentDetailViewModel.idProperty(), new NumberStringConverter());
         adjustmentProductVariant.valueProperty().bindBidirectional(AdjustmentDetailViewModel.productProperty());
         adjustmentProductsQnty.textProperty().bindBidirectional(AdjustmentDetailViewModel.quantityProperty());
         adjustmentType.textProperty().bindBidirectional(AdjustmentDetailViewModel.adjustmentTypeProperty());
@@ -98,16 +101,10 @@ public class AdjustmentDetailFormController implements Initializable {
             if (!adjustmentProductVariantValidationLabel.isVisible()
                     && !adjustmentProductsQntyValidationLabel.isVisible()
                     && !adjustmentTypeValidationLabel.isVisible()) {
-                if (!adjustmentDetailID.getText().isEmpty()) {
-                    try {
-                        if (Integer.parseInt(adjustmentDetailID.getText()) > 0)
-                            AdjustmentDetailViewModel.updateItem(Integer.parseInt(adjustmentDetailID.getText()));
-                    } catch (NumberFormatException ignored) {
-                        AdjustmentDetailViewModel.updateAdjustmentDetail(Integer.parseInt(adjustmentDetailID.getText()
-                                .substring(adjustmentDetailID.getText().lastIndexOf(':') + 1,
-                                        adjustmentDetailID.getText().indexOf(';'))));
-                    }
-                } else AdjustmentDetailViewModel.addAdjustmentDetails();
+                if (tempIdProperty().get() > -1)
+                    AdjustmentDetailViewModel.updateAdjustmentDetail(AdjustmentDetailViewModel.getId());
+                else
+                    AdjustmentDetailViewModel.addAdjustmentDetails();
                 AdjustmentDetailViewModel.resetProperties();
                 closeDialog(e);
             }
