@@ -51,7 +51,6 @@ public class TransferMasterDao {
             transferMaster.setDate(obj.getDate());
             transferMaster.setFromBranch(obj.getFromBranch());
             transferMaster.setToBranch(obj.getToBranch());
-//            transferMaster.setTransferDetails(obj.getTransferDetails());
             transferMaster.setShipping(obj.getShipping());
             transferMaster.setTotal(obj.getTotal());
             transferMaster.setStatus(obj.getStatus());
@@ -60,6 +59,10 @@ public class TransferMasterDao {
             transferMaster.setReceivedBy(obj.getReceivedBy());
             transferMaster.setReceiveDate(obj.getReceiveDate());
             transferMaster.setNotes(obj.getNotes());
+            obj.getTransferDetails().forEach(transferDetail -> {
+                if (transferDetail.getTransfer() == null) transferDetail.setTransfer(transferMaster);
+            });
+            transferMaster.setTransferDetails(obj.getTransferDetails());
             transferMaster.setUpdatedAt(new Date());
             // TODO: updated by should be a system user.
             // transferMaster.setUpdatedBy();

@@ -57,6 +57,10 @@ public class RequisitionMasterDao {
             requisitionMaster.setNotes(obj.getNotes());
             requisitionMaster.setStatus(obj.getStatus());
             requisitionMaster.setTotalCost(obj.getTotalCost());
+            requisitionMaster.setRequisitionDetails(obj.getRequisitionDetails());
+            obj.getRequisitionDetails().forEach(requisitionDetail -> {
+                if (requisitionDetail.getRequisition() == null) requisitionDetail.setRequisition(requisitionMaster);
+            });
             requisitionMaster.setUpdatedAt(new Date());
             // TODO: updated by should be a system user.
             // requisitionMaster.setUpdatedBy();

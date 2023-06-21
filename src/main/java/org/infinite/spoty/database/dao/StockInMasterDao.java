@@ -50,7 +50,6 @@ public class StockInMasterDao {
             stockInMaster.setRef(obj.getRef());
             stockInMaster.setDate(obj.getDate());
             stockInMaster.setBranch(obj.getBranch());
-//            stockInMaster.setStockInDetails(obj.getStockInDetails());
             stockInMaster.setShipping(obj.getShipping());
             stockInMaster.setTotal(obj.getTotal());
             stockInMaster.setStatus(obj.getStatus());
@@ -59,6 +58,7 @@ public class StockInMasterDao {
             stockInMaster.setReceivedBy(obj.getReceivedBy());
             stockInMaster.setReceiveDate(obj.getReceiveDate());
             stockInMaster.setNotes(obj.getNotes());
+            stockInMaster.setStockInDetails(obj.getStockInDetails());
             stockInMaster.setUpdatedAt(new Date());
             // TODO: updated by should be a system user.
             // stockInMaster.setUpdatedBy();

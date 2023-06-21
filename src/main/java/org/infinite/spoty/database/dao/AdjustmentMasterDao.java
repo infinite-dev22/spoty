@@ -49,8 +49,12 @@ public class AdjustmentMasterDao {
             adjustmentMaster.setUser(obj.getUser());
             adjustmentMaster.setDate(obj.getDate());
             adjustmentMaster.setRef(obj.getRef());
+            adjustmentMaster.setAdjustmentDetails(obj.getAdjustmentDetails());
             adjustmentMaster.setBranch(obj.getBranch());
             adjustmentMaster.setNotes(obj.getNotes());
+            obj.getAdjustmentDetails().forEach(adjustmentDetail -> {
+                if (adjustmentDetail.getAdjustment() == null) adjustmentDetail.setAdjustment(adjustmentMaster);
+            });
             adjustmentMaster.setUpdatedAt(new Date());
             // TODO: updated by should be a system user.
             // adjustmentMaster.setUpdatedBy();

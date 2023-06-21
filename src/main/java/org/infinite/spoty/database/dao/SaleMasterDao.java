@@ -60,6 +60,10 @@ public class SaleMasterDao {
             saleMaster.setPaymentStatus(obj.getPaymentStatus());
             saleMaster.setSaleStatus(obj.getSaleStatus());
             saleMaster.setNotes(obj.getNotes());
+            saleMaster.setSaleDetails(obj.getSaleDetails());
+            obj.getSaleDetails().forEach(saleDetail -> {
+                if (saleDetail.getSaleMaster() == null) saleDetail.setSaleMaster(saleMaster);
+            });
             saleMaster.setUpdatedAt(new Date());
             // TODO: updated by should be a system user.
             // saleMaster.setUpdatedBy();

@@ -60,6 +60,7 @@ public class PurchaseMasterDao {
             purchaseMaster.setStatus(obj.getStatus());
             purchaseMaster.setPaymentStatus(obj.getPaymentStatus());
             purchaseMaster.setNotes(obj.getNotes());
+            purchaseMaster.setPurchaseDetails(obj.getPurchaseDetails());
             purchaseMaster.setUpdatedAt(new Date());
             // TODO: updated by should be a system user.
             // purchaseMaster.setUpdatedBy();

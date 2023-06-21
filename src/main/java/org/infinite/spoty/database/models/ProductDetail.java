@@ -58,8 +58,6 @@ public class ProductDetail implements Serializable {
     public ProductDetail() {}
 
     public ProductDetail(UnitOfMeasure unit,
-                         UnitOfMeasure saleUnit,
-                         UnitOfMeasure purchaseUnit,
                          String name,
                          int quantity,
                          double cost,
@@ -69,8 +67,6 @@ public class ProductDetail implements Serializable {
                          int stockAlert,
                          String serialNumber) {
         this.unit = unit;
-        this.saleUnit = saleUnit;
-        this.purchaseUnit = purchaseUnit;
         this.name = name;
         this.quantity = quantity;
         this.cost = cost;

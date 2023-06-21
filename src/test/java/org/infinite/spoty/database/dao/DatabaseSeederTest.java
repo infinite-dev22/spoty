@@ -361,8 +361,6 @@ class DatabaseSeederTest {
                     true);
 
             var productDetail = new ProductDetail(null,
-                    null,
-                    null,
                     "Product Detail",
                     2,
                     20.09,
@@ -391,6 +389,27 @@ class DatabaseSeederTest {
 
     @Test
     @Order(16)
+    void productUpdate() {
+        try {
+            List<ProductDetail> list = new LinkedList<>();
+            int i = 0;
+            var pM = ProductMasterDao.findProductMaster(1);
+            var pD = pM.getProductDetails();
+            pD.forEach(e -> {
+                e.setName("New Product Details: " + i);
+                list.add(e);
+            });
+            list.forEach(ii -> ProductDetailDao.updateProductDetail(ii, ii.getId()));
+            pM.setProductDetails(pD);
+            pM.setProductDetails(list);
+            ProductMasterDao.updateProductMaster(pM, pM.getId());
+        } catch (Exception e) {
+            throw new AssertionError();
+        }
+    }
+
+    @Test
+    @Order(17)
     void userInsert() {
         try {
             var user = new User("Test",

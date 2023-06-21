@@ -35,13 +35,11 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
-import org.infinite.spoty.database.dao.AdjustmentDetailDao;
 import org.infinite.spoty.database.models.AdjustmentDetail;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.viewModels.AdjustmentDetailViewModel;
 import org.infinite.spoty.viewModels.AdjustmentMasterViewModel;
 import org.infinite.spoty.viewModels.BranchViewModel;
-import org.infinite.spoty.viewModels.ProductDetailViewModel;
 
 import java.io.IOException;
 import java.net.URL;
@@ -53,7 +51,6 @@ import static org.infinite.spoty.Validators.requiredValidator;
 
 @SuppressWarnings("unchecked")
 public class AdjustmentMasterFormController implements Initializable {
-    public MFXTextField adjustmentDetailID = new MFXTextField();
     public MFXTextField adjustmentMasterID = new MFXTextField();
     @FXML
     public MFXFilterComboBox<Branch> adjustmentBranch;
@@ -88,8 +85,8 @@ public class AdjustmentMasterFormController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Input binding.
-        adjustmentDetailID.textProperty().bindBidirectional(AdjustmentDetailViewModel.idProperty());
-        adjustmentMasterID.textProperty().bindBidirectional(AdjustmentMasterViewModel.idProperty(), new NumberStringConverter());
+        adjustmentMasterID.textProperty()
+                .bindBidirectional(AdjustmentMasterViewModel.idProperty(), new NumberStringConverter());
         adjustmentBranch.valueProperty().bindBidirectional(AdjustmentMasterViewModel.branchProperty());
         adjustmentBranch.setItems(BranchViewModel.branchesList);
         adjustmentBranch.setConverter(new StringConverter<>() {
@@ -116,9 +113,12 @@ public class AdjustmentMasterFormController implements Initializable {
     }
 
     private void setupTable() {
-        MFXTableColumn<AdjustmentDetail> productName = new MFXTableColumn<>("Product", false, Comparator.comparing(AdjustmentDetail::getProductDetailName));
-        MFXTableColumn<AdjustmentDetail> productQuantity = new MFXTableColumn<>("Quantity", false, Comparator.comparing(AdjustmentDetail::getQuantity));
-        MFXTableColumn<AdjustmentDetail> adjustmentType = new MFXTableColumn<>("Adjustment Type", false, Comparator.comparing(AdjustmentDetail::getAdjustmentType));
+        MFXTableColumn<AdjustmentDetail> productName = new MFXTableColumn<>("Product", false,
+                Comparator.comparing(AdjustmentDetail::getProductDetailName));
+        MFXTableColumn<AdjustmentDetail> productQuantity = new MFXTableColumn<>("Quantity", false,
+                Comparator.comparing(AdjustmentDetail::getQuantity));
+        MFXTableColumn<AdjustmentDetail> adjustmentType = new MFXTableColumn<>("Adjustment Type", false,
+                Comparator.comparing(AdjustmentDetail::getAdjustmentType));
 
         productName.setRowCellFactory(product -> new MFXTableRowCell<>(AdjustmentDetail::getProductDetailName));
         productQuantity.setRowCellFactory(product -> new MFXTableRowCell<>(AdjustmentDetail::getQuantity));
@@ -163,19 +163,15 @@ public class AdjustmentMasterFormController implements Initializable {
         // Actions
         // Delete
         delete.setOnAction(e -> {
-            AdjustmentDetailViewModel.getItem(obj.getData(), AdjustmentDetailViewModel.adjustmentDetailsTempList.indexOf(obj.getData()));
-            try {
-                if (Integer.parseInt(adjustmentDetailID.getText()) > 0)
-                    AdjustmentDetailDao.deleteAdjustmentDetail(Integer.parseInt(adjustmentDetailID.getText()));
-            } catch (NumberFormatException ignored) {
-                AdjustmentDetailViewModel.removeAdjustmentDetail(AdjustmentDetailViewModel.adjustmentDetailsTempList.indexOf(obj.getData()));
-            }
+            AdjustmentDetailViewModel.removeAdjustmentDetail(obj.getData().getId(),
+                    AdjustmentDetailViewModel.adjustmentDetailsTempList.indexOf(obj.getData()));
             AdjustmentDetailViewModel.getAdjustmentDetails();
             e.consume();
         });
         // Edit
         edit.setOnAction(e -> {
-            AdjustmentDetailViewModel.getItem(obj.getData(), AdjustmentDetailViewModel.adjustmentDetailsTempList.indexOf(obj.getData()));
+            AdjustmentDetailViewModel.getItem(obj.getData().getId(),
+                    AdjustmentDetailViewModel.adjustmentDetailsTempList.indexOf(obj.getData()));
             dialog.showAndWait();
             e.consume();
         });
