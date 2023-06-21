@@ -59,6 +59,9 @@ public class StockInMasterDao {
             stockInMaster.setReceiveDate(obj.getReceiveDate());
             stockInMaster.setNotes(obj.getNotes());
             stockInMaster.setStockInDetails(obj.getStockInDetails());
+            obj.getStockInDetails().forEach(stockInDetail -> {
+                if (stockInDetail.getStockIn() == null) stockInDetail.setStockIn(stockInMaster);
+            });
             stockInMaster.setUpdatedAt(new Date());
             // TODO: updated by should be a system user.
             // stockInMaster.setUpdatedBy();
