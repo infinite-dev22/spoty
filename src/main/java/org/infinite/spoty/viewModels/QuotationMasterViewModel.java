@@ -26,6 +26,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
+
 public class QuotationMasterViewModel {
     public static final ObservableList<QuotationMaster> quotationMasterList = FXCollections.observableArrayList();
     private static final IntegerProperty id = new SimpleIntegerProperty(0);
@@ -118,6 +120,8 @@ public class QuotationMasterViewModel {
         setBranch(null);
         setStatus("");
         setNote("");
+        PENDING_DELETES.clear();
+        QuotationDetailViewModel.quotationDetailTempList.clear();
     }
 
     public static void saveQuotationMaster() {
@@ -130,7 +134,6 @@ public class QuotationMasterViewModel {
         }
         QuotationMasterDao.saveQuotationMaster(quotationMaster);
         resetProperties();
-        QuotationDetailViewModel.quotationDetailTempList.clear();
         getQuotationMasters();
     }
 
@@ -140,8 +143,8 @@ public class QuotationMasterViewModel {
         return quotationMasterList;
     }
 
-    public static void getItem(int quotationMasterID) {
-        QuotationMaster quotationMaster = QuotationMasterDao.findQuotationMaster(quotationMasterID);
+    public static void getItem(int index) {
+        QuotationMaster quotationMaster = QuotationMasterDao.findQuotationMaster(index);
         setId(quotationMaster.getId());
         setDate(quotationMaster.getLocaleDate());
         setCustomer(quotationMaster.getCustomer());
@@ -149,16 +152,20 @@ public class QuotationMasterViewModel {
         setStatus(quotationMaster.getStatus());
         setNote(quotationMaster.getNotes());
         QuotationDetailViewModel.quotationDetailTempList.addAll(quotationMaster.getQuotationDetails());
-        quotationMaster.getQuotationDetails().forEach(System.out::println);
         getQuotationMasters();
     }
 
-    public static void updateItem(int quotationMasterID) {
-        QuotationMaster quotationMaster = new QuotationMaster(getDate(), getCustomer(), getBranch(), getStatus(), getNote());
+    public static void updateItem(int index) {
+        QuotationMaster quotationMaster = QuotationMasterDao.findQuotationMaster(index);
+        quotationMaster.setDate(getDate());
+        quotationMaster.setCustomer(getCustomer());
+        quotationMaster.setBranch(getBranch());
+        quotationMaster.setStatus(getStatus());
+        quotationMaster.setNotes(getNote());
+        QuotationDetailViewModel.deleteQuotationDetails(PENDING_DELETES);
         quotationMaster.setQuotationDetails(QuotationDetailViewModel.quotationDetailTempList);
-        QuotationMasterDao.updateQuotationMaster(quotationMaster, quotationMasterID);
+        QuotationMasterDao.updateQuotationMaster(quotationMaster, index);
         resetProperties();
-        QuotationDetailViewModel.quotationDetailTempList.clear();
         getQuotationMasters();
     }
 }

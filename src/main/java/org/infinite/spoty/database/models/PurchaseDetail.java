@@ -53,23 +53,11 @@ public class PurchaseDetail implements Serializable {
 
     public PurchaseDetail(PurchaseMaster purchase,
                           double cost,
-                          double netTax,
-                          String taxType,
-                          double discount,
-                          String discountType,
                           ProductDetail product,
-                          String serialNumber,
-                          double total,
                           int quantity) {
         this.cost = cost;
         this.purchase = purchase;
-        this.netTax = netTax;
-        this.taxType = taxType;
-        this.discount = discount;
-        this.discountType = discountType;
         this.product = product;
-        this.serialNumber = serialNumber;
-        this.total = total;
         this.quantity = quantity;
     }
 
@@ -105,11 +93,11 @@ public class PurchaseDetail implements Serializable {
         this.netTax = netTax;
     }
 
-    public String getTaxtType() {
+    public String getTaxType() {
         return taxType;
     }
 
-    public void setTaxtType(String taxType) {
+    public void setTaxType(String taxType) {
         this.taxType = taxType;
     }
 

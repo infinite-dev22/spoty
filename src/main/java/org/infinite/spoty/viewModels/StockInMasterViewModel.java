@@ -25,6 +25,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
+
 public class StockInMasterViewModel {
     public static final ObservableList<StockInMaster> stockInMasterList = FXCollections.observableArrayList();
     private static final IntegerProperty id = new SimpleIntegerProperty(0);
@@ -117,6 +119,8 @@ public class StockInMasterViewModel {
         setNote("");
         setStatus("");
         setTotalCost("");
+        PENDING_DELETES.clear();
+        StockInDetailViewModel.stockInDetailsTempList.clear();
     }
 
     public static void saveStockInMaster() {
@@ -132,7 +136,6 @@ public class StockInMasterViewModel {
         }
         StockInMasterDao.saveStockInMaster(stockInMaster);
         resetProperties();
-        StockInDetailViewModel.stockInDetailsTempList.clear();
         getStockInMasters();
     }
 
@@ -142,8 +145,8 @@ public class StockInMasterViewModel {
         return stockInMasterList;
     }
 
-    public static void getItem(int stockInMasterID) {
-        StockInMaster stockInMaster = StockInMasterDao.findStockInMaster(stockInMasterID);
+    public static void getItem(int index) {
+        StockInMaster stockInMaster = StockInMasterDao.findStockInMaster(index);
         setId(stockInMaster.getId());
         setDate(stockInMaster.getLocaleDate());
         setBranch(stockInMaster.getBranch());
@@ -151,19 +154,19 @@ public class StockInMasterViewModel {
         setStatus(stockInMaster.getStatus());
         setNote(stockInMaster.getNotes());
         StockInDetailViewModel.stockInDetailsTempList.addAll(stockInMaster.getStockInDetails());
-        stockInMaster.getStockInDetails().forEach(System.out::println);
         getStockInMasters();
     }
 
-    public static void updateItem(int stockInMasterID) {
-        StockInMaster stockInMaster = new StockInMaster(getDate(),
-                getBranch(),
-                getStatus(),
-                getNote());
+    public static void updateItem(int index) {
+        StockInMaster stockInMaster = StockInMasterDao.findStockInMaster(index);
+        stockInMaster.setDate(getDate());
+        stockInMaster.setBranch(getBranch());
+        stockInMaster.setStatus(getStatus());
+        stockInMaster.setNotes(getNote());
+        StockInDetailViewModel.deleteStockInDetails(PENDING_DELETES);
         stockInMaster.setStockInDetails(StockInDetailViewModel.stockInDetailsTempList);
-        StockInMasterDao.updateStockInMaster(stockInMaster, stockInMasterID);
+        StockInMasterDao.updateStockInMaster(stockInMaster, index);
         resetProperties();
-        StockInDetailViewModel.stockInDetailsTempList.clear();
         getStockInMasters();
     }
 }

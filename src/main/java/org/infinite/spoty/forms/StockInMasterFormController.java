@@ -35,7 +35,6 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
-import org.infinite.spoty.database.dao.StocKInDetailDao;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.StockInDetail;
 import org.infinite.spoty.viewModels.BranchViewModel;
@@ -53,7 +52,6 @@ import static org.infinite.spoty.Validators.requiredValidator;
 @SuppressWarnings("unchecked")
 public class StockInMasterFormController implements Initializable {
     private static StockInMasterFormController instance;
-    public MFXTextField stockInDetailID = new MFXTextField();
     public MFXTextField stockInMasterID = new MFXTextField();
     @FXML
     public MFXFilterComboBox<Branch> stockInMasterBranch;
@@ -164,19 +162,15 @@ public class StockInMasterFormController implements Initializable {
         // Actions
         // Delete
         delete.setOnAction(e -> {
-            StockInDetailViewModel.getItem(obj.getData(), StockInDetailViewModel.stockInDetailsTempList.indexOf(obj.getData()));
-            try {
-                if (Integer.parseInt(stockInDetailID.getText()) > 0)
-                    StocKInDetailDao.deleteStockInDetail(Integer.parseInt(stockInDetailID.getText()));
-            } catch (NumberFormatException ignored) {
-                StockInDetailViewModel.removeStockInDetail(StockInDetailViewModel.stockInDetailsTempList.indexOf(obj.getData()));
-            }
+            StockInDetailViewModel.removeStockInDetail(obj.getData().getId(),
+                    StockInDetailViewModel.stockInDetailsTempList.indexOf(obj.getData()));
             StockInDetailViewModel.getStockInDetails();
             e.consume();
         });
         // Edit
         edit.setOnAction(e -> {
-            StockInDetailViewModel.getItem(obj.getData(), StockInDetailViewModel.stockInDetailsTempList.indexOf(obj.getData()));
+            StockInDetailViewModel.getItem(obj.getData().getId(),
+                    StockInDetailViewModel.stockInDetailsTempList.indexOf(obj.getData()));
             dialog.showAndWait();
             e.consume();
         });

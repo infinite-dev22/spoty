@@ -31,17 +31,15 @@ import java.util.ResourceBundle;
 
 import static org.infinite.spoty.GlobalActions.closeDialog;
 import static org.infinite.spoty.Validators.requiredValidator;
+import static org.infinite.spoty.values.SharedResources.tempIdProperty;
 
 public class PurchaseDetailFormController implements Initializable {
-    public MFXTextField purchaseDetailID = new MFXTextField();
     @FXML
     public MFXTextField purchaseDetailQnty;
     @FXML
     public MFXFilterComboBox<ProductDetail> purchaseDetailPdct;
     @FXML
-    public MFXTextField purchaseDetailOrderTax;
-    @FXML
-    public MFXTextField purchaseDetailDiscount;
+    public MFXTextField purchaseDetailCost;
     @FXML
     public MFXFilledButton purchaseDetailSaveBtn;
     @FXML
@@ -52,15 +50,15 @@ public class PurchaseDetailFormController implements Initializable {
     public Label purchaseDetailQntyValidationLabel;
     @FXML
     public Label purchaseDetailPdctValidationLabel;
+    @FXML
+    public Label purchaseDetailCostValidationLabel;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Input bindings.
-        purchaseDetailID.textProperty().bindBidirectional(PurchaseDetailViewModel.idProperty());
         purchaseDetailQnty.textProperty().bindBidirectional(PurchaseDetailViewModel.quantityProperty());
         purchaseDetailPdct.valueProperty().bindBidirectional(PurchaseDetailViewModel.productProperty());
-        purchaseDetailOrderTax.textProperty().bindBidirectional(PurchaseDetailViewModel.netTaxProperty());
-        purchaseDetailDiscount.textProperty().bindBidirectional(PurchaseDetailViewModel.discountProperty());
+        purchaseDetailCost.textProperty().bindBidirectional(PurchaseDetailViewModel.costProperty());
         purchaseDetailPdct.setItems(ProductDetailViewModel.getProductDetails());
         purchaseDetailPdct.setConverter(new StringConverter<>() {
             @Override
@@ -78,6 +76,7 @@ public class PurchaseDetailFormController implements Initializable {
         // Input validators.
         requiredValidator(purchaseDetailPdct, "Product is required.", purchaseDetailPdctValidationLabel);
         requiredValidator(purchaseDetailQnty, "Quantity is required.", purchaseDetailQntyValidationLabel);
+        requiredValidator(purchaseDetailCost, "Cost is required.", purchaseDetailCostValidationLabel);
         dialogOnActions();
     }
 
@@ -87,20 +86,18 @@ public class PurchaseDetailFormController implements Initializable {
             PurchaseDetailViewModel.resetProperties();
             purchaseDetailPdctValidationLabel.setVisible(false);
             purchaseDetailQntyValidationLabel.setVisible(false);
+            purchaseDetailCostValidationLabel.setVisible(false);
         });
         purchaseDetailSaveBtn.setOnAction((e) -> {
             if (!purchaseDetailPdctValidationLabel.isVisible()
-                    && !purchaseDetailQntyValidationLabel.isVisible()) {
-                if (!purchaseDetailID.getText().isEmpty()) {
-                    try {
-                        if (Integer.parseInt(purchaseDetailID.getText()) > 0)
-                            PurchaseDetailViewModel.updateItem(Integer.parseInt(purchaseDetailID.getText()));
-                    } catch (NumberFormatException ignored) {
-                        PurchaseDetailViewModel.updatePurchaseDetail(Integer.parseInt(purchaseDetailID.getText()
-                                .substring(purchaseDetailID.getText().lastIndexOf(':') + 1,
-                                        purchaseDetailID.getText().indexOf(';'))));
-                    }
-                } else PurchaseDetailViewModel.addPurchaseDetail();
+                    && !purchaseDetailQntyValidationLabel.isVisible()
+                    && !purchaseDetailCostValidationLabel.isVisible()) {
+                System.out.println(purchaseDetailPdct.getSelectedItem().getName());
+                System.out.println(PurchaseDetailViewModel.getProduct().getName());
+                if (tempIdProperty().get() > -1)
+                    PurchaseDetailViewModel.updatePurchaseDetail(PurchaseDetailViewModel.getId());
+                else
+                    PurchaseDetailViewModel.addPurchaseDetail();
                 PurchaseDetailViewModel.resetProperties();
                 closeDialog(e);
             }

@@ -31,9 +31,9 @@ import java.util.ResourceBundle;
 
 import static org.infinite.spoty.GlobalActions.closeDialog;
 import static org.infinite.spoty.Validators.requiredValidator;
+import static org.infinite.spoty.values.SharedResources.tempIdProperty;
 
 public class SaleDetailFormController implements Initializable {
-    public MFXTextField saleDetailID = new MFXTextField();
     @FXML
     public MFXTextField saleDetailQnty;
     @FXML
@@ -71,7 +71,6 @@ public class SaleDetailFormController implements Initializable {
             }
         });
         // Property binding.
-        saleDetailID.textProperty().bindBidirectional(SaleDetailViewModel.idProperty());
         saleDetailQnty.textProperty().bindBidirectional(SaleDetailViewModel.quantityProperty());
         saleDetailPdct.valueProperty().bindBidirectional(SaleDetailViewModel.productProperty());
         saleDetailOrderTax.textProperty().bindBidirectional(SaleDetailViewModel.netTaxProperty());
@@ -92,16 +91,9 @@ public class SaleDetailFormController implements Initializable {
         saleProductsSaveBtn.setOnAction((e) -> {
             if (!saleDetailPdctValidationLabel.isVisible()
                     && !saleDetailQntyValidationLabel.isVisible()) {
-                if (!saleDetailID.getText().isEmpty()) {
-                    try {
-                        if (Integer.parseInt(saleDetailID.getText()) > 0)
-                            SaleDetailViewModel.updateItem(Integer.parseInt(saleDetailID.getText()));
-                    } catch (NumberFormatException ignored) {
-                        SaleDetailViewModel.updateSaleDetail(Integer.parseInt(saleDetailID.getText()
-                                .substring(saleDetailID.getText().lastIndexOf(':') + 1,
-                                        saleDetailID.getText().indexOf(';'))));
-                    }
-                } else
+                if (tempIdProperty().get() > -1)
+                    SaleDetailViewModel.updateSaleDetail(SaleDetailViewModel.getId());
+                else
                     SaleDetailViewModel.addSaleDetail();
                 SaleDetailViewModel.resetProperties();
                 closeDialog(e);

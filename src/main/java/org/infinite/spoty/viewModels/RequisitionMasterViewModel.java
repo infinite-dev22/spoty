@@ -26,6 +26,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
+
 public class RequisitionMasterViewModel {
     public static final ObservableList<RequisitionMaster> requisitionMasterList = FXCollections.observableArrayList();
     private static final IntegerProperty id = new SimpleIntegerProperty(0);
@@ -192,6 +194,8 @@ public class RequisitionMasterViewModel {
         setNote("");
         setStatus("");
         setTotalCost("");
+        PENDING_DELETES.clear();
+        RequisitionDetailViewModel.requisitionDetailTempList.clear();
     }
 
     public static void saveRequisitionMaster() {
@@ -213,7 +217,6 @@ public class RequisitionMasterViewModel {
         }
         RequisitionMasterDao.saveRequisitionMaster(requisitionMaster);
         resetProperties();
-        RequisitionDetailViewModel.requisitionDetailTempList.clear();
         getRequisitionMasters();
     }
 
@@ -223,8 +226,8 @@ public class RequisitionMasterViewModel {
         return requisitionMasterList;
     }
 
-    public static void getItem(int requisitionMasterID) {
-        RequisitionMaster requisitionMaster = RequisitionMasterDao.findRequisitionMaster(requisitionMasterID);
+    public static void getItem(int index) {
+        RequisitionMaster requisitionMaster = RequisitionMasterDao.findRequisitionMaster(index);
         setId(requisitionMaster.getId());
         setSupplier(requisitionMaster.getSupplier());
         setBranch(requisitionMaster.getBranch());
@@ -239,21 +242,22 @@ public class RequisitionMasterViewModel {
         getRequisitionMasters();
     }
 
-    public static void updateItem(int requisitionMasterID) {
-        RequisitionMaster requisitionMaster = new RequisitionMaster(getDate(),
-                getSupplier(),
-                getBranch(),
-                getShipVia(),
-                getShipMethod(),
-                getShippingTerms(),
-                getDeliveryDate(),
-                getNote(),
-                getStatus(),
-                getTotalCost());
+    public static void updateItem(int index) {
+        RequisitionMaster requisitionMaster = RequisitionMasterDao.findRequisitionMaster(index);
+        requisitionMaster.setDate(getDate());
+        requisitionMaster.setSupplier(getSupplier());
+        requisitionMaster.setBranch(getBranch());
+        requisitionMaster.setShipVia(getShipVia());
+        requisitionMaster.setShipMethod(getShipMethod());
+        requisitionMaster.setShippingTerms(getShippingTerms());
+        requisitionMaster.setDeliveryDate(getDeliveryDate());
+        requisitionMaster.setNotes(getNote());
+        requisitionMaster.setStatus(getStatus());
+        requisitionMaster.setTotalCost(getTotalCost());
+        RequisitionDetailViewModel.deleteRequisitionDetails(PENDING_DELETES);
         requisitionMaster.setRequisitionDetails(RequisitionDetailViewModel.requisitionDetailTempList);
-        RequisitionMasterDao.updateRequisitionMaster(requisitionMaster, requisitionMasterID);
+        RequisitionMasterDao.updateRequisitionMaster(requisitionMaster, index);
         resetProperties();
-        RequisitionDetailViewModel.requisitionDetailTempList.clear();
         getRequisitionMasters();
     }
 }

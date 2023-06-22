@@ -31,9 +31,9 @@ import java.util.ResourceBundle;
 
 import static org.infinite.spoty.GlobalActions.closeDialog;
 import static org.infinite.spoty.Validators.requiredValidator;
+import static org.infinite.spoty.values.SharedResources.tempIdProperty;
 
 public class TransferDetailFormController implements Initializable {
-    public MFXTextField transferDetailID = new MFXTextField();
     @FXML
     public MFXTextField transferDetailQnty;
     @FXML
@@ -54,7 +54,6 @@ public class TransferDetailFormController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Form input binding.
-        transferDetailID.textProperty().bindBidirectional(TransferDetailViewModel.idProperty());
         transferDetailPdct.valueProperty().bindBidirectional(TransferDetailViewModel.productProperty());
         transferDetailQnty.textProperty().bindBidirectional(TransferDetailViewModel.quantityProperty());
         transferDetailDescription.textProperty().bindBidirectional(TransferDetailViewModel.descriptionProperty());
@@ -89,16 +88,19 @@ public class TransferDetailFormController implements Initializable {
         transferDetailSaveBtn.setOnAction((e) -> {
             if (!transferDetailPdctValidationLabel.isVisible()
                     && !transferDetailQntyValidationLabel.isVisible()) {
-                if (!transferDetailID.getText().isEmpty()) {
-                    try {
-                        if (Integer.parseInt(transferDetailID.getText()) > 0)
-                            TransferDetailViewModel.updateItem(Integer.parseInt(transferDetailID.getText()));
-                    } catch (NumberFormatException ignored) {
-                        TransferDetailViewModel.updateTransferDetail(Integer.parseInt(transferDetailID.getText()
-                                .substring(transferDetailID.getText().lastIndexOf(':') + 1,
-                                        transferDetailID.getText().indexOf(';'))));
-                    }
-                } else TransferDetailViewModel.addTransferDetails();
+                if (tempIdProperty().get() > -1)
+                    TransferDetailViewModel.updateTransferDetail(TransferDetailViewModel.getId());
+                else
+                    TransferDetailViewModel.addTransferDetails();
+//
+//                if (!transferDetailID.getText().isEmpty()) {
+//                    try {
+//                        if (Integer.parseInt(transferDetailID.getText()) > 0)
+//                            TransferDetailViewModel.updateItem(Integer.parseInt(transferDetailID.getText()));
+//                    } catch (NumberFormatException ignored) {
+//                        TransferDetailViewModel.updateTransferDetail(TransferDetailViewModel.getId());
+//                    }
+//                } else TransferDetailViewModel.addTransferDetails();
                 TransferDetailViewModel.resetProperties();
                 closeDialog(e);
             }

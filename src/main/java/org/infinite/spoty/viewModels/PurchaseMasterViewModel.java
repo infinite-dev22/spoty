@@ -26,6 +26,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
+
 public class PurchaseMasterViewModel {
     public static final ObservableList<PurchaseMaster> purchaseMasterList = FXCollections.observableArrayList();
     private static final IntegerProperty id = new SimpleIntegerProperty(0);
@@ -118,6 +120,8 @@ public class PurchaseMasterViewModel {
         setBranch(null);
         setStatus("");
         setNote("");
+        PENDING_DELETES.clear();
+        PurchaseDetailViewModel.purchaseDetailTempList.clear();
     }
 
     public static void savePurchaseMaster() {
@@ -138,8 +142,8 @@ public class PurchaseMasterViewModel {
         return purchaseMasterList;
     }
 
-    public static void getItem(int purchaseMasterID) {
-        PurchaseMaster purchaseMaster = PurchaseMasterDao.findPurchaseMaster(purchaseMasterID);
+    public static void getItem(int index) {
+        PurchaseMaster purchaseMaster = PurchaseMasterDao.findPurchaseMaster(index);
         setId(purchaseMaster.getId());
         setDate(purchaseMaster.getLocaleDate());
         setSupplier(purchaseMaster.getSupplier());
@@ -147,16 +151,20 @@ public class PurchaseMasterViewModel {
         setStatus(purchaseMaster.getStatus());
         setNote(purchaseMaster.getNotes());
         PurchaseDetailViewModel.purchaseDetailTempList.addAll(purchaseMaster.getPurchaseDetails());
-        purchaseMaster.getPurchaseDetails().forEach(System.out::println);
         getPurchaseMasters();
     }
 
-    public static void updateItem(int purchaseMasterID) {
-        PurchaseMaster purchaseMaster = new PurchaseMaster(getSupplier(), getBranch(), getStatus(), getNote(), getDate());
+    public static void updateItem(int index) {
+        PurchaseMaster purchaseMaster = PurchaseMasterDao.findPurchaseMaster(index);
+        purchaseMaster.setSupplier(getSupplier());
+        purchaseMaster.setBranch(getBranch());
+        purchaseMaster.setStatus(getStatus());
+        purchaseMaster.setNotes(getNote());
+        purchaseMaster.setDate(getDate());
+        PurchaseDetailViewModel.deletePurchaseDetails(PENDING_DELETES);
         purchaseMaster.setPurchaseDetails(PurchaseDetailViewModel.purchaseDetailTempList);
-        PurchaseMasterDao.updatePurchaseMaster(purchaseMaster, purchaseMasterID);
+        PurchaseMasterDao.updatePurchaseMaster(purchaseMaster, index);
         resetProperties();
-        PurchaseDetailViewModel.purchaseDetailTempList.clear();
         getPurchaseMasters();
     }
 }

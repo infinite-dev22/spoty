@@ -14,10 +14,7 @@
 
 package org.infinite.spoty.viewModels;
 
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.infinite.spoty.database.dao.RequisitionDetailDao;
@@ -25,24 +22,29 @@ import org.infinite.spoty.database.models.ProductDetail;
 import org.infinite.spoty.database.models.RequisitionDetail;
 import org.infinite.spoty.database.models.RequisitionMaster;
 
+import java.util.LinkedList;
+
+import static org.infinite.spoty.values.SharedResources.*;
+import static org.infinite.spoty.values.SharedResources.getTempId;
+
 public class RequisitionDetailViewModel {
     public static final ObservableList<RequisitionDetail> requisitionDetailList = FXCollections.observableArrayList();
     public static final ObservableList<RequisitionDetail> requisitionDetailTempList = FXCollections.observableArrayList();
-    private static final StringProperty id = new SimpleStringProperty();
+    private static final IntegerProperty id = new SimpleIntegerProperty(0);
     private static final ObjectProperty<ProductDetail> product = new SimpleObjectProperty<>();
     private static final ObjectProperty<RequisitionMaster> requisition = new SimpleObjectProperty<>();
     private static final StringProperty quantity = new SimpleStringProperty();
     private static final StringProperty description = new SimpleStringProperty();
 
-    public static String getId() {
+    public static int getId() {
         return id.get();
     }
 
-    public static void setId(String id) {
+    public static void setId(int id) {
         RequisitionDetailViewModel.id.set(id);
     }
 
-    public static StringProperty idProperty() {
+    public static IntegerProperty idProperty() {
         return id;
     }
 
@@ -95,7 +97,8 @@ public class RequisitionDetailViewModel {
     }
 
     public static void resetProperties() {
-        setId("");
+        setId(0);
+        setTempId(-1);
         setProduct(null);
         setRequisition(null);
         setDescription("");
@@ -118,39 +121,39 @@ public class RequisitionDetailViewModel {
     }
 
     public static void updateRequisitionDetail(int index) {
-        RequisitionDetail requisitionDetail = new RequisitionDetail(getProduct(),
-                getRequisition(),
-                Integer.parseInt(getQuantity()),
-                getDescription());
-        requisitionDetailTempList.remove(index);
-        requisitionDetailTempList.add(index, requisitionDetail);
+        RequisitionDetail requisitionDetail = RequisitionDetailDao.findRequisitionDetail(index);
+        requisitionDetail.setProductDetail(getProduct());
+        requisitionDetail.setQuantity(Integer.parseInt(getQuantity()));
+        requisitionDetail.setDescription(getDescription());
+        requisitionDetailTempList.remove((int) getTempId());
+        requisitionDetailTempList.add(getTempId(), requisitionDetail);
         resetProperties();
     }
 
-    public static void getItem(int requisitionDetailID) {
-        RequisitionDetail requisitionDetail = RequisitionDetailDao.findRequisitionDetail(requisitionDetailID);
-        setId(String.valueOf(requisitionDetail.getId()));
-        setProduct(requisitionDetail.getProductDetail());
-        setQuantity(String.valueOf(requisitionDetail.getQuantity()));
-        setDescription(requisitionDetail.getDescription());
-        getRequisitionDetails();
-    }
-
-    public static void getItem(RequisitionDetail requisitionDetail, int index) {
-        setId("index:" + index + ";");
+    public static void getItem(int index, int tempIndex) {
+        RequisitionDetail requisitionDetail = RequisitionDetailDao.findRequisitionDetail(index);
+        setTempId(tempIndex);
+        setId(requisitionDetail.getId());
         setProduct(requisitionDetail.getProductDetail());
         setQuantity(String.valueOf(requisitionDetail.getQuantity()));
         setDescription(requisitionDetail.getDescription());
     }
 
-    public static void updateItem(int requisitionDetailID) {
-        RequisitionDetail requisitionDetail = new RequisitionDetail(getProduct(), getRequisition(),
-                Integer.parseInt(getQuantity()), getDescription());
-        RequisitionDetailDao.updateRequisitionDetail(requisitionDetail, requisitionDetailID);
+    public static void updateItem(int index) {
+        RequisitionDetail requisitionDetail = RequisitionDetailDao.findRequisitionDetail(index);
+        requisitionDetail.setProductDetail(getProduct());
+        requisitionDetail.setQuantity(Integer.parseInt(getQuantity()));
+        requisitionDetail.setDescription(getDescription());
+        RequisitionDetailDao.updateRequisitionDetail(requisitionDetail, index);
         getRequisitionDetails();
     }
 
-    public static void removeRequisitionDetail(int index) {
-        requisitionDetailTempList.remove(index);
+    public static void removeRequisitionDetail(int index, int tempIndex) {
+        requisitionDetailTempList.remove(tempIndex);
+        PENDING_DELETES.add(index);
+    }
+
+    public static void deleteRequisitionDetails(LinkedList<Integer> indexes) {
+        indexes.forEach(RequisitionDetailDao::deleteRequisitionDetail);
     }
 }

@@ -49,7 +49,7 @@ public class PurchaseDetailDao {
             purchaseDetail.setCost(obj.getCost());
             purchaseDetail.setPurchase(obj.getPurchase());
             purchaseDetail.setNetTax(obj.getNetTax());
-            purchaseDetail.setTaxtType(obj.getTaxtType());
+            purchaseDetail.setTaxType(obj.getTaxType());
             purchaseDetail.setDiscount(obj.getDiscount());
             purchaseDetail.setDiscountType(obj.getDiscountType());
             purchaseDetail.setProduct(obj.getProduct());

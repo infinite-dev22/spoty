@@ -25,6 +25,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
+
 public class TransferMasterViewModel {
     public static final ObservableList<TransferMaster> transferMasterList = FXCollections.observableArrayList();
     private static final IntegerProperty id = new SimpleIntegerProperty(0);
@@ -131,6 +133,8 @@ public class TransferMasterViewModel {
         setNote("");
         setStatus("");
         setTotalCost("");
+        PENDING_DELETES.clear();
+        TransferDetailViewModel.transferDetailsTempList.clear();
     }
 
     public static void saveTransferMaster() {
@@ -148,7 +152,6 @@ public class TransferMasterViewModel {
         }
         TransferMasterDao.saveTransferMaster(transferMaster);
         resetProperties();
-        TransferDetailViewModel.transferDetailsTempList.clear();
         getTransferMasters();
     }
 
@@ -168,21 +171,21 @@ public class TransferMasterViewModel {
         setNote(transferMaster.getNotes());
         setStatus(transferMaster.getStatus());
         TransferDetailViewModel.transferDetailsTempList.addAll(transferMaster.getTransferDetails());
-        transferMaster.getTransferDetails().forEach(System.out::println);
         getTransferMasters();
     }
 
     public static void updateItem(int transferMasterID) {
-        TransferMaster transferMaster = new TransferMaster(getDate(),
-                getFromBranch(),
-                getToBranch(),
-                getTotalCost(),
-                getStatus(),
-                getNote());
+        TransferMaster transferMaster = TransferMasterDao.findTransferMaster(transferMasterID);
+        transferMaster.setDate(getDate());
+        transferMaster.setFromBranch(getFromBranch());
+        transferMaster.setToBranch(getToBranch());
+        transferMaster.setTotal(getTotalCost());
+        transferMaster.setStatus(getStatus());
+        transferMaster.setNotes(getNote());
+        TransferDetailViewModel.deleteTransferDetails(PENDING_DELETES);
         transferMaster.setTransferDetails(TransferDetailViewModel.transferDetailsTempList);
         TransferMasterDao.updateTransferMaster(transferMaster, transferMasterID);
         resetProperties();
-        TransferDetailViewModel.transferDetailsTempList.clear();
         getTransferMasters();
     }
 }

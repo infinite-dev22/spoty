@@ -14,10 +14,7 @@
 
 package org.infinite.spoty.viewModels;
 
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.infinite.spoty.database.dao.StocKInDetailDao;
@@ -25,10 +22,14 @@ import org.infinite.spoty.database.models.ProductDetail;
 import org.infinite.spoty.database.models.StockInDetail;
 import org.infinite.spoty.database.models.StockInMaster;
 
+import java.util.LinkedList;
+
+import static org.infinite.spoty.values.SharedResources.*;
+
 public class StockInDetailViewModel {
     public static final ObservableList<StockInDetail> stockInDetailsList = FXCollections.observableArrayList();
     public static final ObservableList<StockInDetail> stockInDetailsTempList = FXCollections.observableArrayList();
-    private static final StringProperty id = new SimpleStringProperty();
+    private static final IntegerProperty id = new SimpleIntegerProperty(0);
     private static final ObjectProperty<ProductDetail> product = new SimpleObjectProperty<>();
     private static final ObjectProperty<StockInMaster> stockIn = new SimpleObjectProperty<>();
     private static final StringProperty quantity = new SimpleStringProperty("");
@@ -36,15 +37,15 @@ public class StockInDetailViewModel {
     private static final StringProperty description = new SimpleStringProperty("");
     private static final StringProperty location = new SimpleStringProperty("");
 
-    public static String getId() {
+    public static int getId() {
         return id.get();
     }
 
-    public static void setId(String id) {
+    public static void setId(int id) {
         StockInDetailViewModel.id.set(id);
     }
 
-    public static StringProperty idProperty() {
+    public static IntegerProperty idProperty() {
         return id;
     }
 
@@ -121,7 +122,8 @@ public class StockInDetailViewModel {
     }
 
     public static void resetProperties() {
-        setId("");
+        setId(0);
+        setTempId(-1);
         setProduct(null);
         setQuantity("");
         setSerial("");
@@ -146,29 +148,21 @@ public class StockInDetailViewModel {
     }
 
     public static void updateStockInDetail(int index) {
-        StockInDetail stockInDetail = new StockInDetail(getProduct(),
-                getQuantity(),
-                getSerial(),
-                getDescription(),
-                getLocation());
-        stockInDetailsTempList.remove(index);
-        stockInDetailsTempList.add(index, stockInDetail);
+        StockInDetail stockInDetail = StocKInDetailDao.findStockInDetail(index);
+        stockInDetail.setProduct(getProduct());
+        stockInDetail.setQuantity(getQuantity());
+        stockInDetail.setSerialNo(getSerial());
+        stockInDetail.setDescription(getDescription());
+        stockInDetail.setLocation(getLocation());
+        stockInDetailsTempList.remove((int) getTempId());
+        stockInDetailsTempList.add(getTempId(), stockInDetail);
         resetProperties();
     }
 
-    public static void getItem(int stockInDetailID) {
-        StockInDetail stockInDetail = StocKInDetailDao.findStockInDetail(stockInDetailID);
-        setId(String.valueOf(stockInDetail.getId()));
-        setProduct(stockInDetail.getProduct());
-        setQuantity(String.valueOf(stockInDetail.getQuantity()));
-        setSerial(stockInDetail.getSerialNo());
-        setDescription(stockInDetail.getDescription());
-        setLocation(stockInDetail.getLocation());
-        getStockInDetails();
-    }
-
-    public static void getItem(StockInDetail stockInDetail, int index) {
-        setId("index:" + index + ";");
+    public static void getItem(int index, int tempIndex) {
+        StockInDetail stockInDetail = StocKInDetailDao.findStockInDetail(index);
+        setTempId(tempIndex);
+        setId(stockInDetail.getId());
         setProduct(stockInDetail.getProduct());
         setQuantity(String.valueOf(stockInDetail.getQuantity()));
         setSerial(stockInDetail.getSerialNo());
@@ -176,17 +170,23 @@ public class StockInDetailViewModel {
         setLocation(stockInDetail.getLocation());
     }
 
-    public static void updateItem(int stockInDetailID) {
-        StockInDetail stockInDetail = new StockInDetail(getProduct(),
-                getQuantity(),
-                getSerial(),
-                getDescription(),
-                getLocation());
-        StocKInDetailDao.updateStockInDetail(stockInDetail, stockInDetailID);
+    public static void updateItem(int index) {
+        StockInDetail stockInDetail = StocKInDetailDao.findStockInDetail(index);
+        stockInDetail.setProduct(getProduct());
+        stockInDetail.setQuantity(getQuantity());
+        stockInDetail.setSerialNo(getSerial());
+        stockInDetail.setDescription(getDescription());
+        stockInDetail.setLocation(getLocation());
+        StocKInDetailDao.updateStockInDetail(stockInDetail, index);
         getStockInDetails();
     }
 
-    public static void removeStockInDetail(int index) {
-        stockInDetailsTempList.remove(index);
+    public static void removeStockInDetail(int index, int tempIndex) {
+        stockInDetailsTempList.remove(tempIndex);
+        PENDING_DELETES.add(index);
+    }
+
+    public static void deleteStockInDetails(LinkedList<Integer> indexes) {
+        indexes.forEach(StocKInDetailDao::deleteStockInDetail);
     }
 }

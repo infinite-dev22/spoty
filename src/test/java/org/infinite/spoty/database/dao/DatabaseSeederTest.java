@@ -219,13 +219,7 @@ class DatabaseSeederTest {
 
             var purchaseDetail = new PurchaseDetail(purchaseMaster,
                     13234,
-                    554,
-                    "VAT",
-                    20,
-                    "Customer",
                     null,
-                    "",
-                    13788,
                     1);
             List<PurchaseDetail> list = new LinkedList<>();
 
