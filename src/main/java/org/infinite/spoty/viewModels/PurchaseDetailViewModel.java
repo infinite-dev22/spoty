@@ -14,10 +14,7 @@
 
 package org.infinite.spoty.viewModels;
 
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.infinite.spoty.database.dao.PurchaseDetailDao;
@@ -25,10 +22,15 @@ import org.infinite.spoty.database.models.ProductDetail;
 import org.infinite.spoty.database.models.PurchaseDetail;
 import org.infinite.spoty.database.models.PurchaseMaster;
 
+import java.util.LinkedList;
+
+import static org.infinite.spoty.values.SharedResources.*;
+import static org.infinite.spoty.values.SharedResources.getTempId;
+
 public class PurchaseDetailViewModel {
     public static final ObservableList<PurchaseDetail> purchaseDetailList = FXCollections.observableArrayList();
     public static final ObservableList<PurchaseDetail> purchaseDetailTempList = FXCollections.observableArrayList();
-    private static final StringProperty id = new SimpleStringProperty();
+    private static final IntegerProperty id = new SimpleIntegerProperty(0);
     private static final ObjectProperty<PurchaseMaster> purchase = new SimpleObjectProperty<>(null);
     private static final StringProperty cost = new SimpleStringProperty("");
     private static final StringProperty netTax = new SimpleStringProperty("");
@@ -40,15 +42,15 @@ public class PurchaseDetailViewModel {
     private static final StringProperty total = new SimpleStringProperty("");
     private static final StringProperty quantity = new SimpleStringProperty("");
 
-    public static String getId() {
+    public static int getId() {
         return id.get();
     }
 
-    public static void setId(String id) {
+    public static void setId(int id) {
         PurchaseDetailViewModel.id.set(id);
     }
 
-    public static StringProperty idProperty() {
+    public static IntegerProperty idProperty() {
         return id;
     }
 
@@ -173,24 +175,18 @@ public class PurchaseDetailViewModel {
     }
 
     public static void addPurchaseDetail() {
-        setCost("0");
-        setTotal("0");
         PurchaseDetail purchaseDetail = new PurchaseDetail(getPurchase(),
                 Double.parseDouble(getCost()),
-                Double.parseDouble(getNetTax()),
-                getTaxType(),
-                Double.parseDouble(getDiscount()),
-                getDiscountType(),
                 getProduct(),
-                getSerial(),
-                Double.parseDouble(getTotal()),
                 Integer.parseInt(getQuantity()));
         purchaseDetailTempList.add(purchaseDetail);
     }
 
     public static void resetProperties() {
-        setId("");
+        setId(0);
+        setTempId(-1);
         setPurchase(null);
+        setProduct(null);
         setCost("");
         setNetTax("");
         setTaxType(null);
@@ -208,43 +204,30 @@ public class PurchaseDetailViewModel {
     }
 
     public static void updatePurchaseDetail(int index) {
-        PurchaseDetail purchaseDetail = new PurchaseDetail(getPurchase(),
-                Double.parseDouble(getCost()),
-                Double.parseDouble(getNetTax()),
-                getTaxType(),
-                Double.parseDouble(getDiscount()),
-                getDiscountType(),
-                getProduct(),
-                getSerial(),
-                Double.parseDouble(getTotal()),
-                Integer.parseInt(getQuantity()));
-        purchaseDetailTempList.remove(index);
-        purchaseDetailTempList.add(index, purchaseDetail);
+        PurchaseDetail purchaseDetail = PurchaseDetailDao.findPurchaseDetail(index);
+        purchaseDetail.setPurchase(getPurchase());
+        purchaseDetail.setCost(Double.parseDouble(getCost()));
+        purchaseDetail.setNetTax(Double.parseDouble(getNetTax()));
+        purchaseDetail.setTaxType(purchaseDetail.getTaxType());
+        purchaseDetail.setDiscount(Double.parseDouble(getDiscount()));
+        purchaseDetail.setDiscountType(purchaseDetail.getDiscountType());
+        purchaseDetail.setProduct(getProduct());
+        purchaseDetail.setSerialNumber(getSerial());
+        purchaseDetail.setTotal(Double.parseDouble(getTotal()));
+        purchaseDetail.setQuantity(Integer.parseInt(getQuantity()));
+        purchaseDetailTempList.remove((int) getTempId());
+        purchaseDetailTempList.add(getTempId(), purchaseDetail);
         resetProperties();
     }
 
-    public static void getItem(int purchaseDetailID) {
-        PurchaseDetail purchaseDetail = PurchaseDetailDao.findPurchaseDetail(purchaseDetailID);
-        setId(String.valueOf(purchaseDetail.getId()));
+    public static void getItem(int index, int tempIndex) {
+        PurchaseDetail purchaseDetail = PurchaseDetailDao.findPurchaseDetail(index);
+        setTempId(tempIndex);
+        setId(purchaseDetail.getId());
         setPurchase(purchaseDetail.getPurchase());
         setCost(String.valueOf(purchaseDetail.getCost()));
         setNetTax(String.valueOf(purchaseDetail.getNetTax()));
-        setTaxType(purchaseDetail.getTaxtType());
-        setDiscount(String.valueOf(purchaseDetail.getDiscount()));
-        setDiscountType(purchaseDetail.getDiscountType());
-        setProduct(purchaseDetail.getProduct());
-        setSerial(purchaseDetail.getSerialNumber());
-        setTotal(String.valueOf(purchaseDetail.getTotal()));
-        setQuantity(String.valueOf(purchaseDetail.getQuantity()));
-        getPurchaseDetails();
-    }
-
-    public static void getItem(PurchaseDetail purchaseDetail, int index) {
-        setId("index:" + index + ";");
-        setPurchase(purchaseDetail.getPurchase());
-        setCost(String.valueOf(purchaseDetail.getCost()));
-        setNetTax(String.valueOf(purchaseDetail.getNetTax()));
-        setTaxType(purchaseDetail.getTaxtType());
+        setTaxType(purchaseDetail.getTaxType());
         setDiscount(String.valueOf(purchaseDetail.getDiscount()));
         setDiscountType(purchaseDetail.getDiscountType());
         setProduct(purchaseDetail.getProduct());
@@ -253,22 +236,29 @@ public class PurchaseDetailViewModel {
         setQuantity(String.valueOf(purchaseDetail.getQuantity()));
     }
 
-    public static void updateItem(int purchaseDetailID) {
-        PurchaseDetail purchaseDetail = new PurchaseDetail(getPurchase(),
-                Double.parseDouble(getCost()),
-                Double.parseDouble(getNetTax()),
-                getTaxType(),
-                Double.parseDouble(getDiscount()),
-                getDiscountType(),
-                getProduct(),
-                getSerial(),
-                Double.parseDouble(getTotal()),
-                Integer.parseInt(getQuantity()));
-        PurchaseDetailDao.updatePurchaseDetail(purchaseDetail, purchaseDetailID);
+    public static void updateItem(int index) {
+        PurchaseDetail purchaseDetail = PurchaseDetailDao.findPurchaseDetail(index);
+        setId(purchaseDetail.getId());
+        setPurchase(purchaseDetail.getPurchase());
+        setCost(String.valueOf(purchaseDetail.getCost()));
+        setNetTax(String.valueOf(purchaseDetail.getNetTax()));
+        setTaxType(purchaseDetail.getTaxType());
+        setDiscount(String.valueOf(purchaseDetail.getDiscount()));
+        setDiscountType(purchaseDetail.getDiscountType());
+        setProduct(purchaseDetail.getProduct());
+        setSerial(purchaseDetail.getSerialNumber());
+        setTotal(String.valueOf(purchaseDetail.getTotal()));
+        setQuantity(String.valueOf(purchaseDetail.getQuantity()));
+        PurchaseDetailDao.updatePurchaseDetail(purchaseDetail, index);
         getPurchaseDetails();
     }
 
-    public static void removePurchaseDetail(int index) {
-        purchaseDetailTempList.remove(index);
+    public static void removePurchaseDetail(int index, int tempIndex) {
+        purchaseDetailTempList.remove(tempIndex);
+        PENDING_DELETES.add(index);
+    }
+
+    public static void deletePurchaseDetails(LinkedList<Integer> indexes) {
+        indexes.forEach(PurchaseDetailDao::deletePurchaseDetail);
     }
 }

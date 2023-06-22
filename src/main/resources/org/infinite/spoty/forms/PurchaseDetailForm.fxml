@@ -61,19 +61,11 @@
                     <padding>
                         <Insets right="10.0" top="2.5"/>
                     </padding>
-                    <MFXTextField fx:id="purchaseDetailOrderTax" floatMode="BORDER" floatingText="Order Tax"
+                    <MFXTextField fx:id="purchaseDetailCost" floatMode="BORDER" floatingText="Cost"
                                   prefWidth="400.0"/>
-                    <Label id="validationLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
-                           styleClass="input-validation-error" visible="false" wrapText="true"/>
-                </VBox>
-                <VBox spacing="2.0">
-                    <padding>
-                        <Insets right="10.0" top="2.5"/>
-                    </padding>
-                    <MFXTextField fx:id="purchaseDetailDiscount" floatMode="BORDER" floatingText="Discount"
-                                  prefWidth="400.0"/>
-                    <Label id="validationLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
-                           styleClass="input-validation-error" visible="false" wrapText="true"/>
+                    <Label id="validationLabel" fx:id="purchaseDetailCostValidationLabel"
+                           maxWidth="1.7976931348623157E308"
+                           minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true"/>
                 </VBox>
                 <HBox alignment="CENTER_RIGHT" spacing="20.0">
                     <VBox.margin>

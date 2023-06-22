@@ -31,9 +31,9 @@ import java.util.ResourceBundle;
 
 import static org.infinite.spoty.GlobalActions.closeDialog;
 import static org.infinite.spoty.Validators.requiredValidator;
+import static org.infinite.spoty.values.SharedResources.tempIdProperty;
 
 public class RequisitionDetailFormController implements Initializable {
-    public MFXTextField requisitionDetailID = new MFXTextField();
     @FXML
     public MFXTextField requisitionDetailQnty;
     @FXML
@@ -54,7 +54,6 @@ public class RequisitionDetailFormController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Form input binding.
-        requisitionDetailID.textProperty().bindBidirectional(RequisitionDetailViewModel.idProperty());
         requisitionDetailPdct.valueProperty().bindBidirectional(RequisitionDetailViewModel.productProperty());
         requisitionDetailQnty.textProperty().bindBidirectional(RequisitionDetailViewModel.quantityProperty());
         requisitionDetailDescription.textProperty().bindBidirectional(RequisitionDetailViewModel.descriptionProperty());
@@ -89,16 +88,10 @@ public class RequisitionDetailFormController implements Initializable {
         requisitionDetailSaveBtn.setOnAction((e) -> {
             if (!requisitionDetailPdctValidationLabel.isVisible()
                     && !requisitionDetailQntyValidationLabel.isVisible()) {
-                if (!requisitionDetailID.getText().isEmpty()) {
-                    try {
-                        if (Integer.parseInt(requisitionDetailID.getText()) > 0)
-                            RequisitionDetailViewModel.updateItem(Integer.parseInt(requisitionDetailID.getText()));
-                    } catch (NumberFormatException ignored) {
-                        RequisitionDetailViewModel.updateRequisitionDetail(Integer.parseInt(requisitionDetailID.getText()
-                                .substring(requisitionDetailID.getText().lastIndexOf(':') + 1,
-                                        requisitionDetailID.getText().indexOf(';'))));
-                    }
-                } else RequisitionDetailViewModel.addRequisitionDetails();
+                if (tempIdProperty().get() > -1)
+                    RequisitionDetailViewModel.updateRequisitionDetail(RequisitionDetailViewModel.getId());
+                else
+                    RequisitionDetailViewModel.addRequisitionDetails();
                 RequisitionDetailViewModel.resetProperties();
                 closeDialog(e);
             }

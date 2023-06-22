@@ -31,9 +31,9 @@ import java.util.ResourceBundle;
 
 import static org.infinite.spoty.GlobalActions.closeDialog;
 import static org.infinite.spoty.Validators.requiredValidator;
+import static org.infinite.spoty.values.SharedResources.tempIdProperty;
 
 public class StockInDetailFormController implements Initializable {
-    public MFXTextField stockInDetailID = new MFXTextField();
     @FXML
     public MFXTextField stockInDetailQnty;
     @FXML
@@ -54,7 +54,6 @@ public class StockInDetailFormController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Form input binding.
-        stockInDetailID.textProperty().bindBidirectional(StockInDetailViewModel.idProperty());
         stockInDetailPdct.valueProperty().bindBidirectional(StockInDetailViewModel.productProperty());
         stockInDetailQnty.textProperty().bindBidirectional(StockInDetailViewModel.quantityProperty());
         stockInDetailDescription.textProperty().bindBidirectional(StockInDetailViewModel.descriptionProperty());
@@ -89,16 +88,10 @@ public class StockInDetailFormController implements Initializable {
         stockInDetailSaveBtn.setOnAction((e) -> {
             if (!stockInDetailPdctValidationLabel.isVisible()
                     && !stockInDetailQntyValidationLabel.isVisible()) {
-                if (!stockInDetailID.getText().isEmpty()) {
-                    try {
-                        if (Integer.parseInt(stockInDetailID.getText()) > 0)
-                            StockInDetailViewModel.updateItem(Integer.parseInt(stockInDetailID.getText()));
-                    } catch (NumberFormatException ignored) {
-                        StockInDetailViewModel.updateStockInDetail(Integer.parseInt(stockInDetailID.getText()
-                                .substring(stockInDetailID.getText().lastIndexOf(':') + 1,
-                                        stockInDetailID.getText().indexOf(';'))));
-                    }
-                } else StockInDetailViewModel.addStockInDetails();
+                if (tempIdProperty().get() > -1)
+                    StockInDetailViewModel.updateStockInDetail(StockInDetailViewModel.getId());
+                else
+                    StockInDetailViewModel.addStockInDetails();
                 StockInDetailViewModel.resetProperties();
                 closeDialog(e);
             }

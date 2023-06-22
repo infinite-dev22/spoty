@@ -35,7 +35,6 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
-import org.infinite.spoty.database.dao.RequisitionDetailDao;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.RequisitionDetail;
 import org.infinite.spoty.database.models.Supplier;
@@ -55,7 +54,6 @@ import static org.infinite.spoty.Validators.requiredValidator;
 @SuppressWarnings("unchecked")
 public class RequisitionMasterFormController implements Initializable {
     private static RequisitionMasterFormController instance;
-    public MFXTextField requisitionDetailID = new MFXTextField();
     public MFXTextField requisitionMasterID = new MFXTextField();
     @FXML
     public MFXFilterComboBox<Branch> requisitionMasterBranch;
@@ -195,19 +193,15 @@ public class RequisitionMasterFormController implements Initializable {
         // Actions
         // Delete
         delete.setOnAction(e -> {
-            RequisitionDetailViewModel.getItem(obj.getData(), RequisitionDetailViewModel.requisitionDetailTempList.indexOf(obj.getData()));
-            try {
-                if (Integer.parseInt(requisitionDetailID.getText()) > 0)
-                    RequisitionDetailDao.deleteRequisitionDetail(Integer.parseInt(requisitionDetailID.getText()));
-            } catch (NumberFormatException ignored) {
-                RequisitionDetailViewModel.removeRequisitionDetail(RequisitionDetailViewModel.requisitionDetailTempList.indexOf(obj.getData()));
-            }
+            RequisitionDetailViewModel.removeRequisitionDetail(obj.getData().getId(),
+                    RequisitionDetailViewModel.requisitionDetailTempList.indexOf(obj.getData()));
             RequisitionDetailViewModel.getRequisitionDetails();
             e.consume();
         });
         // Edit
         edit.setOnAction(e -> {
-            RequisitionDetailViewModel.getItem(obj.getData(), RequisitionDetailViewModel.requisitionDetailTempList.indexOf(obj.getData()));
+            RequisitionDetailViewModel.getItem(obj.getData().getId(),
+                    RequisitionDetailViewModel.requisitionDetailTempList.indexOf(obj.getData()));
             dialog.showAndWait();
             e.consume();
         });

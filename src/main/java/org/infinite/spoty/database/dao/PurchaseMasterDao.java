@@ -61,6 +61,9 @@ public class PurchaseMasterDao {
             purchaseMaster.setPaymentStatus(obj.getPaymentStatus());
             purchaseMaster.setNotes(obj.getNotes());
             purchaseMaster.setPurchaseDetails(obj.getPurchaseDetails());
+            obj.getPurchaseDetails().forEach(purchaseDetail -> {
+                if (purchaseDetail.getPurchase() == null) purchaseDetail.setPurchase(purchaseMaster);
+            });
             purchaseMaster.setUpdatedAt(new Date());
             // TODO: updated by should be a system user.
             // purchaseMaster.setUpdatedBy();

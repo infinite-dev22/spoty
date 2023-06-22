@@ -36,7 +36,6 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
-import org.infinite.spoty.database.dao.PurchaseDetailDao;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.PurchaseDetail;
 import org.infinite.spoty.database.models.Supplier;
@@ -58,7 +57,6 @@ import static org.infinite.spoty.dataShare.DataShare.getPurchaseProducts;
 @SuppressWarnings("unchecked")
 public class PurchaseMasterFormController implements Initializable {
     private static PurchaseMasterFormController instance;
-    public MFXTextField purchaseDetailID = new MFXTextField();
     public MFXTextField purchaseMasterID = new MFXTextField();
     @FXML
     public Label purchaseFormTitle;
@@ -234,19 +232,14 @@ public class PurchaseMasterFormController implements Initializable {
         // Actions
         // Delete
         delete.setOnAction(e -> {
-            PurchaseDetailViewModel.getItem(obj.getData(), PurchaseDetailViewModel.purchaseDetailTempList.indexOf(obj.getData()));
-            try {
-                if (Integer.parseInt(purchaseDetailID.getText()) > 0)
-                    PurchaseDetailDao.deletePurchaseDetail(Integer.parseInt(purchaseDetailID.getText()));
-            } catch (NumberFormatException ignored) {
-                PurchaseDetailViewModel.removePurchaseDetail(PurchaseDetailViewModel.purchaseDetailTempList.indexOf(obj.getData()));
-            }
+            PurchaseDetailViewModel.removePurchaseDetail(obj.getData().getId(), PurchaseDetailViewModel.purchaseDetailTempList.indexOf(obj.getData()));
             PurchaseDetailViewModel.getPurchaseDetails();
             e.consume();
         });
         // Edit
         edit.setOnAction(e -> {
-            PurchaseDetailViewModel.getItem(obj.getData(), PurchaseDetailViewModel.purchaseDetailTempList.indexOf(obj.getData()));
+            PurchaseDetailViewModel.getItem(obj.getData().getId(), PurchaseDetailViewModel.purchaseDetailTempList.indexOf(obj.getData()));
+            System.out.println("Purchase Detail ID: " + PurchaseDetailViewModel.getId());
             dialog.showAndWait();
             e.consume();
         });

@@ -36,7 +36,6 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
-import org.infinite.spoty.database.dao.QuotationDetailDao;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.Customer;
 import org.infinite.spoty.database.models.QuotationDetail;
@@ -56,7 +55,6 @@ import static org.infinite.spoty.Validators.requiredValidator;
 
 @SuppressWarnings("unchecked")
 public class QuotationMasterFormController implements Initializable {
-    public MFXTextField quotationDetailID = new MFXTextField();
     public MFXTextField quotationMasterID = new MFXTextField();
     @FXML
     public Label quotationFormTitle;
@@ -154,7 +152,6 @@ public class QuotationMasterFormController implements Initializable {
         productDiscount.setRowCellFactory(product -> new MFXTableRowCell<>(QuotationDetail::getDiscount));
         productTax.setRowCellFactory(product -> new MFXTableRowCell<>(QuotationDetail::getNetTax));
 
-        quotationDetailID.textProperty().bindBidirectional(QuotationDetailViewModel.idProperty());
         productName.prefWidthProperty().bind(quotationDetailTable.widthProperty().multiply(.25));
         productQuantity.prefWidthProperty().bind(quotationDetailTable.widthProperty().multiply(.25));
         productDiscount.prefWidthProperty().bind(quotationDetailTable.widthProperty().multiply(.25));
@@ -196,19 +193,15 @@ public class QuotationMasterFormController implements Initializable {
         // Actions
         // Delete
         delete.setOnAction(e -> {
-            QuotationDetailViewModel.getItem(obj.getData().getId());
-            try {
-                if (Integer.parseInt(quotationDetailID.getText()) > 0)
-                    QuotationDetailDao.deleteQuotationDetail(Integer.parseInt(quotationDetailID.getText()));
-            } catch (NumberFormatException ignored) {
-                QuotationDetailViewModel.removeQuotationDetail(QuotationDetailViewModel.quotationDetailTempList.indexOf(obj.getData()));
-            }
+            QuotationDetailViewModel.removeQuotationDetail(obj.getData().getId(),
+                    QuotationDetailViewModel.quotationDetailTempList.indexOf(obj.getData()));
             QuotationDetailViewModel.getQuotationDetails();
             e.consume();
         });
         // Edit
         edit.setOnAction(e -> {
-            QuotationDetailViewModel.getItem(obj.getData().getId());
+            QuotationDetailViewModel.getItem(obj.getData().getId(),
+                    QuotationDetailViewModel.quotationDetailTempList.indexOf(obj.getData()));
             dialog.showAndWait();
             e.consume();
         });

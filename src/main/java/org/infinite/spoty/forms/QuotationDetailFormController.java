@@ -31,9 +31,9 @@ import java.util.ResourceBundle;
 
 import static org.infinite.spoty.GlobalActions.closeDialog;
 import static org.infinite.spoty.Validators.requiredValidator;
+import static org.infinite.spoty.values.SharedResources.tempIdProperty;
 
 public class QuotationDetailFormController implements Initializable {
-    public MFXTextField quotationDetailID = new MFXTextField();
     @FXML
     public MFXTextField quotationProductQnty;
     @FXML
@@ -56,7 +56,6 @@ public class QuotationDetailFormController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Bind form input values.
-        quotationDetailID.textProperty().bindBidirectional(QuotationDetailViewModel.idProperty());
         quotationProductQnty.textProperty().bindBidirectional(QuotationDetailViewModel.quantityProperty());
         quotationProductPdct.valueProperty().bindBidirectional(QuotationDetailViewModel.productProperty());
         quotationProductsOrderTax.textProperty().bindBidirectional(QuotationDetailViewModel.taxProperty());
@@ -92,8 +91,8 @@ public class QuotationDetailFormController implements Initializable {
         quotationProductsSaveBtn.setOnAction((e) -> {
             if (!quotationProductPdctValidationLabel.isVisible()
                     && !quotationProductQntyValidationLabel.isVisible()) {
-                if (!quotationDetailID.getText().isEmpty() && Integer.parseInt(quotationDetailID.getText()) > 0)
-                    QuotationDetailViewModel.updateQuotationDetail();
+                if (tempIdProperty().get() > -1)
+                    QuotationDetailViewModel.updateQuotationDetail(QuotationDetailViewModel.getId());
                 else
                     QuotationDetailViewModel.addQuotationDetails();
                 QuotationDetailViewModel.resetProperties();

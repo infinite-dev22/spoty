@@ -35,7 +35,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
-import org.infinite.spoty.database.dao.SaleDetailDao;
+import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.Customer;
 import org.infinite.spoty.database.models.SaleDetail;
@@ -56,7 +56,6 @@ import static org.infinite.spoty.Validators.requiredValidator;
 @SuppressWarnings("unchecked")
 public class SaleMasterFormController implements Initializable {
     private static SaleMasterFormController instance;
-    public MFXTextField saleDetailID = new MFXTextField();
     public MFXTextField saleMasterID = new MFXTextField();
     @FXML
     public Label saleFormTitle;
@@ -140,7 +139,7 @@ public class SaleMasterFormController implements Initializable {
         saleStatus.setItems(FXCollections.observableArrayList(Values.SALESTATUSES));
         salePaymentStatus.setItems(FXCollections.observableArrayList(Values.PAYMENTSTATUSES));
         // Bi~Directional Binding.
-        saleMasterID.textProperty().bindBidirectional(SaleMasterViewModel.idProperty());
+        saleMasterID.textProperty().bindBidirectional(SaleMasterViewModel.idProperty(), new NumberStringConverter());
         saleDate.textProperty().bindBidirectional(SaleMasterViewModel.dateProperty());
         saleCustomer.valueProperty().bindBidirectional(SaleMasterViewModel.customerProperty());
         saleBranch.valueProperty().bindBidirectional(SaleMasterViewModel.branchProperty());
@@ -253,19 +252,14 @@ public class SaleMasterFormController implements Initializable {
         // Actions
         // Delete
         delete.setOnAction(e -> {
-            SaleDetailViewModel.getItem(obj.getData(), SaleDetailViewModel.saleDetailTempList.indexOf(obj.getData()));
-            try {
-                if (Integer.parseInt(saleDetailID.getText()) > 0)
-                    SaleDetailDao.deleteSaleDetail(Integer.parseInt(saleDetailID.getText()));
-            } catch (NumberFormatException ignored) {
-                SaleDetailViewModel.removeSaleDetail(SaleDetailViewModel.saleDetailTempList.indexOf(obj.getData()));
-            }
+            SaleDetailViewModel.removeSaleDetail(obj.getData().getId(),
+                    SaleDetailViewModel.saleDetailTempList.indexOf(obj.getData()));
             SaleDetailViewModel.getSaleDetails();
             e.consume();
         });
         // Edit
         edit.setOnAction(e -> {
-            SaleDetailViewModel.getItem(obj.getData(), SaleDetailViewModel.saleDetailTempList.indexOf(obj.getData()));
+            SaleDetailViewModel.getItem(obj.getData().getId(), SaleDetailViewModel.saleDetailTempList.indexOf(obj.getData()));
             dialog.showAndWait();
             e.consume();
         });

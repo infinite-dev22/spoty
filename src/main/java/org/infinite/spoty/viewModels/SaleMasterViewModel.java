@@ -14,10 +14,7 @@
 
 package org.infinite.spoty.viewModels;
 
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.infinite.spoty.database.dao.SaleMasterDao;
@@ -29,9 +26,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
+
 public class SaleMasterViewModel {
     public static final ObservableList<SaleMaster> saleMasterList = FXCollections.observableArrayList();
-    private static final StringProperty id = new SimpleStringProperty("");
+    private static final IntegerProperty id = new SimpleIntegerProperty(0);
     private static final StringProperty date = new SimpleStringProperty("");
     private static final StringProperty ref = new SimpleStringProperty("");
     private static final ObjectProperty<Customer> customer = new SimpleObjectProperty<>(null);
@@ -40,15 +39,15 @@ public class SaleMasterViewModel {
     private static final StringProperty payStatus = new SimpleStringProperty("");
     private static final StringProperty note = new SimpleStringProperty("");
 
-    public static String getId() {
+    public static int getId() {
         return id.get();
     }
 
-    public static void setId(String id) {
+    public static void setId(int id) {
         SaleMasterViewModel.id.set(id);
     }
 
-    public static StringProperty idProperty() {
+    public static IntegerProperty idProperty() {
         return id;
     }
 
@@ -129,12 +128,14 @@ public class SaleMasterViewModel {
     }
 
     public static void resetProperties() {
-        setId("");
+        setId(0);
         setDate("");
         setCustomer(null);
         setBranch(null);
         setSaleStatus("");
         setNote("");
+        PENDING_DELETES.clear();
+        SaleDetailViewModel.saleDetailTempList.clear();
     }
 
     public static void saveSaleMaster() {
@@ -147,7 +148,6 @@ public class SaleMasterViewModel {
         }
         SaleMasterDao.saveSaleMaster(saleMaster);
         resetProperties();
-        SaleDetailViewModel.saleDetailTempList.clear();
         getSaleMasters();
     }
 
@@ -157,9 +157,9 @@ public class SaleMasterViewModel {
         return saleMasterList;
     }
 
-    public static void getItem(int saleMasterID) {
-        SaleMaster saleMaster = SaleMasterDao.findSaleMaster(saleMasterID);
-        setId(String.valueOf(saleMaster.getId()));
+    public static void getItem(int index) {
+        SaleMaster saleMaster = SaleMasterDao.findSaleMaster(index);
+        setId(saleMaster.getId());
         setDate(saleMaster.getLocaleDate());
         setCustomer(saleMaster.getCustomer());
         setBranch(saleMaster.getBranch());
@@ -170,12 +170,18 @@ public class SaleMasterViewModel {
         getSaleMasters();
     }
 
-    public static void updateItem(int saleMasterID) {
-        SaleMaster saleMaster = new SaleMaster(getCustomer(), getBranch(), getSaleStatus(), getNote(), getDate());
+    public static void updateItem(int index) {
+        SaleMaster saleMaster = SaleMasterDao.findSaleMaster(index);
+        new SaleMaster(getCustomer(), getBranch(), getSaleStatus(), getNote(), getDate());
+        saleMaster.setCustomer(getCustomer());
+        saleMaster.setBranch(getBranch());
+        saleMaster.setSaleStatus(getSaleStatus());
+        saleMaster.setNotes(getNote());
+        saleMaster.setDate(getDate());
+        SaleDetailViewModel.deleteSaleDetails(PENDING_DELETES);
         saleMaster.setSaleDetails(SaleDetailViewModel.saleDetailTempList);
-        SaleMasterDao.updateSaleMaster(saleMaster, saleMasterID);
+        SaleMasterDao.updateSaleMaster(saleMaster, index);
         resetProperties();
-        SaleDetailViewModel.saleDetailTempList.clear();
         getSaleMasters();
     }
 }

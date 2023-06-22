@@ -35,7 +35,6 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
-import org.infinite.spoty.database.dao.TransferDetailDao;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.TransferDetail;
 import org.infinite.spoty.viewModels.BranchViewModel;
@@ -53,7 +52,6 @@ import static org.infinite.spoty.Validators.requiredValidator;
 @SuppressWarnings("unchecked")
 public class TransferMasterFormController implements Initializable {
     private static TransferMasterFormController instance;
-    public MFXTextField transferDetailID = new MFXTextField();
     public MFXTextField transferMasterID = new MFXTextField();
     @FXML
     public MFXFilterComboBox<Branch> transferMasterFromBranch;
@@ -184,19 +182,15 @@ public class TransferMasterFormController implements Initializable {
         // Actions
         // Delete
         delete.setOnAction(e -> {
-            TransferDetailViewModel.getItem(obj.getData(), TransferDetailViewModel.transferDetailsTempList.indexOf(obj.getData()));
-            try {
-                if (Integer.parseInt(transferDetailID.getText()) > 0)
-                    TransferDetailDao.deleteTransferDetail(Integer.parseInt(transferDetailID.getText()));
-            } catch (NumberFormatException ignored) {
-                TransferDetailViewModel.removeTransferDetail(TransferDetailViewModel.transferDetailsTempList.indexOf(obj.getData()));
-            }
+            TransferDetailViewModel.removeTransferDetail(obj.getData().getId(),
+                    TransferDetailViewModel.transferDetailsTempList.indexOf(obj.getData()));
             TransferDetailViewModel.getTransferDetails();
             e.consume();
         });
         // Edit
         edit.setOnAction(e -> {
-            TransferDetailViewModel.getItem(obj.getData(), TransferDetailViewModel.transferDetailsTempList.indexOf(obj.getData()));
+            TransferDetailViewModel.getItem(obj.getData().getId(),
+                    TransferDetailViewModel.transferDetailsTempList.indexOf(obj.getData()));
             dialog.showAndWait();
             e.consume();
         });
