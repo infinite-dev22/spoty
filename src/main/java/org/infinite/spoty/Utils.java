@@ -14,6 +14,7 @@
 
 package org.infinite.spoty;
 
+import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXIconWrapper;
 import io.github.palexdev.materialfx.controls.MFXRectangleToggleNode;
 import io.github.palexdev.materialfx.utils.ToggleButtonsUtil;
@@ -32,16 +33,15 @@ public class Utils implements Serializable {
         ToggleButtonsUtil.addAlwaysOneSelectedSupport(toggleGroup);
     }
 
-    public static ToggleButton createToggle(String icon, String text) {
+    public static MFXButton createToggle(String icon, String text) {
         return createToggle(icon, text, 0);
     }
 
-    private static ToggleButton createToggle(String icon, String text, double rotate) {
+    private static MFXButton createToggle(String icon, String text, double rotate) {
         MFXIconWrapper wrapper = new MFXIconWrapper(icon, 24, 32);
-        MFXRectangleToggleNode toggleNode = new MFXRectangleToggleNode(text, wrapper);
+        MFXButton toggleNode = new MFXButton(text, wrapper);
         toggleNode.setAlignment(Pos.CENTER_LEFT);
         toggleNode.setMaxWidth(Double.MAX_VALUE);
-        toggleNode.setToggleGroup(toggleGroup);
         if (rotate != 0) wrapper.getIcon().setRotate(rotate);
         return toggleNode;
     }

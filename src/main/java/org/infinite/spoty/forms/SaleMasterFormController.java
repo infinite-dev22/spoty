@@ -30,6 +30,7 @@ import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -70,7 +71,7 @@ public class SaleMasterFormController implements Initializable {
     @FXML
     public MFXTextField saleNote;
     @FXML
-    public AnchorPane saleFormContentPane;
+    public BorderPane saleFormContentPane;
     @FXML
     public MFXFilterComboBox<String> saleStatus;
     @FXML
@@ -190,8 +191,8 @@ public class SaleMasterFormController implements Initializable {
         saleDateValidationLabel.setVisible(false);
         saleStatusValidationLabel.setVisible(false);
         salePaymentStatusValidationLabel.setVisible(false);
-        ((StackPane) saleFormContentPane.getParent().getParent()).getChildren().get(0).setVisible(true);
-        ((StackPane) saleFormContentPane.getParent().getParent()).getChildren().remove(1);
+        ((StackPane) saleFormContentPane.getParent()).getChildren().get(0).setVisible(true);
+        ((StackPane) saleFormContentPane.getParent()).getChildren().remove(1);
     }
 
     public void addBtnClicked() {

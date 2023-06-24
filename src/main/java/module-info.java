@@ -32,6 +32,9 @@ module org.infinite.spoty {
     requires org.apache.derby.engine;
 
     requires org.apache.commons.compress;
+    requires org.kordamp.ikonli.javafx;
+
+    requires org.jetbrains.annotations;
 
     opens org.infinite.spoty.views;
     opens org.infinite.spoty.views.components;
@@ -42,7 +45,6 @@ module org.infinite.spoty {
     opens org.infinite.spoty.views.stock_in;
     opens org.infinite.spoty.views.transfer;
 
-    opens org.infinite.spoty.views.inventory;
     opens org.infinite.spoty.views.inventory.category;
     opens org.infinite.spoty.views.inventory.brand;
     opens org.infinite.spoty.views.inventory.unit_of_measure;
@@ -50,11 +52,9 @@ module org.infinite.spoty {
     opens org.infinite.spoty.views.inventory.adjustment;
     opens org.infinite.spoty.views.inventory.quotation;
 
-    opens org.infinite.spoty.views.expenses;
     opens org.infinite.spoty.views.expenses.expense;
     opens org.infinite.spoty.views.expenses.category;
 
-    opens org.infinite.spoty.views.people;
     opens org.infinite.spoty.views.people.customers;
     opens org.infinite.spoty.views.people.suppliers;
     opens org.infinite.spoty.views.people.users;
@@ -67,7 +67,6 @@ module org.infinite.spoty {
     opens org.infinite.spoty.views.settings.currency;
     opens org.infinite.spoty.views.settings.export;
 
-    opens org.infinite.spoty.views.returns;
     opens org.infinite.spoty.views.returns.sales;
     opens org.infinite.spoty.views.returns.purchases;
 

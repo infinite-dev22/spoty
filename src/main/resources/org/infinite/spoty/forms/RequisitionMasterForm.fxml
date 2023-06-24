@@ -22,16 +22,15 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import java.net.URL?>
-<BorderPane xmlns:fx="http://javafx.com/fxml/1" cache="true" cacheHint="SPEED" xmlns="http://javafx.com/javafx/19"
+<BorderPane fx:id="requisitionMasterFormContentPane" xmlns:fx="http://javafx.com/fxml/1" cache="true" cacheHint="SPEED"
+            xmlns="http://javafx.com/javafx/19"
             fx:controller="org.infinite.spoty.forms.RequisitionMasterFormController">
     <stylesheets>
         <URL value="@../styles/Common.css"/>
         <URL value="@../styles/TextFields.css"/>
     </stylesheets>
     <center>
-        <AnchorPane fx:id="requisitionMasterFormContentPane" cache="true" cacheHint="SPEED" styleClass="card"
-                    stylesheets="@../styles/Common.css" xmlns="http://javafx.com/javafx/19"
-                    xmlns:fx="http://javafx.com/fxml/1">
+        <AnchorPane styleClass="card">
             <padding>
                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
             </padding>

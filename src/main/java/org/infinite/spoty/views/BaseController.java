@@ -14,6 +14,7 @@
 
 package org.infinite.spoty.views;
 
+import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXScrollPane;
 import io.github.palexdev.materialfx.utils.ScrollUtils;
 import io.github.palexdev.materialfx.utils.others.loader.MFXLoader;
@@ -23,23 +24,15 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import org.infinite.spoty.components.navigation.Navigation;
 import org.infinite.spoty.values.strings.Labels;
-import org.infinite.spoty.views.expenses.ExpensesController;
-import org.infinite.spoty.views.inventory.InventoryController;
-import org.infinite.spoty.views.people.PeopleController;
-import org.infinite.spoty.views.purchases.PurchasesController;
-import org.infinite.spoty.views.requisition.RequisitionController;
-import org.infinite.spoty.views.sales.SalesController;
 import org.infinite.spoty.views.settings.SettingsController;
-import org.infinite.spoty.views.stock_in.StockInController;
-import org.infinite.spoty.views.transfer.TransferController;
 
 import java.net.URL;
 import java.util.List;
@@ -49,6 +42,7 @@ import static org.infinite.spoty.SpotResourceLoader.loadURL;
 import static org.infinite.spoty.Utils.createToggle;
 
 public class BaseController implements Initializable {
+    private static BaseController instance;
     public final Stage stage;
     @FXML
     public MFXFontIcon closeIcon;
@@ -57,7 +51,7 @@ public class BaseController implements Initializable {
     @FXML
     public MFXFontIcon minimizeIcon;
     @FXML
-    public Pane contentPane;
+    public StackPane contentPane;
     @FXML
     public VBox navBar;
     @FXML
@@ -72,16 +66,15 @@ public class BaseController implements Initializable {
     public Label appNameLabel;
     private double xOffset;
     private double yOffset;
-    private static BaseController instance;
+
+    private BaseController(Stage stage) {
+        this.stage = stage;
+    }
 
     public static BaseController getInstance(Stage stage) {
         if (instance == null)
             instance = new BaseController(stage);
         return instance;
-    }
-
-    private BaseController(Stage stage) {
-        this.stage = stage;
     }
 
     @FXML
@@ -116,43 +109,21 @@ public class BaseController implements Initializable {
         initializeLoader();
 
         ScrollUtils.addSmoothScrolling(scrollPane);
+//        scrollPane.setStyle("-fx-background-color: red;");
+//        navBar.setStyle("-fx-background-color: red;");
     }
 
     public void initializeLoader() {
-        MFXLoader loader = new MFXLoader();
-        loader.addView(MFXLoaderBean.of("DASHBOARD", loadURL("fxml/dashboard/Dashboard.fxml")).setBeanToNodeMapper(() -> createToggle("fas-chart-simple", "Dashboard")).setDefaultRoot(true).get());
-        loader.addView(MFXLoaderBean.of("INVENTORY", loadURL("fxml/inventory/Inventory.fxml")).setBeanToNodeMapper(() -> createToggle("fas-cubes", "Inventory")).setControllerFactory(c -> InventoryController.getInstance(stage)).get());
-        loader.addView(MFXLoaderBean.of("REQUISITIONS", loadURL("fxml/requisition/Requisition.fxml")).setBeanToNodeMapper(() -> createToggle("fas-hand-holding", "Requisitions")).setControllerFactory(c -> RequisitionController.getInstance(stage)).get());
-        loader.addView(MFXLoaderBean.of("PURCHASES", loadURL("fxml/purchases/Purchases.fxml")).setBeanToNodeMapper(() -> createToggle("fas-cart-plus", "Purchases")).setControllerFactory(c -> PurchasesController.getInstance(stage)).get());
-        loader.addView(MFXLoaderBean.of("TRANSFERS", loadURL("fxml/transfer/Transfer.fxml")).setBeanToNodeMapper(() -> createToggle("fas-arrow-right-arrow-left", "Transfers")).setControllerFactory(c -> TransferController.getInstance(stage)).get());
-        loader.addView(MFXLoaderBean.of("STOCK IN", loadURL("fxml/stock_in/StockIn.fxml")).setBeanToNodeMapper(() -> createToggle("fas-cart-flatbed", "Stock In")).setControllerFactory(c -> StockInController.getInstance(stage)).get());
-        loader.addView(MFXLoaderBean.of("SALES", loadURL("fxml/sales/Sales.fxml")).setBeanToNodeMapper(() -> createToggle("fas-cash-register", "Sales")).setControllerFactory(c -> SalesController.getInstance(stage)).get());
-        loader.addView(MFXLoaderBean.of("RETURNS", loadURL("fxml/returns/Returns.fxml")).setBeanToNodeMapper(() -> createToggle("fas-retweet", "Returns")).get());
-        loader.addView(MFXLoaderBean.of("EXPENSES", loadURL("fxml/expenses/Expenses.fxml")).setBeanToNodeMapper(() -> createToggle("fas-wallet", "Expenses")).setControllerFactory(c -> ExpensesController.getInstance(stage)).get());
-        loader.addView(MFXLoaderBean.of("PEOPLE", loadURL("fxml/people/People.fxml")).setBeanToNodeMapper(() -> createToggle("fas-users", "People")).setControllerFactory(c -> PeopleController.getInstance(stage)).get());
-        loader.setOnLoadedAction(beans -> {
-            List<ToggleButton> nodes = beans.stream()
-                    .map(bean -> {
-                        ToggleButton toggle = (ToggleButton) bean.getBeanToNodeMapper().get();
-                        toggle.setOnAction(event -> contentPane.getChildren().setAll(bean.getRoot()));
-                        if (bean.isDefaultView()) {
-                            contentPane.getChildren().setAll(bean.getRoot());
-                            toggle.setSelected(true);
-                        }
-                        return toggle;
-                    })
-                    .toList();
-            navBar.getChildren().setAll(nodes);
-        });
-        loader.start();
+        Navigation navigation = new Navigation(contentPane);
+        navBar.getChildren().add(navigation.createNavigation());
 
         MFXLoader settingsLoader = new MFXLoader();
         settingsLoader.addView(MFXLoaderBean.of("SETTINGS", loadURL("fxml/settings/Settings.fxml"))
                 .setBeanToNodeMapper(() -> createToggle("fas-gears", "Settings"))
                 .setControllerFactory(c -> SettingsController.getInstance(stage)).get());
         settingsLoader.setOnLoadedAction(beans -> {
-            List<ToggleButton> node = beans.stream().map(bean -> {
-                ToggleButton toggle = (ToggleButton) bean.getBeanToNodeMapper().get();
+            List<MFXButton> node = beans.stream().map(bean -> {
+                MFXButton toggle = (MFXButton) bean.getBeanToNodeMapper().get();
                 toggle.setOnAction(event -> contentPane.getChildren().setAll(bean.getRoot()));
                 return toggle;
             }).toList();

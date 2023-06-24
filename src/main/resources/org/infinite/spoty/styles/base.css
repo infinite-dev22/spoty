@@ -96,8 +96,8 @@
 	-fx-text-fill: white;
 }
 
-.rootPane .sidebar .navbar .mfx-rectangle-toggle-node {
-	-fx-background-color: transparent;
+.rootPane .sidebar .navbar .tree-view .tree-cell {
+	-fx-background-color: -mfx-charcoal;
 	-fx-background-radius: 0;
 	-fx-border-color: transparent;
 	-fx-border-radius: 0;
@@ -105,29 +105,124 @@
 
 	-fx-font-family: 'Visby Round CF Demi Bold';
 	-fx-font-size: 13;
-	-fx-text-fill: white;
+	-fx-fill: white;
 }
 
-.rootPane .sidebar .navbar .mfx-rectangle-toggle-node .mfx-ripple-generator {
+.tree-view {
+    -fx-insets: 0;
+    -fx-border-insets: 0;
+    -fx-background-insets: 1;
+}
+
+.tree-view, .tree-cell {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.tree-view *.scroll-bar:vertical,
+.tree-view *.scroll-bar:vertical *.track,
+.tree-view *.scroll-bar:vertical *.track-background,
+.tree-view *.scroll-bar:vertical *.thumb,
+.tree-view *.column-header-background *.show-hide-columns-button,
+.tree-view *.scroll-bar:vertical *.increment-button,
+.tree-view *.scroll-bar:vertical *.decrement-button,
+.tree-view *.scroll-bar:vertical *.increment-arrow,
+.tree-view *.scroll-bar:vertical *.decrement-arrow {
+    -fx-background-color: -mfx-charcoal;
+    -fx-background-radius: 0;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+    -fx-shape: null;
+}
+
+.tree-view *.scroll-bar:horizontal,
+.tree-view *.scroll-bar:horizontal *.track,
+.tree-view *.scroll-bar:horizontal *.track-background,
+.tree-view *.scroll-bar:horizontal *.thumb,
+.tree-view *.scroll-bar:horizontal *.increment-button,
+.tree-view *.scroll-bar:horizontal *.decrement-button,
+.tree-view *.scroll-bar:horizontal *.increment-arrow,
+.tree-view *.scroll-bar:horizontal *.decrement-arrow {
+    -fx-background-color: -mfx-charcoal;
+    -fx-background-radius: 0;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+    -fx-shape: null;
+}
+
+//.tree-view *.tree-disclosure-node,
+//.tree-view *.tree-disclosure-node *.arrow,
+//.tree-view *.arrow {
+//    -fx-min-width: 0;
+//    -fx-pref-width: 0;
+//    -fx-max-width: 0;
+//      visibility: hidden;
+//    -fx-min-height: 0;
+//    -fx-pref-height: 0;
+//    -fx-max-height: 0;
+//}
+
+//.tree-view .tree-disclosure-node .arrow {
+//   -fx-shape: "M 0 0 L 10 5 L 0 10 L 0 8 L 8 5 L 0 2 Z";
+//}
+
+.rootPane .sidebar .navbar .mfx-button .mfx-ripple-generator {
 	-mfx-paused: true;
 }
 
-.rootPane .sidebar .navbar .mfx-rectangle-toggle-node .mfx-icon-wrapper .mfx-font-icon {
+.rootPane .sidebar .navbar .tree-view .tree-cell .mfx-icon-wrapper .mfx-font-icon {
 	-mfx-color: white;
 }
 
-.rootPane .sidebar .navbar .mfx-rectangle-toggle-node:selected {
-	-fx-background-color: white;
+.rootPane .sidebar .navbar .tree-view .tree-cell:selected {
+	-fx-background-color: #6b6e6f;
 	-fx-background-radius: 50 0 0 50;
-	-fx-text-fill: -mfx-charcoal;
+	-fx-fill: -mfx-charcoal;
 }
 
-.rootPane .sidebar .navbar .mfx-rectangle-toggle-node:selected .selection-rectangle {
+.rootPane .sidebar .navbar .tree-view {
+	-fx-background-color: -mfx-charcoal;
+	-fx-background-radius: 10;
+	-fx-fill: -mfx-charcoal;
+}
+
+.rootPane .sidebar .navbar .mfx-button {
+	-fx-background-color: -mfx-charcoal;
+	-fx-background-radius: 0;
+	-fx-border-color: transparent;
+	-fx-border-radius: 0;
+	-fx-pref-height: 40;
+
+	-fx-font-family: 'Visby Round CF Demi Bold';
+	-fx-font-size: 13;
+	-fx-fill: white;
+}
+
+.rootPane .sidebar .navbar .mfx-button:focused .selection-rectangle {
 	-fx-stroke: transparent;
 	-fx-fill: #601cbe;
 }
 
-.rootPane .sidebar .navbar .mfx-rectangle-toggle-node:selected .mfx-icon-wrapper .mfx-font-icon {
+.rootPane .sidebar .navbar .mfx-button:focused .mfx-icon-wrapper .mfx-font-icon {
+	-mfx-color: -mfx-charcoal;
+}
+
+.rootPane .sidebar .navbar .mfx-icon-wrapper .mfx-font-icon {
+	-mfx-color: white;
+}
+
+.rootPane .sidebar .navbar .mfx-button:focused {
+	-fx-background-color: white;
+	-fx-background-radius: 50 0 0 50;
+	-fx-fill: -mfx-charcoal;
+}
+
+.rootPane .sidebar .navbar .mfx-button:focused .selection-rectangle {
+	-fx-stroke: transparent;
+	-fx-fill: #601cbe;
+}
+
+.rootPane .sidebar .navbar .mfx-button:focused .mfx-icon-wrapper .mfx-font-icon {
 	-mfx-color: -mfx-charcoal;
 }
 

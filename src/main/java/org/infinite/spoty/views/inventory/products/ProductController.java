@@ -140,7 +140,7 @@ public class ProductController implements Initializable {
         FXMLLoader loader = fxmlLoader("forms/ProductMasterForm.fxml");
         loader.setControllerFactory(c -> new ProductMasterFormController(stage));
         try {
-            AnchorPane productFormPane = loader.load();
+            BorderPane productFormPane = loader.load();
             ((StackPane) productsContentPane.getParent()).getChildren().add(productFormPane);
             ((StackPane) productsContentPane.getParent()).getChildren().get(0).setVisible(false);
         } catch (IOException ex) {

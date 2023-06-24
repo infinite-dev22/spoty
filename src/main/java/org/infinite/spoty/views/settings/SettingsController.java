@@ -14,6 +14,7 @@
 
 package org.infinite.spoty.views.settings;
 
+import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.utils.others.loader.MFXLoader;
 import io.github.palexdev.materialfx.utils.others.loader.MFXLoaderBean;
 import javafx.application.Platform;
@@ -61,13 +62,12 @@ public class SettingsController implements Initializable {
         loader.addView(MFXLoaderBean.of("CURRENCY", loadURL("fxml/settings/currency/Currency.fxml")).setBeanToNodeMapper(() -> createToggle("fas-dollar-sign", "Currency")).setControllerFactory(c -> CurrencyController.getInstance(stage)).get());
         loader.addView(MFXLoaderBean.of("EXPORT", loadURL("fxml/settings/export/Export.fxml")).setBeanToNodeMapper(() -> createToggle("fas-arrow-up-from-bracket", "Export")).get());
         loader.setOnLoadedAction(beans -> {
-            List<ToggleButton> nodes = beans.stream()
+            List<MFXButton> nodes = beans.stream()
                     .map(bean -> {
-                        ToggleButton toggle = (ToggleButton) bean.getBeanToNodeMapper().get();
+                        MFXButton toggle = (MFXButton) bean.getBeanToNodeMapper().get();
                         toggle.setOnAction(event -> contentPane.getChildren().setAll(bean.getRoot()));
                         if (bean.isDefaultView()) {
                             contentPane.getChildren().setAll(bean.getRoot());
-                            toggle.setSelected(true);
                         }
                         return toggle;
                     })

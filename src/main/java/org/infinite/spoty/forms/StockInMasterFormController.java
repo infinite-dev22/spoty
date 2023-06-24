@@ -29,6 +29,7 @@ import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -62,7 +63,7 @@ public class StockInMasterFormController implements Initializable {
     @FXML
     public MFXTextField stockInMasterNote;
     @FXML
-    public AnchorPane stockInMasterFormContentPane;
+    public BorderPane stockInMasterFormContentPane;
     @FXML
     public Label stockInMasterFormTitle;
     @FXML
@@ -215,7 +216,7 @@ public class StockInMasterFormController implements Initializable {
         StockInDetailViewModel.stockInDetailsTempList.clear();
         stockInMasterBranchValidationLabel.setVisible(false);
         stockInMasterDateValidationLabel.setVisible(false);
-        ((StackPane) stockInMasterFormContentPane.getParent().getParent()).getChildren().get(0).setVisible(true);
-        ((StackPane) stockInMasterFormContentPane.getParent().getParent()).getChildren().remove(1);
+        ((StackPane) stockInMasterFormContentPane.getParent()).getChildren().get(0).setVisible(true);
+        ((StackPane) stockInMasterFormContentPane.getParent()).getChildren().remove(1);
     }
 }
