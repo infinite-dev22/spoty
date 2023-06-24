@@ -25,50 +25,65 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.layout.*?>
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="adjustmentFormContentPane" cache="true" cacheHint="SPEED"
-            styleClass="card" stylesheets="@../styles/Common.css" xmlns="http://javafx.com/javafx/19"
-            fx:controller="org.infinite.spoty.forms.AdjustmentMasterFormController">
+<?import java.net.URL?>
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:id="adjustmentFormContentPane" cache="true" cacheHint="SPEED"
+            xmlns="http://javafx.com/javafx/19" fx:controller="org.infinite.spoty.forms.AdjustmentMasterFormController">
+    <stylesheets>
+        <URL value="@../styles/Common.css"/>
+        <URL value="@../styles/TextFields.css"/>
+    </stylesheets>
     <padding>
-        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="40.0"/>
     </padding>
-    <Label fx:id="adjustmentFormTitle" text="Create" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-           AnchorPane.topAnchor="0.0"/>
-    <Separator prefWidth="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0"/>
-    <GridPane hgap="20.0" layoutX="10.0" layoutY="50.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="180.0"
-              AnchorPane.topAnchor="40.0" stylesheets="@../styles/TextFields.css">
-        <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"/>
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"/>
-        </columnConstraints>
-        <rowConstraints>
-            <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
-        </rowConstraints>
-        <VBox spacing="5.0">
+    <center>
+        <AnchorPane styleClass="card">
             <padding>
-                <Insets right="10.0" top="5.0"/>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
             </padding>
-            <MFXFilterComboBox fx:id="adjustmentBranch" floatMode="BORDER" floatingText="Branch" prefWidth="400.0"/>
-            <Label id="validationLabel" fx:id="adjustmentBranchValidationLabel" maxWidth="1.7976931348623157E308"
-                   minHeight="-Infinity" visible="false" wrapText="true" styleClass="input-validation-error"/>
-        </VBox>
-        <VBox spacing="5.0" GridPane.columnIndex="1">
-            <padding>
-                <Insets right="10.0" top="5.0"/>
-            </padding>
-            <MFXDatePicker fx:id="adjustmentDate" floatMode="BORDER" floatingText="Date" prefWidth="400.0"/>
-            <Label id="validationLabel" fx:id="adjustmentDateValidationLabel" maxWidth="1.7976931348623157E308"
-                   minHeight="-Infinity" visible="false" wrapText="true" styleClass="input-validation-error"/>
-        </VBox>
-    </GridPane>
-    <MFXElevatedButton fx:id="adjustmentProductAddBtn" layoutX="930.0" layoutY="80.0" text="Add Product"
-                       AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0"/>
-    <MFXTableView fx:id="adjustmentDetailTable" AnchorPane.bottomAnchor="120.0" AnchorPane.leftAnchor="0.0"
-                  AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="120.0"/>
-    <MFXTextField fx:id="adjustmentNote" floatMode="BORDER" floatingText="Note" prefWidth="1000.0"
-                  AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"/>
-    <HBox alignment="CENTER_RIGHT" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-          AnchorPane.rightAnchor="0.0">
-        <MFXFilledButton onMouseClicked="#adjustmentSaveBtnClicked" text="Save"/>
-        <MFXOutlinedButton onMouseClicked="#adjustmentCancelBtnClicked" text="Cancel"/>
-    </HBox>
-</AnchorPane>
+            <Label fx:id="adjustmentFormTitle" text="Create" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                   AnchorPane.topAnchor="0.0"/>
+            <Separator prefWidth="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                       AnchorPane.topAnchor="20.0"/>
+            <GridPane hgap="20.0" layoutX="10.0" layoutY="50.0" AnchorPane.leftAnchor="0.0"
+                      AnchorPane.rightAnchor="180.0"
+                      AnchorPane.topAnchor="40.0">
+                <columnConstraints>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"/>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"/>
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
+                </rowConstraints>
+                <VBox spacing="5.0">
+                    <padding>
+                        <Insets right="10.0" top="5.0"/>
+                    </padding>
+                    <MFXFilterComboBox fx:id="adjustmentBranch" floatMode="BORDER" floatingText="Branch"
+                                       prefWidth="400.0"/>
+                    <Label id="validationLabel" fx:id="adjustmentBranchValidationLabel"
+                           maxWidth="1.7976931348623157E308"
+                           minHeight="-Infinity" visible="false" wrapText="true" styleClass="input-validation-error"/>
+                </VBox>
+                <VBox spacing="5.0" GridPane.columnIndex="1">
+                    <padding>
+                        <Insets right="10.0" top="5.0"/>
+                    </padding>
+                    <MFXDatePicker fx:id="adjustmentDate" floatMode="BORDER" floatingText="Date" prefWidth="400.0"/>
+                    <Label id="validationLabel" fx:id="adjustmentDateValidationLabel" maxWidth="1.7976931348623157E308"
+                           minHeight="-Infinity" visible="false" wrapText="true" styleClass="input-validation-error"/>
+                </VBox>
+            </GridPane>
+            <MFXElevatedButton fx:id="adjustmentProductAddBtn" layoutX="930.0" layoutY="80.0" text="Add Product"
+                               AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0"/>
+            <MFXTableView fx:id="adjustmentDetailTable" AnchorPane.bottomAnchor="120.0" AnchorPane.leftAnchor="0.0"
+                          AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="120.0"/>
+            <MFXTextField fx:id="adjustmentNote" floatMode="BORDER" floatingText="Note" prefWidth="1000.0"
+                          AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"/>
+            <HBox alignment="CENTER_RIGHT" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                  AnchorPane.rightAnchor="0.0">
+                <MFXFilledButton onMouseClicked="#adjustmentSaveBtnClicked" text="Save"/>
+                <MFXOutlinedButton onMouseClicked="#adjustmentCancelBtnClicked" text="Cancel"/>
+            </HBox>
+        </AnchorPane>
+    </center>
+</BorderPane>

@@ -28,11 +28,11 @@
                 <Insets left="10.0" right="10.0" />
             </padding>
         </Label>
-        <MFXScrollPane fx:id="scrollPane" fitToWidth="true" VBox.vgrow="ALWAYS">
+        <MFXScrollPane fx:id="scrollPane" fitToWidth="true" fitToHeight="true" VBox.vgrow="ALWAYS">
             <VBox.margin>
-                <Insets left="20.0" right="-1.0" />
+                <Insets left="1.0" right="1.0" />
             </VBox.margin>
-            <VBox fx:id="navBar" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="navbar" />
+            <VBox fx:id="navBar" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="navbar" VBox.vgrow="ALWAYS" />
         </MFXScrollPane>
         <VBox fx:id="settingsHolder" styleClass="navbar">
             <VBox.margin>

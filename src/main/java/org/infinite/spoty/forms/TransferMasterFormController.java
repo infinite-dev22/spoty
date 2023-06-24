@@ -28,7 +28,7 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.input.ContextMenuEvent;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -63,7 +63,7 @@ public class TransferMasterFormController implements Initializable {
     @FXML
     public MFXTextField transferMasterNote;
     @FXML
-    public AnchorPane transferMasterFormContentPane;
+    public BorderPane transferMasterFormContentPane;
     @FXML
     public Label transferMasterFormTitle;
     @FXML
@@ -237,7 +237,7 @@ public class TransferMasterFormController implements Initializable {
         transferMasterToBranchValidationLabel.setVisible(false);
         transferMasterFromBranchValidationLabel.setVisible(false);
         transferMasterDateValidationLabel.setVisible(false);
-        ((StackPane) transferMasterFormContentPane.getParent().getParent()).getChildren().get(0).setVisible(true);
-        ((StackPane) transferMasterFormContentPane.getParent().getParent()).getChildren().remove(1);
+        ((StackPane) transferMasterFormContentPane.getParent()).getChildren().get(0).setVisible(true);
+        ((StackPane) transferMasterFormContentPane.getParent()).getChildren().remove(1);
     }
 }

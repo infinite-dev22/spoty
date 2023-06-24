@@ -29,6 +29,7 @@ import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -64,7 +65,7 @@ public class RequisitionMasterFormController implements Initializable {
     @FXML
     public MFXTextField requisitionMasterNote;
     @FXML
-    public AnchorPane requisitionMasterFormContentPane;
+    public BorderPane requisitionMasterFormContentPane;
     @FXML
     public Label requisitionMasterFormTitle;
     @FXML
@@ -248,7 +249,7 @@ public class RequisitionMasterFormController implements Initializable {
         requisitionMasterBranchValidationLabel.setVisible(false);
         requisitionMasterSupplierValidationLabel.setVisible(false);
         requisitionMasterDateValidationLabel.setVisible(false);
-        ((StackPane) requisitionMasterFormContentPane.getParent().getParent()).getChildren().get(0).setVisible(true);
-        ((StackPane) requisitionMasterFormContentPane.getParent().getParent()).getChildren().get(1).setVisible(false);
+        ((StackPane) requisitionMasterFormContentPane.getParent()).getChildren().get(0).setVisible(true);
+        ((StackPane) requisitionMasterFormContentPane.getParent()).getChildren().get(1).setVisible(false);
     }
 }

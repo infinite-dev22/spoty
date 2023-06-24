@@ -30,6 +30,7 @@ import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -67,7 +68,7 @@ public class ProductMasterFormController implements Initializable {
     @FXML
     public MFXTableView<ProductDetail> productDetailTable;
     @FXML
-    public AnchorPane productFormContentPane;
+    public BorderPane productFormContentPane;
     @FXML
     public Label productFormTitle;
     @FXML

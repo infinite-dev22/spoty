@@ -37,6 +37,8 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
+import static org.infinite.spoty.components.navigation.Pages.setControllers;
+import static org.infinite.spoty.components.navigation.Pages.setPanes;
 
 public class SplashScreenController implements Initializable {
     @FXML
@@ -55,6 +57,8 @@ public class SplashScreenController implements Initializable {
                 CSSFX.start();
                 FXMLLoader loader = fxmlLoader("fxml/Base.fxml");
                 Stage stage = new Stage();
+                setControllers(stage);
+                setPanes();
                 loader.setControllerFactory(c -> BaseController.getInstance(stage));
                 Parent root = loader.load();
                 Scene scene = new Scene(root);

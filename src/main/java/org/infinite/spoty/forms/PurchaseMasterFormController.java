@@ -30,6 +30,7 @@ import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -71,7 +72,7 @@ public class PurchaseMasterFormController implements Initializable {
     @FXML
     public MFXTextField purchaseNote;
     @FXML
-    public AnchorPane purchaseFormContentPane;
+    public BorderPane purchaseFormContentPane;
     @FXML
     public MFXFilterComboBox<String> purchaseStatus;
     @FXML
@@ -256,8 +257,8 @@ public class PurchaseMasterFormController implements Initializable {
         purchaseSupplierValidationLabel.setVisible(false);
         purchaseDateValidationLabel.setVisible(false);
         purchaseStatusValidationLabel.setVisible(false);
-        ((StackPane) purchaseFormContentPane.getParent().getParent()).getChildren().get(0).setVisible(true);
-        ((StackPane) purchaseFormContentPane.getParent().getParent()).getChildren().remove(1);
+        ((StackPane) purchaseFormContentPane.getParent()).getChildren().get(0).setVisible(true);
+        ((StackPane) purchaseFormContentPane.getParent()).getChildren().remove(1);
     }
 
     public void addBtnClicked() {

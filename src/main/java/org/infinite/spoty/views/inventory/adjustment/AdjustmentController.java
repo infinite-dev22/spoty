@@ -138,7 +138,7 @@ public class AdjustmentController implements Initializable {
         loader.setControllerFactory(c -> new AdjustmentMasterFormController(stage));
 
         try {
-            AnchorPane productFormPane = loader.load();
+            BorderPane productFormPane = loader.load();
             ((StackPane) adjustmentContentPane.getParent()).getChildren().add(productFormPane);
             ((StackPane) adjustmentContentPane.getParent()).getChildren().get(0).setVisible(false);
         } catch (IOException ex) {

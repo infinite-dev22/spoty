@@ -151,7 +151,7 @@ public class QuotationController implements Initializable {
         FXMLLoader loader = fxmlLoader("forms/QuotationMasterForm.fxml");
         loader.setControllerFactory(c -> new QuotationMasterFormController(stage));
         try {
-            AnchorPane productFormPane = loader.load();
+            BorderPane productFormPane = loader.load();
             ((StackPane) quotationContentPane.getParent()).getChildren().add(productFormPane);
             ((StackPane) quotationContentPane.getParent()).getChildren().get(0).setVisible(false);
         } catch (IOException ex) {

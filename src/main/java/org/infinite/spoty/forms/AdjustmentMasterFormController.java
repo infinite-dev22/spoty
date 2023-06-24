@@ -29,6 +29,7 @@ import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -61,7 +62,7 @@ public class AdjustmentMasterFormController implements Initializable {
     @FXML
     public MFXTextField adjustmentNote;
     @FXML
-    public AnchorPane adjustmentFormContentPane;
+    public BorderPane adjustmentFormContentPane;
     @FXML
     public Label adjustmentFormTitle;
     @FXML
