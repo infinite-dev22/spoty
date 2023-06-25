@@ -14,10 +14,16 @@
 
 package org.infinite.spoty.forms;
 
+import static org.infinite.spoty.GlobalActions.closeDialog;
+import static org.infinite.spoty.Validators.requiredValidator;
+import static org.infinite.spoty.values.SharedResources.tempIdProperty;
+
 import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
+import java.net.URL;
+import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -26,78 +32,80 @@ import org.infinite.spoty.database.models.ProductDetail;
 import org.infinite.spoty.viewModels.ProductDetailViewModel;
 import org.infinite.spoty.viewModels.QuotationDetailViewModel;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
-import static org.infinite.spoty.GlobalActions.closeDialog;
-import static org.infinite.spoty.Validators.requiredValidator;
-import static org.infinite.spoty.values.SharedResources.tempIdProperty;
-
 public class QuotationDetailFormController implements Initializable {
-    @FXML
-    public MFXTextField quotationProductQnty;
-    @FXML
-    public MFXFilterComboBox<ProductDetail> quotationProductPdct;
-    @FXML
-    public MFXTextField quotationProductsOrderTax;
-    @FXML
-    public MFXTextField quotationProductsDiscount;
-    @FXML
-    public MFXFilledButton quotationProductsSaveBtn;
-    @FXML
-    public MFXOutlinedButton quotationProductsCancelBtn;
-    @FXML
-    public Label quotationProductsTitle;
-    @FXML
-    public Label quotationProductPdctValidationLabel;
-    @FXML
-    public Label quotationProductQntyValidationLabel;
+  @FXML public MFXTextField quotationProductQnty;
+  @FXML public MFXFilterComboBox<ProductDetail> quotationProductPdct;
+  @FXML public MFXTextField quotationProductsOrderTax;
+  @FXML public MFXTextField quotationProductsDiscount;
+  @FXML public MFXFilledButton quotationProductsSaveBtn;
+  @FXML public MFXOutlinedButton quotationProductsCancelBtn;
+  @FXML public Label quotationProductsTitle;
+  @FXML public Label quotationProductPdctValidationLabel;
+  @FXML public Label quotationProductQntyValidationLabel;
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        // Bind form input values.
-        quotationProductQnty.textProperty().bindBidirectional(QuotationDetailViewModel.quantityProperty());
-        quotationProductPdct.valueProperty().bindBidirectional(QuotationDetailViewModel.productProperty());
-        quotationProductsOrderTax.textProperty().bindBidirectional(QuotationDetailViewModel.taxProperty());
-        quotationProductsDiscount.textProperty().bindBidirectional(QuotationDetailViewModel.discountProperty());
-        // Combo box properties.
-        quotationProductPdct.setItems(ProductDetailViewModel.getProductDetails());
-        quotationProductPdct.setConverter(new StringConverter<>() {
-            @Override
-            public String toString(ProductDetail object) {
-                return object != null ? object.getProduct().getName()
-                        + " " + (object.getUnit() != null ? (object.getName().isEmpty() ? "" : object.getName())
-                        + " " + object.getUnit().getName() : object.getName()) : "No products";
-            }
+  @Override
+  public void initialize(URL location, ResourceBundle resources) {
+    // Bind form input values.
+    quotationProductQnty
+        .textProperty()
+        .bindBidirectional(QuotationDetailViewModel.quantityProperty());
+    quotationProductPdct
+        .valueProperty()
+        .bindBidirectional(QuotationDetailViewModel.productProperty());
+    quotationProductsOrderTax
+        .textProperty()
+        .bindBidirectional(QuotationDetailViewModel.taxProperty());
+    quotationProductsDiscount
+        .textProperty()
+        .bindBidirectional(QuotationDetailViewModel.discountProperty());
+    // Combo box properties.
+    quotationProductPdct.setItems(ProductDetailViewModel.getProductDetails());
+    quotationProductPdct.setConverter(
+        new StringConverter<>() {
+          @Override
+          public String toString(ProductDetail object) {
+            return object != null
+                ? object.getProduct().getName()
+                    + " "
+                    + (object.getUnit() != null
+                        ? (object.getName().isEmpty() ? "" : object.getName())
+                            + " "
+                            + object.getUnit().getName()
+                        : object.getName())
+                : "No products";
+          }
 
-            @Override
-            public ProductDetail fromString(String string) {
-                return null;
-            }
+          @Override
+          public ProductDetail fromString(String string) {
+            return null;
+          }
         });
-        // Input validators.
-        requiredValidator(quotationProductPdct, "Product is required.", quotationProductPdctValidationLabel);
-        requiredValidator(quotationProductQnty, "Quantity is required.", quotationProductQntyValidationLabel);
-        dialogOnActions();
-    }
+    // Input validators.
+    requiredValidator(
+        quotationProductPdct, "Product is required.", quotationProductPdctValidationLabel);
+    requiredValidator(
+        quotationProductQnty, "Quantity is required.", quotationProductQntyValidationLabel);
+    dialogOnActions();
+  }
 
-    private void dialogOnActions() {
-        quotationProductsCancelBtn.setOnAction((e) -> {
-            closeDialog(e);
+  private void dialogOnActions() {
+    quotationProductsCancelBtn.setOnAction(
+        (e) -> {
+          closeDialog(e);
+          QuotationDetailViewModel.resetProperties();
+          quotationProductPdctValidationLabel.setVisible(false);
+          quotationProductQntyValidationLabel.setVisible(false);
+        });
+    quotationProductsSaveBtn.setOnAction(
+        (e) -> {
+          if (!quotationProductPdctValidationLabel.isVisible()
+              && !quotationProductQntyValidationLabel.isVisible()) {
+            if (tempIdProperty().get() > -1)
+              QuotationDetailViewModel.updateQuotationDetail(QuotationDetailViewModel.getId());
+            else QuotationDetailViewModel.addQuotationDetails();
             QuotationDetailViewModel.resetProperties();
-            quotationProductPdctValidationLabel.setVisible(false);
-            quotationProductQntyValidationLabel.setVisible(false);
+            closeDialog(e);
+          }
         });
-        quotationProductsSaveBtn.setOnAction((e) -> {
-            if (!quotationProductPdctValidationLabel.isVisible()
-                    && !quotationProductQntyValidationLabel.isVisible()) {
-                if (tempIdProperty().get() > -1)
-                    QuotationDetailViewModel.updateQuotationDetail(QuotationDetailViewModel.getId());
-                else
-                    QuotationDetailViewModel.addQuotationDetails();
-                QuotationDetailViewModel.resetProperties();
-                closeDialog(e);
-            }
-        });
-    }
+  }
 }

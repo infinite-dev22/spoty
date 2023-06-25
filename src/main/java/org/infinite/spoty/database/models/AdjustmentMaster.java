@@ -15,7 +15,6 @@
 package org.infinite.spoty.database.models;
 
 import jakarta.persistence.*;
-
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.util.Date;
@@ -24,134 +23,134 @@ import java.util.List;
 
 @Entity
 public class AdjustmentMaster implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    @ManyToOne
-    private User user_detail;
-    private Date date;
-    private String ref;
-    @ManyToOne
-    private Branch branch;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "adjustment")
-    private List<AdjustmentDetail> adjustmentDetails = new LinkedList<>();
-    private String notes;
-    @Column(name = "created_at")
-    private Date createdAt;
-    @Column(name = "created_by")
-    private String createdBy;
-    @Column(name = "updated_at")
-    private Date updatedAt;
-    @Column(name = "updated_by")
-    private String updatedBy;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private int id;
 
-    public AdjustmentMaster() {
-    }
+  @ManyToOne private User user_detail;
+  private Date date;
+  private String ref;
+  @ManyToOne private Branch branch;
 
-    public AdjustmentMaster(Branch branch,
-                            String notes,
-                            Date date) {
-        this.date = date;
-        this.branch = branch;
-        this.notes = notes;
-    }
+  @OneToMany(cascade = CascadeType.ALL, mappedBy = "adjustment")
+  private List<AdjustmentDetail> adjustmentDetails = new LinkedList<>();
 
-    public int getId() {
-        return id;
-    }
+  private String notes;
 
-    public void setId(int id) {
-        this.id = id;
-    }
+  @Column(name = "created_at")
+  private Date createdAt;
 
-    public User getUser() {
-        return user_detail;
-    }
+  @Column(name = "created_by")
+  private String createdBy;
 
-    public void setUser(User user_detail) {
-        this.user_detail = user_detail;
-    }
+  @Column(name = "updated_at")
+  private Date updatedAt;
 
-    public Date getDate() {
-        return date;
-    }
+  @Column(name = "updated_by")
+  private String updatedBy;
 
-    public String getLocaleDate() {
-        return DateFormat.getDateInstance().format(date);
-    }
+  public AdjustmentMaster() {}
 
-    public void setDate(Date date) {
-        this.date = date;
-    }
+  public AdjustmentMaster(Branch branch, String notes, Date date) {
+    this.date = date;
+    this.branch = branch;
+    this.notes = notes;
+  }
 
-    public String getRef() {
-        return ref;
-    }
+  public int getId() {
+    return id;
+  }
 
-    public void setRef(String ref) {
-        this.ref = ref;
-    }
+  public void setId(int id) {
+    this.id = id;
+  }
 
-    public Branch getBranch() {
-        return branch;
-    }
+  public User getUser() {
+    return user_detail;
+  }
 
-    public void setBranch(Branch branch) {
-        this.branch = branch;
-    }
+  public void setUser(User user_detail) {
+    this.user_detail = user_detail;
+  }
 
-    public String getBranchName() {
-        if (branch != null)
-            return branch.getName();
-        else
-            return null;
-    }
+  public Date getDate() {
+    return date;
+  }
 
-    public List<AdjustmentDetail> getAdjustmentDetails() {
-        return adjustmentDetails;
-    }
+  public void setDate(Date date) {
+    this.date = date;
+  }
 
-    public void setAdjustmentDetails(List<AdjustmentDetail> adjustmentDetails) {
-        this.adjustmentDetails = adjustmentDetails;
-    }
+  public String getLocaleDate() {
+    return DateFormat.getDateInstance().format(date);
+  }
 
-    public String getNotes() {
-        return notes;
-    }
+  public String getRef() {
+    return ref;
+  }
 
-    public void setNotes(String notes) {
-        this.notes = notes;
-    }
+  public void setRef(String ref) {
+    this.ref = ref;
+  }
 
-    public Date getCreatedAt() {
-        return createdAt;
-    }
+  public Branch getBranch() {
+    return branch;
+  }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
+  public void setBranch(Branch branch) {
+    this.branch = branch;
+  }
 
-    public String getCreatedBy() {
-        return createdBy;
-    }
+  public String getBranchName() {
+    if (branch != null) return branch.getName();
+    else return null;
+  }
 
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
+  public List<AdjustmentDetail> getAdjustmentDetails() {
+    return adjustmentDetails;
+  }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
+  public void setAdjustmentDetails(List<AdjustmentDetail> adjustmentDetails) {
+    this.adjustmentDetails = adjustmentDetails;
+  }
 
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+  public String getNotes() {
+    return notes;
+  }
 
-    public String getUpdatedBy() {
-        return updatedBy;
-    }
+  public void setNotes(String notes) {
+    this.notes = notes;
+  }
 
-    public void setUpdatedBy(String updatedBy) {
-        this.updatedBy = updatedBy;
-    }
+  public Date getCreatedAt() {
+    return createdAt;
+  }
+
+  public void setCreatedAt(Date createdAt) {
+    this.createdAt = createdAt;
+  }
+
+  public String getCreatedBy() {
+    return createdBy;
+  }
+
+  public void setCreatedBy(String createdBy) {
+    this.createdBy = createdBy;
+  }
+
+  public Date getUpdatedAt() {
+    return updatedAt;
+  }
+
+  public void setUpdatedAt(Date updatedAt) {
+    this.updatedAt = updatedAt;
+  }
+
+  public String getUpdatedBy() {
+    return updatedBy;
+  }
+
+  public void setUpdatedBy(String updatedBy) {
+    this.updatedBy = updatedBy;
+  }
 }

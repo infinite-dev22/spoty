@@ -14,10 +14,16 @@
 
 package org.infinite.spoty.forms;
 
+import static org.infinite.spoty.GlobalActions.closeDialog;
+import static org.infinite.spoty.Validators.requiredValidator;
+import static org.infinite.spoty.values.SharedResources.tempIdProperty;
+
 import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
+import java.net.URL;
+import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -26,78 +32,70 @@ import org.infinite.spoty.database.models.ProductDetail;
 import org.infinite.spoty.viewModels.ProductDetailViewModel;
 import org.infinite.spoty.viewModels.SaleDetailViewModel;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
-import static org.infinite.spoty.GlobalActions.closeDialog;
-import static org.infinite.spoty.Validators.requiredValidator;
-import static org.infinite.spoty.values.SharedResources.tempIdProperty;
-
 public class SaleDetailFormController implements Initializable {
-    @FXML
-    public MFXTextField saleDetailQnty;
-    @FXML
-    public MFXFilterComboBox<ProductDetail> saleDetailPdct;
-    @FXML
-    public MFXTextField saleDetailOrderTax;
-    @FXML
-    public MFXTextField saleDetailDiscount;
-    @FXML
-    public MFXFilledButton saleProductsSaveBtn;
-    @FXML
-    public MFXOutlinedButton saleProductsCancelBtn;
-    @FXML
-    public Label saleProductsTitle;
-    @FXML
-    public Label saleDetailPdctValidationLabel;
-    @FXML
-    public Label saleDetailQntyValidationLabel;
+  @FXML public MFXTextField saleDetailQnty;
+  @FXML public MFXFilterComboBox<ProductDetail> saleDetailPdct;
+  @FXML public MFXTextField saleDetailOrderTax;
+  @FXML public MFXTextField saleDetailDiscount;
+  @FXML public MFXFilledButton saleProductsSaveBtn;
+  @FXML public MFXOutlinedButton saleProductsCancelBtn;
+  @FXML public Label saleProductsTitle;
+  @FXML public Label saleDetailPdctValidationLabel;
+  @FXML public Label saleDetailQntyValidationLabel;
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        // Set combo box options.
-        saleDetailPdct.setItems(ProductDetailViewModel.getProductDetails());
-        saleDetailPdct.setConverter(new StringConverter<>() {
-            @Override
-            public String toString(ProductDetail object) {
-                return object != null ? object.getProduct().getName()
-                        + " " + (object.getUnit() != null ? (object.getName().isEmpty() ? "" : object.getName())
-                        + " " + object.getUnit().getName() : object.getName()) : "No products";
-            }
+  @Override
+  public void initialize(URL location, ResourceBundle resources) {
+    // Set combo box options.
+    saleDetailPdct.setItems(ProductDetailViewModel.getProductDetails());
+    saleDetailPdct.setConverter(
+        new StringConverter<>() {
+          @Override
+          public String toString(ProductDetail object) {
+            return object != null
+                ? object.getProduct().getName()
+                    + " "
+                    + (object.getUnit() != null
+                        ? (object.getName().isEmpty() ? "" : object.getName())
+                            + " "
+                            + object.getUnit().getName()
+                        : object.getName())
+                : "No products";
+          }
 
-            @Override
-            public ProductDetail fromString(String string) {
-                return null;
-            }
+          @Override
+          public ProductDetail fromString(String string) {
+            return null;
+          }
         });
-        // Property binding.
-        saleDetailQnty.textProperty().bindBidirectional(SaleDetailViewModel.quantityProperty());
-        saleDetailPdct.valueProperty().bindBidirectional(SaleDetailViewModel.productProperty());
-        saleDetailOrderTax.textProperty().bindBidirectional(SaleDetailViewModel.netTaxProperty());
-        saleDetailDiscount.textProperty().bindBidirectional(SaleDetailViewModel.discountProperty());
-        // Input validators.
-        requiredValidator(saleDetailPdct, "Product is required.", saleDetailPdctValidationLabel);
-        requiredValidator(saleDetailQnty, "Quantity is required.", saleDetailQntyValidationLabel);
-        dialogOnActions();
-    }
+    // Property binding.
+    saleDetailQnty.textProperty().bindBidirectional(SaleDetailViewModel.quantityProperty());
+    saleDetailPdct.valueProperty().bindBidirectional(SaleDetailViewModel.productProperty());
+    saleDetailOrderTax.textProperty().bindBidirectional(SaleDetailViewModel.netTaxProperty());
+    saleDetailDiscount.textProperty().bindBidirectional(SaleDetailViewModel.discountProperty());
+    // Input validators.
+    requiredValidator(saleDetailPdct, "Product is required.", saleDetailPdctValidationLabel);
+    requiredValidator(saleDetailQnty, "Quantity is required.", saleDetailQntyValidationLabel);
+    dialogOnActions();
+  }
 
-    private void dialogOnActions() {
-        saleProductsCancelBtn.setOnAction((e) -> {
-            closeDialog(e);
+  private void dialogOnActions() {
+    saleProductsCancelBtn.setOnAction(
+        (e) -> {
+          closeDialog(e);
+          SaleDetailViewModel.resetProperties();
+          saleDetailPdctValidationLabel.setVisible(false);
+          saleDetailQntyValidationLabel.setVisible(false);
+        });
+    saleProductsSaveBtn.setOnAction(
+        (e) -> {
+          if (!saleDetailPdctValidationLabel.isVisible()
+              && !saleDetailQntyValidationLabel.isVisible()) {
+            if (tempIdProperty().get() > -1)
+              SaleDetailViewModel.updateSaleDetail(SaleDetailViewModel.getId());
+            else SaleDetailViewModel.addSaleDetail();
             SaleDetailViewModel.resetProperties();
-            saleDetailPdctValidationLabel.setVisible(false);
-            saleDetailQntyValidationLabel.setVisible(false);
+            closeDialog(e);
+          }
         });
-        saleProductsSaveBtn.setOnAction((e) -> {
-            if (!saleDetailPdctValidationLabel.isVisible()
-                    && !saleDetailQntyValidationLabel.isVisible()) {
-                if (tempIdProperty().get() > -1)
-                    SaleDetailViewModel.updateSaleDetail(SaleDetailViewModel.getId());
-                else
-                    SaleDetailViewModel.addSaleDetail();
-                SaleDetailViewModel.resetProperties();
-                closeDialog(e);
-            }
-        });
-    }
+  }
 }

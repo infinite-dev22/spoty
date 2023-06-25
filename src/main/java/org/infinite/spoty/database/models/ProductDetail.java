@@ -15,213 +15,220 @@
 package org.infinite.spoty.database.models;
 
 import jakarta.persistence.*;
-
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 @Entity
 public class ProductDetail implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    @ManyToOne
-    @JoinColumn(name = "product_id", nullable = false)
-    private ProductMaster product;
-    @ManyToMany(targetEntity = Branch.class)
-    private List<Branch> branch;
-    @ManyToOne
-    private UnitOfMeasure unit;
-    @ManyToOne
-    private UnitOfMeasure saleUnit;
-    @ManyToOne
-    private UnitOfMeasure purchaseUnit;
-    private String name;
-    private int quantity;
-    private double cost;
-    private double price;
-    private double netTax;
-    @Column(name = "tax_type")
-    private String taxType;
-    @Column(name = "stock_alert")
-    private int stockAlert;
-    private String serialNumber;
-    @Column(name = "created_at")
-    private Date createdAt;
-    @Column(name = "created_by")
-    private String createdBy;
-    @Column(name = "updated_at")
-    private Date updatedAt;
-    @Column(name = "updated_by")
-    private String updatedBy;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private int id;
 
-    public ProductDetail() {}
+  @ManyToOne
+  @JoinColumn(name = "product_id", nullable = false)
+  private ProductMaster product;
 
-    public ProductDetail(UnitOfMeasure unit,
-                         String name,
-                         int quantity,
-                         double cost,
-                         double price,
-                         double netTax,
-                         String taxType,
-                         int stockAlert,
-                         String serialNumber) {
-        this.unit = unit;
-        this.name = name;
-        this.quantity = quantity;
-        this.cost = cost;
-        this.price = price;
-        this.netTax = netTax;
-        this.taxType = taxType;
-        this.stockAlert = stockAlert;
-        this.serialNumber = serialNumber;
-    }
+  @ManyToMany(targetEntity = Branch.class)
+  private List<Branch> branch;
 
-    public int getId() {
-        return id;
-    }
+  @ManyToOne private UnitOfMeasure unit;
+  @ManyToOne private UnitOfMeasure saleUnit;
+  @ManyToOne private UnitOfMeasure purchaseUnit;
+  private String name;
+  private int quantity;
+  private double cost;
+  private double price;
+  private double netTax;
 
-    public void setId(int id) {
-        this.id = id;
-    }
+  @Column(name = "tax_type")
+  private String taxType;
 
-    public ProductMaster getProduct() {
-        return product;
-    }
+  @Column(name = "stock_alert")
+  private int stockAlert;
 
-    public void setProduct(ProductMaster product) {
-        this.product = product;
-    }
+  private String serialNumber;
 
-    public String getName() {
-        return name;
-    }
+  @Column(name = "created_at")
+  private Date createdAt;
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  @Column(name = "created_by")
+  private String createdBy;
 
-    public int getQuantity() {
-        return quantity;
-    }
+  @Column(name = "updated_at")
+  private Date updatedAt;
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
+  @Column(name = "updated_by")
+  private String updatedBy;
 
-    public List<Branch> getBranch() {
-        return branch;
-    }
+  public ProductDetail() {}
 
-    public void setBranch(List<Branch> branch) {
-        this.branch = branch;
-    }
+  public ProductDetail(
+      UnitOfMeasure unit,
+      String name,
+      int quantity,
+      double cost,
+      double price,
+      double netTax,
+      String taxType,
+      int stockAlert,
+      String serialNumber) {
+    this.unit = unit;
+    this.name = name;
+    this.quantity = quantity;
+    this.cost = cost;
+    this.price = price;
+    this.netTax = netTax;
+    this.taxType = taxType;
+    this.stockAlert = stockAlert;
+    this.serialNumber = serialNumber;
+  }
 
-    public UnitOfMeasure getUnit() {
-        return unit;
-    }
+  public int getId() {
+    return id;
+  }
 
-    public String getUnitName() {
-        return unit != null ? unit.getName() : null;
-    }
+  public void setId(int id) {
+    this.id = id;
+  }
 
-    public void setUnit(UnitOfMeasure unit) {
-        this.unit = unit;
-    }
+  public ProductMaster getProduct() {
+    return product;
+  }
 
-    public UnitOfMeasure getSaleUnit() {
-        return saleUnit;
-    }
+  public void setProduct(ProductMaster product) {
+    this.product = product;
+  }
 
-    public void setSaleUnit(UnitOfMeasure saleUnit) {
-        this.saleUnit = saleUnit;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public UnitOfMeasure getPurchaseUnit() {
-        return purchaseUnit;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public void setPurchaseUnit(UnitOfMeasure purchaseUnit) {
-        this.purchaseUnit = purchaseUnit;
-    }
+  public int getQuantity() {
+    return quantity;
+  }
 
-    public double getCost() {
-        return cost;
-    }
+  public void setQuantity(int quantity) {
+    this.quantity = quantity;
+  }
 
-    public void setCost(double cost) {
-        this.cost = cost;
-    }
+  public List<Branch> getBranch() {
+    return branch;
+  }
 
-    public double getPrice() {
-        return price;
-    }
+  public void setBranch(List<Branch> branch) {
+    this.branch = branch;
+  }
 
-    public void setPrice(double price) {
-        this.price = price;
-    }
+  public UnitOfMeasure getUnit() {
+    return unit;
+  }
 
-    public double getNetTax() {
-        return netTax;
-    }
+  public void setUnit(UnitOfMeasure unit) {
+    this.unit = unit;
+  }
 
-    public void setNetTax(double netTax) {
-        this.netTax = netTax;
-    }
+  public String getUnitName() {
+    return unit != null ? unit.getName() : null;
+  }
 
-    public String getTaxType() {
-        return taxType;
-    }
+  public UnitOfMeasure getSaleUnit() {
+    return saleUnit;
+  }
 
-    public void setTaxType(String taxType) {
-        this.taxType = taxType;
-    }
+  public void setSaleUnit(UnitOfMeasure saleUnit) {
+    this.saleUnit = saleUnit;
+  }
 
-    public int getStockAlert() {
-        return stockAlert;
-    }
+  public UnitOfMeasure getPurchaseUnit() {
+    return purchaseUnit;
+  }
 
-    public void setStockAlert(int stockAlert) {
-        this.stockAlert = stockAlert;
-    }
+  public void setPurchaseUnit(UnitOfMeasure purchaseUnit) {
+    this.purchaseUnit = purchaseUnit;
+  }
 
-    public String getSerialNumber() {
-        return serialNumber;
-    }
+  public double getCost() {
+    return cost;
+  }
 
-    public void setSerialNumber(String serialNumber) {
-        this.serialNumber = serialNumber;
-    }
+  public void setCost(double cost) {
+    this.cost = cost;
+  }
 
-    public Date getCreatedAt() {
-        return createdAt;
-    }
+  public double getPrice() {
+    return price;
+  }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
+  public void setPrice(double price) {
+    this.price = price;
+  }
 
-    public String getCreatedBy() {
-        return createdBy;
-    }
+  public double getNetTax() {
+    return netTax;
+  }
 
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
+  public void setNetTax(double netTax) {
+    this.netTax = netTax;
+  }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
+  public String getTaxType() {
+    return taxType;
+  }
 
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+  public void setTaxType(String taxType) {
+    this.taxType = taxType;
+  }
 
-    public String getUpdatedBy() {
-        return updatedBy;
-    }
+  public int getStockAlert() {
+    return stockAlert;
+  }
 
-    public void setUpdatedBy(String updatedBy) {
-        this.updatedBy = updatedBy;
-    }
+  public void setStockAlert(int stockAlert) {
+    this.stockAlert = stockAlert;
+  }
+
+  public String getSerialNumber() {
+    return serialNumber;
+  }
+
+  public void setSerialNumber(String serialNumber) {
+    this.serialNumber = serialNumber;
+  }
+
+  public Date getCreatedAt() {
+    return createdAt;
+  }
+
+  public void setCreatedAt(Date createdAt) {
+    this.createdAt = createdAt;
+  }
+
+  public String getCreatedBy() {
+    return createdBy;
+  }
+
+  public void setCreatedBy(String createdBy) {
+    this.createdBy = createdBy;
+  }
+
+  public Date getUpdatedAt() {
+    return updatedAt;
+  }
+
+  public void setUpdatedAt(Date updatedAt) {
+    this.updatedAt = updatedAt;
+  }
+
+  public String getUpdatedBy() {
+    return updatedBy;
+  }
+
+  public void setUpdatedBy(String updatedBy) {
+    this.updatedBy = updatedBy;
+  }
 }

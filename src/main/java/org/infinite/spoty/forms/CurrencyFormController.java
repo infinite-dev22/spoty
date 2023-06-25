@@ -14,73 +14,74 @@
 
 package org.infinite.spoty.forms;
 
+import static org.infinite.spoty.GlobalActions.closeDialog;
+import static org.infinite.spoty.Validators.requiredValidator;
+import static org.infinite.spoty.viewModels.CurrencyViewModel.clearCurrencyData;
+import static org.infinite.spoty.viewModels.CurrencyViewModel.saveCurrency;
+
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
+import java.net.URL;
+import java.util.Objects;
+import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.viewModels.CurrencyViewModel;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
-import static org.infinite.spoty.GlobalActions.closeDialog;
-import static org.infinite.spoty.Validators.requiredValidator;
-import static org.infinite.spoty.viewModels.CurrencyViewModel.clearCurrencyData;
-import static org.infinite.spoty.viewModels.CurrencyViewModel.saveCurrency;
-
 public class CurrencyFormController implements Initializable {
-    public MFXTextField currencyFormID = new MFXTextField();
-    @FXML
-    public Label currencyFormTitle;
-    @FXML
-    public MFXTextField currencyFormName;
-    @FXML
-    public MFXFilledButton currencyFormSaveBtn;
-    @FXML
-    public MFXOutlinedButton currencyFormCancelBtn;
-    @FXML
-    public MFXTextField currencyFormCode;
-    @FXML
-    public MFXTextField currencyFormSymbol;
-    @FXML
-    public Label currencyFormCodeValidationLabel;
-    @FXML
-    public Label currencyFormNameValidationLabel;
+  private static CurrencyFormController instance;
+  public MFXTextField currencyFormID = new MFXTextField();
+  @FXML public Label currencyFormTitle;
+  @FXML public MFXTextField currencyFormName;
+  @FXML public MFXFilledButton currencyFormSaveBtn;
+  @FXML public MFXOutlinedButton currencyFormCancelBtn;
+  @FXML public MFXTextField currencyFormCode;
+  @FXML public MFXTextField currencyFormSymbol;
+  @FXML public Label currencyFormCodeValidationLabel;
+  @FXML public Label currencyFormNameValidationLabel;
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        // Input listeners.
-        // Input bindings.
-        currencyFormID.textProperty().bindBidirectional(CurrencyViewModel.idProperty(), new NumberStringConverter());
-        currencyFormCode.textProperty().bindBidirectional(CurrencyViewModel.codeProperty());
-        currencyFormName.textProperty().bindBidirectional(CurrencyViewModel.nameProperty());
-        currencyFormSymbol.textProperty().bindBidirectional(CurrencyViewModel.symbolProperty());
-        // Input listeners.
-        requiredValidator(currencyFormName, "Name is required.", currencyFormNameValidationLabel);
-        requiredValidator(currencyFormCode, "Code is required.", currencyFormCodeValidationLabel);
-        dialogOnActions();
-    }
+  public static CurrencyFormController getInstance() {
+    if (Objects.equals(instance, null)) instance = new CurrencyFormController();
+    return instance;
+  }
 
-    private void dialogOnActions() {
-        currencyFormCancelBtn.setOnAction((e) -> {
+  @Override
+  public void initialize(URL location, ResourceBundle resources) {
+    // Input listeners.
+    // Input bindings.
+    currencyFormID
+        .textProperty()
+        .bindBidirectional(CurrencyViewModel.idProperty(), new NumberStringConverter());
+    currencyFormCode.textProperty().bindBidirectional(CurrencyViewModel.codeProperty());
+    currencyFormName.textProperty().bindBidirectional(CurrencyViewModel.nameProperty());
+    currencyFormSymbol.textProperty().bindBidirectional(CurrencyViewModel.symbolProperty());
+    // Input listeners.
+    requiredValidator(currencyFormName, "Name is required.", currencyFormNameValidationLabel);
+    requiredValidator(currencyFormCode, "Code is required.", currencyFormCodeValidationLabel);
+    dialogOnActions();
+  }
+
+  private void dialogOnActions() {
+    currencyFormCancelBtn.setOnAction(
+        (e) -> {
+          clearCurrencyData();
+          closeDialog(e);
+          currencyFormNameValidationLabel.setVisible(false);
+          currencyFormCodeValidationLabel.setVisible(false);
+        });
+    currencyFormSaveBtn.setOnAction(
+        (e) -> {
+          if (!currencyFormNameValidationLabel.isVisible()
+              && !currencyFormCodeValidationLabel.isVisible()) {
+            if (Integer.parseInt(currencyFormID.getText()) > 0)
+              CurrencyViewModel.updateItem(Integer.parseInt(currencyFormID.getText()));
+            else saveCurrency();
             clearCurrencyData();
             closeDialog(e);
-            currencyFormNameValidationLabel.setVisible(false);
-            currencyFormCodeValidationLabel.setVisible(false);
+          }
         });
-        currencyFormSaveBtn.setOnAction((e) -> {
-            if (!currencyFormNameValidationLabel.isVisible()
-                    && !currencyFormCodeValidationLabel.isVisible()) {
-                if (Integer.parseInt(currencyFormID.getText()) > 0)
-                    CurrencyViewModel.updateItem(Integer.parseInt(currencyFormID.getText()));
-                else
-                    saveCurrency();
-                clearCurrencyData();
-                closeDialog(e);
-            }
-        });
-    }
+  }
 }

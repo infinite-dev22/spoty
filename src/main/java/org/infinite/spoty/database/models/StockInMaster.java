@@ -15,7 +15,6 @@
 package org.infinite.spoty.database.models;
 
 import jakarta.persistence.*;
-
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.util.Date;
@@ -23,220 +22,221 @@ import java.util.List;
 
 @Entity
 public class StockInMaster implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    @ManyToOne
-    private User user_detail;
-    private String ref;
-    private Date date;
-    @ManyToOne
-    private Branch branch;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "stockIn")
-    private List<StockInDetail> stockInDetails;
-    private String shipping;
-    private double totalCost;
-    private String status;
-    private User approvedBy;
-    private User recordedBy;
-    private Date approvalDate;
-    private Date recordDate;
-    private String notes;
-    @Column(name = "created_at")
-    private Date createdAt;
-    @Column(name = "created_by")
-    private String createdBy;
-    @Column(name = "updated_at")
-    private Date updatedAt;
-    @Column(name = "updated_by")
-    private String updatedBy;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private int id;
 
-    public StockInMaster() {
-    }
+  @ManyToOne private User user_detail;
+  private String ref;
+  private Date date;
+  @ManyToOne private Branch branch;
 
-    public StockInMaster(Date date,
-                         Branch branch,
-                         String status,
-                         String notes) {
-        this.date = date;
-        this.branch = branch;
-        this.status = status;
-        this.notes = notes;
-    }
+  @OneToMany(cascade = CascadeType.ALL, mappedBy = "stockIn")
+  private List<StockInDetail> stockInDetails;
 
-    public int getId() {
-        return id;
-    }
+  private String shipping;
+  private double totalCost;
+  private String status;
+  private User approvedBy;
+  private User recordedBy;
+  private Date approvalDate;
+  private Date recordDate;
+  private String notes;
 
-    public void setId(int id) {
-        this.id = id;
-    }
+  @Column(name = "created_at")
+  private Date createdAt;
 
-    public User getUser() {
-        return user_detail;
-    }
+  @Column(name = "created_by")
+  private String createdBy;
 
-    public void setUser(User user_detail) {
-        this.user_detail = user_detail;
-    }
+  @Column(name = "updated_at")
+  private Date updatedAt;
 
-    public String getRef() {
-        return ref;
-    }
+  @Column(name = "updated_by")
+  private String updatedBy;
 
-    public void setRef(String ref) {
-        this.ref = ref;
-    }
+  public StockInMaster() {}
 
-    public Date getDate() {
-        return date;
-    }
+  public StockInMaster(Date date, Branch branch, String status, String notes) {
+    this.date = date;
+    this.branch = branch;
+    this.status = status;
+    this.notes = notes;
+  }
 
-    public void setDate(Date date) {
-        this.date = date;
-    }
+  public int getId() {
+    return id;
+  }
 
-    public Branch getBranch() {
-        return branch;
-    }
+  public void setId(int id) {
+    this.id = id;
+  }
 
-    public void setBranch(Branch branch) {
-        this.branch = branch;
-    }
+  public User getUser() {
+    return user_detail;
+  }
 
-    public String getBranchName() {
-        return (branch != null) ? branch.getName() : null;
-    }
+  public void setUser(User user_detail) {
+    this.user_detail = user_detail;
+  }
 
-    public String getShipping() {
-        return shipping;
-    }
+  public String getRef() {
+    return ref;
+  }
 
-    public void setShipping(String shipping) {
-        this.shipping = shipping;
-    }
+  public void setRef(String ref) {
+    this.ref = ref;
+  }
 
-    public double getTotal() {
-        return totalCost;
-    }
+  public Date getDate() {
+    return date;
+  }
 
-    public void setTotal(double totalCost) {
-        this.totalCost = totalCost;
-    }
+  public void setDate(Date date) {
+    this.date = date;
+  }
 
-    public String getStatus() {
-        return status;
-    }
+  public Branch getBranch() {
+    return branch;
+  }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+  public void setBranch(Branch branch) {
+    this.branch = branch;
+  }
 
-    public String getNotes() {
-        return notes;
-    }
+  public String getBranchName() {
+    return (branch != null) ? branch.getName() : null;
+  }
 
-    public void setNotes(String notes) {
-        this.notes = notes;
-    }
+  public String getShipping() {
+    return shipping;
+  }
 
-    public List<StockInDetail> getStockInDetails() {
-        return stockInDetails;
-    }
+  public void setShipping(String shipping) {
+    this.shipping = shipping;
+  }
 
-    public void setStockInDetails(List<StockInDetail> stockInDetails) {
-        this.stockInDetails = stockInDetails;
-    }
+  public double getTotal() {
+    return totalCost;
+  }
 
-    public User getApprovedBy() {
-        return approvedBy;
-    }
+  public void setTotal(double totalCost) {
+    this.totalCost = totalCost;
+  }
 
-    public void setApprovedBy(User approvedBy) {
-        this.approvedBy = approvedBy;
-    }
+  public String getStatus() {
+    return status;
+  }
 
-    public User getReceivedBy() {
-        return recordedBy;
-    }
+  public void setStatus(String status) {
+    this.status = status;
+  }
 
-    public void setReceivedBy(User recordedBy) {
-        this.recordedBy = recordedBy;
-    }
+  public String getNotes() {
+    return notes;
+  }
 
-    public Date getApprovalDate() {
-        return approvalDate;
-    }
+  public void setNotes(String notes) {
+    this.notes = notes;
+  }
 
-    public void setApprovalDate(Date approvalDate) {
-        this.approvalDate = approvalDate;
-    }
+  public List<StockInDetail> getStockInDetails() {
+    return stockInDetails;
+  }
 
-    public Date getReceiveDate() {
-        return recordDate;
-    }
+  public void setStockInDetails(List<StockInDetail> stockInDetails) {
+    this.stockInDetails = stockInDetails;
+  }
 
-    public void setReceiveDate(Date recordDate) {
-        this.recordDate = recordDate;
-    }
+  public User getApprovedBy() {
+    return approvedBy;
+  }
 
-    public double getTotalCost() {
-        return totalCost;
-    }
+  public void setApprovedBy(User approvedBy) {
+    this.approvedBy = approvedBy;
+  }
 
-    public void setTotalCost(double totalCost) {
-        this.totalCost = totalCost;
-    }
+  public User getReceivedBy() {
+    return recordedBy;
+  }
 
-    public User getRecordedBy() {
-        return recordedBy;
-    }
+  public void setReceivedBy(User recordedBy) {
+    this.recordedBy = recordedBy;
+  }
 
-    public void setRecordedBy(User recordedBy) {
-        this.recordedBy = recordedBy;
-    }
+  public Date getApprovalDate() {
+    return approvalDate;
+  }
 
-    public Date getRecordDate() {
-        return recordDate;
-    }
+  public void setApprovalDate(Date approvalDate) {
+    this.approvalDate = approvalDate;
+  }
 
-    public void setRecordDate(Date recordDate) {
-        this.recordDate = recordDate;
-    }
+  public Date getReceiveDate() {
+    return recordDate;
+  }
 
-    public Date getCreatedAt() {
-        return createdAt;
-    }
+  public void setReceiveDate(Date recordDate) {
+    this.recordDate = recordDate;
+  }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
+  public double getTotalCost() {
+    return totalCost;
+  }
 
-    public String getCreatedBy() {
-        return createdBy;
-    }
+  public void setTotalCost(double totalCost) {
+    this.totalCost = totalCost;
+  }
 
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
+  public User getRecordedBy() {
+    return recordedBy;
+  }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
+  public void setRecordedBy(User recordedBy) {
+    this.recordedBy = recordedBy;
+  }
 
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+  public Date getRecordDate() {
+    return recordDate;
+  }
 
-    public String getUpdatedBy() {
-        return updatedBy;
-    }
+  public void setRecordDate(Date recordDate) {
+    this.recordDate = recordDate;
+  }
 
-    public void setUpdatedBy(String updatedBy) {
-        this.updatedBy = updatedBy;
-    }
+  public Date getCreatedAt() {
+    return createdAt;
+  }
 
-    public String getLocaleDate() {
-        return DateFormat.getDateInstance().format(date);
-    }
+  public void setCreatedAt(Date createdAt) {
+    this.createdAt = createdAt;
+  }
+
+  public String getCreatedBy() {
+    return createdBy;
+  }
+
+  public void setCreatedBy(String createdBy) {
+    this.createdBy = createdBy;
+  }
+
+  public Date getUpdatedAt() {
+    return updatedAt;
+  }
+
+  public void setUpdatedAt(Date updatedAt) {
+    this.updatedAt = updatedAt;
+  }
+
+  public String getUpdatedBy() {
+    return updatedBy;
+  }
+
+  public void setUpdatedBy(String updatedBy) {
+    this.updatedBy = updatedBy;
+  }
+
+  public String getLocaleDate() {
+    return DateFormat.getDateInstance().format(date);
+  }
 }

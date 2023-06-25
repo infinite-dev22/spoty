@@ -15,182 +15,195 @@
 package org.infinite.spoty.database.models;
 
 import jakarta.persistence.*;
-
 import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 public class PurchaseReturnDetail implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-    private double cost;
-    @ManyToOne
-    private UnitOfMeasure purchaseUnit;
-    @ManyToOne
-    @JoinColumn(name = "purchaseReturnMaster_id", nullable = false)
-    private PurchaseReturnMaster purchaseReturn;
-    @OneToOne
-    private ProductDetail product;
-    private double netTax;
-    private String taxType;
-    private double discount;
-    private String discountType;
-    private int quantity;
-    private double total;
-    private String serialNumber;
-    @Column(name = "created_at")
-    private Date createdAt;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private long id;
 
-    public PurchaseReturnDetail(double cost, UnitOfMeasure purchaseUnit, PurchaseReturnMaster purchaseReturn, ProductDetail product, double netTax, String taxType, double discount, String discountType, int quantity, double total, String serialNumber) {
-        this.cost = cost;
-        this.purchaseUnit = purchaseUnit;
-        this.purchaseReturn = purchaseReturn;
-        this.product = product;
-        this.netTax = netTax;
-        this.taxType = taxType;
-        this.discount = discount;
-        this.discountType = discountType;
-        this.quantity = quantity;
-        this.total = total;
-        this.serialNumber = serialNumber;
-    }
+  private double cost;
+  @ManyToOne private UnitOfMeasure purchaseUnit;
 
-    public PurchaseReturnDetail() {
-    }
+  @ManyToOne
+  @JoinColumn(name = "purchaseReturnMaster_id", nullable = false)
+  private PurchaseReturnMaster purchaseReturn;
 
-    @Column(name = "created_by")
-    private String createdBy;
-    @Column(name = "updated_at")
-    private Date updatedAt;
-    @Column(name = "updated_by")
-    private String updatedBy;
+  @OneToOne private ProductDetail product;
+  private double netTax;
+  private String taxType;
+  private double discount;
+  private String discountType;
+  private int quantity;
+  private double total;
+  private String serialNumber;
 
-    public long getId() {
-        return id;
-    }
+  @Column(name = "created_at")
+  private Date createdAt;
 
-    public void setId(long id) {
-        this.id = id;
-    }
+  @Column(name = "created_by")
+  private String createdBy;
 
-    public double getCost() {
-        return cost;
-    }
+  @Column(name = "updated_at")
+  private Date updatedAt;
 
-    public void setCost(double cost) {
-        this.cost = cost;
-    }
+  @Column(name = "updated_by")
+  private String updatedBy;
 
-    public UnitOfMeasure getPurchaseUnit() {
-        return purchaseUnit;
-    }
+  public PurchaseReturnDetail(
+      double cost,
+      UnitOfMeasure purchaseUnit,
+      PurchaseReturnMaster purchaseReturn,
+      ProductDetail product,
+      double netTax,
+      String taxType,
+      double discount,
+      String discountType,
+      int quantity,
+      double total,
+      String serialNumber) {
+    this.cost = cost;
+    this.purchaseUnit = purchaseUnit;
+    this.purchaseReturn = purchaseReturn;
+    this.product = product;
+    this.netTax = netTax;
+    this.taxType = taxType;
+    this.discount = discount;
+    this.discountType = discountType;
+    this.quantity = quantity;
+    this.total = total;
+    this.serialNumber = serialNumber;
+  }
 
-    public void setPurchaseUnit(UnitOfMeasure purchaseUnit) {
-        this.purchaseUnit = purchaseUnit;
-    }
+  public PurchaseReturnDetail() {}
 
-    public PurchaseReturnMaster getPurchaseReturn() {
-        return purchaseReturn;
-    }
+  public long getId() {
+    return id;
+  }
 
-    public void setPurchaseReturn(PurchaseReturnMaster purchaseReturn) {
-        this.purchaseReturn = purchaseReturn;
-    }
+  public void setId(long id) {
+    this.id = id;
+  }
 
-    public ProductDetail getProduct() {
-        return product;
-    }
+  public double getCost() {
+    return cost;
+  }
 
-    public void setProduct(ProductDetail product) {
-        this.product = product;
-    }
+  public void setCost(double cost) {
+    this.cost = cost;
+  }
 
-    public double getNetTax() {
-        return netTax;
-    }
+  public UnitOfMeasure getPurchaseUnit() {
+    return purchaseUnit;
+  }
 
-    public void setNetTax(double netTax) {
-        this.netTax = netTax;
-    }
+  public void setPurchaseUnit(UnitOfMeasure purchaseUnit) {
+    this.purchaseUnit = purchaseUnit;
+  }
 
-    public String getTaxType() {
-        return taxType;
-    }
+  public PurchaseReturnMaster getPurchaseReturn() {
+    return purchaseReturn;
+  }
 
-    public void setTaxType(String taxType) {
-        this.taxType = taxType;
-    }
+  public void setPurchaseReturn(PurchaseReturnMaster purchaseReturn) {
+    this.purchaseReturn = purchaseReturn;
+  }
 
-    public double getDiscount() {
-        return discount;
-    }
+  public ProductDetail getProduct() {
+    return product;
+  }
 
-    public void setDiscount(double discount) {
-        this.discount = discount;
-    }
+  public void setProduct(ProductDetail product) {
+    this.product = product;
+  }
 
-    public String getDiscountType() {
-        return discountType;
-    }
+  public double getNetTax() {
+    return netTax;
+  }
 
-    public void setDiscountType(String discountType) {
-        this.discountType = discountType;
-    }
+  public void setNetTax(double netTax) {
+    this.netTax = netTax;
+  }
 
-    public int getQuantity() {
-        return quantity;
-    }
+  public String getTaxType() {
+    return taxType;
+  }
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
+  public void setTaxType(String taxType) {
+    this.taxType = taxType;
+  }
 
-    public double getTotal() {
-        return total;
-    }
+  public double getDiscount() {
+    return discount;
+  }
 
-    public void setTotal(double total) {
-        this.total = total;
-    }
+  public void setDiscount(double discount) {
+    this.discount = discount;
+  }
 
-    public String getSerialNumber() {
-        return serialNumber;
-    }
+  public String getDiscountType() {
+    return discountType;
+  }
 
-    public void setSerialNumber(String serialNumber) {
-        this.serialNumber = serialNumber;
-    }
+  public void setDiscountType(String discountType) {
+    this.discountType = discountType;
+  }
 
-    public Date getCreatedAt() {
-        return createdAt;
-    }
+  public int getQuantity() {
+    return quantity;
+  }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
+  public void setQuantity(int quantity) {
+    this.quantity = quantity;
+  }
 
-    public String getCreatedBy() {
-        return createdBy;
-    }
+  public double getTotal() {
+    return total;
+  }
 
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
+  public void setTotal(double total) {
+    this.total = total;
+  }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
+  public String getSerialNumber() {
+    return serialNumber;
+  }
 
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+  public void setSerialNumber(String serialNumber) {
+    this.serialNumber = serialNumber;
+  }
 
-    public String getUpdatedBy() {
-        return updatedBy;
-    }
+  public Date getCreatedAt() {
+    return createdAt;
+  }
 
-    public void setUpdatedBy(String updatedBy) {
-        this.updatedBy = updatedBy;
-    }
+  public void setCreatedAt(Date createdAt) {
+    this.createdAt = createdAt;
+  }
+
+  public String getCreatedBy() {
+    return createdBy;
+  }
+
+  public void setCreatedBy(String createdBy) {
+    this.createdBy = createdBy;
+  }
+
+  public Date getUpdatedAt() {
+    return updatedAt;
+  }
+
+  public void setUpdatedAt(Date updatedAt) {
+    this.updatedAt = updatedAt;
+  }
+
+  public String getUpdatedBy() {
+    return updatedBy;
+  }
+
+  public void setUpdatedBy(String updatedBy) {
+    this.updatedBy = updatedBy;
+  }
 }

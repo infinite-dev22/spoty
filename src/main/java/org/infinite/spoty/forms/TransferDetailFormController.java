@@ -14,10 +14,16 @@
 
 package org.infinite.spoty.forms;
 
+import static org.infinite.spoty.GlobalActions.closeDialog;
+import static org.infinite.spoty.Validators.requiredValidator;
+import static org.infinite.spoty.values.SharedResources.tempIdProperty;
+
 import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
+import java.net.URL;
+import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -26,84 +32,83 @@ import org.infinite.spoty.database.models.ProductDetail;
 import org.infinite.spoty.viewModels.ProductDetailViewModel;
 import org.infinite.spoty.viewModels.TransferDetailViewModel;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
-import static org.infinite.spoty.GlobalActions.closeDialog;
-import static org.infinite.spoty.Validators.requiredValidator;
-import static org.infinite.spoty.values.SharedResources.tempIdProperty;
-
 public class TransferDetailFormController implements Initializable {
-    @FXML
-    public MFXTextField transferDetailQnty;
-    @FXML
-    public MFXFilterComboBox<ProductDetail> transferDetailPdct;
-    @FXML
-    public MFXFilledButton transferDetailSaveBtn;
-    @FXML
-    public MFXOutlinedButton transferDetailCancelBtn;
-    @FXML
-    public Label transferDetailTitle;
-    @FXML
-    public MFXTextField transferDetailDescription;
-    @FXML
-    public Label transferDetailQntyValidationLabel;
-    @FXML
-    public Label transferDetailPdctValidationLabel;
+  @FXML public MFXTextField transferDetailQnty;
+  @FXML public MFXFilterComboBox<ProductDetail> transferDetailPdct;
+  @FXML public MFXFilledButton transferDetailSaveBtn;
+  @FXML public MFXOutlinedButton transferDetailCancelBtn;
+  @FXML public Label transferDetailTitle;
+  @FXML public MFXTextField transferDetailDescription;
+  @FXML public Label transferDetailQntyValidationLabel;
+  @FXML public Label transferDetailPdctValidationLabel;
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        // Form input binding.
-        transferDetailPdct.valueProperty().bindBidirectional(TransferDetailViewModel.productProperty());
-        transferDetailQnty.textProperty().bindBidirectional(TransferDetailViewModel.quantityProperty());
-        transferDetailDescription.textProperty().bindBidirectional(TransferDetailViewModel.descriptionProperty());
-        // Combo box properties.
-        transferDetailPdct.setItems(ProductDetailViewModel.getProductDetails());
-        transferDetailPdct.setConverter(new StringConverter<>() {
-            @Override
-            public String toString(ProductDetail object) {
-                return object != null ? object.getProduct().getName()
-                        + " " + (object.getUnit() != null ? (object.getName().isEmpty() ? "" : object.getName())
-                        + " " + object.getUnit().getName() : object.getName()) : "No products";
-            }
+  @Override
+  public void initialize(URL location, ResourceBundle resources) {
+    // Form input binding.
+    transferDetailPdct.valueProperty().bindBidirectional(TransferDetailViewModel.productProperty());
+    transferDetailQnty.textProperty().bindBidirectional(TransferDetailViewModel.quantityProperty());
+    transferDetailDescription
+        .textProperty()
+        .bindBidirectional(TransferDetailViewModel.descriptionProperty());
+    // Combo box properties.
+    transferDetailPdct.setItems(ProductDetailViewModel.getProductDetails());
+    transferDetailPdct.setConverter(
+        new StringConverter<>() {
+          @Override
+          public String toString(ProductDetail object) {
+            return object != null
+                ? object.getProduct().getName()
+                    + " "
+                    + (object.getUnit() != null
+                        ? (object.getName().isEmpty() ? "" : object.getName())
+                            + " "
+                            + object.getUnit().getName()
+                        : object.getName())
+                : "No products";
+          }
 
-            @Override
-            public ProductDetail fromString(String string) {
-                return null;
-            }
+          @Override
+          public ProductDetail fromString(String string) {
+            return null;
+          }
         });
-        // Input validators.
-        requiredValidator(transferDetailPdct, "Product is required.", transferDetailPdctValidationLabel);
-        requiredValidator(transferDetailQnty, "Quantity is required.", transferDetailQntyValidationLabel);
-        dialogOnActions();
-    }
+    // Input validators.
+    requiredValidator(
+        transferDetailPdct, "Product is required.", transferDetailPdctValidationLabel);
+    requiredValidator(
+        transferDetailQnty, "Quantity is required.", transferDetailQntyValidationLabel);
+    dialogOnActions();
+  }
 
-    private void dialogOnActions() {
-        transferDetailCancelBtn.setOnAction((e) -> {
-            closeDialog(e);
+  private void dialogOnActions() {
+    transferDetailCancelBtn.setOnAction(
+        (e) -> {
+          closeDialog(e);
+          TransferDetailViewModel.resetProperties();
+          transferDetailPdctValidationLabel.setVisible(false);
+          transferDetailQntyValidationLabel.setVisible(false);
+        });
+    transferDetailSaveBtn.setOnAction(
+        (e) -> {
+          if (!transferDetailPdctValidationLabel.isVisible()
+              && !transferDetailQntyValidationLabel.isVisible()) {
+            if (tempIdProperty().get() > -1)
+              TransferDetailViewModel.updateTransferDetail(TransferDetailViewModel.getId());
+            else TransferDetailViewModel.addTransferDetails();
+            //
+            //                if (!transferDetailID.getText().isEmpty()) {
+            //                    try {
+            //                        if (Integer.parseInt(transferDetailID.getText()) > 0)
+            //
+            // TransferDetailViewModel.updateItem(Integer.parseInt(transferDetailID.getText()));
+            //                    } catch (NumberFormatException ignored) {
+            //
+            // TransferDetailViewModel.updateTransferDetail(TransferDetailViewModel.getId());
+            //                    }
+            //                } else TransferDetailViewModel.addTransferDetails();
             TransferDetailViewModel.resetProperties();
-            transferDetailPdctValidationLabel.setVisible(false);
-            transferDetailQntyValidationLabel.setVisible(false);
+            closeDialog(e);
+          }
         });
-        transferDetailSaveBtn.setOnAction((e) -> {
-            if (!transferDetailPdctValidationLabel.isVisible()
-                    && !transferDetailQntyValidationLabel.isVisible()) {
-                if (tempIdProperty().get() > -1)
-                    TransferDetailViewModel.updateTransferDetail(TransferDetailViewModel.getId());
-                else
-                    TransferDetailViewModel.addTransferDetails();
-//
-//                if (!transferDetailID.getText().isEmpty()) {
-//                    try {
-//                        if (Integer.parseInt(transferDetailID.getText()) > 0)
-//                            TransferDetailViewModel.updateItem(Integer.parseInt(transferDetailID.getText()));
-//                    } catch (NumberFormatException ignored) {
-//                        TransferDetailViewModel.updateTransferDetail(TransferDetailViewModel.getId());
-//                    }
-//                } else TransferDetailViewModel.addTransferDetails();
-                TransferDetailViewModel.resetProperties();
-                closeDialog(e);
-            }
-        });
-    }
+  }
 }

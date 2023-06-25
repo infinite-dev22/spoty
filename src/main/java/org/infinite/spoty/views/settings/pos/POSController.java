@@ -14,18 +14,22 @@
 
 package org.infinite.spoty.views.settings.pos;
 
+import java.net.URL;
+import java.util.Objects;
+import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.AnchorPane;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
 public class POSController implements Initializable {
-    @FXML
-    public AnchorPane posSettingsPane;
+  private static POSController instance;
+  @FXML public AnchorPane posSettingsPane;
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-    }
+  public static POSController getInstance() {
+    if (Objects.equals(instance, null)) instance = new POSController();
+    return instance;
+  }
+
+  @Override
+  public void initialize(URL location, ResourceBundle resources) {}
 }

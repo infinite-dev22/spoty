@@ -18,80 +18,76 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-
 import java.util.Date;
 
 @Entity
 public class LeaveType {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    private String name;
-    private Date createdAt = null;
-    private String created_by = null;
-    private Date updatedAt = null;
-    private String updatedBy = null;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private int id;
 
-    public LeaveType(String name,
-                     Date createdAt,
-                     String created_by,
-                     Date updatedAt,
-                     String updatedBy) {
-        this.name = name;
-        this.createdAt = createdAt;
-        this.created_by = created_by;
-        this.updatedAt = updatedAt;
-        this.updatedBy = updatedBy;
-    }
+  private String name;
+  private Date createdAt = null;
+  private String created_by = null;
+  private Date updatedAt = null;
+  private String updatedBy = null;
 
-    public LeaveType() {
-    }
+  public LeaveType(
+      String name, Date createdAt, String created_by, Date updatedAt, String updatedBy) {
+    this.name = name;
+    this.createdAt = createdAt;
+    this.created_by = created_by;
+    this.updatedAt = updatedAt;
+    this.updatedBy = updatedBy;
+  }
 
-    public int getId() {
-        return id;
-    }
+  public LeaveType() {}
 
-    public void setId(int id) {
-        this.id = id;
-    }
+  public int getId() {
+    return id;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public void setId(int id) {
+    this.id = id;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public Date getCreatedAt() {
-        return createdAt;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
+  public Date getCreatedAt() {
+    return createdAt;
+  }
 
-    public String getCreated_by() {
-        return created_by;
-    }
+  public void setCreatedAt(Date createdAt) {
+    this.createdAt = createdAt;
+  }
 
-    public void setCreated_by(String created_by) {
-        this.created_by = created_by;
-    }
+  public String getCreated_by() {
+    return created_by;
+  }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
+  public void setCreated_by(String created_by) {
+    this.created_by = created_by;
+  }
 
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+  public Date getUpdatedAt() {
+    return updatedAt;
+  }
 
-    public String getUpdated_by() {
-        return updatedBy;
-    }
+  public void setUpdatedAt(Date updatedAt) {
+    this.updatedAt = updatedAt;
+  }
 
-    public void setUpdated_by(String updatedBy) {
-        this.updatedBy = updatedBy;
-    }
+  public String getUpdated_by() {
+    return updatedBy;
+  }
+
+  public void setUpdated_by(String updatedBy) {
+    this.updatedBy = updatedBy;
+  }
 }

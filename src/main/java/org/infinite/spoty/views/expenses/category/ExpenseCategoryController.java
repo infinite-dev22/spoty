@@ -14,10 +14,16 @@
 
 package org.infinite.spoty.views.expenses.category;
 
+import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
+
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.enums.ButtonType;
 import io.github.palexdev.materialfx.filter.StringFilter;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Comparator;
+import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -34,121 +40,121 @@ import org.infinite.spoty.database.dao.ExpenseCategoryDao;
 import org.infinite.spoty.database.models.ExpenseCategory;
 import org.infinite.spoty.viewModels.ExpenseCategoryViewModel;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.Comparator;
-import java.util.ResourceBundle;
-
-import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
-
 @SuppressWarnings("unchecked")
 public class ExpenseCategoryController implements Initializable {
-    private static ExpenseCategoryController instance;
-    @FXML
-    public MFXTextField categoryExpenseSearchBar;
-    @FXML
-    public HBox categoryExpenseActionsPane;
-    @FXML
-    public MFXButton categoryExpenseImportBtn;
-    @FXML
-    public BorderPane categoryContentPane;
-    @FXML
-    private MFXTableView<ExpenseCategory> categoryExpenseTable;
-    private Dialog<ButtonType> dialog;
+  private static ExpenseCategoryController instance;
+  @FXML public MFXTextField categoryExpenseSearchBar;
+  @FXML public HBox categoryExpenseActionsPane;
+  @FXML public MFXButton categoryExpenseImportBtn;
+  @FXML public BorderPane categoryContentPane;
+  @FXML private MFXTableView<ExpenseCategory> categoryExpenseTable;
+  private Dialog<ButtonType> dialog;
 
-    private ExpenseCategoryController(Stage stage) {
-        Platform.runLater(() -> {
-            try {
-                expenseCategoryFormDialogPane(stage);
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
+  private ExpenseCategoryController(Stage stage) {
+    Platform.runLater(
+        () -> {
+          try {
+            expenseCategoryFormDialogPane(stage);
+          } catch (IOException ex) {
+            throw new RuntimeException(ex);
+          }
         });
-    }
+  }
 
-    public static ExpenseCategoryController getInstance(Stage stage) {
-        if (instance == null)
-            instance = new ExpenseCategoryController(stage);
-        return instance;
-    }
+  public static ExpenseCategoryController getInstance(Stage stage) {
+    if (instance == null) instance = new ExpenseCategoryController(stage);
+    return instance;
+  }
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        Platform.runLater(this::setupTable);
-    }
+  @Override
+  public void initialize(URL location, ResourceBundle resources) {
+    Platform.runLater(this::setupTable);
+  }
 
-    private void setupTable() {
-        MFXTableColumn<ExpenseCategory> categoryName = new MFXTableColumn<>("Name", true, Comparator.comparing(ExpenseCategory::getName));
-        MFXTableColumn<ExpenseCategory> categoryDescription = new MFXTableColumn<>("Description", true, Comparator.comparing(ExpenseCategory::getDescription));
+  private void setupTable() {
+    MFXTableColumn<ExpenseCategory> categoryName =
+        new MFXTableColumn<>("Name", true, Comparator.comparing(ExpenseCategory::getName));
+    MFXTableColumn<ExpenseCategory> categoryDescription =
+        new MFXTableColumn<>(
+            "Description", true, Comparator.comparing(ExpenseCategory::getDescription));
 
-        categoryName.setRowCellFactory(category -> new MFXTableRowCell<>(ExpenseCategory::getName));
-        categoryDescription.setRowCellFactory(category -> new MFXTableRowCell<>(ExpenseCategory::getDescription));
+    categoryName.setRowCellFactory(category -> new MFXTableRowCell<>(ExpenseCategory::getName));
+    categoryDescription.setRowCellFactory(
+        category -> new MFXTableRowCell<>(ExpenseCategory::getDescription));
 
-        categoryName.prefWidthProperty().bind(categoryExpenseTable.widthProperty().multiply(.5));
-        categoryDescription.prefWidthProperty().bind(categoryExpenseTable.widthProperty().multiply(.5));
+    categoryName.prefWidthProperty().bind(categoryExpenseTable.widthProperty().multiply(.5));
+    categoryDescription.prefWidthProperty().bind(categoryExpenseTable.widthProperty().multiply(.5));
 
-        categoryExpenseTable.getTableColumns().addAll(categoryName, categoryDescription);
-        categoryExpenseTable.getFilters().addAll(
-                new StringFilter<>("Name", ExpenseCategory::getName),
-                new StringFilter<>("Description", ExpenseCategory::getDescription)
-        );
+    categoryExpenseTable.getTableColumns().addAll(categoryName, categoryDescription);
+    categoryExpenseTable
+        .getFilters()
+        .addAll(
+            new StringFilter<>("Name", ExpenseCategory::getName),
+            new StringFilter<>("Description", ExpenseCategory::getDescription));
 
-        styleExpenseCategoryTable();
-        categoryExpenseTable.setItems(ExpenseCategoryViewModel.getCategories());
-    }
+    styleExpenseCategoryTable();
+    categoryExpenseTable.setItems(ExpenseCategoryViewModel.getCategories());
+  }
 
-    private void styleExpenseCategoryTable() {
-        categoryExpenseTable.setPrefSize(1200, 1000);
-        categoryExpenseTable.features().enableBounceEffect();
-        categoryExpenseTable.features().enableSmoothScrolling(0.5);
+  private void styleExpenseCategoryTable() {
+    categoryExpenseTable.setPrefSize(1200, 1000);
+    categoryExpenseTable.features().enableBounceEffect();
+    categoryExpenseTable.features().enableSmoothScrolling(0.5);
 
-        categoryExpenseTable.setTableRowFactory(t -> {
-            MFXTableRow<ExpenseCategory> row = new MFXTableRow<>(categoryExpenseTable, t);
-            EventHandler<ContextMenuEvent> eventHandler = event -> {
-                showContextMenu((MFXTableRow<ExpenseCategory>) event.getSource()).
-                        show(categoryExpenseTable.getScene().getWindow(), event.getScreenX(), event.getScreenY());
+    categoryExpenseTable.setTableRowFactory(
+        t -> {
+          MFXTableRow<ExpenseCategory> row = new MFXTableRow<>(categoryExpenseTable, t);
+          EventHandler<ContextMenuEvent> eventHandler =
+              event -> {
+                showContextMenu((MFXTableRow<ExpenseCategory>) event.getSource())
+                    .show(
+                        categoryExpenseTable.getScene().getWindow(),
+                        event.getScreenX(),
+                        event.getScreenY());
                 event.consume();
-            };
-            row.setOnContextMenuRequested(eventHandler);
-            return row;
+              };
+          row.setOnContextMenuRequested(eventHandler);
+          return row;
         });
-    }
+  }
 
-    private MFXContextMenu showContextMenu(MFXTableRow<ExpenseCategory> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(categoryExpenseTable);
-        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
-        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+  private MFXContextMenu showContextMenu(MFXTableRow<ExpenseCategory> obj) {
+    MFXContextMenu contextMenu = new MFXContextMenu(categoryExpenseTable);
+    MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
+    MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
 
-        // Actions
-        // Delete
-        delete.setOnAction(e -> {
-            ExpenseCategoryDao.deleteExpenseCategory(obj.getData().getId());
-            ExpenseCategoryViewModel.getCategories();
-            e.consume();
+    // Actions
+    // Delete
+    delete.setOnAction(
+        e -> {
+          ExpenseCategoryDao.deleteExpenseCategory(obj.getData().getId());
+          ExpenseCategoryViewModel.getCategories();
+          e.consume();
         });
-        // Edit
-        edit.setOnAction(e -> {
-            ExpenseCategoryViewModel.getItem(obj.getData().getId());
-            dialog.showAndWait();
-            e.consume();
+    // Edit
+    edit.setOnAction(
+        e -> {
+          ExpenseCategoryViewModel.getItem(obj.getData().getId());
+          dialog.showAndWait();
+          e.consume();
         });
 
-        contextMenu.addItems(edit, delete);
+    contextMenu.addItems(edit, delete);
 
-        return contextMenu;
-    }
+    return contextMenu;
+  }
 
-    private void expenseCategoryFormDialogPane(Stage stage) throws IOException {
-        DialogPane dialogPane = fxmlLoader("forms/ExpenseCategoryForm.fxml").load();
+  private void expenseCategoryFormDialogPane(Stage stage) throws IOException {
+    DialogPane dialogPane = fxmlLoader("forms/ExpenseCategoryForm.fxml").load();
 
-        dialog = new Dialog<>();
-        dialog.setDialogPane(dialogPane);
-        dialog.initOwner(stage);
-        dialog.initModality(Modality.APPLICATION_MODAL);
-        dialog.initStyle(StageStyle.UNDECORATED);
-    }
+    dialog = new Dialog<>();
+    dialog.setDialogPane(dialogPane);
+    dialog.initOwner(stage);
+    dialog.initModality(Modality.APPLICATION_MODAL);
+    dialog.initStyle(StageStyle.UNDECORATED);
+  }
 
-    public void categoryExpenseCreateBtnClicked() {
-        dialog.showAndWait();
-    }
+  public void categoryExpenseCreateBtnClicked() {
+    dialog.showAndWait();
+  }
 }

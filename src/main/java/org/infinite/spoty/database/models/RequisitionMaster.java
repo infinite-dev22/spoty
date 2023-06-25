@@ -14,236 +14,237 @@
 
 package org.infinite.spoty.database.models;
 
-import jakarta.persistence.*;
+import static org.infinite.spoty.GlobalActions.fineDate;
 
+import jakarta.persistence.*;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.infinite.spoty.GlobalActions.fineDate;
-
 @Entity
 public class RequisitionMaster implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    private String ref;
-    private Date date;
-    @ManyToOne
-    private User user_detail;
-    @OneToOne
-    private Supplier supplier;
-    @ManyToOne
-    private Branch branch;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "requisition")
-    private List<RequisitionDetail> requisitionDetails = new LinkedList<>();
-    private String shipVia;
-    private String shipMethod;
-    private String shippingTerms;
-    private Date deliveryDate;
-    private String notes;
-    private String status;
-    private double totalCost;
-    @Column(name = "created_at")
-    private Date createdAt;
-    @Column(name = "created_by")
-    private String createdBy;
-    @Column(name = "updated_at")
-    private Date updatedAt;
-    @Column(name = "updated_by")
-    private String updatedBy;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private int id;
 
-    public RequisitionMaster() {
-    }
+  private String ref;
+  private Date date;
+  @ManyToOne private User user_detail;
+  @OneToOne private Supplier supplier;
+  @ManyToOne private Branch branch;
 
-    public RequisitionMaster(Date date,
-                             Supplier supplier,
-                             Branch branch,
-                             String shipVia,
-                             String shipMethod,
-                             String shippingTerms,
-                             Date deliveryDate,
-                             String notes,
-                             String status,
-                             double totalCost) {
-        this.date = date;
-        this.supplier = supplier;
-        this.branch = branch;
-        this.shipVia = shipVia;
-        this.shipMethod = shipMethod;
-        this.shippingTerms = shippingTerms;
-        this.deliveryDate = deliveryDate;
-        this.notes = notes;
-        this.status = status;
-        this.totalCost = totalCost;
-    }
+  @OneToMany(cascade = CascadeType.ALL, mappedBy = "requisition")
+  private List<RequisitionDetail> requisitionDetails = new LinkedList<>();
 
-    public int getId() {
-        return id;
-    }
+  private String shipVia;
+  private String shipMethod;
+  private String shippingTerms;
+  private Date deliveryDate;
+  private String notes;
+  private String status;
+  private double totalCost;
 
-    public void setId(int id) {
-        this.id = id;
-    }
+  @Column(name = "created_at")
+  private Date createdAt;
 
-    public User getUser() {
-        return user_detail;
-    }
+  @Column(name = "created_by")
+  private String createdBy;
 
-    public void setUser(User user_detail) {
-        this.user_detail = user_detail;
-    }
+  @Column(name = "updated_at")
+  private Date updatedAt;
 
-    public Date getDate() {
-        return date;
-    }
+  @Column(name = "updated_by")
+  private String updatedBy;
 
-    public void setDate(Date date) {
-        this.date = date;
-    }
+  public RequisitionMaster() {}
 
-    public String getRef() {
-        return ref;
-    }
+  public RequisitionMaster(
+      Date date,
+      Supplier supplier,
+      Branch branch,
+      String shipVia,
+      String shipMethod,
+      String shippingTerms,
+      Date deliveryDate,
+      String notes,
+      String status,
+      double totalCost) {
+    this.date = date;
+    this.supplier = supplier;
+    this.branch = branch;
+    this.shipVia = shipVia;
+    this.shipMethod = shipMethod;
+    this.shippingTerms = shippingTerms;
+    this.deliveryDate = deliveryDate;
+    this.notes = notes;
+    this.status = status;
+    this.totalCost = totalCost;
+  }
 
-    public void setRef(String ref) {
-        this.ref = ref;
-    }
+  public int getId() {
+    return id;
+  }
 
-    public Branch getBranch() {
-        return branch;
-    }
+  public void setId(int id) {
+    this.id = id;
+  }
 
-    public void setBranch(Branch branch) {
-        this.branch = branch;
-    }
+  public User getUser() {
+    return user_detail;
+  }
 
-    public String getBranchName() {
-        if (branch != null)
-            return branch.getName();
-        else
-            return null;
-    }
+  public void setUser(User user_detail) {
+    this.user_detail = user_detail;
+  }
 
-    public List<RequisitionDetail> getRequisitionDetails() {
-        return requisitionDetails;
-    }
+  public Date getDate() {
+    return date;
+  }
 
-    public void setRequisitionDetails(List<RequisitionDetail> requisitionDetails) {
-        this.requisitionDetails = requisitionDetails;
-    }
+  public void setDate(Date date) {
+    this.date = date;
+  }
 
-    public String getNotes() {
-        return notes;
-    }
+  public String getRef() {
+    return ref;
+  }
 
-    public void setNotes(String notes) {
-        this.notes = notes;
-    }
+  public void setRef(String ref) {
+    this.ref = ref;
+  }
 
-    public Date getCreatedAt() {
-        return createdAt;
-    }
+  public Branch getBranch() {
+    return branch;
+  }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
+  public void setBranch(Branch branch) {
+    this.branch = branch;
+  }
 
-    public String getCreatedBy() {
-        return createdBy;
-    }
+  public String getBranchName() {
+    if (branch != null) return branch.getName();
+    else return null;
+  }
 
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
+  public List<RequisitionDetail> getRequisitionDetails() {
+    return requisitionDetails;
+  }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
+  public void setRequisitionDetails(List<RequisitionDetail> requisitionDetails) {
+    this.requisitionDetails = requisitionDetails;
+  }
 
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+  public String getNotes() {
+    return notes;
+  }
 
-    public String getUpdatedBy() {
-        return updatedBy;
-    }
+  public void setNotes(String notes) {
+    this.notes = notes;
+  }
 
-    public void setUpdatedBy(String updatedBy) {
-        this.updatedBy = updatedBy;
-    }
+  public Date getCreatedAt() {
+    return createdAt;
+  }
 
-    public Supplier getSupplier() {
-        return supplier;
-    }
+  public void setCreatedAt(Date createdAt) {
+    this.createdAt = createdAt;
+  }
 
-    public void setSupplier(Supplier supplier) {
-        this.supplier = supplier;
-    }
+  public String getCreatedBy() {
+    return createdBy;
+  }
 
-    public String getSupplierName() {
-        return (supplier != null) ? supplier.getName() : null;
-    }
+  public void setCreatedBy(String createdBy) {
+    this.createdBy = createdBy;
+  }
 
-    public String getShipVia() {
-        return shipVia;
-    }
+  public Date getUpdatedAt() {
+    return updatedAt;
+  }
 
-    public void setShipVia(String shipVia) {
-        this.shipVia = shipVia;
-    }
+  public void setUpdatedAt(Date updatedAt) {
+    this.updatedAt = updatedAt;
+  }
 
-    public String getShipMethod() {
-        return shipMethod;
-    }
+  public String getUpdatedBy() {
+    return updatedBy;
+  }
 
-    public void setShipMethod(String shipMethod) {
-        this.shipMethod = shipMethod;
-    }
+  public void setUpdatedBy(String updatedBy) {
+    this.updatedBy = updatedBy;
+  }
 
-    public String getShippingTerms() {
-        return shippingTerms;
-    }
+  public Supplier getSupplier() {
+    return supplier;
+  }
 
-    public void setShippingTerms(String shippingTerms) {
-        this.shippingTerms = shippingTerms;
-    }
+  public void setSupplier(Supplier supplier) {
+    this.supplier = supplier;
+  }
 
-    public Date getDeliveryDate() {
-        return deliveryDate;
-    }
+  public String getSupplierName() {
+    return (supplier != null) ? supplier.getName() : null;
+  }
 
-    public String getDeliveryLocaleDate() {
-        return DateFormat.getDateInstance().format(deliveryDate);
-    }
+  public String getShipVia() {
+    return shipVia;
+  }
 
-    public void setDeliveryDate(Date deliveryDate) {
-        this.deliveryDate = deliveryDate;
-    }
+  public void setShipVia(String shipVia) {
+    this.shipVia = shipVia;
+  }
 
-    public String getDeliveryDateString() {
-        return fineDate(deliveryDate.toString()).toString();
-    }
+  public String getShipMethod() {
+    return shipMethod;
+  }
 
-    public String getStatus() {
-        return status;
-    }
+  public void setShipMethod(String shipMethod) {
+    this.shipMethod = shipMethod;
+  }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+  public String getShippingTerms() {
+    return shippingTerms;
+  }
 
-    public double getTotalCost() {
-        return totalCost;
-    }
+  public void setShippingTerms(String shippingTerms) {
+    this.shippingTerms = shippingTerms;
+  }
 
-    public void setTotalCost(double totalCost) {
-        this.totalCost = totalCost;
-    }
+  public Date getDeliveryDate() {
+    return deliveryDate;
+  }
 
-    public String getLocaleDate() {
-        return DateFormat.getDateInstance().format(date);
-    }
+  public void setDeliveryDate(Date deliveryDate) {
+    this.deliveryDate = deliveryDate;
+  }
+
+  public String getDeliveryLocaleDate() {
+    return DateFormat.getDateInstance().format(deliveryDate);
+  }
+
+  public String getDeliveryDateString() {
+    return fineDate(deliveryDate.toString()).toString();
+  }
+
+  public String getStatus() {
+    return status;
+  }
+
+  public void setStatus(String status) {
+    this.status = status;
+  }
+
+  public double getTotalCost() {
+    return totalCost;
+  }
+
+  public void setTotalCost(double totalCost) {
+    this.totalCost = totalCost;
+  }
+
+  public String getLocaleDate() {
+    return DateFormat.getDateInstance().format(date);
+  }
 }

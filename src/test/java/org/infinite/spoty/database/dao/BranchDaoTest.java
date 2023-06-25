@@ -14,12 +14,11 @@
 
 package org.infinite.spoty.database.dao;
 
-import org.infinite.spoty.database.models.Branch;
-import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Date;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.infinite.spoty.database.models.Branch;
+import org.junit.jupiter.api.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class BranchDaoTest {

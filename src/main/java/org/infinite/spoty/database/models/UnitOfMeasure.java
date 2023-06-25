@@ -15,125 +15,127 @@
 package org.infinite.spoty.database.models;
 
 import jakarta.persistence.*;
-
 import java.util.Date;
 
 @Entity
 public class UnitOfMeasure {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    private String name;
-    private String shortName;
-    @OneToOne(cascade = CascadeType.ALL)
-    private UnitOfMeasure baseUnit;
-    private String operator;
-    @Column(name = "operator_value")
-    private double operatorValue;
-    private Date createdAt = null;
-    private String createdBy = null;
-    private Date updatedAt = null;
-    private String updatedBy = null;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private int id;
 
-    public UnitOfMeasure(String name,
-                         String shortName,
-                         UnitOfMeasure baseUnit,
-                         String operator,
-                         double operatorValue) {
-        this.name = name;
-        this.shortName = shortName;
-        this.baseUnit = baseUnit;
-        this.operator = operator;
-        this.operatorValue = operatorValue;
-    }
+  private String name;
+  private String shortName;
 
-    public UnitOfMeasure() {
-    }
+  @OneToOne(cascade = CascadeType.ALL)
+  private UnitOfMeasure baseUnit;
 
-    public int getId() {
-        return id;
-    }
+  private String operator;
 
-    public void setId(int id) {
-        this.id = id;
-    }
+  @Column(name = "operator_value")
+  private double operatorValue;
 
-    public String getName() {
-        return name;
-    }
+  private Date createdAt = null;
+  private String createdBy = null;
+  private Date updatedAt = null;
+  private String updatedBy = null;
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public UnitOfMeasure(
+      String name,
+      String shortName,
+      UnitOfMeasure baseUnit,
+      String operator,
+      double operatorValue) {
+    this.name = name;
+    this.shortName = shortName;
+    this.baseUnit = baseUnit;
+    this.operator = operator;
+    this.operatorValue = operatorValue;
+  }
 
-    public String getShortName() {
-        return shortName;
-    }
+  public UnitOfMeasure() {}
 
-    public void setShortName(String shortName) {
-        this.shortName = shortName;
-    }
+  public int getId() {
+    return id;
+  }
 
-    public UnitOfMeasure getBaseUnit() {
-        return baseUnit;
-    }
+  public void setId(int id) {
+    this.id = id;
+  }
 
-    public String getBaseUnitName() {
-        if (baseUnit != null)
-            return baseUnit.name;
-        else
-            return null;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public void setBaseUnit(UnitOfMeasure baseUnit) {
-        this.baseUnit = baseUnit;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public String getOperator() {
-        return operator;
-    }
+  public String getShortName() {
+    return shortName;
+  }
 
-    public void setOperator(String operator) {
-        this.operator = operator;
-    }
+  public void setShortName(String shortName) {
+    this.shortName = shortName;
+  }
 
-    public double getOperatorValue() {
-        return operatorValue;
-    }
+  public UnitOfMeasure getBaseUnit() {
+    return baseUnit;
+  }
 
-    public void setOperatorValue(double operatorValue) {
-        this.operatorValue = operatorValue;
-    }
+  public void setBaseUnit(UnitOfMeasure baseUnit) {
+    this.baseUnit = baseUnit;
+  }
 
-    public Date getCreatedAt() {
-        return createdAt;
-    }
+  public String getBaseUnitName() {
+    if (baseUnit != null) return baseUnit.name;
+    else return null;
+  }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
+  public String getOperator() {
+    return operator;
+  }
 
-    public String getCreatedBy() {
-        return createdBy;
-    }
+  public void setOperator(String operator) {
+    this.operator = operator;
+  }
 
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
+  public double getOperatorValue() {
+    return operatorValue;
+  }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
+  public void setOperatorValue(double operatorValue) {
+    this.operatorValue = operatorValue;
+  }
 
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+  public Date getCreatedAt() {
+    return createdAt;
+  }
 
-    public String getUpdatedBy() {
-        return updatedBy;
-    }
+  public void setCreatedAt(Date createdAt) {
+    this.createdAt = createdAt;
+  }
 
-    public void setUpdatedBy(String updatedBy) {
-        this.updatedBy = updatedBy;
-    }
+  public String getCreatedBy() {
+    return createdBy;
+  }
+
+  public void setCreatedBy(String createdBy) {
+    this.createdBy = createdBy;
+  }
+
+  public Date getUpdatedAt() {
+    return updatedAt;
+  }
+
+  public void setUpdatedAt(Date updatedAt) {
+    this.updatedAt = updatedAt;
+  }
+
+  public String getUpdatedBy() {
+    return updatedBy;
+  }
+
+  public void setUpdatedBy(String updatedBy) {
+    this.updatedBy = updatedBy;
+  }
 }

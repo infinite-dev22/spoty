@@ -14,10 +14,16 @@
 
 package org.infinite.spoty.forms;
 
+import static org.infinite.spoty.GlobalActions.closeDialog;
+import static org.infinite.spoty.Validators.requiredValidator;
+import static org.infinite.spoty.values.SharedResources.tempIdProperty;
+
 import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
+import java.net.URL;
+import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -26,75 +32,70 @@ import org.infinite.spoty.database.models.ProductDetail;
 import org.infinite.spoty.viewModels.ProductDetailViewModel;
 import org.infinite.spoty.viewModels.StockInDetailViewModel;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
-import static org.infinite.spoty.GlobalActions.closeDialog;
-import static org.infinite.spoty.Validators.requiredValidator;
-import static org.infinite.spoty.values.SharedResources.tempIdProperty;
-
 public class StockInDetailFormController implements Initializable {
-    @FXML
-    public MFXTextField stockInDetailQnty;
-    @FXML
-    public MFXFilterComboBox<ProductDetail> stockInDetailPdct;
-    @FXML
-    public MFXFilledButton stockInDetailSaveBtn;
-    @FXML
-    public MFXOutlinedButton stockInDetailCancelBtn;
-    @FXML
-    public Label stockInDetailTitle;
-    @FXML
-    public MFXTextField stockInDetailDescription;
-    @FXML
-    public Label stockInDetailPdctValidationLabel;
-    @FXML
-    public Label stockInDetailQntyValidationLabel;
+  @FXML public MFXTextField stockInDetailQnty;
+  @FXML public MFXFilterComboBox<ProductDetail> stockInDetailPdct;
+  @FXML public MFXFilledButton stockInDetailSaveBtn;
+  @FXML public MFXOutlinedButton stockInDetailCancelBtn;
+  @FXML public Label stockInDetailTitle;
+  @FXML public MFXTextField stockInDetailDescription;
+  @FXML public Label stockInDetailPdctValidationLabel;
+  @FXML public Label stockInDetailQntyValidationLabel;
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        // Form input binding.
-        stockInDetailPdct.valueProperty().bindBidirectional(StockInDetailViewModel.productProperty());
-        stockInDetailQnty.textProperty().bindBidirectional(StockInDetailViewModel.quantityProperty());
-        stockInDetailDescription.textProperty().bindBidirectional(StockInDetailViewModel.descriptionProperty());
-        // Combo box properties.
-        stockInDetailPdct.setItems(ProductDetailViewModel.getProductDetails());
-        stockInDetailPdct.setConverter(new StringConverter<>() {
-            @Override
-            public String toString(ProductDetail object) {
-                return object != null ? object.getProduct().getName()
-                        + " " + (object.getUnit() != null ? (object.getName().isEmpty() ? "" : object.getName())
-                        + " " + object.getUnit().getName() : object.getName()) : "No products";
-            }
+  @Override
+  public void initialize(URL location, ResourceBundle resources) {
+    // Form input binding.
+    stockInDetailPdct.valueProperty().bindBidirectional(StockInDetailViewModel.productProperty());
+    stockInDetailQnty.textProperty().bindBidirectional(StockInDetailViewModel.quantityProperty());
+    stockInDetailDescription
+        .textProperty()
+        .bindBidirectional(StockInDetailViewModel.descriptionProperty());
+    // Combo box properties.
+    stockInDetailPdct.setItems(ProductDetailViewModel.getProductDetails());
+    stockInDetailPdct.setConverter(
+        new StringConverter<>() {
+          @Override
+          public String toString(ProductDetail object) {
+            return object != null
+                ? object.getProduct().getName()
+                    + " "
+                    + (object.getUnit() != null
+                        ? (object.getName().isEmpty() ? "" : object.getName())
+                            + " "
+                            + object.getUnit().getName()
+                        : object.getName())
+                : "No products";
+          }
 
-            @Override
-            public ProductDetail fromString(String string) {
-                return null;
-            }
+          @Override
+          public ProductDetail fromString(String string) {
+            return null;
+          }
         });
-        // Input validators.
-        requiredValidator(stockInDetailPdct, "Product is required.", stockInDetailPdctValidationLabel);
-        requiredValidator(stockInDetailQnty, "Quantity is required.", stockInDetailQntyValidationLabel);
-        dialogOnActions();
-    }
+    // Input validators.
+    requiredValidator(stockInDetailPdct, "Product is required.", stockInDetailPdctValidationLabel);
+    requiredValidator(stockInDetailQnty, "Quantity is required.", stockInDetailQntyValidationLabel);
+    dialogOnActions();
+  }
 
-    private void dialogOnActions() {
-        stockInDetailCancelBtn.setOnAction((e) -> {
-            closeDialog(e);
+  private void dialogOnActions() {
+    stockInDetailCancelBtn.setOnAction(
+        (e) -> {
+          closeDialog(e);
+          StockInDetailViewModel.resetProperties();
+          stockInDetailPdctValidationLabel.setVisible(false);
+          stockInDetailQntyValidationLabel.setVisible(false);
+        });
+    stockInDetailSaveBtn.setOnAction(
+        (e) -> {
+          if (!stockInDetailPdctValidationLabel.isVisible()
+              && !stockInDetailQntyValidationLabel.isVisible()) {
+            if (tempIdProperty().get() > -1)
+              StockInDetailViewModel.updateStockInDetail(StockInDetailViewModel.getId());
+            else StockInDetailViewModel.addStockInDetails();
             StockInDetailViewModel.resetProperties();
-            stockInDetailPdctValidationLabel.setVisible(false);
-            stockInDetailQntyValidationLabel.setVisible(false);
+            closeDialog(e);
+          }
         });
-        stockInDetailSaveBtn.setOnAction((e) -> {
-            if (!stockInDetailPdctValidationLabel.isVisible()
-                    && !stockInDetailQntyValidationLabel.isVisible()) {
-                if (tempIdProperty().get() > -1)
-                    StockInDetailViewModel.updateStockInDetail(StockInDetailViewModel.getId());
-                else
-                    StockInDetailViewModel.addStockInDetails();
-                StockInDetailViewModel.resetProperties();
-                closeDialog(e);
-            }
-        });
-    }
+  }
 }

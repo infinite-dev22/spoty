@@ -14,10 +14,16 @@
 
 package org.infinite.spoty.views.settings.branches;
 
+import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
+
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.enums.ButtonType;
 import io.github.palexdev.materialfx.filter.StringFilter;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Comparator;
+import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -35,136 +41,141 @@ import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.values.strings.Labels;
 import org.infinite.spoty.viewModels.BranchViewModel;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.Comparator;
-import java.util.ResourceBundle;
-
-import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
-
 @SuppressWarnings("unchecked")
 public class BranchesController implements Initializable {
-    private static BranchesController instance;
-    @FXML
-    public MFXTextField branchSearchBar;
-    @FXML
-    public HBox branchActionsPane;
-    @FXML
-    public MFXButton branchImportBtn;
-    @FXML
-    public MFXTableView<Branch> branchTable;
-    @FXML
-    public BorderPane branchContentPane;
-    private Dialog<ButtonType> dialog;
+  private static BranchesController instance;
+  @FXML public MFXTextField branchSearchBar;
+  @FXML public HBox branchActionsPane;
+  @FXML public MFXButton branchImportBtn;
+  @FXML public MFXTableView<Branch> branchTable;
+  @FXML public BorderPane branchContentPane;
+  private Dialog<ButtonType> dialog;
 
-    private BranchesController(Stage stage) {
-        Platform.runLater(() -> {
-            try {
-                branchFormDialogPane(stage);
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
+  private BranchesController(Stage stage) {
+    Platform.runLater(
+        () -> {
+          try {
+            branchFormDialogPane(stage);
+          } catch (IOException ex) {
+            throw new RuntimeException(ex);
+          }
         });
-    }
+  }
 
-    public static BranchesController getInstance(Stage stage) {
-        if (instance == null)
-            instance = new BranchesController(stage);
-        return instance;
-    }
+  public static BranchesController getInstance(Stage stage) {
+    if (instance == null) instance = new BranchesController(stage);
+    return instance;
+  }
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        Platform.runLater(this::setupTable);
-    }
+  @Override
+  public void initialize(URL location, ResourceBundle resources) {
+    Platform.runLater(this::setupTable);
+  }
 
-    public void setupTable() {
-        // TODO: Create ZipCode and Country Columns.
-        MFXTableColumn<Branch> branchName = new MFXTableColumn<>("Name", false, Comparator.comparing(Branch::getName));
-        MFXTableColumn<Branch> branchPhone = new MFXTableColumn<>("Phone", false, Comparator.comparing(Branch::getPhone));
-        MFXTableColumn<Branch> branchCity = new MFXTableColumn<>("City", false, Comparator.comparing(Branch::getCity));
-        MFXTableColumn<Branch> branchTown = new MFXTableColumn<>("Town", false, Comparator.comparing(Branch::getTown));
-        MFXTableColumn<Branch> branchLocation = new MFXTableColumn<>("Location", false, Comparator.comparing(Branch::getZipCode));
-        MFXTableColumn<Branch> branchEmail = new MFXTableColumn<>("Email", false, Comparator.comparing(Branch::getEmail));
+  public void setupTable() {
+    // TODO: Create ZipCode and Country Columns.
+    MFXTableColumn<Branch> branchName =
+        new MFXTableColumn<>("Name", false, Comparator.comparing(Branch::getName));
+    MFXTableColumn<Branch> branchPhone =
+        new MFXTableColumn<>("Phone", false, Comparator.comparing(Branch::getPhone));
+    MFXTableColumn<Branch> branchCity =
+        new MFXTableColumn<>("City", false, Comparator.comparing(Branch::getCity));
+    MFXTableColumn<Branch> branchTown =
+        new MFXTableColumn<>("Town", false, Comparator.comparing(Branch::getTown));
+    MFXTableColumn<Branch> branchLocation =
+        new MFXTableColumn<>("Location", false, Comparator.comparing(Branch::getZipCode));
+    MFXTableColumn<Branch> branchEmail =
+        new MFXTableColumn<>("Email", false, Comparator.comparing(Branch::getEmail));
 
-        branchName.setRowCellFactory(branch -> new MFXTableRowCell<>(Branch::getName));
-        branchPhone.setRowCellFactory(branch -> new MFXTableRowCell<>(Branch::getPhone));
-        branchCity.setRowCellFactory(branch -> new MFXTableRowCell<>(Branch::getCity));
-        branchTown.setRowCellFactory(branch -> new MFXTableRowCell<>(Branch::getTown));
-        branchLocation.setRowCellFactory(branch -> new MFXTableRowCell<>(Branch::getZipCode));
-        branchEmail.setRowCellFactory(branch -> new MFXTableRowCell<>(Branch::getEmail));
+    branchName.setRowCellFactory(branch -> new MFXTableRowCell<>(Branch::getName));
+    branchPhone.setRowCellFactory(branch -> new MFXTableRowCell<>(Branch::getPhone));
+    branchCity.setRowCellFactory(branch -> new MFXTableRowCell<>(Branch::getCity));
+    branchTown.setRowCellFactory(branch -> new MFXTableRowCell<>(Branch::getTown));
+    branchLocation.setRowCellFactory(branch -> new MFXTableRowCell<>(Branch::getZipCode));
+    branchEmail.setRowCellFactory(branch -> new MFXTableRowCell<>(Branch::getEmail));
 
-        branchName.prefWidthProperty().bind(branchTable.widthProperty().multiply(.2));
-        branchPhone.prefWidthProperty().bind(branchTable.widthProperty().multiply(.14));
-        branchCity.prefWidthProperty().bind(branchTable.widthProperty().multiply(.16));
-        branchTown.prefWidthProperty().bind(branchTable.widthProperty().multiply(.16));
-        branchLocation.prefWidthProperty().bind(branchTable.widthProperty().multiply(.16));
-        branchEmail.prefWidthProperty().bind(branchTable.widthProperty().multiply(.18));
+    branchName.prefWidthProperty().bind(branchTable.widthProperty().multiply(.2));
+    branchPhone.prefWidthProperty().bind(branchTable.widthProperty().multiply(.14));
+    branchCity.prefWidthProperty().bind(branchTable.widthProperty().multiply(.16));
+    branchTown.prefWidthProperty().bind(branchTable.widthProperty().multiply(.16));
+    branchLocation.prefWidthProperty().bind(branchTable.widthProperty().multiply(.16));
+    branchEmail.prefWidthProperty().bind(branchTable.widthProperty().multiply(.18));
 
-        branchTable.getTableColumns().addAll(branchName, branchPhone, branchCity, branchTown, branchLocation, branchEmail);
-        branchTable.getFilters().addAll(
-                new StringFilter<>("Name", Branch::getName),
-                new StringFilter<>("Phone", Branch::getPhone),
-                new StringFilter<>("City", Branch::getCity),
-                new StringFilter<>("Town", Branch::getTown),
-                new StringFilter<>("Location", Branch::getZipCode),
-                new StringFilter<>("Email", Branch::getEmail)
-        );
-        getBranchTable();
-        branchTable.setItems(BranchViewModel.getBranches());
-    }
+    branchTable
+        .getTableColumns()
+        .addAll(branchName, branchPhone, branchCity, branchTown, branchLocation, branchEmail);
+    branchTable
+        .getFilters()
+        .addAll(
+            new StringFilter<>("Name", Branch::getName),
+            new StringFilter<>("Phone", Branch::getPhone),
+            new StringFilter<>("City", Branch::getCity),
+            new StringFilter<>("Town", Branch::getTown),
+            new StringFilter<>("Location", Branch::getZipCode),
+            new StringFilter<>("Email", Branch::getEmail));
+    getBranchTable();
+    branchTable.setItems(BranchViewModel.getBranches());
+  }
 
-    private void getBranchTable() {
-        branchTable.setPrefSize(1200, 1000);
-        branchTable.features().enableBounceEffect();
-        branchTable.features().enableSmoothScrolling(0.5);
+  private void getBranchTable() {
+    branchTable.setPrefSize(1200, 1000);
+    branchTable.features().enableBounceEffect();
+    branchTable.features().enableSmoothScrolling(0.5);
 
-        branchTable.setTableRowFactory(t -> {
-            MFXTableRow<Branch> row = new MFXTableRow<>(branchTable, t);
-            EventHandler<ContextMenuEvent> eventHandler = event -> showContextMenu((MFXTableRow<Branch>) event.getSource())
-                    .show(branchContentPane.getScene().getWindow(), event.getScreenX(), event.getScreenY());
-            row.setOnContextMenuRequested(eventHandler);
-            return row;
+    branchTable.setTableRowFactory(
+        t -> {
+          MFXTableRow<Branch> row = new MFXTableRow<>(branchTable, t);
+          EventHandler<ContextMenuEvent> eventHandler =
+              event ->
+                  showContextMenu((MFXTableRow<Branch>) event.getSource())
+                      .show(
+                          branchContentPane.getScene().getWindow(),
+                          event.getScreenX(),
+                          event.getScreenY());
+          row.setOnContextMenuRequested(eventHandler);
+          return row;
         });
-    }
+  }
 
-    private MFXContextMenu showContextMenu(MFXTableRow<Branch> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(branchTable);
+  private MFXContextMenu showContextMenu(MFXTableRow<Branch> obj) {
+    MFXContextMenu contextMenu = new MFXContextMenu(branchTable);
 
-        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
-        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+    MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
+    MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
 
-        // Actions
-        // Delete
-        delete.setOnAction(e -> {
-            BranchDao.deleteBranch(obj.getData().getId());
-            BranchViewModel.getBranches();
-            e.consume();
+    // Actions
+    // Delete
+    delete.setOnAction(
+        e -> {
+          BranchDao.deleteBranch(obj.getData().getId());
+          BranchViewModel.getBranches();
+          e.consume();
         });
-        // Edit
-        edit.setOnAction(e -> {
-            BranchViewModel.getItem(obj.getData().getId());
-            branchCreateBtnClicked();
-            e.consume();
+    // Edit
+    edit.setOnAction(
+        e -> {
+          BranchViewModel.getItem(obj.getData().getId());
+          branchCreateBtnClicked();
+          e.consume();
         });
 
-        contextMenu.addItems(edit, delete);
+    contextMenu.addItems(edit, delete);
 
-        return contextMenu;
-    }
+    return contextMenu;
+  }
 
-    @FXML
-    private void branchCreateBtnClicked() {
-        BranchViewModel.setTitle(Labels.CREATE);
-        dialog.showAndWait();
-    }
+  @FXML
+  private void branchCreateBtnClicked() {
+    BranchViewModel.setTitle(Labels.CREATE);
+    dialog.showAndWait();
+  }
 
-    private void branchFormDialogPane(Stage stage) throws IOException {
-        DialogPane dialogPane = fxmlLoader("forms/BranchForm.fxml").load();
-        dialog = new Dialog<>();
-        dialog.setDialogPane(dialogPane);
-        dialog.initOwner(stage);
-        dialog.initModality(Modality.APPLICATION_MODAL);
-        dialog.initStyle(StageStyle.UNDECORATED);
-    }
+  private void branchFormDialogPane(Stage stage) throws IOException {
+    DialogPane dialogPane = fxmlLoader("forms/BranchForm.fxml").load();
+    dialog = new Dialog<>();
+    dialog.setDialogPane(dialogPane);
+    dialog.initOwner(stage);
+    dialog.initModality(Modality.APPLICATION_MODAL);
+    dialog.initStyle(StageStyle.UNDECORATED);
+  }
 }

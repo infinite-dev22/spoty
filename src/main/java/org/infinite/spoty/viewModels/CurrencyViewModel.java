@@ -24,94 +24,94 @@ import org.infinite.spoty.database.dao.CurrencyDao;
 import org.infinite.spoty.database.models.Currency;
 
 public class CurrencyViewModel {
-    private static final IntegerProperty id = new SimpleIntegerProperty(0);
-    private static final StringProperty code = new SimpleStringProperty("");
-    private static final StringProperty name = new SimpleStringProperty("");
-    private static final StringProperty symbol = new SimpleStringProperty("");
-    public static ObservableList<Currency> currenciesList = FXCollections.observableArrayList();
+  private static final IntegerProperty id = new SimpleIntegerProperty(0);
+  private static final StringProperty code = new SimpleStringProperty("");
+  private static final StringProperty name = new SimpleStringProperty("");
+  private static final StringProperty symbol = new SimpleStringProperty("");
+  public static ObservableList<Currency> currenciesList = FXCollections.observableArrayList();
 
-    public static Integer getId() {
-        return id.get();
-    }
+  public static Integer getId() {
+    return id.get();
+  }
 
-    public static void setId(Integer id) {
-        CurrencyViewModel.id.set(id);
-    }
+  public static void setId(Integer id) {
+    CurrencyViewModel.id.set(id);
+  }
 
-    public static IntegerProperty idProperty() {
-        return id;
-    }
+  public static IntegerProperty idProperty() {
+    return id;
+  }
 
-    public static String getName() {
-        return name.get();
-    }
+  public static String getName() {
+    return name.get();
+  }
 
-    public static void setName(String name) {
-        CurrencyViewModel.name.set(name);
-    }
+  public static void setName(String name) {
+    CurrencyViewModel.name.set(name);
+  }
 
-    public static StringProperty nameProperty() {
-        return name;
-    }
+  public static StringProperty nameProperty() {
+    return name;
+  }
 
-    public static String getSymbol() {
-        return symbol.get();
-    }
+  public static String getSymbol() {
+    return symbol.get();
+  }
 
-    public static void setSymbol(String symbol) {
-        CurrencyViewModel.symbol.set(symbol);
-    }
+  public static void setSymbol(String symbol) {
+    CurrencyViewModel.symbol.set(symbol);
+  }
 
-    public static StringProperty symbolProperty() {
-        return symbol;
-    }
+  public static StringProperty symbolProperty() {
+    return symbol;
+  }
 
-    public static String getCode() {
-        return code.get();
-    }
+  public static String getCode() {
+    return code.get();
+  }
 
-    public static void setCode(String code) {
-        CurrencyViewModel.code.set(code);
-    }
+  public static void setCode(String code) {
+    CurrencyViewModel.code.set(code);
+  }
 
-    public static StringProperty codeProperty() {
-        return code;
-    }
+  public static StringProperty codeProperty() {
+    return code;
+  }
 
-    public static void saveCurrency() {
-        Currency currency = new Currency(getCode(), getName(), getSymbol());
-        CurrencyDao.saveCurrency(currency);
-        currenciesList.clear();
-        clearCurrencyData();
-        getCurrencies();
-    }
+  public static void saveCurrency() {
+    Currency currency = new Currency(getCode(), getName(), getSymbol());
+    CurrencyDao.saveCurrency(currency);
+    currenciesList.clear();
+    clearCurrencyData();
+    getCurrencies();
+  }
 
-    public static void clearCurrencyData() {
-        setId(0);
-        setName("");
-        setCode("");
-        setSymbol("");
-    }
+  public static void clearCurrencyData() {
+    setId(0);
+    setName("");
+    setCode("");
+    setSymbol("");
+  }
 
-    public static ObservableList<Currency> getCurrencies() {
-        currenciesList.clear();
-        currenciesList.addAll(CurrencyDao.fetchCurrencies());
-        return currenciesList;
-    }
+  public static ObservableList<Currency> getCurrencies() {
+    currenciesList.clear();
+    currenciesList.addAll(CurrencyDao.fetchCurrencies());
+    return currenciesList;
+  }
 
-    public static void getItem(int currencyID) {
-        Currency currency = CurrencyDao.findCurrency(currencyID);
-        setId(currency.getId());
-        setSymbol(currency.getSymbol());
-        setCode(currency.getCode());
-        setName(currency.getName());
-        getCurrencies();
-    }
+  public static void getItem(int currencyID) {
+    Currency currency = CurrencyDao.findCurrency(currencyID);
+    setId(currency.getId());
+    setSymbol(currency.getSymbol());
+    setCode(currency.getCode());
+    setName(currency.getName());
+    getCurrencies();
+  }
 
-    public static void updateItem(int currencyID) {
-        Currency currency = new Currency(getCode(), getName(), getSymbol());
-        CurrencyDao.updateCurrency(currency, currencyID);
-        clearCurrencyData();
-        getCurrencies();
-    }
+  public static void updateItem(int currencyID) {
+    Currency currency = new Currency(getCode(), getName(), getSymbol());
+    CurrencyDao.updateCurrency(currency, currencyID);
+    clearCurrencyData();
+    getCurrencies();
+  }
 }

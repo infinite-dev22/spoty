@@ -15,7 +15,6 @@
 package org.infinite.spoty.database.models;
 
 import jakarta.persistence.*;
-
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.util.Date;
@@ -23,236 +22,231 @@ import java.util.List;
 
 @Entity
 public class PurchaseMaster implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    @ManyToOne
-    private User user_detail;
-    private String ref;
-    private Date date;
-    @ManyToOne
-    private Supplier supplier;
-    @ManyToOne
-    private Branch branch;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "purchase")
-    private List<PurchaseDetail> purchaseDetails;
-    private double taxRate;
-    private double netTax;
-    private double discount;
-    private String shipping;
-    private double paid;
-    private double total;
-    private double due;
-    private String status;
-    private String paymentStatus;
-    private String notes;
-    @Column(name = "created_at")
-    private Date createdAt;
-    @Column(name = "created_by")
-    private String createdBy;
-    @Column(name = "updated_at")
-    private Date updatedAt;
-    @Column(name = "updated_by")
-    private String updatedBy;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private int id;
 
-    public PurchaseMaster() {
-    }
+  @ManyToOne private User user_detail;
+  private String ref;
+  private Date date;
+  @ManyToOne private Supplier supplier;
+  @ManyToOne private Branch branch;
 
-    public PurchaseMaster(Supplier supplier,
-                          Branch branch,
-                          String status,
-                          String notes,
-                          Date date) {
-        this.date = date;
-        this.supplier = supplier;
-        this.branch = branch;
-        this.status = status;
-        this.notes = notes;
-    }
+  @OneToMany(cascade = CascadeType.ALL, mappedBy = "purchase")
+  private List<PurchaseDetail> purchaseDetails;
 
-    public int getId() {
-        return id;
-    }
+  private double taxRate;
+  private double netTax;
+  private double discount;
+  private String shipping;
+  private double paid;
+  private double total;
+  private double due;
+  private String status;
+  private String paymentStatus;
+  private String notes;
 
-    public void setId(int id) {
-        this.id = id;
-    }
+  @Column(name = "created_at")
+  private Date createdAt;
 
-    public User getUser() {
-        return user_detail;
-    }
+  @Column(name = "created_by")
+  private String createdBy;
 
-    public void setUser(User user_detail) {
-        this.user_detail = user_detail;
-    }
+  @Column(name = "updated_at")
+  private Date updatedAt;
 
-    public String getRef() {
-        return ref;
-    }
+  @Column(name = "updated_by")
+  private String updatedBy;
 
-    public void setRef(String ref) {
-        this.ref = ref;
-    }
+  public PurchaseMaster() {}
 
-    public Date getDate() {
-        return date;
-    }
+  public PurchaseMaster(Supplier supplier, Branch branch, String status, String notes, Date date) {
+    this.date = date;
+    this.supplier = supplier;
+    this.branch = branch;
+    this.status = status;
+    this.notes = notes;
+  }
 
-    public void setDate(Date date) {
-        this.date = date;
-    }
+  public int getId() {
+    return id;
+  }
 
-    public Supplier getSupplier() {
-        return supplier;
-    }
+  public void setId(int id) {
+    this.id = id;
+  }
 
-    public String getSupplierName() {
-        if (supplier != null)
-            return supplier.getName();
-        else
-            return null;
-    }
+  public User getUser() {
+    return user_detail;
+  }
 
-    public void setSupplier(Supplier supplier) {
-        this.supplier = supplier;
-    }
+  public void setUser(User user_detail) {
+    this.user_detail = user_detail;
+  }
 
-    public Branch getBranch() {
-        return branch;
-    }
+  public String getRef() {
+    return ref;
+  }
 
-    public String getBranchName() {
-        if (branch != null)
-            return branch.getName();
-        else
-            return null;
-    }
+  public void setRef(String ref) {
+    this.ref = ref;
+  }
 
-    public void setBranch(Branch branch) {
-        this.branch = branch;
-    }
+  public Date getDate() {
+    return date;
+  }
 
-    public double getTaxRate() {
-        return taxRate;
-    }
+  public void setDate(Date date) {
+    this.date = date;
+  }
 
-    public void setTaxRate(double taxRate) {
-        this.taxRate = taxRate;
-    }
+  public Supplier getSupplier() {
+    return supplier;
+  }
 
-    public double getNetTax() {
-        return netTax;
-    }
+  public void setSupplier(Supplier supplier) {
+    this.supplier = supplier;
+  }
 
-    public void setNetTax(double netTax) {
-        this.netTax = netTax;
-    }
+  public String getSupplierName() {
+    if (supplier != null) return supplier.getName();
+    else return null;
+  }
 
-    public double getDiscount() {
-        return discount;
-    }
+  public Branch getBranch() {
+    return branch;
+  }
 
-    public void setDiscount(double discount) {
-        this.discount = discount;
-    }
+  public void setBranch(Branch branch) {
+    this.branch = branch;
+  }
 
-    public String getShipping() {
-        return shipping;
-    }
+  public String getBranchName() {
+    if (branch != null) return branch.getName();
+    else return null;
+  }
 
-    public void setShipping(String shipping) {
-        this.shipping = shipping;
-    }
+  public double getTaxRate() {
+    return taxRate;
+  }
 
-    public double getPaid() {
-        return paid;
-    }
+  public void setTaxRate(double taxRate) {
+    this.taxRate = taxRate;
+  }
 
-    public void setPaid(double paid) {
-        this.paid = paid;
-    }
+  public double getNetTax() {
+    return netTax;
+  }
 
-    public double getTotal() {
-        return total;
-    }
+  public void setNetTax(double netTax) {
+    this.netTax = netTax;
+  }
 
-    public void setTotal(double total) {
-        this.total = total;
-    }
+  public double getDiscount() {
+    return discount;
+  }
 
-    public String getStatus() {
-        return status;
-    }
+  public void setDiscount(double discount) {
+    this.discount = discount;
+  }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+  public String getShipping() {
+    return shipping;
+  }
 
-    public String getPaymentStatus() {
-        return paymentStatus;
-    }
+  public void setShipping(String shipping) {
+    this.shipping = shipping;
+  }
 
-    public void setPaymentStatus(String paymentStatus) {
-        this.paymentStatus = paymentStatus;
-    }
+  public double getPaid() {
+    return paid;
+  }
 
-    public String getNotes() {
-        return notes;
-    }
+  public void setPaid(double paid) {
+    this.paid = paid;
+  }
 
-    public void setNotes(String notes) {
-        this.notes = notes;
-    }
+  public double getTotal() {
+    return total;
+  }
 
-    public Date getCreatedAt() {
-        return createdAt;
-    }
+  public void setTotal(double total) {
+    this.total = total;
+  }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
+  public String getStatus() {
+    return status;
+  }
 
-    public String getCreatedBy() {
-        return createdBy;
-    }
+  public void setStatus(String status) {
+    this.status = status;
+  }
 
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
+  public String getPaymentStatus() {
+    return paymentStatus;
+  }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
+  public void setPaymentStatus(String paymentStatus) {
+    this.paymentStatus = paymentStatus;
+  }
 
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+  public String getNotes() {
+    return notes;
+  }
 
-    public String getUpdatedBy() {
-        return updatedBy;
-    }
+  public void setNotes(String notes) {
+    this.notes = notes;
+  }
 
-    public void setUpdatedBy(String updatedBy) {
-        this.updatedBy = updatedBy;
-    }
+  public Date getCreatedAt() {
+    return createdAt;
+  }
 
-    public List<PurchaseDetail> getPurchaseDetails() {
-        return purchaseDetails;
-    }
+  public void setCreatedAt(Date createdAt) {
+    this.createdAt = createdAt;
+  }
 
-    public void setPurchaseDetails(List<PurchaseDetail> purchaseDetails) {
-        this.purchaseDetails = purchaseDetails;
-    }
+  public String getCreatedBy() {
+    return createdBy;
+  }
 
-    public double getDue() {
-        return due;
-    }
+  public void setCreatedBy(String createdBy) {
+    this.createdBy = createdBy;
+  }
 
-    public void setDue(double due) {
-        this.due = due;
-    }
+  public Date getUpdatedAt() {
+    return updatedAt;
+  }
 
-    public String getLocaleDate() {
-        return DateFormat.getDateInstance().format(date);
-    }
+  public void setUpdatedAt(Date updatedAt) {
+    this.updatedAt = updatedAt;
+  }
+
+  public String getUpdatedBy() {
+    return updatedBy;
+  }
+
+  public void setUpdatedBy(String updatedBy) {
+    this.updatedBy = updatedBy;
+  }
+
+  public List<PurchaseDetail> getPurchaseDetails() {
+    return purchaseDetails;
+  }
+
+  public void setPurchaseDetails(List<PurchaseDetail> purchaseDetails) {
+    this.purchaseDetails = purchaseDetails;
+  }
+
+  public double getDue() {
+    return due;
+  }
+
+  public void setDue(double due) {
+    this.due = due;
+  }
+
+  public String getLocaleDate() {
+    return DateFormat.getDateInstance().format(date);
+  }
 }

@@ -14,11 +14,17 @@
 
 package org.infinite.spoty.forms;
 
+import static org.infinite.spoty.GlobalActions.closeDialog;
+import static org.infinite.spoty.Validators.requiredValidator;
+import static org.infinite.spoty.values.SharedResources.tempIdProperty;
+
 import io.github.palexdev.materialfx.controls.MFXComboBox;
 import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
+import java.net.URL;
+import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -30,84 +36,85 @@ import org.infinite.spoty.values.strings.Values;
 import org.infinite.spoty.viewModels.AdjustmentDetailViewModel;
 import org.infinite.spoty.viewModels.ProductDetailViewModel;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
-import static org.infinite.spoty.GlobalActions.closeDialog;
-import static org.infinite.spoty.Validators.requiredValidator;
-import static org.infinite.spoty.values.SharedResources.tempIdProperty;
-
 public class AdjustmentDetailFormController implements Initializable {
-    public MFXTextField adjustmentDetailID = new MFXTextField();
-    @FXML
-    public MFXTextField adjustmentProductsQnty;
-    @FXML
-    public MFXFilterComboBox<ProductDetail> adjustmentProductVariant;
-    @FXML
-    public MFXFilledButton adjustmentProductsSaveBtn;
-    @FXML
-    public MFXOutlinedButton adjustmentProductsCancelBtn;
-    @FXML
-    public Label adjustmentProductsTitle;
-    @FXML
-    public MFXComboBox<String> adjustmentType;
-    @FXML
-    public Label adjustmentProductVariantValidationLabel;
-    @FXML
-    public Label adjustmentProductsQntyValidationLabel;
-    @FXML
-    public Label adjustmentTypeValidationLabel;
+  public MFXTextField adjustmentDetailID = new MFXTextField();
+  @FXML public MFXTextField adjustmentProductsQnty;
+  @FXML public MFXFilterComboBox<ProductDetail> adjustmentProductVariant;
+  @FXML public MFXFilledButton adjustmentProductsSaveBtn;
+  @FXML public MFXOutlinedButton adjustmentProductsCancelBtn;
+  @FXML public Label adjustmentProductsTitle;
+  @FXML public MFXComboBox<String> adjustmentType;
+  @FXML public Label adjustmentProductVariantValidationLabel;
+  @FXML public Label adjustmentProductsQntyValidationLabel;
+  @FXML public Label adjustmentTypeValidationLabel;
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        // Bind form input value to property value.
-        adjustmentDetailID.textProperty()
-                .bindBidirectional(AdjustmentDetailViewModel.idProperty(), new NumberStringConverter());
-        adjustmentProductVariant.valueProperty().bindBidirectional(AdjustmentDetailViewModel.productProperty());
-        adjustmentProductsQnty.textProperty().bindBidirectional(AdjustmentDetailViewModel.quantityProperty());
-        adjustmentType.textProperty().bindBidirectional(AdjustmentDetailViewModel.adjustmentTypeProperty());
-        // AdjustmentType combo box properties.
-        adjustmentProductVariant.setItems(ProductDetailViewModel.getProductDetails());
-        adjustmentProductVariant.setConverter(new StringConverter<>() {
-            @Override
-            public String toString(ProductDetail object) {
-                return object != null ? object.getProduct().getName()
-                        + " " + (object.getUnit() != null ? (object.getName().isEmpty() ? "" : object.getName())
-                        + " " + object.getUnit().getName() : object.getName()) : null;
-            }
+  @Override
+  public void initialize(URL location, ResourceBundle resources) {
+    // Bind form input value to property value.
+    adjustmentDetailID
+        .textProperty()
+        .bindBidirectional(AdjustmentDetailViewModel.idProperty(), new NumberStringConverter());
+    adjustmentProductVariant
+        .valueProperty()
+        .bindBidirectional(AdjustmentDetailViewModel.productProperty());
+    adjustmentProductsQnty
+        .textProperty()
+        .bindBidirectional(AdjustmentDetailViewModel.quantityProperty());
+    adjustmentType
+        .textProperty()
+        .bindBidirectional(AdjustmentDetailViewModel.adjustmentTypeProperty());
+    // AdjustmentType combo box properties.
+    adjustmentProductVariant.setItems(ProductDetailViewModel.getProductDetails());
+    adjustmentProductVariant.setConverter(
+        new StringConverter<>() {
+          @Override
+          public String toString(ProductDetail object) {
+            return object != null
+                ? object.getProduct().getName()
+                    + " "
+                    + (object.getUnit() != null
+                        ? (object.getName().isEmpty() ? "" : object.getName())
+                            + " "
+                            + object.getUnit().getName()
+                        : object.getName())
+                : null;
+          }
 
-            @Override
-            public ProductDetail fromString(String string) {
-                return null;
-            }
+          @Override
+          public ProductDetail fromString(String string) {
+            return null;
+          }
         });
-        adjustmentType.setItems(FXCollections.observableArrayList(Values.ADJUSTMENTTYPE));
-        // Input validators.
-        requiredValidator(adjustmentProductVariant, "Product is required.", adjustmentProductVariantValidationLabel);
-        requiredValidator(adjustmentProductsQnty, "Quantity is required.", adjustmentProductsQntyValidationLabel);
-        requiredValidator(adjustmentType, "Type is required.", adjustmentTypeValidationLabel);
-        dialogOnActions();
-    }
+    adjustmentType.setItems(FXCollections.observableArrayList(Values.ADJUSTMENTTYPE));
+    // Input validators.
+    requiredValidator(
+        adjustmentProductVariant, "Product is required.", adjustmentProductVariantValidationLabel);
+    requiredValidator(
+        adjustmentProductsQnty, "Quantity is required.", adjustmentProductsQntyValidationLabel);
+    requiredValidator(adjustmentType, "Type is required.", adjustmentTypeValidationLabel);
+    dialogOnActions();
+  }
 
-    private void dialogOnActions() {
-        adjustmentProductsCancelBtn.setOnAction((e) -> {
-            closeDialog(e);
+  private void dialogOnActions() {
+    adjustmentProductsCancelBtn.setOnAction(
+        (e) -> {
+          closeDialog(e);
+          AdjustmentDetailViewModel.resetProperties();
+          adjustmentProductVariantValidationLabel.setVisible(false);
+          adjustmentProductsQntyValidationLabel.setVisible(false);
+          adjustmentTypeValidationLabel.setVisible(false);
+        });
+    adjustmentProductsSaveBtn.setOnAction(
+        (e) -> {
+          if (!adjustmentProductVariantValidationLabel.isVisible()
+              && !adjustmentProductsQntyValidationLabel.isVisible()
+              && !adjustmentTypeValidationLabel.isVisible()) {
+            if (tempIdProperty().get() > -1)
+              AdjustmentDetailViewModel.updateAdjustmentDetail(AdjustmentDetailViewModel.getId());
+            else AdjustmentDetailViewModel.addAdjustmentDetails();
             AdjustmentDetailViewModel.resetProperties();
-            adjustmentProductVariantValidationLabel.setVisible(false);
-            adjustmentProductsQntyValidationLabel.setVisible(false);
-            adjustmentTypeValidationLabel.setVisible(false);
+            closeDialog(e);
+          }
         });
-        adjustmentProductsSaveBtn.setOnAction((e) -> {
-            if (!adjustmentProductVariantValidationLabel.isVisible()
-                    && !adjustmentProductsQntyValidationLabel.isVisible()
-                    && !adjustmentTypeValidationLabel.isVisible()) {
-                if (tempIdProperty().get() > -1)
-                    AdjustmentDetailViewModel.updateAdjustmentDetail(AdjustmentDetailViewModel.getId());
-                else
-                    AdjustmentDetailViewModel.addAdjustmentDetails();
-                AdjustmentDetailViewModel.resetProperties();
-                closeDialog(e);
-            }
-        });
-    }
+  }
 }

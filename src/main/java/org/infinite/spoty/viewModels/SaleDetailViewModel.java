@@ -14,6 +14,9 @@
 
 package org.infinite.spoty.viewModels;
 
+import static org.infinite.spoty.values.SharedResources.*;
+
+import java.util.LinkedList;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -22,252 +25,252 @@ import org.infinite.spoty.database.models.ProductDetail;
 import org.infinite.spoty.database.models.SaleDetail;
 import org.infinite.spoty.database.models.UnitOfMeasure;
 
-import java.util.LinkedList;
-
-import static org.infinite.spoty.values.SharedResources.*;
-
 public class SaleDetailViewModel {
-    public static final ObservableList<SaleDetail> saleDetailTempList = FXCollections.observableArrayList();
-    private static final IntegerProperty id = new SimpleIntegerProperty(0);
-    private static final StringProperty ref = new SimpleStringProperty();
-    private static final ObjectProperty<ProductDetail> product = new SimpleObjectProperty<>();
-    private static final StringProperty serial = new SimpleStringProperty();
-    private static final StringProperty price = new SimpleStringProperty();
-    private static final ObjectProperty<UnitOfMeasure> saleUnit = new SimpleObjectProperty<>();
-    private static final StringProperty netTax = new SimpleStringProperty();
-    private static final StringProperty taxType = new SimpleStringProperty();
-    private static final StringProperty discount = new SimpleStringProperty();
-    private static final StringProperty discountType = new SimpleStringProperty();
-    private static final StringProperty total = new SimpleStringProperty();
-    private static final StringProperty quantity = new SimpleStringProperty();
-    private static final ObservableList<SaleDetail> saleDetailList = FXCollections.observableArrayList();
+  public static final ObservableList<SaleDetail> saleDetailTempList =
+      FXCollections.observableArrayList();
+  private static final IntegerProperty id = new SimpleIntegerProperty(0);
+  private static final StringProperty ref = new SimpleStringProperty();
+  private static final ObjectProperty<ProductDetail> product = new SimpleObjectProperty<>();
+  private static final StringProperty serial = new SimpleStringProperty();
+  private static final StringProperty price = new SimpleStringProperty();
+  private static final ObjectProperty<UnitOfMeasure> saleUnit = new SimpleObjectProperty<>();
+  private static final StringProperty netTax = new SimpleStringProperty();
+  private static final StringProperty taxType = new SimpleStringProperty();
+  private static final StringProperty discount = new SimpleStringProperty();
+  private static final StringProperty discountType = new SimpleStringProperty();
+  private static final StringProperty total = new SimpleStringProperty();
+  private static final StringProperty quantity = new SimpleStringProperty();
+  private static final ObservableList<SaleDetail> saleDetailList =
+      FXCollections.observableArrayList();
 
-    public static int getId() {
-        return id.get();
-    }
+  public static int getId() {
+    return id.get();
+  }
 
-    public static void setId(int id) {
-        SaleDetailViewModel.id.set(id);
-    }
+  public static void setId(int id) {
+    SaleDetailViewModel.id.set(id);
+  }
 
-    public static IntegerProperty idProperty() {
-        return id;
-    }
+  public static IntegerProperty idProperty() {
+    return id;
+  }
 
-    public static String getRef() {
-        return ref.get();
-    }
+  public static String getRef() {
+    return ref.get();
+  }
 
-    public static void setRef(String ref) {
-        SaleDetailViewModel.ref.set(ref);
-    }
+  public static void setRef(String ref) {
+    SaleDetailViewModel.ref.set(ref);
+  }
 
-    public static StringProperty refProperty() {
-        return ref;
-    }
+  public static StringProperty refProperty() {
+    return ref;
+  }
 
-    public static ProductDetail getProduct() {
-        return product.get();
-    }
+  public static ProductDetail getProduct() {
+    return product.get();
+  }
 
-    public static void setProduct(ProductDetail product) {
-        SaleDetailViewModel.product.set(product);
-    }
+  public static void setProduct(ProductDetail product) {
+    SaleDetailViewModel.product.set(product);
+  }
 
-    public static ObjectProperty<ProductDetail> productProperty() {
-        return product;
-    }
+  public static ObjectProperty<ProductDetail> productProperty() {
+    return product;
+  }
 
-    public static String getSerial() {
-        return serial.get();
-    }
+  public static String getSerial() {
+    return serial.get();
+  }
 
-    public static void setSerial(String serial) {
-        SaleDetailViewModel.serial.set(serial);
-    }
+  public static void setSerial(String serial) {
+    SaleDetailViewModel.serial.set(serial);
+  }
 
-    public static StringProperty serialProperty() {
-        return serial;
-    }
+  public static StringProperty serialProperty() {
+    return serial;
+  }
 
-    public static String getPrice() {
-        return price.get();
-    }
+  public static String getPrice() {
+    return price.get();
+  }
 
-    public static void setPrice(String price) {
-        SaleDetailViewModel.price.set(price);
-    }
+  public static void setPrice(String price) {
+    SaleDetailViewModel.price.set(price);
+  }
 
-    public static StringProperty priceProperty() {
-        return price;
-    }
+  public static StringProperty priceProperty() {
+    return price;
+  }
 
-    public static UnitOfMeasure getSaleUnit() {
-        return saleUnit.get();
-    }
+  public static UnitOfMeasure getSaleUnit() {
+    return saleUnit.get();
+  }
 
-    public static void setSaleUnit(UnitOfMeasure saleUnit) {
-        SaleDetailViewModel.saleUnit.set(saleUnit);
-    }
+  public static void setSaleUnit(UnitOfMeasure saleUnit) {
+    SaleDetailViewModel.saleUnit.set(saleUnit);
+  }
 
-    public static ObjectProperty<UnitOfMeasure> saleUnitProperty() {
-        return saleUnit;
-    }
+  public static ObjectProperty<UnitOfMeasure> saleUnitProperty() {
+    return saleUnit;
+  }
 
-    public static String getNetTax() {
-        return netTax.get();
-    }
+  public static String getNetTax() {
+    return netTax.get();
+  }
 
-    public static void setNetTax(String netTax) {
-        SaleDetailViewModel.netTax.set(netTax);
-    }
+  public static void setNetTax(String netTax) {
+    SaleDetailViewModel.netTax.set(netTax);
+  }
 
-    public static StringProperty netTaxProperty() {
-        return netTax;
-    }
+  public static StringProperty netTaxProperty() {
+    return netTax;
+  }
 
-    public static String getTaxType() {
-        return taxType.get();
-    }
+  public static String getTaxType() {
+    return taxType.get();
+  }
 
-    public static void setTaxType(String taxType) {
-        SaleDetailViewModel.taxType.set(taxType);
-    }
+  public static void setTaxType(String taxType) {
+    SaleDetailViewModel.taxType.set(taxType);
+  }
 
-    public static StringProperty taxTypeProperty() {
-        return taxType;
-    }
+  public static StringProperty taxTypeProperty() {
+    return taxType;
+  }
 
-    public static String getDiscount() {
-        return discount.get();
-    }
+  public static String getDiscount() {
+    return discount.get();
+  }
 
-    public static void setDiscount(String discount) {
-        SaleDetailViewModel.discount.set(discount);
-    }
+  public static void setDiscount(String discount) {
+    SaleDetailViewModel.discount.set(discount);
+  }
 
-    public static StringProperty discountProperty() {
-        return discount;
-    }
+  public static StringProperty discountProperty() {
+    return discount;
+  }
 
-    public static String getDiscountType() {
-        return discountType.get();
-    }
+  public static String getDiscountType() {
+    return discountType.get();
+  }
 
-    public static void setDiscountType(String discountType) {
-        SaleDetailViewModel.discountType.set(discountType);
-    }
+  public static void setDiscountType(String discountType) {
+    SaleDetailViewModel.discountType.set(discountType);
+  }
 
-    public static StringProperty discountTypeProperty() {
-        return discountType;
-    }
+  public static StringProperty discountTypeProperty() {
+    return discountType;
+  }
 
-    public static String getTotal() {
-        return total.get();
-    }
+  public static String getTotal() {
+    return total.get();
+  }
 
-    public static void setTotal(String total) {
-        SaleDetailViewModel.total.set(total);
-    }
+  public static void setTotal(String total) {
+    SaleDetailViewModel.total.set(total);
+  }
 
-    public static StringProperty totalProperty() {
-        return total;
-    }
+  public static StringProperty totalProperty() {
+    return total;
+  }
 
-    public static String getQuantity() {
-        return quantity.get();
-    }
+  public static String getQuantity() {
+    return quantity.get();
+  }
 
-    public static void setQuantity(String quantity) {
-        SaleDetailViewModel.quantity.set(quantity);
-    }
+  public static void setQuantity(String quantity) {
+    SaleDetailViewModel.quantity.set(quantity);
+  }
 
-    public static StringProperty quantityProperty() {
-        return quantity;
-    }
+  public static StringProperty quantityProperty() {
+    return quantity;
+  }
 
-    public static void resetProperties() {
-        setId(0);
-        setTempId(-1);
-        setProduct(null);
-        setSerial("");
-        setSaleUnit(null);
-        setNetTax("");
-        setTaxType("");
-        setDiscount("");
-        setQuantity("");
-        setDiscountType("");
-    }
+  public static void resetProperties() {
+    setId(0);
+    setTempId(-1);
+    setProduct(null);
+    setSerial("");
+    setSaleUnit(null);
+    setNetTax("");
+    setTaxType("");
+    setDiscount("");
+    setQuantity("");
+    setDiscountType("");
+  }
 
-    public static void addSaleDetail() {
-        SaleDetail saleDetail = new SaleDetail(getProduct(),
-                Integer.parseInt(getQuantity()),
-                getSerial(),
-                Double.parseDouble(getNetTax()),
-                getTaxType(),
-                Double.parseDouble(getDiscount()),
-                getDiscountType());
-        saleDetailTempList.add(saleDetail);
-        saleDetailTempList.forEach(System.out::println);
-        resetProperties();
-    }
+  public static void addSaleDetail() {
+    SaleDetail saleDetail =
+        new SaleDetail(
+            getProduct(),
+            Integer.parseInt(getQuantity()),
+            getSerial(),
+            Double.parseDouble(getNetTax()),
+            getTaxType(),
+            Double.parseDouble(getDiscount()),
+            getDiscountType());
+    saleDetailTempList.add(saleDetail);
+    saleDetailTempList.forEach(System.out::println);
+    resetProperties();
+  }
 
-    public static void updateSaleDetail(int index) {
-        SaleDetail saleDetail = SaleDetailDao.findSaleDetail(index);
-        saleDetail.setProduct(getProduct());
-        saleDetail.setQuantity(Integer.parseInt(getQuantity()));
-        saleDetail.setSerialNumber(getSerial());
-        saleDetail.setNetTax(Double.parseDouble(getNetTax()));
-        saleDetail.setTaxType(getTaxType());
-        saleDetail.setDiscount(Double.parseDouble(getDiscount()));
-        saleDetail.setDiscountType(getDiscountType());
-        saleDetailTempList.remove((int) getTempId());
-        saleDetailTempList.add(getTempId(), saleDetail);
-        resetProperties();
-    }
+  public static void updateSaleDetail(int index) {
+    SaleDetail saleDetail = SaleDetailDao.findSaleDetail(index);
+    saleDetail.setProduct(getProduct());
+    saleDetail.setQuantity(Integer.parseInt(getQuantity()));
+    saleDetail.setSerialNumber(getSerial());
+    saleDetail.setNetTax(Double.parseDouble(getNetTax()));
+    saleDetail.setTaxType(getTaxType());
+    saleDetail.setDiscount(Double.parseDouble(getDiscount()));
+    saleDetail.setDiscountType(getDiscountType());
+    saleDetailTempList.remove((int) getTempId());
+    saleDetailTempList.add(getTempId(), saleDetail);
+    resetProperties();
+  }
 
-    public static void getItem(int index, int tempIndex) {
-        SaleDetail saleDetail = SaleDetailDao.findSaleDetail(index);
-        setTempId(tempIndex);
-        setId(saleDetail.getId());
-        setProduct(saleDetail.getProduct());
-        setSerial(saleDetail.getSerialNumber());
-        setNetTax(String.valueOf(saleDetail.getNetTax()));
-        setTaxType(saleDetail.getTaxType());
-        setDiscount(String.valueOf(saleDetail.getDiscount()));
-        setDiscountType(saleDetail.getDiscountType());
-        setQuantity(String.valueOf(saleDetail.getQuantity()));
-        setProduct(saleDetail.getProduct());
-        setTotal(String.valueOf(saleDetail.getTotal()));
-        setQuantity(String.valueOf(saleDetail.getQuantity()));
-        setPrice(String.valueOf(saleDetail.getPrice()));
-    }
+  public static void getItem(int index, int tempIndex) {
+    SaleDetail saleDetail = SaleDetailDao.findSaleDetail(index);
+    setTempId(tempIndex);
+    setId(saleDetail.getId());
+    setProduct(saleDetail.getProduct());
+    setSerial(saleDetail.getSerialNumber());
+    setNetTax(String.valueOf(saleDetail.getNetTax()));
+    setTaxType(saleDetail.getTaxType());
+    setDiscount(String.valueOf(saleDetail.getDiscount()));
+    setDiscountType(saleDetail.getDiscountType());
+    setQuantity(String.valueOf(saleDetail.getQuantity()));
+    setProduct(saleDetail.getProduct());
+    setTotal(String.valueOf(saleDetail.getTotal()));
+    setQuantity(String.valueOf(saleDetail.getQuantity()));
+    setPrice(String.valueOf(saleDetail.getPrice()));
+  }
 
-    public static void updateItem(int index) {
-        SaleDetail saleDetail = SaleDetailDao.findSaleDetail(index);
-        saleDetail.setProduct(getProduct());
-        saleDetail.setQuantity(Integer.parseInt(getQuantity()));
-        saleDetail.setSerialNumber(getSerial());
-        saleDetail.setNetTax(Double.parseDouble(getNetTax()));
-        saleDetail.setTaxType(getTaxType());
-        saleDetail.setDiscount(Double.parseDouble(getDiscount()));
-        saleDetail.setDiscountType(getDiscountType());
-        SaleDetailDao.updateSaleDetail(saleDetail, index);
-        getSaleDetails();
-    }
+  public static void updateItem(int index) {
+    SaleDetail saleDetail = SaleDetailDao.findSaleDetail(index);
+    saleDetail.setProduct(getProduct());
+    saleDetail.setQuantity(Integer.parseInt(getQuantity()));
+    saleDetail.setSerialNumber(getSerial());
+    saleDetail.setNetTax(Double.parseDouble(getNetTax()));
+    saleDetail.setTaxType(getTaxType());
+    saleDetail.setDiscount(Double.parseDouble(getDiscount()));
+    saleDetail.setDiscountType(getDiscountType());
+    SaleDetailDao.updateSaleDetail(saleDetail, index);
+    getSaleDetails();
+  }
 
-    public static ObservableList<SaleDetail> getSaleDetails() {
-        saleDetailList.clear();
-        saleDetailList.addAll(SaleDetailDao.fetchSaleDetails());
-        return saleDetailList;
-    }
+  public static ObservableList<SaleDetail> getSaleDetails() {
+    saleDetailList.clear();
+    saleDetailList.addAll(SaleDetailDao.fetchSaleDetails());
+    return saleDetailList;
+  }
 
-    public static void removeSaleDetail(int index, int tempIndex) {
-        saleDetailTempList.remove(tempIndex);
-        PENDING_DELETES.add(index);
-    }
+  public static void removeSaleDetail(int index, int tempIndex) {
+    saleDetailTempList.remove(tempIndex);
+    PENDING_DELETES.add(index);
+  }
 
-    public static void deleteSaleDetails(LinkedList<Integer> indexes) {
-        indexes.forEach(SaleDetailDao::deleteSaleDetail);
-    }
+  public static void deleteSaleDetails(LinkedList<Integer> indexes) {
+    indexes.forEach(SaleDetailDao::deleteSaleDetail);
+  }
 }

@@ -15,188 +15,192 @@
 package org.infinite.spoty.database.models;
 
 import jakarta.persistence.*;
-
 import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 public class SaleDetail implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    private String ref;
-    @ManyToOne
-    @JoinColumn(name = "saleMaster_id", nullable = false)
-    private SaleMaster sale;
-    @ManyToOne
-    private ProductDetail product;
-    private String serialNumber;
-    private double price;
-    private double netTax;
-    private String taxType;
-    private double discount;
-    private String discountType;
-    private double total;
-    private int quantity;
-    @Column(name = "created_at")
-    private Date createdAt;
-    @Column(name = "created_by")
-    private String createdBy;
-    @Column(name = "updated_at")
-    private Date updatedAt;
-    @Column(name = "updated_by")
-    private String updatedBy;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private int id;
 
-    public SaleDetail() {
-    }
+  private String ref;
 
-    public SaleDetail(ProductDetail product,
-                      int quantity,
-                      String serialNumber,
-                      double netTax,
-                      String taxType,
-                      double discount,
-                      String discountType) {
-        this.product = product;
-        this.quantity = quantity;
-        this.serialNumber = serialNumber;
-        this.netTax = netTax;
-        this.taxType = taxType;
-        this.discount = discount;
-        this.discountType = discountType;
-    }
+  @ManyToOne
+  @JoinColumn(name = "saleMaster_id", nullable = false)
+  private SaleMaster sale;
 
-    public int getId() {
-        return id;
-    }
+  @ManyToOne private ProductDetail product;
+  private String serialNumber;
+  private double price;
+  private double netTax;
+  private String taxType;
+  private double discount;
+  private String discountType;
+  private double total;
+  private int quantity;
 
-    public void setId(int id) {
-        this.id = id;
-    }
+  @Column(name = "created_at")
+  private Date createdAt;
 
-    public String getRef() {
-        return ref;
-    }
+  @Column(name = "created_by")
+  private String createdBy;
 
-    public void setRef(String ref) {
-        this.ref = ref;
-    }
+  @Column(name = "updated_at")
+  private Date updatedAt;
 
-    public ProductDetail getProduct() {
-        return product;
-    }
-    public String getProductName() {
-        if (product != null)
-            return product.getProduct().getName() + " " + product.getName();
-        else
-            return null;
-    }
+  @Column(name = "updated_by")
+  private String updatedBy;
 
-    public void setProduct(ProductDetail product) {
-        this.product = product;
-    }
+  public SaleDetail() {}
 
-    public String getSerialNumber() {
-        return serialNumber;
-    }
+  public SaleDetail(
+      ProductDetail product,
+      int quantity,
+      String serialNumber,
+      double netTax,
+      String taxType,
+      double discount,
+      String discountType) {
+    this.product = product;
+    this.quantity = quantity;
+    this.serialNumber = serialNumber;
+    this.netTax = netTax;
+    this.taxType = taxType;
+    this.discount = discount;
+    this.discountType = discountType;
+  }
 
-    public void setSerialNumber(String serialNumber) {
-        this.serialNumber = serialNumber;
-    }
+  public int getId() {
+    return id;
+  }
 
-    public double getPrice() {
-        return price;
-    }
+  public void setId(int id) {
+    this.id = id;
+  }
 
-    public void setPrice(double price) {
-        this.price = price;
-    }
+  public String getRef() {
+    return ref;
+  }
 
-    public double getNetTax() {
-        return netTax;
-    }
+  public void setRef(String ref) {
+    this.ref = ref;
+  }
 
-    public void setNetTax(double netTax) {
-        this.netTax = netTax;
-    }
+  public ProductDetail getProduct() {
+    return product;
+  }
 
-    public String getTaxType() {
-        return taxType;
-    }
+  public void setProduct(ProductDetail product) {
+    this.product = product;
+  }
 
-    public void setTaxType(String taxType) {
-        this.taxType = taxType;
-    }
+  public String getProductName() {
+    if (product != null) return product.getProduct().getName() + " " + product.getName();
+    else return null;
+  }
 
-    public double getDiscount() {
-        return discount;
-    }
+  public String getSerialNumber() {
+    return serialNumber;
+  }
 
-    public void setDiscount(double discount) {
-        this.discount = discount;
-    }
+  public void setSerialNumber(String serialNumber) {
+    this.serialNumber = serialNumber;
+  }
 
-    public String getDiscountType() {
-        return discountType;
-    }
+  public double getPrice() {
+    return price;
+  }
 
-    public void setDiscountType(String discountType) {
-        this.discountType = discountType;
-    }
+  public void setPrice(double price) {
+    this.price = price;
+  }
 
-    public double getTotal() {
-        return total;
-    }
+  public double getNetTax() {
+    return netTax;
+  }
 
-    public void setTotal(double total) {
-        this.total = total;
-    }
+  public void setNetTax(double netTax) {
+    this.netTax = netTax;
+  }
 
-    public int getQuantity() {
-        return quantity;
-    }
+  public String getTaxType() {
+    return taxType;
+  }
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
+  public void setTaxType(String taxType) {
+    this.taxType = taxType;
+  }
 
-    public Date getCreatedAt() {
-        return createdAt;
-    }
+  public double getDiscount() {
+    return discount;
+  }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
+  public void setDiscount(double discount) {
+    this.discount = discount;
+  }
 
-    public String getCreatedBy() {
-        return createdBy;
-    }
+  public String getDiscountType() {
+    return discountType;
+  }
 
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
+  public void setDiscountType(String discountType) {
+    this.discountType = discountType;
+  }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
+  public double getTotal() {
+    return total;
+  }
 
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+  public void setTotal(double total) {
+    this.total = total;
+  }
 
-    public String getUpdatedBy() {
-        return updatedBy;
-    }
+  public int getQuantity() {
+    return quantity;
+  }
 
-    public void setUpdatedBy(String updatedBy) {
-        this.updatedBy = updatedBy;
-    }
+  public void setQuantity(int quantity) {
+    this.quantity = quantity;
+  }
 
-    public SaleMaster getSaleMaster() {
-        return sale;
-    }
+  public Date getCreatedAt() {
+    return createdAt;
+  }
 
-    public void setSaleMaster(SaleMaster sale) {
-        this.sale = sale;
-    }
+  public void setCreatedAt(Date createdAt) {
+    this.createdAt = createdAt;
+  }
+
+  public String getCreatedBy() {
+    return createdBy;
+  }
+
+  public void setCreatedBy(String createdBy) {
+    this.createdBy = createdBy;
+  }
+
+  public Date getUpdatedAt() {
+    return updatedAt;
+  }
+
+  public void setUpdatedAt(Date updatedAt) {
+    this.updatedAt = updatedAt;
+  }
+
+  public String getUpdatedBy() {
+    return updatedBy;
+  }
+
+  public void setUpdatedBy(String updatedBy) {
+    this.updatedBy = updatedBy;
+  }
+
+  public SaleMaster getSaleMaster() {
+    return sale;
+  }
+
+  public void setSaleMaster(SaleMaster sale) {
+    this.sale = sale;
+  }
 }

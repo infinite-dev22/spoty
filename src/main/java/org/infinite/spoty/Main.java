@@ -20,20 +20,20 @@ import org.infinite.spoty.views.splash.LaunchPreloader;
 import org.infinite.spoty.views.splash.SplashScreenController;
 
 public class Main extends Application {
-    public static Stage primaryStage = null;
+  public static Stage primaryStage = null;
 
-    public static void main(String... args) {
-        System.setProperty("javafx.preloader", LaunchPreloader.class.getCanonicalName());
-        Application.launch(Main.class, args);
-    }
+  public static void main(String... args) {
+    System.setProperty("javafx.preloader", LaunchPreloader.class.getCanonicalName());
+    Application.launch(Main.class, args);
+  }
 
-    @Override
-    public void init() {
-        SplashScreenController.checkFunctions();
-    }
+  @Override
+  public void init() {
+    SplashScreenController.checkFunctions();
+  }
 
-    @Override
-    public void start(Stage primaryStage) {
-        Main.primaryStage = primaryStage;
-    }
+  @Override
+  public void start(Stage primaryStage) {
+    Main.primaryStage = primaryStage;
+  }
 }

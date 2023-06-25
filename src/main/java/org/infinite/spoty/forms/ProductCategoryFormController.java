@@ -14,67 +14,64 @@
 
 package org.infinite.spoty.forms;
 
+import static org.infinite.spoty.GlobalActions.closeDialog;
+import static org.infinite.spoty.Validators.requiredValidator;
+import static org.infinite.spoty.viewModels.ProductCategoryViewModel.*;
+
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
+import java.net.URL;
+import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.viewModels.ProductCategoryViewModel;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
-import static org.infinite.spoty.GlobalActions.closeDialog;
-import static org.infinite.spoty.Validators.requiredValidator;
-import static org.infinite.spoty.viewModels.ProductCategoryViewModel.*;
-
 public class ProductCategoryFormController implements Initializable {
-    @FXML
-    public static Label formTitle;
-    public MFXTextField dialogCategoryID = new MFXTextField();
-    @FXML
-    public MFXTextField dialogCategoryCode;
-    @FXML
-    public MFXTextField dialogCategoryName;
-    @FXML
-    public MFXFilledButton dialogSaveBtn;
-    @FXML
-    public MFXOutlinedButton dialogCancelBtn;
-    @FXML
-    public Label dialogCategoryCodeValidationLabel;
-    @FXML
-    public Label dialogCategoryNameValidationLabel;
+  @FXML public static Label formTitle;
+  public MFXTextField dialogCategoryID = new MFXTextField();
+  @FXML public MFXTextField dialogCategoryCode;
+  @FXML public MFXTextField dialogCategoryName;
+  @FXML public MFXFilledButton dialogSaveBtn;
+  @FXML public MFXOutlinedButton dialogCancelBtn;
+  @FXML public Label dialogCategoryCodeValidationLabel;
+  @FXML public Label dialogCategoryNameValidationLabel;
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        // Input bindings.
-        dialogCategoryID.textProperty().bindBidirectional(ProductCategoryViewModel.idProperty(), new NumberStringConverter());
-        dialogCategoryCode.textProperty().bindBidirectional(ProductCategoryViewModel.codeProperty());
-        dialogCategoryName.textProperty().bindBidirectional(ProductCategoryViewModel.nameProperty());
-        //Input validators.
-        requiredValidator(dialogCategoryCode, "Name field is required.", dialogCategoryCodeValidationLabel);
-        requiredValidator(dialogCategoryName, "Name field is required.", dialogCategoryNameValidationLabel);
-        dialogOnActions();
-    }
+  @Override
+  public void initialize(URL location, ResourceBundle resources) {
+    // Input bindings.
+    dialogCategoryID
+        .textProperty()
+        .bindBidirectional(ProductCategoryViewModel.idProperty(), new NumberStringConverter());
+    dialogCategoryCode.textProperty().bindBidirectional(ProductCategoryViewModel.codeProperty());
+    dialogCategoryName.textProperty().bindBidirectional(ProductCategoryViewModel.nameProperty());
+    // Input validators.
+    requiredValidator(
+        dialogCategoryCode, "Name field is required.", dialogCategoryCodeValidationLabel);
+    requiredValidator(
+        dialogCategoryName, "Name field is required.", dialogCategoryNameValidationLabel);
+    dialogOnActions();
+  }
 
-    private void dialogOnActions() {
-        dialogCancelBtn.setOnAction((e) -> {
+  private void dialogOnActions() {
+    dialogCancelBtn.setOnAction(
+        (e) -> {
+          closeDialog(e);
+          clearProductCategoryData();
+          dialogCategoryCodeValidationLabel.setVisible(false);
+          dialogCategoryNameValidationLabel.setVisible(false);
+        });
+    dialogSaveBtn.setOnAction(
+        (e) -> {
+          if (!dialogCategoryCodeValidationLabel.isVisible()
+              && !dialogCategoryNameValidationLabel.isVisible()) {
+            if (Integer.parseInt(dialogCategoryID.getText()) > 0)
+              updateItem(Integer.parseInt(dialogCategoryID.getText()));
+            else saveProductCategory();
             closeDialog(e);
-            clearProductCategoryData();
-            dialogCategoryCodeValidationLabel.setVisible(false);
-            dialogCategoryNameValidationLabel.setVisible(false);
+          }
         });
-        dialogSaveBtn.setOnAction((e) -> {
-            if (!dialogCategoryCodeValidationLabel.isVisible()
-                    && !dialogCategoryNameValidationLabel.isVisible()) {
-                if (Integer.parseInt(dialogCategoryID.getText()) > 0)
-                    updateItem(Integer.parseInt(dialogCategoryID.getText()));
-                else
-                    saveProductCategory();
-                closeDialog(e);
-            }
-        });
-    }
+  }
 }

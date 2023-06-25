@@ -15,149 +15,158 @@
 package org.infinite.spoty.database.models;
 
 import jakarta.persistence.*;
-
 import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 public class PaymentSale implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-    @ManyToOne
-    private User user_detail;
-    private Date date;
-    private String ref;
-    @ManyToOne
-    private SaleMaster sale;
-    private String paymentMethod;
-    private double amount;
-    private double change;
-    private String notes;
-    @Column(name = "created_at")
-    private Date createdAt;
-    @Column(name = "created_by")
-    private String createdBy;
-    @Column(name = "updated_at")
-    private Date updatedAt;
-    @Column(name = "updated_by")
-    private String updatedBy;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private long id;
 
-    public PaymentSale(User user_detail, Date date, String ref, SaleMaster sale, String paymentMethod, double amount, double change, String notes) {
-        this.user_detail = user_detail;
-        this.date = date;
-        this.ref = ref;
-        this.sale = sale;
-        this.paymentMethod = paymentMethod;
-        this.amount = amount;
-        this.change = change;
-        this.notes = notes;
-    }
+  @ManyToOne private User user_detail;
+  private Date date;
+  private String ref;
+  @ManyToOne private SaleMaster sale;
+  private String paymentMethod;
+  private double amount;
+  private double change;
+  private String notes;
 
-    public PaymentSale() {
-    }
+  @Column(name = "created_at")
+  private Date createdAt;
 
-    public long getId() {
-        return id;
-    }
+  @Column(name = "created_by")
+  private String createdBy;
 
-    public void setId(long id) {
-        this.id = id;
-    }
+  @Column(name = "updated_at")
+  private Date updatedAt;
 
-    public User getUser() {
-        return user_detail;
-    }
+  @Column(name = "updated_by")
+  private String updatedBy;
 
-    public void setUser(User user_detail) {
-        this.user_detail = user_detail;
-    }
+  public PaymentSale(
+      User user_detail,
+      Date date,
+      String ref,
+      SaleMaster sale,
+      String paymentMethod,
+      double amount,
+      double change,
+      String notes) {
+    this.user_detail = user_detail;
+    this.date = date;
+    this.ref = ref;
+    this.sale = sale;
+    this.paymentMethod = paymentMethod;
+    this.amount = amount;
+    this.change = change;
+    this.notes = notes;
+  }
 
-    public Date getDate() {
-        return date;
-    }
+  public PaymentSale() {}
 
-    public void setDate(Date date) {
-        this.date = date;
-    }
+  public long getId() {
+    return id;
+  }
 
-    public String getRef() {
-        return ref;
-    }
+  public void setId(long id) {
+    this.id = id;
+  }
 
-    public void setRef(String ref) {
-        this.ref = ref;
-    }
+  public User getUser() {
+    return user_detail;
+  }
 
-    public SaleMaster getSale() {
-        return sale;
-    }
+  public void setUser(User user_detail) {
+    this.user_detail = user_detail;
+  }
 
-    public void setSale(SaleMaster sale) {
-        this.sale = sale;
-    }
+  public Date getDate() {
+    return date;
+  }
 
-    public String getPaymentMethod() {
-        return paymentMethod;
-    }
+  public void setDate(Date date) {
+    this.date = date;
+  }
 
-    public void setPaymentMethod(String paymentMethod) {
-        this.paymentMethod = paymentMethod;
-    }
+  public String getRef() {
+    return ref;
+  }
 
-    public double getAmount() {
-        return amount;
-    }
+  public void setRef(String ref) {
+    this.ref = ref;
+  }
 
-    public void setAmount(double amount) {
-        this.amount = amount;
-    }
+  public SaleMaster getSale() {
+    return sale;
+  }
 
-    public double getChange() {
-        return change;
-    }
+  public void setSale(SaleMaster sale) {
+    this.sale = sale;
+  }
 
-    public void setChange(double change) {
-        this.change = change;
-    }
+  public String getPaymentMethod() {
+    return paymentMethod;
+  }
 
-    public String getNotes() {
-        return notes;
-    }
+  public void setPaymentMethod(String paymentMethod) {
+    this.paymentMethod = paymentMethod;
+  }
 
-    public void setNotes(String notes) {
-        this.notes = notes;
-    }
+  public double getAmount() {
+    return amount;
+  }
 
-    public Date getCreatedAt() {
-        return createdAt;
-    }
+  public void setAmount(double amount) {
+    this.amount = amount;
+  }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
+  public double getChange() {
+    return change;
+  }
 
-    public String getCreatedBy() {
-        return createdBy;
-    }
+  public void setChange(double change) {
+    this.change = change;
+  }
 
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
+  public String getNotes() {
+    return notes;
+  }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
+  public void setNotes(String notes) {
+    this.notes = notes;
+  }
 
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+  public Date getCreatedAt() {
+    return createdAt;
+  }
 
-    public String getUpdatedBy() {
-        return updatedBy;
-    }
+  public void setCreatedAt(Date createdAt) {
+    this.createdAt = createdAt;
+  }
 
-    public void setUpdatedBy(String updatedBy) {
-        this.updatedBy = updatedBy;
-    }
+  public String getCreatedBy() {
+    return createdBy;
+  }
+
+  public void setCreatedBy(String createdBy) {
+    this.createdBy = createdBy;
+  }
+
+  public Date getUpdatedAt() {
+    return updatedAt;
+  }
+
+  public void setUpdatedAt(Date updatedAt) {
+    this.updatedAt = updatedAt;
+  }
+
+  public String getUpdatedBy() {
+    return updatedBy;
+  }
+
+  public void setUpdatedBy(String updatedBy) {
+    this.updatedBy = updatedBy;
+  }
 }

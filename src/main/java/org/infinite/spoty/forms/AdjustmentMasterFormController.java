@@ -14,12 +14,19 @@
 
 package org.infinite.spoty.forms;
 
+import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
+import static org.infinite.spoty.Validators.requiredValidator;
+
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.enums.ButtonType;
 import io.github.palexdev.materialfx.filter.IntegerFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXElevatedButton;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Comparator;
+import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -28,197 +35,202 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.input.ContextMenuEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
+import org.infinite.spoty.components.navigation.Pages;
 import org.infinite.spoty.database.models.AdjustmentDetail;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.viewModels.AdjustmentDetailViewModel;
 import org.infinite.spoty.viewModels.AdjustmentMasterViewModel;
 import org.infinite.spoty.viewModels.BranchViewModel;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.Comparator;
-import java.util.ResourceBundle;
-
-import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
-import static org.infinite.spoty.Validators.requiredValidator;
+import org.infinite.spoty.views.BaseController;
 
 @SuppressWarnings("unchecked")
 public class AdjustmentMasterFormController implements Initializable {
-    public MFXTextField adjustmentMasterID = new MFXTextField();
-    @FXML
-    public MFXFilterComboBox<Branch> adjustmentBranch;
-    @FXML
-    public MFXDatePicker adjustmentDate;
-    @FXML
-    public MFXTableView<AdjustmentDetail> adjustmentDetailTable;
-    @FXML
-    public MFXTextField adjustmentNote;
-    @FXML
-    public BorderPane adjustmentFormContentPane;
-    @FXML
-    public Label adjustmentFormTitle;
-    @FXML
-    public MFXElevatedButton adjustmentProductAddBtn;
-    @FXML
-    public Label adjustmentBranchValidationLabel;
-    @FXML
-    public Label adjustmentDateValidationLabel;
-    private Dialog<ButtonType> dialog;
+  private static AdjustmentMasterFormController instance;
+  public MFXTextField adjustmentMasterID = new MFXTextField();
+  @FXML public MFXFilterComboBox<Branch> adjustmentBranch;
+  @FXML public MFXDatePicker adjustmentDate;
+  @FXML public MFXTableView<AdjustmentDetail> adjustmentDetailTable;
+  @FXML public MFXTextField adjustmentNote;
+  @FXML public BorderPane adjustmentFormContentPane;
+  @FXML public Label adjustmentFormTitle;
+  @FXML public MFXElevatedButton adjustmentProductAddBtn;
+  @FXML public Label adjustmentBranchValidationLabel;
+  @FXML public Label adjustmentDateValidationLabel;
+  private Dialog<ButtonType> dialog;
 
-    public AdjustmentMasterFormController(Stage stage) {
-        Platform.runLater(() -> {
-            try {
-                quotationProductDialogPane(stage);
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
+  private AdjustmentMasterFormController(Stage stage) {
+    Platform.runLater(
+        () -> {
+          try {
+            quotationProductDialogPane(stage);
+          } catch (IOException ex) {
+            throw new RuntimeException(ex);
+          }
         });
-    }
+  }
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        // Input binding.
-        adjustmentMasterID.textProperty()
-                .bindBidirectional(AdjustmentMasterViewModel.idProperty(), new NumberStringConverter());
-        adjustmentBranch.valueProperty().bindBidirectional(AdjustmentMasterViewModel.branchProperty());
-        adjustmentBranch.setItems(BranchViewModel.branchesList);
-        adjustmentBranch.setConverter(new StringConverter<>() {
-            @Override
-            public String toString(Branch object) {
-                if (object != null)
-                    return object.getName();
-                else
-                    return null;
-            }
+  public static AdjustmentMasterFormController getInstance(Stage stage) {
+    if (instance == null) instance = new AdjustmentMasterFormController(stage);
+    return instance;
+  }
 
-            @Override
-            public Branch fromString(String string) {
-                return null;
-            }
+  @Override
+  public void initialize(URL location, ResourceBundle resources) {
+    // Input binding.
+    adjustmentMasterID
+        .textProperty()
+        .bindBidirectional(AdjustmentMasterViewModel.idProperty(), new NumberStringConverter());
+    adjustmentBranch.valueProperty().bindBidirectional(AdjustmentMasterViewModel.branchProperty());
+    adjustmentBranch.setItems(BranchViewModel.branchesList);
+    adjustmentBranch.setConverter(
+        new StringConverter<>() {
+          @Override
+          public String toString(Branch object) {
+            if (object != null) return object.getName();
+            else return null;
+          }
+
+          @Override
+          public Branch fromString(String string) {
+            return null;
+          }
         });
-        adjustmentDate.textProperty().bindBidirectional(AdjustmentMasterViewModel.dateProperty());
-        adjustmentNote.textProperty().bindBidirectional(AdjustmentMasterViewModel.noteProperty());
-        // input validators.
-        requiredValidator(adjustmentBranch, "Branch is required.", adjustmentBranchValidationLabel);
-        requiredValidator(adjustmentDate, "Date is required.", adjustmentDateValidationLabel);
-        adjustmentAddProductBtnClicked();
-        Platform.runLater(this::setupTable);
-    }
+    adjustmentDate.textProperty().bindBidirectional(AdjustmentMasterViewModel.dateProperty());
+    adjustmentNote.textProperty().bindBidirectional(AdjustmentMasterViewModel.noteProperty());
+    // input validators.
+    requiredValidator(adjustmentBranch, "Branch is required.", adjustmentBranchValidationLabel);
+    requiredValidator(adjustmentDate, "Date is required.", adjustmentDateValidationLabel);
+    adjustmentAddProductBtnClicked();
+    Platform.runLater(this::setupTable);
+  }
 
-    private void setupTable() {
-        MFXTableColumn<AdjustmentDetail> productName = new MFXTableColumn<>("Product", false,
-                Comparator.comparing(AdjustmentDetail::getProductDetailName));
-        MFXTableColumn<AdjustmentDetail> productQuantity = new MFXTableColumn<>("Quantity", false,
-                Comparator.comparing(AdjustmentDetail::getQuantity));
-        MFXTableColumn<AdjustmentDetail> adjustmentType = new MFXTableColumn<>("Adjustment Type", false,
-                Comparator.comparing(AdjustmentDetail::getAdjustmentType));
+  private void setupTable() {
+    MFXTableColumn<AdjustmentDetail> productName =
+        new MFXTableColumn<>(
+            "Product", false, Comparator.comparing(AdjustmentDetail::getProductDetailName));
+    MFXTableColumn<AdjustmentDetail> productQuantity =
+        new MFXTableColumn<>(
+            "Quantity", false, Comparator.comparing(AdjustmentDetail::getQuantity));
+    MFXTableColumn<AdjustmentDetail> adjustmentType =
+        new MFXTableColumn<>(
+            "Adjustment Type", false, Comparator.comparing(AdjustmentDetail::getAdjustmentType));
 
-        productName.setRowCellFactory(product -> new MFXTableRowCell<>(AdjustmentDetail::getProductDetailName));
-        productQuantity.setRowCellFactory(product -> new MFXTableRowCell<>(AdjustmentDetail::getQuantity));
-        adjustmentType.setRowCellFactory(product -> new MFXTableRowCell<>(AdjustmentDetail::getAdjustmentType));
+    productName.setRowCellFactory(
+        product -> new MFXTableRowCell<>(AdjustmentDetail::getProductDetailName));
+    productQuantity.setRowCellFactory(
+        product -> new MFXTableRowCell<>(AdjustmentDetail::getQuantity));
+    adjustmentType.setRowCellFactory(
+        product -> new MFXTableRowCell<>(AdjustmentDetail::getAdjustmentType));
 
-        productName.prefWidthProperty().bind(adjustmentDetailTable.widthProperty().multiply(.4));
-        productQuantity.prefWidthProperty().bind(adjustmentDetailTable.widthProperty().multiply(.4));
-        adjustmentType.prefWidthProperty().bind(adjustmentDetailTable.widthProperty().multiply(.4));
+    productName.prefWidthProperty().bind(adjustmentDetailTable.widthProperty().multiply(.4));
+    productQuantity.prefWidthProperty().bind(adjustmentDetailTable.widthProperty().multiply(.4));
+    adjustmentType.prefWidthProperty().bind(adjustmentDetailTable.widthProperty().multiply(.4));
 
-        adjustmentDetailTable.getTableColumns().addAll(productName, productQuantity, adjustmentType);
-        adjustmentDetailTable.getFilters().addAll(
-                new StringFilter<>("Name", AdjustmentDetail::getProductDetailName),
-                new IntegerFilter<>("Quantity", AdjustmentDetail::getQuantity),
-                new StringFilter<>("Adjustment Type", AdjustmentDetail::getAdjustmentType)
-        );
-        getAdjustmentDetailTable();
-        adjustmentDetailTable.setItems(AdjustmentDetailViewModel.adjustmentDetailsTempList);
-    }
+    adjustmentDetailTable.getTableColumns().addAll(productName, productQuantity, adjustmentType);
+    adjustmentDetailTable
+        .getFilters()
+        .addAll(
+            new StringFilter<>("Name", AdjustmentDetail::getProductDetailName),
+            new IntegerFilter<>("Quantity", AdjustmentDetail::getQuantity),
+            new StringFilter<>("Adjustment Type", AdjustmentDetail::getAdjustmentType));
+    getAdjustmentDetailTable();
+    adjustmentDetailTable.setItems(AdjustmentDetailViewModel.adjustmentDetailsTempList);
+  }
 
-    private void getAdjustmentDetailTable() {
-        adjustmentDetailTable.setPrefSize(1000, 1000);
-        adjustmentDetailTable.features().enableBounceEffect();
-        adjustmentDetailTable.features().enableSmoothScrolling(0.5);
+  private void getAdjustmentDetailTable() {
+    adjustmentDetailTable.setPrefSize(1000, 1000);
+    adjustmentDetailTable.features().enableBounceEffect();
+    adjustmentDetailTable.features().enableSmoothScrolling(0.5);
 
-        adjustmentDetailTable.setTableRowFactory(t -> {
-            MFXTableRow<AdjustmentDetail> row = new MFXTableRow<>(adjustmentDetailTable, t);
-            EventHandler<ContextMenuEvent> eventHandler = event -> {
+    adjustmentDetailTable.setTableRowFactory(
+        t -> {
+          MFXTableRow<AdjustmentDetail> row = new MFXTableRow<>(adjustmentDetailTable, t);
+          EventHandler<ContextMenuEvent> eventHandler =
+              event -> {
                 showContextMenu((MFXTableRow<AdjustmentDetail>) event.getSource())
-                        .show(adjustmentDetailTable.getScene().getWindow(), event.getScreenX(), event.getScreenY());
+                    .show(
+                        adjustmentDetailTable.getScene().getWindow(),
+                        event.getScreenX(),
+                        event.getScreenY());
                 event.consume();
-            };
-            row.setOnContextMenuRequested(eventHandler);
-            return row;
+              };
+          row.setOnContextMenuRequested(eventHandler);
+          return row;
         });
-    }
+  }
 
-    private MFXContextMenu showContextMenu(MFXTableRow<AdjustmentDetail> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(adjustmentDetailTable);
-        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
-        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+  private MFXContextMenu showContextMenu(MFXTableRow<AdjustmentDetail> obj) {
+    MFXContextMenu contextMenu = new MFXContextMenu(adjustmentDetailTable);
+    MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
+    MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
 
-        // Actions
-        // Delete
-        delete.setOnAction(e -> {
-            AdjustmentDetailViewModel.removeAdjustmentDetail(obj.getData().getId(),
-                    AdjustmentDetailViewModel.adjustmentDetailsTempList.indexOf(obj.getData()));
-            AdjustmentDetailViewModel.getAdjustmentDetails();
-            e.consume();
+    // Actions
+    // Delete
+    delete.setOnAction(
+        e -> {
+          AdjustmentDetailViewModel.removeAdjustmentDetail(
+              obj.getData().getId(),
+              AdjustmentDetailViewModel.adjustmentDetailsTempList.indexOf(obj.getData()));
+          AdjustmentDetailViewModel.getAdjustmentDetails();
+          e.consume();
         });
-        // Edit
-        edit.setOnAction(e -> {
-            AdjustmentDetailViewModel.getItem(obj.getData().getId(),
-                    AdjustmentDetailViewModel.adjustmentDetailsTempList.indexOf(obj.getData()));
-            dialog.showAndWait();
-            e.consume();
+    // Edit
+    edit.setOnAction(
+        e -> {
+          AdjustmentDetailViewModel.getItem(
+              obj.getData().getId(),
+              AdjustmentDetailViewModel.adjustmentDetailsTempList.indexOf(obj.getData()));
+          dialog.showAndWait();
+          e.consume();
         });
 
-        contextMenu.addItems(edit, delete);
+    contextMenu.addItems(edit, delete);
 
-        return contextMenu;
-    }
+    return contextMenu;
+  }
 
-    private void adjustmentAddProductBtnClicked() {
-        adjustmentProductAddBtn.setOnAction(e -> dialog.showAndWait());
-    }
+  private void adjustmentAddProductBtnClicked() {
+    adjustmentProductAddBtn.setOnAction(e -> dialog.showAndWait());
+  }
 
-    private void quotationProductDialogPane(Stage stage) throws IOException {
-        DialogPane dialogPane = fxmlLoader("forms/AdjustmentDetailForm.fxml").load();
-        dialog = new Dialog<>();
-        dialog.setDialogPane(dialogPane);
-        dialog.initOwner(stage);
-        dialog.initModality(Modality.APPLICATION_MODAL);
-        dialog.initStyle(StageStyle.UNDECORATED);
-    }
+  private void quotationProductDialogPane(Stage stage) throws IOException {
+    DialogPane dialogPane = fxmlLoader("forms/AdjustmentDetailForm.fxml").load();
+    dialog = new Dialog<>();
+    dialog.setDialogPane(dialogPane);
+    dialog.initOwner(stage);
+    dialog.initModality(Modality.APPLICATION_MODAL);
+    dialog.initStyle(StageStyle.UNDECORATED);
+  }
 
-    public void adjustmentSaveBtnClicked() {
-        if (!adjustmentDetailTable.isDisabled() && AdjustmentDetailViewModel.adjustmentDetailsTempList.isEmpty()) {
-            // Notify table can't be empty
-            System.out.println("Table can't be empty");
-            return;
-        }
-        if (!adjustmentBranchValidationLabel.isVisible()
-                && !adjustmentDateValidationLabel.isVisible()) {
-            if (Integer.parseInt(adjustmentMasterID.getText()) > 0) {
-                AdjustmentMasterViewModel.updateItem(Integer.parseInt(adjustmentMasterID.getText()));
-                adjustmentCancelBtnClicked();
-            } else
-                AdjustmentMasterViewModel.saveAdjustmentMaster();
-            AdjustmentMasterViewModel.resetProperties();
-            AdjustmentDetailViewModel.adjustmentDetailsTempList.clear();
-        }
+  public void adjustmentSaveBtnClicked() {
+    if (!adjustmentDetailTable.isDisabled()
+        && AdjustmentDetailViewModel.adjustmentDetailsTempList.isEmpty()) {
+      // Notify table can't be empty
+      System.out.println("Table can't be empty");
+      return;
     }
+    if (!adjustmentBranchValidationLabel.isVisible()
+        && !adjustmentDateValidationLabel.isVisible()) {
+      if (Integer.parseInt(adjustmentMasterID.getText()) > 0) {
+        AdjustmentMasterViewModel.updateItem(Integer.parseInt(adjustmentMasterID.getText()));
+        adjustmentCancelBtnClicked();
+      } else AdjustmentMasterViewModel.saveAdjustmentMaster();
+      AdjustmentMasterViewModel.resetProperties();
+      AdjustmentDetailViewModel.adjustmentDetailsTempList.clear();
+    }
+  }
 
-    public void adjustmentCancelBtnClicked() {
-        AdjustmentMasterViewModel.resetProperties();
-        AdjustmentDetailViewModel.adjustmentDetailsTempList.clear();
-        adjustmentBranchValidationLabel.setVisible(false);
-        adjustmentDateValidationLabel.setVisible(false);
-        ((StackPane) adjustmentFormContentPane.getParent()).getChildren().get(0).setVisible(true);
-        ((StackPane) adjustmentFormContentPane.getParent()).getChildren().remove(1);
-    }
+  public void adjustmentCancelBtnClicked() {
+    BaseController.navigation.navigate(Pages.getAdjustmentPane());
+    AdjustmentMasterViewModel.resetProperties();
+    AdjustmentDetailViewModel.adjustmentDetailsTempList.clear();
+    adjustmentBranchValidationLabel.setVisible(false);
+    adjustmentDateValidationLabel.setVisible(false);
+  }
 }

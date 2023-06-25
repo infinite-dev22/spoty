@@ -22,7 +22,8 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import java.net.URL?>
-<BorderPane fx:id="saleFormContentPane" xmlns:fx="http://javafx.com/fxml/1" cache="true" cacheHint="SPEED" xmlns="http://javafx.com/javafx/19"
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:id="saleFormContentPane" cache="true" cacheHint="SPEED"
+            xmlns="http://javafx.com/javafx/19"
             fx:controller="org.infinite.spoty.forms.SaleMasterFormController">
     <stylesheets>
         <URL value="@../styles/Common.css"/>

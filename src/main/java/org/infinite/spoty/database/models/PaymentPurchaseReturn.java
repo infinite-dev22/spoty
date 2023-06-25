@@ -15,148 +15,158 @@
 package org.infinite.spoty.database.models;
 
 import jakarta.persistence.*;
-
 import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 public class PaymentPurchaseReturn implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-    @ManyToOne
-    private User user_detail;
-    private Date date;
-    private String ref;
-    @ManyToOne
-    private PurchaseReturnMaster purchaseReturn;
-    private String paymentMethod;
-    private double amount;
-    private double change;
-    private String notes;
-    @Column(name = "created_at")
-    private Date createdAt;
-    @Column(name = "created_by")
-    private String createdBy;
-    @Column(name = "updated_at")
-    private Date updatedAt;
-    @Column(name = "updated_by")
-    private String updatedBy;
-    public PaymentPurchaseReturn(User user_detail, Date date, String ref, PurchaseReturnMaster purchaseReturn, String paymentMethod, double amount, double change, String notes) {
-        this.user_detail = user_detail;
-        this.date = date;
-        this.ref = ref;
-        this.purchaseReturn = purchaseReturn;
-        this.paymentMethod = paymentMethod;
-        this.amount = amount;
-        this.change = change;
-        this.notes = notes;
-    }
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private long id;
 
-    public PaymentPurchaseReturn() {
-    }
+  @ManyToOne private User user_detail;
+  private Date date;
+  private String ref;
+  @ManyToOne private PurchaseReturnMaster purchaseReturn;
+  private String paymentMethod;
+  private double amount;
+  private double change;
+  private String notes;
 
-    public long getId() {
-        return id;
-    }
+  @Column(name = "created_at")
+  private Date createdAt;
 
-    public void setId(long id) {
-        this.id = id;
-    }
+  @Column(name = "created_by")
+  private String createdBy;
 
-    public User getUser() {
-        return user_detail;
-    }
+  @Column(name = "updated_at")
+  private Date updatedAt;
 
-    public void setUser(User user_detail) {
-        this.user_detail = user_detail;
-    }
+  @Column(name = "updated_by")
+  private String updatedBy;
 
-    public Date getDate() {
-        return date;
-    }
+  public PaymentPurchaseReturn(
+      User user_detail,
+      Date date,
+      String ref,
+      PurchaseReturnMaster purchaseReturn,
+      String paymentMethod,
+      double amount,
+      double change,
+      String notes) {
+    this.user_detail = user_detail;
+    this.date = date;
+    this.ref = ref;
+    this.purchaseReturn = purchaseReturn;
+    this.paymentMethod = paymentMethod;
+    this.amount = amount;
+    this.change = change;
+    this.notes = notes;
+  }
 
-    public void setDate(Date date) {
-        this.date = date;
-    }
+  public PaymentPurchaseReturn() {}
 
-    public String getRef() {
-        return ref;
-    }
+  public long getId() {
+    return id;
+  }
 
-    public void setRef(String ref) {
-        this.ref = ref;
-    }
+  public void setId(long id) {
+    this.id = id;
+  }
 
-    public PurchaseReturnMaster getPurchaseReturn() {
-        return purchaseReturn;
-    }
+  public User getUser() {
+    return user_detail;
+  }
 
-    public void setPurchaseReturn(PurchaseReturnMaster purchaseReturn) {
-        this.purchaseReturn = purchaseReturn;
-    }
+  public void setUser(User user_detail) {
+    this.user_detail = user_detail;
+  }
 
-    public String getPaymentMethod() {
-        return paymentMethod;
-    }
+  public Date getDate() {
+    return date;
+  }
 
-    public void setPaymentMethod(String paymentMethod) {
-        this.paymentMethod = paymentMethod;
-    }
+  public void setDate(Date date) {
+    this.date = date;
+  }
 
-    public double getAmount() {
-        return amount;
-    }
+  public String getRef() {
+    return ref;
+  }
 
-    public void setAmount(double amount) {
-        this.amount = amount;
-    }
+  public void setRef(String ref) {
+    this.ref = ref;
+  }
 
-    public double getChange() {
-        return change;
-    }
+  public PurchaseReturnMaster getPurchaseReturn() {
+    return purchaseReturn;
+  }
 
-    public void setChange(double change) {
-        this.change = change;
-    }
+  public void setPurchaseReturn(PurchaseReturnMaster purchaseReturn) {
+    this.purchaseReturn = purchaseReturn;
+  }
 
-    public String getNotes() {
-        return notes;
-    }
+  public String getPaymentMethod() {
+    return paymentMethod;
+  }
 
-    public void setNotes(String notes) {
-        this.notes = notes;
-    }
+  public void setPaymentMethod(String paymentMethod) {
+    this.paymentMethod = paymentMethod;
+  }
 
-    public Date getCreatedAt() {
-        return createdAt;
-    }
+  public double getAmount() {
+    return amount;
+  }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
+  public void setAmount(double amount) {
+    this.amount = amount;
+  }
 
-    public String getCreatedBy() {
-        return createdBy;
-    }
+  public double getChange() {
+    return change;
+  }
 
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
+  public void setChange(double change) {
+    this.change = change;
+  }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
+  public String getNotes() {
+    return notes;
+  }
 
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+  public void setNotes(String notes) {
+    this.notes = notes;
+  }
 
-    public String getUpdatedBy() {
-        return updatedBy;
-    }
+  public Date getCreatedAt() {
+    return createdAt;
+  }
 
-    public void setUpdatedBy(String updatedBy) {
-        this.updatedBy = updatedBy;
-    }
+  public void setCreatedAt(Date createdAt) {
+    this.createdAt = createdAt;
+  }
+
+  public String getCreatedBy() {
+    return createdBy;
+  }
+
+  public void setCreatedBy(String createdBy) {
+    this.createdBy = createdBy;
+  }
+
+  public Date getUpdatedAt() {
+    return updatedAt;
+  }
+
+  public void setUpdatedAt(Date updatedAt) {
+    this.updatedAt = updatedAt;
+  }
+
+  public String getUpdatedBy() {
+    return updatedBy;
+  }
+
+  public void setUpdatedBy(String updatedBy) {
+    this.updatedBy = updatedBy;
+  }
 }

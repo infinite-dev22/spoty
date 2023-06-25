@@ -15,7 +15,6 @@
 package org.infinite.spoty.database.models;
 
 import jakarta.persistence.*;
-
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.util.Date;
@@ -23,214 +22,213 @@ import java.util.List;
 
 @Entity
 public class TransferMaster implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    @ManyToOne
-    private User user_detail;
-    private String ref;
-    private Date date;
-    @ManyToOne
-    private Branch fromBranch;
-    @ManyToOne
-    private Branch toBranch;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "transfer")
-    private List<TransferDetail> transferDetails;
-    private String shipping;
-    private double total;
-    private String status;
-    private User approvedBy;
-    private User receivedBy;
-    private Date approvalDate;
-    private Date receiveDate;
-    private String notes;
-    @Column(name = "created_at")
-    private Date createdAt;
-    @Column(name = "created_by")
-    private String createdBy;
-    @Column(name = "updated_at")
-    private Date updatedAt;
-    @Column(name = "updated_by")
-    private String updatedBy;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private int id;
 
-    public TransferMaster() {
-    }
+  @ManyToOne private User user_detail;
+  private String ref;
+  private Date date;
+  @ManyToOne private Branch fromBranch;
+  @ManyToOne private Branch toBranch;
 
-    public TransferMaster(Date date,
-                          Branch fromBranch,
-                          Branch toBranch,
-                          double total,
-                          String status,
-                          String notes) {
-        this.date = date;
-        this.fromBranch = fromBranch;
-        this.toBranch = toBranch;
-        this.total = total;
-        this.status = status;
-        this.notes = notes;
-    }
+  @OneToMany(cascade = CascadeType.ALL, mappedBy = "transfer")
+  private List<TransferDetail> transferDetails;
 
-    public int getId() {
-        return id;
-    }
+  private String shipping;
+  private double total;
+  private String status;
+  private User approvedBy;
+  private User receivedBy;
+  private Date approvalDate;
+  private Date receiveDate;
+  private String notes;
 
-    public void setId(int id) {
-        this.id = id;
-    }
+  @Column(name = "created_at")
+  private Date createdAt;
 
-    public User getUser() {
-        return user_detail;
-    }
+  @Column(name = "created_by")
+  private String createdBy;
 
-    public void setUser(User user_detail) {
-        this.user_detail = user_detail;
-    }
+  @Column(name = "updated_at")
+  private Date updatedAt;
 
-    public String getRef() {
-        return ref;
-    }
+  @Column(name = "updated_by")
+  private String updatedBy;
 
-    public void setRef(String ref) {
-        this.ref = ref;
-    }
+  public TransferMaster() {}
 
-    public Date getDate() {
-        return date;
-    }
+  public TransferMaster(
+      Date date, Branch fromBranch, Branch toBranch, double total, String status, String notes) {
+    this.date = date;
+    this.fromBranch = fromBranch;
+    this.toBranch = toBranch;
+    this.total = total;
+    this.status = status;
+    this.notes = notes;
+  }
 
-    public void setDate(Date date) {
-        this.date = date;
-    }
+  public int getId() {
+    return id;
+  }
 
-    public Branch getFromBranch() {
-        return fromBranch;
-    }
+  public void setId(int id) {
+    this.id = id;
+  }
 
-    public void setFromBranch(Branch fromBranch) {
-        this.fromBranch = fromBranch;
-    }
+  public User getUser() {
+    return user_detail;
+  }
 
-    public String getFromBranchName() {
-        return (fromBranch != null) ? fromBranch.getName() : null;
-    }
+  public void setUser(User user_detail) {
+    this.user_detail = user_detail;
+  }
 
-    public Branch getToBranch() {
-        return toBranch;
-    }
+  public String getRef() {
+    return ref;
+  }
 
-    public void setToBranch(Branch toBranch) {
-        this.toBranch = toBranch;
-    }
+  public void setRef(String ref) {
+    this.ref = ref;
+  }
 
-    public String getToBranchName() {
-        return (toBranch != null) ? toBranch.getName() : null;
-    }
+  public Date getDate() {
+    return date;
+  }
 
-    public String getShipping() {
-        return shipping;
-    }
+  public void setDate(Date date) {
+    this.date = date;
+  }
 
-    public void setShipping(String shipping) {
-        this.shipping = shipping;
-    }
+  public Branch getFromBranch() {
+    return fromBranch;
+  }
 
-    public double getTotal() {
-        return total;
-    }
+  public void setFromBranch(Branch fromBranch) {
+    this.fromBranch = fromBranch;
+  }
 
-    public void setTotal(double total) {
-        this.total = total;
-    }
+  public String getFromBranchName() {
+    return (fromBranch != null) ? fromBranch.getName() : null;
+  }
 
-    public String getStatus() {
-        return status;
-    }
+  public Branch getToBranch() {
+    return toBranch;
+  }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+  public void setToBranch(Branch toBranch) {
+    this.toBranch = toBranch;
+  }
 
-    public String getNotes() {
-        return notes;
-    }
+  public String getToBranchName() {
+    return (toBranch != null) ? toBranch.getName() : null;
+  }
 
-    public void setNotes(String notes) {
-        this.notes = notes;
-    }
+  public String getShipping() {
+    return shipping;
+  }
 
-    public List<TransferDetail> getTransferDetails() {
-        return transferDetails;
-    }
+  public void setShipping(String shipping) {
+    this.shipping = shipping;
+  }
 
-    public void setTransferDetails(List<TransferDetail> transferDetails) {
-        this.transferDetails = transferDetails;
-    }
+  public double getTotal() {
+    return total;
+  }
 
-    public User getApprovedBy() {
-        return approvedBy;
-    }
+  public void setTotal(double total) {
+    this.total = total;
+  }
 
-    public void setApprovedBy(User approvedBy) {
-        this.approvedBy = approvedBy;
-    }
+  public String getStatus() {
+    return status;
+  }
 
-    public User getReceivedBy() {
-        return receivedBy;
-    }
+  public void setStatus(String status) {
+    this.status = status;
+  }
 
-    public void setReceivedBy(User receivedBy) {
-        this.receivedBy = receivedBy;
-    }
+  public String getNotes() {
+    return notes;
+  }
 
-    public Date getApprovalDate() {
-        return approvalDate;
-    }
+  public void setNotes(String notes) {
+    this.notes = notes;
+  }
 
-    public void setApprovalDate(Date approvalDate) {
-        this.approvalDate = approvalDate;
-    }
+  public List<TransferDetail> getTransferDetails() {
+    return transferDetails;
+  }
 
-    public Date getReceiveDate() {
-        return receiveDate;
-    }
+  public void setTransferDetails(List<TransferDetail> transferDetails) {
+    this.transferDetails = transferDetails;
+  }
 
-    public void setReceiveDate(Date receiveDate) {
-        this.receiveDate = receiveDate;
-    }
+  public User getApprovedBy() {
+    return approvedBy;
+  }
 
-    public Date getCreatedAt() {
-        return createdAt;
-    }
+  public void setApprovedBy(User approvedBy) {
+    this.approvedBy = approvedBy;
+  }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
+  public User getReceivedBy() {
+    return receivedBy;
+  }
 
-    public String getCreatedBy() {
-        return createdBy;
-    }
+  public void setReceivedBy(User receivedBy) {
+    this.receivedBy = receivedBy;
+  }
 
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
+  public Date getApprovalDate() {
+    return approvalDate;
+  }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
+  public void setApprovalDate(Date approvalDate) {
+    this.approvalDate = approvalDate;
+  }
 
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+  public Date getReceiveDate() {
+    return receiveDate;
+  }
 
-    public String getUpdatedBy() {
-        return updatedBy;
-    }
+  public void setReceiveDate(Date receiveDate) {
+    this.receiveDate = receiveDate;
+  }
 
-    public void setUpdatedBy(String updatedBy) {
-        this.updatedBy = updatedBy;
-    }
+  public Date getCreatedAt() {
+    return createdAt;
+  }
 
-    public String getLocaleDate() {
-        return DateFormat.getDateInstance().format(date);
-    }
+  public void setCreatedAt(Date createdAt) {
+    this.createdAt = createdAt;
+  }
+
+  public String getCreatedBy() {
+    return createdBy;
+  }
+
+  public void setCreatedBy(String createdBy) {
+    this.createdBy = createdBy;
+  }
+
+  public Date getUpdatedAt() {
+    return updatedAt;
+  }
+
+  public void setUpdatedAt(Date updatedAt) {
+    this.updatedAt = updatedAt;
+  }
+
+  public String getUpdatedBy() {
+    return updatedBy;
+  }
+
+  public void setUpdatedBy(String updatedBy) {
+    this.updatedBy = updatedBy;
+  }
+
+  public String getLocaleDate() {
+    return DateFormat.getDateInstance().format(date);
+  }
 }

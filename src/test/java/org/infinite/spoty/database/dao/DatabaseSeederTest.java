@@ -14,15 +14,14 @@
 
 package org.infinite.spoty.database.dao;
 
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import org.infinite.spoty.database.models.*;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class DatabaseSeederTest {

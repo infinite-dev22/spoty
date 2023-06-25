@@ -14,10 +14,16 @@
 
 package org.infinite.spoty.forms;
 
+import static org.infinite.spoty.GlobalActions.closeDialog;
+import static org.infinite.spoty.Validators.requiredValidator;
+import static org.infinite.spoty.values.SharedResources.tempIdProperty;
+
 import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
+import java.net.URL;
+import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -26,81 +32,69 @@ import org.infinite.spoty.database.models.UnitOfMeasure;
 import org.infinite.spoty.viewModels.ProductDetailViewModel;
 import org.infinite.spoty.viewModels.UOMViewModel;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
-import static org.infinite.spoty.GlobalActions.closeDialog;
-import static org.infinite.spoty.Validators.requiredValidator;
-import static org.infinite.spoty.values.SharedResources.tempIdProperty;
-
 public class ProductDetailFormController implements Initializable {
-    @FXML
-    public MFXFilledButton productProductsSaveBtn;
-    @FXML
-    public MFXOutlinedButton productProductsCancelBtn;
-    @FXML
-    public Label productProductsTitle;
-    @FXML
-    public MFXTextField productVariantSerial;
-    @FXML
-    public MFXTextField productVariantName;
-    @FXML
-    public Label productVariantNameValidationLabel;
-    @FXML
-    public MFXFilterComboBox<UnitOfMeasure> productVariantUOM;
-    @FXML
-    public Label productVariantUOMValidationLabel;
+  @FXML public MFXFilledButton productProductsSaveBtn;
+  @FXML public MFXOutlinedButton productProductsCancelBtn;
+  @FXML public Label productProductsTitle;
+  @FXML public MFXTextField productVariantSerial;
+  @FXML public MFXTextField productVariantName;
+  @FXML public Label productVariantNameValidationLabel;
+  @FXML public MFXFilterComboBox<UnitOfMeasure> productVariantUOM;
+  @FXML public Label productVariantUOMValidationLabel;
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        // Bind form input value to property value.
-        productVariantUOM.valueProperty().bindBidirectional(ProductDetailViewModel.unitProperty());
-        productVariantSerial.textProperty().bindBidirectional(ProductDetailViewModel.serialProperty());
-        productVariantName.textProperty().bindBidirectional(ProductDetailViewModel.nameProperty());
-        // ProductType combo box properties.
-        productVariantUOM.setItems(UOMViewModel.uomComboList);
-        productVariantUOM.setResetOnPopupHidden(true);
-        productVariantUOM.setAnimated(true);
-        productVariantUOM.setConverter(new StringConverter<>() {
-            @Override
-            public String toString(UnitOfMeasure object) {
-                return (object != null) ? object.getName() : "--Unit Of Measure--";
-            }
+  @Override
+  public void initialize(URL location, ResourceBundle resources) {
+    // Bind form input value to property value.
+    productVariantUOM.valueProperty().bindBidirectional(ProductDetailViewModel.unitProperty());
+    productVariantSerial.textProperty().bindBidirectional(ProductDetailViewModel.serialProperty());
+    productVariantName.textProperty().bindBidirectional(ProductDetailViewModel.nameProperty());
+    // ProductType combo box properties.
+    productVariantUOM.setItems(UOMViewModel.uomComboList);
+    productVariantUOM.setResetOnPopupHidden(true);
+    productVariantUOM.setAnimated(true);
+    productVariantUOM.setConverter(
+        new StringConverter<>() {
+          @Override
+          public String toString(UnitOfMeasure object) {
+            return (object != null) ? object.getName() : "--Unit Of Measure--";
+          }
 
-            @Override
-            public UnitOfMeasure fromString(String string) {
-                return null;
-            }
+          @Override
+          public UnitOfMeasure fromString(String string) {
+            return null;
+          }
         });
-        // Input validators.
-        requiredValidator(productVariantUOM, "Unit of measure is required.", productVariantUOMValidationLabel);
-        requiredValidator(productVariantName, "Name is required.", productVariantNameValidationLabel);
-        dialogOnActions();
-    }
+    // Input validators.
+    requiredValidator(
+        productVariantUOM, "Unit of measure is required.", productVariantUOMValidationLabel);
+    requiredValidator(productVariantName, "Name is required.", productVariantNameValidationLabel);
+    dialogOnActions();
+  }
 
-    private void dialogOnActions() {
-        productProductsCancelBtn.setOnAction((e) -> {
-            closeDialog(e);
-            ProductDetailViewModel.resetProperties();
-            productVariantUOMValidationLabel.setVisible(false);
+  private void dialogOnActions() {
+    productProductsCancelBtn.setOnAction(
+        (e) -> {
+          closeDialog(e);
+          ProductDetailViewModel.resetProperties();
+          productVariantUOMValidationLabel.setVisible(false);
+          productVariantNameValidationLabel.setVisible(false);
+        });
+    productProductsSaveBtn.setOnAction(
+        (e) -> {
+          // TODO: Find better logic for this.
+          // If one of productVariantUOM or productVariantName is provide can save the product.
+          if (productVariantName.getText().isEmpty() && !productVariantUOM.getText().isEmpty())
             productVariantNameValidationLabel.setVisible(false);
+          if (productVariantUOM.getText().isEmpty() && !productVariantName.getText().isEmpty())
+            productVariantUOMValidationLabel.setVisible(false);
+          if (!productVariantUOMValidationLabel.isVisible()
+              && !productVariantNameValidationLabel.isVisible()) {
+            if (tempIdProperty().get() > -1)
+              ProductDetailViewModel.updateProductDetail(ProductDetailViewModel.getId());
+            else ProductDetailViewModel.addProductDetail();
+            ProductDetailViewModel.resetProperties();
+            closeDialog(e);
+          }
         });
-        productProductsSaveBtn.setOnAction((e) -> {
-            // TODO: Find better logic for this.
-            // If one of productVariantUOM or productVariantName is provide can save the product.
-            if (productVariantName.getText().isEmpty() && !productVariantUOM.getText().isEmpty())
-                productVariantNameValidationLabel.setVisible(false);
-            if (productVariantUOM.getText().isEmpty() && !productVariantName.getText().isEmpty())
-                productVariantUOMValidationLabel.setVisible(false);
-            if (!productVariantUOMValidationLabel.isVisible()
-                    && !productVariantNameValidationLabel.isVisible()) {
-                if (tempIdProperty().get() > -1)
-                    ProductDetailViewModel.updateProductDetail(ProductDetailViewModel.getId());
-                else
-                    ProductDetailViewModel.addProductDetail();
-                ProductDetailViewModel.resetProperties();
-                closeDialog(e);
-            }
-        });
-    }
+  }
 }

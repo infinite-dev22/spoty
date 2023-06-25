@@ -15,148 +15,150 @@
 package org.infinite.spoty.database.models;
 
 import jakarta.persistence.*;
-
 import java.util.Date;
 
 @Entity
 public class Supplier {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    private String name;
-    private String code;
-    private String email;
-    private String phone;
-    @Column(name = "tax_number")
-    private String taxNumber;
-    private String address;
-    private String city;
-    private String country;
-    private Date createdAt;
-    private String createdBy;
-    private Date updatedAt;
-    private String updatedBy;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private int id;
 
-    public Supplier(String name,
-                    String email,
-                    String phone,
-                    String taxNumber,
-                    String address,
-                    String city,
-                    String country) {
-        this.name = name;
-        this.email = email;
-        this.phone = phone;
-        this.taxNumber = taxNumber;
-        this.address = address;
-        this.city = city;
-        this.country = country;
-    }
+  private String name;
+  private String code;
+  private String email;
+  private String phone;
 
-    public Supplier() {
-    }
+  @Column(name = "tax_number")
+  private String taxNumber;
 
-    public int getId() {
-        return id;
-    }
+  private String address;
+  private String city;
+  private String country;
+  private Date createdAt;
+  private String createdBy;
+  private Date updatedAt;
+  private String updatedBy;
 
-    public void setId(int id) {
-        this.id = id;
-    }
+  public Supplier(
+      String name,
+      String email,
+      String phone,
+      String taxNumber,
+      String address,
+      String city,
+      String country) {
+    this.name = name;
+    this.email = email;
+    this.phone = phone;
+    this.taxNumber = taxNumber;
+    this.address = address;
+    this.city = city;
+    this.country = country;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public Supplier() {}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public int getId() {
+    return id;
+  }
 
-    public String getCode() {
-        return code;
-    }
+  public void setId(int id) {
+    this.id = id;
+  }
 
-    public void setCode(String code) {
-        this.code = code;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public String getEmail() {
-        return email;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+  public String getCode() {
+    return code;
+  }
 
-    public String getPhone() {
-        return phone;
-    }
+  public void setCode(String code) {
+    this.code = code;
+  }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
+  public String getEmail() {
+    return email;
+  }
 
-    public String getTaxNumber() {
-        return taxNumber;
-    }
+  public void setEmail(String email) {
+    this.email = email;
+  }
 
-    public void setTaxNumber(String taxNumber) {
-        this.taxNumber = taxNumber;
-    }
+  public String getPhone() {
+    return phone;
+  }
 
-    public String getAddress() {
-        return address;
-    }
+  public void setPhone(String phone) {
+    this.phone = phone;
+  }
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
+  public String getTaxNumber() {
+    return taxNumber;
+  }
 
-    public String getCity() {
-        return city;
-    }
+  public void setTaxNumber(String taxNumber) {
+    this.taxNumber = taxNumber;
+  }
 
-    public void setCity(String city) {
-        this.city = city;
-    }
+  public String getAddress() {
+    return address;
+  }
 
-    public String getCountry() {
-        return country;
-    }
+  public void setAddress(String address) {
+    this.address = address;
+  }
 
-    public void setCountry(String country) {
-        this.country = country;
-    }
+  public String getCity() {
+    return city;
+  }
 
-    public Date getCreatedAt() {
-        return createdAt;
-    }
+  public void setCity(String city) {
+    this.city = city;
+  }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
+  public String getCountry() {
+    return country;
+  }
 
-    public String getCreatedBy() {
-        return createdBy;
-    }
+  public void setCountry(String country) {
+    this.country = country;
+  }
 
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
+  public Date getCreatedAt() {
+    return createdAt;
+  }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
+  public void setCreatedAt(Date createdAt) {
+    this.createdAt = createdAt;
+  }
 
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+  public String getCreatedBy() {
+    return createdBy;
+  }
 
-    public String getUpdatedBy() {
-        return updatedBy;
-    }
+  public void setCreatedBy(String createdBy) {
+    this.createdBy = createdBy;
+  }
 
-    public void setUpdatedBy(String updatedBy) {
-        this.updatedBy = updatedBy;
-    }
+  public Date getUpdatedAt() {
+    return updatedAt;
+  }
+
+  public void setUpdatedAt(Date updatedAt) {
+    this.updatedAt = updatedAt;
+  }
+
+  public String getUpdatedBy() {
+    return updatedBy;
+  }
+
+  public void setUpdatedBy(String updatedBy) {
+    this.updatedBy = updatedBy;
+  }
 }

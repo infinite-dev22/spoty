@@ -15,193 +15,196 @@
 package org.infinite.spoty.database.models;
 
 import jakarta.persistence.*;
-
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 @Entity
 public class ProductMaster implements Serializable {
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private int id;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    private String code;
-    @Column(name = "barcode_type")
-    private String barcodeType;
-    private String name;
-    @ManyToOne
-    private ProductCategory category;
-    @ManyToOne
-    private Brand brand;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "product")
-    private List<ProductDetail> productDetails;
-    private byte[] image;
-    private String note;
-    @Column(nullable = false, name = "not_sale")
-    private boolean notForSale;
-    @Column(nullable = false, name = "is_active")
-    private boolean hasVariants;
-    @Column(name = "created_at")
-    private Date createdAt;
-    @Column(name = "created_by")
-    private String createdBy;
-    @Column(name = "updated_at")
-    private Date updatedAt;
-    @Column(name = "updated_by")
-    private String updatedBy;
+  private String code;
 
-    public ProductMaster(String barcodeType,
-                         String name,
-                         double price,
-                         ProductCategory category,
-                         Brand brand,
-                         String note,
-                         boolean notForSale,
-                         boolean hasVariants) {
-        this.barcodeType = barcodeType;
-        this.name = name;
-        this.category = category;
-        this.brand = brand;
-        this.note = note;
-        this.notForSale = notForSale;
-        this.hasVariants = hasVariants;
-    }
+  @Column(name = "barcode_type")
+  private String barcodeType;
 
-    public ProductMaster() {
-    }
+  private String name;
+  @ManyToOne private ProductCategory category;
+  @ManyToOne private Brand brand;
 
-    public int getId() {
-        return id;
-    }
+  @OneToMany(cascade = CascadeType.ALL, mappedBy = "product")
+  private List<ProductDetail> productDetails;
 
-    public void setId(int id) {
-        this.id = id;
-    }
+  private byte[] image;
+  private String note;
 
-    public String getCode() {
-        return code;
-    }
+  @Column(nullable = false, name = "not_sale")
+  private boolean notForSale;
 
-    public void setCode(String code) {
-        this.code = code;
-    }
+  @Column(nullable = false, name = "is_active")
+  private boolean hasVariants;
 
-    public String getBarcodeType() {
-        return barcodeType;
-    }
+  @Column(name = "created_at")
+  private Date createdAt;
 
-    public void setBarcodeType(String barcodeType) {
-        this.barcodeType = barcodeType;
-    }
+  @Column(name = "created_by")
+  private String createdBy;
 
-    public String getName() {
-        return name;
-    }
+  @Column(name = "updated_at")
+  private Date updatedAt;
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  @Column(name = "updated_by")
+  private String updatedBy;
 
-    public ProductCategory getCategory() {
-        return category;
-    }
+  public ProductMaster(
+      String barcodeType,
+      String name,
+      double price,
+      ProductCategory category,
+      Brand brand,
+      String note,
+      boolean notForSale,
+      boolean hasVariants) {
+    this.barcodeType = barcodeType;
+    this.name = name;
+    this.category = category;
+    this.brand = brand;
+    this.note = note;
+    this.notForSale = notForSale;
+    this.hasVariants = hasVariants;
+  }
 
-    public void setCategory(ProductCategory category) {
-        this.category = category;
-    }
+  public ProductMaster() {}
 
-    public String getCategoryName() {
-        if (category != null)
-            return category.getName();
-        else
-            return null;
-    }
+  public int getId() {
+    return id;
+  }
 
-    public Brand getBrand() {
-        return brand;
-    }
+  public void setId(int id) {
+    this.id = id;
+  }
 
-    public void setBrand(Brand brand) {
-        this.brand = brand;
-    }
+  public String getCode() {
+    return code;
+  }
 
-    public String getBrandName() {
-        if (brand != null)
-            return brand.getName();
-        else
-            return null;
-    }
+  public void setCode(String code) {
+    this.code = code;
+  }
 
-    public byte[] getImage() {
-        return image;
-    }
+  public String getBarcodeType() {
+    return barcodeType;
+  }
 
-    public void setImage(byte[] image) {
-        this.image = image;
-    }
+  public void setBarcodeType(String barcodeType) {
+    this.barcodeType = barcodeType;
+  }
 
-    public String getNote() {
-        return note;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public void setNote(String note) {
-        this.note = note;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public List<ProductDetail> getProductDetails() {
-        return productDetails;
-    }
+  public ProductCategory getCategory() {
+    return category;
+  }
 
-    public void setProductDetails(List<ProductDetail> productDetails) {
-        this.productDetails = productDetails;
-    }
+  public void setCategory(ProductCategory category) {
+    this.category = category;
+  }
 
-    public boolean isNotForSale() {
-        return notForSale;
-    }
+  public String getCategoryName() {
+    if (category != null) return category.getName();
+    else return null;
+  }
 
-    public void setNotForSale(boolean notForSale) {
-        this.notForSale = notForSale;
-    }
+  public Brand getBrand() {
+    return brand;
+  }
 
-    public boolean hasVariant() {
-        return hasVariants;
-    }
+  public void setBrand(Brand brand) {
+    this.brand = brand;
+  }
 
-    public void canHaveVariants(boolean hasVariants) {
-        this.hasVariants = hasVariants;
-    }
+  public String getBrandName() {
+    if (brand != null) return brand.getName();
+    else return null;
+  }
 
-    public Date getCreatedAt() {
-        return createdAt;
-    }
+  public byte[] getImage() {
+    return image;
+  }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
+  public void setImage(byte[] image) {
+    this.image = image;
+  }
 
-    public String getCreatedBy() {
-        return createdBy;
-    }
+  public String getNote() {
+    return note;
+  }
 
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
+  public void setNote(String note) {
+    this.note = note;
+  }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
+  public List<ProductDetail> getProductDetails() {
+    return productDetails;
+  }
 
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+  public void setProductDetails(List<ProductDetail> productDetails) {
+    this.productDetails = productDetails;
+  }
 
-    public String getUpdatedBy() {
-        return updatedBy;
-    }
+  public boolean isNotForSale() {
+    return notForSale;
+  }
 
-    public void setUpdatedBy(String updatedBy) {
-        this.updatedBy = updatedBy;
-    }
+  public void setNotForSale(boolean notForSale) {
+    this.notForSale = notForSale;
+  }
+
+  public boolean hasVariant() {
+    return hasVariants;
+  }
+
+  public void canHaveVariants(boolean hasVariants) {
+    this.hasVariants = hasVariants;
+  }
+
+  public Date getCreatedAt() {
+    return createdAt;
+  }
+
+  public void setCreatedAt(Date createdAt) {
+    this.createdAt = createdAt;
+  }
+
+  public String getCreatedBy() {
+    return createdBy;
+  }
+
+  public void setCreatedBy(String createdBy) {
+    this.createdBy = createdBy;
+  }
+
+  public Date getUpdatedAt() {
+    return updatedAt;
+  }
+
+  public void setUpdatedAt(Date updatedAt) {
+    this.updatedAt = updatedAt;
+  }
+
+  public String getUpdatedBy() {
+    return updatedBy;
+  }
+
+  public void setUpdatedBy(String updatedBy) {
+    this.updatedBy = updatedBy;
+  }
 }

@@ -14,64 +14,67 @@
 
 package org.infinite.spoty.forms;
 
+import static org.infinite.spoty.GlobalActions.closeDialog;
+import static org.infinite.spoty.Validators.requiredValidator;
+import static org.infinite.spoty.viewModels.ExpenseCategoryViewModel.resetProperties;
+import static org.infinite.spoty.viewModels.ExpenseCategoryViewModel.saveExpenseCategory;
+
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
+import java.net.URL;
+import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.viewModels.ExpenseCategoryViewModel;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
-import static org.infinite.spoty.GlobalActions.closeDialog;
-import static org.infinite.spoty.Validators.requiredValidator;
-import static org.infinite.spoty.viewModels.ExpenseCategoryViewModel.resetProperties;
-import static org.infinite.spoty.viewModels.ExpenseCategoryViewModel.saveExpenseCategory;
-
 public class ExpenseCategoryFormController implements Initializable {
-    public MFXTextField expenseCategoryID = new MFXTextField();
-    @FXML
-    public MFXTextField categoryExpenseFormName;
-    @FXML
-    public MFXTextField categoryExpenseFormDescription;
-    @FXML
-    public MFXFilledButton categoryExpenseFormSaveBtn;
-    @FXML
-    public MFXOutlinedButton categoryExpenseFormCancelBtn;
-    @FXML
-    public Label categoryExpenseFormTitle;
-    @FXML
-    public Label categoryExpenseFormNameValidationLabel;
+  public MFXTextField expenseCategoryID = new MFXTextField();
+  @FXML public MFXTextField categoryExpenseFormName;
+  @FXML public MFXTextField categoryExpenseFormDescription;
+  @FXML public MFXFilledButton categoryExpenseFormSaveBtn;
+  @FXML public MFXOutlinedButton categoryExpenseFormCancelBtn;
+  @FXML public Label categoryExpenseFormTitle;
+  @FXML public Label categoryExpenseFormNameValidationLabel;
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        // Input bindings.
-        expenseCategoryID.textProperty().bindBidirectional(ExpenseCategoryViewModel.idProperty(), new NumberStringConverter());
-        categoryExpenseFormName.textProperty().bindBidirectional(ExpenseCategoryViewModel.nameProperty());
-        categoryExpenseFormDescription.textProperty().bindBidirectional(ExpenseCategoryViewModel.descriptionProperty());
-        // Input listeners.
-        requiredValidator(categoryExpenseFormName, "Category name is required.", categoryExpenseFormNameValidationLabel);
-        dialogOnActions();
-    }
+  @Override
+  public void initialize(URL location, ResourceBundle resources) {
+    // Input bindings.
+    expenseCategoryID
+        .textProperty()
+        .bindBidirectional(ExpenseCategoryViewModel.idProperty(), new NumberStringConverter());
+    categoryExpenseFormName
+        .textProperty()
+        .bindBidirectional(ExpenseCategoryViewModel.nameProperty());
+    categoryExpenseFormDescription
+        .textProperty()
+        .bindBidirectional(ExpenseCategoryViewModel.descriptionProperty());
+    // Input listeners.
+    requiredValidator(
+        categoryExpenseFormName,
+        "Category name is required.",
+        categoryExpenseFormNameValidationLabel);
+    dialogOnActions();
+  }
 
-    private void dialogOnActions() {
-        categoryExpenseFormCancelBtn.setOnAction((e) -> {
-            closeDialog(e);
+  private void dialogOnActions() {
+    categoryExpenseFormCancelBtn.setOnAction(
+        (e) -> {
+          closeDialog(e);
+          resetProperties();
+          categoryExpenseFormNameValidationLabel.setVisible(false);
+        });
+    categoryExpenseFormSaveBtn.setOnAction(
+        (e) -> {
+          if (!categoryExpenseFormNameValidationLabel.isVisible()) {
+            if (Integer.parseInt(expenseCategoryID.getText()) > 0)
+              ExpenseCategoryViewModel.updateItem(Integer.parseInt(expenseCategoryID.getText()));
+            else saveExpenseCategory();
             resetProperties();
-            categoryExpenseFormNameValidationLabel.setVisible(false);
+            closeDialog(e);
+          }
         });
-        categoryExpenseFormSaveBtn.setOnAction((e) -> {
-            if (!categoryExpenseFormNameValidationLabel.isVisible()) {
-                if (Integer.parseInt(expenseCategoryID.getText()) > 0)
-                    ExpenseCategoryViewModel.updateItem(Integer.parseInt(expenseCategoryID.getText()));
-                else
-                    saveExpenseCategory();
-                resetProperties();
-                closeDialog(e);
-            }
-        });
-    }
+  }
 }

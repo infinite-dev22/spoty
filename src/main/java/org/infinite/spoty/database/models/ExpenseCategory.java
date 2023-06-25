@@ -15,97 +15,99 @@
 package org.infinite.spoty.database.models;
 
 import jakarta.persistence.*;
-
 import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 public class ExpenseCategory implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    private User user_detail;
-    private String name;
-    private String description;
-    @Column(name = "created_at")
-    private Date createdAt;
-    @Column(name = "created_by")
-    private String createdBy;
-    @Column(name = "updated_at")
-    private Date updatedAt;
-    @Column(name = "updated_by")
-    private String updatedBy;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private int id;
 
-    public ExpenseCategory() {
-    }
+  private User user_detail;
+  private String name;
+  private String description;
 
-    public ExpenseCategory(String name,
-                           String description) {
-        this.name = name;
-        this.description = description;
-    }
+  @Column(name = "created_at")
+  private Date createdAt;
 
-    public int getId() {
-        return id;
-    }
+  @Column(name = "created_by")
+  private String createdBy;
 
-    public void setId(int id) {
-        this.id = id;
-    }
+  @Column(name = "updated_at")
+  private Date updatedAt;
 
-    public User getUser() {
-        return user_detail;
-    }
+  @Column(name = "updated_by")
+  private String updatedBy;
 
-    public void setUser(User user_detail) {
-        this.user_detail = user_detail;
-    }
+  public ExpenseCategory() {}
 
-    public String getName() {
-        return name;
-    }
+  public ExpenseCategory(String name, String description) {
+    this.name = name;
+    this.description = description;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public int getId() {
+    return id;
+  }
 
-    public String getDescription() {
-        return description;
-    }
+  public void setId(int id) {
+    this.id = id;
+  }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+  public User getUser() {
+    return user_detail;
+  }
 
-    public Date getCreatedAt() {
-        return createdAt;
-    }
+  public void setUser(User user_detail) {
+    this.user_detail = user_detail;
+  }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public String getCreatedBy() {
-        return createdBy;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
+  public String getDescription() {
+    return description;
+  }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+  public Date getCreatedAt() {
+    return createdAt;
+  }
 
-    public String getUpdatedBy() {
-        return updatedBy;
-    }
+  public void setCreatedAt(Date createdAt) {
+    this.createdAt = createdAt;
+  }
 
-    public void setUpdatedBy(String updatedBy) {
-        this.updatedBy = updatedBy;
-    }
+  public String getCreatedBy() {
+    return createdBy;
+  }
+
+  public void setCreatedBy(String createdBy) {
+    this.createdBy = createdBy;
+  }
+
+  public Date getUpdatedAt() {
+    return updatedAt;
+  }
+
+  public void setUpdatedAt(Date updatedAt) {
+    this.updatedAt = updatedAt;
+  }
+
+  public String getUpdatedBy() {
+    return updatedBy;
+  }
+
+  public void setUpdatedBy(String updatedBy) {
+    this.updatedBy = updatedBy;
+  }
 }
