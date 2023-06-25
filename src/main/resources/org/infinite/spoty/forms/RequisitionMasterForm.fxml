@@ -22,7 +22,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import java.net.URL?>
-<BorderPane fx:id="requisitionMasterFormContentPane" xmlns:fx="http://javafx.com/fxml/1" cache="true" cacheHint="SPEED"
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:id="requisitionMasterFormContentPane" cache="true" cacheHint="SPEED"
             xmlns="http://javafx.com/javafx/19"
             fx:controller="org.infinite.spoty.forms.RequisitionMasterFormController">
     <stylesheets>

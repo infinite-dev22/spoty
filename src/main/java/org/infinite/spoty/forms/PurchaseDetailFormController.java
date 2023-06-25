@@ -14,10 +14,16 @@
 
 package org.infinite.spoty.forms;
 
+import static org.infinite.spoty.GlobalActions.closeDialog;
+import static org.infinite.spoty.Validators.requiredValidator;
+import static org.infinite.spoty.values.SharedResources.tempIdProperty;
+
 import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
+import java.net.URL;
+import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -26,81 +32,75 @@ import org.infinite.spoty.database.models.ProductDetail;
 import org.infinite.spoty.viewModels.ProductDetailViewModel;
 import org.infinite.spoty.viewModels.PurchaseDetailViewModel;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
-import static org.infinite.spoty.GlobalActions.closeDialog;
-import static org.infinite.spoty.Validators.requiredValidator;
-import static org.infinite.spoty.values.SharedResources.tempIdProperty;
-
 public class PurchaseDetailFormController implements Initializable {
-    @FXML
-    public MFXTextField purchaseDetailQnty;
-    @FXML
-    public MFXFilterComboBox<ProductDetail> purchaseDetailPdct;
-    @FXML
-    public MFXTextField purchaseDetailCost;
-    @FXML
-    public MFXFilledButton purchaseDetailSaveBtn;
-    @FXML
-    public MFXOutlinedButton purchaseDetailCancelBtn;
-    @FXML
-    public Label purchaseDetailTitle;
-    @FXML
-    public Label purchaseDetailQntyValidationLabel;
-    @FXML
-    public Label purchaseDetailPdctValidationLabel;
-    @FXML
-    public Label purchaseDetailCostValidationLabel;
+  @FXML public MFXTextField purchaseDetailQnty;
+  @FXML public MFXFilterComboBox<ProductDetail> purchaseDetailPdct;
+  @FXML public MFXTextField purchaseDetailCost;
+  @FXML public MFXFilledButton purchaseDetailSaveBtn;
+  @FXML public MFXOutlinedButton purchaseDetailCancelBtn;
+  @FXML public Label purchaseDetailTitle;
+  @FXML public Label purchaseDetailQntyValidationLabel;
+  @FXML public Label purchaseDetailPdctValidationLabel;
+  @FXML public Label purchaseDetailCostValidationLabel;
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        // Input bindings.
-        purchaseDetailQnty.textProperty().bindBidirectional(PurchaseDetailViewModel.quantityProperty());
-        purchaseDetailPdct.valueProperty().bindBidirectional(PurchaseDetailViewModel.productProperty());
-        purchaseDetailCost.textProperty().bindBidirectional(PurchaseDetailViewModel.costProperty());
-        purchaseDetailPdct.setItems(ProductDetailViewModel.getProductDetails());
-        purchaseDetailPdct.setConverter(new StringConverter<>() {
-            @Override
-            public String toString(ProductDetail object) {
-                return object != null ? object.getProduct().getName()
-                        + " " + (object.getUnit() != null ? (object.getName().isEmpty() ? "" : object.getName())
-                        + " " + object.getUnit().getName() : object.getName()) : null;
-            }
+  @Override
+  public void initialize(URL location, ResourceBundle resources) {
+    // Input bindings.
+    purchaseDetailQnty.textProperty().bindBidirectional(PurchaseDetailViewModel.quantityProperty());
+    purchaseDetailPdct.valueProperty().bindBidirectional(PurchaseDetailViewModel.productProperty());
+    purchaseDetailCost.textProperty().bindBidirectional(PurchaseDetailViewModel.costProperty());
+    purchaseDetailPdct.setItems(ProductDetailViewModel.getProductDetails());
+    purchaseDetailPdct.setConverter(
+        new StringConverter<>() {
+          @Override
+          public String toString(ProductDetail object) {
+            return object != null
+                ? object.getProduct().getName()
+                    + " "
+                    + (object.getUnit() != null
+                        ? (object.getName().isEmpty() ? "" : object.getName())
+                            + " "
+                            + object.getUnit().getName()
+                        : object.getName())
+                : null;
+          }
 
-            @Override
-            public ProductDetail fromString(String string) {
-                return null;
-            }
+          @Override
+          public ProductDetail fromString(String string) {
+            return null;
+          }
         });
-        // Input validators.
-        requiredValidator(purchaseDetailPdct, "Product is required.", purchaseDetailPdctValidationLabel);
-        requiredValidator(purchaseDetailQnty, "Quantity is required.", purchaseDetailQntyValidationLabel);
-        requiredValidator(purchaseDetailCost, "Cost is required.", purchaseDetailCostValidationLabel);
-        dialogOnActions();
-    }
+    // Input validators.
+    requiredValidator(
+        purchaseDetailPdct, "Product is required.", purchaseDetailPdctValidationLabel);
+    requiredValidator(
+        purchaseDetailQnty, "Quantity is required.", purchaseDetailQntyValidationLabel);
+    requiredValidator(purchaseDetailCost, "Cost is required.", purchaseDetailCostValidationLabel);
+    dialogOnActions();
+  }
 
-    private void dialogOnActions() {
-        purchaseDetailCancelBtn.setOnAction((e) -> {
-            closeDialog(e);
+  private void dialogOnActions() {
+    purchaseDetailCancelBtn.setOnAction(
+        (e) -> {
+          closeDialog(e);
+          PurchaseDetailViewModel.resetProperties();
+          purchaseDetailPdctValidationLabel.setVisible(false);
+          purchaseDetailQntyValidationLabel.setVisible(false);
+          purchaseDetailCostValidationLabel.setVisible(false);
+        });
+    purchaseDetailSaveBtn.setOnAction(
+        (e) -> {
+          if (!purchaseDetailPdctValidationLabel.isVisible()
+              && !purchaseDetailQntyValidationLabel.isVisible()
+              && !purchaseDetailCostValidationLabel.isVisible()) {
+            System.out.println(purchaseDetailPdct.getSelectedItem().getName());
+            System.out.println(PurchaseDetailViewModel.getProduct().getName());
+            if (tempIdProperty().get() > -1)
+              PurchaseDetailViewModel.updatePurchaseDetail(PurchaseDetailViewModel.getId());
+            else PurchaseDetailViewModel.addPurchaseDetail();
             PurchaseDetailViewModel.resetProperties();
-            purchaseDetailPdctValidationLabel.setVisible(false);
-            purchaseDetailQntyValidationLabel.setVisible(false);
-            purchaseDetailCostValidationLabel.setVisible(false);
+            closeDialog(e);
+          }
         });
-        purchaseDetailSaveBtn.setOnAction((e) -> {
-            if (!purchaseDetailPdctValidationLabel.isVisible()
-                    && !purchaseDetailQntyValidationLabel.isVisible()
-                    && !purchaseDetailCostValidationLabel.isVisible()) {
-                System.out.println(purchaseDetailPdct.getSelectedItem().getName());
-                System.out.println(PurchaseDetailViewModel.getProduct().getName());
-                if (tempIdProperty().get() > -1)
-                    PurchaseDetailViewModel.updatePurchaseDetail(PurchaseDetailViewModel.getId());
-                else
-                    PurchaseDetailViewModel.addPurchaseDetail();
-                PurchaseDetailViewModel.resetProperties();
-                closeDialog(e);
-            }
-        });
-    }
+  }
 }

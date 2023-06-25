@@ -15,137 +15,137 @@
 package org.infinite.spoty.database.models;
 
 import jakarta.persistence.*;
-
 import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 public class StockInDetail implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    @ManyToOne
-    @JoinColumn(name = "stockIn_id", nullable = false)
-    private StockInMaster stockIn;
-    @ManyToOne
-    private ProductDetail product;
-    private int quantity;
-    private String serialNo;
-    private String description;
-    private String location;
-    @Column(name = "created_at")
-    private Date createdAt;
-    @Column(name = "created_by")
-    private String createdBy;
-    @Column(name = "updated_at")
-    private Date updatedAt;
-    @Column(name = "updated_by")
-    private String updatedBy;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private int id;
 
-    public StockInDetail() {
-    }
+  @ManyToOne
+  @JoinColumn(name = "stockIn_id", nullable = false)
+  private StockInMaster stockIn;
 
-    public StockInDetail(ProductDetail product,
-                         int quantity,
-                         String serialNo,
-                         String description,
-                         String location) {
-        this.product = product;
-        this.quantity = quantity;
-        this.serialNo = serialNo;
-        this.description = description;
-        this.location = location;
-    }
+  @ManyToOne private ProductDetail product;
+  private int quantity;
+  private String serialNo;
+  private String description;
+  private String location;
 
-    public int getId() {
-        return id;
-    }
+  @Column(name = "created_at")
+  private Date createdAt;
 
-    public void setId(int id) {
-        this.id = id;
-    }
+  @Column(name = "created_by")
+  private String createdBy;
 
-    public StockInMaster getStockIn() {
-        return stockIn;
-    }
+  @Column(name = "updated_at")
+  private Date updatedAt;
 
-    public void setStockIn(StockInMaster stockIn) {
-        this.stockIn = stockIn;
-    }
+  @Column(name = "updated_by")
+  private String updatedBy;
 
-    public ProductDetail getProduct() {
-        return product;
-    }
+  public StockInDetail() {}
 
-    public void setProduct(ProductDetail product) {
-        this.product = product;
-    }
+  public StockInDetail(
+      ProductDetail product, int quantity, String serialNo, String description, String location) {
+    this.product = product;
+    this.quantity = quantity;
+    this.serialNo = serialNo;
+    this.description = description;
+    this.location = location;
+  }
 
-    public String getProductDetailName() {
-        return (product != null) ? product.getProduct().getName() + " " + product.getSaleUnit() : null;
-    }
+  public int getId() {
+    return id;
+  }
 
-    public int getQuantity() {
-        return quantity;
-    }
+  public void setId(int id) {
+    this.id = id;
+  }
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
+  public StockInMaster getStockIn() {
+    return stockIn;
+  }
 
-    public String getSerialNo() {
-        return serialNo;
-    }
+  public void setStockIn(StockInMaster stockIn) {
+    this.stockIn = stockIn;
+  }
 
-    public void setSerialNo(String serialNo) {
-        this.serialNo = serialNo;
-    }
+  public ProductDetail getProduct() {
+    return product;
+  }
 
-    public String getDescription() {
-        return description;
-    }
+  public void setProduct(ProductDetail product) {
+    this.product = product;
+  }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+  public String getProductDetailName() {
+    return (product != null) ? product.getProduct().getName() + " " + product.getSaleUnit() : null;
+  }
 
-    public String getLocation() {
-        return location;
-    }
+  public int getQuantity() {
+    return quantity;
+  }
 
-    public void setLocation(String location) {
-        this.location = location;
-    }
+  public void setQuantity(int quantity) {
+    this.quantity = quantity;
+  }
 
-    public Date getCreatedAt() {
-        return createdAt;
-    }
+  public String getSerialNo() {
+    return serialNo;
+  }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
+  public void setSerialNo(String serialNo) {
+    this.serialNo = serialNo;
+  }
 
-    public String getCreatedBy() {
-        return createdBy;
-    }
+  public String getDescription() {
+    return description;
+  }
 
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
+  public String getLocation() {
+    return location;
+  }
 
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+  public void setLocation(String location) {
+    this.location = location;
+  }
 
-    public String getUpdatedBy() {
-        return updatedBy;
-    }
+  public Date getCreatedAt() {
+    return createdAt;
+  }
 
-    public void setUpdatedBy(String updatedBy) {
-        this.updatedBy = updatedBy;
-    }
+  public void setCreatedAt(Date createdAt) {
+    this.createdAt = createdAt;
+  }
+
+  public String getCreatedBy() {
+    return createdBy;
+  }
+
+  public void setCreatedBy(String createdBy) {
+    this.createdBy = createdBy;
+  }
+
+  public Date getUpdatedAt() {
+    return updatedAt;
+  }
+
+  public void setUpdatedAt(Date updatedAt) {
+    this.updatedAt = updatedAt;
+  }
+
+  public String getUpdatedBy() {
+    return updatedBy;
+  }
+
+  public void setUpdatedBy(String updatedBy) {
+    this.updatedBy = updatedBy;
+  }
 }

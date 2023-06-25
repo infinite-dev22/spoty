@@ -15,6 +15,8 @@
 package org.infinite.spoty.components.navigation;
 
 import io.github.palexdev.materialfx.controls.MFXIconWrapper;
+import java.util.List;
+import java.util.Objects;
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.css.PseudoClass;
@@ -31,183 +33,204 @@ import javafx.scene.layout.HBox;
 import org.jetbrains.annotations.Nullable;
 import org.kordamp.ikonli.javafx.FontIcon;
 
-import java.util.List;
-import java.util.Objects;
-
 public class NavTree extends TreeView<Nav> {
-    /**
-     * Removes or hides dropdown arrow nav.
-     */
-    public static final String NO_ARROW = "no-arrow";
+  public static final double SIDEBAR_WIDTH = 194.0;
+  /** Removes or hides dropdown arrow nav. */
+  public static final String NO_ARROW = "no-arrow";
 
-    /**
-     * Removes external control borders.
-     */
-    public static final String EDGE_TO_EDGE = "edge-to-edge";
+  /** Removes external control borders. */
+  public static final String EDGE_TO_EDGE = "edge-to-edge";
 
-    /**
-     * Removes control header.
-     */
-    public static final String NO_HEADER = "no-header";
+  /** Removes control header. */
+  public static final String NO_HEADER = "no-header";
 
-    /**
-     * Alignment.
-     */
-    public static final String ALIGN_LEFT = "align-left";
-    public static final String ALIGN_CENTER = "align-center";
-    public static final String ALIGN_RIGHT = "align-right";
-    static ChangeListener<Boolean> expandedListener;
+  /** Alignment. */
+  public static final String ALIGN_LEFT = "align-left";
 
-    /**
-     * Forces a control to use alternative icon, if available.
-     */
-    public static final String ALT_ICON = "alt-icon";
+  public static final String ALIGN_CENTER = "align-center";
+  public static final String ALIGN_RIGHT = "align-right";
+  /** Forces a control to use alternative icon, if available. */
+  public static final String ALT_ICON = "alt-icon";
 
-    public NavTree(Navigation navigation) {
-        super();
-        setPrefHeight(700);
+  static ChangeListener<Boolean> expandedListener;
 
-        getSelectionModel().selectedItemProperty().addListener((obs, old, val) -> {
-            if (!(val instanceof NavTreeItem navTreeItem)) {
+  public NavTree(Navigation navigation) {
+    super();
+    setPrefHeight(600);
+
+    getSelectionModel()
+        .selectedItemProperty()
+        .addListener(
+            (obs, old, val) -> {
+              if (!(val instanceof NavTreeItem navTreeItem)) {
                 return;
-            }
+              }
 
-            if (!navTreeItem.isGroup()) {
+              if (!navTreeItem.isGroup()) {
                 navigation.navigate(navTreeItem.view());
-            }
+              }
 
-            if (navTreeItem.isGroup()) {
+              if (navTreeItem.isGroup()) {
                 navTreeItem.expandedProperty().addListener(expandedListener);
-            }
-        });
+              }
 
-        expandedListener = (obs, wasExpanded, isNowExpanded) -> {
-            if (isNowExpanded) {
-                ReadOnlyProperty<?> expandedProperty = (ReadOnlyProperty<?>) obs;
-                Object itemThatWasJustExpanded = expandedProperty.getBean();
-                for (TreeItem<Nav> item : getRoot().getChildren()) {
-                    if (item != itemThatWasJustExpanded) {
-                        item.setExpanded(false);
-                    }
-                }
-            }
-        };
-
-        getStyleClass().addAll(EDGE_TO_EDGE);
-        setShowRoot(false);
-        rootProperty().bind(navigation.navTreeProperty());
-        setCellFactory(p -> new NavTreeCell());
-    }
-
-    public static void toggleVisibility(Node node, boolean on) {
-        node.setVisible(on);
-        node.setManaged(on);
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    public static final class NavTreeCell extends TreeCell<Nav> {
-        private static final PseudoClass GROUP = PseudoClass.getPseudoClass("group");
-
-        private final HBox root;
-        private final Label titleLabel;
-        private final Node arrowIcon;
-        private final Label tagLabel;
-
-        public NavTreeCell() {
-            super();
-
-            titleLabel = new Label();
-            titleLabel.setGraphicTextGap(10);
-            titleLabel.getStyleClass().add("title");
-
-            arrowIcon = new FontIcon();
-            arrowIcon.getStyleClass().add("arrow");
-
-            tagLabel = new Label("new");
-            tagLabel.getStyleClass().add("tag");
-
-            root = new HBox();
-            root.setAlignment(Pos.CENTER_LEFT);
-            root.getChildren().setAll(titleLabel, new Spacer(), tagLabel, arrowIcon);
-            root.setCursor(Cursor.HAND);
-            root.getStyleClass().add("container");
-            // root.setMaxWidth(ApplicationWindow.SIDEBAR_WIDTH - 10);
-
-            root.setOnMouseClicked(e -> {
-                if (!(getTreeItem() instanceof NavTreeItem navTreeItem)) {
-                    return;
-                }
-
-                if (navTreeItem.isGroup() && e.getButton() == MouseButton.PRIMARY) {
-                    navTreeItem.setExpanded(!navTreeItem.isExpanded());
-                    // scroll slightly above the target
-                    getTreeView().scrollTo(getTreeView().getRow(navTreeItem) - 10);
-                }
+              if (navTreeItem.isMainPage()) {
+                getSelectionModel()
+                    .selectedItemProperty()
+                    .addListener(
+                        changeListener -> {
+                          ReadOnlyProperty<?> expandedProperty = (ReadOnlyProperty<?>) obs;
+                          Object itemThatWasJustExpanded = expandedProperty.getBean();
+                          for (TreeItem<Nav> item : getRoot().getChildren()) {
+                            if (item != itemThatWasJustExpanded) {
+                              item.setExpanded(false);
+                            }
+                          }
+                        });
+              }
             });
 
-            setDisclosureNode(null);
-            getStyleClass().add("nav-tree-cell");
-        }
-
-        @Override
-        protected void updateItem(Nav nav, boolean empty) {
-            super.updateItem(nav, empty);
-
-            if (nav == null || empty) {
-                setGraphic(null);
-                titleLabel.setText(null);
-                titleLabel.setGraphic(null);
-            } else {
-                setGraphic(root);
-
-                titleLabel.setText(nav.title());
-                titleLabel.setGraphic(nav.graphic());
-
-                pseudoClassStateChanged(GROUP, nav.isGroup());
-                toggleVisibility(arrowIcon, nav.isGroup());
+    expandedListener =
+        (obs, wasExpanded, isNowExpanded) -> {
+          if (isNowExpanded) {
+            ReadOnlyProperty<?> expandedProperty = (ReadOnlyProperty<?>) obs;
+            Object itemThatWasJustExpanded = expandedProperty.getBean();
+            for (TreeItem<Nav> item : getRoot().getChildren()) {
+              if (item != itemThatWasJustExpanded) {
+                item.setExpanded(false);
+              }
             }
-        }
+          }
+        };
+
+    getStyleClass().addAll(EDGE_TO_EDGE);
+    setShowRoot(false);
+    rootProperty().bind(navigation.navTreeProperty());
+    setCellFactory(p -> new NavTreeCell());
+  }
+
+  public static void toggleVisibility(Node node, boolean on) {
+    node.setVisible(on);
+    node.setManaged(on);
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  public static final class NavTreeCell extends TreeCell<Nav> {
+    private static final PseudoClass GROUP = PseudoClass.getPseudoClass("group");
+
+    private static final PseudoClass SUB_ITEM = PseudoClass.getPseudoClass("sub-tree-item");
+
+    private final HBox root;
+    private final Label titleLabel;
+    private final Node arrowIcon;
+    private final Label tagLabel;
+
+    public NavTreeCell() {
+      super();
+
+      titleLabel = new Label();
+      titleLabel.getStyleClass().add("title");
+
+      arrowIcon = new FontIcon();
+      arrowIcon.getStyleClass().add("arrow");
+
+      tagLabel = new Label("");
+      tagLabel.getStyleClass().add("tag");
+
+      root = new HBox();
+      root.setAlignment(Pos.CENTER_LEFT);
+      root.getChildren().setAll(titleLabel, new Spacer(), tagLabel, arrowIcon);
+      root.setCursor(Cursor.HAND);
+      root.getStyleClass().add("container");
+      root.setMaxWidth(SIDEBAR_WIDTH - 10);
+
+      root.setOnMouseClicked(
+          e -> {
+            if (!(getTreeItem() instanceof NavTreeItem navTreeItem)) {
+              return;
+            }
+
+            if (navTreeItem.isGroup() && e.getButton() == MouseButton.PRIMARY) {
+              navTreeItem.setExpanded(!navTreeItem.isExpanded());
+              // scroll slightly above the target
+              getTreeView().scrollTo(getTreeView().getRow(navTreeItem) - 10);
+            }
+          });
+
+      treeItemProperty()
+          .addListener(
+              (obs, oldTreeItem, newTreeItem) ->
+                  pseudoClassStateChanged(
+                      SUB_ITEM,
+                      newTreeItem != null && newTreeItem.getParent() != getTreeView().getRoot()));
+
+      getStyleClass().add("nav-tree-cell");
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    @Override
+    protected void updateItem(Nav nav, boolean empty) {
+      super.updateItem(nav, empty);
+      setDisclosureNode(null);
 
-    public static final class NavTreeItem extends TreeItem<Nav> {
-        private final Nav nav;
+      if (nav == null || empty) {
+        setText("");
+        setGraphic(null);
+        titleLabel.setText(null);
+        titleLabel.setGraphic(null);
+      } else {
+        setGraphic(root);
+        titleLabel.setGraphic(nav.graphic());
+        titleLabel.setText(nav.title());
 
-        public NavTreeItem(Nav nav) {
-            this.nav = Objects.requireNonNull(nav, "nav");
-            setValue(nav);
-        }
-
-        public @Nullable BorderPane view () {
-            return nav.view();
-        }
-
-        public static NavTreeItem root() {
-            return new NavTreeItem(Nav.ROOT);
-        }
-
-        public static NavTreeItem group(String title, String icon) {
-            MFXIconWrapper wrapper = new MFXIconWrapper(icon, 24, 32);
-            return new NavTreeItem(new Nav(title, wrapper, null, null));
-        }
-
-        public static NavTreeItem mainPage(String title, String icon,  BorderPane view) {
-            MFXIconWrapper wrapper = new MFXIconWrapper(icon, 24, 32);
-            return new NavTreeItem(new Nav(title, wrapper, view, null));
-        }
-
-        public static NavTreeItem page(String title, BorderPane view) {
-            return new NavTreeItem(new Nav(title, null, view, null));
-        }
-
-        public static NavTreeItem page(String title, BorderPane view, String... searchKeywords) {
-            return new NavTreeItem(new Nav(title, null, view, List.of(searchKeywords)));
-        }
-
-        public boolean isGroup() {
-            return nav.isGroup();
-        }
+        pseudoClassStateChanged(GROUP, nav.isGroup());
+        toggleVisibility(arrowIcon, nav.isGroup());
+      }
     }
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  public static final class NavTreeItem extends TreeItem<Nav> {
+    private final Nav nav;
+
+    public NavTreeItem(Nav nav) {
+      this.nav = Objects.requireNonNull(nav, "nav");
+      setValue(nav);
+    }
+
+    public static NavTreeItem root() {
+      return new NavTreeItem(Nav.ROOT);
+    }
+
+    public static NavTreeItem group(String title, String icon) {
+      MFXIconWrapper wrapper = new MFXIconWrapper(icon, 24, 32);
+      return new NavTreeItem(new Nav(title, wrapper, null, null));
+    }
+
+    public static NavTreeItem mainPage(String title, String icon, BorderPane view) {
+      MFXIconWrapper wrapper = new MFXIconWrapper(icon, 24, 32);
+      return new NavTreeItem(new Nav(title, wrapper, view, null));
+    }
+
+    public static NavTreeItem page(String title, BorderPane view) {
+      return new NavTreeItem(new Nav(title, null, view, null));
+    }
+
+    public static NavTreeItem page(String title, BorderPane view, String... searchKeywords) {
+      return new NavTreeItem(new Nav(title, null, view, List.of(searchKeywords)));
+    }
+
+    public @Nullable BorderPane view() {
+      return nav.view();
+    }
+
+    public boolean isGroup() {
+      return nav.isGroup();
+    }
+
+    public boolean isMainPage() {
+      return nav.isMainPage();
+    }
+  }
 }

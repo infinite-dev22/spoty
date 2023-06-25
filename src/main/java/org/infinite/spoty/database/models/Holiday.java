@@ -15,139 +15,153 @@
 package org.infinite.spoty.database.models;
 
 import jakarta.persistence.*;
-
 import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 public class Holiday implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-    private String title;
-    @ManyToOne
-    private Company company;
-    @Column(name = "start_date")
-    private Date startDate;
-    @Column(name = "end_date")
-    private Date endDate;
-    private String description;
-    @Column(name = "created_at")
-    private Date createdAt;
-    @Column(name = "created_by")
-    private String createdBy;
-    @Column(name = "updated_at")
-    private Date updatedAt;
-    @Column(name = "updated_by")
-    private String updatedBy;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private long id;
 
-    public Holiday(String title, Company company, Date startDate, Date endDate, String description, Date createdAt, String createdBy, Date updatedAt, String updatedBy) {
-        this.title = title;
-        this.company = company;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.description = description;
-        this.createdAt = createdAt;
-        this.createdBy = createdBy;
-        this.updatedAt = updatedAt;
-        this.updatedBy = updatedBy;
-    }
+  private String title;
+  @ManyToOne private Company company;
 
-    public Holiday(String title, Company company, Date startDate, Date endDate, String description) {
-        this.title = title;
-        this.company = company;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.description = description;
-    }
+  @Column(name = "start_date")
+  private Date startDate;
 
-    public Holiday(String title, Company company, Date startDate, Date endDate) {
-        this.title = title;
-        this.company = company;
-        this.startDate = startDate;
-        this.endDate = endDate;
-    }
+  @Column(name = "end_date")
+  private Date endDate;
 
-    public Holiday() {
-    }
+  private String description;
 
-    public long getId() {
-        return id;
-    }
+  @Column(name = "created_at")
+  private Date createdAt;
 
-    public void setId(long id) {
-        this.id = id;
-    }
+  @Column(name = "created_by")
+  private String createdBy;
 
-    public String getTitle() {
-        return title;
-    }
+  @Column(name = "updated_at")
+  private Date updatedAt;
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+  @Column(name = "updated_by")
+  private String updatedBy;
 
-    public Company getCompany() {
-        return company;
-    }
+  public Holiday(
+      String title,
+      Company company,
+      Date startDate,
+      Date endDate,
+      String description,
+      Date createdAt,
+      String createdBy,
+      Date updatedAt,
+      String updatedBy) {
+    this.title = title;
+    this.company = company;
+    this.startDate = startDate;
+    this.endDate = endDate;
+    this.description = description;
+    this.createdAt = createdAt;
+    this.createdBy = createdBy;
+    this.updatedAt = updatedAt;
+    this.updatedBy = updatedBy;
+  }
 
-    public void setCompany(Company company) {
-        this.company = company;
-    }
+  public Holiday(String title, Company company, Date startDate, Date endDate, String description) {
+    this.title = title;
+    this.company = company;
+    this.startDate = startDate;
+    this.endDate = endDate;
+    this.description = description;
+  }
 
-    public Date getStartDate() {
-        return startDate;
-    }
+  public Holiday(String title, Company company, Date startDate, Date endDate) {
+    this.title = title;
+    this.company = company;
+    this.startDate = startDate;
+    this.endDate = endDate;
+  }
 
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
-    }
+  public Holiday() {}
 
-    public Date getEndDate() {
-        return endDate;
-    }
+  public long getId() {
+    return id;
+  }
 
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
-    }
+  public void setId(long id) {
+    this.id = id;
+  }
 
-    public String getDescription() {
-        return description;
-    }
+  public String getTitle() {
+    return title;
+  }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+  public void setTitle(String title) {
+    this.title = title;
+  }
 
-    public Date getCreatedAt() {
-        return createdAt;
-    }
+  public Company getCompany() {
+    return company;
+  }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
+  public void setCompany(Company company) {
+    this.company = company;
+  }
 
-    public String getCreatedBy() {
-        return createdBy;
-    }
+  public Date getStartDate() {
+    return startDate;
+  }
 
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
+  public void setStartDate(Date startDate) {
+    this.startDate = startDate;
+  }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
+  public Date getEndDate() {
+    return endDate;
+  }
 
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+  public void setEndDate(Date endDate) {
+    this.endDate = endDate;
+  }
 
-    public String getUpdatedBy() {
-        return updatedBy;
-    }
+  public String getDescription() {
+    return description;
+  }
 
-    public void setUpdatedBy(String updatedBy) {
-        this.updatedBy = updatedBy;
-    }
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public Date getCreatedAt() {
+    return createdAt;
+  }
+
+  public void setCreatedAt(Date createdAt) {
+    this.createdAt = createdAt;
+  }
+
+  public String getCreatedBy() {
+    return createdBy;
+  }
+
+  public void setCreatedBy(String createdBy) {
+    this.createdBy = createdBy;
+  }
+
+  public Date getUpdatedAt() {
+    return updatedAt;
+  }
+
+  public void setUpdatedAt(Date updatedAt) {
+    this.updatedAt = updatedAt;
+  }
+
+  public String getUpdatedBy() {
+    return updatedBy;
+  }
+
+  public void setUpdatedBy(String updatedBy) {
+    this.updatedBy = updatedBy;
+  }
 }

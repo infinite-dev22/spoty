@@ -24,152 +24,154 @@ import org.infinite.spoty.database.dao.BranchDao;
 import org.infinite.spoty.database.models.Branch;
 
 public class BranchViewModel {
-    private static final IntegerProperty id = new SimpleIntegerProperty(0);
-    private static final StringProperty title = new SimpleStringProperty("");
-    private static final StringProperty name = new SimpleStringProperty("");
-    private static final StringProperty email = new SimpleStringProperty("");
-    private static final StringProperty phone = new SimpleStringProperty("");
-    private static final StringProperty town = new SimpleStringProperty("");
-    private static final StringProperty city = new SimpleStringProperty("");
-    private static final StringProperty zipcode = new SimpleStringProperty("");
-    public static ObservableList<Branch> branchesList = FXCollections.observableArrayList();
+  private static final IntegerProperty id = new SimpleIntegerProperty(0);
+  private static final StringProperty title = new SimpleStringProperty("");
+  private static final StringProperty name = new SimpleStringProperty("");
+  private static final StringProperty email = new SimpleStringProperty("");
+  private static final StringProperty phone = new SimpleStringProperty("");
+  private static final StringProperty town = new SimpleStringProperty("");
+  private static final StringProperty city = new SimpleStringProperty("");
+  private static final StringProperty zipcode = new SimpleStringProperty("");
+  public static ObservableList<Branch> branchesList = FXCollections.observableArrayList();
 
-    public static Integer getId() {
-        return id.get();
-    }
+  public static Integer getId() {
+    return id.get();
+  }
 
-    public static void setId(Integer id) {
-        BranchViewModel.id.set(id);
-    }
+  public static void setId(Integer id) {
+    BranchViewModel.id.set(id);
+  }
 
-    public static IntegerProperty idProperty() {
-        return id;
-    }
+  public static IntegerProperty idProperty() {
+    return id;
+  }
 
-    public static String getName() {
-        return name.get();
-    }
+  public static String getName() {
+    return name.get();
+  }
 
-    public static void setName(String name) {
-        BranchViewModel.name.set(name);
-    }
+  public static void setName(String name) {
+    BranchViewModel.name.set(name);
+  }
 
-    public static StringProperty nameProperty() {
-        return name;
-    }
+  public static StringProperty nameProperty() {
+    return name;
+  }
 
-    public static String getEmail() {
-        return email.get();
-    }
+  public static String getEmail() {
+    return email.get();
+  }
 
-    public static void setEmail(String email) {
-        BranchViewModel.email.set(email);
-    }
+  public static void setEmail(String email) {
+    BranchViewModel.email.set(email);
+  }
 
-    public static StringProperty emailProperty() {
-        return email;
-    }
+  public static StringProperty emailProperty() {
+    return email;
+  }
 
-    public static String getPhone() {
-        return phone.get();
-    }
+  public static String getPhone() {
+    return phone.get();
+  }
 
-    public static void setPhone(String phone) {
-        BranchViewModel.phone.set(phone);
-    }
+  public static void setPhone(String phone) {
+    BranchViewModel.phone.set(phone);
+  }
 
-    public static StringProperty phoneProperty() {
-        return phone;
-    }
+  public static StringProperty phoneProperty() {
+    return phone;
+  }
 
-    public static String getTown() {
-        return town.get();
-    }
+  public static String getTown() {
+    return town.get();
+  }
 
-    public static void setTown(String town) {
-        BranchViewModel.town.set(town);
-    }
+  public static void setTown(String town) {
+    BranchViewModel.town.set(town);
+  }
 
-    public static StringProperty townProperty() {
-        return town;
-    }
+  public static StringProperty townProperty() {
+    return town;
+  }
 
-    public static String getCity() {
-        return city.get();
-    }
+  public static String getCity() {
+    return city.get();
+  }
 
-    public static void setCity(String city) {
-        BranchViewModel.city.set(city);
-    }
+  public static void setCity(String city) {
+    BranchViewModel.city.set(city);
+  }
 
-    public static StringProperty cityProperty() {
-        return city;
-    }
+  public static StringProperty cityProperty() {
+    return city;
+  }
 
-    public static String getZipcode() {
-        return zipcode.get();
-    }
+  public static String getZipcode() {
+    return zipcode.get();
+  }
 
-    public static void setZipcode(String zipcode) {
-        BranchViewModel.zipcode.set(zipcode);
-    }
+  public static void setZipcode(String zipcode) {
+    BranchViewModel.zipcode.set(zipcode);
+  }
 
-    public static StringProperty zipcodeProperty() {
-        return zipcode;
-    }
+  public static StringProperty zipcodeProperty() {
+    return zipcode;
+  }
 
-    public static String getTitle() {
-        return title.get();
-    }
+  public static String getTitle() {
+    return title.get();
+  }
 
-    public static void setTitle(String title) {
-        BranchViewModel.title.set(title);
-    }
+  public static void setTitle(String title) {
+    BranchViewModel.title.set(title);
+  }
 
-    public static StringProperty titleProperty() {
-        return title;
-    }
+  public static StringProperty titleProperty() {
+    return title;
+  }
 
-    public static void saveBranch() {
-        Branch branch = new Branch(getName(), getCity(), getPhone(), getEmail(), getTown(), getZipcode());
-        BranchDao.saveBranch(branch);
-        branchesList.clear();
-        clearBranchData();
-        getBranches();
-    }
+  public static void saveBranch() {
+    Branch branch =
+        new Branch(getName(), getCity(), getPhone(), getEmail(), getTown(), getZipcode());
+    BranchDao.saveBranch(branch);
+    branchesList.clear();
+    clearBranchData();
+    getBranches();
+  }
 
-    public static void clearBranchData() {
-        setId(0);
-        setName("");
-        setCity("");
-        setPhone("");
-        setEmail("");
-        setTown("");
-        setZipcode("");
-    }
+  public static void clearBranchData() {
+    setId(0);
+    setName("");
+    setCity("");
+    setPhone("");
+    setEmail("");
+    setTown("");
+    setZipcode("");
+  }
 
-    public static ObservableList<Branch> getBranches() {
-        branchesList.clear();
-        branchesList.addAll(BranchDao.getBranches());
-        return branchesList;
-    }
+  public static ObservableList<Branch> getBranches() {
+    branchesList.clear();
+    branchesList.addAll(BranchDao.getBranches());
+    return branchesList;
+  }
 
-    public static void getItem(int branchID) {
-        Branch branch = BranchDao.findBranch(branchID);
-        setId(branch.getId());
-        setName(branch.getName());
-        setEmail(branch.getEmail());
-        setPhone(branch.getPhone());
-        setCity(branch.getCity());
-        setTown(branch.getTown());
-        setZipcode(branch.getZipCode());
-        getBranches();
-    }
+  public static void getItem(int branchID) {
+    Branch branch = BranchDao.findBranch(branchID);
+    setId(branch.getId());
+    setName(branch.getName());
+    setEmail(branch.getEmail());
+    setPhone(branch.getPhone());
+    setCity(branch.getCity());
+    setTown(branch.getTown());
+    setZipcode(branch.getZipCode());
+    getBranches();
+  }
 
-    public static void updateItem(int branchID) {
-        Branch branch = new Branch(getName(), getCity(), getPhone(), getEmail(), getTown(), getZipcode());
-        BranchDao.updateBranch(branch, branchID);
-        clearBranchData();
-        getBranches();
-    }
+  public static void updateItem(int branchID) {
+    Branch branch =
+        new Branch(getName(), getCity(), getPhone(), getEmail(), getTown(), getZipcode());
+    BranchDao.updateBranch(branch, branchID);
+    clearBranchData();
+    getBranches();
+  }
 }

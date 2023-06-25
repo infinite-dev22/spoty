@@ -15,172 +15,180 @@
 package org.infinite.spoty.database.models;
 
 import jakarta.persistence.*;
-
 import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 @Table(name = "user_account")
 public class User implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    @Column(name = "first_name", nullable = false)
-    private String firstName;
-    @Column(name = "last_name", nullable = false)
-    private String lastName;
-    @Column(name = "username", nullable = false, unique = true)
-    private String userName;
-    private String email;
-    private String password;
-    private String phone;
-    @ManyToOne(optional = false)
-    private Role role;
-    @Column(nullable = false)
-    private boolean active;
-    @Column(name = "access_all_branches", nullable = false)
-    private boolean accessAllBranches;
-    @Column(unique = true)
-    private byte[] avatar;
-    private Date createdAt;
-    private String createdBy;
-    private Date updatedAt;
-    private String updatedBy;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private int id;
 
-    public User() {
-    }
+  @Column(name = "first_name", nullable = false)
+  private String firstName;
 
-    public User(String firstName,
-                String lastName,
-                String userName,
-                Role role,
-                boolean active,
-                boolean accessAllBranches) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.userName = userName;
-        this.role = role;
-        this.active = active;
-        this.accessAllBranches = accessAllBranches;
-    }
+  @Column(name = "last_name", nullable = false)
+  private String lastName;
 
-    public int getId() {
-        return id;
-    }
+  @Column(name = "username", nullable = false, unique = true)
+  private String userName;
 
-    public void setId(int id) {
-        this.id = id;
-    }
+  private String email;
+  private String password;
+  private String phone;
 
-    public String getFirstName() {
-        return firstName;
-    }
+  @ManyToOne(optional = false)
+  private Role role;
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
+  @Column(nullable = false)
+  private boolean active;
 
-    public String getLastName() {
-        return lastName;
-    }
+  @Column(name = "access_all_branches", nullable = false)
+  private boolean accessAllBranches;
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
+  @Column(unique = true)
+  private byte[] avatar;
 
-    public String getUserName() {
-        return userName;
-    }
+  private Date createdAt;
+  private String createdBy;
+  private Date updatedAt;
+  private String updatedBy;
 
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
+  public User() {}
 
-    public String getEmail() {
-        return email;
-    }
+  public User(
+      String firstName,
+      String lastName,
+      String userName,
+      Role role,
+      boolean active,
+      boolean accessAllBranches) {
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.userName = userName;
+    this.role = role;
+    this.active = active;
+    this.accessAllBranches = accessAllBranches;
+  }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+  public int getId() {
+    return id;
+  }
 
-    public String getPassword() {
-        return password;
-    }
+  public void setId(int id) {
+    this.id = id;
+  }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+  public String getFirstName() {
+    return firstName;
+  }
 
-    public String getPhone() {
-        return phone;
-    }
+  public void setFirstName(String firstName) {
+    this.firstName = firstName;
+  }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
+  public String getLastName() {
+    return lastName;
+  }
 
-    public Role getRole() {
-        return role;
-    }
+  public void setLastName(String lastName) {
+    this.lastName = lastName;
+  }
 
-    public void setRole(Role role) {
-        this.role = role;
-    }
+  public String getUserName() {
+    return userName;
+  }
 
-    public boolean isActive() {
-        return active;
-    }
+  public void setUserName(String userName) {
+    this.userName = userName;
+  }
 
-    public void setActive(boolean active) {
-        this.active = active;
-    }
+  public String getEmail() {
+    return email;
+  }
 
-    public boolean canAccessAllBranches() {
-        return accessAllBranches;
-    }
+  public void setEmail(String email) {
+    this.email = email;
+  }
 
-    public void setAccessAllBranches(boolean accessAllBranches) {
-        this.accessAllBranches = accessAllBranches;
-    }
+  public String getPassword() {
+    return password;
+  }
 
-    public byte[] getAvatar() {
-        return avatar;
-    }
+  public void setPassword(String password) {
+    this.password = password;
+  }
 
-    public void setAvatar(byte[] avatar) {
-        this.avatar = avatar;
-    }
+  public String getPhone() {
+    return phone;
+  }
 
-    public Date getCreatedAt() {
-        return createdAt;
-    }
+  public void setPhone(String phone) {
+    this.phone = phone;
+  }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
+  public Role getRole() {
+    return role;
+  }
 
-    public String getCreatedBy() {
-        return createdBy;
-    }
+  public void setRole(Role role) {
+    this.role = role;
+  }
 
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
+  public boolean isActive() {
+    return active;
+  }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
+  public void setActive(boolean active) {
+    this.active = active;
+  }
 
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+  public boolean canAccessAllBranches() {
+    return accessAllBranches;
+  }
 
-    public String getUpdatedBy() {
-        return updatedBy;
-    }
+  public void setAccessAllBranches(boolean accessAllBranches) {
+    this.accessAllBranches = accessAllBranches;
+  }
 
-    public void setUpdatedBy(String updatedBy) {
-        this.updatedBy = updatedBy;
-    }
+  public byte[] getAvatar() {
+    return avatar;
+  }
+
+  public void setAvatar(byte[] avatar) {
+    this.avatar = avatar;
+  }
+
+  public Date getCreatedAt() {
+    return createdAt;
+  }
+
+  public void setCreatedAt(Date createdAt) {
+    this.createdAt = createdAt;
+  }
+
+  public String getCreatedBy() {
+    return createdBy;
+  }
+
+  public void setCreatedBy(String createdBy) {
+    this.createdBy = createdBy;
+  }
+
+  public Date getUpdatedAt() {
+    return updatedAt;
+  }
+
+  public void setUpdatedAt(Date updatedAt) {
+    this.updatedAt = updatedAt;
+  }
+
+  public String getUpdatedBy() {
+    return updatedBy;
+  }
+
+  public void setUpdatedBy(String updatedBy) {
+    this.updatedBy = updatedBy;
+  }
 }

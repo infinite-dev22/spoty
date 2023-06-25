@@ -15,120 +15,126 @@
 package org.infinite.spoty.database.models;
 
 import jakarta.persistence.*;
-
 import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 public class RequisitionDetail implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    @OneToOne
-    private ProductDetail productDetail;
-    @ManyToOne
-    @JoinColumn(name = "requisition_id", nullable = false)
-    private RequisitionMaster requisition;
-    private int quantity;
-    private String description;
-    @Column(name = "created_at")
-    private Date createdAt;
-    @Column(name = "created_by")
-    private String createdBy;
-    @Column(name = "updated_at")
-    private Date updatedAt;
-    @Column(name = "updated_by")
-    private String updatedBy;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private int id;
 
-    public RequisitionDetail() {
-    }
+  @OneToOne private ProductDetail productDetail;
 
-    public RequisitionDetail(ProductDetail productDetail,
-                             RequisitionMaster requisition, // TODO: Remove this line as it ain't good being here. can't get RequisitionMaster here. use setter.
-                             int quantity,
-                             String description) {
-        this.productDetail = productDetail;
-        this.requisition = requisition;
-        this.quantity = quantity;
-        this.description = description;
-    }
+  @ManyToOne
+  @JoinColumn(name = "requisition_id", nullable = false)
+  private RequisitionMaster requisition;
 
-    public int getId() {
-        return id;
-    }
+  private int quantity;
+  private String description;
 
-    public void setId(int id) {
-        this.id = id;
-    }
+  @Column(name = "created_at")
+  private Date createdAt;
 
-    public ProductDetail getProductDetail() {
-        return productDetail;
-    }
+  @Column(name = "created_by")
+  private String createdBy;
 
-    public void setProductDetail(ProductDetail productDetail) {
-        this.productDetail = productDetail;
-    }
+  @Column(name = "updated_at")
+  private Date updatedAt;
 
-    public String getProductDetailName() {
-        if (productDetail != null)
-            return productDetail.getProduct().getName() + " " + productDetail.getName();
-        else
-            return null;
-    }
+  @Column(name = "updated_by")
+  private String updatedBy;
 
-    public RequisitionMaster getRequisition() {
-        return requisition;
-    }
+  public RequisitionDetail() {}
 
-    public void setRequisition(RequisitionMaster requisition) {
-        this.requisition = requisition;
-    }
+  public RequisitionDetail(
+      ProductDetail productDetail,
+      RequisitionMaster
+          requisition, // TODO: Remove this line as it ain't good being here. can't get
+                       // RequisitionMaster here. use setter.
+      int quantity,
+      String description) {
+    this.productDetail = productDetail;
+    this.requisition = requisition;
+    this.quantity = quantity;
+    this.description = description;
+  }
 
-    public int getQuantity() {
-        return quantity;
-    }
+  public int getId() {
+    return id;
+  }
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
+  public void setId(int id) {
+    this.id = id;
+  }
 
-    public String getDescription() {
-        return description;
-    }
+  public ProductDetail getProductDetail() {
+    return productDetail;
+  }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+  public void setProductDetail(ProductDetail productDetail) {
+    this.productDetail = productDetail;
+  }
 
-    public Date getCreatedAt() {
-        return createdAt;
-    }
+  public String getProductDetailName() {
+    if (productDetail != null)
+      return productDetail.getProduct().getName() + " " + productDetail.getName();
+    else return null;
+  }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
+  public RequisitionMaster getRequisition() {
+    return requisition;
+  }
 
-    public String getCreatedBy() {
-        return createdBy;
-    }
+  public void setRequisition(RequisitionMaster requisition) {
+    this.requisition = requisition;
+  }
 
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
+  public int getQuantity() {
+    return quantity;
+  }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
+  public void setQuantity(int quantity) {
+    this.quantity = quantity;
+  }
 
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+  public String getDescription() {
+    return description;
+  }
 
-    public String getUpdatedBy() {
-        return updatedBy;
-    }
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
-    public void setUpdatedBy(String updatedBy) {
-        this.updatedBy = updatedBy;
-    }
+  public Date getCreatedAt() {
+    return createdAt;
+  }
+
+  public void setCreatedAt(Date createdAt) {
+    this.createdAt = createdAt;
+  }
+
+  public String getCreatedBy() {
+    return createdBy;
+  }
+
+  public void setCreatedBy(String createdBy) {
+    this.createdBy = createdBy;
+  }
+
+  public Date getUpdatedAt() {
+    return updatedAt;
+  }
+
+  public void setUpdatedAt(Date updatedAt) {
+    this.updatedAt = updatedAt;
+  }
+
+  public String getUpdatedBy() {
+    return updatedBy;
+  }
+
+  public void setUpdatedBy(String updatedBy) {
+    this.updatedBy = updatedBy;
+  }
 }

@@ -14,10 +14,17 @@
 
 package org.infinite.spoty.views.inventory.brand;
 
+import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
+import static org.infinite.spoty.viewModels.BrandViewModel.getItems;
+
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.enums.ButtonType;
 import io.github.palexdev.materialfx.filter.StringFilter;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Comparator;
+import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -33,118 +40,114 @@ import org.infinite.spoty.database.dao.BrandDao;
 import org.infinite.spoty.database.models.Brand;
 import org.infinite.spoty.viewModels.BrandViewModel;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.Comparator;
-import java.util.ResourceBundle;
-
-import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
-import static org.infinite.spoty.viewModels.BrandViewModel.getItems;
-
 @SuppressWarnings("unchecked")
 public class BrandController implements Initializable {
-    private static BrandController instance;
-    @FXML
-    public MFXTableView<Brand> brandTable;
-    @FXML
-    public MFXTextField brandSearchBar;
-    @FXML
-    public HBox brandActionsPane;
-    @FXML
-    public MFXButton brandImportBtn;
-    private Dialog<ButtonType> dialog;
+  private static BrandController instance;
+  @FXML public MFXTableView<Brand> brandTable;
+  @FXML public MFXTextField brandSearchBar;
+  @FXML public HBox brandActionsPane;
+  @FXML public MFXButton brandImportBtn;
+  private Dialog<ButtonType> dialog;
 
-    private BrandController(Stage stage) {
-        Platform.runLater(() -> {
-            try {
-                brandFormDialogPane(stage);
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
+  private BrandController(Stage stage) {
+    Platform.runLater(
+        () -> {
+          try {
+            brandFormDialogPane(stage);
+          } catch (IOException ex) {
+            throw new RuntimeException(ex);
+          }
         });
-    }
+  }
 
-    public static BrandController getInstance(Stage stage) {
-        if (instance == null)
-            instance = new BrandController(stage);
-        return instance;
-    }
+  public static BrandController getInstance(Stage stage) {
+    if (instance == null) instance = new BrandController(stage);
+    return instance;
+  }
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        Platform.runLater(this::setupTable);
-    }
+  @Override
+  public void initialize(URL location, ResourceBundle resources) {
+    Platform.runLater(this::setupTable);
+  }
 
-    private void setupTable() {
-        MFXTableColumn<Brand> brandName = new MFXTableColumn<>("Name", false, Comparator.comparing(Brand::getName));
-        MFXTableColumn<Brand> brandDescription = new MFXTableColumn<>("Description", false, Comparator.comparing(Brand::getDescription));
+  private void setupTable() {
+    MFXTableColumn<Brand> brandName =
+        new MFXTableColumn<>("Name", false, Comparator.comparing(Brand::getName));
+    MFXTableColumn<Brand> brandDescription =
+        new MFXTableColumn<>("Description", false, Comparator.comparing(Brand::getDescription));
 
-        brandName.setRowCellFactory(brand -> new MFXTableRowCell<>(Brand::getName));
-        brandDescription.setRowCellFactory(brand -> new MFXTableRowCell<>(Brand::getDescription));
+    brandName.setRowCellFactory(brand -> new MFXTableRowCell<>(Brand::getName));
+    brandDescription.setRowCellFactory(brand -> new MFXTableRowCell<>(Brand::getDescription));
 
-        brandName.prefWidthProperty().bind(brandTable.widthProperty().multiply(.5));
-        brandDescription.prefWidthProperty().bind(brandTable.widthProperty().multiply(.5));
+    brandName.prefWidthProperty().bind(brandTable.widthProperty().multiply(.5));
+    brandDescription.prefWidthProperty().bind(brandTable.widthProperty().multiply(.5));
 
-        brandTable.getTableColumns().addAll(brandName, brandDescription);
-        brandTable.getFilters().addAll(
-                new StringFilter<>("Name", Brand::getName),
-                new StringFilter<>("Description", Brand::getDescription)
-        );
-        getBrandTable();
-        brandTable.setItems(getItems());
-    }
+    brandTable.getTableColumns().addAll(brandName, brandDescription);
+    brandTable
+        .getFilters()
+        .addAll(
+            new StringFilter<>("Name", Brand::getName),
+            new StringFilter<>("Description", Brand::getDescription));
+    getBrandTable();
+    brandTable.setItems(getItems());
+  }
 
-    private void getBrandTable() {
-        brandTable.setPrefSize(1000, 1000);
-        brandTable.features().enableBounceEffect();
-        brandTable.features().enableSmoothScrolling(0.5);
+  private void getBrandTable() {
+    brandTable.setPrefSize(1000, 1000);
+    brandTable.features().enableBounceEffect();
+    brandTable.features().enableSmoothScrolling(0.5);
 
-        brandTable.setTableRowFactory(t -> {
-            MFXTableRow<Brand> row = new MFXTableRow<>(brandTable, t);
-            EventHandler<ContextMenuEvent> eventHandler = event -> {
+    brandTable.setTableRowFactory(
+        t -> {
+          MFXTableRow<Brand> row = new MFXTableRow<>(brandTable, t);
+          EventHandler<ContextMenuEvent> eventHandler =
+              event -> {
                 showContextMenu((MFXTableRow<Brand>) event.getSource())
-                        .show(brandTable.getScene().getWindow(), event.getScreenX(), event.getScreenY());
+                    .show(
+                        brandTable.getScene().getWindow(), event.getScreenX(), event.getScreenY());
                 event.consume();
-            };
-            row.setOnContextMenuRequested(eventHandler);
-            return row;
+              };
+          row.setOnContextMenuRequested(eventHandler);
+          return row;
         });
-    }
+  }
 
-    private MFXContextMenu showContextMenu(MFXTableRow<Brand> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(brandTable);
-        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
-        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+  private MFXContextMenu showContextMenu(MFXTableRow<Brand> obj) {
+    MFXContextMenu contextMenu = new MFXContextMenu(brandTable);
+    MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
+    MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
 
-        // Actions
-        // Delete
-        delete.setOnAction(e -> {
-            BrandDao.deleteBrand(obj.getData().getId());
-            BrandViewModel.getItems();
-            e.consume();
+    // Actions
+    // Delete
+    delete.setOnAction(
+        e -> {
+          BrandDao.deleteBrand(obj.getData().getId());
+          BrandViewModel.getItems();
+          e.consume();
         });
-        // Edit
-        edit.setOnAction(e -> {
-            BrandViewModel.getItem(obj.getData().getId());
-            dialog.showAndWait();
-            e.consume();
+    // Edit
+    edit.setOnAction(
+        e -> {
+          BrandViewModel.getItem(obj.getData().getId());
+          dialog.showAndWait();
+          e.consume();
         });
 
-        contextMenu.addItems(edit, delete);
+    contextMenu.addItems(edit, delete);
 
-        return contextMenu;
-    }
+    return contextMenu;
+  }
 
-    private void brandFormDialogPane(Stage stage) throws IOException {
-        DialogPane dialogPane = fxmlLoader("forms/BrandForm.fxml").load();
-        dialog = new Dialog<>();
-        dialog.setDialogPane(dialogPane);
-        dialog.initOwner(stage);
-        dialog.initModality(Modality.APPLICATION_MODAL);
-        dialog.initStyle(StageStyle.UNDECORATED);
-    }
+  private void brandFormDialogPane(Stage stage) throws IOException {
+    DialogPane dialogPane = fxmlLoader("forms/BrandForm.fxml").load();
+    dialog = new Dialog<>();
+    dialog.setDialogPane(dialogPane);
+    dialog.initOwner(stage);
+    dialog.initModality(Modality.APPLICATION_MODAL);
+    dialog.initStyle(StageStyle.UNDECORATED);
+  }
 
-    public void brandCreateBtnClicked() {
-        dialog.showAndWait();
-    }
+  public void brandCreateBtnClicked() {
+    dialog.showAndWait();
+  }
 }

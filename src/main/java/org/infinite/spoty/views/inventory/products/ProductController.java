@@ -17,134 +17,125 @@ package org.infinite.spoty.views.inventory.products;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.filter.StringFilter;
-import javafx.application.Platform;
-import javafx.event.EventHandler;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
-import javafx.scene.input.ContextMenuEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
-import org.infinite.spoty.database.dao.ProductMasterDao;
-import org.infinite.spoty.database.models.ProductMaster;
-import org.infinite.spoty.forms.ProductMasterFormController;
-import org.infinite.spoty.viewModels.ProductMasterViewModel;
-
-import java.io.IOException;
 import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
-
-import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
+import javafx.application.Platform;
+import javafx.event.EventHandler;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.layout.BorderPane;
+import org.infinite.spoty.components.navigation.Pages;
+import org.infinite.spoty.database.dao.ProductMasterDao;
+import org.infinite.spoty.database.models.ProductMaster;
+import org.infinite.spoty.viewModels.ProductMasterViewModel;
+import org.infinite.spoty.views.BaseController;
 
 @SuppressWarnings("unchecked")
 public class ProductController implements Initializable {
-    private static ProductController instance;
-    private final Stage stage;
-    @FXML
-    public MFXTableView<ProductMaster> productMasterTable;
-    @FXML
-    public BorderPane productsContentPane;
-    @FXML
-    public MFXTextField productsSearchBar;
-    @FXML
-    public MFXButton productImportBtn;
+  private static ProductController instance;
+  @FXML public MFXTableView<ProductMaster> productMasterTable;
+  @FXML public BorderPane productsContentPane;
+  @FXML public MFXTextField productsSearchBar;
+  @FXML public MFXButton productImportBtn;
 
-    private ProductController(Stage stage) {
-        this.stage = stage;
-    }
+  public static ProductController getInstance() {
+    if (instance == null) instance = new ProductController();
+    return instance;
+  }
 
-    public static ProductController getInstance(Stage stage) {
-        if (instance == null)
-            instance = new ProductController(stage);
-        return instance;
-    }
+  @Override
+  public void initialize(URL location, ResourceBundle resources) {
+    Platform.runLater(this::setupTable);
+  }
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        Platform.runLater(this::setupTable);
-    }
+  private void setupTable() {
+    MFXTableColumn<ProductMaster> productName =
+        new MFXTableColumn<>("Name", false, Comparator.comparing(ProductMaster::getName));
+    MFXTableColumn<ProductMaster> productCode =
+        new MFXTableColumn<>("Code", false, Comparator.comparing(ProductMaster::getCode));
+    MFXTableColumn<ProductMaster> productCategory =
+        new MFXTableColumn<>(
+            "Category", false, Comparator.comparing(ProductMaster::getCategoryName));
+    MFXTableColumn<ProductMaster> productBrand =
+        new MFXTableColumn<>("Brand", false, Comparator.comparing(ProductMaster::getBrandName));
 
-    private void setupTable() {
-        MFXTableColumn<ProductMaster> productName = new MFXTableColumn<>("Name", false, Comparator.comparing(ProductMaster::getName));
-        MFXTableColumn<ProductMaster> productCode = new MFXTableColumn<>("Code", false, Comparator.comparing(ProductMaster::getCode));
-        MFXTableColumn<ProductMaster> productCategory = new MFXTableColumn<>("Category", false, Comparator.comparing(ProductMaster::getCategoryName));
-        MFXTableColumn<ProductMaster> productBrand = new MFXTableColumn<>("Brand", false, Comparator.comparing(ProductMaster::getBrandName));
+    productName.setRowCellFactory(product -> new MFXTableRowCell<>(ProductMaster::getName));
+    productCode.setRowCellFactory(product -> new MFXTableRowCell<>(ProductMaster::getCode));
+    productCategory.setRowCellFactory(
+        product -> new MFXTableRowCell<>(ProductMaster::getCategoryName));
+    productBrand.setRowCellFactory(product -> new MFXTableRowCell<>(ProductMaster::getBrandName));
 
-        productName.setRowCellFactory(product -> new MFXTableRowCell<>(ProductMaster::getName));
-        productCode.setRowCellFactory(product -> new MFXTableRowCell<>(ProductMaster::getCode));
-        productCategory.setRowCellFactory(product -> new MFXTableRowCell<>(ProductMaster::getCategoryName));
-        productBrand.setRowCellFactory(product -> new MFXTableRowCell<>(ProductMaster::getBrandName));
+    productName.prefWidthProperty().bind(productMasterTable.widthProperty().multiply(.25));
+    productCode.prefWidthProperty().bind(productMasterTable.widthProperty().multiply(.25));
+    productCategory.prefWidthProperty().bind(productMasterTable.widthProperty().multiply(.25));
+    productBrand.prefWidthProperty().bind(productMasterTable.widthProperty().multiply(.25));
 
-        productName.prefWidthProperty().bind(productMasterTable.widthProperty().multiply(.25));
-        productCode.prefWidthProperty().bind(productMasterTable.widthProperty().multiply(.25));
-        productCategory.prefWidthProperty().bind(productMasterTable.widthProperty().multiply(.25));
-        productBrand.prefWidthProperty().bind(productMasterTable.widthProperty().multiply(.25));
+    productMasterTable
+        .getTableColumns()
+        .addAll(productName, productCode, productCategory, productBrand);
+    productMasterTable
+        .getFilters()
+        .addAll(
+            new StringFilter<>("Name", ProductMaster::getName),
+            new StringFilter<>("Code", ProductMaster::getCode),
+            new StringFilter<>("Category", ProductMaster::getCategoryName),
+            new StringFilter<>("Brand", ProductMaster::getBrandName));
+    getTable();
+    productMasterTable.setItems(ProductMasterViewModel.getProductMasters());
+  }
 
-        productMasterTable.getTableColumns().addAll(productName, productCode, productCategory, productBrand);
-        productMasterTable.getFilters().addAll(
-                new StringFilter<>("Name", ProductMaster::getName),
-                new StringFilter<>("Code", ProductMaster::getCode),
-                new StringFilter<>("Category", ProductMaster::getCategoryName),
-                new StringFilter<>("Brand", ProductMaster::getBrandName)
-        );
-        getTable();
-        productMasterTable.setItems(ProductMasterViewModel.getProductMasters());
-    }
+  private void getTable() {
+    productMasterTable.setPrefSize(1000, 1000);
+    productMasterTable.features().enableBounceEffect();
+    productMasterTable.features().enableSmoothScrolling(0.5);
 
-    private void getTable() {
-        productMasterTable.setPrefSize(1000, 1000);
-        productMasterTable.features().enableBounceEffect();
-        productMasterTable.features().enableSmoothScrolling(0.5);
-
-        productMasterTable.setTableRowFactory(t -> {
-            MFXTableRow<ProductMaster> row = new MFXTableRow<>(productMasterTable, t);
-            EventHandler<ContextMenuEvent> eventHandler = event -> {
+    productMasterTable.setTableRowFactory(
+        t -> {
+          MFXTableRow<ProductMaster> row = new MFXTableRow<>(productMasterTable, t);
+          EventHandler<ContextMenuEvent> eventHandler =
+              event -> {
                 showContextMenu((MFXTableRow<ProductMaster>) event.getSource())
-                        .show(productMasterTable.getScene().getWindow(), event.getScreenX(), event.getScreenY());
+                    .show(
+                        productMasterTable.getScene().getWindow(),
+                        event.getScreenX(),
+                        event.getScreenY());
                 event.consume();
-            };
-            row.setOnContextMenuRequested(eventHandler);
-            return row;
+              };
+          row.setOnContextMenuRequested(eventHandler);
+          return row;
         });
-    }
+  }
 
-    private MFXContextMenu showContextMenu(MFXTableRow<ProductMaster> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(productMasterTable);
-        MFXContextMenuItem view = new MFXContextMenuItem("View");
-        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
-        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+  private MFXContextMenu showContextMenu(MFXTableRow<ProductMaster> obj) {
+    MFXContextMenu contextMenu = new MFXContextMenu(productMasterTable);
+    MFXContextMenuItem view = new MFXContextMenuItem("View");
+    MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
+    MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
 
-        // Actions
-        // Delete
-        delete.setOnAction(e -> {
-            ProductMasterDao.deleteProductMaster(obj.getData().getId());
-            ProductMasterViewModel.getProductMasters();
-            e.consume();
+    // Actions
+    // Delete
+    delete.setOnAction(
+        e -> {
+          ProductMasterDao.deleteProductMaster(obj.getData().getId());
+          ProductMasterViewModel.getProductMasters();
+          e.consume();
         });
-        // Edit
-        edit.setOnAction(e -> {
-            ProductMasterViewModel.getItem(obj.getData().getId());
-            productCreateBtnClicked();
-            e.consume();
+    // Edit
+    edit.setOnAction(
+        e -> {
+          ProductMasterViewModel.getItem(obj.getData().getId());
+          productCreateBtnClicked();
+          e.consume();
         });
 
-        contextMenu.addItems(view, edit, delete);
+    contextMenu.addItems(view, edit, delete);
 
-        return contextMenu;
-    }
+    return contextMenu;
+  }
 
-    public void productCreateBtnClicked() {
-        FXMLLoader loader = fxmlLoader("forms/ProductMasterForm.fxml");
-        loader.setControllerFactory(c -> new ProductMasterFormController(stage));
-        try {
-            BorderPane productFormPane = loader.load();
-            ((StackPane) productsContentPane.getParent()).getChildren().add(productFormPane);
-            ((StackPane) productsContentPane.getParent()).getChildren().get(0).setVisible(false);
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
-    }
+  public void productCreateBtnClicked() {
+    BaseController.navigation.navigate(Pages.getProductMasterFormPane());
+  }
 }

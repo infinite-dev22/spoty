@@ -14,66 +14,61 @@
 
 package org.infinite.spoty.forms;
 
+import static org.infinite.spoty.GlobalActions.closeDialog;
+import static org.infinite.spoty.Validators.requiredValidator;
+import static org.infinite.spoty.viewModels.BrandViewModel.clearBrandData;
+import static org.infinite.spoty.viewModels.BrandViewModel.saveBrand;
+
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
+import java.net.URL;
+import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.viewModels.BrandViewModel;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
-import static org.infinite.spoty.GlobalActions.closeDialog;
-import static org.infinite.spoty.Validators.requiredValidator;
-import static org.infinite.spoty.viewModels.BrandViewModel.clearBrandData;
-import static org.infinite.spoty.viewModels.BrandViewModel.saveBrand;
-
 public class BrandFormController implements Initializable {
-    public MFXTextField brandID = new MFXTextField();
-    @FXML
-    public Label brandFormTitle;
-    @FXML
-    public MFXTextField brandFormName;
-    @FXML
-    public MFXTextField brandFormDescription;
-    @FXML
-    public MFXFilledButton brandFormSaveBtn;
-    @FXML
-    public MFXOutlinedButton brandFormCancelBtn;
-    @FXML
-    public Label brandFormNameValidationLabel;
-    @FXML
-    public Label brandFormDescriptionValidationLabel;
+  public MFXTextField brandID = new MFXTextField();
+  @FXML public Label brandFormTitle;
+  @FXML public MFXTextField brandFormName;
+  @FXML public MFXTextField brandFormDescription;
+  @FXML public MFXFilledButton brandFormSaveBtn;
+  @FXML public MFXOutlinedButton brandFormCancelBtn;
+  @FXML public Label brandFormNameValidationLabel;
+  @FXML public Label brandFormDescriptionValidationLabel;
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        // Input bindings.
-        brandID.textProperty().bindBidirectional(BrandViewModel.idProperty(), new NumberStringConverter());
-        brandFormName.textProperty().bindBidirectional(BrandViewModel.nameProperty());
-        brandFormDescription.textProperty().bindBidirectional(BrandViewModel.descriptionProperty());
-        // Input listeners.
-        requiredValidator(brandFormName, "Brand name is required.", brandFormNameValidationLabel);
-        dialogOnActions();
-    }
+  @Override
+  public void initialize(URL location, ResourceBundle resources) {
+    // Input bindings.
+    brandID
+        .textProperty()
+        .bindBidirectional(BrandViewModel.idProperty(), new NumberStringConverter());
+    brandFormName.textProperty().bindBidirectional(BrandViewModel.nameProperty());
+    brandFormDescription.textProperty().bindBidirectional(BrandViewModel.descriptionProperty());
+    // Input listeners.
+    requiredValidator(brandFormName, "Brand name is required.", brandFormNameValidationLabel);
+    dialogOnActions();
+  }
 
-    private void dialogOnActions() {
-        brandFormCancelBtn.setOnAction((e) -> {
-            closeDialog(e);
+  private void dialogOnActions() {
+    brandFormCancelBtn.setOnAction(
+        (e) -> {
+          closeDialog(e);
+          clearBrandData();
+          brandFormNameValidationLabel.setVisible(false);
+        });
+    brandFormSaveBtn.setOnAction(
+        (e) -> {
+          if (!brandFormNameValidationLabel.isVisible()) {
+            if (Integer.parseInt(brandID.getText()) > 0)
+              BrandViewModel.updateItem(Integer.parseInt(brandID.getText()));
+            else saveBrand();
             clearBrandData();
-            brandFormNameValidationLabel.setVisible(false);
+            closeDialog(e);
+          }
         });
-        brandFormSaveBtn.setOnAction((e) -> {
-            if (!brandFormNameValidationLabel.isVisible()) {
-                if (Integer.parseInt(brandID.getText()) > 0)
-                    BrandViewModel.updateItem(Integer.parseInt(brandID.getText()));
-                else
-                    saveBrand();
-                clearBrandData();
-                closeDialog(e);
-            }
-        });
-    }
+  }
 }

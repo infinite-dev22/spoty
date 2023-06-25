@@ -14,66 +14,44 @@
 
 package org.infinite.spoty.views.settings;
 
-import io.github.palexdev.materialfx.controls.MFXButton;
-import io.github.palexdev.materialfx.utils.others.loader.MFXLoader;
-import io.github.palexdev.materialfx.utils.others.loader.MFXLoaderBean;
-import javafx.application.Platform;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-import org.infinite.spoty.views.settings.branches.BranchesController;
-import org.infinite.spoty.views.settings.currency.CurrencyController;
-
-import java.net.URL;
-import java.util.List;
-import java.util.ResourceBundle;
-
-import static org.infinite.spoty.SpotResourceLoader.loadURL;
 import static org.infinite.spoty.Utils.createToggle;
 
+import io.github.palexdev.materialfx.controls.MFXButton;
+import java.net.URL;
+import java.util.ResourceBundle;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import org.infinite.spoty.components.navigation.Navigation;
+import org.infinite.spoty.components.navigation.Pages;
+
 public class SettingsController implements Initializable {
-    private final Stage stage;
-    @FXML
-    public VBox settingsNavbar;
-    @FXML
-    public StackPane contentPane;
-    private static SettingsController instance;
+  private static SettingsController instance;
+  @FXML public VBox settingsNavbar;
+  @FXML public StackPane contentPane;
 
-    public static SettingsController getInstance(Stage stage) {
-        if (instance == null)
-            instance = new SettingsController(stage);
-        return instance;
-    }
+  public static SettingsController getInstance() {
+    if (instance == null) instance = new SettingsController();
+    return instance;
+  }
 
-    private SettingsController(Stage stage) {
-        this.stage = stage;
-    }
+  @Override
+  public void initialize(URL location, ResourceBundle resources) {
+    MFXButton system = createToggle("fas-computer", "System");
+    MFXButton pos = createToggle("fas-bag-shopping", "POS");
+    MFXButton role = createToggle("fas-user-shield", "Roles");
+    MFXButton branches = createToggle("fas-store", "Branches");
+    MFXButton currency = createToggle("fas-dollar-sign", "Currency");
+    MFXButton export = createToggle("fas-arrow-up-from-bracket", "Export");
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        MFXLoader loader = new MFXLoader();
-        loader.addView(MFXLoaderBean.of("SYSTEM", loadURL("fxml/settings/system/System.fxml")).setBeanToNodeMapper(() -> createToggle("fas-computer", "System")).setDefaultRoot(true).get());
-        loader.addView(MFXLoaderBean.of("POS", loadURL("fxml/settings/pos/POS.fxml")).setBeanToNodeMapper(() -> createToggle("fas-bag-shopping", "POS")).get());
-        loader.addView(MFXLoaderBean.of("ROLES", loadURL("fxml/settings/roles/Roles.fxml")).setBeanToNodeMapper(() -> createToggle("fas-user-shield", "Roles")).get());
-        loader.addView(MFXLoaderBean.of("BRANCHES", loadURL("fxml/settings/branches/Branches.fxml")).setBeanToNodeMapper(() -> createToggle("fas-store", "Branches")).setControllerFactory(c -> BranchesController.getInstance(stage)).get());
-        loader.addView(MFXLoaderBean.of("CURRENCY", loadURL("fxml/settings/currency/Currency.fxml")).setBeanToNodeMapper(() -> createToggle("fas-dollar-sign", "Currency")).setControllerFactory(c -> CurrencyController.getInstance(stage)).get());
-        loader.addView(MFXLoaderBean.of("EXPORT", loadURL("fxml/settings/export/Export.fxml")).setBeanToNodeMapper(() -> createToggle("fas-arrow-up-from-bracket", "Export")).get());
-        loader.setOnLoadedAction(beans -> {
-            List<MFXButton> nodes = beans.stream()
-                    .map(bean -> {
-                        MFXButton toggle = (MFXButton) bean.getBeanToNodeMapper().get();
-                        toggle.setOnAction(event -> contentPane.getChildren().setAll(bean.getRoot()));
-                        if (bean.isDefaultView()) {
-                            contentPane.getChildren().setAll(bean.getRoot());
-                        }
-                        return toggle;
-                    })
-                    .toList();
-            settingsNavbar.getChildren().setAll(nodes);
-        });
-        Platform.runLater(loader::start);
-    }
+    system.setOnAction(e -> Navigation.navigate(Pages.getSystemSettingsPane(), contentPane));
+    pos.setOnAction(e -> Navigation.navigate(Pages.getPosSettingsPane(), contentPane));
+    role.setOnAction(e -> Navigation.navigate(Pages.getRoleSettingsPane(), contentPane));
+    branches.setOnAction(e -> Navigation.navigate(Pages.getBranchSettingsPane(), contentPane));
+    currency.setOnAction(e -> Navigation.navigate(Pages.getCurrencySettingsPane(), contentPane));
+    export.setOnAction(e -> Navigation.navigate(Pages.getExportSettingsPane(), contentPane));
+
+    settingsNavbar.getChildren().setAll(system, pos, role, branches, currency, export);
+  }
 }

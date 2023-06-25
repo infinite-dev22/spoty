@@ -15,115 +15,117 @@
 package org.infinite.spoty.database.models;
 
 import jakarta.persistence.*;
-
 import java.util.Date;
 import java.util.List;
 
 @Entity
 public class Permission {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    private String name;
-    private String label;
-    private String description;
-    @ManyToMany(mappedBy = "permissions")
-    private List<Role> roles;
-    private Date createdAt;
-    private String createdBy;
-    private Date updatedAt;
-    private String updatedBy;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private int id;
 
-    public Permission(String name,
-                      String label,
-                      String description,
-                      List<Role> roles,
-                      Date createdAt,
-                      String createdBy,
-                      Date updatedAt,
-                      String updatedBy) {
-        this.name = name;
-        this.label = label;
-        this.description = description;
-        this.roles = roles;
-        this.createdAt = createdAt;
-        this.createdBy = createdBy;
-        this.updatedAt = updatedAt;
-        this.updatedBy = updatedBy;
-    }
+  private String name;
+  private String label;
+  private String description;
 
-    public Permission() {
-    }
+  @ManyToMany(mappedBy = "permissions")
+  private List<Role> roles;
 
-    public int getId() {
-        return id;
-    }
+  private Date createdAt;
+  private String createdBy;
+  private Date updatedAt;
+  private String updatedBy;
 
-    public void setId(int id) {
-        this.id = id;
-    }
+  public Permission(
+      String name,
+      String label,
+      String description,
+      List<Role> roles,
+      Date createdAt,
+      String createdBy,
+      Date updatedAt,
+      String updatedBy) {
+    this.name = name;
+    this.label = label;
+    this.description = description;
+    this.roles = roles;
+    this.createdAt = createdAt;
+    this.createdBy = createdBy;
+    this.updatedAt = updatedAt;
+    this.updatedBy = updatedBy;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public Permission() {}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public int getId() {
+    return id;
+  }
 
-    public String getLabel() {
-        return label;
-    }
+  public void setId(int id) {
+    this.id = id;
+  }
 
-    public void setLabel(String label) {
-        this.label = label;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public String getDescription() {
-        return description;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+  public String getLabel() {
+    return label;
+  }
 
-    public Date getCreatedAt() {
-        return createdAt;
-    }
+  public void setLabel(String label) {
+    this.label = label;
+  }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
+  public String getDescription() {
+    return description;
+  }
 
-    public String getCreatedBy() {
-        return createdBy;
-    }
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
+  public Date getCreatedAt() {
+    return createdAt;
+  }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
+  public void setCreatedAt(Date createdAt) {
+    this.createdAt = createdAt;
+  }
 
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+  public String getCreatedBy() {
+    return createdBy;
+  }
 
-    public String getUpdatedBy() {
-        return updatedBy;
-    }
+  public void setCreatedBy(String createdBy) {
+    this.createdBy = createdBy;
+  }
 
-    public void setUpdatedBy(String updatedBy) {
-        this.updatedBy = updatedBy;
-    }
+  public Date getUpdatedAt() {
+    return updatedAt;
+  }
 
-    public List<Role> getRole() {
-        return roles;
-    }
+  public void setUpdatedAt(Date updatedAt) {
+    this.updatedAt = updatedAt;
+  }
 
-    public void setRole(List<Role> roles) {
-        this.roles = roles;
-    }
+  public String getUpdatedBy() {
+    return updatedBy;
+  }
+
+  public void setUpdatedBy(String updatedBy) {
+    this.updatedBy = updatedBy;
+  }
+
+  public List<Role> getRole() {
+    return roles;
+  }
+
+  public void setRole(List<Role> roles) {
+    this.roles = roles;
+  }
 }

@@ -18,147 +18,147 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-
 import java.util.Date;
 
 @Entity
 public class Customer {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    private String name;
-    private String code;
-    private String email;
-    private String phone;
-    private String city;
-    private String address;
-    private String taxNumber;
-    private String country;
-    private Date createdAt = null;
-    private String createdBy = null;
-    private Date updatedAt = null;
-    private String updatedBy = null;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private int id;
 
-    public Customer(String name,
-                    String email,
-                    String phone,
-                    String city,
-                    String address,
-                    String taxNumber,
-                    String country) {
-        this.name = name;
-        this.email = email;
-        this.phone = phone;
-        this.city = city;
-        this.address = address;
-        this.taxNumber = taxNumber;
-        this.country = country;
-    }
+  private String name;
+  private String code;
+  private String email;
+  private String phone;
+  private String city;
+  private String address;
+  private String taxNumber;
+  private String country;
+  private Date createdAt = null;
+  private String createdBy = null;
+  private Date updatedAt = null;
+  private String updatedBy = null;
 
-    public Customer() {
-    }
+  public Customer(
+      String name,
+      String email,
+      String phone,
+      String city,
+      String address,
+      String taxNumber,
+      String country) {
+    this.name = name;
+    this.email = email;
+    this.phone = phone;
+    this.city = city;
+    this.address = address;
+    this.taxNumber = taxNumber;
+    this.country = country;
+  }
 
-    public int getId() {
-        return id;
-    }
+  public Customer() {}
 
-    public void setId(int id) {
-        this.id = id;
-    }
+  public int getId() {
+    return id;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public void setId(int id) {
+    this.id = id;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public String getCode() {
-        return code;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public void setCode(String code) {
-        this.code = code;
-    }
+  public String getCode() {
+    return code;
+  }
 
-    public String getEmail() {
-        return email;
-    }
+  public void setCode(String code) {
+    this.code = code;
+  }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+  public String getEmail() {
+    return email;
+  }
 
-    public String getPhone() {
-        return phone;
-    }
+  public void setEmail(String email) {
+    this.email = email;
+  }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
+  public String getPhone() {
+    return phone;
+  }
 
-    public String getCity() {
-        return city;
-    }
+  public void setPhone(String phone) {
+    this.phone = phone;
+  }
 
-    public void setCity(String city) {
-        this.city = city;
-    }
+  public String getCity() {
+    return city;
+  }
 
-    public String getAddress() {
-        return address;
-    }
+  public void setCity(String city) {
+    this.city = city;
+  }
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
+  public String getAddress() {
+    return address;
+  }
 
-    public String getTaxNumber() {
-        return taxNumber;
-    }
+  public void setAddress(String address) {
+    this.address = address;
+  }
 
-    public void setTaxNumber(String taxNumber) {
-        this.taxNumber = taxNumber;
-    }
+  public String getTaxNumber() {
+    return taxNumber;
+  }
 
-    public String getCountry() {
-        return country;
-    }
+  public void setTaxNumber(String taxNumber) {
+    this.taxNumber = taxNumber;
+  }
 
-    public void setCountry(String country) {
-        this.country = country;
-    }
+  public String getCountry() {
+    return country;
+  }
 
-    public Date getCreatedAt() {
-        return createdAt;
-    }
+  public void setCountry(String country) {
+    this.country = country;
+  }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
+  public Date getCreatedAt() {
+    return createdAt;
+  }
 
-    public String getCreatedBy() {
-        return createdBy;
-    }
+  public void setCreatedAt(Date createdAt) {
+    this.createdAt = createdAt;
+  }
 
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
+  public String getCreatedBy() {
+    return createdBy;
+  }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
+  public void setCreatedBy(String createdBy) {
+    this.createdBy = createdBy;
+  }
 
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+  public Date getUpdatedAt() {
+    return updatedAt;
+  }
 
-    public String getUpdatedBy() {
-        return updatedBy;
-    }
+  public void setUpdatedAt(Date updatedAt) {
+    this.updatedAt = updatedAt;
+  }
 
-    public void setUpdatedBy(String updatedBy) {
-        this.updatedBy = updatedBy;
-    }
+  public String getUpdatedBy() {
+    return updatedBy;
+  }
+
+  public void setUpdatedBy(String updatedBy) {
+    this.updatedBy = updatedBy;
+  }
 }

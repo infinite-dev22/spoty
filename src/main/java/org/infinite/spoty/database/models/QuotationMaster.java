@@ -15,7 +15,6 @@
 package org.infinite.spoty.database.models;
 
 import jakarta.persistence.*;
-
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.util.Date;
@@ -24,182 +23,177 @@ import java.util.List;
 
 @Entity
 public class QuotationMaster implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    @ManyToOne
-    private User user_detail;
-    private Date date;
-    private String ref;
-    @ManyToOne
-    private Customer customer;
-    @ManyToOne
-    private Branch branch;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quotation")
-    private List<QuotationDetail> quotationDetails = new LinkedList<>();
-    private String shipping;
-    private double total;
-    private String status;
-    private String notes;
-    @Column(name = "created_at")
-    private Date createdAt;
-    @Column(name = "created_by")
-    private String createdBy;
-    @Column(name = "updated_at")
-    private Date updatedAt;
-    @Column(name = "updated_by")
-    private String updatedBy;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private int id;
 
-    public QuotationMaster() {
-    }
+  @ManyToOne private User user_detail;
+  private Date date;
+  private String ref;
+  @ManyToOne private Customer customer;
+  @ManyToOne private Branch branch;
 
-    public QuotationMaster(Date date,
-                           Customer customer,
-                           Branch branch,
-                           String status,
-                           String notes) {
-        this.date = date;
-        this.customer = customer;
-        this.branch = branch;
-        this.status = status;
-        this.notes = notes;
-    }
+  @OneToMany(cascade = CascadeType.ALL, mappedBy = "quotation")
+  private List<QuotationDetail> quotationDetails = new LinkedList<>();
 
-    public int getId() {
-        return id;
-    }
+  private String shipping;
+  private double total;
+  private String status;
+  private String notes;
 
-    public void setId(int id) {
-        this.id = id;
-    }
+  @Column(name = "created_at")
+  private Date createdAt;
 
-    public User getUser() {
-        return user_detail;
-    }
+  @Column(name = "created_by")
+  private String createdBy;
 
-    public void setUser(User user_detail) {
-        this.user_detail = user_detail;
-    }
+  @Column(name = "updated_at")
+  private Date updatedAt;
 
-    public Date getDate() {
-        return date;
-    }
+  @Column(name = "updated_by")
+  private String updatedBy;
 
-    public void setDate(Date date) {
-        this.date = date;
-    }
+  public QuotationMaster() {}
 
-    public String getRef() {
-        return ref;
-    }
+  public QuotationMaster(Date date, Customer customer, Branch branch, String status, String notes) {
+    this.date = date;
+    this.customer = customer;
+    this.branch = branch;
+    this.status = status;
+    this.notes = notes;
+  }
 
-    public void setRef(String ref) {
-        this.ref = ref;
-    }
+  public int getId() {
+    return id;
+  }
 
-    public Customer getCustomer() {
-        return customer;
-    }
+  public void setId(int id) {
+    this.id = id;
+  }
 
-    public String getCustomerName() {
-        if (customer != null)
-            return customer.getName();
-        else
-            return null;
-    }
+  public User getUser() {
+    return user_detail;
+  }
 
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
-    }
+  public void setUser(User user_detail) {
+    this.user_detail = user_detail;
+  }
 
-    public Branch getBranch() {
-        return branch;
-    }
+  public Date getDate() {
+    return date;
+  }
 
-    public String getBranchName() {
-        if (branch != null)
-            return branch.getName();
-        else
-            return null;
-    }
+  public void setDate(Date date) {
+    this.date = date;
+  }
 
-    public void setBranch(Branch branch) {
-        this.branch = branch;
-    }
+  public String getRef() {
+    return ref;
+  }
 
-    public List<QuotationDetail> getQuotationDetails() {
-        return quotationDetails;
-    }
+  public void setRef(String ref) {
+    this.ref = ref;
+  }
 
-    public void setQuotationDetails(List<QuotationDetail> quotationDetails) {
-        this.quotationDetails = quotationDetails;
-    }
+  public Customer getCustomer() {
+    return customer;
+  }
 
-    public String getShipping() {
-        return shipping;
-    }
+  public void setCustomer(Customer customer) {
+    this.customer = customer;
+  }
 
-    public void setShipping(String shipping) {
-        this.shipping = shipping;
-    }
+  public String getCustomerName() {
+    if (customer != null) return customer.getName();
+    else return null;
+  }
 
-    public double getTotal() {
-        return total;
-    }
+  public Branch getBranch() {
+    return branch;
+  }
 
-    public void setTotal(double total) {
-        this.total = total;
-    }
+  public void setBranch(Branch branch) {
+    this.branch = branch;
+  }
 
-    public String getStatus() {
-        return status;
-    }
+  public String getBranchName() {
+    if (branch != null) return branch.getName();
+    else return null;
+  }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+  public List<QuotationDetail> getQuotationDetails() {
+    return quotationDetails;
+  }
 
-    public String getNotes() {
-        return notes;
-    }
+  public void setQuotationDetails(List<QuotationDetail> quotationDetails) {
+    this.quotationDetails = quotationDetails;
+  }
 
-    public void setNotes(String notes) {
-        this.notes = notes;
-    }
+  public String getShipping() {
+    return shipping;
+  }
 
-    public Date getCreatedAt() {
-        return createdAt;
-    }
+  public void setShipping(String shipping) {
+    this.shipping = shipping;
+  }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
+  public double getTotal() {
+    return total;
+  }
 
-    public String getCreatedBy() {
-        return createdBy;
-    }
+  public void setTotal(double total) {
+    this.total = total;
+  }
 
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
+  public String getStatus() {
+    return status;
+  }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
+  public void setStatus(String status) {
+    this.status = status;
+  }
 
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+  public String getNotes() {
+    return notes;
+  }
 
-    public String getUpdatedBy() {
-        return updatedBy;
-    }
+  public void setNotes(String notes) {
+    this.notes = notes;
+  }
 
-    public void setUpdatedBy(String updatedBy) {
-        this.updatedBy = updatedBy;
-    }
+  public Date getCreatedAt() {
+    return createdAt;
+  }
 
-    public String getLocaleDate() {
-        return DateFormat.getDateInstance().format(date);
-    }
+  public void setCreatedAt(Date createdAt) {
+    this.createdAt = createdAt;
+  }
+
+  public String getCreatedBy() {
+    return createdBy;
+  }
+
+  public void setCreatedBy(String createdBy) {
+    this.createdBy = createdBy;
+  }
+
+  public Date getUpdatedAt() {
+    return updatedAt;
+  }
+
+  public void setUpdatedAt(Date updatedAt) {
+    this.updatedAt = updatedAt;
+  }
+
+  public String getUpdatedBy() {
+    return updatedBy;
+  }
+
+  public void setUpdatedBy(String updatedBy) {
+    this.updatedBy = updatedBy;
+  }
+
+  public String getLocaleDate() {
+    return DateFormat.getDateInstance().format(date);
+  }
 }

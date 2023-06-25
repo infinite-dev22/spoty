@@ -26,7 +26,8 @@
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.layout.*?>
 <?import java.net.URL?>
-<BorderPane fx:id="stockInMasterFormContentPane" xmlns:fx="http://javafx.com/fxml/1" cache="true" cacheHint="SPEED" xmlns="http://javafx.com/javafx/19"
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:id="stockInMasterFormContentPane" cache="true" cacheHint="SPEED"
+            xmlns="http://javafx.com/javafx/19"
             fx:controller="org.infinite.spoty.forms.StockInMasterFormController">
     <stylesheets>
         <URL value="@../styles/Common.css"/>

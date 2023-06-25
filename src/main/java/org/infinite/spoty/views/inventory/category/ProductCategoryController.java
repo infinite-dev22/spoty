@@ -14,10 +14,16 @@
 
 package org.infinite.spoty.views.inventory.category;
 
+import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
+
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.enums.ButtonType;
 import io.github.palexdev.materialfx.filter.StringFilter;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Comparator;
+import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -33,121 +39,118 @@ import org.infinite.spoty.database.dao.ProductCategoryDao;
 import org.infinite.spoty.database.models.ProductCategory;
 import org.infinite.spoty.viewModels.ProductCategoryViewModel;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.Comparator;
-import java.util.ResourceBundle;
-
-import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
-
 @SuppressWarnings("unchecked")
 public class ProductCategoryController implements Initializable {
-    private static ProductCategoryController instance;
-    @FXML
-    public MFXTableView<ProductCategory> categoryTable;
-    @FXML
-    public MFXTextField categorySearchBar;
-    @FXML
-    public HBox categoryActionsPane;
-    @FXML
-    public MFXButton categoryImportBtn;
-    private Dialog<ButtonType> dialog;
+  private static ProductCategoryController instance;
+  @FXML public MFXTableView<ProductCategory> categoryTable;
+  @FXML public MFXTextField categorySearchBar;
+  @FXML public HBox categoryActionsPane;
+  @FXML public MFXButton categoryImportBtn;
+  private Dialog<ButtonType> dialog;
 
-    private ProductCategoryController(Stage stage) {
-        Platform.runLater(() -> {
-            try {
-                productProductCategoryDialogPane(stage);
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
+  private ProductCategoryController(Stage stage) {
+    Platform.runLater(
+        () -> {
+          try {
+            productProductCategoryDialogPane(stage);
+          } catch (IOException ex) {
+            throw new RuntimeException(ex);
+          }
         });
-    }
+  }
 
-    public static ProductCategoryController getInstance(Stage stage) {
-        if (instance == null)
-            instance = new ProductCategoryController(stage);
-        return instance;
-    }
+  public static ProductCategoryController getInstance(Stage stage) {
+    if (instance == null) instance = new ProductCategoryController(stage);
+    return instance;
+  }
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        Platform.runLater(this::setupTable);
-    }
+  @Override
+  public void initialize(URL location, ResourceBundle resources) {
+    Platform.runLater(this::setupTable);
+  }
 
-    private void setupTable() {
-        MFXTableColumn<ProductCategory> categoryCode =
-                new MFXTableColumn<>("Code", false, Comparator.comparing(ProductCategory::getCode));
-        MFXTableColumn<ProductCategory> categoryName =
-                new MFXTableColumn<>("Name", false, Comparator.comparing(ProductCategory::getName));
+  private void setupTable() {
+    MFXTableColumn<ProductCategory> categoryCode =
+        new MFXTableColumn<>("Code", false, Comparator.comparing(ProductCategory::getCode));
+    MFXTableColumn<ProductCategory> categoryName =
+        new MFXTableColumn<>("Name", false, Comparator.comparing(ProductCategory::getName));
 
-        categoryCode.setRowCellFactory(category -> new MFXTableRowCell<>(ProductCategory::getCode));
-        categoryName.setRowCellFactory(category -> new MFXTableRowCell<>(ProductCategory::getName));
+    categoryCode.setRowCellFactory(category -> new MFXTableRowCell<>(ProductCategory::getCode));
+    categoryName.setRowCellFactory(category -> new MFXTableRowCell<>(ProductCategory::getName));
 
-        categoryCode.prefWidthProperty().bind(categoryTable.widthProperty().multiply(.5));
-        categoryName.prefWidthProperty().bind(categoryTable.widthProperty().multiply(.5));
+    categoryCode.prefWidthProperty().bind(categoryTable.widthProperty().multiply(.5));
+    categoryName.prefWidthProperty().bind(categoryTable.widthProperty().multiply(.5));
 
-        categoryTable.getTableColumns().addAll(categoryCode, categoryName);
-        categoryTable.getFilters().addAll(
-                new StringFilter<>("Code", ProductCategory::getCode),
-                new StringFilter<>("Name", ProductCategory::getName)
-        );
-        getProductCategoryTable();
-        categoryTable.setItems(ProductCategoryViewModel.getItems());
-    }
+    categoryTable.getTableColumns().addAll(categoryCode, categoryName);
+    categoryTable
+        .getFilters()
+        .addAll(
+            new StringFilter<>("Code", ProductCategory::getCode),
+            new StringFilter<>("Name", ProductCategory::getName));
+    getProductCategoryTable();
+    categoryTable.setItems(ProductCategoryViewModel.getItems());
+  }
 
-    private void getProductCategoryTable() {
-        categoryTable.setPrefSize(1000, 1000);
-        categoryTable.features().enableBounceEffect();
-        categoryTable.features().enableSmoothScrolling(0.5);
+  private void getProductCategoryTable() {
+    categoryTable.setPrefSize(1000, 1000);
+    categoryTable.features().enableBounceEffect();
+    categoryTable.features().enableSmoothScrolling(0.5);
 
-        categoryTable.setTableRowFactory(t -> {
-            MFXTableRow<ProductCategory> row = new MFXTableRow<>(categoryTable, t);
-            EventHandler<ContextMenuEvent> eventHandler = event -> {
+    categoryTable.setTableRowFactory(
+        t -> {
+          MFXTableRow<ProductCategory> row = new MFXTableRow<>(categoryTable, t);
+          EventHandler<ContextMenuEvent> eventHandler =
+              event -> {
                 showContextMenu((MFXTableRow<ProductCategory>) event.getSource())
-                        .show(categoryTable.getScene().getWindow(), event.getScreenX(), event.getScreenY());
+                    .show(
+                        categoryTable.getScene().getWindow(),
+                        event.getScreenX(),
+                        event.getScreenY());
                 event.consume();
-            };
-            row.setOnContextMenuRequested(eventHandler);
-            return row;
+              };
+          row.setOnContextMenuRequested(eventHandler);
+          return row;
         });
-    }
+  }
 
-    private MFXContextMenu showContextMenu(MFXTableRow<ProductCategory> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(categoryTable);
-        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
-        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+  private MFXContextMenu showContextMenu(MFXTableRow<ProductCategory> obj) {
+    MFXContextMenu contextMenu = new MFXContextMenu(categoryTable);
+    MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
+    MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
 
-        // Actions
-        // Delete
-        delete.setOnAction(e -> {
-            ProductCategoryDao.deleteProductCategory(obj.getData().getId());
-            ProductCategoryViewModel.getItems();
-            e.consume();
+    // Actions
+    // Delete
+    delete.setOnAction(
+        e -> {
+          ProductCategoryDao.deleteProductCategory(obj.getData().getId());
+          ProductCategoryViewModel.getItems();
+          e.consume();
         });
-        // Edit
-        edit.setOnAction(e -> {
-            ProductCategoryViewModel.getItem(obj.getData().getId());
-            dialog.showAndWait();
-            e.consume();
+    // Edit
+    edit.setOnAction(
+        e -> {
+          ProductCategoryViewModel.getItem(obj.getData().getId());
+          dialog.showAndWait();
+          e.consume();
         });
 
-        contextMenu.addItems(edit, delete);
+    contextMenu.addItems(edit, delete);
 
-        return contextMenu;
-    }
+    return contextMenu;
+  }
 
-    private void productProductCategoryDialogPane(Stage stage) throws IOException {
-        DialogPane dialogPane = fxmlLoader("forms/ProductCategoryForm.fxml").load();
-        dialog = new Dialog<>();
-        dialog.setDialogPane(dialogPane);
-        dialog.initOwner(stage);
-        dialog.initModality(Modality.APPLICATION_MODAL);
-        dialog.initStyle(StageStyle.UNDECORATED);
-        // To update dialog title dynamically, create a bind in the viewModel with the formTile.
-        // ProductCategoryFormController.formTitle.setText(Labels.CREATE);
-    }
+  private void productProductCategoryDialogPane(Stage stage) throws IOException {
+    DialogPane dialogPane = fxmlLoader("forms/ProductCategoryForm.fxml").load();
+    dialog = new Dialog<>();
+    dialog.setDialogPane(dialogPane);
+    dialog.initOwner(stage);
+    dialog.initModality(Modality.APPLICATION_MODAL);
+    dialog.initStyle(StageStyle.UNDECORATED);
+    // To update dialog title dynamically, create a bind in the viewModel with the formTile.
+    // ProductCategoryFormController.formTitle.setText(Labels.CREATE);
+  }
 
-    public void categoryCreateBtnClicked() {
-        dialog.showAndWait();
-    }
+  public void categoryCreateBtnClicked() {
+    dialog.showAndWait();
+  }
 }

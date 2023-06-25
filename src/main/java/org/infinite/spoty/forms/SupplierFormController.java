@@ -14,101 +14,94 @@
 
 package org.infinite.spoty.forms;
 
-import io.github.palexdev.materialfx.controls.MFXIconWrapper;
-import io.github.palexdev.materialfx.controls.MFXTextField;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.scene.paint.Color;
-import javafx.util.converter.NumberStringConverter;
-import org.infinite.spoty.viewModels.SupplierViewModel;
-
-import java.net.URL;
-import java.util.ResourceBundle;
-
 import static org.infinite.spoty.GlobalActions.closeDialog;
 import static org.infinite.spoty.Validators.*;
 
+import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
+import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
+import java.net.URL;
+import java.util.ResourceBundle;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
+import javafx.util.converter.NumberStringConverter;
+import org.infinite.spoty.viewModels.SupplierViewModel;
+
 public class SupplierFormController implements Initializable {
-    public MFXTextField supplierID = new MFXTextField();
-    @FXML
-    public MFXFilledButton supplierFormSaveBtn;
-    @FXML
-    public MFXOutlinedButton supplierFormCancelBtn;
-    @FXML
-    public Label supplierFormTitle;
-    @FXML
-    public MFXTextField supplierFormName;
-    @FXML
-    public MFXTextField supplierFormEmail;
-    @FXML
-    public MFXTextField supplierFormPhone;
-    @FXML
-    public MFXTextField supplierFormCity;
-    @FXML
-    public MFXTextField supplierFormCountry;
-    @FXML
-    public MFXTextField supplierFormTaxNumber;
-    @FXML
-    public MFXTextField supplierFormAddress;
-    @FXML
-    public Label supplierFormNameValidationLabel;
-    @FXML
-    public Label supplierFormEmailValidationLabel;
-    @FXML
-    public Label supplierFormPhoneValidationLabel;
+  public MFXTextField supplierID = new MFXTextField();
+  @FXML public MFXFilledButton supplierFormSaveBtn;
+  @FXML public MFXOutlinedButton supplierFormCancelBtn;
+  @FXML public Label supplierFormTitle;
+  @FXML public MFXTextField supplierFormName;
+  @FXML public MFXTextField supplierFormEmail;
+  @FXML public MFXTextField supplierFormPhone;
+  @FXML public MFXTextField supplierFormCity;
+  @FXML public MFXTextField supplierFormCountry;
+  @FXML public MFXTextField supplierFormTaxNumber;
+  @FXML public MFXTextField supplierFormAddress;
+  @FXML public Label supplierFormNameValidationLabel;
+  @FXML public Label supplierFormEmailValidationLabel;
+  @FXML public Label supplierFormPhoneValidationLabel;
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        // Input listeners.
-        supplierFormPhone.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue.matches("\\d*"))
+  @Override
+  public void initialize(URL location, ResourceBundle resources) {
+    // Input listeners.
+    supplierFormPhone
+        .textProperty()
+        .addListener(
+            (observable, oldValue, newValue) -> {
+              if (!newValue.matches("\\d*"))
                 supplierFormPhone.setText(newValue.replaceAll("\\D", ""));
-        });
-        supplierFormPhone.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != oldValue) supplierFormPhone.setLeadingIcon(new Label("+"));
-            System.out.println("newValue oldValue");
-        });
-        // Form input binding.
-        supplierID.textProperty().bindBidirectional(SupplierViewModel.idProperty(), new NumberStringConverter());
-        supplierFormName.textProperty().bindBidirectional(SupplierViewModel.nameProperty());
-        supplierFormEmail.textProperty().bindBidirectional(SupplierViewModel.emailProperty());
-        supplierFormPhone.textProperty().bindBidirectional(SupplierViewModel.phoneProperty());
-        supplierFormCity.textProperty().bindBidirectional(SupplierViewModel.cityProperty());
-        supplierFormCountry.textProperty().bindBidirectional(SupplierViewModel.countryProperty());
-        supplierFormTaxNumber.textProperty().bindBidirectional(SupplierViewModel.taxNumberProperty());
-        supplierFormAddress.textProperty().bindBidirectional(SupplierViewModel.addressProperty());
-        // Input validations.
-        // Name input validation.
-        requiredValidator(supplierFormName, "Name field is required.", supplierFormNameValidationLabel);
-        // Email input validation.
-        emailValidator(supplierFormEmail, supplierFormEmailValidationLabel);
-        // Phone input validation.
-        lengthValidator(supplierFormPhone, 11, "Invalid length", supplierFormPhoneValidationLabel);
-        dialogOnActions();
-    }
+            });
+    supplierFormPhone
+        .focusedProperty()
+        .addListener(
+            (observable, oldValue, newValue) -> {
+              if (newValue != oldValue) supplierFormPhone.setLeadingIcon(new Label("+"));
+              System.out.println("newValue oldValue");
+            });
+    // Form input binding.
+    supplierID
+        .textProperty()
+        .bindBidirectional(SupplierViewModel.idProperty(), new NumberStringConverter());
+    supplierFormName.textProperty().bindBidirectional(SupplierViewModel.nameProperty());
+    supplierFormEmail.textProperty().bindBidirectional(SupplierViewModel.emailProperty());
+    supplierFormPhone.textProperty().bindBidirectional(SupplierViewModel.phoneProperty());
+    supplierFormCity.textProperty().bindBidirectional(SupplierViewModel.cityProperty());
+    supplierFormCountry.textProperty().bindBidirectional(SupplierViewModel.countryProperty());
+    supplierFormTaxNumber.textProperty().bindBidirectional(SupplierViewModel.taxNumberProperty());
+    supplierFormAddress.textProperty().bindBidirectional(SupplierViewModel.addressProperty());
+    // Input validations.
+    // Name input validation.
+    requiredValidator(supplierFormName, "Name field is required.", supplierFormNameValidationLabel);
+    // Email input validation.
+    emailValidator(supplierFormEmail, supplierFormEmailValidationLabel);
+    // Phone input validation.
+    lengthValidator(supplierFormPhone, 11, "Invalid length", supplierFormPhoneValidationLabel);
+    dialogOnActions();
+  }
 
-    private void dialogOnActions() {
-        supplierFormCancelBtn.setOnAction((e) -> {
-            closeDialog(e);
+  private void dialogOnActions() {
+    supplierFormCancelBtn.setOnAction(
+        (e) -> {
+          closeDialog(e);
+          SupplierViewModel.resetProperties();
+          supplierFormNameValidationLabel.setVisible(false);
+          supplierFormEmailValidationLabel.setVisible(false);
+          supplierFormPhoneValidationLabel.setVisible(false);
+        });
+    supplierFormSaveBtn.setOnAction(
+        (e) -> {
+          if (!supplierFormNameValidationLabel.isVisible()
+              && !supplierFormEmailValidationLabel.isVisible()
+              && !supplierFormPhoneValidationLabel.isVisible()) {
+            if (Integer.parseInt(supplierID.getText()) > 0)
+              SupplierViewModel.updateItem(Integer.parseInt(supplierID.getText()));
+            else SupplierViewModel.saveSupplier();
             SupplierViewModel.resetProperties();
-            supplierFormNameValidationLabel.setVisible(false);
-            supplierFormEmailValidationLabel.setVisible(false);
-            supplierFormPhoneValidationLabel.setVisible(false);
+            closeDialog(e);
+          }
         });
-        supplierFormSaveBtn.setOnAction((e) -> {
-            if (!supplierFormNameValidationLabel.isVisible()
-                    && !supplierFormEmailValidationLabel.isVisible()
-                    && !supplierFormPhoneValidationLabel.isVisible()) {
-                if (Integer.parseInt(supplierID.getText()) > 0)
-                    SupplierViewModel.updateItem(Integer.parseInt(supplierID.getText()));
-                else
-                    SupplierViewModel.saveSupplier();
-                SupplierViewModel.resetProperties();
-                closeDialog(e);
-            }
-        });
-    }
+  }
 }

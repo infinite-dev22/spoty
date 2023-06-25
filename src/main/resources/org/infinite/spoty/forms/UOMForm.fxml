@@ -38,7 +38,8 @@
                     <padding>
                         <Insets right="10.0" top="10.0"/>
                     </padding>
-                    <MFXTextField fx:id="uomFormShortName" floatMode="BORDER" floatingText="Short Name" prefWidth="400.0"/>
+                    <MFXTextField fx:id="uomFormShortName" floatMode="BORDER" floatingText="Short Name"
+                                  prefWidth="400.0"/>
                     <Label id="validationLabel" fx:id="uomFormShortNameValidationLabel"
                            maxWidth="1.7976931348623157E308"
                            minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true"/>
@@ -54,7 +55,8 @@
                         <padding>
                             <Insets right="10.0" top="5.0"/>
                         </padding>
-                        <MFXTextField fx:id="uomFormOperator" floatMode="BORDER" floatingText="Operator" prefWidth="400.0"/>
+                        <MFXTextField fx:id="uomFormOperator" floatMode="BORDER" floatingText="Operator"
+                                      prefWidth="400.0"/>
                         <Label id="validationLabel" fx:id="uomFormOperatorValidationLabel"
                                maxWidth="1.7976931348623157E308"
                                minHeight="-Infinity" styleClass="input-validation-error" visible="false"
