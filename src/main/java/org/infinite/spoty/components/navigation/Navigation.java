@@ -41,7 +41,7 @@ public class Navigation {
   public static Navigation getInstance(StackPane viewWindow) {
     if (instance == null) {
       instance = new Navigation(viewWindow);
-      instance.navigate(Pages.getDashboardPane());
+      instance.loadView(Pages.getDashboardPane());
     }
     return instance;
   }

@@ -36,7 +36,7 @@ record Nav(
   }
 
   public boolean isMainPage() {
-    return Objects.equals(view, null) && Objects.equals(graphic, null);
+    return !Objects.equals(view, null) && !Objects.equals(graphic, null);
   }
 
   public boolean matches(String filter) {

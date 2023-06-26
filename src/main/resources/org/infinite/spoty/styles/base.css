@@ -1,19 +1,15 @@
 /*
- * Copyright (C) 2022 Parisi Alessandro
- * This file is part of MaterialFX (https://github.com/palexdev/MaterialFX).
+ * Copyright (c) 2023, Jonathan Mark Mwigo. All rights reserved.
  *
- * MaterialFX is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * The computer system code contained in this file is the property of Jonathan Mark Mwigo and is protected by copyright law. Any unauthorized use of this code is prohibited.
  *
- * MaterialFX is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
+ * This copyright notice applies to all parts of the computer system code, including the source code, object code, and any other related materials.
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with MaterialFX.  If not, see <http://www.gnu.org/licenses/>.
+ * The computer system code may not be modified, translated, or reverse-engineered without the express written permission of Jonathan Mark Mwigo.
+ *
+ * Jonathan Mark Mwigo reserves the right to update, modify, or discontinue the computer system code at any time.
+ *
+ * Jonathan Mark Mwigo makes no warranties, express or implied, with respect to the computer system code. Jonathan Mark Mwigo shall not be liable for any damages, including, but not limited to, direct, indirect, incidental, special, consequential, or punitive damages, arising out of or in connection with the use of the computer system code.
  */
 
 @import '../fonts/Fonts.css';
@@ -23,7 +19,7 @@
  * Root
 **************************************************/
 .rootPane {
-	-fx-background-color: white;
+	-fx-background-color: -mfx-app-background-light;
 	-fx-background-radius: 10;
 	-fx-border-color: #ebebeb;
 	-fx-border-radius: 10;
@@ -95,6 +91,7 @@
 	-fx-font-size: 14;
 	-fx-text-fill: white;
 }
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                      TREE VIEW NAV STYLING.
 .rootPane .sidebar .navbar .tree-view {
@@ -129,46 +126,66 @@
 
 .rootPane .sidebar .navbar .tree-view .tree-cell:selected {
 	-fx-background-radius: 30;
-	-fx-background-color: #c0c9cc;
-	-fx-fill: #6b6e6f;
-	-fx-text-fill: #6b6e6f;
+	-fx-background-color: -mfx-selected-nav;
+	-fx-fill: -mfx-nav-white-text;
+	-fx-text-fill: -mfx-nav-white-text;
+	-fx-border-insets: 3 3.5 3 21.1;
+	-fx-background-insets: 0 3.5 0 21.1;
 }
 
-.rootPane .sidebar .navbar .tree-view .tree-cell:hover {
+.nav-tree-cell:selected .container .title {
+	-fx-text-fill: -mfx-nav-white-text;
+}
+
+.rootPane .sidebar .navbar .tree-view .tree-cell .container:hover {
 	-fx-background-radius: 30;
-	-fx-background-color: #6b6e6f;
-	-fx-fill: -mfx-charcoal;
-	-fx-text-fill: -mfx-charcoal;
+	-fx-background-color: -mfx-charcoal-disabled;
+	-fx-fill: -mfx-nav-white-text;
+	-fx-text-fill: -mfx-nav-white-text;
 }
 
+.rootPane .sidebar .navbar .tree-view .tree-cell .container {
+	-fx-background-radius: 30;
+	-fx-fill: -mfx-charcoal;
+	-fx-padding: 4 5 4 10;
+	-fx-text-fill: -mfx-nav-white-text;
+}
+
+// Style group
+.rootPane .sidebar .navbar .tree-view .tree-cell .container:group:selected,
 .rootPane .sidebar .navbar .tree-view .tree-cell:group:selected {
 	-fx-background-radius: 30;
 	-fx-background-color: -mfx-charcoal;
-	-fx-fill: -mfx-charcoal;
-	-fx-text-fill: -mfx-charcoal;
+	-fx-fill: -mfx-nav-white-text;
+	-fx-text-fill: -mfx-nav-white-text;
 }
-
 // Style expanded group.
 .rootPane .sidebar .navbar .tree-view .tree-cell:group:expanded {
 	-fx-background-radius: 30;
 	-fx-background-color: -mfx-charcoal;
-	-fx-fill: -mfx-charcoal;
-	-fx-text-fill: -mfx-charcoal;
+	-fx-fill: -mfx-nav-white-text;
+	-fx-text-fill: -mfx-nav-white-text;
 }
 
 // Style group sub item.
-.rootPane .sidebar .navbar .tree-view .tree-cell:sub-tree-item {
+.rootPane .sidebar .navbar .tree-view .tree-cell .container:sub-tree-item {
 	-fx-background-radius: 30;
-    -fx-fill: -mfx-charcoal;
-    -fx-text-fill: -mfx-charcoal;
+    -fx-fill: -mfx-nav-white-text;
+    -fx-text-fill: -mfx-nav-white-text;
     -fx-indent: 35;
 }
-
-.rootPane .sidebar .navbar .tree-view .tree-cell:hover:sub-tree-item {
+.rootPane .sidebar .navbar .tree-view .tree-cell:selected:sub-tree-item {
 	-fx-background-radius: 30;
-	-fx-background-color: #6b6e6f;
-	-fx-fill: -mfx-charcoal;
-	-fx-text-fill: -mfx-charcoal;
+    -fx-fill: -mfx-nav-white-text;
+    -fx-text-fill: -mfx-nav-white-text;
+	-fx-border-insets: 3 3.5 3 34;
+	-fx-background-insets: 3 3.5 3 34;
+}
+.rootPane .sidebar .navbar .tree-view .tree-cell .container:hover:sub-tree-item {
+	-fx-background-radius: 30;
+	-fx-background-color: -mfx-charcoal-disabled;
+	-fx-fill: -mfx-nav-white-text;
+	-fx-text-fill: -mfx-nav-white-text;
 	-fx-indent: 35;
 }
 
@@ -195,35 +212,49 @@
     -fx-background-color: #404040 ;
 }
 
+// Remove Horizontal scrollbar and other components.
+.tree-view *.scroll-bar:horizontal,
+.tree-view *.scroll-bar:horizontal *.track,
+.tree-view *.scroll-bar:horizontal *.track-background,
+.tree-view *.scroll-bar:horizontal *.thumb,
+.tree-view *.row-header-background *.show-hide-rows-button,
+.tree-view *.scroll-bar:horizontal *.increment-button,
+.tree-view *.scroll-bar:horizontal *.decrement-button,
+.tree-view *.scroll-bar:horizontal *.increment-arrow,
+.tree-view *.scroll-bar:horizontal *.decrement-arrow,
 .tree-view *.scroll-bar:vertical,
-.tree-view *.scroll-bar:vertical *.track,
-.tree-view *.scroll-bar:vertical *.track-background,
-.tree-view *.scroll-bar:vertical *.thumb,
 .tree-view *.column-header-background *.show-hide-columns-button,
 .tree-view *.scroll-bar:vertical *.increment-button,
 .tree-view *.scroll-bar:vertical *.decrement-button,
 .tree-view *.scroll-bar:vertical *.increment-arrow,
 .tree-view *.scroll-bar:vertical *.decrement-arrow {
-    -fx-background-color: -mfx-charcoal;
+    -fx-background-color: transparent;
     -fx-background-radius: 0;
     -fx-background-insets: 0;
     -fx-padding: 0;
-    -fx-shape: null;
 }
 
-.tree-view *.scroll-bar:horizontal,
-.tree-view *.scroll-bar:horizontal *.track,
-.tree-view *.scroll-bar:horizontal *.track-background,
-.tree-view *.scroll-bar:horizontal *.thumb,
-.tree-view *.scroll-bar:horizontal *.increment-button,
-.tree-view *.scroll-bar:horizontal *.decrement-button,
-.tree-view *.scroll-bar:horizontal *.increment-arrow,
-.tree-view *.scroll-bar:horizontal *.decrement-arrow {
-    -fx-background-color: -mfx-charcoal;
-    -fx-background-radius: 0;
-    -fx-background-insets: 0;
-    -fx-padding: 0;
-    -fx-shape: null;
+// Style scrollbar track and thumb
+.tree-view *.scroll-bar:vertical {
+    -fx-unit-increment: 2 ;
+    -fx-block-increment: 5 ;
+}
+.tree-view *.scroll-bar:vertical *.track,
+.tree-view *.scroll-bar:vertical *.track-background {
+    -fx-background-radius: 2.0em;
+    -fx-border-radius: 2.0em;
+    -fx-padding: 0.2em;
+    -fx-background-insets: 4.0, 0.0, 0.0;
+}
+.tree-view *.scroll-bar:vertical *.thumb {
+    -fx-background-color: derive(#20601cbe, 90.0%);
+    -fx-background-insets: 3.0, 0.0, 0.0;
+    -fx-background-radius: 2.0em;
+}
+.tree-view *.scroll-bar:vertical *.thumb:hover {
+    -fx-background-color: derive(#20601cbe, 90.0%);
+    -fx-background-insets: 2.5, 0.0, 0.0;
+    -fx-background-radius: 2.0em;
 }
 
 //.tree-view .tree-disclosure-node .arrow {
@@ -231,6 +262,7 @@
 //}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                                            NAV BUTTON STYLES
 .rootPane .sidebar .navbar .mfx-button .mfx-ripple-generator {
 	-mfx-paused: true;
 }
@@ -249,6 +281,7 @@
 	-fx-font-family: 'Visby Round CF Demi Bold';
 	-fx-font-size: 13;
 	-fx-fill: white;
+	-fx-text-fill: white;
 }
 
 .rootPane .sidebar .navbar .mfx-button:focused .selection-rectangle {
@@ -261,13 +294,20 @@
 }
 
 .rootPane .sidebar .navbar .mfx-icon-wrapper .mfx-font-icon {
-	-mfx-color: white;
+	-mfx-color: -mfx-nav-white-text;
+}
+
+.rootPane .sidebar .navbar .mfx-button:hover {
+	-fx-background-color: -mfx-charcoal-disabled;
+	-fx-background-radius: 30;
+	-fx-fill: -mfx-charcoal;
 }
 
 .rootPane .sidebar .navbar .mfx-button:focused {
-	-fx-background-color: white;
-	-fx-background-radius: 50 0 0 50;
-	-fx-fill: -mfx-charcoal;
+    -fx-background-color: -mfx-selected-nav;
+	-fx-background-radius: 30;
+    -fx-fill: -mfx-nav-white-text;
+    -fx-text-fill: -mfx-nav-white-text;
 }
 
 .rootPane .sidebar .navbar .mfx-button:focused .selection-rectangle {
@@ -276,11 +316,13 @@
 }
 
 .rootPane .sidebar .navbar .mfx-button:focused .mfx-icon-wrapper .mfx-font-icon {
-	-mfx-color: -mfx-charcoal;
+	-mfx-color: -mfx-nav-white-text;
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                                          APPBAR STYLES
 .appBar {
-	-fx-background-color: white;
+	-fx-background-color: -mfx-app-components-light;
 	-fx-background-radius: 10 10 10 10;
 	-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0.12, -1.0, 2.0);
 }

@@ -23,10 +23,7 @@ import javafx.css.PseudoClass;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
-import javafx.scene.control.TreeCell;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -35,28 +32,14 @@ import org.kordamp.ikonli.javafx.FontIcon;
 
 public class NavTree extends TreeView<Nav> {
   public static final double SIDEBAR_WIDTH = 194.0;
-  /** Removes or hides dropdown arrow nav. */
-  public static final String NO_ARROW = "no-arrow";
 
   /** Removes external control borders. */
   public static final String EDGE_TO_EDGE = "edge-to-edge";
-
-  /** Removes control header. */
-  public static final String NO_HEADER = "no-header";
-
-  /** Alignment. */
-  public static final String ALIGN_LEFT = "align-left";
-
-  public static final String ALIGN_CENTER = "align-center";
-  public static final String ALIGN_RIGHT = "align-right";
-  /** Forces a control to use alternative icon, if available. */
-  public static final String ALT_ICON = "alt-icon";
 
   static ChangeListener<Boolean> expandedListener;
 
   public NavTree(Navigation navigation) {
     super();
-    setPrefHeight(600);
 
     getSelectionModel()
         .selectedItemProperty()
@@ -72,21 +55,6 @@ public class NavTree extends TreeView<Nav> {
 
               if (navTreeItem.isGroup()) {
                 navTreeItem.expandedProperty().addListener(expandedListener);
-              }
-
-              if (navTreeItem.isMainPage()) {
-                getSelectionModel()
-                    .selectedItemProperty()
-                    .addListener(
-                        changeListener -> {
-                          ReadOnlyProperty<?> expandedProperty = (ReadOnlyProperty<?>) obs;
-                          Object itemThatWasJustExpanded = expandedProperty.getBean();
-                          for (TreeItem<Nav> item : getRoot().getChildren()) {
-                            if (item != itemThatWasJustExpanded) {
-                              item.setExpanded(false);
-                            }
-                          }
-                        });
               }
             });
 
@@ -118,7 +86,6 @@ public class NavTree extends TreeView<Nav> {
 
   public static final class NavTreeCell extends TreeCell<Nav> {
     private static final PseudoClass GROUP = PseudoClass.getPseudoClass("group");
-
     private static final PseudoClass SUB_ITEM = PseudoClass.getPseudoClass("sub-tree-item");
 
     private final HBox root;
@@ -144,6 +111,8 @@ public class NavTree extends TreeView<Nav> {
       root.setCursor(Cursor.HAND);
       root.getStyleClass().add("container");
       root.setMaxWidth(SIDEBAR_WIDTH - 10);
+      setPrefWidth(root.getPrefWidth());
+      root.setPrefHeight(getPrefHeight());
 
       root.setOnMouseClicked(
           e -> {

@@ -26,10 +26,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import org.infinite.spoty.components.navigation.Navigation;
@@ -44,7 +41,7 @@ public class BaseController implements Initializable {
   @FXML public MFXFontIcon maximizeIcon;
   @FXML public MFXFontIcon minimizeIcon;
   @FXML public StackPane contentPane;
-  @FXML public VBox navBar;
+  @FXML public StackPane navBar;
   @FXML public HBox windowHeader;
   @FXML public MFXScrollPane scrollPane;
   @FXML public AnchorPane rootPane;
@@ -102,6 +99,8 @@ public class BaseController implements Initializable {
   public void initializeLoader() {
     navigation = Navigation.getInstance(contentPane);
     navBar.getChildren().add(navigation.createNavigation());
+
+//    navBar.setStyle("-fx-background-color: red;");
 
     MFXButton settings = createToggle("fas-gears", "Settings");
     settings.setOnAction(e -> navigation.navigate(Pages.getSettingsPane()));
