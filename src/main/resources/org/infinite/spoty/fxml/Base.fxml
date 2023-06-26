@@ -16,7 +16,7 @@
 
 <?import io.github.palexdev.materialfx.controls.MFXScrollPane?>
 <?import io.github.palexdev.mfxresources.fonts.MFXFontIcon?>
-<?import javafx.geometry.*?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.*?>
 <?import java.lang.String?>
@@ -33,15 +33,12 @@
             </padding>
         </Label>
         <MFXScrollPane fx:id="scrollPane" fitToWidth="true" fitToHeight="true" VBox.vgrow="ALWAYS">
-            <VBox.margin>
-                <Insets left="1.0" right="1.0"/>
-            </VBox.margin>
-            <VBox fx:id="navBar" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-                  styleClass="navbar" VBox.vgrow="ALWAYS"/>
+            <StackPane fx:id="navBar" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                       styleClass="navbar" VBox.vgrow="ALWAYS"/>
         </MFXScrollPane>
         <VBox fx:id="settingsHolder" styleClass="navbar">
             <VBox.margin>
-                <Insets bottom="20.0" left="20.0"/>
+                <Insets bottom="20.0" left="25.0" right="5.0"/>
             </VBox.margin>
         </VBox>
     </VBox>
