@@ -28,16 +28,24 @@ public class StockInMaster implements Serializable {
 
   @ManyToOne private User user_detail;
   private String ref;
+  @Column(nullable = false)
   private Date date;
-  @ManyToOne private Branch branch;
+  @ManyToOne(optional = false)
+  @JoinColumn(nullable = false, name = "branch_id") private Branch branch;
 
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "stockIn")
   private List<StockInDetail> stockInDetails;
 
   private String shipping;
+  @Column(nullable = false)
   private double totalCost;
+  @Column(nullable = false)
   private String status;
+  @ManyToOne
+  @JoinColumn(name = "approved_by_id")
   private User approvedBy;
+  @ManyToOne
+  @JoinColumn(name = "recorded_by_id")
   private User recordedBy;
   private Date approvalDate;
   private Date recordDate;

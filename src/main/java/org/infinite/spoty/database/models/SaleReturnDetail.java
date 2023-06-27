@@ -24,19 +24,31 @@ public class SaleReturnDetail implements Serializable {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
 
-  @ManyToOne
+  @ManyToOne(optional = false)
   @JoinColumn(name = "saleReturnMaster_id", nullable = false)
   private SaleReturnMaster saleReturn;
 
-  @ManyToOne private ProductDetail product;
+  @ManyToOne(optional = false)
+  @JoinColumn(nullable = false, name = "product_id")
+  private ProductDetail product;
+
+  @Column(nullable = false)
   private double price;
-  @ManyToOne private UnitOfMeasure saleUnit;
+
+  @ManyToOne(optional = false)
+  @JoinColumn(nullable = false, name = "sale_unit_id")
+  private UnitOfMeasure saleUnit;
+
   private double netTax;
   private String taxType;
   private double discount;
   private String discountType;
   private String serialNumber;
+
+  @Column(nullable = false)
   private int quantity;
+
+  @Column(nullable = false)
   private double total;
 
   @Column(name = "created_at")

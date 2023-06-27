@@ -23,17 +23,27 @@ public class Supplier {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
 
+  @Column(nullable = false)
   private String name;
+
   private String code;
   private String email;
+
+  @Column(nullable = false)
   private String phone;
 
   @Column(name = "tax_number")
   private String taxNumber;
 
+  @Column(nullable = false)
   private String address;
+
+  @Column(nullable = false)
   private String city;
+
+  @Column(nullable = false)
   private String country;
+
   private Date createdAt;
   private String createdBy;
   private Date updatedAt;

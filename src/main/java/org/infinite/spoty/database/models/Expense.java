@@ -27,13 +27,27 @@ public class Expense implements Serializable {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
 
+  @Column(nullable = false)
   private Date date;
+
   private String ref;
+
+  @Column(nullable = false)
   private String name;
+  // TODO: Add not nullable when the user system works.
   @ManyToOne private User user_detail;
-  @ManyToOne private ExpenseCategory expenseCategory;
-  @ManyToOne private Branch branch;
+
+  @ManyToOne(optional = false)
+  @JoinColumn(nullable = false, name = "expense_category_id")
+  private ExpenseCategory expenseCategory;
+
+  @ManyToOne(optional = false)
+  @JoinColumn(nullable = false, name = "branch_id")
+  private Branch branch;
+
   private String details;
+
+  @Column(nullable = false)
   private double amount;
 
   @Column(name = "created_at")

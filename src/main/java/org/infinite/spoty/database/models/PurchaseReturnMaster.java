@@ -27,9 +27,17 @@ public class PurchaseReturnMaster implements Serializable {
 
   @ManyToOne private User user_detail;
   private String ref;
+
+  @Column(nullable = false)
   private Date date;
-  @ManyToOne private Supplier supplier;
-  @ManyToOne private Branch branch;
+
+  @ManyToOne(optional = false)
+  @JoinColumn(nullable = false, name = "supplier_id")
+  private Supplier supplier;
+
+  @ManyToOne(optional = false)
+  @JoinColumn(nullable = false, name = "branch_id")
+  private Branch branch;
 
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "purchaseReturn")
   private List<PurchaseReturnDetail> purchaseReturnDetails;

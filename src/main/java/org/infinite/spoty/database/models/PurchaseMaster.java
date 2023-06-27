@@ -28,8 +28,11 @@ public class PurchaseMaster implements Serializable {
 
   @ManyToOne private User user_detail;
   private String ref;
+  @Column(nullable = false)
   private Date date;
+  @JoinColumn(nullable = false, name = "supplier_id")
   @ManyToOne private Supplier supplier;
+  @JoinColumn(nullable = false, name = "branch_id")
   @ManyToOne private Branch branch;
 
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "purchase")

@@ -28,8 +28,13 @@ public class StockInDetail implements Serializable {
   @JoinColumn(name = "stockIn_id", nullable = false)
   private StockInMaster stockIn;
 
-  @ManyToOne private ProductDetail product;
+  @ManyToOne(optional = false)
+  @JoinColumn(nullable = false, name = "product_id")
+  private ProductDetail product;
+
+  @Column(nullable = false)
   private int quantity;
+
   private String serialNo;
   private String description;
   private String location;

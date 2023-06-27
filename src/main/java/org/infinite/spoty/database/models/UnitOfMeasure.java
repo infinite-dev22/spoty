@@ -23,10 +23,13 @@ public class UnitOfMeasure {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
 
+  @Column(nullable = false)
   private String name;
+
   private String shortName;
 
-  @OneToOne(cascade = CascadeType.ALL)
+  @ManyToOne
+  @JoinColumn(name = "base_unit_id")
   private UnitOfMeasure baseUnit;
 
   private String operator;

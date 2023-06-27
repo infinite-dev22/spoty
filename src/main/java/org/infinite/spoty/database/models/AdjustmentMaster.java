@@ -32,7 +32,7 @@ public class AdjustmentMaster implements Serializable {
   private String ref;
   @ManyToOne private Branch branch;
 
-  @OneToMany(cascade = CascadeType.ALL, mappedBy = "adjustment")
+  @OneToMany(cascade = CascadeType.ALL, mappedBy = "adjustment", orphanRemoval = true)
   private List<AdjustmentDetail> adjustmentDetails = new LinkedList<>();
 
   private String notes;

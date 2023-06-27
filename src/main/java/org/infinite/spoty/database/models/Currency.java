@@ -14,10 +14,7 @@
 
 package org.infinite.spoty.database.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import java.util.Date;
 
 @Entity
@@ -26,8 +23,12 @@ public class Currency {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
 
+  @Column(nullable = false)
   private String code;
+
+  @Column(nullable = false)
   private String name;
+
   private String symbol;
   private Date createdAt;
   private String createdBy;

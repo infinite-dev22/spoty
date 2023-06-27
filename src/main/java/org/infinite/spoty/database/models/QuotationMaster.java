@@ -28,17 +28,32 @@ public class QuotationMaster implements Serializable {
   private int id;
 
   @ManyToOne private User user_detail;
+
+  @Column(nullable = false)
   private Date date;
+
   private String ref;
-  @ManyToOne private Customer customer;
-  @ManyToOne private Branch branch;
+
+  @ManyToOne(optional = false)
+  @JoinColumn(nullable = false, name = "customer_id")
+  private Customer customer;
+
+  @ManyToOne(optional = false)
+  @JoinColumn(nullable = false, name = "branch_id")
+  private Branch branch;
 
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "quotation")
   private List<QuotationDetail> quotationDetails = new LinkedList<>();
 
+  @Column(nullable = false)
   private String shipping;
+
+  @Column(nullable = false)
   private double total;
+
+  @Column(nullable = false)
   private String status;
+
   private String notes;
 
   @Column(name = "created_at")

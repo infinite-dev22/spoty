@@ -26,18 +26,28 @@ public class SaleDetail implements Serializable {
 
   private String ref;
 
-  @ManyToOne
+  @ManyToOne(optional = false)
   @JoinColumn(name = "saleMaster_id", nullable = false)
   private SaleMaster sale;
 
-  @ManyToOne private ProductDetail product;
+  @ManyToOne(optional = false)
+  @JoinColumn(nullable = false, name = "product_id")
+  private ProductDetail product;
+
   private String serialNumber;
+
+  @Column(nullable = false)
   private double price;
+
   private double netTax;
   private String taxType;
   private double discount;
   private String discountType;
+
+  @Column(nullable = false)
   private double total;
+
+  @Column(nullable = false)
   private int quantity;
 
   @Column(name = "created_at")

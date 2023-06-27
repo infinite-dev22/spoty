@@ -24,20 +24,32 @@ public class PurchaseReturnDetail implements Serializable {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
+  @Column(nullable = false)
   private double cost;
-  @ManyToOne private UnitOfMeasure purchaseUnit;
 
-  @ManyToOne
-  @JoinColumn(name = "purchaseReturnMaster_id", nullable = false)
+  @ManyToOne(optional = false)
+  @JoinColumn(nullable = false, name = "purchase_unit_id")
+  private UnitOfMeasure purchaseUnit;
+
+  @ManyToOne(optional = false)
+  @JoinColumn(name = "purchase_return_master_id", nullable = false)
   private PurchaseReturnMaster purchaseReturn;
 
-  @OneToOne private ProductDetail product;
+  @ManyToOne(optional = false)
+  @JoinColumn(nullable = false, name = "product_id")
+  private ProductDetail product;
+
   private double netTax;
   private String taxType;
   private double discount;
   private String discountType;
+
+  @Column(nullable = false)
   private int quantity;
+
+  @Column(nullable = false)
   private double total;
+
   private String serialNumber;
 
   @Column(name = "created_at")

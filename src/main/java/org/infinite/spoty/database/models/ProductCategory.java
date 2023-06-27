@@ -25,7 +25,10 @@ public class ProductCategory {
   private int id;
 
   private String code;
+
+  @Column(nullable = false)
   private String name;
+
   private Date createdAt = null;
   private String createdBy = null;
   private Date updatedAt = null;
