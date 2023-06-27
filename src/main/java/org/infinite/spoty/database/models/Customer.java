@@ -14,10 +14,7 @@
 
 package org.infinite.spoty.database.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import java.util.Date;
 
 @Entity
@@ -26,14 +23,22 @@ public class Customer {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
 
+  @Column(nullable = false)
   private String name;
+
   private String code;
   private String email;
+
+  @Column(nullable = false)
   private String phone;
+
   private String city;
   private String address;
   private String taxNumber;
+
+  @Column(nullable = false)
   private String country;
+
   private Date createdAt = null;
   private String createdBy = null;
   private Date updatedAt = null;

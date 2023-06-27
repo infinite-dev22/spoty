@@ -14,10 +14,7 @@
 
 package org.infinite.spoty.database.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import java.util.Date;
 
 @Entity
@@ -26,7 +23,9 @@ public class Brand {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
 
+  @Column(nullable = false)
   private String name;
+
   private String description;
   private byte[] image;
   private Date createdAt;

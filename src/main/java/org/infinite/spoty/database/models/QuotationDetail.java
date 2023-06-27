@@ -24,11 +24,18 @@ public class QuotationDetail implements Serializable {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
 
+  @JoinColumn(nullable = false)
   private double price;
-  @ManyToOne private UnitOfMeasure saleUnit;
-  @ManyToOne private ProductDetail product;
 
-  @ManyToOne
+  @ManyToOne(optional = false)
+  @JoinColumn(nullable = false, name = "sale_unit_id")
+  private UnitOfMeasure saleUnit;
+
+  @ManyToOne(optional = false)
+  @JoinColumn(nullable = false, name = "product_id")
+  private ProductDetail product;
+
+  @ManyToOne(optional = false)
   @JoinColumn(name = "quotation_id", nullable = false)
   private QuotationMaster quotation;
 
@@ -36,8 +43,13 @@ public class QuotationDetail implements Serializable {
   private String taxType;
   private double discount;
   private String discountType;
+
+  @Column(nullable = false)
   private double total;
+
+  @Column(nullable = false)
   private int quantity;
+
   private String serialNumber;
 
   @Column(name = "created_at")

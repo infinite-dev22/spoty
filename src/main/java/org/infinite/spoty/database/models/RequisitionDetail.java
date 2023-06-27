@@ -24,13 +24,17 @@ public class RequisitionDetail implements Serializable {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
 
-  @OneToOne private ProductDetail productDetail;
+  @ManyToOne(optional = false)
+  @JoinColumn(nullable = false, name = "product_detail_id")
+  private ProductDetail productDetail;
 
-  @ManyToOne
+  @ManyToOne(optional = false)
   @JoinColumn(name = "requisition_id", nullable = false)
   private RequisitionMaster requisition;
 
+  @Column(nullable = false)
   private int quantity;
+
   private String description;
 
   @Column(name = "created_at")
@@ -51,7 +55,7 @@ public class RequisitionDetail implements Serializable {
       ProductDetail productDetail,
       RequisitionMaster
           requisition, // TODO: Remove this line as it ain't good being here. can't get
-                       // RequisitionMaster here. use setter.
+      // RequisitionMaster here. use setter.
       int quantity,
       String description) {
     this.productDetail = productDetail;

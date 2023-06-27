@@ -30,9 +30,14 @@ public class ProductMaster implements Serializable {
   @Column(name = "barcode_type")
   private String barcodeType;
 
+  @Column(nullable = false)
   private String name;
-  @ManyToOne private ProductCategory category;
-  @ManyToOne private Brand brand;
+
+  @ManyToOne(optional = false)
+  private ProductCategory category;
+
+  @ManyToOne(optional = false)
+  private Brand brand;
 
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "product")
   private List<ProductDetail> productDetails;

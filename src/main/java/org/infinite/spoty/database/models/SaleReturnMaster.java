@@ -26,10 +26,19 @@ public class SaleReturnMaster implements Serializable {
   private long id;
 
   @ManyToOne private User user_detail;
+
+  @Column(nullable = false)
   private Date date;
+
   private String ref;
-  @ManyToOne private Customer customer;
-  @ManyToOne private Branch branch;
+
+  @ManyToOne(optional = false)
+  @JoinColumn(nullable = false, name = "customer_id")
+  private Customer customer;
+
+  @ManyToOne(optional = false)
+  @JoinColumn(nullable = false, name = "branch_id")
+  private Branch branch;
 
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "saleReturn")
   private List<SaleReturnDetail> saleReturnDetails;
@@ -37,10 +46,19 @@ public class SaleReturnMaster implements Serializable {
   private double taxRate;
   private double netTax;
   private double discount;
+
+  @Column(nullable = false)
   private double total;
+
+  @Column(nullable = false)
   private double paid;
+
+  @Column(nullable = false)
   private String paymentStatus;
+
+  @Column(nullable = false)
   private String status;
+
   private String notes;
 
   @Column(name = "created_at")

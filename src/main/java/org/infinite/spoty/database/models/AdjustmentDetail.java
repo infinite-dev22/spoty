@@ -24,7 +24,8 @@ public class AdjustmentDetail implements Serializable {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
 
-  @OneToOne private ProductDetail productDetail;
+  @OneToOne(optional = false)
+  private ProductDetail productDetail;
 
   @ManyToOne
   @JoinColumn(name = "adjustment_id", nullable = false)

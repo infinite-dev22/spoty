@@ -24,8 +24,13 @@ public class Permission {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
 
+  @Column(nullable = false)
   private String name;
+
+  @Column(nullable = false)
   private String label;
+
+  @Column(nullable = false)
   private String description;
 
   @ManyToMany(mappedBy = "permissions")

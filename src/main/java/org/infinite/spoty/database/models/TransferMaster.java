@@ -28,18 +28,37 @@ public class TransferMaster implements Serializable {
 
   @ManyToOne private User user_detail;
   private String ref;
+
+  @Column(nullable = false)
   private Date date;
-  @ManyToOne private Branch fromBranch;
-  @ManyToOne private Branch toBranch;
+
+  @ManyToOne(optional = false)
+  @JoinColumn(nullable = false, name = "from_branch_id")
+  private Branch fromBranch;
+
+  @ManyToOne(optional = false)
+  @JoinColumn(nullable = false, name = "to_branch_id")
+  private Branch toBranch;
 
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "transfer")
   private List<TransferDetail> transferDetails;
 
   private String shipping;
+
+  @Column(nullable = false)
   private double total;
+
+  @Column(nullable = false)
   private String status;
+
+  @ManyToOne
+  @JoinColumn(name = "approved_by_id")
   private User approvedBy;
+
+  @ManyToOne
+  @JoinColumn(name = "received_by_id")
   private User receivedBy;
+
   private Date approvalDate;
   private Date receiveDate;
   private String notes;

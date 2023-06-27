@@ -25,12 +25,25 @@ public class PaymentSaleReturn implements Serializable {
   private long id;
 
   @ManyToOne private User user_detail;
+
+  @Column(nullable = false)
   private Date date;
+
   private String ref;
+
+  @ManyToOne(optional = false)
+  @JoinColumn(name = "sale_return_id", nullable = false)
   private SaleReturnMaster saleReturn;
+
+  @Column(nullable = false)
   private String paymentMethod;
+
+  @Column(nullable = false)
   private double amount;
+
+  @Column(nullable = false)
   private double change;
+
   private String notes;
 
   @Column(name = "created_at")

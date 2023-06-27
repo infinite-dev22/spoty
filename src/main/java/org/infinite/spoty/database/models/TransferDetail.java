@@ -28,11 +28,20 @@ public class TransferDetail implements Serializable {
   @JoinColumn(name = "transfer_id", nullable = false)
   private TransferMaster transfer;
 
-  @ManyToOne private ProductDetail product;
+  @ManyToOne(optional = false)
+  @JoinColumn(nullable = false, name = "product_id")
+  private ProductDetail product;
+
+  @Column(nullable = false)
   private int quantity;
+
   private String serialNo;
   private String description;
+
+  @Column(nullable = false)
   private double price;
+
+  @Column(nullable = false)
   private double total;
 
   @Column(name = "created_at")

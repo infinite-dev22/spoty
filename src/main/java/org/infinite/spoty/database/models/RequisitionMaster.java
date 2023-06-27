@@ -30,10 +30,19 @@ public class RequisitionMaster implements Serializable {
   private int id;
 
   private String ref;
+
+  @Column(nullable = false)
   private Date date;
+
   @ManyToOne private User user_detail;
-  @OneToOne private Supplier supplier;
-  @ManyToOne private Branch branch;
+
+  @OneToOne(optional = false)
+  @JoinColumn(nullable = false, name = "supplier_id")
+  private Supplier supplier;
+
+  @ManyToOne(optional = false)
+  @JoinColumn(nullable = false, name = "branch_id")
+  private Branch branch;
 
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "requisition")
   private List<RequisitionDetail> requisitionDetails = new LinkedList<>();
@@ -43,7 +52,11 @@ public class RequisitionMaster implements Serializable {
   private String shippingTerms;
   private Date deliveryDate;
   private String notes;
+
+  @Column(nullable = false)
   private String status;
+
+  @Column(nullable = false)
   private double totalCost;
 
   @Column(name = "created_at")

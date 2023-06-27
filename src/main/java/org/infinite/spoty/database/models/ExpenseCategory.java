@@ -23,9 +23,12 @@ public class ExpenseCategory implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
-
+  // TODO: Add user not nullable later.
   private User user_detail;
+
+  @Column(nullable = false)
   private String name;
+
   private String description;
 
   @Column(name = "created_at")

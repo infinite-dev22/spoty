@@ -24,7 +24,9 @@ public class Holiday implements Serializable {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
+  @Column(nullable = false)
   private String title;
+  @JoinColumn(nullable = false, name = "company_id")
   @ManyToOne private Company company;
 
   @Column(name = "start_date")

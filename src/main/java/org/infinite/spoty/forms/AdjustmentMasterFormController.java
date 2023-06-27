@@ -87,13 +87,16 @@ public class AdjustmentMasterFormController implements Initializable {
         .textProperty()
         .bindBidirectional(AdjustmentMasterViewModel.idProperty(), new NumberStringConverter());
     adjustmentBranch.valueProperty().bindBidirectional(AdjustmentMasterViewModel.branchProperty());
-    adjustmentBranch.setItems(BranchViewModel.branchesList);
+    adjustmentBranch.setItems(BranchViewModel.getBranches());
+    adjustmentBranch.setResetOnPopupHidden(true);
     adjustmentBranch.setConverter(
         new StringConverter<>() {
           @Override
           public String toString(Branch object) {
-            if (object != null) return object.getName();
-            else return null;
+            if (object != null) {
+              System.out.println(object.getName());
+              return object.getName();
+            } else return null;
           }
 
           @Override
