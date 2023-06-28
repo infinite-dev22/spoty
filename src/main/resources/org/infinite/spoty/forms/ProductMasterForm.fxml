@@ -14,13 +14,22 @@
   ~ Jonathan Mark Mwigo makes no warranties, express or implied, with respect to the computer system code. Jonathan Mark Mwigo shall not be liable for any damages, including, but not limited to, direct, indirect, incidental, special, consequential, or punitive damages, arising out of or in connection with the use of the computer system code.
   -->
 
-<?import io.github.palexdev.materialfx.controls.*?>
-<?import io.github.palexdev.mfxcomponents.controls.buttons.MFXElevatedButton?>
-<?import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton?>
-<?import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import io.github.palexdev.materialfx.controls.MFXComboBox?>
+<?import io.github.palexdev.materialfx.controls.MFXFilterComboBox?>
+<?import io.github.palexdev.materialfx.controls.MFXTableView?>
+<?import io.github.palexdev.materialfx.controls.MFXTextField?>
+<?import io.github.palexdev.materialfx.controls.MFXToggleButton?>
+<?import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 <?import java.net.URL?>
 <BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:id="productFormContentPane" cache="true" cacheHint="SPEED"
             xmlns="http://javafx.com/javafx/19" fx:controller="org.infinite.spoty.forms.ProductMasterFormController">
@@ -85,16 +94,16 @@
                 <MFXToggleButton fx:id="hasVariantToggle" layoutX="10.0" layoutY="32.0" text="Has variants"
                                  GridPane.columnIndex="1" GridPane.rowIndex="1"/>
             </GridPane>
-            <MFXElevatedButton fx:id="productVariantAddBtn" layoutX="930.0" layoutY="90.0" text="Add Variant"
-                               AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="100.0" disable="true"/>
+            <MFXButton fx:id="productVariantAddBtn" layoutX="930.0" layoutY="90.0" text="Add Variant"
+                       AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="100.0" disable="true"/>
             <MFXTableView fx:id="productDetailTable" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0"
                           AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="170.0" disable="true"/>
             <MFXToggleButton fx:id="notForSaleToggle" layoutX="10.0" layoutY="32.0" text="Not For Sale"
                              AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"/>
             <HBox alignment="CENTER_RIGHT" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="100.0"
                   AnchorPane.rightAnchor="0.0">
-                <MFXFilledButton onMouseClicked="#productSaveBtnClicked" text="Save"/>
-                <MFXOutlinedButton onMouseClicked="#productCancelBtnClicked" text="Cancel"/>
+                <MFXButton styleClass="filled" onMouseClicked="#productSaveBtnClicked" text="Save"/>
+                <MFXButton styleClass="outlined" onMouseClicked="#productCancelBtnClicked" text="Cancel"/>
             </HBox>
         </AnchorPane>
     </center>

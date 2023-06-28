@@ -20,8 +20,7 @@ import static org.infinite.spoty.viewModels.ExpenseCategoryViewModel.resetProper
 import static org.infinite.spoty.viewModels.ExpenseCategoryViewModel.saveExpenseCategory;
 
 import io.github.palexdev.materialfx.controls.MFXTextField;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
+import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
@@ -34,8 +33,8 @@ public class ExpenseCategoryFormController implements Initializable {
   public MFXTextField expenseCategoryID = new MFXTextField();
   @FXML public MFXTextField categoryExpenseFormName;
   @FXML public MFXTextField categoryExpenseFormDescription;
-  @FXML public MFXFilledButton categoryExpenseFormSaveBtn;
-  @FXML public MFXOutlinedButton categoryExpenseFormCancelBtn;
+  @FXML public MFXButton categoryExpenseFormSaveBtn;
+  @FXML public MFXButton categoryExpenseFormCancelBtn;
   @FXML public Label categoryExpenseFormTitle;
   @FXML public Label categoryExpenseFormNameValidationLabel;
 

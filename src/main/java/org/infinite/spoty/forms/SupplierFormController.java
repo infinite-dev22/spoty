@@ -18,8 +18,7 @@ import static org.infinite.spoty.GlobalActions.closeDialog;
 import static org.infinite.spoty.Validators.*;
 
 import io.github.palexdev.materialfx.controls.MFXTextField;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
+import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
@@ -30,8 +29,8 @@ import org.infinite.spoty.viewModels.SupplierViewModel;
 
 public class SupplierFormController implements Initializable {
   public MFXTextField supplierID = new MFXTextField();
-  @FXML public MFXFilledButton supplierFormSaveBtn;
-  @FXML public MFXOutlinedButton supplierFormCancelBtn;
+  @FXML public MFXButton supplierFormSaveBtn;
+  @FXML public MFXButton supplierFormCancelBtn;
   @FXML public Label supplierFormTitle;
   @FXML public MFXTextField supplierFormName;
   @FXML public MFXTextField supplierFormEmail;

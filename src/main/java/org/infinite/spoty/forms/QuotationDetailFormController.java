@@ -20,8 +20,7 @@ import static org.infinite.spoty.values.SharedResources.tempIdProperty;
 
 import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
+import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
@@ -37,8 +36,8 @@ public class QuotationDetailFormController implements Initializable {
   @FXML public MFXFilterComboBox<ProductDetail> quotationProductPdct;
   @FXML public MFXTextField quotationProductsOrderTax;
   @FXML public MFXTextField quotationProductsDiscount;
-  @FXML public MFXFilledButton quotationProductsSaveBtn;
-  @FXML public MFXOutlinedButton quotationProductsCancelBtn;
+  @FXML public MFXButton quotationProductsSaveBtn;
+  @FXML public MFXButton quotationProductsCancelBtn;
   @FXML public Label quotationProductsTitle;
   @FXML public Label quotationProductPdctValidationLabel;
   @FXML public Label quotationProductQntyValidationLabel;

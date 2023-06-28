@@ -51,16 +51,15 @@ public class SplashScreenController implements Initializable {
           try {
             Thread.sleep(5000);
             CSSFX.start();
-            FXMLLoader loader = fxmlLoader("fxml/Base.fxml");
             Stage stage = new Stage();
             setControllers(stage);
             setPanes();
+            FXMLLoader loader = fxmlLoader("fxml/Base.fxml");
             loader.setControllerFactory(c -> BaseController.getInstance(stage));
             Parent root = loader.load();
             Scene scene = new Scene(root);
             MFXThemeManager.addOn(scene, Themes.DEFAULT, Themes.LEGACY);
-            io.github.palexdev.mfxcomponents.theming.enums.MFXThemeManager.PURPLE_LIGHT.addOn(
-                scene);
+            io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(scene);
             scene.setFill(Color.TRANSPARENT);
             stage.setScene(scene);
             stage.initStyle(StageStyle.TRANSPARENT);

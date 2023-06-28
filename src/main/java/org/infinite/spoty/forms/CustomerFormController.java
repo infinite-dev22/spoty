@@ -18,8 +18,7 @@ import static org.infinite.spoty.GlobalActions.closeDialog;
 import static org.infinite.spoty.Validators.*;
 
 import io.github.palexdev.materialfx.controls.MFXTextField;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
+import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
@@ -30,8 +29,8 @@ import org.infinite.spoty.viewModels.CustomerViewModel;
 
 public class CustomerFormController implements Initializable {
   public MFXTextField customerID = new MFXTextField();
-  @FXML public MFXFilledButton customerFormSaveBtn;
-  @FXML public MFXOutlinedButton customerFormCancelBtn;
+  @FXML public MFXButton customerFormSaveBtn;
+  @FXML public MFXButton customerFormCancelBtn;
   @FXML public Label customerFormTitle;
   @FXML public MFXTextField customerFormName;
   @FXML public MFXTextField customerFormEmail;

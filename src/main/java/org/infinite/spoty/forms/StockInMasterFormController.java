@@ -22,7 +22,7 @@ import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.enums.ButtonType;
 import io.github.palexdev.materialfx.filter.IntegerFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXElevatedButton;
+import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Comparator;
@@ -59,7 +59,7 @@ public class StockInMasterFormController implements Initializable {
   @FXML public MFXTextField stockInMasterNote;
   @FXML public BorderPane stockInMasterFormContentPane;
   @FXML public Label stockInMasterFormTitle;
-  @FXML public MFXElevatedButton stockInMasterProductAddBtn;
+  @FXML public MFXButton stockInMasterProductAddBtn;
   @FXML public Label stockInMasterDateValidationLabel;
   @FXML public Label stockInMasterBranchValidationLabel;
   private Dialog<ButtonType> dialog;

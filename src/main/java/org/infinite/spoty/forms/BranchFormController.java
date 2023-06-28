@@ -20,8 +20,7 @@ import static org.infinite.spoty.viewModels.BranchViewModel.clearBranchData;
 import static org.infinite.spoty.viewModels.BranchViewModel.saveBranch;
 
 import io.github.palexdev.materialfx.controls.MFXTextField;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
+import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
@@ -32,8 +31,8 @@ import org.infinite.spoty.viewModels.BranchViewModel;
 
 public class BranchFormController implements Initializable {
   public MFXTextField branchFormID = new MFXTextField();
-  @FXML public MFXFilledButton branchFormSaveBtn;
-  @FXML public MFXOutlinedButton branchFormCancelBtn;
+  @FXML public MFXButton branchFormSaveBtn;
+  @FXML public MFXButton branchFormCancelBtn;
   @FXML public Label branchFormTitle;
   @FXML public MFXTextField branchFormName;
   @FXML public MFXTextField branchFormEmail;

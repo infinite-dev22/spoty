@@ -19,8 +19,7 @@ import static org.infinite.spoty.Validators.requiredValidator;
 
 import io.github.palexdev.materialfx.controls.MFXComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
+import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
@@ -42,8 +41,8 @@ public class UOMFormController implements Initializable {
 
   @FXML public MFXTextField uomFormName;
   @FXML public MFXTextField uomFormShortName;
-  @FXML public MFXFilledButton uomFormSaveBtn;
-  @FXML public MFXOutlinedButton uomFormCancelBtn;
+  @FXML public MFXButton uomFormSaveBtn;
+  @FXML public MFXButton uomFormCancelBtn;
   @FXML public Label uomFormTitle;
   @FXML public MFXComboBox<UnitOfMeasure> uomFormBaseUnit;
   @FXML public MFXTextField uomFormOperator;

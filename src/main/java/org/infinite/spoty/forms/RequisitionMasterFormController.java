@@ -22,7 +22,7 @@ import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.enums.ButtonType;
 import io.github.palexdev.materialfx.filter.IntegerFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXElevatedButton;
+import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Comparator;
@@ -61,7 +61,7 @@ public class RequisitionMasterFormController implements Initializable {
   @FXML public MFXTextField requisitionMasterNote;
   @FXML public BorderPane requisitionMasterFormContentPane;
   @FXML public Label requisitionMasterFormTitle;
-  @FXML public MFXElevatedButton requisitionMasterProductAddBtn;
+  @FXML public MFXButton requisitionMasterProductAddBtn;
   @FXML public MFXFilterComboBox<Supplier> requisitionMasterSupplier;
   @FXML public MFXTextField requisitionMasterShipVia;
   @FXML public MFXTextField requisitionMasterShipMthd;

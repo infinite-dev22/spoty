@@ -20,8 +20,7 @@ import static org.infinite.spoty.viewModels.BrandViewModel.clearBrandData;
 import static org.infinite.spoty.viewModels.BrandViewModel.saveBrand;
 
 import io.github.palexdev.materialfx.controls.MFXTextField;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
+import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
@@ -35,8 +34,8 @@ public class BrandFormController implements Initializable {
   @FXML public Label brandFormTitle;
   @FXML public MFXTextField brandFormName;
   @FXML public MFXTextField brandFormDescription;
-  @FXML public MFXFilledButton brandFormSaveBtn;
-  @FXML public MFXOutlinedButton brandFormCancelBtn;
+  @FXML public MFXButton brandFormSaveBtn;
+  @FXML public MFXButton brandFormCancelBtn;
   @FXML public Label brandFormNameValidationLabel;
   @FXML public Label brandFormDescriptionValidationLabel;
 

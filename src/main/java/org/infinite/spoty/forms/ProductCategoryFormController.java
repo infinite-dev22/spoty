@@ -19,8 +19,7 @@ import static org.infinite.spoty.Validators.requiredValidator;
 import static org.infinite.spoty.viewModels.ProductCategoryViewModel.*;
 
 import io.github.palexdev.materialfx.controls.MFXTextField;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
+import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
@@ -34,8 +33,8 @@ public class ProductCategoryFormController implements Initializable {
   public MFXTextField dialogCategoryID = new MFXTextField();
   @FXML public MFXTextField dialogCategoryCode;
   @FXML public MFXTextField dialogCategoryName;
-  @FXML public MFXFilledButton dialogSaveBtn;
-  @FXML public MFXOutlinedButton dialogCancelBtn;
+  @FXML public MFXButton dialogSaveBtn;
+  @FXML public MFXButton dialogCancelBtn;
   @FXML public Label dialogCategoryCodeValidationLabel;
   @FXML public Label dialogCategoryNameValidationLabel;
 

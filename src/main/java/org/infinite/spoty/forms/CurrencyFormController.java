@@ -20,8 +20,7 @@ import static org.infinite.spoty.viewModels.CurrencyViewModel.clearCurrencyData;
 import static org.infinite.spoty.viewModels.CurrencyViewModel.saveCurrency;
 
 import io.github.palexdev.materialfx.controls.MFXTextField;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
+import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
@@ -36,8 +35,8 @@ public class CurrencyFormController implements Initializable {
   public MFXTextField currencyFormID = new MFXTextField();
   @FXML public Label currencyFormTitle;
   @FXML public MFXTextField currencyFormName;
-  @FXML public MFXFilledButton currencyFormSaveBtn;
-  @FXML public MFXOutlinedButton currencyFormCancelBtn;
+  @FXML public MFXButton currencyFormSaveBtn;
+  @FXML public MFXButton currencyFormCancelBtn;
   @FXML public MFXTextField currencyFormCode;
   @FXML public MFXTextField currencyFormSymbol;
   @FXML public Label currencyFormCodeValidationLabel;

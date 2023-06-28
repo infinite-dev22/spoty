@@ -20,8 +20,7 @@ import static org.infinite.spoty.values.SharedResources.tempIdProperty;
 
 import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
+import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
@@ -35,8 +34,8 @@ import org.infinite.spoty.viewModels.TransferDetailViewModel;
 public class TransferDetailFormController implements Initializable {
   @FXML public MFXTextField transferDetailQnty;
   @FXML public MFXFilterComboBox<ProductDetail> transferDetailPdct;
-  @FXML public MFXFilledButton transferDetailSaveBtn;
-  @FXML public MFXOutlinedButton transferDetailCancelBtn;
+  @FXML public MFXButton transferDetailSaveBtn;
+  @FXML public MFXButton transferDetailCancelBtn;
   @FXML public Label transferDetailTitle;
   @FXML public MFXTextField transferDetailDescription;
   @FXML public Label transferDetailQntyValidationLabel;

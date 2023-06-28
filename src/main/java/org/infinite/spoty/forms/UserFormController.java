@@ -15,13 +15,14 @@
 package org.infinite.spoty.forms;
 
 import static org.infinite.spoty.GlobalActions.closeDialog;
-import static org.infinite.spoty.Validators.*;
+import static org.infinite.spoty.Validators.emailValidator;
+import static org.infinite.spoty.Validators.lengthValidator;
+import static org.infinite.spoty.Validators.requiredValidator;
 
 import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.controls.MFXToggleButton;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
+import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
@@ -36,8 +37,8 @@ import org.infinite.spoty.viewModels.UserViewModel;
 
 public class UserFormController implements Initializable {
   public MFXTextField userID = new MFXTextField();
-  @FXML public MFXFilledButton userFormSaveBtn;
-  @FXML public MFXOutlinedButton userFormCancelBtn;
+  @FXML public MFXButton userFormSaveBtn;
+  @FXML public MFXButton userFormCancelBtn;
   @FXML public Label userFormTitle;
   @FXML public MFXTextField userFormEmail;
   @FXML public MFXTextField userFormPhone;
