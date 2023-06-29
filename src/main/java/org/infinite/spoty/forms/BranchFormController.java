@@ -27,6 +27,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.util.converter.NumberStringConverter;
+import org.infinite.spoty.components.notification.SimpleNotification;
+import org.infinite.spoty.components.notification.SimpleNotificationHolder;
+import org.infinite.spoty.components.notification.enums.NotificationDuration;
+import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.viewModels.BranchViewModel;
 
 public class BranchFormController implements Initializable {
@@ -80,16 +84,42 @@ public class BranchFormController implements Initializable {
         });
     branchFormSaveBtn.setOnAction(
         (e) -> {
+          SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
           if (!branchFormNameValidationLabel.isVisible()
               && !branchFormEmailValidationLabel.isVisible()
               && !branchFormPhoneValidationLabel.isVisible()
               && !branchFormTownValidationLabel.isVisible()
               && !branchFormCityValidationLabel.isVisible()) {
-            if (Integer.parseInt(branchFormID.getText()) > 0)
+            if (Integer.parseInt(branchFormID.getText()) > 0) {
               BranchViewModel.updateItem(Integer.parseInt(branchFormID.getText()));
-            else saveBranch();
+              SimpleNotification notification =
+                  new SimpleNotification.NotificationBuilder("Branch updated successfully")
+                      .duration(NotificationDuration.SHORT)
+                      .icon("fas-circle-check")
+                      .type(NotificationVariants.SUCCESS)
+                      .build();
+              notificationHolder.addNotification(notification);
+              closeDialog(e);
+              return;
+            }
+            saveBranch();
+            SimpleNotification notification =
+                new SimpleNotification.NotificationBuilder("Branch saved successfully")
+                    .duration(NotificationDuration.SHORT)
+                    .icon("fas-circle-check")
+                    .type(NotificationVariants.SUCCESS)
+                    .build();
+            notificationHolder.addNotification(notification);
             closeDialog(e);
+            return;
           }
+          SimpleNotification notification =
+              new SimpleNotification.NotificationBuilder("Required fields missing")
+                  .duration(NotificationDuration.SHORT)
+                  .icon("fas-triangle-exclamation")
+                  .type(NotificationVariants.ERROR)
+                  .build();
+          notificationHolder.addNotification(notification);
         });
   }
 }

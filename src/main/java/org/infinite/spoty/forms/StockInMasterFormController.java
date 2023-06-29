@@ -42,6 +42,10 @@ import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.components.navigation.Pages;
+import org.infinite.spoty.components.notification.SimpleNotification;
+import org.infinite.spoty.components.notification.SimpleNotificationHolder;
+import org.infinite.spoty.components.notification.enums.NotificationDuration;
+import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.StockInDetail;
 import org.infinite.spoty.viewModels.BranchViewModel;
@@ -87,7 +91,7 @@ public class StockInMasterFormController implements Initializable {
         .textProperty()
         .bindBidirectional(StockInMasterViewModel.idProperty(), new NumberStringConverter());
     stockInMasterBranch.valueProperty().bindBidirectional(StockInMasterViewModel.branchProperty());
-    stockInMasterBranch.setItems(BranchViewModel.branchesList);
+    stockInMasterBranch.setItems(BranchViewModel.getBranches());
     stockInMasterBranch.setConverter(
         new StringConverter<>() {
           @Override
@@ -132,7 +136,7 @@ public class StockInMasterFormController implements Initializable {
             new StringFilter<>("Name", StockInDetail::getProductDetailName),
             new IntegerFilter<>("Quantity", StockInDetail::getQuantity));
     getStockInDetailTable();
-    stockInDetailTable.setItems(StockInDetailViewModel.stockInDetailsTempList);
+    stockInDetailTable.setItems(StockInDetailViewModel.getStockInDetails());
   }
 
   private void getStockInDetailTable() {
@@ -201,20 +205,50 @@ public class StockInMasterFormController implements Initializable {
   }
 
   public void stockInMasterSaveBtnClicked() {
+    SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
     if (!stockInDetailTable.isDisabled()
         && StockInDetailViewModel.stockInDetailsTempList.isEmpty()) {
-      // Notify table can't be empty
-      System.out.println("Table can't be empty");
+      SimpleNotification notification =
+          new SimpleNotification.NotificationBuilder("Table can't be Empty")
+              .duration(NotificationDuration.SHORT)
+              .icon("fas-triangle-exclamation")
+              .type(NotificationVariants.ERROR)
+              .build();
+      notificationHolder.addNotification(notification);
+      return;
     }
     if (!stockInMasterBranchValidationLabel.isVisible()
         && !stockInMasterDateValidationLabel.isVisible()) {
       if (Integer.parseInt(stockInMasterID.getText()) > 0) {
         StockInMasterViewModel.updateItem(Integer.parseInt(stockInMasterID.getText()));
+        SimpleNotification notification =
+            new SimpleNotification.NotificationBuilder("Stock In updated successfully")
+                .duration(NotificationDuration.MEDIUM)
+                .icon("fas-circle-check")
+                .type(NotificationVariants.SUCCESS)
+                .build();
+        notificationHolder.addNotification(notification);
         stockInMasterCancelBtnClicked();
-      } else StockInMasterViewModel.saveStockInMaster();
-      StockInMasterViewModel.resetProperties();
-      StockInDetailViewModel.stockInDetailsTempList.clear();
+        return;
+      }
+      StockInMasterViewModel.saveStockInMaster();
+      SimpleNotification notification =
+          new SimpleNotification.NotificationBuilder("Stock In saved successfully")
+              .duration(NotificationDuration.MEDIUM)
+              .icon("fas-circle-check")
+              .type(NotificationVariants.SUCCESS)
+              .build();
+      notificationHolder.addNotification(notification);
+      stockInMasterCancelBtnClicked();
+      return;
     }
+    SimpleNotification notification =
+        new SimpleNotification.NotificationBuilder("Required fields missing")
+            .duration(NotificationDuration.SHORT)
+            .icon("fas-triangle-exclamation")
+            .type(NotificationVariants.ERROR)
+            .build();
+    notificationHolder.addNotification(notification);
   }
 
   public void stockInMasterCancelBtnClicked() {

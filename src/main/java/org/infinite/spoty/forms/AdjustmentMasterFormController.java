@@ -49,6 +49,10 @@ import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.components.navigation.Pages;
+import org.infinite.spoty.components.notification.SimpleNotification;
+import org.infinite.spoty.components.notification.SimpleNotificationHolder;
+import org.infinite.spoty.components.notification.enums.NotificationDuration;
+import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.database.models.AdjustmentDetail;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.viewModels.AdjustmentDetailViewModel;
@@ -150,7 +154,7 @@ public class AdjustmentMasterFormController implements Initializable {
             new IntegerFilter<>("Quantity", AdjustmentDetail::getQuantity),
             new StringFilter<>("Adjustment Type", AdjustmentDetail::getAdjustmentType));
     getAdjustmentDetailTable();
-    adjustmentDetailTable.setItems(AdjustmentDetailViewModel.adjustmentDetailsTempList);
+    adjustmentDetailTable.setItems(AdjustmentDetailViewModel.getAdjustmentDetails());
   }
 
   private void getAdjustmentDetailTable() {
@@ -219,21 +223,50 @@ public class AdjustmentMasterFormController implements Initializable {
   }
 
   public void adjustmentSaveBtnClicked() {
+    SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
     if (!adjustmentDetailTable.isDisabled()
         && AdjustmentDetailViewModel.adjustmentDetailsTempList.isEmpty()) {
-      // Notify table can't be empty
-      System.out.println("Table can't be empty");
+      SimpleNotification notification =
+          new SimpleNotification.NotificationBuilder("Table can't be Empty")
+              .duration(NotificationDuration.SHORT)
+              .icon("fas-triangle-exclamation")
+              .type(NotificationVariants.ERROR)
+              .build();
+      notificationHolder.addNotification(notification);
       return;
     }
     if (!adjustmentBranchValidationLabel.isVisible()
         && !adjustmentDateValidationLabel.isVisible()) {
       if (Integer.parseInt(adjustmentMasterID.getText()) > 0) {
         AdjustmentMasterViewModel.updateItem(Integer.parseInt(adjustmentMasterID.getText()));
+        SimpleNotification notification =
+            new SimpleNotification.NotificationBuilder("Product adjustment updated successfully")
+                .duration(NotificationDuration.MEDIUM)
+                .icon("fas-circle-check")
+                .type(NotificationVariants.SUCCESS)
+                .build();
+        notificationHolder.addNotification(notification);
         adjustmentCancelBtnClicked();
-      } else AdjustmentMasterViewModel.saveAdjustmentMaster();
-      AdjustmentMasterViewModel.resetProperties();
-      AdjustmentDetailViewModel.adjustmentDetailsTempList.clear();
+        return;
+      }
+        AdjustmentMasterViewModel.saveAdjustmentMaster();
+        SimpleNotification notification =
+            new SimpleNotification.NotificationBuilder("Product adjustment saved successfully")
+                .duration(NotificationDuration.MEDIUM)
+                .icon("fas-circle-check")
+                .type(NotificationVariants.SUCCESS)
+                .build();
+        notificationHolder.addNotification(notification);
+      adjustmentCancelBtnClicked();
+      return;
     }
+    SimpleNotification notification =
+            new SimpleNotification.NotificationBuilder("Required fields missing")
+                    .duration(NotificationDuration.SHORT)
+                    .icon("fas-triangle-exclamation")
+                    .type(NotificationVariants.ERROR)
+                    .build();
+    notificationHolder.addNotification(notification);
   }
 
   public void adjustmentCancelBtnClicked() {

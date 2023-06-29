@@ -28,6 +28,10 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
+import org.infinite.spoty.components.notification.SimpleNotification;
+import org.infinite.spoty.components.notification.SimpleNotificationHolder;
+import org.infinite.spoty.components.notification.enums.NotificationDuration;
+import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.ExpenseCategory;
 import org.infinite.spoty.viewModels.BranchViewModel;
@@ -117,16 +121,42 @@ public class ExpenseFormController implements Initializable {
         });
     expenseFormSaveBtn.setOnAction(
         (e) -> {
+          SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
           if (!expenseFormNameValidationLabel.isVisible()
               && !expenseFormDateValidationLabel.isVisible()
               && !expenseFormBranchValidationLabel.isVisible()
               && !expenseFormCategoryValidationLabel.isVisible()
               && !expenseFormAmountValidationLabel.isVisible()) {
-            if (Integer.parseInt(expenseID.getText()) > 0)
+            if (Integer.parseInt(expenseID.getText()) > 0) {
               ExpenseViewModel.updateItem(Integer.parseInt(expenseID.getText()));
-            else ExpenseViewModel.saveExpense();
+              SimpleNotification notification =
+                  new SimpleNotification.NotificationBuilder("Expense updated successfully")
+                      .duration(NotificationDuration.SHORT)
+                      .icon("fas-circle-check")
+                      .type(NotificationVariants.SUCCESS)
+                      .build();
+              notificationHolder.addNotification(notification);
+              closeDialog(e);
+              return;
+            }
+            ExpenseViewModel.saveExpense();
+            SimpleNotification notification =
+                new SimpleNotification.NotificationBuilder("Expense saved successfully")
+                    .duration(NotificationDuration.SHORT)
+                    .icon("fas-circle-check")
+                    .type(NotificationVariants.SUCCESS)
+                    .build();
+            notificationHolder.addNotification(notification);
             closeDialog(e);
+            return;
           }
+          SimpleNotification notification =
+              new SimpleNotification.NotificationBuilder("Required fields missing")
+                  .duration(NotificationDuration.SHORT)
+                  .icon("fas-triangle-exclamation")
+                  .type(NotificationVariants.ERROR)
+                  .build();
+          notificationHolder.addNotification(notification);
         });
   }
 }

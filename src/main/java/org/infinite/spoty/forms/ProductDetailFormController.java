@@ -27,6 +27,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.util.StringConverter;
+import org.infinite.spoty.components.notification.SimpleNotification;
+import org.infinite.spoty.components.notification.SimpleNotificationHolder;
+import org.infinite.spoty.components.notification.enums.NotificationDuration;
+import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.database.models.UnitOfMeasure;
 import org.infinite.spoty.viewModels.ProductDetailViewModel;
 import org.infinite.spoty.viewModels.UOMViewModel;
@@ -80,20 +84,56 @@ public class ProductDetailFormController implements Initializable {
         });
     productProductsSaveBtn.setOnAction(
         (e) -> {
+          SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
           // TODO: Find better logic for this.
           // If one of productVariantUOM or productVariantName is provide can save the product.
           if (productVariantName.getText().isEmpty() && !productVariantUOM.getText().isEmpty())
             productVariantNameValidationLabel.setVisible(false);
           if (productVariantUOM.getText().isEmpty() && !productVariantName.getText().isEmpty())
             productVariantUOMValidationLabel.setVisible(false);
+          if (productVariantUOM.getText().isEmpty() && productVariantName.getText().isEmpty()) {
+            SimpleNotification notification =
+                new SimpleNotification.NotificationBuilder(
+                        "Required fields missing\nEither fill Name or Unit of measure")
+                    .duration(NotificationDuration.SHORT)
+                    .icon("fas-triangle-exclamation")
+                    .type(NotificationVariants.ERROR)
+                    .build();
+            notificationHolder.addNotification(notification);
+            return;
+          }
           if (!productVariantUOMValidationLabel.isVisible()
               && !productVariantNameValidationLabel.isVisible()) {
-            if (tempIdProperty().get() > -1)
+            if (tempIdProperty().get() > -1) {
               ProductDetailViewModel.updateProductDetail(ProductDetailViewModel.getId());
-            else ProductDetailViewModel.addProductDetail();
-            ProductDetailViewModel.resetProperties();
+              SimpleNotification notification =
+                  new SimpleNotification.NotificationBuilder("Product variant changed successfully")
+                      .duration(NotificationDuration.SHORT)
+                      .icon("fas-circle-check")
+                      .type(NotificationVariants.SUCCESS)
+                      .build();
+              notificationHolder.addNotification(notification);
+              closeDialog(e);
+              return;
+            }
+            ProductDetailViewModel.addProductDetail();
+            SimpleNotification notification =
+                new SimpleNotification.NotificationBuilder("Product variant added successfully")
+                    .duration(NotificationDuration.SHORT)
+                    .icon("fas-circle-check")
+                    .type(NotificationVariants.SUCCESS)
+                    .build();
+            notificationHolder.addNotification(notification);
             closeDialog(e);
+            return;
           }
+          SimpleNotification notification =
+              new SimpleNotification.NotificationBuilder("Required fields missing")
+                  .duration(NotificationDuration.SHORT)
+                  .icon("fas-triangle-exclamation")
+                  .type(NotificationVariants.ERROR)
+                  .build();
+          notificationHolder.addNotification(notification);
         });
   }
 }

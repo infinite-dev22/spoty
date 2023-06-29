@@ -36,6 +36,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.values.strings.Labels;
 import org.infinite.spoty.views.BaseController;
 
@@ -66,6 +67,8 @@ public class SplashScreenController implements Initializable {
             stage.setMaximized(true);
             stage.setTitle(Labels.APP_NAME);
             stage.show();
+            System.out.println(stage.getWidth());
+            SimpleNotificationHolder.setNotificationOwner(stage);
           } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
           }

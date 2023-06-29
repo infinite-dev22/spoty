@@ -50,6 +50,10 @@ import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.components.navigation.Pages;
+import org.infinite.spoty.components.notification.SimpleNotification;
+import org.infinite.spoty.components.notification.SimpleNotificationHolder;
+import org.infinite.spoty.components.notification.enums.NotificationDuration;
+import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.PurchaseDetail;
 import org.infinite.spoty.database.models.Supplier;
@@ -97,7 +101,7 @@ public class PurchaseMasterFormController implements Initializable {
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     // Set items to combo boxes and display custom text.
-    purchaseSupplier.setItems(SupplierViewModel.suppliersList);
+    purchaseSupplier.setItems(SupplierViewModel.getSuppliers());
     purchaseSupplier.setConverter(
         new StringConverter<>() {
           @Override
@@ -111,7 +115,7 @@ public class PurchaseMasterFormController implements Initializable {
             return null;
           }
         });
-    purchaseBranch.setItems(BranchViewModel.branchesList);
+    purchaseBranch.setItems(BranchViewModel.getBranches());
     purchaseBranch.setConverter(
         new StringConverter<>() {
           @Override
@@ -153,10 +157,16 @@ public class PurchaseMasterFormController implements Initializable {
   }
 
   public void saveBtnClicked() {
+    SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
     if (!purchaseDetailTable.isDisabled()
         && PurchaseDetailViewModel.purchaseDetailTempList.isEmpty()) {
-      // Notify table can't be empty
-      System.out.println("Table can't be empty");
+      SimpleNotification notification =
+          new SimpleNotification.NotificationBuilder("Table can't be Empty")
+              .duration(NotificationDuration.SHORT)
+              .icon("fas-triangle-exclamation")
+              .type(NotificationVariants.ERROR)
+              .build();
+      notificationHolder.addNotification(notification);
     }
     if (!purchaseBranchValidationLabel.isVisible()
         && !purchaseSupplierValidationLabel.isVisible()
@@ -164,11 +174,34 @@ public class PurchaseMasterFormController implements Initializable {
         && !purchaseStatusValidationLabel.isVisible()) {
       if (Integer.parseInt(purchaseMasterID.getText()) > 0) {
         PurchaseMasterViewModel.updateItem(Integer.parseInt(purchaseMasterID.getText()));
+        SimpleNotification notification =
+            new SimpleNotification.NotificationBuilder("Purchase updated successfully")
+                .duration(NotificationDuration.MEDIUM)
+                .icon("fas-circle-check")
+                .type(NotificationVariants.SUCCESS)
+                .build();
+        notificationHolder.addNotification(notification);
         cancelBtnClicked();
-      } else PurchaseMasterViewModel.savePurchaseMaster();
-      PurchaseMasterViewModel.resetProperties();
-      purchaseDetailTable.getTableColumns().clear();
+        return;
+      }
+      PurchaseMasterViewModel.savePurchaseMaster();
+      SimpleNotification notification =
+          new SimpleNotification.NotificationBuilder("Purchase saved successfully")
+              .duration(NotificationDuration.MEDIUM)
+              .icon("fas-circle-check")
+              .type(NotificationVariants.SUCCESS)
+              .build();
+      notificationHolder.addNotification(notification);
+      cancelBtnClicked();
+      return;
     }
+    SimpleNotification notification =
+        new SimpleNotification.NotificationBuilder("Required fields missing")
+            .duration(NotificationDuration.SHORT)
+            .icon("fas-triangle-exclamation")
+            .type(NotificationVariants.ERROR)
+            .build();
+    notificationHolder.addNotification(notification);
   }
 
   private void setupTable() {
@@ -206,7 +239,7 @@ public class PurchaseMasterFormController implements Initializable {
             new DoubleFilter<>("Discount", PurchaseDetail::getDiscount));
     styleTable();
     // Populate table.
-    purchaseDetailTable.setItems(PurchaseDetailViewModel.purchaseDetailTempList);
+    purchaseDetailTable.setItems(PurchaseDetailViewModel.getPurchaseDetails());
   }
 
   private void styleTable() {

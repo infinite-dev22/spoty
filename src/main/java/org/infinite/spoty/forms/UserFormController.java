@@ -30,6 +30,10 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
+import org.infinite.spoty.components.notification.SimpleNotification;
+import org.infinite.spoty.components.notification.SimpleNotificationHolder;
+import org.infinite.spoty.components.notification.enums.NotificationDuration;
+import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.Role;
 import org.infinite.spoty.viewModels.BranchViewModel;
@@ -144,6 +148,7 @@ public class UserFormController implements Initializable {
         });
     userFormSaveBtn.setOnAction(
         (e) -> {
+          SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
           if (!userFormFirstNameValidationLabel.isVisible()
               && !userFormLastNameValidationLabel.isVisible()
               && !userFormUserNameValidationLabel.isVisible()
@@ -151,12 +156,36 @@ public class UserFormController implements Initializable {
               && !userFormRoleValidationLabel.isVisible()
               && !userFormEmailValidationLabel.isVisible()
               && !userFormPhoneValidationLabel.isVisible()) {
-            if (Integer.parseInt(userID.getText()) > 0)
+            if (Integer.parseInt(userID.getText()) > 0) {
               UserViewModel.updateItem(Integer.parseInt(userID.getText()));
-            else UserViewModel.saveUser();
+              SimpleNotification notification =
+                  new SimpleNotification.NotificationBuilder("User updated successfully")
+                      .duration(NotificationDuration.SHORT)
+                      .icon("fas-circle-check")
+                      .type(NotificationVariants.SUCCESS)
+                      .build();
+              notificationHolder.addNotification(notification);
+              closeDialog(e);
+              return;
+            }
+            UserViewModel.saveUser();
+            SimpleNotification notification =
+                new SimpleNotification.NotificationBuilder("User saved successfully")
+                    .duration(NotificationDuration.SHORT)
+                    .icon("fas-circle-check")
+                    .type(NotificationVariants.SUCCESS)
+                    .build();
+            notificationHolder.addNotification(notification);
             closeDialog(e);
-            UserViewModel.resetProperties();
+            return;
           }
+          SimpleNotification notification =
+              new SimpleNotification.NotificationBuilder("Required fields missing")
+                  .duration(NotificationDuration.SHORT)
+                  .icon("fas-triangle-exclamation")
+                  .type(NotificationVariants.ERROR)
+                  .build();
+          notificationHolder.addNotification(notification);
         });
   }
 }

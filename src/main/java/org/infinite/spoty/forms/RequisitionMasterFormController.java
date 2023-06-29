@@ -42,6 +42,10 @@ import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.components.navigation.Pages;
+import org.infinite.spoty.components.notification.SimpleNotification;
+import org.infinite.spoty.components.notification.SimpleNotificationHolder;
+import org.infinite.spoty.components.notification.enums.NotificationDuration;
+import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.RequisitionDetail;
 import org.infinite.spoty.database.models.Supplier;
@@ -96,7 +100,7 @@ public class RequisitionMasterFormController implements Initializable {
     requisitionMasterBranch
         .valueProperty()
         .bindBidirectional(RequisitionMasterViewModel.branchProperty());
-    requisitionMasterBranch.setItems(BranchViewModel.branchesList);
+    requisitionMasterBranch.setItems(BranchViewModel.getBranches());
     requisitionMasterBranch.setConverter(
         new StringConverter<>() {
           @Override
@@ -110,7 +114,7 @@ public class RequisitionMasterFormController implements Initializable {
             return null;
           }
         });
-    requisitionMasterSupplier.setItems(SupplierViewModel.suppliersList);
+    requisitionMasterSupplier.setItems(SupplierViewModel.getSuppliers());
     requisitionMasterSupplier.setConverter(
         new StringConverter<>() {
           @Override
@@ -175,7 +179,7 @@ public class RequisitionMasterFormController implements Initializable {
             new StringFilter<>("Name", RequisitionDetail::getProductDetailName),
             new IntegerFilter<>("Quantity", RequisitionDetail::getQuantity));
     getRequisitionDetailTable();
-    requisitionDetailTable.setItems(RequisitionDetailViewModel.requisitionDetailTempList);
+    requisitionDetailTable.setItems(RequisitionDetailViewModel.getRequisitionDetails());
   }
 
   private void getRequisitionDetailTable() {
@@ -244,21 +248,51 @@ public class RequisitionMasterFormController implements Initializable {
   }
 
   public void requisitionMasterSaveBtnClicked() {
+    SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
     if (!requisitionDetailTable.isDisabled()
         && RequisitionDetailViewModel.requisitionDetailTempList.isEmpty()) {
-      // Notify table can't be empty
-      System.out.println("Table can't be empty");
+      SimpleNotification notification =
+          new SimpleNotification.NotificationBuilder("Table can't be Empty")
+              .duration(NotificationDuration.SHORT)
+              .icon("fas-triangle-exclamation")
+              .type(NotificationVariants.ERROR)
+              .build();
+      notificationHolder.addNotification(notification);
+      return;
     }
     if (!requisitionMasterSupplierValidationLabel.isVisible()
         && !requisitionMasterDateValidationLabel.isVisible()
         && !requisitionMasterBranchValidationLabel.isVisible()) {
       if (Integer.parseInt(requisitionMasterID.getText()) > 0) {
         RequisitionMasterViewModel.updateItem(Integer.parseInt(requisitionMasterID.getText()));
+        SimpleNotification notification =
+            new SimpleNotification.NotificationBuilder("Requisition updated successfully")
+                .duration(NotificationDuration.MEDIUM)
+                .icon("fas-circle-check")
+                .type(NotificationVariants.SUCCESS)
+                .build();
+        notificationHolder.addNotification(notification);
         requisitionMasterCancelBtnClicked();
-      } else RequisitionMasterViewModel.saveRequisitionMaster();
-      RequisitionMasterViewModel.resetProperties();
-      RequisitionDetailViewModel.requisitionDetailTempList.clear();
+        return;
+      }
+      RequisitionMasterViewModel.saveRequisitionMaster();
+      SimpleNotification notification =
+          new SimpleNotification.NotificationBuilder("Requisition saved successfully")
+              .duration(NotificationDuration.MEDIUM)
+              .icon("fas-circle-check")
+              .type(NotificationVariants.SUCCESS)
+              .build();
+      notificationHolder.addNotification(notification);
+      requisitionMasterCancelBtnClicked();
+      return;
     }
+    SimpleNotification notification =
+        new SimpleNotification.NotificationBuilder("Required fields missing")
+            .duration(NotificationDuration.SHORT)
+            .icon("fas-triangle-exclamation")
+            .type(NotificationVariants.ERROR)
+            .build();
+    notificationHolder.addNotification(notification);
   }
 
   public void requisitionMasterCancelBtnClicked() {

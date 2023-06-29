@@ -28,6 +28,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.util.converter.NumberStringConverter;
+import org.infinite.spoty.components.notification.SimpleNotification;
+import org.infinite.spoty.components.notification.SimpleNotificationHolder;
+import org.infinite.spoty.components.notification.enums.NotificationDuration;
+import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.viewModels.CurrencyViewModel;
 
 public class CurrencyFormController implements Initializable {
@@ -73,14 +77,39 @@ public class CurrencyFormController implements Initializable {
         });
     currencyFormSaveBtn.setOnAction(
         (e) -> {
+          SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
           if (!currencyFormNameValidationLabel.isVisible()
               && !currencyFormCodeValidationLabel.isVisible()) {
-            if (Integer.parseInt(currencyFormID.getText()) > 0)
+            if (Integer.parseInt(currencyFormID.getText()) > 0) {
               CurrencyViewModel.updateItem(Integer.parseInt(currencyFormID.getText()));
-            else saveCurrency();
-            clearCurrencyData();
+              SimpleNotification notification =
+                  new SimpleNotification.NotificationBuilder("Currency updated successfully")
+                      .duration(NotificationDuration.SHORT)
+                      .icon("fas-circle-check")
+                      .type(NotificationVariants.SUCCESS)
+                      .build();
+              notificationHolder.addNotification(notification);
+              closeDialog(e);
+              return;
+            }
+            saveCurrency();
+            SimpleNotification notification =
+                new SimpleNotification.NotificationBuilder("Currency saved successfully")
+                    .duration(NotificationDuration.SHORT)
+                    .icon("fas-circle-check")
+                    .type(NotificationVariants.SUCCESS)
+                    .build();
+            notificationHolder.addNotification(notification);
             closeDialog(e);
+            return;
           }
+          SimpleNotification notification =
+              new SimpleNotification.NotificationBuilder("Required fields missing")
+                  .duration(NotificationDuration.SHORT)
+                  .icon("fas-triangle-exclamation")
+                  .type(NotificationVariants.ERROR)
+                  .build();
+          notificationHolder.addNotification(notification);
         });
   }
 }
