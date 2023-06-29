@@ -14,9 +14,9 @@
 
 package org.infinite.spoty.views.settings.system;
 
-import io.github.palexdev.materialfx.controls.MFXCheckbox;
 import io.github.palexdev.materialfx.controls.MFXComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.mfxcomponents.controls.checkbox.MFXCheckBox;
 import java.io.File;
 import java.net.URL;
 import java.util.Objects;
@@ -40,7 +40,7 @@ public class SystemController implements Initializable {
   @FXML public MFXTextField companyPhone;
   @FXML public MFXComboBox<Branch> defaultBranch;
   @FXML public MFXTextField branchAddress;
-  @FXML public MFXCheckbox invoiceFooter;
+  @FXML public MFXCheckBox invoiceFooter;
   @FXML public GridPane systemSettings;
 
   public static SystemController getInstance() {

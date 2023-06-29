@@ -18,20 +18,23 @@ import static org.infinite.spoty.GlobalActions.closeDialog;
 import static org.infinite.spoty.Validators.*;
 
 import io.github.palexdev.materialfx.controls.MFXTextField;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
+import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.util.converter.NumberStringConverter;
+import org.infinite.spoty.components.notification.SimpleNotification;
+import org.infinite.spoty.components.notification.SimpleNotificationHolder;
+import org.infinite.spoty.components.notification.enums.NotificationDuration;
+import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.viewModels.CustomerViewModel;
 
 public class CustomerFormController implements Initializable {
   public MFXTextField customerID = new MFXTextField();
-  @FXML public MFXFilledButton customerFormSaveBtn;
-  @FXML public MFXOutlinedButton customerFormCancelBtn;
+  @FXML public MFXButton customerFormSaveBtn;
+  @FXML public MFXButton customerFormCancelBtn;
   @FXML public Label customerFormTitle;
   @FXML public MFXTextField customerFormName;
   @FXML public MFXTextField customerFormEmail;
@@ -93,18 +96,40 @@ public class CustomerFormController implements Initializable {
         });
     customerFormSaveBtn.setOnAction(
         (e) -> {
+          SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
           if (!validationLabel1.isVisible()
               && !validationLabel2.isVisible()
               && !validationLabel3.isVisible()) {
-            if (Integer.parseInt(customerID.getText()) > 0)
+            if (Integer.parseInt(customerID.getText()) > 0) {
               CustomerViewModel.updateItem(Integer.parseInt(customerID.getText()));
-            else CustomerViewModel.saveCustomer();
-            CustomerViewModel.resetProperties();
+              SimpleNotification notification =
+                  new SimpleNotification.NotificationBuilder("Customer updated successfully")
+                      .duration(NotificationDuration.SHORT)
+                      .icon("fas-circle-check")
+                      .type(NotificationVariants.SUCCESS)
+                      .build();
+              notificationHolder.addNotification(notification);
+              closeDialog(e);
+              return;
+            }
+            CustomerViewModel.saveCustomer();
+            SimpleNotification notification =
+                new SimpleNotification.NotificationBuilder("Customer saved successfully")
+                    .duration(NotificationDuration.SHORT)
+                    .icon("fas-circle-check")
+                    .type(NotificationVariants.SUCCESS)
+                    .build();
+            notificationHolder.addNotification(notification);
             closeDialog(e);
-            validationLabel1.setVisible(false);
-            validationLabel2.setVisible(false);
-            validationLabel3.setVisible(false);
+            return;
           }
+          SimpleNotification notification =
+              new SimpleNotification.NotificationBuilder("Required fields missing")
+                  .duration(NotificationDuration.SHORT)
+                  .icon("fas-triangle-exclamation")
+                  .type(NotificationVariants.ERROR)
+                  .build();
+          notificationHolder.addNotification(notification);
         });
   }
 }

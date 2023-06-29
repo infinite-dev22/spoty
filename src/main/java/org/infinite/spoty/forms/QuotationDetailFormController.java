@@ -20,14 +20,17 @@ import static org.infinite.spoty.values.SharedResources.tempIdProperty;
 
 import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
+import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.util.StringConverter;
+import org.infinite.spoty.components.notification.SimpleNotification;
+import org.infinite.spoty.components.notification.SimpleNotificationHolder;
+import org.infinite.spoty.components.notification.enums.NotificationDuration;
+import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.database.models.ProductDetail;
 import org.infinite.spoty.viewModels.ProductDetailViewModel;
 import org.infinite.spoty.viewModels.QuotationDetailViewModel;
@@ -37,8 +40,8 @@ public class QuotationDetailFormController implements Initializable {
   @FXML public MFXFilterComboBox<ProductDetail> quotationProductPdct;
   @FXML public MFXTextField quotationProductsOrderTax;
   @FXML public MFXTextField quotationProductsDiscount;
-  @FXML public MFXFilledButton quotationProductsSaveBtn;
-  @FXML public MFXOutlinedButton quotationProductsCancelBtn;
+  @FXML public MFXButton quotationProductsSaveBtn;
+  @FXML public MFXButton quotationProductsCancelBtn;
   @FXML public Label quotationProductsTitle;
   @FXML public Label quotationProductPdctValidationLabel;
   @FXML public Label quotationProductQntyValidationLabel;
@@ -98,14 +101,39 @@ public class QuotationDetailFormController implements Initializable {
         });
     quotationProductsSaveBtn.setOnAction(
         (e) -> {
+          SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
           if (!quotationProductPdctValidationLabel.isVisible()
               && !quotationProductQntyValidationLabel.isVisible()) {
-            if (tempIdProperty().get() > -1)
+            if (tempIdProperty().get() > -1) {
               QuotationDetailViewModel.updateQuotationDetail(QuotationDetailViewModel.getId());
-            else QuotationDetailViewModel.addQuotationDetails();
-            QuotationDetailViewModel.resetProperties();
+              SimpleNotification notification =
+                  new SimpleNotification.NotificationBuilder("Product changed successfully")
+                      .duration(NotificationDuration.SHORT)
+                      .icon("fas-circle-check")
+                      .type(NotificationVariants.SUCCESS)
+                      .build();
+              notificationHolder.addNotification(notification);
+              closeDialog(e);
+              return;
+            }
+            QuotationDetailViewModel.addQuotationDetails();
+            SimpleNotification notification =
+                new SimpleNotification.NotificationBuilder("Product added successfully")
+                    .duration(NotificationDuration.SHORT)
+                    .icon("fas-circle-check")
+                    .type(NotificationVariants.SUCCESS)
+                    .build();
+            notificationHolder.addNotification(notification);
             closeDialog(e);
+            return;
           }
+          SimpleNotification notification =
+              new SimpleNotification.NotificationBuilder("Required fields missing")
+                  .duration(NotificationDuration.SHORT)
+                  .icon("fas-triangle-exclamation")
+                  .type(NotificationVariants.ERROR)
+                  .build();
+          notificationHolder.addNotification(notification);
         });
   }
 }

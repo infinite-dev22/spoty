@@ -20,8 +20,7 @@ import static org.infinite.spoty.Validators.requiredValidator;
 import io.github.palexdev.materialfx.controls.MFXComboBox;
 import io.github.palexdev.materialfx.controls.MFXDatePicker;
 import io.github.palexdev.materialfx.controls.MFXTextField;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
+import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
@@ -29,6 +28,10 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
+import org.infinite.spoty.components.notification.SimpleNotification;
+import org.infinite.spoty.components.notification.SimpleNotificationHolder;
+import org.infinite.spoty.components.notification.enums.NotificationDuration;
+import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.ExpenseCategory;
 import org.infinite.spoty.viewModels.BranchViewModel;
@@ -39,8 +42,8 @@ public class ExpenseFormController implements Initializable {
   public MFXTextField expenseID = new MFXTextField();
   @FXML public MFXTextField expenseFormAmount;
   @FXML public MFXTextField expenseFormDetails;
-  @FXML public MFXFilledButton expenseFormSaveBtn;
-  @FXML public MFXOutlinedButton expenseFormCancelBtn;
+  @FXML public MFXButton expenseFormSaveBtn;
+  @FXML public MFXButton expenseFormCancelBtn;
   @FXML public Label expenseFormTitle;
   @FXML public MFXDatePicker expenseFormDate;
   @FXML public MFXComboBox<Branch> expenseFormBranch;
@@ -118,16 +121,42 @@ public class ExpenseFormController implements Initializable {
         });
     expenseFormSaveBtn.setOnAction(
         (e) -> {
+          SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
           if (!expenseFormNameValidationLabel.isVisible()
               && !expenseFormDateValidationLabel.isVisible()
               && !expenseFormBranchValidationLabel.isVisible()
               && !expenseFormCategoryValidationLabel.isVisible()
               && !expenseFormAmountValidationLabel.isVisible()) {
-            if (Integer.parseInt(expenseID.getText()) > 0)
+            if (Integer.parseInt(expenseID.getText()) > 0) {
               ExpenseViewModel.updateItem(Integer.parseInt(expenseID.getText()));
-            else ExpenseViewModel.saveExpense();
+              SimpleNotification notification =
+                  new SimpleNotification.NotificationBuilder("Expense updated successfully")
+                      .duration(NotificationDuration.SHORT)
+                      .icon("fas-circle-check")
+                      .type(NotificationVariants.SUCCESS)
+                      .build();
+              notificationHolder.addNotification(notification);
+              closeDialog(e);
+              return;
+            }
+            ExpenseViewModel.saveExpense();
+            SimpleNotification notification =
+                new SimpleNotification.NotificationBuilder("Expense saved successfully")
+                    .duration(NotificationDuration.SHORT)
+                    .icon("fas-circle-check")
+                    .type(NotificationVariants.SUCCESS)
+                    .build();
+            notificationHolder.addNotification(notification);
             closeDialog(e);
+            return;
           }
+          SimpleNotification notification =
+              new SimpleNotification.NotificationBuilder("Required fields missing")
+                  .duration(NotificationDuration.SHORT)
+                  .icon("fas-triangle-exclamation")
+                  .type(NotificationVariants.ERROR)
+                  .build();
+          notificationHolder.addNotification(notification);
         });
   }
 }

@@ -19,14 +19,17 @@ import static org.infinite.spoty.Validators.requiredValidator;
 import static org.infinite.spoty.viewModels.ProductCategoryViewModel.*;
 
 import io.github.palexdev.materialfx.controls.MFXTextField;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
+import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.util.converter.NumberStringConverter;
+import org.infinite.spoty.components.notification.SimpleNotification;
+import org.infinite.spoty.components.notification.SimpleNotificationHolder;
+import org.infinite.spoty.components.notification.enums.NotificationDuration;
+import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.viewModels.ProductCategoryViewModel;
 
 public class ProductCategoryFormController implements Initializable {
@@ -34,8 +37,8 @@ public class ProductCategoryFormController implements Initializable {
   public MFXTextField dialogCategoryID = new MFXTextField();
   @FXML public MFXTextField dialogCategoryCode;
   @FXML public MFXTextField dialogCategoryName;
-  @FXML public MFXFilledButton dialogSaveBtn;
-  @FXML public MFXOutlinedButton dialogCancelBtn;
+  @FXML public MFXButton dialogSaveBtn;
+  @FXML public MFXButton dialogCancelBtn;
   @FXML public Label dialogCategoryCodeValidationLabel;
   @FXML public Label dialogCategoryNameValidationLabel;
 
@@ -65,13 +68,39 @@ public class ProductCategoryFormController implements Initializable {
         });
     dialogSaveBtn.setOnAction(
         (e) -> {
+          SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
           if (!dialogCategoryCodeValidationLabel.isVisible()
               && !dialogCategoryNameValidationLabel.isVisible()) {
-            if (Integer.parseInt(dialogCategoryID.getText()) > 0)
+            if (Integer.parseInt(dialogCategoryID.getText()) > 0) {
               updateItem(Integer.parseInt(dialogCategoryID.getText()));
-            else saveProductCategory();
+              SimpleNotification notification =
+                  new SimpleNotification.NotificationBuilder("Category updated successfully")
+                      .duration(NotificationDuration.SHORT)
+                      .icon("fas-circle-check")
+                      .type(NotificationVariants.SUCCESS)
+                      .build();
+              notificationHolder.addNotification(notification);
+              closeDialog(e);
+              return;
+            }
+            saveProductCategory();
+            SimpleNotification notification =
+                new SimpleNotification.NotificationBuilder("Category added successfully")
+                    .duration(NotificationDuration.SHORT)
+                    .icon("fas-circle-check")
+                    .type(NotificationVariants.SUCCESS)
+                    .build();
+            notificationHolder.addNotification(notification);
             closeDialog(e);
+            return;
           }
+          SimpleNotification notification =
+              new SimpleNotification.NotificationBuilder("Required fields missing")
+                  .duration(NotificationDuration.SHORT)
+                  .icon("fas-triangle-exclamation")
+                  .type(NotificationVariants.ERROR)
+                  .build();
+          notificationHolder.addNotification(notification);
         });
   }
 }

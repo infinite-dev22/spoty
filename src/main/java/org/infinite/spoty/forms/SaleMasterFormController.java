@@ -17,7 +17,14 @@ package org.infinite.spoty.forms;
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 import static org.infinite.spoty.Validators.requiredValidator;
 
-import io.github.palexdev.materialfx.controls.*;
+import io.github.palexdev.materialfx.controls.MFXContextMenu;
+import io.github.palexdev.materialfx.controls.MFXContextMenuItem;
+import io.github.palexdev.materialfx.controls.MFXDatePicker;
+import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
+import io.github.palexdev.materialfx.controls.MFXTableColumn;
+import io.github.palexdev.materialfx.controls.MFXTableRow;
+import io.github.palexdev.materialfx.controls.MFXTableView;
+import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.enums.ButtonType;
 import io.github.palexdev.materialfx.filter.DoubleFilter;
@@ -43,6 +50,10 @@ import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.components.navigation.Pages;
+import org.infinite.spoty.components.notification.SimpleNotification;
+import org.infinite.spoty.components.notification.SimpleNotificationHolder;
+import org.infinite.spoty.components.notification.enums.NotificationDuration;
+import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.Customer;
 import org.infinite.spoty.database.models.SaleDetail;
@@ -92,7 +103,7 @@ public class SaleMasterFormController implements Initializable {
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     // Set items to combo boxes and display custom text.
-    saleCustomer.setItems(CustomerViewModel.customersList);
+    saleCustomer.setItems(CustomerViewModel.getCustomers());
     saleCustomer.setConverter(
         new StringConverter<>() {
           @Override
@@ -106,7 +117,7 @@ public class SaleMasterFormController implements Initializable {
             return null;
           }
         });
-    saleBranch.setItems(BranchViewModel.branchesList);
+    saleBranch.setItems(BranchViewModel.getBranches());
     saleBranch.setConverter(
         new StringConverter<>() {
           @Override
@@ -150,9 +161,16 @@ public class SaleMasterFormController implements Initializable {
   }
 
   public void saveBtnClicked() {
+    SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
     if (!saleDetailTable.isDisabled() && SaleDetailViewModel.saleDetailTempList.isEmpty()) {
-      // Notify table can't be empty
-      System.out.println("Table can't be empty");
+      SimpleNotification notification =
+          new SimpleNotification.NotificationBuilder("Table can't be Empty")
+              .duration(NotificationDuration.SHORT)
+              .icon("fas-triangle-exclamation")
+              .type(NotificationVariants.ERROR)
+              .build();
+      notificationHolder.addNotification(notification);
+      return;
     }
     if (!saleCustomerValidationLabel.isVisible()
         && !saleDateValidationLabel.isVisible()
@@ -161,11 +179,34 @@ public class SaleMasterFormController implements Initializable {
         && !salePaymentStatusValidationLabel.isVisible()) {
       if (Integer.parseInt(saleMasterID.getText()) > 0) {
         SaleMasterViewModel.updateItem(Integer.parseInt(saleMasterID.getText()));
+        SimpleNotification notification =
+            new SimpleNotification.NotificationBuilder("Sale updated successfully")
+                .duration(NotificationDuration.MEDIUM)
+                .icon("fas-circle-check")
+                .type(NotificationVariants.SUCCESS)
+                .build();
+        notificationHolder.addNotification(notification);
         cancelBtnClicked();
-      } else SaleMasterViewModel.saveSaleMaster();
-      SaleMasterViewModel.resetProperties();
-      SaleDetailViewModel.saleDetailTempList.clear();
+        return;
+      }
+      SaleMasterViewModel.saveSaleMaster();
+      SimpleNotification notification =
+          new SimpleNotification.NotificationBuilder("Sale saved successfully")
+              .duration(NotificationDuration.MEDIUM)
+              .icon("fas-circle-check")
+              .type(NotificationVariants.SUCCESS)
+              .build();
+      notificationHolder.addNotification(notification);
+      cancelBtnClicked();
+      return;
     }
+    SimpleNotification notification =
+        new SimpleNotification.NotificationBuilder("Required fields missing")
+            .duration(NotificationDuration.SHORT)
+            .icon("fas-triangle-exclamation")
+            .type(NotificationVariants.ERROR)
+            .build();
+    notificationHolder.addNotification(notification);
   }
 
   public void cancelBtnClicked() {
@@ -214,7 +255,7 @@ public class SaleMasterFormController implements Initializable {
             new DoubleFilter<>("Discount", SaleDetail::getDiscount));
     styleTable();
     // Populate table.
-    saleDetailTable.setItems(SaleDetailViewModel.saleDetailTempList);
+    saleDetailTable.setItems(SaleDetailViewModel.getSaleDetails());
   }
 
   private void styleTable() {

@@ -20,14 +20,17 @@ import static org.infinite.spoty.values.SharedResources.tempIdProperty;
 
 import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
+import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.util.StringConverter;
+import org.infinite.spoty.components.notification.SimpleNotification;
+import org.infinite.spoty.components.notification.SimpleNotificationHolder;
+import org.infinite.spoty.components.notification.enums.NotificationDuration;
+import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.database.models.ProductDetail;
 import org.infinite.spoty.viewModels.ProductDetailViewModel;
 import org.infinite.spoty.viewModels.TransferDetailViewModel;
@@ -35,8 +38,8 @@ import org.infinite.spoty.viewModels.TransferDetailViewModel;
 public class TransferDetailFormController implements Initializable {
   @FXML public MFXTextField transferDetailQnty;
   @FXML public MFXFilterComboBox<ProductDetail> transferDetailPdct;
-  @FXML public MFXFilledButton transferDetailSaveBtn;
-  @FXML public MFXOutlinedButton transferDetailCancelBtn;
+  @FXML public MFXButton transferDetailSaveBtn;
+  @FXML public MFXButton transferDetailCancelBtn;
   @FXML public Label transferDetailTitle;
   @FXML public MFXTextField transferDetailDescription;
   @FXML public Label transferDetailQntyValidationLabel;
@@ -90,11 +93,31 @@ public class TransferDetailFormController implements Initializable {
         });
     transferDetailSaveBtn.setOnAction(
         (e) -> {
+          SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
           if (!transferDetailPdctValidationLabel.isVisible()
               && !transferDetailQntyValidationLabel.isVisible()) {
-            if (tempIdProperty().get() > -1)
+            if (tempIdProperty().get() > -1) {
               TransferDetailViewModel.updateTransferDetail(TransferDetailViewModel.getId());
-            else TransferDetailViewModel.addTransferDetails();
+              SimpleNotification notification =
+                  new SimpleNotification.NotificationBuilder("Product changed successfully")
+                      .duration(NotificationDuration.SHORT)
+                      .icon("fas-circle-check")
+                      .type(NotificationVariants.SUCCESS)
+                      .build();
+              notificationHolder.addNotification(notification);
+              closeDialog(e);
+              return;
+            }
+            TransferDetailViewModel.addTransferDetails();
+            SimpleNotification notification =
+                new SimpleNotification.NotificationBuilder("Product added successfully")
+                    .duration(NotificationDuration.SHORT)
+                    .icon("fas-circle-check")
+                    .type(NotificationVariants.SUCCESS)
+                    .build();
+            notificationHolder.addNotification(notification);
+            closeDialog(e);
+            return;
             //
             //                if (!transferDetailID.getText().isEmpty()) {
             //                    try {
@@ -106,9 +129,14 @@ public class TransferDetailFormController implements Initializable {
             // TransferDetailViewModel.updateTransferDetail(TransferDetailViewModel.getId());
             //                    }
             //                } else TransferDetailViewModel.addTransferDetails();
-            TransferDetailViewModel.resetProperties();
-            closeDialog(e);
           }
+          SimpleNotification notification =
+              new SimpleNotification.NotificationBuilder("Required fields missing")
+                  .duration(NotificationDuration.SHORT)
+                  .icon("fas-triangle-exclamation")
+                  .type(NotificationVariants.ERROR)
+                  .build();
+          notificationHolder.addNotification(notification);
         });
   }
 }

@@ -15,13 +15,13 @@
   -->
 
 <?import io.github.palexdev.materialfx.controls.MFXTextField?>
-<?import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton?>
-<?import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton?>
+<?import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.DialogPane?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <DialogPane xmlns:fx="http://javafx.com/fxml/1" styleClass="card" stylesheets="@../styles/Common.css"
             xmlns="http://javafx.com/javafx/19" fx:controller="org.infinite.spoty.forms.ExpenseCategoryFormController">
     <content>
@@ -44,8 +44,8 @@
                 <padding>
                     <Insets top="10.0"/>
                 </padding>
-                <MFXFilledButton fx:id="categoryExpenseFormSaveBtn" text="Save"/>
-                <MFXOutlinedButton fx:id="categoryExpenseFormCancelBtn" text="Cancel"/>
+                <MFXButton styleClass="filled" fx:id="categoryExpenseFormSaveBtn" text="Save"/>
+                <MFXButton styleClass="outlined" fx:id="categoryExpenseFormCancelBtn" text="Cancel"/>
             </HBox>
         </VBox>
     </content>

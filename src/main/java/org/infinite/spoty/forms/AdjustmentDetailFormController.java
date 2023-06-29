@@ -21,8 +21,7 @@ import static org.infinite.spoty.values.SharedResources.tempIdProperty;
 import io.github.palexdev.materialfx.controls.MFXComboBox;
 import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
+import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
@@ -31,17 +30,22 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
+import org.infinite.spoty.components.notification.SimpleNotification;
+import org.infinite.spoty.components.notification.SimpleNotificationHolder;
+import org.infinite.spoty.components.notification.enums.NotificationDuration;
+import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.database.models.ProductDetail;
 import org.infinite.spoty.values.strings.Values;
 import org.infinite.spoty.viewModels.AdjustmentDetailViewModel;
 import org.infinite.spoty.viewModels.ProductDetailViewModel;
+import org.infinite.spoty.viewModels.TransferMasterViewModel;
 
 public class AdjustmentDetailFormController implements Initializable {
   public MFXTextField adjustmentDetailID = new MFXTextField();
   @FXML public MFXTextField adjustmentProductsQnty;
   @FXML public MFXFilterComboBox<ProductDetail> adjustmentProductVariant;
-  @FXML public MFXFilledButton adjustmentProductsSaveBtn;
-  @FXML public MFXOutlinedButton adjustmentProductsCancelBtn;
+  @FXML public MFXButton adjustmentProductsSaveBtn;
+  @FXML public MFXButton adjustmentProductsCancelBtn;
   @FXML public Label adjustmentProductsTitle;
   @FXML public MFXComboBox<String> adjustmentType;
   @FXML public Label adjustmentProductVariantValidationLabel;
@@ -106,15 +110,42 @@ public class AdjustmentDetailFormController implements Initializable {
         });
     adjustmentProductsSaveBtn.setOnAction(
         (e) -> {
+          SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
           if (!adjustmentProductVariantValidationLabel.isVisible()
               && !adjustmentProductsQntyValidationLabel.isVisible()
               && !adjustmentTypeValidationLabel.isVisible()) {
-            if (tempIdProperty().get() > -1)
+            if (tempIdProperty().get() > -1) {
               AdjustmentDetailViewModel.updateAdjustmentDetail(AdjustmentDetailViewModel.getId());
-            else AdjustmentDetailViewModel.addAdjustmentDetails();
+              SimpleNotification notification =
+                  new SimpleNotification.NotificationBuilder("Entry updated successfully")
+                      .duration(NotificationDuration.MEDIUM)
+                      .icon("fas-circle-check")
+                      .type(NotificationVariants.SUCCESS)
+                      .build();
+              notificationHolder.addNotification(notification);
+              closeDialog(e);
+              return;
+            }
+            AdjustmentDetailViewModel.addAdjustmentDetails();
+            TransferMasterViewModel.saveTransferMaster();
+            SimpleNotification notification =
+                new SimpleNotification.NotificationBuilder("Entry added successfully")
+                    .duration(NotificationDuration.SHORT)
+                    .icon("fas-circle-check")
+                    .type(NotificationVariants.SUCCESS)
+                    .build();
+            notificationHolder.addNotification(notification);
             AdjustmentDetailViewModel.resetProperties();
             closeDialog(e);
+            return;
           }
+          SimpleNotification notification =
+              new SimpleNotification.NotificationBuilder("Required fields missing")
+                  .duration(NotificationDuration.SHORT)
+                  .icon("fas-triangle-exclamation")
+                  .type(NotificationVariants.ERROR)
+                  .build();
+          notificationHolder.addNotification(notification);
         });
   }
 }

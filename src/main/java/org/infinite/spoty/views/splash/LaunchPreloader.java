@@ -32,7 +32,7 @@ public class LaunchPreloader extends Preloader {
     this.preloadStage = primaryStage;
     Scene scene = new Scene(fxmlLoader("fxml/splash/SplashScreen.fxml").load());
     MFXThemeManager.addOn(scene, Themes.DEFAULT, Themes.LEGACY);
-    io.github.palexdev.mfxcomponents.theming.enums.MFXThemeManager.PURPLE_LIGHT.addOn(scene);
+    io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(scene);
     scene.setFill(Color.TRANSPARENT);
     primaryStage.initStyle(StageStyle.TRANSPARENT);
     primaryStage.setScene(scene);

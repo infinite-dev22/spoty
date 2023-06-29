@@ -326,3 +326,66 @@
 	-fx-background-radius: 10 10 10 10;
 	-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0.12, -1.0, 2.0);
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                                          NOTIFICATION STYLES
+.notification-holder {
+    -fx-background-color: transparent;
+    -fx-fill: transparent;
+    -fx-padding: 0 5 0 5;
+}
+
+.notification {
+    -fx-background-color: transparent;
+    -fx-fill: transparent;
+}
+
+.notification-layout {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -foreground-color: black;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0.12, -1.0, 2.0);
+}
+
+.notification-icon {
+    -fx-background-color: rgba(0, 0, 0, 0.8);
+    -fx-background-radius: 15;
+    -fx-border-radius: 15;
+    -foreground-color: black;
+    -fx-pref-height: 5;
+    -fx-pref-width: 40;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0.12, -1.0, 2.0);
+}
+
+.notification-icon .mfx-font-icon {
+	-mfx-color: -mfx-nav-white-text;
+}
+
+.notification-message {
+	-fx-font-family: 'Visby Round CF Demi Bold';
+    -fx-font-size: 1.0em;
+    -fx-content-display: left;
+    -fx-graphic-text-gap: 10;
+    -fx-text-fill: rgba(0, 0, 0, 1);
+}
+
+// Error alert styles.
+.error {
+    -fx-background-color: #fcede9; // Light red.
+    -fx-border-color: #f5a089;
+    -fx-border-size: 2;
+}
+.error .notification-icon {
+    -fx-background-color: #cd5235; // red.
+}
+
+// Success alert styles.
+.success {
+    -fx-background-color: #e4f0e7; // Light green.
+    -fx-border-color: #89f5a4;
+    -fx-border-size: 2;
+}
+.success .notification-icon {
+    -fx-background-color: #35cc56; // green.
+}

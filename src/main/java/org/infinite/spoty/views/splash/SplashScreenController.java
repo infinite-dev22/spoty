@@ -36,6 +36,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.values.strings.Labels;
 import org.infinite.spoty.views.BaseController;
 
@@ -51,22 +52,23 @@ public class SplashScreenController implements Initializable {
           try {
             Thread.sleep(5000);
             CSSFX.start();
-            FXMLLoader loader = fxmlLoader("fxml/Base.fxml");
             Stage stage = new Stage();
             setControllers(stage);
             setPanes();
+            FXMLLoader loader = fxmlLoader("fxml/Base.fxml");
             loader.setControllerFactory(c -> BaseController.getInstance(stage));
             Parent root = loader.load();
             Scene scene = new Scene(root);
             MFXThemeManager.addOn(scene, Themes.DEFAULT, Themes.LEGACY);
-            io.github.palexdev.mfxcomponents.theming.enums.MFXThemeManager.PURPLE_LIGHT.addOn(
-                scene);
+            io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(scene);
             scene.setFill(Color.TRANSPARENT);
             stage.setScene(scene);
             stage.initStyle(StageStyle.TRANSPARENT);
             stage.setMaximized(true);
             stage.setTitle(Labels.APP_NAME);
             stage.show();
+            System.out.println(stage.getWidth());
+            SimpleNotificationHolder.setNotificationOwner(stage);
           } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
           }

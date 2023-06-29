@@ -20,14 +20,17 @@ import static org.infinite.spoty.values.SharedResources.tempIdProperty;
 
 import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton;
+import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.util.StringConverter;
+import org.infinite.spoty.components.notification.SimpleNotification;
+import org.infinite.spoty.components.notification.SimpleNotificationHolder;
+import org.infinite.spoty.components.notification.enums.NotificationDuration;
+import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.database.models.ProductDetail;
 import org.infinite.spoty.viewModels.ProductDetailViewModel;
 import org.infinite.spoty.viewModels.PurchaseDetailViewModel;
@@ -36,8 +39,8 @@ public class PurchaseDetailFormController implements Initializable {
   @FXML public MFXTextField purchaseDetailQnty;
   @FXML public MFXFilterComboBox<ProductDetail> purchaseDetailPdct;
   @FXML public MFXTextField purchaseDetailCost;
-  @FXML public MFXFilledButton purchaseDetailSaveBtn;
-  @FXML public MFXOutlinedButton purchaseDetailCancelBtn;
+  @FXML public MFXButton purchaseDetailSaveBtn;
+  @FXML public MFXButton purchaseDetailCancelBtn;
   @FXML public Label purchaseDetailTitle;
   @FXML public Label purchaseDetailQntyValidationLabel;
   @FXML public Label purchaseDetailPdctValidationLabel;
@@ -90,17 +93,40 @@ public class PurchaseDetailFormController implements Initializable {
         });
     purchaseDetailSaveBtn.setOnAction(
         (e) -> {
+          SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
           if (!purchaseDetailPdctValidationLabel.isVisible()
               && !purchaseDetailQntyValidationLabel.isVisible()
               && !purchaseDetailCostValidationLabel.isVisible()) {
-            System.out.println(purchaseDetailPdct.getSelectedItem().getName());
-            System.out.println(PurchaseDetailViewModel.getProduct().getName());
-            if (tempIdProperty().get() > -1)
+            if (tempIdProperty().get() > -1) {
               PurchaseDetailViewModel.updatePurchaseDetail(PurchaseDetailViewModel.getId());
-            else PurchaseDetailViewModel.addPurchaseDetail();
-            PurchaseDetailViewModel.resetProperties();
+              SimpleNotification notification =
+                  new SimpleNotification.NotificationBuilder("Product changed successfully")
+                      .duration(NotificationDuration.SHORT)
+                      .icon("fas-circle-check")
+                      .type(NotificationVariants.SUCCESS)
+                      .build();
+              notificationHolder.addNotification(notification);
+              closeDialog(e);
+              return;
+            }
+            PurchaseDetailViewModel.addPurchaseDetail();
+            SimpleNotification notification =
+                new SimpleNotification.NotificationBuilder("Product added successfully")
+                    .duration(NotificationDuration.SHORT)
+                    .icon("fas-circle-check")
+                    .type(NotificationVariants.SUCCESS)
+                    .build();
+            notificationHolder.addNotification(notification);
             closeDialog(e);
+            return;
           }
+          SimpleNotification notification =
+              new SimpleNotification.NotificationBuilder("Required fields missing")
+                  .duration(NotificationDuration.SHORT)
+                  .icon("fas-triangle-exclamation")
+                  .type(NotificationVariants.ERROR)
+                  .build();
+          notificationHolder.addNotification(notification);
         });
   }
 }

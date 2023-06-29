@@ -14,12 +14,17 @@
   ~ Jonathan Mark Mwigo makes no warranties, express or implied, with respect to the computer system code. Jonathan Mark Mwigo shall not be liable for any damages, including, but not limited to, direct, indirect, incidental, special, consequential, or punitive damages, arising out of or in connection with the use of the computer system code.
   -->
 
-<?import io.github.palexdev.materialfx.controls.*?>
-<?import io.github.palexdev.mfxcomponents.controls.buttons.MFXFilledButton?>
-<?import io.github.palexdev.mfxcomponents.controls.buttons.MFXOutlinedButton?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import io.github.palexdev.materialfx.controls.MFXTextField?>
+<?import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.DialogPane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 <DialogPane xmlns:fx="http://javafx.com/fxml/1" styleClass="card" stylesheets="@../styles/Common.css"
             xmlns="http://javafx.com/javafx/19" fx:controller="org.infinite.spoty.forms.SupplierFormController">
     <content>
@@ -98,8 +103,8 @@
                 <VBox.margin>
                     <Insets/>
                 </VBox.margin>
-                <MFXFilledButton fx:id="supplierFormSaveBtn" text="Save"/>
-                <MFXOutlinedButton fx:id="supplierFormCancelBtn" text="Cancel"/>
+                <MFXButton styleClass="filled" fx:id="supplierFormSaveBtn" text="Save"/>
+                <MFXButton styleClass="outlined" fx:id="supplierFormCancelBtn" text="Cancel"/>
             </HBox>
         </VBox>
     </content>

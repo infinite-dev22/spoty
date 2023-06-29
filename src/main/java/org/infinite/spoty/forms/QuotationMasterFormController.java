@@ -43,6 +43,10 @@ import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.components.navigation.Pages;
+import org.infinite.spoty.components.notification.SimpleNotification;
+import org.infinite.spoty.components.notification.SimpleNotificationHolder;
+import org.infinite.spoty.components.notification.enums.NotificationDuration;
+import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.Customer;
 import org.infinite.spoty.database.models.QuotationDetail;
@@ -101,7 +105,7 @@ public class QuotationMasterFormController implements Initializable {
     quotationStatus.textProperty().bindBidirectional(QuotationMasterViewModel.statusProperty());
     quotationNote.textProperty().bindBidirectional(QuotationMasterViewModel.noteProperty());
     // Combo box properties.
-    quotationCustomer.setItems(CustomerViewModel.customersList);
+    quotationCustomer.setItems(CustomerViewModel.getCustomers());
     quotationCustomer.setConverter(
         new StringConverter<>() {
           @Override
@@ -115,7 +119,7 @@ public class QuotationMasterFormController implements Initializable {
             return null;
           }
         });
-    quotationBranch.setItems(BranchViewModel.branchesList);
+    quotationBranch.setItems(BranchViewModel.getBranches());
     quotationBranch.setConverter(
         new StringConverter<>() {
           @Override
@@ -173,7 +177,7 @@ public class QuotationMasterFormController implements Initializable {
             new DoubleFilter<>("Discount", QuotationDetail::getDiscount),
             new DoubleFilter<>("Tax", QuotationDetail::getNetTax));
     getQuotationDetailTable();
-    quotationDetailTable.setItems(QuotationDetailViewModel.quotationDetailTempList);
+    quotationDetailTable.setItems(QuotationDetailViewModel.getQuotationDetails());
   }
 
   private void getQuotationDetailTable() {
@@ -238,10 +242,16 @@ public class QuotationMasterFormController implements Initializable {
   }
 
   public void saveBtnClicked() {
+    SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
     if (!quotationDetailTable.isDisabled()
         && QuotationDetailViewModel.quotationDetailTempList.isEmpty()) {
-      // Notify table can't be empty
-      System.out.println("Table can't be empty");
+      SimpleNotification notification =
+          new SimpleNotification.NotificationBuilder("Table can't be Empty")
+              .duration(NotificationDuration.SHORT)
+              .icon("fas-triangle-exclamation")
+              .type(NotificationVariants.ERROR)
+              .build();
+      notificationHolder.addNotification(notification);
       return;
     }
     if (!quotationBranchValidationLabel.isVisible()
@@ -250,11 +260,34 @@ public class QuotationMasterFormController implements Initializable {
         && !quotationStatusValidationLabel.isVisible()) {
       if (Integer.parseInt(quotationMasterID.getText()) > 0) {
         QuotationMasterViewModel.updateItem(Integer.parseInt(quotationMasterID.getText()));
+        SimpleNotification notification =
+            new SimpleNotification.NotificationBuilder("Quotation updated successfully")
+                .duration(NotificationDuration.MEDIUM)
+                .icon("fas-circle-check")
+                .type(NotificationVariants.SUCCESS)
+                .build();
+        notificationHolder.addNotification(notification);
         cancelBtnClicked();
-      } else QuotationMasterViewModel.saveQuotationMaster();
-      QuotationMasterViewModel.resetProperties();
-      quotationDetailTable.getTableColumns().clear();
+        return;
+      }
+      QuotationMasterViewModel.saveQuotationMaster();
+      SimpleNotification notification =
+          new SimpleNotification.NotificationBuilder("Quotation saved successfully")
+              .duration(NotificationDuration.MEDIUM)
+              .icon("fas-circle-check")
+              .type(NotificationVariants.SUCCESS)
+              .build();
+      notificationHolder.addNotification(notification);
+      cancelBtnClicked();
+      return;
     }
+    SimpleNotification notification =
+        new SimpleNotification.NotificationBuilder("Required fields missing")
+            .duration(NotificationDuration.SHORT)
+            .icon("fas-triangle-exclamation")
+            .type(NotificationVariants.ERROR)
+            .build();
+    notificationHolder.addNotification(notification);
   }
 
   public void cancelBtnClicked() {

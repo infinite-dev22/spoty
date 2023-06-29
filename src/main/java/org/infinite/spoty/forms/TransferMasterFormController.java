@@ -17,12 +17,19 @@ package org.infinite.spoty.forms;
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 import static org.infinite.spoty.Validators.requiredValidator;
 
-import io.github.palexdev.materialfx.controls.*;
+import io.github.palexdev.materialfx.controls.MFXContextMenu;
+import io.github.palexdev.materialfx.controls.MFXContextMenuItem;
+import io.github.palexdev.materialfx.controls.MFXDatePicker;
+import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
+import io.github.palexdev.materialfx.controls.MFXTableColumn;
+import io.github.palexdev.materialfx.controls.MFXTableRow;
+import io.github.palexdev.materialfx.controls.MFXTableView;
+import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.enums.ButtonType;
 import io.github.palexdev.materialfx.filter.IntegerFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXElevatedButton;
+import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Comparator;
@@ -42,6 +49,10 @@ import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.components.navigation.Pages;
+import org.infinite.spoty.components.notification.SimpleNotification;
+import org.infinite.spoty.components.notification.SimpleNotificationHolder;
+import org.infinite.spoty.components.notification.enums.NotificationDuration;
+import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.TransferDetail;
 import org.infinite.spoty.viewModels.BranchViewModel;
@@ -60,7 +71,7 @@ public class TransferMasterFormController implements Initializable {
   @FXML public MFXTextField transferMasterNote;
   @FXML public BorderPane transferMasterFormContentPane;
   @FXML public Label transferMasterFormTitle;
-  @FXML public MFXElevatedButton transferMasterProductAddBtn;
+  @FXML public MFXButton transferMasterProductAddBtn;
   @FXML public Label transferMasterDateValidationLabel;
   @FXML public Label transferMasterToBranchValidationLabel;
   @FXML public Label transferMasterFromBranchValidationLabel;
@@ -91,7 +102,7 @@ public class TransferMasterFormController implements Initializable {
     transferMasterFromBranch
         .valueProperty()
         .bindBidirectional(TransferMasterViewModel.fromBranchProperty());
-    transferMasterFromBranch.setItems(BranchViewModel.branchesList);
+    transferMasterFromBranch.setItems(BranchViewModel.getBranches());
     transferMasterFromBranch.setConverter(
         new StringConverter<>() {
           @Override
@@ -108,7 +119,7 @@ public class TransferMasterFormController implements Initializable {
     transferMasterToBranch
         .valueProperty()
         .bindBidirectional(TransferMasterViewModel.toBranchProperty());
-    transferMasterToBranch.setItems(BranchViewModel.branchesList);
+    transferMasterToBranch.setItems(BranchViewModel.getBranches());
     transferMasterToBranch.setConverter(
         new StringConverter<>() {
           @Override
@@ -160,7 +171,7 @@ public class TransferMasterFormController implements Initializable {
             new StringFilter<>("Name", TransferDetail::getProductDetailName),
             new IntegerFilter<>("Quantity", TransferDetail::getQuantity));
     getTransferDetailTable();
-    transferDetailTable.setItems(TransferDetailViewModel.transferDetailsTempList);
+    transferDetailTable.setItems(TransferDetailViewModel.getTransferDetails());
   }
 
   private void getTransferDetailTable() {
@@ -229,21 +240,50 @@ public class TransferMasterFormController implements Initializable {
   }
 
   public void transferMasterSaveBtnClicked() {
+    SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
     if (!transferDetailTable.isDisabled()
         && TransferDetailViewModel.transferDetailsTempList.isEmpty()) {
-      // Notify table can't be empty
-      System.out.println("Table can't be empty");
+      SimpleNotification notification =
+          new SimpleNotification.NotificationBuilder("Table can't be Empty")
+              .duration(NotificationDuration.SHORT)
+              .icon("fas-triangle-exclamation")
+              .type(NotificationVariants.ERROR)
+              .build();
+      notificationHolder.addNotification(notification);
+      return;
     }
     if (!transferMasterToBranchValidationLabel.isVisible()
         && !transferMasterFromBranchValidationLabel.isVisible()
         && !transferMasterDateValidationLabel.isVisible()) {
       if (Integer.parseInt(transferMasterID.getText()) > 0) {
         TransferMasterViewModel.updateItem(Integer.parseInt(transferMasterID.getText()));
+        SimpleNotification notification =
+            new SimpleNotification.NotificationBuilder("Transfer updated successfully")
+                .duration(NotificationDuration.MEDIUM)
+                .icon("fas-circle-check")
+                .type(NotificationVariants.SUCCESS)
+                .build();
+        notificationHolder.addNotification(notification);
         transferMasterCancelBtnClicked();
-      } else TransferMasterViewModel.saveTransferMaster();
-      TransferMasterViewModel.resetProperties();
-      TransferDetailViewModel.transferDetailsTempList.clear();
+        return;
+      }
+      TransferMasterViewModel.saveTransferMaster();
+      SimpleNotification notification =
+          new SimpleNotification.NotificationBuilder("Transfer saved successfully")
+              .duration(NotificationDuration.MEDIUM)
+              .icon("fas-circle-check")
+              .type(NotificationVariants.SUCCESS)
+              .build();
+      notificationHolder.addNotification(notification);
+      return;
     }
+    SimpleNotification notification =
+        new SimpleNotification.NotificationBuilder("Required fields missing")
+            .duration(NotificationDuration.SHORT)
+            .icon("fas-triangle-exclamation")
+            .type(NotificationVariants.ERROR)
+            .build();
+    notificationHolder.addNotification(notification);
   }
 
   public void transferMasterCancelBtnClicked() {

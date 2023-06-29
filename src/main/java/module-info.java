@@ -57,7 +57,10 @@ module org.infinite.spoty {
   opens org.infinite.spoty.forms;
   opens org.infinite.spoty.views.splash;
   opens org.infinite.spoty.database.models;
+  opens org.infinite.spoty.components.navigation;
+  opens org.infinite.spoty.components.notification;
   opens org.infinite.spoty;
 
   exports org.infinite.spoty;
+  opens org.infinite.spoty.components.notification.enums;
 }

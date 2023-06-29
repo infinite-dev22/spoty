@@ -17,12 +17,20 @@ package org.infinite.spoty.forms;
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 import static org.infinite.spoty.Validators.requiredValidator;
 
-import io.github.palexdev.materialfx.controls.*;
+import io.github.palexdev.materialfx.controls.MFXComboBox;
+import io.github.palexdev.materialfx.controls.MFXContextMenu;
+import io.github.palexdev.materialfx.controls.MFXContextMenuItem;
+import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
+import io.github.palexdev.materialfx.controls.MFXTableColumn;
+import io.github.palexdev.materialfx.controls.MFXTableRow;
+import io.github.palexdev.materialfx.controls.MFXTableView;
+import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.controls.MFXToggleButton;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.enums.ButtonType;
 import io.github.palexdev.materialfx.filter.IntegerFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXElevatedButton;
+import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Comparator;
@@ -43,6 +51,10 @@ import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.components.navigation.Pages;
+import org.infinite.spoty.components.notification.SimpleNotification;
+import org.infinite.spoty.components.notification.SimpleNotificationHolder;
+import org.infinite.spoty.components.notification.enums.NotificationDuration;
+import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.database.models.Brand;
 import org.infinite.spoty.database.models.ProductCategory;
 import org.infinite.spoty.database.models.ProductDetail;
@@ -67,7 +79,7 @@ public class ProductMasterFormController implements Initializable {
   @FXML public MFXTableView<ProductDetail> productDetailTable;
   @FXML public BorderPane productFormContentPane;
   @FXML public Label productFormTitle;
-  @FXML public MFXElevatedButton productVariantAddBtn;
+  @FXML public MFXButton productVariantAddBtn;
   @FXML public MFXFilterComboBox<ProductCategory> productFormCategory;
   @FXML public MFXFilterComboBox<Brand> productFormBrand;
   @FXML public MFXComboBox<String> productFormBarCodeType;
@@ -125,7 +137,7 @@ public class ProductMasterFormController implements Initializable {
         .selectedProperty()
         .bindBidirectional(ProductMasterViewModel.notForSaleProperty());
 
-    productFormCategory.setItems(ProductCategoryViewModel.categoriesList);
+    productFormCategory.setItems(ProductCategoryViewModel.getItems());
     productFormCategory.setConverter(
         new StringConverter<>() {
           @Override
@@ -140,7 +152,7 @@ public class ProductMasterFormController implements Initializable {
           }
         });
 
-    productFormBrand.setItems(BrandViewModel.brandsList);
+    productFormBrand.setItems(BrandViewModel.getItems());
     productFormBrand.setConverter(
         new StringConverter<>() {
           @Override
@@ -186,7 +198,7 @@ public class ProductMasterFormController implements Initializable {
             new StringFilter<>("Unit Of Measure", ProductDetail::getUnitName),
             new StringFilter<>("Serial", ProductDetail::getSerialNumber));
     getProductDetailTable();
-    productDetailTable.setItems(ProductDetailViewModel.productDetailTempList);
+    productDetailTable.setItems(ProductDetailViewModel.getProductDetails());
   }
 
   private void getProductDetailTable() {
@@ -255,10 +267,16 @@ public class ProductMasterFormController implements Initializable {
   }
 
   public void productSaveBtnClicked() {
+    SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
     if (!productDetailTable.isDisabled()
         && ProductDetailViewModel.productDetailTempList.isEmpty()) {
-      // Notify table can't be empty
-      System.out.println("Table can't be empty");
+      SimpleNotification notification =
+          new SimpleNotification.NotificationBuilder("Table can't be Empty")
+              .duration(NotificationDuration.SHORT)
+              .icon("fas-triangle-exclamation")
+              .type(NotificationVariants.ERROR)
+              .build();
+      notificationHolder.addNotification(notification);
       return;
     }
     if (!productFormCategoryValidationLabel.isVisible()
@@ -266,11 +284,34 @@ public class ProductMasterFormController implements Initializable {
         && !productFormNameValidationLabel.isVisible()) {
       if (Integer.parseInt(productMasterID.getText()) > 0) {
         ProductMasterViewModel.updateItem(Integer.parseInt(productMasterID.getText()));
+        SimpleNotification notification =
+            new SimpleNotification.NotificationBuilder("Product updated successfully")
+                .duration(NotificationDuration.MEDIUM)
+                .icon("fas-circle-check")
+                .type(NotificationVariants.SUCCESS)
+                .build();
+        notificationHolder.addNotification(notification);
         productCancelBtnClicked();
-      } else ProductMasterViewModel.saveProductMaster();
-      ProductMasterViewModel.resetProperties();
-      ProductDetailViewModel.productDetailTempList.clear();
+        return;
+      }
+      ProductMasterViewModel.saveProductMaster();
+      SimpleNotification notification =
+          new SimpleNotification.NotificationBuilder("Product saved successfully")
+              .duration(NotificationDuration.MEDIUM)
+              .icon("fas-circle-check")
+              .type(NotificationVariants.SUCCESS)
+              .build();
+      notificationHolder.addNotification(notification);
+      productCancelBtnClicked();
+      return;
     }
+    SimpleNotification notification =
+        new SimpleNotification.NotificationBuilder("Required fields missing")
+            .duration(NotificationDuration.SHORT)
+            .icon("fas-triangle-exclamation")
+            .type(NotificationVariants.ERROR)
+            .build();
+    notificationHolder.addNotification(notification);
   }
 
   public void productCancelBtnClicked() {
