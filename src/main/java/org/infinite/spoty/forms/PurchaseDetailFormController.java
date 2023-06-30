@@ -128,5 +128,6 @@ public class PurchaseDetailFormController implements Initializable {
                   .build();
           notificationHolder.addNotification(notification);
         });
+    purchaseDetailPdct.clearSelection();
   }
 }

@@ -38,7 +38,6 @@ import org.infinite.spoty.database.models.ProductDetail;
 import org.infinite.spoty.values.strings.Values;
 import org.infinite.spoty.viewModels.AdjustmentDetailViewModel;
 import org.infinite.spoty.viewModels.ProductDetailViewModel;
-import org.infinite.spoty.viewModels.TransferMasterViewModel;
 
 public class AdjustmentDetailFormController implements Initializable {
   public MFXTextField adjustmentDetailID = new MFXTextField();
@@ -69,6 +68,7 @@ public class AdjustmentDetailFormController implements Initializable {
         .bindBidirectional(AdjustmentDetailViewModel.adjustmentTypeProperty());
     // AdjustmentType combo box properties.
     adjustmentProductVariant.setItems(ProductDetailViewModel.getProductDetails());
+    adjustmentProductVariant.setResetOnPopupHidden(true);
     adjustmentProductVariant.setConverter(
         new StringConverter<>() {
           @Override
@@ -114,7 +114,9 @@ public class AdjustmentDetailFormController implements Initializable {
           if (!adjustmentProductVariantValidationLabel.isVisible()
               && !adjustmentProductsQntyValidationLabel.isVisible()
               && !adjustmentTypeValidationLabel.isVisible()) {
+            System.out.println("Temp ID: " + tempIdProperty().get());
             if (tempIdProperty().get() > -1) {
+              System.out.println("In 1");
               AdjustmentDetailViewModel.updateAdjustmentDetail(AdjustmentDetailViewModel.getId());
               SimpleNotification notification =
                   new SimpleNotification.NotificationBuilder("Entry updated successfully")
@@ -126,8 +128,8 @@ public class AdjustmentDetailFormController implements Initializable {
               closeDialog(e);
               return;
             }
+            System.out.println("In 2");
             AdjustmentDetailViewModel.addAdjustmentDetails();
-            TransferMasterViewModel.saveTransferMaster();
             SimpleNotification notification =
                 new SimpleNotification.NotificationBuilder("Entry added successfully")
                     .duration(NotificationDuration.SHORT)
@@ -139,6 +141,7 @@ public class AdjustmentDetailFormController implements Initializable {
             closeDialog(e);
             return;
           }
+          System.out.println("In 3");
           SimpleNotification notification =
               new SimpleNotification.NotificationBuilder("Required fields missing")
                   .duration(NotificationDuration.SHORT)
@@ -147,5 +150,7 @@ public class AdjustmentDetailFormController implements Initializable {
                   .build();
           notificationHolder.addNotification(notification);
         });
+    adjustmentProductVariant.clearSelection();
+    adjustmentType.clearSelection();
   }
 }

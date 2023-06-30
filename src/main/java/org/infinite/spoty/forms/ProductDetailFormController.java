@@ -135,5 +135,6 @@ public class ProductDetailFormController implements Initializable {
                   .build();
           notificationHolder.addNotification(notification);
         });
+    productVariantUOM.clearSelection();
   }
 }

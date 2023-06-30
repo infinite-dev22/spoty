@@ -312,14 +312,19 @@ public class ProductMasterFormController implements Initializable {
             .type(NotificationVariants.ERROR)
             .build();
     notificationHolder.addNotification(notification);
+    productFormCategory.clearSelection();
+    productFormBrand.clearSelection();
+    productFormBarCodeType.clearSelection();
   }
 
   public void productCancelBtnClicked() {
     BaseController.navigation.navigate(Pages.getProductPane());
     ProductMasterViewModel.resetProperties();
-    ProductDetailViewModel.productDetailTempList.clear();
     productFormCategoryValidationLabel.setVisible(false);
     productFormBrandValidationLabel.setVisible(false);
     productFormNameValidationLabel.setVisible(false);
+    productFormCategory.clearSelection();
+    productFormBrand.clearSelection();
+    productFormBarCodeType.clearSelection();
   }
 }

@@ -132,5 +132,6 @@ public class RequisitionDetailFormController implements Initializable {
                   .build();
           notificationHolder.addNotification(notification);
         });
+    requisitionDetailPdct.clearSelection();
   }
 }

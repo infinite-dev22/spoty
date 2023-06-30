@@ -158,5 +158,7 @@ public class ExpenseFormController implements Initializable {
                   .build();
           notificationHolder.addNotification(notification);
         });
+    expenseFormBranch.clearSelection();
+    expenseFormCategory.clearSelection();
   }
 }

@@ -125,5 +125,6 @@ public class SaleDetailFormController implements Initializable {
                   .build();
           notificationHolder.addNotification(notification);
         });
+    saleDetailPdct.clearSelection();
   }
 }

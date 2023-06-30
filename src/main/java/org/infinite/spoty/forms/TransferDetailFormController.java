@@ -138,5 +138,6 @@ public class TransferDetailFormController implements Initializable {
                   .build();
           notificationHolder.addNotification(notification);
         });
+    transferDetailPdct.clearSelection();
   }
 }

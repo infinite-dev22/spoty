@@ -30,7 +30,7 @@ public class QuotationMaster implements Serializable {
   @ManyToOne private User user_detail;
 
   @Column(nullable = false)
-  private Date date;
+  private Date date = new Date();
 
   private String ref;
 
@@ -46,10 +46,10 @@ public class QuotationMaster implements Serializable {
   private List<QuotationDetail> quotationDetails = new LinkedList<>();
 
   @Column(nullable = false)
-  private String shipping;
+  private String shipping = "";
 
   @Column(nullable = false)
-  private double total;
+  private double total = 0;
 
   @Column(nullable = false)
   private String status;

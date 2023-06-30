@@ -65,7 +65,7 @@ public class TransferMasterFormController implements Initializable {
   private static TransferMasterFormController instance;
   public MFXTextField transferMasterID = new MFXTextField();
   @FXML public MFXFilterComboBox<Branch> transferMasterFromBranch;
-  public MFXFilterComboBox<Branch> transferMasterToBranch;
+  @FXML public MFXFilterComboBox<Branch> transferMasterToBranch;
   @FXML public MFXDatePicker transferMasterDate;
   @FXML public MFXTableView<TransferDetail> transferDetailTable;
   @FXML public MFXTextField transferMasterNote;
@@ -289,9 +289,10 @@ public class TransferMasterFormController implements Initializable {
   public void transferMasterCancelBtnClicked() {
     BaseController.navigation.navigate(Pages.getTransferPane());
     TransferMasterViewModel.resetProperties();
-    TransferDetailViewModel.transferDetailsTempList.clear();
     transferMasterToBranchValidationLabel.setVisible(false);
     transferMasterFromBranchValidationLabel.setVisible(false);
     transferMasterDateValidationLabel.setVisible(false);
+    transferMasterFromBranch.clearSelection();
+    transferMasterToBranch.clearSelection();
   }
 }

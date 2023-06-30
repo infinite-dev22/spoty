@@ -167,6 +167,7 @@ public class PurchaseMasterFormController implements Initializable {
               .type(NotificationVariants.ERROR)
               .build();
       notificationHolder.addNotification(notification);
+      return;
     }
     if (!purchaseBranchValidationLabel.isVisible()
         && !purchaseSupplierValidationLabel.isVisible()
@@ -202,6 +203,9 @@ public class PurchaseMasterFormController implements Initializable {
             .type(NotificationVariants.ERROR)
             .build();
     notificationHolder.addNotification(notification);
+    purchaseSupplier.clearSelection();
+    purchaseBranch.clearSelection();
+    purchaseStatus.clearSelection();
   }
 
   private void setupTable() {
@@ -297,12 +301,14 @@ public class PurchaseMasterFormController implements Initializable {
 
   public void cancelBtnClicked() {
     BaseController.navigation.navigate(Pages.getPurchasePane());
-    purchaseDetailTable.getTableColumns().clear();
     PurchaseMasterViewModel.resetProperties();
     purchaseBranchValidationLabel.setVisible(false);
     purchaseSupplierValidationLabel.setVisible(false);
     purchaseDateValidationLabel.setVisible(false);
     purchaseStatusValidationLabel.setVisible(false);
+    purchaseSupplier.clearSelection();
+    purchaseBranch.clearSelection();
+    purchaseStatus.clearSelection();
   }
 
   public void addBtnClicked() {

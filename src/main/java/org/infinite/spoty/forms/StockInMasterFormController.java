@@ -249,13 +249,14 @@ public class StockInMasterFormController implements Initializable {
             .type(NotificationVariants.ERROR)
             .build();
     notificationHolder.addNotification(notification);
+    stockInMasterBranch.clearSelection();
   }
 
   public void stockInMasterCancelBtnClicked() {
     BaseController.navigation.navigate(Pages.getStockInPane());
     StockInMasterViewModel.resetProperties();
-    StockInDetailViewModel.stockInDetailsTempList.clear();
     stockInMasterBranchValidationLabel.setVisible(false);
     stockInMasterDateValidationLabel.setVisible(false);
+    stockInMasterBranch.clearSelection();
   }
 }

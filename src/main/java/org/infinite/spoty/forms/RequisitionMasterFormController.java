@@ -293,14 +293,17 @@ public class RequisitionMasterFormController implements Initializable {
             .type(NotificationVariants.ERROR)
             .build();
     notificationHolder.addNotification(notification);
+    requisitionMasterBranch.clearSelection();
+    requisitionMasterSupplier.clearSelection();
   }
 
   public void requisitionMasterCancelBtnClicked() {
     BaseController.navigation.navigate(Pages.getRequisitionPane());
     RequisitionMasterViewModel.resetProperties();
-    RequisitionDetailViewModel.requisitionDetailTempList.clear();
     requisitionMasterBranchValidationLabel.setVisible(false);
     requisitionMasterSupplierValidationLabel.setVisible(false);
     requisitionMasterDateValidationLabel.setVisible(false);
+    requisitionMasterBranch.clearSelection();
+    requisitionMasterSupplier.clearSelection();
   }
 }

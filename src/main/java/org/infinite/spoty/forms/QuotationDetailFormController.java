@@ -135,5 +135,6 @@ public class QuotationDetailFormController implements Initializable {
                   .build();
           notificationHolder.addNotification(notification);
         });
+    quotationProductPdct.clearSelection();
   }
 }

@@ -18,14 +18,21 @@ import java.util.Arrays;
 import java.util.LinkedList;
 
 public class Values {
-    public static final LinkedList<String> BARCODETYPES = new LinkedList<>(Arrays.stream(new String[]{"Type 01", "Type 02", "Type 03", "Type 04"}).toList());
-    public static final LinkedList<String> PURCHASESTATUSES = new LinkedList<>(Arrays.stream(new String[]{"Ordered", "Pending", "Received"}).toList());
-    public static final LinkedList<String> SALESTATUSES = new LinkedList<>(Arrays.stream(new String[]{"Ordered", "Pending", "Completed"}).toList());
-    public static final LinkedList<String> PAYMENTSTATUSES = new LinkedList<>(Arrays.stream(new String[]{"Partial", "Pending", "Paid"}).toList());
-    public static final LinkedList<String> ADJUSTMENTTYPE = new LinkedList<>(Arrays.stream(new String[]{"Increment", "Decrement"}).toList());
-    public static final LinkedList<String> QUOTATIONTYPE = new LinkedList<>(Arrays.stream(new String[]{"Sent", "Pending"}).toList());
-    public static final String[] SPECIALS = "@ . ".split(" ");
-    public static final String[] UPPERCHARACTERS = "A B C D E F G H I J K L M N O P Q R S T U V W X Y Z".split(" ");
-    public static final String[] LOWERCHARACTERS = "a b c d e f g h i j k l m n o p q r s t u v w x y z".split(" ");
-    public static final String[] NUMBERS = "0 1 2 3 4 5 6 7 8 9".split(" ");
+  public static final LinkedList<String> BARCODETYPES =
+      new LinkedList<>(
+          Arrays.stream(new String[] {"Type 01", "Type 02", "Type 03", "Type 04"}).toList());
+  public static final LinkedList<String> PURCHASESTATUSES =
+      new LinkedList<>(Arrays.stream(new String[] {"Ordered", "Pending", "Received"}).toList());
+  public static final LinkedList<String> SALESTATUSES =
+      new LinkedList<>(Arrays.stream(new String[] {"Ordered", "Pending", "Completed"}).toList());
+  public static final LinkedList<String> PAYMENTSTATUSES =
+      new LinkedList<>(Arrays.stream(new String[] {"Partial", "Pending", "Paid"}).toList());
+  public static final LinkedList<String> ADJUSTMENTTYPE =
+      new LinkedList<>(Arrays.stream(new String[] {"Increment", "Decrement"}).toList());
+  public static final LinkedList<String> QUOTATIONTYPE =
+      new LinkedList<>(Arrays.stream(new String[] {"Sent", "Pending"}).toList());
+  public static final String[] SPECIALS = "@ . ".split(" ");
+  public static final String[] ALPHANUMERIC =
+      "A B C D E F G H I J K L M N O P Q R S T U V W X Y Z a b c d e f g h i j k l m n o p q r s t u v w x y z 0 1 2 3 4 5 6 7 8 9"
+          .split(" ");
 }

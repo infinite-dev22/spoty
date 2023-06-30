@@ -125,5 +125,6 @@ public class StockInDetailFormController implements Initializable {
                   .build();
           notificationHolder.addNotification(notification);
         });
+    stockInDetailPdct.clearSelection();
   }
 }

@@ -155,5 +155,6 @@ public class UOMFormController implements Initializable {
                   .build();
           notificationHolder.addNotification(notification);
         });
+    uomFormBaseUnit.clearSelection();
   }
 }

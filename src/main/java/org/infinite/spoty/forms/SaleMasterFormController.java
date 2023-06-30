@@ -207,12 +207,15 @@ public class SaleMasterFormController implements Initializable {
             .type(NotificationVariants.ERROR)
             .build();
     notificationHolder.addNotification(notification);
+    saleCustomer.clearSelection();
+    saleBranch.clearSelection();
+    saleStatus.clearSelection();
+    salePaymentStatus.clearSelection();
   }
 
   public void cancelBtnClicked() {
     BaseController.navigation.navigate(Pages.getSalePane());
     SaleMasterViewModel.resetProperties();
-    saleDetailTable.getTableColumns().clear();
     saleBranchValidationLabel.setVisible(false);
     saleCustomerValidationLabel.setVisible(false);
     saleDateValidationLabel.setVisible(false);

@@ -187,5 +187,7 @@ public class UserFormController implements Initializable {
                   .build();
           notificationHolder.addNotification(notification);
         });
+    userFormRole.clearSelection();
+    userFormBranch.clearSelection();
   }
 }

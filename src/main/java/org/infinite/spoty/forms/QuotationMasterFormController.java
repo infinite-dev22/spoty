@@ -288,16 +288,21 @@ public class QuotationMasterFormController implements Initializable {
             .type(NotificationVariants.ERROR)
             .build();
     notificationHolder.addNotification(notification);
+    quotationCustomer.clearSelection();
+    quotationBranch.clearSelection();
+    quotationStatus.clearSelection();
   }
 
   public void cancelBtnClicked() {
     BaseController.navigation.navigate(Pages.getQuotationPane());
     QuotationMasterViewModel.resetProperties();
-    quotationDetailTable.getTableColumns().clear();
     quotationBranchValidationLabel.setVisible(false);
     quotationCustomerValidationLabel.setVisible(false);
     quotationDateValidationLabel.setVisible(false);
     quotationStatusValidationLabel.setVisible(false);
+    quotationCustomer.clearSelection();
+    quotationBranch.clearSelection();
+    quotationStatus.clearSelection();
   }
 
   public void addBtnClicked() {
