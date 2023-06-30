@@ -22,10 +22,12 @@ import io.github.palexdev.materialfx.controls.MFXDatePicker;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.components.notification.SimpleNotification;
@@ -37,8 +39,11 @@ import org.infinite.spoty.database.models.ExpenseCategory;
 import org.infinite.spoty.viewModels.BranchViewModel;
 import org.infinite.spoty.viewModels.ExpenseCategoryViewModel;
 import org.infinite.spoty.viewModels.ExpenseViewModel;
+import org.infinite.spoty.views.expenses.expense.ExpenseController;
 
 public class ExpenseFormController implements Initializable {
+  private static ExpenseFormController instance;
+  private final Stage stage;
   public MFXTextField expenseID = new MFXTextField();
   @FXML public MFXTextField expenseFormAmount;
   @FXML public MFXTextField expenseFormDetails;
@@ -54,6 +59,15 @@ public class ExpenseFormController implements Initializable {
   @FXML public Label expenseFormBranchValidationLabel;
   @FXML public Label expenseFormCategoryValidationLabel;
   @FXML public Label expenseFormAmountValidationLabel;
+
+  private ExpenseFormController(Stage stage) {
+    this.stage = stage;
+  }
+
+  public static ExpenseFormController getInstance(Stage stage) {
+    if (Objects.equals(instance, null)) instance = new ExpenseFormController(stage);
+    return instance;
+  }
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
@@ -113,6 +127,9 @@ public class ExpenseFormController implements Initializable {
         (e) -> {
           closeDialog(e);
           ExpenseViewModel.resetProperties();
+          expenseFormBranch.clearSelection();
+          expenseFormCategory.clearSelection();
+
           expenseFormNameValidationLabel.setVisible(false);
           expenseFormDateValidationLabel.setVisible(false);
           expenseFormBranchValidationLabel.setVisible(false);
@@ -129,6 +146,7 @@ public class ExpenseFormController implements Initializable {
               && !expenseFormAmountValidationLabel.isVisible()) {
             if (Integer.parseInt(expenseID.getText()) > 0) {
               ExpenseViewModel.updateItem(Integer.parseInt(expenseID.getText()));
+
               SimpleNotification notification =
                   new SimpleNotification.NotificationBuilder("Expense updated successfully")
                       .duration(NotificationDuration.SHORT)
@@ -136,10 +154,19 @@ public class ExpenseFormController implements Initializable {
                       .type(NotificationVariants.SUCCESS)
                       .build();
               notificationHolder.addNotification(notification);
+
+              expenseFormBranch.clearSelection();
+              expenseFormCategory.clearSelection();
+
+              ExpenseController.getInstance(stage)
+                  .expenseTable
+                  .setItems(ExpenseViewModel.expenseList);
+
               closeDialog(e);
               return;
             }
             ExpenseViewModel.saveExpense();
+
             SimpleNotification notification =
                 new SimpleNotification.NotificationBuilder("Expense saved successfully")
                     .duration(NotificationDuration.SHORT)
@@ -147,6 +174,14 @@ public class ExpenseFormController implements Initializable {
                     .type(NotificationVariants.SUCCESS)
                     .build();
             notificationHolder.addNotification(notification);
+
+            expenseFormBranch.clearSelection();
+            expenseFormCategory.clearSelection();
+
+            ExpenseController.getInstance(stage)
+                .expenseTable
+                .setItems(ExpenseViewModel.expenseList);
+
             closeDialog(e);
             return;
           }

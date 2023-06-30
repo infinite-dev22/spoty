@@ -20,6 +20,8 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 @Entity
 public class AdjustmentMaster implements Serializable {
@@ -32,7 +34,8 @@ public class AdjustmentMaster implements Serializable {
   private String ref;
   @ManyToOne private Branch branch;
 
-  @OneToMany(cascade = CascadeType.ALL, mappedBy = "adjustment", orphanRemoval = true)
+  @OneToMany(mappedBy = "adjustment", fetch = FetchType.LAZY)
+  @Cascade({CascadeType.ALL})
   private List<AdjustmentDetail> adjustmentDetails = new LinkedList<>();
 
   private String notes;

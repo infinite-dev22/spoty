@@ -67,7 +67,6 @@ public class SplashScreenController implements Initializable {
             stage.setMaximized(true);
             stage.setTitle(Labels.APP_NAME);
             stage.show();
-            System.out.println(stage.getWidth());
             SimpleNotificationHolder.setNotificationOwner(stage);
           } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);

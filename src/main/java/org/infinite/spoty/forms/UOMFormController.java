@@ -21,11 +21,13 @@ import io.github.palexdev.materialfx.controls.MFXComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.components.notification.SimpleNotification;
@@ -34,6 +36,7 @@ import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.database.models.UnitOfMeasure;
 import org.infinite.spoty.viewModels.UOMViewModel;
+import org.infinite.spoty.views.inventory.unit_of_measure.UnitOfMeasureController;
 
 public class UOMFormController implements Initializable {
   /**
@@ -41,8 +44,10 @@ public class UOMFormController implements Initializable {
    * filled in its combo. =>The dialog should animate to expand and contract when a BaseUnit is
    * present i.e. not just have a scroll view.
    */
-  public MFXTextField uomID = new MFXTextField();
+  private static UOMFormController instance;
 
+  private final Stage stage;
+  public MFXTextField uomID = new MFXTextField();
   @FXML public MFXTextField uomFormName;
   @FXML public MFXTextField uomFormShortName;
   @FXML public MFXButton uomFormSaveBtn;
@@ -56,6 +61,15 @@ public class UOMFormController implements Initializable {
   @FXML public Label uomFormShortNameValidationLabel;
   @FXML public Label uomFormOperatorValidationLabel;
   @FXML public Label uomFormOperatorValueValidationLabel;
+
+  private UOMFormController(Stage stage) {
+    this.stage = stage;
+  }
+
+  public static UOMFormController getInstance(Stage stage) {
+    if (Objects.equals(instance, null)) instance = new UOMFormController(stage);
+    return instance;
+  }
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
@@ -110,6 +124,7 @@ public class UOMFormController implements Initializable {
         (e) -> {
           closeDialog(e);
           UOMViewModel.resetUOMProperties();
+          uomFormBaseUnit.clearSelection();
           uomFormNameValidationLabel.setVisible(false);
           uomFormShortNameValidationLabel.setVisible(false);
           uomFormOperatorValidationLabel.setVisible(false);
@@ -120,12 +135,14 @@ public class UOMFormController implements Initializable {
     uomFormSaveBtn.setOnAction(
         (e) -> {
           SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
+
           if (!uomFormNameValidationLabel.isVisible()
               && !uomFormShortNameValidationLabel.isVisible()
               && !uomFormOperatorValidationLabel.isVisible()
               && !uomFormOperatorValueValidationLabel.isVisible()) {
             if (Integer.parseInt(uomID.getText()) > 0) {
               UOMViewModel.updateItem(Integer.parseInt(uomID.getText()));
+
               SimpleNotification notification =
                   new SimpleNotification.NotificationBuilder("Unit of measure updated successfully")
                       .duration(NotificationDuration.SHORT)
@@ -133,10 +150,15 @@ public class UOMFormController implements Initializable {
                       .type(NotificationVariants.SUCCESS)
                       .build();
               notificationHolder.addNotification(notification);
+
+              uomFormBaseUnit.clearSelection();
+              UnitOfMeasureController.getInstance(stage).uomTable.setItems(UOMViewModel.uomList);
+
               closeDialog(e);
               return;
             }
             UOMViewModel.saveUOM();
+
             SimpleNotification notification =
                 new SimpleNotification.NotificationBuilder("Unit of measure saved successfully")
                     .duration(NotificationDuration.SHORT)
@@ -144,6 +166,10 @@ public class UOMFormController implements Initializable {
                     .type(NotificationVariants.SUCCESS)
                     .build();
             notificationHolder.addNotification(notification);
+
+            uomFormBaseUnit.clearSelection();
+            UnitOfMeasureController.getInstance(stage).uomTable.setItems(UOMViewModel.uomList);
+
             closeDialog(e);
             return;
           }

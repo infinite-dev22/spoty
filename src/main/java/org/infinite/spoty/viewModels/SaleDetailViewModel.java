@@ -28,6 +28,8 @@ import org.infinite.spoty.database.models.UnitOfMeasure;
 public class SaleDetailViewModel {
   public static final ObservableList<SaleDetail> saleDetailTempList =
       FXCollections.observableArrayList();
+  public static final ObservableList<SaleDetail> saleDetailList =
+      FXCollections.observableArrayList();
   private static final IntegerProperty id = new SimpleIntegerProperty(0);
   private static final StringProperty ref = new SimpleStringProperty();
   private static final ObjectProperty<ProductDetail> product = new SimpleObjectProperty<>();
@@ -40,8 +42,6 @@ public class SaleDetailViewModel {
   private static final StringProperty discountType = new SimpleStringProperty();
   private static final StringProperty total = new SimpleStringProperty();
   private static final StringProperty quantity = new SimpleStringProperty();
-  private static final ObservableList<SaleDetail> saleDetailList =
-      FXCollections.observableArrayList();
 
   public static int getId() {
     return id.get();

@@ -39,9 +39,9 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Dialog;
-import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
@@ -258,9 +258,11 @@ public class ProductMasterFormController implements Initializable {
   }
 
   private void quotationProductDialogPane(Stage stage) throws IOException {
-    DialogPane dialogPane = fxmlLoader("forms/ProductDetailForm.fxml").load();
+    FXMLLoader fxmlLoader = fxmlLoader("forms/ProductDetailForm.fxml");
+    fxmlLoader.setControllerFactory(c -> ProductDetailFormController.getInstance(stage));
+
     dialog = new Dialog<>();
-    dialog.setDialogPane(dialogPane);
+    dialog.setDialogPane(fxmlLoader.load());
     dialog.initOwner(stage);
     dialog.initModality(Modality.APPLICATION_MODAL);
     dialog.initStyle(StageStyle.UNDECORATED);
@@ -268,6 +270,7 @@ public class ProductMasterFormController implements Initializable {
 
   public void productSaveBtnClicked() {
     SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
+
     if (!productDetailTable.isDisabled()
         && ProductDetailViewModel.productDetailTempList.isEmpty()) {
       SimpleNotification notification =
@@ -284,6 +287,7 @@ public class ProductMasterFormController implements Initializable {
         && !productFormNameValidationLabel.isVisible()) {
       if (Integer.parseInt(productMasterID.getText()) > 0) {
         ProductMasterViewModel.updateItem(Integer.parseInt(productMasterID.getText()));
+
         SimpleNotification notification =
             new SimpleNotification.NotificationBuilder("Product updated successfully")
                 .duration(NotificationDuration.MEDIUM)
@@ -291,10 +295,17 @@ public class ProductMasterFormController implements Initializable {
                 .type(NotificationVariants.SUCCESS)
                 .build();
         notificationHolder.addNotification(notification);
+
+        productFormCategory.clearSelection();
+        productFormBrand.clearSelection();
+        productFormBarCodeType.clearSelection();
+
         productCancelBtnClicked();
+
         return;
       }
       ProductMasterViewModel.saveProductMaster();
+
       SimpleNotification notification =
           new SimpleNotification.NotificationBuilder("Product saved successfully")
               .duration(NotificationDuration.MEDIUM)
@@ -302,7 +313,13 @@ public class ProductMasterFormController implements Initializable {
               .type(NotificationVariants.SUCCESS)
               .build();
       notificationHolder.addNotification(notification);
+
+      productFormCategory.clearSelection();
+      productFormBrand.clearSelection();
+      productFormBarCodeType.clearSelection();
+
       productCancelBtnClicked();
+
       return;
     }
     SimpleNotification notification =
@@ -316,10 +333,14 @@ public class ProductMasterFormController implements Initializable {
 
   public void productCancelBtnClicked() {
     BaseController.navigation.navigate(Pages.getProductPane());
+
     ProductMasterViewModel.resetProperties();
-    ProductDetailViewModel.productDetailTempList.clear();
+
     productFormCategoryValidationLabel.setVisible(false);
     productFormBrandValidationLabel.setVisible(false);
     productFormNameValidationLabel.setVisible(false);
+    productFormCategory.clearSelection();
+    productFormBrand.clearSelection();
+    productFormBarCodeType.clearSelection();
   }
 }

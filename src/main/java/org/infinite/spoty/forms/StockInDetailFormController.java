@@ -22,10 +22,12 @@ import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
@@ -36,6 +38,8 @@ import org.infinite.spoty.viewModels.ProductDetailViewModel;
 import org.infinite.spoty.viewModels.StockInDetailViewModel;
 
 public class StockInDetailFormController implements Initializable {
+  private static StockInDetailFormController instance;
+  private final Stage stage;
   @FXML public MFXTextField stockInDetailQnty;
   @FXML public MFXFilterComboBox<ProductDetail> stockInDetailPdct;
   @FXML public MFXButton stockInDetailSaveBtn;
@@ -44,6 +48,15 @@ public class StockInDetailFormController implements Initializable {
   @FXML public MFXTextField stockInDetailDescription;
   @FXML public Label stockInDetailPdctValidationLabel;
   @FXML public Label stockInDetailQntyValidationLabel;
+
+  private StockInDetailFormController(Stage stage) {
+    this.stage = stage;
+  }
+
+  public static StockInDetailFormController getInstance(Stage stage) {
+    if (Objects.equals(instance, null)) instance = new StockInDetailFormController(stage);
+    return instance;
+  }
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
@@ -86,16 +99,19 @@ public class StockInDetailFormController implements Initializable {
         (e) -> {
           closeDialog(e);
           StockInDetailViewModel.resetProperties();
+          stockInDetailPdct.clearSelection();
           stockInDetailPdctValidationLabel.setVisible(false);
           stockInDetailQntyValidationLabel.setVisible(false);
         });
     stockInDetailSaveBtn.setOnAction(
         (e) -> {
           SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
+
           if (!stockInDetailPdctValidationLabel.isVisible()
               && !stockInDetailQntyValidationLabel.isVisible()) {
             if (tempIdProperty().get() > -1) {
               StockInDetailViewModel.updateStockInDetail(StockInDetailViewModel.getId());
+
               SimpleNotification notification =
                   new SimpleNotification.NotificationBuilder("Product changed successfully")
                       .duration(NotificationDuration.SHORT)
@@ -103,10 +119,17 @@ public class StockInDetailFormController implements Initializable {
                       .type(NotificationVariants.SUCCESS)
                       .build();
               notificationHolder.addNotification(notification);
+
+              stockInDetailPdct.clearSelection();
+              StockInMasterFormController.getInstance(stage)
+                  .stockInDetailTable
+                  .setItems(StockInDetailViewModel.stockInDetailsList);
+
               closeDialog(e);
               return;
             }
             StockInDetailViewModel.addStockInDetails();
+
             SimpleNotification notification =
                 new SimpleNotification.NotificationBuilder("Product added successfully")
                     .duration(NotificationDuration.SHORT)
@@ -114,6 +137,12 @@ public class StockInDetailFormController implements Initializable {
                     .type(NotificationVariants.SUCCESS)
                     .build();
             notificationHolder.addNotification(notification);
+
+            stockInDetailPdct.clearSelection();
+            StockInMasterFormController.getInstance(stage)
+                .stockInDetailTable
+                .setItems(StockInDetailViewModel.stockInDetailsList);
+
             closeDialog(e);
             return;
           }

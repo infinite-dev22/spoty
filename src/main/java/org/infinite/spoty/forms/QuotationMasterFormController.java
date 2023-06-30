@@ -31,9 +31,9 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Dialog;
-import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
@@ -233,9 +233,11 @@ public class QuotationMasterFormController implements Initializable {
   }
 
   private void quotationProductDialogPane(Stage stage) throws IOException {
-    DialogPane dialogPane = fxmlLoader("forms/QuotationDetailForm.fxml").load();
+    FXMLLoader fxmlLoader = fxmlLoader("forms/QuotationDetailForm.fxml");
+    fxmlLoader.setControllerFactory(c -> QuotationDetailFormController.getInstance(stage));
+
     dialog = new Dialog<>();
-    dialog.setDialogPane(dialogPane);
+    dialog.setDialogPane(fxmlLoader.load());
     dialog.initOwner(stage);
     dialog.initModality(Modality.APPLICATION_MODAL);
     dialog.initStyle(StageStyle.UNDECORATED);
@@ -243,6 +245,7 @@ public class QuotationMasterFormController implements Initializable {
 
   public void saveBtnClicked() {
     SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
+
     if (!quotationDetailTable.isDisabled()
         && QuotationDetailViewModel.quotationDetailTempList.isEmpty()) {
       SimpleNotification notification =
@@ -254,12 +257,14 @@ public class QuotationMasterFormController implements Initializable {
       notificationHolder.addNotification(notification);
       return;
     }
+
     if (!quotationBranchValidationLabel.isVisible()
         && !quotationCustomerValidationLabel.isVisible()
         && !quotationDateValidationLabel.isVisible()
         && !quotationStatusValidationLabel.isVisible()) {
       if (Integer.parseInt(quotationMasterID.getText()) > 0) {
         QuotationMasterViewModel.updateItem(Integer.parseInt(quotationMasterID.getText()));
+
         SimpleNotification notification =
             new SimpleNotification.NotificationBuilder("Quotation updated successfully")
                 .duration(NotificationDuration.MEDIUM)
@@ -267,10 +272,16 @@ public class QuotationMasterFormController implements Initializable {
                 .type(NotificationVariants.SUCCESS)
                 .build();
         notificationHolder.addNotification(notification);
+
+        quotationCustomer.clearSelection();
+        quotationBranch.clearSelection();
+        quotationStatus.clearSelection();
+
         cancelBtnClicked();
         return;
       }
       QuotationMasterViewModel.saveQuotationMaster();
+
       SimpleNotification notification =
           new SimpleNotification.NotificationBuilder("Quotation saved successfully")
               .duration(NotificationDuration.MEDIUM)
@@ -278,6 +289,11 @@ public class QuotationMasterFormController implements Initializable {
               .type(NotificationVariants.SUCCESS)
               .build();
       notificationHolder.addNotification(notification);
+
+      quotationCustomer.clearSelection();
+      quotationBranch.clearSelection();
+      quotationStatus.clearSelection();
+
       cancelBtnClicked();
       return;
     }
@@ -292,12 +308,16 @@ public class QuotationMasterFormController implements Initializable {
 
   public void cancelBtnClicked() {
     BaseController.navigation.navigate(Pages.getQuotationPane());
+
     QuotationMasterViewModel.resetProperties();
-    quotationDetailTable.getTableColumns().clear();
+
     quotationBranchValidationLabel.setVisible(false);
     quotationCustomerValidationLabel.setVisible(false);
     quotationDateValidationLabel.setVisible(false);
     quotationStatusValidationLabel.setVisible(false);
+    quotationCustomer.clearSelection();
+    quotationBranch.clearSelection();
+    quotationStatus.clearSelection();
   }
 
   public void addBtnClicked() {

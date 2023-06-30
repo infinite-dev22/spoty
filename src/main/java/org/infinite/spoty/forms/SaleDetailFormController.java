@@ -22,10 +22,12 @@ import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
@@ -36,6 +38,8 @@ import org.infinite.spoty.viewModels.ProductDetailViewModel;
 import org.infinite.spoty.viewModels.SaleDetailViewModel;
 
 public class SaleDetailFormController implements Initializable {
+  private static SaleDetailFormController instance;
+  private final Stage stage;
   @FXML public MFXTextField saleDetailQnty;
   @FXML public MFXFilterComboBox<ProductDetail> saleDetailPdct;
   @FXML public MFXTextField saleDetailOrderTax;
@@ -45,6 +49,15 @@ public class SaleDetailFormController implements Initializable {
   @FXML public Label saleProductsTitle;
   @FXML public Label saleDetailPdctValidationLabel;
   @FXML public Label saleDetailQntyValidationLabel;
+
+  private SaleDetailFormController(Stage stage) {
+    this.stage = stage;
+  }
+
+  public static SaleDetailFormController getInstance(Stage stage) {
+    if (Objects.equals(instance, null)) instance = new SaleDetailFormController(stage);
+    return instance;
+  }
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
@@ -86,16 +99,19 @@ public class SaleDetailFormController implements Initializable {
         (e) -> {
           closeDialog(e);
           SaleDetailViewModel.resetProperties();
+          saleDetailPdct.clearSelection();
           saleDetailPdctValidationLabel.setVisible(false);
           saleDetailQntyValidationLabel.setVisible(false);
         });
     saleProductsSaveBtn.setOnAction(
         (e) -> {
           SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
+
           if (!saleDetailPdctValidationLabel.isVisible()
               && !saleDetailQntyValidationLabel.isVisible()) {
             if (tempIdProperty().get() > -1) {
               SaleDetailViewModel.updateSaleDetail(SaleDetailViewModel.getId());
+
               SimpleNotification notification =
                   new SimpleNotification.NotificationBuilder("Product changed successfully")
                       .duration(NotificationDuration.SHORT)
@@ -103,10 +119,18 @@ public class SaleDetailFormController implements Initializable {
                       .type(NotificationVariants.SUCCESS)
                       .build();
               notificationHolder.addNotification(notification);
+
+              saleDetailPdct.clearSelection();
+
+              SaleMasterFormController.getInstance(stage)
+                  .saleDetailTable
+                  .setItems(SaleDetailViewModel.saleDetailList);
+
               closeDialog(e);
               return;
             }
             SaleDetailViewModel.addSaleDetail();
+
             SimpleNotification notification =
                 new SimpleNotification.NotificationBuilder("Product added successfully")
                     .duration(NotificationDuration.SHORT)
@@ -114,6 +138,13 @@ public class SaleDetailFormController implements Initializable {
                     .type(NotificationVariants.SUCCESS)
                     .build();
             notificationHolder.addNotification(notification);
+
+            saleDetailPdct.clearSelection();
+
+            SaleMasterFormController.getInstance(stage)
+                .saleDetailTable
+                .setItems(SaleDetailViewModel.saleDetailList);
+
             closeDialog(e);
             return;
           }

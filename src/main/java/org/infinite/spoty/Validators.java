@@ -36,9 +36,7 @@ public class Validators {
             .setCondition(
                 Bindings.createBooleanBinding(
                     () ->
-                        containsAny(textField.getText(), "", UPPERCHARACTERS)
-                            && containsAny(textField.getText(), "", LOWERCHARACTERS)
-                            && containsAny(textField.getText(), "", NUMBERS),
+                        containsAny(textField.getText(), "", ALPHANUMERIC),
                     textField.textProperty()))
             .get();
     Constraint specialCharsConstraint =

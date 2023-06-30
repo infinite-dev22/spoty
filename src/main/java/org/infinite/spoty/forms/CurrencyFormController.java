@@ -27,15 +27,18 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.stage.Stage;
 import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.viewModels.CurrencyViewModel;
+import org.infinite.spoty.views.settings.currency.CurrencyController;
 
 public class CurrencyFormController implements Initializable {
   private static CurrencyFormController instance;
+  private final Stage stage;
   public MFXTextField currencyFormID = new MFXTextField();
   @FXML public Label currencyFormTitle;
   @FXML public MFXTextField currencyFormName;
@@ -46,8 +49,12 @@ public class CurrencyFormController implements Initializable {
   @FXML public Label currencyFormCodeValidationLabel;
   @FXML public Label currencyFormNameValidationLabel;
 
-  public static CurrencyFormController getInstance() {
-    if (Objects.equals(instance, null)) instance = new CurrencyFormController();
+  private CurrencyFormController(Stage stage) {
+    this.stage = stage;
+  }
+
+  public static CurrencyFormController getInstance(Stage stage) {
+    if (Objects.equals(instance, null)) instance = new CurrencyFormController(stage);
     return instance;
   }
 
@@ -71,17 +78,21 @@ public class CurrencyFormController implements Initializable {
     currencyFormCancelBtn.setOnAction(
         (e) -> {
           clearCurrencyData();
+
           closeDialog(e);
+
           currencyFormNameValidationLabel.setVisible(false);
           currencyFormCodeValidationLabel.setVisible(false);
         });
     currencyFormSaveBtn.setOnAction(
         (e) -> {
           SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
+
           if (!currencyFormNameValidationLabel.isVisible()
               && !currencyFormCodeValidationLabel.isVisible()) {
             if (Integer.parseInt(currencyFormID.getText()) > 0) {
               CurrencyViewModel.updateItem(Integer.parseInt(currencyFormID.getText()));
+
               SimpleNotification notification =
                   new SimpleNotification.NotificationBuilder("Currency updated successfully")
                       .duration(NotificationDuration.SHORT)
@@ -89,10 +100,16 @@ public class CurrencyFormController implements Initializable {
                       .type(NotificationVariants.SUCCESS)
                       .build();
               notificationHolder.addNotification(notification);
+
+              CurrencyController.getInstance(stage)
+                  .currencyTable
+                  .setItems(CurrencyViewModel.currenciesList);
+
               closeDialog(e);
               return;
             }
             saveCurrency();
+
             SimpleNotification notification =
                 new SimpleNotification.NotificationBuilder("Currency saved successfully")
                     .duration(NotificationDuration.SHORT)
@@ -100,6 +117,11 @@ public class CurrencyFormController implements Initializable {
                     .type(NotificationVariants.SUCCESS)
                     .build();
             notificationHolder.addNotification(notification);
+
+            CurrencyController.getInstance(stage)
+                .currencyTable
+                .setItems(CurrencyViewModel.currenciesList);
+
             closeDialog(e);
             return;
           }

@@ -30,9 +30,9 @@ import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Dialog;
-import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
@@ -196,9 +196,11 @@ public class StockInMasterFormController implements Initializable {
   }
 
   private void quotationProductDialogPane(Stage stage) throws IOException {
-    DialogPane dialogPane = fxmlLoader("forms/StockInDetailForm.fxml").load();
+    FXMLLoader fxmlLoader = fxmlLoader("forms/StockInDetailForm.fxml");
+    fxmlLoader.setControllerFactory(c -> StockInDetailFormController.getInstance(stage));
+
     dialog = new Dialog<>();
-    dialog.setDialogPane(dialogPane);
+    dialog.setDialogPane(fxmlLoader.load());
     dialog.initOwner(stage);
     dialog.initModality(Modality.APPLICATION_MODAL);
     dialog.initStyle(StageStyle.UNDECORATED);
@@ -206,6 +208,7 @@ public class StockInMasterFormController implements Initializable {
 
   public void stockInMasterSaveBtnClicked() {
     SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
+
     if (!stockInDetailTable.isDisabled()
         && StockInDetailViewModel.stockInDetailsTempList.isEmpty()) {
       SimpleNotification notification =
@@ -221,6 +224,7 @@ public class StockInMasterFormController implements Initializable {
         && !stockInMasterDateValidationLabel.isVisible()) {
       if (Integer.parseInt(stockInMasterID.getText()) > 0) {
         StockInMasterViewModel.updateItem(Integer.parseInt(stockInMasterID.getText()));
+
         SimpleNotification notification =
             new SimpleNotification.NotificationBuilder("Stock In updated successfully")
                 .duration(NotificationDuration.MEDIUM)
@@ -228,10 +232,13 @@ public class StockInMasterFormController implements Initializable {
                 .type(NotificationVariants.SUCCESS)
                 .build();
         notificationHolder.addNotification(notification);
+
+        stockInMasterBranch.clearSelection();
         stockInMasterCancelBtnClicked();
         return;
       }
       StockInMasterViewModel.saveStockInMaster();
+
       SimpleNotification notification =
           new SimpleNotification.NotificationBuilder("Stock In saved successfully")
               .duration(NotificationDuration.MEDIUM)
@@ -239,6 +246,8 @@ public class StockInMasterFormController implements Initializable {
               .type(NotificationVariants.SUCCESS)
               .build();
       notificationHolder.addNotification(notification);
+
+      stockInMasterBranch.clearSelection();
       stockInMasterCancelBtnClicked();
       return;
     }
@@ -254,8 +263,8 @@ public class StockInMasterFormController implements Initializable {
   public void stockInMasterCancelBtnClicked() {
     BaseController.navigation.navigate(Pages.getStockInPane());
     StockInMasterViewModel.resetProperties();
-    StockInDetailViewModel.stockInDetailsTempList.clear();
     stockInMasterBranchValidationLabel.setVisible(false);
     stockInMasterDateValidationLabel.setVisible(false);
+    stockInMasterBranch.clearSelection();
   }
 }

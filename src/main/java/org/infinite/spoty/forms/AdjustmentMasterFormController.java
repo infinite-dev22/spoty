@@ -37,9 +37,9 @@ import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Dialog;
-import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
@@ -105,7 +105,6 @@ public class AdjustmentMasterFormController implements Initializable {
           @Override
           public String toString(Branch object) {
             if (object != null) {
-              System.out.println(object.getName());
               return object.getName();
             } else return null;
           }
@@ -154,7 +153,8 @@ public class AdjustmentMasterFormController implements Initializable {
             new IntegerFilter<>("Quantity", AdjustmentDetail::getQuantity),
             new StringFilter<>("Adjustment Type", AdjustmentDetail::getAdjustmentType));
     getAdjustmentDetailTable();
-    adjustmentDetailTable.setItems(AdjustmentDetailViewModel.getAdjustmentDetails());
+    AdjustmentDetailViewModel.getAdjustmentDetails();
+    adjustmentDetailTable.setItems(AdjustmentDetailViewModel.adjustmentDetailsList);
   }
 
   private void getAdjustmentDetailTable() {
@@ -190,7 +190,7 @@ public class AdjustmentMasterFormController implements Initializable {
         e -> {
           AdjustmentDetailViewModel.removeAdjustmentDetail(
               obj.getData().getId(),
-              AdjustmentDetailViewModel.adjustmentDetailsTempList.indexOf(obj.getData()));
+              AdjustmentDetailViewModel.adjustmentDetailsList.indexOf(obj.getData()));
           AdjustmentDetailViewModel.getAdjustmentDetails();
           e.consume();
         });
@@ -199,7 +199,7 @@ public class AdjustmentMasterFormController implements Initializable {
         e -> {
           AdjustmentDetailViewModel.getItem(
               obj.getData().getId(),
-              AdjustmentDetailViewModel.adjustmentDetailsTempList.indexOf(obj.getData()));
+              AdjustmentDetailViewModel.adjustmentDetailsList.indexOf(obj.getData()));
           dialog.showAndWait();
           e.consume();
         });
@@ -214,9 +214,11 @@ public class AdjustmentMasterFormController implements Initializable {
   }
 
   private void quotationProductDialogPane(Stage stage) throws IOException {
-    DialogPane dialogPane = fxmlLoader("forms/AdjustmentDetailForm.fxml").load();
+    FXMLLoader fxmlLoader = fxmlLoader("forms/AdjustmentDetailForm.fxml");
+    fxmlLoader.setControllerFactory(c -> AdjustmentDetailFormController.getInstance(stage));
+
     dialog = new Dialog<>();
-    dialog.setDialogPane(dialogPane);
+    dialog.setDialogPane(fxmlLoader.load());
     dialog.initOwner(stage);
     dialog.initModality(Modality.APPLICATION_MODAL);
     dialog.initStyle(StageStyle.UNDECORATED);
@@ -225,7 +227,7 @@ public class AdjustmentMasterFormController implements Initializable {
   public void adjustmentSaveBtnClicked() {
     SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
     if (!adjustmentDetailTable.isDisabled()
-        && AdjustmentDetailViewModel.adjustmentDetailsTempList.isEmpty()) {
+        && AdjustmentDetailViewModel.adjustmentDetailsList.isEmpty()) {
       SimpleNotification notification =
           new SimpleNotification.NotificationBuilder("Table can't be Empty")
               .duration(NotificationDuration.SHORT)
@@ -233,6 +235,7 @@ public class AdjustmentMasterFormController implements Initializable {
               .type(NotificationVariants.ERROR)
               .build();
       notificationHolder.addNotification(notification);
+      AdjustmentDetailViewModel.adjustmentDetailsList.forEach(System.out::println);
       return;
     }
     if (!adjustmentBranchValidationLabel.isVisible()
@@ -247,32 +250,37 @@ public class AdjustmentMasterFormController implements Initializable {
                 .build();
         notificationHolder.addNotification(notification);
         adjustmentCancelBtnClicked();
+        adjustmentBranch.clearSelection();
         return;
       }
-        AdjustmentMasterViewModel.saveAdjustmentMaster();
-        SimpleNotification notification =
-            new SimpleNotification.NotificationBuilder("Product adjustment saved successfully")
-                .duration(NotificationDuration.MEDIUM)
-                .icon("fas-circle-check")
-                .type(NotificationVariants.SUCCESS)
-                .build();
-        notificationHolder.addNotification(notification);
+      AdjustmentMasterViewModel.saveAdjustmentMaster();
+      SimpleNotification notification =
+          new SimpleNotification.NotificationBuilder("Product adjustment saved successfully")
+              .duration(NotificationDuration.MEDIUM)
+              .icon("fas-circle-check")
+              .type(NotificationVariants.SUCCESS)
+              .build();
+      notificationHolder.addNotification(notification);
       adjustmentCancelBtnClicked();
+      adjustmentBranch.clearSelection();
       return;
     }
     SimpleNotification notification =
-            new SimpleNotification.NotificationBuilder("Required fields missing")
-                    .duration(NotificationDuration.SHORT)
-                    .icon("fas-triangle-exclamation")
-                    .type(NotificationVariants.ERROR)
-                    .build();
+        new SimpleNotification.NotificationBuilder("Required fields missing")
+            .duration(NotificationDuration.SHORT)
+            .icon("fas-triangle-exclamation")
+            .type(NotificationVariants.ERROR)
+            .build();
     notificationHolder.addNotification(notification);
   }
 
   public void adjustmentCancelBtnClicked() {
     BaseController.navigation.navigate(Pages.getAdjustmentPane());
+
     AdjustmentMasterViewModel.resetProperties();
-    AdjustmentDetailViewModel.adjustmentDetailsTempList.clear();
+
+    adjustmentBranch.clearSelection();
+
     adjustmentBranchValidationLabel.setVisible(false);
     adjustmentDateValidationLabel.setVisible(false);
   }

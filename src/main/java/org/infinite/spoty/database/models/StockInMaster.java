@@ -19,6 +19,8 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 @Entity
 public class StockInMaster implements Serializable {
@@ -28,25 +30,34 @@ public class StockInMaster implements Serializable {
 
   @ManyToOne private User user_detail;
   private String ref;
+
   @Column(nullable = false)
   private Date date;
-  @ManyToOne(optional = false)
-  @JoinColumn(nullable = false, name = "branch_id") private Branch branch;
 
-  @OneToMany(cascade = CascadeType.ALL, mappedBy = "stockIn")
+  @ManyToOne(optional = false)
+  @JoinColumn(nullable = false, name = "branch_id")
+  private Branch branch;
+
+  @OneToMany(mappedBy = "stockIn", fetch = FetchType.LAZY)
+  @Cascade({CascadeType.ALL})
   private List<StockInDetail> stockInDetails;
 
   private String shipping;
+
   @Column(nullable = false)
   private double totalCost;
+
   @Column(nullable = false)
   private String status;
+
   @ManyToOne
   @JoinColumn(name = "approved_by_id")
   private User approvedBy;
+
   @ManyToOne
   @JoinColumn(name = "recorded_by_id")
   private User recordedBy;
+
   private Date approvalDate;
   private Date recordDate;
   private String notes;

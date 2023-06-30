@@ -22,10 +22,12 @@ import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
@@ -36,6 +38,8 @@ import org.infinite.spoty.viewModels.ProductDetailViewModel;
 import org.infinite.spoty.viewModels.QuotationDetailViewModel;
 
 public class QuotationDetailFormController implements Initializable {
+  private static QuotationDetailFormController instance;
+  private final Stage stage;
   @FXML public MFXTextField quotationProductQnty;
   @FXML public MFXFilterComboBox<ProductDetail> quotationProductPdct;
   @FXML public MFXTextField quotationProductsOrderTax;
@@ -45,6 +49,15 @@ public class QuotationDetailFormController implements Initializable {
   @FXML public Label quotationProductsTitle;
   @FXML public Label quotationProductPdctValidationLabel;
   @FXML public Label quotationProductQntyValidationLabel;
+
+  private QuotationDetailFormController(Stage stage) {
+    this.stage = stage;
+  }
+
+  public static QuotationDetailFormController getInstance(Stage stage) {
+    if (Objects.equals(instance, null)) instance = new QuotationDetailFormController(stage);
+    return instance;
+  }
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
@@ -96,16 +109,19 @@ public class QuotationDetailFormController implements Initializable {
         (e) -> {
           closeDialog(e);
           QuotationDetailViewModel.resetProperties();
+          quotationProductPdct.clearSelection();
           quotationProductPdctValidationLabel.setVisible(false);
           quotationProductQntyValidationLabel.setVisible(false);
         });
     quotationProductsSaveBtn.setOnAction(
         (e) -> {
           SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
+
           if (!quotationProductPdctValidationLabel.isVisible()
               && !quotationProductQntyValidationLabel.isVisible()) {
             if (tempIdProperty().get() > -1) {
               QuotationDetailViewModel.updateQuotationDetail(QuotationDetailViewModel.getId());
+
               SimpleNotification notification =
                   new SimpleNotification.NotificationBuilder("Product changed successfully")
                       .duration(NotificationDuration.SHORT)
@@ -113,17 +129,33 @@ public class QuotationDetailFormController implements Initializable {
                       .type(NotificationVariants.SUCCESS)
                       .build();
               notificationHolder.addNotification(notification);
+
+              quotationProductPdct.clearSelection();
+
+              QuotationMasterFormController.getInstance(stage)
+                  .quotationDetailTable
+                  .setItems(QuotationDetailViewModel.quotationDetailsList);
+
               closeDialog(e);
               return;
             }
             QuotationDetailViewModel.addQuotationDetails();
+
             SimpleNotification notification =
                 new SimpleNotification.NotificationBuilder("Product added successfully")
                     .duration(NotificationDuration.SHORT)
                     .icon("fas-circle-check")
                     .type(NotificationVariants.SUCCESS)
                     .build();
+
             notificationHolder.addNotification(notification);
+
+            quotationProductPdct.clearSelection();
+
+            QuotationMasterFormController.getInstance(stage)
+                .quotationDetailTable
+                .setItems(QuotationDetailViewModel.quotationDetailsList);
+
             closeDialog(e);
             return;
           }

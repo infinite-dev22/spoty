@@ -19,6 +19,8 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 @Entity
 public class SaleMaster implements Serializable {
@@ -41,7 +43,8 @@ public class SaleMaster implements Serializable {
   @JoinColumn(nullable = false, name = "branch_id")
   private Branch branch;
 
-  @OneToMany(cascade = CascadeType.ALL, mappedBy = "sale")
+  @OneToMany(mappedBy = "sale", fetch = FetchType.LAZY)
+  @Cascade({CascadeType.ALL})
   private List<SaleDetail> saleDetails;
 
   @Column(name = "tax_rate")
@@ -79,11 +82,18 @@ public class SaleMaster implements Serializable {
   @Column(name = "updated_by")
   private String updatedBy;
 
-  public SaleMaster(Customer customer, Branch branch, String saleStatus, String notes, Date date) {
+  public SaleMaster(
+      Customer customer,
+      Branch branch,
+      String saleStatus,
+      String paymentStatus,
+      String notes,
+      Date date) {
     this.date = date;
     this.customer = customer;
     this.branch = branch;
     this.saleStatus = saleStatus;
+    this.paymentStatus = paymentStatus;
     this.notes = notes;
   }
 

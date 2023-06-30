@@ -38,9 +38,9 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Dialog;
-import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
@@ -141,6 +141,7 @@ public class SaleMasterFormController implements Initializable {
     saleCustomer.valueProperty().bindBidirectional(SaleMasterViewModel.customerProperty());
     saleBranch.valueProperty().bindBidirectional(SaleMasterViewModel.branchProperty());
     saleStatus.textProperty().bindBidirectional(SaleMasterViewModel.saleStatusProperty());
+    salePaymentStatus.textProperty().bindBidirectional(SaleMasterViewModel.payStatusProperty());
     // input validators.
     requiredValidator(saleBranch, "Branch is required.", saleBranchValidationLabel);
     requiredValidator(saleCustomer, "Customer is required.", saleCustomerValidationLabel);
@@ -152,9 +153,11 @@ public class SaleMasterFormController implements Initializable {
   }
 
   private void saleProductDialogPane(Stage stage) throws IOException {
-    DialogPane dialogPane = fxmlLoader("forms/SaleDetailForm.fxml").load();
+    FXMLLoader fxmlLoader = fxmlLoader("forms/SaleDetailForm.fxml");
+    fxmlLoader.setControllerFactory(c -> SaleDetailFormController.getInstance(stage));
+
     dialog = new Dialog<>();
-    dialog.setDialogPane(dialogPane);
+    dialog.setDialogPane(fxmlLoader.load());
     dialog.initOwner(stage);
     dialog.initModality(Modality.APPLICATION_MODAL);
     dialog.initStyle(StageStyle.UNDECORATED);
@@ -162,6 +165,7 @@ public class SaleMasterFormController implements Initializable {
 
   public void saveBtnClicked() {
     SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
+
     if (!saleDetailTable.isDisabled() && SaleDetailViewModel.saleDetailTempList.isEmpty()) {
       SimpleNotification notification =
           new SimpleNotification.NotificationBuilder("Table can't be Empty")
@@ -179,6 +183,7 @@ public class SaleMasterFormController implements Initializable {
         && !salePaymentStatusValidationLabel.isVisible()) {
       if (Integer.parseInt(saleMasterID.getText()) > 0) {
         SaleMasterViewModel.updateItem(Integer.parseInt(saleMasterID.getText()));
+
         SimpleNotification notification =
             new SimpleNotification.NotificationBuilder("Sale updated successfully")
                 .duration(NotificationDuration.MEDIUM)
@@ -186,10 +191,17 @@ public class SaleMasterFormController implements Initializable {
                 .type(NotificationVariants.SUCCESS)
                 .build();
         notificationHolder.addNotification(notification);
+
+        saleCustomer.clearSelection();
+        saleBranch.clearSelection();
+        saleStatus.clearSelection();
+        salePaymentStatus.clearSelection();
+
         cancelBtnClicked();
         return;
       }
       SaleMasterViewModel.saveSaleMaster();
+
       SimpleNotification notification =
           new SimpleNotification.NotificationBuilder("Sale saved successfully")
               .duration(NotificationDuration.MEDIUM)
@@ -197,6 +209,12 @@ public class SaleMasterFormController implements Initializable {
               .type(NotificationVariants.SUCCESS)
               .build();
       notificationHolder.addNotification(notification);
+
+      saleCustomer.clearSelection();
+      saleBranch.clearSelection();
+      saleStatus.clearSelection();
+      salePaymentStatus.clearSelection();
+
       cancelBtnClicked();
       return;
     }
@@ -212,7 +230,12 @@ public class SaleMasterFormController implements Initializable {
   public void cancelBtnClicked() {
     BaseController.navigation.navigate(Pages.getSalePane());
     SaleMasterViewModel.resetProperties();
-    saleDetailTable.getTableColumns().clear();
+
+    saleCustomer.clearSelection();
+    saleBranch.clearSelection();
+    saleStatus.clearSelection();
+    salePaymentStatus.clearSelection();
+
     saleBranchValidationLabel.setVisible(false);
     saleCustomerValidationLabel.setVisible(false);
     saleDateValidationLabel.setVisible(false);

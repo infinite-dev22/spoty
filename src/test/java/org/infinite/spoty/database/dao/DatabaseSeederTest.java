@@ -146,7 +146,7 @@ class DatabaseSeederTest {
     @Order(8)
     void quotationInsert() {
         try {
-            var quotationDetail = new QuotationDetail(null, 6.54, 25, 29898);
+            var quotationDetail = new QuotationDetail(null, null, 6.54, 25, 29898);
             var quotationMaster = new QuotationMaster(new Date(), null, null, "Pending", "No customer yet.");
             List<QuotationDetail> list = new LinkedList<>();
 
@@ -312,6 +312,7 @@ class DatabaseSeederTest {
             var saleMaster = new SaleMaster(null,
                     null,
                     "Pending",
+                    "Partial",
                     "Testing.",
                     new Date());
 

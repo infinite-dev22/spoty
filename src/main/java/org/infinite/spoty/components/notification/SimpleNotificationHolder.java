@@ -33,7 +33,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class SimpleNotificationHolder {
   private static FlowPane root;
-  private static Scene scene;
   private static Stage stage;
   private static Duration notificationAnimationTime;
   private static ObservableList<Pane> popups;
@@ -55,12 +54,6 @@ public class SimpleNotificationHolder {
   public static void setNotificationOwner(Stage windowOwner) {
     stage = new Stage();
     stage.initStyle(StageStyle.TRANSPARENT);
-    // window x + max width.
-    //    windowOwner
-    //        .maximizedProperty()
-    //        .addListener(
-    //            (observable, oldValue, newValue) -> stage.setX(windowOwner.getX() +
-    // windowOwner.getWidth()));
     stage.setX(windowOwner.getWidth() - SimpleNotification.getLayoutWidth());
     stage.setY(windowOwner.getHeight() - (windowOwner.getHeight() - 5));
     stage.setAlwaysOnTop(true);
@@ -84,7 +77,7 @@ public class SimpleNotificationHolder {
     root.getStyleClass().add("notification-holder");
     root.getStylesheets().add(SpotResourceLoader.load("styles/base.css"));
 
-    scene = new Scene(root);
+    Scene scene = new Scene(root);
     scene.setFill(Color.TRANSPARENT);
 
     stage.setScene(scene);

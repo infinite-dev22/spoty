@@ -25,10 +25,10 @@ public class QuotationDetail implements Serializable {
   private int id;
 
   @JoinColumn(nullable = false)
-  private double price;
+  private double price = 0;
 
-  @ManyToOne(optional = false)
-  @JoinColumn(nullable = false, name = "sale_unit_id")
+  @JoinColumn(name = "sale_unit_id")
+  @ManyToOne
   private UnitOfMeasure saleUnit;
 
   @ManyToOne(optional = false)
@@ -45,10 +45,10 @@ public class QuotationDetail implements Serializable {
   private String discountType;
 
   @Column(nullable = false)
-  private double total;
+  private double total = 0;
 
   @Column(nullable = false)
-  private int quantity;
+  private int quantity = 0;
 
   private String serialNumber;
 
@@ -64,8 +64,10 @@ public class QuotationDetail implements Serializable {
   @Column(name = "updated_by")
   private String updatedBy;
 
-  public QuotationDetail(ProductDetail product, double netTax, double discount, int quantity) {
+  public QuotationDetail(
+      ProductDetail product, UnitOfMeasure saleUnit, double netTax, double discount, int quantity) {
     this.product = product;
+    this.saleUnit = saleUnit;
     this.netTax = netTax;
     this.discount = discount;
     this.quantity = quantity;

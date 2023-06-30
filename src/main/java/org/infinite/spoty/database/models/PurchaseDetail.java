@@ -36,7 +36,7 @@ public class PurchaseDetail implements Serializable {
   private String taxType;
   private double discount;
   private String discountType;
-  @OneToOne private ProductDetail product;
+  @ManyToOne(optional = false) private ProductDetail product;
   private String serialNumber;
   private double total;
   private int quantity;

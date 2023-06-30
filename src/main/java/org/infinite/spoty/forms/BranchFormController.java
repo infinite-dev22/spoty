@@ -22,18 +22,23 @@ import static org.infinite.spoty.viewModels.BranchViewModel.saveBranch;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.stage.Stage;
 import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.viewModels.BranchViewModel;
+import org.infinite.spoty.views.settings.branches.BranchController;
 
 public class BranchFormController implements Initializable {
+  private static BranchFormController instance;
+  private final Stage stage;
   public MFXTextField branchFormID = new MFXTextField();
   @FXML public MFXButton branchFormSaveBtn;
   @FXML public MFXButton branchFormCancelBtn;
@@ -49,6 +54,15 @@ public class BranchFormController implements Initializable {
   @FXML public Label branchFormTownValidationLabel;
   @FXML public Label branchFormPhoneValidationLabel;
   @FXML public Label branchFormNameValidationLabel;
+
+  private BranchFormController(Stage stage) {
+    this.stage = stage;
+  }
+
+  public static BranchFormController getInstance(Stage stage) {
+    if (Objects.equals(instance, null)) instance = new BranchFormController(stage);
+    return instance;
+  }
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
@@ -75,7 +89,9 @@ public class BranchFormController implements Initializable {
     branchFormCancelBtn.setOnAction(
         (e) -> {
           clearBranchData();
+
           closeDialog(e);
+
           branchFormNameValidationLabel.setVisible(false);
           branchFormEmailValidationLabel.setVisible(false);
           branchFormPhoneValidationLabel.setVisible(false);
@@ -85,6 +101,7 @@ public class BranchFormController implements Initializable {
     branchFormSaveBtn.setOnAction(
         (e) -> {
           SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
+
           if (!branchFormNameValidationLabel.isVisible()
               && !branchFormEmailValidationLabel.isVisible()
               && !branchFormPhoneValidationLabel.isVisible()
@@ -92,6 +109,7 @@ public class BranchFormController implements Initializable {
               && !branchFormCityValidationLabel.isVisible()) {
             if (Integer.parseInt(branchFormID.getText()) > 0) {
               BranchViewModel.updateItem(Integer.parseInt(branchFormID.getText()));
+
               SimpleNotification notification =
                   new SimpleNotification.NotificationBuilder("Branch updated successfully")
                       .duration(NotificationDuration.SHORT)
@@ -99,10 +117,16 @@ public class BranchFormController implements Initializable {
                       .type(NotificationVariants.SUCCESS)
                       .build();
               notificationHolder.addNotification(notification);
+
+              BranchController.getInstance(stage)
+                  .branchTable
+                  .setItems(BranchViewModel.branchesList);
+
               closeDialog(e);
               return;
             }
             saveBranch();
+
             SimpleNotification notification =
                 new SimpleNotification.NotificationBuilder("Branch saved successfully")
                     .duration(NotificationDuration.SHORT)
@@ -110,6 +134,9 @@ public class BranchFormController implements Initializable {
                     .type(NotificationVariants.SUCCESS)
                     .build();
             notificationHolder.addNotification(notification);
+
+            BranchController.getInstance(stage).branchTable.setItems(BranchViewModel.branchesList);
+
             closeDialog(e);
             return;
           }

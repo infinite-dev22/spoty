@@ -20,18 +20,23 @@ import static org.infinite.spoty.Validators.*;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.stage.Stage;
 import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.viewModels.CustomerViewModel;
+import org.infinite.spoty.views.people.customers.CustomerController;
 
 public class CustomerFormController implements Initializable {
+  private static CustomerFormController instance;
+  private final Stage stage;
   public MFXTextField customerID = new MFXTextField();
   @FXML public MFXButton customerFormSaveBtn;
   @FXML public MFXButton customerFormCancelBtn;
@@ -44,6 +49,15 @@ public class CustomerFormController implements Initializable {
   @FXML public MFXTextField customerFormTaxNumber;
   @FXML public MFXTextField customerFormAddress;
   @FXML public Label validationLabel1, validationLabel2, validationLabel3;
+
+  private CustomerFormController(Stage stage) {
+    this.stage = stage;
+  }
+
+  public static CustomerFormController getInstance(Stage stage) {
+    if (Objects.equals(instance, null)) instance = new CustomerFormController(stage);
+    return instance;
+  }
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
@@ -88,6 +102,7 @@ public class CustomerFormController implements Initializable {
     customerFormCancelBtn.setOnAction(
         (e) -> {
           closeDialog(e);
+
           validationLabel1.setVisible(false);
           validationLabel2.setVisible(false);
           validationLabel3.setVisible(false);
@@ -97,11 +112,13 @@ public class CustomerFormController implements Initializable {
     customerFormSaveBtn.setOnAction(
         (e) -> {
           SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
+
           if (!validationLabel1.isVisible()
               && !validationLabel2.isVisible()
               && !validationLabel3.isVisible()) {
             if (Integer.parseInt(customerID.getText()) > 0) {
               CustomerViewModel.updateItem(Integer.parseInt(customerID.getText()));
+
               SimpleNotification notification =
                   new SimpleNotification.NotificationBuilder("Customer updated successfully")
                       .duration(NotificationDuration.SHORT)
@@ -109,10 +126,16 @@ public class CustomerFormController implements Initializable {
                       .type(NotificationVariants.SUCCESS)
                       .build();
               notificationHolder.addNotification(notification);
+
+              CustomerController.getInstance(stage)
+                  .customersTable
+                  .setItems(CustomerViewModel.customersList);
+
               closeDialog(e);
               return;
             }
             CustomerViewModel.saveCustomer();
+
             SimpleNotification notification =
                 new SimpleNotification.NotificationBuilder("Customer saved successfully")
                     .duration(NotificationDuration.SHORT)
@@ -120,6 +143,11 @@ public class CustomerFormController implements Initializable {
                     .type(NotificationVariants.SUCCESS)
                     .build();
             notificationHolder.addNotification(notification);
+
+            CustomerController.getInstance(stage)
+                .customersTable
+                .setItems(CustomerViewModel.customersList);
+
             closeDialog(e);
             return;
           }

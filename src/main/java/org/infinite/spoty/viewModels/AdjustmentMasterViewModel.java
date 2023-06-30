@@ -92,15 +92,15 @@ public class AdjustmentMasterViewModel {
     setBranch(null);
     setNote("");
     PENDING_DELETES.clear();
-    AdjustmentDetailViewModel.adjustmentDetailsTempList.clear();
+    AdjustmentDetailViewModel.adjustmentDetailsList.clear();
   }
 
   public static void saveAdjustmentMaster() {
     AdjustmentMaster adjustmentMaster = new AdjustmentMaster(getBranch(), getNote(), getDate());
-    if (!AdjustmentDetailViewModel.adjustmentDetailsTempList.isEmpty()) {
-      AdjustmentDetailViewModel.adjustmentDetailsTempList.forEach(
+    if (!AdjustmentDetailViewModel.adjustmentDetailsList.isEmpty()) {
+      AdjustmentDetailViewModel.adjustmentDetailsList.forEach(
           adjustmentDetail -> adjustmentDetail.setAdjustment(adjustmentMaster));
-      adjustmentMaster.setAdjustmentDetails(AdjustmentDetailViewModel.adjustmentDetailsTempList);
+      adjustmentMaster.setAdjustmentDetails(AdjustmentDetailViewModel.adjustmentDetailsList);
     }
     AdjustmentMasterDao.saveAdjustmentMaster(adjustmentMaster);
     resetProperties();
@@ -119,8 +119,7 @@ public class AdjustmentMasterViewModel {
     setBranch(adjustmentMaster.getBranch());
     setNote(adjustmentMaster.getNotes());
     setDate(adjustmentMaster.getLocaleDate());
-    AdjustmentDetailViewModel.adjustmentDetailsTempList.addAll(
-        adjustmentMaster.getAdjustmentDetails());
+    AdjustmentDetailViewModel.adjustmentDetailsList.addAll(adjustmentMaster.getAdjustmentDetails());
     getAdjustmentMasters();
   }
 
@@ -130,7 +129,7 @@ public class AdjustmentMasterViewModel {
     adjustmentMaster.setNotes(getNote());
     adjustmentMaster.setDate(getDate());
     AdjustmentDetailViewModel.deleteAdjustmentDetails(PENDING_DELETES);
-    adjustmentMaster.setAdjustmentDetails(AdjustmentDetailViewModel.adjustmentDetailsTempList);
+    adjustmentMaster.setAdjustmentDetails(AdjustmentDetailViewModel.adjustmentDetailsList);
     AdjustmentMasterDao.updateAdjustmentMaster(adjustmentMaster, index);
     resetProperties();
     getAdjustmentMasters();

@@ -22,10 +22,12 @@ import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
@@ -36,6 +38,8 @@ import org.infinite.spoty.viewModels.ProductDetailViewModel;
 import org.infinite.spoty.viewModels.TransferDetailViewModel;
 
 public class TransferDetailFormController implements Initializable {
+  private static TransferDetailFormController instance;
+  private final Stage stage;
   @FXML public MFXTextField transferDetailQnty;
   @FXML public MFXFilterComboBox<ProductDetail> transferDetailPdct;
   @FXML public MFXButton transferDetailSaveBtn;
@@ -44,6 +48,15 @@ public class TransferDetailFormController implements Initializable {
   @FXML public MFXTextField transferDetailDescription;
   @FXML public Label transferDetailQntyValidationLabel;
   @FXML public Label transferDetailPdctValidationLabel;
+
+  private TransferDetailFormController(Stage stage) {
+    this.stage = stage;
+  }
+
+  public static TransferDetailFormController getInstance(Stage stage) {
+    if (Objects.equals(instance, null)) instance = new TransferDetailFormController(stage);
+    return instance;
+  }
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
@@ -94,10 +107,12 @@ public class TransferDetailFormController implements Initializable {
     transferDetailSaveBtn.setOnAction(
         (e) -> {
           SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
+
           if (!transferDetailPdctValidationLabel.isVisible()
               && !transferDetailQntyValidationLabel.isVisible()) {
             if (tempIdProperty().get() > -1) {
               TransferDetailViewModel.updateTransferDetail(TransferDetailViewModel.getId());
+
               SimpleNotification notification =
                   new SimpleNotification.NotificationBuilder("Product changed successfully")
                       .duration(NotificationDuration.SHORT)
@@ -105,10 +120,17 @@ public class TransferDetailFormController implements Initializable {
                       .type(NotificationVariants.SUCCESS)
                       .build();
               notificationHolder.addNotification(notification);
+
+              transferDetailPdct.clearSelection();
+              TransferMasterFormController.getInstance(stage)
+                  .transferDetailTable
+                  .setItems(TransferDetailViewModel.transferDetailsList);
+
               closeDialog(e);
               return;
             }
             TransferDetailViewModel.addTransferDetails();
+
             SimpleNotification notification =
                 new SimpleNotification.NotificationBuilder("Product added successfully")
                     .duration(NotificationDuration.SHORT)
@@ -116,19 +138,14 @@ public class TransferDetailFormController implements Initializable {
                     .type(NotificationVariants.SUCCESS)
                     .build();
             notificationHolder.addNotification(notification);
+
+            transferDetailPdct.clearSelection();
+            TransferMasterFormController.getInstance(stage)
+                .transferDetailTable
+                .setItems(TransferDetailViewModel.transferDetailsList);
+
             closeDialog(e);
             return;
-            //
-            //                if (!transferDetailID.getText().isEmpty()) {
-            //                    try {
-            //                        if (Integer.parseInt(transferDetailID.getText()) > 0)
-            //
-            // TransferDetailViewModel.updateItem(Integer.parseInt(transferDetailID.getText()));
-            //                    } catch (NumberFormatException ignored) {
-            //
-            // TransferDetailViewModel.updateTransferDetail(TransferDetailViewModel.getId());
-            //                    }
-            //                } else TransferDetailViewModel.addTransferDetails();
           }
           SimpleNotification notification =
               new SimpleNotification.NotificationBuilder("Required fields missing")
