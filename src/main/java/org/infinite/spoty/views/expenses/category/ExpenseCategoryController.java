@@ -27,9 +27,9 @@ import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Dialog;
-import javafx.scene.control.DialogPane;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -38,6 +38,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.infinite.spoty.database.dao.ExpenseCategoryDao;
 import org.infinite.spoty.database.models.ExpenseCategory;
+import org.infinite.spoty.forms.ExpenseCategoryFormController;
 import org.infinite.spoty.viewModels.ExpenseCategoryViewModel;
 
 @SuppressWarnings("unchecked")
@@ -47,7 +48,7 @@ public class ExpenseCategoryController implements Initializable {
   @FXML public HBox categoryExpenseActionsPane;
   @FXML public MFXButton categoryExpenseImportBtn;
   @FXML public BorderPane categoryContentPane;
-  @FXML private MFXTableView<ExpenseCategory> categoryExpenseTable;
+  @FXML public MFXTableView<ExpenseCategory> categoryExpenseTable;
   private Dialog<ButtonType> dialog;
 
   private ExpenseCategoryController(Stage stage) {
@@ -145,10 +146,11 @@ public class ExpenseCategoryController implements Initializable {
   }
 
   private void expenseCategoryFormDialogPane(Stage stage) throws IOException {
-    DialogPane dialogPane = fxmlLoader("forms/ExpenseCategoryForm.fxml").load();
+    FXMLLoader fxmlLoader = fxmlLoader("forms/ExpenseCategoryForm.fxml");
+    fxmlLoader.setControllerFactory(c -> ExpenseCategoryFormController.getInstance(stage));
 
     dialog = new Dialog<>();
-    dialog.setDialogPane(dialogPane);
+    dialog.setDialogPane(fxmlLoader.load());
     dialog.initOwner(stage);
     dialog.initModality(Modality.APPLICATION_MODAL);
     dialog.initStyle(StageStyle.UNDECORATED);

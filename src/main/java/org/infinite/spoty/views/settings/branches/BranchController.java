@@ -27,9 +27,9 @@ import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Dialog;
-import javafx.scene.control.DialogPane;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -38,12 +38,13 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.infinite.spoty.database.dao.BranchDao;
 import org.infinite.spoty.database.models.Branch;
+import org.infinite.spoty.forms.BranchFormController;
 import org.infinite.spoty.values.strings.Labels;
 import org.infinite.spoty.viewModels.BranchViewModel;
 
 @SuppressWarnings("unchecked")
-public class BranchesController implements Initializable {
-  private static BranchesController instance;
+public class BranchController implements Initializable {
+  private static BranchController instance;
   @FXML public MFXTextField branchSearchBar;
   @FXML public HBox branchActionsPane;
   @FXML public MFXButton branchImportBtn;
@@ -51,7 +52,7 @@ public class BranchesController implements Initializable {
   @FXML public BorderPane branchContentPane;
   private Dialog<ButtonType> dialog;
 
-  private BranchesController(Stage stage) {
+  private BranchController(Stage stage) {
     Platform.runLater(
         () -> {
           try {
@@ -62,8 +63,8 @@ public class BranchesController implements Initializable {
         });
   }
 
-  public static BranchesController getInstance(Stage stage) {
-    if (instance == null) instance = new BranchesController(stage);
+  public static BranchController getInstance(Stage stage) {
+    if (instance == null) instance = new BranchController(stage);
     return instance;
   }
 
@@ -171,9 +172,11 @@ public class BranchesController implements Initializable {
   }
 
   private void branchFormDialogPane(Stage stage) throws IOException {
-    DialogPane dialogPane = fxmlLoader("forms/BranchForm.fxml").load();
+    FXMLLoader fxmlLoader = fxmlLoader("forms/BranchForm.fxml");
+    fxmlLoader.setControllerFactory(c -> BranchFormController.getInstance(stage));
+
     dialog = new Dialog<>();
-    dialog.setDialogPane(dialogPane);
+    dialog.setDialogPane(fxmlLoader.load());
     dialog.initOwner(stage);
     dialog.initModality(Modality.APPLICATION_MODAL);
     dialog.initStyle(StageStyle.UNDECORATED);

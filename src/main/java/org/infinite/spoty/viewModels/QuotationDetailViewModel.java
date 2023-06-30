@@ -24,6 +24,7 @@ import org.infinite.spoty.database.dao.QuotationDetailDao;
 import org.infinite.spoty.database.models.ProductDetail;
 import org.infinite.spoty.database.models.QuotationDetail;
 import org.infinite.spoty.database.models.QuotationMaster;
+import org.infinite.spoty.database.models.UnitOfMeasure;
 
 public class QuotationDetailViewModel {
   // TODO: Add more fields according to DB design and necessity.
@@ -33,6 +34,7 @@ public class QuotationDetailViewModel {
       FXCollections.observableArrayList();
   private static final IntegerProperty id = new SimpleIntegerProperty(0);
   private static final ObjectProperty<ProductDetail> product = new SimpleObjectProperty<>();
+  private static final ObjectProperty<UnitOfMeasure> saleUnit = new SimpleObjectProperty<>();
   private static final ObjectProperty<QuotationMaster> quotation = new SimpleObjectProperty<>();
   private static final StringProperty quantity = new SimpleStringProperty();
   private static final StringProperty tax = new SimpleStringProperty();
@@ -60,6 +62,18 @@ public class QuotationDetailViewModel {
 
   public static ObjectProperty<ProductDetail> productProperty() {
     return product;
+  }
+
+  public static UnitOfMeasure getSaleUnit() {
+    return saleUnit.get();
+  }
+
+  public static void setSaleUnit(UnitOfMeasure saleUnit) {
+    QuotationDetailViewModel.saleUnit.set(saleUnit);
+  }
+
+  public static ObjectProperty<UnitOfMeasure> saleUnitProperty() {
+    return saleUnit;
   }
 
   public static QuotationMaster getQuotation() {
@@ -121,7 +135,8 @@ public class QuotationDetailViewModel {
 
   public static void addQuotationDetails() {
     QuotationDetail quotationDetail =
-        new QuotationDetail(getProduct(), getTax(), getDiscount(), getQuantity());
+        new QuotationDetail(
+            getProduct(), getProduct().getSaleUnit(), getTax(), getDiscount(), getQuantity());
     quotationDetailTempList.add(quotationDetail);
     resetProperties();
   }
@@ -129,6 +144,7 @@ public class QuotationDetailViewModel {
   public static void updateQuotationDetail(int index) {
     QuotationDetail quotationDetail = QuotationDetailDao.findQuotationDetail(index);
     quotationDetail.setProduct(getProduct());
+    quotationDetail.setSaleUnit(getSaleUnit());
     quotationDetail.setNetTax(getTax());
     quotationDetail.setDiscount(getDiscount());
     quotationDetail.setQuantity(getQuantity());
@@ -151,6 +167,7 @@ public class QuotationDetailViewModel {
     setTempId(tempIndex);
     setId(quotationDetail.getId());
     setProduct(quotationDetail.getProduct());
+    setSaleUnit(quotationDetail.getProduct().getSaleUnit());
     setTax(String.valueOf(quotationDetail.getNetTax()));
     setDiscount(String.valueOf(quotationDetail.getDiscount()));
     setQuantity(String.valueOf(quotationDetail.getQuantity()));
@@ -161,6 +178,7 @@ public class QuotationDetailViewModel {
   public static void updateItem(int index) {
     QuotationDetail quotationDetail = QuotationDetailDao.findQuotationDetail(index);
     quotationDetail.setProduct(getProduct());
+    quotationDetail.setSaleUnit(getSaleUnit());
     quotationDetail.setNetTax(getTax());
     quotationDetail.setDiscount(getDiscount());
     quotationDetail.setQuantity(getQuantity());

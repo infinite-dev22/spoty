@@ -18,6 +18,8 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 @Entity
 public class SaleReturnMaster implements Serializable {
@@ -40,7 +42,8 @@ public class SaleReturnMaster implements Serializable {
   @JoinColumn(nullable = false, name = "branch_id")
   private Branch branch;
 
-  @OneToMany(cascade = CascadeType.ALL, mappedBy = "saleReturn")
+  @OneToMany(mappedBy = "saleReturn", fetch = FetchType.LAZY)
+  @Cascade({CascadeType.ALL})
   private List<SaleReturnDetail> saleReturnDetails;
 
   private double taxRate;

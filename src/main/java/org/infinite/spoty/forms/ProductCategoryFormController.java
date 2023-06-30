@@ -21,19 +21,24 @@ import static org.infinite.spoty.viewModels.ProductCategoryViewModel.*;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.stage.Stage;
 import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.viewModels.ProductCategoryViewModel;
+import org.infinite.spoty.views.inventory.category.ProductCategoryController;
 
 public class ProductCategoryFormController implements Initializable {
   @FXML public static Label formTitle;
+  private static ProductCategoryFormController instance;
+  private final Stage stage;
   public MFXTextField dialogCategoryID = new MFXTextField();
   @FXML public MFXTextField dialogCategoryCode;
   @FXML public MFXTextField dialogCategoryName;
@@ -41,6 +46,15 @@ public class ProductCategoryFormController implements Initializable {
   @FXML public MFXButton dialogCancelBtn;
   @FXML public Label dialogCategoryCodeValidationLabel;
   @FXML public Label dialogCategoryNameValidationLabel;
+
+  public ProductCategoryFormController(Stage stage) {
+    this.stage = stage;
+  }
+
+  public static ProductCategoryFormController getInstance(Stage stage) {
+    if (Objects.equals(instance, null)) instance = new ProductCategoryFormController(stage);
+    return instance;
+  }
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
@@ -63,6 +77,7 @@ public class ProductCategoryFormController implements Initializable {
         (e) -> {
           closeDialog(e);
           clearProductCategoryData();
+
           dialogCategoryCodeValidationLabel.setVisible(false);
           dialogCategoryNameValidationLabel.setVisible(false);
         });
@@ -73,6 +88,7 @@ public class ProductCategoryFormController implements Initializable {
               && !dialogCategoryNameValidationLabel.isVisible()) {
             if (Integer.parseInt(dialogCategoryID.getText()) > 0) {
               updateItem(Integer.parseInt(dialogCategoryID.getText()));
+
               SimpleNotification notification =
                   new SimpleNotification.NotificationBuilder("Category updated successfully")
                       .duration(NotificationDuration.SHORT)
@@ -80,10 +96,14 @@ public class ProductCategoryFormController implements Initializable {
                       .type(NotificationVariants.SUCCESS)
                       .build();
               notificationHolder.addNotification(notification);
+
+              ProductCategoryController.getInstance(stage).categoryTable.setItems(categoriesList);
+
               closeDialog(e);
               return;
             }
             saveProductCategory();
+
             SimpleNotification notification =
                 new SimpleNotification.NotificationBuilder("Category added successfully")
                     .duration(NotificationDuration.SHORT)
@@ -91,6 +111,9 @@ public class ProductCategoryFormController implements Initializable {
                     .type(NotificationVariants.SUCCESS)
                     .build();
             notificationHolder.addNotification(notification);
+
+            ProductCategoryController.getInstance(stage).categoryTable.setItems(categoriesList);
+
             closeDialog(e);
             return;
           }

@@ -19,6 +19,8 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 @Entity
 public class PurchaseMaster implements Serializable {
@@ -35,7 +37,8 @@ public class PurchaseMaster implements Serializable {
   @JoinColumn(nullable = false, name = "branch_id")
   @ManyToOne private Branch branch;
 
-  @OneToMany(cascade = CascadeType.ALL, mappedBy = "purchase")
+  @OneToMany(mappedBy = "purchase", fetch = FetchType.LAZY)
+  @Cascade({CascadeType.ALL})
   private List<PurchaseDetail> purchaseDetails;
 
   private double taxRate;

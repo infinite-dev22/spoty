@@ -28,9 +28,9 @@ import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Dialog;
-import javafx.scene.control.DialogPane;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -39,19 +39,20 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.infinite.spoty.database.dao.UserDao;
 import org.infinite.spoty.database.models.User;
+import org.infinite.spoty.forms.UserFormController;
 import org.infinite.spoty.viewModels.UserViewModel;
 
 @SuppressWarnings("unchecked")
-public class UsersController implements Initializable {
-  private static UsersController instance;
+public class UserController implements Initializable {
+  private static UserController instance;
   @FXML public MFXTextField userSearchBar;
   @FXML public HBox userActionsPane;
   @FXML public MFXButton userImportBtn;
   @FXML public BorderPane userContentPane;
-  @FXML private MFXTableView<User> userTable;
+  @FXML public MFXTableView<User> userTable;
   private Dialog<ButtonType> dialog;
 
-  private UsersController(Stage stage) {
+  private UserController(Stage stage) {
     Platform.runLater(
         () -> {
           try {
@@ -62,8 +63,8 @@ public class UsersController implements Initializable {
         });
   }
 
-  public static UsersController getInstance(Stage stage) {
-    if (instance == null) instance = new UsersController(stage);
+  public static UserController getInstance(Stage stage) {
+    if (instance == null) instance = new UserController(stage);
     return instance;
   }
 
@@ -160,9 +161,11 @@ public class UsersController implements Initializable {
   }
 
   private void userFormDialogPane(Stage stage) throws IOException {
-    DialogPane dialogPane = fxmlLoader("forms/UserForm.fxml").load();
+    FXMLLoader fxmlLoader = fxmlLoader("forms/UserForm.fxml");
+    fxmlLoader.setControllerFactory(c -> UserFormController.getInstance(stage));
+
     dialog = new Dialog<>();
-    dialog.setDialogPane(dialogPane);
+    dialog.setDialogPane(fxmlLoader.load());
     dialog.initOwner(stage);
     dialog.initModality(Modality.APPLICATION_MODAL);
     dialog.initStyle(StageStyle.UNDECORATED);

@@ -19,6 +19,8 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 @Entity
 public class TransferMaster implements Serializable {
@@ -40,7 +42,8 @@ public class TransferMaster implements Serializable {
   @JoinColumn(nullable = false, name = "to_branch_id")
   private Branch toBranch;
 
-  @OneToMany(cascade = CascadeType.ALL, mappedBy = "transfer")
+  @OneToMany(mappedBy = "transfer", fetch = FetchType.LAZY)
+  @Cascade({CascadeType.ALL})
   private List<TransferDetail> transferDetails;
 
   private String shipping;

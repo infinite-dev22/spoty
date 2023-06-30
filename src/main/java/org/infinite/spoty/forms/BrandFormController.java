@@ -22,18 +22,23 @@ import static org.infinite.spoty.viewModels.BrandViewModel.saveBrand;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.stage.Stage;
 import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.viewModels.BrandViewModel;
+import org.infinite.spoty.views.inventory.brand.BrandController;
 
 public class BrandFormController implements Initializable {
+  private static BrandFormController instance;
+  private final Stage stage;
   public MFXTextField brandID = new MFXTextField();
   @FXML public Label brandFormTitle;
   @FXML public MFXTextField brandFormName;
@@ -42,6 +47,15 @@ public class BrandFormController implements Initializable {
   @FXML public MFXButton brandFormCancelBtn;
   @FXML public Label brandFormNameValidationLabel;
   @FXML public Label brandFormDescriptionValidationLabel;
+
+  private BrandFormController(Stage stage) {
+    this.stage = stage;
+  }
+
+  public static BrandFormController getInstance(Stage stage) {
+    if (Objects.equals(instance, null)) instance = new BrandFormController(stage);
+    return instance;
+  }
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
@@ -60,15 +74,19 @@ public class BrandFormController implements Initializable {
     brandFormCancelBtn.setOnAction(
         (e) -> {
           closeDialog(e);
+
           clearBrandData();
+
           brandFormNameValidationLabel.setVisible(false);
         });
     brandFormSaveBtn.setOnAction(
         (e) -> {
           SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
+
           if (!brandFormNameValidationLabel.isVisible()) {
             if (Integer.parseInt(brandID.getText()) > 0) {
               BrandViewModel.updateItem(Integer.parseInt(brandID.getText()));
+
               SimpleNotification notification =
                   new SimpleNotification.NotificationBuilder("Brand updated successfully")
                       .duration(NotificationDuration.SHORT)
@@ -76,10 +94,14 @@ public class BrandFormController implements Initializable {
                       .type(NotificationVariants.SUCCESS)
                       .build();
               notificationHolder.addNotification(notification);
+
+              BrandController.getInstance(stage).brandTable.setItems(BrandViewModel.brandsList);
+
               closeDialog(e);
               return;
             }
             saveBrand();
+
             SimpleNotification notification =
                 new SimpleNotification.NotificationBuilder("Brand saved successfully")
                     .duration(NotificationDuration.SHORT)
@@ -87,6 +109,9 @@ public class BrandFormController implements Initializable {
                     .type(NotificationVariants.SUCCESS)
                     .build();
             notificationHolder.addNotification(notification);
+
+            BrandController.getInstance(stage).brandTable.setItems(BrandViewModel.brandsList);
+
             closeDialog(e);
             return;
           }

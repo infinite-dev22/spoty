@@ -30,9 +30,9 @@ import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Dialog;
-import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
@@ -114,6 +114,9 @@ public class RequisitionMasterFormController implements Initializable {
             return null;
           }
         });
+      requisitionMasterSupplier
+              .valueProperty()
+              .bindBidirectional(RequisitionMasterViewModel.supplierProperty());
     requisitionMasterSupplier.setItems(SupplierViewModel.getSuppliers());
     requisitionMasterSupplier.setConverter(
         new StringConverter<>() {
@@ -239,9 +242,11 @@ public class RequisitionMasterFormController implements Initializable {
   }
 
   private void quotationProductDialogPane(Stage stage) throws IOException {
-    DialogPane dialogPane = fxmlLoader("forms/RequisitionDetailForm.fxml").load();
+    FXMLLoader fxmlLoader = fxmlLoader("forms/RequisitionDetailForm.fxml");
+    fxmlLoader.setControllerFactory(c -> RequisitionDetailFormController.getInstance(stage));
+
     dialog = new Dialog<>();
-    dialog.setDialogPane(dialogPane);
+    dialog.setDialogPane(fxmlLoader.load());
     dialog.initOwner(stage);
     dialog.initModality(Modality.APPLICATION_MODAL);
     dialog.initStyle(StageStyle.UNDECORATED);
@@ -249,6 +254,7 @@ public class RequisitionMasterFormController implements Initializable {
 
   public void requisitionMasterSaveBtnClicked() {
     SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
+
     if (!requisitionDetailTable.isDisabled()
         && RequisitionDetailViewModel.requisitionDetailTempList.isEmpty()) {
       SimpleNotification notification =
@@ -260,11 +266,13 @@ public class RequisitionMasterFormController implements Initializable {
       notificationHolder.addNotification(notification);
       return;
     }
+
     if (!requisitionMasterSupplierValidationLabel.isVisible()
         && !requisitionMasterDateValidationLabel.isVisible()
         && !requisitionMasterBranchValidationLabel.isVisible()) {
       if (Integer.parseInt(requisitionMasterID.getText()) > 0) {
         RequisitionMasterViewModel.updateItem(Integer.parseInt(requisitionMasterID.getText()));
+
         SimpleNotification notification =
             new SimpleNotification.NotificationBuilder("Requisition updated successfully")
                 .duration(NotificationDuration.MEDIUM)
@@ -272,10 +280,15 @@ public class RequisitionMasterFormController implements Initializable {
                 .type(NotificationVariants.SUCCESS)
                 .build();
         notificationHolder.addNotification(notification);
+
+        requisitionMasterBranch.clearSelection();
+        requisitionMasterSupplier.clearSelection();
+
         requisitionMasterCancelBtnClicked();
         return;
       }
       RequisitionMasterViewModel.saveRequisitionMaster();
+
       SimpleNotification notification =
           new SimpleNotification.NotificationBuilder("Requisition saved successfully")
               .duration(NotificationDuration.MEDIUM)
@@ -283,6 +296,10 @@ public class RequisitionMasterFormController implements Initializable {
               .type(NotificationVariants.SUCCESS)
               .build();
       notificationHolder.addNotification(notification);
+
+      requisitionMasterBranch.clearSelection();
+      requisitionMasterSupplier.clearSelection();
+
       requisitionMasterCancelBtnClicked();
       return;
     }
@@ -293,8 +310,6 @@ public class RequisitionMasterFormController implements Initializable {
             .type(NotificationVariants.ERROR)
             .build();
     notificationHolder.addNotification(notification);
-    requisitionMasterBranch.clearSelection();
-    requisitionMasterSupplier.clearSelection();
   }
 
   public void requisitionMasterCancelBtnClicked() {

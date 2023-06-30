@@ -34,14 +34,14 @@ import org.infinite.spoty.views.inventory.quotation.QuotationController;
 import org.infinite.spoty.views.inventory.unit_of_measure.UnitOfMeasureController;
 import org.infinite.spoty.views.people.customers.CustomerController;
 import org.infinite.spoty.views.people.suppliers.SupplierController;
-import org.infinite.spoty.views.people.users.UsersController;
+import org.infinite.spoty.views.people.users.UserController;
 import org.infinite.spoty.views.purchases.PurchasesController;
 import org.infinite.spoty.views.requisition.RequisitionController;
 import org.infinite.spoty.views.returns.purchases.PurchaseReturnController;
 import org.infinite.spoty.views.returns.sales.SaleReturnsController;
 import org.infinite.spoty.views.sales.SalesController;
 import org.infinite.spoty.views.settings.SettingsController;
-import org.infinite.spoty.views.settings.branches.BranchesController;
+import org.infinite.spoty.views.settings.branches.BranchController;
 import org.infinite.spoty.views.settings.currency.CurrencyController;
 import org.infinite.spoty.views.settings.export.ExportController;
 import org.infinite.spoty.views.settings.pos.POSController;
@@ -178,7 +178,7 @@ public class Pages {
   private static void setPeople(Stage stage) {
     customerLoader.setControllerFactory(e -> CustomerController.getInstance(stage));
     supplierLoader.setControllerFactory(e -> SupplierController.getInstance(stage));
-    userLoader.setControllerFactory(e -> UsersController.getInstance(stage));
+    userLoader.setControllerFactory(e -> UserController.getInstance(stage));
   }
 
   private static void setSettings(Stage stage) {
@@ -186,7 +186,7 @@ public class Pages {
     systemSettingsLoader.setControllerFactory(c -> SystemController.getInstance());
     posSettingsLoader.setControllerFactory(c -> POSController.getInstance());
     roleSettingsLoader.setControllerFactory(c -> RoleController.getInstance());
-    branchSettingsLoader.setControllerFactory(c -> BranchesController.getInstance(stage));
+    branchSettingsLoader.setControllerFactory(c -> BranchController.getInstance(stage));
     currencySettingsLoader.setControllerFactory(c -> CurrencyController.getInstance(stage));
     exportSettingsLoader.setControllerFactory(c -> ExportController.getInstance());
     roleSettingsFormLoader.setControllerFactory(c -> RoleSettingsFormController.getInstance());

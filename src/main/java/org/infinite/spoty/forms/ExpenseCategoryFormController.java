@@ -22,18 +22,23 @@ import static org.infinite.spoty.viewModels.ExpenseCategoryViewModel.saveExpense
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.stage.Stage;
 import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.viewModels.ExpenseCategoryViewModel;
+import org.infinite.spoty.views.expenses.category.ExpenseCategoryController;
 
 public class ExpenseCategoryFormController implements Initializable {
+  private static ExpenseCategoryFormController instance;
+  private final Stage stage;
   public MFXTextField expenseCategoryID = new MFXTextField();
   @FXML public MFXTextField categoryExpenseFormName;
   @FXML public MFXTextField categoryExpenseFormDescription;
@@ -41,6 +46,15 @@ public class ExpenseCategoryFormController implements Initializable {
   @FXML public MFXButton categoryExpenseFormCancelBtn;
   @FXML public Label categoryExpenseFormTitle;
   @FXML public Label categoryExpenseFormNameValidationLabel;
+
+  private ExpenseCategoryFormController(Stage stage) {
+    this.stage = stage;
+  }
+
+  public static ExpenseCategoryFormController getInstance(Stage stage) {
+    if (Objects.equals(instance, null)) instance = new ExpenseCategoryFormController(stage);
+    return instance;
+  }
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
@@ -72,9 +86,11 @@ public class ExpenseCategoryFormController implements Initializable {
     categoryExpenseFormSaveBtn.setOnAction(
         (e) -> {
           SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
+
           if (!categoryExpenseFormNameValidationLabel.isVisible()) {
             if (Integer.parseInt(expenseCategoryID.getText()) > 0) {
               ExpenseCategoryViewModel.updateItem(Integer.parseInt(expenseCategoryID.getText()));
+
               SimpleNotification notification =
                   new SimpleNotification.NotificationBuilder("Category updated successfully")
                       .duration(NotificationDuration.SHORT)
@@ -82,6 +98,11 @@ public class ExpenseCategoryFormController implements Initializable {
                       .type(NotificationVariants.SUCCESS)
                       .build();
               notificationHolder.addNotification(notification);
+
+              ExpenseCategoryController.getInstance(stage)
+                  .categoryExpenseTable
+                  .setItems(ExpenseCategoryViewModel.categoryList);
+
               closeDialog(e);
               return;
             }
@@ -93,6 +114,11 @@ public class ExpenseCategoryFormController implements Initializable {
                     .type(NotificationVariants.SUCCESS)
                     .build();
             notificationHolder.addNotification(notification);
+
+            ExpenseCategoryController.getInstance(stage)
+                .categoryExpenseTable
+                .setItems(ExpenseCategoryViewModel.categoryList);
+
             closeDialog(e);
             return;
           }

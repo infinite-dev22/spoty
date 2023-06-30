@@ -20,6 +20,8 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 @Entity
 public class QuotationMaster implements Serializable {
@@ -42,7 +44,8 @@ public class QuotationMaster implements Serializable {
   @JoinColumn(nullable = false, name = "branch_id")
   private Branch branch;
 
-  @OneToMany(cascade = CascadeType.ALL, mappedBy = "quotation")
+  @OneToMany(mappedBy = "quotation", fetch = FetchType.LAZY)
+  @Cascade({CascadeType.ALL})
   private List<QuotationDetail> quotationDetails = new LinkedList<>();
 
   @Column(nullable = false)

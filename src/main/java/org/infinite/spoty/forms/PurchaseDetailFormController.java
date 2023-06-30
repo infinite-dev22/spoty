@@ -22,10 +22,12 @@ import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
@@ -36,6 +38,8 @@ import org.infinite.spoty.viewModels.ProductDetailViewModel;
 import org.infinite.spoty.viewModels.PurchaseDetailViewModel;
 
 public class PurchaseDetailFormController implements Initializable {
+  private static PurchaseDetailFormController instance;
+  private final Stage stage;
   @FXML public MFXTextField purchaseDetailQnty;
   @FXML public MFXFilterComboBox<ProductDetail> purchaseDetailPdct;
   @FXML public MFXTextField purchaseDetailCost;
@@ -45,6 +49,15 @@ public class PurchaseDetailFormController implements Initializable {
   @FXML public Label purchaseDetailQntyValidationLabel;
   @FXML public Label purchaseDetailPdctValidationLabel;
   @FXML public Label purchaseDetailCostValidationLabel;
+
+  private PurchaseDetailFormController(Stage stage) {
+    this.stage = stage;
+  }
+
+  public static PurchaseDetailFormController getInstance(Stage stage) {
+    if (Objects.equals(instance, null)) instance = new PurchaseDetailFormController(stage);
+    return instance;
+  }
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
@@ -87,6 +100,7 @@ public class PurchaseDetailFormController implements Initializable {
         (e) -> {
           closeDialog(e);
           PurchaseDetailViewModel.resetProperties();
+          purchaseDetailPdct.clearSelection();
           purchaseDetailPdctValidationLabel.setVisible(false);
           purchaseDetailQntyValidationLabel.setVisible(false);
           purchaseDetailCostValidationLabel.setVisible(false);
@@ -94,11 +108,13 @@ public class PurchaseDetailFormController implements Initializable {
     purchaseDetailSaveBtn.setOnAction(
         (e) -> {
           SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
+
           if (!purchaseDetailPdctValidationLabel.isVisible()
               && !purchaseDetailQntyValidationLabel.isVisible()
               && !purchaseDetailCostValidationLabel.isVisible()) {
             if (tempIdProperty().get() > -1) {
               PurchaseDetailViewModel.updatePurchaseDetail(PurchaseDetailViewModel.getId());
+
               SimpleNotification notification =
                   new SimpleNotification.NotificationBuilder("Product changed successfully")
                       .duration(NotificationDuration.SHORT)
@@ -106,10 +122,18 @@ public class PurchaseDetailFormController implements Initializable {
                       .type(NotificationVariants.SUCCESS)
                       .build();
               notificationHolder.addNotification(notification);
+
+              PurchaseMasterFormController.getInstance(stage)
+                  .purchaseDetailTable
+                  .setItems(PurchaseDetailViewModel.purchaseDetailList);
+
+              purchaseDetailPdct.clearSelection();
+
               closeDialog(e);
               return;
             }
             PurchaseDetailViewModel.addPurchaseDetail();
+
             SimpleNotification notification =
                 new SimpleNotification.NotificationBuilder("Product added successfully")
                     .duration(NotificationDuration.SHORT)
@@ -117,7 +141,13 @@ public class PurchaseDetailFormController implements Initializable {
                     .type(NotificationVariants.SUCCESS)
                     .build();
             notificationHolder.addNotification(notification);
+
+            PurchaseMasterFormController.getInstance(stage)
+                .purchaseDetailTable
+                .setItems(PurchaseDetailViewModel.purchaseDetailList);
+
             closeDialog(e);
+            purchaseDetailPdct.clearSelection();
             return;
           }
           SimpleNotification notification =
@@ -128,6 +158,5 @@ public class PurchaseDetailFormController implements Initializable {
                   .build();
           notificationHolder.addNotification(notification);
         });
-    purchaseDetailPdct.clearSelection();
   }
 }

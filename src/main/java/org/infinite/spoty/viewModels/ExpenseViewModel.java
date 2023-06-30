@@ -26,6 +26,7 @@ import org.infinite.spoty.database.models.Expense;
 import org.infinite.spoty.database.models.ExpenseCategory;
 
 public class ExpenseViewModel {
+  public static final ObservableList<Expense> expenseList = FXCollections.observableArrayList();
   private static final IntegerProperty id = new SimpleIntegerProperty(0);
   private static final StringProperty date = new SimpleStringProperty("");
   private static final StringProperty reference = new SimpleStringProperty("");
@@ -34,7 +35,6 @@ public class ExpenseViewModel {
   private static final ObjectProperty<ExpenseCategory> category = new SimpleObjectProperty<>(null);
   private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>(null);
   private static final StringProperty details = new SimpleStringProperty("");
-  private static final ObservableList<Expense> expenseList = FXCollections.observableArrayList();
 
   public static int getId() {
     return id.get();

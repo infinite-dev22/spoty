@@ -229,6 +229,7 @@ public class ProductDetailViewModel {
             getStockAlert(),
             getSerial());
     productDetailTempList.add(productDetail);
+    resetProperties();
   }
 
   public static void resetProperties() {

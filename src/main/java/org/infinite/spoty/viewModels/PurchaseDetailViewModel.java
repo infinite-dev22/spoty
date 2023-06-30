@@ -183,6 +183,7 @@ public class PurchaseDetailViewModel {
             getProduct(),
             Integer.parseInt(getQuantity()));
     purchaseDetailTempList.add(purchaseDetail);
+    resetProperties();
   }
 
   public static void resetProperties() {

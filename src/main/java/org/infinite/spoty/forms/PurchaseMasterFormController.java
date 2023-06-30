@@ -38,9 +38,9 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Dialog;
-import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
@@ -115,6 +115,7 @@ public class PurchaseMasterFormController implements Initializable {
             return null;
           }
         });
+
     purchaseBranch.setItems(BranchViewModel.getBranches());
     purchaseBranch.setConverter(
         new StringConverter<>() {
@@ -129,6 +130,7 @@ public class PurchaseMasterFormController implements Initializable {
             return null;
           }
         });
+
     purchaseStatus.setItems(FXCollections.observableArrayList(Values.PURCHASESTATUSES));
     // Bi~Directional Binding.
     purchaseMasterID
@@ -144,13 +146,16 @@ public class PurchaseMasterFormController implements Initializable {
     requiredValidator(purchaseSupplier, "Supplier is required.", purchaseSupplierValidationLabel);
     requiredValidator(purchaseDate, "Date is required.", purchaseDateValidationLabel);
     requiredValidator(purchaseStatus, "Status is required.", purchaseStatusValidationLabel);
+
     setupTable();
   }
 
   private void createPurchaseProductDialog(Stage stage) throws IOException {
-    DialogPane dialogPane = fxmlLoader("forms/PurchaseDetailForm.fxml").load();
+    FXMLLoader fxmlLoader = fxmlLoader("forms/PurchaseDetailForm.fxml");
+    fxmlLoader.setControllerFactory(c -> PurchaseDetailFormController.getInstance(stage));
+
     dialog = new Dialog<>();
-    dialog.setDialogPane(dialogPane);
+    dialog.setDialogPane(fxmlLoader.load());
     dialog.initOwner(stage);
     dialog.initModality(Modality.APPLICATION_MODAL);
     dialog.initStyle(StageStyle.UNDECORATED);
@@ -158,6 +163,7 @@ public class PurchaseMasterFormController implements Initializable {
 
   public void saveBtnClicked() {
     SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
+
     if (!purchaseDetailTable.isDisabled()
         && PurchaseDetailViewModel.purchaseDetailTempList.isEmpty()) {
       SimpleNotification notification =
@@ -175,6 +181,7 @@ public class PurchaseMasterFormController implements Initializable {
         && !purchaseStatusValidationLabel.isVisible()) {
       if (Integer.parseInt(purchaseMasterID.getText()) > 0) {
         PurchaseMasterViewModel.updateItem(Integer.parseInt(purchaseMasterID.getText()));
+
         SimpleNotification notification =
             new SimpleNotification.NotificationBuilder("Purchase updated successfully")
                 .duration(NotificationDuration.MEDIUM)
@@ -182,10 +189,16 @@ public class PurchaseMasterFormController implements Initializable {
                 .type(NotificationVariants.SUCCESS)
                 .build();
         notificationHolder.addNotification(notification);
+
+        purchaseSupplier.clearSelection();
+        purchaseBranch.clearSelection();
+        purchaseStatus.clearSelection();
+
         cancelBtnClicked();
         return;
       }
       PurchaseMasterViewModel.savePurchaseMaster();
+
       SimpleNotification notification =
           new SimpleNotification.NotificationBuilder("Purchase saved successfully")
               .duration(NotificationDuration.MEDIUM)
@@ -193,6 +206,11 @@ public class PurchaseMasterFormController implements Initializable {
               .type(NotificationVariants.SUCCESS)
               .build();
       notificationHolder.addNotification(notification);
+
+      purchaseSupplier.clearSelection();
+      purchaseBranch.clearSelection();
+      purchaseStatus.clearSelection();
+
       cancelBtnClicked();
       return;
     }
@@ -203,9 +221,6 @@ public class PurchaseMasterFormController implements Initializable {
             .type(NotificationVariants.ERROR)
             .build();
     notificationHolder.addNotification(notification);
-    purchaseSupplier.clearSelection();
-    purchaseBranch.clearSelection();
-    purchaseStatus.clearSelection();
   }
 
   private void setupTable() {
@@ -301,7 +316,9 @@ public class PurchaseMasterFormController implements Initializable {
 
   public void cancelBtnClicked() {
     BaseController.navigation.navigate(Pages.getPurchasePane());
+
     PurchaseMasterViewModel.resetProperties();
+
     purchaseBranchValidationLabel.setVisible(false);
     purchaseSupplierValidationLabel.setVisible(false);
     purchaseDateValidationLabel.setVisible(false);

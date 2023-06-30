@@ -20,19 +20,23 @@ import static org.infinite.spoty.Validators.*;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.stage.Stage;
 import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
-import org.infinite.spoty.viewModels.SaleDetailViewModel;
 import org.infinite.spoty.viewModels.SupplierViewModel;
+import org.infinite.spoty.views.people.suppliers.SupplierController;
 
 public class SupplierFormController implements Initializable {
+  private static SupplierFormController instance;
+  private final Stage stage;
   public MFXTextField supplierID = new MFXTextField();
   @FXML public MFXButton supplierFormSaveBtn;
   @FXML public MFXButton supplierFormCancelBtn;
@@ -47,6 +51,15 @@ public class SupplierFormController implements Initializable {
   @FXML public Label supplierFormNameValidationLabel;
   @FXML public Label supplierFormEmailValidationLabel;
   @FXML public Label supplierFormPhoneValidationLabel;
+
+  private SupplierFormController(Stage stage) {
+    this.stage = stage;
+  }
+
+  public static SupplierFormController getInstance(Stage stage) {
+    if (Objects.equals(instance, null)) instance = new SupplierFormController(stage);
+    return instance;
+  }
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
@@ -103,6 +116,7 @@ public class SupplierFormController implements Initializable {
               && !supplierFormPhoneValidationLabel.isVisible()) {
             if (Integer.parseInt(supplierID.getText()) > 0) {
               SupplierViewModel.updateItem(Integer.parseInt(supplierID.getText()));
+
               SimpleNotification notification =
                   new SimpleNotification.NotificationBuilder("Supplier updated successfully")
                       .duration(NotificationDuration.SHORT)
@@ -110,11 +124,16 @@ public class SupplierFormController implements Initializable {
                       .type(NotificationVariants.SUCCESS)
                       .build();
               notificationHolder.addNotification(notification);
+
+              SupplierController.getInstance(stage)
+                  .suppliersTable
+                  .setItems(SupplierViewModel.suppliersList);
+
               closeDialog(e);
               return;
             }
             SupplierViewModel.saveSupplier();
-            SaleDetailViewModel.addSaleDetail();
+            
             SimpleNotification notification =
                 new SimpleNotification.NotificationBuilder("Supplier saved successfully")
                     .duration(NotificationDuration.SHORT)
@@ -122,6 +141,11 @@ public class SupplierFormController implements Initializable {
                     .type(NotificationVariants.SUCCESS)
                     .build();
             notificationHolder.addNotification(notification);
+
+            SupplierController.getInstance(stage)
+                .suppliersTable
+                .setItems(SupplierViewModel.suppliersList);
+
             closeDialog(e);
             return;
           }

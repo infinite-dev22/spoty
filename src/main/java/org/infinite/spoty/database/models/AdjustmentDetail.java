@@ -24,10 +24,10 @@ public class AdjustmentDetail implements Serializable {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
 
-  @OneToOne(optional = false)
+  @ManyToOne(optional = false)
   private ProductDetail productDetail;
 
-  @ManyToOne
+  @ManyToOne(optional = false)
   @JoinColumn(name = "adjustment_id", nullable = false)
   private AdjustmentMaster adjustment;
 

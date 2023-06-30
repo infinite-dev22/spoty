@@ -24,10 +24,12 @@ import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.controls.MFXToggleButton;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.components.notification.SimpleNotification;
@@ -38,8 +40,11 @@ import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.Role;
 import org.infinite.spoty.viewModels.BranchViewModel;
 import org.infinite.spoty.viewModels.UserViewModel;
+import org.infinite.spoty.views.people.users.UserController;
 
 public class UserFormController implements Initializable {
+  public static UserFormController instance;
+  private final Stage stage;
   public MFXTextField userID = new MFXTextField();
   @FXML public MFXButton userFormSaveBtn;
   @FXML public MFXButton userFormCancelBtn;
@@ -59,6 +64,15 @@ public class UserFormController implements Initializable {
   @FXML public Label userFormUserNameValidationLabel;
   @FXML public Label userFormBranchValidationLabel;
   @FXML public Label userFormRoleValidationLabel;
+
+  public UserFormController(Stage stage) {
+    this.stage = stage;
+  }
+
+  public static UserFormController getInstance(Stage stage) {
+    if (Objects.equals(instance, null)) instance = new UserFormController(stage);
+    return instance;
+  }
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
@@ -138,6 +152,9 @@ public class UserFormController implements Initializable {
           closeDialog(e);
           UserViewModel.resetProperties();
 
+          userFormRole.clearSelection();
+          userFormBranch.clearSelection();
+
           userFormFirstNameValidationLabel.setVisible(false);
           userFormLastNameValidationLabel.setVisible(false);
           userFormUserNameValidationLabel.setVisible(false);
@@ -165,6 +182,11 @@ public class UserFormController implements Initializable {
                       .type(NotificationVariants.SUCCESS)
                       .build();
               notificationHolder.addNotification(notification);
+
+              userFormRole.clearSelection();
+              userFormBranch.clearSelection();
+              UserController.getInstance(stage).userTable.setItems(UserViewModel.usersList);
+
               closeDialog(e);
               return;
             }
@@ -176,6 +198,11 @@ public class UserFormController implements Initializable {
                     .type(NotificationVariants.SUCCESS)
                     .build();
             notificationHolder.addNotification(notification);
+
+            userFormRole.clearSelection();
+            userFormBranch.clearSelection();
+            UserController.getInstance(stage).userTable.setItems(UserViewModel.usersList);
+
             closeDialog(e);
             return;
           }
@@ -187,7 +214,5 @@ public class UserFormController implements Initializable {
                   .build();
           notificationHolder.addNotification(notification);
         });
-    userFormRole.clearSelection();
-    userFormBranch.clearSelection();
   }
 }

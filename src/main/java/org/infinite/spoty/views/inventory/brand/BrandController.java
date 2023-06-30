@@ -28,9 +28,9 @@ import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Dialog;
-import javafx.scene.control.DialogPane;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
@@ -38,6 +38,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.infinite.spoty.database.dao.BrandDao;
 import org.infinite.spoty.database.models.Brand;
+import org.infinite.spoty.forms.BrandFormController;
 import org.infinite.spoty.viewModels.BrandViewModel;
 
 @SuppressWarnings("unchecked")
@@ -139,9 +140,11 @@ public class BrandController implements Initializable {
   }
 
   private void brandFormDialogPane(Stage stage) throws IOException {
-    DialogPane dialogPane = fxmlLoader("forms/BrandForm.fxml").load();
+    FXMLLoader fxmlLoader = fxmlLoader("forms/BrandForm.fxml");
+    fxmlLoader.setControllerFactory(c -> BrandFormController.getInstance(stage));
+
     dialog = new Dialog<>();
-    dialog.setDialogPane(dialogPane);
+    dialog.setDialogPane(fxmlLoader.load());
     dialog.initOwner(stage);
     dialog.initModality(Modality.APPLICATION_MODAL);
     dialog.initStyle(StageStyle.UNDECORATED);

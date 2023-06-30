@@ -140,7 +140,8 @@ public class SaleMasterViewModel {
 
   public static void saveSaleMaster() {
     SaleMaster saleMaster =
-        new SaleMaster(getCustomer(), getBranch(), getSaleStatus(), getNote(), getDate());
+        new SaleMaster(
+            getCustomer(), getBranch(), getSaleStatus(), getPayStatus(), getNote(), getDate());
     if (!SaleDetailViewModel.saleDetailTempList.isEmpty()) {
       SaleDetailViewModel.saleDetailTempList.forEach(
           saleDetail -> saleDetail.setSaleMaster(saleMaster));
@@ -172,10 +173,10 @@ public class SaleMasterViewModel {
 
   public static void updateItem(int index) {
     SaleMaster saleMaster = SaleMasterDao.findSaleMaster(index);
-    new SaleMaster(getCustomer(), getBranch(), getSaleStatus(), getNote(), getDate());
     saleMaster.setCustomer(getCustomer());
     saleMaster.setBranch(getBranch());
     saleMaster.setSaleStatus(getSaleStatus());
+    saleMaster.setPaymentStatus(getPayStatus());
     saleMaster.setNotes(getNote());
     saleMaster.setDate(getDate());
     SaleDetailViewModel.deleteSaleDetails(PENDING_DELETES);

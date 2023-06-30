@@ -130,7 +130,6 @@ public class AdjustmentDetailViewModel {
   public static void getItem(int index, int tempIndex) {
     AdjustmentDetail adjustmentDetail = AdjustmentDetailDao.findAdjustmentDetail(index);
     setTempId(tempIndex);
-    System.out.println("Temp ID: " + tempIndex);
     setProduct(adjustmentDetail.getProductDetail());
     setQuantity(String.valueOf(adjustmentDetail.getQuantity()));
     setAdjustmentType(adjustmentDetail.getAdjustmentType());

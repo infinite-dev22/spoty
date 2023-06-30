@@ -22,10 +22,12 @@ import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
@@ -36,6 +38,8 @@ import org.infinite.spoty.viewModels.ProductDetailViewModel;
 import org.infinite.spoty.viewModels.RequisitionDetailViewModel;
 
 public class RequisitionDetailFormController implements Initializable {
+  private static RequisitionDetailFormController instance;
+  private final Stage stage;
   @FXML public MFXTextField requisitionDetailQnty;
   @FXML public MFXFilterComboBox<ProductDetail> requisitionDetailPdct;
   @FXML public MFXButton requisitionDetailSaveBtn;
@@ -44,6 +48,15 @@ public class RequisitionDetailFormController implements Initializable {
   @FXML public MFXTextField requisitionDetailDescription;
   @FXML public Label requisitionDetailPdctValidationLabel;
   @FXML public Label requisitionDetailQntyValidationLabel;
+
+  private RequisitionDetailFormController(Stage stage) {
+    this.stage = stage;
+  }
+
+  public static RequisitionDetailFormController getInstance(Stage stage) {
+    if (Objects.equals(instance, null)) instance = new RequisitionDetailFormController(stage);
+    return instance;
+  }
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
@@ -92,17 +105,20 @@ public class RequisitionDetailFormController implements Initializable {
         (e) -> {
           closeDialog(e);
           RequisitionDetailViewModel.resetProperties();
+          requisitionDetailPdct.clearSelection();
           requisitionDetailPdctValidationLabel.setVisible(false);
           requisitionDetailQntyValidationLabel.setVisible(false);
         });
     requisitionDetailSaveBtn.setOnAction(
         (e) -> {
           SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
+
           if (!requisitionDetailPdctValidationLabel.isVisible()
               && !requisitionDetailQntyValidationLabel.isVisible()) {
             if (tempIdProperty().get() > -1) {
               RequisitionDetailViewModel.updateRequisitionDetail(
                   RequisitionDetailViewModel.getId());
+
               SimpleNotification notification =
                   new SimpleNotification.NotificationBuilder("Product changed successfully")
                       .duration(NotificationDuration.SHORT)
@@ -110,10 +126,18 @@ public class RequisitionDetailFormController implements Initializable {
                       .type(NotificationVariants.SUCCESS)
                       .build();
               notificationHolder.addNotification(notification);
+
+              requisitionDetailPdct.clearSelection();
+
+              RequisitionMasterFormController.getInstance(stage)
+                  .requisitionDetailTable
+                  .setItems(RequisitionDetailViewModel.requisitionDetailList);
+
               closeDialog(e);
               return;
             }
             RequisitionDetailViewModel.addRequisitionDetails();
+
             SimpleNotification notification =
                 new SimpleNotification.NotificationBuilder("Product added successfully")
                     .duration(NotificationDuration.SHORT)
@@ -121,6 +145,13 @@ public class RequisitionDetailFormController implements Initializable {
                     .type(NotificationVariants.SUCCESS)
                     .build();
             notificationHolder.addNotification(notification);
+
+            requisitionDetailPdct.clearSelection();
+
+            RequisitionMasterFormController.getInstance(stage)
+                .requisitionDetailTable
+                .setItems(RequisitionDetailViewModel.requisitionDetailList);
+
             closeDialog(e);
             return;
           }
@@ -132,6 +163,5 @@ public class RequisitionDetailFormController implements Initializable {
                   .build();
           notificationHolder.addNotification(notification);
         });
-    requisitionDetailPdct.clearSelection();
   }
 }

@@ -64,7 +64,7 @@
                     <padding>
                         <Insets right="10.0" top="5.0"/>
                     </padding>
-                    <MFXTextField fx:id="supplierFormPhone" textLimit="50" floatMode="BORDER" floatingText="Name"
+                    <MFXTextField fx:id="supplierFormPhone" textLimit="50" floatMode="BORDER" floatingText="Phone"
                                   prefWidth="300.0"/>
                     <Label id="validationLabel" fx:id="supplierFormPhoneValidationLabel"
                            maxWidth="1.7976931348623157E308"

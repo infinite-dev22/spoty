@@ -23,11 +23,13 @@ import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.components.notification.SimpleNotification;
@@ -40,6 +42,8 @@ import org.infinite.spoty.viewModels.AdjustmentDetailViewModel;
 import org.infinite.spoty.viewModels.ProductDetailViewModel;
 
 public class AdjustmentDetailFormController implements Initializable {
+  private static AdjustmentDetailFormController instance;
+  private final Stage stage;
   public MFXTextField adjustmentDetailID = new MFXTextField();
   @FXML public MFXTextField adjustmentProductsQnty;
   @FXML public MFXFilterComboBox<ProductDetail> adjustmentProductVariant;
@@ -50,6 +54,15 @@ public class AdjustmentDetailFormController implements Initializable {
   @FXML public Label adjustmentProductVariantValidationLabel;
   @FXML public Label adjustmentProductsQntyValidationLabel;
   @FXML public Label adjustmentTypeValidationLabel;
+
+  private AdjustmentDetailFormController(Stage stage) {
+    this.stage = stage;
+  }
+
+  public static AdjustmentDetailFormController getInstance(Stage stage) {
+    if (Objects.equals(instance, null)) instance = new AdjustmentDetailFormController(stage);
+    return instance;
+  }
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
@@ -103,7 +116,11 @@ public class AdjustmentDetailFormController implements Initializable {
     adjustmentProductsCancelBtn.setOnAction(
         (e) -> {
           closeDialog(e);
+
           AdjustmentDetailViewModel.resetProperties();
+          adjustmentProductVariant.clearSelection();
+          adjustmentType.clearSelection();
+
           adjustmentProductVariantValidationLabel.setVisible(false);
           adjustmentProductsQntyValidationLabel.setVisible(false);
           adjustmentTypeValidationLabel.setVisible(false);
@@ -111,13 +128,13 @@ public class AdjustmentDetailFormController implements Initializable {
     adjustmentProductsSaveBtn.setOnAction(
         (e) -> {
           SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
+
           if (!adjustmentProductVariantValidationLabel.isVisible()
               && !adjustmentProductsQntyValidationLabel.isVisible()
               && !adjustmentTypeValidationLabel.isVisible()) {
-            System.out.println("Temp ID: " + tempIdProperty().get());
             if (tempIdProperty().get() > -1) {
-              System.out.println("In 1");
               AdjustmentDetailViewModel.updateAdjustmentDetail(AdjustmentDetailViewModel.getId());
+
               SimpleNotification notification =
                   new SimpleNotification.NotificationBuilder("Entry updated successfully")
                       .duration(NotificationDuration.MEDIUM)
@@ -125,11 +142,19 @@ public class AdjustmentDetailFormController implements Initializable {
                       .type(NotificationVariants.SUCCESS)
                       .build();
               notificationHolder.addNotification(notification);
+
+              adjustmentProductVariant.clearSelection();
+              adjustmentType.clearSelection();
+
+              AdjustmentMasterFormController.getInstance(stage)
+                  .adjustmentDetailTable
+                  .setItems(AdjustmentDetailViewModel.adjustmentDetailsList);
+
               closeDialog(e);
               return;
             }
-            System.out.println("In 2");
             AdjustmentDetailViewModel.addAdjustmentDetails();
+
             SimpleNotification notification =
                 new SimpleNotification.NotificationBuilder("Entry added successfully")
                     .duration(NotificationDuration.SHORT)
@@ -138,10 +163,17 @@ public class AdjustmentDetailFormController implements Initializable {
                     .build();
             notificationHolder.addNotification(notification);
             AdjustmentDetailViewModel.resetProperties();
+
+            adjustmentProductVariant.clearSelection();
+            adjustmentType.clearSelection();
+
+            AdjustmentMasterFormController.getInstance(stage)
+                .adjustmentDetailTable
+                .setItems(AdjustmentDetailViewModel.adjustmentDetailsList);
+
             closeDialog(e);
             return;
           }
-          System.out.println("In 3");
           SimpleNotification notification =
               new SimpleNotification.NotificationBuilder("Required fields missing")
                   .duration(NotificationDuration.SHORT)
@@ -150,7 +182,5 @@ public class AdjustmentDetailFormController implements Initializable {
                   .build();
           notificationHolder.addNotification(notification);
         });
-    adjustmentProductVariant.clearSelection();
-    adjustmentType.clearSelection();
   }
 }

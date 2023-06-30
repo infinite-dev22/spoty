@@ -22,10 +22,12 @@ import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
@@ -36,6 +38,8 @@ import org.infinite.spoty.viewModels.ProductDetailViewModel;
 import org.infinite.spoty.viewModels.UOMViewModel;
 
 public class ProductDetailFormController implements Initializable {
+  private static ProductDetailFormController instance;
+  private final Stage stage;
   @FXML public MFXButton productProductsSaveBtn;
   @FXML public MFXButton productProductsCancelBtn;
   @FXML public Label productProductsTitle;
@@ -44,6 +48,15 @@ public class ProductDetailFormController implements Initializable {
   @FXML public Label productVariantNameValidationLabel;
   @FXML public MFXFilterComboBox<UnitOfMeasure> productVariantUOM;
   @FXML public Label productVariantUOMValidationLabel;
+
+  private ProductDetailFormController(Stage stage) {
+    this.stage = stage;
+  }
+
+  public static ProductDetailFormController getInstance(Stage stage) {
+    if (Objects.equals(instance, null)) instance = new ProductDetailFormController(stage);
+    return instance;
+  }
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
@@ -79,18 +92,22 @@ public class ProductDetailFormController implements Initializable {
         (e) -> {
           closeDialog(e);
           ProductDetailViewModel.resetProperties();
+          productVariantUOM.clearSelection();
           productVariantUOMValidationLabel.setVisible(false);
           productVariantNameValidationLabel.setVisible(false);
         });
     productProductsSaveBtn.setOnAction(
         (e) -> {
           SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
+
           // TODO: Find better logic for this.
           // If one of productVariantUOM or productVariantName is provide can save the product.
           if (productVariantName.getText().isEmpty() && !productVariantUOM.getText().isEmpty())
             productVariantNameValidationLabel.setVisible(false);
+
           if (productVariantUOM.getText().isEmpty() && !productVariantName.getText().isEmpty())
             productVariantUOMValidationLabel.setVisible(false);
+
           if (productVariantUOM.getText().isEmpty() && productVariantName.getText().isEmpty()) {
             SimpleNotification notification =
                 new SimpleNotification.NotificationBuilder(
@@ -106,6 +123,7 @@ public class ProductDetailFormController implements Initializable {
               && !productVariantNameValidationLabel.isVisible()) {
             if (tempIdProperty().get() > -1) {
               ProductDetailViewModel.updateProductDetail(ProductDetailViewModel.getId());
+
               SimpleNotification notification =
                   new SimpleNotification.NotificationBuilder("Product variant changed successfully")
                       .duration(NotificationDuration.SHORT)
@@ -113,10 +131,18 @@ public class ProductDetailFormController implements Initializable {
                       .type(NotificationVariants.SUCCESS)
                       .build();
               notificationHolder.addNotification(notification);
+
+              productVariantUOM.clearSelection();
+
+              ProductMasterFormController.getInstance(stage)
+                  .productDetailTable
+                  .setItems(ProductDetailViewModel.productDetailsList);
+
               closeDialog(e);
               return;
             }
             ProductDetailViewModel.addProductDetail();
+
             SimpleNotification notification =
                 new SimpleNotification.NotificationBuilder("Product variant added successfully")
                     .duration(NotificationDuration.SHORT)
@@ -124,6 +150,13 @@ public class ProductDetailFormController implements Initializable {
                     .type(NotificationVariants.SUCCESS)
                     .build();
             notificationHolder.addNotification(notification);
+
+            productVariantUOM.clearSelection();
+
+            ProductMasterFormController.getInstance(stage)
+                .productDetailTable
+                .setItems(ProductDetailViewModel.productDetailsList);
+
             closeDialog(e);
             return;
           }
@@ -135,6 +168,5 @@ public class ProductDetailFormController implements Initializable {
                   .build();
           notificationHolder.addNotification(notification);
         });
-    productVariantUOM.clearSelection();
   }
 }

@@ -18,6 +18,8 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 @Entity
 public class ProductMaster implements Serializable {
@@ -39,7 +41,8 @@ public class ProductMaster implements Serializable {
   @ManyToOne(optional = false)
   private Brand brand;
 
-  @OneToMany(cascade = CascadeType.ALL, mappedBy = "product")
+  @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
+  @Cascade({CascadeType.ALL})
   private List<ProductDetail> productDetails;
 
   private byte[] image;
