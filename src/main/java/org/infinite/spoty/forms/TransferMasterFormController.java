@@ -171,7 +171,7 @@ public class TransferMasterFormController implements Initializable {
             new StringFilter<>("Name", TransferDetail::getProductDetailName),
             new IntegerFilter<>("Quantity", TransferDetail::getQuantity));
     getTransferDetailTable();
-    transferDetailTable.setItems(TransferDetailViewModel.getTransferDetails());
+    transferDetailTable.setItems(TransferDetailViewModel.transferDetailsList);
   }
 
   private void getTransferDetailTable() {
@@ -207,8 +207,7 @@ public class TransferMasterFormController implements Initializable {
         e -> {
           TransferDetailViewModel.removeTransferDetail(
               obj.getData().getId(),
-              TransferDetailViewModel.transferDetailsTempList.indexOf(obj.getData()));
-          TransferDetailViewModel.getTransferDetails();
+              TransferDetailViewModel.transferDetailsList.indexOf(obj.getData()));
           e.consume();
         });
     // Edit
@@ -216,7 +215,7 @@ public class TransferMasterFormController implements Initializable {
         e -> {
           TransferDetailViewModel.getItem(
               obj.getData().getId(),
-              TransferDetailViewModel.transferDetailsTempList.indexOf(obj.getData()));
+              TransferDetailViewModel.transferDetailsList.indexOf(obj.getData()));
           dialog.showAndWait();
           e.consume();
         });
@@ -245,7 +244,7 @@ public class TransferMasterFormController implements Initializable {
     SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
 
     if (!transferDetailTable.isDisabled()
-        && TransferDetailViewModel.transferDetailsTempList.isEmpty()) {
+        && TransferDetailViewModel.transferDetailsList.isEmpty()) {
       SimpleNotification notification =
           new SimpleNotification.NotificationBuilder("Table can't be Empty")
               .duration(NotificationDuration.SHORT)

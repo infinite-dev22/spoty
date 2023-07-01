@@ -170,7 +170,7 @@ public class ProductMasterViewModel {
     setCategory(null);
     setBrand(null);
     PENDING_DELETES.clear();
-    ProductDetailViewModel.productDetailTempList.clear();
+    ProductDetailViewModel.productDetailsList.clear();
   }
 
   public static void saveProductMaster() {
@@ -185,10 +185,10 @@ public class ProductMasterViewModel {
             isNotForSale(),
             getHasVariants());
     // Add product master to product details.
-    if (!ProductDetailViewModel.productDetailTempList.isEmpty()) {
-      ProductDetailViewModel.productDetailTempList.forEach(
+    if (!ProductDetailViewModel.productDetailsList.isEmpty()) {
+      ProductDetailViewModel.productDetailsList.forEach(
           productDetail -> productDetail.setProduct(productMaster));
-      productMaster.setProductDetails(ProductDetailViewModel.productDetailTempList);
+      productMaster.setProductDetails(ProductDetailViewModel.productDetailsList);
     }
     ProductMasterDao.saveProductMaster(productMaster);
     resetProperties();
@@ -212,7 +212,8 @@ public class ProductMasterViewModel {
     setNotForSale(productMaster.isNotForSale());
     setHasVariants(productMaster.hasVariant());
     setBarcodeType(productMaster.getBarcodeType());
-    ProductDetailViewModel.productDetailTempList.addAll(productMaster.getProductDetails());
+    ProductDetailViewModel.productDetailsList.clear();
+    ProductDetailViewModel.productDetailsList.addAll(productMaster.getProductDetails());
     getProductMasters();
   }
 
@@ -226,7 +227,7 @@ public class ProductMasterViewModel {
     productMaster.setNotForSale(isNotForSale());
     productMaster.canHaveVariants(getHasVariants());
     ProductDetailViewModel.deleteProductDetails(PENDING_DELETES);
-    productMaster.setProductDetails(ProductDetailViewModel.productDetailTempList);
+    productMaster.setProductDetails(ProductDetailViewModel.productDetailsList);
     ProductMasterDao.updateProductMaster(productMaster, index);
     resetProperties();
     getProductMasters();

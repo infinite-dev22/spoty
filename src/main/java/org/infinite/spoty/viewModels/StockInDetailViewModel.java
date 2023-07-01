@@ -28,8 +28,6 @@ import org.infinite.spoty.database.models.StockInMaster;
 public class StockInDetailViewModel {
   public static final ObservableList<StockInDetail> stockInDetailsList =
       FXCollections.observableArrayList();
-  public static final ObservableList<StockInDetail> stockInDetailsTempList =
-      FXCollections.observableArrayList();
   private static final IntegerProperty id = new SimpleIntegerProperty(0);
   private static final ObjectProperty<ProductDetail> product = new SimpleObjectProperty<>();
   private static final ObjectProperty<StockInMaster> stockIn = new SimpleObjectProperty<>();
@@ -136,7 +134,7 @@ public class StockInDetailViewModel {
     StockInDetail stockInDetail =
         new StockInDetail(
             getProduct(), getQuantity(), getSerial(), getDescription(), getLocation());
-    stockInDetailsTempList.add(stockInDetail);
+    stockInDetailsList.add(stockInDetail);
     resetProperties();
   }
 
@@ -153,8 +151,8 @@ public class StockInDetailViewModel {
     stockInDetail.setSerialNo(getSerial());
     stockInDetail.setDescription(getDescription());
     stockInDetail.setLocation(getLocation());
-    stockInDetailsTempList.remove((int) getTempId());
-    stockInDetailsTempList.add(getTempId(), stockInDetail);
+    stockInDetailsList.remove((int) getTempId());
+    stockInDetailsList.add(getTempId(), stockInDetail);
     resetProperties();
   }
 
@@ -181,7 +179,7 @@ public class StockInDetailViewModel {
   }
 
   public static void removeStockInDetail(int index, int tempIndex) {
-    stockInDetailsTempList.remove(tempIndex);
+    stockInDetailsList.remove(tempIndex);
     PENDING_DELETES.add(index);
   }
 

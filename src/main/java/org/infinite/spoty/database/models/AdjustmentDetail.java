@@ -25,7 +25,7 @@ public class AdjustmentDetail implements Serializable {
   private int id;
 
   @ManyToOne(optional = false)
-  private ProductDetail productDetail;
+  private ProductDetail product;
 
   @ManyToOne(optional = false)
   @JoinColumn(name = "adjustment_id", nullable = false)
@@ -48,8 +48,8 @@ public class AdjustmentDetail implements Serializable {
 
   public AdjustmentDetail() {}
 
-  public AdjustmentDetail(ProductDetail productDetail, int quantity, String adjustmentType) {
-    this.productDetail = productDetail;
+  public AdjustmentDetail(ProductDetail product, int quantity, String adjustmentType) {
+    this.product = product;
     this.quantity = quantity;
     this.adjustmentType = adjustmentType;
   }
@@ -62,18 +62,24 @@ public class AdjustmentDetail implements Serializable {
     this.id = id;
   }
 
-  public ProductDetail getProductDetail() {
-    return productDetail;
+  public ProductDetail getProduct() {
+    return product;
   }
 
-  public void setProductDetail(ProductDetail productDetail) {
-    this.productDetail = productDetail;
+  public void setProduct(ProductDetail product) {
+    this.product = product;
   }
 
   public String getProductDetailName() {
-    if (productDetail != null)
-      return productDetail.getProduct().getName() + " " + productDetail.getName();
-    else return null;
+    return (product != null)
+        ? product.getProduct().getBrand().getName()
+            + " "
+            + product.getProduct().getName()
+            + " "
+            + product.getName()
+            + " "
+            + product.getUnit().getName()
+        : null;
   }
 
   public AdjustmentMaster getAdjustment() {

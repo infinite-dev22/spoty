@@ -29,8 +29,6 @@ import org.infinite.spoty.database.models.UnitOfMeasure;
 public class ProductDetailViewModel {
   public static final ObservableList<ProductDetail> productDetailsList =
       FXCollections.observableArrayList();
-  public static final ObservableList<ProductDetail> productDetailTempList =
-      FXCollections.observableArrayList();
   private static final IntegerProperty id = new SimpleIntegerProperty(0);
   private static final ObjectProperty<ProductMaster> product = new SimpleObjectProperty<>(null);
   private static final ListProperty<Branch> branches = new SimpleListProperty<>(null);
@@ -228,7 +226,7 @@ public class ProductDetailViewModel {
             getTaxType(),
             getStockAlert(),
             getSerial());
-    productDetailTempList.add(productDetail);
+    productDetailsList.add(productDetail);
     resetProperties();
   }
 
@@ -264,8 +262,8 @@ public class ProductDetailViewModel {
     productDetail.setUnit(getUnit());
     productDetail.setName(getName());
     productDetail.setSerialNumber(getSerial());
-    productDetailTempList.remove((int) getTempId());
-    productDetailTempList.add(getTempId(), productDetail);
+    productDetailsList.remove((int) getTempId());
+    productDetailsList.add(getTempId(), productDetail);
     resetProperties();
   }
 
@@ -303,7 +301,7 @@ public class ProductDetailViewModel {
   }
 
   public static void removeProductDetail(int index, int tempIndex) {
-    productDetailTempList.remove(tempIndex);
+    productDetailsList.remove(tempIndex);
     PENDING_DELETES.add(index);
   }
 

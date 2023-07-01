@@ -29,8 +29,6 @@ import org.infinite.spoty.database.models.PurchaseMaster;
 public class PurchaseDetailViewModel {
   public static final ObservableList<PurchaseDetail> purchaseDetailList =
       FXCollections.observableArrayList();
-  public static final ObservableList<PurchaseDetail> purchaseDetailTempList =
-      FXCollections.observableArrayList();
   private static final IntegerProperty id = new SimpleIntegerProperty(0);
   private static final ObjectProperty<PurchaseMaster> purchase = new SimpleObjectProperty<>(null);
   private static final StringProperty cost = new SimpleStringProperty("");
@@ -182,7 +180,7 @@ public class PurchaseDetailViewModel {
             Double.parseDouble(getCost()),
             getProduct(),
             Integer.parseInt(getQuantity()));
-    purchaseDetailTempList.add(purchaseDetail);
+    purchaseDetailList.add(purchaseDetail);
     resetProperties();
   }
 
@@ -219,8 +217,8 @@ public class PurchaseDetailViewModel {
     purchaseDetail.setSerialNumber(getSerial());
     purchaseDetail.setTotal(Double.parseDouble(getTotal()));
     purchaseDetail.setQuantity(Integer.parseInt(getQuantity()));
-    purchaseDetailTempList.remove((int) getTempId());
-    purchaseDetailTempList.add(getTempId(), purchaseDetail);
+    purchaseDetailList.remove((int) getTempId());
+    purchaseDetailList.add(getTempId(), purchaseDetail);
     resetProperties();
   }
 
@@ -258,7 +256,7 @@ public class PurchaseDetailViewModel {
   }
 
   public static void removePurchaseDetail(int index, int tempIndex) {
-    purchaseDetailTempList.remove(tempIndex);
+    purchaseDetailList.remove(tempIndex);
     PENDING_DELETES.add(index);
   }
 

@@ -182,7 +182,7 @@ public class RequisitionMasterFormController implements Initializable {
             new StringFilter<>("Name", RequisitionDetail::getProductDetailName),
             new IntegerFilter<>("Quantity", RequisitionDetail::getQuantity));
     getRequisitionDetailTable();
-    requisitionDetailTable.setItems(RequisitionDetailViewModel.getRequisitionDetails());
+    requisitionDetailTable.setItems(RequisitionDetailViewModel.requisitionDetailList);
   }
 
   private void getRequisitionDetailTable() {
@@ -218,8 +218,7 @@ public class RequisitionMasterFormController implements Initializable {
         e -> {
           RequisitionDetailViewModel.removeRequisitionDetail(
               obj.getData().getId(),
-              RequisitionDetailViewModel.requisitionDetailTempList.indexOf(obj.getData()));
-          RequisitionDetailViewModel.getRequisitionDetails();
+              RequisitionDetailViewModel.requisitionDetailList.indexOf(obj.getData()));
           e.consume();
         });
     // Edit
@@ -227,7 +226,7 @@ public class RequisitionMasterFormController implements Initializable {
         e -> {
           RequisitionDetailViewModel.getItem(
               obj.getData().getId(),
-              RequisitionDetailViewModel.requisitionDetailTempList.indexOf(obj.getData()));
+              RequisitionDetailViewModel.requisitionDetailList.indexOf(obj.getData()));
           dialog.showAndWait();
           e.consume();
         });
@@ -256,7 +255,7 @@ public class RequisitionMasterFormController implements Initializable {
     SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
 
     if (!requisitionDetailTable.isDisabled()
-        && RequisitionDetailViewModel.requisitionDetailTempList.isEmpty()) {
+        && RequisitionDetailViewModel.requisitionDetailList.isEmpty()) {
       SimpleNotification notification =
           new SimpleNotification.NotificationBuilder("Table can't be Empty")
               .duration(NotificationDuration.SHORT)

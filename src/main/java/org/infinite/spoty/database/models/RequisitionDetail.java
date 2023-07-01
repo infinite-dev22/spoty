@@ -26,7 +26,7 @@ public class RequisitionDetail implements Serializable {
 
   @ManyToOne(optional = false)
   @JoinColumn(nullable = false, name = "product_detail_id")
-  private ProductDetail productDetail;
+  private ProductDetail product;
 
   @ManyToOne(optional = false)
   @JoinColumn(name = "requisition_id", nullable = false)
@@ -52,13 +52,13 @@ public class RequisitionDetail implements Serializable {
   public RequisitionDetail() {}
 
   public RequisitionDetail(
-      ProductDetail productDetail,
+      ProductDetail product,
       RequisitionMaster
           requisition, // TODO: Remove this line as it ain't good being here. can't get
       // RequisitionMaster here. use setter.
       int quantity,
       String description) {
-    this.productDetail = productDetail;
+    this.product = product;
     this.requisition = requisition;
     this.quantity = quantity;
     this.description = description;
@@ -72,18 +72,24 @@ public class RequisitionDetail implements Serializable {
     this.id = id;
   }
 
-  public ProductDetail getProductDetail() {
-    return productDetail;
+  public ProductDetail getProduct() {
+    return product;
   }
 
-  public void setProductDetail(ProductDetail productDetail) {
-    this.productDetail = productDetail;
+  public void setProduct(ProductDetail product) {
+    this.product = product;
   }
 
   public String getProductDetailName() {
-    if (productDetail != null)
-      return productDetail.getProduct().getName() + " " + productDetail.getName();
-    else return null;
+    return (product != null)
+        ? product.getProduct().getBrand().getName()
+            + " "
+            + product.getProduct().getName()
+            + " "
+            + product.getName()
+            + " "
+            + product.getUnit().getName()
+        : null;
   }
 
   public RequisitionMaster getRequisition() {

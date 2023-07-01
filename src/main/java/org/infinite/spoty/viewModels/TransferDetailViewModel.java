@@ -28,8 +28,6 @@ import org.infinite.spoty.database.models.TransferMaster;
 public class TransferDetailViewModel {
   public static final ObservableList<TransferDetail> transferDetailsList =
       FXCollections.observableArrayList();
-  public static final ObservableList<TransferDetail> transferDetailsTempList =
-      FXCollections.observableArrayList();
   private static final IntegerProperty id = new SimpleIntegerProperty(0);
   private static final ObjectProperty<ProductDetail> product = new SimpleObjectProperty<>();
   private static final ObjectProperty<TransferMaster> transfer = new SimpleObjectProperty<>();
@@ -150,7 +148,7 @@ public class TransferDetailViewModel {
     TransferDetail transferDetail =
         new TransferDetail(
             getProduct(), getQuantity(), getSerial(), getDescription(), getPrice(), getTotal());
-    transferDetailsTempList.add(transferDetail);
+    transferDetailsList.add(transferDetail);
     resetProperties();
   }
 
@@ -168,8 +166,8 @@ public class TransferDetailViewModel {
     transferDetail.setDescription(getDescription());
     transferDetail.setPrice(getPrice());
     transferDetail.setTotal(getTotal());
-    transferDetailsTempList.remove((int) getTempId());
-    transferDetailsTempList.add(getTempId(), transferDetail);
+    transferDetailsList.remove((int) getTempId());
+    transferDetailsList.add(getTempId(), transferDetail);
     resetProperties();
   }
 
@@ -198,7 +196,7 @@ public class TransferDetailViewModel {
   }
 
   public static void removeTransferDetail(int index, int tempIndex) {
-    transferDetailsTempList.remove(tempIndex);
+    transferDetailsList.remove(tempIndex);
     PENDING_DELETES.add(index);
   }
 

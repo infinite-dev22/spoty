@@ -26,8 +26,6 @@ import org.infinite.spoty.database.models.SaleDetail;
 import org.infinite.spoty.database.models.UnitOfMeasure;
 
 public class SaleDetailViewModel {
-  public static final ObservableList<SaleDetail> saleDetailTempList =
-      FXCollections.observableArrayList();
   public static final ObservableList<SaleDetail> saleDetailList =
       FXCollections.observableArrayList();
   private static final IntegerProperty id = new SimpleIntegerProperty(0);
@@ -210,8 +208,8 @@ public class SaleDetailViewModel {
             getTaxType(),
             Double.parseDouble(getDiscount()),
             getDiscountType());
-    saleDetailTempList.add(saleDetail);
-    saleDetailTempList.forEach(System.out::println);
+    saleDetailList.add(saleDetail);
+    saleDetailList.forEach(System.out::println);
     resetProperties();
   }
 
@@ -224,8 +222,8 @@ public class SaleDetailViewModel {
     saleDetail.setTaxType(getTaxType());
     saleDetail.setDiscount(Double.parseDouble(getDiscount()));
     saleDetail.setDiscountType(getDiscountType());
-    saleDetailTempList.remove((int) getTempId());
-    saleDetailTempList.add(getTempId(), saleDetail);
+    saleDetailList.remove((int) getTempId());
+    saleDetailList.add(getTempId(), saleDetail);
     resetProperties();
   }
 
@@ -266,7 +264,7 @@ public class SaleDetailViewModel {
   }
 
   public static void removeSaleDetail(int index, int tempIndex) {
-    saleDetailTempList.remove(tempIndex);
+    saleDetailList.remove(tempIndex);
     PENDING_DELETES.add(index);
   }
 

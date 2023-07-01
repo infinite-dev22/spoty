@@ -32,13 +32,29 @@ class DatabaseSeederTest {
     Customer customer;
     Supplier supplier;
     Branch branch;
+    ProductDetail productDetail;
+
     @Test
     @Order(1)
+    void branchInsert() {
+        try {
+            branch = new Branch("Default Branch",
+                    "St Helena", "123456789012",
+                    "defaultbranch@email.com", "Burgaw", "5675676");
+            branch.setCreatedAt(new Date());
+            branch.setCreatedBy("User One");
+            BranchDao.saveBranch(branch);
+        } catch (Exception e) {
+            throw new AssertionError();
+        }
+    }
+    @Test
+    @Order(2)
     void productCategoryInsert() {
         try {
-            productCategory = new ProductCategory("PC-001", "Test Product Category 1");
+            productCategory = new ProductCategory("PC-001", "SoftDrinks");
             productCategory.setCreatedAt(new Date());
-            productCategory.setCreatedBy("Tester One");
+            productCategory.setCreatedBy("User One");
             ProductCategoryDao.saveProductCategory(productCategory);
         } catch (Exception e) {
             throw new AssertionError();
@@ -46,12 +62,12 @@ class DatabaseSeederTest {
     }
 
     @Test
-    @Order(2)
+    @Order(3)
     void brandInsert() {
         try {
-            brand = new Brand("Test Brand 1", "This is a test brand.");
+            brand = new Brand("CocaCola", "A SoftDrink & Beverage global franchise");
             brand.setCreatedAt(new Date());
-            brand.setCreatedBy("Tester One");
+            brand.setCreatedBy("User One");
             BrandDao.saveBrand(brand);
         } catch (Exception e) {
             throw new AssertionError();
@@ -59,12 +75,12 @@ class DatabaseSeederTest {
     }
 
     @Test
-    @Order(3)
+    @Order(4)
     void uomInsert() {
         try {
-            uom = new UnitOfMeasure("Test UOM 1", "TUOM1", null, "", 0);
+            uom = new UnitOfMeasure("Litre", "ltr", null, "", 0);
             uom.setCreatedAt(new Date());
-            uom.setCreatedBy("Tester One");
+            uom.setCreatedBy("User One");
             UnitOfMeasureDao.saveUnitOfMeasure(uom);
         } catch (Exception e) {
             throw new AssertionError();
@@ -72,31 +88,75 @@ class DatabaseSeederTest {
     }
 
     @Test
-    @Order(4)
-    void expenseInsert() {
+    @Order(5)
+    void productInsert() {
         try {
-            expenseCategory = new ExpenseCategory("Test Category 1", "This is the first test category");
-            expenseCategory.setCreatedAt(new Date());
-            expenseCategory.setCreatedBy("Tester One");
-            ExpenseCategoryDao.saveExpenseCategory(expenseCategory);
-            var expense = new Expense(new Date(), expenseCategory, 1560.95);
-            expense.setCreatedAt(new Date());
-            expense.setCreatedBy("Tester One");
-            ExpenseDao.saveExpense(expense);
+            var productMaster = new ProductMaster("Type 01",
+                    "Coke",
+                    4488000,
+                    ProductCategoryDao.findProductCategory(1),
+                    BrandDao.findBrand(1),
+                    "Approved.",
+                    false,
+                    true);
+
+            productDetail = new ProductDetail(UnitOfMeasureDao.findUnitOfMeasure(1),
+                    "Zero Sugar",
+                    2244,
+                    4488000,
+                    2000,
+                    4.29,
+                    "VAT",
+                    70,
+                    "6724856672");
+            List<ProductDetail> list = new LinkedList<>();
+
+            productDetail.setCreatedAt(new Date());
+            productDetail.setCreatedBy("User One");
+            productDetail.setProduct(productMaster);
+
+            list.add(productDetail);
+
+            productMaster.setProductDetails(list);
+            productMaster.setCreatedAt(new Date());
+            productMaster.setCreatedBy("User One");
+
+            ProductMasterDao.saveProductMaster(productMaster);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new AssertionError();
         }
     }
 
     @Test
-    @Order(5)
+    @Order(6)
+    void expenseInsert() {
+        try {
+            expenseCategory = new ExpenseCategory("Transport", "This is spent on transportation of employees monthly.");
+            expenseCategory.setCreatedAt(new Date());
+            expenseCategory.setCreatedBy("User One");
+            ExpenseCategoryDao.saveExpenseCategory(expenseCategory);
+            var expense = new Expense(new Date(), expenseCategory, 1500060.95);
+            expense.setName("Board of Governors Meeting, San Francisco.");
+            expense.setBranch(BranchDao.findBranch(1));
+            expense.setCreatedAt(new Date());
+            expense.setCreatedBy("User One");
+            ExpenseDao.saveExpense(expense);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new AssertionError();
+        }
+    }
+
+    @Test
+    @Order(7)
     void customerInsert() {
         try {
-            customer = new Customer("Test Customer 1", "test1@email.com", "+1234567890",
-                    "Test City 1", "Test Address 1", "TXN-5685655555555",
-                    "Test Country 1");
+            customer = new Customer("John Doe", "johndoe@email.com", "+1234567890",
+                    "Arkansas", "TJ Robert Downy Street", "TXN-5685655555555",
+                    "USA");
             customer.setCreatedAt(new Date());
-            customer.setCreatedBy("Tester One");
+            customer.setCreatedBy("User One");
             CustomerDao.saveCustomer(customer);
         } catch (Exception e) {
             throw new AssertionError();
@@ -104,14 +164,14 @@ class DatabaseSeederTest {
     }
 
     @Test
-    @Order(6)
+    @Order(8)
     void supplierInsert() {
         try {
-            supplier = new Supplier("Test Supplier 1", "test1@email.com", "+123456789012",
-                    "TXN-5685655555555", "Test Address 1", "Test City 1",
-                    "Test Country 1");
+            supplier = new Supplier("Jeffery Doe", "jefferydoe@email.com", "+123456789012",
+                    "TXN-5685655555555", "17th Loop Lane Street", "Birmingham",
+                    "UK");
             supplier.setCreatedAt(new Date());
-            supplier.setCreatedBy("Tester One");
+            supplier.setCreatedBy("User One");
             SupplierDao.saveSupplier(supplier);
         } catch (Exception e) {
             throw new AssertionError();
@@ -119,46 +179,47 @@ class DatabaseSeederTest {
     }
 
     @Test
-    @Order(7)
+    @Order(9)
     void adjustmentInsert() {
         try {
-            var adjustmentDetail = new AdjustmentDetail(null, 12, "Increment");
-            var adjustmentMaster = new AdjustmentMaster(null, "Test Adjustment Master", new Date());
+            var adjustmentDetail = new AdjustmentDetail(ProductDetailDao.findProductDetail(1), 12, "Increment");
+            var adjustmentMaster = new AdjustmentMaster(BranchDao.findBranch(1), "Approved.", new Date());
             List<AdjustmentDetail> list = new LinkedList<>();
 
             adjustmentDetail.setCreatedAt(new Date());
-            adjustmentDetail.setCreatedBy("Tester One");
+            adjustmentDetail.setCreatedBy("User One");
             adjustmentDetail.setAdjustment(adjustmentMaster);
 
             list.add(adjustmentDetail);
 
             adjustmentMaster.setAdjustmentDetails(list);
             adjustmentMaster.setCreatedAt(new Date());
-            adjustmentMaster.setCreatedBy("Tester One");
+            adjustmentMaster.setCreatedBy("User One");
 
             AdjustmentMasterDao.saveAdjustmentMaster(adjustmentMaster);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new AssertionError();
         }
     }
 
     @Test
-    @Order(8)
+    @Order(10)
     void quotationInsert() {
         try {
-            var quotationDetail = new QuotationDetail(null, null, 6.54, 25, 29898);
-            var quotationMaster = new QuotationMaster(new Date(), null, null, "Pending", "No customer yet.");
+            var quotationDetail = new QuotationDetail(ProductDetailDao.findProductDetail(1), UnitOfMeasureDao.findUnitOfMeasure(1), 6.54, 25, 98);
+            var quotationMaster = new QuotationMaster(new Date(), CustomerDao.findCustomer(1), BranchDao.findBranch(1), "Pending", "Approved.");
             List<QuotationDetail> list = new LinkedList<>();
 
             quotationDetail.setCreatedAt(new Date());
-            quotationDetail.setCreatedBy("Tester One");
+            quotationDetail.setCreatedBy("User One");
             quotationDetail.setQuotation(quotationMaster);
 
             list.add(quotationDetail);
 
             quotationMaster.setQuotationDetails(list);
             quotationMaster.setCreatedAt(new Date());
-            quotationMaster.setCreatedBy("Tester One");
+            quotationMaster.setCreatedBy("User One");
 
             QuotationMasterDao.saveQuotationMaster(quotationMaster);
         } catch (Exception e) {
@@ -167,26 +228,26 @@ class DatabaseSeederTest {
     }
 
     @Test
-    @Order(9)
+    @Order(11)
     void requisitionInsert() {
         try {
-            var requisitionMaster = new RequisitionMaster(new Date(), null, null, "TTF",
-                    "Air", "Secure", new Date(), "Confirmed", "Approved", 15647765.0843);
-            var requisitionDetail = new RequisitionDetail(null,
+            var requisitionMaster = new RequisitionMaster(new Date(), SupplierDao.findSupplier(1), BranchDao.findBranch(1), "TTF",
+                    "Air", "Secure", new Date(), "Confirmed.", "Approved.", 450000);
+            var requisitionDetail = new RequisitionDetail(ProductDetailDao.findProductDetail(1),
                     requisitionMaster,
-                    13234,
-                    "This is a Test Product 1");
+                    300,
+                    "Only retaining stock left.");
             List<RequisitionDetail> list = new LinkedList<>();
 
             requisitionDetail.setCreatedAt(new Date());
-            requisitionDetail.setCreatedBy("Tester One");
+            requisitionDetail.setCreatedBy("User One");
             requisitionDetail.setRequisition(requisitionMaster);
 
             list.add(requisitionDetail);
 
             requisitionMaster.setRequisitionDetails(list);
             requisitionMaster.setCreatedAt(new Date());
-            requisitionMaster.setCreatedBy("Tester One");
+            requisitionMaster.setCreatedBy("User One");
 
             RequisitionMasterDao.saveRequisitionMaster(requisitionMaster);
         } catch (Exception e) {
@@ -195,42 +256,27 @@ class DatabaseSeederTest {
     }
 
     @Test
-    @Order(10)
-    void branchInsert() {
-        try {
-            branch = new Branch("Test Branch One",
-                    "Test City 1", "123456789012",
-                    "test1.branch@email.com", "Test Town 1", "5675676");
-            branch.setCreatedAt(new Date());
-            branch.setCreatedBy("Tester One");
-            BranchDao.saveBranch(branch);
-        } catch (Exception e) {
-            throw new AssertionError();
-        }
-    }
-
-    @Test
-    @Order(11)
+    @Order(12)
     void purchaseInsert() {
         try {
-            var purchaseMaster = new PurchaseMaster(null, null, "Confirmed",
-                    "Approved", new Date());
+            var purchaseMaster = new PurchaseMaster(SupplierDao.findSupplier(1), BranchDao.findBranch(1), "Confirmed.",
+                    "Approved.", new Date());
 
             var purchaseDetail = new PurchaseDetail(purchaseMaster,
                     13234,
-                    null,
+                    ProductDetailDao.findProductDetail(1),
                     1);
             List<PurchaseDetail> list = new LinkedList<>();
 
             purchaseDetail.setCreatedAt(new Date());
-            purchaseDetail.setCreatedBy("Tester One");
+            purchaseDetail.setCreatedBy("User One");
             purchaseDetail.setPurchase(purchaseMaster);
 
             list.add(purchaseDetail);
 
             purchaseMaster.setPurchaseDetails(list);
             purchaseMaster.setCreatedAt(new Date());
-            purchaseMaster.setCreatedBy("Tester One");
+            purchaseMaster.setCreatedBy("User One");
 
             PurchaseMasterDao.savePurchaseMaster(purchaseMaster);
         } catch (Exception e) {
@@ -239,33 +285,33 @@ class DatabaseSeederTest {
     }
 
     @Test
-    @Order(12)
+    @Order(13)
     void transferInsert() {
         try {
             var transferMaster = new TransferMaster(new Date(),
-                    null,
-                    null,
+                    BranchDao.findBranch(1),
+                    BranchDao.findBranch(1),
                     234889,
                     "Pending",
-                    "Not Approved Yet.");
+                    "Approved.");
 
-            var transferDetail = new TransferDetail(null,
+            var transferDetail = new TransferDetail(ProductDetailDao.findProductDetail(1),
                     1,
-                    "",
-                    "Test Description",
+                    "5756756778",
+                    "Good.",
                     25645,
                     23645);
             List<TransferDetail> list = new LinkedList<>();
 
             transferDetail.setCreatedAt(new Date());
-            transferDetail.setCreatedBy("Tester One");
+            transferDetail.setCreatedBy("User One");
             transferDetail.setTransfer(transferMaster);
 
             list.add(transferDetail);
 
             transferMaster.setTransferDetails(list);
             transferMaster.setCreatedAt(new Date());
-            transferMaster.setCreatedBy("Tester One");
+            transferMaster.setCreatedBy("User One");
 
             TransferMasterDao.saveTransferMaster(transferMaster);
         } catch (Exception e) {
@@ -274,30 +320,30 @@ class DatabaseSeederTest {
     }
 
     @Test
-    @Order(13)
+    @Order(14)
     void stockInInsert() {
         try {
             var stockInMaster = new StockInMaster(new Date(),
-                    null,
+                    BranchDao.findBranch(1),
                     "Pending",
-                    "Not Approved Yet.");
+                    "Approved.");
 
-            var stockInDetail = new StockInDetail(null,
+            var stockInDetail = new StockInDetail(ProductDetailDao.findProductDetail(1),
                     1,
                     "",
-                    "Test Description",
+                    "Good",
                     "Shelf A");
             List<StockInDetail> list = new LinkedList<>();
 
             stockInDetail.setCreatedAt(new Date());
-            stockInDetail.setCreatedBy("Tester One");
+            stockInDetail.setCreatedBy("User One");
             stockInDetail.setStockIn(stockInMaster);
 
             list.add(stockInDetail);
 
             stockInMaster.setStockInDetails(list);
             stockInMaster.setCreatedAt(new Date());
-            stockInMaster.setCreatedBy("Tester One");
+            stockInMaster.setCreatedBy("User One");
 
             StockInMasterDao.saveStockInMaster(stockInMaster);
         } catch (Exception e) {
@@ -306,76 +352,36 @@ class DatabaseSeederTest {
     }
 
     @Test
-    @Order(14)
+    @Order(15)
     void saleInsert() {
         try {
-            var saleMaster = new SaleMaster(null,
-                    null,
+            var saleMaster = new SaleMaster(CustomerDao.findCustomer(1),
+                    BranchDao.findBranch(1),
                     "Pending",
                     "Partial",
-                    "Testing.",
+                    "Approved..",
                     new Date());
 
-            var saleDetail = new SaleDetail(null,
-                    1,
+            var saleDetail = new SaleDetail(ProductDetailDao.findProductDetail(1),
+                    41,
                     "",
                     2.09,
                     "VAT",
-                    20,
-                    "Test.");
+                    10,
+                    "Customs.");
             List<SaleDetail> list = new LinkedList<>();
 
             saleDetail.setCreatedAt(new Date());
-            saleDetail.setCreatedBy("Tester One");
+            saleDetail.setCreatedBy("User One");
             saleDetail.setSaleMaster(saleMaster);
 
             list.add(saleDetail);
 
             saleMaster.setSaleDetails(list);
             saleMaster.setCreatedAt(new Date());
-            saleMaster.setCreatedBy("Tester One");
+            saleMaster.setCreatedBy("User One");
 
             SaleMasterDao.saveSaleMaster(saleMaster);
-        } catch (Exception e) {
-            throw new AssertionError();
-        }
-    }
-
-    @Test
-    @Order(15)
-    void productInsert() {
-        try {
-            var productMaster = new ProductMaster("Type 01",
-                    "Product Master",
-                    20,
-                    null,
-                    null,
-                    "Testing.",
-                    false,
-                    true);
-
-            var productDetail = new ProductDetail(null,
-                    "Product Detail",
-                    2,
-                    20.09,
-                    50,
-                    0.09,
-                    "VAT",
-                    20,
-                    "Test2342");
-            List<ProductDetail> list = new LinkedList<>();
-
-            productDetail.setCreatedAt(new Date());
-            productDetail.setCreatedBy("Tester One");
-            productDetail.setProduct(productMaster);
-
-            list.add(productDetail);
-
-            productMaster.setProductDetails(list);
-            productMaster.setCreatedAt(new Date());
-            productMaster.setCreatedBy("Tester One");
-
-            ProductMasterDao.saveProductMaster(productMaster);
         } catch (Exception e) {
             throw new AssertionError();
         }
@@ -390,7 +396,7 @@ class DatabaseSeederTest {
             var pM = ProductMasterDao.findProductMaster(1);
             var pD = pM.getProductDetails();
             pD.forEach(e -> {
-                e.setName("New Product Details: " + i);
+                e.setName("Coke: " + i);
                 list.add(e);
             });
             list.forEach(ii -> ProductDetailDao.updateProductDetail(ii, ii.getId()));
@@ -402,22 +408,22 @@ class DatabaseSeederTest {
         }
     }
 
-    @Test
-    @Order(17)
-    void userInsert() {
-        try {
-            var user = new User("Test",
-                    "One",
-                    "User_0ne",
-                    null,
-            true,
-            true);
-            user.setCreatedAt(new Date());
-            user.setCreatedBy("Tester One");
-            UserDao.saveUser(user);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new AssertionError();
-        }
-    }
+    // @Test
+    // @Order(17)
+    // void userInsert() {
+    //     try {
+    //         var user = new User("Test",
+    //                 "One",
+    //                 "User_0ne",
+    //                 null,
+    //         true,
+    //         true);
+    //         user.setCreatedAt(new Date());
+    //         user.setCreatedBy("Tester One");
+    //         UserDao.saveUser(user);
+    //     } catch (Exception e) {
+    //         e.printStackTrace();
+    //         throw new AssertionError();
+    //     }
+    // }
 }

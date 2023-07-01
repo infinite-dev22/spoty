@@ -30,8 +30,6 @@ public class QuotationDetailViewModel {
   // TODO: Add more fields according to DB design and necessity.
   public static final ObservableList<QuotationDetail> quotationDetailsList =
       FXCollections.observableArrayList();
-  public static final ObservableList<QuotationDetail> quotationDetailTempList =
-      FXCollections.observableArrayList();
   private static final IntegerProperty id = new SimpleIntegerProperty(0);
   private static final ObjectProperty<ProductDetail> product = new SimpleObjectProperty<>();
   private static final ObjectProperty<UnitOfMeasure> saleUnit = new SimpleObjectProperty<>();
@@ -137,7 +135,7 @@ public class QuotationDetailViewModel {
     QuotationDetail quotationDetail =
         new QuotationDetail(
             getProduct(), getProduct().getSaleUnit(), getTax(), getDiscount(), getQuantity());
-    quotationDetailTempList.add(quotationDetail);
+    quotationDetailsList.add(quotationDetail);
     resetProperties();
   }
 
@@ -151,8 +149,8 @@ public class QuotationDetailViewModel {
     quotationDetail.setId(getId());
     quotationDetail.setQuotation(getQuotation());
     QuotationDetailDao.updateQuotationDetail(quotationDetail, getId());
-    quotationDetailTempList.remove((int) getTempId());
-    quotationDetailTempList.add(getTempId(), quotationDetail);
+    quotationDetailsList.remove((int) getTempId());
+    quotationDetailsList.add(getTempId(), quotationDetail);
     resetProperties();
   }
 
@@ -187,7 +185,7 @@ public class QuotationDetailViewModel {
   }
 
   public static void removeQuotationDetail(int index, int tempIndex) {
-    quotationDetailTempList.remove(tempIndex);
+    quotationDetailsList.remove(tempIndex);
     PENDING_DELETES.add(index);
   }
 

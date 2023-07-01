@@ -134,17 +134,17 @@ public class TransferMasterViewModel {
     setStatus("");
     setTotalCost("");
     PENDING_DELETES.clear();
-    TransferDetailViewModel.transferDetailsTempList.clear();
+    TransferDetailViewModel.transferDetailsList.clear();
   }
 
   public static void saveTransferMaster() {
     TransferMaster transferMaster =
         new TransferMaster(
             getDate(), getFromBranch(), getToBranch(), getTotalCost(), getStatus(), getNote());
-    if (!TransferDetailViewModel.transferDetailsTempList.isEmpty()) {
-      TransferDetailViewModel.transferDetailsTempList.forEach(
+    if (!TransferDetailViewModel.transferDetailsList.isEmpty()) {
+      TransferDetailViewModel.transferDetailsList.forEach(
           transferDetail -> transferDetail.setTransfer(transferMaster));
-      transferMaster.setTransferDetails(TransferDetailViewModel.transferDetailsTempList);
+      transferMaster.setTransferDetails(TransferDetailViewModel.transferDetailsList);
     }
     TransferMasterDao.saveTransferMaster(transferMaster);
     resetProperties();
@@ -166,7 +166,8 @@ public class TransferMasterViewModel {
     setTotalCost(String.valueOf(transferMaster.getTotal()));
     setNote(transferMaster.getNotes());
     setStatus(transferMaster.getStatus());
-    TransferDetailViewModel.transferDetailsTempList.addAll(transferMaster.getTransferDetails());
+    TransferDetailViewModel.transferDetailsList.clear();
+    TransferDetailViewModel.transferDetailsList.addAll(transferMaster.getTransferDetails());
     getTransferMasters();
   }
 
@@ -179,7 +180,7 @@ public class TransferMasterViewModel {
     transferMaster.setStatus(getStatus());
     transferMaster.setNotes(getNote());
     TransferDetailViewModel.deleteTransferDetails(PENDING_DELETES);
-    transferMaster.setTransferDetails(TransferDetailViewModel.transferDetailsTempList);
+    transferMaster.setTransferDetails(TransferDetailViewModel.transferDetailsList);
     TransferMasterDao.updateTransferMaster(transferMaster, transferMasterID);
     resetProperties();
     getTransferMasters();

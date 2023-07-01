@@ -119,6 +119,8 @@ public class AdjustmentMasterViewModel {
     setBranch(adjustmentMaster.getBranch());
     setNote(adjustmentMaster.getNotes());
     setDate(adjustmentMaster.getLocaleDate());
+    AdjustmentDetailViewModel.adjustmentDetailsList.clear();
+    adjustmentMaster.getAdjustmentDetails().forEach(System.out::println);
     AdjustmentDetailViewModel.adjustmentDetailsList.addAll(adjustmentMaster.getAdjustmentDetails());
     getAdjustmentMasters();
   }

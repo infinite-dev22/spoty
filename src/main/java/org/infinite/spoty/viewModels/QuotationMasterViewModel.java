@@ -121,16 +121,16 @@ public class QuotationMasterViewModel {
     setStatus("");
     setNote("");
     PENDING_DELETES.clear();
-    QuotationDetailViewModel.quotationDetailTempList.clear();
+    QuotationDetailViewModel.quotationDetailsList.clear();
   }
 
   public static void saveQuotationMaster() {
     QuotationMaster quotationMaster =
         new QuotationMaster(getDate(), getCustomer(), getBranch(), getStatus(), getNote());
-    if (!QuotationDetailViewModel.quotationDetailTempList.isEmpty()) {
-      QuotationDetailViewModel.quotationDetailTempList.forEach(
+    if (!QuotationDetailViewModel.quotationDetailsList.isEmpty()) {
+      QuotationDetailViewModel.quotationDetailsList.forEach(
           quotationDetail -> quotationDetail.setQuotation(quotationMaster));
-      quotationMaster.setQuotationDetails(QuotationDetailViewModel.quotationDetailTempList);
+      quotationMaster.setQuotationDetails(QuotationDetailViewModel.quotationDetailsList);
     }
     QuotationMasterDao.saveQuotationMaster(quotationMaster);
     resetProperties();
@@ -151,7 +151,8 @@ public class QuotationMasterViewModel {
     setBranch(quotationMaster.getBranch());
     setStatus(quotationMaster.getStatus());
     setNote(quotationMaster.getNotes());
-    QuotationDetailViewModel.quotationDetailTempList.addAll(quotationMaster.getQuotationDetails());
+    QuotationDetailViewModel.quotationDetailsList.clear();
+    QuotationDetailViewModel.quotationDetailsList.addAll(quotationMaster.getQuotationDetails());
     getQuotationMasters();
   }
 
@@ -163,7 +164,7 @@ public class QuotationMasterViewModel {
     quotationMaster.setStatus(getStatus());
     quotationMaster.setNotes(getNote());
     QuotationDetailViewModel.deleteQuotationDetails(PENDING_DELETES);
-    quotationMaster.setQuotationDetails(QuotationDetailViewModel.quotationDetailTempList);
+    quotationMaster.setQuotationDetails(QuotationDetailViewModel.quotationDetailsList);
     QuotationMasterDao.updateQuotationMaster(quotationMaster, index);
     resetProperties();
     getQuotationMasters();

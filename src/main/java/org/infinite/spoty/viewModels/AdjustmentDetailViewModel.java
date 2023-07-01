@@ -113,7 +113,7 @@ public class AdjustmentDetailViewModel {
   public static void updateAdjustmentDetail(int index) {
     AdjustmentDetail adjustmentDetail = adjustmentDetailsList.get(getTempId());
 //    AdjustmentDetail adjustmentDetail = AdjustmentDetailDao.findAdjustmentDetail(index);
-    adjustmentDetail.setProductDetail(getProduct());
+    adjustmentDetail.setProduct(getProduct());
     adjustmentDetail.setQuantity(getQuantity());
     adjustmentDetail.setAdjustmentType(getAdjustmentType());
 //    adjustmentDetailsList.remove((int) getTempId());
@@ -130,7 +130,7 @@ public class AdjustmentDetailViewModel {
   public static void getItem(int index, int tempIndex) {
     AdjustmentDetail adjustmentDetail = AdjustmentDetailDao.findAdjustmentDetail(index);
     setTempId(tempIndex);
-    setProduct(adjustmentDetail.getProductDetail());
+    setProduct(adjustmentDetail.getProduct());
     setQuantity(String.valueOf(adjustmentDetail.getQuantity()));
     setAdjustmentType(adjustmentDetail.getAdjustmentType());
   }
