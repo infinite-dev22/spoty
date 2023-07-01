@@ -19,9 +19,6 @@ module org.infinite.spoty {
   requires java.sql;
   requires java.logging;
   requires java.naming;
-  requires org.apache.derby.tools;
-  requires org.apache.derby.commons;
-  requires org.apache.derby.engine;
   requires org.apache.commons.compress;
   requires org.kordamp.ikonli.javafx;
   requires org.jetbrains.annotations;
