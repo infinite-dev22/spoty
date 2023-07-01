@@ -213,8 +213,7 @@ public class QuotationMasterFormController implements Initializable {
         e -> {
           QuotationDetailViewModel.removeQuotationDetail(
               obj.getData().getId(),
-              QuotationDetailViewModel.quotationDetailTempList.indexOf(obj.getData()));
-          QuotationDetailViewModel.getQuotationDetails();
+              QuotationDetailViewModel.quotationDetailsList.indexOf(obj.getData()));
           e.consume();
         });
     // Edit
@@ -222,7 +221,7 @@ public class QuotationMasterFormController implements Initializable {
         e -> {
           QuotationDetailViewModel.getItem(
               obj.getData().getId(),
-              QuotationDetailViewModel.quotationDetailTempList.indexOf(obj.getData()));
+              QuotationDetailViewModel.quotationDetailsList.indexOf(obj.getData()));
           dialog.showAndWait();
           e.consume();
         });
@@ -247,7 +246,7 @@ public class QuotationMasterFormController implements Initializable {
     SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
 
     if (!quotationDetailTable.isDisabled()
-        && QuotationDetailViewModel.quotationDetailTempList.isEmpty()) {
+        && QuotationDetailViewModel.quotationDetailsList.isEmpty()) {
       SimpleNotification notification =
           new SimpleNotification.NotificationBuilder("Table can't be Empty")
               .duration(NotificationDuration.SHORT)

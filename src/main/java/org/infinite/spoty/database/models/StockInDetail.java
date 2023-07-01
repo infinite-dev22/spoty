@@ -87,7 +87,15 @@ public class StockInDetail implements Serializable {
   }
 
   public String getProductDetailName() {
-    return (product != null) ? product.getProduct().getName() + " " + product.getSaleUnit() : null;
+    return (product != null)
+        ? product.getProduct().getBrand().getName()
+            + " "
+            + product.getProduct().getName()
+            + " "
+            + product.getName()
+            + " "
+            + product.getUnit().getName()
+        : null;
   }
 
   public int getQuantity() {

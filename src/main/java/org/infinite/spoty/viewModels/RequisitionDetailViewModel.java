@@ -29,8 +29,6 @@ import org.infinite.spoty.database.models.RequisitionMaster;
 public class RequisitionDetailViewModel {
   public static final ObservableList<RequisitionDetail> requisitionDetailList =
       FXCollections.observableArrayList();
-  public static final ObservableList<RequisitionDetail> requisitionDetailTempList =
-      FXCollections.observableArrayList();
   private static final IntegerProperty id = new SimpleIntegerProperty(0);
   private static final ObjectProperty<ProductDetail> product = new SimpleObjectProperty<>();
   private static final ObjectProperty<RequisitionMaster> requisition = new SimpleObjectProperty<>();
@@ -110,7 +108,7 @@ public class RequisitionDetailViewModel {
     RequisitionDetail requisitionDetail =
         new RequisitionDetail(
             getProduct(), getRequisition(), Integer.parseInt(getQuantity()), getDescription());
-    requisitionDetailTempList.add(requisitionDetail);
+    requisitionDetailList.add(requisitionDetail);
     resetProperties();
   }
 
@@ -122,11 +120,11 @@ public class RequisitionDetailViewModel {
 
   public static void updateRequisitionDetail(int index) {
     RequisitionDetail requisitionDetail = RequisitionDetailDao.findRequisitionDetail(index);
-    requisitionDetail.setProductDetail(getProduct());
+    requisitionDetail.setProduct(getProduct());
     requisitionDetail.setQuantity(Integer.parseInt(getQuantity()));
     requisitionDetail.setDescription(getDescription());
-    requisitionDetailTempList.remove((int) getTempId());
-    requisitionDetailTempList.add(getTempId(), requisitionDetail);
+    requisitionDetailList.remove((int) getTempId());
+    requisitionDetailList.add(getTempId(), requisitionDetail);
     resetProperties();
   }
 
@@ -134,14 +132,14 @@ public class RequisitionDetailViewModel {
     RequisitionDetail requisitionDetail = RequisitionDetailDao.findRequisitionDetail(index);
     setTempId(tempIndex);
     setId(requisitionDetail.getId());
-    setProduct(requisitionDetail.getProductDetail());
+    setProduct(requisitionDetail.getProduct());
     setQuantity(String.valueOf(requisitionDetail.getQuantity()));
     setDescription(requisitionDetail.getDescription());
   }
 
   public static void updateItem(int index) {
     RequisitionDetail requisitionDetail = RequisitionDetailDao.findRequisitionDetail(index);
-    requisitionDetail.setProductDetail(getProduct());
+    requisitionDetail.setProduct(getProduct());
     requisitionDetail.setQuantity(Integer.parseInt(getQuantity()));
     requisitionDetail.setDescription(getDescription());
     RequisitionDetailDao.updateRequisitionDetail(requisitionDetail, index);
@@ -149,7 +147,7 @@ public class RequisitionDetailViewModel {
   }
 
   public static void removeRequisitionDetail(int index, int tempIndex) {
-    requisitionDetailTempList.remove(tempIndex);
+    requisitionDetailList.remove(tempIndex);
     PENDING_DELETES.add(index);
   }
 

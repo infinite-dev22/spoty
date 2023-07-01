@@ -195,7 +195,7 @@ public class RequisitionMasterViewModel {
     setStatus("");
     setTotalCost("");
     PENDING_DELETES.clear();
-    RequisitionDetailViewModel.requisitionDetailTempList.clear();
+    RequisitionDetailViewModel.requisitionDetailList.clear();
   }
 
   public static void saveRequisitionMaster() {
@@ -211,10 +211,10 @@ public class RequisitionMasterViewModel {
             getNote(),
             getStatus(),
             getTotalCost());
-    if (!RequisitionDetailViewModel.requisitionDetailTempList.isEmpty()) {
-      RequisitionDetailViewModel.requisitionDetailTempList.forEach(
+    if (!RequisitionDetailViewModel.requisitionDetailList.isEmpty()) {
+      RequisitionDetailViewModel.requisitionDetailList.forEach(
           requisitionDetail -> requisitionDetail.setRequisition(requisitionMaster));
-      requisitionMaster.setRequisitionDetails(RequisitionDetailViewModel.requisitionDetailTempList);
+      requisitionMaster.setRequisitionDetails(RequisitionDetailViewModel.requisitionDetailList);
     }
     RequisitionMasterDao.saveRequisitionMaster(requisitionMaster);
     resetProperties();
@@ -239,7 +239,8 @@ public class RequisitionMasterViewModel {
     setStatus(requisitionMaster.getStatus());
     setTotalCost(String.valueOf(requisitionMaster.getTotalCost()));
     setDate(requisitionMaster.getLocaleDate());
-    RequisitionDetailViewModel.requisitionDetailTempList.addAll(
+    RequisitionDetailViewModel.requisitionDetailList.clear();
+    RequisitionDetailViewModel.requisitionDetailList.addAll(
         requisitionMaster.getRequisitionDetails());
     getRequisitionMasters();
   }
@@ -257,7 +258,7 @@ public class RequisitionMasterViewModel {
     requisitionMaster.setStatus(getStatus());
     requisitionMaster.setTotalCost(getTotalCost());
     RequisitionDetailViewModel.deleteRequisitionDetails(PENDING_DELETES);
-    requisitionMaster.setRequisitionDetails(RequisitionDetailViewModel.requisitionDetailTempList);
+    requisitionMaster.setRequisitionDetails(RequisitionDetailViewModel.requisitionDetailList);
     RequisitionMasterDao.updateRequisitionMaster(requisitionMaster, index);
     resetProperties();
     getRequisitionMasters();

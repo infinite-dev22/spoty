@@ -120,15 +120,15 @@ public class StockInMasterViewModel {
     setStatus("");
     setTotalCost("");
     PENDING_DELETES.clear();
-    StockInDetailViewModel.stockInDetailsTempList.clear();
+    StockInDetailViewModel.stockInDetailsList.clear();
   }
 
   public static void saveStockInMaster() {
     StockInMaster stockInMaster = new StockInMaster(getDate(), getBranch(), getStatus(), getNote());
-    if (!StockInDetailViewModel.stockInDetailsTempList.isEmpty()) {
-      StockInDetailViewModel.stockInDetailsTempList.forEach(
+    if (!StockInDetailViewModel.stockInDetailsList.isEmpty()) {
+      StockInDetailViewModel.stockInDetailsList.forEach(
           stockInDetail -> stockInDetail.setStockIn(stockInMaster));
-      stockInMaster.setStockInDetails(StockInDetailViewModel.stockInDetailsTempList);
+      stockInMaster.setStockInDetails(StockInDetailViewModel.stockInDetailsList);
     }
     StockInMasterDao.saveStockInMaster(stockInMaster);
     resetProperties();
@@ -149,7 +149,8 @@ public class StockInMasterViewModel {
     setTotalCost(String.valueOf(stockInMaster.getTotalCost()));
     setStatus(stockInMaster.getStatus());
     setNote(stockInMaster.getNotes());
-    StockInDetailViewModel.stockInDetailsTempList.addAll(stockInMaster.getStockInDetails());
+    StockInDetailViewModel.stockInDetailsList.clear();
+    StockInDetailViewModel.stockInDetailsList.addAll(stockInMaster.getStockInDetails());
     getStockInMasters();
   }
 
@@ -160,7 +161,7 @@ public class StockInMasterViewModel {
     stockInMaster.setStatus(getStatus());
     stockInMaster.setNotes(getNote());
     StockInDetailViewModel.deleteStockInDetails(PENDING_DELETES);
-    stockInMaster.setStockInDetails(StockInDetailViewModel.stockInDetailsTempList);
+    stockInMaster.setStockInDetails(StockInDetailViewModel.stockInDetailsList);
     StockInMasterDao.updateStockInMaster(stockInMaster, index);
     resetProperties();
     getStockInMasters();

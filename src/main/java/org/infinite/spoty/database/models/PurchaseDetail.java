@@ -36,7 +36,10 @@ public class PurchaseDetail implements Serializable {
   private String taxType;
   private double discount;
   private String discountType;
-  @ManyToOne(optional = false) private ProductDetail product;
+
+  @ManyToOne(optional = false)
+  private ProductDetail product;
+
   private String serialNumber;
   private double total;
   private int quantity;
@@ -127,8 +130,15 @@ public class PurchaseDetail implements Serializable {
   }
 
   public String getProductName() {
-    if (product != null) return product.getProduct().getName() + " " + product.getName();
-    else return null;
+    return (product != null)
+        ? product.getProduct().getBrand().getName()
+            + " "
+            + product.getProduct().getName()
+            + " "
+            + product.getName()
+            + " "
+            + product.getUnit().getName()
+        : null;
   }
 
   public String getSerialNumber() {

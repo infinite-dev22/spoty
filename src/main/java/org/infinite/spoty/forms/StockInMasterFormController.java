@@ -136,7 +136,7 @@ public class StockInMasterFormController implements Initializable {
             new StringFilter<>("Name", StockInDetail::getProductDetailName),
             new IntegerFilter<>("Quantity", StockInDetail::getQuantity));
     getStockInDetailTable();
-    stockInDetailTable.setItems(StockInDetailViewModel.getStockInDetails());
+    stockInDetailTable.setItems(StockInDetailViewModel.stockInDetailsList);
   }
 
   private void getStockInDetailTable() {
@@ -172,8 +172,7 @@ public class StockInMasterFormController implements Initializable {
         e -> {
           StockInDetailViewModel.removeStockInDetail(
               obj.getData().getId(),
-              StockInDetailViewModel.stockInDetailsTempList.indexOf(obj.getData()));
-          StockInDetailViewModel.getStockInDetails();
+              StockInDetailViewModel.stockInDetailsList.indexOf(obj.getData()));
           e.consume();
         });
     // Edit
@@ -181,7 +180,7 @@ public class StockInMasterFormController implements Initializable {
         e -> {
           StockInDetailViewModel.getItem(
               obj.getData().getId(),
-              StockInDetailViewModel.stockInDetailsTempList.indexOf(obj.getData()));
+              StockInDetailViewModel.stockInDetailsList.indexOf(obj.getData()));
           dialog.showAndWait();
           e.consume();
         });
@@ -210,7 +209,7 @@ public class StockInMasterFormController implements Initializable {
     SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
 
     if (!stockInDetailTable.isDisabled()
-        && StockInDetailViewModel.stockInDetailsTempList.isEmpty()) {
+        && StockInDetailViewModel.stockInDetailsList.isEmpty()) {
       SimpleNotification notification =
           new SimpleNotification.NotificationBuilder("Table can't be Empty")
               .duration(NotificationDuration.SHORT)

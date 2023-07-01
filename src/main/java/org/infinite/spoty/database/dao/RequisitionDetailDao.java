@@ -46,7 +46,7 @@ public class RequisitionDetailDao {
       transaction = session.beginTransaction();
       requisitionDetail = session.get(RequisitionDetail.class, id);
       requisitionDetail.setRequisition(obj.getRequisition());
-      requisitionDetail.setProductDetail(obj.getProductDetail());
+      requisitionDetail.setProduct(obj.getProduct());
       requisitionDetail.setDescription(obj.getDescription());
       requisitionDetail.setQuantity(obj.getQuantity());
       requisitionDetail.setUpdatedAt(new Date());

@@ -198,7 +198,7 @@ public class ProductMasterFormController implements Initializable {
             new StringFilter<>("Unit Of Measure", ProductDetail::getUnitName),
             new StringFilter<>("Serial", ProductDetail::getSerialNumber));
     getProductDetailTable();
-    productDetailTable.setItems(ProductDetailViewModel.getProductDetails());
+    productDetailTable.setItems(ProductDetailViewModel.productDetailsList);
   }
 
   private void getProductDetailTable() {
@@ -234,8 +234,7 @@ public class ProductMasterFormController implements Initializable {
         e -> {
           ProductDetailViewModel.removeProductDetail(
               obj.getData().getId(),
-              ProductDetailViewModel.productDetailTempList.indexOf(obj.getData()));
-          ProductDetailViewModel.getProductDetails();
+              ProductDetailViewModel.productDetailsList.indexOf(obj.getData()));
           e.consume();
         });
     // Edit
@@ -243,7 +242,7 @@ public class ProductMasterFormController implements Initializable {
         e -> {
           ProductDetailViewModel.getItem(
               obj.getData().getId(),
-              ProductDetailViewModel.productDetailTempList.indexOf(obj.getData()));
+              ProductDetailViewModel.productDetailsList.indexOf(obj.getData()));
           dialog.showAndWait();
           e.consume();
         });
@@ -272,7 +271,7 @@ public class ProductMasterFormController implements Initializable {
     SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
 
     if (!productDetailTable.isDisabled()
-        && ProductDetailViewModel.productDetailTempList.isEmpty()) {
+        && ProductDetailViewModel.productDetailsList.isEmpty()) {
       SimpleNotification notification =
           new SimpleNotification.NotificationBuilder("Table can't be Empty")
               .duration(NotificationDuration.SHORT)

@@ -165,7 +165,7 @@ public class PurchaseMasterFormController implements Initializable {
     SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
 
     if (!purchaseDetailTable.isDisabled()
-        && PurchaseDetailViewModel.purchaseDetailTempList.isEmpty()) {
+        && PurchaseDetailViewModel.purchaseDetailList.isEmpty()) {
       SimpleNotification notification =
           new SimpleNotification.NotificationBuilder("Table can't be Empty")
               .duration(NotificationDuration.SHORT)
@@ -294,8 +294,7 @@ public class PurchaseMasterFormController implements Initializable {
         e -> {
           PurchaseDetailViewModel.removePurchaseDetail(
               obj.getData().getId(),
-              PurchaseDetailViewModel.purchaseDetailTempList.indexOf(obj.getData()));
-          PurchaseDetailViewModel.getPurchaseDetails();
+              PurchaseDetailViewModel.purchaseDetailList.indexOf(obj.getData()));
           e.consume();
         });
     // Edit
@@ -303,8 +302,7 @@ public class PurchaseMasterFormController implements Initializable {
         e -> {
           PurchaseDetailViewModel.getItem(
               obj.getData().getId(),
-              PurchaseDetailViewModel.purchaseDetailTempList.indexOf(obj.getData()));
-          System.out.println("Purchase Detail ID: " + PurchaseDetailViewModel.getId());
+              PurchaseDetailViewModel.purchaseDetailList.indexOf(obj.getData()));
           dialog.showAndWait();
           e.consume();
         });

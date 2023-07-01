@@ -106,8 +106,15 @@ public class SaleDetail implements Serializable {
   }
 
   public String getProductName() {
-    if (product != null) return product.getProduct().getName() + " " + product.getName();
-    else return null;
+    return (product != null)
+        ? product.getProduct().getBrand().getName()
+            + " "
+            + product.getProduct().getName()
+            + " "
+            + product.getName()
+            + " "
+            + product.getUnit().getName()
+        : null;
   }
 
   public String getSerialNumber() {

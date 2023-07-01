@@ -125,10 +125,10 @@ public class PurchaseReturnMasterViewModel {
   //                getStatus(),
   //                getNote());
   //
-  // purchaseReturnMaster.setPurchaseReturnDetails(PurchaseReturnDetailViewModel.purchaseReturnDetailsTempList);
+  // purchaseReturnMaster.setPurchaseReturnDetails(PurchaseReturnDetailViewModel.purchaseReturnDetailsList);
   //        PurchaseReturnMasterDao.savePurchaseReturnMaster(purchaseReturnMaster);
   //        resetProperties();
-  //        PurchaseReturnDetailViewModel.purchaseReturnDetailsTempList.clear();
+  //        PurchaseReturnDetailViewModel.purchaseReturnDetailsList.clear();
   //        getPurchaseReturnMasters();
   //    }
 

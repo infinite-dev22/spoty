@@ -135,17 +135,17 @@ public class SaleMasterViewModel {
     setSaleStatus("");
     setNote("");
     PENDING_DELETES.clear();
-    SaleDetailViewModel.saleDetailTempList.clear();
+    SaleDetailViewModel.saleDetailList.clear();
   }
 
   public static void saveSaleMaster() {
     SaleMaster saleMaster =
         new SaleMaster(
             getCustomer(), getBranch(), getSaleStatus(), getPayStatus(), getNote(), getDate());
-    if (!SaleDetailViewModel.saleDetailTempList.isEmpty()) {
-      SaleDetailViewModel.saleDetailTempList.forEach(
+    if (!SaleDetailViewModel.saleDetailList.isEmpty()) {
+      SaleDetailViewModel.saleDetailList.forEach(
           saleDetail -> saleDetail.setSaleMaster(saleMaster));
-      saleMaster.setSaleDetails(SaleDetailViewModel.saleDetailTempList);
+      saleMaster.setSaleDetails(SaleDetailViewModel.saleDetailList);
     }
     SaleMasterDao.saveSaleMaster(saleMaster);
     resetProperties();
@@ -167,7 +167,8 @@ public class SaleMasterViewModel {
     setNote(saleMaster.getNotes());
     setSaleStatus(saleMaster.getSaleStatus());
     setPayStatus(saleMaster.getPaymentStatus());
-    SaleDetailViewModel.saleDetailTempList.addAll(saleMaster.getSaleDetails());
+    SaleDetailViewModel.saleDetailList.clear();
+    SaleDetailViewModel.saleDetailList.addAll(saleMaster.getSaleDetails());
     getSaleMasters();
   }
 
@@ -180,7 +181,7 @@ public class SaleMasterViewModel {
     saleMaster.setNotes(getNote());
     saleMaster.setDate(getDate());
     SaleDetailViewModel.deleteSaleDetails(PENDING_DELETES);
-    saleMaster.setSaleDetails(SaleDetailViewModel.saleDetailTempList);
+    saleMaster.setSaleDetails(SaleDetailViewModel.saleDetailList);
     SaleMasterDao.updateSaleMaster(saleMaster, index);
     resetProperties();
     getSaleMasters();

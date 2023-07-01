@@ -46,7 +46,7 @@ public class AdjustmentDetailDao {
       transaction = session.beginTransaction();
       adjustmentDetail = session.get(AdjustmentDetail.class, id);
       adjustmentDetail.setAdjustment(obj.getAdjustment());
-      adjustmentDetail.setProductDetail(obj.getProductDetail());
+      adjustmentDetail.setProduct(obj.getProduct());
       adjustmentDetail.setAdjustmentType(obj.getAdjustmentType());
       adjustmentDetail.setQuantity(obj.getQuantity());
       adjustmentDetail.setUpdatedAt(new Date());

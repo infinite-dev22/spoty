@@ -153,7 +153,6 @@ public class AdjustmentMasterFormController implements Initializable {
             new IntegerFilter<>("Quantity", AdjustmentDetail::getQuantity),
             new StringFilter<>("Adjustment Type", AdjustmentDetail::getAdjustmentType));
     getAdjustmentDetailTable();
-    AdjustmentDetailViewModel.getAdjustmentDetails();
     adjustmentDetailTable.setItems(AdjustmentDetailViewModel.adjustmentDetailsList);
   }
 
@@ -191,7 +190,6 @@ public class AdjustmentMasterFormController implements Initializable {
           AdjustmentDetailViewModel.removeAdjustmentDetail(
               obj.getData().getId(),
               AdjustmentDetailViewModel.adjustmentDetailsList.indexOf(obj.getData()));
-          AdjustmentDetailViewModel.getAdjustmentDetails();
           e.consume();
         });
     // Edit

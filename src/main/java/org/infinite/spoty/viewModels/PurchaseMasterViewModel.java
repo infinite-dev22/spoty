@@ -121,16 +121,16 @@ public class PurchaseMasterViewModel {
     setStatus("");
     setNote("");
     PENDING_DELETES.clear();
-    PurchaseDetailViewModel.purchaseDetailTempList.clear();
+    PurchaseDetailViewModel.purchaseDetailList.clear();
   }
 
   public static void savePurchaseMaster() {
     PurchaseMaster purchaseMaster =
         new PurchaseMaster(getSupplier(), getBranch(), getStatus(), getNote(), getDate());
-    if (!PurchaseDetailViewModel.purchaseDetailTempList.isEmpty()) {
-      PurchaseDetailViewModel.purchaseDetailTempList.forEach(
+    if (!PurchaseDetailViewModel.purchaseDetailList.isEmpty()) {
+      PurchaseDetailViewModel.purchaseDetailList.forEach(
           purchaseDetail -> purchaseDetail.setPurchase(purchaseMaster));
-      purchaseMaster.setPurchaseDetails(PurchaseDetailViewModel.purchaseDetailTempList);
+      purchaseMaster.setPurchaseDetails(PurchaseDetailViewModel.purchaseDetailList);
     }
     PurchaseMasterDao.savePurchaseMaster(purchaseMaster);
     resetProperties();
@@ -151,7 +151,8 @@ public class PurchaseMasterViewModel {
     setBranch(purchaseMaster.getBranch());
     setStatus(purchaseMaster.getStatus());
     setNote(purchaseMaster.getNotes());
-    PurchaseDetailViewModel.purchaseDetailTempList.addAll(purchaseMaster.getPurchaseDetails());
+    PurchaseDetailViewModel.purchaseDetailList.clear();
+    PurchaseDetailViewModel.purchaseDetailList.addAll(purchaseMaster.getPurchaseDetails());
     getPurchaseMasters();
   }
 
@@ -163,7 +164,7 @@ public class PurchaseMasterViewModel {
     purchaseMaster.setNotes(getNote());
     purchaseMaster.setDate(getDate());
     PurchaseDetailViewModel.deletePurchaseDetails(PENDING_DELETES);
-    purchaseMaster.setPurchaseDetails(PurchaseDetailViewModel.purchaseDetailTempList);
+    purchaseMaster.setPurchaseDetails(PurchaseDetailViewModel.purchaseDetailList);
     PurchaseMasterDao.updatePurchaseMaster(purchaseMaster, index);
     resetProperties();
     getPurchaseMasters();

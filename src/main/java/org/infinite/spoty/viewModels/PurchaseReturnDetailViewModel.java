@@ -25,8 +25,6 @@ import org.infinite.spoty.database.models.PurchaseReturnMaster;
 public class PurchaseReturnDetailViewModel {
   public static final ObservableList<PurchaseReturnDetail> purchaseReturnDetailsList =
       FXCollections.observableArrayList();
-  public static final ObservableList<PurchaseReturnDetail> purchaseReturnDetailsTempList =
-      FXCollections.observableArrayList();
   private static final IntegerProperty id = new SimpleIntegerProperty();
   private static final ObjectProperty<ProductDetail> product = new SimpleObjectProperty<>();
   private static final ObjectProperty<PurchaseReturnMaster> purchaseReturn =

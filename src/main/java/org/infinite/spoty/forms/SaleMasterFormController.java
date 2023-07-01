@@ -166,7 +166,7 @@ public class SaleMasterFormController implements Initializable {
   public void saveBtnClicked() {
     SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
 
-    if (!saleDetailTable.isDisabled() && SaleDetailViewModel.saleDetailTempList.isEmpty()) {
+    if (!saleDetailTable.isDisabled() && SaleDetailViewModel.saleDetailList.isEmpty()) {
       SimpleNotification notification =
           new SimpleNotification.NotificationBuilder("Table can't be Empty")
               .duration(NotificationDuration.SHORT)
@@ -278,7 +278,7 @@ public class SaleMasterFormController implements Initializable {
             new DoubleFilter<>("Discount", SaleDetail::getDiscount));
     styleTable();
     // Populate table.
-    saleDetailTable.setItems(SaleDetailViewModel.getSaleDetails());
+    saleDetailTable.setItems(SaleDetailViewModel.saleDetailList);
   }
 
   private void styleTable() {
@@ -313,15 +313,14 @@ public class SaleMasterFormController implements Initializable {
     delete.setOnAction(
         e -> {
           SaleDetailViewModel.removeSaleDetail(
-              obj.getData().getId(), SaleDetailViewModel.saleDetailTempList.indexOf(obj.getData()));
-          SaleDetailViewModel.getSaleDetails();
+              obj.getData().getId(), SaleDetailViewModel.saleDetailList.indexOf(obj.getData()));
           e.consume();
         });
     // Edit
     edit.setOnAction(
         e -> {
           SaleDetailViewModel.getItem(
-              obj.getData().getId(), SaleDetailViewModel.saleDetailTempList.indexOf(obj.getData()));
+              obj.getData().getId(), SaleDetailViewModel.saleDetailList.indexOf(obj.getData()));
           dialog.showAndWait();
           e.consume();
         });

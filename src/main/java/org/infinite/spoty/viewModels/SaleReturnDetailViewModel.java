@@ -25,8 +25,6 @@ import org.infinite.spoty.database.models.SaleReturnMaster;
 public class SaleReturnDetailViewModel {
   public static final ObservableList<SaleReturnDetail> SaleReturnDetailsList =
       FXCollections.observableArrayList();
-  public static final ObservableList<SaleReturnDetail> SaleReturnDetailsTempList =
-      FXCollections.observableArrayList();
   private static final IntegerProperty id = new SimpleIntegerProperty();
   private static final ObjectProperty<ProductDetail> product = new SimpleObjectProperty<>();
   private static final ObjectProperty<SaleReturnMaster> SaleReturn = new SimpleObjectProperty<>();
@@ -134,7 +132,7 @@ public class SaleReturnDetailViewModel {
   //                getSerial(),
   //                getDescription(),
   //                getLocation());
-  //        SaleReturnDetailsTempList.add(SaleReturnDetail);
+  //        SaleReturnDetailsList.add(SaleReturnDetail);
   //        resetProperties();
   //    }
 
