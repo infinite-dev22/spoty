@@ -14,9 +14,6 @@
 
 package org.infinite.spoty.database.util;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Properties;
 import java.util.logging.Level;
 import org.hibernate.SessionFactory;
@@ -31,53 +28,28 @@ public class HibernateUtil {
 
   public static SessionFactory getSessionFactory() {
     java.util.logging.Logger.getLogger("org.hibernate").setLevel(Level.OFF);
-    try {
-      Files.createDirectories(
-          Paths.get(
-              System.getProperty("user.home") + "/.config/ZenmartERP/datastores/databases/derby"));
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+
     if (sessionFactory == null) {
       try {
         Configuration configuration = new Configuration();
 
         // Hibernate Settings
         Properties settings = new Properties();
-        settings.put(Environment.USER, "admin");
-        settings.put(Environment.PASS, "password");
-        settings.put(Environment.DIALECT, "org.hibernate.dialect.DerbyDialect");
-        settings.put(Environment.DRIVER, "org.apache.derby.jdbc.EmbeddedDriver");
-        settings.put(Environment.SHOW_SQL, "true");
+        settings.put(Environment.USER, "root");
+        settings.put(Environment.PASS, "root");
+        settings.put(Environment.DIALECT, "org.hibernate.dialect.MySQLDialect");
+        settings.put(Environment.DRIVER, "com.mysql.cj.jdbc.Driver");
+        settings.put(
+            Environment.URL,
+            "jdbc:mysql://localhost:3306/zen_mart?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false");
+        settings.put(Environment.SHOW_SQL, "false");
         settings.put(Environment.CURRENT_SESSION_CONTEXT_CLASS, "thread");
         settings.put(Environment.HBM2DDL_AUTO, "update");
         settings.put(Environment.POOL_SIZE, "20");
         settings.put(Environment.C3P0_MAX_SIZE, "30");
         settings.put(Environment.C3P0_MIN_SIZE, "5");
         settings.put(Environment.C3P0_IDLE_TEST_PERIOD, "-1");
-        //                settings.put(Environment.AUTOCOMMIT, "true");
         settings.put(Environment.ENABLE_LAZY_LOAD_NO_TRANS, "true");
-        if (System.getProperty("os.name").contains("Linux")) {
-          settings.put(
-              Environment.URL,
-              "jdbc:derby:"
-                  + System.getProperty("user.home")
-                  + "/.config/ZenmartERP/datastores/databases/derby/database;create=true");
-        }
-        if (System.getProperty("os.name").contains("mac")) {
-          settings.put(
-              Environment.URL,
-              "jdbc:derby:"
-                  + System.getProperty("user.home")
-                  + "/.config/ZenmartERP/database;create=true");
-        }
-        if (System.getProperty("os.name").contains("Windows")) {
-          settings.put(
-              Environment.URL,
-              "jdbc:derby:"
-                  + System.getenv("APPDATA")
-                  + "/datastores/databases/derby/database;create=true");
-        }
         // create-drop
         // create-only
         // validate
