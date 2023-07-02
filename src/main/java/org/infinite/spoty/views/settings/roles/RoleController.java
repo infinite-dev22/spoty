@@ -64,6 +64,9 @@ public class RoleController implements Initializable {
     roleMasterDescription.setRowCellFactory(
         roleMaster -> new MFXTableRowCell<>(Role::getDescription));
 
+    roleMasterRole.prefWidthProperty().bind(roleMasterTable.widthProperty().multiply(.5));
+    roleMasterDescription.prefWidthProperty().bind(roleMasterTable.widthProperty().multiply(.5));
+
     roleMasterTable.getTableColumns().addAll(roleMasterRole, roleMasterDescription);
     roleMasterTable
         .getFilters()
