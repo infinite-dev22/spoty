@@ -19,23 +19,19 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
-<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:id="roleSettings" styleClass="card"
-            stylesheets="@../styles/Common.css" xmlns="http://javafx.com/javafx/19"
-            fx:controller="org.infinite.spoty.forms.RoleSettingsFormController">
+
+<BorderPane fx:id="roleSettingsHolder" styleClass="card" stylesheets="@../styles/Common.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.infinite.spoty.forms.RoleSettingsFormController">
     <center>
         <AnchorPane BorderPane.alignment="CENTER">
-            <MFXStepper fx:id="roleSettingsStepper" cache="true" cacheHint="SPEED" layoutX="32.0" layoutY="6.0"
-                        AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                        AnchorPane.topAnchor="0.0"/>
+            <MFXStepper fx:id="roleSettingsStepper" cache="true" cacheHint="SPEED" layoutX="32.0" layoutY="6.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
             <padding>
-                <Insets bottom="20.0" left="20.0" right="20.0"/>
+                <Insets bottom="20.0" />
             </padding>
         </AnchorPane>
     </center>
     <top>
         <AnchorPane BorderPane.alignment="CENTER">
-            <MFXFontIcon description="fas-circle" onMouseClicked="#closeRoleStepper" styleClass="close-icon"
-                         AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="8.0"/>
+            <MFXFontIcon description="fas-circle" onMouseClicked="#closeRoleStepper" styleClass="close-icon" AnchorPane.bottomAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="8.0" />
         </AnchorPane>
     </top>
 </BorderPane>

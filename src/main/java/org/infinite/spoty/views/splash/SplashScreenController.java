@@ -50,7 +50,6 @@ public class SplashScreenController implements Initializable {
     Platform.runLater(
         () -> {
           try {
-            Thread.sleep(5000);
             CSSFX.start();
             Stage stage = new Stage();
             setControllers(stage);
@@ -68,7 +67,7 @@ public class SplashScreenController implements Initializable {
             stage.setTitle(Labels.APP_NAME);
             stage.show();
             SimpleNotificationHolder.setNotificationOwner(stage);
-          } catch (IOException | InterruptedException e) {
+          } catch (IOException e) {
             throw new RuntimeException(e);
           }
         });

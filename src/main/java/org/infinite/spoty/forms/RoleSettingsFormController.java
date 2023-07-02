@@ -50,13 +50,13 @@ public class RoleSettingsFormController implements Initializable {
   private static RoleSettingsFormController instance;
   private final MFXTextField roleNameInputField;
   private final MFXTextField roleDescriptionInputField;
-  private final MFXCheckBox dashboardRoleCheckbox;
+  private final MFXCheckBox dashboardCheckbox;
+  private final MFXCheckBox accessPOSCheckbox;
   // Users
   private final MFXCheckBox viewUsersCheckbox;
   private final MFXCheckBox editUsersCheckbox;
   private final MFXCheckBox createUserCheckbox;
   private final MFXCheckBox deleteUserCheckbox;
-  private final MFXCheckBox viewAllUserRecordsCheckbox;
   // User Permissions
   private final MFXCheckBox viewUserPermissionsCheckbox;
   private final MFXCheckBox editUserPermissionsCheckbox;
@@ -68,7 +68,7 @@ public class RoleSettingsFormController implements Initializable {
   private final MFXCheckBox createProductCheckbox;
   private final MFXCheckBox deleteProductCheckbox;
   private final MFXCheckBox productBarcodesCheckbox;
-  private final MFXCheckBox productCategorysCheckbox;
+  private final MFXCheckBox productCategoriesCheckbox;
   private final MFXCheckBox productUnitsCheckbox;
   private final MFXCheckBox productImportsCheckbox;
   private final MFXCheckBox productBrandsCheckbox;
@@ -92,7 +92,6 @@ public class RoleSettingsFormController implements Initializable {
   private final MFXCheckBox editSalesCheckbox;
   private final MFXCheckBox createSaleCheckbox;
   private final MFXCheckBox deleteSaleCheckbox;
-  private final MFXCheckBox accessPOSCheckbox;
   // Expenses
   private final MFXCheckBox viewPurchasesCheckbox;
   private final MFXCheckBox editPurchasesCheckbox;
@@ -180,21 +179,23 @@ public class RoleSettingsFormController implements Initializable {
   private final MFXCheckBox viewPOSSettingsCheckbox;
   private final MFXCheckBox viewCurrencyCheckbox;
   private final MFXCheckBox viewBranchCheckbox;
+  private final GridPane roleSettings = new GridPane();
+  private final MFXScrollPane roleSettingsScrollPane = new MFXScrollPane();
   private final MFXCheckBox viewBackupCheckbox;
-  @FXML private BorderPane roleSettings;
+  @FXML private BorderPane roleSettingsHolder;
   @FXML private MFXStepper roleSettingsStepper;
 
   public RoleSettingsFormController() {
     roleNameInputField = new MFXTextField();
     roleDescriptionInputField = new MFXTextField();
 
-    dashboardRoleCheckbox = new MFXCheckBox();
+    dashboardCheckbox = new MFXCheckBox();
+    accessPOSCheckbox = new MFXCheckBox();
 
     viewUsersCheckbox = new MFXCheckBox();
     editUsersCheckbox = new MFXCheckBox();
     createUserCheckbox = new MFXCheckBox();
     deleteUserCheckbox = new MFXCheckBox();
-    viewAllUserRecordsCheckbox = new MFXCheckBox();
 
     viewUserPermissionsCheckbox = new MFXCheckBox();
     editUserPermissionsCheckbox = new MFXCheckBox();
@@ -206,7 +207,7 @@ public class RoleSettingsFormController implements Initializable {
     createProductCheckbox = new MFXCheckBox();
     deleteProductCheckbox = new MFXCheckBox();
     productBarcodesCheckbox = new MFXCheckBox();
-    productCategorysCheckbox = new MFXCheckBox();
+    productCategoriesCheckbox = new MFXCheckBox();
     productUnitsCheckbox = new MFXCheckBox();
     productImportsCheckbox = new MFXCheckBox();
     productBrandsCheckbox = new MFXCheckBox();
@@ -230,7 +231,6 @@ public class RoleSettingsFormController implements Initializable {
     editSalesCheckbox = new MFXCheckBox();
     createSaleCheckbox = new MFXCheckBox();
     deleteSaleCheckbox = new MFXCheckBox();
-    accessPOSCheckbox = new MFXCheckBox();
 
     viewPurchasesCheckbox = new MFXCheckBox();
     editPurchasesCheckbox = new MFXCheckBox();
@@ -351,6 +351,8 @@ public class RoleSettingsFormController implements Initializable {
     roleDescriptionInputField.setFloatingText("Role description");
     roleDescriptionInputField.setPrefWidth(400);
 
+    getRoleSettings();
+
     List<MFXStepperToggle> stepperToggle;
     try {
       stepperToggle = getSteps();
@@ -406,12 +408,21 @@ public class RoleSettingsFormController implements Initializable {
   }
 
   private VBox getDashboardRoleSetting() {
-    VBox dashboardRoleSetting = new VBox();
-    dashboardRoleSetting.getStyleClass().add("card");
-    dashboardRoleSetting.setPadding(new Insets(10));
-    dashboardRoleCheckbox.setText("Access Dashboard");
-    dashboardRoleSetting.getChildren().addAll(title("Dashboard"), dashboardRoleCheckbox);
-    return dashboardRoleSetting;
+    VBox dashboardSetting = new VBox();
+    dashboardSetting.getStyleClass().add("card");
+    dashboardSetting.setPadding(new Insets(10));
+    dashboardCheckbox.setText("Access Dashboard");
+    dashboardSetting.getChildren().addAll(title("Dashboard"), dashboardCheckbox);
+    return dashboardSetting;
+  }
+
+  private VBox getPOSSetting() {
+    VBox posSetting = new VBox();
+    posSetting.getStyleClass().add("card");
+    posSetting.setPadding(new Insets(10));
+    accessPOSCheckbox.setText("Point Of SaleMaster");
+    posSetting.getChildren().addAll(title("Dashboard"), accessPOSCheckbox);
+    return posSetting;
   }
 
   private VBox getUserMgtSetting() {
@@ -425,10 +436,8 @@ public class RoleSettingsFormController implements Initializable {
     editUsersCheckbox.setText("Edit");
     createUserCheckbox.setText("Create");
     deleteUserCheckbox.setText("Delete");
-    viewAllUserRecordsCheckbox.setText("View all user records");
 
-    userMgtSettingCheckboxes.addColumn(
-        0, viewUsersCheckbox, editUsersCheckbox, viewAllUserRecordsCheckbox);
+    userMgtSettingCheckboxes.addColumn(0, viewUsersCheckbox, editUsersCheckbox);
     userMgtSettingCheckboxes.addColumn(1, createUserCheckbox, deleteUserCheckbox);
 
     userMgtSettingCheckboxes.setHgap(GRID_HGAP);
@@ -474,7 +483,7 @@ public class RoleSettingsFormController implements Initializable {
     viewProductsCheckbox.setText("View");
     editProductsCheckbox.setText("Edit");
     productBarcodesCheckbox.setText("Barcode");
-    productCategorysCheckbox.setText("Category");
+    productCategoriesCheckbox.setText("Category");
     productUnitsCheckbox.setText("Unit");
     createProductCheckbox.setText("Create");
     deleteProductCheckbox.setText("Delete");
@@ -486,7 +495,7 @@ public class RoleSettingsFormController implements Initializable {
         viewProductsCheckbox,
         editProductsCheckbox,
         productBarcodesCheckbox,
-        productCategorysCheckbox,
+        productCategoriesCheckbox,
         productUnitsCheckbox);
     productsSettingCheckboxes.addColumn(
         1,
@@ -579,9 +588,8 @@ public class RoleSettingsFormController implements Initializable {
     editSalesCheckbox.setText("Edit");
     createSaleCheckbox.setText("Create");
     deleteSaleCheckbox.setText("Delete");
-    accessPOSCheckbox.setText("Point Of SaleMaster");
 
-    saleSettingCheckboxes.addColumn(0, viewSalesCheckbox, editSalesCheckbox, accessPOSCheckbox);
+    saleSettingCheckboxes.addColumn(0, viewSalesCheckbox, editSalesCheckbox);
     saleSettingCheckboxes.addColumn(1, createSaleCheckbox, deleteSaleCheckbox);
 
     saleSettingCheckboxes.setHgap(GRID_HGAP);
@@ -628,8 +636,8 @@ public class RoleSettingsFormController implements Initializable {
     quotationSettingCheckboxes.addColumn(0, viewQuotationsCheckbox, editQuotationsCheckbox);
     quotationSettingCheckboxes.addColumn(1, createQuotationCheckbox, deleteQuotationCheckbox);
 
-    quotationSettingCheckboxes.setHgap(GRID_VGAP);
-    quotationSettingCheckboxes.setVgap(GRID_HGAP);
+    quotationSettingCheckboxes.setHgap(GRID_HGAP);
+    quotationSettingCheckboxes.setVgap(GRID_VGAP);
 
     quotationSetting.getChildren().addAll(title("Quotations"), quotationSettingCheckboxes);
     return quotationSetting;
@@ -937,60 +945,36 @@ public class RoleSettingsFormController implements Initializable {
 
     settingSettingCheckboxes.setHgap(GRID_HGAP);
     settingSettingCheckboxes.setVgap(GRID_VGAP);
-    //        settingSettingCheckboxes.getColumnConstraints().add(0, new ColumnConstraints(
-    //                60,
-    //                100,
-    //                100,
-    //                Priority.ALWAYS,
-    //                HPos.LEFT,
-    //                true
-    //        ));
-    //        settingSettingCheckboxes.getColumnConstraints().add(1, new ColumnConstraints(
-    //                60,
-    //                10,
-    //                100,
-    //                Priority.ALWAYS,
-    //                HPos.LEFT,
-    //                true
-    //        ));
 
     settingSetting.getChildren().addAll(title("Settings"), settingSettingCheckboxes);
     return settingSetting;
   }
 
-  private MFXScrollPane getRoleSettings() {
-    MFXScrollPane roleSettingsScrollPane = new MFXScrollPane();
-    GridPane roleSettings = new GridPane();
+  private void getRoleSettings() {
+    ColumnConstraints col1 = new ColumnConstraints();
+    col1.setHgrow(Priority.SOMETIMES);
+    ColumnConstraints col2 = new ColumnConstraints();
+    col2.setHgrow(Priority.SOMETIMES);
+
     roleSettings.setPadding(new Insets(10));
+    roleSettings.prefHeight(roleSettingsScrollPane.getPrefWidth());
+
     roleSettingsScrollPane.setContent(roleSettings);
 
-    //        roleSettings.addRow(0, getDashboardRoleSetting(), getUserMgtSetting());
-    //        roleSettings.addRow(1, getUserPermissionsSetting(), getProductsSetting());
-    //        roleSettings.addRow(2, getAdjustmentSetting(), getTransferSetting());
-    //        roleSettings.addRow(3, getExpenseSetting(), getSaleSetting());
-    //        roleSettings.addRow(4, getPurchaseSetting(), getQuotationSetting());
-    //        roleSettings.addRow(5, getSaleReturnSetting(), getPurchaseReturnSetting());
-    //        roleSettings.addRow(6, getPaymentSaleSetting(), getPaymentPurchaseSetting());
-    //        roleSettings.addRow(7, getPaymentReturnSetting(), getCustomerSetting());
-    //        roleSettings.addRow(8, getSupplierSetting(), getReportSetting());
-    //        roleSettings.addRow(9, getHRMSetting(), getSettingSetting());
-
-    roleSettings.addRow(0, getDashboardRoleSetting(), getPurchaseSetting());
+    roleSettings.addRow(0, getDashboardRoleSetting(), getPOSSetting());
     roleSettings.addRow(1, getAdjustmentSetting(), getTransferSetting());
     roleSettings.addRow(2, getQuotationSetting(), getSaleReturnSetting());
     roleSettings.addRow(3, getPaymentSaleSetting(), getPaymentPurchaseSetting());
     roleSettings.addRow(4, getPurchaseReturnSetting(), getPaymentReturnSetting());
     roleSettings.addRow(5, getExpenseSetting(), getUserPermissionsSetting());
-    roleSettings.addRow(6, getUserMgtSetting(), getSaleSetting());
-    roleSettings.addRow(7, getSupplierSetting(), getCustomerSetting());
-    roleSettings.addRow(8, getProductsSetting(), getSettingSetting());
-    roleSettings.add(getReportSetting(), 0, 9, 2, 1);
-    //        roleSettings.addRow(7, getProductsSetting(), getHRMSetting());
+    roleSettings.addRow(6, getPurchaseSetting(), getUserMgtSetting());
+    roleSettings.addRow(7, getSaleSetting(), getSettingSetting());
+    roleSettings.addRow(8, getSupplierSetting(), getCustomerSetting());
+    roleSettings.addRow(9, getProductsSetting());
+    roleSettings.add(getReportSetting(), 0, 10, 2, 1);
 
     roleSettings.setHgap(20);
     roleSettings.setVgap(40);
-
-    return roleSettingsScrollPane;
   }
 
   private List<MFXStepperToggle> getSteps() throws IOException {
@@ -1009,7 +993,7 @@ public class RoleSettingsFormController implements Initializable {
 
     MFXStepperToggle step3 =
         new MFXStepperToggle("Permissions", new MFXFontIcon("fas-check", 12, Color.web("#f1c40f")));
-    Platform.runLater(() -> step3.setContent(getRoleSettings()));
+    Platform.runLater(() -> step3.setContent(roleSettingsScrollPane));
 
     MFXStepperToggle step4 =
         new MFXStepperToggle("Confirming", new MFXFontIcon("fas-check", 12, Color.web("#f1c40f")));
@@ -1030,6 +1014,6 @@ public class RoleSettingsFormController implements Initializable {
   }
 
   public void closeRoleStepper() {
-    Navigation.navigate(Pages.getRoleSettingsPane(), (StackPane) roleSettings.getParent());
+    Navigation.navigate(Pages.getRoleSettingsPane(), (StackPane) roleSettingsHolder.getParent());
   }
 }
