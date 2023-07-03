@@ -93,6 +93,8 @@ public class BaseController implements Initializable {
 
     initializeLoader();
 
+    ScrollUtils.animateScrollBars(scrollPane);
+
     ScrollUtils.addSmoothScrolling(scrollPane);
   }
 
