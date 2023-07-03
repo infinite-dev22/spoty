@@ -44,20 +44,10 @@ public class Permission {
   public Permission(
       String name,
       String label,
-      String description,
-      List<Role> roles,
-      Date createdAt,
-      String createdBy,
-      Date updatedAt,
-      String updatedBy) {
+      String description) {
     this.name = name;
     this.label = label;
     this.description = description;
-    this.roles = roles;
-    this.createdAt = createdAt;
-    this.createdBy = createdBy;
-    this.updatedAt = updatedAt;
-    this.updatedBy = updatedBy;
   }
 
   public Permission() {}

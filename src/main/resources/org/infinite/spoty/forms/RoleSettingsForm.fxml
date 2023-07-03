@@ -14,24 +14,36 @@
   ~ Jonathan Mark Mwigo makes no warranties, express or implied, with respect to the computer system code. Jonathan Mark Mwigo shall not be liable for any damages, including, but not limited to, direct, indirect, incidental, special, consequential, or punitive damages, arising out of or in connection with the use of the computer system code.
   -->
 
-<?import io.github.palexdev.materialfx.controls.MFXStepper?>
-<?import io.github.palexdev.mfxresources.fonts.MFXFontIcon?>
+<?import io.github.palexdev.materialfx.controls.MFXScrollPane?>
+<?import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
-
-<BorderPane fx:id="roleSettingsHolder" styleClass="card" stylesheets="@../styles/Common.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.infinite.spoty.forms.RoleSettingsFormController">
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import java.net.URL?>
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:id="roleSettingsHolder" styleClass="card"
+            xmlns="http://javafx.com/javafx/20.0.1" fx:controller="org.infinite.spoty.forms.RoleSettingsFormController">
+    <stylesheets>
+        <URL value="@../styles/Common.css"/>
+        <URL value="@../styles/TextFields.css"/>
+    </stylesheets>
     <center>
-        <AnchorPane BorderPane.alignment="CENTER">
-            <MFXStepper fx:id="roleSettingsStepper" cache="true" cacheHint="SPEED" layoutX="32.0" layoutY="6.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-            <padding>
-                <Insets bottom="20.0" />
-            </padding>
-        </AnchorPane>
+        <MFXScrollPane>
+            <VBox fx:id="roleHolder"/>
+            <GridPane fx:id="roleSettings"/>
+        </MFXScrollPane>
     </center>
-    <top>
-        <AnchorPane BorderPane.alignment="CENTER">
-            <MFXFontIcon description="fas-circle" onMouseClicked="#closeRoleStepper" styleClass="close-icon" AnchorPane.bottomAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="8.0" />
-        </AnchorPane>
-    </top>
+    <bottom>
+        <HBox alignment="CENTER_RIGHT" spacing="20.0">
+            <padding>
+                <Insets topRightBottomLeft="10"/>
+            </padding>
+            <MFXButton fx:id="roleSaveBtn" styleClass="filled" onAction="#save" text="Save"/>
+            <MFXButton fx:id="roleCancelBtn" styleClass="outlined" onAction="#close" text="Cancel"/>
+        </HBox>
+    </bottom>
+    <padding>
+        <Insets top="3" right="3" left="3"/>
+    </padding>
 </BorderPane>
