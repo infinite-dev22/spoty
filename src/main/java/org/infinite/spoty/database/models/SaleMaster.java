@@ -14,72 +14,71 @@
 
 package org.infinite.spoty.database.models;
 
-import jakarta.persistence.*;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
+import com.j256.ormlite.table.DatabaseTable;
 import java.io.Serializable;
 import java.text.DateFormat;
+import java.util.Collection;
 import java.util.Date;
-import java.util.List;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 
-@Entity
+@DatabaseTable(tableName = "sales_master")
 public class SaleMaster implements Serializable {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @DatabaseField(generatedId = true)
   private int id;
 
-  @ManyToOne private User user_detail;
+  @DatabaseField(foreign = true, columnName = "user_id")
+  private User user;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private Date date;
 
+  @DatabaseField(columnName = "reference_number")
   private String ref;
 
-  @ManyToOne(optional = false)
-  @JoinColumn(nullable = false, name = "customer_id")
+  @DatabaseField(foreign = true, columnName = "customer_id", canBeNull = false)
   private Customer customer;
 
-  @ManyToOne(optional = false)
-  @JoinColumn(nullable = false, name = "branch_id")
+  @DatabaseField(foreign = true, columnName = "branch_id", canBeNull = false)
   private Branch branch;
 
-  @OneToMany(mappedBy = "sale", fetch = FetchType.LAZY)
-  @Cascade({CascadeType.ALL})
-  private List<SaleDetail> saleDetails;
+  @ForeignCollectionField private Collection<SaleDetail> saleDetails;
 
-  @Column(name = "tax_rate")
+  @DatabaseField(columnName = "tax_rate")
   private double taxRate;
 
+  @DatabaseField(columnName = "net_tax")
   private double netTax;
-  private double discount;
 
-  @Column(nullable = false)
+  @DatabaseField private double discount;
+
+  @DatabaseField(canBeNull = false)
   private double total;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private double amountPaid;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private double amountDue;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private String paymentStatus;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private String saleStatus;
 
-  private String notes;
+  @DatabaseField private String notes;
 
-  @Column(name = "created_at")
+  @DatabaseField(columnName = "created_at")
   private Date createdAt;
 
-  @Column(name = "created_by")
+  @DatabaseField(columnName = "created_by")
   private String createdBy;
 
-  @Column(name = "updated_at")
+  @DatabaseField(columnName = "updated_at")
   private Date updatedAt;
 
-  @Column(name = "updated_by")
+  @DatabaseField(columnName = "updated_by")
   private String updatedBy;
 
   public SaleMaster(
@@ -108,16 +107,16 @@ public class SaleMaster implements Serializable {
   }
 
   public User getUser() {
-    return user_detail;
+    return user;
   }
 
   public void setUser(User user_detail) {
-    this.user_detail = user_detail;
+    this.user = user_detail;
   }
 
   // TODO: Remove addedBy.
   public String getAddedBy() {
-    if (user_detail != null) return user_detail.getFirstName() + " " + user_detail.getLastName();
+    if (user != null) return user.getFirstName() + " " + user.getLastName();
     else return null;
   }
 
@@ -267,11 +266,11 @@ public class SaleMaster implements Serializable {
     this.updatedBy = updatedBy;
   }
 
-  public List<SaleDetail> getSaleDetails() {
+  public Collection<SaleDetail> getSaleDetails() {
     return saleDetails;
   }
 
-  public void setSaleDetails(List<SaleDetail> saleDetails) {
+  public void setSaleDetails(Collection<SaleDetail> saleDetails) {
     this.saleDetails = saleDetails;
   }
 

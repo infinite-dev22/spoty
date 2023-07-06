@@ -14,62 +14,78 @@
 
 package org.infinite.spoty.database.models;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
 // TODO: Remove total and Quantity and add them to PurchaseMaster.
 // TODO: In place of total create purchasePrice.
-@Entity
+@DatabaseTable(tableName = "purchase_details")
 public class PurchaseDetail implements Serializable {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private int id;
+  @DatabaseField(generatedId = true)
+  private long id;
 
-  private double cost;
+  @DatabaseField private double cost;
 
-  @ManyToOne
-  @JoinColumn(name = "purchaseMaster_id", nullable = false)
+  @DatabaseField(
+      foreign = true,
+      columnName = "purchase_master_id",
+      canBeNull = false,
+      foreignAutoCreate = true,
+      foreignAutoRefresh = true,
+      columnDefinition =
+          "INTEGER CONSTRAINT FK_NAME REFERENCES purchase_masters(id) ON DELETE CASCADE")
   private PurchaseMaster purchase;
 
+  @DatabaseField(columnName = "net_tax")
   private double netTax;
+
+  @DatabaseField(columnName = "tax_type")
   private String taxType;
-  private double discount;
+
+  @DatabaseField private double discount;
+
+  @DatabaseField(columnName = "discount_type")
   private String discountType;
 
-  @ManyToOne(optional = false)
+  @DatabaseField(foreign = true, canBeNull = false)
   private ProductDetail product;
 
+  @DatabaseField(columnName = "serial_number")
   private String serialNumber;
-  private double total;
-  private int quantity;
 
-  @Column(name = "created_at")
+  @DatabaseField private double total;
+  @DatabaseField private long quantity;
+
+  @DatabaseField(columnName = "created_at")
   private Date createdAt;
 
-  @Column(name = "created_by")
+  @DatabaseField(columnName = "created_by")
   private String createdBy;
 
-  @Column(name = "updated_at")
+  @DatabaseField(columnName = "updated_at")
   private Date updatedAt;
 
-  @Column(name = "updated_by")
+  @DatabaseField(columnName = "updated_by")
   private String updatedBy;
 
   public PurchaseDetail() {}
 
-  public PurchaseDetail(PurchaseMaster purchase, double cost, ProductDetail product, int quantity) {
+  public PurchaseDetail(
+      PurchaseMaster purchase, double cost, ProductDetail product, long quantity) {
     this.cost = cost;
     this.purchase = purchase;
     this.product = product;
     this.quantity = quantity;
   }
 
-  public int getId() {
+  public long getId() {
     return id;
   }
 
-  public void setId(int id) {
+  public void setId(long id) {
     this.id = id;
   }
 
@@ -157,11 +173,11 @@ public class PurchaseDetail implements Serializable {
     this.total = total;
   }
 
-  public int getQuantity() {
+  public long getQuantity() {
     return quantity;
   }
 
-  public void setQuantity(int quantity) {
+  public void setQuantity(long quantity) {
     this.quantity = quantity;
   }
 

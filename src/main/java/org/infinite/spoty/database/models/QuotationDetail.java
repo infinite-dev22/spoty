@@ -14,58 +14,73 @@
 
 package org.infinite.spoty.database.models;
 
-import jakarta.persistence.*;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 import java.io.Serializable;
 import java.util.Date;
 
-@Entity
+@DatabaseTable(tableName = "quotation_detail")
 public class QuotationDetail implements Serializable {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private int id;
+  @DatabaseField(generatedId = true)
+  private long id;
 
-  @JoinColumn(nullable = false)
+  @DatabaseField(canBeNull = false)
   private double price = 0;
 
-  @JoinColumn(name = "sale_unit_id")
-  @ManyToOne
+  @DatabaseField(foreign = true, columnName = "sale_unit_id", canBeNull = false)
   private UnitOfMeasure saleUnit;
 
-  @ManyToOne(optional = false)
-  @JoinColumn(nullable = false, name = "product_id")
+  @DatabaseField(foreign = true, columnName = "product_id", canBeNull = false)
   private ProductDetail product;
 
-  @ManyToOne(optional = false)
-  @JoinColumn(name = "quotation_id", nullable = false)
+  @DatabaseField(
+      foreign = true,
+      columnName = "quotation_id",
+      canBeNull = false,
+      foreignAutoCreate = true,
+      foreignAutoRefresh = true,
+      columnDefinition =
+          "INTEGER CONSTRAINT FK_NAME REFERENCES quotation_master(id) ON DELETE CASCADE")
   private QuotationMaster quotation;
 
+  @DatabaseField(columnName = "net_tax")
   private double netTax;
+
+  @DatabaseField(columnName = "tax_type")
   private String taxType;
-  private double discount;
+
+  @DatabaseField private double discount;
+
+  @DatabaseField(columnName = "discount_type")
   private String discountType;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private double total = 0;
 
-  @Column(nullable = false)
-  private int quantity = 0;
+  @DatabaseField(canBeNull = false)
+  private long quantity = 0;
 
+  @DatabaseField(columnName = "serial_number")
   private String serialNumber;
 
-  @Column(name = "created_at")
+  @DatabaseField(columnName = "created_at")
   private Date createdAt;
 
-  @Column(name = "created_by")
+  @DatabaseField(columnName = "created_by")
   private String createdBy;
 
-  @Column(name = "updated_at")
+  @DatabaseField(columnName = "updated_at")
   private Date updatedAt;
 
-  @Column(name = "updated_by")
+  @DatabaseField(columnName = "updated_by")
   private String updatedBy;
 
   public QuotationDetail(
-      ProductDetail product, UnitOfMeasure saleUnit, double netTax, double discount, int quantity) {
+      ProductDetail product,
+      UnitOfMeasure saleUnit,
+      double netTax,
+      double discount,
+      long quantity) {
     this.product = product;
     this.saleUnit = saleUnit;
     this.netTax = netTax;
@@ -75,11 +90,11 @@ public class QuotationDetail implements Serializable {
 
   public QuotationDetail() {}
 
-  public int getId() {
+  public long getId() {
     return id;
   }
 
-  public void setId(int id) {
+  public void setId(long id) {
     this.id = id;
   }
 
@@ -167,11 +182,11 @@ public class QuotationDetail implements Serializable {
     this.total = total;
   }
 
-  public int getQuantity() {
+  public long getQuantity() {
     return quantity;
   }
 
-  public void setQuantity(int quantity) {
+  public void setQuantity(long quantity) {
     this.quantity = quantity;
   }
 

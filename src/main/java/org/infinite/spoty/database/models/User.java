@@ -14,46 +14,53 @@
 
 package org.infinite.spoty.database.models;
 
-import jakarta.persistence.*;
+import com.j256.ormlite.field.DataType;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 import java.io.Serializable;
 import java.util.Date;
 
-@Entity
-@Table(name = "user_account")
+@DatabaseTable(tableName = "users")
 public class User implements Serializable {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @DatabaseField(generatedId = true)
   private int id;
 
-  @Column(name = "first_name", nullable = false)
+  @DatabaseField(columnName = "first_name", canBeNull = false)
   private String firstName;
 
-  @Column(name = "last_name", nullable = false)
+  @DatabaseField(columnName = "last_name", canBeNull = false)
   private String lastName;
 
-  @Column(name = "username", nullable = false, unique = true)
+  @DatabaseField(columnName = "username", canBeNull = false, unique = true)
   private String userName;
 
-  private String email;
-  private String password;
-  private String phone;
+  @DatabaseField private String email;
+  @DatabaseField private String password;
+  @DatabaseField private String phone;
 
-  @ManyToOne(optional = false)
+  @DatabaseField(foreign = true, columnName = "role_id", canBeNull = false)
   private Role role;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private boolean active;
 
-  @Column(name = "access_all_branches", nullable = false)
+  @DatabaseField(columnName = "access_all_branches", canBeNull = false)
   private boolean accessAllBranches;
 
-  @Column(unique = true)
+  @DatabaseField(dataType = DataType.BYTE_ARRAY )
   private byte[] avatar;
 
-  private Date createdAt;
-  private String createdBy;
-  private Date updatedAt;
-  private String updatedBy;
+  @DatabaseField(columnName = "created_at")
+  private Date createdAt = null;
+
+  @DatabaseField(columnName = "created_by")
+  private String createdBy = null;
+
+  @DatabaseField(columnName = "updated_at")
+  private Date updatedAt = null;
+
+  @DatabaseField(columnName = "updated_by")
+  private String updatedBy = null;
 
   public User() {}
 

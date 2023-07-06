@@ -26,6 +26,7 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
+import javafx.collections.WeakListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -36,7 +37,6 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.infinite.spoty.database.dao.UnitOfMeasureDao;
 import org.infinite.spoty.database.models.UnitOfMeasure;
 import org.infinite.spoty.forms.UOMFormController;
 import org.infinite.spoty.viewModels.UOMViewModel;
@@ -111,7 +111,9 @@ public class UnitOfMeasureController implements Initializable {
             new StringFilter<>("Operator", UnitOfMeasure::getOperator),
             new DoubleFilter<>("Operation Value", UnitOfMeasure::getOperatorValue));
     getUnitOfMeasureTable();
-    uomTable.setItems(UOMViewModel.getItems());
+    uomTable.setItems(UOMViewModel.uomList);
+    UOMViewModel.uomList.addListener(
+        new WeakListChangeListener<>(c -> uomTable.setItems(UOMViewModel.uomList)));
   }
 
   private void getUnitOfMeasureTable() {
@@ -142,8 +144,7 @@ public class UnitOfMeasureController implements Initializable {
     // Delete
     delete.setOnAction(
         e -> {
-          UnitOfMeasureDao.deleteUnitOfMeasure(obj.getData().getId());
-          UOMViewModel.getItems();
+          UOMViewModel.deleteItem(obj.getData().getId());
           e.consume();
         });
     // Edit

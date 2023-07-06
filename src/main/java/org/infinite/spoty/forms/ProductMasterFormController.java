@@ -28,7 +28,7 @@ import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.controls.MFXToggleButton;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.enums.ButtonType;
-import io.github.palexdev.materialfx.filter.IntegerFilter;
+import io.github.palexdev.materialfx.filter.LongFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.io.IOException;
@@ -137,7 +137,7 @@ public class ProductMasterFormController implements Initializable {
         .selectedProperty()
         .bindBidirectional(ProductMasterViewModel.notForSaleProperty());
 
-    productFormCategory.setItems(ProductCategoryViewModel.getItems());
+    productFormCategory.setItems(ProductCategoryViewModel.categoriesList);
     productFormCategory.setConverter(
         new StringConverter<>() {
           @Override
@@ -152,7 +152,7 @@ public class ProductMasterFormController implements Initializable {
           }
         });
 
-    productFormBrand.setItems(BrandViewModel.getItems());
+    productFormBrand.setItems(BrandViewModel.brandsList);
     productFormBrand.setConverter(
         new StringConverter<>() {
           @Override
@@ -194,7 +194,7 @@ public class ProductMasterFormController implements Initializable {
     productDetailTable
         .getFilters()
         .addAll(
-            new IntegerFilter<>("Name", ProductDetail::getQuantity),
+            new LongFilter<>("Quantity", ProductDetail::getQuantity),
             new StringFilter<>("Unit Of Measure", ProductDetail::getUnitName),
             new StringFilter<>("Serial", ProductDetail::getSerialNumber));
     getProductDetailTable();

@@ -16,19 +16,22 @@ package org.infinite.spoty.viewModels;
 
 import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
 
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.support.ConnectionSource;
+import java.sql.SQLException;
+import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.database.dao.ProductMasterDao;
-import org.infinite.spoty.database.models.Branch;
-import org.infinite.spoty.database.models.Brand;
-import org.infinite.spoty.database.models.ProductCategory;
-import org.infinite.spoty.database.models.ProductMaster;
+import javafx.concurrent.Task;
+import org.infinite.spoty.database.connection.SQLiteConnection;
+import org.infinite.spoty.database.models.*;
 
 public class ProductMasterViewModel {
   public static final ObservableList<ProductMaster> productMasterList =
       FXCollections.observableArrayList();
-  private static final IntegerProperty id = new SimpleIntegerProperty(0);
+  private static final LongProperty id = new SimpleLongProperty(0);
   private static final StringProperty barcodeType = new SimpleStringProperty("");
   private static final StringProperty name = new SimpleStringProperty("");
   private static final DoubleProperty price = new SimpleDoubleProperty(0);
@@ -39,15 +42,15 @@ public class ProductMasterViewModel {
   private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>(null);
   private static final ObjectProperty<Brand> brand = new SimpleObjectProperty<>(null);
 
-  public static int getId() {
+  public static long getId() {
     return id.get();
   }
 
-  public static void setId(int id) {
+  public static void setId(long id) {
     ProductMasterViewModel.id.set(id);
   }
 
-  public static IntegerProperty idProperty() {
+  public static LongProperty idProperty() {
     return id;
   }
 
@@ -174,62 +177,167 @@ public class ProductMasterViewModel {
   }
 
   public static void saveProductMaster() {
-    ProductMaster productMaster =
-        new ProductMaster(
-            getBarcodeType(),
-            getName(),
-            getPrice(),
-            getCategory(),
-            getBrand(),
-            getNote(),
-            isNotForSale(),
-            getHasVariants());
-    // Add product master to product details.
-    if (!ProductDetailViewModel.productDetailsList.isEmpty()) {
-      ProductDetailViewModel.productDetailsList.forEach(
-          productDetail -> productDetail.setProduct(productMaster));
-      productMaster.setProductDetails(ProductDetailViewModel.productDetailsList);
-    }
-    ProductMasterDao.saveProductMaster(productMaster);
-    resetProperties();
-    getProductMasters();
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<ProductMaster, Long> productMasterDao =
+                DaoManager.createDao(connectionSource, ProductMaster.class);
+
+            ProductMaster productMaster =
+                new ProductMaster(
+                    getBarcodeType(),
+                    getName(),
+                    getPrice(),
+                    getCategory(),
+                    getBrand(),
+                    getNote(),
+                    isNotForSale(),
+                    getHasVariants());
+
+            // Add product master to product details.
+            if (!ProductDetailViewModel.productDetailsList.isEmpty()) {
+              ProductDetailViewModel.productDetailsList.forEach(
+                  productDetail -> productDetail.setProduct(productMaster));
+              productMaster.setProductDetails(ProductDetailViewModel.productDetailsList);
+            }
+
+            productMasterDao.create(productMaster);
+
+            resetProperties();
+            getProductMasters();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static ObservableList<ProductMaster> getProductMasters() {
-    productMasterList.clear();
-    productMasterList.addAll(ProductMasterDao.getProductMaster());
-    return productMasterList;
+  public static void getProductMasters() {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<ProductMaster, Long> productMasterDao =
+                DaoManager.createDao(connectionSource, ProductMaster.class);
+
+            Platform.runLater(
+                () -> {
+                  productMasterList.clear();
+
+                  try {
+                    productMasterList.addAll(productMasterDao.queryForAll());
+                  } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                  }
+                });
+
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static void getItem(int index) {
-    ProductMaster productMaster = ProductMasterDao.findProductMaster(index);
-    setId(productMaster.getId());
-    setBarcodeType(productMaster.getBarcodeType());
-    setName(productMaster.getName());
-    setCategory(productMaster.getCategory());
-    setBrand(productMaster.getBrand());
-    setNote(productMaster.getNote());
-    setNotForSale(productMaster.isNotForSale());
-    setHasVariants(productMaster.hasVariant());
-    setBarcodeType(productMaster.getBarcodeType());
-    ProductDetailViewModel.productDetailsList.clear();
-    ProductDetailViewModel.productDetailsList.addAll(productMaster.getProductDetails());
-    getProductMasters();
+  public static void getItem(long index) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<ProductMaster, Long> productMasterDao =
+                DaoManager.createDao(connectionSource, ProductMaster.class);
+
+            ProductMaster productMaster = productMasterDao.queryForId(index);
+            setId(productMaster.getId());
+            setBarcodeType(productMaster.getBarcodeType());
+            setName(productMaster.getName());
+            setCategory(productMaster.getCategory());
+            setBrand(productMaster.getBrand());
+            setNote(productMaster.getNote());
+            setNotForSale(productMaster.isNotForSale());
+            setHasVariants(productMaster.hasVariant());
+            setBarcodeType(productMaster.getBarcodeType());
+
+            ProductDetailViewModel.productDetailsList.clear();
+            ProductDetailViewModel.productDetailsList.addAll(productMaster.getProductDetails());
+            getProductMasters();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static void updateItem(int index) {
-    ProductMaster productMaster = ProductMasterDao.findProductMaster(index);
-    productMaster.setBarcodeType(getBarcodeType());
-    productMaster.setName(getName());
-    productMaster.setCategory(getCategory());
-    productMaster.setBrand(getBrand());
-    productMaster.setNote(getNote());
-    productMaster.setNotForSale(isNotForSale());
-    productMaster.canHaveVariants(getHasVariants());
-    ProductDetailViewModel.deleteProductDetails(PENDING_DELETES);
-    productMaster.setProductDetails(ProductDetailViewModel.productDetailsList);
-    ProductMasterDao.updateProductMaster(productMaster, index);
-    resetProperties();
-    getProductMasters();
+  public static void updateItem(long index) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<ProductMaster, Long> productMasterDao =
+                DaoManager.createDao(connectionSource, ProductMaster.class);
+
+            ProductMaster productMaster = productMasterDao.queryForId(index);
+            productMaster.setBarcodeType(getBarcodeType());
+            productMaster.setName(getName());
+            productMaster.setCategory(getCategory());
+            productMaster.setBrand(getBrand());
+            productMaster.setNote(getNote());
+            productMaster.setNotForSale(isNotForSale());
+            productMaster.canHaveVariants(getHasVariants());
+
+            ProductDetailViewModel.deleteProductDetails(PENDING_DELETES);
+            productMaster.setProductDetails(ProductDetailViewModel.productDetailsList);
+
+            productMasterDao.update(productMaster);
+
+            resetProperties();
+            getProductMasters();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
+  }
+
+  public static void deleteItem(long index) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<ProductMaster, Long> productMasterDao =
+                DaoManager.createDao(connectionSource, ProductMaster.class);
+
+            productMasterDao.deleteById(index);
+            getProductMasters();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 }

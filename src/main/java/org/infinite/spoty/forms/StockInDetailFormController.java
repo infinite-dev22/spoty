@@ -67,7 +67,7 @@ public class StockInDetailFormController implements Initializable {
         .textProperty()
         .bindBidirectional(StockInDetailViewModel.descriptionProperty());
     // Combo box properties.
-    stockInDetailPdct.setItems(ProductDetailViewModel.getProductDetails());
+    stockInDetailPdct.setItems(ProductDetailViewModel.productDetailsList);
     stockInDetailPdct.setConverter(
         new StringConverter<>() {
           @Override

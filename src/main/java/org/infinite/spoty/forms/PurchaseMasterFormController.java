@@ -28,7 +28,7 @@ import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.enums.ButtonType;
 import io.github.palexdev.materialfx.filter.DoubleFilter;
-import io.github.palexdev.materialfx.filter.IntegerFilter;
+import io.github.palexdev.materialfx.filter.LongFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import java.io.IOException;
 import java.net.URL;
@@ -101,7 +101,7 @@ public class PurchaseMasterFormController implements Initializable {
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     // Set items to combo boxes and display custom text.
-    purchaseSupplier.setItems(SupplierViewModel.getSuppliers());
+    purchaseSupplier.setItems(SupplierViewModel.suppliersList);
     purchaseSupplier.setConverter(
         new StringConverter<>() {
           @Override
@@ -116,7 +116,7 @@ public class PurchaseMasterFormController implements Initializable {
           }
         });
 
-    purchaseBranch.setItems(BranchViewModel.getBranches());
+    purchaseBranch.setItems(BranchViewModel.branchesList);
     purchaseBranch.setConverter(
         new StringConverter<>() {
           @Override
@@ -164,8 +164,7 @@ public class PurchaseMasterFormController implements Initializable {
   public void saveBtnClicked() {
     SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
 
-    if (!purchaseDetailTable.isDisabled()
-        && PurchaseDetailViewModel.purchaseDetailList.isEmpty()) {
+    if (!purchaseDetailTable.isDisabled() && PurchaseDetailViewModel.purchaseDetailList.isEmpty()) {
       SimpleNotification notification =
           new SimpleNotification.NotificationBuilder("Table can't be Empty")
               .duration(NotificationDuration.SHORT)
@@ -253,12 +252,12 @@ public class PurchaseMasterFormController implements Initializable {
         .getFilters()
         .addAll(
             new StringFilter<>("Product", PurchaseDetail::getProductName),
-            new IntegerFilter<>("Quantity", PurchaseDetail::getQuantity),
+            new LongFilter<>("Quantity", PurchaseDetail::getQuantity),
             new DoubleFilter<>("Tax", PurchaseDetail::getNetTax),
             new DoubleFilter<>("Discount", PurchaseDetail::getDiscount));
     styleTable();
     // Populate table.
-    purchaseDetailTable.setItems(PurchaseDetailViewModel.getPurchaseDetails());
+    purchaseDetailTable.setItems(PurchaseDetailViewModel.purchaseDetailList);
   }
 
   private void styleTable() {

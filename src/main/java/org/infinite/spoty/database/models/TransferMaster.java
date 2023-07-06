@@ -14,68 +14,68 @@
 
 package org.infinite.spoty.database.models;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
+import com.j256.ormlite.table.DatabaseTable;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.text.DateFormat;
+import java.util.Collection;
 import java.util.Date;
-import java.util.List;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 
-@Entity
+@DatabaseTable(tableName = "transfer_master")
 public class TransferMaster implements Serializable {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @DatabaseField(generatedId = true)
   private int id;
 
-  @ManyToOne private User user_detail;
+  @DatabaseField(foreign = true, columnName = "user_id") private User user;
+  @DatabaseField(columnName = "reference_number")
   private String ref;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private Date date;
 
-  @ManyToOne(optional = false)
-  @JoinColumn(nullable = false, name = "from_branch_id")
+  @DatabaseField(foreign = true, columnName = "from_branch_id", canBeNull = false)
   private Branch fromBranch;
 
-  @ManyToOne(optional = false)
-  @JoinColumn(nullable = false, name = "to_branch_id")
+  @DatabaseField(foreign = true, columnName = "to_branch_id", canBeNull = false)
   private Branch toBranch;
 
-  @OneToMany(mappedBy = "transfer", fetch = FetchType.LAZY)
-  @Cascade({CascadeType.ALL})
-  private List<TransferDetail> transferDetails;
+  @ForeignCollectionField
+  private Collection<TransferDetail> transferDetails;
 
+  @DatabaseField
   private String shipping;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private double total;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private String status;
 
-  @ManyToOne
-  @JoinColumn(name = "approved_by_id")
+  @DatabaseField(foreign = true, columnName = "approved_by_id")
   private User approvedBy;
 
-  @ManyToOne
-  @JoinColumn(name = "received_by_id")
+  @DatabaseField(foreign = true, columnName = "received_by_id")
   private User receivedBy;
 
+  @DatabaseField(columnName = "approval_date")
   private Date approvalDate;
+  @DatabaseField(columnName = "receive_date")
   private Date receiveDate;
+  @DatabaseField
   private String notes;
 
-  @Column(name = "created_at")
+  @DatabaseField(columnName = "created_at")
   private Date createdAt;
 
-  @Column(name = "created_by")
+  @DatabaseField(columnName = "created_by")
   private String createdBy;
 
-  @Column(name = "updated_at")
+  @DatabaseField(columnName = "updated_at")
   private Date updatedAt;
 
-  @Column(name = "updated_by")
+  @DatabaseField(columnName = "updated_by")
   private String updatedBy;
 
   public TransferMaster() {}
@@ -99,11 +99,11 @@ public class TransferMaster implements Serializable {
   }
 
   public User getUser() {
-    return user_detail;
+    return user;
   }
 
   public void setUser(User user_detail) {
-    this.user_detail = user_detail;
+    this.user = user_detail;
   }
 
   public String getRef() {
@@ -178,11 +178,11 @@ public class TransferMaster implements Serializable {
     this.notes = notes;
   }
 
-  public List<TransferDetail> getTransferDetails() {
+  public Collection<TransferDetail> getTransferDetails() {
     return transferDetails;
   }
 
-  public void setTransferDetails(List<TransferDetail> transferDetails) {
+  public void setTransferDetails(Collection<TransferDetail> transferDetails) {
     this.transferDetails = transferDetails;
   }
 

@@ -14,32 +14,39 @@
 
 package org.infinite.spoty.database.models;
 
-import jakarta.persistence.*;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 import java.util.Date;
 
-@Entity
+@DatabaseTable(tableName = "units_of_measure")
 public class UnitOfMeasure {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @DatabaseField(generatedId = true)
   private int id;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private String name;
 
+  @DatabaseField(columnName = "short_name")
   private String shortName;
 
-  @ManyToOne
-  @JoinColumn(name = "base_unit_id")
+  @DatabaseField(foreign = true, columnName = "base_unit_id")
   private UnitOfMeasure baseUnit;
 
-  private String operator;
+  @DatabaseField private String operator;
 
-  @Column(name = "operator_value")
+  @DatabaseField(columnName = "operator_value")
   private double operatorValue;
 
+  @DatabaseField(columnName = "created_at")
   private Date createdAt = null;
+
+  @DatabaseField(columnName = "created_by")
   private String createdBy = null;
+
+  @DatabaseField(columnName = "updated_at")
   private Date updatedAt = null;
+
+  @DatabaseField(columnName = "updated_by")
   private String updatedBy = null;
 
   public UnitOfMeasure(

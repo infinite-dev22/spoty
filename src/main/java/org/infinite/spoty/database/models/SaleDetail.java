@@ -14,59 +14,71 @@
 
 package org.infinite.spoty.database.models;
 
-import jakarta.persistence.*;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 import java.io.Serializable;
 import java.util.Date;
 
-@Entity
+@DatabaseTable(tableName = "sales_detail")
 public class SaleDetail implements Serializable {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private int id;
+  @DatabaseField(generatedId = true)
+  private long id;
 
+  @DatabaseField(columnName = "reference_number")
   private String ref;
 
-  @ManyToOne(optional = false)
-  @JoinColumn(name = "saleMaster_id", nullable = false)
+  @DatabaseField(
+      foreign = true,
+      columnName = "sale_id",
+      canBeNull = false,
+      foreignAutoCreate = true,
+      foreignAutoRefresh = true,
+      columnDefinition = "INTEGER CONSTRAINT FK_NAME REFERENCES sales_master(id) ON DELETE CASCADE")
   private SaleMaster sale;
 
-  @ManyToOne(optional = false)
-  @JoinColumn(nullable = false, name = "product_id")
+  @DatabaseField(foreign = true, columnName = "product_id", canBeNull = false)
   private ProductDetail product;
 
+  @DatabaseField(columnName = "serial_number")
   private String serialNumber;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private double price;
 
+  @DatabaseField(columnName = "net_tax")
   private double netTax;
+
+  @DatabaseField(columnName = "tax_type")
   private String taxType;
-  private double discount;
+
+  @DatabaseField private double discount;
+
+  @DatabaseField(columnName = "discount_type")
   private String discountType;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private double total;
 
-  @Column(nullable = false)
-  private int quantity;
+  @DatabaseField(canBeNull = false)
+  private long quantity;
 
-  @Column(name = "created_at")
+  @DatabaseField(columnName = "created_at")
   private Date createdAt;
 
-  @Column(name = "created_by")
+  @DatabaseField(columnName = "created_by")
   private String createdBy;
 
-  @Column(name = "updated_at")
+  @DatabaseField(columnName = "updated_at")
   private Date updatedAt;
 
-  @Column(name = "updated_by")
+  @DatabaseField(columnName = "updated_by")
   private String updatedBy;
 
   public SaleDetail() {}
 
   public SaleDetail(
       ProductDetail product,
-      int quantity,
+      long quantity,
       String serialNumber,
       double netTax,
       String taxType,
@@ -81,11 +93,11 @@ public class SaleDetail implements Serializable {
     this.discountType = discountType;
   }
 
-  public int getId() {
+  public long getId() {
     return id;
   }
 
-  public void setId(int id) {
+  public void setId(long id) {
     this.id = id;
   }
 
@@ -173,11 +185,11 @@ public class SaleDetail implements Serializable {
     this.total = total;
   }
 
-  public int getQuantity() {
+  public long getQuantity() {
     return quantity;
   }
 
-  public void setQuantity(int quantity) {
+  public void setQuantity(long quantity) {
     this.quantity = quantity;
   }
 

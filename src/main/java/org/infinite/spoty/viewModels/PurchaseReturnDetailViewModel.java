@@ -14,10 +14,15 @@
 
 package org.infinite.spoty.viewModels;
 
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.support.ConnectionSource;
+import java.sql.SQLException;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.database.dao.PurchaseReturnDetailDao;
+import javafx.concurrent.Task;
+import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.ProductDetail;
 import org.infinite.spoty.database.models.PurchaseReturnDetail;
 import org.infinite.spoty.database.models.PurchaseReturnMaster;
@@ -25,7 +30,7 @@ import org.infinite.spoty.database.models.PurchaseReturnMaster;
 public class PurchaseReturnDetailViewModel {
   public static final ObservableList<PurchaseReturnDetail> purchaseReturnDetailsList =
       FXCollections.observableArrayList();
-  private static final IntegerProperty id = new SimpleIntegerProperty();
+  private static final LongProperty id = new SimpleLongProperty();
   private static final ObjectProperty<ProductDetail> product = new SimpleObjectProperty<>();
   private static final ObjectProperty<PurchaseReturnMaster> purchaseReturn =
       new SimpleObjectProperty<>();
@@ -34,15 +39,15 @@ public class PurchaseReturnDetailViewModel {
   private static final StringProperty description = new SimpleStringProperty("");
   private static final StringProperty location = new SimpleStringProperty("");
 
-  public static int getId() {
+  public static long getId() {
     return id.get();
   }
 
-  public static void setId(int id) {
+  public static void setId(long id) {
     PurchaseReturnDetailViewModel.id.set(id);
   }
 
-  public static IntegerProperty idProperty() {
+  public static LongProperty idProperty() {
     return id;
   }
 
@@ -70,8 +75,8 @@ public class PurchaseReturnDetailViewModel {
     return purchaseReturn;
   }
 
-  public static int getQuantity() {
-    return Integer.parseInt(!quantity.get().isEmpty() ? quantity.get() : "0");
+  public static long getQuantity() {
+    return Long.parseLong(!quantity.get().isEmpty() ? quantity.get() : "0");
   }
 
   public static void setQuantity(String quantity) {
@@ -127,19 +132,25 @@ public class PurchaseReturnDetailViewModel {
     setLocation("");
   }
 
-  //    public static void addPurchaseReturnDetails() {
-  //        PurchaseReturnDetail purchaseReturnDetail = new PurchaseReturnDetail(getProduct(),
-  //                getQuantity(),
-  //                getSerial(),
-  //                getDescription(),
-  //                getLocation());
-  //        PurchaseReturnDetailsTempList.add(purchaseReturnDetail);
-  //        resetProperties();
-  //    }
+  public static void getPurchaseReturnDetails() {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
 
-  public static ObservableList<PurchaseReturnDetail> getPurchaseReturnDetails() {
-    purchaseReturnDetailsList.clear();
-    purchaseReturnDetailsList.addAll(PurchaseReturnDetailDao.fetchPurchaseReturnDetails());
-    return purchaseReturnDetailsList;
+            Dao<PurchaseReturnDetail, Long> purchaseReturnDetailDao =
+                DaoManager.createDao(connectionSource, PurchaseReturnDetail.class);
+
+            purchaseReturnDetailsList.clear();
+            purchaseReturnDetailsList.addAll(purchaseReturnDetailDao.queryForAll());
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 }

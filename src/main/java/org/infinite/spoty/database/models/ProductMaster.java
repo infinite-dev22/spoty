@@ -14,56 +14,55 @@
 
 package org.infinite.spoty.database.models;
 
-import jakarta.persistence.*;
+import com.j256.ormlite.field.DataType;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
+import com.j256.ormlite.table.DatabaseTable;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
-import java.util.List;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 
-@Entity
+@DatabaseTable(tableName = "product_masters")
 public class ProductMaster implements Serializable {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @DatabaseField(generatedId = true)
   private int id;
 
-  private String code;
+  @DatabaseField private String code;
 
-  @Column(name = "barcode_type")
+  @DatabaseField(columnName = "barcode_type")
   private String barcodeType;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private String name;
 
-  @ManyToOne(optional = false)
+  @DatabaseField(foreign = true, canBeNull = false)
   private ProductCategory category;
 
-  @ManyToOne(optional = false)
+  @DatabaseField(foreign = true, canBeNull = false)
   private Brand brand;
 
-  @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
-  @Cascade({CascadeType.ALL})
-  private List<ProductDetail> productDetails;
+  @ForeignCollectionField
+  private Collection<ProductDetail> productDetails;
 
-  private byte[] image;
-  private String note;
+  @DatabaseField(dataType = DataType.BYTE_ARRAY ) private byte[] image;
+  @DatabaseField private String note;
 
-  @Column(nullable = false, name = "not_sale")
+  @DatabaseField(canBeNull = false, columnName = "not_sale")
   private boolean notForSale;
 
-  @Column(nullable = false, name = "is_active")
+  @DatabaseField(canBeNull = false, columnName = "is_active")
   private boolean hasVariants;
 
-  @Column(name = "created_at")
+  @DatabaseField(columnName = "created_at")
   private Date createdAt;
 
-  @Column(name = "created_by")
+  @DatabaseField(columnName = "created_by")
   private String createdBy;
 
-  @Column(name = "updated_at")
+  @DatabaseField(columnName = "updated_at")
   private Date updatedAt;
 
-  @Column(name = "updated_by")
+  @DatabaseField(columnName = "updated_by")
   private String updatedBy;
 
   public ProductMaster(
@@ -160,11 +159,11 @@ public class ProductMaster implements Serializable {
     this.note = note;
   }
 
-  public List<ProductDetail> getProductDetails() {
+  public Collection<ProductDetail> getProductDetails() {
     return productDetails;
   }
 
-  public void setProductDetails(List<ProductDetail> productDetails) {
+  public void setProductDetails(Collection<ProductDetail> productDetails) {
     this.productDetails = productDetails;
   }
 

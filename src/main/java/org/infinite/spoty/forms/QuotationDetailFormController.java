@@ -75,7 +75,7 @@ public class QuotationDetailFormController implements Initializable {
         .textProperty()
         .bindBidirectional(QuotationDetailViewModel.discountProperty());
     // Combo box properties.
-    quotationProductPdct.setItems(ProductDetailViewModel.getProductDetails());
+    quotationProductPdct.setItems(ProductDetailViewModel.productDetailsList);
     quotationProductPdct.setConverter(
         new StringConverter<>() {
           @Override

@@ -16,20 +16,22 @@ package org.infinite.spoty.viewModels;
 
 import static org.infinite.spoty.values.SharedResources.*;
 
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.support.ConnectionSource;
+import java.sql.SQLException;
 import java.util.List;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.database.dao.ProductDetailDao;
-import org.infinite.spoty.database.models.Branch;
-import org.infinite.spoty.database.models.ProductDetail;
-import org.infinite.spoty.database.models.ProductMaster;
-import org.infinite.spoty.database.models.UnitOfMeasure;
+import javafx.concurrent.Task;
+import org.infinite.spoty.database.connection.SQLiteConnection;
+import org.infinite.spoty.database.models.*;
 
 public class ProductDetailViewModel {
   public static final ObservableList<ProductDetail> productDetailsList =
       FXCollections.observableArrayList();
-  private static final IntegerProperty id = new SimpleIntegerProperty(0);
+  private static final LongProperty id = new SimpleLongProperty(0);
   private static final ObjectProperty<ProductMaster> product = new SimpleObjectProperty<>(null);
   private static final ListProperty<Branch> branches = new SimpleListProperty<>(null);
   private static final ObjectProperty<UnitOfMeasure> unit = new SimpleObjectProperty<>(null);
@@ -38,23 +40,23 @@ public class ProductDetailViewModel {
   //    private static final ObjectProperty<UnitOfMeasure> productUnit = new
   // SimpleObjectProperty<>(null);
   private static final StringProperty name = new SimpleStringProperty("");
-  private static final IntegerProperty quantity = new SimpleIntegerProperty(0);
+  private static final LongProperty quantity = new SimpleLongProperty(0);
   private static final DoubleProperty cost = new SimpleDoubleProperty(0);
   private static final DoubleProperty price = new SimpleDoubleProperty(0);
   private static final DoubleProperty netTax = new SimpleDoubleProperty(0);
   private static final StringProperty taxType = new SimpleStringProperty("");
-  private static final IntegerProperty stockAlert = new SimpleIntegerProperty(0);
+  private static final LongProperty stockAlert = new SimpleLongProperty(0);
   private static final StringProperty serial = new SimpleStringProperty("");
 
-  public static Integer getId() {
+  public static Long getId() {
     return id.get();
   }
 
-  public static void setId(int id) {
+  public static void setId(long id) {
     ProductDetailViewModel.id.set(id);
   }
 
-  public static IntegerProperty idProperty() {
+  public static LongProperty idProperty() {
     return id;
   }
 
@@ -130,15 +132,15 @@ public class ProductDetailViewModel {
     return name;
   }
 
-  public static int getQuantity() {
+  public static long getQuantity() {
     return quantity.get();
   }
 
-  public static void setQuantity(int quantity) {
+  public static void setQuantity(long quantity) {
     ProductDetailViewModel.quantity.set(quantity);
   }
 
-  public static IntegerProperty quantityProperty() {
+  public static LongProperty quantityProperty() {
     return quantity;
   }
 
@@ -190,19 +192,19 @@ public class ProductDetailViewModel {
     return taxType;
   }
 
-  public static int getStockAlert() {
+  public static long getStockAlert() {
     return stockAlert.get();
   }
 
-  public static void setStockAlert(int stockAlert) {
+  public static void setStockAlert(long stockAlert) {
     ProductDetailViewModel.stockAlert.set(stockAlert);
   }
 
-  public static IntegerProperty stockAlertProperty() {
+  public static LongProperty stockAlertProperty() {
     return stockAlert;
   }
 
-  public static String getSerial() {
+  public static String getSerialNumber() {
     return serial.get();
   }
 
@@ -215,19 +217,31 @@ public class ProductDetailViewModel {
   }
 
   public static void addProductDetail() {
-    ProductDetail productDetail =
-        new ProductDetail(
-            getUnit(),
-            getName(),
-            getQuantity(),
-            getCost(),
-            getPrice(),
-            getNetTax(),
-            getTaxType(),
-            getStockAlert(),
-            getSerial());
-    productDetailsList.add(productDetail);
-    resetProperties();
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() {
+            ProductDetail productDetail =
+                new ProductDetail(
+                    getUnit(),
+                    getName(),
+                    getQuantity(),
+                    getCost(),
+                    getPrice(),
+                    getNetTax(),
+                    getTaxType(),
+                    getStockAlert(),
+                    getSerialNumber());
+            productDetailsList.add(productDetail);
+
+            resetProperties();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
   public static void resetProperties() {
@@ -247,65 +261,167 @@ public class ProductDetailViewModel {
     setTempId(-1);
   }
 
-  public static void resetTempList() {
-    productDetailsList.clear();
+  public static void getProductDetails() {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<ProductDetail, Long> productDetailDao =
+                DaoManager.createDao(connectionSource, ProductDetail.class);
+
+            productDetailsList.clear();
+            productDetailsList.addAll(productDetailDao.queryForAll());
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static ObservableList<ProductDetail> getProductDetails() {
-    productDetailsList.clear();
-    productDetailsList.addAll(ProductDetailDao.fetchProductDetails());
-    return productDetailsList;
+  public static void updateProductDetail(long index) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<ProductDetail, Long> productDetailDao =
+                DaoManager.createDao(connectionSource, ProductDetail.class);
+
+            ProductDetail productDetail = productDetailDao.queryForId(index);
+            productDetail.setUnit(getUnit());
+            productDetail.setName(getName());
+            productDetail.setSerialNumber(getSerialNumber());
+
+            productDetailsList.remove((int) getTempId());
+            productDetailsList.add(getTempId(), productDetail);
+
+            resetProperties();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static void updateProductDetail(int index) {
-    ProductDetail productDetail = ProductDetailDao.findProductDetail(index);
-    productDetail.setUnit(getUnit());
-    productDetail.setName(getName());
-    productDetail.setSerialNumber(getSerial());
-    productDetailsList.remove((int) getTempId());
-    productDetailsList.add(getTempId(), productDetail);
-    resetProperties();
+  public static void getItem(long index, int tempIndex) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<ProductDetail, Long> productDetailDao =
+                DaoManager.createDao(connectionSource, ProductDetail.class);
+
+            setTempId(tempIndex);
+            ProductDetail productDetail = productDetailDao.queryForId(index);
+
+            setId(productDetail.getId());
+            setBranches(FXCollections.observableArrayList(productDetail.getBranch()));
+            setUnit(productDetail.getUnit());
+            setName(productDetail.getName());
+            setQuantity(productDetail.getQuantity());
+            setCost(productDetail.getCost());
+            setPrice(productDetail.getPrice());
+            setNetTax(productDetail.getNetTax());
+            setTaxType(productDetail.getTaxType());
+            setStockAlert(productDetail.getStockAlert());
+            setSerial(productDetail.getSerialNumber());
+            setProduct(productDetail.getProduct());
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static void getItem(int index, int tempIndex) {
-    setTempId(tempIndex);
-    ProductDetail productDetail = ProductDetailDao.findProductDetail(index);
-    setId(productDetail.getId());
-    setBranches(FXCollections.observableArrayList(productDetail.getBranch()));
-    setUnit(productDetail.getUnit());
-    setName(productDetail.getName());
-    setQuantity(productDetail.getQuantity());
-    setCost(productDetail.getCost());
-    setPrice(productDetail.getPrice());
-    setNetTax(productDetail.getNetTax());
-    setTaxType(productDetail.getTaxType());
-    setStockAlert(productDetail.getStockAlert());
-    setSerial(productDetail.getSerialNumber());
-    setProduct(productDetail.getProduct());
+  public static void updateItem(long index) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<ProductDetail, Long> productDetailDao =
+                DaoManager.createDao(connectionSource, ProductDetail.class);
+
+            ProductDetail productDetail = productDetailDao.queryForId(index);
+
+            productDetail.setUnit(getUnit());
+            productDetail.setName(getName());
+            productDetail.setQuantity(getQuantity());
+            productDetail.setCost(getCost());
+            productDetail.setPrice(getPrice());
+            productDetail.setNetTax(getNetTax());
+            productDetail.setTaxType(getTaxType());
+            productDetail.setStockAlert(getStockAlert());
+            productDetail.setSerialNumber(getSerialNumber());
+
+            productDetailDao.update(productDetail);
+
+            getProductDetails();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static void updateItem(int productDetailID) {
-    ProductDetail productDetail =
-        new ProductDetail(
-            getUnit(),
-            getName(),
-            getQuantity(),
-            getCost(),
-            getPrice(),
-            getNetTax(),
-            getTaxType(),
-            getStockAlert(),
-            getSerial());
-    ProductDetailDao.updateProductDetail(productDetail, productDetailID);
-    getProductDetails();
+  public static void removeProductDetail(long index, int tempIndex) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() {
+            productDetailsList.remove(tempIndex);
+            PENDING_DELETES.add(index);
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static void removeProductDetail(int index, int tempIndex) {
-    productDetailsList.remove(tempIndex);
-    PENDING_DELETES.add(index);
-  }
+  public static void deleteProductDetails(List<Long> indexes) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() {
+            indexes.forEach(
+                index -> {
+                  try {
+                    SQLiteConnection connection = SQLiteConnection.getInstance();
+                    ConnectionSource connectionSource = connection.getConnection();
 
-  public static void deleteProductDetails(List<Integer> indexes) {
-    indexes.forEach(ProductDetailDao::deleteProductDetail);
+                    Dao<ProductDetail, Long> productDetailDao =
+                        DaoManager.createDao(connectionSource, ProductDetail.class);
+                    productDetailDao.deleteById(index);
+                  } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                  }
+                });
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 }

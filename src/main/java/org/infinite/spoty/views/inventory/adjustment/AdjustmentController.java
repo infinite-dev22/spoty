@@ -21,6 +21,7 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
+import javafx.collections.WeakListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -28,7 +29,6 @@ import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import org.infinite.spoty.components.navigation.Pages;
-import org.infinite.spoty.database.dao.AdjustmentMasterDao;
 import org.infinite.spoty.database.models.AdjustmentMaster;
 import org.infinite.spoty.viewModels.AdjustmentMasterViewModel;
 import org.infinite.spoty.views.BaseController;
@@ -55,35 +55,29 @@ public class AdjustmentController implements Initializable {
   private void setupTable() {
     MFXTableColumn<AdjustmentMaster> adjustmentDate =
         new MFXTableColumn<>("Date", false, Comparator.comparing(AdjustmentMaster::getDate));
-    MFXTableColumn<AdjustmentMaster> adjustmentReference =
-        new MFXTableColumn<>("Reference", false, Comparator.comparing(AdjustmentMaster::getRef));
     MFXTableColumn<AdjustmentMaster> adjustmentBranch =
         new MFXTableColumn<>(
             "Branch", false, Comparator.comparing(AdjustmentMaster::getBranchName));
 
     adjustmentDate.setRowCellFactory(
         adjustment -> new MFXTableRowCell<>(AdjustmentMaster::getLocaleDate));
-    adjustmentReference.setRowCellFactory(
-        adjustment -> new MFXTableRowCell<>(AdjustmentMaster::getRef));
     adjustmentBranch.setRowCellFactory(
         adjustment -> new MFXTableRowCell<>(AdjustmentMaster::getBranchName));
 
-    adjustmentDate.prefWidthProperty().bind(adjustmentMasterTable.widthProperty().multiply(.4));
-    adjustmentReference
-        .prefWidthProperty()
-        .bind(adjustmentMasterTable.widthProperty().multiply(.4));
-    adjustmentBranch.prefWidthProperty().bind(adjustmentMasterTable.widthProperty().multiply(.4));
+    adjustmentDate.prefWidthProperty().bind(adjustmentMasterTable.widthProperty().multiply(.5));
+    adjustmentBranch.prefWidthProperty().bind(adjustmentMasterTable.widthProperty().multiply(.5));
 
-    adjustmentMasterTable
-        .getTableColumns()
-        .addAll(adjustmentDate, adjustmentReference, adjustmentBranch);
+    adjustmentMasterTable.getTableColumns().addAll(adjustmentDate, adjustmentBranch);
     adjustmentMasterTable
         .getFilters()
         .addAll(
             new StringFilter<>("Reference", AdjustmentMaster::getRef),
             new StringFilter<>("Branch", AdjustmentMaster::getBranchName));
     getAdjustmentMasterTable();
-    adjustmentMasterTable.setItems(AdjustmentMasterViewModel.getAdjustmentMasters());
+    adjustmentMasterTable.setItems(AdjustmentMasterViewModel.adjustmentMasterList);
+    AdjustmentMasterViewModel.adjustmentMasterList.addListener(
+        new WeakListChangeListener<>(
+            c -> adjustmentMasterTable.setItems(AdjustmentMasterViewModel.adjustmentMasterList)));
   }
 
   private void getAdjustmentMasterTable() {
@@ -117,8 +111,7 @@ public class AdjustmentController implements Initializable {
     // Delete
     delete.setOnAction(
         e -> {
-          AdjustmentMasterDao.deleteAdjustmentMaster(obj.getData().getId());
-          AdjustmentMasterViewModel.getAdjustmentMasters();
+          AdjustmentMasterViewModel.deleteItem(obj.getData().getId());
           e.consume();
         });
     // Edit

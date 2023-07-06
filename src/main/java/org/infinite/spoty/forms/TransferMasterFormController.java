@@ -27,7 +27,7 @@ import io.github.palexdev.materialfx.controls.MFXTableView;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.enums.ButtonType;
-import io.github.palexdev.materialfx.filter.IntegerFilter;
+import io.github.palexdev.materialfx.filter.LongFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.io.IOException;
@@ -102,7 +102,7 @@ public class TransferMasterFormController implements Initializable {
     transferMasterFromBranch
         .valueProperty()
         .bindBidirectional(TransferMasterViewModel.fromBranchProperty());
-    transferMasterFromBranch.setItems(BranchViewModel.getBranches());
+    transferMasterFromBranch.setItems(BranchViewModel.branchesList);
     transferMasterFromBranch.setConverter(
         new StringConverter<>() {
           @Override
@@ -119,7 +119,7 @@ public class TransferMasterFormController implements Initializable {
     transferMasterToBranch
         .valueProperty()
         .bindBidirectional(TransferMasterViewModel.toBranchProperty());
-    transferMasterToBranch.setItems(BranchViewModel.getBranches());
+    transferMasterToBranch.setItems(BranchViewModel.branchesList);
     transferMasterToBranch.setConverter(
         new StringConverter<>() {
           @Override
@@ -169,7 +169,7 @@ public class TransferMasterFormController implements Initializable {
         .getFilters()
         .addAll(
             new StringFilter<>("Name", TransferDetail::getProductDetailName),
-            new IntegerFilter<>("Quantity", TransferDetail::getQuantity));
+            new LongFilter<>("Quantity", TransferDetail::getQuantity));
     getTransferDetailTable();
     transferDetailTable.setItems(TransferDetailViewModel.transferDetailsList);
   }

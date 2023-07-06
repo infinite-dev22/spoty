@@ -25,6 +25,7 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
+import javafx.collections.WeakListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -36,7 +37,6 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.infinite.spoty.database.dao.CurrencyDao;
 import org.infinite.spoty.database.models.Currency;
 import org.infinite.spoty.forms.CurrencyFormController;
 import org.infinite.spoty.viewModels.CurrencyViewModel;
@@ -95,8 +95,14 @@ public class CurrencyController implements Initializable {
             new StringFilter<>("Name", Currency::getName),
             new StringFilter<>("Code", Currency::getCode),
             new StringFilter<>("Symbol", Currency::getSymbol));
+
     getCurrencyTable();
-    currencyTable.setItems(CurrencyViewModel.getCurrencies());
+
+    currencyTable.setItems(CurrencyViewModel.currenciesList);
+
+    CurrencyViewModel.currenciesList.addListener(
+        new WeakListChangeListener<>(
+            c -> currencyTable.setItems(CurrencyViewModel.currenciesList)));
   }
 
   private void getCurrencyTable() {
@@ -129,8 +135,7 @@ public class CurrencyController implements Initializable {
     // Delete
     delete.setOnAction(
         e -> {
-          CurrencyDao.deleteCurrency(obj.getData().getId());
-          CurrencyViewModel.getCurrencies();
+          CurrencyViewModel.deleteItem(obj.getData().getId());
           e.consume();
         });
     // Edit

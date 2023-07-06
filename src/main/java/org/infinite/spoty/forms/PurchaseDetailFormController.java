@@ -65,7 +65,7 @@ public class PurchaseDetailFormController implements Initializable {
     purchaseDetailQnty.textProperty().bindBidirectional(PurchaseDetailViewModel.quantityProperty());
     purchaseDetailPdct.valueProperty().bindBidirectional(PurchaseDetailViewModel.productProperty());
     purchaseDetailCost.textProperty().bindBidirectional(PurchaseDetailViewModel.costProperty());
-    purchaseDetailPdct.setItems(ProductDetailViewModel.getProductDetails());
+    purchaseDetailPdct.setItems(ProductDetailViewModel.productDetailsList);
     purchaseDetailPdct.setConverter(
         new StringConverter<>() {
           @Override

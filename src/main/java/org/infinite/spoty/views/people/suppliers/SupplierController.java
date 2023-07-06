@@ -25,6 +25,7 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
+import javafx.collections.WeakListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -36,7 +37,6 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.infinite.spoty.database.dao.SupplierDao;
 import org.infinite.spoty.database.models.Supplier;
 import org.infinite.spoty.forms.SupplierFormController;
 import org.infinite.spoty.viewModels.SupplierViewModel;
@@ -108,7 +108,10 @@ public class SupplierController implements Initializable {
             new StringFilter<>("Email", Supplier::getEmail),
             new StringFilter<>("Tax No.", Supplier::getTaxNumber));
     getTable();
-    suppliersTable.setItems(SupplierViewModel.getSuppliers());
+    suppliersTable.setItems(SupplierViewModel.suppliersList);
+    SupplierViewModel.suppliersList.addListener(
+        new WeakListChangeListener<>(
+            c -> suppliersTable.setItems(SupplierViewModel.suppliersList)));
   }
 
   private void getTable() {
@@ -142,8 +145,7 @@ public class SupplierController implements Initializable {
     // Delete
     delete.setOnAction(
         e -> {
-          SupplierDao.deleteSupplier(obj.getData().getId());
-          SupplierViewModel.getSuppliers();
+          SupplierViewModel.deleteItem(obj.getData().getId());
           e.consume();
         });
     // Edit

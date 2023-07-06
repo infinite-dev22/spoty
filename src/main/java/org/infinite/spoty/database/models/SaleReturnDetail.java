@@ -14,53 +14,65 @@
 
 package org.infinite.spoty.database.models;
 
-import jakarta.persistence.*;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 import java.io.Serializable;
 import java.util.Date;
 
-@Entity
+@DatabaseTable(tableName = "sales_return_detail")
 public class SaleReturnDetail implements Serializable {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @DatabaseField(generatedId = true)
   private int id;
 
-  @ManyToOne(optional = false)
-  @JoinColumn(name = "saleReturnMaster_id", nullable = false)
+  @DatabaseField(
+      foreign = true,
+      columnName = "sales_return_master_id",
+      canBeNull = false,
+      foreignAutoCreate = true,
+      foreignAutoRefresh = true,
+      columnDefinition =
+          "INTEGER CONSTRAINT FK_NAME REFERENCES sales_return_master(id) ON DELETE CASCADE")
   private SaleReturnMaster saleReturn;
 
-  @ManyToOne(optional = false)
-  @JoinColumn(nullable = false, name = "product_id")
+  @DatabaseField(foreign = true, columnName = "product_id", canBeNull = false)
   private ProductDetail product;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private double price;
 
-  @ManyToOne(optional = false)
-  @JoinColumn(nullable = false, name = "sale_unit_id")
+  @DatabaseField(foreign = true, columnName = "sale_unit_id", canBeNull = false)
   private UnitOfMeasure saleUnit;
 
+  @DatabaseField(columnName = "net_tax")
   private double netTax;
+
+  @DatabaseField(columnName = "tax_type")
   private String taxType;
-  private double discount;
+
+  @DatabaseField private double discount;
+
+  @DatabaseField(columnName = "discount_type")
   private String discountType;
+
+  @DatabaseField(columnName = "serial_number")
   private String serialNumber;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private int quantity;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private double total;
 
-  @Column(name = "created_at")
+  @DatabaseField(columnName = "created_at")
   private Date createdAt;
 
-  @Column(name = "created_by")
+  @DatabaseField(columnName = "created_by")
   private String createdBy;
 
-  @Column(name = "updated_at")
+  @DatabaseField(columnName = "updated_at")
   private Date updatedAt;
 
-  @Column(name = "updated_by")
+  @DatabaseField(columnName = "updated_by")
   private String updatedBy;
 
   public SaleReturnDetail() {}

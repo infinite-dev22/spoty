@@ -20,7 +20,7 @@ import static org.infinite.spoty.Validators.requiredValidator;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.enums.ButtonType;
-import io.github.palexdev.materialfx.filter.IntegerFilter;
+import io.github.palexdev.materialfx.filter.LongFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.io.IOException;
@@ -100,7 +100,7 @@ public class RequisitionMasterFormController implements Initializable {
     requisitionMasterBranch
         .valueProperty()
         .bindBidirectional(RequisitionMasterViewModel.branchProperty());
-    requisitionMasterBranch.setItems(BranchViewModel.getBranches());
+    requisitionMasterBranch.setItems(BranchViewModel.branchesList);
     requisitionMasterBranch.setConverter(
         new StringConverter<>() {
           @Override
@@ -114,10 +114,10 @@ public class RequisitionMasterFormController implements Initializable {
             return null;
           }
         });
-      requisitionMasterSupplier
-              .valueProperty()
-              .bindBidirectional(RequisitionMasterViewModel.supplierProperty());
-    requisitionMasterSupplier.setItems(SupplierViewModel.getSuppliers());
+    requisitionMasterSupplier
+        .valueProperty()
+        .bindBidirectional(RequisitionMasterViewModel.supplierProperty());
+    requisitionMasterSupplier.setItems(SupplierViewModel.suppliersList);
     requisitionMasterSupplier.setConverter(
         new StringConverter<>() {
           @Override
@@ -180,7 +180,7 @@ public class RequisitionMasterFormController implements Initializable {
         .getFilters()
         .addAll(
             new StringFilter<>("Name", RequisitionDetail::getProductDetailName),
-            new IntegerFilter<>("Quantity", RequisitionDetail::getQuantity));
+            new LongFilter<>("Quantity", RequisitionDetail::getQuantity));
     getRequisitionDetailTable();
     requisitionDetailTable.setItems(RequisitionDetailViewModel.requisitionDetailList);
   }

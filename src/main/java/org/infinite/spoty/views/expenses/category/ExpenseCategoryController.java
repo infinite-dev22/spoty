@@ -25,6 +25,7 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
+import javafx.collections.WeakListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -36,7 +37,6 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.infinite.spoty.database.dao.ExpenseCategoryDao;
 import org.infinite.spoty.database.models.ExpenseCategory;
 import org.infinite.spoty.forms.ExpenseCategoryFormController;
 import org.infinite.spoty.viewModels.ExpenseCategoryViewModel;
@@ -94,7 +94,10 @@ public class ExpenseCategoryController implements Initializable {
             new StringFilter<>("Description", ExpenseCategory::getDescription));
 
     styleExpenseCategoryTable();
-    categoryExpenseTable.setItems(ExpenseCategoryViewModel.getCategories());
+    categoryExpenseTable.setItems(ExpenseCategoryViewModel.categoryList);
+    ExpenseCategoryViewModel.categoryList.addListener(
+        new WeakListChangeListener<>(
+            c -> categoryExpenseTable.setItems(ExpenseCategoryViewModel.categoryList)));
   }
 
   private void styleExpenseCategoryTable() {
@@ -128,8 +131,7 @@ public class ExpenseCategoryController implements Initializable {
     // Delete
     delete.setOnAction(
         e -> {
-          ExpenseCategoryDao.deleteExpenseCategory(obj.getData().getId());
-          ExpenseCategoryViewModel.getCategories();
+          ExpenseCategoryViewModel.deleteItem(obj.getData().getId());
           e.consume();
         });
     // Edit

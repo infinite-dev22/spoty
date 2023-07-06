@@ -15,7 +15,6 @@
 package org.infinite.spoty.views.inventory.brand;
 
 import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
-import static org.infinite.spoty.viewModels.BrandViewModel.getItems;
 
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
@@ -26,6 +25,7 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
+import javafx.collections.WeakListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -36,7 +36,6 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.infinite.spoty.database.dao.BrandDao;
 import org.infinite.spoty.database.models.Brand;
 import org.infinite.spoty.forms.BrandFormController;
 import org.infinite.spoty.viewModels.BrandViewModel;
@@ -90,7 +89,9 @@ public class BrandController implements Initializable {
             new StringFilter<>("Name", Brand::getName),
             new StringFilter<>("Description", Brand::getDescription));
     getBrandTable();
-    brandTable.setItems(getItems());
+    brandTable.setItems(BrandViewModel.brandsList);
+    BrandViewModel.brandsList.addListener(
+        new WeakListChangeListener<>(c -> brandTable.setItems(BrandViewModel.brandsList)));
   }
 
   private void getBrandTable() {
@@ -122,8 +123,7 @@ public class BrandController implements Initializable {
     // Delete
     delete.setOnAction(
         e -> {
-          BrandDao.deleteBrand(obj.getData().getId());
-          BrandViewModel.getItems();
+          BrandViewModel.deleteItem(obj.getData().getId());
           e.consume();
         });
     // Edit

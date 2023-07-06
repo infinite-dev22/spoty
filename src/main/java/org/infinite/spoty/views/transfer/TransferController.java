@@ -22,6 +22,7 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
+import javafx.collections.WeakListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -29,7 +30,6 @@ import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import org.infinite.spoty.components.navigation.Pages;
-import org.infinite.spoty.database.dao.TransferMasterDao;
 import org.infinite.spoty.database.models.TransferMaster;
 import org.infinite.spoty.viewModels.TransferMasterViewModel;
 import org.infinite.spoty.views.BaseController;
@@ -56,8 +56,6 @@ public class TransferController implements Initializable {
   private void setupTable() {
     MFXTableColumn<TransferMaster> transferDate =
         new MFXTableColumn<>("Date", false, Comparator.comparing(TransferMaster::getDate));
-    MFXTableColumn<TransferMaster> transferReference =
-        new MFXTableColumn<>("Reference", false, Comparator.comparing(TransferMaster::getRef));
     MFXTableColumn<TransferMaster> transferFromBranch =
         new MFXTableColumn<>(
             "Branch(From)", false, Comparator.comparing(TransferMaster::getFromBranchName));
@@ -71,7 +69,6 @@ public class TransferController implements Initializable {
 
     transferDate.setRowCellFactory(
         transfer -> new MFXTableRowCell<>(TransferMaster::getLocaleDate));
-    transferReference.setRowCellFactory(transfer -> new MFXTableRowCell<>(TransferMaster::getRef));
     transferFromBranch.setRowCellFactory(
         transfer -> new MFXTableRowCell<>(TransferMaster::getFromBranchName));
     transferToBranch.setRowCellFactory(
@@ -81,7 +78,6 @@ public class TransferController implements Initializable {
         transfer -> new MFXTableRowCell<>(TransferMaster::getTotal));
 
     transferDate.prefWidthProperty().bind(transferMasterTable.widthProperty().multiply(.17));
-    transferReference.prefWidthProperty().bind(transferMasterTable.widthProperty().multiply(.17));
     transferFromBranch.prefWidthProperty().bind(transferMasterTable.widthProperty().multiply(.17));
     transferToBranch.prefWidthProperty().bind(transferMasterTable.widthProperty().multiply(.17));
     transferStatus.prefWidthProperty().bind(transferMasterTable.widthProperty().multiply(.17));
@@ -90,12 +86,7 @@ public class TransferController implements Initializable {
     transferMasterTable
         .getTableColumns()
         .addAll(
-            transferDate,
-            transferReference,
-            transferFromBranch,
-            transferToBranch,
-            transferStatus,
-            transferTotalCost);
+            transferDate, transferFromBranch, transferToBranch, transferStatus, transferTotalCost);
     transferMasterTable
         .getFilters()
         .addAll(
@@ -105,7 +96,10 @@ public class TransferController implements Initializable {
             new StringFilter<>("Status", TransferMaster::getStatus),
             new DoubleFilter<>("Total Cost", TransferMaster::getTotal));
     getTransferMasterTable();
-    transferMasterTable.setItems(TransferMasterViewModel.getTransferMasters());
+    transferMasterTable.setItems(TransferMasterViewModel.transferMasterList);
+    TransferMasterViewModel.transferMasterList.addListener(
+        new WeakListChangeListener<>(
+            c -> transferMasterTable.setItems(TransferMasterViewModel.transferMasterList)));
   }
 
   private void getTransferMasterTable() {
@@ -139,8 +133,7 @@ public class TransferController implements Initializable {
     // Delete
     delete.setOnAction(
         e -> {
-          TransferMasterDao.deleteTransferMaster(obj.getData().getId());
-          TransferMasterViewModel.getTransferMasters();
+          TransferMasterViewModel.deleteItem(obj.getData().getId());
           e.consume();
         });
     // Edit

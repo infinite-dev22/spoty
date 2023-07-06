@@ -14,18 +14,24 @@
 
 package org.infinite.spoty.viewModels;
 
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.support.ConnectionSource;
+import java.sql.SQLException;
+import javafx.application.Platform;
+import javafx.beans.property.LongProperty;
+import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.database.dao.SupplierDao;
+import javafx.concurrent.Task;
+import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.Supplier;
 
 public class SupplierViewModel {
   public static final ObservableList<Supplier> suppliersList = FXCollections.observableArrayList();
-  private static final IntegerProperty id = new SimpleIntegerProperty(0);
+  private static final LongProperty id = new SimpleLongProperty(0);
   private static final StringProperty name = new SimpleStringProperty("");
   private static final StringProperty code = new SimpleStringProperty("");
   private static final StringProperty email = new SimpleStringProperty("");
@@ -35,15 +41,15 @@ public class SupplierViewModel {
   private static final StringProperty taxNumber = new SimpleStringProperty("");
   private static final StringProperty country = new SimpleStringProperty("");
 
-  public static int getId() {
+  public static long getId() {
     return id.get();
   }
 
-  public static void setId(int id) {
+  public static void setId(long id) {
     SupplierViewModel.id.set(id);
   }
 
-  public static IntegerProperty idProperty() {
+  public static LongProperty idProperty() {
     return id;
   }
 
@@ -157,51 +163,154 @@ public class SupplierViewModel {
   }
 
   public static void saveSupplier() {
-    Supplier supplier =
-        new Supplier(
-            getName(),
-            getEmail(),
-            getPhone(),
-            getCity(),
-            getAddress(),
-            getTaxNumber(),
-            getCountry());
-    SupplierDao.saveSupplier(supplier);
-    resetProperties();
-    getSuppliers();
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<Supplier, Long> supplierDao =
+                DaoManager.createDao(connectionSource, Supplier.class);
+
+            Supplier supplier =
+                new Supplier(
+                    getName(),
+                    getEmail(),
+                    getPhone(),
+                    getCity(),
+                    getAddress(),
+                    getTaxNumber(),
+                    getCountry());
+
+            supplierDao.create(supplier);
+
+            resetProperties();
+            getSuppliers();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static ObservableList<Supplier> getSuppliers() {
-    suppliersList.clear();
-    suppliersList.addAll(SupplierDao.fetchSuppliers());
-    return suppliersList;
+  public static void getSuppliers() {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<Supplier, Long> supplierDao =
+                DaoManager.createDao(connectionSource, Supplier.class);
+
+            Platform.runLater(
+                () -> {
+                  suppliersList.clear();
+
+                  try {
+                    suppliersList.addAll(supplierDao.queryForAll());
+                  } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                  }
+                });
+
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static void getItem(int supplierID) {
-    Supplier supplier = SupplierDao.findSupplier(supplierID);
-    setId(supplier.getId());
-    setName(supplier.getName());
-    setEmail(supplier.getEmail());
-    setPhone(supplier.getPhone());
-    setCity(supplier.getCity());
-    setCountry(supplier.getCountry());
-    setAddress(supplier.getAddress());
-    setTaxNumber(supplier.getTaxNumber());
-    getSuppliers();
+  public static void getItem(long index) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<Supplier, Long> supplierDao =
+                DaoManager.createDao(connectionSource, Supplier.class);
+
+            Supplier supplier = supplierDao.queryForId(index);
+
+            setId(supplier.getId());
+            setName(supplier.getName());
+            setEmail(supplier.getEmail());
+            setPhone(supplier.getPhone());
+            setCity(supplier.getCity());
+            setCountry(supplier.getCountry());
+            setAddress(supplier.getAddress());
+            setTaxNumber(supplier.getTaxNumber());
+
+            getSuppliers();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static void updateItem(int supplierID) {
-    Supplier supplier =
-        new Supplier(
-            getName(),
-            getEmail(),
-            getPhone(),
-            getTaxNumber(),
-            getAddress(),
-            getCity(),
-            getCountry());
-    SupplierDao.updateSupplier(supplier, supplierID);
-    resetProperties();
-    getSuppliers();
+  public static void updateItem(long index) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<Supplier, Long> supplierDao =
+                DaoManager.createDao(connectionSource, Supplier.class);
+
+            Supplier supplier = supplierDao.queryForId(index);
+
+            supplier.setName(getName());
+            supplier.setEmail(getEmail());
+            supplier.setPhone(getPhone());
+            supplier.setTaxNumber(getTaxNumber());
+            supplier.setAddress(getAddress());
+            supplier.setCity(getCity());
+            supplier.setCountry(getCountry());
+
+            supplierDao.update(supplier);
+            resetProperties();
+            getSuppliers();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
+  }
+
+  public static void deleteItem(long index) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<Supplier, Long> supplierDao =
+                DaoManager.createDao(connectionSource, Supplier.class);
+
+            supplierDao.deleteById(index);
+            getSuppliers();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 }

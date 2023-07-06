@@ -14,8 +14,6 @@
 
 package org.infinite.spoty.views.purchases;
 
-import static org.infinite.spoty.viewModels.PurchaseMasterViewModel.getPurchaseMasters;
-
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXContextMenu;
 import io.github.palexdev.materialfx.controls.MFXContextMenuItem;
@@ -30,6 +28,7 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
+import javafx.collections.WeakListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -37,7 +36,6 @@ import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import org.infinite.spoty.components.navigation.Pages;
-import org.infinite.spoty.database.dao.PurchaseMasterDao;
 import org.infinite.spoty.database.models.PurchaseMaster;
 import org.infinite.spoty.viewModels.PurchaseMasterViewModel;
 import org.infinite.spoty.views.BaseController;
@@ -64,8 +62,6 @@ public class PurchasesController implements Initializable {
   private void setupTable() {
     MFXTableColumn<PurchaseMaster> purchaseMasterDate =
         new MFXTableColumn<>("Date", false, Comparator.comparing(PurchaseMaster::getDate));
-    MFXTableColumn<PurchaseMaster> purchaseMasterReference =
-        new MFXTableColumn<>("Reference", false, Comparator.comparing(PurchaseMaster::getRef));
     MFXTableColumn<PurchaseMaster> purchaseMasterSupplier =
         new MFXTableColumn<>(
             "Supplier", false, Comparator.comparing(PurchaseMaster::getSupplierName));
@@ -85,8 +81,6 @@ public class PurchasesController implements Initializable {
 
     purchaseMasterDate.setRowCellFactory(
         purchaseMaster -> new MFXTableRowCell<>(PurchaseMaster::getLocaleDate));
-    purchaseMasterReference.setRowCellFactory(
-        purchaseMaster -> new MFXTableRowCell<>(PurchaseMaster::getRef));
     purchaseMasterSupplier.setRowCellFactory(
         purchaseMaster -> new MFXTableRowCell<>(PurchaseMaster::getSupplierName));
     purchaseMasterBranch.setRowCellFactory(
@@ -103,9 +97,6 @@ public class PurchasesController implements Initializable {
         purchaseMaster -> new MFXTableRowCell<>(PurchaseMaster::getPaymentStatus));
 
     purchaseMasterDate.prefWidthProperty().bind(purchaseMasterTable.widthProperty().multiply(.1));
-    purchaseMasterReference
-        .prefWidthProperty()
-        .bind(purchaseMasterTable.widthProperty().multiply(.1));
     purchaseMasterSupplier
         .prefWidthProperty()
         .bind(purchaseMasterTable.widthProperty().multiply(.15));
@@ -130,7 +121,6 @@ public class PurchasesController implements Initializable {
         .getTableColumns()
         .addAll(
             purchaseMasterDate,
-            purchaseMasterReference,
             purchaseMasterSupplier,
             purchaseMasterBranch,
             purchaseMasterStatus,
@@ -150,7 +140,10 @@ public class PurchasesController implements Initializable {
             new DoubleFilter<>("Due", PurchaseMaster::getDue),
             new StringFilter<>("Pay Status", PurchaseMaster::getPaymentStatus));
     getTable();
-    purchaseMasterTable.setItems(getPurchaseMasters());
+    purchaseMasterTable.setItems(PurchaseMasterViewModel.purchaseMasterList);
+    PurchaseMasterViewModel.purchaseMasterList.addListener(
+        new WeakListChangeListener<>(
+            c -> purchaseMasterTable.setItems(PurchaseMasterViewModel.purchaseMasterList)));
   }
 
   private void getTable() {
@@ -184,8 +177,7 @@ public class PurchasesController implements Initializable {
     // Delete
     delete.setOnAction(
         e -> {
-          PurchaseMasterDao.deletePurchaseMaster(obj.getData().getId());
-          PurchaseMasterViewModel.getPurchaseMasters();
+          PurchaseMasterViewModel.deleteItem(obj.getData().getId());
           e.consume();
         });
     // Edit

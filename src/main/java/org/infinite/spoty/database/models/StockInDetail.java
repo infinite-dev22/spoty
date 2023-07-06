@@ -14,47 +14,54 @@
 
 package org.infinite.spoty.database.models;
 
-import jakarta.persistence.*;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 import java.io.Serializable;
 import java.util.Date;
 
-@Entity
+@DatabaseTable(tableName = "stock_in_detail")
 public class StockInDetail implements Serializable {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private int id;
+  @DatabaseField(generatedId = true)
+  private long id;
 
-  @ManyToOne
-  @JoinColumn(name = "stockIn_id", nullable = false)
+  @DatabaseField(
+      foreign = true,
+      columnName = "stock_in_master_id",
+      canBeNull = false,
+      foreignAutoCreate = true,
+      foreignAutoRefresh = true,
+      columnDefinition =
+          "INTEGER CONSTRAINT FK_NAME REFERENCES stock_in_master(id) ON DELETE CASCADE")
   private StockInMaster stockIn;
 
-  @ManyToOne(optional = false)
-  @JoinColumn(nullable = false, name = "product_id")
+  @DatabaseField(foreign = true, columnName = "product_id", canBeNull = false)
   private ProductDetail product;
 
-  @Column(nullable = false)
-  private int quantity;
+  @DatabaseField(canBeNull = false)
+  private long quantity;
 
+  @DatabaseField(columnName = "serial_number")
   private String serialNo;
-  private String description;
-  private String location;
 
-  @Column(name = "created_at")
+  @DatabaseField private String description;
+  @DatabaseField private String location;
+
+  @DatabaseField(columnName = "created_at")
   private Date createdAt;
 
-  @Column(name = "created_by")
+  @DatabaseField(columnName = "created_by")
   private String createdBy;
 
-  @Column(name = "updated_at")
+  @DatabaseField(columnName = "updated_at")
   private Date updatedAt;
 
-  @Column(name = "updated_by")
+  @DatabaseField(columnName = "updated_by")
   private String updatedBy;
 
   public StockInDetail() {}
 
   public StockInDetail(
-      ProductDetail product, int quantity, String serialNo, String description, String location) {
+      ProductDetail product, long quantity, String serialNo, String description, String location) {
     this.product = product;
     this.quantity = quantity;
     this.serialNo = serialNo;
@@ -62,11 +69,11 @@ public class StockInDetail implements Serializable {
     this.location = location;
   }
 
-  public int getId() {
+  public long getId() {
     return id;
   }
 
-  public void setId(int id) {
+  public void setId(long id) {
     this.id = id;
   }
 
@@ -98,11 +105,11 @@ public class StockInDetail implements Serializable {
         : null;
   }
 
-  public int getQuantity() {
+  public long getQuantity() {
     return quantity;
   }
 
-  public void setQuantity(int quantity) {
+  public void setQuantity(long quantity) {
     this.quantity = quantity;
   }
 

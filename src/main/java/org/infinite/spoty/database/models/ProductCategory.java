@@ -14,24 +14,30 @@
 
 package org.infinite.spoty.database.models;
 
-import jakarta.persistence.*;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 import java.util.Date;
 
-@Entity
-@Table(name = "product_category")
+@DatabaseTable(tableName = "product_category")
 public class ProductCategory {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @DatabaseField(generatedId = true)
   private int id;
 
-  private String code;
+  @DatabaseField private String code;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private String name;
 
+  @DatabaseField(columnName = "created_at")
   private Date createdAt = null;
+
+  @DatabaseField(columnName = "created_by")
   private String createdBy = null;
+
+  @DatabaseField(columnName = "updated_at")
   private Date updatedAt = null;
+
+  @DatabaseField(columnName = "updated_by")
   private String updatedBy = null;
 
   public ProductCategory(String code, String name) {

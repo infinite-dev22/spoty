@@ -25,6 +25,7 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
+import javafx.collections.WeakListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -36,7 +37,6 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.infinite.spoty.database.dao.CustomerDao;
 import org.infinite.spoty.database.models.Customer;
 import org.infinite.spoty.forms.CustomerFormController;
 import org.infinite.spoty.viewModels.CustomerViewModel;
@@ -108,7 +108,10 @@ public class CustomerController implements Initializable {
             new StringFilter<>("Email", Customer::getEmail),
             new StringFilter<>("Tax No.", Customer::getTaxNumber));
     styleCustomerTable();
-    customersTable.setItems(CustomerViewModel.getCustomers());
+    customersTable.setItems(CustomerViewModel.customersList);
+    CustomerViewModel.customersList.addListener(
+        new WeakListChangeListener<>(
+            c -> customersTable.setItems(CustomerViewModel.customersList)));
   }
 
   private void styleCustomerTable() {
@@ -142,8 +145,7 @@ public class CustomerController implements Initializable {
     // Delete
     delete.setOnAction(
         e -> {
-          CustomerDao.deleteCustomer(obj.getData().getId());
-          CustomerViewModel.getCustomers();
+          CustomerViewModel.deleteItem(obj.getData().getId());
           e.consume();
         });
     // Edit
@@ -162,7 +164,7 @@ public class CustomerController implements Initializable {
 
   private void customerFormDialogPane(Stage stage) throws IOException {
     FXMLLoader fxmlLoader = fxmlLoader("forms/CustomerForm.fxml");
-      fxmlLoader.setControllerFactory(c -> CustomerFormController.getInstance(stage));
+    fxmlLoader.setControllerFactory(c -> CustomerFormController.getInstance(stage));
     dialog = new Dialog<>();
     dialog.setDialogPane(fxmlLoader.load());
     dialog.initOwner(stage);

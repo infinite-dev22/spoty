@@ -14,39 +14,40 @@
 
 package org.infinite.spoty.database.models;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
-@Entity
+@DatabaseTable(tableName = "holiday")
 public class Holiday implements Serializable {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @DatabaseField(generatedId = true)
   private long id;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private String title;
-  @JoinColumn(nullable = false, name = "company_id")
+  @DatabaseField(foreign = true, canBeNull = false, columnName = "company_id")
   @ManyToOne private Company company;
 
-  @Column(name = "start_date")
+  @DatabaseField(columnName = "start_date")
   private Date startDate;
 
-  @Column(name = "end_date")
+  @DatabaseField(columnName = "end_date")
   private Date endDate;
-
+  @DatabaseField
   private String description;
 
-  @Column(name = "created_at")
+  @DatabaseField(columnName = "created_at")
   private Date createdAt;
 
-  @Column(name = "created_by")
+  @DatabaseField(columnName = "created_by")
   private String createdBy;
 
-  @Column(name = "updated_at")
+  @DatabaseField(columnName = "updated_at")
   private Date updatedAt;
 
-  @Column(name = "updated_by")
+  @DatabaseField(columnName = "updated_by")
   private String updatedBy;
 
   public Holiday(

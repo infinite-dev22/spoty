@@ -8,20 +8,17 @@ module org.infinite.spoty {
   requires fr.brouillard.oss.cssfx;
   requires mfx.components;
   requires mfx.resources;
-  requires org.hibernate.orm.core;
-  requires org.hibernate.commons.annotations;
-  requires org.jboss.logging;
-  requires net.bytebuddy;
   requires jakarta.persistence;
-  requires jakarta.transaction;
-  requires jakarta.xml.bind;
-  requires com.fasterxml.classmate;
   requires java.sql;
   requires java.logging;
   requires java.naming;
-  requires org.apache.commons.compress;
   requires org.kordamp.ikonli.javafx;
   requires org.jetbrains.annotations;
+  requires java.prefs;
+  requires ormlite.jdbc;
+  requires org.xerial.sqlitejdbc;
+  requires org.kordamp.ikonli.core;
+  requires org.kordamp.ikonli.fontawesome5;
 
   opens org.infinite.spoty.views;
   opens org.infinite.spoty.views.components;
@@ -57,7 +54,7 @@ module org.infinite.spoty {
   opens org.infinite.spoty.components.navigation;
   opens org.infinite.spoty.components.notification;
   opens org.infinite.spoty;
+  opens org.infinite.spoty.components.notification.enums;
 
   exports org.infinite.spoty;
-  opens org.infinite.spoty.components.notification.enums;
 }

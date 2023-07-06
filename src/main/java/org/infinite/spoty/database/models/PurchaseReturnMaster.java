@@ -14,61 +14,67 @@
 
 package org.infinite.spoty.database.models;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
+import com.j256.ormlite.table.DatabaseTable;
 import jakarta.persistence.*;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
-import java.util.List;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 
-@Entity
+@DatabaseTable(tableName = "purchase_return_masters")
 public class PurchaseReturnMaster implements Serializable {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @DatabaseField(generatedId = true)
   private long id;
 
-  @ManyToOne private User user_detail;
+  @DatabaseField(foreign = true, columnName = "user_id")
+  private User user;
+
+  @DatabaseField(columnName = "reference_number")
   private String ref;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private Date date;
 
-  @ManyToOne(optional = false)
-  @JoinColumn(nullable = false, name = "supplier_id")
+  @DatabaseField(foreign = true, canBeNull = false, columnName = "supplier_id")
   private Supplier supplier;
 
-  @ManyToOne(optional = false)
-  @JoinColumn(nullable = false, name = "branch_id")
+  @DatabaseField(foreign = true, canBeNull = false, columnName = "branch_id")
   private Branch branch;
 
-  @OneToMany(mappedBy = "purchaseReturn", fetch = FetchType.LAZY)
-  @Cascade({CascadeType.ALL})
-  private List<PurchaseReturnDetail> purchaseReturnDetails;
+  @ForeignCollectionField private Collection<PurchaseReturnDetail> purchaseReturnDetails;
 
+  @DatabaseField(columnName = "tax_rate")
   private double taxRate;
-  private double netTax;
-  private double discount;
-  private String shipping;
-  private double paid;
-  private double total;
-  private String status;
-  private String paymentStatus;
-  private String notes;
 
-  @Column(name = "created_at")
+  @DatabaseField(columnName = "net_tax")
+  private double netTax;
+
+  @DatabaseField private double discount;
+  @DatabaseField private String shipping;
+  @DatabaseField private double paid;
+  @DatabaseField private double total;
+  @DatabaseField private String status;
+
+  @DatabaseField(columnName = "payment_status")
+  private String paymentStatus;
+
+  @DatabaseField private String notes;
+
+  @DatabaseField(columnName = "created_at")
   private Date createdAt;
 
-  @Column(name = "created_by")
+  @DatabaseField(columnName = "created_by")
   private String createdBy;
 
-  @Column(name = "updated_at")
+  @DatabaseField(columnName = "updated_at")
   private Date updatedAt;
 
-  @Column(name = "updated_by")
+  @DatabaseField(columnName = "updated_by")
   private String updatedBy;
 
   public PurchaseReturnMaster(
-      User user_detail,
+      User user,
       String ref,
       Date date,
       Supplier supplier,
@@ -82,7 +88,7 @@ public class PurchaseReturnMaster implements Serializable {
       String status,
       String paymentStatus,
       String notes) {
-    this.user_detail = user_detail;
+    this.user = user;
     this.ref = ref;
     this.date = date;
     this.supplier = supplier;
@@ -109,11 +115,11 @@ public class PurchaseReturnMaster implements Serializable {
   }
 
   public User getUser() {
-    return user_detail;
+    return user;
   }
 
   public void setUser(User user_detail) {
-    this.user_detail = user_detail;
+    this.user = user_detail;
   }
 
   public String getRef() {
@@ -156,11 +162,11 @@ public class PurchaseReturnMaster implements Serializable {
     return (branch != null) ? branch.getName() : null;
   }
 
-  public List<PurchaseReturnDetail> getPurchaseReturnDetails() {
+  public Collection<PurchaseReturnDetail> getPurchaseReturnDetails() {
     return purchaseReturnDetails;
   }
 
-  public void setPurchaseReturnDetails(List<PurchaseReturnDetail> purchaseReturnDetails) {
+  public void setPurchaseReturnDetails(Collection<PurchaseReturnDetail> purchaseReturnDetails) {
     this.purchaseReturnDetails = purchaseReturnDetails;
   }
 

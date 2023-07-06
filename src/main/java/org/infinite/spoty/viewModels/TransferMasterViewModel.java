@@ -16,20 +16,26 @@ package org.infinite.spoty.viewModels;
 
 import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
 
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.support.ConnectionSource;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.database.dao.TransferMasterDao;
+import javafx.concurrent.Task;
+import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.TransferMaster;
 
 public class TransferMasterViewModel {
   public static final ObservableList<TransferMaster> transferMasterList =
       FXCollections.observableArrayList();
-  private static final IntegerProperty id = new SimpleIntegerProperty(0);
+  private static final LongProperty id = new SimpleLongProperty(0);
   private static final StringProperty date = new SimpleStringProperty("");
   private static final ObjectProperty<Branch> fromBranch = new SimpleObjectProperty<>(null);
   private static final ObjectProperty<Branch> toBranch = new SimpleObjectProperty<>(null);
@@ -37,15 +43,15 @@ public class TransferMasterViewModel {
   private static final StringProperty status = new SimpleStringProperty("");
   private static final StringProperty note = new SimpleStringProperty("");
 
-  public static int getId() {
+  public static long getId() {
     return id.get();
   }
 
-  public static void setId(int id) {
+  public static void setId(long id) {
     TransferMasterViewModel.id.set(id);
   }
 
-  public static IntegerProperty idProperty() {
+  public static LongProperty idProperty() {
     return id;
   }
 
@@ -138,51 +144,164 @@ public class TransferMasterViewModel {
   }
 
   public static void saveTransferMaster() {
-    TransferMaster transferMaster =
-        new TransferMaster(
-            getDate(), getFromBranch(), getToBranch(), getTotalCost(), getStatus(), getNote());
-    if (!TransferDetailViewModel.transferDetailsList.isEmpty()) {
-      TransferDetailViewModel.transferDetailsList.forEach(
-          transferDetail -> transferDetail.setTransfer(transferMaster));
-      transferMaster.setTransferDetails(TransferDetailViewModel.transferDetailsList);
-    }
-    TransferMasterDao.saveTransferMaster(transferMaster);
-    resetProperties();
-    getTransferMasters();
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<TransferMaster, Long> transferMasterDao =
+                DaoManager.createDao(connectionSource, TransferMaster.class);
+
+            TransferMaster transferMaster =
+                new TransferMaster(
+                    getDate(),
+                    getFromBranch(),
+                    getToBranch(),
+                    getTotalCost(),
+                    getStatus(),
+                    getNote());
+
+            if (!TransferDetailViewModel.transferDetailsList.isEmpty()) {
+              TransferDetailViewModel.transferDetailsList.forEach(
+                  transferDetail -> transferDetail.setTransfer(transferMaster));
+
+              transferMaster.setTransferDetails(TransferDetailViewModel.transferDetailsList);
+            }
+
+            transferMasterDao.create(transferMaster);
+
+            resetProperties();
+            getTransferMasters();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static ObservableList<TransferMaster> getTransferMasters() {
-    transferMasterList.clear();
-    transferMasterList.addAll(TransferMasterDao.fetchTransferMasters());
-    return transferMasterList;
+  public static void getTransferMasters() {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<TransferMaster, Long> transferMasterDao =
+                DaoManager.createDao(connectionSource, TransferMaster.class);
+
+            Platform.runLater(
+                () -> {
+                  transferMasterList.clear();
+
+                  try {
+                    transferMasterList.addAll(transferMasterDao.queryForAll());
+                  } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                  }
+                });
+
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static void getItem(int transferMasterID) {
-    TransferMaster transferMaster = TransferMasterDao.findTransferMaster(transferMasterID);
-    setId(transferMaster.getId());
-    setDate(transferMaster.getLocaleDate());
-    setFromBranch(transferMaster.getFromBranch());
-    setToBranch(transferMaster.getToBranch());
-    setTotalCost(String.valueOf(transferMaster.getTotal()));
-    setNote(transferMaster.getNotes());
-    setStatus(transferMaster.getStatus());
-    TransferDetailViewModel.transferDetailsList.clear();
-    TransferDetailViewModel.transferDetailsList.addAll(transferMaster.getTransferDetails());
-    getTransferMasters();
+  public static void getItem(long transferMasterID) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<TransferMaster, Long> transferMasterDao =
+                DaoManager.createDao(connectionSource, TransferMaster.class);
+
+            TransferMaster transferMaster = transferMasterDao.queryForId(transferMasterID);
+
+            setId(transferMaster.getId());
+            setDate(transferMaster.getLocaleDate());
+            setFromBranch(transferMaster.getFromBranch());
+            setToBranch(transferMaster.getToBranch());
+            setTotalCost(String.valueOf(transferMaster.getTotal()));
+            setNote(transferMaster.getNotes());
+            setStatus(transferMaster.getStatus());
+
+            TransferDetailViewModel.transferDetailsList.clear();
+            TransferDetailViewModel.transferDetailsList.addAll(transferMaster.getTransferDetails());
+
+            getTransferMasters();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static void updateItem(int transferMasterID) {
-    TransferMaster transferMaster = TransferMasterDao.findTransferMaster(transferMasterID);
-    transferMaster.setDate(getDate());
-    transferMaster.setFromBranch(getFromBranch());
-    transferMaster.setToBranch(getToBranch());
-    transferMaster.setTotal(getTotalCost());
-    transferMaster.setStatus(getStatus());
-    transferMaster.setNotes(getNote());
-    TransferDetailViewModel.deleteTransferDetails(PENDING_DELETES);
-    transferMaster.setTransferDetails(TransferDetailViewModel.transferDetailsList);
-    TransferMasterDao.updateTransferMaster(transferMaster, transferMasterID);
-    resetProperties();
-    getTransferMasters();
+  public static void updateItem(long transferMasterID) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<TransferMaster, Long> transferMasterDao =
+                DaoManager.createDao(connectionSource, TransferMaster.class);
+
+            TransferMaster transferMaster = transferMasterDao.queryForId(transferMasterID);
+            transferMaster.setDate(getDate());
+            transferMaster.setFromBranch(getFromBranch());
+            transferMaster.setToBranch(getToBranch());
+            transferMaster.setTotal(getTotalCost());
+            transferMaster.setStatus(getStatus());
+            transferMaster.setNotes(getNote());
+
+            TransferDetailViewModel.deleteTransferDetails(PENDING_DELETES);
+            transferMaster.setTransferDetails(TransferDetailViewModel.transferDetailsList);
+
+            transferMasterDao.update(transferMaster);
+
+            resetProperties();
+            getTransferMasters();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
+  }
+
+  public static void deleteItem(long transferMasterID) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<TransferMaster, Long> transferMasterDao =
+                DaoManager.createDao(connectionSource, TransferMaster.class);
+
+            transferMasterDao.deleteById(transferMasterID);
+            getTransferMasters();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 }

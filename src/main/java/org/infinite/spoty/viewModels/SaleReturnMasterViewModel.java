@@ -14,35 +14,41 @@
 
 package org.infinite.spoty.viewModels;
 
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.support.ConnectionSource;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.database.dao.SaleReturnMasterDao;
+import javafx.concurrent.Task;
+import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.SaleReturnMaster;
 
 public class SaleReturnMasterViewModel {
   public static final ObservableList<SaleReturnMaster> saleReturnMasterList =
       FXCollections.observableArrayList();
-  private static final IntegerProperty id = new SimpleIntegerProperty(0);
+  private static final LongProperty id = new SimpleLongProperty(0);
   private static final StringProperty date = new SimpleStringProperty("");
   private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>(null);
   private static final StringProperty totalCost = new SimpleStringProperty("");
   private static final StringProperty status = new SimpleStringProperty("");
   private static final StringProperty note = new SimpleStringProperty("");
 
-  public static int getId() {
+  public static long getId() {
     return id.get();
   }
 
-  public static void setId(int id) {
+  public static void setId(long id) {
     SaleReturnMasterViewModel.id.set(id);
   }
 
-  public static IntegerProperty idProperty() {
+  public static LongProperty idProperty() {
     return id;
   }
 
@@ -119,22 +125,34 @@ public class SaleReturnMasterViewModel {
     setTotalCost("");
   }
 
-  //    public static void saveSaleReturnMaster() {
-  //        SaleReturnMaster saleReturnMaster = new SaleReturnMaster(getDate(),
-  //                getBranch(),
-  //                getStatus(),
-  //                getNote());
-  //
-  // saleReturnMaster.setSaleReturnDetails(SaleReturnDetailViewModel.saleReturnDetailsTempList);
-  //        SaleReturnMasterDao.saveSaleReturnMaster(saleReturnMaster);
-  //        resetProperties();
-  //        SaleReturnDetailViewModel.saleReturnDetailsTempList.clear();
-  //        getSaleReturnMasters();
-  //    }
+  public static void getSaleReturnMasters() {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
 
-  public static ObservableList<SaleReturnMaster> getSaleReturnMasters() {
-    saleReturnMasterList.clear();
-    saleReturnMasterList.addAll(SaleReturnMasterDao.fetchSaleReturnMasters());
-    return saleReturnMasterList;
+            Dao<SaleReturnMaster, Long> saleReturnMasterDao =
+                DaoManager.createDao(connectionSource, SaleReturnMaster.class);
+
+            Platform.runLater(
+                () -> {
+                  saleReturnMasterList.clear();
+
+                  try {
+                    saleReturnMasterList.addAll(saleReturnMasterDao.queryForAll());
+                  } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                  }
+                });
+
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 }

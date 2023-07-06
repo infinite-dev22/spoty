@@ -14,61 +14,59 @@
 
 package org.infinite.spoty.database.models;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
+import com.j256.ormlite.table.DatabaseTable;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.text.DateFormat;
+import java.util.Collection;
 import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 
-@Entity
+@DatabaseTable(tableName = "quotation_master")
 public class QuotationMaster implements Serializable {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @DatabaseField(generatedId = true)
   private int id;
 
-  @ManyToOne private User user_detail;
+  @DatabaseField(foreign = true, columnName = "user_id")
+  private User user;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private Date date = new Date();
 
+  @DatabaseField(columnName = "reference_number")
   private String ref;
 
-  @ManyToOne(optional = false)
-  @JoinColumn(nullable = false, name = "customer_id")
+  @DatabaseField(foreign = true, columnName = "customer_id", canBeNull = false)
   private Customer customer;
 
-  @ManyToOne(optional = false)
-  @JoinColumn(nullable = false, name = "branch_id")
+  @DatabaseField(foreign = true, columnName = "branch_id", canBeNull = false)
   private Branch branch;
 
-  @OneToMany(mappedBy = "quotation", fetch = FetchType.LAZY)
-  @Cascade({CascadeType.ALL})
-  private List<QuotationDetail> quotationDetails = new LinkedList<>();
+  @ForeignCollectionField
+  private Collection<QuotationDetail> quotationDetails;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private String shipping = "";
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private double total = 0;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private String status;
 
-  private String notes;
+  @DatabaseField private String notes;
 
-  @Column(name = "created_at")
+  @DatabaseField(columnName = "created_at")
   private Date createdAt;
 
-  @Column(name = "created_by")
+  @DatabaseField(columnName = "created_by")
   private String createdBy;
 
-  @Column(name = "updated_at")
+  @DatabaseField(columnName = "updated_at")
   private Date updatedAt;
 
-  @Column(name = "updated_by")
+  @DatabaseField(columnName = "updated_by")
   private String updatedBy;
 
   public QuotationMaster() {}
@@ -90,11 +88,11 @@ public class QuotationMaster implements Serializable {
   }
 
   public User getUser() {
-    return user_detail;
+    return user;
   }
 
   public void setUser(User user_detail) {
-    this.user_detail = user_detail;
+    this.user = user_detail;
   }
 
   public Date getDate() {
@@ -139,11 +137,11 @@ public class QuotationMaster implements Serializable {
     else return null;
   }
 
-  public List<QuotationDetail> getQuotationDetails() {
+  public Collection<QuotationDetail> getQuotationDetails() {
     return quotationDetails;
   }
 
-  public void setQuotationDetails(List<QuotationDetail> quotationDetails) {
+  public void setQuotationDetails(Collection<QuotationDetail> quotationDetails) {
     this.quotationDetails = quotationDetails;
   }
 

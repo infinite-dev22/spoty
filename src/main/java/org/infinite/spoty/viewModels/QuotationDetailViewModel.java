@@ -16,21 +16,23 @@ package org.infinite.spoty.viewModels;
 
 import static org.infinite.spoty.values.SharedResources.*;
 
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.support.ConnectionSource;
+import java.sql.SQLException;
 import java.util.LinkedList;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.database.dao.QuotationDetailDao;
-import org.infinite.spoty.database.models.ProductDetail;
-import org.infinite.spoty.database.models.QuotationDetail;
-import org.infinite.spoty.database.models.QuotationMaster;
-import org.infinite.spoty.database.models.UnitOfMeasure;
+import javafx.concurrent.Task;
+import org.infinite.spoty.database.connection.SQLiteConnection;
+import org.infinite.spoty.database.models.*;
 
 public class QuotationDetailViewModel {
   // TODO: Add more fields according to DB design and necessity.
   public static final ObservableList<QuotationDetail> quotationDetailsList =
       FXCollections.observableArrayList();
-  private static final IntegerProperty id = new SimpleIntegerProperty(0);
+  private static final LongProperty id = new SimpleLongProperty(0);
   private static final ObjectProperty<ProductDetail> product = new SimpleObjectProperty<>();
   private static final ObjectProperty<UnitOfMeasure> saleUnit = new SimpleObjectProperty<>();
   private static final ObjectProperty<QuotationMaster> quotation = new SimpleObjectProperty<>();
@@ -38,15 +40,15 @@ public class QuotationDetailViewModel {
   private static final StringProperty tax = new SimpleStringProperty();
   private static final StringProperty discount = new SimpleStringProperty();
 
-  public static int getId() {
+  public static long getId() {
     return id.get();
   }
 
-  public static void setId(int id) {
+  public static void setId(long id) {
     QuotationDetailViewModel.id.set(id);
   }
 
-  public static IntegerProperty idProperty() {
+  public static LongProperty idProperty() {
     return id;
   }
 
@@ -86,8 +88,8 @@ public class QuotationDetailViewModel {
     return quotation;
   }
 
-  public static int getQuantity() {
-    return Integer.parseInt(quantity.get());
+  public static long getQuantity() {
+    return Long.parseLong(quantity.get());
   }
 
   public static void setQuantity(String quantity) {
@@ -132,64 +134,185 @@ public class QuotationDetailViewModel {
   }
 
   public static void addQuotationDetails() {
-    QuotationDetail quotationDetail =
-        new QuotationDetail(
-            getProduct(), getProduct().getSaleUnit(), getTax(), getDiscount(), getQuantity());
-    quotationDetailsList.add(quotationDetail);
-    resetProperties();
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() {
+            QuotationDetail quotationDetail =
+                new QuotationDetail(
+                    getProduct(),
+                    getProduct().getSaleUnit(),
+                    getTax(),
+                    getDiscount(),
+                    getQuantity());
+            quotationDetailsList.add(quotationDetail);
+            resetProperties();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static void updateQuotationDetail(int index) {
-    QuotationDetail quotationDetail = QuotationDetailDao.findQuotationDetail(index);
-    quotationDetail.setProduct(getProduct());
-    quotationDetail.setSaleUnit(getSaleUnit());
-    quotationDetail.setNetTax(getTax());
-    quotationDetail.setDiscount(getDiscount());
-    quotationDetail.setQuantity(getQuantity());
-    quotationDetail.setId(getId());
-    quotationDetail.setQuotation(getQuotation());
-    QuotationDetailDao.updateQuotationDetail(quotationDetail, getId());
-    quotationDetailsList.remove((int) getTempId());
-    quotationDetailsList.add(getTempId(), quotationDetail);
-    resetProperties();
+  public static void updateQuotationDetail(long index) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<QuotationDetail, Long> quotationDetailDao =
+                DaoManager.createDao(connectionSource, QuotationDetail.class);
+
+            QuotationDetail quotationDetail = quotationDetailDao.queryForId(index);
+            quotationDetail.setProduct(getProduct());
+            quotationDetail.setSaleUnit(getSaleUnit());
+            quotationDetail.setNetTax(getTax());
+            quotationDetail.setDiscount(getDiscount());
+            quotationDetail.setQuantity(getQuantity());
+            quotationDetail.setId(getId());
+            quotationDetail.setQuotation(getQuotation());
+
+            quotationDetailsList.remove((int) getTempId());
+            quotationDetailsList.add(getTempId(), quotationDetail);
+
+            resetProperties();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static ObservableList<QuotationDetail> getQuotationDetails() {
-    quotationDetailsList.clear();
-    quotationDetailsList.addAll(QuotationDetailDao.fetchQuotationDetails());
-    return quotationDetailsList;
+  public static void getQuotationDetails() {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<QuotationDetail, Long> quotationDetailDao =
+                DaoManager.createDao(connectionSource, QuotationDetail.class);
+
+            quotationDetailsList.clear();
+            quotationDetailsList.addAll(quotationDetailDao.queryForAll());
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static void getItem(int index, int tempIndex) {
-    QuotationDetail quotationDetail = QuotationDetailDao.findQuotationDetail(index);
-    setTempId(tempIndex);
-    setId(quotationDetail.getId());
-    setProduct(quotationDetail.getProduct());
-    setSaleUnit(quotationDetail.getProduct().getSaleUnit());
-    setTax(String.valueOf(quotationDetail.getNetTax()));
-    setDiscount(String.valueOf(quotationDetail.getDiscount()));
-    setQuantity(String.valueOf(quotationDetail.getQuantity()));
-    setQuotation(quotationDetail.getQuotation());
-    getQuotationDetails();
+  public static void getItem(long index, int tempIndex) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<QuotationDetail, Long> quotationDetailDao =
+                DaoManager.createDao(connectionSource, QuotationDetail.class);
+
+            QuotationDetail quotationDetail = quotationDetailDao.queryForId(index);
+            setTempId(tempIndex);
+            setId(quotationDetail.getId());
+            setProduct(quotationDetail.getProduct());
+            setSaleUnit(quotationDetail.getProduct().getSaleUnit());
+            setTax(String.valueOf(quotationDetail.getNetTax()));
+            setDiscount(String.valueOf(quotationDetail.getDiscount()));
+            setQuantity(String.valueOf(quotationDetail.getQuantity()));
+            setQuotation(quotationDetail.getQuotation());
+
+            getQuotationDetails();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static void updateItem(int index) {
-    QuotationDetail quotationDetail = QuotationDetailDao.findQuotationDetail(index);
-    quotationDetail.setProduct(getProduct());
-    quotationDetail.setSaleUnit(getSaleUnit());
-    quotationDetail.setNetTax(getTax());
-    quotationDetail.setDiscount(getDiscount());
-    quotationDetail.setQuantity(getQuantity());
-    QuotationDetailDao.updateQuotationDetail(quotationDetail, index);
-    getQuotationDetails();
+  public static void updateItem(long index) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<QuotationDetail, Long> quotationDetailDao =
+                DaoManager.createDao(connectionSource, QuotationDetail.class);
+
+            QuotationDetail quotationDetail = quotationDetailDao.queryForId(index);
+            quotationDetail.setProduct(getProduct());
+            quotationDetail.setSaleUnit(getSaleUnit());
+            quotationDetail.setNetTax(getTax());
+            quotationDetail.setDiscount(getDiscount());
+            quotationDetail.setQuantity(getQuantity());
+
+            quotationDetailDao.update(quotationDetail);
+
+            getQuotationDetails();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static void removeQuotationDetail(int index, int tempIndex) {
-    quotationDetailsList.remove(tempIndex);
-    PENDING_DELETES.add(index);
+  public static void removeQuotationDetail(long index, int tempIndex) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() {
+            quotationDetailsList.remove(tempIndex);
+            PENDING_DELETES.add(index);
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static void deleteQuotationDetails(LinkedList<Integer> indexes) {
-    indexes.forEach(QuotationDetailDao::deleteQuotationDetail);
+  public static void deleteQuotationDetails(LinkedList<Long> indexes) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() {
+            indexes.forEach(
+                index -> {
+                  try {
+                    SQLiteConnection connection = SQLiteConnection.getInstance();
+                    ConnectionSource connectionSource = connection.getConnection();
+
+                    Dao<QuotationDetail, Long> quotationDetailDao =
+                        DaoManager.createDao(connectionSource, QuotationDetail.class);
+
+                    quotationDetailDao.deleteById(index);
+                  } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                  }
+                });
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 }

@@ -21,6 +21,7 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
+import javafx.collections.WeakListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -28,7 +29,6 @@ import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import org.infinite.spoty.components.navigation.Pages;
-import org.infinite.spoty.database.dao.RequisitionMasterDao;
 import org.infinite.spoty.database.models.RequisitionMaster;
 import org.infinite.spoty.viewModels.RequisitionMasterViewModel;
 import org.infinite.spoty.views.BaseController;
@@ -55,8 +55,6 @@ public class RequisitionController implements Initializable {
   private void setupTable() {
     MFXTableColumn<RequisitionMaster> requisitionDate =
         new MFXTableColumn<>("Date", false, Comparator.comparing(RequisitionMaster::getDate));
-    MFXTableColumn<RequisitionMaster> requisitionReference =
-        new MFXTableColumn<>("Reference", false, Comparator.comparing(RequisitionMaster::getRef));
     MFXTableColumn<RequisitionMaster> requisitionBranch =
         new MFXTableColumn<>(
             "Branch", false, Comparator.comparing(RequisitionMaster::getBranchName));
@@ -74,8 +72,6 @@ public class RequisitionController implements Initializable {
 
     requisitionDate.setRowCellFactory(
         requisition -> new MFXTableRowCell<>(RequisitionMaster::getLocaleDate));
-    requisitionReference.setRowCellFactory(
-        requisition -> new MFXTableRowCell<>(RequisitionMaster::getRef));
     requisitionBranch.setRowCellFactory(
         requisition -> new MFXTableRowCell<>(RequisitionMaster::getBranchName));
     requisitionSupplier.setRowCellFactory(
@@ -88,9 +84,6 @@ public class RequisitionController implements Initializable {
         requisition -> new MFXTableRowCell<>(RequisitionMaster::getShipMethod));
 
     requisitionDate.prefWidthProperty().bind(requisitionMasterTable.widthProperty().multiply(.15));
-    requisitionReference
-        .prefWidthProperty()
-        .bind(requisitionMasterTable.widthProperty().multiply(.15));
     requisitionBranch
         .prefWidthProperty()
         .bind(requisitionMasterTable.widthProperty().multiply(.15));
@@ -111,7 +104,6 @@ public class RequisitionController implements Initializable {
         .getTableColumns()
         .addAll(
             requisitionDate,
-            requisitionReference,
             requisitionBranch,
             requisitionSupplier,
             requisitionDelivery,
@@ -127,7 +119,11 @@ public class RequisitionController implements Initializable {
             new StringFilter<>("Status", RequisitionMaster::getStatus),
             new StringFilter<>("Shipping Method", RequisitionMaster::getShipMethod));
     getRequisitionMasterTable();
-    requisitionMasterTable.setItems(RequisitionMasterViewModel.getRequisitionMasters());
+    requisitionMasterTable.setItems(RequisitionMasterViewModel.requisitionMasterList);
+    RequisitionMasterViewModel.requisitionMasterList.addListener(
+        new WeakListChangeListener<>(
+            c ->
+                requisitionMasterTable.setItems(RequisitionMasterViewModel.requisitionMasterList)));
   }
 
   private void getRequisitionMasterTable() {
@@ -161,8 +157,7 @@ public class RequisitionController implements Initializable {
     // Delete
     delete.setOnAction(
         e -> {
-          RequisitionMasterDao.deleteRequisitionMaster(obj.getData().getId());
-          RequisitionMasterViewModel.getRequisitionMasters();
+          RequisitionMasterViewModel.deleteItem(obj.getData().getId());
           e.consume();
         });
     // Edit

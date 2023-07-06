@@ -25,6 +25,7 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
+import javafx.collections.WeakListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Tooltip;
@@ -33,6 +34,7 @@ import javafx.scene.layout.HBox;
 import org.infinite.spoty.database.models.SaleReturnMaster;
 import org.infinite.spoty.viewModels.SaleReturnMasterViewModel;
 
+@SuppressWarnings("unchecked")
 public class SaleReturnsController implements Initializable {
   @FXML public BorderPane saleReturnContentPane;
   @FXML public MFXTextField saleReturnSearchBar;
@@ -48,8 +50,6 @@ public class SaleReturnsController implements Initializable {
   private void setupTable() {
     MFXTableColumn<SaleReturnMaster> saleReturnDate =
         new MFXTableColumn<>("Date", false, Comparator.comparing(SaleReturnMaster::getDate));
-    MFXTableColumn<SaleReturnMaster> saleReturnReference =
-        new MFXTableColumn<>("Ref No.", false, Comparator.comparing(SaleReturnMaster::getRef));
     MFXTableColumn<SaleReturnMaster> saleReturnCustomer =
         new MFXTableColumn<>(
             "Customer", false, Comparator.comparing(SaleReturnMaster::getCustomerName));
@@ -66,24 +66,22 @@ public class SaleReturnsController implements Initializable {
         new MFXTableColumn<>(
             "Pay Status", false, Comparator.comparing(SaleReturnMaster::getPaymentStatus));
 
-    saleReturnReference.setTooltip(new Tooltip("PurchaseMaster Return Reference Number"));
     saleReturnPaymentStatus.setTooltip(new Tooltip("PurchaseMaster Return Payment Status"));
     saleReturnStatus.setTooltip(new Tooltip("PurchaseMaster Return Status"));
     saleReturnBranch.setTooltip(new Tooltip("Branch, store or warehouse"));
 
-    saleReturnDate.prefWidthProperty().bind(saleReturnTable.widthProperty().multiply(.13));
-    saleReturnReference.prefWidthProperty().bind(saleReturnTable.widthProperty().multiply(.13));
-    saleReturnCustomer.prefWidthProperty().bind(saleReturnTable.widthProperty().multiply(.13));
-    saleReturnBranch.prefWidthProperty().bind(saleReturnTable.widthProperty().multiply(.13));
-    saleReturnStatus.prefWidthProperty().bind(saleReturnTable.widthProperty().multiply(.13));
-    saleReturnGrandTotal.prefWidthProperty().bind(saleReturnTable.widthProperty().multiply(.13));
-    saleReturnAmountPaid.prefWidthProperty().bind(saleReturnTable.widthProperty().multiply(.13));
-    saleReturnPaymentStatus.prefWidthProperty().bind(saleReturnTable.widthProperty().multiply(.13));
+    saleReturnDate.prefWidthProperty().bind(saleReturnTable.widthProperty().multiply(.143));
+    saleReturnCustomer.prefWidthProperty().bind(saleReturnTable.widthProperty().multiply(.143));
+    saleReturnBranch.prefWidthProperty().bind(saleReturnTable.widthProperty().multiply(.143));
+    saleReturnStatus.prefWidthProperty().bind(saleReturnTable.widthProperty().multiply(.143));
+    saleReturnGrandTotal.prefWidthProperty().bind(saleReturnTable.widthProperty().multiply(.143));
+    saleReturnAmountPaid.prefWidthProperty().bind(saleReturnTable.widthProperty().multiply(.143));
+    saleReturnPaymentStatus
+        .prefWidthProperty()
+        .bind(saleReturnTable.widthProperty().multiply(.143));
 
     saleReturnDate.setRowCellFactory(
         saleReturn -> new MFXTableRowCell<>(SaleReturnMaster::getDate));
-    saleReturnReference.setRowCellFactory(
-        saleReturn -> new MFXTableRowCell<>(SaleReturnMaster::getRef));
     saleReturnCustomer.setRowCellFactory(
         saleReturn -> new MFXTableRowCell<>(SaleReturnMaster::getCustomerName));
     saleReturnBranch.setRowCellFactory(
@@ -101,7 +99,6 @@ public class SaleReturnsController implements Initializable {
         .getTableColumns()
         .addAll(
             saleReturnDate,
-            saleReturnReference,
             saleReturnCustomer,
             saleReturnBranch,
             saleReturnStatus,
@@ -111,7 +108,7 @@ public class SaleReturnsController implements Initializable {
     saleReturnTable
         .getFilters()
         .addAll(
-            new StringFilter<>("Reference", SaleReturnMaster::getRef),
+            new StringFilter<>("Ref No.", SaleReturnMaster::getRef),
             new StringFilter<>("Customer", SaleReturnMaster::getCustomerName),
             new StringFilter<>("Branch", SaleReturnMaster::getBranchName),
             new StringFilter<>("Status", SaleReturnMaster::getStatus),
@@ -119,7 +116,10 @@ public class SaleReturnsController implements Initializable {
             new DoubleFilter<>("Paid", SaleReturnMaster::getPaid),
             new StringFilter<>("Pay Status", SaleReturnMaster::getPaymentStatus));
     getSaleReturnMasterTable();
-    saleReturnTable.setItems(SaleReturnMasterViewModel.getSaleReturnMasters());
+    saleReturnTable.setItems(SaleReturnMasterViewModel.saleReturnMasterList);
+    SaleReturnMasterViewModel.saleReturnMasterList.addListener(
+        new WeakListChangeListener<>(
+            c -> saleReturnTable.setItems(SaleReturnMasterViewModel.saleReturnMasterList)));
   }
 
   private void getSaleReturnMasterTable() {

@@ -14,51 +14,64 @@
 
 package org.infinite.spoty.database.models;
 
-import jakarta.persistence.*;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
-@Entity
+@DatabaseTable(tableName = "product_details")
 public class ProductDetail implements Serializable {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private int id;
+  @DatabaseField(generatedId = true)
+  private long id;
 
-  @ManyToOne
-  @JoinColumn(name = "product_id", nullable = false)
+  @DatabaseField(
+      columnName = "product_id",
+      foreign = true,
+      canBeNull = false,
+      foreignAutoCreate = true,
+      foreignAutoRefresh = true,
+      columnDefinition =
+          "INTEGER CONSTRAINT FK_NAME REFERENCES product_masters(id) ON DELETE CASCADE")
   private ProductMaster product;
 
-  @ManyToMany(targetEntity = Branch.class)
-  private List<Branch> branch;
+  @DatabaseField(foreign = true, columnName = "branch_id") private Branch branch;
 
-  @ManyToOne private UnitOfMeasure unit;
-  @ManyToOne private UnitOfMeasure saleUnit;
-  @ManyToOne private UnitOfMeasure purchaseUnit;
-  private String name;
-  private int quantity;
-  private double cost;
-  private double price;
+  @DatabaseField(foreign = true, columnName = "unit_id")
+  private UnitOfMeasure unit;
+
+  @DatabaseField(foreign = true, columnName = "sale_unit_id")
+  private UnitOfMeasure saleUnit;
+
+  @DatabaseField(foreign = true, columnName = "purchase_unit_id")
+  private UnitOfMeasure purchaseUnit;
+
+  @DatabaseField private String name;
+  @DatabaseField private long quantity;
+  @DatabaseField private double cost;
+  @DatabaseField private double price;
+
+  @DatabaseField(columnName = "net_tax")
   private double netTax;
 
-  @Column(name = "tax_type")
+  @DatabaseField(columnName = "tax_type")
   private String taxType;
 
-  @Column(name = "stock_alert")
-  private int stockAlert;
+  @DatabaseField(columnName = "stock_alert")
+  private long stockAlert;
 
+  @DatabaseField(columnName = "serial_number")
   private String serialNumber;
 
-  @Column(name = "created_at")
+  @DatabaseField(columnName = "created_at")
   private Date createdAt;
 
-  @Column(name = "created_by")
+  @DatabaseField(columnName = "created_by")
   private String createdBy;
 
-  @Column(name = "updated_at")
+  @DatabaseField(columnName = "updated_at")
   private Date updatedAt;
 
-  @Column(name = "updated_by")
+  @DatabaseField(columnName = "updated_by")
   private String updatedBy;
 
   public ProductDetail() {}
@@ -66,12 +79,12 @@ public class ProductDetail implements Serializable {
   public ProductDetail(
       UnitOfMeasure unit,
       String name,
-      int quantity,
+      long quantity,
       double cost,
       double price,
       double netTax,
       String taxType,
-      int stockAlert,
+      long stockAlert,
       String serialNumber) {
     this.unit = unit;
     this.name = name;
@@ -84,11 +97,11 @@ public class ProductDetail implements Serializable {
     this.serialNumber = serialNumber;
   }
 
-  public int getId() {
+  public long getId() {
     return id;
   }
 
-  public void setId(int id) {
+  public void setId(long id) {
     this.id = id;
   }
 
@@ -108,19 +121,19 @@ public class ProductDetail implements Serializable {
     this.name = name;
   }
 
-  public int getQuantity() {
+  public long getQuantity() {
     return quantity;
   }
 
-  public void setQuantity(int quantity) {
+  public void setQuantity(long quantity) {
     this.quantity = quantity;
   }
 
-  public List<Branch> getBranch() {
+  public Branch getBranch() {
     return branch;
   }
 
-  public void setBranch(List<Branch> branch) {
+  public void setBranch(Branch branch) {
     this.branch = branch;
   }
 
@@ -184,11 +197,11 @@ public class ProductDetail implements Serializable {
     this.taxType = taxType;
   }
 
-  public int getStockAlert() {
+  public long getStockAlert() {
     return stockAlert;
   }
 
-  public void setStockAlert(int stockAlert) {
+  public void setStockAlert(long stockAlert) {
     this.stockAlert = stockAlert;
   }
 
