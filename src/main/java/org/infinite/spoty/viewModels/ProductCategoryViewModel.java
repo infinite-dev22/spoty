@@ -18,6 +18,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
 import java.sql.SQLException;
+import javafx.application.Platform;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -127,8 +128,17 @@ public class ProductCategoryViewModel {
             Dao<ProductCategory, Long> productCategoryDao =
                 DaoManager.createDao(connectionSource, ProductCategory.class);
 
-            categoriesList.clear();
-            categoriesList.addAll(productCategoryDao.queryForAll());
+            Platform.runLater(
+                () -> {
+                  categoriesList.clear();
+
+                  try {
+                    categoriesList.addAll(productCategoryDao.queryForAll());
+                  } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                  }
+                });
+
             return null;
           }
         };
@@ -204,6 +214,7 @@ public class ProductCategoryViewModel {
                 DaoManager.createDao(connectionSource, ProductCategory.class);
 
             productCategoryDao.deleteById(index);
+            getItems();
             return null;
           }
         };

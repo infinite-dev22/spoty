@@ -26,6 +26,7 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
+import javafx.collections.WeakListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -111,6 +112,8 @@ public class UnitOfMeasureController implements Initializable {
             new DoubleFilter<>("Operation Value", UnitOfMeasure::getOperatorValue));
     getUnitOfMeasureTable();
     uomTable.setItems(UOMViewModel.uomList);
+    UOMViewModel.uomList.addListener(
+        new WeakListChangeListener<>(c -> uomTable.setItems(UOMViewModel.uomList)));
   }
 
   private void getUnitOfMeasureTable() {

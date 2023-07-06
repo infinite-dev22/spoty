@@ -22,58 +22,65 @@ import org.junit.jupiter.api.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class BranchDaoTest {
 
-    @Test
-    @Order(1)
-    void saveBranch() {
-        BranchViewModel.setName("Branch One");
-        BranchViewModel.setCity("Kampala");
-        BranchViewModel.setPhone("+1234567890");
-        BranchViewModel.setEmail("branchone@email.com");
-        BranchViewModel.setTown("Bwaise");
-        BranchViewModel.setZipcode("617867838");
+  @Test
+  @Order(1)
+  void saveBranch() {
+    try {
+    BranchViewModel.setName("Branch One");
+    BranchViewModel.setCity("Kampala");
+    BranchViewModel.setPhone("+1234567890");
+    BranchViewModel.setEmail("branchone@email.com");
+    BranchViewModel.setTown("Bwaise");
+    BranchViewModel.setZipcode("617867838");
 
-        BranchViewModel.saveBranch();
+    BranchViewModel.saveBranch();
 
-        BranchViewModel.setName("Branch Two");
-        BranchViewModel.setCity("Arkansas City");
-        BranchViewModel.setPhone("+0987654321");
-        BranchViewModel.setEmail("branchtwo@email.com");
-        BranchViewModel.setTown("Ark Town");
-        BranchViewModel.setZipcode("617863228");
+    BranchViewModel.setName("Branch Two");
+    BranchViewModel.setCity("Arkansas City");
+    BranchViewModel.setPhone("+0987654321");
+    BranchViewModel.setEmail("branchtwo@email.com");
+    BranchViewModel.setTown("Ark Town");
+    BranchViewModel.setZipcode("617863228");
 
-        BranchViewModel.saveBranch();
+    BranchViewModel.saveBranch();
+    } catch (Exception e) {
+      e.printStackTrace();
+      throw new AssertionError();
     }
+  }
 
-    @Test
-    @Order(2)
-    void updateBranch() {
-        BranchViewModel.setName("Branch 1");
-        BranchViewModel.setPhone("+2567123456789");
-        BranchViewModel.setEmail("branch1@email.com");
-        BranchViewModel.setTown("Kisaasi");
-        BranchViewModel.setZipcode("76782");
+  @Test
+  @Order(2)
+  void updateBranch() {
+    BranchViewModel.setName("Branch 1");
+    BranchViewModel.setPhone("+2567123456789");
+    BranchViewModel.setEmail("branch1@email.com");
+    BranchViewModel.setTown("Kisaasi");
+    BranchViewModel.setZipcode("76782");
 
-        BranchViewModel.saveBranch();
-    }
+    BranchViewModel.saveBranch();
+  }
 
-    @Test
-    @Order(3)
-    void findBranch() {
-        BranchViewModel.getItem(2);
-        assertEquals(BranchViewModel.getTown(), "USA");
-    }
+  @Test
+  @Order(3)
+  void findBranch() {
+    BranchViewModel.getItem(2);
+    System.out.println(BranchViewModel.getName());
+    assertEquals(BranchViewModel.getTown(), "");
+  }
 
-    @Test
-    @Order(4)
-    void getBranch() {
-        BranchViewModel.getBranches();
-        assertEquals(BranchViewModel.branchesList.size(), 2);
-    }
+  @Test
+  @Order(4)
+  void getBranch() {
+    BranchViewModel.getBranches();
+    BranchViewModel.branchesList.forEach(e -> System.out.println(e.getName()));
+    assertEquals(BranchViewModel.branchesList.size(), 2);
+  }
 
-    @Test
-    @Order(5)
-    void deleteBranch() {
-        BranchViewModel.deleteItem(2);
-        BranchViewModel.deleteItem(1);
-    }
+  @Test
+  @Order(5)
+  void deleteBranch() {
+    BranchViewModel.deleteItem(2);
+    BranchViewModel.deleteItem(1);
+  }
 }

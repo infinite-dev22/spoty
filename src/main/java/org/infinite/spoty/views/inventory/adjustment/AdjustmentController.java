@@ -21,6 +21,7 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
+import javafx.collections.WeakListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -66,9 +67,7 @@ public class AdjustmentController implements Initializable {
     adjustmentDate.prefWidthProperty().bind(adjustmentMasterTable.widthProperty().multiply(.5));
     adjustmentBranch.prefWidthProperty().bind(adjustmentMasterTable.widthProperty().multiply(.5));
 
-    adjustmentMasterTable
-        .getTableColumns()
-        .addAll(adjustmentDate,  adjustmentBranch);
+    adjustmentMasterTable.getTableColumns().addAll(adjustmentDate, adjustmentBranch);
     adjustmentMasterTable
         .getFilters()
         .addAll(
@@ -76,6 +75,9 @@ public class AdjustmentController implements Initializable {
             new StringFilter<>("Branch", AdjustmentMaster::getBranchName));
     getAdjustmentMasterTable();
     adjustmentMasterTable.setItems(AdjustmentMasterViewModel.adjustmentMasterList);
+    AdjustmentMasterViewModel.adjustmentMasterList.addListener(
+        new WeakListChangeListener<>(
+            c -> adjustmentMasterTable.setItems(AdjustmentMasterViewModel.adjustmentMasterList)));
   }
 
   private void getAdjustmentMasterTable() {

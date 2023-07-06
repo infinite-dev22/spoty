@@ -25,6 +25,7 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
+import javafx.collections.WeakListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -108,6 +109,9 @@ public class CustomerController implements Initializable {
             new StringFilter<>("Tax No.", Customer::getTaxNumber));
     styleCustomerTable();
     customersTable.setItems(CustomerViewModel.customersList);
+    CustomerViewModel.customersList.addListener(
+        new WeakListChangeListener<>(
+            c -> customersTable.setItems(CustomerViewModel.customersList)));
   }
 
   private void styleCustomerTable() {
@@ -160,7 +164,7 @@ public class CustomerController implements Initializable {
 
   private void customerFormDialogPane(Stage stage) throws IOException {
     FXMLLoader fxmlLoader = fxmlLoader("forms/CustomerForm.fxml");
-      fxmlLoader.setControllerFactory(c -> CustomerFormController.getInstance(stage));
+    fxmlLoader.setControllerFactory(c -> CustomerFormController.getInstance(stage));
     dialog = new Dialog<>();
     dialog.setDialogPane(fxmlLoader.load());
     dialog.initOwner(stage);

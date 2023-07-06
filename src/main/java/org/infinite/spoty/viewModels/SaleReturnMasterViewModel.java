@@ -21,6 +21,7 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -135,8 +136,17 @@ public class SaleReturnMasterViewModel {
             Dao<SaleReturnMaster, Long> saleReturnMasterDao =
                 DaoManager.createDao(connectionSource, SaleReturnMaster.class);
 
-            saleReturnMasterList.clear();
-            saleReturnMasterList.addAll(saleReturnMasterDao.queryForAll());
+            Platform.runLater(
+                () -> {
+                  saleReturnMasterList.clear();
+
+                  try {
+                    saleReturnMasterList.addAll(saleReturnMasterDao.queryForAll());
+                  } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                  }
+                });
+
             return null;
           }
         };

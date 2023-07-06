@@ -25,6 +25,7 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
+import javafx.collections.WeakListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Tooltip;
@@ -128,6 +129,11 @@ public class PurchaseReturnController implements Initializable {
 
     stylePurchaseReturnMasterTable();
     purchaseReturnTable.setItems(PurchaseReturnMasterViewModel.purchaseReturnMasterList);
+    PurchaseReturnMasterViewModel.purchaseReturnMasterList.addListener(
+        new WeakListChangeListener<>(
+            c ->
+                purchaseReturnTable.setItems(
+                    PurchaseReturnMasterViewModel.purchaseReturnMasterList)));
   }
 
   private void stylePurchaseReturnMasterTable() {

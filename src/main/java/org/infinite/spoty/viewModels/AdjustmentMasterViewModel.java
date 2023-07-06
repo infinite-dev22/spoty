@@ -23,6 +23,7 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -142,8 +143,17 @@ public class AdjustmentMasterViewModel {
             Dao<AdjustmentMaster, Long> adjustmentMasterDao =
                 DaoManager.createDao(connectionSource, AdjustmentMaster.class);
 
-            adjustmentMasterList.clear();
-            adjustmentMasterList.addAll(adjustmentMasterDao.queryForAll());
+            Platform.runLater(
+                () -> {
+                  adjustmentMasterList.clear();
+
+                  try {
+                    adjustmentMasterList.addAll(adjustmentMasterDao.queryForAll());
+                  } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                  }
+                });
+
             return null;
           }
         };
@@ -227,6 +237,7 @@ public class AdjustmentMasterViewModel {
                 DaoManager.createDao(connectionSource, AdjustmentMaster.class);
 
             adjustmentMasterDao.deleteById(index);
+            getAdjustmentMasters();
             return null;
           }
         };

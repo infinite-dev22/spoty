@@ -25,6 +25,7 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
+import javafx.collections.WeakListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -89,6 +90,8 @@ public class BrandController implements Initializable {
             new StringFilter<>("Description", Brand::getDescription));
     getBrandTable();
     brandTable.setItems(BrandViewModel.brandsList);
+    BrandViewModel.brandsList.addListener(
+        new WeakListChangeListener<>(c -> brandTable.setItems(BrandViewModel.brandsList)));
   }
 
   private void getBrandTable() {

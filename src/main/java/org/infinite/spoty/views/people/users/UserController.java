@@ -26,6 +26,7 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
+import javafx.collections.WeakListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -112,6 +113,8 @@ public class UserController implements Initializable {
             new BooleanFilter<>("Status", User::isActive));
     styleUserTable();
     userTable.setItems(UserViewModel.usersList);
+    UserViewModel.usersList.addListener(
+        new WeakListChangeListener<>(c -> userTable.setItems(UserViewModel.usersList)));
   }
 
   private void styleUserTable() {

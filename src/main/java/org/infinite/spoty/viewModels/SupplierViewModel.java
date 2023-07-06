@@ -18,6 +18,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
 import java.sql.SQLException;
+import javafx.application.Platform;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -206,8 +207,17 @@ public class SupplierViewModel {
             Dao<Supplier, Long> supplierDao =
                 DaoManager.createDao(connectionSource, Supplier.class);
 
-            suppliersList.clear();
-            suppliersList.addAll(supplierDao.queryForAll());
+            Platform.runLater(
+                () -> {
+                  suppliersList.clear();
+
+                  try {
+                    suppliersList.addAll(supplierDao.queryForAll());
+                  } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                  }
+                });
+
             return null;
           }
         };
@@ -294,6 +304,7 @@ public class SupplierViewModel {
                 DaoManager.createDao(connectionSource, Supplier.class);
 
             supplierDao.deleteById(index);
+            getSuppliers();
             return null;
           }
         };

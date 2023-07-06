@@ -25,6 +25,7 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
+import javafx.collections.WeakListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -94,6 +95,9 @@ public class ExpenseCategoryController implements Initializable {
 
     styleExpenseCategoryTable();
     categoryExpenseTable.setItems(ExpenseCategoryViewModel.categoryList);
+    ExpenseCategoryViewModel.categoryList.addListener(
+        new WeakListChangeListener<>(
+            c -> categoryExpenseTable.setItems(ExpenseCategoryViewModel.categoryList)));
   }
 
   private void styleExpenseCategoryTable() {

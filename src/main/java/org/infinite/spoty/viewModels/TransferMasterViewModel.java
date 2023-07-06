@@ -23,6 +23,7 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -193,8 +194,17 @@ public class TransferMasterViewModel {
             Dao<TransferMaster, Long> transferMasterDao =
                 DaoManager.createDao(connectionSource, TransferMaster.class);
 
-            transferMasterList.clear();
-            transferMasterList.addAll(transferMasterDao.queryForAll());
+            Platform.runLater(
+                () -> {
+                  transferMasterList.clear();
+
+                  try {
+                    transferMasterList.addAll(transferMasterDao.queryForAll());
+                  } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                  }
+                });
+
             return null;
           }
         };
@@ -285,6 +295,7 @@ public class TransferMasterViewModel {
                 DaoManager.createDao(connectionSource, TransferMaster.class);
 
             transferMasterDao.deleteById(transferMasterID);
+            getTransferMasters();
             return null;
           }
         };

@@ -18,6 +18,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
 import java.sql.SQLException;
+import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -122,9 +123,17 @@ public class CurrencyViewModel {
 
             Dao<Currency, Long> currencyDao =
                 DaoManager.createDao(connectionSource, Currency.class);
+            Platform.runLater(
+                () -> {
+                  currenciesList.clear();
 
-            currenciesList.clear();
-            currenciesList.addAll(currencyDao.queryForAll());
+                  try {
+                    currenciesList.addAll(currencyDao.queryForAll());
+                  } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                  }
+                });
+
             return null;
           }
         };
@@ -201,6 +210,7 @@ public class CurrencyViewModel {
                 DaoManager.createDao(connectionSource, Currency.class);
 
             currencyDao.deleteById(index);
+            getCurrencies();
             return null;
           }
         };

@@ -20,6 +20,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
 import java.sql.SQLException;
+import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -228,8 +229,17 @@ public class ProductMasterViewModel {
             Dao<ProductMaster, Long> productMasterDao =
                 DaoManager.createDao(connectionSource, ProductMaster.class);
 
-            productMasterList.clear();
-            productMasterList.addAll(productMasterDao.queryForAll());
+            Platform.runLater(
+                () -> {
+                  productMasterList.clear();
+
+                  try {
+                    productMasterList.addAll(productMasterDao.queryForAll());
+                  } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                  }
+                });
+
             return null;
           }
         };
@@ -321,6 +331,7 @@ public class ProductMasterViewModel {
                 DaoManager.createDao(connectionSource, ProductMaster.class);
 
             productMasterDao.deleteById(index);
+            getProductMasters();
             return null;
           }
         };

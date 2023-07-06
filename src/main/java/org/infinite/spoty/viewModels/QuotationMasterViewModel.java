@@ -23,6 +23,7 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -173,8 +174,17 @@ public class QuotationMasterViewModel {
             Dao<QuotationMaster, Long> quotationMasterDao =
                 DaoManager.createDao(connectionSource, QuotationMaster.class);
 
-            quotationMasterList.clear();
-            quotationMasterList.addAll(quotationMasterDao.queryForAll());
+            Platform.runLater(
+                () -> {
+                  quotationMasterList.clear();
+
+                  try {
+                    quotationMasterList.addAll(quotationMasterDao.queryForAll());
+                  } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                  }
+                });
+
             return null;
           }
         };
@@ -265,6 +275,7 @@ public class QuotationMasterViewModel {
                 DaoManager.createDao(connectionSource, QuotationMaster.class);
 
             quotationMasterDao.deleteById(index);
+            getQuotationMasters();
             return null;
           }
         };

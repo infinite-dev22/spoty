@@ -18,6 +18,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
 import java.sql.SQLException;
+import javafx.application.Platform;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -114,8 +115,17 @@ public class ExpenseCategoryViewModel {
             Dao<ExpenseCategory, Long> expenseCategoryDao =
                 DaoManager.createDao(connectionSource, ExpenseCategory.class);
 
-            categoryList.clear();
-            categoryList.addAll(expenseCategoryDao.queryForAll());
+            Platform.runLater(
+                () -> {
+                  categoryList.clear();
+
+                  try {
+                    categoryList.addAll(expenseCategoryDao.queryForAll());
+                  } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                  }
+                });
+
             return null;
           }
         };
@@ -190,6 +200,7 @@ public class ExpenseCategoryViewModel {
                 DaoManager.createDao(connectionSource, ExpenseCategory.class);
 
             expenseCategoryDao.deleteById(index);
+            getCategories();
             return null;
           }
         };

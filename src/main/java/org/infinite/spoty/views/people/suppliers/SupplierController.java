@@ -25,6 +25,7 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
+import javafx.collections.WeakListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -108,6 +109,9 @@ public class SupplierController implements Initializable {
             new StringFilter<>("Tax No.", Supplier::getTaxNumber));
     getTable();
     suppliersTable.setItems(SupplierViewModel.suppliersList);
+    SupplierViewModel.suppliersList.addListener(
+        new WeakListChangeListener<>(
+            c -> suppliersTable.setItems(SupplierViewModel.suppliersList)));
   }
 
   private void getTable() {

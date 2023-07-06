@@ -25,6 +25,7 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
+import javafx.collections.WeakListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -89,6 +90,12 @@ public class ProductCategoryController implements Initializable {
             new StringFilter<>("Name", ProductCategory::getName));
     getProductCategoryTable();
     categoryTable.setItems(ProductCategoryViewModel.categoriesList);
+    ProductCategoryViewModel.categoriesList.addListener(
+        new WeakListChangeListener<>(
+            c -> {
+              System.out.println("List changed...");
+              categoryTable.setItems(ProductCategoryViewModel.categoriesList);
+            }));
   }
 
   private void getProductCategoryTable() {

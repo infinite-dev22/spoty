@@ -25,6 +25,7 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
+import javafx.collections.WeakListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Tooltip;
@@ -116,6 +117,9 @@ public class SaleReturnsController implements Initializable {
             new StringFilter<>("Pay Status", SaleReturnMaster::getPaymentStatus));
     getSaleReturnMasterTable();
     saleReturnTable.setItems(SaleReturnMasterViewModel.saleReturnMasterList);
+    SaleReturnMasterViewModel.saleReturnMasterList.addListener(
+        new WeakListChangeListener<>(
+            c -> saleReturnTable.setItems(SaleReturnMasterViewModel.saleReturnMasterList)));
   }
 
   private void getSaleReturnMasterTable() {

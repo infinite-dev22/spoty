@@ -25,6 +25,7 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
+import javafx.collections.WeakListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -104,6 +105,7 @@ public class BranchController implements Initializable {
     branchTable
         .getTableColumns()
         .addAll(branchName, branchPhone, branchCity, branchTown, branchLocation, branchEmail);
+
     branchTable
         .getFilters()
         .addAll(
@@ -113,8 +115,13 @@ public class BranchController implements Initializable {
             new StringFilter<>("Town", Branch::getTown),
             new StringFilter<>("Location", Branch::getZipCode),
             new StringFilter<>("Email", Branch::getEmail));
+
     getBranchTable();
+
     branchTable.setItems(BranchViewModel.branchesList);
+
+    BranchViewModel.branchesList.addListener(
+        new WeakListChangeListener<>(c -> branchTable.setItems(BranchViewModel.branchesList)));
   }
 
   private void getBranchTable() {

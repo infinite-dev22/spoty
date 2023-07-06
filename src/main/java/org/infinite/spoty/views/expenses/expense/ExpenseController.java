@@ -26,6 +26,7 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
+import javafx.collections.WeakListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -100,8 +101,7 @@ public class ExpenseController implements Initializable {
 
     expenseTable
         .getTableColumns()
-        .addAll(
-            expenseDate, expenseName, expenseAmount, expenseCategory, expenseBranch);
+        .addAll(expenseDate, expenseName, expenseAmount, expenseCategory, expenseBranch);
     expenseTable
         .getFilters()
         .addAll(
@@ -112,6 +112,8 @@ public class ExpenseController implements Initializable {
             new StringFilter<>("Branch", Expense::getBranchName));
     styleExpenseTable();
     expenseTable.setItems(ExpenseViewModel.expenseList);
+    ExpenseViewModel.expenseList.addListener(
+        new WeakListChangeListener<>(c -> expenseTable.setItems(ExpenseViewModel.expenseList)));
   }
 
   private void styleExpenseTable() {

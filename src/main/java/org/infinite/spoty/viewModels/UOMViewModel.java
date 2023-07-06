@@ -18,6 +18,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
 import java.sql.SQLException;
+import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -156,13 +157,21 @@ public class UOMViewModel {
             Dao<UnitOfMeasure, Long> unitOfMeasureDao =
                 DaoManager.createDao(connectionSource, UnitOfMeasure.class);
 
-            uomList.clear();
-            uomComboList.clear();
-            uomComboList.add(null);
+            Platform.runLater(
+                () -> {
+                  uomList.clear();
+                  uomComboList.clear();
+                  uomComboList.add(null);
 
-            uomList.addAll(unitOfMeasureDao.queryForAll());
+                  try {
+                    uomList.addAll(unitOfMeasureDao.queryForAll());
+                  } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                  }
 
-            uomComboList.addAll(uomList);
+                  uomComboList.addAll(uomList);
+                });
+
             return null;
           }
         };
@@ -247,6 +256,7 @@ public class UOMViewModel {
                 DaoManager.createDao(connectionSource, UnitOfMeasure.class);
 
             unitOfMeasureDao.deleteById(index);
+            getItems();
             return null;
           }
         };

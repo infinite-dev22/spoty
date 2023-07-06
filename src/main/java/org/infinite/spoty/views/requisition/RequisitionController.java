@@ -21,6 +21,7 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
+import javafx.collections.WeakListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -119,6 +120,10 @@ public class RequisitionController implements Initializable {
             new StringFilter<>("Shipping Method", RequisitionMaster::getShipMethod));
     getRequisitionMasterTable();
     requisitionMasterTable.setItems(RequisitionMasterViewModel.requisitionMasterList);
+    RequisitionMasterViewModel.requisitionMasterList.addListener(
+        new WeakListChangeListener<>(
+            c ->
+                requisitionMasterTable.setItems(RequisitionMasterViewModel.requisitionMasterList)));
   }
 
   private void getRequisitionMasterTable() {

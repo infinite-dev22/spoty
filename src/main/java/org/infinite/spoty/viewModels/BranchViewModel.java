@@ -18,6 +18,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
 import java.sql.SQLException;
+import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -178,8 +179,17 @@ public class BranchViewModel {
 
             Dao<Branch, Long> branchDao = DaoManager.createDao(connectionSource, Branch.class);
 
-            branchesList.clear();
-            branchesList.addAll(branchDao.queryForAll());
+            Platform.runLater(
+                () -> {
+                  branchesList.clear();
+
+                  try {
+                    branchesList.addAll(branchDao.queryForAll());
+                  } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                  }
+                });
+
             return null;
           }
         };
@@ -260,6 +270,8 @@ public class BranchViewModel {
             Dao<Branch, Long> branchDao = DaoManager.createDao(connectionSource, Branch.class);
 
             branchDao.deleteById(index);
+            
+            getBranches();
             return null;
           }
         };

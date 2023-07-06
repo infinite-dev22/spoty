@@ -28,6 +28,7 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
+import javafx.collections.WeakListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -121,6 +122,9 @@ public class SalesController implements Initializable {
             new StringFilter<>("Payment Status", SaleMaster::getPaymentStatus));
     styleSaleMasterTable();
     saleMasterTable.setItems(SaleMasterViewModel.saleMasterList);
+    SaleMasterViewModel.saleMasterList.addListener(
+        new WeakListChangeListener<>(
+            c -> saleMasterTable.setItems(SaleMasterViewModel.saleMasterList)));
   }
 
   private void styleSaleMasterTable() {

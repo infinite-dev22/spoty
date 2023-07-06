@@ -18,6 +18,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
 import java.sql.SQLException;
+import javafx.application.Platform;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -72,22 +73,22 @@ public class BrandViewModel {
 
   public static void saveBrand() {
     Task<Void> task =
-            new Task<>() {
-              @Override
-              protected Void call() throws SQLException {
-                SQLiteConnection connection = SQLiteConnection.getInstance();
-                ConnectionSource connectionSource = connection.getConnection();
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
 
-                Dao<Brand, Long> brandDao = DaoManager.createDao(connectionSource, Brand.class);
+            Dao<Brand, Long> brandDao = DaoManager.createDao(connectionSource, Brand.class);
 
-                Brand brand = new Brand(getName(), getDescription());
-                brandDao.create(brand);
+            Brand brand = new Brand(getName(), getDescription());
+            brandDao.create(brand);
 
-                clearBrandData();
-                getItems();
-                return null;
-              }
-            };
+            clearBrandData();
+            getItems();
+            return null;
+          }
+        };
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -102,19 +103,28 @@ public class BrandViewModel {
 
   public static void getItems() {
     Task<Void> task =
-            new Task<>() {
-              @Override
-              protected Void call() throws SQLException {
-                SQLiteConnection connection = SQLiteConnection.getInstance();
-                ConnectionSource connectionSource = connection.getConnection();
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
 
-                Dao<Brand, Long> brandDao = DaoManager.createDao(connectionSource, Brand.class);
+            Dao<Brand, Long> brandDao = DaoManager.createDao(connectionSource, Brand.class);
 
-                brandsList.clear();
-                brandsList.addAll(brandDao.queryForAll());
-                return null;
-              }
-            };
+            Platform.runLater(
+                () -> {
+                  brandsList.clear();
+
+                  try {
+                    brandsList.addAll(brandDao.queryForAll());
+                  } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                  }
+                });
+
+            return null;
+          }
+        };
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -123,22 +133,22 @@ public class BrandViewModel {
 
   public static void getItem(long brandID) {
     Task<Void> task =
-            new Task<>() {
-              @Override
-              protected Void call() throws SQLException {
-                SQLiteConnection connection = SQLiteConnection.getInstance();
-                ConnectionSource connectionSource = connection.getConnection();
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
 
-                Dao<Brand, Long> brandDao = DaoManager.createDao(connectionSource, Brand.class);
+            Dao<Brand, Long> brandDao = DaoManager.createDao(connectionSource, Brand.class);
 
-                Brand brand = brandDao.queryForId(brandID);
-                setId(brand.getId());
-                setName(brand.getName());
-                setDescription(brand.getDescription());
-                getItems();
-                return null;
-              }
-            };
+            Brand brand = brandDao.queryForId(brandID);
+            setId(brand.getId());
+            setName(brand.getName());
+            setDescription(brand.getDescription());
+            getItems();
+            return null;
+          }
+        };
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -147,26 +157,26 @@ public class BrandViewModel {
 
   public static void updateItem(long index) {
     Task<Void> task =
-            new Task<>() {
-              @Override
-              protected Void call() throws SQLException {
-                SQLiteConnection connection = SQLiteConnection.getInstance();
-                ConnectionSource connectionSource = connection.getConnection();
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
 
-                Dao<Brand, Long> brandDao = DaoManager.createDao(connectionSource, Brand.class);
+            Dao<Brand, Long> brandDao = DaoManager.createDao(connectionSource, Brand.class);
 
-                Brand brand = brandDao.queryForId(index);
+            Brand brand = brandDao.queryForId(index);
 
-                brand.setName(getName());
-                brand.setDescription(getDescription());
+            brand.setName(getName());
+            brand.setDescription(getDescription());
 
-                brandDao.update(brand);
+            brandDao.update(brand);
 
-                clearBrandData();
-                getItems();
-                return null;
-              }
-            };
+            clearBrandData();
+            getItems();
+            return null;
+          }
+        };
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -175,18 +185,19 @@ public class BrandViewModel {
 
   public static void deleteItem(long index) {
     Task<Void> task =
-            new Task<>() {
-              @Override
-              protected Void call() throws SQLException {
-                SQLiteConnection connection = SQLiteConnection.getInstance();
-                ConnectionSource connectionSource = connection.getConnection();
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
 
-                Dao<Brand, Long> brandDao = DaoManager.createDao(connectionSource, Brand.class);
+            Dao<Brand, Long> brandDao = DaoManager.createDao(connectionSource, Brand.class);
 
-                brandDao.deleteById(index);
-                return null;
-              }
-            };
+            brandDao.deleteById(index);
+            getItems();
+            return null;
+          }
+        };
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);

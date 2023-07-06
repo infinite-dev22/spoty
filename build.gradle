@@ -14,7 +14,7 @@ plugins {
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.13'
     id 'org.beryx.jlink' version '2.26.0'
-    id 'org.graalvm.buildtools.native' version '0.9.23'
+//    id 'org.graalvm.buildtools.native' version '0.9.23'
 }
 
 apply plugin: 'java'
@@ -34,17 +34,17 @@ compileJava {
     sourceCompatibility = "17"
 }
 
-graalvmNative {
-    toolchainDetection = true
-    binaries {
-        main {
-            javaLauncher = javaToolchains.launcherFor {
-                languageVersion = JavaLanguageVersion.of(17)
-                vendor = JvmVendorSpec.matching("Oracle Corporation")
-            }
-        }
-    }
-}
+//graalvmNative {
+//    toolchainDetection = true
+//    binaries {
+//        main {
+//            javaLauncher = javaToolchains.launcherFor {
+//                languageVersion = JavaLanguageVersion.of(17)
+//                vendor = JvmVendorSpec.matching("Oracle Corporation")
+//            }
+//        }
+//    }
+//}
 
 project.description = "Zenmart ERP - Fintech Software."
 project.ext.buildDate = new Date()
@@ -66,8 +66,32 @@ application {
 
 run {
     jvmArgs = [
-            '-Djdk.gtk.version=3'
+            '-Djdk.gtk.version=3',
+            '-XX:NewRatio=1',
+            '-Xms256m',
+            '-Xmx2G',
+            '-XX:ReservedCodeCacheSize=512m',
+            '-XX:+UseG1GC',
+            '-XX:SoftRefLRUPolicyMSPerMB=50',
+            '-XX:CICompilerCount=2',
+            '-XX:+HeapDumpOnOutOfMemoryError',
+            '-XX:-OmitStackTraceInFastThrow',
+            '-XX:+IgnoreUnrecognizedVMOptions',
+            '-Dsun.io.useCanonCaches=false',
+            '-Dsun.java2d.metal=true',
+            '-Djbr.catch.SIGABRT=true',
+            '-Djdk.http.auth.tunneling.disabledSchemes=""',
+            '-Djdk.attach.allowAttachSelf=true',
+            '-Djdk.module.illegalAccess.silent=true'
     ]
+}
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'org.infinite.spoty.Main'
+        )
+    }
 }
 
 jlink {

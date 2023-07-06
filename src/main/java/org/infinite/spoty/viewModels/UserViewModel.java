@@ -18,6 +18,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
 import java.sql.SQLException;
+import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -256,8 +257,17 @@ public class UserViewModel {
 
             Dao<User, Long> userDao = DaoManager.createDao(connectionSource, User.class);
 
-            usersList.clear();
-            usersList.addAll(userDao.queryForAll());
+            Platform.runLater(
+                () -> {
+                  usersList.clear();
+
+                  try {
+                    usersList.addAll(userDao.queryForAll());
+                  } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                  }
+                });
+
             return null;
           }
         };
@@ -340,6 +350,7 @@ public class UserViewModel {
             Dao<User, Long> userDao = DaoManager.createDao(connectionSource, User.class);
 
             userDao.deleteById(index);
+            getUsers();
             return null;
           }
         };
