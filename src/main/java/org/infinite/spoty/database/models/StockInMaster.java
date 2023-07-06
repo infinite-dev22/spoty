@@ -14,64 +14,65 @@
 
 package org.infinite.spoty.database.models;
 
-import jakarta.persistence.*;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
+import com.j256.ormlite.table.DatabaseTable;
 import java.io.Serializable;
 import java.text.DateFormat;
+import java.util.Collection;
 import java.util.Date;
-import java.util.List;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 
-@Entity
+@DatabaseTable(tableName = "stock_in_master")
 public class StockInMaster implements Serializable {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @DatabaseField(generatedId = true)
   private int id;
 
-  @ManyToOne private User user_detail;
+  @DatabaseField(foreign = true, columnName = "user_id")
+  private User user;
+
+  @DatabaseField(columnName = "reference_number")
   private String ref;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private Date date;
 
-  @ManyToOne(optional = false)
-  @JoinColumn(nullable = false, name = "branch_id")
+  @DatabaseField(foreign = true, columnName = "branch_id", canBeNull = false)
   private Branch branch;
 
-  @OneToMany(mappedBy = "stockIn", fetch = FetchType.LAZY)
-  @Cascade({CascadeType.ALL})
-  private List<StockInDetail> stockInDetails;
+  @ForeignCollectionField private Collection<StockInDetail> stockInDetails;
 
-  private String shipping;
+  @DatabaseField private String shipping;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false, columnName = "total_cost")
   private double totalCost;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private String status;
 
-  @ManyToOne
-  @JoinColumn(name = "approved_by_id")
+  @DatabaseField(foreign = true, columnName = "approved_by_id")
   private User approvedBy;
 
-  @ManyToOne
-  @JoinColumn(name = "recorded_by_id")
+  @DatabaseField(foreign = true, columnName = "recorded_by_id")
   private User recordedBy;
 
+  @DatabaseField(columnName = "approval_date")
   private Date approvalDate;
-  private Date recordDate;
-  private String notes;
 
-  @Column(name = "created_at")
+  @DatabaseField(columnName = "record_date")
+  private Date recordDate;
+
+  @DatabaseField private String notes;
+
+  @DatabaseField(columnName = "created_at")
   private Date createdAt;
 
-  @Column(name = "created_by")
+  @DatabaseField(columnName = "created_by")
   private String createdBy;
 
-  @Column(name = "updated_at")
+  @DatabaseField(columnName = "updated_at")
   private Date updatedAt;
 
-  @Column(name = "updated_by")
+  @DatabaseField(columnName = "updated_by")
   private String updatedBy;
 
   public StockInMaster() {}
@@ -92,11 +93,11 @@ public class StockInMaster implements Serializable {
   }
 
   public User getUser() {
-    return user_detail;
+    return user;
   }
 
   public void setUser(User user_detail) {
-    this.user_detail = user_detail;
+    this.user = user_detail;
   }
 
   public String getRef() {
@@ -159,11 +160,11 @@ public class StockInMaster implements Serializable {
     this.notes = notes;
   }
 
-  public List<StockInDetail> getStockInDetails() {
+  public Collection<StockInDetail> getStockInDetails() {
     return stockInDetails;
   }
 
-  public void setStockInDetails(List<StockInDetail> stockInDetails) {
+  public void setStockInDetails(Collection<StockInDetail> stockInDetails) {
     this.stockInDetails = stockInDetails;
   }
 

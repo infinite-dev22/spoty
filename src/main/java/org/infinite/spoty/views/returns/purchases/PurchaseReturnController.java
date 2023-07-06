@@ -33,6 +33,7 @@ import javafx.scene.layout.HBox;
 import org.infinite.spoty.database.models.PurchaseReturnMaster;
 import org.infinite.spoty.viewModels.PurchaseReturnMasterViewModel;
 
+@SuppressWarnings("unchecked")
 public class PurchaseReturnController implements Initializable {
   @FXML public MFXTableView<PurchaseReturnMaster> purchaseReturnTable;
   @FXML public BorderPane purchaseReturnContentPane;
@@ -48,8 +49,6 @@ public class PurchaseReturnController implements Initializable {
   private void setupTable() {
     MFXTableColumn<PurchaseReturnMaster> purchaseReturnDate =
         new MFXTableColumn<>("Date", false, Comparator.comparing(PurchaseReturnMaster::getDate));
-    MFXTableColumn<PurchaseReturnMaster> purchaseReturnReference =
-        new MFXTableColumn<>("Ref No.", false, Comparator.comparing(PurchaseReturnMaster::getRef));
     MFXTableColumn<PurchaseReturnMaster> purchaseReturnSupplier =
         new MFXTableColumn<>(
             "Supplier", false, Comparator.comparing(PurchaseReturnMaster::getSupplierName));
@@ -66,19 +65,11 @@ public class PurchaseReturnController implements Initializable {
     MFXTableColumn<PurchaseReturnMaster> purchaseReturnPaymentStatus =
         new MFXTableColumn<>(
             "Pay Status", false, Comparator.comparing(PurchaseReturnMaster::getPaymentStatus));
-
-    purchaseReturnReference.setTooltip(new Tooltip("PurchaseMaster Return Reference Number"));
     purchaseReturnPaymentStatus.setTooltip(new Tooltip("PurchaseMaster Return Payment Status"));
     purchaseReturnStatus.setTooltip(new Tooltip("PurchaseMaster Return Status"));
     purchaseReturnBranch.setTooltip(new Tooltip("Branch, store or warehouse"));
-    //        purchaseReturnPaymentStatus.setPrefWidth(100);
-    //        purchaseReturnAmountDue.setPrefWidth(100);
-    //        purchaseReturnSupplier.setPrefWidth(100);
 
     purchaseReturnDate.prefWidthProperty().bind(purchaseReturnTable.widthProperty().multiply(.13));
-    purchaseReturnReference
-        .prefWidthProperty()
-        .bind(purchaseReturnTable.widthProperty().multiply(.13));
     purchaseReturnSupplier
         .prefWidthProperty()
         .bind(purchaseReturnTable.widthProperty().multiply(.13));
@@ -100,8 +91,6 @@ public class PurchaseReturnController implements Initializable {
 
     purchaseReturnDate.setRowCellFactory(
         purchaseReturn -> new MFXTableRowCell<>(PurchaseReturnMaster::getDate));
-    purchaseReturnReference.setRowCellFactory(
-        purchaseReturn -> new MFXTableRowCell<>(PurchaseReturnMaster::getRef));
     purchaseReturnSupplier.setRowCellFactory(
         purchaseReturn -> new MFXTableRowCell<>(PurchaseReturnMaster::getSupplierName));
     purchaseReturnBranch.setRowCellFactory(
@@ -119,7 +108,6 @@ public class PurchaseReturnController implements Initializable {
         .getTableColumns()
         .addAll(
             purchaseReturnDate,
-            purchaseReturnReference,
             purchaseReturnSupplier,
             purchaseReturnBranch,
             purchaseReturnStatus,
@@ -139,7 +127,7 @@ public class PurchaseReturnController implements Initializable {
             new StringFilter<>("Pay Status", PurchaseReturnMaster::getPaymentStatus));
 
     stylePurchaseReturnMasterTable();
-    purchaseReturnTable.setItems(PurchaseReturnMasterViewModel.getPurchaseReturnMasters());
+    purchaseReturnTable.setItems(PurchaseReturnMasterViewModel.purchaseReturnMasterList);
   }
 
   private void stylePurchaseReturnMasterTable() {

@@ -29,7 +29,6 @@ import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import org.infinite.spoty.components.navigation.Pages;
-import org.infinite.spoty.database.dao.QuotationMasterDao;
 import org.infinite.spoty.database.models.QuotationMaster;
 import org.infinite.spoty.viewModels.QuotationMasterViewModel;
 import org.infinite.spoty.views.BaseController;
@@ -56,8 +55,6 @@ public class QuotationController implements Initializable {
   private void setupTable() {
     MFXTableColumn<QuotationMaster> quotationDate =
         new MFXTableColumn<>("Date", false, Comparator.comparing(QuotationMaster::getDate));
-    MFXTableColumn<QuotationMaster> quotationReference =
-        new MFXTableColumn<>("Reference", false, Comparator.comparing(QuotationMaster::getRef));
     MFXTableColumn<QuotationMaster> quotationCustomer =
         new MFXTableColumn<>(
             "Customer", false, Comparator.comparing(QuotationMaster::getCustomerName));
@@ -70,8 +67,6 @@ public class QuotationController implements Initializable {
 
     quotationDate.setRowCellFactory(
         quotation -> new MFXTableRowCell<>(QuotationMaster::getLocaleDate));
-    quotationReference.setRowCellFactory(
-        quotation -> new MFXTableRowCell<>(QuotationMaster::getRef));
     quotationCustomer.setRowCellFactory(
         quotation -> new MFXTableRowCell<>(QuotationMaster::getCustomerName));
     quotationBranch.setRowCellFactory(
@@ -82,7 +77,6 @@ public class QuotationController implements Initializable {
         quotation -> new MFXTableRowCell<>(QuotationMaster::getTotal));
 
     quotationDate.prefWidthProperty().bind(quotationsTable.widthProperty().multiply(.17));
-    quotationReference.prefWidthProperty().bind(quotationsTable.widthProperty().multiply(.17));
     quotationCustomer.prefWidthProperty().bind(quotationsTable.widthProperty().multiply(.17));
     quotationBranch.prefWidthProperty().bind(quotationsTable.widthProperty().multiply(.17));
     quotationStatus.prefWidthProperty().bind(quotationsTable.widthProperty().multiply(.17));
@@ -92,7 +86,6 @@ public class QuotationController implements Initializable {
         .getTableColumns()
         .addAll(
             quotationDate,
-            quotationReference,
             quotationCustomer,
             quotationBranch,
             quotationStatus,
@@ -106,7 +99,7 @@ public class QuotationController implements Initializable {
             new StringFilter<>("Status", QuotationMaster::getStatus),
             new DoubleFilter<>("Grand Total", QuotationMaster::getTotal));
     getQuotationMasterTable();
-    quotationsTable.setItems(QuotationMasterViewModel.getQuotationMasters());
+    quotationsTable.setItems(QuotationMasterViewModel.quotationMasterList);
   }
 
   private void getQuotationMasterTable() {
@@ -141,8 +134,7 @@ public class QuotationController implements Initializable {
     // Delete
     delete.setOnAction(
         e -> {
-          QuotationMasterDao.deleteQuotationMaster(obj.getData().getId());
-          QuotationMasterViewModel.getQuotationMasters();
+          QuotationMasterViewModel.deleteItem(obj.getData().getId());
           e.consume();
         });
     // Edit

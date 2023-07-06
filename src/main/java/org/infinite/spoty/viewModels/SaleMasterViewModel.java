@@ -16,13 +16,18 @@ package org.infinite.spoty.viewModels;
 
 import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
 
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.support.ConnectionSource;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.database.dao.SaleMasterDao;
+import javafx.concurrent.Task;
+import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.Customer;
 import org.infinite.spoty.database.models.SaleMaster;
@@ -30,7 +35,7 @@ import org.infinite.spoty.database.models.SaleMaster;
 public class SaleMasterViewModel {
   public static final ObservableList<SaleMaster> saleMasterList =
       FXCollections.observableArrayList();
-  private static final IntegerProperty id = new SimpleIntegerProperty(0);
+  private static final LongProperty id = new SimpleLongProperty(0);
   private static final StringProperty date = new SimpleStringProperty("");
   private static final StringProperty ref = new SimpleStringProperty("");
   private static final ObjectProperty<Customer> customer = new SimpleObjectProperty<>(null);
@@ -39,15 +44,15 @@ public class SaleMasterViewModel {
   private static final StringProperty payStatus = new SimpleStringProperty("");
   private static final StringProperty note = new SimpleStringProperty("");
 
-  public static int getId() {
+  public static long getId() {
     return id.get();
   }
 
-  public static void setId(int id) {
+  public static void setId(long id) {
     SaleMasterViewModel.id.set(id);
   }
 
-  public static IntegerProperty idProperty() {
+  public static LongProperty idProperty() {
     return id;
   }
 
@@ -139,51 +144,153 @@ public class SaleMasterViewModel {
   }
 
   public static void saveSaleMaster() {
-    SaleMaster saleMaster =
-        new SaleMaster(
-            getCustomer(), getBranch(), getSaleStatus(), getPayStatus(), getNote(), getDate());
-    if (!SaleDetailViewModel.saleDetailList.isEmpty()) {
-      SaleDetailViewModel.saleDetailList.forEach(
-          saleDetail -> saleDetail.setSaleMaster(saleMaster));
-      saleMaster.setSaleDetails(SaleDetailViewModel.saleDetailList);
-    }
-    SaleMasterDao.saveSaleMaster(saleMaster);
-    resetProperties();
-    getSaleMasters();
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<SaleMaster, Long> saleMasterDao =
+                DaoManager.createDao(connectionSource, SaleMaster.class);
+
+            SaleMaster saleMaster =
+                new SaleMaster(
+                    getCustomer(),
+                    getBranch(),
+                    getSaleStatus(),
+                    getPayStatus(),
+                    getNote(),
+                    getDate());
+
+            if (!SaleDetailViewModel.saleDetailList.isEmpty()) {
+              SaleDetailViewModel.saleDetailList.forEach(
+                  saleDetail -> saleDetail.setSaleMaster(saleMaster));
+              saleMaster.setSaleDetails(SaleDetailViewModel.saleDetailList);
+            }
+
+            saleMasterDao.create(saleMaster);
+
+            resetProperties();
+            getSaleMasters();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static ObservableList<SaleMaster> getSaleMasters() {
-    saleMasterList.clear();
-    saleMasterList.addAll(SaleMasterDao.fetchSaleMasters());
-    return saleMasterList;
+  public static void getSaleMasters() {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<SaleMaster, Long> saleMasterDao =
+                DaoManager.createDao(connectionSource, SaleMaster.class);
+
+            saleMasterList.clear();
+            saleMasterList.addAll(saleMasterDao.queryForAll());
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static void getItem(int index) {
-    SaleMaster saleMaster = SaleMasterDao.findSaleMaster(index);
-    setId(saleMaster.getId());
-    setDate(saleMaster.getLocaleDate());
-    setCustomer(saleMaster.getCustomer());
-    setBranch(saleMaster.getBranch());
-    setNote(saleMaster.getNotes());
-    setSaleStatus(saleMaster.getSaleStatus());
-    setPayStatus(saleMaster.getPaymentStatus());
-    SaleDetailViewModel.saleDetailList.clear();
-    SaleDetailViewModel.saleDetailList.addAll(saleMaster.getSaleDetails());
-    getSaleMasters();
+  public static void getItem(long index) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<SaleMaster, Long> saleMasterDao =
+                DaoManager.createDao(connectionSource, SaleMaster.class);
+
+            SaleMaster saleMaster = saleMasterDao.queryForId(index);
+
+            setId(saleMaster.getId());
+            setDate(saleMaster.getLocaleDate());
+            setCustomer(saleMaster.getCustomer());
+            setBranch(saleMaster.getBranch());
+            setNote(saleMaster.getNotes());
+            setSaleStatus(saleMaster.getSaleStatus());
+            setPayStatus(saleMaster.getPaymentStatus());
+
+            SaleDetailViewModel.saleDetailList.clear();
+            SaleDetailViewModel.saleDetailList.addAll(saleMaster.getSaleDetails());
+
+            getSaleMasters();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static void updateItem(int index) {
-    SaleMaster saleMaster = SaleMasterDao.findSaleMaster(index);
-    saleMaster.setCustomer(getCustomer());
-    saleMaster.setBranch(getBranch());
-    saleMaster.setSaleStatus(getSaleStatus());
-    saleMaster.setPaymentStatus(getPayStatus());
-    saleMaster.setNotes(getNote());
-    saleMaster.setDate(getDate());
-    SaleDetailViewModel.deleteSaleDetails(PENDING_DELETES);
-    saleMaster.setSaleDetails(SaleDetailViewModel.saleDetailList);
-    SaleMasterDao.updateSaleMaster(saleMaster, index);
-    resetProperties();
-    getSaleMasters();
+  public static void updateItem(long index) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<SaleMaster, Long> saleMasterDao =
+                DaoManager.createDao(connectionSource, SaleMaster.class);
+
+            SaleMaster saleMaster = saleMasterDao.queryForId(index);
+            saleMaster.setCustomer(getCustomer());
+            saleMaster.setBranch(getBranch());
+            saleMaster.setSaleStatus(getSaleStatus());
+            saleMaster.setPaymentStatus(getPayStatus());
+            saleMaster.setNotes(getNote());
+            saleMaster.setDate(getDate());
+
+            SaleDetailViewModel.deleteSaleDetails(PENDING_DELETES);
+            saleMaster.setSaleDetails(SaleDetailViewModel.saleDetailList);
+
+            saleMasterDao.update(saleMaster);
+
+            resetProperties();
+            getSaleMasters();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
+  }
+
+  public static void deleteItem(long index) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<SaleMaster, Long> saleMasterDao =
+                DaoManager.createDao(connectionSource, SaleMaster.class);
+
+            saleMasterDao.deleteById(index);
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 }

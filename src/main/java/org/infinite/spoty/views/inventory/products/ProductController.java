@@ -27,7 +27,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
 import org.infinite.spoty.components.navigation.Pages;
-import org.infinite.spoty.database.dao.ProductMasterDao;
 import org.infinite.spoty.database.models.ProductMaster;
 import org.infinite.spoty.viewModels.ProductMasterViewModel;
 import org.infinite.spoty.views.BaseController;
@@ -83,7 +82,7 @@ public class ProductController implements Initializable {
             new StringFilter<>("Category", ProductMaster::getCategoryName),
             new StringFilter<>("Brand", ProductMaster::getBrandName));
     getTable();
-    productMasterTable.setItems(ProductMasterViewModel.getProductMasters());
+    productMasterTable.setItems(ProductMasterViewModel.productMasterList);
   }
 
   private void getTable() {
@@ -118,8 +117,7 @@ public class ProductController implements Initializable {
     // Delete
     delete.setOnAction(
         e -> {
-          ProductMasterDao.deleteProductMaster(obj.getData().getId());
-          ProductMasterViewModel.getProductMasters();
+          ProductMasterViewModel.deleteItem(obj.getData().getId());
           e.consume();
         });
     // Edit

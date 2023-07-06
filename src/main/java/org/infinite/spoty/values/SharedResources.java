@@ -19,7 +19,7 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 
 public class SharedResources {
-  public static final LinkedList<Integer> PENDING_DELETES = new LinkedList<>();
+  public static final LinkedList<Long> PENDING_DELETES = new LinkedList<>();
   private static final IntegerProperty TEMP_ID = new SimpleIntegerProperty(-1);
 
   public static Integer getTempId() {

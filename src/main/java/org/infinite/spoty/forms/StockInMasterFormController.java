@@ -20,7 +20,7 @@ import static org.infinite.spoty.Validators.requiredValidator;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.enums.ButtonType;
-import io.github.palexdev.materialfx.filter.IntegerFilter;
+import io.github.palexdev.materialfx.filter.LongFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.io.IOException;
@@ -91,7 +91,7 @@ public class StockInMasterFormController implements Initializable {
         .textProperty()
         .bindBidirectional(StockInMasterViewModel.idProperty(), new NumberStringConverter());
     stockInMasterBranch.valueProperty().bindBidirectional(StockInMasterViewModel.branchProperty());
-    stockInMasterBranch.setItems(BranchViewModel.getBranches());
+    stockInMasterBranch.setItems(BranchViewModel.branchesList);
     stockInMasterBranch.setConverter(
         new StringConverter<>() {
           @Override
@@ -134,7 +134,7 @@ public class StockInMasterFormController implements Initializable {
         .getFilters()
         .addAll(
             new StringFilter<>("Name", StockInDetail::getProductDetailName),
-            new IntegerFilter<>("Quantity", StockInDetail::getQuantity));
+            new LongFilter<>("Quantity", StockInDetail::getQuantity));
     getStockInDetailTable();
     stockInDetailTable.setItems(StockInDetailViewModel.stockInDetailsList);
   }
@@ -208,8 +208,7 @@ public class StockInMasterFormController implements Initializable {
   public void stockInMasterSaveBtnClicked() {
     SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
 
-    if (!stockInDetailTable.isDisabled()
-        && StockInDetailViewModel.stockInDetailsList.isEmpty()) {
+    if (!stockInDetailTable.isDisabled() && StockInDetailViewModel.stockInDetailsList.isEmpty()) {
       SimpleNotification notification =
           new SimpleNotification.NotificationBuilder("Table can't be Empty")
               .duration(NotificationDuration.SHORT)

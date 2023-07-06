@@ -14,36 +14,37 @@
 
 package org.infinite.spoty.database.models;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 import jakarta.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-@Entity
-public class Role {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+@DatabaseTable(tableName = "role")
+public class Role implements Serializable {
+  @DatabaseField(generatedId = true)
   private int id;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private String name;
 
+  @DatabaseField
   private String label;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private boolean status;
 
+  @DatabaseField
   private String description;
 
-  @ManyToMany
-  @JoinTable(
-      name = "Role_Permission",
-      joinColumns = {@JoinColumn(name = "role_id", nullable = false)},
-      inverseJoinColumns = {@JoinColumn(name = "Permission_id")})
-  private List<Permission> permissions;
-
+  @DatabaseField(columnName = "created_at")
   private Date createdAt;
+  @DatabaseField(columnName = "created_by")
   private String createdBy;
+  @DatabaseField(columnName = "updated_at")
   private Date updatedAt;
+  @DatabaseField(columnName = "updated_by")
   private String updatedBy;
 
   public Role(
@@ -59,7 +60,6 @@ public class Role {
     this.name = name;
     this.label = label;
     this.status = status;
-    this.permissions = permissions;
     this.description = description;
     this.createdAt = createdAt;
     this.createdBy = createdBy;
@@ -139,13 +139,5 @@ public class Role {
 
   public void setUpdatedBy(String updatedBy) {
     this.updatedBy = updatedBy;
-  }
-
-  public List<Permission> getPermission() {
-    return permissions;
-  }
-
-  public void setPermission(List<Permission> permissions) {
-    this.permissions = permissions;
   }
 }

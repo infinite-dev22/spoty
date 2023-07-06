@@ -14,17 +14,19 @@
 
 package org.infinite.spoty.viewModels;
 
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.support.ConnectionSource;
+import java.sql.SQLException;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.database.dao.BranchDao;
+import javafx.concurrent.Task;
+import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.Branch;
 
 public class BranchViewModel {
-  private static final IntegerProperty id = new SimpleIntegerProperty(0);
+  private static final LongProperty id = new SimpleLongProperty(0);
   private static final StringProperty title = new SimpleStringProperty("");
   private static final StringProperty name = new SimpleStringProperty("");
   private static final StringProperty email = new SimpleStringProperty("");
@@ -34,15 +36,15 @@ public class BranchViewModel {
   private static final StringProperty zipcode = new SimpleStringProperty("");
   public static ObservableList<Branch> branchesList = FXCollections.observableArrayList();
 
-  public static Integer getId() {
+  public static long getId() {
     return id.get();
   }
 
-  public static void setId(Integer id) {
+  public static void setId(long id) {
     BranchViewModel.id.set(id);
   }
 
-  public static IntegerProperty idProperty() {
+  public static LongProperty idProperty() {
     return id;
   }
 
@@ -131,12 +133,29 @@ public class BranchViewModel {
   }
 
   public static void saveBranch() {
-    Branch branch =
-        new Branch(getName(), getCity(), getPhone(), getEmail(), getTown(), getZipcode());
-    BranchDao.saveBranch(branch);
-    branchesList.clear();
-    clearBranchData();
-    getBranches();
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<Branch, Long> branchDao = DaoManager.createDao(connectionSource, Branch.class);
+
+            Branch branch =
+                new Branch(getName(), getCity(), getPhone(), getEmail(), getTown(), getZipcode());
+
+            branchDao.create(branch);
+
+            clearBranchData();
+            getBranches();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
   public static void clearBranchData() {
@@ -149,29 +168,104 @@ public class BranchViewModel {
     setZipcode("");
   }
 
-  public static ObservableList<Branch> getBranches() {
-    branchesList.clear();
-    branchesList.addAll(BranchDao.getBranches());
-    return branchesList;
+  public static void getBranches() {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<Branch, Long> branchDao = DaoManager.createDao(connectionSource, Branch.class);
+
+            branchesList.clear();
+            branchesList.addAll(branchDao.queryForAll());
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static void getItem(int branchID) {
-    Branch branch = BranchDao.findBranch(branchID);
-    setId(branch.getId());
-    setName(branch.getName());
-    setEmail(branch.getEmail());
-    setPhone(branch.getPhone());
-    setCity(branch.getCity());
-    setTown(branch.getTown());
-    setZipcode(branch.getZipCode());
-    getBranches();
+  public static void getItem(long branchID) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<Branch, Long> branchDao = DaoManager.createDao(connectionSource, Branch.class);
+
+            Branch branch = branchDao.queryForId(branchID);
+            setId(branch.getId());
+            setName(branch.getName());
+            setEmail(branch.getEmail());
+            setPhone(branch.getPhone());
+            setCity(branch.getCity());
+            setTown(branch.getTown());
+            setZipcode(branch.getZipCode());
+            getBranches();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static void updateItem(int branchID) {
-    Branch branch =
-        new Branch(getName(), getCity(), getPhone(), getEmail(), getTown(), getZipcode());
-    BranchDao.updateBranch(branch, branchID);
-    clearBranchData();
-    getBranches();
+  public static void updateItem(long index) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<Branch, Long> branchDao = DaoManager.createDao(connectionSource, Branch.class);
+
+            Branch branch = branchDao.queryForId(index);
+
+            branch.setName(getName());
+            branch.setCity(getCity());
+            branch.setPhone(getPhone());
+            branch.setEmail(getEmail());
+            branch.setTown(getTown());
+            branch.setZipCode(getZipcode());
+
+            branchDao.update(branch);
+
+            clearBranchData();
+            getBranches();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
+  }
+
+  public static void deleteItem(long index) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<Branch, Long> branchDao = DaoManager.createDao(connectionSource, Branch.class);
+
+            branchDao.deleteById(index);
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 }

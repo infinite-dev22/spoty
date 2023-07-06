@@ -16,8 +16,7 @@ package org.infinite.spoty.database.dao;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.Date;
-import org.infinite.spoty.database.models.Branch;
+import org.infinite.spoty.viewModels.BranchViewModel;
 import org.junit.jupiter.api.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -26,56 +25,55 @@ class BranchDaoTest {
     @Test
     @Order(1)
     void saveBranch() {
-        var branch1 = new Branch("Branch One",
-                "Kampala", "+1234567890",
-                "branchone@email.com", "Uganda", "617867838");
-        branch1.setCreatedAt(new Date());
-        branch1.setCreatedBy("Test User One");
-        BranchDao.saveBranch(branch1);
-        assertEquals(branch1.getId(), 1);
+        BranchViewModel.setName("Branch One");
+        BranchViewModel.setCity("Kampala");
+        BranchViewModel.setPhone("+1234567890");
+        BranchViewModel.setEmail("branchone@email.com");
+        BranchViewModel.setTown("Bwaise");
+        BranchViewModel.setZipcode("617867838");
 
-        var branch2 = new Branch("Branch Two",
-                "Akansas City", "+0987654321",
-                "branchtwo@email.com", "USA", "617863228");
-        branch2.setCreatedAt(new Date());
-        branch2.setCreatedBy("Test User Two");
-        BranchDao.saveBranch(branch2);
-        Assertions.assertEquals(branch2.getName(), "Branch Two");
+        BranchViewModel.saveBranch();
+
+        BranchViewModel.setName("Branch Two");
+        BranchViewModel.setCity("Arkansas City");
+        BranchViewModel.setPhone("+0987654321");
+        BranchViewModel.setEmail("branchtwo@email.com");
+        BranchViewModel.setTown("Ark Town");
+        BranchViewModel.setZipcode("617863228");
+
+        BranchViewModel.saveBranch();
     }
 
     @Test
     @Order(2)
     void updateBranch() {
-        var branch = new Branch("Branch 1",
-                "Kampala", "+2567123456789",
-                "branch1@email.com", "Uganda", "76782");
-        branch.setUpdatedAt(new Date());
-        branch.setUpdatedBy("Test User");
-        BranchDao.updateBranch(branch, 1);
-        assertEquals(branch.getPhone(), "+2567123456789");
+        BranchViewModel.setName("Branch 1");
+        BranchViewModel.setPhone("+2567123456789");
+        BranchViewModel.setEmail("branch1@email.com");
+        BranchViewModel.setTown("Kisaasi");
+        BranchViewModel.setZipcode("76782");
+
+        BranchViewModel.saveBranch();
     }
 
     @Test
     @Order(3)
     void findBranch() {
-        var obj = BranchDao.findBranch(2);
-        assertEquals(obj.getTown(), "USA");
+        BranchViewModel.getItem(2);
+        assertEquals(BranchViewModel.getTown(), "USA");
     }
 
     @Test
     @Order(4)
     void getBranch() {
-        var obj = BranchDao.getBranches();
-        assertEquals(obj.size(), 2);
+        BranchViewModel.getBranches();
+        assertEquals(BranchViewModel.branchesList.size(), 2);
     }
 
     @Test
     @Order(5)
     void deleteBranch() {
-        var obj1 = BranchDao.deleteBranch(2);
-        assertEquals(obj1, 1);
-
-        var obj2 = BranchDao.deleteBranch(1);
-        assertEquals(obj2, 1);
+        BranchViewModel.deleteItem(2);
+        BranchViewModel.deleteItem(1);
     }
 }

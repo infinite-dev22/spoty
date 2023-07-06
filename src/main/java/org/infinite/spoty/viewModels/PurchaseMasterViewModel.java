@@ -16,13 +16,18 @@ package org.infinite.spoty.viewModels;
 
 import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
 
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.support.ConnectionSource;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.database.dao.PurchaseMasterDao;
+import javafx.concurrent.Task;
+import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.PurchaseMaster;
 import org.infinite.spoty.database.models.Supplier;
@@ -30,22 +35,22 @@ import org.infinite.spoty.database.models.Supplier;
 public class PurchaseMasterViewModel {
   public static final ObservableList<PurchaseMaster> purchaseMasterList =
       FXCollections.observableArrayList();
-  private static final IntegerProperty id = new SimpleIntegerProperty(0);
+  private static final LongProperty id = new SimpleLongProperty(0);
   private static final StringProperty date = new SimpleStringProperty("");
   private static final ObjectProperty<Supplier> supplier = new SimpleObjectProperty<>(null);
   private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>(null);
   private static final StringProperty status = new SimpleStringProperty("");
   private static final StringProperty note = new SimpleStringProperty("");
 
-  public static int getId() {
+  public static long getId() {
     return id.get();
   }
 
-  public static void setId(int id) {
+  public static void setId(long id) {
     PurchaseMasterViewModel.id.set(id);
   }
 
-  public static IntegerProperty idProperty() {
+  public static LongProperty idProperty() {
     return id;
   }
 
@@ -125,48 +130,145 @@ public class PurchaseMasterViewModel {
   }
 
   public static void savePurchaseMaster() {
-    PurchaseMaster purchaseMaster =
-        new PurchaseMaster(getSupplier(), getBranch(), getStatus(), getNote(), getDate());
-    if (!PurchaseDetailViewModel.purchaseDetailList.isEmpty()) {
-      PurchaseDetailViewModel.purchaseDetailList.forEach(
-          purchaseDetail -> purchaseDetail.setPurchase(purchaseMaster));
-      purchaseMaster.setPurchaseDetails(PurchaseDetailViewModel.purchaseDetailList);
-    }
-    PurchaseMasterDao.savePurchaseMaster(purchaseMaster);
-    resetProperties();
-    getPurchaseMasters();
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<PurchaseMaster, Long> purchaseMasterDao =
+                DaoManager.createDao(connectionSource, PurchaseMaster.class);
+
+            PurchaseMaster purchaseMaster =
+                new PurchaseMaster(getSupplier(), getBranch(), getStatus(), getNote(), getDate());
+
+            if (!PurchaseDetailViewModel.purchaseDetailList.isEmpty()) {
+              PurchaseDetailViewModel.purchaseDetailList.forEach(
+                  purchaseDetail -> purchaseDetail.setPurchase(purchaseMaster));
+              purchaseMaster.setPurchaseDetails(PurchaseDetailViewModel.purchaseDetailList);
+            }
+
+            purchaseMasterDao.create(purchaseMaster);
+
+            resetProperties();
+            getPurchaseMasters();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static ObservableList<PurchaseMaster> getPurchaseMasters() {
-    purchaseMasterList.clear();
-    purchaseMasterList.addAll(PurchaseMasterDao.fetchPurchaseMasters());
-    return purchaseMasterList;
+  public static void getPurchaseMasters() {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<PurchaseMaster, Long> purchaseMasterDao =
+                DaoManager.createDao(connectionSource, PurchaseMaster.class);
+
+            purchaseMasterList.clear();
+            purchaseMasterList.addAll(purchaseMasterDao.queryForAll());
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static void getItem(int index) {
-    PurchaseMaster purchaseMaster = PurchaseMasterDao.findPurchaseMaster(index);
-    setId(purchaseMaster.getId());
-    setDate(purchaseMaster.getLocaleDate());
-    setSupplier(purchaseMaster.getSupplier());
-    setBranch(purchaseMaster.getBranch());
-    setStatus(purchaseMaster.getStatus());
-    setNote(purchaseMaster.getNotes());
-    PurchaseDetailViewModel.purchaseDetailList.clear();
-    PurchaseDetailViewModel.purchaseDetailList.addAll(purchaseMaster.getPurchaseDetails());
-    getPurchaseMasters();
+  public static void getItem(long index) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<PurchaseMaster, Long> purchaseMasterDao =
+                DaoManager.createDao(connectionSource, PurchaseMaster.class);
+
+            PurchaseMaster purchaseMaster = purchaseMasterDao.queryForId(index);
+
+            setId(purchaseMaster.getId());
+            setDate(purchaseMaster.getLocaleDate());
+            setSupplier(purchaseMaster.getSupplier());
+            setBranch(purchaseMaster.getBranch());
+            setStatus(purchaseMaster.getStatus());
+            setNote(purchaseMaster.getNotes());
+
+            PurchaseDetailViewModel.purchaseDetailList.clear();
+            PurchaseDetailViewModel.purchaseDetailList.addAll(purchaseMaster.getPurchaseDetails());
+
+            getPurchaseMasters();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static void updateItem(int index) {
-    PurchaseMaster purchaseMaster = PurchaseMasterDao.findPurchaseMaster(index);
-    purchaseMaster.setSupplier(getSupplier());
-    purchaseMaster.setBranch(getBranch());
-    purchaseMaster.setStatus(getStatus());
-    purchaseMaster.setNotes(getNote());
-    purchaseMaster.setDate(getDate());
-    PurchaseDetailViewModel.deletePurchaseDetails(PENDING_DELETES);
-    purchaseMaster.setPurchaseDetails(PurchaseDetailViewModel.purchaseDetailList);
-    PurchaseMasterDao.updatePurchaseMaster(purchaseMaster, index);
-    resetProperties();
-    getPurchaseMasters();
+  public static void updateItem(long index) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<PurchaseMaster, Long> purchaseMasterDao =
+                DaoManager.createDao(connectionSource, PurchaseMaster.class);
+
+            PurchaseMaster purchaseMaster = purchaseMasterDao.queryForId(index);
+            purchaseMaster.setSupplier(getSupplier());
+            purchaseMaster.setBranch(getBranch());
+            purchaseMaster.setStatus(getStatus());
+            purchaseMaster.setNotes(getNote());
+            purchaseMaster.setDate(getDate());
+
+            PurchaseDetailViewModel.deletePurchaseDetails(PENDING_DELETES);
+            purchaseMaster.setPurchaseDetails(PurchaseDetailViewModel.purchaseDetailList);
+
+            purchaseMasterDao.update(purchaseMaster);
+
+            resetProperties();
+            getPurchaseMasters();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
+  }
+
+  public static void deleteItem(long index) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<PurchaseMaster, Long> purchaseMasterDao =
+                DaoManager.createDao(connectionSource, PurchaseMaster.class);
+
+            purchaseMasterDao.deleteById(index);
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 }

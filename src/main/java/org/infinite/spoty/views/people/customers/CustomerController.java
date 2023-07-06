@@ -36,7 +36,6 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.infinite.spoty.database.dao.CustomerDao;
 import org.infinite.spoty.database.models.Customer;
 import org.infinite.spoty.forms.CustomerFormController;
 import org.infinite.spoty.viewModels.CustomerViewModel;
@@ -108,7 +107,7 @@ public class CustomerController implements Initializable {
             new StringFilter<>("Email", Customer::getEmail),
             new StringFilter<>("Tax No.", Customer::getTaxNumber));
     styleCustomerTable();
-    customersTable.setItems(CustomerViewModel.getCustomers());
+    customersTable.setItems(CustomerViewModel.customersList);
   }
 
   private void styleCustomerTable() {
@@ -142,8 +141,7 @@ public class CustomerController implements Initializable {
     // Delete
     delete.setOnAction(
         e -> {
-          CustomerDao.deleteCustomer(obj.getData().getId());
-          CustomerViewModel.getCustomers();
+          CustomerViewModel.deleteItem(obj.getData().getId());
           e.consume();
         });
     // Edit

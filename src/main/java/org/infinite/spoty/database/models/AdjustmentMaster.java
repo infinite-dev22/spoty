@@ -14,42 +14,44 @@
 
 package org.infinite.spoty.database.models;
 
-import jakarta.persistence.*;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
+import com.j256.ormlite.table.DatabaseTable;
 import java.io.Serializable;
 import java.text.DateFormat;
+import java.util.Collection;
 import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 
-@Entity
+@DatabaseTable(tableName = "adjustment_masters")
 public class AdjustmentMaster implements Serializable {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @DatabaseField(generatedId = true)
   private int id;
 
-  @ManyToOne private User user_detail;
-  private Date date;
-  private String ref;
-  @ManyToOne private Branch branch;
+  @DatabaseField(foreign = true, columnName = "user_id")
+  private User user;
 
-  @OneToMany(mappedBy = "adjustment", fetch = FetchType.LAZY)
-  @Cascade({CascadeType.ALL})
-  private List<AdjustmentDetail> adjustmentDetails = new LinkedList<>();
+  @DatabaseField private Date date;
+  @DatabaseField private String ref;
 
+  @DatabaseField(foreign = true, columnName = "branch_id", canBeNull = false)
+  private Branch branch;
+
+  @ForeignCollectionField
+  private Collection<AdjustmentDetail> adjustmentDetails;
+
+  @DatabaseField(columnName = "notes")
   private String notes;
 
-  @Column(name = "created_at")
+  @DatabaseField(columnName = "created_at")
   private Date createdAt;
 
-  @Column(name = "created_by")
+  @DatabaseField(columnName = "created_by")
   private String createdBy;
 
-  @Column(name = "updated_at")
+  @DatabaseField(columnName = "updated_at")
   private Date updatedAt;
 
-  @Column(name = "updated_by")
+  @DatabaseField(columnName = "updated_by")
   private String updatedBy;
 
   public AdjustmentMaster() {}
@@ -69,11 +71,11 @@ public class AdjustmentMaster implements Serializable {
   }
 
   public User getUser() {
-    return user_detail;
+    return user;
   }
 
   public void setUser(User user_detail) {
-    this.user_detail = user_detail;
+    this.user = user_detail;
   }
 
   public Date getDate() {
@@ -109,11 +111,11 @@ public class AdjustmentMaster implements Serializable {
     else return null;
   }
 
-  public List<AdjustmentDetail> getAdjustmentDetails() {
+  public Collection<AdjustmentDetail> getAdjustmentDetails() {
     return adjustmentDetails;
   }
 
-  public void setAdjustmentDetails(List<AdjustmentDetail> adjustmentDetails) {
+  public void setAdjustmentDetails(Collection<AdjustmentDetail> adjustmentDetails) {
     this.adjustmentDetails = adjustmentDetails;
   }
 

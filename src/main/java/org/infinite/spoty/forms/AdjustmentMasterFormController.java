@@ -27,7 +27,7 @@ import io.github.palexdev.materialfx.controls.MFXTableView;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.enums.ButtonType;
-import io.github.palexdev.materialfx.filter.IntegerFilter;
+import io.github.palexdev.materialfx.filter.LongFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.io.IOException;
@@ -98,7 +98,7 @@ public class AdjustmentMasterFormController implements Initializable {
         .textProperty()
         .bindBidirectional(AdjustmentMasterViewModel.idProperty(), new NumberStringConverter());
     adjustmentBranch.valueProperty().bindBidirectional(AdjustmentMasterViewModel.branchProperty());
-    adjustmentBranch.setItems(BranchViewModel.getBranches());
+    adjustmentBranch.setItems(BranchViewModel.branchesList);
     adjustmentBranch.setResetOnPopupHidden(true);
     adjustmentBranch.setConverter(
         new StringConverter<>() {
@@ -150,7 +150,7 @@ public class AdjustmentMasterFormController implements Initializable {
         .getFilters()
         .addAll(
             new StringFilter<>("Name", AdjustmentDetail::getProductDetailName),
-            new IntegerFilter<>("Quantity", AdjustmentDetail::getQuantity),
+            new LongFilter<>("Quantity", AdjustmentDetail::getQuantity),
             new StringFilter<>("Adjustment Type", AdjustmentDetail::getAdjustmentType));
     getAdjustmentDetailTable();
     adjustmentDetailTable.setItems(AdjustmentDetailViewModel.adjustmentDetailsList);

@@ -14,35 +14,43 @@
 
 package org.infinite.spoty.database.models;
 
-import jakarta.persistence.*;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 import java.util.Date;
 
-@Entity
+@DatabaseTable(tableName = "branches")
 public class Branch {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @DatabaseField(generatedId = true)
   private int id;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private String name;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private String city;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private String phone;
 
+  @DatabaseField
   private String email;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private String town;
 
+  @DatabaseField(columnName = "zip_code")
   private String zipCode;
-  //    @ManyToMany(targetEntity = ProductDetail.class)
-  //    private List<ProductDetail> productDetails;
+
+  @DatabaseField(columnName = "created_at")
   private Date createdAt;
+
+  @DatabaseField(columnName = "created_by")
   private String createdBy;
+
+  @DatabaseField(columnName = "updated_at")
   private Date updatedAt;
+
+  @DatabaseField(columnName = "updated_by")
   private String updatedBy;
 
   public Branch(String name, String city, String phone, String email, String town, String zipCode) {

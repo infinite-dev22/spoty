@@ -14,16 +14,21 @@
 
 package org.infinite.spoty.viewModels;
 
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.support.ConnectionSource;
+import java.sql.SQLException;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.database.dao.UserDao;
+import javafx.concurrent.Task;
+import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.Role;
 import org.infinite.spoty.database.models.User;
 
 public class UserViewModel {
   public static final ObservableList<User> usersList = FXCollections.observableArrayList();
-  private static final IntegerProperty id = new SimpleIntegerProperty(0);
+  private static final LongProperty id = new SimpleLongProperty(0);
   private static final StringProperty firstName = new SimpleStringProperty("");
   private static final StringProperty lastName = new SimpleStringProperty("");
   private static final StringProperty userName = new SimpleStringProperty("");
@@ -37,15 +42,15 @@ public class UserViewModel {
   private static final BooleanProperty active = new SimpleBooleanProperty(true);
   private static final BooleanProperty accessAllBranches = new SimpleBooleanProperty(false);
 
-  public static int getId() {
+  public static long getId() {
     return id.get();
   }
 
-  public static void setId(int id) {
+  public static void setId(long id) {
     UserViewModel.id.set(id);
   }
 
-  public static IntegerProperty idProperty() {
+  public static LongProperty idProperty() {
     return id;
   }
 
@@ -210,48 +215,137 @@ public class UserViewModel {
   }
 
   public static void saveUser() {
-    User user =
-        new User(
-            getFirstName(),
-            getLastName(),
-            getUserName(),
-            getRole(),
-            isActive(),
-            canAccessAllBranches());
-    UserDao.saveUser(user);
-    resetProperties();
-    getUsers();
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<User, Long> userDao = DaoManager.createDao(connectionSource, User.class);
+
+            User user =
+                new User(
+                    getFirstName(),
+                    getLastName(),
+                    getUserName(),
+                    getRole(),
+                    isActive(),
+                    canAccessAllBranches());
+
+            userDao.create(user);
+
+            resetProperties();
+            getUsers();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static ObservableList<User> getUsers() {
-    usersList.clear();
-    usersList.addAll(UserDao.fetchUsers());
-    return usersList;
+  public static void getUsers() {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<User, Long> userDao = DaoManager.createDao(connectionSource, User.class);
+
+            usersList.clear();
+            usersList.addAll(userDao.queryForAll());
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static void getItem(int userID) {
-    User user = UserDao.findUser(userID);
-    setId(user.getId());
-    setFirstName(user.getFirstName());
-    setLastName(user.getLastName());
-    setUserName(user.getUserName());
-    setRole(user.getRole());
-    setActive(user.isActive());
-    setAccessAllBranches(user.canAccessAllBranches());
-    getUsers();
+  public static void getItem(long index) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<User, Long> userDao = DaoManager.createDao(connectionSource, User.class);
+
+            User user = userDao.queryForId(index);
+
+            setId(user.getId());
+            setFirstName(user.getFirstName());
+            setLastName(user.getLastName());
+            setUserName(user.getUserName());
+            setRole(user.getRole());
+            setActive(user.isActive());
+            setAccessAllBranches(user.canAccessAllBranches());
+
+            getUsers();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static void updateItem(int userID) {
-    User user =
-        new User(
-            getFirstName(),
-            getLastName(),
-            getUserName(),
-            getRole(),
-            isActive(),
-            canAccessAllBranches());
-    UserDao.updateUser(user, userID);
-    resetProperties();
-    getUsers();
+  public static void updateItem(long index) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<User, Long> userDao = DaoManager.createDao(connectionSource, User.class);
+
+            User user = userDao.queryForId(index);
+
+            user.setFirstName(getFirstName());
+            user.setLastName(getLastName());
+            user.setUserName(getUserName());
+            user.setRole(getRole());
+            user.setActive(isActive());
+            user.setAccessAllBranches(canAccessAllBranches());
+
+            userDao.update(user);
+
+            resetProperties();
+            getUsers();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
+  }
+
+  public static void deleteItem(long index) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<User, Long> userDao = DaoManager.createDao(connectionSource, User.class);
+
+            userDao.deleteById(index);
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 }

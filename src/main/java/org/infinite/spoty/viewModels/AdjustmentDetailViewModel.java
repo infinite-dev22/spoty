@@ -16,11 +16,16 @@ package org.infinite.spoty.viewModels;
 
 import static org.infinite.spoty.values.SharedResources.*;
 
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.support.ConnectionSource;
+import java.sql.SQLException;
 import java.util.LinkedList;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.database.dao.AdjustmentDetailDao;
+import javafx.concurrent.Task;
+import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.AdjustmentDetail;
 import org.infinite.spoty.database.models.AdjustmentMaster;
 import org.infinite.spoty.database.models.ProductDetail;
@@ -28,21 +33,21 @@ import org.infinite.spoty.database.models.ProductDetail;
 public class AdjustmentDetailViewModel {
   public static final ObservableList<AdjustmentDetail> adjustmentDetailsList =
       FXCollections.observableArrayList();
-  private static final IntegerProperty id = new SimpleIntegerProperty(0);
+  private static final LongProperty id = new SimpleLongProperty(0);
   private static final ObjectProperty<ProductDetail> product = new SimpleObjectProperty<>();
   private static final ObjectProperty<AdjustmentMaster> adjustment = new SimpleObjectProperty<>();
   private static final StringProperty quantity = new SimpleStringProperty("");
   private static final StringProperty adjustmentType = new SimpleStringProperty("");
 
-  public static int getId() {
+  public static long getId() {
     return id.get();
   }
 
-  public static void setId(int id) {
+  public static void setId(long id) {
     AdjustmentDetailViewModel.id.set(id);
   }
 
-  public static IntegerProperty idProperty() {
+  public static LongProperty idProperty() {
     return id;
   }
 
@@ -70,8 +75,8 @@ public class AdjustmentDetailViewModel {
     return adjustment;
   }
 
-  public static int getQuantity() {
-    return Integer.parseInt(quantity.get());
+  public static long getQuantity() {
+    return Long.parseLong(quantity.get());
   }
 
   public static void setQuantity(String quantity) {
@@ -104,50 +109,157 @@ public class AdjustmentDetailViewModel {
   }
 
   public static void addAdjustmentDetails() {
-    AdjustmentDetail adjustmentDetail =
-        new AdjustmentDetail(getProduct(), getQuantity(), getAdjustmentType());
-    adjustmentDetailsList.add(adjustmentDetail);
-    resetProperties();
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() {
+            AdjustmentDetail adjustmentDetail =
+                new AdjustmentDetail(getProduct(), getQuantity(), getAdjustmentType());
+
+            adjustmentDetailsList.add(adjustmentDetail);
+            resetProperties();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
   public static void updateAdjustmentDetail(int index) {
-    AdjustmentDetail adjustmentDetail = adjustmentDetailsList.get(getTempId());
-//    AdjustmentDetail adjustmentDetail = AdjustmentDetailDao.findAdjustmentDetail(index);
-    adjustmentDetail.setProduct(getProduct());
-    adjustmentDetail.setQuantity(getQuantity());
-    adjustmentDetail.setAdjustmentType(getAdjustmentType());
-//    adjustmentDetailsList.remove((int) getTempId());
-//    adjustmentDetailsList.add(getTempId(), adjustmentDetail);
-    resetProperties();
+    Task<Void> task =
+            new Task<>() {
+              @Override
+              protected Void call() {
+                AdjustmentDetail adjustmentDetail = adjustmentDetailsList.get(index);
+                adjustmentDetail.setProduct(getProduct());
+                adjustmentDetail.setQuantity(getQuantity());
+                adjustmentDetail.setAdjustmentType(getAdjustmentType());
+                resetProperties();
+                return null;
+              }
+            };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static ObservableList<AdjustmentDetail> getAdjustmentDetails() {
-    adjustmentDetailsList.clear();
-    adjustmentDetailsList.addAll(AdjustmentDetailDao.getAdjustmentDetail());
-    return adjustmentDetailsList;
+  public static void getAdjustmentDetails() {
+    Task<Void> task =
+            new Task<>() {
+              @Override
+              protected Void call() throws SQLException {
+                SQLiteConnection connection = SQLiteConnection.getInstance();
+                ConnectionSource connectionSource = connection.getConnection();
+
+                Dao<AdjustmentDetail, Long> adjustmentDetailDao =
+                        DaoManager.createDao(connectionSource, AdjustmentDetail.class);
+
+                adjustmentDetailsList.clear();
+                adjustmentDetailsList.addAll(adjustmentDetailDao.queryForAll());
+                return null;
+              }
+            };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static void getItem(int index, int tempIndex) {
-    AdjustmentDetail adjustmentDetail = AdjustmentDetailDao.findAdjustmentDetail(index);
-    setTempId(tempIndex);
-    setProduct(adjustmentDetail.getProduct());
-    setQuantity(String.valueOf(adjustmentDetail.getQuantity()));
-    setAdjustmentType(adjustmentDetail.getAdjustmentType());
+  public static void getItem(long index, int tempIndex) {
+    Task<Void> task =
+            new Task<>() {
+              @Override
+              protected Void call() throws SQLException {
+                SQLiteConnection connection = SQLiteConnection.getInstance();
+                ConnectionSource connectionSource = connection.getConnection();
+
+                Dao<AdjustmentDetail, Long> adjustmentDetailDao =
+                        DaoManager.createDao(connectionSource, AdjustmentDetail.class);
+
+                AdjustmentDetail adjustmentDetail = adjustmentDetailDao.queryForId(index);
+                setTempId(tempIndex);
+                setProduct(adjustmentDetail.getProduct());
+                setQuantity(String.valueOf(adjustmentDetail.getQuantity()));
+                setAdjustmentType(adjustmentDetail.getAdjustmentType());
+                return null;
+              }
+            };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static void updateItem(int adjustmentDetailID) {
-    AdjustmentDetail adjustmentDetail =
-        new AdjustmentDetail(getProduct(), getQuantity(), getAdjustmentType());
-    AdjustmentDetailDao.updateAdjustmentDetail(adjustmentDetail, adjustmentDetailID);
-    getAdjustmentDetails();
+  public static void updateItem(long index) {
+    Task<Void> task =
+            new Task<>() {
+              @Override
+              protected Void call() throws SQLException {
+                SQLiteConnection connection = SQLiteConnection.getInstance();
+                ConnectionSource connectionSource = connection.getConnection();
+
+                Dao<AdjustmentDetail, Long> adjustmentDetailDao =
+                        DaoManager.createDao(connectionSource, AdjustmentDetail.class);
+
+                AdjustmentDetail adjustmentDetail = adjustmentDetailDao.queryForId(index);
+                adjustmentDetail.setProduct(getProduct());
+                adjustmentDetail.setQuantity(getQuantity());
+                adjustmentDetail.setAdjustmentType(getAdjustmentType());
+                adjustmentDetailDao.update(adjustmentDetail);
+                getAdjustmentDetails();
+                return null;
+              }
+            };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static void removeAdjustmentDetail(int index, int tempIndex) {
-    adjustmentDetailsList.remove(tempIndex);
-    PENDING_DELETES.add(index);
+  public static void removeAdjustmentDetail(long index, int tempIndex) {
+    Task<Void> task =
+            new Task<>() {
+              @Override
+              protected Void call() {
+                adjustmentDetailsList.remove(tempIndex);
+                PENDING_DELETES.add(index);
+                return null;
+              }
+            };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static void deleteAdjustmentDetails(LinkedList<Integer> indexes) {
-    indexes.forEach(AdjustmentDetailDao::deleteAdjustmentDetail);
+  public static void deleteAdjustmentDetails(LinkedList<Long> indexes) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() {
+            indexes.forEach(
+                index -> {
+                  try {
+                    SQLiteConnection connection = SQLiteConnection.getInstance();
+                    ConnectionSource connectionSource = connection.getConnection();
+
+                    Dao<AdjustmentDetail, Long> adjustmentDetailDao =
+                        DaoManager.createDao(connectionSource, AdjustmentDetail.class);
+
+                    adjustmentDetailDao.deleteById(index);
+                  } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                  }
+                });
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 }

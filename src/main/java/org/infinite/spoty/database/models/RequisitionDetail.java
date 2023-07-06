@@ -14,39 +14,45 @@
 
 package org.infinite.spoty.database.models;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
-@Entity
+@DatabaseTable(tableName = "requisition_detail")
 public class RequisitionDetail implements Serializable {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private int id;
+  @DatabaseField(generatedId = true)
+  private long id;
 
-  @ManyToOne(optional = false)
-  @JoinColumn(nullable = false, name = "product_detail_id")
+  @DatabaseField(foreign = true, columnName = "product_detail_id", canBeNull = false)
   private ProductDetail product;
 
-  @ManyToOne(optional = false)
-  @JoinColumn(name = "requisition_id", nullable = false)
+  @DatabaseField(
+      foreign = true,
+      columnName = "requisition_id",
+      canBeNull = false,
+      foreignAutoCreate = true,
+      foreignAutoRefresh = true,
+      columnDefinition =
+          "INTEGER CONSTRAINT FK_NAME REFERENCES requisition_master(id) ON DELETE CASCADE")
   private RequisitionMaster requisition;
 
-  @Column(nullable = false)
-  private int quantity;
+  @DatabaseField(canBeNull = false)
+  private long quantity;
 
-  private String description;
+  @DatabaseField private String description;
 
-  @Column(name = "created_at")
+  @DatabaseField(columnName = "created_at")
   private Date createdAt;
 
-  @Column(name = "created_by")
+  @DatabaseField(columnName = "created_by")
   private String createdBy;
 
-  @Column(name = "updated_at")
+  @DatabaseField(columnName = "updated_at")
   private Date updatedAt;
 
-  @Column(name = "updated_by")
+  @DatabaseField(columnName = "updated_by")
   private String updatedBy;
 
   public RequisitionDetail() {}
@@ -56,7 +62,7 @@ public class RequisitionDetail implements Serializable {
       RequisitionMaster
           requisition, // TODO: Remove this line as it ain't good being here. can't get
       // RequisitionMaster here. use setter.
-      int quantity,
+      long quantity,
       String description) {
     this.product = product;
     this.requisition = requisition;
@@ -64,11 +70,11 @@ public class RequisitionDetail implements Serializable {
     this.description = description;
   }
 
-  public int getId() {
+  public long getId() {
     return id;
   }
 
-  public void setId(int id) {
+  public void setId(long id) {
     this.id = id;
   }
 
@@ -100,11 +106,11 @@ public class RequisitionDetail implements Serializable {
     this.requisition = requisition;
   }
 
-  public int getQuantity() {
+  public long getQuantity() {
     return quantity;
   }
 
-  public void setQuantity(int quantity) {
+  public void setQuantity(long quantity) {
     this.quantity = quantity;
   }
 

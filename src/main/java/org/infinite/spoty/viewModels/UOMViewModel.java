@@ -14,32 +14,37 @@
 
 package org.infinite.spoty.viewModels;
 
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.support.ConnectionSource;
+import java.sql.SQLException;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.database.dao.UnitOfMeasureDao;
+import javafx.concurrent.Task;
+import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.UnitOfMeasure;
 
 public class UOMViewModel {
   public static final ObservableList<UnitOfMeasure> uomList = FXCollections.observableArrayList();
   public static final ObservableList<UnitOfMeasure> uomComboList =
       FXCollections.observableArrayList();
-  private static final IntegerProperty id = new SimpleIntegerProperty(0);
+  private static final LongProperty id = new SimpleLongProperty(0);
   private static final StringProperty name = new SimpleStringProperty("");
   private static final StringProperty shortName = new SimpleStringProperty("");
   private static final ObjectProperty<UnitOfMeasure> baseUnit = new SimpleObjectProperty<>();
   private static final StringProperty operator = new SimpleStringProperty("");
   private static final StringProperty operatorValue = new SimpleStringProperty("");
 
-  public static int getId() {
+  public static long getId() {
     return id.get();
   }
 
-  public static void setId(int id) {
+  public static void setId(long id) {
     UOMViewModel.id.set(id);
   }
 
-  public static IntegerProperty idProperty() {
+  public static LongProperty idProperty() {
     return id;
   }
 
@@ -104,13 +109,31 @@ public class UOMViewModel {
   }
 
   public static void saveUOM() {
-    UnitOfMeasure unitOfMeasure =
-        new UnitOfMeasure(
-            getName(), getShortName(), getBaseUnit(), getOperator(), getOperatorValue());
-    UnitOfMeasureDao.saveUnitOfMeasure(unitOfMeasure);
-    uomList.clear();
-    resetUOMProperties();
-    getItems();
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<UnitOfMeasure, Long> unitOfMeasureDao =
+                DaoManager.createDao(connectionSource, UnitOfMeasure.class);
+
+            UnitOfMeasure unitOfMeasure =
+                new UnitOfMeasure(
+                    getName(), getShortName(), getBaseUnit(), getOperator(), getOperatorValue());
+
+            unitOfMeasureDao.create(unitOfMeasure);
+
+            resetUOMProperties();
+            getItems();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
   public static void resetUOMProperties() {
@@ -122,32 +145,114 @@ public class UOMViewModel {
     setOperatorValue("");
   }
 
-  public static ObservableList<UnitOfMeasure> getItems() {
-    uomList.clear();
-    uomComboList.clear();
-    uomComboList.add(null);
-    uomList.addAll(UnitOfMeasureDao.getUnitsOfMeasure());
-    uomComboList.addAll(uomList);
-    return uomList;
+  public static void getItems() {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<UnitOfMeasure, Long> unitOfMeasureDao =
+                DaoManager.createDao(connectionSource, UnitOfMeasure.class);
+
+            uomList.clear();
+            uomComboList.clear();
+            uomComboList.add(null);
+
+            uomList.addAll(unitOfMeasureDao.queryForAll());
+
+            uomComboList.addAll(uomList);
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static void getItem(int uomID) {
-    UnitOfMeasure uom = UnitOfMeasureDao.findUnitOfMeasure(uomID);
-    setId(uom.getId());
-    setName(uom.getName());
-    setShortName(uom.getShortName());
-    setBaseUnit(uom.getBaseUnit());
-    setOperator(uom.getOperator());
-    setOperatorValue(String.valueOf(uom.getOperatorValue() == 0 ? "" : uom.getOperatorValue()));
-    getItems();
+  public static void getItem(long index) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<UnitOfMeasure, Long> unitOfMeasureDao =
+                DaoManager.createDao(connectionSource, UnitOfMeasure.class);
+
+            UnitOfMeasure uom = unitOfMeasureDao.queryForId(index);
+
+            setId(uom.getId());
+            setName(uom.getName());
+            setShortName(uom.getShortName());
+            setBaseUnit(uom.getBaseUnit());
+            setOperator(uom.getOperator());
+            setOperatorValue(
+                String.valueOf(uom.getOperatorValue() == 0 ? "" : uom.getOperatorValue()));
+
+            getItems();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static void updateItem(int uomID) {
-    UnitOfMeasure uom =
-        new UnitOfMeasure(
-            getName(), getShortName(), getBaseUnit(), getOperator(), getOperatorValue());
-    UnitOfMeasureDao.updateUnitOfMeasure(uom, uomID);
-    resetUOMProperties();
-    getItems();
+  public static void updateItem(long index) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<UnitOfMeasure, Long> unitOfMeasureDao =
+                DaoManager.createDao(connectionSource, UnitOfMeasure.class);
+
+            UnitOfMeasure uom = unitOfMeasureDao.queryForId(index);
+
+            uom.setName(getName());
+            uom.setShortName(getShortName());
+            uom.setBaseUnit(getBaseUnit());
+            uom.setOperator(getOperator());
+            uom.setOperatorValue(getOperatorValue());
+
+            unitOfMeasureDao.update(uom);
+
+            resetUOMProperties();
+            getItems();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
+  }
+
+  public static void deleteItem(long index) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<UnitOfMeasure, Long> unitOfMeasureDao =
+                DaoManager.createDao(connectionSource, UnitOfMeasure.class);
+
+            unitOfMeasureDao.deleteById(index);
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 }

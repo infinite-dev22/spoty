@@ -14,21 +14,29 @@
 
 package org.infinite.spoty.database.models;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 import jakarta.persistence.*;
 import java.util.Date;
 
-@Entity
+@DatabaseTable(tableName = "leave_type")
 public class LeaveType {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @DatabaseField(generatedId = true)
   private int id;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private String name;
 
+  @DatabaseField(columnName = "created_at")
   private Date createdAt = null;
+
+  @DatabaseField(columnName = "created_by")
   private String created_by = null;
+
+  @DatabaseField(columnName = "updated_at")
   private Date updatedAt = null;
+
+  @DatabaseField(columnName = "updated_by")
   private String updatedBy = null;
 
   public LeaveType(

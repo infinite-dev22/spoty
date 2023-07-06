@@ -14,66 +14,68 @@
 
 package org.infinite.spoty.database.models;
 
-import jakarta.persistence.*;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
+import com.j256.ormlite.table.DatabaseTable;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 
-@Entity
+@DatabaseTable(tableName = "sales_return_master")
 public class SaleReturnMaster implements Serializable {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @DatabaseField(generatedId = true)
   private long id;
 
-  @ManyToOne private User user_detail;
+  @DatabaseField(foreign = true, columnName = "user_id")
+  private User user;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private Date date;
 
+  @DatabaseField(columnName = "reference_number")
   private String ref;
 
-  @ManyToOne(optional = false)
-  @JoinColumn(nullable = false, name = "customer_id")
+  @DatabaseField(foreign = true, columnName = "customer_id", canBeNull = false)
   private Customer customer;
 
-  @ManyToOne(optional = false)
-  @JoinColumn(nullable = false, name = "branch_id")
+  @DatabaseField(foreign = true, columnName = "branch_id", canBeNull = false)
   private Branch branch;
 
-  @OneToMany(mappedBy = "saleReturn", fetch = FetchType.LAZY)
-  @Cascade({CascadeType.ALL})
-  private List<SaleReturnDetail> saleReturnDetails;
+  @ForeignCollectionField private Collection<SaleReturnDetail> saleReturnDetails;
 
+  @DatabaseField(columnName = "tax_rate")
   private double taxRate;
-  private double netTax;
-  private double discount;
 
-  @Column(nullable = false)
+  @DatabaseField(columnName = "net_tax")
+  private double netTax;
+
+  @DatabaseField private double discount;
+
+  @DatabaseField(canBeNull = false)
   private double total;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private double paid;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private String paymentStatus;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private String status;
 
-  private String notes;
+  @DatabaseField private String notes;
 
-  @Column(name = "created_at")
+  @DatabaseField(columnName = "created_at")
   private Date createdAt;
 
-  @Column(name = "created_by")
+  @DatabaseField(columnName = "created_by")
   private String createdBy;
 
-  @Column(name = "updated_at")
+  @DatabaseField(columnName = "updated_at")
   private Date updatedAt;
 
-  @Column(name = "updated_by")
+  @DatabaseField(columnName = "updated_by")
   private String updatedBy;
 
   public SaleReturnMaster() {}
@@ -104,11 +106,11 @@ public class SaleReturnMaster implements Serializable {
   }
 
   public User getUser() {
-    return user_detail;
+    return user;
   }
 
   public void setUser(User user_detail) {
-    this.user_detail = user_detail;
+    this.user = user_detail;
   }
 
   public Date getDate() {
@@ -159,7 +161,7 @@ public class SaleReturnMaster implements Serializable {
     this.id = id;
   }
 
-  public List<SaleReturnDetail> getSaleReturnDetails() {
+  public Collection<SaleReturnDetail> getSaleReturnDetails() {
     return saleReturnDetails;
   }
 

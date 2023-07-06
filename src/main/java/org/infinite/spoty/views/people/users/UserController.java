@@ -37,7 +37,6 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.infinite.spoty.database.dao.UserDao;
 import org.infinite.spoty.database.models.User;
 import org.infinite.spoty.forms.UserFormController;
 import org.infinite.spoty.viewModels.UserViewModel;
@@ -112,7 +111,7 @@ public class UserController implements Initializable {
             new StringFilter<>("Phone", User::getPhone),
             new BooleanFilter<>("Status", User::isActive));
     styleUserTable();
-    userTable.setItems(UserViewModel.getUsers());
+    userTable.setItems(UserViewModel.usersList);
   }
 
   private void styleUserTable() {
@@ -143,8 +142,7 @@ public class UserController implements Initializable {
     // Delete
     delete.setOnAction(
         e -> {
-          UserDao.deleteUser(obj.getData().getId());
-          UserViewModel.getUsers();
+          UserViewModel.deleteItem(obj.getData().getId());
           e.consume();
         });
     // Edit

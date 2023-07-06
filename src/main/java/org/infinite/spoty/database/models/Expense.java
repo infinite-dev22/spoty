@@ -14,6 +14,8 @@
 
 package org.infinite.spoty.database.models;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.text.DateFormat;
@@ -21,45 +23,44 @@ import java.util.Date;
 
 // TODO: Remove uUser Property.
 
-@Entity
+@DatabaseTable(tableName = "expenses")
 public class Expense implements Serializable {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @DatabaseField(generatedId = true)
   private int id;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private Date date;
 
+  @DatabaseField(columnName = "reference_number")
   private String ref;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private String name;
   // TODO: Add not nullable when the user system works.
-  @ManyToOne private User user_detail;
+  @DatabaseField(foreign = true, columnName = "user_id")
+  private User user;
 
-  @ManyToOne(optional = false)
-  @JoinColumn(nullable = false, name = "expense_category_id")
+  @DatabaseField(foreign = true, canBeNull = false, columnName = "expense_category_id")
   private ExpenseCategory expenseCategory;
 
-  @ManyToOne(optional = false)
-  @JoinColumn(nullable = false, name = "branch_id")
+  @DatabaseField(foreign = true, canBeNull = false, columnName = "branch_id")
   private Branch branch;
 
-  private String details;
+  @DatabaseField private String details;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private double amount;
 
-  @Column(name = "created_at")
+  @DatabaseField(columnName = "created_at")
   private Date createdAt;
 
-  @Column(name = "created_by")
+  @DatabaseField(columnName = "created_by")
   private String createdBy;
 
-  @Column(name = "updated_at")
+  @DatabaseField(columnName = "updated_at")
   private Date updatedAt;
 
-  @Column(name = "updated_by")
+  @DatabaseField(columnName = "updated_by")
   private String updatedBy;
 
   public Expense(
@@ -121,19 +122,19 @@ public class Expense implements Serializable {
     this.name = name;
   }
 
-  public User getUser_detail() {
-    return user_detail;
+  public User getUser() {
+    return user;
   }
 
-  public void setUser_detail(User user_detail) {
-    this.user_detail = user_detail;
+  public void setUser(User user) {
+    this.user = user;
   }
 
   public ExpenseCategory getExpenseCategory() {
     return expenseCategory;
   }
 
-  public void setExpenseCategory(ExpenseCategory expenseCategory) {
+  public void setCategory(ExpenseCategory expenseCategory) {
     this.expenseCategory = expenseCategory;
   }
 

@@ -14,20 +14,25 @@
 
 package org.infinite.spoty.viewModels;
 
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.support.ConnectionSource;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.database.dao.ExpenseDao;
+import javafx.concurrent.Task;
+import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.Expense;
 import org.infinite.spoty.database.models.ExpenseCategory;
 
 public class ExpenseViewModel {
   public static final ObservableList<Expense> expenseList = FXCollections.observableArrayList();
-  private static final IntegerProperty id = new SimpleIntegerProperty(0);
+  private static final LongProperty id = new SimpleLongProperty(0);
   private static final StringProperty date = new SimpleStringProperty("");
   private static final StringProperty reference = new SimpleStringProperty("");
   private static final StringProperty name = new SimpleStringProperty("");
@@ -36,15 +41,15 @@ public class ExpenseViewModel {
   private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>(null);
   private static final StringProperty details = new SimpleStringProperty("");
 
-  public static int getId() {
+  public static long getId() {
     return id.get();
   }
 
-  public static void setId(int id) {
+  public static void setId(long id) {
     ExpenseViewModel.id.set(id);
   }
 
-  public static IntegerProperty idProperty() {
+  public static LongProperty idProperty() {
     return id;
   }
 
@@ -148,35 +153,132 @@ public class ExpenseViewModel {
   }
 
   public static void saveExpense() {
-    Expense expense =
-        new Expense(getDate(), getName(), getCategory(), getBranch(), getDetails(), getAmount());
-    ExpenseDao.saveExpense(expense);
-    getExpenses();
-    resetProperties();
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<Expense, Long> expenseDao = DaoManager.createDao(connectionSource, Expense.class);
+
+            Expense expense =
+                new Expense(
+                    getDate(), getName(), getCategory(), getBranch(), getDetails(), getAmount());
+
+            expenseDao.create(expense);
+
+            getExpenses();
+            resetProperties();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static ObservableList<Expense> getExpenses() {
-    expenseList.clear();
-    expenseList.addAll(ExpenseDao.getExpenses());
-    return expenseList;
+  public static void getExpenses() {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<Expense, Long> expenseDao = DaoManager.createDao(connectionSource, Expense.class);
+
+            expenseList.clear();
+
+            expenseList.addAll(expenseDao.queryForAll());
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static void getItem(int expenseID) {
-    Expense expense = ExpenseDao.findExpense(expenseID);
-    setId(expense.getId());
-    setDate(expense.getLocaleDate());
-    setName(expense.getName());
-    setBranch(expense.getBranch());
-    setCategory(expense.getExpenseCategory());
-    setAmount(expense.getAmount());
-    setDetails(expense.getDetails());
-    getExpenses();
+  public static void getItem(long index) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<Expense, Long> expenseDao = DaoManager.createDao(connectionSource, Expense.class);
+
+            Expense expense = expenseDao.queryForId(index);
+
+            setId(expense.getId());
+            setDate(expense.getLocaleDate());
+            setName(expense.getName());
+            setBranch(expense.getBranch());
+            setCategory(expense.getExpenseCategory());
+            setAmount(expense.getAmount());
+            setDetails(expense.getDetails());
+
+            getExpenses();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static void updateItem(int expenseID) {
-    Expense expense =
-        new Expense(getDate(), getName(), getCategory(), getBranch(), getDetails(), getAmount());
-    ExpenseDao.updateExpense(expense, expenseID);
-    getExpenses();
+  public static void updateItem(long index) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<Expense, Long> expenseDao = DaoManager.createDao(connectionSource, Expense.class);
+
+            Expense expense = expenseDao.queryForId(index);
+
+            expense.setDate(getDate());
+            expense.setName(getName());
+            expense.setCategory(getCategory());
+            expense.setBranch(getBranch());
+            expense.setDetails(getDetails());
+            expense.setAmount(getAmount());
+
+            expenseDao.update(expense);
+
+            getExpenses();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
+  }
+
+  public static void deleteItem(long index) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<Expense, Long> expenseDao = DaoManager.createDao(connectionSource, Expense.class);
+
+            expenseDao.deleteById(index);
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 }

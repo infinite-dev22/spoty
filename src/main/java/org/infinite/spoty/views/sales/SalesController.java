@@ -35,7 +35,6 @@ import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import org.infinite.spoty.components.navigation.Pages;
-import org.infinite.spoty.database.dao.SaleMasterDao;
 import org.infinite.spoty.database.models.SaleMaster;
 import org.infinite.spoty.viewModels.SaleMasterViewModel;
 import org.infinite.spoty.views.BaseController;
@@ -63,8 +62,6 @@ public class SalesController implements Initializable {
   private void setupTable() {
     MFXTableColumn<SaleMaster> saleDate =
         new MFXTableColumn<>("Date", false, Comparator.comparing(SaleMaster::getDate));
-    MFXTableColumn<SaleMaster> saleReference =
-        new MFXTableColumn<>("Reference", false, Comparator.comparing(SaleMaster::getRef));
     MFXTableColumn<SaleMaster> saleCustomer =
         new MFXTableColumn<>("Customer", false, Comparator.comparing(SaleMaster::getCustomerName));
     MFXTableColumn<SaleMaster> saleBranch =
@@ -82,7 +79,6 @@ public class SalesController implements Initializable {
             "Pay Status", false, Comparator.comparing(SaleMaster::getPaymentStatus));
 
     saleDate.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleMaster::getLocaleDate));
-    saleReference.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleMaster::getRef));
     saleCustomer.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleMaster::getCustomerName));
     saleBranch.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleMaster::getBranchName));
     saleStatus.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleMaster::getSaleStatus));
@@ -93,7 +89,6 @@ public class SalesController implements Initializable {
         sale -> new MFXTableRowCell<>(SaleMaster::getPaymentStatus));
 
     saleDate.prefWidthProperty().bind(saleMasterTable.widthProperty().multiply(.1));
-    saleReference.prefWidthProperty().bind(saleMasterTable.widthProperty().multiply(.1));
     saleCustomer.prefWidthProperty().bind(saleMasterTable.widthProperty().multiply(.1));
     saleBranch.prefWidthProperty().bind(saleMasterTable.widthProperty().multiply(.1));
     saleStatus.prefWidthProperty().bind(saleMasterTable.widthProperty().multiply(.1));
@@ -106,7 +101,6 @@ public class SalesController implements Initializable {
         .getTableColumns()
         .addAll(
             saleDate,
-            saleReference,
             saleCustomer,
             saleBranch,
             saleStatus,
@@ -117,7 +111,7 @@ public class SalesController implements Initializable {
     saleMasterTable
         .getFilters()
         .addAll(
-            new StringFilter<>("Reference", SaleMaster::getRef),
+            new StringFilter<>("Ref No.", SaleMaster::getRef),
             new StringFilter<>("Customer", SaleMaster::getCustomerName),
             new StringFilter<>("Branch", SaleMaster::getBranchName),
             new StringFilter<>("Sale Status", SaleMaster::getSaleStatus),
@@ -126,7 +120,7 @@ public class SalesController implements Initializable {
             new DoubleFilter<>("Amount Due", SaleMaster::getAmountDue),
             new StringFilter<>("Payment Status", SaleMaster::getPaymentStatus));
     styleSaleMasterTable();
-    saleMasterTable.setItems(SaleMasterViewModel.getSaleMasters());
+    saleMasterTable.setItems(SaleMasterViewModel.saleMasterList);
   }
 
   private void styleSaleMasterTable() {
@@ -160,8 +154,7 @@ public class SalesController implements Initializable {
     // Delete
     delete.setOnAction(
         e -> {
-          SaleMasterDao.deleteSaleMaster(obj.getData().getId());
-          SaleMasterViewModel.getSaleMasters();
+          SaleMasterViewModel.deleteItem(obj.getData().getId());
           e.consume();
         });
     // Edit

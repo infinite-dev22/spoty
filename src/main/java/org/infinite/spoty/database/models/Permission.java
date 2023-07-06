@@ -14,37 +14,38 @@
 
 package org.infinite.spoty.database.models;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 import jakarta.persistence.*;
 import java.util.Date;
-import java.util.List;
 
-@Entity
+@DatabaseTable(tableName = "permissions")
 public class Permission {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @DatabaseField(generatedId = true)
   private int id;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private String name;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private String label;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private String description;
 
-  @ManyToMany(mappedBy = "permissions")
-  private List<Role> roles;
-
+  @DatabaseField(columnName = "created_at")
   private Date createdAt;
+
+  @DatabaseField(columnName = "created_by")
   private String createdBy;
+
+  @DatabaseField(columnName = "updated_at")
   private Date updatedAt;
+
+  @DatabaseField(columnName = "updated_by")
   private String updatedBy;
 
-  public Permission(
-      String name,
-      String label,
-      String description) {
+  public Permission(String name, String label, String description) {
     this.name = name;
     this.label = label;
     this.description = description;
@@ -114,13 +115,5 @@ public class Permission {
 
   public void setUpdatedBy(String updatedBy) {
     this.updatedBy = updatedBy;
-  }
-
-  public List<Role> getRole() {
-    return roles;
-  }
-
-  public void setRole(List<Role> roles) {
-    this.roles = roles;
   }
 }

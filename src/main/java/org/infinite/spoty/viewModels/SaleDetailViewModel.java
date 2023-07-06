@@ -16,11 +16,16 @@ package org.infinite.spoty.viewModels;
 
 import static org.infinite.spoty.values.SharedResources.*;
 
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.support.ConnectionSource;
+import java.sql.SQLException;
 import java.util.LinkedList;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.database.dao.SaleDetailDao;
+import javafx.concurrent.Task;
+import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.ProductDetail;
 import org.infinite.spoty.database.models.SaleDetail;
 import org.infinite.spoty.database.models.UnitOfMeasure;
@@ -28,7 +33,7 @@ import org.infinite.spoty.database.models.UnitOfMeasure;
 public class SaleDetailViewModel {
   public static final ObservableList<SaleDetail> saleDetailList =
       FXCollections.observableArrayList();
-  private static final IntegerProperty id = new SimpleIntegerProperty(0);
+  private static final LongProperty id = new SimpleLongProperty(0);
   private static final StringProperty ref = new SimpleStringProperty();
   private static final ObjectProperty<ProductDetail> product = new SimpleObjectProperty<>();
   private static final StringProperty serial = new SimpleStringProperty();
@@ -41,15 +46,15 @@ public class SaleDetailViewModel {
   private static final StringProperty total = new SimpleStringProperty();
   private static final StringProperty quantity = new SimpleStringProperty();
 
-  public static int getId() {
+  public static long getId() {
     return id.get();
   }
 
-  public static void setId(int id) {
+  public static void setId(long id) {
     SaleDetailViewModel.id.set(id);
   }
 
-  public static IntegerProperty idProperty() {
+  public static LongProperty idProperty() {
     return id;
   }
 
@@ -199,76 +204,194 @@ public class SaleDetailViewModel {
   }
 
   public static void addSaleDetail() {
-    SaleDetail saleDetail =
-        new SaleDetail(
-            getProduct(),
-            Integer.parseInt(getQuantity()),
-            getSerial(),
-            Double.parseDouble(getNetTax()),
-            getTaxType(),
-            Double.parseDouble(getDiscount()),
-            getDiscountType());
-    saleDetailList.add(saleDetail);
-    saleDetailList.forEach(System.out::println);
-    resetProperties();
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() {
+            SaleDetail saleDetail =
+                new SaleDetail(
+                    getProduct(),
+                    Long.parseLong(getQuantity()),
+                    getSerial(),
+                    Double.parseDouble(getNetTax()),
+                    getTaxType(),
+                    Double.parseDouble(getDiscount()),
+                    getDiscountType());
+
+            saleDetailList.add(saleDetail);
+            resetProperties();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static void updateSaleDetail(int index) {
-    SaleDetail saleDetail = SaleDetailDao.findSaleDetail(index);
-    saleDetail.setProduct(getProduct());
-    saleDetail.setQuantity(Integer.parseInt(getQuantity()));
-    saleDetail.setSerialNumber(getSerial());
-    saleDetail.setNetTax(Double.parseDouble(getNetTax()));
-    saleDetail.setTaxType(getTaxType());
-    saleDetail.setDiscount(Double.parseDouble(getDiscount()));
-    saleDetail.setDiscountType(getDiscountType());
-    saleDetailList.remove((int) getTempId());
-    saleDetailList.add(getTempId(), saleDetail);
-    resetProperties();
+  public static void updateSaleDetail(long index) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<SaleDetail, Long> saleDetailDao =
+                DaoManager.createDao(connectionSource, SaleDetail.class);
+
+            SaleDetail saleDetail = saleDetailDao.queryForId(index);
+            saleDetail.setProduct(getProduct());
+            saleDetail.setQuantity(Long.parseLong(getQuantity()));
+            saleDetail.setSerialNumber(getSerial());
+            saleDetail.setNetTax(Double.parseDouble(getNetTax()));
+            saleDetail.setTaxType(getTaxType());
+            saleDetail.setDiscount(Double.parseDouble(getDiscount()));
+            saleDetail.setDiscountType(getDiscountType());
+
+            saleDetailList.remove((int) getTempId());
+            saleDetailList.add(getTempId(), saleDetail);
+
+            resetProperties();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static void getItem(int index, int tempIndex) {
-    SaleDetail saleDetail = SaleDetailDao.findSaleDetail(index);
-    setTempId(tempIndex);
-    setId(saleDetail.getId());
-    setProduct(saleDetail.getProduct());
-    setSerial(saleDetail.getSerialNumber());
-    setNetTax(String.valueOf(saleDetail.getNetTax()));
-    setTaxType(saleDetail.getTaxType());
-    setDiscount(String.valueOf(saleDetail.getDiscount()));
-    setDiscountType(saleDetail.getDiscountType());
-    setQuantity(String.valueOf(saleDetail.getQuantity()));
-    setProduct(saleDetail.getProduct());
-    setTotal(String.valueOf(saleDetail.getTotal()));
-    setQuantity(String.valueOf(saleDetail.getQuantity()));
-    setPrice(String.valueOf(saleDetail.getPrice()));
+  public static void getItem(long index, int tempIndex) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<SaleDetail, Long> saleDetailDao =
+                DaoManager.createDao(connectionSource, SaleDetail.class);
+
+            SaleDetail saleDetail = saleDetailDao.queryForId(index);
+
+            setTempId(tempIndex);
+            setId(saleDetail.getId());
+            setProduct(saleDetail.getProduct());
+            setSerial(saleDetail.getSerialNumber());
+            setNetTax(String.valueOf(saleDetail.getNetTax()));
+            setTaxType(saleDetail.getTaxType());
+            setDiscount(String.valueOf(saleDetail.getDiscount()));
+            setDiscountType(saleDetail.getDiscountType());
+            setQuantity(String.valueOf(saleDetail.getQuantity()));
+            setProduct(saleDetail.getProduct());
+            setTotal(String.valueOf(saleDetail.getTotal()));
+            setQuantity(String.valueOf(saleDetail.getQuantity()));
+            setPrice(String.valueOf(saleDetail.getPrice()));
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static void updateItem(int index) {
-    SaleDetail saleDetail = SaleDetailDao.findSaleDetail(index);
-    saleDetail.setProduct(getProduct());
-    saleDetail.setQuantity(Integer.parseInt(getQuantity()));
-    saleDetail.setSerialNumber(getSerial());
-    saleDetail.setNetTax(Double.parseDouble(getNetTax()));
-    saleDetail.setTaxType(getTaxType());
-    saleDetail.setDiscount(Double.parseDouble(getDiscount()));
-    saleDetail.setDiscountType(getDiscountType());
-    SaleDetailDao.updateSaleDetail(saleDetail, index);
-    getSaleDetails();
+  public static void updateItem(long index) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<SaleDetail, Long> saleDetailDao =
+                DaoManager.createDao(connectionSource, SaleDetail.class);
+
+            SaleDetail saleDetail = saleDetailDao.queryForId(index);
+            saleDetail.setProduct(getProduct());
+            saleDetail.setQuantity(Long.parseLong(getQuantity()));
+            saleDetail.setSerialNumber(getSerial());
+            saleDetail.setNetTax(Double.parseDouble(getNetTax()));
+            saleDetail.setTaxType(getTaxType());
+            saleDetail.setDiscount(Double.parseDouble(getDiscount()));
+            saleDetail.setDiscountType(getDiscountType());
+
+            saleDetailDao.update(saleDetail);
+
+            getSaleDetails();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static ObservableList<SaleDetail> getSaleDetails() {
-    saleDetailList.clear();
-    saleDetailList.addAll(SaleDetailDao.fetchSaleDetails());
-    return saleDetailList;
+  public static void getSaleDetails() throws SQLException {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<SaleDetail, Long> saleDetailDao =
+                DaoManager.createDao(connectionSource, SaleDetail.class);
+
+            saleDetailList.clear();
+            saleDetailList.addAll(saleDetailDao.queryForAll());
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static void removeSaleDetail(int index, int tempIndex) {
-    saleDetailList.remove(tempIndex);
-    PENDING_DELETES.add(index);
+  public static void removeSaleDetail(long index, int tempIndex) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() {
+            saleDetailList.remove(tempIndex);
+            PENDING_DELETES.add(index);
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static void deleteSaleDetails(LinkedList<Integer> indexes) {
-    indexes.forEach(SaleDetailDao::deleteSaleDetail);
+  public static void deleteSaleDetails(LinkedList<Long> indexes) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() {
+            indexes.forEach(
+                index -> {
+                  try {
+                    SQLiteConnection connection = SQLiteConnection.getInstance();
+                    ConnectionSource connectionSource = connection.getConnection();
+
+                    Dao<SaleDetail, Long> saleDetailDao =
+                        DaoManager.createDao(connectionSource, SaleDetail.class);
+
+                    saleDetailDao.deleteById(index);
+                  } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                  }
+                });
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 }

@@ -24,6 +24,7 @@ import io.github.palexdev.materialfx.css.themes.MFXThemeManager;
 import io.github.palexdev.materialfx.css.themes.Themes;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -33,10 +34,10 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
+import org.infinite.spoty.database.management.SQLiteTableCreator;
 import org.infinite.spoty.values.strings.Labels;
 import org.infinite.spoty.views.BaseController;
 
@@ -47,6 +48,21 @@ public class SplashScreenController implements Initializable {
   @FXML public MFXProgressBar hidden;
 
   public static void checkFunctions() {
+        Thread thread = new Thread(() -> {
+          try {
+            SQLiteTableCreator.getInstance().createTablesIfNotExist();
+          } catch (SQLException e) {
+            throw new RuntimeException(e);
+          }
+        });
+    thread.setDaemon(true);
+    try {
+      thread.start();
+      thread.join();
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
+
     Platform.runLater(
         () -> {
           try {
@@ -60,7 +76,7 @@ public class SplashScreenController implements Initializable {
             Scene scene = new Scene(root);
             MFXThemeManager.addOn(scene, Themes.DEFAULT, Themes.LEGACY);
             io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(scene);
-            scene.setFill(Color.TRANSPARENT);
+            scene.setFill(null);
             stage.setScene(scene);
             stage.initStyle(StageStyle.TRANSPARENT);
             stage.setMaximized(true);

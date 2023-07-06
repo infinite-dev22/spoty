@@ -29,7 +29,6 @@ import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import org.infinite.spoty.components.navigation.Pages;
-import org.infinite.spoty.database.dao.StockInMasterDao;
 import org.infinite.spoty.database.models.StockInMaster;
 import org.infinite.spoty.viewModels.StockInMasterViewModel;
 import org.infinite.spoty.views.BaseController;
@@ -56,8 +55,6 @@ public class StockInController implements Initializable {
   private void setupTable() {
     MFXTableColumn<StockInMaster> stockInDate =
         new MFXTableColumn<>("Date", false, Comparator.comparing(StockInMaster::getDate));
-    MFXTableColumn<StockInMaster> stockInReference =
-        new MFXTableColumn<>("Reference", false, Comparator.comparing(StockInMaster::getRef));
     MFXTableColumn<StockInMaster> stockInBranch =
         new MFXTableColumn<>("Branch", false, Comparator.comparing(StockInMaster::getBranchName));
     MFXTableColumn<StockInMaster> stockInStatus =
@@ -66,20 +63,18 @@ public class StockInController implements Initializable {
         new MFXTableColumn<>("Total Cost", false, Comparator.comparing(StockInMaster::getTotal));
 
     stockInDate.setRowCellFactory(stockIn -> new MFXTableRowCell<>(StockInMaster::getLocaleDate));
-    stockInReference.setRowCellFactory(stockIn -> new MFXTableRowCell<>(StockInMaster::getRef));
     stockInBranch.setRowCellFactory(stockIn -> new MFXTableRowCell<>(StockInMaster::getBranchName));
     stockInStatus.setRowCellFactory(stockIn -> new MFXTableRowCell<>(StockInMaster::getStatus));
     stockInTotalCost.setRowCellFactory(stockIn -> new MFXTableRowCell<>(StockInMaster::getTotal));
 
     stockInDate.prefWidthProperty().bind(stockInMasterTable.widthProperty().multiply(.2));
-    stockInReference.prefWidthProperty().bind(stockInMasterTable.widthProperty().multiply(.2));
     stockInBranch.prefWidthProperty().bind(stockInMasterTable.widthProperty().multiply(.2));
     stockInStatus.prefWidthProperty().bind(stockInMasterTable.widthProperty().multiply(.2));
     stockInTotalCost.prefWidthProperty().bind(stockInMasterTable.widthProperty().multiply(.2));
 
     stockInMasterTable
         .getTableColumns()
-        .addAll(stockInDate, stockInReference, stockInBranch, stockInStatus, stockInTotalCost);
+        .addAll(stockInDate, stockInBranch, stockInStatus, stockInTotalCost);
     stockInMasterTable
         .getFilters()
         .addAll(
@@ -88,7 +83,7 @@ public class StockInController implements Initializable {
             new StringFilter<>("Status", StockInMaster::getStatus),
             new DoubleFilter<>("Total Cost", StockInMaster::getTotal));
     getStockInMasterTable();
-    stockInMasterTable.setItems(StockInMasterViewModel.getStockInMasters());
+    stockInMasterTable.setItems(StockInMasterViewModel.stockInMasterList);
   }
 
   private void getStockInMasterTable() {
@@ -122,8 +117,7 @@ public class StockInController implements Initializable {
     // Delete
     delete.setOnAction(
         e -> {
-          StockInMasterDao.deleteStockInMaster(obj.getData().getId());
-          StockInMasterViewModel.getStockInMasters();
+          StockInMasterViewModel.deleteItem(obj.getData().getId());
           e.consume();
         });
     // Edit

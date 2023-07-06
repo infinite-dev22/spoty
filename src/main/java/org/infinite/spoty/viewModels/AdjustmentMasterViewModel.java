@@ -16,33 +16,38 @@ package org.infinite.spoty.viewModels;
 
 import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
 
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.support.ConnectionSource;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.database.dao.AdjustmentMasterDao;
+import javafx.concurrent.Task;
+import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.AdjustmentMaster;
 import org.infinite.spoty.database.models.Branch;
 
 public class AdjustmentMasterViewModel {
   public static final ObservableList<AdjustmentMaster> adjustmentMasterList =
       FXCollections.observableArrayList();
-  private static final IntegerProperty id = new SimpleIntegerProperty(0);
+  private static final LongProperty id = new SimpleLongProperty(0);
   private static final StringProperty date = new SimpleStringProperty("");
   private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>(null);
   private static final StringProperty note = new SimpleStringProperty("");
 
-  public static int getId() {
+  public static long getId() {
     return id.get();
   }
 
-  public static void setId(int id) {
+  public static void setId(long id) {
     AdjustmentMasterViewModel.id.set(id);
   }
 
-  public static IntegerProperty idProperty() {
+  public static LongProperty idProperty() {
     return id;
   }
 
@@ -96,44 +101,138 @@ public class AdjustmentMasterViewModel {
   }
 
   public static void saveAdjustmentMaster() {
-    AdjustmentMaster adjustmentMaster = new AdjustmentMaster(getBranch(), getNote(), getDate());
-    if (!AdjustmentDetailViewModel.adjustmentDetailsList.isEmpty()) {
-      AdjustmentDetailViewModel.adjustmentDetailsList.forEach(
-          adjustmentDetail -> adjustmentDetail.setAdjustment(adjustmentMaster));
-      adjustmentMaster.setAdjustmentDetails(AdjustmentDetailViewModel.adjustmentDetailsList);
-    }
-    AdjustmentMasterDao.saveAdjustmentMaster(adjustmentMaster);
-    resetProperties();
-    getAdjustmentMasters();
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<AdjustmentMaster, Long> adjustmentMasterDao =
+                DaoManager.createDao(connectionSource, AdjustmentMaster.class);
+
+            AdjustmentMaster adjustmentMaster =
+                new AdjustmentMaster(getBranch(), getNote(), getDate());
+            if (!AdjustmentDetailViewModel.adjustmentDetailsList.isEmpty()) {
+              AdjustmentDetailViewModel.adjustmentDetailsList.forEach(
+                  adjustmentDetail -> adjustmentDetail.setAdjustment(adjustmentMaster));
+              adjustmentMaster.setAdjustmentDetails(
+                  AdjustmentDetailViewModel.adjustmentDetailsList);
+            }
+            adjustmentMasterDao.create(adjustmentMaster);
+            resetProperties();
+            getAdjustmentMasters();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static ObservableList<AdjustmentMaster> getAdjustmentMasters() {
-    adjustmentMasterList.clear();
-    adjustmentMasterList.addAll(AdjustmentMasterDao.fetchAdjustmentMasters());
-    return adjustmentMasterList;
+  public static void getAdjustmentMasters() {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<AdjustmentMaster, Long> adjustmentMasterDao =
+                DaoManager.createDao(connectionSource, AdjustmentMaster.class);
+
+            adjustmentMasterList.clear();
+            adjustmentMasterList.addAll(adjustmentMasterDao.queryForAll());
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static void getItem(int index) {
-    AdjustmentMaster adjustmentMaster = AdjustmentMasterDao.findAdjustmentMaster(index);
-    setId(adjustmentMaster.getId());
-    setBranch(adjustmentMaster.getBranch());
-    setNote(adjustmentMaster.getNotes());
-    setDate(adjustmentMaster.getLocaleDate());
-    AdjustmentDetailViewModel.adjustmentDetailsList.clear();
-    adjustmentMaster.getAdjustmentDetails().forEach(System.out::println);
-    AdjustmentDetailViewModel.adjustmentDetailsList.addAll(adjustmentMaster.getAdjustmentDetails());
-    getAdjustmentMasters();
+  public static void getItem(long index) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<AdjustmentMaster, Long> adjustmentMasterDao =
+                DaoManager.createDao(connectionSource, AdjustmentMaster.class);
+
+            AdjustmentMaster adjustmentMaster = adjustmentMasterDao.queryForId(index);
+
+            setId(adjustmentMaster.getId());
+            setBranch(adjustmentMaster.getBranch());
+            setNote(adjustmentMaster.getNotes());
+            setDate(adjustmentMaster.getLocaleDate());
+
+            AdjustmentDetailViewModel.adjustmentDetailsList.clear();
+            AdjustmentDetailViewModel.adjustmentDetailsList.addAll(
+                adjustmentMaster.getAdjustmentDetails());
+
+            getAdjustmentMasters();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static void updateItem(int index) {
-    AdjustmentMaster adjustmentMaster = AdjustmentMasterDao.findAdjustmentMaster(index);
-    adjustmentMaster.setBranch(getBranch());
-    adjustmentMaster.setNotes(getNote());
-    adjustmentMaster.setDate(getDate());
-    AdjustmentDetailViewModel.deleteAdjustmentDetails(PENDING_DELETES);
-    adjustmentMaster.setAdjustmentDetails(AdjustmentDetailViewModel.adjustmentDetailsList);
-    AdjustmentMasterDao.updateAdjustmentMaster(adjustmentMaster, index);
-    resetProperties();
-    getAdjustmentMasters();
+  public static void updateItem(long index) {
+
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<AdjustmentMaster, Long> adjustmentMasterDao =
+                DaoManager.createDao(connectionSource, AdjustmentMaster.class);
+
+            AdjustmentMaster adjustmentMaster = adjustmentMasterDao.queryForId(index);
+            adjustmentMaster.setBranch(getBranch());
+            adjustmentMaster.setNotes(getNote());
+            adjustmentMaster.setDate(getDate());
+            AdjustmentDetailViewModel.deleteAdjustmentDetails(PENDING_DELETES);
+            adjustmentMaster.setAdjustmentDetails(AdjustmentDetailViewModel.adjustmentDetailsList);
+            adjustmentMasterDao.update(adjustmentMaster);
+            resetProperties();
+            getAdjustmentMasters();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
+  }
+
+  public static void deleteItem(long index) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<AdjustmentMaster, Long> adjustmentMasterDao =
+                DaoManager.createDao(connectionSource, AdjustmentMaster.class);
+
+            adjustmentMasterDao.deleteById(index);
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 }

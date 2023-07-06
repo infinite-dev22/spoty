@@ -14,53 +14,60 @@
 
 package org.infinite.spoty.database.models;
 
-import jakarta.persistence.*;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 import java.io.Serializable;
 import java.util.Date;
 
-@Entity
+@DatabaseTable(tableName = "transfer_detail")
 public class TransferDetail implements Serializable {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private int id;
+  @DatabaseField(generatedId = true)
+  private long id;
 
-  @ManyToOne
-  @JoinColumn(name = "transfer_id", nullable = false)
+  @DatabaseField(
+      foreign = true,
+      columnName = "transfer_id",
+      canBeNull = false,
+      foreignAutoCreate = true,
+      foreignAutoRefresh = true,
+      columnDefinition =
+          "INTEGER CONSTRAINT FK_NAME REFERENCES transfer_master(id) ON DELETE CASCADE")
   private TransferMaster transfer;
 
-  @ManyToOne(optional = false)
-  @JoinColumn(nullable = false, name = "product_id")
+  @DatabaseField(foreign = true, canBeNull = false, columnName = "product_id")
   private ProductDetail product;
 
-  @Column(nullable = false)
-  private int quantity;
+  @DatabaseField(canBeNull = false)
+  private long quantity;
 
+  @DatabaseField(columnName = "serial_number")
   private String serialNo;
-  private String description;
 
-  @Column(nullable = false)
+  @DatabaseField private String description;
+
+  @DatabaseField(canBeNull = false)
   private double price;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private double total;
 
-  @Column(name = "created_at")
+  @DatabaseField(columnName = "created_at")
   private Date createdAt;
 
-  @Column(name = "created_by")
+  @DatabaseField(columnName = "created_by")
   private String createdBy;
 
-  @Column(name = "updated_at")
+  @DatabaseField(columnName = "updated_at")
   private Date updatedAt;
 
-  @Column(name = "updated_by")
+  @DatabaseField(columnName = "updated_by")
   private String updatedBy;
 
   public TransferDetail() {}
 
   public TransferDetail(
       ProductDetail product,
-      int quantity,
+      long quantity,
       String serialNo,
       String description,
       double price,
@@ -73,11 +80,11 @@ public class TransferDetail implements Serializable {
     this.total = total;
   }
 
-  public int getId() {
+  public long getId() {
     return id;
   }
 
-  public void setId(int id) {
+  public void setId(long id) {
     this.id = id;
   }
 
@@ -109,11 +116,11 @@ public class TransferDetail implements Serializable {
         : null;
   }
 
-  public int getQuantity() {
+  public long getQuantity() {
     return quantity;
   }
 
-  public void setQuantity(int quantity) {
+  public void setQuantity(long quantity) {
     this.quantity = quantity;
   }
 

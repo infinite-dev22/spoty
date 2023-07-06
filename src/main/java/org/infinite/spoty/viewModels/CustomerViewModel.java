@@ -14,18 +14,23 @@
 
 package org.infinite.spoty.viewModels;
 
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.support.ConnectionSource;
+import java.sql.SQLException;
+import javafx.beans.property.LongProperty;
+import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.database.dao.CustomerDao;
+import javafx.concurrent.Task;
+import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.Customer;
 
 public class CustomerViewModel {
   public static final ObservableList<Customer> customersList = FXCollections.observableArrayList();
-  private static final IntegerProperty id = new SimpleIntegerProperty(0);
+  private static final LongProperty id = new SimpleLongProperty(0);
   private static final StringProperty name = new SimpleStringProperty("");
   private static final StringProperty code = new SimpleStringProperty("");
   private static final StringProperty email = new SimpleStringProperty("");
@@ -35,15 +40,15 @@ public class CustomerViewModel {
   private static final StringProperty taxNumber = new SimpleStringProperty("");
   private static final StringProperty country = new SimpleStringProperty("");
 
-  public static int getId() {
+  public static long getId() {
     return id.get();
   }
 
-  public static void setId(int id) {
+  public static void setId(long id) {
     CustomerViewModel.id.set(id);
   }
 
-  public static IntegerProperty idProperty() {
+  public static LongProperty idProperty() {
     return id;
   }
 
@@ -157,51 +162,145 @@ public class CustomerViewModel {
   }
 
   public static void saveCustomer() {
-    Customer customer =
-        new Customer(
-            getName(),
-            getEmail(),
-            "+" + getPhone(),
-            getCity(),
-            getAddress(),
-            getTaxNumber(),
-            getCountry());
-    CustomerDao.saveCustomer(customer);
-    resetProperties();
-    getCustomers();
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<Customer, Long> customerDao =
+                DaoManager.createDao(connectionSource, Customer.class);
+
+            Customer customer =
+                new Customer(
+                    getName(),
+                    getEmail(),
+                    "+" + getPhone(),
+                    getCity(),
+                    getAddress(),
+                    getTaxNumber(),
+                    getCountry());
+
+            customerDao.create(customer);
+
+            resetProperties();
+            getCustomers();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static ObservableList<Customer> getCustomers() {
-    customersList.clear();
-    customersList.addAll(CustomerDao.fetchCustomers());
-    return customersList;
+  public static void getCustomers() {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<Customer, Long> customerDao =
+                DaoManager.createDao(connectionSource, Customer.class);
+
+            customersList.clear();
+            customersList.addAll(customerDao.queryForAll());
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static void getItem(int customerID) {
-    Customer customer = CustomerDao.findCustomer(customerID);
-    setId(customer.getId());
-    setName(customer.getName());
-    setEmail(customer.getEmail());
-    setPhone(customer.getPhone());
-    setCity(customer.getCity());
-    setCountry(customer.getCountry());
-    setAddress(customer.getAddress());
-    setTaxNumber(customer.getTaxNumber());
-    getCustomers();
+  public static void getItem(long index) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<Customer, Long> customerDao =
+                DaoManager.createDao(connectionSource, Customer.class);
+
+            Customer customer = customerDao.queryForId(index);
+
+            setId(customer.getId());
+            setName(customer.getName());
+            setEmail(customer.getEmail());
+            setPhone(customer.getPhone());
+            setCity(customer.getCity());
+            setCountry(customer.getCountry());
+            setAddress(customer.getAddress());
+            setTaxNumber(customer.getTaxNumber());
+
+            getCustomers();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static void updateItem(int customerID) {
-    Customer customer =
-        new Customer(
-            getName(),
-            getEmail(),
-            getPhone(),
-            getCity(),
-            getAddress(),
-            getTaxNumber(),
-            getCountry());
-    CustomerDao.updateCustomer(customer, customerID);
-    resetProperties();
-    getCustomers();
+  public static void updateItem(long index) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<Customer, Long> customerDao =
+                DaoManager.createDao(connectionSource, Customer.class);
+
+            Customer customer = customerDao.queryForId(index);
+
+            customer.setName(getName());
+            customer.setEmail(getEmail());
+            customer.setPhone(getPhone());
+            customer.setCity(getCity());
+            customer.setAddress(getAddress());
+            customer.setTaxNumber(getTaxNumber());
+            customer.setCountry(getCountry());
+
+            customerDao.update(customer);
+
+            resetProperties();
+            getCustomers();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
+  }
+
+  public static void deleteItem(long index) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<Customer, Long> customerDao =
+                DaoManager.createDao(connectionSource, Customer.class);
+
+            customerDao.deleteById(index);
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 }

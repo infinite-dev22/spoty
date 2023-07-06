@@ -35,7 +35,6 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.infinite.spoty.database.dao.ProductCategoryDao;
 import org.infinite.spoty.database.models.ProductCategory;
 import org.infinite.spoty.forms.ProductCategoryFormController;
 import org.infinite.spoty.viewModels.ProductCategoryViewModel;
@@ -89,7 +88,7 @@ public class ProductCategoryController implements Initializable {
             new StringFilter<>("Code", ProductCategory::getCode),
             new StringFilter<>("Name", ProductCategory::getName));
     getProductCategoryTable();
-    categoryTable.setItems(ProductCategoryViewModel.getItems());
+    categoryTable.setItems(ProductCategoryViewModel.categoriesList);
   }
 
   private void getProductCategoryTable() {
@@ -123,8 +122,7 @@ public class ProductCategoryController implements Initializable {
     // Delete
     delete.setOnAction(
         e -> {
-          ProductCategoryDao.deleteProductCategory(obj.getData().getId());
-          ProductCategoryViewModel.getItems();
+          ProductCategoryViewModel.deleteItem(obj.getData().getId());
           e.consume();
         });
     // Edit

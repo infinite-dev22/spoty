@@ -14,39 +14,45 @@
 
 package org.infinite.spoty.database.models;
 
-import jakarta.persistence.*;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 import java.util.Date;
 
-@Entity
+@DatabaseTable(tableName = "supplier")
 public class Supplier {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @DatabaseField(generatedId = true)
   private int id;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private String name;
 
+  @DatabaseField
   private String code;
+  @DatabaseField
   private String email;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private String phone;
 
-  @Column(name = "tax_number")
+  @DatabaseField(columnName = "tax_number")
   private String taxNumber;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private String address;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private String city;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private String country;
 
+  @DatabaseField(columnName = "created_at")
   private Date createdAt;
+  @DatabaseField(columnName = "created_by")
   private String createdBy;
+  @DatabaseField(columnName = "updated_at")
   private Date updatedAt;
+  @DatabaseField(columnName = "updated_by")
   private String updatedBy;
 
   public Supplier(

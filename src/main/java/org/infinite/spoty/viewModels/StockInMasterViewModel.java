@@ -16,35 +16,40 @@ package org.infinite.spoty.viewModels;
 
 import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
 
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.support.ConnectionSource;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.database.dao.StockInMasterDao;
+import javafx.concurrent.Task;
+import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.StockInMaster;
 
 public class StockInMasterViewModel {
   public static final ObservableList<StockInMaster> stockInMasterList =
       FXCollections.observableArrayList();
-  private static final IntegerProperty id = new SimpleIntegerProperty(0);
+  private static final LongProperty id = new SimpleLongProperty(0);
   private static final StringProperty date = new SimpleStringProperty("");
   private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>(null);
   private static final StringProperty totalCost = new SimpleStringProperty("");
   private static final StringProperty status = new SimpleStringProperty("");
   private static final StringProperty note = new SimpleStringProperty("");
 
-  public static int getId() {
+  public static long getId() {
     return id.get();
   }
 
-  public static void setId(int id) {
+  public static void setId(long id) {
     StockInMasterViewModel.id.set(id);
   }
 
-  public static IntegerProperty idProperty() {
+  public static LongProperty idProperty() {
     return id;
   }
 
@@ -124,46 +129,143 @@ public class StockInMasterViewModel {
   }
 
   public static void saveStockInMaster() {
-    StockInMaster stockInMaster = new StockInMaster(getDate(), getBranch(), getStatus(), getNote());
-    if (!StockInDetailViewModel.stockInDetailsList.isEmpty()) {
-      StockInDetailViewModel.stockInDetailsList.forEach(
-          stockInDetail -> stockInDetail.setStockIn(stockInMaster));
-      stockInMaster.setStockInDetails(StockInDetailViewModel.stockInDetailsList);
-    }
-    StockInMasterDao.saveStockInMaster(stockInMaster);
-    resetProperties();
-    getStockInMasters();
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<StockInMaster, Long> stockInMasterDao =
+                DaoManager.createDao(connectionSource, StockInMaster.class);
+
+            StockInMaster stockInMaster =
+                new StockInMaster(getDate(), getBranch(), getStatus(), getNote());
+
+            if (!StockInDetailViewModel.stockInDetailsList.isEmpty()) {
+              StockInDetailViewModel.stockInDetailsList.forEach(
+                  stockInDetail -> stockInDetail.setStockIn(stockInMaster));
+              stockInMaster.setStockInDetails(StockInDetailViewModel.stockInDetailsList);
+            }
+
+            stockInMasterDao.create(stockInMaster);
+
+            resetProperties();
+            getStockInMasters();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static ObservableList<StockInMaster> getStockInMasters() {
-    stockInMasterList.clear();
-    stockInMasterList.addAll(StockInMasterDao.fetchStockInMasters());
-    return stockInMasterList;
+  public static void getStockInMasters() {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<StockInMaster, Long> stockInMasterDao =
+                DaoManager.createDao(connectionSource, StockInMaster.class);
+
+            stockInMasterList.clear();
+            stockInMasterList.addAll(stockInMasterDao.queryForAll());
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static void getItem(int index) {
-    StockInMaster stockInMaster = StockInMasterDao.findStockInMaster(index);
-    setId(stockInMaster.getId());
-    setDate(stockInMaster.getLocaleDate());
-    setBranch(stockInMaster.getBranch());
-    setTotalCost(String.valueOf(stockInMaster.getTotalCost()));
-    setStatus(stockInMaster.getStatus());
-    setNote(stockInMaster.getNotes());
-    StockInDetailViewModel.stockInDetailsList.clear();
-    StockInDetailViewModel.stockInDetailsList.addAll(stockInMaster.getStockInDetails());
-    getStockInMasters();
+  public static void getItem(long index) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<StockInMaster, Long> stockInMasterDao =
+                DaoManager.createDao(connectionSource, StockInMaster.class);
+
+            StockInMaster stockInMaster = stockInMasterDao.queryForId(index);
+            setId(stockInMaster.getId());
+            setDate(stockInMaster.getLocaleDate());
+            setBranch(stockInMaster.getBranch());
+            setTotalCost(String.valueOf(stockInMaster.getTotalCost()));
+            setStatus(stockInMaster.getStatus());
+            setNote(stockInMaster.getNotes());
+
+            StockInDetailViewModel.stockInDetailsList.clear();
+            StockInDetailViewModel.stockInDetailsList.addAll(stockInMaster.getStockInDetails());
+
+            getStockInMasters();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static void updateItem(int index) {
-    StockInMaster stockInMaster = StockInMasterDao.findStockInMaster(index);
-    stockInMaster.setDate(getDate());
-    stockInMaster.setBranch(getBranch());
-    stockInMaster.setStatus(getStatus());
-    stockInMaster.setNotes(getNote());
-    StockInDetailViewModel.deleteStockInDetails(PENDING_DELETES);
-    stockInMaster.setStockInDetails(StockInDetailViewModel.stockInDetailsList);
-    StockInMasterDao.updateStockInMaster(stockInMaster, index);
-    resetProperties();
-    getStockInMasters();
+  public static void updateItem(long index) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<StockInMaster, Long> stockInMasterDao =
+                DaoManager.createDao(connectionSource, StockInMaster.class);
+
+            StockInMaster stockInMaster = stockInMasterDao.queryForId(index);
+            stockInMaster.setDate(getDate());
+            stockInMaster.setBranch(getBranch());
+            stockInMaster.setStatus(getStatus());
+            stockInMaster.setNotes(getNote());
+
+            StockInDetailViewModel.deleteStockInDetails(PENDING_DELETES);
+            stockInMaster.setStockInDetails(StockInDetailViewModel.stockInDetailsList);
+
+            stockInMasterDao.update(stockInMaster);
+
+            resetProperties();
+            getStockInMasters();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
+  }
+
+  public static void deleteItem(long index) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<StockInMaster, Long> stockInMasterDao =
+                DaoManager.createDao(connectionSource, StockInMaster.class);
+
+            stockInMasterDao.deleteById(index);
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 }

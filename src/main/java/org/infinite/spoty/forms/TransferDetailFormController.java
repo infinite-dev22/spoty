@@ -67,7 +67,7 @@ public class TransferDetailFormController implements Initializable {
         .textProperty()
         .bindBidirectional(TransferDetailViewModel.descriptionProperty());
     // Combo box properties.
-    transferDetailPdct.setItems(ProductDetailViewModel.getProductDetails());
+    transferDetailPdct.setItems(ProductDetailViewModel.productDetailsList);
     transferDetailPdct.setConverter(
         new StringConverter<>() {
           @Override

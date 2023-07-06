@@ -14,51 +14,55 @@
 
 package org.infinite.spoty.database.models;
 
-import jakarta.persistence.*;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 import java.io.Serializable;
 import java.util.Date;
 
-@Entity
+@DatabaseTable(tableName = "adjustment_details")
 public class AdjustmentDetail implements Serializable {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private int id;
+  @DatabaseField(generatedId = true)
+  private long id;
 
-  @ManyToOne(optional = false)
+  @DatabaseField(foreign = true, columnName = "product_id", canBeNull = false)
   private ProductDetail product;
 
-  @ManyToOne(optional = false)
-  @JoinColumn(name = "adjustment_id", nullable = false)
+  @DatabaseField(foreign = true, columnName = "adjustment_master_id", canBeNull = false, foreignAutoRefresh = true,
+          foreignAutoCreate = true,
+          columnDefinition = "INTEGER CONSTRAINT FK_NAME REFERENCES adjustment(id) ON DELETE CASCADE")
   private AdjustmentMaster adjustment;
 
-  private int quantity;
+  @DatabaseField(columnName = "quantity")
+  private long quantity;
+
+  @DatabaseField(columnName = "adjustment_type")
   private String adjustmentType;
 
-  @Column(name = "created_at")
+  @DatabaseField(columnName = "created_at")
   private Date createdAt;
 
-  @Column(name = "created_by")
+  @DatabaseField(columnName = "created_by")
   private String createdBy;
 
-  @Column(name = "updated_at")
+  @DatabaseField(columnName = "updated_at")
   private Date updatedAt;
 
-  @Column(name = "updated_by")
+  @DatabaseField(columnName = "updated_by")
   private String updatedBy;
 
   public AdjustmentDetail() {}
 
-  public AdjustmentDetail(ProductDetail product, int quantity, String adjustmentType) {
+  public AdjustmentDetail(ProductDetail product, long quantity, String adjustmentType) {
     this.product = product;
     this.quantity = quantity;
     this.adjustmentType = adjustmentType;
   }
 
-  public int getId() {
+  public long getId() {
     return id;
   }
 
-  public void setId(int id) {
+  public void setId(long id) {
     this.id = id;
   }
 
@@ -90,11 +94,11 @@ public class AdjustmentDetail implements Serializable {
     this.adjustment = adjustment;
   }
 
-  public int getQuantity() {
+  public long getQuantity() {
     return quantity;
   }
 
-  public void setQuantity(int quantity) {
+  public void setQuantity(long quantity) {
     this.quantity = quantity;
   }
 

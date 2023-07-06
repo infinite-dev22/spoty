@@ -14,53 +14,57 @@
 
 package org.infinite.spoty.database.models;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
-@Entity
+@DatabaseTable(tableName = "payment_purchases")
 public class PaymentPurchase implements Serializable {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @DatabaseField(generatedId = true)
   private long id;
 
-  @ManyToOne private User user_detail;
+  @DatabaseField(foreign = true, columnName = "user_id")
+  private User user;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private Date date;
 
+  @DatabaseField(columnName = "reference_number")
   private String ref;
 
-  @ManyToOne(optional = false)
+  @DatabaseField(foreign = true, canBeNull = false)
   private PurchaseMaster purchase;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private String paymentMethod;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private double amount;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private double change;
 
+  @DatabaseField
   private String notes;
 
-  @Column(name = "created_at")
+  @DatabaseField(columnName = "created_at")
   private Date createdAt;
 
-  @Column(name = "created_by")
+  @DatabaseField(columnName = "created_by")
   private String createdBy;
 
-  @Column(name = "updated_at")
+  @DatabaseField(columnName = "updated_at")
   private Date updatedAt;
 
-  @Column(name = "updated_by")
+  @DatabaseField(columnName = "updated_by")
   private String updatedBy;
 
   public PaymentPurchase() {}
 
   public PaymentPurchase(
-      User user_detail,
+      User user,
       Date date,
       String ref,
       PurchaseMaster purchase,
@@ -68,7 +72,7 @@ public class PaymentPurchase implements Serializable {
       double amount,
       double change,
       String notes) {
-    this.user_detail = user_detail;
+    this.user = user;
     this.date = date;
     this.ref = ref;
     this.purchase = purchase;
@@ -87,11 +91,11 @@ public class PaymentPurchase implements Serializable {
   }
 
   public User getUser() {
-    return user_detail;
+    return user;
   }
 
   public void setUser(User user_detail) {
-    this.user_detail = user_detail;
+    this.user = user_detail;
   }
 
   public Date getDate() {

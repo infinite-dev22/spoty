@@ -17,11 +17,16 @@ package org.infinite.spoty.viewModels;
 import static org.infinite.spoty.values.SharedResources.*;
 import static org.infinite.spoty.values.SharedResources.getTempId;
 
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.support.ConnectionSource;
+import java.sql.SQLException;
 import java.util.LinkedList;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.database.dao.PurchaseDetailDao;
+import javafx.concurrent.Task;
+import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.ProductDetail;
 import org.infinite.spoty.database.models.PurchaseDetail;
 import org.infinite.spoty.database.models.PurchaseMaster;
@@ -29,7 +34,7 @@ import org.infinite.spoty.database.models.PurchaseMaster;
 public class PurchaseDetailViewModel {
   public static final ObservableList<PurchaseDetail> purchaseDetailList =
       FXCollections.observableArrayList();
-  private static final IntegerProperty id = new SimpleIntegerProperty(0);
+  private static final LongProperty id = new SimpleLongProperty(0);
   private static final ObjectProperty<PurchaseMaster> purchase = new SimpleObjectProperty<>(null);
   private static final StringProperty cost = new SimpleStringProperty("");
   private static final StringProperty netTax = new SimpleStringProperty("");
@@ -41,15 +46,15 @@ public class PurchaseDetailViewModel {
   private static final StringProperty total = new SimpleStringProperty("");
   private static final StringProperty quantity = new SimpleStringProperty("");
 
-  public static int getId() {
+  public static long getId() {
     return id.get();
   }
 
-  public static void setId(int id) {
+  public static void setId(long id) {
     PurchaseDetailViewModel.id.set(id);
   }
 
-  public static IntegerProperty idProperty() {
+  public static LongProperty idProperty() {
     return id;
   }
 
@@ -174,14 +179,25 @@ public class PurchaseDetailViewModel {
   }
 
   public static void addPurchaseDetail() {
-    PurchaseDetail purchaseDetail =
-        new PurchaseDetail(
-            getPurchase(),
-            Double.parseDouble(getCost()),
-            getProduct(),
-            Integer.parseInt(getQuantity()));
-    purchaseDetailList.add(purchaseDetail);
-    resetProperties();
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() {
+            PurchaseDetail purchaseDetail =
+                new PurchaseDetail(
+                    getPurchase(),
+                    Double.parseDouble(getCost()),
+                    getProduct(),
+                    Long.parseLong(getQuantity()));
+            purchaseDetailList.add(purchaseDetail);
+            resetProperties();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
   public static void resetProperties() {
@@ -199,68 +215,176 @@ public class PurchaseDetailViewModel {
     setQuantity("");
   }
 
-  public static ObservableList<PurchaseDetail> getPurchaseDetails() {
-    purchaseDetailList.clear();
-    purchaseDetailList.addAll(PurchaseDetailDao.fetchPurchaseDetails());
-    return purchaseDetailList;
+  public static void getPurchaseDetails() {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<PurchaseDetail, Long> purchaseDetailDao =
+                DaoManager.createDao(connectionSource, PurchaseDetail.class);
+
+            purchaseDetailList.clear();
+            purchaseDetailList.addAll(purchaseDetailDao.queryForAll());
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static void updatePurchaseDetail(int index) {
-    PurchaseDetail purchaseDetail = PurchaseDetailDao.findPurchaseDetail(index);
-    purchaseDetail.setPurchase(getPurchase());
-    purchaseDetail.setCost(Double.parseDouble(getCost()));
-    purchaseDetail.setNetTax(Double.parseDouble(getNetTax()));
-    purchaseDetail.setTaxType(purchaseDetail.getTaxType());
-    purchaseDetail.setDiscount(Double.parseDouble(getDiscount()));
-    purchaseDetail.setDiscountType(purchaseDetail.getDiscountType());
-    purchaseDetail.setProduct(getProduct());
-    purchaseDetail.setSerialNumber(getSerial());
-    purchaseDetail.setTotal(Double.parseDouble(getTotal()));
-    purchaseDetail.setQuantity(Integer.parseInt(getQuantity()));
-    purchaseDetailList.remove((int) getTempId());
-    purchaseDetailList.add(getTempId(), purchaseDetail);
-    resetProperties();
+  public static void updatePurchaseDetail(long index) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<PurchaseDetail, Long> purchaseDetailDao =
+                DaoManager.createDao(connectionSource, PurchaseDetail.class);
+
+            PurchaseDetail purchaseDetail = purchaseDetailDao.queryForId(index);
+            purchaseDetail.setPurchase(getPurchase());
+            purchaseDetail.setCost(Double.parseDouble(getCost()));
+            purchaseDetail.setNetTax(Double.parseDouble(getNetTax()));
+            purchaseDetail.setTaxType(purchaseDetail.getTaxType());
+            purchaseDetail.setDiscount(Double.parseDouble(getDiscount()));
+            purchaseDetail.setDiscountType(purchaseDetail.getDiscountType());
+            purchaseDetail.setProduct(getProduct());
+            purchaseDetail.setSerialNumber(getSerial());
+            purchaseDetail.setTotal(Double.parseDouble(getTotal()));
+            purchaseDetail.setQuantity(Long.parseLong(getQuantity()));
+
+            purchaseDetailList.remove((int) getTempId());
+            purchaseDetailList.add(getTempId(), purchaseDetail);
+
+            resetProperties();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static void getItem(int index, int tempIndex) {
-    PurchaseDetail purchaseDetail = PurchaseDetailDao.findPurchaseDetail(index);
-    setTempId(tempIndex);
-    setId(purchaseDetail.getId());
-    setPurchase(purchaseDetail.getPurchase());
-    setCost(String.valueOf(purchaseDetail.getCost()));
-    setNetTax(String.valueOf(purchaseDetail.getNetTax()));
-    setTaxType(purchaseDetail.getTaxType());
-    setDiscount(String.valueOf(purchaseDetail.getDiscount()));
-    setDiscountType(purchaseDetail.getDiscountType());
-    setProduct(purchaseDetail.getProduct());
-    setSerial(purchaseDetail.getSerialNumber());
-    setTotal(String.valueOf(purchaseDetail.getTotal()));
-    setQuantity(String.valueOf(purchaseDetail.getQuantity()));
+  public static void getItem(long index, int tempIndex) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<PurchaseDetail, Long> purchaseDetailDao =
+                DaoManager.createDao(connectionSource, PurchaseDetail.class);
+
+            PurchaseDetail purchaseDetail = purchaseDetailDao.queryForId(index);
+
+            setTempId(tempIndex);
+            setId(purchaseDetail.getId());
+            setPurchase(purchaseDetail.getPurchase());
+            setCost(String.valueOf(purchaseDetail.getCost()));
+            setNetTax(String.valueOf(purchaseDetail.getNetTax()));
+            setTaxType(purchaseDetail.getTaxType());
+            setDiscount(String.valueOf(purchaseDetail.getDiscount()));
+            setDiscountType(purchaseDetail.getDiscountType());
+            setProduct(purchaseDetail.getProduct());
+            setSerial(purchaseDetail.getSerialNumber());
+            setTotal(String.valueOf(purchaseDetail.getTotal()));
+            setQuantity(String.valueOf(purchaseDetail.getQuantity()));
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static void updateItem(int index) {
-    PurchaseDetail purchaseDetail = PurchaseDetailDao.findPurchaseDetail(index);
-    setId(purchaseDetail.getId());
-    setPurchase(purchaseDetail.getPurchase());
-    setCost(String.valueOf(purchaseDetail.getCost()));
-    setNetTax(String.valueOf(purchaseDetail.getNetTax()));
-    setTaxType(purchaseDetail.getTaxType());
-    setDiscount(String.valueOf(purchaseDetail.getDiscount()));
-    setDiscountType(purchaseDetail.getDiscountType());
-    setProduct(purchaseDetail.getProduct());
-    setSerial(purchaseDetail.getSerialNumber());
-    setTotal(String.valueOf(purchaseDetail.getTotal()));
-    setQuantity(String.valueOf(purchaseDetail.getQuantity()));
-    PurchaseDetailDao.updatePurchaseDetail(purchaseDetail, index);
-    getPurchaseDetails();
+  public static void updateItem(long index) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<PurchaseDetail, Long> purchaseDetailDao =
+                DaoManager.createDao(connectionSource, PurchaseDetail.class);
+
+            PurchaseDetail purchaseDetail = purchaseDetailDao.queryForId(index);
+
+            setId(purchaseDetail.getId());
+            setPurchase(purchaseDetail.getPurchase());
+            setCost(String.valueOf(purchaseDetail.getCost()));
+            setNetTax(String.valueOf(purchaseDetail.getNetTax()));
+            setTaxType(purchaseDetail.getTaxType());
+            setDiscount(String.valueOf(purchaseDetail.getDiscount()));
+            setDiscountType(purchaseDetail.getDiscountType());
+            setProduct(purchaseDetail.getProduct());
+            setSerial(purchaseDetail.getSerialNumber());
+            setTotal(String.valueOf(purchaseDetail.getTotal()));
+            setQuantity(String.valueOf(purchaseDetail.getQuantity()));
+
+            purchaseDetailDao.update(purchaseDetail);
+
+            getPurchaseDetails();
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static void removePurchaseDetail(int index, int tempIndex) {
-    purchaseDetailList.remove(tempIndex);
-    PENDING_DELETES.add(index);
+  public static void removePurchaseDetail(long index, int tempIndex) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() {
+            purchaseDetailList.remove(tempIndex);
+            PENDING_DELETES.add(index);
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 
-  public static void deletePurchaseDetails(LinkedList<Integer> indexes) {
-    indexes.forEach(PurchaseDetailDao::deletePurchaseDetail);
+  public static void deletePurchaseDetails(LinkedList<Long> indexes) {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() {
+            indexes.forEach(
+                index -> {
+                  try {
+                    SQLiteConnection connection = SQLiteConnection.getInstance();
+                    ConnectionSource connectionSource = connection.getConnection();
+
+                    Dao<PurchaseDetail, Long> purchaseDetailDao =
+                        DaoManager.createDao(connectionSource, PurchaseDetail.class);
+
+                    purchaseDetailDao.deleteById(index);
+                  } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                  }
+                });
+            return null;
+          }
+        };
+
+    Thread thread = new Thread(task);
+    thread.setDaemon(true);
+    thread.start();
   }
 }

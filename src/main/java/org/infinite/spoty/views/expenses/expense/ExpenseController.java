@@ -37,7 +37,6 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.infinite.spoty.database.dao.ExpenseDao;
 import org.infinite.spoty.database.models.Expense;
 import org.infinite.spoty.forms.ExpenseFormController;
 import org.infinite.spoty.viewModels.ExpenseViewModel;
@@ -76,8 +75,6 @@ public class ExpenseController implements Initializable {
   private void setupTable() {
     MFXTableColumn<Expense> expenseDate =
         new MFXTableColumn<>("Date", false, Comparator.comparing(Expense::getDate));
-    MFXTableColumn<Expense> expenseRef =
-        new MFXTableColumn<>("Reference No.", false, Comparator.comparing(Expense::getRef));
     MFXTableColumn<Expense> expenseName =
         new MFXTableColumn<>("Name", false, Comparator.comparing(Expense::getName));
     MFXTableColumn<Expense> expenseAmount =
@@ -89,7 +86,6 @@ public class ExpenseController implements Initializable {
         new MFXTableColumn<>("Branch", false, Comparator.comparing(Expense::getBranchName));
 
     expenseDate.setRowCellFactory(expense -> new MFXTableRowCell<>(Expense::getLocaleDate));
-    expenseRef.setRowCellFactory(expense -> new MFXTableRowCell<>(Expense::getRef));
     expenseName.setRowCellFactory(expense -> new MFXTableRowCell<>(Expense::getName));
     expenseAmount.setRowCellFactory(expense -> new MFXTableRowCell<>(Expense::getAmount));
     expenseCategory.setRowCellFactory(
@@ -97,7 +93,6 @@ public class ExpenseController implements Initializable {
     expenseBranch.setRowCellFactory(expense -> new MFXTableRowCell<>(Expense::getBranchName));
 
     expenseDate.prefWidthProperty().bind(expenseTable.widthProperty().multiply(.1));
-    expenseRef.prefWidthProperty().bind(expenseTable.widthProperty().multiply(.16));
     expenseName.prefWidthProperty().bind(expenseTable.widthProperty().multiply(.2));
     expenseAmount.prefWidthProperty().bind(expenseTable.widthProperty().multiply(.2));
     expenseCategory.prefWidthProperty().bind(expenseTable.widthProperty().multiply(.2));
@@ -106,7 +101,7 @@ public class ExpenseController implements Initializable {
     expenseTable
         .getTableColumns()
         .addAll(
-            expenseDate, expenseRef, expenseName, expenseAmount, expenseCategory, expenseBranch);
+            expenseDate, expenseName, expenseAmount, expenseCategory, expenseBranch);
     expenseTable
         .getFilters()
         .addAll(
@@ -116,7 +111,7 @@ public class ExpenseController implements Initializable {
             new StringFilter<>("Category", Expense::getExpenseCategoryName),
             new StringFilter<>("Branch", Expense::getBranchName));
     styleExpenseTable();
-    expenseTable.setItems(ExpenseViewModel.getExpenses());
+    expenseTable.setItems(ExpenseViewModel.expenseList);
   }
 
   private void styleExpenseTable() {
@@ -150,8 +145,7 @@ public class ExpenseController implements Initializable {
     // Delete
     delete.setOnAction(
         e -> {
-          ExpenseDao.deleteExpense(obj.getData().getId());
-          ExpenseViewModel.getExpenses();
+          ExpenseViewModel.deleteItem(obj.getData().getId());
           e.consume();
         });
     // Edit

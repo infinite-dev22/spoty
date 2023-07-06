@@ -21,7 +21,7 @@ import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.enums.ButtonType;
 import io.github.palexdev.materialfx.filter.DoubleFilter;
-import io.github.palexdev.materialfx.filter.IntegerFilter;
+import io.github.palexdev.materialfx.filter.LongFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import java.io.IOException;
 import java.net.URL;
@@ -105,7 +105,7 @@ public class QuotationMasterFormController implements Initializable {
     quotationStatus.textProperty().bindBidirectional(QuotationMasterViewModel.statusProperty());
     quotationNote.textProperty().bindBidirectional(QuotationMasterViewModel.noteProperty());
     // Combo box properties.
-    quotationCustomer.setItems(CustomerViewModel.getCustomers());
+    quotationCustomer.setItems(CustomerViewModel.customersList);
     quotationCustomer.setConverter(
         new StringConverter<>() {
           @Override
@@ -119,7 +119,7 @@ public class QuotationMasterFormController implements Initializable {
             return null;
           }
         });
-    quotationBranch.setItems(BranchViewModel.getBranches());
+    quotationBranch.setItems(BranchViewModel.branchesList);
     quotationBranch.setConverter(
         new StringConverter<>() {
           @Override
@@ -173,11 +173,11 @@ public class QuotationMasterFormController implements Initializable {
         .getFilters()
         .addAll(
             new StringFilter<>("Product", QuotationDetail::getProductName),
-            new IntegerFilter<>("Quantity", QuotationDetail::getQuantity),
+            new LongFilter<>("Quantity", QuotationDetail::getQuantity),
             new DoubleFilter<>("Discount", QuotationDetail::getDiscount),
             new DoubleFilter<>("Tax", QuotationDetail::getNetTax));
     getQuotationDetailTable();
-    quotationDetailTable.setItems(QuotationDetailViewModel.getQuotationDetails());
+    quotationDetailTable.setItems(QuotationDetailViewModel.quotationDetailsList);
   }
 
   private void getQuotationDetailTable() {

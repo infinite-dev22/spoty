@@ -28,7 +28,7 @@ import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.enums.ButtonType;
 import io.github.palexdev.materialfx.filter.DoubleFilter;
-import io.github.palexdev.materialfx.filter.IntegerFilter;
+import io.github.palexdev.materialfx.filter.LongFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import java.io.IOException;
 import java.net.URL;
@@ -103,7 +103,7 @@ public class SaleMasterFormController implements Initializable {
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     // Set items to combo boxes and display custom text.
-    saleCustomer.setItems(CustomerViewModel.getCustomers());
+    saleCustomer.setItems(CustomerViewModel.customersList);
     saleCustomer.setConverter(
         new StringConverter<>() {
           @Override
@@ -117,7 +117,7 @@ public class SaleMasterFormController implements Initializable {
             return null;
           }
         });
-    saleBranch.setItems(BranchViewModel.getBranches());
+    saleBranch.setItems(BranchViewModel.branchesList);
     saleBranch.setConverter(
         new StringConverter<>() {
           @Override
@@ -273,7 +273,7 @@ public class SaleMasterFormController implements Initializable {
         .getFilters()
         .addAll(
             new StringFilter<>("Product", SaleDetail::getProductName),
-            new IntegerFilter<>("Quantity", SaleDetail::getQuantity),
+            new LongFilter<>("Quantity", SaleDetail::getQuantity),
             new DoubleFilter<>("Tax", SaleDetail::getNetTax),
             new DoubleFilter<>("Discount", SaleDetail::getDiscount));
     styleTable();

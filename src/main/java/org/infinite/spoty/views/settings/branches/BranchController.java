@@ -36,7 +36,6 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.infinite.spoty.database.dao.BranchDao;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.forms.BranchFormController;
 import org.infinite.spoty.values.strings.Labels;
@@ -115,7 +114,7 @@ public class BranchController implements Initializable {
             new StringFilter<>("Location", Branch::getZipCode),
             new StringFilter<>("Email", Branch::getEmail));
     getBranchTable();
-    branchTable.setItems(BranchViewModel.getBranches());
+    branchTable.setItems(BranchViewModel.branchesList);
   }
 
   private void getBranchTable() {
@@ -148,8 +147,7 @@ public class BranchController implements Initializable {
     // Delete
     delete.setOnAction(
         e -> {
-          BranchDao.deleteBranch(obj.getData().getId());
-          BranchViewModel.getBranches();
+          BranchViewModel.deleteItem(obj.getData().getId());
           e.consume();
         });
     // Edit

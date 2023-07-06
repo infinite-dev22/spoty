@@ -37,6 +37,7 @@ import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.database.models.ProductDetail;
+import org.infinite.spoty.values.SharedResources;
 import org.infinite.spoty.values.strings.Values;
 import org.infinite.spoty.viewModels.AdjustmentDetailViewModel;
 import org.infinite.spoty.viewModels.ProductDetailViewModel;
@@ -79,8 +80,9 @@ public class AdjustmentDetailFormController implements Initializable {
     adjustmentType
         .textProperty()
         .bindBidirectional(AdjustmentDetailViewModel.adjustmentTypeProperty());
+    ProductDetailViewModel.getProductDetails();
     // AdjustmentType combo box properties.
-    adjustmentProductVariant.setItems(ProductDetailViewModel.getProductDetails());
+    adjustmentProductVariant.setItems(ProductDetailViewModel.productDetailsList);
     adjustmentProductVariant.setResetOnPopupHidden(true);
     adjustmentProductVariant.setConverter(
         new StringConverter<>() {
@@ -133,7 +135,7 @@ public class AdjustmentDetailFormController implements Initializable {
               && !adjustmentProductsQntyValidationLabel.isVisible()
               && !adjustmentTypeValidationLabel.isVisible()) {
             if (tempIdProperty().get() > -1) {
-              AdjustmentDetailViewModel.updateAdjustmentDetail(AdjustmentDetailViewModel.getId());
+              AdjustmentDetailViewModel.updateAdjustmentDetail(SharedResources.getTempId());
 
               SimpleNotification notification =
                   new SimpleNotification.NotificationBuilder("Entry updated successfully")

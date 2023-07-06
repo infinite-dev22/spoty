@@ -16,62 +16,69 @@ package org.infinite.spoty.database.models;
 
 import static org.infinite.spoty.GlobalActions.fineDate;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
+import com.j256.ormlite.table.DatabaseTable;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.text.DateFormat;
+import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
-import java.util.List;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 
-@Entity
+@DatabaseTable(tableName = "requisition_master")
 public class RequisitionMaster implements Serializable {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @DatabaseField(generatedId = true)
   private int id;
 
+  @DatabaseField(columnName = "reference_number")
   private String ref;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false)
   private Date date;
 
-  @ManyToOne private User user_detail;
+  @DatabaseField(foreign = true, columnName = "user_id")
+  private User user;
 
-  @OneToOne(optional = false)
-  @JoinColumn(nullable = false, name = "supplier_id")
+  @DatabaseField(foreign = true, columnName = "supplier_id", canBeNull = false)
   private Supplier supplier;
 
-  @ManyToOne(optional = false)
-  @JoinColumn(nullable = false, name = "branch_id")
+  @DatabaseField(foreign = true, columnName = "branch_id", canBeNull = false)
   private Branch branch;
 
-  @OneToMany(mappedBy = "requisition", fetch = FetchType.LAZY)
-  @Cascade({CascadeType.ALL})
-  private List<RequisitionDetail> requisitionDetails = new LinkedList<>();
+  @ForeignCollectionField
+  private Collection<RequisitionDetail> requisitionDetails = new LinkedList<>();
 
+  @DatabaseField(columnName = "ship_via")
   private String shipVia;
-  private String shipMethod;
-  private String shippingTerms;
-  private Date deliveryDate;
-  private String notes;
 
-  @Column(nullable = false)
+  @DatabaseField(columnName = "ship_method")
+  private String shipMethod;
+
+  @DatabaseField(columnName = "shipping_terms")
+  private String shippingTerms;
+
+  @DatabaseField(columnName = "delivery_date")
+  private Date deliveryDate;
+
+  @DatabaseField private String notes;
+
+  @DatabaseField(canBeNull = false)
   private String status;
 
-  @Column(nullable = false)
+  @DatabaseField(canBeNull = false, columnName = "total_cost")
   private double totalCost;
 
-  @Column(name = "created_at")
+  @DatabaseField(columnName = "created_at")
   private Date createdAt;
 
-  @Column(name = "created_by")
+  @DatabaseField(columnName = "created_by")
   private String createdBy;
 
-  @Column(name = "updated_at")
+  @DatabaseField(columnName = "updated_at")
   private Date updatedAt;
 
-  @Column(name = "updated_by")
+  @DatabaseField(columnName = "updated_by")
   private String updatedBy;
 
   public RequisitionMaster() {}
@@ -108,11 +115,11 @@ public class RequisitionMaster implements Serializable {
   }
 
   public User getUser() {
-    return user_detail;
+    return user;
   }
 
   public void setUser(User user_detail) {
-    this.user_detail = user_detail;
+    this.user = user_detail;
   }
 
   public Date getDate() {
@@ -144,11 +151,11 @@ public class RequisitionMaster implements Serializable {
     else return null;
   }
 
-  public List<RequisitionDetail> getRequisitionDetails() {
+  public Collection<RequisitionDetail> getRequisitionDetails() {
     return requisitionDetails;
   }
 
-  public void setRequisitionDetails(List<RequisitionDetail> requisitionDetails) {
+  public void setRequisitionDetails(Collection<RequisitionDetail> requisitionDetails) {
     this.requisitionDetails = requisitionDetails;
   }
 

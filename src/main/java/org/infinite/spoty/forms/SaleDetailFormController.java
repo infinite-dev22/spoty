@@ -62,7 +62,7 @@ public class SaleDetailFormController implements Initializable {
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     // Set combo box options.
-    saleDetailPdct.setItems(ProductDetailViewModel.getProductDetails());
+    saleDetailPdct.setItems(ProductDetailViewModel.productDetailsList);
     saleDetailPdct.setConverter(
         new StringConverter<>() {
           @Override
