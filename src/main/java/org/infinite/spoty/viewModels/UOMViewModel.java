@@ -160,8 +160,6 @@ public class UOMViewModel {
             Platform.runLater(
                 () -> {
                   uomList.clear();
-                  uomComboList.clear();
-                  uomComboList.add(null);
 
                   try {
                     uomList.addAll(unitOfMeasureDao.queryForAll());
@@ -169,6 +167,8 @@ public class UOMViewModel {
                     throw new RuntimeException(e);
                   }
 
+                  uomComboList.clear();
+                  uomComboList.add(null);
                   uomComboList.addAll(uomList);
                 });
 

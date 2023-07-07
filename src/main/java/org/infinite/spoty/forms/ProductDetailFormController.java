@@ -24,6 +24,7 @@ import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import javafx.collections.WeakListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -64,10 +65,13 @@ public class ProductDetailFormController implements Initializable {
     productVariantUOM.valueProperty().bindBidirectional(ProductDetailViewModel.unitProperty());
     productVariantSerial.textProperty().bindBidirectional(ProductDetailViewModel.serialProperty());
     productVariantName.textProperty().bindBidirectional(ProductDetailViewModel.nameProperty());
+
     // ProductType combo box properties.
     productVariantUOM.setItems(UOMViewModel.uomComboList);
     productVariantUOM.setResetOnPopupHidden(true);
     productVariantUOM.setAnimated(true);
+    UOMViewModel.uomComboList.addListener(
+        new WeakListChangeListener<>(c -> productVariantUOM.setItems(UOMViewModel.uomComboList)));
     productVariantUOM.setConverter(
         new StringConverter<>() {
           @Override
@@ -80,6 +84,7 @@ public class ProductDetailFormController implements Initializable {
             return null;
           }
         });
+
     // Input validators.
     requiredValidator(
         productVariantUOM, "Unit of measure is required.", productVariantUOMValidationLabel);

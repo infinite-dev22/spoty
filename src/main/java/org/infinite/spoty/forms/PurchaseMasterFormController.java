@@ -36,6 +36,7 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.collections.WeakListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -102,6 +103,9 @@ public class PurchaseMasterFormController implements Initializable {
   public void initialize(URL location, ResourceBundle resources) {
     // Set items to combo boxes and display custom text.
     purchaseSupplier.setItems(SupplierViewModel.suppliersList);
+    SupplierViewModel.suppliersList.addListener(
+        new WeakListChangeListener<>(
+            c -> purchaseSupplier.setItems(SupplierViewModel.suppliersList)));
     purchaseSupplier.setConverter(
         new StringConverter<>() {
           @Override
@@ -117,6 +121,8 @@ public class PurchaseMasterFormController implements Initializable {
         });
 
     purchaseBranch.setItems(BranchViewModel.branchesList);
+    BranchViewModel.branchesList.addListener(
+        new WeakListChangeListener<>(c -> purchaseBranch.setItems(BranchViewModel.branchesList)));
     purchaseBranch.setConverter(
         new StringConverter<>() {
           @Override

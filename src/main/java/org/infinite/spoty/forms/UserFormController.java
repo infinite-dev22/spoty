@@ -26,6 +26,7 @@ import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import javafx.collections.WeakListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -90,6 +91,7 @@ public class UserFormController implements Initializable {
               if (newValue != oldValue) userFormPhone.setLeadingIcon(new Label("+"));
               System.out.println("newValue oldValue");
             });
+
     // Input bindings.
     userID
         .textProperty()
@@ -100,8 +102,9 @@ public class UserFormController implements Initializable {
     userFormEmail.textProperty().bindBidirectional(UserViewModel.emailProperty());
     userFormPhone.textProperty().bindBidirectional(UserViewModel.phoneProperty());
     userFormRole.valueProperty().bindBidirectional(UserViewModel.roleProperty());
-    //        userFormBranch.valueProperty().bindBidirectional(UserViewModel.roleProperty());
+    //            userFormBranch.valueProperty().bindBidirectional(UserViewModel.roleProperty());
     userFormActive.selectedProperty().bindBidirectional(UserViewModel.activeProperty());
+
     // Combo box properties.
     //        userFormRole.setItems(UserViewModel.usersList);
     userFormRole.setConverter(
@@ -117,7 +120,10 @@ public class UserFormController implements Initializable {
             return null;
           }
         });
+
     userFormBranch.setItems(BranchViewModel.branchesList);
+    BranchViewModel.branchesList.addListener(
+        new WeakListChangeListener<>(c -> userFormBranch.setItems(BranchViewModel.branchesList)));
     userFormBranch.setConverter(
         new StringConverter<>() {
           @Override

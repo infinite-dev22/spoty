@@ -24,6 +24,7 @@ import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import javafx.collections.WeakListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -66,8 +67,12 @@ public class StockInDetailFormController implements Initializable {
     stockInDetailDescription
         .textProperty()
         .bindBidirectional(StockInDetailViewModel.descriptionProperty());
+
     // Combo box properties.
     stockInDetailPdct.setItems(ProductDetailViewModel.productDetailsList);
+    ProductDetailViewModel.productDetailsList.addListener(
+        new WeakListChangeListener<>(
+            c -> stockInDetailPdct.setItems(ProductDetailViewModel.productDetailsList)));
     stockInDetailPdct.setConverter(
         new StringConverter<>() {
           @Override
@@ -88,9 +93,11 @@ public class StockInDetailFormController implements Initializable {
             return null;
           }
         });
+
     // Input validators.
     requiredValidator(stockInDetailPdct, "Product is required.", stockInDetailPdctValidationLabel);
     requiredValidator(stockInDetailQnty, "Quantity is required.", stockInDetailQntyValidationLabel);
+
     dialogOnActions();
   }
 

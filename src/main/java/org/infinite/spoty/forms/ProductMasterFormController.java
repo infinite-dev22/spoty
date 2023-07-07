@@ -37,6 +37,7 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.collections.WeakListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -138,6 +139,9 @@ public class ProductMasterFormController implements Initializable {
         .bindBidirectional(ProductMasterViewModel.notForSaleProperty());
 
     productFormCategory.setItems(ProductCategoryViewModel.categoriesList);
+    ProductCategoryViewModel.categoriesList.addListener(
+        new WeakListChangeListener<>(
+            c -> productFormCategory.setItems(ProductCategoryViewModel.categoriesList)));
     productFormCategory.setConverter(
         new StringConverter<>() {
           @Override
@@ -153,6 +157,8 @@ public class ProductMasterFormController implements Initializable {
         });
 
     productFormBrand.setItems(BrandViewModel.brandsList);
+    BrandViewModel.brandsList.addListener(
+        new WeakListChangeListener<>(c -> productFormBrand.setItems(BrandViewModel.brandsList)));
     productFormBrand.setConverter(
         new StringConverter<>() {
           @Override
