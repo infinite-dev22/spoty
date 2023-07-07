@@ -20,7 +20,6 @@ import io.github.palexdev.materialfx.css.themes.MFXThemeManager;
 import io.github.palexdev.materialfx.css.themes.Themes;
 import javafx.application.Preloader;
 import javafx.scene.Scene;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -33,7 +32,7 @@ public class LaunchPreloader extends Preloader {
     Scene scene = new Scene(fxmlLoader("fxml/splash/SplashScreen.fxml").load());
     MFXThemeManager.addOn(scene, Themes.DEFAULT, Themes.LEGACY);
     io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(scene);
-    scene.setFill(Color.TRANSPARENT);
+    scene.setFill(null);
     primaryStage.initStyle(StageStyle.TRANSPARENT);
     primaryStage.setScene(scene);
     primaryStage.setAlwaysOnTop(true);

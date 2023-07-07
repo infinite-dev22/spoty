@@ -41,7 +41,6 @@ import org.infinite.spoty.LocalDatabaseService;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.database.management.SQLiteTableCreator;
 import org.infinite.spoty.values.strings.Labels;
-import org.infinite.spoty.viewModels.AdjustmentMasterViewModel;
 import org.infinite.spoty.views.BaseController;
 
 public class SplashScreenController implements Initializable {
@@ -63,27 +62,12 @@ public class SplashScreenController implements Initializable {
           }
         };
 
-    Task<Void> startupDatabaseQueryRunner =
-        new Task<>() {
-          @Override
-          protected Void call() {
-            AdjustmentMasterViewModel.getAdjustmentMasters();
-            AdjustmentMasterViewModel.adjustmentMasterList.forEach(
-                e -> System.out.println("Adjustments: " + e));
-            return null;
-          }
-        };
-
     Thread thread1 = new Thread(databaseCreator);
     thread1.setDaemon(true);
-    Thread thread2 = new Thread(startupDatabaseQueryRunner);
-    thread2.setDaemon(true);
 
     try {
       thread1.start();
       thread1.join();
-      thread2.start();
-      thread2.join();
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
     }
