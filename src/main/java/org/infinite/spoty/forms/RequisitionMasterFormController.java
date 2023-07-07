@@ -28,6 +28,7 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
+import javafx.collections.WeakListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -100,37 +101,9 @@ public class RequisitionMasterFormController implements Initializable {
     requisitionMasterBranch
         .valueProperty()
         .bindBidirectional(RequisitionMasterViewModel.branchProperty());
-    requisitionMasterBranch.setItems(BranchViewModel.branchesList);
-    requisitionMasterBranch.setConverter(
-        new StringConverter<>() {
-          @Override
-          public String toString(Branch object) {
-            if (object != null) return object.getName();
-            else return null;
-          }
-
-          @Override
-          public Branch fromString(String string) {
-            return null;
-          }
-        });
     requisitionMasterSupplier
         .valueProperty()
         .bindBidirectional(RequisitionMasterViewModel.supplierProperty());
-    requisitionMasterSupplier.setItems(SupplierViewModel.suppliersList);
-    requisitionMasterSupplier.setConverter(
-        new StringConverter<>() {
-          @Override
-          public String toString(Supplier object) {
-            if (object != null) return object.getName();
-            else return null;
-          }
-
-          @Override
-          public Supplier fromString(String string) {
-            return null;
-          }
-        });
     requisitionMasterDate
         .textProperty()
         .bindBidirectional(RequisitionMasterViewModel.dateProperty());
@@ -146,6 +119,44 @@ public class RequisitionMasterFormController implements Initializable {
     requisitionMasterNote
         .textProperty()
         .bindBidirectional(RequisitionMasterViewModel.noteProperty());
+
+    // ComboBox properties.
+    requisitionMasterBranch.setItems(BranchViewModel.branchesList);
+    BranchViewModel.branchesList.addListener(
+        new WeakListChangeListener<>(
+            c -> requisitionMasterBranch.setItems(BranchViewModel.branchesList)));
+    requisitionMasterBranch.setConverter(
+        new StringConverter<>() {
+          @Override
+          public String toString(Branch object) {
+            if (object != null) return object.getName();
+            else return null;
+          }
+
+          @Override
+          public Branch fromString(String string) {
+            return null;
+          }
+        });
+
+    requisitionMasterSupplier.setItems(SupplierViewModel.suppliersList);
+    SupplierViewModel.suppliersList.addListener(
+        new WeakListChangeListener<>(
+            c -> requisitionMasterSupplier.setItems(SupplierViewModel.suppliersList)));
+    requisitionMasterSupplier.setConverter(
+        new StringConverter<>() {
+          @Override
+          public String toString(Supplier object) {
+            if (object != null) return object.getName();
+            else return null;
+          }
+
+          @Override
+          public Supplier fromString(String string) {
+            return null;
+          }
+        });
+
     // input validators.
     requiredValidator(
         requisitionMasterBranch, "Branch is required.", requisitionMasterBranchValidationLabel);
@@ -155,7 +166,9 @@ public class RequisitionMasterFormController implements Initializable {
         requisitionMasterSupplierValidationLabel);
     requiredValidator(
         requisitionMasterDate, "Date is required.", requisitionMasterDateValidationLabel);
+
     requisitionMasterAddProductBtnClicked();
+
     Platform.runLater(this::setupTable);
   }
 

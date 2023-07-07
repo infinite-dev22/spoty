@@ -35,6 +35,7 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
+import javafx.collections.WeakListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -114,11 +115,18 @@ public class AdjustmentMasterFormController implements Initializable {
             return null;
           }
         });
+
     adjustmentDate.textProperty().bindBidirectional(AdjustmentMasterViewModel.dateProperty());
     adjustmentNote.textProperty().bindBidirectional(AdjustmentMasterViewModel.noteProperty());
+
     // input validators.
     requiredValidator(adjustmentBranch, "Branch is required.", adjustmentBranchValidationLabel);
     requiredValidator(adjustmentDate, "Date is required.", adjustmentDateValidationLabel);
+
+    // Change Listeners.
+    BranchViewModel.branchesList.addListener(
+        new WeakListChangeListener<>(c -> adjustmentBranch.setItems(BranchViewModel.branchesList)));
+
     adjustmentAddProductBtnClicked();
     Platform.runLater(this::setupTable);
   }
@@ -154,6 +162,9 @@ public class AdjustmentMasterFormController implements Initializable {
             new StringFilter<>("Adjustment Type", AdjustmentDetail::getAdjustmentType));
     getAdjustmentDetailTable();
     adjustmentDetailTable.setItems(AdjustmentDetailViewModel.adjustmentDetailsList);
+    AdjustmentDetailViewModel.adjustmentDetailsList.addListener(
+        new WeakListChangeListener<>(
+            c -> adjustmentDetailTable.setItems(AdjustmentDetailViewModel.adjustmentDetailsList)));
   }
 
   private void getAdjustmentDetailTable() {

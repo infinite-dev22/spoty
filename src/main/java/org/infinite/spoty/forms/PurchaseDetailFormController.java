@@ -24,6 +24,7 @@ import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import javafx.collections.WeakListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -65,7 +66,12 @@ public class PurchaseDetailFormController implements Initializable {
     purchaseDetailQnty.textProperty().bindBidirectional(PurchaseDetailViewModel.quantityProperty());
     purchaseDetailPdct.valueProperty().bindBidirectional(PurchaseDetailViewModel.productProperty());
     purchaseDetailCost.textProperty().bindBidirectional(PurchaseDetailViewModel.costProperty());
+
+    // ComboBox properties.
     purchaseDetailPdct.setItems(ProductDetailViewModel.productDetailsList);
+    ProductDetailViewModel.productDetailsList.addListener(
+        new WeakListChangeListener<>(
+            c -> purchaseDetailPdct.setItems(ProductDetailViewModel.productDetailsList)));
     purchaseDetailPdct.setConverter(
         new StringConverter<>() {
           @Override

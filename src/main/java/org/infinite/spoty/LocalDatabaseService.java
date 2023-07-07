@@ -26,8 +26,7 @@ public class LocalDatabaseService extends ScheduledService<Void> {
 
   private static class LocalDatabaseTask extends Task<Void> {
     @Override
-    protected Void call() throws Exception {
-      System.out.println("Scheduled Service Thread is now running...");
+    protected Void call() {
       AdjustmentMasterViewModel.getAdjustmentMasters();
       BranchViewModel.getBranches();
       BrandViewModel.getItems();

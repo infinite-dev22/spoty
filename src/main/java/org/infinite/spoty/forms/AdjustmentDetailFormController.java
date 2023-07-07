@@ -26,6 +26,7 @@ import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
+import javafx.collections.WeakListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -111,6 +112,12 @@ public class AdjustmentDetailFormController implements Initializable {
     requiredValidator(
         adjustmentProductsQnty, "Quantity is required.", adjustmentProductsQntyValidationLabel);
     requiredValidator(adjustmentType, "Type is required.", adjustmentTypeValidationLabel);
+
+    // Change Listners.
+    ProductDetailViewModel.productDetailsList.addListener(
+        new WeakListChangeListener<>(
+            c -> adjustmentProductVariant.setItems(ProductDetailViewModel.productDetailsList)));
+
     dialogOnActions();
   }
 

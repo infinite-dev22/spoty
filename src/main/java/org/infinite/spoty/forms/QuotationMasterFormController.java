@@ -29,6 +29,7 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.collections.WeakListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -104,8 +105,12 @@ public class QuotationMasterFormController implements Initializable {
     quotationBranch.valueProperty().bindBidirectional(QuotationMasterViewModel.branchProperty());
     quotationStatus.textProperty().bindBidirectional(QuotationMasterViewModel.statusProperty());
     quotationNote.textProperty().bindBidirectional(QuotationMasterViewModel.noteProperty());
+
     // Combo box properties.
     quotationCustomer.setItems(CustomerViewModel.customersList);
+    CustomerViewModel.customersList.addListener(
+        new WeakListChangeListener<>(
+            c -> quotationCustomer.setItems(CustomerViewModel.customersList)));
     quotationCustomer.setConverter(
         new StringConverter<>() {
           @Override
@@ -120,6 +125,8 @@ public class QuotationMasterFormController implements Initializable {
           }
         });
     quotationBranch.setItems(BranchViewModel.branchesList);
+    BranchViewModel.branchesList.addListener(
+        new WeakListChangeListener<>(c -> quotationBranch.setItems(BranchViewModel.branchesList)));
     quotationBranch.setConverter(
         new StringConverter<>() {
           @Override
@@ -134,11 +141,13 @@ public class QuotationMasterFormController implements Initializable {
           }
         });
     quotationStatus.setItems(FXCollections.observableArrayList(Values.QUOTATIONTYPE));
+
     // input validators.
     requiredValidator(quotationBranch, "Branch is required.", quotationBranchValidationLabel);
     requiredValidator(quotationCustomer, "Customer is required.", quotationCustomerValidationLabel);
     requiredValidator(quotationDate, "Date is required.", quotationDateValidationLabel);
     requiredValidator(quotationStatus, "Status is required.", quotationStatusValidationLabel);
+
     Platform.runLater(this::setupTable);
   }
 

@@ -36,6 +36,7 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.collections.WeakListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -104,6 +105,8 @@ public class SaleMasterFormController implements Initializable {
   public void initialize(URL location, ResourceBundle resources) {
     // Set items to combo boxes and display custom text.
     saleCustomer.setItems(CustomerViewModel.customersList);
+    CustomerViewModel.customersList.addListener(
+        new WeakListChangeListener<>(c -> saleCustomer.setItems(CustomerViewModel.customersList)));
     saleCustomer.setConverter(
         new StringConverter<>() {
           @Override
@@ -117,7 +120,10 @@ public class SaleMasterFormController implements Initializable {
             return null;
           }
         });
+
     saleBranch.setItems(BranchViewModel.branchesList);
+    BranchViewModel.branchesList.addListener(
+        new WeakListChangeListener<>(c -> saleBranch.setItems(BranchViewModel.branchesList)));
     saleBranch.setConverter(
         new StringConverter<>() {
           @Override
@@ -133,6 +139,7 @@ public class SaleMasterFormController implements Initializable {
         });
     saleStatus.setItems(FXCollections.observableArrayList(Values.SALESTATUSES));
     salePaymentStatus.setItems(FXCollections.observableArrayList(Values.PAYMENTSTATUSES));
+
     // Bi~Directional Binding.
     saleMasterID
         .textProperty()
@@ -142,6 +149,7 @@ public class SaleMasterFormController implements Initializable {
     saleBranch.valueProperty().bindBidirectional(SaleMasterViewModel.branchProperty());
     saleStatus.textProperty().bindBidirectional(SaleMasterViewModel.saleStatusProperty());
     salePaymentStatus.textProperty().bindBidirectional(SaleMasterViewModel.payStatusProperty());
+
     // input validators.
     requiredValidator(saleBranch, "Branch is required.", saleBranchValidationLabel);
     requiredValidator(saleCustomer, "Customer is required.", saleCustomerValidationLabel);
@@ -149,6 +157,7 @@ public class SaleMasterFormController implements Initializable {
     requiredValidator(saleStatus, "Sale Status is required.", saleStatusValidationLabel);
     requiredValidator(
         salePaymentStatus, "Payment status is required.", salePaymentStatusValidationLabel);
+
     setupTable();
   }
 

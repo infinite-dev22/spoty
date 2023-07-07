@@ -73,11 +73,6 @@ public class SplashScreenController implements Initializable {
             return null;
           }
         };
-    
-    LocalDatabaseService service = new LocalDatabaseService();
-    service.setPeriod(Duration.seconds(5));
-    service.setOnFailed(event -> service.getException().printStackTrace());
-    service.start();
 
     Thread thread1 = new Thread(databaseCreator);
     thread1.setDaemon(true);
@@ -92,6 +87,10 @@ public class SplashScreenController implements Initializable {
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
     }
+
+    LocalDatabaseService service = new LocalDatabaseService();
+    service.setPeriod(Duration.seconds(5));
+    service.start();
 
     Platform.runLater(
         () -> {

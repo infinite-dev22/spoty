@@ -24,6 +24,7 @@ import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import javafx.collections.WeakListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -70,8 +71,12 @@ public class RequisitionDetailFormController implements Initializable {
     requisitionDetailDescription
         .textProperty()
         .bindBidirectional(RequisitionDetailViewModel.descriptionProperty());
+
     // Combo box properties.
     requisitionDetailPdct.setItems(ProductDetailViewModel.productDetailsList);
+    ProductDetailViewModel.productDetailsList.addListener(
+        new WeakListChangeListener<>(
+            c -> requisitionDetailPdct.setItems(ProductDetailViewModel.productDetailsList)));
     requisitionDetailPdct.setConverter(
         new StringConverter<>() {
           @Override
@@ -92,6 +97,7 @@ public class RequisitionDetailFormController implements Initializable {
             return null;
           }
         });
+
     // Input validators.
     requiredValidator(
         requisitionDetailPdct, "Product is required.", requisitionDetailPdctValidationLabel);

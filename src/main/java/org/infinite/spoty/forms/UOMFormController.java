@@ -23,6 +23,7 @@ import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import javafx.collections.WeakListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -73,21 +74,7 @@ public class UOMFormController implements Initializable {
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-    uomFormBaseUnit.setItems(UOMViewModel.uomComboList);
-    uomFormBaseUnit.setConverter(
-        new StringConverter<>() {
-          @Override
-          public String toString(UnitOfMeasure object) {
-            if (object != null) return object.getName();
-            else return "--Select--";
-          }
-
-          @Override
-          public UnitOfMeasure fromString(String string) {
-            return null;
-          }
-        });
-
+    // Form input binding.
     uomID.textProperty().bindBidirectional(UOMViewModel.idProperty(), new NumberStringConverter());
     uomFormName.textProperty().bindBidirectional(UOMViewModel.nameProperty());
     uomFormShortName.textProperty().bindBidirectional(UOMViewModel.shortNameProperty());
@@ -95,6 +82,7 @@ public class UOMFormController implements Initializable {
     uomFormOperator.textProperty().bindBidirectional(UOMViewModel.operatorProperty());
     uomFormOperatorValue.textProperty().bindBidirectional(UOMViewModel.operatorValueProperty());
 
+    // Input listeners.
     uomFormBaseUnit
         .valueProperty()
         .addListener(
@@ -109,13 +97,33 @@ public class UOMFormController implements Initializable {
                 uomFormOperatorValueValidationLabel.setVisible(false);
               }
             });
-    // Input listeners.
+
+    // ComboBox properties.
+    uomFormBaseUnit.setItems(UOMViewModel.uomComboList);
+    UOMViewModel.uomComboList.addListener(
+        new WeakListChangeListener<>(c -> uomFormBaseUnit.setItems(UOMViewModel.uomComboList)));
+    uomFormBaseUnit.setConverter(
+        new StringConverter<>() {
+          @Override
+          public String toString(UnitOfMeasure object) {
+            if (object != null) return object.getName();
+            else return "--Select--";
+          }
+
+          @Override
+          public UnitOfMeasure fromString(String string) {
+            return null;
+          }
+        });
+
+    // Input validators.
     requiredValidator(uomFormName, "Name is required.", uomFormNameValidationLabel);
     requiredValidator(
         uomFormShortName, "Short name field is required.", uomFormShortNameValidationLabel);
     requiredValidator(uomFormOperator, "Operator is required.", uomFormOperatorValidationLabel);
     requiredValidator(
         uomFormOperatorValue, "Operator value is required.", uomFormOperatorValueValidationLabel);
+
     setUomFormDialogOnActions();
   }
 

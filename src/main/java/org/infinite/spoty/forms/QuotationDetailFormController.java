@@ -24,6 +24,7 @@ import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import javafx.collections.WeakListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -74,8 +75,12 @@ public class QuotationDetailFormController implements Initializable {
     quotationProductsDiscount
         .textProperty()
         .bindBidirectional(QuotationDetailViewModel.discountProperty());
+
     // Combo box properties.
     quotationProductPdct.setItems(ProductDetailViewModel.productDetailsList);
+    ProductDetailViewModel.productDetailsList.addListener(
+        new WeakListChangeListener<>(
+            c -> quotationProductPdct.setItems(ProductDetailViewModel.productDetailsList)));
     quotationProductPdct.setConverter(
         new StringConverter<>() {
           @Override

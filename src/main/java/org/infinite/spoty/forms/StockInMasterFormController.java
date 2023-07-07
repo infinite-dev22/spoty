@@ -28,6 +28,7 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
+import javafx.collections.WeakListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -91,7 +92,14 @@ public class StockInMasterFormController implements Initializable {
         .textProperty()
         .bindBidirectional(StockInMasterViewModel.idProperty(), new NumberStringConverter());
     stockInMasterBranch.valueProperty().bindBidirectional(StockInMasterViewModel.branchProperty());
+    stockInMasterDate.textProperty().bindBidirectional(StockInMasterViewModel.dateProperty());
+    stockInMasterNote.textProperty().bindBidirectional(StockInMasterViewModel.noteProperty());
+
+    // ComboBox properties.
     stockInMasterBranch.setItems(BranchViewModel.branchesList);
+    BranchViewModel.branchesList.addListener(
+        new WeakListChangeListener<>(
+            c -> stockInMasterBranch.setItems(BranchViewModel.branchesList)));
     stockInMasterBranch.setConverter(
         new StringConverter<>() {
           @Override
@@ -105,13 +113,14 @@ public class StockInMasterFormController implements Initializable {
             return null;
           }
         });
-    stockInMasterDate.textProperty().bindBidirectional(StockInMasterViewModel.dateProperty());
-    stockInMasterNote.textProperty().bindBidirectional(StockInMasterViewModel.noteProperty());
+
     // input validators.
     requiredValidator(
         stockInMasterBranch, "Branch is required.", stockInMasterBranchValidationLabel);
     requiredValidator(stockInMasterDate, "Date is required.", stockInMasterDateValidationLabel);
+
     stockInMasterAddProductBtnClicked();
+
     Platform.runLater(this::setupTable);
   }
 

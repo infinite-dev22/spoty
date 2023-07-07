@@ -35,6 +35,7 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
+import javafx.collections.WeakListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -102,7 +103,17 @@ public class TransferMasterFormController implements Initializable {
     transferMasterFromBranch
         .valueProperty()
         .bindBidirectional(TransferMasterViewModel.fromBranchProperty());
+    transferMasterToBranch
+        .valueProperty()
+        .bindBidirectional(TransferMasterViewModel.toBranchProperty());
+    transferMasterDate.textProperty().bindBidirectional(TransferMasterViewModel.dateProperty());
+    transferMasterNote.textProperty().bindBidirectional(TransferMasterViewModel.noteProperty());
+
+    // ComboBox properties.
     transferMasterFromBranch.setItems(BranchViewModel.branchesList);
+    BranchViewModel.branchesList.addListener(
+        new WeakListChangeListener<>(
+            c -> transferMasterFromBranch.setItems(BranchViewModel.branchesList)));
     transferMasterFromBranch.setConverter(
         new StringConverter<>() {
           @Override
@@ -116,10 +127,11 @@ public class TransferMasterFormController implements Initializable {
             return null;
           }
         });
-    transferMasterToBranch
-        .valueProperty()
-        .bindBidirectional(TransferMasterViewModel.toBranchProperty());
+
     transferMasterToBranch.setItems(BranchViewModel.branchesList);
+    BranchViewModel.branchesList.addListener(
+        new WeakListChangeListener<>(
+            c -> transferMasterToBranch.setItems(BranchViewModel.branchesList)));
     transferMasterToBranch.setConverter(
         new StringConverter<>() {
           @Override
@@ -133,8 +145,7 @@ public class TransferMasterFormController implements Initializable {
             return null;
           }
         });
-    transferMasterDate.textProperty().bindBidirectional(TransferMasterViewModel.dateProperty());
-    transferMasterNote.textProperty().bindBidirectional(TransferMasterViewModel.noteProperty());
+
     // input validators.
     requiredValidator(
         transferMasterToBranch,
@@ -145,7 +156,9 @@ public class TransferMasterFormController implements Initializable {
         "Supplying branch is required.",
         transferMasterFromBranchValidationLabel);
     requiredValidator(transferMasterDate, "Date is required.", transferMasterDateValidationLabel);
+
     transferMasterAddProductBtnClicked();
+
     Platform.runLater(this::setupTable);
   }
 
