@@ -121,10 +121,9 @@ public class RequisitionMasterFormController implements Initializable {
         .bindBidirectional(RequisitionMasterViewModel.noteProperty());
 
     // ComboBox properties.
-    requisitionMasterBranch.setItems(BranchViewModel.branchesList);
-    BranchViewModel.branchesList.addListener(
-        new WeakListChangeListener<>(
-            c -> requisitionMasterBranch.setItems(BranchViewModel.branchesList)));
+    requisitionMasterBranch.setItems(BranchViewModel.getBranchesComboBoxList());
+    requisitionMasterBranch.setOnShowing(
+        e -> requisitionMasterBranch.setItems(BranchViewModel.getBranchesComboBoxList()));
     requisitionMasterBranch.setConverter(
         new StringConverter<>() {
           @Override

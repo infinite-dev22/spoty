@@ -36,6 +36,7 @@ public class BranchViewModel {
   private static final StringProperty city = new SimpleStringProperty("");
   private static final StringProperty zipcode = new SimpleStringProperty("");
   public static ObservableList<Branch> branchesList = FXCollections.observableArrayList();
+  public static ObservableList<Branch> branchesComboBoxList = FXCollections.observableArrayList();
 
   public static long getId() {
     return id.get();
@@ -270,7 +271,7 @@ public class BranchViewModel {
             Dao<Branch, Long> branchDao = DaoManager.createDao(connectionSource, Branch.class);
 
             branchDao.deleteById(index);
-            
+
             getBranches();
             return null;
           }
@@ -279,5 +280,11 @@ public class BranchViewModel {
     Thread thread = new Thread(task);
     thread.setDaemon(true);
     thread.start();
+  }
+
+  public static ObservableList<Branch> getBranchesComboBoxList() {
+    branchesComboBoxList.clear();
+    branchesComboBoxList.addAll(branchesList);
+    return branchesComboBoxList;
   }
 }

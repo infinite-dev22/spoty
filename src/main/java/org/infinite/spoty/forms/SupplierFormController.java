@@ -76,7 +76,6 @@ public class SupplierFormController implements Initializable {
         .addListener(
             (observable, oldValue, newValue) -> {
               if (newValue != oldValue) supplierFormPhone.setLeadingIcon(new Label("+"));
-              System.out.println("newValue oldValue");
             });
     // Form input binding.
     supplierID

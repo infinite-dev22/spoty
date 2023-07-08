@@ -30,10 +30,14 @@ import io.github.palexdev.materialfx.enums.ButtonType;
 import io.github.palexdev.materialfx.filter.DoubleFilter;
 import io.github.palexdev.materialfx.filter.LongFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
+import io.github.palexdev.materialfx.utils.StringUtils;
+import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.WeakListChangeListener;
@@ -101,43 +105,6 @@ public class PurchaseMasterFormController implements Initializable {
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-    // Set items to combo boxes and display custom text.
-    purchaseSupplier.setItems(SupplierViewModel.suppliersList);
-    SupplierViewModel.suppliersList.addListener(
-        new WeakListChangeListener<>(
-            c -> purchaseSupplier.setItems(SupplierViewModel.suppliersList)));
-    purchaseSupplier.setConverter(
-        new StringConverter<>() {
-          @Override
-          public String toString(Supplier object) {
-            if (object != null) return object.getName();
-            else return null;
-          }
-
-          @Override
-          public Supplier fromString(String string) {
-            return null;
-          }
-        });
-
-    purchaseBranch.setItems(BranchViewModel.branchesList);
-    BranchViewModel.branchesList.addListener(
-        new WeakListChangeListener<>(c -> purchaseBranch.setItems(BranchViewModel.branchesList)));
-    purchaseBranch.setConverter(
-        new StringConverter<>() {
-          @Override
-          public String toString(Branch object) {
-            if (object != null) return object.getName();
-            else return null;
-          }
-
-          @Override
-          public Branch fromString(String string) {
-            return null;
-          }
-        });
-
-    purchaseStatus.setItems(FXCollections.observableArrayList(Values.PURCHASESTATUSES));
     // Bi~Directional Binding.
     purchaseMasterID
         .textProperty()
@@ -147,6 +114,43 @@ public class PurchaseMasterFormController implements Initializable {
     purchaseBranch.valueProperty().bindBidirectional(PurchaseMasterViewModel.branchProperty());
     purchaseStatus.textProperty().bindBidirectional(PurchaseMasterViewModel.statusProperty());
     purchaseNote.textProperty().bindBidirectional(PurchaseMasterViewModel.noteProperty());
+
+    // ComboBox Converters.
+    StringConverter<Supplier> purchaseSupplierConverter =
+        FunctionalStringConverter.to(supplier -> (supplier == null) ? "" : supplier.getName());
+
+    StringConverter<Branch> purchaseBranchConverter =
+        FunctionalStringConverter.to(branch -> (branch == null) ? "" : branch.getName());
+
+    // ComboBox Filter Functions.
+    Function<String, Predicate<Supplier>> purchaseSupplierFilterFunction =
+        searchStr ->
+            supplier ->
+                StringUtils.containsIgnoreCase(
+                    purchaseSupplierConverter.toString(supplier), searchStr);
+
+    Function<String, Predicate<Branch>> purchaseBranchFilterFunction =
+        searchStr ->
+            branch ->
+                StringUtils.containsIgnoreCase(purchaseBranchConverter.toString(branch), searchStr);
+
+
+    // Set items to combo boxes and display custom text.
+    purchaseSupplier.setItems(SupplierViewModel.suppliersList);
+    purchaseSupplier.setConverter(purchaseSupplierConverter);
+    purchaseSupplier.setFilterFunction(purchaseSupplierFilterFunction);
+    SupplierViewModel.suppliersList.addListener(
+        new WeakListChangeListener<>(
+            c -> purchaseSupplier.setItems(SupplierViewModel.suppliersList)));
+
+    purchaseBranch.setItems(BranchViewModel.getBranchesComboBoxList());
+    purchaseBranch.setConverter(purchaseBranchConverter);
+    purchaseBranch.setFilterFunction(purchaseBranchFilterFunction);
+    purchaseBranch.setOnShowing(
+        e -> purchaseBranch.setItems(BranchViewModel.getBranchesComboBoxList()));
+
+    purchaseStatus.setItems(FXCollections.observableArrayList(Values.PURCHASESTATUSES));
+
     // input validators.
     requiredValidator(purchaseBranch, "Branch is required.", purchaseBranchValidationLabel);
     requiredValidator(purchaseSupplier, "Supplier is required.", purchaseSupplierValidationLabel);

@@ -24,7 +24,6 @@ import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
-import javafx.collections.WeakListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -73,15 +72,13 @@ public class ExpenseFormController implements Initializable {
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     // Combo box properties.
-    expenseFormBranch.setItems(BranchViewModel.branchesList);
-    BranchViewModel.branchesList.addListener(
-        new WeakListChangeListener<>(
-            c -> expenseFormBranch.setItems(BranchViewModel.branchesList)));
+    expenseFormBranch.setItems(BranchViewModel.getBranchesComboBoxList());
+    expenseFormBranch.setOnShowing(
+        e -> expenseFormBranch.setItems(BranchViewModel.getBranchesComboBoxList()));
 
-    expenseFormCategory.setItems(ExpenseCategoryViewModel.categoryList);
-    ExpenseCategoryViewModel.categoryList.addListener(
-        new WeakListChangeListener<>(
-            c -> expenseFormCategory.setItems(ExpenseCategoryViewModel.categoryList)));
+    expenseFormCategory.setItems(ExpenseCategoryViewModel.getCategoryComboBoxList());
+    expenseFormCategory.setOnShowing(
+        e -> expenseFormCategory.setItems(ExpenseCategoryViewModel.getCategoryComboBoxList()));
 
     // Set Object property as combo display name.
     expenseFormBranch.setConverter(

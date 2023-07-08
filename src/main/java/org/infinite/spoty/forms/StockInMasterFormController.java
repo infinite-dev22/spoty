@@ -28,7 +28,6 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
-import javafx.collections.WeakListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -96,10 +95,9 @@ public class StockInMasterFormController implements Initializable {
     stockInMasterNote.textProperty().bindBidirectional(StockInMasterViewModel.noteProperty());
 
     // ComboBox properties.
-    stockInMasterBranch.setItems(BranchViewModel.branchesList);
-    BranchViewModel.branchesList.addListener(
-        new WeakListChangeListener<>(
-            c -> stockInMasterBranch.setItems(BranchViewModel.branchesList)));
+    stockInMasterBranch.setItems(BranchViewModel.getBranchesComboBoxList());
+    stockInMasterBranch.setOnShowing(
+        e -> stockInMasterBranch.setItems(BranchViewModel.getBranchesComboBoxList()));
     stockInMasterBranch.setConverter(
         new StringConverter<>() {
           @Override

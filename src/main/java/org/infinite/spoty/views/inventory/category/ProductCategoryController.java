@@ -92,10 +92,7 @@ public class ProductCategoryController implements Initializable {
     categoryTable.setItems(ProductCategoryViewModel.categoriesList);
     ProductCategoryViewModel.categoriesList.addListener(
         new WeakListChangeListener<>(
-            c -> {
-              System.out.println("List changed...");
-              categoryTable.setItems(ProductCategoryViewModel.categoriesList);
-            }));
+            c -> categoryTable.setItems(ProductCategoryViewModel.categoriesList)));
   }
 
   private void getProductCategoryTable() {

@@ -36,6 +36,8 @@ public class ProductCategoryViewModel {
   private static final StringProperty name = new SimpleStringProperty("");
   public static ObservableList<ProductCategory> categoriesList =
       FXCollections.observableArrayList();
+  public static ObservableList<ProductCategory> categoriesComboBoxList =
+      FXCollections.observableArrayList();
 
   public static long getId() {
     return id.get();
@@ -222,5 +224,11 @@ public class ProductCategoryViewModel {
     Thread thread = new Thread(task);
     thread.setDaemon(true);
     thread.start();
+  }
+
+  public static ObservableList<ProductCategory> getCategoriesComboBoxList() {
+    categoriesComboBoxList.clear();
+    categoriesComboBoxList.addAll(categoriesList);
+    return categoriesComboBoxList;
   }
 }

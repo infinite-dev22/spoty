@@ -37,7 +37,6 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
-import javafx.collections.WeakListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -138,10 +137,9 @@ public class ProductMasterFormController implements Initializable {
         .selectedProperty()
         .bindBidirectional(ProductMasterViewModel.notForSaleProperty());
 
-    productFormCategory.setItems(ProductCategoryViewModel.categoriesList);
-    ProductCategoryViewModel.categoriesList.addListener(
-        new WeakListChangeListener<>(
-            c -> productFormCategory.setItems(ProductCategoryViewModel.categoriesList)));
+    productFormCategory.setItems(ProductCategoryViewModel.getCategoriesComboBoxList());
+    productFormCategory.setOnShowing(
+        e -> productFormCategory.setItems(ProductCategoryViewModel.getCategoriesComboBoxList()));
     productFormCategory.setConverter(
         new StringConverter<>() {
           @Override
@@ -156,9 +154,9 @@ public class ProductMasterFormController implements Initializable {
           }
         });
 
-    productFormBrand.setItems(BrandViewModel.brandsList);
-    BrandViewModel.brandsList.addListener(
-        new WeakListChangeListener<>(c -> productFormBrand.setItems(BrandViewModel.brandsList)));
+    productFormBrand.setItems(BrandViewModel.getBrandsComboBoxList());
+    productFormBrand.setOnShowing(
+        e -> productFormBrand.setItems(BrandViewModel.getBrandsComboBoxList()));
     productFormBrand.setConverter(
         new StringConverter<>() {
           @Override
@@ -276,8 +274,7 @@ public class ProductMasterFormController implements Initializable {
   public void productSaveBtnClicked() {
     SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
 
-    if (!productDetailTable.isDisabled()
-        && ProductDetailViewModel.productDetailsList.isEmpty()) {
+    if (!productDetailTable.isDisabled() && ProductDetailViewModel.productDetailsList.isEmpty()) {
       SimpleNotification notification =
           new SimpleNotification.NotificationBuilder("Table can't be Empty")
               .duration(NotificationDuration.SHORT)

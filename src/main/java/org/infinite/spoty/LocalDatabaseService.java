@@ -24,7 +24,6 @@ public class LocalDatabaseService extends Service<Void> {
     return new Task<>() {
       @Override
       protected Void call() {
-        System.out.println("Local DB Service starting...");
         AdjustmentMasterViewModel.getAdjustmentMasters();
         BranchViewModel.getBranches();
         BrandViewModel.getItems();
@@ -45,7 +44,6 @@ public class LocalDatabaseService extends Service<Void> {
         TransferMasterViewModel.getTransferMasters();
         UOMViewModel.getItems();
         UserViewModel.getUsers();
-        System.out.println("Local DB Service finished...");
         return null;
       }
     };

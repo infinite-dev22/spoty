@@ -99,8 +99,13 @@ public class AdjustmentMasterFormController implements Initializable {
         .textProperty()
         .bindBidirectional(AdjustmentMasterViewModel.idProperty(), new NumberStringConverter());
     adjustmentBranch.valueProperty().bindBidirectional(AdjustmentMasterViewModel.branchProperty());
-    adjustmentBranch.setItems(BranchViewModel.branchesList);
-    adjustmentBranch.setResetOnPopupHidden(true);
+    adjustmentDate.textProperty().bindBidirectional(AdjustmentMasterViewModel.dateProperty());
+    adjustmentNote.textProperty().bindBidirectional(AdjustmentMasterViewModel.noteProperty());
+
+    // combBox properties.
+    adjustmentBranch.setItems(BranchViewModel.getBranchesComboBoxList());
+    adjustmentBranch.setOnShowing(
+        e -> adjustmentBranch.setItems(BranchViewModel.getBranchesComboBoxList()));
     adjustmentBranch.setConverter(
         new StringConverter<>() {
           @Override
@@ -116,16 +121,9 @@ public class AdjustmentMasterFormController implements Initializable {
           }
         });
 
-    adjustmentDate.textProperty().bindBidirectional(AdjustmentMasterViewModel.dateProperty());
-    adjustmentNote.textProperty().bindBidirectional(AdjustmentMasterViewModel.noteProperty());
-
     // input validators.
     requiredValidator(adjustmentBranch, "Branch is required.", adjustmentBranchValidationLabel);
     requiredValidator(adjustmentDate, "Date is required.", adjustmentDateValidationLabel);
-
-    // Change Listeners.
-    BranchViewModel.branchesList.addListener(
-        new WeakListChangeListener<>(c -> adjustmentBranch.setItems(BranchViewModel.branchesList)));
 
     adjustmentAddProductBtnClicked();
     Platform.runLater(this::setupTable);

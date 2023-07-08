@@ -24,7 +24,6 @@ import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
-import javafx.collections.WeakListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -67,11 +66,8 @@ public class ProductDetailFormController implements Initializable {
     productVariantName.textProperty().bindBidirectional(ProductDetailViewModel.nameProperty());
 
     // ProductType combo box properties.
-    productVariantUOM.setItems(UOMViewModel.uomComboList);
-    productVariantUOM.setResetOnPopupHidden(true);
-    productVariantUOM.setAnimated(true);
-    UOMViewModel.uomComboList.addListener(
-        new WeakListChangeListener<>(c -> productVariantUOM.setItems(UOMViewModel.uomComboList)));
+    productVariantUOM.setItems(UOMViewModel.getUomComboBoxList());
+    productVariantUOM.setOnShowing(e -> productVariantUOM.setItems(UOMViewModel.getUomComboBoxList()));
     productVariantUOM.setConverter(
         new StringConverter<>() {
           @Override

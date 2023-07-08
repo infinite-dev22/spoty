@@ -24,7 +24,6 @@ import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
-import javafx.collections.WeakListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -69,10 +68,9 @@ public class TransferDetailFormController implements Initializable {
         .bindBidirectional(TransferDetailViewModel.descriptionProperty());
 
     // Combo box properties.
-    transferDetailPdct.setItems(ProductDetailViewModel.productDetailsList);
-    ProductDetailViewModel.productDetailsList.addListener(
-        new WeakListChangeListener<>(
-            c -> transferDetailPdct.setItems(ProductDetailViewModel.productDetailsList)));
+    transferDetailPdct.setItems(ProductDetailViewModel.getProductDetailsComboBoxList());
+    transferDetailPdct.setOnShowing(
+        e -> transferDetailPdct.setItems(ProductDetailViewModel.getProductDetailsComboBoxList()));
     transferDetailPdct.setConverter(
         new StringConverter<>() {
           @Override

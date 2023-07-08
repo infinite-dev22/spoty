@@ -32,6 +32,7 @@ public class CurrencyViewModel {
   private static final StringProperty name = new SimpleStringProperty("");
   private static final StringProperty symbol = new SimpleStringProperty("");
   public static ObservableList<Currency> currenciesList = FXCollections.observableArrayList();
+  public static ObservableList<Currency> currenciesComboBoxList = FXCollections.observableArrayList();
 
   public static long getId() {
     return id.get();
@@ -218,5 +219,11 @@ public class CurrencyViewModel {
     Thread thread = new Thread(task);
     thread.setDaemon(true);
     thread.start();
+  }
+
+  public static ObservableList<Currency> getCurrenciesComboBoxList() {
+    currenciesComboBoxList.clear();
+    currenciesComboBoxList.addAll(currenciesList);
+    return currenciesComboBoxList;
   }
 }

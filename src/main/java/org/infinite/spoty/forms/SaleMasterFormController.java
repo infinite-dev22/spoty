@@ -36,7 +36,6 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
-import javafx.collections.WeakListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -104,9 +103,9 @@ public class SaleMasterFormController implements Initializable {
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     // Set items to combo boxes and display custom text.
-    saleCustomer.setItems(CustomerViewModel.customersList);
-    CustomerViewModel.customersList.addListener(
-        new WeakListChangeListener<>(c -> saleCustomer.setItems(CustomerViewModel.customersList)));
+    saleCustomer.setItems(CustomerViewModel.getCustomersComboBoxList());
+    saleCustomer.setOnShowing(
+        e -> saleCustomer.setItems(CustomerViewModel.getCustomersComboBoxList()));
     saleCustomer.setConverter(
         new StringConverter<>() {
           @Override
@@ -121,9 +120,8 @@ public class SaleMasterFormController implements Initializable {
           }
         });
 
-    saleBranch.setItems(BranchViewModel.branchesList);
-    BranchViewModel.branchesList.addListener(
-        new WeakListChangeListener<>(c -> saleBranch.setItems(BranchViewModel.branchesList)));
+    saleBranch.setItems(BranchViewModel.getBranchesComboBoxList());
+    saleBranch.setOnShowing(e -> saleBranch.setItems(BranchViewModel.getBranchesComboBoxList()));
     saleBranch.setConverter(
         new StringConverter<>() {
           @Override

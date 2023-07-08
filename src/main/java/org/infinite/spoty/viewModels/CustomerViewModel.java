@@ -31,6 +31,8 @@ import org.infinite.spoty.database.models.Customer;
 
 public class CustomerViewModel {
   public static final ObservableList<Customer> customersList = FXCollections.observableArrayList();
+  public static final ObservableList<Customer> customersComboBoxList =
+      FXCollections.observableArrayList();
   private static final LongProperty id = new SimpleLongProperty(0);
   private static final StringProperty name = new SimpleStringProperty("");
   private static final StringProperty code = new SimpleStringProperty("");
@@ -313,5 +315,11 @@ public class CustomerViewModel {
     Thread thread = new Thread(task);
     thread.setDaemon(true);
     thread.start();
+  }
+
+  public static ObservableList<Customer> getCustomersComboBoxList() {
+    customersComboBoxList.clear();
+    customersComboBoxList.addAll(customersList);
+    return customersComboBoxList;
   }
 }

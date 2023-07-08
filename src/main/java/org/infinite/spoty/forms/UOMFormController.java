@@ -99,9 +99,9 @@ public class UOMFormController implements Initializable {
             });
 
     // ComboBox properties.
-    uomFormBaseUnit.setItems(UOMViewModel.uomComboList);
-    UOMViewModel.uomComboList.addListener(
-        new WeakListChangeListener<>(c -> uomFormBaseUnit.setItems(UOMViewModel.uomComboList)));
+    uomFormBaseUnit.setItems(UOMViewModel.uomComboBoxList);
+    UOMViewModel.uomComboBoxList.addListener(
+        new WeakListChangeListener<>(c -> uomFormBaseUnit.setItems(UOMViewModel.uomComboBoxList)));
     uomFormBaseUnit.setConverter(
         new StringConverter<>() {
           @Override

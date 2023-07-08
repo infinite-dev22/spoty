@@ -26,7 +26,6 @@ import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
-import javafx.collections.WeakListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -121,9 +120,9 @@ public class UserFormController implements Initializable {
           }
         });
 
-    userFormBranch.setItems(BranchViewModel.branchesList);
-    BranchViewModel.branchesList.addListener(
-        new WeakListChangeListener<>(c -> userFormBranch.setItems(BranchViewModel.branchesList)));
+    userFormBranch.setItems(BranchViewModel.getBranchesComboBoxList());
+    userFormBranch.setOnShowing(
+        e -> userFormBranch.setItems(BranchViewModel.getBranchesComboBoxList()));
     userFormBranch.setConverter(
         new StringConverter<>() {
           @Override

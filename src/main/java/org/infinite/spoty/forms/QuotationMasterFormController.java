@@ -29,7 +29,6 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
-import javafx.collections.WeakListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -107,10 +106,9 @@ public class QuotationMasterFormController implements Initializable {
     quotationNote.textProperty().bindBidirectional(QuotationMasterViewModel.noteProperty());
 
     // Combo box properties.
-    quotationCustomer.setItems(CustomerViewModel.customersList);
-    CustomerViewModel.customersList.addListener(
-        new WeakListChangeListener<>(
-            c -> quotationCustomer.setItems(CustomerViewModel.customersList)));
+    quotationCustomer.setItems(CustomerViewModel.getCustomersComboBoxList());
+    quotationCustomer.setOnShowing(
+        e -> quotationCustomer.setItems(CustomerViewModel.getCustomersComboBoxList()));
     quotationCustomer.setConverter(
         new StringConverter<>() {
           @Override
@@ -124,9 +122,9 @@ public class QuotationMasterFormController implements Initializable {
             return null;
           }
         });
-    quotationBranch.setItems(BranchViewModel.branchesList);
-    BranchViewModel.branchesList.addListener(
-        new WeakListChangeListener<>(c -> quotationBranch.setItems(BranchViewModel.branchesList)));
+    quotationBranch.setItems(BranchViewModel.getBranchesComboBoxList());
+    quotationBranch.setOnShowing(
+        e -> quotationBranch.setItems(BranchViewModel.getBranchesComboBoxList()));
     quotationBranch.setConverter(
         new StringConverter<>() {
           @Override

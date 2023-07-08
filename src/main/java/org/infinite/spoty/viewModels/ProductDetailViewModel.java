@@ -31,6 +31,8 @@ import org.infinite.spoty.database.models.*;
 public class ProductDetailViewModel {
   public static final ObservableList<ProductDetail> productDetailsList =
       FXCollections.observableArrayList();
+  public static final ObservableList<ProductDetail> productDetailsComboBoxList =
+      FXCollections.observableArrayList();
   private static final LongProperty id = new SimpleLongProperty(0);
   private static final ObjectProperty<ProductMaster> product = new SimpleObjectProperty<>(null);
   private static final ListProperty<Branch> branches = new SimpleListProperty<>(null);
@@ -423,5 +425,11 @@ public class ProductDetailViewModel {
     Thread thread = new Thread(task);
     thread.setDaemon(true);
     thread.start();
+  }
+
+  public static ObservableList<ProductDetail> getProductDetailsComboBoxList() {
+    productDetailsComboBoxList.clear();
+    productDetailsComboBoxList.addAll(productDetailsList);
+    return productDetailsComboBoxList;
   }
 }

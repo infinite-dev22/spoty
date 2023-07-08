@@ -53,7 +53,9 @@ public class SystemController implements Initializable {
     // Input listeners.
     // Input bindings.
     // Combo box properties.
-    defaultCurrency.setItems(CurrencyViewModel.currenciesList);
+    defaultCurrency.setItems(CurrencyViewModel.getCurrenciesComboBoxList());
+    defaultCurrency.setOnShowing(
+        e -> defaultCurrency.setItems(CurrencyViewModel.getCurrenciesComboBoxList()));
     defaultCurrency.setConverter(
         new StringConverter<>() {
           @Override
@@ -67,7 +69,10 @@ public class SystemController implements Initializable {
             return null;
           }
         });
-    defaultBranch.setItems(BranchViewModel.branchesList);
+
+    defaultBranch.setItems(BranchViewModel.getBranchesComboBoxList());
+    defaultBranch.setOnShowing(
+        e -> defaultBranch.setItems(BranchViewModel.getBranchesComboBoxList()));
     defaultBranch.setConverter(
         new StringConverter<>() {
           @Override

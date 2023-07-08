@@ -24,7 +24,6 @@ import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
-import javafx.collections.WeakListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -69,10 +68,9 @@ public class StockInDetailFormController implements Initializable {
         .bindBidirectional(StockInDetailViewModel.descriptionProperty());
 
     // Combo box properties.
-    stockInDetailPdct.setItems(ProductDetailViewModel.productDetailsList);
-    ProductDetailViewModel.productDetailsList.addListener(
-        new WeakListChangeListener<>(
-            c -> stockInDetailPdct.setItems(ProductDetailViewModel.productDetailsList)));
+    stockInDetailPdct.setItems(ProductDetailViewModel.getProductDetailsComboBoxList());
+    stockInDetailPdct.setOnShowing(
+        e -> stockInDetailPdct.setItems(ProductDetailViewModel.getProductDetailsComboBoxList()));
     stockInDetailPdct.setConverter(
         new StringConverter<>() {
           @Override

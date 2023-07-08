@@ -24,7 +24,6 @@ import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
-import javafx.collections.WeakListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -63,10 +62,9 @@ public class SaleDetailFormController implements Initializable {
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     // Set combo box options.
-    saleDetailPdct.setItems(ProductDetailViewModel.productDetailsList);
-    ProductDetailViewModel.productDetailsList.addListener(
-        new WeakListChangeListener<>(
-            c -> saleDetailPdct.setItems(ProductDetailViewModel.productDetailsList)));
+    saleDetailPdct.setItems(ProductDetailViewModel.getProductDetailsComboBoxList());
+    saleDetailPdct.setOnShowing(
+        e -> saleDetailPdct.setItems(ProductDetailViewModel.getProductDetailsComboBoxList()));
     saleDetailPdct.setConverter(
         new StringConverter<>() {
           @Override

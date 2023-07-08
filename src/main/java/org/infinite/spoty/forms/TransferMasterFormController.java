@@ -35,7 +35,6 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
-import javafx.collections.WeakListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -110,10 +109,9 @@ public class TransferMasterFormController implements Initializable {
     transferMasterNote.textProperty().bindBidirectional(TransferMasterViewModel.noteProperty());
 
     // ComboBox properties.
-    transferMasterFromBranch.setItems(BranchViewModel.branchesList);
-    BranchViewModel.branchesList.addListener(
-        new WeakListChangeListener<>(
-            c -> transferMasterFromBranch.setItems(BranchViewModel.branchesList)));
+    transferMasterFromBranch.setItems(BranchViewModel.getBranchesComboBoxList());
+    transferMasterFromBranch.setOnShowing(
+        e -> transferMasterFromBranch.setItems(BranchViewModel.getBranchesComboBoxList()));
     transferMasterFromBranch.setConverter(
         new StringConverter<>() {
           @Override
@@ -128,10 +126,9 @@ public class TransferMasterFormController implements Initializable {
           }
         });
 
-    transferMasterToBranch.setItems(BranchViewModel.branchesList);
-    BranchViewModel.branchesList.addListener(
-        new WeakListChangeListener<>(
-            c -> transferMasterToBranch.setItems(BranchViewModel.branchesList)));
+    transferMasterToBranch.setItems(BranchViewModel.getBranchesComboBoxList());
+    transferMasterToBranch.setOnShowing(
+        e -> transferMasterToBranch.setItems(BranchViewModel.getBranchesComboBoxList()));
     transferMasterToBranch.setConverter(
         new StringConverter<>() {
           @Override
