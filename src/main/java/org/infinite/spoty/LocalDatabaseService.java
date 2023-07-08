@@ -14,40 +14,40 @@
 
 package org.infinite.spoty;
 
-import javafx.concurrent.ScheduledService;
+import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import org.infinite.spoty.viewModels.*;
 
-public class LocalDatabaseService extends ScheduledService<Void> {
+public class LocalDatabaseService extends Service<Void> {
   @Override
   protected Task<Void> createTask() {
-    return new LocalDatabaseTask();
-  }
-
-  private static class LocalDatabaseTask extends Task<Void> {
-    @Override
-    protected Void call() {
-      AdjustmentMasterViewModel.getAdjustmentMasters();
-      BranchViewModel.getBranches();
-      BrandViewModel.getItems();
-      CurrencyViewModel.getCurrencies();
-      CustomerViewModel.getCustomers();
-      ExpenseCategoryViewModel.getCategories();
-      ExpenseViewModel.getExpenses();
-      ProductCategoryViewModel.getItems();
-      ProductMasterViewModel.getProductMasters();
-      PurchaseMasterViewModel.getPurchaseMasters();
-      PurchaseReturnMasterViewModel.getPurchaseReturnMasters();
-      QuotationMasterViewModel.getQuotationMasters();
-      RequisitionMasterViewModel.getRequisitionMasters();
-      SaleMasterViewModel.getSaleMasters();
-      SaleReturnMasterViewModel.getSaleReturnMasters();
-      StockInMasterViewModel.getStockInMasters();
-      SupplierViewModel.getSuppliers();
-      TransferMasterViewModel.getTransferMasters();
-      UOMViewModel.getItems();
-      UserViewModel.getUsers();
-      return null;
-    }
+    return new Task<>() {
+      @Override
+      protected Void call() {
+        System.out.println("Local DB Service starting...");
+        AdjustmentMasterViewModel.getAdjustmentMasters();
+        BranchViewModel.getBranches();
+        BrandViewModel.getItems();
+        CurrencyViewModel.getCurrencies();
+        CustomerViewModel.getCustomers();
+        ExpenseCategoryViewModel.getCategories();
+        ExpenseViewModel.getExpenses();
+        ProductCategoryViewModel.getItems();
+        ProductMasterViewModel.getProductMasters();
+        PurchaseMasterViewModel.getPurchaseMasters();
+        PurchaseReturnMasterViewModel.getPurchaseReturnMasters();
+        QuotationMasterViewModel.getQuotationMasters();
+        RequisitionMasterViewModel.getRequisitionMasters();
+        SaleMasterViewModel.getSaleMasters();
+        SaleReturnMasterViewModel.getSaleReturnMasters();
+        StockInMasterViewModel.getStockInMasters();
+        SupplierViewModel.getSuppliers();
+        TransferMasterViewModel.getTransferMasters();
+        UOMViewModel.getItems();
+        UserViewModel.getUsers();
+        System.out.println("Local DB Service finished...");
+        return null;
+      }
+    };
   }
 }
