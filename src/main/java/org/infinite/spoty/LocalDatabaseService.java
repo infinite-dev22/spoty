@@ -14,11 +14,11 @@
 
 package org.infinite.spoty;
 
-import javafx.concurrent.ScheduledService;
+import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import org.infinite.spoty.viewModels.*;
 
-public class LocalDatabaseService extends ScheduledService<Void> {
+public class LocalDatabaseService extends Service<Void> {
   @Override
   protected Task<Void> createTask() {
     return new Task<>() {

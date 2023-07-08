@@ -36,7 +36,6 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.util.Duration;
 import org.infinite.spoty.LocalDatabaseService;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.database.management.SQLiteTableCreator;
@@ -73,7 +72,6 @@ public class SplashScreenController implements Initializable {
     }
 
     LocalDatabaseService service = new LocalDatabaseService();
-    service.setPeriod(Duration.seconds(5));
     service.start();
 
     Platform.runLater(
