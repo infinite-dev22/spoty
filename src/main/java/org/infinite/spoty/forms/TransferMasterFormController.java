@@ -35,7 +35,6 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
-import javafx.collections.WeakListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -76,6 +75,7 @@ public class TransferMasterFormController implements Initializable {
   @FXML public Label transferMasterDateValidationLabel;
   @FXML public Label transferMasterToBranchValidationLabel;
   @FXML public Label transferMasterFromBranchValidationLabel;
+  @FXML public MFXButton transferMasterSaveBtn;
   private Dialog<ButtonType> dialog;
 
   private TransferMasterFormController(Stage stage) {
@@ -110,10 +110,9 @@ public class TransferMasterFormController implements Initializable {
     transferMasterNote.textProperty().bindBidirectional(TransferMasterViewModel.noteProperty());
 
     // ComboBox properties.
-    transferMasterFromBranch.setItems(BranchViewModel.branchesList);
-    BranchViewModel.branchesList.addListener(
-        new WeakListChangeListener<>(
-            c -> transferMasterFromBranch.setItems(BranchViewModel.branchesList)));
+    transferMasterFromBranch.setItems(BranchViewModel.getBranchesComboBoxList());
+    transferMasterFromBranch.setOnShowing(
+        e -> transferMasterFromBranch.setItems(BranchViewModel.getBranchesComboBoxList()));
     transferMasterFromBranch.setConverter(
         new StringConverter<>() {
           @Override
@@ -128,10 +127,9 @@ public class TransferMasterFormController implements Initializable {
           }
         });
 
-    transferMasterToBranch.setItems(BranchViewModel.branchesList);
-    BranchViewModel.branchesList.addListener(
-        new WeakListChangeListener<>(
-            c -> transferMasterToBranch.setItems(BranchViewModel.branchesList)));
+    transferMasterToBranch.setItems(BranchViewModel.getBranchesComboBoxList());
+    transferMasterToBranch.setOnShowing(
+        e -> transferMasterToBranch.setItems(BranchViewModel.getBranchesComboBoxList()));
     transferMasterToBranch.setConverter(
         new StringConverter<>() {
           @Override
@@ -150,12 +148,18 @@ public class TransferMasterFormController implements Initializable {
     requiredValidator(
         transferMasterToBranch,
         "Receiving branch is required.",
-        transferMasterToBranchValidationLabel);
+        transferMasterToBranchValidationLabel,
+        transferMasterSaveBtn);
     requiredValidator(
         transferMasterFromBranch,
         "Supplying branch is required.",
-        transferMasterFromBranchValidationLabel);
-    requiredValidator(transferMasterDate, "Date is required.", transferMasterDateValidationLabel);
+        transferMasterFromBranchValidationLabel,
+        transferMasterSaveBtn);
+    requiredValidator(
+        transferMasterDate,
+        "Date is required.",
+        transferMasterDateValidationLabel,
+        transferMasterSaveBtn);
 
     transferMasterAddProductBtnClicked();
 
@@ -184,7 +188,7 @@ public class TransferMasterFormController implements Initializable {
             new StringFilter<>("Name", TransferDetail::getProductDetailName),
             new LongFilter<>("Quantity", TransferDetail::getQuantity));
     getTransferDetailTable();
-    transferDetailTable.setItems(TransferDetailViewModel.transferDetailsList);
+    transferDetailTable.setItems(TransferDetailViewModel.getTransferDetailsList());
   }
 
   private void getTransferDetailTable() {

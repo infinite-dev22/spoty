@@ -94,10 +94,10 @@ public class ExpenseCategoryController implements Initializable {
             new StringFilter<>("Description", ExpenseCategory::getDescription));
 
     styleExpenseCategoryTable();
-    categoryExpenseTable.setItems(ExpenseCategoryViewModel.categoryList);
+    categoryExpenseTable.setItems(ExpenseCategoryViewModel.getCategoryList());
     ExpenseCategoryViewModel.categoryList.addListener(
         new WeakListChangeListener<>(
-            c -> categoryExpenseTable.setItems(ExpenseCategoryViewModel.categoryList)));
+            c -> categoryExpenseTable.setItems(ExpenseCategoryViewModel.getCategoryList())));
   }
 
   private void styleExpenseCategoryTable() {

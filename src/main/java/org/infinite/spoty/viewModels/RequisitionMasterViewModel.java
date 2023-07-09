@@ -232,7 +232,7 @@ public class RequisitionMasterViewModel {
               RequisitionDetailViewModel.requisitionDetailList.forEach(
                   requisitionDetail -> requisitionDetail.setRequisition(requisitionMaster));
               requisitionMaster.setRequisitionDetails(
-                  RequisitionDetailViewModel.requisitionDetailList);
+                  RequisitionDetailViewModel.getRequisitionDetailList());
             }
 
             requisitionMasterDao.create(requisitionMaster);
@@ -342,7 +342,7 @@ public class RequisitionMasterViewModel {
 
             RequisitionDetailViewModel.deleteRequisitionDetails(PENDING_DELETES);
             requisitionMaster.setRequisitionDetails(
-                RequisitionDetailViewModel.requisitionDetailList);
+                RequisitionDetailViewModel.getRequisitionDetailList());
 
             requisitionMasterDao.update(requisitionMaster);
 
@@ -377,5 +377,9 @@ public class RequisitionMasterViewModel {
     Thread thread = new Thread(task);
     thread.setDaemon(true);
     thread.start();
+  }
+
+  public static ObservableList<RequisitionMaster> getRequisitionMasterList() {
+    return requisitionMasterList;
   }
 }

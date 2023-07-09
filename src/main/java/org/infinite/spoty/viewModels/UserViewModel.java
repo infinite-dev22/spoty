@@ -359,4 +359,8 @@ public class UserViewModel {
     thread.setDaemon(true);
     thread.start();
   }
+
+  public static ObservableList<User> getUsersList() {
+    return usersList;
+  }
 }

@@ -74,6 +74,7 @@ public class RequisitionMasterFormController implements Initializable {
   @FXML public Label requisitionMasterBranchValidationLabel;
   @FXML public Label requisitionMasterSupplierValidationLabel;
   @FXML public Label requisitionMasterDateValidationLabel;
+  @FXML public MFXButton requisitionMasterSaveBtn;
   private Dialog<ButtonType> dialog;
 
   private RequisitionMasterFormController(Stage stage) {
@@ -121,10 +122,9 @@ public class RequisitionMasterFormController implements Initializable {
         .bindBidirectional(RequisitionMasterViewModel.noteProperty());
 
     // ComboBox properties.
-    requisitionMasterBranch.setItems(BranchViewModel.branchesList);
-    BranchViewModel.branchesList.addListener(
-        new WeakListChangeListener<>(
-            c -> requisitionMasterBranch.setItems(BranchViewModel.branchesList)));
+    requisitionMasterBranch.setItems(BranchViewModel.getBranchesComboBoxList());
+    requisitionMasterBranch.setOnShowing(
+        e -> requisitionMasterBranch.setItems(BranchViewModel.getBranchesComboBoxList()));
     requisitionMasterBranch.setConverter(
         new StringConverter<>() {
           @Override
@@ -139,10 +139,10 @@ public class RequisitionMasterFormController implements Initializable {
           }
         });
 
-    requisitionMasterSupplier.setItems(SupplierViewModel.suppliersList);
+    requisitionMasterSupplier.setItems(SupplierViewModel.getSuppliersList());
     SupplierViewModel.suppliersList.addListener(
         new WeakListChangeListener<>(
-            c -> requisitionMasterSupplier.setItems(SupplierViewModel.suppliersList)));
+            c -> requisitionMasterSupplier.setItems(SupplierViewModel.getSuppliersList())));
     requisitionMasterSupplier.setConverter(
         new StringConverter<>() {
           @Override
@@ -159,13 +159,20 @@ public class RequisitionMasterFormController implements Initializable {
 
     // input validators.
     requiredValidator(
-        requisitionMasterBranch, "Branch is required.", requisitionMasterBranchValidationLabel);
+        requisitionMasterBranch,
+        "Branch is required.",
+        requisitionMasterBranchValidationLabel,
+        requisitionMasterSaveBtn);
     requiredValidator(
         requisitionMasterSupplier,
         "Supplier is required.",
-        requisitionMasterSupplierValidationLabel);
+        requisitionMasterSupplierValidationLabel,
+        requisitionMasterSaveBtn);
     requiredValidator(
-        requisitionMasterDate, "Date is required.", requisitionMasterDateValidationLabel);
+        requisitionMasterDate,
+        "Date is required.",
+        requisitionMasterDateValidationLabel,
+        requisitionMasterSaveBtn);
 
     requisitionMasterAddProductBtnClicked();
 
@@ -195,7 +202,7 @@ public class RequisitionMasterFormController implements Initializable {
             new StringFilter<>("Name", RequisitionDetail::getProductDetailName),
             new LongFilter<>("Quantity", RequisitionDetail::getQuantity));
     getRequisitionDetailTable();
-    requisitionDetailTable.setItems(RequisitionDetailViewModel.requisitionDetailList);
+    requisitionDetailTable.setItems(RequisitionDetailViewModel.getRequisitionDetailList());
   }
 
   private void getRequisitionDetailTable() {

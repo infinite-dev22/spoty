@@ -24,7 +24,6 @@ import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
-import javafx.collections.WeakListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -69,10 +68,9 @@ public class StockInDetailFormController implements Initializable {
         .bindBidirectional(StockInDetailViewModel.descriptionProperty());
 
     // Combo box properties.
-    stockInDetailPdct.setItems(ProductDetailViewModel.productDetailsList);
-    ProductDetailViewModel.productDetailsList.addListener(
-        new WeakListChangeListener<>(
-            c -> stockInDetailPdct.setItems(ProductDetailViewModel.productDetailsList)));
+    stockInDetailPdct.setItems(ProductDetailViewModel.getProductDetailsComboBoxList());
+    stockInDetailPdct.setOnShowing(
+        e -> stockInDetailPdct.setItems(ProductDetailViewModel.getProductDetailsComboBoxList()));
     stockInDetailPdct.setConverter(
         new StringConverter<>() {
           @Override
@@ -95,8 +93,16 @@ public class StockInDetailFormController implements Initializable {
         });
 
     // Input validators.
-    requiredValidator(stockInDetailPdct, "Product is required.", stockInDetailPdctValidationLabel);
-    requiredValidator(stockInDetailQnty, "Quantity is required.", stockInDetailQntyValidationLabel);
+    requiredValidator(
+        stockInDetailPdct,
+        "Product is required.",
+        stockInDetailPdctValidationLabel,
+        stockInDetailSaveBtn);
+    requiredValidator(
+        stockInDetailQnty,
+        "Quantity is required.",
+        stockInDetailQntyValidationLabel,
+        stockInDetailSaveBtn);
 
     dialogOnActions();
   }
@@ -130,7 +136,7 @@ public class StockInDetailFormController implements Initializable {
               stockInDetailPdct.clearSelection();
               StockInMasterFormController.getInstance(stage)
                   .stockInDetailTable
-                  .setItems(StockInDetailViewModel.stockInDetailsList);
+                  .setItems(StockInDetailViewModel.getStockInDetailsList());
 
               closeDialog(e);
               return;
@@ -148,7 +154,7 @@ public class StockInDetailFormController implements Initializable {
             stockInDetailPdct.clearSelection();
             StockInMasterFormController.getInstance(stage)
                 .stockInDetailTable
-                .setItems(StockInDetailViewModel.stockInDetailsList);
+                .setItems(StockInDetailViewModel.getStockInDetailsList());
 
             closeDialog(e);
             return;

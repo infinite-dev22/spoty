@@ -99,9 +99,9 @@ public class UOMFormController implements Initializable {
             });
 
     // ComboBox properties.
-    uomFormBaseUnit.setItems(UOMViewModel.uomComboList);
-    UOMViewModel.uomComboList.addListener(
-        new WeakListChangeListener<>(c -> uomFormBaseUnit.setItems(UOMViewModel.uomComboList)));
+    uomFormBaseUnit.setItems(UOMViewModel.uomComboBoxList);
+    UOMViewModel.uomComboBoxList.addListener(
+        new WeakListChangeListener<>(c -> uomFormBaseUnit.setItems(UOMViewModel.uomComboBoxList)));
     uomFormBaseUnit.setConverter(
         new StringConverter<>() {
           @Override
@@ -117,12 +117,19 @@ public class UOMFormController implements Initializable {
         });
 
     // Input validators.
-    requiredValidator(uomFormName, "Name is required.", uomFormNameValidationLabel);
+    requiredValidator(uomFormName, "Name is required.", uomFormNameValidationLabel, uomFormSaveBtn);
     requiredValidator(
-        uomFormShortName, "Short name field is required.", uomFormShortNameValidationLabel);
-    requiredValidator(uomFormOperator, "Operator is required.", uomFormOperatorValidationLabel);
+        uomFormShortName,
+        "Short name field is required.",
+        uomFormShortNameValidationLabel,
+        uomFormSaveBtn);
     requiredValidator(
-        uomFormOperatorValue, "Operator value is required.", uomFormOperatorValueValidationLabel);
+        uomFormOperator, "Operator is required.", uomFormOperatorValidationLabel, uomFormSaveBtn);
+    requiredValidator(
+        uomFormOperatorValue,
+        "Operator value is required.",
+        uomFormOperatorValueValidationLabel,
+        uomFormSaveBtn);
 
     setUomFormDialogOnActions();
   }
@@ -160,7 +167,9 @@ public class UOMFormController implements Initializable {
               notificationHolder.addNotification(notification);
 
               uomFormBaseUnit.clearSelection();
-              UnitOfMeasureController.getInstance(stage).uomTable.setItems(UOMViewModel.uomList);
+              UnitOfMeasureController.getInstance(stage)
+                  .uomTable
+                  .setItems(UOMViewModel.getUomList());
 
               closeDialog(e);
               return;
@@ -176,7 +185,7 @@ public class UOMFormController implements Initializable {
             notificationHolder.addNotification(notification);
 
             uomFormBaseUnit.clearSelection();
-            UnitOfMeasureController.getInstance(stage).uomTable.setItems(UOMViewModel.uomList);
+            UnitOfMeasureController.getInstance(stage).uomTable.setItems(UOMViewModel.getUomList());
 
             closeDialog(e);
             return;

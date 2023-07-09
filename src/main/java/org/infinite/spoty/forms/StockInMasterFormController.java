@@ -28,7 +28,6 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
-import javafx.collections.WeakListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -67,6 +66,7 @@ public class StockInMasterFormController implements Initializable {
   @FXML public MFXButton stockInMasterProductAddBtn;
   @FXML public Label stockInMasterDateValidationLabel;
   @FXML public Label stockInMasterBranchValidationLabel;
+  public MFXButton stockInMasterSaveBtn;
   private Dialog<ButtonType> dialog;
 
   private StockInMasterFormController(Stage stage) {
@@ -96,10 +96,9 @@ public class StockInMasterFormController implements Initializable {
     stockInMasterNote.textProperty().bindBidirectional(StockInMasterViewModel.noteProperty());
 
     // ComboBox properties.
-    stockInMasterBranch.setItems(BranchViewModel.branchesList);
-    BranchViewModel.branchesList.addListener(
-        new WeakListChangeListener<>(
-            c -> stockInMasterBranch.setItems(BranchViewModel.branchesList)));
+    stockInMasterBranch.setItems(BranchViewModel.getBranchesComboBoxList());
+    stockInMasterBranch.setOnShowing(
+        e -> stockInMasterBranch.setItems(BranchViewModel.getBranchesComboBoxList()));
     stockInMasterBranch.setConverter(
         new StringConverter<>() {
           @Override
@@ -116,8 +115,15 @@ public class StockInMasterFormController implements Initializable {
 
     // input validators.
     requiredValidator(
-        stockInMasterBranch, "Branch is required.", stockInMasterBranchValidationLabel);
-    requiredValidator(stockInMasterDate, "Date is required.", stockInMasterDateValidationLabel);
+        stockInMasterBranch,
+        "Branch is required.",
+        stockInMasterBranchValidationLabel,
+        stockInMasterSaveBtn);
+    requiredValidator(
+        stockInMasterDate,
+        "Date is required.",
+        stockInMasterDateValidationLabel,
+        stockInMasterSaveBtn);
 
     stockInMasterAddProductBtnClicked();
 
@@ -145,7 +151,7 @@ public class StockInMasterFormController implements Initializable {
             new StringFilter<>("Name", StockInDetail::getProductDetailName),
             new LongFilter<>("Quantity", StockInDetail::getQuantity));
     getStockInDetailTable();
-    stockInDetailTable.setItems(StockInDetailViewModel.stockInDetailsList);
+    stockInDetailTable.setItems(StockInDetailViewModel.getStockInDetailsList());
   }
 
   private void getStockInDetailTable() {

@@ -155,4 +155,8 @@ public class PurchaseReturnMasterViewModel {
     thread.setDaemon(true);
     thread.start();
   }
+
+  public static ObservableList<PurchaseReturnMaster> getPurchaseReturnMasterList() {
+    return purchaseReturnMasterList;
+  }
 }

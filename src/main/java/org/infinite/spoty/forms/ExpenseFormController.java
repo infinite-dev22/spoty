@@ -24,7 +24,6 @@ import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
-import javafx.collections.WeakListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -72,16 +71,25 @@ public class ExpenseFormController implements Initializable {
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-    // Combo box properties.
-    expenseFormBranch.setItems(BranchViewModel.branchesList);
-    BranchViewModel.branchesList.addListener(
-        new WeakListChangeListener<>(
-            c -> expenseFormBranch.setItems(BranchViewModel.branchesList)));
+    // Form Bindings.
+    expenseID
+        .textProperty()
+        .bindBidirectional(ExpenseViewModel.idProperty(), new NumberStringConverter());
+    expenseFormName.textProperty().bindBidirectional(ExpenseViewModel.nameProperty());
+    expenseFormDate.textProperty().bindBidirectional(ExpenseViewModel.dateProperty());
+    expenseFormBranch.valueProperty().bindBidirectional(ExpenseViewModel.branchProperty());
+    expenseFormCategory.valueProperty().bindBidirectional(ExpenseViewModel.categoryProperty());
+    expenseFormAmount.textProperty().bindBidirectional(ExpenseViewModel.amountProperty());
+    expenseFormDetails.textProperty().bindBidirectional(ExpenseViewModel.detailsProperty());
 
-    expenseFormCategory.setItems(ExpenseCategoryViewModel.categoryList);
-    ExpenseCategoryViewModel.categoryList.addListener(
-        new WeakListChangeListener<>(
-            c -> expenseFormCategory.setItems(ExpenseCategoryViewModel.categoryList)));
+    // Combo box properties.
+    expenseFormBranch.setItems(BranchViewModel.getBranchesComboBoxList());
+    expenseFormBranch.setOnShowing(
+        e -> expenseFormBranch.setItems(BranchViewModel.getBranchesComboBoxList()));
+
+    expenseFormCategory.setItems(ExpenseCategoryViewModel.getCategoryComboBoxList());
+    expenseFormCategory.setOnShowing(
+        e -> expenseFormCategory.setItems(ExpenseCategoryViewModel.getCategoryComboBoxList()));
 
     // Set Object property as combo display name.
     expenseFormBranch.setConverter(
@@ -110,24 +118,27 @@ public class ExpenseFormController implements Initializable {
             return null;
           }
         });
-    // Form Bindings.
-    expenseID
-        .textProperty()
-        .bindBidirectional(ExpenseViewModel.idProperty(), new NumberStringConverter());
-    expenseFormName.textProperty().bindBidirectional(ExpenseViewModel.nameProperty());
-    expenseFormDate.textProperty().bindBidirectional(ExpenseViewModel.dateProperty());
-    expenseFormBranch.valueProperty().bindBidirectional(ExpenseViewModel.branchProperty());
-    expenseFormCategory.valueProperty().bindBidirectional(ExpenseViewModel.categoryProperty());
-    expenseFormAmount.textProperty().bindBidirectional(ExpenseViewModel.amountProperty());
-    expenseFormDetails.textProperty().bindBidirectional(ExpenseViewModel.detailsProperty());
+
     // Input listeners.
-    requiredValidator(expenseFormName, "Name is required.", expenseFormNameValidationLabel);
-    requiredValidator(expenseFormDate, "Date is required.", expenseFormDateValidationLabel);
-    requiredValidator(expenseFormBranch, "Branch is required.", expenseFormBranchValidationLabel);
     requiredValidator(
-        expenseFormCategory, "Category is required.", expenseFormCategoryValidationLabel);
+        expenseFormName, "Name is required.", expenseFormNameValidationLabel, expenseFormSaveBtn);
     requiredValidator(
-        expenseFormAmount, "Amount can't be empty.", expenseFormAmountValidationLabel);
+        expenseFormDate, "Date is required.", expenseFormDateValidationLabel, expenseFormSaveBtn);
+    requiredValidator(
+        expenseFormBranch,
+        "Branch is required.",
+        expenseFormBranchValidationLabel,
+        expenseFormSaveBtn);
+    requiredValidator(
+        expenseFormCategory,
+        "Category is required.",
+        expenseFormCategoryValidationLabel,
+        expenseFormSaveBtn);
+    requiredValidator(
+        expenseFormAmount,
+        "Amount can't be empty.",
+        expenseFormAmountValidationLabel,
+        expenseFormSaveBtn);
     dialogOnActions();
   }
 
@@ -169,7 +180,7 @@ public class ExpenseFormController implements Initializable {
 
               ExpenseController.getInstance(stage)
                   .expenseTable
-                  .setItems(ExpenseViewModel.expenseList);
+                  .setItems(ExpenseViewModel.getExpenseList());
 
               closeDialog(e);
               return;
@@ -189,7 +200,7 @@ public class ExpenseFormController implements Initializable {
 
             ExpenseController.getInstance(stage)
                 .expenseTable
-                .setItems(ExpenseViewModel.expenseList);
+                .setItems(ExpenseViewModel.getExpenseList());
 
             closeDialog(e);
             return;

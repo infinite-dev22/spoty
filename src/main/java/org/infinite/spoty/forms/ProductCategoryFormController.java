@@ -66,9 +66,15 @@ public class ProductCategoryFormController implements Initializable {
     dialogCategoryName.textProperty().bindBidirectional(ProductCategoryViewModel.nameProperty());
     // Input validators.
     requiredValidator(
-        dialogCategoryCode, "Name field is required.", dialogCategoryCodeValidationLabel);
+        dialogCategoryCode,
+        "Name field is required.",
+        dialogCategoryCodeValidationLabel,
+        dialogSaveBtn);
     requiredValidator(
-        dialogCategoryName, "Name field is required.", dialogCategoryNameValidationLabel);
+        dialogCategoryName,
+        "Name field is required.",
+        dialogCategoryNameValidationLabel,
+        dialogSaveBtn);
     dialogOnActions();
   }
 
@@ -97,7 +103,9 @@ public class ProductCategoryFormController implements Initializable {
                       .build();
               notificationHolder.addNotification(notification);
 
-              ProductCategoryController.getInstance(stage).categoryTable.setItems(categoriesList);
+              ProductCategoryController.getInstance(stage)
+                  .categoryTable
+                  .setItems(getCategoriesList());
 
               closeDialog(e);
               return;
@@ -112,7 +120,9 @@ public class ProductCategoryFormController implements Initializable {
                     .build();
             notificationHolder.addNotification(notification);
 
-            ProductCategoryController.getInstance(stage).categoryTable.setItems(categoriesList);
+            ProductCategoryController.getInstance(stage)
+                .categoryTable
+                .setItems(getCategoriesList());
 
             closeDialog(e);
             return;

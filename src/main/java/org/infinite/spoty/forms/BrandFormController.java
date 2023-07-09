@@ -66,7 +66,8 @@ public class BrandFormController implements Initializable {
     brandFormName.textProperty().bindBidirectional(BrandViewModel.nameProperty());
     brandFormDescription.textProperty().bindBidirectional(BrandViewModel.descriptionProperty());
     // Input listeners.
-    requiredValidator(brandFormName, "Brand name is required.", brandFormNameValidationLabel);
+    requiredValidator(
+        brandFormName, "Brand name is required.", brandFormNameValidationLabel, brandFormSaveBtn);
     dialogOnActions();
   }
 
@@ -95,7 +96,9 @@ public class BrandFormController implements Initializable {
                       .build();
               notificationHolder.addNotification(notification);
 
-              BrandController.getInstance(stage).brandTable.setItems(BrandViewModel.brandsList);
+              BrandController.getInstance(stage)
+                  .brandTable
+                  .setItems(BrandViewModel.getBrandsList());
 
               closeDialog(e);
               return;
@@ -110,7 +113,7 @@ public class BrandFormController implements Initializable {
                     .build();
             notificationHolder.addNotification(notification);
 
-            BrandController.getInstance(stage).brandTable.setItems(BrandViewModel.brandsList);
+            BrandController.getInstance(stage).brandTable.setItems(BrandViewModel.getBrandsList());
 
             closeDialog(e);
             return;

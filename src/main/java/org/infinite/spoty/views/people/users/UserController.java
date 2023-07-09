@@ -112,9 +112,9 @@ public class UserController implements Initializable {
             new StringFilter<>("Phone", User::getPhone),
             new BooleanFilter<>("Status", User::isActive));
     styleUserTable();
-    userTable.setItems(UserViewModel.usersList);
+    userTable.setItems(UserViewModel.getUsersList());
     UserViewModel.usersList.addListener(
-        new WeakListChangeListener<>(c -> userTable.setItems(UserViewModel.usersList)));
+        new WeakListChangeListener<>(c -> userTable.setItems(UserViewModel.getUsersList())));
   }
 
   private void styleUserTable() {

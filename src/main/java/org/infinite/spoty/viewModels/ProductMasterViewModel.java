@@ -202,7 +202,7 @@ public class ProductMasterViewModel {
             if (!ProductDetailViewModel.productDetailsList.isEmpty()) {
               ProductDetailViewModel.productDetailsList.forEach(
                   productDetail -> productDetail.setProduct(productMaster));
-              productMaster.setProductDetails(ProductDetailViewModel.productDetailsList);
+              productMaster.setProductDetails(ProductDetailViewModel.getProductDetailsList());
             }
 
             productMasterDao.create(productMaster);
@@ -304,7 +304,7 @@ public class ProductMasterViewModel {
             productMaster.canHaveVariants(getHasVariants());
 
             ProductDetailViewModel.deleteProductDetails(PENDING_DELETES);
-            productMaster.setProductDetails(ProductDetailViewModel.productDetailsList);
+            productMaster.setProductDetails(ProductDetailViewModel.getProductDetailsList());
 
             productMasterDao.update(productMaster);
 

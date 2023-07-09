@@ -280,4 +280,8 @@ public class RequisitionDetailViewModel {
     thread.setDaemon(true);
     thread.start();
   }
+
+  public static ObservableList<RequisitionDetail> getRequisitionDetailList() {
+    return requisitionDetailList;
+  }
 }

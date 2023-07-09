@@ -34,6 +34,7 @@ public class BrandViewModel {
   private static final StringProperty name = new SimpleStringProperty("");
   private static final StringProperty description = new SimpleStringProperty("");
   public static ObservableList<Brand> brandsList = FXCollections.observableArrayList();
+  public static ObservableList<Brand> brandsComboBoxList = FXCollections.observableArrayList();
 
   public static long getId() {
     return id.get();
@@ -202,5 +203,15 @@ public class BrandViewModel {
     Thread thread = new Thread(task);
     thread.setDaemon(true);
     thread.start();
+  }
+
+  public static ObservableList<Brand> getBrandsComboBoxList() {
+    brandsComboBoxList.clear();
+    brandsComboBoxList.addAll(brandsList);
+    return brandsComboBoxList;
+  }
+
+  public static ObservableList<Brand> getBrandsList() {
+    return brandsList;
   }
 }

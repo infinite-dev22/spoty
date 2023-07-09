@@ -32,6 +32,8 @@ import org.infinite.spoty.database.models.ExpenseCategory;
 public class ExpenseCategoryViewModel {
   public static final ObservableList<ExpenseCategory> categoryList =
       FXCollections.observableArrayList();
+  public static final ObservableList<ExpenseCategory> categoryComboBoxList =
+      FXCollections.observableArrayList();
   private static final LongProperty id = new SimpleLongProperty(0);
   private static final StringProperty name = new SimpleStringProperty("");
   private static final StringProperty description = new SimpleStringProperty("");
@@ -208,5 +210,15 @@ public class ExpenseCategoryViewModel {
     Thread thread = new Thread(task);
     thread.setDaemon(true);
     thread.start();
+  }
+
+  public static ObservableList<ExpenseCategory> getCategoryComboBoxList() {
+    categoryComboBoxList.clear();
+    categoryComboBoxList.addAll(categoryList);
+    return categoryComboBoxList;
+  }
+
+  public static ObservableList<ExpenseCategory> getCategoryList() {
+    return categoryList;
   }
 }

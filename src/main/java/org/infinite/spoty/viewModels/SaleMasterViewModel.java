@@ -167,7 +167,7 @@ public class SaleMasterViewModel {
             if (!SaleDetailViewModel.saleDetailList.isEmpty()) {
               SaleDetailViewModel.saleDetailList.forEach(
                   saleDetail -> saleDetail.setSaleMaster(saleMaster));
-              saleMaster.setSaleDetails(SaleDetailViewModel.saleDetailList);
+              saleMaster.setSaleDetails(SaleDetailViewModel.getSaleDetailList());
             }
 
             saleMasterDao.create(saleMaster);
@@ -268,7 +268,7 @@ public class SaleMasterViewModel {
             saleMaster.setDate(getDate());
 
             SaleDetailViewModel.deleteSaleDetails(PENDING_DELETES);
-            saleMaster.setSaleDetails(SaleDetailViewModel.saleDetailList);
+            saleMaster.setSaleDetails(SaleDetailViewModel.getSaleDetailList());
 
             saleMasterDao.update(saleMaster);
 
@@ -303,5 +303,9 @@ public class SaleMasterViewModel {
     Thread thread = new Thread(task);
     thread.setDaemon(true);
     thread.start();
+  }
+
+  public static ObservableList<SaleMaster> getSaleMasterList() {
+    return saleMasterList;
   }
 }

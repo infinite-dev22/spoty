@@ -63,6 +63,18 @@ public class SupplierFormController implements Initializable {
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
+    // Form input binding.
+    supplierID
+        .textProperty()
+        .bindBidirectional(SupplierViewModel.idProperty(), new NumberStringConverter());
+    supplierFormName.textProperty().bindBidirectional(SupplierViewModel.nameProperty());
+    supplierFormEmail.textProperty().bindBidirectional(SupplierViewModel.emailProperty());
+    supplierFormPhone.textProperty().bindBidirectional(SupplierViewModel.phoneProperty());
+    supplierFormCity.textProperty().bindBidirectional(SupplierViewModel.cityProperty());
+    supplierFormCountry.textProperty().bindBidirectional(SupplierViewModel.countryProperty());
+    supplierFormTaxNumber.textProperty().bindBidirectional(SupplierViewModel.taxNumberProperty());
+    supplierFormAddress.textProperty().bindBidirectional(SupplierViewModel.addressProperty());
+
     // Input listeners.
     supplierFormPhone
         .textProperty()
@@ -76,26 +88,26 @@ public class SupplierFormController implements Initializable {
         .addListener(
             (observable, oldValue, newValue) -> {
               if (newValue != oldValue) supplierFormPhone.setLeadingIcon(new Label("+"));
-              System.out.println("newValue oldValue");
             });
-    // Form input binding.
-    supplierID
-        .textProperty()
-        .bindBidirectional(SupplierViewModel.idProperty(), new NumberStringConverter());
-    supplierFormName.textProperty().bindBidirectional(SupplierViewModel.nameProperty());
-    supplierFormEmail.textProperty().bindBidirectional(SupplierViewModel.emailProperty());
-    supplierFormPhone.textProperty().bindBidirectional(SupplierViewModel.phoneProperty());
-    supplierFormCity.textProperty().bindBidirectional(SupplierViewModel.cityProperty());
-    supplierFormCountry.textProperty().bindBidirectional(SupplierViewModel.countryProperty());
-    supplierFormTaxNumber.textProperty().bindBidirectional(SupplierViewModel.taxNumberProperty());
-    supplierFormAddress.textProperty().bindBidirectional(SupplierViewModel.addressProperty());
+
     // Input validations.
     // Name input validation.
-    requiredValidator(supplierFormName, "Name field is required.", supplierFormNameValidationLabel);
+    requiredValidator(
+        supplierFormName,
+        "Name field is required.",
+        supplierFormNameValidationLabel,
+        supplierFormSaveBtn);
+
     // Email input validation.
-    emailValidator(supplierFormEmail, supplierFormEmailValidationLabel);
+    emailValidator(supplierFormEmail, supplierFormEmailValidationLabel, supplierFormSaveBtn);
+
     // Phone input validation.
-    lengthValidator(supplierFormPhone, 11, "Invalid length", supplierFormPhoneValidationLabel);
+    lengthValidator(
+        supplierFormPhone,
+        11,
+        "Invalid length",
+        supplierFormPhoneValidationLabel,
+        supplierFormSaveBtn);
     dialogOnActions();
   }
 
@@ -127,13 +139,13 @@ public class SupplierFormController implements Initializable {
 
               SupplierController.getInstance(stage)
                   .suppliersTable
-                  .setItems(SupplierViewModel.suppliersList);
+                  .setItems(SupplierViewModel.getSuppliersList());
 
               closeDialog(e);
               return;
             }
             SupplierViewModel.saveSupplier();
-            
+
             SimpleNotification notification =
                 new SimpleNotification.NotificationBuilder("Supplier saved successfully")
                     .duration(NotificationDuration.SHORT)
@@ -144,7 +156,7 @@ public class SupplierFormController implements Initializable {
 
             SupplierController.getInstance(stage)
                 .suppliersTable
-                .setItems(SupplierViewModel.suppliersList);
+                .setItems(SupplierViewModel.getSuppliersList());
 
             closeDialog(e);
             return;

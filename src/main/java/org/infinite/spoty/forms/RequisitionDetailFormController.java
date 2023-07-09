@@ -24,7 +24,6 @@ import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
-import javafx.collections.WeakListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -73,10 +72,10 @@ public class RequisitionDetailFormController implements Initializable {
         .bindBidirectional(RequisitionDetailViewModel.descriptionProperty());
 
     // Combo box properties.
-    requisitionDetailPdct.setItems(ProductDetailViewModel.productDetailsList);
-    ProductDetailViewModel.productDetailsList.addListener(
-        new WeakListChangeListener<>(
-            c -> requisitionDetailPdct.setItems(ProductDetailViewModel.productDetailsList)));
+    requisitionDetailPdct.setItems(ProductDetailViewModel.getProductDetailsComboBoxList());
+    requisitionDetailPdct.setOnShowing(
+        e ->
+            requisitionDetailPdct.setItems(ProductDetailViewModel.getProductDetailsComboBoxList()));
     requisitionDetailPdct.setConverter(
         new StringConverter<>() {
           @Override
@@ -100,9 +99,15 @@ public class RequisitionDetailFormController implements Initializable {
 
     // Input validators.
     requiredValidator(
-        requisitionDetailPdct, "Product is required.", requisitionDetailPdctValidationLabel);
+        requisitionDetailPdct,
+        "Product is required.",
+        requisitionDetailPdctValidationLabel,
+        requisitionDetailSaveBtn);
     requiredValidator(
-        requisitionDetailQnty, "Quantity is required.", requisitionDetailQntyValidationLabel);
+        requisitionDetailQnty,
+        "Quantity is required.",
+        requisitionDetailQntyValidationLabel,
+        requisitionDetailSaveBtn);
     dialogOnActions();
   }
 
@@ -137,7 +142,7 @@ public class RequisitionDetailFormController implements Initializable {
 
               RequisitionMasterFormController.getInstance(stage)
                   .requisitionDetailTable
-                  .setItems(RequisitionDetailViewModel.requisitionDetailList);
+                  .setItems(RequisitionDetailViewModel.getRequisitionDetailList());
 
               closeDialog(e);
               return;
@@ -156,7 +161,7 @@ public class RequisitionDetailFormController implements Initializable {
 
             RequisitionMasterFormController.getInstance(stage)
                 .requisitionDetailTable
-                .setItems(RequisitionDetailViewModel.requisitionDetailList);
+                .setItems(RequisitionDetailViewModel.getRequisitionDetailList());
 
             closeDialog(e);
             return;

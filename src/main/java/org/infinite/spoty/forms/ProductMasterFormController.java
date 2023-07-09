@@ -37,7 +37,6 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
-import javafx.collections.WeakListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -70,9 +69,9 @@ import org.infinite.spoty.views.BaseController;
 public class ProductMasterFormController implements Initializable {
   private static ProductMasterFormController instance;
   /**
-   * TODO: Add has variants toggle. TODO: Products can be assigned to specific branches by the head
-   * branch, Add this possibility. TODO: Make Branch combo multi-choice. TODO: Product variants can
-   * later have images. Same as to Products without variants.
+   * TODO: Products can be assigned to specific branches by the head branch, Add this possibility.
+   * TODO: Make Branch combo multi-choice. TODO: Product variants can later have images. Same as to
+   * Products without variants.
    */
   public MFXTextField productMasterID = new MFXTextField();
 
@@ -89,6 +88,7 @@ public class ProductMasterFormController implements Initializable {
   @FXML public Label productFormNameValidationLabel;
   @FXML public Label productFormCategoryValidationLabel;
   @FXML public Label productFormBrandValidationLabel;
+  @FXML public MFXButton productMasterSaveBtn;
   private Dialog<ButtonType> dialog;
 
   private ProductMasterFormController(Stage stage) {
@@ -109,19 +109,6 @@ public class ProductMasterFormController implements Initializable {
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-    // Input listeners.
-    hasVariantToggle
-        .selectedProperty()
-        .addListener(
-            (observable, oldValue, newValue) -> {
-              productVariantAddBtn.setDisable(!ProductMasterViewModel.getHasVariants());
-              productDetailTable.setDisable(!ProductMasterViewModel.getHasVariants());
-            });
-    // input validators.
-    requiredValidator(
-        productFormCategory, "Category is required.", productFormCategoryValidationLabel);
-    requiredValidator(productFormBrand, "Brand is required.", productFormBrandValidationLabel);
-    requiredValidator(productFormName, "Name is required.", productFormNameValidationLabel);
     // Input binding.
     productMasterID
         .textProperty()
@@ -138,10 +125,19 @@ public class ProductMasterFormController implements Initializable {
         .selectedProperty()
         .bindBidirectional(ProductMasterViewModel.notForSaleProperty());
 
-    productFormCategory.setItems(ProductCategoryViewModel.categoriesList);
-    ProductCategoryViewModel.categoriesList.addListener(
-        new WeakListChangeListener<>(
-            c -> productFormCategory.setItems(ProductCategoryViewModel.categoriesList)));
+    // Input listeners.
+    hasVariantToggle
+        .selectedProperty()
+        .addListener(
+            (observable, oldValue, newValue) -> {
+              productVariantAddBtn.setDisable(!ProductMasterViewModel.getHasVariants());
+              productDetailTable.setDisable(!ProductMasterViewModel.getHasVariants());
+            });
+
+    // ComboBox Properties.
+    productFormCategory.setItems(ProductCategoryViewModel.getCategoriesComboBoxList());
+    productFormCategory.setOnShowing(
+        e -> productFormCategory.setItems(ProductCategoryViewModel.getCategoriesComboBoxList()));
     productFormCategory.setConverter(
         new StringConverter<>() {
           @Override
@@ -156,9 +152,9 @@ public class ProductMasterFormController implements Initializable {
           }
         });
 
-    productFormBrand.setItems(BrandViewModel.brandsList);
-    BrandViewModel.brandsList.addListener(
-        new WeakListChangeListener<>(c -> productFormBrand.setItems(BrandViewModel.brandsList)));
+    productFormBrand.setItems(BrandViewModel.getBrandsComboBoxList());
+    productFormBrand.setOnShowing(
+        e -> productFormBrand.setItems(BrandViewModel.getBrandsComboBoxList()));
     productFormBrand.setConverter(
         new StringConverter<>() {
           @Override
@@ -173,6 +169,20 @@ public class ProductMasterFormController implements Initializable {
           }
         });
     productFormBarCodeType.setItems(FXCollections.observableArrayList(Values.BARCODETYPES));
+
+    // input validators.
+    requiredValidator(
+        productFormCategory,
+        "Category is required.",
+        productFormCategoryValidationLabel,
+        productMasterSaveBtn);
+    requiredValidator(
+        productFormBrand,
+        "Brand is required.",
+        productFormBrandValidationLabel,
+        productMasterSaveBtn);
+    requiredValidator(
+        productFormName, "Name is required.", productFormNameValidationLabel, productMasterSaveBtn);
 
     productAddProductBtnClicked();
     Platform.runLater(this::setupTable);
@@ -204,7 +214,7 @@ public class ProductMasterFormController implements Initializable {
             new StringFilter<>("Unit Of Measure", ProductDetail::getUnitName),
             new StringFilter<>("Serial", ProductDetail::getSerialNumber));
     getProductDetailTable();
-    productDetailTable.setItems(ProductDetailViewModel.productDetailsList);
+    productDetailTable.setItems(ProductDetailViewModel.getProductDetailsList());
   }
 
   private void getProductDetailTable() {
@@ -276,8 +286,7 @@ public class ProductMasterFormController implements Initializable {
   public void productSaveBtnClicked() {
     SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
 
-    if (!productDetailTable.isDisabled()
-        && ProductDetailViewModel.productDetailsList.isEmpty()) {
+    if (!productDetailTable.isDisabled() && ProductDetailViewModel.productDetailsList.isEmpty()) {
       SimpleNotification notification =
           new SimpleNotification.NotificationBuilder("Table can't be Empty")
               .duration(NotificationDuration.SHORT)

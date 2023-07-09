@@ -77,11 +77,16 @@ public class BranchFormController implements Initializable {
     branchFormCity.textProperty().bindBidirectional(BranchViewModel.cityProperty());
     branchFormZipCode.textProperty().bindBidirectional(BranchViewModel.zipcodeProperty());
     // Input listeners.
-    requiredValidator(branchFormName, "Name is required.", branchFormNameValidationLabel);
-    requiredValidator(branchFormEmail, "Email is required.", branchFormEmailValidationLabel);
-    requiredValidator(branchFormPhone, "Phone is required.", branchFormPhoneValidationLabel);
-    requiredValidator(branchFormTown, "Town is required.", branchFormTownValidationLabel);
-    requiredValidator(branchFormCity, "City is required", branchFormCityValidationLabel);
+    requiredValidator(
+        branchFormName, "Name is required.", branchFormNameValidationLabel, branchFormSaveBtn);
+    requiredValidator(
+        branchFormEmail, "Email is required.", branchFormEmailValidationLabel, branchFormSaveBtn);
+    requiredValidator(
+        branchFormPhone, "Phone is required.", branchFormPhoneValidationLabel, branchFormSaveBtn);
+    requiredValidator(
+        branchFormTown, "Town is required.", branchFormTownValidationLabel, branchFormSaveBtn);
+    requiredValidator(
+        branchFormCity, "City is required", branchFormCityValidationLabel, branchFormSaveBtn);
     dialogOnActions();
   }
 
@@ -120,7 +125,7 @@ public class BranchFormController implements Initializable {
 
               BranchController.getInstance(stage)
                   .branchTable
-                  .setItems(BranchViewModel.branchesList);
+                  .setItems(BranchViewModel.getBranchesList());
 
               closeDialog(e);
               return;
@@ -135,7 +140,9 @@ public class BranchFormController implements Initializable {
                     .build();
             notificationHolder.addNotification(notification);
 
-            BranchController.getInstance(stage).branchTable.setItems(BranchViewModel.branchesList);
+            BranchController.getInstance(stage)
+                .branchTable
+                .setItems(BranchViewModel.getBranchesList());
 
             closeDialog(e);
             return;

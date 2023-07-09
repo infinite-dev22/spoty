@@ -96,10 +96,10 @@ public class TransferController implements Initializable {
             new StringFilter<>("Status", TransferMaster::getStatus),
             new DoubleFilter<>("Total Cost", TransferMaster::getTotal));
     getTransferMasterTable();
-    transferMasterTable.setItems(TransferMasterViewModel.transferMasterList);
+    transferMasterTable.setItems(TransferMasterViewModel.getTransferMasterList());
     TransferMasterViewModel.transferMasterList.addListener(
         new WeakListChangeListener<>(
-            c -> transferMasterTable.setItems(TransferMasterViewModel.transferMasterList)));
+            c -> transferMasterTable.setItems(TransferMasterViewModel.getTransferMasterList())));
   }
 
   private void getTransferMasterTable() {

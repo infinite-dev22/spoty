@@ -28,7 +28,7 @@ import org.infinite.spoty.database.models.SaleReturnDetail;
 import org.infinite.spoty.database.models.SaleReturnMaster;
 
 public class SaleReturnDetailViewModel {
-  public static final ObservableList<SaleReturnDetail> SaleReturnDetailsList =
+  public static final ObservableList<SaleReturnDetail> saleReturnDetailsList =
       FXCollections.observableArrayList();
   private static final LongProperty id = new SimpleLongProperty();
   private static final ObjectProperty<ProductDetail> product = new SimpleObjectProperty<>();
@@ -142,8 +142,8 @@ public class SaleReturnDetailViewModel {
             Dao<SaleReturnDetail, Long> saleReturnDetailDao =
                 DaoManager.createDao(connectionSource, SaleReturnDetail.class);
 
-            SaleReturnDetailsList.clear();
-            SaleReturnDetailsList.addAll(saleReturnDetailDao.queryForAll());
+            saleReturnDetailsList.clear();
+            saleReturnDetailsList.addAll(saleReturnDetailDao.queryForAll());
             return null;
           }
         };
@@ -151,5 +151,9 @@ public class SaleReturnDetailViewModel {
     Thread thread = new Thread(task);
     thread.setDaemon(true);
     thread.start();
+  }
+
+  public static ObservableList<SaleReturnDetail> getSaleReturnDetailsList() {
+    return saleReturnDetailsList;
   }
 }

@@ -140,10 +140,10 @@ public class PurchasesController implements Initializable {
             new DoubleFilter<>("Due", PurchaseMaster::getDue),
             new StringFilter<>("Pay Status", PurchaseMaster::getPaymentStatus));
     getTable();
-    purchaseMasterTable.setItems(PurchaseMasterViewModel.purchaseMasterList);
+    purchaseMasterTable.setItems(PurchaseMasterViewModel.getPurchaseMasterList());
     PurchaseMasterViewModel.purchaseMasterList.addListener(
         new WeakListChangeListener<>(
-            c -> purchaseMasterTable.setItems(PurchaseMasterViewModel.purchaseMasterList)));
+            c -> purchaseMasterTable.setItems(PurchaseMasterViewModel.getPurchaseMasterList())));
   }
 
   private void getTable() {

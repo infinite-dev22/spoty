@@ -111,9 +111,9 @@ public class ExpenseController implements Initializable {
             new StringFilter<>("Category", Expense::getExpenseCategoryName),
             new StringFilter<>("Branch", Expense::getBranchName));
     styleExpenseTable();
-    expenseTable.setItems(ExpenseViewModel.expenseList);
+    expenseTable.setItems(ExpenseViewModel.getExpenseList());
     ExpenseViewModel.expenseList.addListener(
-        new WeakListChangeListener<>(c -> expenseTable.setItems(ExpenseViewModel.expenseList)));
+        new WeakListChangeListener<>(c -> expenseTable.setItems(ExpenseViewModel.getExpenseList())));
   }
 
   private void styleExpenseTable() {

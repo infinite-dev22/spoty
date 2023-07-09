@@ -74,6 +74,7 @@ public class AdjustmentMasterFormController implements Initializable {
   @FXML public MFXButton adjustmentProductAddBtn;
   @FXML public Label adjustmentBranchValidationLabel;
   @FXML public Label adjustmentDateValidationLabel;
+  @FXML public MFXButton adjustmentProductSaveBtn;
   private Dialog<ButtonType> dialog;
 
   private AdjustmentMasterFormController(Stage stage) {
@@ -99,8 +100,13 @@ public class AdjustmentMasterFormController implements Initializable {
         .textProperty()
         .bindBidirectional(AdjustmentMasterViewModel.idProperty(), new NumberStringConverter());
     adjustmentBranch.valueProperty().bindBidirectional(AdjustmentMasterViewModel.branchProperty());
-    adjustmentBranch.setItems(BranchViewModel.branchesList);
-    adjustmentBranch.setResetOnPopupHidden(true);
+    adjustmentDate.textProperty().bindBidirectional(AdjustmentMasterViewModel.dateProperty());
+    adjustmentNote.textProperty().bindBidirectional(AdjustmentMasterViewModel.noteProperty());
+
+    // combBox properties.
+    adjustmentBranch.setItems(BranchViewModel.getBranchesComboBoxList());
+    adjustmentBranch.setOnShowing(
+        e -> adjustmentBranch.setItems(BranchViewModel.getBranchesComboBoxList()));
     adjustmentBranch.setConverter(
         new StringConverter<>() {
           @Override
@@ -116,16 +122,17 @@ public class AdjustmentMasterFormController implements Initializable {
           }
         });
 
-    adjustmentDate.textProperty().bindBidirectional(AdjustmentMasterViewModel.dateProperty());
-    adjustmentNote.textProperty().bindBidirectional(AdjustmentMasterViewModel.noteProperty());
-
     // input validators.
-    requiredValidator(adjustmentBranch, "Branch is required.", adjustmentBranchValidationLabel);
-    requiredValidator(adjustmentDate, "Date is required.", adjustmentDateValidationLabel);
-
-    // Change Listeners.
-    BranchViewModel.branchesList.addListener(
-        new WeakListChangeListener<>(c -> adjustmentBranch.setItems(BranchViewModel.branchesList)));
+    requiredValidator(
+        adjustmentBranch,
+        "Branch is required.",
+        adjustmentBranchValidationLabel,
+        adjustmentProductSaveBtn);
+    requiredValidator(
+        adjustmentDate,
+        "Date is required.",
+        adjustmentDateValidationLabel,
+        adjustmentProductSaveBtn);
 
     adjustmentAddProductBtnClicked();
     Platform.runLater(this::setupTable);
@@ -161,10 +168,12 @@ public class AdjustmentMasterFormController implements Initializable {
             new LongFilter<>("Quantity", AdjustmentDetail::getQuantity),
             new StringFilter<>("Adjustment Type", AdjustmentDetail::getAdjustmentType));
     getAdjustmentDetailTable();
-    adjustmentDetailTable.setItems(AdjustmentDetailViewModel.adjustmentDetailsList);
+    adjustmentDetailTable.setItems(AdjustmentDetailViewModel.getAdjustmentDetailsList());
     AdjustmentDetailViewModel.adjustmentDetailsList.addListener(
         new WeakListChangeListener<>(
-            c -> adjustmentDetailTable.setItems(AdjustmentDetailViewModel.adjustmentDetailsList)));
+            c ->
+                adjustmentDetailTable.setItems(
+                    AdjustmentDetailViewModel.getAdjustmentDetailsList())));
   }
 
   private void getAdjustmentDetailTable() {

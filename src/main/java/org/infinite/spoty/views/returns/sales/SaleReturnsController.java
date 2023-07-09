@@ -116,10 +116,10 @@ public class SaleReturnsController implements Initializable {
             new DoubleFilter<>("Paid", SaleReturnMaster::getPaid),
             new StringFilter<>("Pay Status", SaleReturnMaster::getPaymentStatus));
     getSaleReturnMasterTable();
-    saleReturnTable.setItems(SaleReturnMasterViewModel.saleReturnMasterList);
+    saleReturnTable.setItems(SaleReturnMasterViewModel.getSaleReturnMasterList());
     SaleReturnMasterViewModel.saleReturnMasterList.addListener(
         new WeakListChangeListener<>(
-            c -> saleReturnTable.setItems(SaleReturnMasterViewModel.saleReturnMasterList)));
+            c -> saleReturnTable.setItems(SaleReturnMasterViewModel.getSaleReturnMasterList())));
   }
 
   private void getSaleReturnMasterTable() {

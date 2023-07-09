@@ -69,8 +69,16 @@ public class CurrencyFormController implements Initializable {
     currencyFormName.textProperty().bindBidirectional(CurrencyViewModel.nameProperty());
     currencyFormSymbol.textProperty().bindBidirectional(CurrencyViewModel.symbolProperty());
     // Input listeners.
-    requiredValidator(currencyFormName, "Name is required.", currencyFormNameValidationLabel);
-    requiredValidator(currencyFormCode, "Code is required.", currencyFormCodeValidationLabel);
+    requiredValidator(
+        currencyFormName,
+        "Name is required.",
+        currencyFormNameValidationLabel,
+        currencyFormSaveBtn);
+    requiredValidator(
+        currencyFormCode,
+        "Code is required.",
+        currencyFormCodeValidationLabel,
+        currencyFormSaveBtn);
     dialogOnActions();
   }
 
@@ -103,7 +111,7 @@ public class CurrencyFormController implements Initializable {
 
               CurrencyController.getInstance(stage)
                   .currencyTable
-                  .setItems(CurrencyViewModel.currenciesList);
+                  .setItems(CurrencyViewModel.getCurrenciesList());
 
               closeDialog(e);
               return;
@@ -120,7 +128,7 @@ public class CurrencyFormController implements Initializable {
 
             CurrencyController.getInstance(stage)
                 .currencyTable
-                .setItems(CurrencyViewModel.currenciesList);
+                .setItems(CurrencyViewModel.getCurrenciesList());
 
             closeDialog(e);
             return;

@@ -26,7 +26,6 @@ import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
-import javafx.collections.WeakListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -106,7 +105,7 @@ public class UserFormController implements Initializable {
     userFormActive.selectedProperty().bindBidirectional(UserViewModel.activeProperty());
 
     // Combo box properties.
-    //        userFormRole.setItems(UserViewModel.usersList);
+    //        userFormRole.setItems(UserViewModel.getUsersList());
     userFormRole.setConverter(
         new StringConverter<>() {
           @Override
@@ -121,9 +120,9 @@ public class UserFormController implements Initializable {
           }
         });
 
-    userFormBranch.setItems(BranchViewModel.branchesList);
-    BranchViewModel.branchesList.addListener(
-        new WeakListChangeListener<>(c -> userFormBranch.setItems(BranchViewModel.branchesList)));
+    userFormBranch.setItems(BranchViewModel.getBranchesComboBoxList());
+    userFormBranch.setOnShowing(
+        e -> userFormBranch.setItems(BranchViewModel.getBranchesComboBoxList()));
     userFormBranch.setConverter(
         new StringConverter<>() {
           @Override
@@ -140,15 +139,29 @@ public class UserFormController implements Initializable {
     // Input validations.
     // Name input validation.
     requiredValidator(
-        userFormFirstname, "First name is required.", userFormFirstNameValidationLabel);
-    requiredValidator(userFormLastname, "Last name is required.", userFormLastNameValidationLabel);
-    requiredValidator(userFormUsername, "Username is required.", userFormUserNameValidationLabel);
-    requiredValidator(userFormBranch, "Branch is required.", userFormBranchValidationLabel);
-    requiredValidator(userFormRole, "User role is required.", userFormRoleValidationLabel);
+        userFormFirstname,
+        "First name is required.",
+        userFormFirstNameValidationLabel,
+        userFormSaveBtn);
+    requiredValidator(
+        userFormLastname,
+        "Last name is required.",
+        userFormLastNameValidationLabel,
+        userFormSaveBtn);
+    requiredValidator(
+        userFormUsername,
+        "Username is required.",
+        userFormUserNameValidationLabel,
+        userFormSaveBtn);
+    requiredValidator(
+        userFormBranch, "Branch is required.", userFormBranchValidationLabel, userFormSaveBtn);
+    requiredValidator(
+        userFormRole, "User role is required.", userFormRoleValidationLabel, userFormSaveBtn);
     // Email input validation.
-    emailValidator(userFormEmail, userFormEmailValidationLabel);
+    emailValidator(userFormEmail, userFormEmailValidationLabel, userFormSaveBtn);
     // Phone input validation.
-    lengthValidator(userFormPhone, 11, "Invalid Phone length", userFormPhoneValidationLabel);
+    lengthValidator(
+        userFormPhone, 11, "Invalid Phone length", userFormPhoneValidationLabel, userFormSaveBtn);
     dialogOnActions();
   }
 
@@ -191,7 +204,7 @@ public class UserFormController implements Initializable {
 
               userFormRole.clearSelection();
               userFormBranch.clearSelection();
-              UserController.getInstance(stage).userTable.setItems(UserViewModel.usersList);
+              UserController.getInstance(stage).userTable.setItems(UserViewModel.getUsersList());
 
               closeDialog(e);
               return;
@@ -207,7 +220,7 @@ public class UserFormController implements Initializable {
 
             userFormRole.clearSelection();
             userFormBranch.clearSelection();
-            UserController.getInstance(stage).userTable.setItems(UserViewModel.usersList);
+            UserController.getInstance(stage).userTable.setItems(UserViewModel.getUsersList());
 
             closeDialog(e);
             return;

@@ -36,10 +36,10 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.infinite.spoty.LocalDatabaseService;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.database.management.SQLiteTableCreator;
 import org.infinite.spoty.values.strings.Labels;
+import org.infinite.spoty.viewModels.*;
 import org.infinite.spoty.views.BaseController;
 
 public class SplashScreenController implements Initializable {
@@ -61,18 +61,46 @@ public class SplashScreenController implements Initializable {
           }
         };
 
+    Task<Void> initDataFetcher = new Task<>() {
+      @Override
+      protected Void call() {
+        AdjustmentMasterViewModel.getAdjustmentMasters();
+        BranchViewModel.getBranches();
+        BrandViewModel.getItems();
+        CurrencyViewModel.getCurrencies();
+        CustomerViewModel.getCustomers();
+        ExpenseCategoryViewModel.getCategories();
+        ExpenseViewModel.getExpenses();
+        ProductCategoryViewModel.getItems();
+        ProductMasterViewModel.getProductMasters();
+        PurchaseMasterViewModel.getPurchaseMasters();
+        PurchaseReturnMasterViewModel.getPurchaseReturnMasters();
+        QuotationMasterViewModel.getQuotationMasters();
+        RequisitionMasterViewModel.getRequisitionMasters();
+        SaleMasterViewModel.getSaleMasters();
+        SaleReturnMasterViewModel.getSaleReturnMasters();
+        StockInMasterViewModel.getStockInMasters();
+        SupplierViewModel.getSuppliers();
+        TransferMasterViewModel.getTransferMasters();
+        UOMViewModel.getItems();
+        UserViewModel.getUsers();
+        return null;
+      }
+    };
+
     Thread thread1 = new Thread(databaseCreator);
     thread1.setDaemon(true);
+    Thread thread2 = new Thread(initDataFetcher);
+    thread2.setDaemon(true);
 
     try {
       thread1.start();
       thread1.join();
+      thread2.start();
+      thread2.join();
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
     }
-
-    LocalDatabaseService service = new LocalDatabaseService();
-    service.start();
 
     Platform.runLater(
         () -> {

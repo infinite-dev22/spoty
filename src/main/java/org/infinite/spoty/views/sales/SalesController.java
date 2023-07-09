@@ -121,10 +121,10 @@ public class SalesController implements Initializable {
             new DoubleFilter<>("Amount Due", SaleMaster::getAmountDue),
             new StringFilter<>("Payment Status", SaleMaster::getPaymentStatus));
     styleSaleMasterTable();
-    saleMasterTable.setItems(SaleMasterViewModel.saleMasterList);
+    saleMasterTable.setItems(SaleMasterViewModel.getSaleMasterList());
     SaleMasterViewModel.saleMasterList.addListener(
         new WeakListChangeListener<>(
-            c -> saleMasterTable.setItems(SaleMasterViewModel.saleMasterList)));
+            c -> saleMasterTable.setItems(SaleMasterViewModel.getSaleMasterList())));
   }
 
   private void styleSaleMasterTable() {

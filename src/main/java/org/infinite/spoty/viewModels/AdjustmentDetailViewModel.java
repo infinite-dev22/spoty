@@ -262,4 +262,8 @@ public class AdjustmentDetailViewModel {
     thread.setDaemon(true);
     thread.start();
   }
+
+  public static ObservableList<AdjustmentDetail> getAdjustmentDetailsList() {
+    return adjustmentDetailsList;
+  }
 }

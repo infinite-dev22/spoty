@@ -111,9 +111,9 @@ public class UnitOfMeasureController implements Initializable {
             new StringFilter<>("Operator", UnitOfMeasure::getOperator),
             new DoubleFilter<>("Operation Value", UnitOfMeasure::getOperatorValue));
     getUnitOfMeasureTable();
-    uomTable.setItems(UOMViewModel.uomList);
+    uomTable.setItems(UOMViewModel.getUomList());
     UOMViewModel.uomList.addListener(
-        new WeakListChangeListener<>(c -> uomTable.setItems(UOMViewModel.uomList)));
+        new WeakListChangeListener<>(c -> uomTable.setItems(UOMViewModel.getUomList())));
   }
 
   private void getUnitOfMeasureTable() {

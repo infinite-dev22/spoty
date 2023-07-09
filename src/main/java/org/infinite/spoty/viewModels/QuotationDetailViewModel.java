@@ -315,4 +315,8 @@ public class QuotationDetailViewModel {
     thread.setDaemon(true);
     thread.start();
   }
+
+  public static ObservableList<QuotationDetail> getQuotationDetailsList() {
+    return quotationDetailsList;
+  }
 }

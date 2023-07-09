@@ -26,7 +26,6 @@ import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
-import javafx.collections.WeakListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -82,9 +81,13 @@ public class AdjustmentDetailFormController implements Initializable {
         .textProperty()
         .bindBidirectional(AdjustmentDetailViewModel.adjustmentTypeProperty());
     ProductDetailViewModel.getProductDetails();
+
     // AdjustmentType combo box properties.
-    adjustmentProductVariant.setItems(ProductDetailViewModel.productDetailsList);
-    adjustmentProductVariant.setResetOnPopupHidden(true);
+    adjustmentProductVariant.setItems(ProductDetailViewModel.getProductDetailsComboBoxList());
+    adjustmentProductVariant.setOnShowing(
+        e ->
+            adjustmentProductVariant.setItems(
+                ProductDetailViewModel.getProductDetailsComboBoxList()));
     adjustmentProductVariant.setConverter(
         new StringConverter<>() {
           @Override
@@ -105,18 +108,25 @@ public class AdjustmentDetailFormController implements Initializable {
             return null;
           }
         });
+
     adjustmentType.setItems(FXCollections.observableArrayList(Values.ADJUSTMENTTYPE));
+
     // Input validators.
     requiredValidator(
-        adjustmentProductVariant, "Product is required.", adjustmentProductVariantValidationLabel);
+        adjustmentProductVariant,
+        "Product is required.",
+        adjustmentProductVariantValidationLabel,
+        adjustmentProductsSaveBtn);
     requiredValidator(
-        adjustmentProductsQnty, "Quantity is required.", adjustmentProductsQntyValidationLabel);
-    requiredValidator(adjustmentType, "Type is required.", adjustmentTypeValidationLabel);
-
-    // Change Listners.
-    ProductDetailViewModel.productDetailsList.addListener(
-        new WeakListChangeListener<>(
-            c -> adjustmentProductVariant.setItems(ProductDetailViewModel.productDetailsList)));
+        adjustmentProductsQnty,
+        "Quantity is required.",
+        adjustmentProductsQntyValidationLabel,
+        adjustmentProductsSaveBtn);
+    requiredValidator(
+        adjustmentType,
+        "Type is required.",
+        adjustmentTypeValidationLabel,
+        adjustmentProductsSaveBtn);
 
     dialogOnActions();
   }
@@ -157,7 +167,7 @@ public class AdjustmentDetailFormController implements Initializable {
 
               AdjustmentMasterFormController.getInstance(stage)
                   .adjustmentDetailTable
-                  .setItems(AdjustmentDetailViewModel.adjustmentDetailsList);
+                  .setItems(AdjustmentDetailViewModel.getAdjustmentDetailsList());
 
               closeDialog(e);
               return;
@@ -178,7 +188,7 @@ public class AdjustmentDetailFormController implements Initializable {
 
             AdjustmentMasterFormController.getInstance(stage)
                 .adjustmentDetailTable
-                .setItems(AdjustmentDetailViewModel.adjustmentDetailsList);
+                .setItems(AdjustmentDetailViewModel.getAdjustmentDetailsList());
 
             closeDialog(e);
             return;

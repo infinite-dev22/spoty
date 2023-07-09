@@ -332,4 +332,8 @@ public class TransferDetailViewModel {
     thread.setDaemon(true);
     thread.start();
   }
+
+  public static ObservableList<TransferDetail> getTransferDetailsList() {
+    return transferDetailsList;
+  }
 }

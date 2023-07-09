@@ -167,7 +167,7 @@ public class TransferMasterViewModel {
               TransferDetailViewModel.transferDetailsList.forEach(
                   transferDetail -> transferDetail.setTransfer(transferMaster));
 
-              transferMaster.setTransferDetails(TransferDetailViewModel.transferDetailsList);
+              transferMaster.setTransferDetails(TransferDetailViewModel.getTransferDetailsList());
             }
 
             transferMasterDao.create(transferMaster);
@@ -268,7 +268,7 @@ public class TransferMasterViewModel {
             transferMaster.setNotes(getNote());
 
             TransferDetailViewModel.deleteTransferDetails(PENDING_DELETES);
-            transferMaster.setTransferDetails(TransferDetailViewModel.transferDetailsList);
+            transferMaster.setTransferDetails(TransferDetailViewModel.getTransferDetailsList());
 
             transferMasterDao.update(transferMaster);
 
@@ -303,5 +303,9 @@ public class TransferMasterViewModel {
     Thread thread = new Thread(task);
     thread.setDaemon(true);
     thread.start();
+  }
+
+  public static ObservableList<TransferMaster> getTransferMasterList() {
+    return transferMasterList;
   }
 }

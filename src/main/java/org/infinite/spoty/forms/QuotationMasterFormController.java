@@ -23,13 +23,13 @@ import io.github.palexdev.materialfx.enums.ButtonType;
 import io.github.palexdev.materialfx.filter.DoubleFilter;
 import io.github.palexdev.materialfx.filter.LongFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
+import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
-import javafx.collections.WeakListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -74,6 +74,7 @@ public class QuotationMasterFormController implements Initializable {
   @FXML public Label quotationCustomerValidationLabel;
   @FXML public Label quotationBranchValidationLabel;
   @FXML public Label quotationStatusValidationLabel;
+  @FXML public MFXButton quotationMasterSaveBtn;
   private Dialog<ButtonType> dialog;
 
   private QuotationMasterFormController(Stage stage) {
@@ -107,10 +108,9 @@ public class QuotationMasterFormController implements Initializable {
     quotationNote.textProperty().bindBidirectional(QuotationMasterViewModel.noteProperty());
 
     // Combo box properties.
-    quotationCustomer.setItems(CustomerViewModel.customersList);
-    CustomerViewModel.customersList.addListener(
-        new WeakListChangeListener<>(
-            c -> quotationCustomer.setItems(CustomerViewModel.customersList)));
+    quotationCustomer.setItems(CustomerViewModel.getCustomersComboBoxList());
+    quotationCustomer.setOnShowing(
+        e -> quotationCustomer.setItems(CustomerViewModel.getCustomersComboBoxList()));
     quotationCustomer.setConverter(
         new StringConverter<>() {
           @Override
@@ -124,9 +124,9 @@ public class QuotationMasterFormController implements Initializable {
             return null;
           }
         });
-    quotationBranch.setItems(BranchViewModel.branchesList);
-    BranchViewModel.branchesList.addListener(
-        new WeakListChangeListener<>(c -> quotationBranch.setItems(BranchViewModel.branchesList)));
+    quotationBranch.setItems(BranchViewModel.getBranchesComboBoxList());
+    quotationBranch.setOnShowing(
+        e -> quotationBranch.setItems(BranchViewModel.getBranchesComboBoxList()));
     quotationBranch.setConverter(
         new StringConverter<>() {
           @Override
@@ -143,10 +143,23 @@ public class QuotationMasterFormController implements Initializable {
     quotationStatus.setItems(FXCollections.observableArrayList(Values.QUOTATIONTYPE));
 
     // input validators.
-    requiredValidator(quotationBranch, "Branch is required.", quotationBranchValidationLabel);
-    requiredValidator(quotationCustomer, "Customer is required.", quotationCustomerValidationLabel);
-    requiredValidator(quotationDate, "Date is required.", quotationDateValidationLabel);
-    requiredValidator(quotationStatus, "Status is required.", quotationStatusValidationLabel);
+    requiredValidator(
+        quotationBranch,
+        "Branch is required.",
+        quotationBranchValidationLabel,
+        quotationMasterSaveBtn);
+    requiredValidator(
+        quotationCustomer,
+        "Customer is required.",
+        quotationCustomerValidationLabel,
+        quotationMasterSaveBtn);
+    requiredValidator(
+        quotationDate, "Date is required.", quotationDateValidationLabel, quotationMasterSaveBtn);
+    requiredValidator(
+        quotationStatus,
+        "Status is required.",
+        quotationStatusValidationLabel,
+        quotationMasterSaveBtn);
 
     Platform.runLater(this::setupTable);
   }
@@ -186,7 +199,7 @@ public class QuotationMasterFormController implements Initializable {
             new DoubleFilter<>("Discount", QuotationDetail::getDiscount),
             new DoubleFilter<>("Tax", QuotationDetail::getNetTax));
     getQuotationDetailTable();
-    quotationDetailTable.setItems(QuotationDetailViewModel.quotationDetailsList);
+    quotationDetailTable.setItems(QuotationDetailViewModel.getQuotationDetailsList());
   }
 
   private void getQuotationDetailTable() {

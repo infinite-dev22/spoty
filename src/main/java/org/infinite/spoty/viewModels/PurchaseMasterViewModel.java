@@ -147,7 +147,7 @@ public class PurchaseMasterViewModel {
             if (!PurchaseDetailViewModel.purchaseDetailList.isEmpty()) {
               PurchaseDetailViewModel.purchaseDetailList.forEach(
                   purchaseDetail -> purchaseDetail.setPurchase(purchaseMaster));
-              purchaseMaster.setPurchaseDetails(PurchaseDetailViewModel.purchaseDetailList);
+              purchaseMaster.setPurchaseDetails(PurchaseDetailViewModel.getPurchaseDetailList());
             }
 
             purchaseMasterDao.create(purchaseMaster);
@@ -246,7 +246,7 @@ public class PurchaseMasterViewModel {
             purchaseMaster.setDate(getDate());
 
             PurchaseDetailViewModel.deletePurchaseDetails(PENDING_DELETES);
-            purchaseMaster.setPurchaseDetails(PurchaseDetailViewModel.purchaseDetailList);
+            purchaseMaster.setPurchaseDetails(PurchaseDetailViewModel.getPurchaseDetailList());
 
             purchaseMasterDao.update(purchaseMaster);
 
@@ -281,5 +281,9 @@ public class PurchaseMasterViewModel {
     Thread thread = new Thread(task);
     thread.setDaemon(true);
     thread.start();
+  }
+
+  public static ObservableList<PurchaseMaster> getPurchaseMasterList() {
+    return purchaseMasterList;
   }
 }

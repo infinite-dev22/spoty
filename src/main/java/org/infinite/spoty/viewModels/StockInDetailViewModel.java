@@ -310,4 +310,8 @@ public class StockInDetailViewModel {
     thread.setDaemon(true);
     thread.start();
   }
+
+  public static ObservableList<StockInDetail> getStockInDetailsList() {
+    return stockInDetailsList;
+  }
 }

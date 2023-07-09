@@ -24,7 +24,6 @@ import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
-import javafx.collections.WeakListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -77,10 +76,9 @@ public class QuotationDetailFormController implements Initializable {
         .bindBidirectional(QuotationDetailViewModel.discountProperty());
 
     // Combo box properties.
-    quotationProductPdct.setItems(ProductDetailViewModel.productDetailsList);
-    ProductDetailViewModel.productDetailsList.addListener(
-        new WeakListChangeListener<>(
-            c -> quotationProductPdct.setItems(ProductDetailViewModel.productDetailsList)));
+    quotationProductPdct.setItems(ProductDetailViewModel.getProductDetailsComboBoxList());
+    quotationProductPdct.setOnShowing(
+        e -> quotationProductPdct.setItems(ProductDetailViewModel.getProductDetailsComboBoxList()));
     quotationProductPdct.setConverter(
         new StringConverter<>() {
           @Override
@@ -103,9 +101,15 @@ public class QuotationDetailFormController implements Initializable {
         });
     // Input validators.
     requiredValidator(
-        quotationProductPdct, "Product is required.", quotationProductPdctValidationLabel);
+        quotationProductPdct,
+        "Product is required.",
+        quotationProductPdctValidationLabel,
+        quotationProductsSaveBtn);
     requiredValidator(
-        quotationProductQnty, "Quantity is required.", quotationProductQntyValidationLabel);
+        quotationProductQnty,
+        "Quantity is required.",
+        quotationProductQntyValidationLabel,
+        quotationProductsSaveBtn);
     dialogOnActions();
   }
 
@@ -139,7 +143,7 @@ public class QuotationDetailFormController implements Initializable {
 
               QuotationMasterFormController.getInstance(stage)
                   .quotationDetailTable
-                  .setItems(QuotationDetailViewModel.quotationDetailsList);
+                  .setItems(QuotationDetailViewModel.getQuotationDetailsList());
 
               closeDialog(e);
               return;
@@ -159,7 +163,7 @@ public class QuotationDetailFormController implements Initializable {
 
             QuotationMasterFormController.getInstance(stage)
                 .quotationDetailTable
-                .setItems(QuotationDetailViewModel.quotationDetailsList);
+                .setItems(QuotationDetailViewModel.getQuotationDetailsList());
 
             closeDialog(e);
             return;
