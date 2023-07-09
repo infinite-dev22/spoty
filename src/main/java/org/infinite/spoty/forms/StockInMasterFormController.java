@@ -66,6 +66,7 @@ public class StockInMasterFormController implements Initializable {
   @FXML public MFXButton stockInMasterProductAddBtn;
   @FXML public Label stockInMasterDateValidationLabel;
   @FXML public Label stockInMasterBranchValidationLabel;
+  public MFXButton stockInMasterSaveBtn;
   private Dialog<ButtonType> dialog;
 
   private StockInMasterFormController(Stage stage) {
@@ -114,8 +115,15 @@ public class StockInMasterFormController implements Initializable {
 
     // input validators.
     requiredValidator(
-        stockInMasterBranch, "Branch is required.", stockInMasterBranchValidationLabel);
-    requiredValidator(stockInMasterDate, "Date is required.", stockInMasterDateValidationLabel);
+        stockInMasterBranch,
+        "Branch is required.",
+        stockInMasterBranchValidationLabel,
+        stockInMasterSaveBtn);
+    requiredValidator(
+        stockInMasterDate,
+        "Date is required.",
+        stockInMasterDateValidationLabel,
+        stockInMasterSaveBtn);
 
     stockInMasterAddProductBtnClicked();
 

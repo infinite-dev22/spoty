@@ -32,6 +32,7 @@ import io.github.palexdev.materialfx.filter.LongFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import io.github.palexdev.materialfx.utils.StringUtils;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
+import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Comparator;
@@ -85,6 +86,7 @@ public class PurchaseMasterFormController implements Initializable {
   @FXML public Label purchaseSupplierValidationLabel;
   @FXML public Label purchaseDateValidationLabel;
   @FXML public Label purchaseStatusValidationLabel;
+  @FXML public MFXButton purchaseMasterSaveBtn;
   private Dialog<ButtonType> dialog;
 
   private PurchaseMasterFormController(Stage stage) {
@@ -151,10 +153,23 @@ public class PurchaseMasterFormController implements Initializable {
     purchaseStatus.setItems(FXCollections.observableArrayList(Values.PURCHASESTATUSES));
 
     // input validators.
-    requiredValidator(purchaseBranch, "Branch is required.", purchaseBranchValidationLabel);
-    requiredValidator(purchaseSupplier, "Supplier is required.", purchaseSupplierValidationLabel);
-    requiredValidator(purchaseDate, "Date is required.", purchaseDateValidationLabel);
-    requiredValidator(purchaseStatus, "Status is required.", purchaseStatusValidationLabel);
+    requiredValidator(
+        purchaseBranch,
+        "Branch is required.",
+        purchaseBranchValidationLabel,
+        purchaseMasterSaveBtn);
+    requiredValidator(
+        purchaseSupplier,
+        "Supplier is required.",
+        purchaseSupplierValidationLabel,
+        purchaseMasterSaveBtn);
+    requiredValidator(
+        purchaseDate, "Date is required.", purchaseDateValidationLabel, purchaseMasterSaveBtn);
+    requiredValidator(
+        purchaseStatus,
+        "Status is required.",
+        purchaseStatusValidationLabel,
+        purchaseMasterSaveBtn);
 
     setupTable();
   }

@@ -27,12 +27,14 @@ import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.util.List;
 import javafx.beans.binding.Bindings;
 import javafx.scene.control.Label;
+import org.jetbrains.annotations.NotNull;
 
 public class Validators {
-    static MFXValidator validator;
-    static List<Constraint> validate;
+  static MFXValidator validator;
+  static List<Constraint> validate;
 
-  public static void emailValidator(MFXTextField textField, Label errorDisplay, MFXButton actionButton) {
+  public static void emailValidator(
+          @NotNull MFXTextField textField, Label errorDisplay, @NotNull MFXButton actionButton) {
     // Email input validation.
     Constraint alphaCharsConstraint =
         Constraint.Builder.build()
@@ -40,8 +42,7 @@ public class Validators {
             .setMessage("Invalid email")
             .setCondition(
                 Bindings.createBooleanBinding(
-                    () ->
-                        containsAny(textField.getText(), "", ALPHANUMERIC),
+                    () -> containsAny(textField.getText(), "", ALPHANUMERIC),
                     textField.textProperty()))
             .get();
     Constraint specialCharsConstraint =
@@ -79,18 +80,22 @@ public class Validators {
             });
 
     actionButton.setOnAction(
-            e -> {
-                validator = textField.getValidator();
-                validate = validator.validate();
-                if (!validate.isEmpty()) {
-                    errorDisplay.setText(validate.get(0).getMessage());
-                    errorDisplay.setVisible(true);
-                }
-            });
+        e -> {
+          validator = textField.getValidator();
+          validate = validator.validate();
+          if (!validate.isEmpty()) {
+            errorDisplay.setText(validate.get(0).getMessage());
+            errorDisplay.setVisible(true);
+          }
+        });
   }
 
   public static void lengthValidator(
-      MFXTextField textField, int length, String message, Label errorDisplay) {
+          @NotNull MFXTextField textField,
+          int length,
+          String message,
+          Label errorDisplay,
+          @NotNull MFXButton actionButton) {
     // Phone input validation.
     Constraint phoneLength =
         Constraint.Builder.build()
@@ -123,9 +128,20 @@ public class Validators {
                 }
               }
             });
+
+    actionButton.setOnAction(
+        e -> {
+          validator = textField.getValidator();
+          validate = validator.validate();
+          if (!validate.isEmpty()) {
+            errorDisplay.setText(validate.get(0).getMessage());
+            errorDisplay.setVisible(true);
+          }
+        });
   }
 
-  public static void requiredValidator(MFXTextField textField, String message, Label errorDisplay) {
+  public static void requiredValidator(
+          @NotNull MFXTextField textField, String message, Label errorDisplay, @NotNull MFXButton actionButton) {
     // Name input validation.
     Constraint lengthConstraint =
         Constraint.Builder.build()
@@ -158,5 +174,15 @@ public class Validators {
                 }
               }
             });
+
+    actionButton.setOnAction(
+        e -> {
+          validator = textField.getValidator();
+          validate = validator.validate();
+          if (!validate.isEmpty()) {
+            errorDisplay.setText(validate.get(0).getMessage());
+            errorDisplay.setVisible(true);
+          }
+        });
   }
 }

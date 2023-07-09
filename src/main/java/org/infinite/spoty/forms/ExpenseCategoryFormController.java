@@ -72,7 +72,7 @@ public class ExpenseCategoryFormController implements Initializable {
     requiredValidator(
         categoryExpenseFormName,
         "Category name is required.",
-        categoryExpenseFormNameValidationLabel);
+        categoryExpenseFormNameValidationLabel, categoryExpenseFormSaveBtn);
     dialogOnActions();
   }
 

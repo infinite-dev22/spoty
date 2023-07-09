@@ -117,12 +117,19 @@ public class UOMFormController implements Initializable {
         });
 
     // Input validators.
-    requiredValidator(uomFormName, "Name is required.", uomFormNameValidationLabel);
+    requiredValidator(uomFormName, "Name is required.", uomFormNameValidationLabel, uomFormSaveBtn);
     requiredValidator(
-        uomFormShortName, "Short name field is required.", uomFormShortNameValidationLabel);
-    requiredValidator(uomFormOperator, "Operator is required.", uomFormOperatorValidationLabel);
+        uomFormShortName,
+        "Short name field is required.",
+        uomFormShortNameValidationLabel,
+        uomFormSaveBtn);
     requiredValidator(
-        uomFormOperatorValue, "Operator value is required.", uomFormOperatorValueValidationLabel);
+        uomFormOperator, "Operator is required.", uomFormOperatorValidationLabel, uomFormSaveBtn);
+    requiredValidator(
+        uomFormOperatorValue,
+        "Operator value is required.",
+        uomFormOperatorValueValidationLabel,
+        uomFormSaveBtn);
 
     setUomFormDialogOnActions();
   }
@@ -160,7 +167,9 @@ public class UOMFormController implements Initializable {
               notificationHolder.addNotification(notification);
 
               uomFormBaseUnit.clearSelection();
-              UnitOfMeasureController.getInstance(stage).uomTable.setItems(UOMViewModel.getUomList());
+              UnitOfMeasureController.getInstance(stage)
+                  .uomTable
+                  .setItems(UOMViewModel.getUomList());
 
               closeDialog(e);
               return;

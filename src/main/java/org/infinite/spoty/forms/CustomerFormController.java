@@ -90,11 +90,12 @@ public class CustomerFormController implements Initializable {
     customerFormTaxNumber.textProperty().bindBidirectional(CustomerViewModel.taxNumberProperty());
     customerFormAddress.textProperty().bindBidirectional(CustomerViewModel.addressProperty());
     // Name input validation.
-    requiredValidator(customerFormName, "Name field is required.", validationLabel1);
+    requiredValidator(
+        customerFormName, "Name field is required.", validationLabel1, customerFormSaveBtn);
     // Email input validation.
     emailValidator(customerFormEmail, validationLabel2, customerFormSaveBtn);
     // Phone input validation.
-    lengthValidator(customerFormPhone, 11, "Invalid length", validationLabel3);
+    lengthValidator(customerFormPhone, 11, "Invalid length", validationLabel3, customerFormSaveBtn);
     dialogOnActions();
   }
 

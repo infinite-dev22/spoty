@@ -30,6 +30,7 @@ import io.github.palexdev.materialfx.enums.ButtonType;
 import io.github.palexdev.materialfx.filter.DoubleFilter;
 import io.github.palexdev.materialfx.filter.LongFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
+import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Comparator;
@@ -82,6 +83,7 @@ public class SaleMasterFormController implements Initializable {
   @FXML public Label saleDateValidationLabel;
   @FXML public Label saleStatusValidationLabel;
   @FXML public Label salePaymentStatusValidationLabel;
+  @FXML public MFXButton saleMasterSaveBtn;
   private Dialog<ButtonType> dialog;
 
   private SaleMasterFormController(Stage stage) {
@@ -149,12 +151,18 @@ public class SaleMasterFormController implements Initializable {
     salePaymentStatus.textProperty().bindBidirectional(SaleMasterViewModel.payStatusProperty());
 
     // input validators.
-    requiredValidator(saleBranch, "Branch is required.", saleBranchValidationLabel);
-    requiredValidator(saleCustomer, "Customer is required.", saleCustomerValidationLabel);
-    requiredValidator(saleDate, "Date is required.", saleDateValidationLabel);
-    requiredValidator(saleStatus, "Sale Status is required.", saleStatusValidationLabel);
     requiredValidator(
-        salePaymentStatus, "Payment status is required.", salePaymentStatusValidationLabel);
+        saleBranch, "Branch is required.", saleBranchValidationLabel, saleMasterSaveBtn);
+    requiredValidator(
+        saleCustomer, "Customer is required.", saleCustomerValidationLabel, saleMasterSaveBtn);
+    requiredValidator(saleDate, "Date is required.", saleDateValidationLabel, saleMasterSaveBtn);
+    requiredValidator(
+        saleStatus, "Sale Status is required.", saleStatusValidationLabel, saleMasterSaveBtn);
+    requiredValidator(
+        salePaymentStatus,
+        "Payment status is required.",
+        salePaymentStatusValidationLabel,
+        saleMasterSaveBtn);
 
     setupTable();
   }

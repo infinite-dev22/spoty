@@ -88,6 +88,7 @@ public class ProductMasterFormController implements Initializable {
   @FXML public Label productFormNameValidationLabel;
   @FXML public Label productFormCategoryValidationLabel;
   @FXML public Label productFormBrandValidationLabel;
+  @FXML public MFXButton productMasterSaveBtn;
   private Dialog<ButtonType> dialog;
 
   private ProductMasterFormController(Stage stage) {
@@ -171,9 +172,17 @@ public class ProductMasterFormController implements Initializable {
 
     // input validators.
     requiredValidator(
-        productFormCategory, "Category is required.", productFormCategoryValidationLabel);
-    requiredValidator(productFormBrand, "Brand is required.", productFormBrandValidationLabel);
-    requiredValidator(productFormName, "Name is required.", productFormNameValidationLabel);
+        productFormCategory,
+        "Category is required.",
+        productFormCategoryValidationLabel,
+        productMasterSaveBtn);
+    requiredValidator(
+        productFormBrand,
+        "Brand is required.",
+        productFormBrandValidationLabel,
+        productMasterSaveBtn);
+    requiredValidator(
+        productFormName, "Name is required.", productFormNameValidationLabel, productMasterSaveBtn);
 
     productAddProductBtnClicked();
     Platform.runLater(this::setupTable);

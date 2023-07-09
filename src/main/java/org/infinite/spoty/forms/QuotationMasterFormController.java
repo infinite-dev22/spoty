@@ -23,6 +23,7 @@ import io.github.palexdev.materialfx.enums.ButtonType;
 import io.github.palexdev.materialfx.filter.DoubleFilter;
 import io.github.palexdev.materialfx.filter.LongFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
+import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Comparator;
@@ -73,6 +74,7 @@ public class QuotationMasterFormController implements Initializable {
   @FXML public Label quotationCustomerValidationLabel;
   @FXML public Label quotationBranchValidationLabel;
   @FXML public Label quotationStatusValidationLabel;
+  @FXML public MFXButton quotationMasterSaveBtn;
   private Dialog<ButtonType> dialog;
 
   private QuotationMasterFormController(Stage stage) {
@@ -141,10 +143,23 @@ public class QuotationMasterFormController implements Initializable {
     quotationStatus.setItems(FXCollections.observableArrayList(Values.QUOTATIONTYPE));
 
     // input validators.
-    requiredValidator(quotationBranch, "Branch is required.", quotationBranchValidationLabel);
-    requiredValidator(quotationCustomer, "Customer is required.", quotationCustomerValidationLabel);
-    requiredValidator(quotationDate, "Date is required.", quotationDateValidationLabel);
-    requiredValidator(quotationStatus, "Status is required.", quotationStatusValidationLabel);
+    requiredValidator(
+        quotationBranch,
+        "Branch is required.",
+        quotationBranchValidationLabel,
+        quotationMasterSaveBtn);
+    requiredValidator(
+        quotationCustomer,
+        "Customer is required.",
+        quotationCustomerValidationLabel,
+        quotationMasterSaveBtn);
+    requiredValidator(
+        quotationDate, "Date is required.", quotationDateValidationLabel, quotationMasterSaveBtn);
+    requiredValidator(
+        quotationStatus,
+        "Status is required.",
+        quotationStatusValidationLabel,
+        quotationMasterSaveBtn);
 
     Platform.runLater(this::setupTable);
   }

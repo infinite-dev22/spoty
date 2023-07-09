@@ -74,6 +74,7 @@ public class AdjustmentMasterFormController implements Initializable {
   @FXML public MFXButton adjustmentProductAddBtn;
   @FXML public Label adjustmentBranchValidationLabel;
   @FXML public Label adjustmentDateValidationLabel;
+  @FXML public MFXButton adjustmentProductSaveBtn;
   private Dialog<ButtonType> dialog;
 
   private AdjustmentMasterFormController(Stage stage) {
@@ -122,8 +123,16 @@ public class AdjustmentMasterFormController implements Initializable {
         });
 
     // input validators.
-    requiredValidator(adjustmentBranch, "Branch is required.", adjustmentBranchValidationLabel);
-    requiredValidator(adjustmentDate, "Date is required.", adjustmentDateValidationLabel);
+    requiredValidator(
+        adjustmentBranch,
+        "Branch is required.",
+        adjustmentBranchValidationLabel,
+        adjustmentProductSaveBtn);
+    requiredValidator(
+        adjustmentDate,
+        "Date is required.",
+        adjustmentDateValidationLabel,
+        adjustmentProductSaveBtn);
 
     adjustmentAddProductBtnClicked();
     Platform.runLater(this::setupTable);
@@ -162,7 +171,9 @@ public class AdjustmentMasterFormController implements Initializable {
     adjustmentDetailTable.setItems(AdjustmentDetailViewModel.getAdjustmentDetailsList());
     AdjustmentDetailViewModel.adjustmentDetailsList.addListener(
         new WeakListChangeListener<>(
-            c -> adjustmentDetailTable.setItems(AdjustmentDetailViewModel.getAdjustmentDetailsList())));
+            c ->
+                adjustmentDetailTable.setItems(
+                    AdjustmentDetailViewModel.getAdjustmentDetailsList())));
   }
 
   private void getAdjustmentDetailTable() {

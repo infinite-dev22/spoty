@@ -93,8 +93,16 @@ public class StockInDetailFormController implements Initializable {
         });
 
     // Input validators.
-    requiredValidator(stockInDetailPdct, "Product is required.", stockInDetailPdctValidationLabel);
-    requiredValidator(stockInDetailQnty, "Quantity is required.", stockInDetailQntyValidationLabel);
+    requiredValidator(
+        stockInDetailPdct,
+        "Product is required.",
+        stockInDetailPdctValidationLabel,
+        stockInDetailSaveBtn);
+    requiredValidator(
+        stockInDetailQnty,
+        "Quantity is required.",
+        stockInDetailQntyValidationLabel,
+        stockInDetailSaveBtn);
 
     dialogOnActions();
   }

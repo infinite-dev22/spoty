@@ -113,10 +113,20 @@ public class AdjustmentDetailFormController implements Initializable {
 
     // Input validators.
     requiredValidator(
-        adjustmentProductVariant, "Product is required.", adjustmentProductVariantValidationLabel);
+        adjustmentProductVariant,
+        "Product is required.",
+        adjustmentProductVariantValidationLabel,
+        adjustmentProductsSaveBtn);
     requiredValidator(
-        adjustmentProductsQnty, "Quantity is required.", adjustmentProductsQntyValidationLabel);
-    requiredValidator(adjustmentType, "Type is required.", adjustmentTypeValidationLabel);
+        adjustmentProductsQnty,
+        "Quantity is required.",
+        adjustmentProductsQntyValidationLabel,
+        adjustmentProductsSaveBtn);
+    requiredValidator(
+        adjustmentType,
+        "Type is required.",
+        adjustmentTypeValidationLabel,
+        adjustmentProductsSaveBtn);
 
     dialogOnActions();
   }

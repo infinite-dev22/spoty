@@ -74,6 +74,7 @@ public class RequisitionMasterFormController implements Initializable {
   @FXML public Label requisitionMasterBranchValidationLabel;
   @FXML public Label requisitionMasterSupplierValidationLabel;
   @FXML public Label requisitionMasterDateValidationLabel;
+  @FXML public MFXButton requisitionMasterSaveBtn;
   private Dialog<ButtonType> dialog;
 
   private RequisitionMasterFormController(Stage stage) {
@@ -158,13 +159,20 @@ public class RequisitionMasterFormController implements Initializable {
 
     // input validators.
     requiredValidator(
-        requisitionMasterBranch, "Branch is required.", requisitionMasterBranchValidationLabel);
+        requisitionMasterBranch,
+        "Branch is required.",
+        requisitionMasterBranchValidationLabel,
+        requisitionMasterSaveBtn);
     requiredValidator(
         requisitionMasterSupplier,
         "Supplier is required.",
-        requisitionMasterSupplierValidationLabel);
+        requisitionMasterSupplierValidationLabel,
+        requisitionMasterSaveBtn);
     requiredValidator(
-        requisitionMasterDate, "Date is required.", requisitionMasterDateValidationLabel);
+        requisitionMasterDate,
+        "Date is required.",
+        requisitionMasterDateValidationLabel,
+        requisitionMasterSaveBtn);
 
     requisitionMasterAddProductBtnClicked();
 

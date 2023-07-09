@@ -91,8 +91,13 @@ public class SaleDetailFormController implements Initializable {
     saleDetailOrderTax.textProperty().bindBidirectional(SaleDetailViewModel.netTaxProperty());
     saleDetailDiscount.textProperty().bindBidirectional(SaleDetailViewModel.discountProperty());
     // Input validators.
-    requiredValidator(saleDetailPdct, "Product is required.", saleDetailPdctValidationLabel);
-    requiredValidator(saleDetailQnty, "Quantity is required.", saleDetailQntyValidationLabel);
+    requiredValidator(
+        saleDetailPdct, "Product is required.", saleDetailPdctValidationLabel, saleProductsSaveBtn);
+    requiredValidator(
+        saleDetailQnty,
+        "Quantity is required.",
+        saleDetailQntyValidationLabel,
+        saleProductsSaveBtn);
     dialogOnActions();
   }
 

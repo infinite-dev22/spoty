@@ -75,6 +75,7 @@ public class TransferMasterFormController implements Initializable {
   @FXML public Label transferMasterDateValidationLabel;
   @FXML public Label transferMasterToBranchValidationLabel;
   @FXML public Label transferMasterFromBranchValidationLabel;
+  @FXML public MFXButton transferMasterSaveBtn;
   private Dialog<ButtonType> dialog;
 
   private TransferMasterFormController(Stage stage) {
@@ -147,12 +148,18 @@ public class TransferMasterFormController implements Initializable {
     requiredValidator(
         transferMasterToBranch,
         "Receiving branch is required.",
-        transferMasterToBranchValidationLabel);
+        transferMasterToBranchValidationLabel,
+        transferMasterSaveBtn);
     requiredValidator(
         transferMasterFromBranch,
         "Supplying branch is required.",
-        transferMasterFromBranchValidationLabel);
-    requiredValidator(transferMasterDate, "Date is required.", transferMasterDateValidationLabel);
+        transferMasterFromBranchValidationLabel,
+        transferMasterSaveBtn);
+    requiredValidator(
+        transferMasterDate,
+        "Date is required.",
+        transferMasterDateValidationLabel,
+        transferMasterSaveBtn);
 
     transferMasterAddProductBtnClicked();
 

@@ -99,9 +99,15 @@ public class RequisitionDetailFormController implements Initializable {
 
     // Input validators.
     requiredValidator(
-        requisitionDetailPdct, "Product is required.", requisitionDetailPdctValidationLabel);
+        requisitionDetailPdct,
+        "Product is required.",
+        requisitionDetailPdctValidationLabel,
+        requisitionDetailSaveBtn);
     requiredValidator(
-        requisitionDetailQnty, "Quantity is required.", requisitionDetailQntyValidationLabel);
+        requisitionDetailQnty,
+        "Quantity is required.",
+        requisitionDetailQntyValidationLabel,
+        requisitionDetailSaveBtn);
     dialogOnActions();
   }
 

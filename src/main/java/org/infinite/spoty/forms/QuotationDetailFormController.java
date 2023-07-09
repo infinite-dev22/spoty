@@ -101,9 +101,15 @@ public class QuotationDetailFormController implements Initializable {
         });
     // Input validators.
     requiredValidator(
-        quotationProductPdct, "Product is required.", quotationProductPdctValidationLabel);
+        quotationProductPdct,
+        "Product is required.",
+        quotationProductPdctValidationLabel,
+        quotationProductsSaveBtn);
     requiredValidator(
-        quotationProductQnty, "Quantity is required.", quotationProductQntyValidationLabel);
+        quotationProductQnty,
+        "Quantity is required.",
+        quotationProductQntyValidationLabel,
+        quotationProductsSaveBtn);
     dialogOnActions();
   }
 

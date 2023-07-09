@@ -71,18 +71,18 @@ public class ExpenseFormController implements Initializable {
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-      // Form Bindings.
-      expenseID
-              .textProperty()
-              .bindBidirectional(ExpenseViewModel.idProperty(), new NumberStringConverter());
-      expenseFormName.textProperty().bindBidirectional(ExpenseViewModel.nameProperty());
-      expenseFormDate.textProperty().bindBidirectional(ExpenseViewModel.dateProperty());
-      expenseFormBranch.valueProperty().bindBidirectional(ExpenseViewModel.branchProperty());
-      expenseFormCategory.valueProperty().bindBidirectional(ExpenseViewModel.categoryProperty());
-      expenseFormAmount.textProperty().bindBidirectional(ExpenseViewModel.amountProperty());
-      expenseFormDetails.textProperty().bindBidirectional(ExpenseViewModel.detailsProperty());
+    // Form Bindings.
+    expenseID
+        .textProperty()
+        .bindBidirectional(ExpenseViewModel.idProperty(), new NumberStringConverter());
+    expenseFormName.textProperty().bindBidirectional(ExpenseViewModel.nameProperty());
+    expenseFormDate.textProperty().bindBidirectional(ExpenseViewModel.dateProperty());
+    expenseFormBranch.valueProperty().bindBidirectional(ExpenseViewModel.branchProperty());
+    expenseFormCategory.valueProperty().bindBidirectional(ExpenseViewModel.categoryProperty());
+    expenseFormAmount.textProperty().bindBidirectional(ExpenseViewModel.amountProperty());
+    expenseFormDetails.textProperty().bindBidirectional(ExpenseViewModel.detailsProperty());
 
-      // Combo box properties.
+    // Combo box properties.
     expenseFormBranch.setItems(BranchViewModel.getBranchesComboBoxList());
     expenseFormBranch.setOnShowing(
         e -> expenseFormBranch.setItems(BranchViewModel.getBranchesComboBoxList()));
@@ -120,13 +120,25 @@ public class ExpenseFormController implements Initializable {
         });
 
     // Input listeners.
-    requiredValidator(expenseFormName, "Name is required.", expenseFormNameValidationLabel);
-    requiredValidator(expenseFormDate, "Date is required.", expenseFormDateValidationLabel);
-    requiredValidator(expenseFormBranch, "Branch is required.", expenseFormBranchValidationLabel);
     requiredValidator(
-        expenseFormCategory, "Category is required.", expenseFormCategoryValidationLabel);
+        expenseFormName, "Name is required.", expenseFormNameValidationLabel, expenseFormSaveBtn);
     requiredValidator(
-        expenseFormAmount, "Amount can't be empty.", expenseFormAmountValidationLabel);
+        expenseFormDate, "Date is required.", expenseFormDateValidationLabel, expenseFormSaveBtn);
+    requiredValidator(
+        expenseFormBranch,
+        "Branch is required.",
+        expenseFormBranchValidationLabel,
+        expenseFormSaveBtn);
+    requiredValidator(
+        expenseFormCategory,
+        "Category is required.",
+        expenseFormCategoryValidationLabel,
+        expenseFormSaveBtn);
+    requiredValidator(
+        expenseFormAmount,
+        "Amount can't be empty.",
+        expenseFormAmountValidationLabel,
+        expenseFormSaveBtn);
     dialogOnActions();
   }
 

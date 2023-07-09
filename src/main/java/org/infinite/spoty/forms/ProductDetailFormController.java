@@ -67,7 +67,8 @@ public class ProductDetailFormController implements Initializable {
 
     // ProductType combo box properties.
     productVariantUOM.setItems(UOMViewModel.getUomComboBoxList());
-    productVariantUOM.setOnShowing(e -> productVariantUOM.setItems(UOMViewModel.getUomComboBoxList()));
+    productVariantUOM.setOnShowing(
+        e -> productVariantUOM.setItems(UOMViewModel.getUomComboBoxList()));
     productVariantUOM.setConverter(
         new StringConverter<>() {
           @Override
@@ -83,8 +84,15 @@ public class ProductDetailFormController implements Initializable {
 
     // Input validators.
     requiredValidator(
-        productVariantUOM, "Unit of measure is required.", productVariantUOMValidationLabel);
-    requiredValidator(productVariantName, "Name is required.", productVariantNameValidationLabel);
+        productVariantUOM,
+        "Unit of measure is required.",
+        productVariantUOMValidationLabel,
+        productProductsSaveBtn);
+    requiredValidator(
+        productVariantName,
+        "Name is required.",
+        productVariantNameValidationLabel,
+        productProductsSaveBtn);
     dialogOnActions();
   }
 

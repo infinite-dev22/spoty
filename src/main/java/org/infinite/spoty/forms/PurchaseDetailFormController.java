@@ -92,10 +92,20 @@ public class PurchaseDetailFormController implements Initializable {
         });
     // Input validators.
     requiredValidator(
-        purchaseDetailPdct, "Product is required.", purchaseDetailPdctValidationLabel);
+        purchaseDetailPdct,
+        "Product is required.",
+        purchaseDetailPdctValidationLabel,
+        purchaseDetailSaveBtn);
     requiredValidator(
-        purchaseDetailQnty, "Quantity is required.", purchaseDetailQntyValidationLabel);
-    requiredValidator(purchaseDetailCost, "Cost is required.", purchaseDetailCostValidationLabel);
+        purchaseDetailQnty,
+        "Quantity is required.",
+        purchaseDetailQntyValidationLabel,
+        purchaseDetailSaveBtn);
+    requiredValidator(
+        purchaseDetailCost,
+        "Cost is required.",
+        purchaseDetailCostValidationLabel,
+        purchaseDetailSaveBtn);
     dialogOnActions();
   }
 

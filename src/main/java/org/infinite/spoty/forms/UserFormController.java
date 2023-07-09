@@ -139,15 +139,29 @@ public class UserFormController implements Initializable {
     // Input validations.
     // Name input validation.
     requiredValidator(
-        userFormFirstname, "First name is required.", userFormFirstNameValidationLabel);
-    requiredValidator(userFormLastname, "Last name is required.", userFormLastNameValidationLabel);
-    requiredValidator(userFormUsername, "Username is required.", userFormUserNameValidationLabel);
-    requiredValidator(userFormBranch, "Branch is required.", userFormBranchValidationLabel);
-    requiredValidator(userFormRole, "User role is required.", userFormRoleValidationLabel);
+        userFormFirstname,
+        "First name is required.",
+        userFormFirstNameValidationLabel,
+        userFormSaveBtn);
+    requiredValidator(
+        userFormLastname,
+        "Last name is required.",
+        userFormLastNameValidationLabel,
+        userFormSaveBtn);
+    requiredValidator(
+        userFormUsername,
+        "Username is required.",
+        userFormUserNameValidationLabel,
+        userFormSaveBtn);
+    requiredValidator(
+        userFormBranch, "Branch is required.", userFormBranchValidationLabel, userFormSaveBtn);
+    requiredValidator(
+        userFormRole, "User role is required.", userFormRoleValidationLabel, userFormSaveBtn);
     // Email input validation.
     emailValidator(userFormEmail, userFormEmailValidationLabel, userFormSaveBtn);
     // Phone input validation.
-    lengthValidator(userFormPhone, 11, "Invalid Phone length", userFormPhoneValidationLabel);
+    lengthValidator(
+        userFormPhone, 11, "Invalid Phone length", userFormPhoneValidationLabel, userFormSaveBtn);
     dialogOnActions();
   }
 

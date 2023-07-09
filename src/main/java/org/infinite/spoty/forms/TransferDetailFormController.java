@@ -94,9 +94,15 @@ public class TransferDetailFormController implements Initializable {
 
     // Input validators.
     requiredValidator(
-        transferDetailPdct, "Product is required.", transferDetailPdctValidationLabel);
+        transferDetailPdct,
+        "Product is required.",
+        transferDetailPdctValidationLabel,
+        transferDetailSaveBtn);
     requiredValidator(
-        transferDetailQnty, "Quantity is required.", transferDetailQntyValidationLabel);
+        transferDetailQnty,
+        "Quantity is required.",
+        transferDetailQntyValidationLabel,
+        transferDetailSaveBtn);
 
     dialogOnActions();
   }
