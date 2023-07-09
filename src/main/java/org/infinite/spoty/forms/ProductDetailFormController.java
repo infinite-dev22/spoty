@@ -137,7 +137,7 @@ public class ProductDetailFormController implements Initializable {
 
               ProductMasterFormController.getInstance(stage)
                   .productDetailTable
-                  .setItems(ProductDetailViewModel.productDetailsList);
+                  .setItems(ProductDetailViewModel.getProductDetailsList());
 
               closeDialog(e);
               return;
@@ -156,7 +156,7 @@ public class ProductDetailFormController implements Initializable {
 
             ProductMasterFormController.getInstance(stage)
                 .productDetailTable
-                .setItems(ProductDetailViewModel.productDetailsList);
+                .setItems(ProductDetailViewModel.getProductDetailsList());
 
             closeDialog(e);
             return;

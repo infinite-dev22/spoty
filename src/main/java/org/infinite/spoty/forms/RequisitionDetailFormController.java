@@ -136,7 +136,7 @@ public class RequisitionDetailFormController implements Initializable {
 
               RequisitionMasterFormController.getInstance(stage)
                   .requisitionDetailTable
-                  .setItems(RequisitionDetailViewModel.requisitionDetailList);
+                  .setItems(RequisitionDetailViewModel.getRequisitionDetailList());
 
               closeDialog(e);
               return;
@@ -155,7 +155,7 @@ public class RequisitionDetailFormController implements Initializable {
 
             RequisitionMasterFormController.getInstance(stage)
                 .requisitionDetailTable
-                .setItems(RequisitionDetailViewModel.requisitionDetailList);
+                .setItems(RequisitionDetailViewModel.getRequisitionDetailList());
 
             closeDialog(e);
             return;

@@ -287,4 +287,8 @@ public class BranchViewModel {
     branchesComboBoxList.addAll(branchesList);
     return branchesComboBoxList;
   }
+
+  public static ObservableList<Branch> getBranchesList() {
+    return branchesList;
+  }
 }

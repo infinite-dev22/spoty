@@ -231,4 +231,8 @@ public class ProductCategoryViewModel {
     categoriesComboBoxList.addAll(categoriesList);
     return categoriesComboBoxList;
   }
+
+  public static ObservableList<ProductCategory> getCategoriesList() {
+    return categoriesList;
+  }
 }

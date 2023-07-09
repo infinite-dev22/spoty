@@ -74,10 +74,12 @@ public class AdjustmentController implements Initializable {
             new StringFilter<>("Reference", AdjustmentMaster::getRef),
             new StringFilter<>("Branch", AdjustmentMaster::getBranchName));
     getAdjustmentMasterTable();
-    adjustmentMasterTable.setItems(AdjustmentMasterViewModel.adjustmentMasterList);
+    adjustmentMasterTable.setItems(AdjustmentMasterViewModel.getAdjustmentMasterList());
     AdjustmentMasterViewModel.adjustmentMasterList.addListener(
         new WeakListChangeListener<>(
-            c -> adjustmentMasterTable.setItems(AdjustmentMasterViewModel.adjustmentMasterList)));
+            c ->
+                adjustmentMasterTable.setItems(
+                    AdjustmentMasterViewModel.getAdjustmentMasterList())));
   }
 
   private void getAdjustmentMasterTable() {

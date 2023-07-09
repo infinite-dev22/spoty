@@ -137,7 +137,7 @@ public class QuotationDetailFormController implements Initializable {
 
               QuotationMasterFormController.getInstance(stage)
                   .quotationDetailTable
-                  .setItems(QuotationDetailViewModel.quotationDetailsList);
+                  .setItems(QuotationDetailViewModel.getQuotationDetailsList());
 
               closeDialog(e);
               return;
@@ -157,7 +157,7 @@ public class QuotationDetailFormController implements Initializable {
 
             QuotationMasterFormController.getInstance(stage)
                 .quotationDetailTable
-                .setItems(QuotationDetailViewModel.quotationDetailsList);
+                .setItems(QuotationDetailViewModel.getQuotationDetailsList());
 
             closeDialog(e);
             return;

@@ -138,10 +138,10 @@ public class RequisitionMasterFormController implements Initializable {
           }
         });
 
-    requisitionMasterSupplier.setItems(SupplierViewModel.suppliersList);
+    requisitionMasterSupplier.setItems(SupplierViewModel.getSuppliersList());
     SupplierViewModel.suppliersList.addListener(
         new WeakListChangeListener<>(
-            c -> requisitionMasterSupplier.setItems(SupplierViewModel.suppliersList)));
+            c -> requisitionMasterSupplier.setItems(SupplierViewModel.getSuppliersList())));
     requisitionMasterSupplier.setConverter(
         new StringConverter<>() {
           @Override
@@ -194,7 +194,7 @@ public class RequisitionMasterFormController implements Initializable {
             new StringFilter<>("Name", RequisitionDetail::getProductDetailName),
             new LongFilter<>("Quantity", RequisitionDetail::getQuantity));
     getRequisitionDetailTable();
-    requisitionDetailTable.setItems(RequisitionDetailViewModel.requisitionDetailList);
+    requisitionDetailTable.setItems(RequisitionDetailViewModel.getRequisitionDetailList());
   }
 
   private void getRequisitionDetailTable() {

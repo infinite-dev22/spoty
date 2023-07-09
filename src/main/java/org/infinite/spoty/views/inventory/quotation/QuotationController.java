@@ -100,10 +100,10 @@ public class QuotationController implements Initializable {
             new StringFilter<>("Status", QuotationMaster::getStatus),
             new DoubleFilter<>("Grand Total", QuotationMaster::getTotal));
     getQuotationMasterTable();
-    quotationsTable.setItems(QuotationMasterViewModel.quotationMasterList);
+    quotationsTable.setItems(QuotationMasterViewModel.getQuotationMasterList());
     QuotationMasterViewModel.quotationMasterList.addListener(
         new WeakListChangeListener<>(
-            c -> quotationsTable.setItems(QuotationMasterViewModel.quotationMasterList)));
+            c -> quotationsTable.setItems(QuotationMasterViewModel.getQuotationMasterList())));
   }
 
   private void getQuotationMasterTable() {

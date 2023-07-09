@@ -120,7 +120,7 @@ public class BranchFormController implements Initializable {
 
               BranchController.getInstance(stage)
                   .branchTable
-                  .setItems(BranchViewModel.branchesList);
+                  .setItems(BranchViewModel.getBranchesList());
 
               closeDialog(e);
               return;
@@ -135,7 +135,7 @@ public class BranchFormController implements Initializable {
                     .build();
             notificationHolder.addNotification(notification);
 
-            BranchController.getInstance(stage).branchTable.setItems(BranchViewModel.branchesList);
+            BranchController.getInstance(stage).branchTable.setItems(BranchViewModel.getBranchesList());
 
             closeDialog(e);
             return;

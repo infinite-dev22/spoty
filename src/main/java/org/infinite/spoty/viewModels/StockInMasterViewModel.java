@@ -146,7 +146,7 @@ public class StockInMasterViewModel {
             if (!StockInDetailViewModel.stockInDetailsList.isEmpty()) {
               StockInDetailViewModel.stockInDetailsList.forEach(
                   stockInDetail -> stockInDetail.setStockIn(stockInMaster));
-              stockInMaster.setStockInDetails(StockInDetailViewModel.stockInDetailsList);
+              stockInMaster.setStockInDetails(StockInDetailViewModel.getStockInDetailsList());
             }
 
             stockInMasterDao.create(stockInMaster);
@@ -243,7 +243,7 @@ public class StockInMasterViewModel {
             stockInMaster.setNotes(getNote());
 
             StockInDetailViewModel.deleteStockInDetails(PENDING_DELETES);
-            stockInMaster.setStockInDetails(StockInDetailViewModel.stockInDetailsList);
+            stockInMaster.setStockInDetails(StockInDetailViewModel.getStockInDetailsList());
 
             stockInMasterDao.update(stockInMaster);
 
@@ -278,5 +278,9 @@ public class StockInMasterViewModel {
     Thread thread = new Thread(task);
     thread.setDaemon(true);
     thread.start();
+  }
+
+  public static ObservableList<StockInMaster> getStockInMasterList() {
+    return stockInMasterList;
   }
 }

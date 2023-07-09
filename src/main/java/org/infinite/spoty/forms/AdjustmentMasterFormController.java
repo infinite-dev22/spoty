@@ -159,10 +159,10 @@ public class AdjustmentMasterFormController implements Initializable {
             new LongFilter<>("Quantity", AdjustmentDetail::getQuantity),
             new StringFilter<>("Adjustment Type", AdjustmentDetail::getAdjustmentType));
     getAdjustmentDetailTable();
-    adjustmentDetailTable.setItems(AdjustmentDetailViewModel.adjustmentDetailsList);
+    adjustmentDetailTable.setItems(AdjustmentDetailViewModel.getAdjustmentDetailsList());
     AdjustmentDetailViewModel.adjustmentDetailsList.addListener(
         new WeakListChangeListener<>(
-            c -> adjustmentDetailTable.setItems(AdjustmentDetailViewModel.adjustmentDetailsList)));
+            c -> adjustmentDetailTable.setItems(AdjustmentDetailViewModel.getAdjustmentDetailsList())));
   }
 
   private void getAdjustmentDetailTable() {

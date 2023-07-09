@@ -21,13 +21,18 @@ import static org.infinite.spoty.values.strings.Values.*;
 
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.validation.Constraint;
+import io.github.palexdev.materialfx.validation.MFXValidator;
 import io.github.palexdev.materialfx.validation.Severity;
+import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.util.List;
 import javafx.beans.binding.Bindings;
 import javafx.scene.control.Label;
 
 public class Validators {
-  public static void emailValidator(MFXTextField textField, Label errorDisplay) {
+    static MFXValidator validator;
+    static List<Constraint> validate;
+
+  public static void emailValidator(MFXTextField textField, Label errorDisplay, MFXButton actionButton) {
     // Email input validation.
     Constraint alphaCharsConstraint =
         Constraint.Builder.build()
@@ -71,6 +76,16 @@ public class Validators {
                   errorDisplay.setVisible(true);
                 }
               }
+            });
+
+    actionButton.setOnAction(
+            e -> {
+                validator = textField.getValidator();
+                validate = validator.validate();
+                if (!validate.isEmpty()) {
+                    errorDisplay.setText(validate.get(0).getMessage());
+                    errorDisplay.setVisible(true);
+                }
             });
   }
 

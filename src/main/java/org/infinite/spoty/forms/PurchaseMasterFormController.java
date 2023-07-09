@@ -134,14 +134,13 @@ public class PurchaseMasterFormController implements Initializable {
             branch ->
                 StringUtils.containsIgnoreCase(purchaseBranchConverter.toString(branch), searchStr);
 
-
     // Set items to combo boxes and display custom text.
-    purchaseSupplier.setItems(SupplierViewModel.suppliersList);
+    purchaseSupplier.setItems(SupplierViewModel.getSuppliersList());
     purchaseSupplier.setConverter(purchaseSupplierConverter);
     purchaseSupplier.setFilterFunction(purchaseSupplierFilterFunction);
     SupplierViewModel.suppliersList.addListener(
         new WeakListChangeListener<>(
-            c -> purchaseSupplier.setItems(SupplierViewModel.suppliersList)));
+            c -> purchaseSupplier.setItems(SupplierViewModel.getSuppliersList())));
 
     purchaseBranch.setItems(BranchViewModel.getBranchesComboBoxList());
     purchaseBranch.setConverter(purchaseBranchConverter);
@@ -267,7 +266,7 @@ public class PurchaseMasterFormController implements Initializable {
             new DoubleFilter<>("Discount", PurchaseDetail::getDiscount));
     styleTable();
     // Populate table.
-    purchaseDetailTable.setItems(PurchaseDetailViewModel.purchaseDetailList);
+    purchaseDetailTable.setItems(PurchaseDetailViewModel.getPurchaseDetailList());
   }
 
   private void styleTable() {

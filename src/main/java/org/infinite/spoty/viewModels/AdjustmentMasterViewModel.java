@@ -118,7 +118,7 @@ public class AdjustmentMasterViewModel {
               AdjustmentDetailViewModel.adjustmentDetailsList.forEach(
                   adjustmentDetail -> adjustmentDetail.setAdjustment(adjustmentMaster));
               adjustmentMaster.setAdjustmentDetails(
-                  AdjustmentDetailViewModel.adjustmentDetailsList);
+                  AdjustmentDetailViewModel.getAdjustmentDetailsList());
             }
             adjustmentMasterDao.create(adjustmentMaster);
             resetProperties();
@@ -212,7 +212,7 @@ public class AdjustmentMasterViewModel {
             adjustmentMaster.setNotes(getNote());
             adjustmentMaster.setDate(getDate());
             AdjustmentDetailViewModel.deleteAdjustmentDetails(PENDING_DELETES);
-            adjustmentMaster.setAdjustmentDetails(AdjustmentDetailViewModel.adjustmentDetailsList);
+            adjustmentMaster.setAdjustmentDetails(AdjustmentDetailViewModel.getAdjustmentDetailsList());
             adjustmentMasterDao.update(adjustmentMaster);
             resetProperties();
             getAdjustmentMasters();
@@ -245,5 +245,9 @@ public class AdjustmentMasterViewModel {
     Thread thread = new Thread(task);
     thread.setDaemon(true);
     thread.start();
+  }
+
+  public static ObservableList<AdjustmentMaster> getAdjustmentMasterList() {
+    return adjustmentMasterList;
   }
 }

@@ -103,7 +103,7 @@ public class CurrencyFormController implements Initializable {
 
               CurrencyController.getInstance(stage)
                   .currencyTable
-                  .setItems(CurrencyViewModel.currenciesList);
+                  .setItems(CurrencyViewModel.getCurrenciesList());
 
               closeDialog(e);
               return;
@@ -120,7 +120,7 @@ public class CurrencyFormController implements Initializable {
 
             CurrencyController.getInstance(stage)
                 .currencyTable
-                .setItems(CurrencyViewModel.currenciesList);
+                .setItems(CurrencyViewModel.getCurrenciesList());
 
             closeDialog(e);
             return;

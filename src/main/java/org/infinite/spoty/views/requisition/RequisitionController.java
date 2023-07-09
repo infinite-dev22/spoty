@@ -119,11 +119,12 @@ public class RequisitionController implements Initializable {
             new StringFilter<>("Status", RequisitionMaster::getStatus),
             new StringFilter<>("Shipping Method", RequisitionMaster::getShipMethod));
     getRequisitionMasterTable();
-    requisitionMasterTable.setItems(RequisitionMasterViewModel.requisitionMasterList);
+    requisitionMasterTable.setItems(RequisitionMasterViewModel.getRequisitionMasterList());
     RequisitionMasterViewModel.requisitionMasterList.addListener(
         new WeakListChangeListener<>(
             c ->
-                requisitionMasterTable.setItems(RequisitionMasterViewModel.requisitionMasterList)));
+                requisitionMasterTable.setItems(
+                    RequisitionMasterViewModel.getRequisitionMasterList())));
   }
 
   private void getRequisitionMasterTable() {

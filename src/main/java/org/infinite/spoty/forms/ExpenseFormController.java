@@ -71,7 +71,18 @@ public class ExpenseFormController implements Initializable {
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-    // Combo box properties.
+      // Form Bindings.
+      expenseID
+              .textProperty()
+              .bindBidirectional(ExpenseViewModel.idProperty(), new NumberStringConverter());
+      expenseFormName.textProperty().bindBidirectional(ExpenseViewModel.nameProperty());
+      expenseFormDate.textProperty().bindBidirectional(ExpenseViewModel.dateProperty());
+      expenseFormBranch.valueProperty().bindBidirectional(ExpenseViewModel.branchProperty());
+      expenseFormCategory.valueProperty().bindBidirectional(ExpenseViewModel.categoryProperty());
+      expenseFormAmount.textProperty().bindBidirectional(ExpenseViewModel.amountProperty());
+      expenseFormDetails.textProperty().bindBidirectional(ExpenseViewModel.detailsProperty());
+
+      // Combo box properties.
     expenseFormBranch.setItems(BranchViewModel.getBranchesComboBoxList());
     expenseFormBranch.setOnShowing(
         e -> expenseFormBranch.setItems(BranchViewModel.getBranchesComboBoxList()));
@@ -107,16 +118,7 @@ public class ExpenseFormController implements Initializable {
             return null;
           }
         });
-    // Form Bindings.
-    expenseID
-        .textProperty()
-        .bindBidirectional(ExpenseViewModel.idProperty(), new NumberStringConverter());
-    expenseFormName.textProperty().bindBidirectional(ExpenseViewModel.nameProperty());
-    expenseFormDate.textProperty().bindBidirectional(ExpenseViewModel.dateProperty());
-    expenseFormBranch.valueProperty().bindBidirectional(ExpenseViewModel.branchProperty());
-    expenseFormCategory.valueProperty().bindBidirectional(ExpenseViewModel.categoryProperty());
-    expenseFormAmount.textProperty().bindBidirectional(ExpenseViewModel.amountProperty());
-    expenseFormDetails.textProperty().bindBidirectional(ExpenseViewModel.detailsProperty());
+
     // Input listeners.
     requiredValidator(expenseFormName, "Name is required.", expenseFormNameValidationLabel);
     requiredValidator(expenseFormDate, "Date is required.", expenseFormDateValidationLabel);
@@ -166,7 +168,7 @@ public class ExpenseFormController implements Initializable {
 
               ExpenseController.getInstance(stage)
                   .expenseTable
-                  .setItems(ExpenseViewModel.expenseList);
+                  .setItems(ExpenseViewModel.getExpenseList());
 
               closeDialog(e);
               return;
@@ -186,7 +188,7 @@ public class ExpenseFormController implements Initializable {
 
             ExpenseController.getInstance(stage)
                 .expenseTable
-                .setItems(ExpenseViewModel.expenseList);
+                .setItems(ExpenseViewModel.getExpenseList());
 
             closeDialog(e);
             return;

@@ -101,7 +101,7 @@ public class ExpenseCategoryFormController implements Initializable {
 
               ExpenseCategoryController.getInstance(stage)
                   .categoryExpenseTable
-                  .setItems(ExpenseCategoryViewModel.categoryList);
+                  .setItems(ExpenseCategoryViewModel.getCategoryList());
 
               closeDialog(e);
               return;
@@ -117,7 +117,7 @@ public class ExpenseCategoryFormController implements Initializable {
 
             ExpenseCategoryController.getInstance(stage)
                 .categoryExpenseTable
-                .setItems(ExpenseCategoryViewModel.categoryList);
+                .setItems(ExpenseCategoryViewModel.getCategoryList());
 
             closeDialog(e);
             return;

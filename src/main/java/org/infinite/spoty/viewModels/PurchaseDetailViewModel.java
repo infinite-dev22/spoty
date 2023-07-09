@@ -387,4 +387,8 @@ public class PurchaseDetailViewModel {
     thread.setDaemon(true);
     thread.start();
   }
+
+  public static ObservableList<PurchaseDetail> getPurchaseDetailList() {
+    return purchaseDetailList;
+  }
 }

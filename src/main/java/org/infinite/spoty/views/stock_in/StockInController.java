@@ -84,10 +84,10 @@ public class StockInController implements Initializable {
             new StringFilter<>("Status", StockInMaster::getStatus),
             new DoubleFilter<>("Total Cost", StockInMaster::getTotal));
     getStockInMasterTable();
-    stockInMasterTable.setItems(StockInMasterViewModel.stockInMasterList);
+    stockInMasterTable.setItems(StockInMasterViewModel.getStockInMasterList());
     StockInMasterViewModel.stockInMasterList.addListener(
         new WeakListChangeListener<>(
-            c -> stockInMasterTable.setItems(StockInMasterViewModel.stockInMasterList)));
+            c -> stockInMasterTable.setItems(StockInMasterViewModel.getStockInMasterList())));
   }
 
   private void getStockInMasterTable() {

@@ -129,7 +129,7 @@ public class PurchaseDetailFormController implements Initializable {
 
               PurchaseMasterFormController.getInstance(stage)
                   .purchaseDetailTable
-                  .setItems(PurchaseDetailViewModel.purchaseDetailList);
+                  .setItems(PurchaseDetailViewModel.getPurchaseDetailList());
 
               purchaseDetailPdct.clearSelection();
 
@@ -148,7 +148,7 @@ public class PurchaseDetailFormController implements Initializable {
 
             PurchaseMasterFormController.getInstance(stage)
                 .purchaseDetailTable
-                .setItems(PurchaseDetailViewModel.purchaseDetailList);
+                .setItems(PurchaseDetailViewModel.getPurchaseDetailList());
 
             closeDialog(e);
             purchaseDetailPdct.clearSelection();

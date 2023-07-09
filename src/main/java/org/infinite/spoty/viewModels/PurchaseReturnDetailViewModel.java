@@ -153,4 +153,8 @@ public class PurchaseReturnDetailViewModel {
     thread.setDaemon(true);
     thread.start();
   }
+
+  public static ObservableList<PurchaseReturnDetail> getPurchaseReturnDetailsList() {
+    return purchaseReturnDetailsList;
+  }
 }

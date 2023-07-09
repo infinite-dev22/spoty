@@ -160,7 +160,7 @@ public class UOMFormController implements Initializable {
               notificationHolder.addNotification(notification);
 
               uomFormBaseUnit.clearSelection();
-              UnitOfMeasureController.getInstance(stage).uomTable.setItems(UOMViewModel.uomList);
+              UnitOfMeasureController.getInstance(stage).uomTable.setItems(UOMViewModel.getUomList());
 
               closeDialog(e);
               return;
@@ -176,7 +176,7 @@ public class UOMFormController implements Initializable {
             notificationHolder.addNotification(notification);
 
             uomFormBaseUnit.clearSelection();
-            UnitOfMeasureController.getInstance(stage).uomTable.setItems(UOMViewModel.uomList);
+            UnitOfMeasureController.getInstance(stage).uomTable.setItems(UOMViewModel.getUomList());
 
             closeDialog(e);
             return;

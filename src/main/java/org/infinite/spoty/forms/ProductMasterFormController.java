@@ -69,9 +69,9 @@ import org.infinite.spoty.views.BaseController;
 public class ProductMasterFormController implements Initializable {
   private static ProductMasterFormController instance;
   /**
-   * TODO: Add has variants toggle. TODO: Products can be assigned to specific branches by the head
-   * branch, Add this possibility. TODO: Make Branch combo multi-choice. TODO: Product variants can
-   * later have images. Same as to Products without variants.
+   * TODO: Products can be assigned to specific branches by the head branch, Add this possibility.
+   * TODO: Make Branch combo multi-choice. TODO: Product variants can later have images. Same as to
+   * Products without variants.
    */
   public MFXTextField productMasterID = new MFXTextField();
 
@@ -108,19 +108,6 @@ public class ProductMasterFormController implements Initializable {
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-    // Input listeners.
-    hasVariantToggle
-        .selectedProperty()
-        .addListener(
-            (observable, oldValue, newValue) -> {
-              productVariantAddBtn.setDisable(!ProductMasterViewModel.getHasVariants());
-              productDetailTable.setDisable(!ProductMasterViewModel.getHasVariants());
-            });
-    // input validators.
-    requiredValidator(
-        productFormCategory, "Category is required.", productFormCategoryValidationLabel);
-    requiredValidator(productFormBrand, "Brand is required.", productFormBrandValidationLabel);
-    requiredValidator(productFormName, "Name is required.", productFormNameValidationLabel);
     // Input binding.
     productMasterID
         .textProperty()
@@ -137,6 +124,16 @@ public class ProductMasterFormController implements Initializable {
         .selectedProperty()
         .bindBidirectional(ProductMasterViewModel.notForSaleProperty());
 
+    // Input listeners.
+    hasVariantToggle
+        .selectedProperty()
+        .addListener(
+            (observable, oldValue, newValue) -> {
+              productVariantAddBtn.setDisable(!ProductMasterViewModel.getHasVariants());
+              productDetailTable.setDisable(!ProductMasterViewModel.getHasVariants());
+            });
+
+    // ComboBox Properties.
     productFormCategory.setItems(ProductCategoryViewModel.getCategoriesComboBoxList());
     productFormCategory.setOnShowing(
         e -> productFormCategory.setItems(ProductCategoryViewModel.getCategoriesComboBoxList()));
@@ -172,6 +169,12 @@ public class ProductMasterFormController implements Initializable {
         });
     productFormBarCodeType.setItems(FXCollections.observableArrayList(Values.BARCODETYPES));
 
+    // input validators.
+    requiredValidator(
+        productFormCategory, "Category is required.", productFormCategoryValidationLabel);
+    requiredValidator(productFormBrand, "Brand is required.", productFormBrandValidationLabel);
+    requiredValidator(productFormName, "Name is required.", productFormNameValidationLabel);
+
     productAddProductBtnClicked();
     Platform.runLater(this::setupTable);
   }
@@ -202,7 +205,7 @@ public class ProductMasterFormController implements Initializable {
             new StringFilter<>("Unit Of Measure", ProductDetail::getUnitName),
             new StringFilter<>("Serial", ProductDetail::getSerialNumber));
     getProductDetailTable();
-    productDetailTable.setItems(ProductDetailViewModel.productDetailsList);
+    productDetailTable.setItems(ProductDetailViewModel.getProductDetailsList());
   }
 
   private void getProductDetailTable() {

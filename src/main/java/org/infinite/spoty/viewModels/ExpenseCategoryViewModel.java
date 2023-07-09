@@ -217,4 +217,8 @@ public class ExpenseCategoryViewModel {
     categoryComboBoxList.addAll(categoryList);
     return categoryComboBoxList;
   }
+
+  public static ObservableList<ExpenseCategory> getCategoryList() {
+    return categoryList;
+  }
 }

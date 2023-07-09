@@ -267,4 +267,8 @@ public class UOMViewModel {
     uomComboBoxList.addAll(uomList);
     return uomComboBoxList;
   }
+
+  public static ObservableList<UnitOfMeasure> getUomList() {
+    return uomList;
+  }
 }

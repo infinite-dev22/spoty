@@ -157,7 +157,7 @@ public class AdjustmentDetailFormController implements Initializable {
 
               AdjustmentMasterFormController.getInstance(stage)
                   .adjustmentDetailTable
-                  .setItems(AdjustmentDetailViewModel.adjustmentDetailsList);
+                  .setItems(AdjustmentDetailViewModel.getAdjustmentDetailsList());
 
               closeDialog(e);
               return;
@@ -178,7 +178,7 @@ public class AdjustmentDetailFormController implements Initializable {
 
             AdjustmentMasterFormController.getInstance(stage)
                 .adjustmentDetailTable
-                .setItems(AdjustmentDetailViewModel.adjustmentDetailsList);
+                .setItems(AdjustmentDetailViewModel.getAdjustmentDetailsList());
 
             closeDialog(e);
             return;

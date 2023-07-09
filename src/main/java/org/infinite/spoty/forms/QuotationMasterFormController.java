@@ -184,7 +184,7 @@ public class QuotationMasterFormController implements Initializable {
             new DoubleFilter<>("Discount", QuotationDetail::getDiscount),
             new DoubleFilter<>("Tax", QuotationDetail::getNetTax));
     getQuotationDetailTable();
-    quotationDetailTable.setItems(QuotationDetailViewModel.quotationDetailsList);
+    quotationDetailTable.setItems(QuotationDetailViewModel.getQuotationDetailsList());
   }
 
   private void getQuotationDetailTable() {

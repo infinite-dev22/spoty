@@ -108,10 +108,10 @@ public class CustomerController implements Initializable {
             new StringFilter<>("Email", Customer::getEmail),
             new StringFilter<>("Tax No.", Customer::getTaxNumber));
     styleCustomerTable();
-    customersTable.setItems(CustomerViewModel.customersList);
+    customersTable.setItems(CustomerViewModel.getCustomersList());
     CustomerViewModel.customersList.addListener(
         new WeakListChangeListener<>(
-            c -> customersTable.setItems(CustomerViewModel.customersList)));
+            c -> customersTable.setItems(CustomerViewModel.getCustomersList())));
   }
 
   private void styleCustomerTable() {

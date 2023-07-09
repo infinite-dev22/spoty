@@ -147,7 +147,7 @@ public class QuotationMasterViewModel {
             if (!QuotationDetailViewModel.quotationDetailsList.isEmpty()) {
               QuotationDetailViewModel.quotationDetailsList.forEach(
                   quotationDetail -> quotationDetail.setQuotation(quotationMaster));
-              quotationMaster.setQuotationDetails(QuotationDetailViewModel.quotationDetailsList);
+              quotationMaster.setQuotationDetails(QuotationDetailViewModel.getQuotationDetailsList());
             }
 
             quotationMasterDao.create(quotationMaster);
@@ -248,7 +248,7 @@ public class QuotationMasterViewModel {
             quotationMaster.setNotes(getNote());
 
             QuotationDetailViewModel.deleteQuotationDetails(PENDING_DELETES);
-            quotationMaster.setQuotationDetails(QuotationDetailViewModel.quotationDetailsList);
+            quotationMaster.setQuotationDetails(QuotationDetailViewModel.getQuotationDetailsList());
 
             quotationMasterDao.update(quotationMaster);
 
@@ -283,5 +283,9 @@ public class QuotationMasterViewModel {
     Thread thread = new Thread(task);
     thread.setDaemon(true);
     thread.start();
+  }
+
+  public static ObservableList<QuotationMaster> getQuotationMasterList() {
+    return quotationMasterList;
   }
 }

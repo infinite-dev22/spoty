@@ -98,11 +98,11 @@ public class CurrencyController implements Initializable {
 
     getCurrencyTable();
 
-    currencyTable.setItems(CurrencyViewModel.currenciesList);
+    currencyTable.setItems(CurrencyViewModel.getCurrenciesList());
 
     CurrencyViewModel.currenciesList.addListener(
         new WeakListChangeListener<>(
-            c -> currencyTable.setItems(CurrencyViewModel.currenciesList)));
+            c -> currencyTable.setItems(CurrencyViewModel.getCurrenciesList())));
   }
 
   private void getCurrencyTable() {

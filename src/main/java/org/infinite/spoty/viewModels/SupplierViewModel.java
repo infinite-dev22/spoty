@@ -313,4 +313,8 @@ public class SupplierViewModel {
     thread.setDaemon(true);
     thread.start();
   }
+
+  public static ObservableList<Supplier> getSuppliersList() {
+    return suppliersList;
+  }
 }

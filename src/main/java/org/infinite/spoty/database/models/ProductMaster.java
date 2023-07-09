@@ -50,7 +50,7 @@ public class ProductMaster implements Serializable {
   @DatabaseField(canBeNull = false, columnName = "not_sale")
   private boolean notForSale;
 
-  @DatabaseField(canBeNull = false, columnName = "is_active")
+  @DatabaseField(canBeNull = false, columnName = "has_variants")
   private boolean hasVariants;
 
   @DatabaseField(columnName = "created_at")

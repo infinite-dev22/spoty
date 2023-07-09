@@ -128,7 +128,7 @@ public class StockInDetailFormController implements Initializable {
               stockInDetailPdct.clearSelection();
               StockInMasterFormController.getInstance(stage)
                   .stockInDetailTable
-                  .setItems(StockInDetailViewModel.stockInDetailsList);
+                  .setItems(StockInDetailViewModel.getStockInDetailsList());
 
               closeDialog(e);
               return;
@@ -146,7 +146,7 @@ public class StockInDetailFormController implements Initializable {
             stockInDetailPdct.clearSelection();
             StockInMasterFormController.getInstance(stage)
                 .stockInDetailTable
-                .setItems(StockInDetailViewModel.stockInDetailsList);
+                .setItems(StockInDetailViewModel.getStockInDetailsList());
 
             closeDialog(e);
             return;

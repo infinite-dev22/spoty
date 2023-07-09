@@ -97,7 +97,7 @@ public class ProductCategoryFormController implements Initializable {
                       .build();
               notificationHolder.addNotification(notification);
 
-              ProductCategoryController.getInstance(stage).categoryTable.setItems(categoriesList);
+              ProductCategoryController.getInstance(stage).categoryTable.setItems(getCategoriesList());
 
               closeDialog(e);
               return;
@@ -112,7 +112,7 @@ public class ProductCategoryFormController implements Initializable {
                     .build();
             notificationHolder.addNotification(notification);
 
-            ProductCategoryController.getInstance(stage).categoryTable.setItems(categoriesList);
+            ProductCategoryController.getInstance(stage).categoryTable.setItems(getCategoriesList());
 
             closeDialog(e);
             return;

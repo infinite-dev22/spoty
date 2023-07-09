@@ -285,7 +285,7 @@ public class SaleMasterFormController implements Initializable {
             new DoubleFilter<>("Discount", SaleDetail::getDiscount));
     styleTable();
     // Populate table.
-    saleDetailTable.setItems(SaleDetailViewModel.saleDetailList);
+    saleDetailTable.setItems(SaleDetailViewModel.getSaleDetailList());
   }
 
   private void styleTable() {

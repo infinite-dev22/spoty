@@ -129,7 +129,7 @@ public class TransferDetailFormController implements Initializable {
               transferDetailPdct.clearSelection();
               TransferMasterFormController.getInstance(stage)
                   .transferDetailTable
-                  .setItems(TransferDetailViewModel.transferDetailsList);
+                  .setItems(TransferDetailViewModel.getTransferDetailsList());
 
               closeDialog(e);
               return;
@@ -147,7 +147,7 @@ public class TransferDetailFormController implements Initializable {
             transferDetailPdct.clearSelection();
             TransferMasterFormController.getInstance(stage)
                 .transferDetailTable
-                .setItems(TransferDetailViewModel.transferDetailsList);
+                .setItems(TransferDetailViewModel.getTransferDetailsList());
 
             closeDialog(e);
             return;

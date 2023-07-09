@@ -89,10 +89,10 @@ public class ProductCategoryController implements Initializable {
             new StringFilter<>("Code", ProductCategory::getCode),
             new StringFilter<>("Name", ProductCategory::getName));
     getProductCategoryTable();
-    categoryTable.setItems(ProductCategoryViewModel.categoriesList);
+    categoryTable.setItems(ProductCategoryViewModel.getCategoriesList());
     ProductCategoryViewModel.categoriesList.addListener(
         new WeakListChangeListener<>(
-            c -> categoryTable.setItems(ProductCategoryViewModel.categoriesList)));
+            c -> categoryTable.setItems(ProductCategoryViewModel.getCategoriesList())));
   }
 
   private void getProductCategoryTable() {

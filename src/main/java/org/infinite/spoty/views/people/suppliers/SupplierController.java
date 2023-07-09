@@ -108,10 +108,10 @@ public class SupplierController implements Initializable {
             new StringFilter<>("Email", Supplier::getEmail),
             new StringFilter<>("Tax No.", Supplier::getTaxNumber));
     getTable();
-    suppliersTable.setItems(SupplierViewModel.suppliersList);
+    suppliersTable.setItems(SupplierViewModel.getSuppliersList());
     SupplierViewModel.suppliersList.addListener(
         new WeakListChangeListener<>(
-            c -> suppliersTable.setItems(SupplierViewModel.suppliersList)));
+            c -> suppliersTable.setItems(SupplierViewModel.getSuppliersList())));
   }
 
   private void getTable() {

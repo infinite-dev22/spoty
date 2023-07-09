@@ -291,4 +291,8 @@ public class ExpenseViewModel {
     thread.setDaemon(true);
     thread.start();
   }
+
+  public static ObservableList<Expense> getExpenseList() {
+    return expenseList;
+  }
 }

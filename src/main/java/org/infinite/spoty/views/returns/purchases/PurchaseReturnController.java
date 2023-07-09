@@ -128,12 +128,12 @@ public class PurchaseReturnController implements Initializable {
             new StringFilter<>("Pay Status", PurchaseReturnMaster::getPaymentStatus));
 
     stylePurchaseReturnMasterTable();
-    purchaseReturnTable.setItems(PurchaseReturnMasterViewModel.purchaseReturnMasterList);
+    purchaseReturnTable.setItems(PurchaseReturnMasterViewModel.getPurchaseReturnMasterList());
     PurchaseReturnMasterViewModel.purchaseReturnMasterList.addListener(
         new WeakListChangeListener<>(
             c ->
                 purchaseReturnTable.setItems(
-                    PurchaseReturnMasterViewModel.purchaseReturnMasterList)));
+                    PurchaseReturnMasterViewModel.getPurchaseReturnMasterList())));
   }
 
   private void stylePurchaseReturnMasterTable() {

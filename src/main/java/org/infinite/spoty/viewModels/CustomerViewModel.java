@@ -322,4 +322,8 @@ public class CustomerViewModel {
     customersComboBoxList.addAll(customersList);
     return customersComboBoxList;
   }
+
+  public static ObservableList<Customer> getCustomersList() {
+    return customersList;
+  }
 }

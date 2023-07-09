@@ -432,4 +432,8 @@ public class ProductDetailViewModel {
     productDetailsComboBoxList.addAll(productDetailsList);
     return productDetailsComboBoxList;
   }
+
+  public static ObservableList<ProductDetail> getProductDetailsList() {
+    return productDetailsList;
+  }
 }

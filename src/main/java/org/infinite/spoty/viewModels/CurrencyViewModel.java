@@ -226,4 +226,8 @@ public class CurrencyViewModel {
     currenciesComboBoxList.addAll(currenciesList);
     return currenciesComboBoxList;
   }
+
+  public static ObservableList<Currency> getCurrenciesList() {
+    return currenciesList;
+  }
 }

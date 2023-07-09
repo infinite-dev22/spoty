@@ -118,10 +118,10 @@ public class BranchController implements Initializable {
 
     getBranchTable();
 
-    branchTable.setItems(BranchViewModel.branchesList);
+    branchTable.setItems(BranchViewModel.getBranchesList());
 
     BranchViewModel.branchesList.addListener(
-        new WeakListChangeListener<>(c -> branchTable.setItems(BranchViewModel.branchesList)));
+        new WeakListChangeListener<>(c -> branchTable.setItems(BranchViewModel.getBranchesList())));
   }
 
   private void getBranchTable() {

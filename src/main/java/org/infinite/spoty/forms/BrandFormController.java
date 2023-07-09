@@ -95,7 +95,7 @@ public class BrandFormController implements Initializable {
                       .build();
               notificationHolder.addNotification(notification);
 
-              BrandController.getInstance(stage).brandTable.setItems(BrandViewModel.brandsList);
+              BrandController.getInstance(stage).brandTable.setItems(BrandViewModel.getBrandsList());
 
               closeDialog(e);
               return;
@@ -110,7 +110,7 @@ public class BrandFormController implements Initializable {
                     .build();
             notificationHolder.addNotification(notification);
 
-            BrandController.getInstance(stage).brandTable.setItems(BrandViewModel.brandsList);
+            BrandController.getInstance(stage).brandTable.setItems(BrandViewModel.getBrandsList());
 
             closeDialog(e);
             return;

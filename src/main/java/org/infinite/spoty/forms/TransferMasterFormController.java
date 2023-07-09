@@ -181,7 +181,7 @@ public class TransferMasterFormController implements Initializable {
             new StringFilter<>("Name", TransferDetail::getProductDetailName),
             new LongFilter<>("Quantity", TransferDetail::getQuantity));
     getTransferDetailTable();
-    transferDetailTable.setItems(TransferDetailViewModel.transferDetailsList);
+    transferDetailTable.setItems(TransferDetailViewModel.getTransferDetailsList());
   }
 
   private void getTransferDetailTable() {

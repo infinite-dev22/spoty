@@ -89,9 +89,9 @@ public class BrandController implements Initializable {
             new StringFilter<>("Name", Brand::getName),
             new StringFilter<>("Description", Brand::getDescription));
     getBrandTable();
-    brandTable.setItems(BrandViewModel.brandsList);
+    brandTable.setItems(BrandViewModel.getBrandsList());
     BrandViewModel.brandsList.addListener(
-        new WeakListChangeListener<>(c -> brandTable.setItems(BrandViewModel.brandsList)));
+        new WeakListChangeListener<>(c -> brandTable.setItems(BrandViewModel.getBrandsList())));
   }
 
   private void getBrandTable() {

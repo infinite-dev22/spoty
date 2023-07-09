@@ -143,7 +143,7 @@ public class StockInMasterFormController implements Initializable {
             new StringFilter<>("Name", StockInDetail::getProductDetailName),
             new LongFilter<>("Quantity", StockInDetail::getQuantity));
     getStockInDetailTable();
-    stockInDetailTable.setItems(StockInDetailViewModel.stockInDetailsList);
+    stockInDetailTable.setItems(StockInDetailViewModel.getStockInDetailsList());
   }
 
   private void getStockInDetailTable() {

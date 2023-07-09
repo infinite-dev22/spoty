@@ -394,4 +394,8 @@ public class SaleDetailViewModel {
     thread.setDaemon(true);
     thread.start();
   }
+
+  public static ObservableList<SaleDetail> getSaleDetailList() {
+    return saleDetailList;
+  }
 }

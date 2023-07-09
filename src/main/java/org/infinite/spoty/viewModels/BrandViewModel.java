@@ -210,4 +210,8 @@ public class BrandViewModel {
     brandsComboBoxList.addAll(brandsList);
     return brandsComboBoxList;
   }
+
+  public static ObservableList<Brand> getBrandsList() {
+    return brandsList;
+  }
 }

@@ -92,7 +92,7 @@ public class SupplierFormController implements Initializable {
     // Name input validation.
     requiredValidator(supplierFormName, "Name field is required.", supplierFormNameValidationLabel);
     // Email input validation.
-    emailValidator(supplierFormEmail, supplierFormEmailValidationLabel);
+    emailValidator(supplierFormEmail, supplierFormEmailValidationLabel, supplierFormSaveBtn);
     // Phone input validation.
     lengthValidator(supplierFormPhone, 11, "Invalid length", supplierFormPhoneValidationLabel);
     dialogOnActions();
@@ -126,7 +126,7 @@ public class SupplierFormController implements Initializable {
 
               SupplierController.getInstance(stage)
                   .suppliersTable
-                  .setItems(SupplierViewModel.suppliersList);
+                  .setItems(SupplierViewModel.getSuppliersList());
 
               closeDialog(e);
               return;
@@ -143,7 +143,7 @@ public class SupplierFormController implements Initializable {
 
             SupplierController.getInstance(stage)
                 .suppliersTable
-                .setItems(SupplierViewModel.suppliersList);
+                .setItems(SupplierViewModel.getSuppliersList());
 
             closeDialog(e);
             return;

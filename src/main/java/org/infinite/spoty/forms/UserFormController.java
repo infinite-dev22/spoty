@@ -105,7 +105,7 @@ public class UserFormController implements Initializable {
     userFormActive.selectedProperty().bindBidirectional(UserViewModel.activeProperty());
 
     // Combo box properties.
-    //        userFormRole.setItems(UserViewModel.usersList);
+    //        userFormRole.setItems(UserViewModel.getUsersList());
     userFormRole.setConverter(
         new StringConverter<>() {
           @Override
@@ -145,7 +145,7 @@ public class UserFormController implements Initializable {
     requiredValidator(userFormBranch, "Branch is required.", userFormBranchValidationLabel);
     requiredValidator(userFormRole, "User role is required.", userFormRoleValidationLabel);
     // Email input validation.
-    emailValidator(userFormEmail, userFormEmailValidationLabel);
+    emailValidator(userFormEmail, userFormEmailValidationLabel, userFormSaveBtn);
     // Phone input validation.
     lengthValidator(userFormPhone, 11, "Invalid Phone length", userFormPhoneValidationLabel);
     dialogOnActions();
@@ -190,7 +190,7 @@ public class UserFormController implements Initializable {
 
               userFormRole.clearSelection();
               userFormBranch.clearSelection();
-              UserController.getInstance(stage).userTable.setItems(UserViewModel.usersList);
+              UserController.getInstance(stage).userTable.setItems(UserViewModel.getUsersList());
 
               closeDialog(e);
               return;
@@ -206,7 +206,7 @@ public class UserFormController implements Initializable {
 
             userFormRole.clearSelection();
             userFormBranch.clearSelection();
-            UserController.getInstance(stage).userTable.setItems(UserViewModel.usersList);
+            UserController.getInstance(stage).userTable.setItems(UserViewModel.getUsersList());
 
             closeDialog(e);
             return;
