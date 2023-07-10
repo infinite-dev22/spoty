@@ -44,7 +44,6 @@ public class ExpenseCategoryFormController implements Initializable {
   @FXML public MFXTextField categoryExpenseFormDescription;
   @FXML public MFXButton categoryExpenseFormSaveBtn;
   @FXML public MFXButton categoryExpenseFormCancelBtn;
-  @FXML public Label categoryExpenseFormTitle;
   @FXML public Label categoryExpenseFormNameValidationLabel;
 
   private ExpenseCategoryFormController(Stage stage) {
@@ -72,7 +71,8 @@ public class ExpenseCategoryFormController implements Initializable {
     requiredValidator(
         categoryExpenseFormName,
         "Category name is required.",
-        categoryExpenseFormNameValidationLabel, categoryExpenseFormSaveBtn);
+        categoryExpenseFormNameValidationLabel,
+        categoryExpenseFormSaveBtn);
     dialogOnActions();
   }
 

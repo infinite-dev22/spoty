@@ -40,7 +40,6 @@ public class SupplierFormController implements Initializable {
   public MFXTextField supplierID = new MFXTextField();
   @FXML public MFXButton supplierFormSaveBtn;
   @FXML public MFXButton supplierFormCancelBtn;
-  @FXML public Label supplierFormTitle;
   @FXML public MFXTextField supplierFormName;
   @FXML public MFXTextField supplierFormEmail;
   @FXML public MFXTextField supplierFormPhone;

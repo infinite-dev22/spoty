@@ -43,6 +43,7 @@ public class LaunchPreloader extends Preloader {
   public void handleStateChangeNotification(StateChangeNotification info) {
     if (info.getType() == StateChangeNotification.Type.BEFORE_START) {
       preloadStage.hide();
+      preloadStage.close();
     }
   }
 }

@@ -40,7 +40,6 @@ public class BrandFormController implements Initializable {
   private static BrandFormController instance;
   private final Stage stage;
   public MFXTextField brandID = new MFXTextField();
-  @FXML public Label brandFormTitle;
   @FXML public MFXTextField brandFormName;
   @FXML public MFXTextField brandFormDescription;
   @FXML public MFXButton brandFormSaveBtn;

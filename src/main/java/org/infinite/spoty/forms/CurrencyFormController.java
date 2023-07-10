@@ -40,7 +40,6 @@ public class CurrencyFormController implements Initializable {
   private static CurrencyFormController instance;
   private final Stage stage;
   public MFXTextField currencyFormID = new MFXTextField();
-  @FXML public Label currencyFormTitle;
   @FXML public MFXTextField currencyFormName;
   @FXML public MFXButton currencyFormSaveBtn;
   @FXML public MFXButton currencyFormCancelBtn;

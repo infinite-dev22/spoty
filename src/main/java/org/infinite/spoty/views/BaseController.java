@@ -61,6 +61,8 @@ public class BaseController implements Initializable {
 
   @FXML
   void closeIconClicked() {
+    stage.hide();
+    stage.close();
     Platform.exit();
     System.exit(0);
   }

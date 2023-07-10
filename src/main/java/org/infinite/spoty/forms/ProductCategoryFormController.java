@@ -36,7 +36,6 @@ import org.infinite.spoty.viewModels.ProductCategoryViewModel;
 import org.infinite.spoty.views.inventory.category.ProductCategoryController;
 
 public class ProductCategoryFormController implements Initializable {
-  @FXML public static Label formTitle;
   private static ProductCategoryFormController instance;
   private final Stage stage;
   public MFXTextField dialogCategoryID = new MFXTextField();

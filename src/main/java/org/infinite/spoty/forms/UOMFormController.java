@@ -53,7 +53,6 @@ public class UOMFormController implements Initializable {
   @FXML public MFXTextField uomFormShortName;
   @FXML public MFXButton uomFormSaveBtn;
   @FXML public MFXButton uomFormCancelBtn;
-  @FXML public Label uomFormTitle;
   @FXML public MFXComboBox<UnitOfMeasure> uomFormBaseUnit;
   @FXML public MFXTextField uomFormOperator;
   @FXML public MFXTextField uomFormOperatorValue;
@@ -62,6 +61,7 @@ public class UOMFormController implements Initializable {
   @FXML public Label uomFormShortNameValidationLabel;
   @FXML public Label uomFormOperatorValidationLabel;
   @FXML public Label uomFormOperatorValueValidationLabel;
+  @FXML public VBox inputsHolder;
 
   private UOMFormController(Stage stage) {
     this.stage = stage;

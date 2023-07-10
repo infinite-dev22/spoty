@@ -26,7 +26,10 @@ import io.github.palexdev.materialfx.controls.MFXTableRow;
 import io.github.palexdev.materialfx.controls.MFXTableView;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
-import io.github.palexdev.materialfx.enums.ButtonType;
+import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
+import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
+import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
+import io.github.palexdev.materialfx.enums.ScrimPriority;
 import io.github.palexdev.materialfx.filter.LongFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
@@ -39,13 +42,11 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.components.navigation.Pages;
@@ -76,7 +77,7 @@ public class TransferMasterFormController implements Initializable {
   @FXML public Label transferMasterToBranchValidationLabel;
   @FXML public Label transferMasterFromBranchValidationLabel;
   @FXML public MFXButton transferMasterSaveBtn;
-  private Dialog<ButtonType> dialog;
+  private MFXStageDialog dialog;
 
   private TransferMasterFormController(Stage stage) {
     Platform.runLater(
@@ -250,11 +251,22 @@ public class TransferMasterFormController implements Initializable {
     FXMLLoader fxmlLoader = fxmlLoader("forms/TransferDetailForm.fxml");
     fxmlLoader.setControllerFactory(c -> TransferDetailFormController.getInstance(stage));
 
-    dialog = new Dialog<>();
-    dialog.setDialogPane(fxmlLoader.load());
-    dialog.initOwner(stage);
-    dialog.initModality(Modality.APPLICATION_MODAL);
-    dialog.initStyle(StageStyle.UNDECORATED);
+    MFXGenericDialog dialogContent = fxmlLoader.load();
+
+    dialogContent.setShowMinimize(false);
+    dialogContent.setShowAlwaysOnTop(false);
+
+    dialog =
+        MFXGenericDialogBuilder.build(dialogContent)
+            .toStageDialogBuilder()
+            .initOwner(stage)
+            .initModality(Modality.WINDOW_MODAL)
+            .setOwnerNode(transferMasterFormContentPane)
+            .setScrimPriority(ScrimPriority.WINDOW)
+            .setScrimOwner(true)
+            .get();
+
+    io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
   }
 
   public void transferMasterSaveBtnClicked() {
