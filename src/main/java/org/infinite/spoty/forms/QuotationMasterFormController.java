@@ -19,7 +19,10 @@ import static org.infinite.spoty.Validators.requiredValidator;
 
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
-import io.github.palexdev.materialfx.enums.ButtonType;
+import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
+import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
+import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
+import io.github.palexdev.materialfx.enums.ScrimPriority;
 import io.github.palexdev.materialfx.filter.DoubleFilter;
 import io.github.palexdev.materialfx.filter.LongFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
@@ -34,13 +37,11 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.components.navigation.Pages;
@@ -75,7 +76,7 @@ public class QuotationMasterFormController implements Initializable {
   @FXML public Label quotationBranchValidationLabel;
   @FXML public Label quotationStatusValidationLabel;
   @FXML public MFXButton quotationMasterSaveBtn;
-  private Dialog<ButtonType> dialog;
+  private MFXStageDialog dialog;
 
   private QuotationMasterFormController(Stage stage) {
     Platform.runLater(
@@ -257,11 +258,22 @@ public class QuotationMasterFormController implements Initializable {
     FXMLLoader fxmlLoader = fxmlLoader("forms/QuotationDetailForm.fxml");
     fxmlLoader.setControllerFactory(c -> QuotationDetailFormController.getInstance(stage));
 
-    dialog = new Dialog<>();
-    dialog.setDialogPane(fxmlLoader.load());
-    dialog.initOwner(stage);
-    dialog.initModality(Modality.APPLICATION_MODAL);
-    dialog.initStyle(StageStyle.UNDECORATED);
+    MFXGenericDialog dialogContent = fxmlLoader.load();
+
+    dialogContent.setShowMinimize(false);
+    dialogContent.setShowAlwaysOnTop(false);
+
+    dialog =
+        MFXGenericDialogBuilder.build(dialogContent)
+            .toStageDialogBuilder()
+            .initOwner(stage)
+            .initModality(Modality.WINDOW_MODAL)
+            .setOwnerNode(quotationFormContentPane)
+            .setScrimPriority(ScrimPriority.WINDOW)
+            .setScrimOwner(true)
+            .get();
+
+    io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
   }
 
   public void saveBtnClicked() {

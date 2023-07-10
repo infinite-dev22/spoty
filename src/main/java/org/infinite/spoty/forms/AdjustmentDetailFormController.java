@@ -50,7 +50,6 @@ public class AdjustmentDetailFormController implements Initializable {
   @FXML public MFXFilterComboBox<ProductDetail> adjustmentProductVariant;
   @FXML public MFXButton adjustmentProductsSaveBtn;
   @FXML public MFXButton adjustmentProductsCancelBtn;
-  @FXML public Label adjustmentProductsTitle;
   @FXML public MFXComboBox<String> adjustmentType;
   @FXML public Label adjustmentProductVariantValidationLabel;
   @FXML public Label adjustmentProductsQntyValidationLabel;

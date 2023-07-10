@@ -49,7 +49,6 @@ public class ExpenseFormController implements Initializable {
   @FXML public MFXTextField expenseFormDetails;
   @FXML public MFXButton expenseFormSaveBtn;
   @FXML public MFXButton expenseFormCancelBtn;
-  @FXML public Label expenseFormTitle;
   @FXML public MFXDatePicker expenseFormDate;
   @FXML public MFXComboBox<Branch> expenseFormBranch;
   @FXML public MFXComboBox<ExpenseCategory> expenseFormCategory;

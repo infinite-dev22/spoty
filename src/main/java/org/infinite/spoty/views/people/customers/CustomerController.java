@@ -18,7 +18,10 @@ import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
-import io.github.palexdev.materialfx.enums.ButtonType;
+import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
+import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
+import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
+import io.github.palexdev.materialfx.enums.ScrimPriority;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import java.io.IOException;
 import java.net.URL;
@@ -30,13 +33,11 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Dialog;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import org.infinite.spoty.database.models.Customer;
 import org.infinite.spoty.forms.CustomerFormController;
 import org.infinite.spoty.viewModels.CustomerViewModel;
@@ -49,7 +50,7 @@ public class CustomerController implements Initializable {
   @FXML public MFXButton customerImportBtn;
   @FXML public BorderPane customersContentPane;
   @FXML public MFXTableView<Customer> customersTable;
-  private Dialog<ButtonType> dialog;
+  private MFXStageDialog dialog;
 
   private CustomerController(Stage stage) {
     Platform.runLater(
@@ -165,11 +166,23 @@ public class CustomerController implements Initializable {
   private void customerFormDialogPane(Stage stage) throws IOException {
     FXMLLoader fxmlLoader = fxmlLoader("forms/CustomerForm.fxml");
     fxmlLoader.setControllerFactory(c -> CustomerFormController.getInstance(stage));
-    dialog = new Dialog<>();
-    dialog.setDialogPane(fxmlLoader.load());
-    dialog.initOwner(stage);
-    dialog.initModality(Modality.APPLICATION_MODAL);
-    dialog.initStyle(StageStyle.UNDECORATED);
+
+    MFXGenericDialog dialogContent = fxmlLoader.load();
+
+    dialogContent.setShowMinimize(false);
+    dialogContent.setShowAlwaysOnTop(false);
+
+    dialog =
+        MFXGenericDialogBuilder.build(dialogContent)
+            .toStageDialogBuilder()
+            .initOwner(stage)
+            .initModality(Modality.WINDOW_MODAL)
+            .setOwnerNode(customersContentPane)
+            .setScrimPriority(ScrimPriority.WINDOW)
+            .setScrimOwner(true)
+            .get();
+
+    io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
   }
 
   public void customerCreateBtnClicked() {

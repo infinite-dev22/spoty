@@ -45,7 +45,6 @@ public class PurchaseDetailFormController implements Initializable {
   @FXML public MFXTextField purchaseDetailCost;
   @FXML public MFXButton purchaseDetailSaveBtn;
   @FXML public MFXButton purchaseDetailCancelBtn;
-  @FXML public Label purchaseDetailTitle;
   @FXML public Label purchaseDetailQntyValidationLabel;
   @FXML public Label purchaseDetailPdctValidationLabel;
   @FXML public Label purchaseDetailCostValidationLabel;

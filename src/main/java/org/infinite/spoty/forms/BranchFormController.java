@@ -42,7 +42,6 @@ public class BranchFormController implements Initializable {
   public MFXTextField branchFormID = new MFXTextField();
   @FXML public MFXButton branchFormSaveBtn;
   @FXML public MFXButton branchFormCancelBtn;
-  @FXML public Label branchFormTitle;
   @FXML public MFXTextField branchFormName;
   @FXML public MFXTextField branchFormEmail;
   @FXML public MFXTextField branchFormPhone;

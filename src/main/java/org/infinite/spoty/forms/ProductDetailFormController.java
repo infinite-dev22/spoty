@@ -42,7 +42,6 @@ public class ProductDetailFormController implements Initializable {
   private final Stage stage;
   @FXML public MFXButton productProductsSaveBtn;
   @FXML public MFXButton productProductsCancelBtn;
-  @FXML public Label productProductsTitle;
   @FXML public MFXTextField productVariantSerial;
   @FXML public MFXTextField productVariantName;
   @FXML public Label productVariantNameValidationLabel;

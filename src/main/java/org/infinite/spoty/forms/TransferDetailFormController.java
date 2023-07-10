@@ -44,7 +44,6 @@ public class TransferDetailFormController implements Initializable {
   @FXML public MFXFilterComboBox<ProductDetail> transferDetailPdct;
   @FXML public MFXButton transferDetailSaveBtn;
   @FXML public MFXButton transferDetailCancelBtn;
-  @FXML public Label transferDetailTitle;
   @FXML public MFXTextField transferDetailDescription;
   @FXML public Label transferDetailQntyValidationLabel;
   @FXML public Label transferDetailPdctValidationLabel;

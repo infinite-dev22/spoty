@@ -46,7 +46,6 @@ public class QuotationDetailFormController implements Initializable {
   @FXML public MFXTextField quotationProductsDiscount;
   @FXML public MFXButton quotationProductsSaveBtn;
   @FXML public MFXButton quotationProductsCancelBtn;
-  @FXML public Label quotationProductsTitle;
   @FXML public Label quotationProductPdctValidationLabel;
   @FXML public Label quotationProductQntyValidationLabel;
 

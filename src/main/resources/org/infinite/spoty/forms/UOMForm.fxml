@@ -17,20 +17,28 @@
 <?import io.github.palexdev.materialfx.controls.MFXComboBox?>
 <?import io.github.palexdev.materialfx.controls.MFXScrollPane?>
 <?import io.github.palexdev.materialfx.controls.MFXTextField?>
+<?import io.github.palexdev.materialfx.dialogs.MFXGenericDialog?>
 <?import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.DialogPane?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<DialogPane xmlns:fx="http://javafx.com/fxml/1" styleClass="card" stylesheets="@../styles/Common.css"
-            xmlns="http://javafx.com/javafx/19" fx:controller="org.infinite.spoty.forms.UOMFormController">
-    <content>
+<?import java.net.URL?>
+<MFXGenericDialog xmlns:fx="http://javafx.com/fxml/1" styleClass="card" xmlns="http://javafx.com/javafx/19"
+                  fx:controller="org.infinite.spoty.forms.UOMFormController">
+    <stylesheets>
+        <URL value="@../styles/Common.css"/>
+        <URL value="@../styles/TextFields.css"/>
+    </stylesheets>
+    <center>
         <MFXScrollPane fitToWidth="true" VBox.vgrow="ALWAYS">
-            <VBox stylesheets="@../styles/TextFields.css">
+            <VBox fx:id="inputsHolder" layoutY="10.0" spacing="10.0">
+                <padding>
+                    <Insets left="10.0" right="10.0" top="10.0" bottom="10.0"/>
+                </padding>
                 <VBox spacing="5.0">
                     <padding>
-                        <Insets right="10.0" top="10.0"/>
+                        <Insets bottom="5.0" top="2.5"/>
                     </padding>
                     <MFXTextField fx:id="uomFormName" floatMode="BORDER" floatingText="Name" prefWidth="400.0"/>
                     <Label id="validationLabel" fx:id="uomFormNameValidationLabel"
@@ -39,7 +47,7 @@
                 </VBox>
                 <VBox spacing="5.0">
                     <padding>
-                        <Insets right="10.0" top="10.0"/>
+                        <Insets bottom="5.0" top="2.5"/>
                     </padding>
                     <MFXTextField fx:id="uomFormShortName" floatMode="BORDER" floatingText="Short Name"
                                   prefWidth="400.0"/>
@@ -49,14 +57,14 @@
                 </VBox>
                 <VBox spacing="5.0">
                     <padding>
-                        <Insets right="10.0" top="10.0"/>
+                        <Insets bottom="5.0" top="2.5"/>
                     </padding>
                     <MFXComboBox fx:id="uomFormBaseUnit" floatMode="BORDER" floatingText="Base Unit" prefWidth="400.0"/>
                 </VBox>
                 <VBox fx:id="formsHolder" visible="false" managed="false">
                     <VBox spacing="5.0">
                         <padding>
-                            <Insets right="10.0" top="5.0"/>
+                            <Insets bottom="5.0" top="2.5"/>
                         </padding>
                         <MFXTextField fx:id="uomFormOperator" floatMode="BORDER" floatingText="Operator"
                                       prefWidth="400.0"/>
@@ -67,7 +75,7 @@
                     </VBox>
                     <VBox spacing="5.0">
                         <padding>
-                            <Insets right="10.0" top="5.0"/>
+                            <Insets bottom="5.0" top="2.5"/>
                         </padding>
                         <MFXTextField fx:id="uomFormOperatorValue" floatMode="BORDER" floatingText="Operator Value"
                                       prefWidth="400.0"/>
@@ -80,26 +88,16 @@
                         <Insets top="15.0"/>
                     </padding>
                 </VBox>
-                <HBox alignment="CENTER_RIGHT" spacing="20.0">
-                    <VBox.margin>
-                        <Insets top="10.0"/>
-                    </VBox.margin>
-                    <padding>
-                        <Insets top="10.0"/>
-                    </padding>
-                    <MFXButton styleClass="filled" fx:id="uomFormSaveBtn" text="Save"/>
-                    <MFXButton styleClass="outlined" fx:id="uomFormCancelBtn" text="Cancel"/>
-                </HBox>
-                <padding>
-                    <Insets left="5.0" right="10.0" top="10.0"/>
-                </padding>
             </VBox>
         </MFXScrollPane>
-    </content>
-    <padding>
-        <Insets left="5.0" top="10.0"/>
-    </padding>
-    <header>
-        <Label fx:id="uomFormTitle" text="Create"/>
-    </header>
-</DialogPane>
+    </center>
+    <bottom>
+        <HBox alignment="CENTER_RIGHT" spacing="20.0">
+            <padding>
+                <Insets left="10.0" right="10.0" top="10.0"/>
+            </padding>
+            <MFXButton styleClass="filled" fx:id="uomFormSaveBtn" text="Save"/>
+            <MFXButton styleClass="outlined" fx:id="uomFormCancelBtn" text="Cancel"/>
+        </HBox>
+    </bottom>
+</MFXGenericDialog>

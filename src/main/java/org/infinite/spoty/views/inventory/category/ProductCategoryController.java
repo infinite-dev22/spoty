@@ -18,7 +18,10 @@ import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
-import io.github.palexdev.materialfx.enums.ButtonType;
+import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
+import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
+import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
+import io.github.palexdev.materialfx.enums.ScrimPriority;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import java.io.IOException;
 import java.net.URL;
@@ -30,12 +33,11 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Dialog;
 import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import org.infinite.spoty.database.models.ProductCategory;
 import org.infinite.spoty.forms.ProductCategoryFormController;
 import org.infinite.spoty.viewModels.ProductCategoryViewModel;
@@ -47,7 +49,8 @@ public class ProductCategoryController implements Initializable {
   @FXML public MFXTextField categorySearchBar;
   @FXML public HBox categoryActionsPane;
   @FXML public MFXButton categoryImportBtn;
-  private Dialog<ButtonType> dialog;
+  @FXML public BorderPane productsCategoryPane;
+  private MFXStageDialog dialog;
 
   private ProductCategoryController(Stage stage) {
     Platform.runLater(
@@ -146,13 +149,22 @@ public class ProductCategoryController implements Initializable {
     FXMLLoader fxmlLoader = fxmlLoader("forms/ProductCategoryForm.fxml");
     fxmlLoader.setControllerFactory(c -> ProductCategoryFormController.getInstance(stage));
 
-    dialog = new Dialog<>();
-    dialog.setDialogPane(fxmlLoader.load());
-    dialog.initOwner(stage);
-    dialog.initModality(Modality.APPLICATION_MODAL);
-    dialog.initStyle(StageStyle.UNDECORATED);
-    // To update dialog title dynamically, create a bind in the viewModel with the formTile.
-    // ProductCategoryFormController.formTitle.setText(Labels.CREATE);
+    MFXGenericDialog dialogContent = fxmlLoader.load();
+
+    dialogContent.setShowMinimize(false);
+    dialogContent.setShowAlwaysOnTop(false);
+
+    dialog =
+        MFXGenericDialogBuilder.build(dialogContent)
+            .toStageDialogBuilder()
+            .initOwner(stage)
+            .initModality(Modality.WINDOW_MODAL)
+            .setOwnerNode(productsCategoryPane)
+            .setScrimPriority(ScrimPriority.WINDOW)
+            .setScrimOwner(true)
+            .get();
+
+    io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
   }
 
   public void categoryCreateBtnClicked() {

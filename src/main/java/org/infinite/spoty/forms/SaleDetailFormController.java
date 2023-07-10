@@ -46,7 +46,6 @@ public class SaleDetailFormController implements Initializable {
   @FXML public MFXTextField saleDetailDiscount;
   @FXML public MFXButton saleProductsSaveBtn;
   @FXML public MFXButton saleProductsCancelBtn;
-  @FXML public Label saleProductsTitle;
   @FXML public Label saleDetailPdctValidationLabel;
   @FXML public Label saleDetailQntyValidationLabel;
 

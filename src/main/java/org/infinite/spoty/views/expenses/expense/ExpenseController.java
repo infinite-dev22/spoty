@@ -18,7 +18,10 @@ import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
 
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
-import io.github.palexdev.materialfx.enums.ButtonType;
+import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
+import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
+import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
+import io.github.palexdev.materialfx.enums.ScrimPriority;
 import io.github.palexdev.materialfx.filter.DoubleFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import java.io.IOException;
@@ -31,13 +34,11 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Dialog;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import org.infinite.spoty.database.models.Expense;
 import org.infinite.spoty.forms.ExpenseFormController;
 import org.infinite.spoty.viewModels.ExpenseViewModel;
@@ -50,7 +51,7 @@ public class ExpenseController implements Initializable {
   @FXML public MFXButton expenseImportBtn;
   @FXML public MFXTableView<Expense> expenseTable;
   @FXML public BorderPane expenseContentPane;
-  private Dialog<ButtonType> dialog;
+  private MFXStageDialog dialog;
 
   private ExpenseController(Stage stage) {
     Platform.runLater(
@@ -113,7 +114,8 @@ public class ExpenseController implements Initializable {
     styleExpenseTable();
     expenseTable.setItems(ExpenseViewModel.getExpenseList());
     ExpenseViewModel.expenseList.addListener(
-        new WeakListChangeListener<>(c -> expenseTable.setItems(ExpenseViewModel.getExpenseList())));
+        new WeakListChangeListener<>(
+            c -> expenseTable.setItems(ExpenseViewModel.getExpenseList())));
   }
 
   private void styleExpenseTable() {
@@ -167,11 +169,22 @@ public class ExpenseController implements Initializable {
     FXMLLoader fxmlLoader = fxmlLoader("forms/ExpenseForm.fxml");
     fxmlLoader.setControllerFactory(c -> ExpenseFormController.getInstance(stage));
 
-    dialog = new Dialog<>();
-    dialog.setDialogPane(fxmlLoader.load());
-    dialog.initOwner(stage);
-    dialog.initModality(Modality.APPLICATION_MODAL);
-    dialog.initStyle(StageStyle.UNDECORATED);
+    MFXGenericDialog dialogContent = fxmlLoader.load();
+
+    dialogContent.setShowMinimize(false);
+    dialogContent.setShowAlwaysOnTop(false);
+
+    dialog =
+        MFXGenericDialogBuilder.build(dialogContent)
+            .toStageDialogBuilder()
+            .initOwner(stage)
+            .initModality(Modality.WINDOW_MODAL)
+            .setOwnerNode(expenseContentPane)
+            .setScrimPriority(ScrimPriority.WINDOW)
+            .setScrimOwner(true)
+            .get();
+
+    io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
   }
 
   public void expenseCreateBtnClicked() {

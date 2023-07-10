@@ -16,74 +16,62 @@
 
 <?import io.github.palexdev.materialfx.controls.MFXFilterComboBox?>
 <?import io.github.palexdev.materialfx.controls.MFXTextField?>
+<?import io.github.palexdev.materialfx.dialogs.MFXGenericDialog?>
 <?import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.DialogPane?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.*?>
 <?import java.net.URL?>
-<DialogPane xmlns:fx="http://javafx.com/fxml/1" styleClass="card" xmlns="http://javafx.com/javafx/19"
-            fx:controller="org.infinite.spoty.forms.PurchaseDetailFormController">
+<MFXGenericDialog xmlns:fx="http://javafx.com/fxml/1" styleClass="card" xmlns="http://javafx.com/javafx/19"
+                  fx:controller="org.infinite.spoty.forms.PurchaseDetailFormController">
     <stylesheets>
         <URL value="@../styles/Common.css"/>
         <URL value="@../styles/TextFields.css"/>
     </stylesheets>
-    <content>
-        <AnchorPane>
-            <Separator layoutY="25.0" prefWidth="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                       AnchorPane.topAnchor="0.0"/>
-            <VBox layoutY="10.0" spacing="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                  AnchorPane.topAnchor="0.0">
+    <center>
+        <VBox layoutY="10.0" spacing="5.0">
+            <padding>
+                <Insets left="10.0" right="10.0" top="10.0" bottom="10.0"/>
+            </padding>
+            <VBox spacing="2.0">
                 <padding>
-                    <Insets left="10.0" right="10.0" top="20.0"/>
+                    <Insets bottom="5" top="2.5"/>
                 </padding>
-                <VBox spacing="2.0">
-                    <padding>
-                        <Insets right="10.0" top="2.5"/>
-                    </padding>
-                    <MFXFilterComboBox fx:id="purchaseDetailPdct" floatMode="BORDER" floatingText="Product"
-                                       prefWidth="400.0"/>
-                    <Label id="validationLabel" fx:id="purchaseDetailPdctValidationLabel"
-                           maxWidth="1.7976931348623157E308"
-                           minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true"/>
-                </VBox>
-                <VBox spacing="2.0">
-                    <padding>
-                        <Insets right="10.0" top="2.5"/>
-                    </padding>
-                    <MFXTextField fx:id="purchaseDetailQnty" floatMode="BORDER" floatingText="Quantity"
-                                  prefWidth="400.0"/>
-                    <Label id="validationLabel" fx:id="purchaseDetailQntyValidationLabel"
-                           maxWidth="1.7976931348623157E308"
-                           minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true"/>
-                </VBox>
-                <VBox spacing="2.0">
-                    <padding>
-                        <Insets right="10.0" top="2.5"/>
-                    </padding>
-                    <MFXTextField fx:id="purchaseDetailCost" floatMode="BORDER" floatingText="Cost"
-                                  prefWidth="400.0"/>
-                    <Label id="validationLabel" fx:id="purchaseDetailCostValidationLabel"
-                           maxWidth="1.7976931348623157E308"
-                           minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true"/>
-                </VBox>
-                <HBox alignment="CENTER_RIGHT" spacing="20.0">
-                    <VBox.margin>
-                        <Insets top="10.0"/>
-                    </VBox.margin>
-                    <MFXButton styleClass="filled" fx:id="purchaseDetailSaveBtn" text="Save"/>
-                    <MFXButton styleClass="outlined" fx:id="purchaseDetailCancelBtn" text="Cancel"/>
-                </HBox>
+                <MFXFilterComboBox fx:id="purchaseDetailPdct" floatMode="BORDER" floatingText="Product"
+                                   prefWidth="400.0"/>
+                <Label id="validationLabel" fx:id="purchaseDetailPdctValidationLabel"
+                       maxWidth="1.7976931348623157E308"
+                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true"/>
             </VBox>
-        </AnchorPane>
-    </content>
-    <header>
-        <Label fx:id="purchaseDetailTitle" styleClass="card-title" text="Create"/>
-    </header>
-    <padding>
-        <Insets left="10.0" right="10.0" top="10.0"/>
-    </padding>
-</DialogPane>
+            <VBox spacing="2.0">
+                <padding>
+                    <Insets bottom="5" top="2.5"/>
+                </padding>
+                <MFXTextField fx:id="purchaseDetailQnty" floatMode="BORDER" floatingText="Quantity"
+                              prefWidth="400.0"/>
+                <Label id="validationLabel" fx:id="purchaseDetailQntyValidationLabel"
+                       maxWidth="1.7976931348623157E308"
+                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true"/>
+            </VBox>
+            <VBox spacing="2.0">
+                <padding>
+                    <Insets bottom="5" top="2.5"/>
+                </padding>
+                <MFXTextField fx:id="purchaseDetailCost" floatMode="BORDER" floatingText="Cost"
+                              prefWidth="400.0"/>
+                <Label id="validationLabel" fx:id="purchaseDetailCostValidationLabel"
+                       maxWidth="1.7976931348623157E308"
+                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true"/>
+            </VBox>
+        </VBox>
+    </center>
+    <bottom>
+        <HBox alignment="CENTER_RIGHT" spacing="20.0">
+            <padding>
+                <Insets left="10.0" right="10.0" top="10.0"/>
+            </padding>
+            <MFXButton styleClass="filled" fx:id="purchaseDetailSaveBtn" text="Save"/>
+            <MFXButton styleClass="outlined" fx:id="purchaseDetailCancelBtn" text="Cancel"/>
+        </HBox>
+    </bottom>
+</MFXGenericDialog>

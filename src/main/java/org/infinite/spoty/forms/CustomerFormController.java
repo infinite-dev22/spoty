@@ -40,7 +40,6 @@ public class CustomerFormController implements Initializable {
   public MFXTextField customerID = new MFXTextField();
   @FXML public MFXButton customerFormSaveBtn;
   @FXML public MFXButton customerFormCancelBtn;
-  @FXML public Label customerFormTitle;
   @FXML public MFXTextField customerFormName;
   @FXML public MFXTextField customerFormEmail;
   @FXML public MFXTextField customerFormPhone;

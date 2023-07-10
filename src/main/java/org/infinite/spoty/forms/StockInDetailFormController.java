@@ -44,7 +44,6 @@ public class StockInDetailFormController implements Initializable {
   @FXML public MFXFilterComboBox<ProductDetail> stockInDetailPdct;
   @FXML public MFXButton stockInDetailSaveBtn;
   @FXML public MFXButton stockInDetailCancelBtn;
-  @FXML public Label stockInDetailTitle;
   @FXML public MFXTextField stockInDetailDescription;
   @FXML public Label stockInDetailPdctValidationLabel;
   @FXML public Label stockInDetailQntyValidationLabel;

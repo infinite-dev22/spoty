@@ -44,7 +44,6 @@ public class RequisitionDetailFormController implements Initializable {
   @FXML public MFXFilterComboBox<ProductDetail> requisitionDetailPdct;
   @FXML public MFXButton requisitionDetailSaveBtn;
   @FXML public MFXButton requisitionDetailCancelBtn;
-  @FXML public Label requisitionDetailTitle;
   @FXML public MFXTextField requisitionDetailDescription;
   @FXML public Label requisitionDetailPdctValidationLabel;
   @FXML public Label requisitionDetailQntyValidationLabel;

@@ -48,7 +48,6 @@ public class UserFormController implements Initializable {
   public MFXTextField userID = new MFXTextField();
   @FXML public MFXButton userFormSaveBtn;
   @FXML public MFXButton userFormCancelBtn;
-  @FXML public Label userFormTitle;
   @FXML public MFXTextField userFormEmail;
   @FXML public MFXTextField userFormPhone;
   @FXML public MFXTextField userFormFirstname;

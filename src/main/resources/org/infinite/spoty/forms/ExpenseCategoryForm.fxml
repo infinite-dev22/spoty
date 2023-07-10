@@ -15,20 +15,27 @@
   -->
 
 <?import io.github.palexdev.materialfx.controls.MFXTextField?>
+<?import io.github.palexdev.materialfx.dialogs.MFXGenericDialog?>
 <?import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.DialogPane?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Separator?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<DialogPane xmlns:fx="http://javafx.com/fxml/1" styleClass="card" stylesheets="@../styles/Common.css"
-            xmlns="http://javafx.com/javafx/19" fx:controller="org.infinite.spoty.forms.ExpenseCategoryFormController">
-    <content>
-        <VBox spacing="20.0" stylesheets="@../styles/TextFields.css">
+<?import java.net.URL?>
+<MFXGenericDialog xmlns:fx="http://javafx.com/fxml/1" styleClass="card" xmlns="http://javafx.com/javafx/19"
+                  fx:controller="org.infinite.spoty.forms.ExpenseCategoryFormController">
+    <stylesheets>
+        <URL value="@../styles/Common.css"/>
+        <URL value="@../styles/TextFields.css"/>
+    </stylesheets>
+    <center>
+        <VBox layoutY="10.0" spacing="20.0">
+            <padding>
+                <Insets left="10.0" right="10.0" top="10.0" bottom="10.0"/>
+            </padding>
             <VBox spacing="5.0">
                 <padding>
-                    <Insets right="10.0" top="5.0"/>
+                    <Insets bottom="5.0" top="2.5"/>
                 </padding>
                 <MFXTextField fx:id="categoryExpenseFormName" floatMode="BORDER" floatingText="Name" prefWidth="400.0"/>
                 <Label id="validationLabel" fx:id="categoryExpenseFormNameValidationLabel"
@@ -37,25 +44,15 @@
             </VBox>
             <MFXTextField fx:id="categoryExpenseFormDescription" floatMode="BORDER" floatingText="Description"
                           prefWidth="400.0"/>
-            <HBox alignment="CENTER_RIGHT" spacing="20.0">
-                <VBox.margin>
-                    <Insets top="10.0"/>
-                </VBox.margin>
-                <padding>
-                    <Insets top="10.0"/>
-                </padding>
-                <MFXButton styleClass="filled" fx:id="categoryExpenseFormSaveBtn" text="Save"/>
-                <MFXButton styleClass="outlined" fx:id="categoryExpenseFormCancelBtn" text="Cancel"/>
-            </HBox>
         </VBox>
-    </content>
-    <padding>
-        <Insets left="10.0" right="10.0" top="10.0"/>
-    </padding>
-    <header>
-        <VBox spacing="5.0">
-            <Label fx:id="categoryExpenseFormTitle" text="Create"/>
-            <Separator prefWidth="200.0"/>
-        </VBox>
-    </header>
-</DialogPane>
+    </center>
+    <bottom>
+        <HBox alignment="CENTER_RIGHT" spacing="20.0">
+            <padding>
+                <Insets left="10.0" right="10.0" top="10.0"/>
+            </padding>
+            <MFXButton styleClass="filled" fx:id="categoryExpenseFormSaveBtn" text="Save"/>
+            <MFXButton styleClass="outlined" fx:id="categoryExpenseFormCancelBtn" text="Cancel"/>
+        </HBox>
+    </bottom>
+</MFXGenericDialog>
