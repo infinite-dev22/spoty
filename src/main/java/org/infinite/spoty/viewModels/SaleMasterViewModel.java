@@ -36,6 +36,7 @@ import org.infinite.spoty.database.models.SaleMaster;
 public class SaleMasterViewModel {
   public static final ObservableList<SaleMaster> saleMasterList =
       FXCollections.observableArrayList();
+  private static final ListProperty<SaleMaster> sales = new SimpleListProperty<>(saleMasterList);
   private static final LongProperty id = new SimpleLongProperty(0);
   private static final StringProperty date = new SimpleStringProperty("");
   private static final StringProperty ref = new SimpleStringProperty("");
@@ -131,6 +132,18 @@ public class SaleMasterViewModel {
 
   public static StringProperty noteProperty() {
     return note;
+  }
+
+  public static ObservableList<SaleMaster> getSales() {
+    return sales.get();
+  }
+
+  public static void setSales(ObservableList<SaleMaster> sales) {
+    SaleMasterViewModel.sales.set(sales);
+  }
+
+  public static ListProperty<SaleMaster> salesProperty() {
+    return sales;
   }
 
   public static void resetProperties() {

@@ -28,7 +28,7 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
-import javafx.collections.WeakListChangeListener;
+import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -119,10 +119,14 @@ public class BranchController implements Initializable {
 
     getBranchTable();
 
-    branchTable.setItems(BranchViewModel.getBranchesList());
-
-    BranchViewModel.branchesList.addListener(
-        new WeakListChangeListener<>(c -> branchTable.setItems(BranchViewModel.getBranchesList())));
+    if (BranchViewModel.getBranches().isEmpty()) {
+      BranchViewModel.getBranches()
+          .addListener(
+              (ListChangeListener<Branch>)
+                  c -> branchTable.setItems(BranchViewModel.getBranches()));
+    } else {
+      branchTable.itemsProperty().bindBidirectional(BranchViewModel.branchesProperty());
+    }
   }
 
   private void getBranchTable() {

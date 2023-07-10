@@ -27,7 +27,6 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
@@ -39,7 +38,6 @@ import org.infinite.spoty.viewModels.SaleDetailViewModel;
 
 public class SaleDetailFormController implements Initializable {
   private static SaleDetailFormController instance;
-  private final Stage stage;
   @FXML public MFXTextField saleDetailQnty;
   @FXML public MFXFilterComboBox<ProductDetail> saleDetailPdct;
   @FXML public MFXTextField saleDetailOrderTax;
@@ -49,12 +47,8 @@ public class SaleDetailFormController implements Initializable {
   @FXML public Label saleDetailPdctValidationLabel;
   @FXML public Label saleDetailQntyValidationLabel;
 
-  private SaleDetailFormController(Stage stage) {
-    this.stage = stage;
-  }
-
-  public static SaleDetailFormController getInstance(Stage stage) {
-    if (Objects.equals(instance, null)) instance = new SaleDetailFormController(stage);
+  public static SaleDetailFormController getInstance() {
+    if (Objects.equals(instance, null)) instance = new SaleDetailFormController();
     return instance;
   }
 
@@ -128,10 +122,6 @@ public class SaleDetailFormController implements Initializable {
 
               saleDetailPdct.clearSelection();
 
-              SaleMasterFormController.getInstance(stage)
-                  .saleDetailTable
-                  .setItems(SaleDetailViewModel.getSaleDetailList());
-
               closeDialog(e);
               return;
             }
@@ -146,10 +136,6 @@ public class SaleDetailFormController implements Initializable {
             notificationHolder.addNotification(notification);
 
             saleDetailPdct.clearSelection();
-
-            SaleMasterFormController.getInstance(stage)
-                .saleDetailTable
-                .setItems(SaleDetailViewModel.getSaleDetailList());
 
             closeDialog(e);
             return;

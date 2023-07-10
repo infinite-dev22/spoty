@@ -32,6 +32,7 @@ public class CurrencyViewModel {
   private static final StringProperty name = new SimpleStringProperty("");
   private static final StringProperty symbol = new SimpleStringProperty("");
   public static ObservableList<Currency> currenciesList = FXCollections.observableArrayList();
+  public static final ListProperty<Currency> currencies = new SimpleListProperty<>(currenciesList);
   public static ObservableList<Currency> currenciesComboBoxList = FXCollections.observableArrayList();
 
   public static long getId() {
@@ -82,6 +83,18 @@ public class CurrencyViewModel {
     return code;
   }
 
+  public static ObservableList<Currency> getCurrencies() {
+    return currencies.get();
+  }
+
+  public static void setCurrencies(ObservableList<Currency> currencies) {
+    CurrencyViewModel.currencies.set(currencies);
+  }
+
+  public static ListProperty<Currency> currencyProperty() {
+    return currencies;
+  }
+
   public static void saveCurrency() {
     Task<Void> task =
         new Task<>() {
@@ -97,7 +110,7 @@ public class CurrencyViewModel {
             currencyDao.create(currency);
 
             clearCurrencyData();
-            getCurrencies();
+            getAllCurrencies();
             return null;
           }
         };
@@ -114,7 +127,7 @@ public class CurrencyViewModel {
     setSymbol("");
   }
 
-  public static void getCurrencies() {
+  public static void getAllCurrencies() {
     Task<Void> task =
         new Task<>() {
           @Override
@@ -160,7 +173,7 @@ public class CurrencyViewModel {
             setSymbol(currency.getSymbol());
             setCode(currency.getCode());
             setName(currency.getName());
-            getCurrencies();
+            getAllCurrencies();
             return null;
           }
         };
@@ -189,7 +202,7 @@ public class CurrencyViewModel {
 
             currencyDao.update(currency);
             clearCurrencyData();
-            getCurrencies();
+            getAllCurrencies();
             return null;
           }
         };
@@ -211,7 +224,7 @@ public class CurrencyViewModel {
                 DaoManager.createDao(connectionSource, Currency.class);
 
             currencyDao.deleteById(index);
-            getCurrencies();
+            getAllCurrencies();
             return null;
           }
         };

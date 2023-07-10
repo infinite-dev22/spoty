@@ -28,7 +28,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.components.notification.SimpleNotification;
@@ -37,7 +36,6 @@ import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.database.models.UnitOfMeasure;
 import org.infinite.spoty.viewModels.UOMViewModel;
-import org.infinite.spoty.views.inventory.unit_of_measure.UnitOfMeasureController;
 
 public class UOMFormController implements Initializable {
   /**
@@ -47,8 +45,7 @@ public class UOMFormController implements Initializable {
    */
   private static UOMFormController instance;
 
-  private final Stage stage;
-  public MFXTextField uomID = new MFXTextField();
+    public MFXTextField uomID = new MFXTextField();
   @FXML public MFXTextField uomFormName;
   @FXML public MFXTextField uomFormShortName;
   @FXML public MFXButton uomFormSaveBtn;
@@ -63,12 +60,8 @@ public class UOMFormController implements Initializable {
   @FXML public Label uomFormOperatorValueValidationLabel;
   @FXML public VBox inputsHolder;
 
-  private UOMFormController(Stage stage) {
-    this.stage = stage;
-  }
-
-  public static UOMFormController getInstance(Stage stage) {
-    if (Objects.equals(instance, null)) instance = new UOMFormController(stage);
+  public static UOMFormController getInstance() {
+    if (Objects.equals(instance, null)) instance = new UOMFormController();
     return instance;
   }
 
@@ -167,9 +160,6 @@ public class UOMFormController implements Initializable {
               notificationHolder.addNotification(notification);
 
               uomFormBaseUnit.clearSelection();
-              UnitOfMeasureController.getInstance(stage)
-                  .uomTable
-                  .setItems(UOMViewModel.getUomList());
 
               closeDialog(e);
               return;
@@ -185,7 +175,6 @@ public class UOMFormController implements Initializable {
             notificationHolder.addNotification(notification);
 
             uomFormBaseUnit.clearSelection();
-            UnitOfMeasureController.getInstance(stage).uomTable.setItems(UOMViewModel.getUomList());
 
             closeDialog(e);
             return;

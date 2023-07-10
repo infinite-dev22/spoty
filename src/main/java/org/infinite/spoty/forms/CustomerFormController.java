@@ -32,7 +32,6 @@ import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.viewModels.CustomerViewModel;
-import org.infinite.spoty.views.people.customers.CustomerController;
 
 public class CustomerFormController implements Initializable {
   private static CustomerFormController instance;
@@ -127,10 +126,6 @@ public class CustomerFormController implements Initializable {
                       .build();
               notificationHolder.addNotification(notification);
 
-              CustomerController.getInstance(stage)
-                  .customersTable
-                  .setItems(CustomerViewModel.getCustomersList());
-
               closeDialog(e);
               return;
             }
@@ -143,10 +138,6 @@ public class CustomerFormController implements Initializable {
                     .type(NotificationVariants.SUCCESS)
                     .build();
             notificationHolder.addNotification(notification);
-
-            CustomerController.getInstance(stage)
-                .customersTable
-                .setItems(CustomerViewModel.getCustomersList());
 
             closeDialog(e);
             return;

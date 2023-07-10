@@ -33,6 +33,7 @@ import org.infinite.spoty.database.models.SaleReturnMaster;
 public class SaleReturnMasterViewModel {
   public static final ObservableList<SaleReturnMaster> saleReturnMasterList =
       FXCollections.observableArrayList();
+  private static final ListProperty<SaleReturnMaster> saleReturns = new SimpleListProperty<>(saleReturnMasterList);
   private static final LongProperty id = new SimpleLongProperty(0);
   private static final StringProperty date = new SimpleStringProperty("");
   private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>(null);
@@ -114,6 +115,18 @@ public class SaleReturnMasterViewModel {
 
   public static StringProperty totalCostProperty() {
     return totalCost;
+  }
+
+  public static ObservableList<SaleReturnMaster> getSaleReturns() {
+    return saleReturns.get();
+  }
+
+  public static void setSaleReturns(ObservableList<SaleReturnMaster> saleReturns) {
+    SaleReturnMasterViewModel.saleReturns.set(saleReturns);
+  }
+
+  public static ListProperty<SaleReturnMaster> saleReturnsProperty() {
+    return saleReturns;
   }
 
   public static void resetProperties() {

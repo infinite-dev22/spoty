@@ -27,7 +27,6 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
@@ -39,7 +38,6 @@ import org.infinite.spoty.viewModels.RequisitionDetailViewModel;
 
 public class RequisitionDetailFormController implements Initializable {
   private static RequisitionDetailFormController instance;
-  private final Stage stage;
   @FXML public MFXTextField requisitionDetailQnty;
   @FXML public MFXFilterComboBox<ProductDetail> requisitionDetailPdct;
   @FXML public MFXButton requisitionDetailSaveBtn;
@@ -48,12 +46,8 @@ public class RequisitionDetailFormController implements Initializable {
   @FXML public Label requisitionDetailPdctValidationLabel;
   @FXML public Label requisitionDetailQntyValidationLabel;
 
-  private RequisitionDetailFormController(Stage stage) {
-    this.stage = stage;
-  }
-
-  public static RequisitionDetailFormController getInstance(Stage stage) {
-    if (Objects.equals(instance, null)) instance = new RequisitionDetailFormController(stage);
+  public static RequisitionDetailFormController getInstance() {
+    if (Objects.equals(instance, null)) instance = new RequisitionDetailFormController();
     return instance;
   }
 
@@ -139,10 +133,6 @@ public class RequisitionDetailFormController implements Initializable {
 
               requisitionDetailPdct.clearSelection();
 
-              RequisitionMasterFormController.getInstance(stage)
-                  .requisitionDetailTable
-                  .setItems(RequisitionDetailViewModel.getRequisitionDetailList());
-
               closeDialog(e);
               return;
             }
@@ -157,10 +147,6 @@ public class RequisitionDetailFormController implements Initializable {
             notificationHolder.addNotification(notification);
 
             requisitionDetailPdct.clearSelection();
-
-            RequisitionMasterFormController.getInstance(stage)
-                .requisitionDetailTable
-                .setItems(RequisitionDetailViewModel.getRequisitionDetailList());
 
             closeDialog(e);
             return;

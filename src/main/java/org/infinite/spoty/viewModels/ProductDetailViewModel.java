@@ -21,6 +21,7 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
 import java.sql.SQLException;
 import java.util.List;
+import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -33,6 +34,7 @@ public class ProductDetailViewModel {
       FXCollections.observableArrayList();
   public static final ObservableList<ProductDetail> productDetailsComboBoxList =
       FXCollections.observableArrayList();
+  private static final ListProperty<ProductDetail> productDetails = new SimpleListProperty<>(productDetailsList);
   private static final LongProperty id = new SimpleLongProperty(0);
   private static final ObjectProperty<ProductMaster> product = new SimpleObjectProperty<>(null);
   private static final ListProperty<Branch> branches = new SimpleListProperty<>(null);
@@ -218,23 +220,37 @@ public class ProductDetailViewModel {
     return serial;
   }
 
+  public static ObservableList<ProductDetail> getProductDetails() {
+    return productDetails.get();
+  }
+
+  public static void setProductDetails(ObservableList<ProductDetail> productDetails) {
+    ProductDetailViewModel.productDetails.set(productDetails);
+  }
+
+  public static ListProperty<ProductDetail> productDetailsProperty() {
+    return productDetails;
+  }
+
   public static void addProductDetail() {
     Task<Void> task =
         new Task<>() {
           @Override
           protected Void call() {
-            ProductDetail productDetail =
-                new ProductDetail(
-                    getUnit(),
-                    getName(),
-                    getQuantity(),
-                    getCost(),
-                    getPrice(),
-                    getNetTax(),
-                    getTaxType(),
-                    getStockAlert(),
-                    getSerialNumber());
-            productDetailsList.add(productDetail);
+            Platform.runLater(() -> {
+              ProductDetail productDetail =
+                      new ProductDetail(
+                              getUnit(),
+                              getName(),
+                              getQuantity(),
+                              getCost(),
+                              getPrice(),
+                              getNetTax(),
+                              getTaxType(),
+                              getStockAlert(),
+                              getSerialNumber());
+              productDetailsList.add(productDetail);
+            });
 
             resetProperties();
             return null;
@@ -263,7 +279,7 @@ public class ProductDetailViewModel {
     setTempId(-1);
   }
 
-  public static void getProductDetails() {
+  public static void getAllProductDetails() {
     Task<Void> task =
         new Task<>() {
           @Override
@@ -374,7 +390,7 @@ public class ProductDetailViewModel {
 
             productDetailDao.update(productDetail);
 
-            getProductDetails();
+            getAllProductDetails();
             return null;
           }
         };

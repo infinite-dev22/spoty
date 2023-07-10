@@ -38,6 +38,7 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
+import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -183,13 +184,25 @@ public class TransferMasterFormController implements Initializable {
     productQuantity.prefWidthProperty().bind(transferDetailTable.widthProperty().multiply(.4));
 
     transferDetailTable.getTableColumns().addAll(productName, productQuantity);
+
     transferDetailTable
         .getFilters()
         .addAll(
             new StringFilter<>("Name", TransferDetail::getProductDetailName),
             new LongFilter<>("Quantity", TransferDetail::getQuantity));
+
     getTransferDetailTable();
-    transferDetailTable.setItems(TransferDetailViewModel.getTransferDetailsList());
+
+    if (TransferDetailViewModel.getTransferDetails().isEmpty()) {
+      TransferDetailViewModel.getTransferDetails()
+          .addListener(
+              (ListChangeListener<TransferDetail>)
+                  c -> transferDetailTable.setItems(TransferDetailViewModel.getTransferDetails()));
+    } else {
+      transferDetailTable
+          .itemsProperty()
+          .bindBidirectional(TransferDetailViewModel.transferDetailsProperty());
+    }
   }
 
   private void getTransferDetailTable() {
@@ -249,7 +262,7 @@ public class TransferMasterFormController implements Initializable {
 
   private void quotationProductDialogPane(Stage stage) throws IOException {
     FXMLLoader fxmlLoader = fxmlLoader("forms/TransferDetailForm.fxml");
-    fxmlLoader.setControllerFactory(c -> TransferDetailFormController.getInstance(stage));
+    fxmlLoader.setControllerFactory(c -> TransferDetailFormController.getInstance());
 
     MFXGenericDialog dialogContent = fxmlLoader.load();
 

@@ -22,7 +22,7 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
-import javafx.collections.WeakListChangeListener;
+import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -100,10 +100,17 @@ public class QuotationController implements Initializable {
             new StringFilter<>("Status", QuotationMaster::getStatus),
             new DoubleFilter<>("Grand Total", QuotationMaster::getTotal));
     getQuotationMasterTable();
-    quotationsTable.setItems(QuotationMasterViewModel.getQuotationMasterList());
-    QuotationMasterViewModel.quotationMasterList.addListener(
-        new WeakListChangeListener<>(
-            c -> quotationsTable.setItems(QuotationMasterViewModel.getQuotationMasterList())));
+
+    if (QuotationMasterViewModel.getQuotations().isEmpty()) {
+      QuotationMasterViewModel.getQuotations()
+          .addListener(
+              (ListChangeListener<QuotationMaster>)
+                  c -> quotationsTable.setItems(QuotationMasterViewModel.getQuotations()));
+    } else {
+      quotationsTable
+          .itemsProperty()
+          .bindBidirectional(QuotationMasterViewModel.quotationsProperty());
+    }
   }
 
   private void getQuotationMasterTable() {

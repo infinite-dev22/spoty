@@ -65,12 +65,12 @@ public class SplashScreenController implements Initializable {
       @Override
       protected Void call() {
         AdjustmentMasterViewModel.getAdjustmentMasters();
-        BranchViewModel.getBranches();
+        BranchViewModel.getAllBranches();
         BrandViewModel.getItems();
-        CurrencyViewModel.getCurrencies();
-        CustomerViewModel.getCustomers();
-        ExpenseCategoryViewModel.getCategories();
-        ExpenseViewModel.getExpenses();
+        CurrencyViewModel.getAllCurrencies();
+        CustomerViewModel.getAllCustomers();
+        ExpenseCategoryViewModel.getAllCategories();
+        ExpenseViewModel.getAllExpenses();
         ProductCategoryViewModel.getItems();
         ProductMasterViewModel.getProductMasters();
         PurchaseMasterViewModel.getPurchaseMasters();
@@ -80,10 +80,10 @@ public class SplashScreenController implements Initializable {
         SaleMasterViewModel.getSaleMasters();
         SaleReturnMasterViewModel.getSaleReturnMasters();
         StockInMasterViewModel.getStockInMasters();
-        SupplierViewModel.getSuppliers();
+        SupplierViewModel.getAllSuppliers();
         TransferMasterViewModel.getTransferMasters();
         UOMViewModel.getItems();
-        UserViewModel.getUsers();
+        UserViewModel.getAllUsers();
         return null;
       }
     };

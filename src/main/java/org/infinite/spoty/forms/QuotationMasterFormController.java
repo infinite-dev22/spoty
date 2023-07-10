@@ -33,6 +33,7 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -192,6 +193,7 @@ public class QuotationMasterFormController implements Initializable {
     quotationDetailTable
         .getTableColumns()
         .addAll(productName, productQuantity, productDiscount, productTax);
+
     quotationDetailTable
         .getFilters()
         .addAll(
@@ -199,8 +201,21 @@ public class QuotationMasterFormController implements Initializable {
             new LongFilter<>("Quantity", QuotationDetail::getQuantity),
             new DoubleFilter<>("Discount", QuotationDetail::getDiscount),
             new DoubleFilter<>("Tax", QuotationDetail::getNetTax));
+
     getQuotationDetailTable();
-    quotationDetailTable.setItems(QuotationDetailViewModel.getQuotationDetailsList());
+
+    if (QuotationDetailViewModel.getQuotationDetails().isEmpty()) {
+      QuotationDetailViewModel.getQuotationDetails()
+          .addListener(
+              (ListChangeListener<QuotationDetail>)
+                  c ->
+                      quotationDetailTable.setItems(
+                          QuotationDetailViewModel.getQuotationDetails()));
+    } else {
+      quotationDetailTable
+          .itemsProperty()
+          .bindBidirectional(QuotationDetailViewModel.quotationDetailsProperty());
+    }
   }
 
   private void getQuotationDetailTable() {
@@ -256,7 +271,7 @@ public class QuotationMasterFormController implements Initializable {
 
   private void quotationProductDialogPane(Stage stage) throws IOException {
     FXMLLoader fxmlLoader = fxmlLoader("forms/QuotationDetailForm.fxml");
-    fxmlLoader.setControllerFactory(c -> QuotationDetailFormController.getInstance(stage));
+    fxmlLoader.setControllerFactory(c -> QuotationDetailFormController.getInstance());
 
     MFXGenericDialog dialogContent = fxmlLoader.load();
 

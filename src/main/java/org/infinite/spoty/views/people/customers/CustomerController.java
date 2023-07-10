@@ -28,7 +28,7 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
-import javafx.collections.WeakListChangeListener;
+import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -109,10 +109,14 @@ public class CustomerController implements Initializable {
             new StringFilter<>("Email", Customer::getEmail),
             new StringFilter<>("Tax No.", Customer::getTaxNumber));
     styleCustomerTable();
-    customersTable.setItems(CustomerViewModel.getCustomersList());
-    CustomerViewModel.customersList.addListener(
-        new WeakListChangeListener<>(
-            c -> customersTable.setItems(CustomerViewModel.getCustomersList())));
+
+    if (CustomerViewModel.getCustomers().isEmpty()) {
+      CustomerViewModel.getCustomers().addListener(
+          (ListChangeListener<Customer>)
+              c -> customersTable.setItems(CustomerViewModel.getCustomers()));
+    } else {
+      customersTable.itemsProperty().bindBidirectional(CustomerViewModel.customersProperty());
+    }
   }
 
   private void styleCustomerTable() {

@@ -34,7 +34,6 @@ import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.viewModels.BrandViewModel;
-import org.infinite.spoty.views.inventory.brand.BrandController;
 
 public class BrandFormController implements Initializable {
   private static BrandFormController instance;
@@ -95,10 +94,6 @@ public class BrandFormController implements Initializable {
                       .build();
               notificationHolder.addNotification(notification);
 
-              BrandController.getInstance(stage)
-                  .brandTable
-                  .setItems(BrandViewModel.getBrandsList());
-
               closeDialog(e);
               return;
             }
@@ -111,8 +106,6 @@ public class BrandFormController implements Initializable {
                     .type(NotificationVariants.SUCCESS)
                     .build();
             notificationHolder.addNotification(notification);
-
-            BrandController.getInstance(stage).brandTable.setItems(BrandViewModel.getBrandsList());
 
             closeDialog(e);
             return;

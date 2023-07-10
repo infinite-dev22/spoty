@@ -31,6 +31,7 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
+import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -146,13 +147,25 @@ public class StockInMasterFormController implements Initializable {
     productQuantity.prefWidthProperty().bind(stockInDetailTable.widthProperty().multiply(.4));
 
     stockInDetailTable.getTableColumns().addAll(productName, productQuantity);
+
     stockInDetailTable
         .getFilters()
         .addAll(
             new StringFilter<>("Name", StockInDetail::getProductDetailName),
             new LongFilter<>("Quantity", StockInDetail::getQuantity));
+
     getStockInDetailTable();
-    stockInDetailTable.setItems(StockInDetailViewModel.getStockInDetailsList());
+
+    if (StockInDetailViewModel.getStockInDetails().isEmpty()) {
+      StockInDetailViewModel.getStockInDetails()
+          .addListener(
+              (ListChangeListener<StockInDetail>)
+                  c -> stockInDetailTable.setItems(StockInDetailViewModel.getStockInDetails()));
+    } else {
+      stockInDetailTable
+          .itemsProperty()
+          .bindBidirectional(StockInDetailViewModel.stockInDetailsProperty());
+    }
   }
 
   private void getStockInDetailTable() {
@@ -212,7 +225,7 @@ public class StockInMasterFormController implements Initializable {
 
   private void quotationProductDialogPane(Stage stage) throws IOException {
     FXMLLoader fxmlLoader = fxmlLoader("forms/StockInDetailForm.fxml");
-    fxmlLoader.setControllerFactory(c -> StockInDetailFormController.getInstance(stage));
+    fxmlLoader.setControllerFactory(c -> StockInDetailFormController.getInstance());
 
     MFXGenericDialog dialogContent = fxmlLoader.load();
 

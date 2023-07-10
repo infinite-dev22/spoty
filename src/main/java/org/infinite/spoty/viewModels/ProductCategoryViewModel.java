@@ -19,7 +19,9 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
 import java.sql.SQLException;
 import javafx.application.Platform;
+import javafx.beans.property.ListProperty;
 import javafx.beans.property.LongProperty;
+import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -36,6 +38,8 @@ public class ProductCategoryViewModel {
   private static final StringProperty name = new SimpleStringProperty("");
   public static ObservableList<ProductCategory> categoriesList =
       FXCollections.observableArrayList();
+
+  public static final ListProperty<ProductCategory> categories = new SimpleListProperty<>(categoriesList);
   public static ObservableList<ProductCategory> categoriesComboBoxList =
       FXCollections.observableArrayList();
 
@@ -85,6 +89,18 @@ public class ProductCategoryViewModel {
 
   public static StringProperty nameProperty() {
     return name;
+  }
+
+  public static ObservableList<ProductCategory> getCategories() {
+    return categories.get();
+  }
+
+  public static void setCategories(ObservableList<ProductCategory> categories) {
+    ProductCategoryViewModel.categories.set(categories);
+  }
+
+  public static ListProperty<ProductCategory> categoriesProperty() {
+    return categories;
   }
 
   public static void saveProductCategory() {

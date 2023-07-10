@@ -36,6 +36,7 @@ import org.infinite.spoty.database.models.Supplier;
 public class RequisitionMasterViewModel {
   public static final ObservableList<RequisitionMaster> requisitionMasterList =
       FXCollections.observableArrayList();
+  private static final ListProperty<RequisitionMaster> requisitions = new SimpleListProperty<>(requisitionMasterList);
   private static final LongProperty id = new SimpleLongProperty(0);
   private static final StringProperty date = new SimpleStringProperty("");
   private static final ObjectProperty<Supplier> supplier = new SimpleObjectProperty<>(null);
@@ -186,6 +187,18 @@ public class RequisitionMasterViewModel {
 
   public static StringProperty totalCostProperty() {
     return totalCost;
+  }
+
+  public static ObservableList<RequisitionMaster> getRequisitions() {
+    return requisitions.get();
+  }
+
+  public static void setRequisitions(ObservableList<RequisitionMaster> requisitions) {
+    RequisitionMasterViewModel.requisitions.set(requisitions);
+  }
+
+  public static ListProperty<RequisitionMaster> requisitionsProperty() {
+    return requisitions;
   }
 
   public static void resetProperties() {

@@ -29,7 +29,7 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
-import javafx.collections.WeakListChangeListener;
+import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -113,9 +113,14 @@ public class UserController implements Initializable {
             new StringFilter<>("Phone", User::getPhone),
             new BooleanFilter<>("Status", User::isActive));
     styleUserTable();
-    userTable.setItems(UserViewModel.getUsersList());
-    UserViewModel.usersList.addListener(
-        new WeakListChangeListener<>(c -> userTable.setItems(UserViewModel.getUsersList())));
+
+    if (UserViewModel.getUsers().isEmpty()) {
+      UserViewModel.getUsers()
+          .addListener(
+              (ListChangeListener<User>) c -> userTable.setItems(UserViewModel.getUsers()));
+    } else {
+      userTable.itemsProperty().bindBidirectional(UserViewModel.usersProperty());
+    }
   }
 
   private void styleUserTable() {
@@ -164,7 +169,7 @@ public class UserController implements Initializable {
 
   private void userFormDialogPane(Stage stage) throws IOException {
     FXMLLoader fxmlLoader = fxmlLoader("forms/UserForm.fxml");
-    fxmlLoader.setControllerFactory(c -> UserFormController.getInstance(stage));
+    fxmlLoader.setControllerFactory(c -> UserFormController.getInstance());
 
     MFXGenericDialog dialogContent = fxmlLoader.load();
 

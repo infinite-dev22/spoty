@@ -34,7 +34,6 @@ import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.viewModels.CurrencyViewModel;
-import org.infinite.spoty.views.settings.currency.CurrencyController;
 
 public class CurrencyFormController implements Initializable {
   private static CurrencyFormController instance;
@@ -108,10 +107,6 @@ public class CurrencyFormController implements Initializable {
                       .build();
               notificationHolder.addNotification(notification);
 
-              CurrencyController.getInstance(stage)
-                  .currencyTable
-                  .setItems(CurrencyViewModel.getCurrenciesList());
-
               closeDialog(e);
               return;
             }
@@ -124,10 +119,6 @@ public class CurrencyFormController implements Initializable {
                     .type(NotificationVariants.SUCCESS)
                     .build();
             notificationHolder.addNotification(notification);
-
-            CurrencyController.getInstance(stage)
-                .currencyTable
-                .setItems(CurrencyViewModel.getCurrenciesList());
 
             closeDialog(e);
             return;

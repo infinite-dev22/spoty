@@ -409,7 +409,7 @@ class DatabaseSeederTest {
 //            List<ProductDetail> list = new LinkedList<>();
 //            int i = 0;
 //            var pM = ProductMasterDao.findProductMaster(1);
-//            var pD = pM.getProductDetails();
+//            var pD = pM.getAllProductDetails();
 //            pD.forEach(e -> {
 //                e.setName("Coke: " + i);
 //                list.add(e);

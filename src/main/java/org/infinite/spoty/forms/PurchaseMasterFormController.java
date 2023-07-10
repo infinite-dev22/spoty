@@ -44,7 +44,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
-import javafx.collections.WeakListChangeListener;
+import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -138,12 +138,11 @@ public class PurchaseMasterFormController implements Initializable {
                 StringUtils.containsIgnoreCase(purchaseBranchConverter.toString(branch), searchStr);
 
     // Set items to combo boxes and display custom text.
-    purchaseSupplier.setItems(SupplierViewModel.getSuppliersList());
+    purchaseSupplier.setItems(SupplierViewModel.getSuppliersComboBoxList());
     purchaseSupplier.setConverter(purchaseSupplierConverter);
     purchaseSupplier.setFilterFunction(purchaseSupplierFilterFunction);
-    SupplierViewModel.suppliersList.addListener(
-        new WeakListChangeListener<>(
-            c -> purchaseSupplier.setItems(SupplierViewModel.getSuppliersList())));
+    purchaseSupplier.setOnShowing(
+        event -> purchaseSupplier.setItems(SupplierViewModel.getSuppliersComboBoxList()));
 
     purchaseBranch.setItems(BranchViewModel.getBranchesComboBoxList());
     purchaseBranch.setConverter(purchaseBranchConverter);
@@ -177,7 +176,7 @@ public class PurchaseMasterFormController implements Initializable {
 
   private void createPurchaseProductDialog(Stage stage) throws IOException {
     FXMLLoader fxmlLoader = fxmlLoader("forms/PurchaseDetailForm.fxml");
-    fxmlLoader.setControllerFactory(c -> PurchaseDetailFormController.getInstance(stage));
+    fxmlLoader.setControllerFactory(c -> PurchaseDetailFormController.getInstance());
 
     MFXGenericDialog dialogContent = fxmlLoader.load();
 
@@ -185,14 +184,14 @@ public class PurchaseMasterFormController implements Initializable {
     dialogContent.setShowAlwaysOnTop(false);
 
     dialog =
-            MFXGenericDialogBuilder.build(dialogContent)
-                    .toStageDialogBuilder()
-                    .initOwner(stage)
-                    .initModality(Modality.WINDOW_MODAL)
-                    .setOwnerNode(purchaseFormContentPane)
-                    .setScrimPriority(ScrimPriority.WINDOW)
-                    .setScrimOwner(true)
-                    .get();
+        MFXGenericDialogBuilder.build(dialogContent)
+            .toStageDialogBuilder()
+            .initOwner(stage)
+            .initModality(Modality.WINDOW_MODAL)
+            .setOwnerNode(purchaseFormContentPane)
+            .setScrimPriority(ScrimPriority.WINDOW)
+            .setScrimOwner(true)
+            .get();
 
     io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
   }
@@ -269,6 +268,7 @@ public class PurchaseMasterFormController implements Initializable {
         new MFXTableColumn<>("Tax", false, Comparator.comparing(PurchaseDetail::getNetTax));
     MFXTableColumn<PurchaseDetail> discount =
         new MFXTableColumn<>("Discount", false, Comparator.comparing(PurchaseDetail::getDiscount));
+
     // Set table column data.
     product.setRowCellFactory(
         purchaseDetail -> new MFXTableRowCell<>(PurchaseDetail::getProductName));
@@ -277,13 +277,16 @@ public class PurchaseMasterFormController implements Initializable {
     tax.setRowCellFactory(purchaseDetail -> new MFXTableRowCell<>(PurchaseDetail::getNetTax));
     discount.setRowCellFactory(
         purchaseDetail -> new MFXTableRowCell<>(PurchaseDetail::getDiscount));
+
     // Set table column width.
     product.prefWidthProperty().bind(purchaseDetailTable.widthProperty().multiply(.25));
     quantity.prefWidthProperty().bind(purchaseDetailTable.widthProperty().multiply(.25));
     tax.prefWidthProperty().bind(purchaseDetailTable.widthProperty().multiply(.25));
     discount.prefWidthProperty().bind(purchaseDetailTable.widthProperty().multiply(.25));
+
     // Set table filter.
     purchaseDetailTable.getTableColumns().addAll(product, quantity, tax, discount);
+
     purchaseDetailTable
         .getFilters()
         .addAll(
@@ -291,9 +294,20 @@ public class PurchaseMasterFormController implements Initializable {
             new LongFilter<>("Quantity", PurchaseDetail::getQuantity),
             new DoubleFilter<>("Tax", PurchaseDetail::getNetTax),
             new DoubleFilter<>("Discount", PurchaseDetail::getDiscount));
+
     styleTable();
+
     // Populate table.
-    purchaseDetailTable.setItems(PurchaseDetailViewModel.getPurchaseDetailList());
+    if (PurchaseDetailViewModel.getPurchaseDetails().isEmpty()) {
+      PurchaseDetailViewModel.getPurchaseDetails()
+          .addListener(
+              (ListChangeListener<PurchaseDetail>)
+                  c -> purchaseDetailTable.setItems(PurchaseDetailViewModel.getPurchaseDetails()));
+    } else {
+      purchaseDetailTable
+          .itemsProperty()
+          .bindBidirectional(PurchaseDetailViewModel.purchaseDetailsProperty());
+    }
   }
 
   private void styleTable() {

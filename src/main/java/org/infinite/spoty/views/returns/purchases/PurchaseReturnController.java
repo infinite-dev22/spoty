@@ -25,7 +25,7 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
-import javafx.collections.WeakListChangeListener;
+import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Tooltip;
@@ -128,12 +128,19 @@ public class PurchaseReturnController implements Initializable {
             new StringFilter<>("Pay Status", PurchaseReturnMaster::getPaymentStatus));
 
     stylePurchaseReturnMasterTable();
-    purchaseReturnTable.setItems(PurchaseReturnMasterViewModel.getPurchaseReturnMasterList());
-    PurchaseReturnMasterViewModel.purchaseReturnMasterList.addListener(
-        new WeakListChangeListener<>(
-            c ->
-                purchaseReturnTable.setItems(
-                    PurchaseReturnMasterViewModel.getPurchaseReturnMasterList())));
+
+    if (PurchaseReturnMasterViewModel.getPurchaseReturns().isEmpty()) {
+      PurchaseReturnMasterViewModel.getPurchaseReturns()
+          .addListener(
+              (ListChangeListener<PurchaseReturnMaster>)
+                  c ->
+                      purchaseReturnTable.setItems(
+                          PurchaseReturnMasterViewModel.getPurchaseReturns()));
+    } else {
+      purchaseReturnTable
+          .itemsProperty()
+          .bindBidirectional(PurchaseReturnMasterViewModel.purchaseReturnsProperty());
+    }
   }
 
   private void stylePurchaseReturnMasterTable() {

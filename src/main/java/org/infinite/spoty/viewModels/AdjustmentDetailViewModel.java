@@ -33,6 +33,8 @@ import org.infinite.spoty.database.models.ProductDetail;
 public class AdjustmentDetailViewModel {
   public static final ObservableList<AdjustmentDetail> adjustmentDetailsList =
       FXCollections.observableArrayList();
+  private static final ListProperty<AdjustmentDetail> adjustmentDetails =
+      new SimpleListProperty<>(adjustmentDetailsList);
   private static final LongProperty id = new SimpleLongProperty(0);
   private static final ObjectProperty<ProductDetail> product = new SimpleObjectProperty<>();
   private static final ObjectProperty<AdjustmentMaster> adjustment = new SimpleObjectProperty<>();
@@ -99,6 +101,18 @@ public class AdjustmentDetailViewModel {
     return adjustmentType;
   }
 
+  public static ObservableList<AdjustmentDetail> getAdjustmentDetails() {
+    return adjustmentDetails.get();
+  }
+
+  public static void setAdjustmentDetails(ObservableList<AdjustmentDetail> adjustmentDetails) {
+    AdjustmentDetailViewModel.adjustmentDetails.set(adjustmentDetails);
+  }
+
+  public static ListProperty<AdjustmentDetail> adjustmentDetailsProperty() {
+    return adjustmentDetails;
+  }
+
   public static void resetProperties() {
     setId(0);
     setTempId(-1);
@@ -129,39 +143,39 @@ public class AdjustmentDetailViewModel {
 
   public static void updateAdjustmentDetail(int index) {
     Task<Void> task =
-            new Task<>() {
-              @Override
-              protected Void call() {
-                AdjustmentDetail adjustmentDetail = adjustmentDetailsList.get(index);
-                adjustmentDetail.setProduct(getProduct());
-                adjustmentDetail.setQuantity(getQuantity());
-                adjustmentDetail.setAdjustmentType(getAdjustmentType());
-                resetProperties();
-                return null;
-              }
-            };
+        new Task<>() {
+          @Override
+          protected Void call() {
+            AdjustmentDetail adjustmentDetail = adjustmentDetailsList.get(index);
+            adjustmentDetail.setProduct(getProduct());
+            adjustmentDetail.setQuantity(getQuantity());
+            adjustmentDetail.setAdjustmentType(getAdjustmentType());
+            resetProperties();
+            return null;
+          }
+        };
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
     thread.start();
   }
 
-  public static void getAdjustmentDetails() {
+  public static void getAllAdjustmentDetails() {
     Task<Void> task =
-            new Task<>() {
-              @Override
-              protected Void call() throws SQLException {
-                SQLiteConnection connection = SQLiteConnection.getInstance();
-                ConnectionSource connectionSource = connection.getConnection();
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
 
-                Dao<AdjustmentDetail, Long> adjustmentDetailDao =
-                        DaoManager.createDao(connectionSource, AdjustmentDetail.class);
+            Dao<AdjustmentDetail, Long> adjustmentDetailDao =
+                DaoManager.createDao(connectionSource, AdjustmentDetail.class);
 
-                adjustmentDetailsList.clear();
-                adjustmentDetailsList.addAll(adjustmentDetailDao.queryForAll());
-                return null;
-              }
-            };
+            adjustmentDetailsList.clear();
+            adjustmentDetailsList.addAll(adjustmentDetailDao.queryForAll());
+            return null;
+          }
+        };
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -170,23 +184,23 @@ public class AdjustmentDetailViewModel {
 
   public static void getItem(long index, int tempIndex) {
     Task<Void> task =
-            new Task<>() {
-              @Override
-              protected Void call() throws SQLException {
-                SQLiteConnection connection = SQLiteConnection.getInstance();
-                ConnectionSource connectionSource = connection.getConnection();
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
 
-                Dao<AdjustmentDetail, Long> adjustmentDetailDao =
-                        DaoManager.createDao(connectionSource, AdjustmentDetail.class);
+            Dao<AdjustmentDetail, Long> adjustmentDetailDao =
+                DaoManager.createDao(connectionSource, AdjustmentDetail.class);
 
-                AdjustmentDetail adjustmentDetail = adjustmentDetailDao.queryForId(index);
-                setTempId(tempIndex);
-                setProduct(adjustmentDetail.getProduct());
-                setQuantity(String.valueOf(adjustmentDetail.getQuantity()));
-                setAdjustmentType(adjustmentDetail.getAdjustmentType());
-                return null;
-              }
-            };
+            AdjustmentDetail adjustmentDetail = adjustmentDetailDao.queryForId(index);
+            setTempId(tempIndex);
+            setProduct(adjustmentDetail.getProduct());
+            setQuantity(String.valueOf(adjustmentDetail.getQuantity()));
+            setAdjustmentType(adjustmentDetail.getAdjustmentType());
+            return null;
+          }
+        };
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -195,24 +209,24 @@ public class AdjustmentDetailViewModel {
 
   public static void updateItem(long index) {
     Task<Void> task =
-            new Task<>() {
-              @Override
-              protected Void call() throws SQLException {
-                SQLiteConnection connection = SQLiteConnection.getInstance();
-                ConnectionSource connectionSource = connection.getConnection();
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
 
-                Dao<AdjustmentDetail, Long> adjustmentDetailDao =
-                        DaoManager.createDao(connectionSource, AdjustmentDetail.class);
+            Dao<AdjustmentDetail, Long> adjustmentDetailDao =
+                DaoManager.createDao(connectionSource, AdjustmentDetail.class);
 
-                AdjustmentDetail adjustmentDetail = adjustmentDetailDao.queryForId(index);
-                adjustmentDetail.setProduct(getProduct());
-                adjustmentDetail.setQuantity(getQuantity());
-                adjustmentDetail.setAdjustmentType(getAdjustmentType());
-                adjustmentDetailDao.update(adjustmentDetail);
-                getAdjustmentDetails();
-                return null;
-              }
-            };
+            AdjustmentDetail adjustmentDetail = adjustmentDetailDao.queryForId(index);
+            adjustmentDetail.setProduct(getProduct());
+            adjustmentDetail.setQuantity(getQuantity());
+            adjustmentDetail.setAdjustmentType(getAdjustmentType());
+            adjustmentDetailDao.update(adjustmentDetail);
+            getAllAdjustmentDetails();
+            return null;
+          }
+        };
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -221,14 +235,14 @@ public class AdjustmentDetailViewModel {
 
   public static void removeAdjustmentDetail(long index, int tempIndex) {
     Task<Void> task =
-            new Task<>() {
-              @Override
-              protected Void call() {
-                adjustmentDetailsList.remove(tempIndex);
-                PENDING_DELETES.add(index);
-                return null;
-              }
-            };
+        new Task<>() {
+          @Override
+          protected Void call() {
+            adjustmentDetailsList.remove(tempIndex);
+            PENDING_DELETES.add(index);
+            return null;
+          }
+        };
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);

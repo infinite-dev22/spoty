@@ -33,6 +33,8 @@ import org.infinite.spoty.database.models.StockInMaster;
 public class StockInDetailViewModel {
   public static final ObservableList<StockInDetail> stockInDetailsList =
       FXCollections.observableArrayList();
+  private static final ListProperty<StockInDetail> stockInDetails =
+      new SimpleListProperty<>(stockInDetailsList);
   private static final LongProperty id = new SimpleLongProperty(0);
   private static final ObjectProperty<ProductDetail> product = new SimpleObjectProperty<>();
   private static final ObjectProperty<StockInMaster> stockIn = new SimpleObjectProperty<>();
@@ -125,6 +127,18 @@ public class StockInDetailViewModel {
     return location;
   }
 
+  public static ObservableList<StockInDetail> getStockInDetails() {
+    return stockInDetails.get();
+  }
+
+  public static void setStockInDetails(ObservableList<StockInDetail> stockInDetails) {
+    StockInDetailViewModel.stockInDetails.set(stockInDetails);
+  }
+
+  public static ListProperty<StockInDetail> stockInDetailsProperty() {
+    return stockInDetails;
+  }
+
   public static void resetProperties() {
     setId(0);
     setTempId(-1);
@@ -155,7 +169,7 @@ public class StockInDetailViewModel {
     thread.start();
   }
 
-  public static void getStockInDetails() {
+  public static void getAllStockInDetails() {
     Task<Void> task =
         new Task<>() {
           @Override
@@ -257,7 +271,7 @@ public class StockInDetailViewModel {
 
             stockInDetailDao.update(stockInDetail);
 
-            getStockInDetails();
+            getAllStockInDetails();
             return null;
           }
         };

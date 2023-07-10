@@ -19,7 +19,9 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
 import java.sql.SQLException;
 import javafx.application.Platform;
+import javafx.beans.property.ListProperty;
 import javafx.beans.property.LongProperty;
+import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -34,6 +36,7 @@ public class ExpenseCategoryViewModel {
       FXCollections.observableArrayList();
   public static final ObservableList<ExpenseCategory> categoryComboBoxList =
       FXCollections.observableArrayList();
+  private static final ListProperty<ExpenseCategory> categories = new SimpleListProperty<>(categoryList);
   private static final LongProperty id = new SimpleLongProperty(0);
   private static final StringProperty name = new SimpleStringProperty("");
   private static final StringProperty description = new SimpleStringProperty("");
@@ -74,6 +77,18 @@ public class ExpenseCategoryViewModel {
     return description;
   }
 
+  public static ObservableList<ExpenseCategory> getCategories() {
+    return categories.get();
+  }
+
+  public static void setCategories(ObservableList<ExpenseCategory> categories) {
+    ExpenseCategoryViewModel.categories.set(categories);
+  }
+
+  public static ListProperty<ExpenseCategory> categoriesProperty() {
+    return categories;
+  }
+
   public static void resetProperties() {
     setId(0);
     setName("");
@@ -96,7 +111,7 @@ public class ExpenseCategoryViewModel {
             expenseCategoryDao.create(expenseCategory);
 
             resetProperties();
-            getCategories();
+            getAllCategories();
             return null;
           }
         };
@@ -106,7 +121,7 @@ public class ExpenseCategoryViewModel {
     thread.start();
   }
 
-  public static void getCategories() {
+  public static void getAllCategories() {
     Task<Void> task =
         new Task<>() {
           @Override
@@ -152,7 +167,7 @@ public class ExpenseCategoryViewModel {
             setId(expenseCategory.getId());
             setName(expenseCategory.getName());
             setDescription(expenseCategory.getDescription());
-            getCategories();
+            getAllCategories();
             return null;
           }
         };
@@ -180,7 +195,7 @@ public class ExpenseCategoryViewModel {
 
             expenseCategoryDao.update(expenseCategory);
 
-            getCategories();
+            getAllCategories();
             return null;
           }
         };
@@ -202,7 +217,7 @@ public class ExpenseCategoryViewModel {
                 DaoManager.createDao(connectionSource, ExpenseCategory.class);
 
             expenseCategoryDao.deleteById(index);
-            getCategories();
+            getAllCategories();
             return null;
           }
         };

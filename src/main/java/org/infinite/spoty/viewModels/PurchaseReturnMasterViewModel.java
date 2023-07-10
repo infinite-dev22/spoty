@@ -33,6 +33,8 @@ import org.infinite.spoty.database.models.PurchaseReturnMaster;
 public class PurchaseReturnMasterViewModel {
   public static final ObservableList<PurchaseReturnMaster> purchaseReturnMasterList =
       FXCollections.observableArrayList();
+  private static final ListProperty<PurchaseReturnMaster> purchaseReturns =
+      new SimpleListProperty<>(purchaseReturnMasterList);
   private static final LongProperty id = new SimpleLongProperty(0);
   private static final StringProperty date = new SimpleStringProperty("");
   private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>(null);
@@ -114,6 +116,18 @@ public class PurchaseReturnMasterViewModel {
 
   public static StringProperty totalCostProperty() {
     return totalCost;
+  }
+
+  public static ObservableList<PurchaseReturnMaster> getPurchaseReturns() {
+    return purchaseReturns.get();
+  }
+
+  public static void setPurchaseReturns(ObservableList<PurchaseReturnMaster> purchaseReturns) {
+    PurchaseReturnMasterViewModel.purchaseReturns.set(purchaseReturns);
+  }
+
+  public static ListProperty<PurchaseReturnMaster> purchaseReturnsProperty() {
+    return purchaseReturns;
   }
 
   public static void resetProperties() {

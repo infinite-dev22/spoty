@@ -31,7 +31,7 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
-import javafx.collections.WeakListChangeListener;
+import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -140,10 +140,9 @@ public class RequisitionMasterFormController implements Initializable {
           }
         });
 
-    requisitionMasterSupplier.setItems(SupplierViewModel.getSuppliersList());
-    SupplierViewModel.suppliersList.addListener(
-        new WeakListChangeListener<>(
-            c -> requisitionMasterSupplier.setItems(SupplierViewModel.getSuppliersList())));
+    requisitionMasterSupplier.setItems(SupplierViewModel.getSuppliersComboBoxList());
+    requisitionMasterSupplier.setOnShowing(
+        event -> requisitionMasterSupplier.setItems(SupplierViewModel.getSuppliersComboBoxList()));
     requisitionMasterSupplier.setConverter(
         new StringConverter<>() {
           @Override
@@ -197,13 +196,27 @@ public class RequisitionMasterFormController implements Initializable {
     productQuantity.prefWidthProperty().bind(requisitionDetailTable.widthProperty().multiply(.4));
 
     requisitionDetailTable.getTableColumns().addAll(productName, productQuantity);
+
     requisitionDetailTable
         .getFilters()
         .addAll(
             new StringFilter<>("Name", RequisitionDetail::getProductDetailName),
             new LongFilter<>("Quantity", RequisitionDetail::getQuantity));
+
     getRequisitionDetailTable();
-    requisitionDetailTable.setItems(RequisitionDetailViewModel.getRequisitionDetailList());
+
+    if (RequisitionDetailViewModel.getRequisitionDetails().isEmpty()) {
+      RequisitionDetailViewModel.getRequisitionDetails()
+          .addListener(
+              (ListChangeListener<RequisitionDetail>)
+                  c ->
+                      requisitionDetailTable.setItems(
+                          RequisitionDetailViewModel.getRequisitionDetails()));
+    } else {
+      requisitionDetailTable
+          .itemsProperty()
+          .bindBidirectional(RequisitionDetailViewModel.requisitionDetailsProperty());
+    }
   }
 
   private void getRequisitionDetailTable() {
@@ -263,7 +276,7 @@ public class RequisitionMasterFormController implements Initializable {
 
   private void quotationProductDialogPane(Stage stage) throws IOException {
     FXMLLoader fxmlLoader = fxmlLoader("forms/RequisitionDetailForm.fxml");
-    fxmlLoader.setControllerFactory(c -> RequisitionDetailFormController.getInstance(stage));
+    fxmlLoader.setControllerFactory(c -> RequisitionDetailFormController.getInstance());
 
     MFXGenericDialog dialogContent = fxmlLoader.load();
 

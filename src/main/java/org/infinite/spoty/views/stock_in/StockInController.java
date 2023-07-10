@@ -22,7 +22,7 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
-import javafx.collections.WeakListChangeListener;
+import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -84,10 +84,17 @@ public class StockInController implements Initializable {
             new StringFilter<>("Status", StockInMaster::getStatus),
             new DoubleFilter<>("Total Cost", StockInMaster::getTotal));
     getStockInMasterTable();
-    stockInMasterTable.setItems(StockInMasterViewModel.getStockInMasterList());
-    StockInMasterViewModel.stockInMasterList.addListener(
-        new WeakListChangeListener<>(
-            c -> stockInMasterTable.setItems(StockInMasterViewModel.getStockInMasterList())));
+
+    if (StockInMasterViewModel.getStockIns().isEmpty()) {
+      StockInMasterViewModel.getStockIns()
+          .addListener(
+              (ListChangeListener<StockInMaster>)
+                  c -> stockInMasterTable.setItems(StockInMasterViewModel.getStockIns()));
+    } else {
+      stockInMasterTable
+          .itemsProperty()
+          .bindBidirectional(StockInMasterViewModel.stockInsProperty());
+    }
   }
 
   private void getStockInMasterTable() {

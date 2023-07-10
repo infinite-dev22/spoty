@@ -33,6 +33,8 @@ import org.infinite.spoty.database.models.UnitOfMeasure;
 public class SaleDetailViewModel {
   public static final ObservableList<SaleDetail> saleDetailList =
       FXCollections.observableArrayList();
+  private static final ListProperty<SaleDetail> saleDetails =
+      new SimpleListProperty<>(saleDetailList);
   private static final LongProperty id = new SimpleLongProperty(0);
   private static final StringProperty ref = new SimpleStringProperty();
   private static final ObjectProperty<ProductDetail> product = new SimpleObjectProperty<>();
@@ -190,6 +192,18 @@ public class SaleDetailViewModel {
     return quantity;
   }
 
+  public static ObservableList<SaleDetail> getSaleDetails() {
+    return saleDetails.get();
+  }
+
+  public static void setSaleDetails(ObservableList<SaleDetail> saleDetails) {
+    SaleDetailViewModel.saleDetails.set(saleDetails);
+  }
+
+  public static ListProperty<SaleDetail> saleDetailsProperty() {
+    return saleDetails;
+  }
+
   public static void resetProperties() {
     setId(0);
     setTempId(-1);
@@ -319,7 +333,7 @@ public class SaleDetailViewModel {
 
             saleDetailDao.update(saleDetail);
 
-            getSaleDetails();
+            getAllSaleDetails();
             return null;
           }
         };
@@ -329,7 +343,7 @@ public class SaleDetailViewModel {
     thread.start();
   }
 
-  public static void getSaleDetails() throws SQLException {
+  public static void getAllSaleDetails() throws SQLException {
     Task<Void> task =
         new Task<>() {
           @Override

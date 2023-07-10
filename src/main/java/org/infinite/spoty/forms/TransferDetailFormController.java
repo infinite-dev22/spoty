@@ -27,7 +27,6 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
@@ -39,8 +38,7 @@ import org.infinite.spoty.viewModels.TransferDetailViewModel;
 
 public class TransferDetailFormController implements Initializable {
   private static TransferDetailFormController instance;
-  private final Stage stage;
-  @FXML public MFXTextField transferDetailQnty;
+    @FXML public MFXTextField transferDetailQnty;
   @FXML public MFXFilterComboBox<ProductDetail> transferDetailPdct;
   @FXML public MFXButton transferDetailSaveBtn;
   @FXML public MFXButton transferDetailCancelBtn;
@@ -48,12 +46,8 @@ public class TransferDetailFormController implements Initializable {
   @FXML public Label transferDetailQntyValidationLabel;
   @FXML public Label transferDetailPdctValidationLabel;
 
-  private TransferDetailFormController(Stage stage) {
-    this.stage = stage;
-  }
-
-  public static TransferDetailFormController getInstance(Stage stage) {
-    if (Objects.equals(instance, null)) instance = new TransferDetailFormController(stage);
+  public static TransferDetailFormController getInstance() {
+    if (Objects.equals(instance, null)) instance = new TransferDetailFormController();
     return instance;
   }
 
@@ -132,9 +126,6 @@ public class TransferDetailFormController implements Initializable {
               notificationHolder.addNotification(notification);
 
               transferDetailPdct.clearSelection();
-              TransferMasterFormController.getInstance(stage)
-                  .transferDetailTable
-                  .setItems(TransferDetailViewModel.getTransferDetailsList());
 
               closeDialog(e);
               return;
@@ -150,9 +141,6 @@ public class TransferDetailFormController implements Initializable {
             notificationHolder.addNotification(notification);
 
             transferDetailPdct.clearSelection();
-            TransferMasterFormController.getInstance(stage)
-                .transferDetailTable
-                .setItems(TransferDetailViewModel.getTransferDetailsList());
 
             closeDialog(e);
             return;

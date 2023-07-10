@@ -27,7 +27,6 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
@@ -39,8 +38,7 @@ import org.infinite.spoty.viewModels.PurchaseDetailViewModel;
 
 public class PurchaseDetailFormController implements Initializable {
   private static PurchaseDetailFormController instance;
-  private final Stage stage;
-  @FXML public MFXTextField purchaseDetailQnty;
+    @FXML public MFXTextField purchaseDetailQnty;
   @FXML public MFXFilterComboBox<ProductDetail> purchaseDetailPdct;
   @FXML public MFXTextField purchaseDetailCost;
   @FXML public MFXButton purchaseDetailSaveBtn;
@@ -49,12 +47,8 @@ public class PurchaseDetailFormController implements Initializable {
   @FXML public Label purchaseDetailPdctValidationLabel;
   @FXML public Label purchaseDetailCostValidationLabel;
 
-  private PurchaseDetailFormController(Stage stage) {
-    this.stage = stage;
-  }
-
-  public static PurchaseDetailFormController getInstance(Stage stage) {
-    if (Objects.equals(instance, null)) instance = new PurchaseDetailFormController(stage);
+  public static PurchaseDetailFormController getInstance() {
+    if (Objects.equals(instance, null)) instance = new PurchaseDetailFormController();
     return instance;
   }
 
@@ -136,10 +130,6 @@ public class PurchaseDetailFormController implements Initializable {
                       .build();
               notificationHolder.addNotification(notification);
 
-              PurchaseMasterFormController.getInstance(stage)
-                  .purchaseDetailTable
-                  .setItems(PurchaseDetailViewModel.getPurchaseDetailList());
-
               purchaseDetailPdct.clearSelection();
 
               closeDialog(e);
@@ -154,10 +144,6 @@ public class PurchaseDetailFormController implements Initializable {
                     .type(NotificationVariants.SUCCESS)
                     .build();
             notificationHolder.addNotification(notification);
-
-            PurchaseMasterFormController.getInstance(stage)
-                .purchaseDetailTable
-                .setItems(PurchaseDetailViewModel.getPurchaseDetailList());
 
             closeDialog(e);
             purchaseDetailPdct.clearSelection();

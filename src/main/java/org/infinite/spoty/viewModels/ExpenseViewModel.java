@@ -33,6 +33,7 @@ import org.infinite.spoty.database.models.ExpenseCategory;
 
 public class ExpenseViewModel {
   public static final ObservableList<Expense> expenseList = FXCollections.observableArrayList();
+  private static final ListProperty<Expense> expenses = new SimpleListProperty<>(expenseList);
   private static final LongProperty id = new SimpleLongProperty(0);
   private static final StringProperty date = new SimpleStringProperty("");
   private static final StringProperty reference = new SimpleStringProperty("");
@@ -142,6 +143,18 @@ public class ExpenseViewModel {
     return details;
   }
 
+  public static ObservableList<Expense> getExpenses() {
+    return expenses.get();
+  }
+
+  public static void setExpenses(ObservableList<Expense> expenses) {
+    ExpenseViewModel.expenses.set(expenses);
+  }
+
+  public static ListProperty<Expense> expensesProperty() {
+    return expenses;
+  }
+
   public static void resetProperties() {
     setId(0);
     setDate("");
@@ -169,7 +182,7 @@ public class ExpenseViewModel {
 
             expenseDao.create(expense);
 
-            getExpenses();
+            getAllExpenses();
             resetProperties();
             return null;
           }
@@ -180,7 +193,7 @@ public class ExpenseViewModel {
     thread.start();
   }
 
-  public static void getExpenses() {
+  public static void getAllExpenses() {
     Task<Void> task =
         new Task<>() {
           @Override
@@ -230,7 +243,7 @@ public class ExpenseViewModel {
             setAmount(expense.getAmount());
             setDetails(expense.getDetails());
 
-            getExpenses();
+            getAllExpenses();
             return null;
           }
         };
@@ -261,7 +274,7 @@ public class ExpenseViewModel {
 
             expenseDao.update(expense);
 
-            getExpenses();
+            getAllExpenses();
             return null;
           }
         };
@@ -282,7 +295,7 @@ public class ExpenseViewModel {
             Dao<Expense, Long> expenseDao = DaoManager.createDao(connectionSource, Expense.class);
 
             expenseDao.deleteById(index);
-            getExpenses();
+            getAllExpenses();
             return null;
           }
         };

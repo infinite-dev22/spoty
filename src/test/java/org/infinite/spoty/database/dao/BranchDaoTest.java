@@ -72,7 +72,7 @@ class BranchDaoTest {
   @Test
   @Order(4)
   void getBranch() {
-    BranchViewModel.getBranches();
+    BranchViewModel.getAllBranches();
     BranchViewModel.branchesList.forEach(e -> System.out.println(e.getName()));
     assertEquals(BranchViewModel.branchesList.size(), 2);
   }

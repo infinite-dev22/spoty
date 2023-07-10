@@ -29,7 +29,7 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
-import javafx.collections.WeakListChangeListener;
+import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -114,9 +114,15 @@ public class UnitOfMeasureController implements Initializable {
             new StringFilter<>("Operator", UnitOfMeasure::getOperator),
             new DoubleFilter<>("Operation Value", UnitOfMeasure::getOperatorValue));
     getUnitOfMeasureTable();
-    uomTable.setItems(UOMViewModel.getUomList());
-    UOMViewModel.uomList.addListener(
-        new WeakListChangeListener<>(c -> uomTable.setItems(UOMViewModel.getUomList())));
+
+    if (UOMViewModel.getUnitsOfMeasure().isEmpty()) {
+      UOMViewModel.getUnitsOfMeasure()
+          .addListener(
+              (ListChangeListener<UnitOfMeasure>)
+                  c -> uomTable.setItems(UOMViewModel.getUnitsOfMeasure()));
+    } else {
+      uomTable.itemsProperty().bindBidirectional(UOMViewModel.unitsOfMeasureProperty());
+    }
   }
 
   private void getUnitOfMeasureTable() {
@@ -165,7 +171,7 @@ public class UnitOfMeasureController implements Initializable {
 
   private void uomFormDialogPane(Stage stage) throws IOException {
     FXMLLoader fxmlLoader = fxmlLoader("forms/UOMForm.fxml");
-    fxmlLoader.setControllerFactory(c -> UOMFormController.getInstance(stage));
+    fxmlLoader.setControllerFactory(c -> UOMFormController.getInstance());
 
     MFXGenericDialog dialogContent = fxmlLoader.load();
 

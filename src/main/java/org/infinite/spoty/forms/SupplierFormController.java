@@ -25,19 +25,16 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.stage.Stage;
 import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.viewModels.SupplierViewModel;
-import org.infinite.spoty.views.people.suppliers.SupplierController;
 
 public class SupplierFormController implements Initializable {
   private static SupplierFormController instance;
-  private final Stage stage;
-  public MFXTextField supplierID = new MFXTextField();
+    public MFXTextField supplierID = new MFXTextField();
   @FXML public MFXButton supplierFormSaveBtn;
   @FXML public MFXButton supplierFormCancelBtn;
   @FXML public MFXTextField supplierFormName;
@@ -51,12 +48,8 @@ public class SupplierFormController implements Initializable {
   @FXML public Label supplierFormEmailValidationLabel;
   @FXML public Label supplierFormPhoneValidationLabel;
 
-  private SupplierFormController(Stage stage) {
-    this.stage = stage;
-  }
-
-  public static SupplierFormController getInstance(Stage stage) {
-    if (Objects.equals(instance, null)) instance = new SupplierFormController(stage);
+  public static SupplierFormController getInstance() {
+    if (Objects.equals(instance, null)) instance = new SupplierFormController();
     return instance;
   }
 
@@ -136,10 +129,6 @@ public class SupplierFormController implements Initializable {
                       .build();
               notificationHolder.addNotification(notification);
 
-              SupplierController.getInstance(stage)
-                  .suppliersTable
-                  .setItems(SupplierViewModel.getSuppliersList());
-
               closeDialog(e);
               return;
             }
@@ -152,10 +141,6 @@ public class SupplierFormController implements Initializable {
                     .type(NotificationVariants.SUCCESS)
                     .build();
             notificationHolder.addNotification(notification);
-
-            SupplierController.getInstance(stage)
-                .suppliersTable
-                .setItems(SupplierViewModel.getSuppliersList());
 
             closeDialog(e);
             return;

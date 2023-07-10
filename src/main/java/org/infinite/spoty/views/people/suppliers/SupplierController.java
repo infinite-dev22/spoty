@@ -28,7 +28,7 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
-import javafx.collections.WeakListChangeListener;
+import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -109,10 +109,15 @@ public class SupplierController implements Initializable {
             new StringFilter<>("Email", Supplier::getEmail),
             new StringFilter<>("Tax No.", Supplier::getTaxNumber));
     getTable();
-    suppliersTable.setItems(SupplierViewModel.getSuppliersList());
-    SupplierViewModel.suppliersList.addListener(
-        new WeakListChangeListener<>(
-            c -> suppliersTable.setItems(SupplierViewModel.getSuppliersList())));
+
+    if (SupplierViewModel.getSuppliers().isEmpty()) {
+      SupplierViewModel.getSuppliers()
+          .addListener(
+              (ListChangeListener<Supplier>)
+                  c -> suppliersTable.setItems(SupplierViewModel.getSuppliers()));
+    } else {
+      suppliersTable.itemsProperty().bindBidirectional(SupplierViewModel.suppliersProperty());
+    }
   }
 
   private void getTable() {
@@ -164,7 +169,7 @@ public class SupplierController implements Initializable {
 
   private void supplierFormDialogPane(Stage stage) throws IOException {
     FXMLLoader fxmlLoader = fxmlLoader("forms/SupplierForm.fxml");
-    fxmlLoader.setControllerFactory(c -> SupplierFormController.getInstance(stage));
+    fxmlLoader.setControllerFactory(c -> SupplierFormController.getInstance());
 
     MFXGenericDialog dialogContent = fxmlLoader.load();
 

@@ -31,6 +31,8 @@ import org.infinite.spoty.database.models.*;
 public class ProductMasterViewModel {
   public static final ObservableList<ProductMaster> productMasterList =
       FXCollections.observableArrayList();
+
+  private static final ListProperty<ProductMaster> products = new SimpleListProperty<>(productMasterList);
   private static final LongProperty id = new SimpleLongProperty(0);
   private static final StringProperty barcodeType = new SimpleStringProperty("");
   private static final StringProperty name = new SimpleStringProperty("");
@@ -160,6 +162,18 @@ public class ProductMasterViewModel {
 
   public static ObjectProperty<Brand> brandProperty() {
     return brand;
+  }
+
+  public static ObservableList<ProductMaster> getProducts() {
+    return products.get();
+  }
+
+  public static void setProducts(ObservableList<ProductMaster> products) {
+    ProductMasterViewModel.products.set(products);
+  }
+
+  public static ListProperty<ProductMaster> productsProperty() {
+    return products;
   }
 
   public static void resetProperties() {

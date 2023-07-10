@@ -28,7 +28,7 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
-import javafx.collections.WeakListChangeListener;
+import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -92,9 +92,13 @@ public class BrandController implements Initializable {
             new StringFilter<>("Name", Brand::getName),
             new StringFilter<>("Description", Brand::getDescription));
     getBrandTable();
-    brandTable.setItems(BrandViewModel.getBrandsList());
-    BrandViewModel.brandsList.addListener(
-        new WeakListChangeListener<>(c -> brandTable.setItems(BrandViewModel.getBrandsList())));
+
+    if (BrandViewModel.getBrands().isEmpty()) {
+      BrandViewModel.getBrands().addListener(
+          (ListChangeListener<Brand>) c -> brandTable.setItems(BrandViewModel.getBrands()));
+    } else {
+      brandTable.itemsProperty().bindBidirectional(BrandViewModel.brandsProperty());
+    }
   }
 
   private void getBrandTable() {

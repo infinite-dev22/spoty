@@ -35,6 +35,7 @@ import org.infinite.spoty.database.models.StockInMaster;
 public class StockInMasterViewModel {
   public static final ObservableList<StockInMaster> stockInMasterList =
       FXCollections.observableArrayList();
+  private static final ListProperty<StockInMaster> stockIns = new SimpleListProperty<>(stockInMasterList);
   private static final LongProperty id = new SimpleLongProperty(0);
   private static final StringProperty date = new SimpleStringProperty("");
   private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>(null);
@@ -116,6 +117,18 @@ public class StockInMasterViewModel {
 
   public static StringProperty totalCostProperty() {
     return totalCost;
+  }
+
+  public static ObservableList<StockInMaster> getStockIns() {
+    return stockIns.get();
+  }
+
+  public static void setStockIns(ObservableList<StockInMaster> stockIns) {
+    StockInMasterViewModel.stockIns.set(stockIns);
+  }
+
+  public static ListProperty<StockInMaster> stockInsProperty() {
+    return stockIns;
   }
 
   public static void resetProperties() {

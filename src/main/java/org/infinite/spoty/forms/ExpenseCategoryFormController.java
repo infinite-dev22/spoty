@@ -34,7 +34,6 @@ import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.viewModels.ExpenseCategoryViewModel;
-import org.infinite.spoty.views.expenses.category.ExpenseCategoryController;
 
 public class ExpenseCategoryFormController implements Initializable {
   private static ExpenseCategoryFormController instance;
@@ -99,10 +98,6 @@ public class ExpenseCategoryFormController implements Initializable {
                       .build();
               notificationHolder.addNotification(notification);
 
-              ExpenseCategoryController.getInstance(stage)
-                  .categoryExpenseTable
-                  .setItems(ExpenseCategoryViewModel.getCategoryList());
-
               closeDialog(e);
               return;
             }
@@ -114,10 +109,6 @@ public class ExpenseCategoryFormController implements Initializable {
                     .type(NotificationVariants.SUCCESS)
                     .build();
             notificationHolder.addNotification(notification);
-
-            ExpenseCategoryController.getInstance(stage)
-                .categoryExpenseTable
-                .setItems(ExpenseCategoryViewModel.getCategoryList());
 
             closeDialog(e);
             return;

@@ -33,7 +33,6 @@ import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.viewModels.ProductCategoryViewModel;
-import org.infinite.spoty.views.inventory.category.ProductCategoryController;
 
 public class ProductCategoryFormController implements Initializable {
   private static ProductCategoryFormController instance;
@@ -102,10 +101,6 @@ public class ProductCategoryFormController implements Initializable {
                       .build();
               notificationHolder.addNotification(notification);
 
-              ProductCategoryController.getInstance(stage)
-                  .categoryTable
-                  .setItems(getCategoriesList());
-
               closeDialog(e);
               return;
             }
@@ -118,10 +113,6 @@ public class ProductCategoryFormController implements Initializable {
                     .type(NotificationVariants.SUCCESS)
                     .build();
             notificationHolder.addNotification(notification);
-
-            ProductCategoryController.getInstance(stage)
-                .categoryTable
-                .setItems(getCategoriesList());
 
             closeDialog(e);
             return;

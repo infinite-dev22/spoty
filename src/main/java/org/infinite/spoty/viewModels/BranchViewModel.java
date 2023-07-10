@@ -36,6 +36,9 @@ public class BranchViewModel {
   private static final StringProperty city = new SimpleStringProperty("");
   private static final StringProperty zipcode = new SimpleStringProperty("");
   public static ObservableList<Branch> branchesList = FXCollections.observableArrayList();
+
+  private static final ListProperty<Branch> branches = new SimpleListProperty<>(branchesList);
+
   public static ObservableList<Branch> branchesComboBoxList = FXCollections.observableArrayList();
 
   public static long getId() {
@@ -134,6 +137,18 @@ public class BranchViewModel {
     return title;
   }
 
+  public static ObservableList<Branch> getBranches() {
+    return branches.get();
+  }
+
+  public static void setBranches(ObservableList<Branch> branches) {
+    BranchViewModel.branches.set(branches);
+  }
+
+  public static ListProperty<Branch> branchesProperty() {
+    return branches;
+  }
+
   public static void saveBranch() {
     Task<Void> task =
         new Task<>() {
@@ -150,7 +165,7 @@ public class BranchViewModel {
             branchDao.create(branch);
 
             clearBranchData();
-            getBranches();
+            getAllBranches();
             return null;
           }
         };
@@ -170,7 +185,7 @@ public class BranchViewModel {
     setZipcode("");
   }
 
-  public static void getBranches() {
+  public static void getAllBranches() {
     Task<Void> task =
         new Task<>() {
           @Override
@@ -218,7 +233,7 @@ public class BranchViewModel {
             setCity(branch.getCity());
             setTown(branch.getTown());
             setZipcode(branch.getZipCode());
-            getBranches();
+            getAllBranches();
             return null;
           }
         };
@@ -250,7 +265,7 @@ public class BranchViewModel {
             branchDao.update(branch);
 
             clearBranchData();
-            getBranches();
+            getAllBranches();
             return null;
           }
         };
@@ -272,7 +287,7 @@ public class BranchViewModel {
 
             branchDao.deleteById(index);
 
-            getBranches();
+            getAllBranches();
             return null;
           }
         };
