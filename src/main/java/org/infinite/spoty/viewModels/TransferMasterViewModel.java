@@ -35,6 +35,7 @@ import org.infinite.spoty.database.models.TransferMaster;
 public class TransferMasterViewModel {
   public static final ObservableList<TransferMaster> transferMasterList =
       FXCollections.observableArrayList();
+  private static final ListProperty<TransferMaster> transfers = new SimpleListProperty<>(transferMasterList);
   private static final LongProperty id = new SimpleLongProperty(0);
   private static final StringProperty date = new SimpleStringProperty("");
   private static final ObjectProperty<Branch> fromBranch = new SimpleObjectProperty<>(null);
@@ -129,6 +130,18 @@ public class TransferMasterViewModel {
 
   public static StringProperty totalCostProperty() {
     return totalCost;
+  }
+
+  public static ObservableList<TransferMaster> getTransfers() {
+    return transfers.get();
+  }
+
+  public static void setTransfers(ObservableList<TransferMaster> transfers) {
+    TransferMasterViewModel.transfers.set(transfers);
+  }
+
+  public static ListProperty<TransferMaster> transfersProperty() {
+    return transfers;
   }
 
   public static void resetProperties() {

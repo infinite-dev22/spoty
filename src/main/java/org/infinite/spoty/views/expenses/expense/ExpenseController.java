@@ -29,7 +29,7 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
-import javafx.collections.WeakListChangeListener;
+import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -112,10 +112,15 @@ public class ExpenseController implements Initializable {
             new StringFilter<>("Category", Expense::getExpenseCategoryName),
             new StringFilter<>("Branch", Expense::getBranchName));
     styleExpenseTable();
-    expenseTable.setItems(ExpenseViewModel.getExpenseList());
-    ExpenseViewModel.expenseList.addListener(
-        new WeakListChangeListener<>(
-            c -> expenseTable.setItems(ExpenseViewModel.getExpenseList())));
+
+    if (ExpenseViewModel.getExpenses().isEmpty()) {
+      ExpenseViewModel.getExpenses()
+          .addListener(
+              (ListChangeListener<Expense>)
+                  c -> expenseTable.setItems(ExpenseViewModel.getExpenses()));
+    } else {
+      expenseTable.itemsProperty().bindBidirectional(ExpenseViewModel.expensesProperty());
+    }
   }
 
   private void styleExpenseTable() {
@@ -167,7 +172,7 @@ public class ExpenseController implements Initializable {
 
   private void expenseFormDialogPane(Stage stage) throws IOException {
     FXMLLoader fxmlLoader = fxmlLoader("forms/ExpenseForm.fxml");
-    fxmlLoader.setControllerFactory(c -> ExpenseFormController.getInstance(stage));
+    fxmlLoader.setControllerFactory(c -> ExpenseFormController.getInstance());
 
     MFXGenericDialog dialogContent = fxmlLoader.load();
 

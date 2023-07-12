@@ -34,6 +34,8 @@ import org.infinite.spoty.database.models.RequisitionMaster;
 public class RequisitionDetailViewModel {
   public static final ObservableList<RequisitionDetail> requisitionDetailList =
       FXCollections.observableArrayList();
+  private static final ListProperty<RequisitionDetail> requisitionDetails =
+      new SimpleListProperty<>(requisitionDetailList);
   private static final LongProperty id = new SimpleLongProperty(0);
   private static final ObjectProperty<ProductDetail> product = new SimpleObjectProperty<>();
   private static final ObjectProperty<RequisitionMaster> requisition = new SimpleObjectProperty<>();
@@ -100,6 +102,18 @@ public class RequisitionDetailViewModel {
     return description;
   }
 
+  public static ObservableList<RequisitionDetail> getRequisitionDetails() {
+    return requisitionDetails.get();
+  }
+
+  public static void setRequisitionDetails(ObservableList<RequisitionDetail> requisitionDetails) {
+    RequisitionDetailViewModel.requisitionDetails.set(requisitionDetails);
+  }
+
+  public static ListProperty<RequisitionDetail> requisitionDetailsProperty() {
+    return requisitionDetails;
+  }
+
   public static void resetProperties() {
     setId(0);
     setTempId(-1);
@@ -131,7 +145,7 @@ public class RequisitionDetailViewModel {
     thread.start();
   }
 
-  public static void getRequisitionDetails() {
+  public static void getAllRequisitionDetails() {
     Task<Void> task =
         new Task<>() {
           @Override
@@ -227,7 +241,7 @@ public class RequisitionDetailViewModel {
 
             requisitionDetailDao.update(requisitionDetail);
 
-            getRequisitionDetails();
+            getAllRequisitionDetails();
             return null;
           }
         };

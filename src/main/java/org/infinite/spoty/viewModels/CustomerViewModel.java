@@ -19,7 +19,9 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
 import java.sql.SQLException;
 import javafx.application.Platform;
+import javafx.beans.property.ListProperty;
 import javafx.beans.property.LongProperty;
+import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -33,6 +35,7 @@ public class CustomerViewModel {
   public static final ObservableList<Customer> customersList = FXCollections.observableArrayList();
   public static final ObservableList<Customer> customersComboBoxList =
       FXCollections.observableArrayList();
+  private static final ListProperty<Customer> customers = new SimpleListProperty<>(customersList);
   private static final LongProperty id = new SimpleLongProperty(0);
   private static final StringProperty name = new SimpleStringProperty("");
   private static final StringProperty code = new SimpleStringProperty("");
@@ -151,6 +154,18 @@ public class CustomerViewModel {
     return country;
   }
 
+  public static ObservableList<Customer> getCustomers() {
+    return customers.get();
+  }
+
+  public static void setCustomers(ObservableList<Customer> customers) {
+    CustomerViewModel.customers.set(customers);
+  }
+
+  public static ListProperty<Customer> customersProperty() {
+    return customers;
+  }
+
   public static void resetProperties() {
     setId(0);
     setName("");
@@ -188,7 +203,7 @@ public class CustomerViewModel {
             customerDao.create(customer);
 
             resetProperties();
-            getCustomers();
+            getAllCustomers();
             return null;
           }
         };
@@ -198,7 +213,7 @@ public class CustomerViewModel {
     thread.start();
   }
 
-  public static void getCustomers() {
+  public static void getAllCustomers() {
     Task<Void> task =
         new Task<>() {
           @Override
@@ -251,7 +266,7 @@ public class CustomerViewModel {
             setAddress(customer.getAddress());
             setTaxNumber(customer.getTaxNumber());
 
-            getCustomers();
+            getAllCustomers();
             return null;
           }
         };
@@ -285,7 +300,7 @@ public class CustomerViewModel {
             customerDao.update(customer);
 
             resetProperties();
-            getCustomers();
+            getAllCustomers();
             return null;
           }
         };
@@ -307,7 +322,7 @@ public class CustomerViewModel {
                 DaoManager.createDao(connectionSource, Customer.class);
 
             customerDao.deleteById(index);
-            getCustomers();
+            getAllCustomers();
             return null;
           }
         };

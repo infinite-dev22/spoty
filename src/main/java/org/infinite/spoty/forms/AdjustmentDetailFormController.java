@@ -29,7 +29,6 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.components.notification.SimpleNotification;
@@ -44,8 +43,7 @@ import org.infinite.spoty.viewModels.ProductDetailViewModel;
 
 public class AdjustmentDetailFormController implements Initializable {
   private static AdjustmentDetailFormController instance;
-  private final Stage stage;
-  public MFXTextField adjustmentDetailID = new MFXTextField();
+    public MFXTextField adjustmentDetailID = new MFXTextField();
   @FXML public MFXTextField adjustmentProductsQnty;
   @FXML public MFXFilterComboBox<ProductDetail> adjustmentProductVariant;
   @FXML public MFXButton adjustmentProductsSaveBtn;
@@ -55,12 +53,8 @@ public class AdjustmentDetailFormController implements Initializable {
   @FXML public Label adjustmentProductsQntyValidationLabel;
   @FXML public Label adjustmentTypeValidationLabel;
 
-  private AdjustmentDetailFormController(Stage stage) {
-    this.stage = stage;
-  }
-
-  public static AdjustmentDetailFormController getInstance(Stage stage) {
-    if (Objects.equals(instance, null)) instance = new AdjustmentDetailFormController(stage);
+  public static AdjustmentDetailFormController getInstance() {
+    if (Objects.equals(instance, null)) instance = new AdjustmentDetailFormController();
     return instance;
   }
 
@@ -79,7 +73,7 @@ public class AdjustmentDetailFormController implements Initializable {
     adjustmentType
         .textProperty()
         .bindBidirectional(AdjustmentDetailViewModel.adjustmentTypeProperty());
-    ProductDetailViewModel.getProductDetails();
+    ProductDetailViewModel.getAllProductDetails();
 
     // AdjustmentType combo box properties.
     adjustmentProductVariant.setItems(ProductDetailViewModel.getProductDetailsComboBoxList());
@@ -164,10 +158,6 @@ public class AdjustmentDetailFormController implements Initializable {
               adjustmentProductVariant.clearSelection();
               adjustmentType.clearSelection();
 
-              AdjustmentMasterFormController.getInstance(stage)
-                  .adjustmentDetailTable
-                  .setItems(AdjustmentDetailViewModel.getAdjustmentDetailsList());
-
               closeDialog(e);
               return;
             }
@@ -184,10 +174,6 @@ public class AdjustmentDetailFormController implements Initializable {
 
             adjustmentProductVariant.clearSelection();
             adjustmentType.clearSelection();
-
-            AdjustmentMasterFormController.getInstance(stage)
-                .adjustmentDetailTable
-                .setItems(AdjustmentDetailViewModel.getAdjustmentDetailsList());
 
             closeDialog(e);
             return;

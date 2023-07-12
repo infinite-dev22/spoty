@@ -19,7 +19,9 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
 import java.sql.SQLException;
 import javafx.application.Platform;
+import javafx.beans.property.ListProperty;
 import javafx.beans.property.LongProperty;
+import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -31,6 +33,8 @@ import org.infinite.spoty.database.models.Supplier;
 
 public class SupplierViewModel {
   public static final ObservableList<Supplier> suppliersList = FXCollections.observableArrayList();
+  public static final ObservableList<Supplier> suppliersComboBoxList = FXCollections.observableArrayList();
+  private static final ListProperty<Supplier> suppliers = new SimpleListProperty<>(suppliersList);
   private static final LongProperty id = new SimpleLongProperty(0);
   private static final StringProperty name = new SimpleStringProperty("");
   private static final StringProperty code = new SimpleStringProperty("");
@@ -149,6 +153,18 @@ public class SupplierViewModel {
     return country;
   }
 
+  public static ObservableList<Supplier> getSuppliers() {
+    return suppliers.get();
+  }
+
+  public static void setSuppliers(ObservableList<Supplier> suppliers) {
+    SupplierViewModel.suppliers.set(suppliers);
+  }
+
+  public static ListProperty<Supplier> suppliersProperty() {
+    return suppliers;
+  }
+
   public static void resetProperties() {
     setId(0);
     setName("");
@@ -186,7 +202,7 @@ public class SupplierViewModel {
             supplierDao.create(supplier);
 
             resetProperties();
-            getSuppliers();
+            getAllSuppliers();
             return null;
           }
         };
@@ -196,7 +212,7 @@ public class SupplierViewModel {
     thread.start();
   }
 
-  public static void getSuppliers() {
+  public static void getAllSuppliers() {
     Task<Void> task =
         new Task<>() {
           @Override
@@ -249,7 +265,7 @@ public class SupplierViewModel {
             setAddress(supplier.getAddress());
             setTaxNumber(supplier.getTaxNumber());
 
-            getSuppliers();
+            getAllSuppliers();
             return null;
           }
         };
@@ -282,7 +298,7 @@ public class SupplierViewModel {
 
             supplierDao.update(supplier);
             resetProperties();
-            getSuppliers();
+            getAllSuppliers();
             return null;
           }
         };
@@ -304,7 +320,7 @@ public class SupplierViewModel {
                 DaoManager.createDao(connectionSource, Supplier.class);
 
             supplierDao.deleteById(index);
-            getSuppliers();
+            getAllSuppliers();
             return null;
           }
         };
@@ -316,5 +332,11 @@ public class SupplierViewModel {
 
   public static ObservableList<Supplier> getSuppliersList() {
     return suppliersList;
+  }
+
+  public static ObservableList<Supplier> getSuppliersComboBoxList() {
+    suppliersComboBoxList.clear();
+    suppliersComboBoxList.addAll(suppliersList);
+    return suppliersComboBoxList;
   }
 }

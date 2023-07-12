@@ -34,7 +34,6 @@ import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.viewModels.BranchViewModel;
-import org.infinite.spoty.views.settings.branches.BranchController;
 
 public class BranchFormController implements Initializable {
   private static BranchFormController instance;
@@ -122,10 +121,6 @@ public class BranchFormController implements Initializable {
                       .build();
               notificationHolder.addNotification(notification);
 
-              BranchController.getInstance(stage)
-                  .branchTable
-                  .setItems(BranchViewModel.getBranchesList());
-
               closeDialog(e);
               return;
             }
@@ -138,10 +133,6 @@ public class BranchFormController implements Initializable {
                     .type(NotificationVariants.SUCCESS)
                     .build();
             notificationHolder.addNotification(notification);
-
-            BranchController.getInstance(stage)
-                .branchTable
-                .setItems(BranchViewModel.getBranchesList());
 
             closeDialog(e);
             return;

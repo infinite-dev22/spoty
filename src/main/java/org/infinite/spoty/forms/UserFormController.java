@@ -29,7 +29,6 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.components.notification.SimpleNotification;
@@ -40,12 +39,10 @@ import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.Role;
 import org.infinite.spoty.viewModels.BranchViewModel;
 import org.infinite.spoty.viewModels.UserViewModel;
-import org.infinite.spoty.views.people.users.UserController;
 
 public class UserFormController implements Initializable {
   public static UserFormController instance;
-  private final Stage stage;
-  public MFXTextField userID = new MFXTextField();
+    public MFXTextField userID = new MFXTextField();
   @FXML public MFXButton userFormSaveBtn;
   @FXML public MFXButton userFormCancelBtn;
   @FXML public MFXTextField userFormEmail;
@@ -64,12 +61,8 @@ public class UserFormController implements Initializable {
   @FXML public Label userFormBranchValidationLabel;
   @FXML public Label userFormRoleValidationLabel;
 
-  public UserFormController(Stage stage) {
-    this.stage = stage;
-  }
-
-  public static UserFormController getInstance(Stage stage) {
-    if (Objects.equals(instance, null)) instance = new UserFormController(stage);
+  public static UserFormController getInstance() {
+    if (Objects.equals(instance, null)) instance = new UserFormController();
     return instance;
   }
 
@@ -203,7 +196,6 @@ public class UserFormController implements Initializable {
 
               userFormRole.clearSelection();
               userFormBranch.clearSelection();
-              UserController.getInstance(stage).userTable.setItems(UserViewModel.getUsersList());
 
               closeDialog(e);
               return;
@@ -219,7 +211,6 @@ public class UserFormController implements Initializable {
 
             userFormRole.clearSelection();
             userFormBranch.clearSelection();
-            UserController.getInstance(stage).userTable.setItems(UserViewModel.getUsersList());
 
             closeDialog(e);
             return;

@@ -34,6 +34,8 @@ import org.infinite.spoty.database.models.PurchaseMaster;
 public class PurchaseDetailViewModel {
   public static final ObservableList<PurchaseDetail> purchaseDetailList =
       FXCollections.observableArrayList();
+  private static final ListProperty<PurchaseDetail> purchaseDetails =
+      new SimpleListProperty<>(purchaseDetailList);
   private static final LongProperty id = new SimpleLongProperty(0);
   private static final ObjectProperty<PurchaseMaster> purchase = new SimpleObjectProperty<>(null);
   private static final StringProperty cost = new SimpleStringProperty("");
@@ -178,6 +180,18 @@ public class PurchaseDetailViewModel {
     return total;
   }
 
+  public static ObservableList<PurchaseDetail> getPurchaseDetails() {
+    return purchaseDetails.get();
+  }
+
+  public static void setPurchaseDetails(ObservableList<PurchaseDetail> purchaseDetails) {
+    PurchaseDetailViewModel.purchaseDetails.set(purchaseDetails);
+  }
+
+  public static ListProperty<PurchaseDetail> purchaseDetailsProperty() {
+    return purchaseDetails;
+  }
+
   public static void addPurchaseDetail() {
     Task<Void> task =
         new Task<>() {
@@ -215,7 +229,7 @@ public class PurchaseDetailViewModel {
     setQuantity("");
   }
 
-  public static void getPurchaseDetails() {
+  public static void getAllPurchaseDetails() {
     Task<Void> task =
         new Task<>() {
           @Override
@@ -334,7 +348,7 @@ public class PurchaseDetailViewModel {
 
             purchaseDetailDao.update(purchaseDetail);
 
-            getPurchaseDetails();
+            getAllPurchaseDetails();
             return null;
           }
         };

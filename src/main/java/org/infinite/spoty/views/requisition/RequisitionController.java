@@ -21,7 +21,7 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
-import javafx.collections.WeakListChangeListener;
+import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -119,12 +119,19 @@ public class RequisitionController implements Initializable {
             new StringFilter<>("Status", RequisitionMaster::getStatus),
             new StringFilter<>("Shipping Method", RequisitionMaster::getShipMethod));
     getRequisitionMasterTable();
-    requisitionMasterTable.setItems(RequisitionMasterViewModel.getRequisitionMasterList());
-    RequisitionMasterViewModel.requisitionMasterList.addListener(
-        new WeakListChangeListener<>(
-            c ->
-                requisitionMasterTable.setItems(
-                    RequisitionMasterViewModel.getRequisitionMasterList())));
+
+    if (RequisitionMasterViewModel.getRequisitions().isEmpty()) {
+      RequisitionMasterViewModel.getRequisitions()
+          .addListener(
+              (ListChangeListener<RequisitionMaster>)
+                  c ->
+                      requisitionMasterTable.setItems(
+                          RequisitionMasterViewModel.getRequisitions()));
+    } else {
+      requisitionMasterTable
+          .itemsProperty()
+          .bindBidirectional(RequisitionMasterViewModel.requisitionsProperty());
+    }
   }
 
   private void getRequisitionMasterTable() {

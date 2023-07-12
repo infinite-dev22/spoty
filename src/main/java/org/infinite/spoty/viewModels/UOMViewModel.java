@@ -30,6 +30,7 @@ public class UOMViewModel {
   public static final ObservableList<UnitOfMeasure> uomList = FXCollections.observableArrayList();
   public static final ObservableList<UnitOfMeasure> uomComboBoxList =
       FXCollections.observableArrayList();
+  private static final ListProperty<UnitOfMeasure> unitsOfMeasure = new SimpleListProperty<>(uomList);
   private static final LongProperty id = new SimpleLongProperty(0);
   private static final StringProperty name = new SimpleStringProperty("");
   private static final StringProperty shortName = new SimpleStringProperty("");
@@ -107,6 +108,18 @@ public class UOMViewModel {
 
   public static StringProperty operatorValueProperty() {
     return operatorValue;
+  }
+
+  public static ObservableList<UnitOfMeasure> getUnitsOfMeasure() {
+    return unitsOfMeasure.get();
+  }
+
+  public static void setUnitsOfMeasure(ObservableList<UnitOfMeasure> unitsOfMeasure) {
+    UOMViewModel.unitsOfMeasure.set(unitsOfMeasure);
+  }
+
+  public static ListProperty<UnitOfMeasure> unitsOfMeasureProperty() {
+    return unitsOfMeasure;
   }
 
   public static void saveUOM() {

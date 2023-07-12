@@ -40,6 +40,7 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -208,14 +209,26 @@ public class ProductMasterFormController implements Initializable {
     productSerial.prefWidthProperty().bind(productDetailTable.widthProperty().multiply(.4));
 
     productDetailTable.getTableColumns().addAll(productName, productUOM, productSerial);
+
     productDetailTable
         .getFilters()
         .addAll(
             new LongFilter<>("Quantity", ProductDetail::getQuantity),
             new StringFilter<>("Unit Of Measure", ProductDetail::getUnitName),
             new StringFilter<>("Serial", ProductDetail::getSerialNumber));
+
     getProductDetailTable();
-    productDetailTable.setItems(ProductDetailViewModel.getProductDetailsList());
+
+    if (ProductDetailViewModel.getProductDetails().isEmpty()) {
+      ProductDetailViewModel.getProductDetails()
+          .addListener(
+              (ListChangeListener<ProductDetail>)
+                  c -> productDetailTable.setItems(ProductDetailViewModel.getProductDetails()));
+    } else {
+      productDetailTable
+          .itemsProperty()
+          .bindBidirectional(ProductDetailViewModel.productDetailsProperty());
+    }
   }
 
   private void getProductDetailTable() {
@@ -275,24 +288,24 @@ public class ProductMasterFormController implements Initializable {
 
   private void quotationProductDialogPane(Stage stage) throws IOException {
     FXMLLoader fxmlLoader = fxmlLoader("forms/ProductDetailForm.fxml");
-    fxmlLoader.setControllerFactory(c -> ProductDetailFormController.getInstance(stage));
+    fxmlLoader.setControllerFactory(c -> ProductDetailFormController.getInstance());
 
-      MFXGenericDialog dialogContent = fxmlLoader.load();
+    MFXGenericDialog dialogContent = fxmlLoader.load();
 
-      dialogContent.setShowMinimize(false);
-      dialogContent.setShowAlwaysOnTop(false);
+    dialogContent.setShowMinimize(false);
+    dialogContent.setShowAlwaysOnTop(false);
 
-      dialog =
-              MFXGenericDialogBuilder.build(dialogContent)
-                      .toStageDialogBuilder()
-                      .initOwner(stage)
-                      .initModality(Modality.WINDOW_MODAL)
-                      .setOwnerNode(productFormContentPane)
-                      .setScrimPriority(ScrimPriority.WINDOW)
-                      .setScrimOwner(true)
-                      .get();
+    dialog =
+        MFXGenericDialogBuilder.build(dialogContent)
+            .toStageDialogBuilder()
+            .initOwner(stage)
+            .initModality(Modality.WINDOW_MODAL)
+            .setOwnerNode(productFormContentPane)
+            .setScrimPriority(ScrimPriority.WINDOW)
+            .setScrimOwner(true)
+            .get();
 
-      io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
+    io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
   }
 
   public void productSaveBtnClicked() {

@@ -36,6 +36,7 @@ import org.infinite.spoty.database.models.QuotationMaster;
 public class QuotationMasterViewModel {
   public static final ObservableList<QuotationMaster> quotationMasterList =
       FXCollections.observableArrayList();
+  private static final ListProperty<QuotationMaster> quotations = new SimpleListProperty<>(quotationMasterList);
   private static final LongProperty id = new SimpleLongProperty(0);
   private static final StringProperty date = new SimpleStringProperty("");
   private static final ObjectProperty<Customer> customer = new SimpleObjectProperty<>(null);
@@ -117,6 +118,18 @@ public class QuotationMasterViewModel {
 
   public static StringProperty statusProperty() {
     return status;
+  }
+
+  public static ObservableList<QuotationMaster> getQuotations() {
+    return quotations.get();
+  }
+
+  public static void setQuotations(ObservableList<QuotationMaster> quotations) {
+    QuotationMasterViewModel.quotations.set(quotations);
+  }
+
+  public static ListProperty<QuotationMaster> quotationsProperty() {
+    return quotations;
   }
 
   public static void resetProperties() {

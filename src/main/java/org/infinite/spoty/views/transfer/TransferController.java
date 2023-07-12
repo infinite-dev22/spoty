@@ -22,7 +22,7 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
-import javafx.collections.WeakListChangeListener;
+import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -96,10 +96,17 @@ public class TransferController implements Initializable {
             new StringFilter<>("Status", TransferMaster::getStatus),
             new DoubleFilter<>("Total Cost", TransferMaster::getTotal));
     getTransferMasterTable();
-    transferMasterTable.setItems(TransferMasterViewModel.getTransferMasterList());
-    TransferMasterViewModel.transferMasterList.addListener(
-        new WeakListChangeListener<>(
-            c -> transferMasterTable.setItems(TransferMasterViewModel.getTransferMasterList())));
+
+    if (TransferMasterViewModel.getTransfers().isEmpty()) {
+      TransferMasterViewModel.getTransfers()
+          .addListener(
+              (ListChangeListener<TransferMaster>)
+                  c -> transferMasterTable.setItems(TransferMasterViewModel.getTransfers()));
+    } else {
+      transferMasterTable
+          .itemsProperty()
+          .bindBidirectional(TransferMasterViewModel.transfersProperty());
+    }
   }
 
   private void getTransferMasterTable() {

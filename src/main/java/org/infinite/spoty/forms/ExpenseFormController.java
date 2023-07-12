@@ -27,7 +27,6 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.components.notification.SimpleNotification;
@@ -39,11 +38,9 @@ import org.infinite.spoty.database.models.ExpenseCategory;
 import org.infinite.spoty.viewModels.BranchViewModel;
 import org.infinite.spoty.viewModels.ExpenseCategoryViewModel;
 import org.infinite.spoty.viewModels.ExpenseViewModel;
-import org.infinite.spoty.views.expenses.expense.ExpenseController;
 
 public class ExpenseFormController implements Initializable {
   private static ExpenseFormController instance;
-  private final Stage stage;
   public MFXTextField expenseID = new MFXTextField();
   @FXML public MFXTextField expenseFormAmount;
   @FXML public MFXTextField expenseFormDetails;
@@ -59,12 +56,8 @@ public class ExpenseFormController implements Initializable {
   @FXML public Label expenseFormCategoryValidationLabel;
   @FXML public Label expenseFormAmountValidationLabel;
 
-  private ExpenseFormController(Stage stage) {
-    this.stage = stage;
-  }
-
-  public static ExpenseFormController getInstance(Stage stage) {
-    if (Objects.equals(instance, null)) instance = new ExpenseFormController(stage);
+  public static ExpenseFormController getInstance() {
+    if (Objects.equals(instance, null)) instance = new ExpenseFormController();
     return instance;
   }
 
@@ -177,10 +170,6 @@ public class ExpenseFormController implements Initializable {
               expenseFormBranch.clearSelection();
               expenseFormCategory.clearSelection();
 
-              ExpenseController.getInstance(stage)
-                  .expenseTable
-                  .setItems(ExpenseViewModel.getExpenseList());
-
               closeDialog(e);
               return;
             }
@@ -196,10 +185,6 @@ public class ExpenseFormController implements Initializable {
 
             expenseFormBranch.clearSelection();
             expenseFormCategory.clearSelection();
-
-            ExpenseController.getInstance(stage)
-                .expenseTable
-                .setItems(ExpenseViewModel.getExpenseList());
 
             closeDialog(e);
             return;

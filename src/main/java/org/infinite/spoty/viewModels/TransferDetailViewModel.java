@@ -33,6 +33,8 @@ import org.infinite.spoty.database.models.TransferMaster;
 public class TransferDetailViewModel {
   public static final ObservableList<TransferDetail> transferDetailsList =
       FXCollections.observableArrayList();
+  private static final ListProperty<TransferDetail> transferDetails =
+      new SimpleListProperty<>(transferDetailsList);
   private static final LongProperty id = new SimpleLongProperty(0);
   private static final ObjectProperty<ProductDetail> product = new SimpleObjectProperty<>();
   private static final ObjectProperty<TransferMaster> transfer = new SimpleObjectProperty<>();
@@ -138,6 +140,18 @@ public class TransferDetailViewModel {
     return total;
   }
 
+  public static ObservableList<TransferDetail> getTransferDetails() {
+    return transferDetails.get();
+  }
+
+  public static void setTransferDetails(ObservableList<TransferDetail> transferDetails) {
+    TransferDetailViewModel.transferDetails.set(transferDetails);
+  }
+
+  public static ListProperty<TransferDetail> transferDetailsProperty() {
+    return transferDetails;
+  }
+
   public static void resetProperties() {
     setId(0);
     setTempId(-1);
@@ -174,7 +188,7 @@ public class TransferDetailViewModel {
     thread.start();
   }
 
-  public static void getTransferDetails() {
+  public static void getAllTransferDetails() {
     Task<Void> task =
         new Task<>() {
           @Override
@@ -279,7 +293,7 @@ public class TransferDetailViewModel {
 
             transferDetailDao.update(transferDetail);
 
-            getTransferDetails();
+            getAllTransferDetails();
             return null;
           }
         };

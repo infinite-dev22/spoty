@@ -38,7 +38,7 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
-import javafx.collections.WeakListChangeListener;
+import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -162,19 +162,28 @@ public class AdjustmentMasterFormController implements Initializable {
     adjustmentType.prefWidthProperty().bind(adjustmentDetailTable.widthProperty().multiply(.4));
 
     adjustmentDetailTable.getTableColumns().addAll(productName, productQuantity, adjustmentType);
+
     adjustmentDetailTable
         .getFilters()
         .addAll(
             new StringFilter<>("Name", AdjustmentDetail::getProductDetailName),
             new LongFilter<>("Quantity", AdjustmentDetail::getQuantity),
             new StringFilter<>("Adjustment Type", AdjustmentDetail::getAdjustmentType));
+
     getAdjustmentDetailTable();
-    adjustmentDetailTable.setItems(AdjustmentDetailViewModel.getAdjustmentDetailsList());
-    AdjustmentDetailViewModel.adjustmentDetailsList.addListener(
-        new WeakListChangeListener<>(
-            c ->
-                adjustmentDetailTable.setItems(
-                    AdjustmentDetailViewModel.getAdjustmentDetailsList())));
+
+    if (AdjustmentDetailViewModel.getAdjustmentDetails().isEmpty()) {
+      AdjustmentDetailViewModel.getAdjustmentDetails()
+          .addListener(
+              (ListChangeListener<AdjustmentDetail>)
+                  c ->
+                      adjustmentDetailTable.setItems(
+                          AdjustmentDetailViewModel.getAdjustmentDetails()));
+    } else {
+      adjustmentDetailTable
+          .itemsProperty()
+          .bindBidirectional(AdjustmentDetailViewModel.adjustmentDetailsProperty());
+    }
   }
 
   private void getAdjustmentDetailTable() {
@@ -234,7 +243,7 @@ public class AdjustmentMasterFormController implements Initializable {
 
   private void quotationProductDialogPane(Stage stage) throws IOException {
     FXMLLoader fxmlLoader = fxmlLoader("forms/AdjustmentDetailForm.fxml");
-    fxmlLoader.setControllerFactory(c -> AdjustmentDetailFormController.getInstance(stage));
+    fxmlLoader.setControllerFactory(c -> AdjustmentDetailFormController.getInstance());
 
     MFXGenericDialog dialogContent = fxmlLoader.load();
 

@@ -29,6 +29,7 @@ import org.infinite.spoty.database.models.User;
 
 public class UserViewModel {
   public static final ObservableList<User> usersList = FXCollections.observableArrayList();
+  public static final ListProperty<User> users = new SimpleListProperty<>(usersList);
   private static final LongProperty id = new SimpleLongProperty(0);
   private static final StringProperty firstName = new SimpleStringProperty("");
   private static final StringProperty lastName = new SimpleStringProperty("");
@@ -198,6 +199,16 @@ public class UserViewModel {
   public static StringProperty countryProperty() {
     return country;
   }
+public static ObservableList<User> getUsers() {
+    return users.get();
+}
+  public static void setUsers(ObservableList<User> users) {
+    UserViewModel.users.set(users);
+  }
+
+  public static ListProperty<User> usersProperty() {
+    return users;
+  }
 
   public static void resetProperties() {
     setId(0);
@@ -237,7 +248,7 @@ public class UserViewModel {
             userDao.create(user);
 
             resetProperties();
-            getUsers();
+            getAllUsers();
             return null;
           }
         };
@@ -247,7 +258,7 @@ public class UserViewModel {
     thread.start();
   }
 
-  public static void getUsers() {
+  public static void getAllUsers() {
     Task<Void> task =
         new Task<>() {
           @Override
@@ -297,7 +308,7 @@ public class UserViewModel {
             setActive(user.isActive());
             setAccessAllBranches(user.canAccessAllBranches());
 
-            getUsers();
+            getAllUsers();
             return null;
           }
         };
@@ -329,7 +340,7 @@ public class UserViewModel {
             userDao.update(user);
 
             resetProperties();
-            getUsers();
+            getAllUsers();
             return null;
           }
         };
@@ -350,7 +361,7 @@ public class UserViewModel {
             Dao<User, Long> userDao = DaoManager.createDao(connectionSource, User.class);
 
             userDao.deleteById(index);
-            getUsers();
+            getAllUsers();
             return null;
           }
         };

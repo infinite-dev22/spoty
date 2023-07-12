@@ -27,7 +27,6 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
@@ -39,7 +38,6 @@ import org.infinite.spoty.viewModels.QuotationDetailViewModel;
 
 public class QuotationDetailFormController implements Initializable {
   private static QuotationDetailFormController instance;
-  private final Stage stage;
   @FXML public MFXTextField quotationProductQnty;
   @FXML public MFXFilterComboBox<ProductDetail> quotationProductPdct;
   @FXML public MFXTextField quotationProductsOrderTax;
@@ -49,12 +47,8 @@ public class QuotationDetailFormController implements Initializable {
   @FXML public Label quotationProductPdctValidationLabel;
   @FXML public Label quotationProductQntyValidationLabel;
 
-  private QuotationDetailFormController(Stage stage) {
-    this.stage = stage;
-  }
-
-  public static QuotationDetailFormController getInstance(Stage stage) {
-    if (Objects.equals(instance, null)) instance = new QuotationDetailFormController(stage);
+  public static QuotationDetailFormController getInstance() {
+    if (Objects.equals(instance, null)) instance = new QuotationDetailFormController();
     return instance;
   }
 
@@ -140,10 +134,6 @@ public class QuotationDetailFormController implements Initializable {
 
               quotationProductPdct.clearSelection();
 
-              QuotationMasterFormController.getInstance(stage)
-                  .quotationDetailTable
-                  .setItems(QuotationDetailViewModel.getQuotationDetailsList());
-
               closeDialog(e);
               return;
             }
@@ -159,10 +149,6 @@ public class QuotationDetailFormController implements Initializable {
             notificationHolder.addNotification(notification);
 
             quotationProductPdct.clearSelection();
-
-            QuotationMasterFormController.getInstance(stage)
-                .quotationDetailTable
-                .setItems(QuotationDetailViewModel.getQuotationDetailsList());
 
             closeDialog(e);
             return;

@@ -27,7 +27,6 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
@@ -39,8 +38,7 @@ import org.infinite.spoty.viewModels.UOMViewModel;
 
 public class ProductDetailFormController implements Initializable {
   private static ProductDetailFormController instance;
-  private final Stage stage;
-  @FXML public MFXButton productProductsSaveBtn;
+    @FXML public MFXButton productProductsSaveBtn;
   @FXML public MFXButton productProductsCancelBtn;
   @FXML public MFXTextField productVariantSerial;
   @FXML public MFXTextField productVariantName;
@@ -48,12 +46,8 @@ public class ProductDetailFormController implements Initializable {
   @FXML public MFXFilterComboBox<UnitOfMeasure> productVariantUOM;
   @FXML public Label productVariantUOMValidationLabel;
 
-  private ProductDetailFormController(Stage stage) {
-    this.stage = stage;
-  }
-
-  public static ProductDetailFormController getInstance(Stage stage) {
-    if (Objects.equals(instance, null)) instance = new ProductDetailFormController(stage);
+  public static ProductDetailFormController getInstance() {
+    if (Objects.equals(instance, null)) instance = new ProductDetailFormController();
     return instance;
   }
 
@@ -142,10 +136,6 @@ public class ProductDetailFormController implements Initializable {
 
               productVariantUOM.clearSelection();
 
-              ProductMasterFormController.getInstance(stage)
-                  .productDetailTable
-                  .setItems(ProductDetailViewModel.getProductDetailsList());
-
               closeDialog(e);
               return;
             }
@@ -160,10 +150,6 @@ public class ProductDetailFormController implements Initializable {
             notificationHolder.addNotification(notification);
 
             productVariantUOM.clearSelection();
-
-            ProductMasterFormController.getInstance(stage)
-                .productDetailTable
-                .setItems(ProductDetailViewModel.getProductDetailsList());
 
             closeDialog(e);
             return;

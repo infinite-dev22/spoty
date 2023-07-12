@@ -40,6 +40,7 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -170,7 +171,7 @@ public class SaleMasterFormController implements Initializable {
 
   private void saleProductDialogPane(Stage stage) throws IOException {
     FXMLLoader fxmlLoader = fxmlLoader("forms/SaleDetailForm.fxml");
-    fxmlLoader.setControllerFactory(c -> SaleDetailFormController.getInstance(stage));
+    fxmlLoader.setControllerFactory(c -> SaleDetailFormController.getInstance());
 
     MFXGenericDialog dialogContent = fxmlLoader.load();
 
@@ -284,16 +285,19 @@ public class SaleMasterFormController implements Initializable {
         new MFXTableColumn<>("Tax", false, Comparator.comparing(SaleDetail::getNetTax));
     MFXTableColumn<SaleDetail> discount =
         new MFXTableColumn<>("Discount", false, Comparator.comparing(SaleDetail::getDiscount));
+
     // Set table column data.
     product.setRowCellFactory(purchaseDetail -> new MFXTableRowCell<>(SaleDetail::getProductName));
     quantity.setRowCellFactory(purchaseDetail -> new MFXTableRowCell<>(SaleDetail::getQuantity));
     tax.setRowCellFactory(purchaseDetail -> new MFXTableRowCell<>(SaleDetail::getNetTax));
     discount.setRowCellFactory(purchaseDetail -> new MFXTableRowCell<>(SaleDetail::getDiscount));
+
     // Set table column width.
     product.prefWidthProperty().bind(saleDetailTable.widthProperty().multiply(.25));
     quantity.prefWidthProperty().bind(saleDetailTable.widthProperty().multiply(.25));
     tax.prefWidthProperty().bind(saleDetailTable.widthProperty().multiply(.25));
     discount.prefWidthProperty().bind(saleDetailTable.widthProperty().multiply(.25));
+
     // Set table filter.
     saleDetailTable.getTableColumns().addAll(product, quantity, tax, discount);
     saleDetailTable
@@ -303,9 +307,18 @@ public class SaleMasterFormController implements Initializable {
             new LongFilter<>("Quantity", SaleDetail::getQuantity),
             new DoubleFilter<>("Tax", SaleDetail::getNetTax),
             new DoubleFilter<>("Discount", SaleDetail::getDiscount));
+
     styleTable();
+
     // Populate table.
-    saleDetailTable.setItems(SaleDetailViewModel.getSaleDetailList());
+    if (SaleDetailViewModel.getSaleDetails().isEmpty()) {
+      SaleDetailViewModel.getSaleDetails()
+          .addListener(
+              (ListChangeListener<SaleDetail>)
+                  c -> saleDetailTable.setItems(SaleDetailViewModel.getSaleDetails()));
+    } else {
+      saleDetailTable.itemsProperty().bindBidirectional(SaleDetailViewModel.saleDetailsProperty());
+    }
   }
 
   private void styleTable() {

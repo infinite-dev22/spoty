@@ -28,7 +28,7 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
-import javafx.collections.WeakListChangeListener;
+import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -99,11 +99,14 @@ public class CurrencyController implements Initializable {
 
     getCurrencyTable();
 
-    currencyTable.setItems(CurrencyViewModel.getCurrenciesList());
-
-    CurrencyViewModel.currenciesList.addListener(
-        new WeakListChangeListener<>(
-            c -> currencyTable.setItems(CurrencyViewModel.getCurrenciesList())));
+    if (CurrencyViewModel.getCurrencies().isEmpty()) {
+      CurrencyViewModel.getCurrencies()
+          .addListener(
+              (ListChangeListener<Currency>)
+                  c -> currencyTable.setItems(CurrencyViewModel.getCurrencies()));
+    } else {
+      currencyTable.itemsProperty().bindBidirectional(CurrencyViewModel.currencyProperty());
+    }
   }
 
   private void getCurrencyTable() {

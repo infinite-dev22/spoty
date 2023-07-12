@@ -32,6 +32,8 @@ public class QuotationDetailViewModel {
   // TODO: Add more fields according to DB design and necessity.
   public static final ObservableList<QuotationDetail> quotationDetailsList =
       FXCollections.observableArrayList();
+  private static final ListProperty<QuotationDetail> quotationDetails =
+      new SimpleListProperty<>(quotationDetailsList);
   private static final LongProperty id = new SimpleLongProperty(0);
   private static final ObjectProperty<ProductDetail> product = new SimpleObjectProperty<>();
   private static final ObjectProperty<UnitOfMeasure> saleUnit = new SimpleObjectProperty<>();
@@ -124,6 +126,18 @@ public class QuotationDetailViewModel {
     return discount;
   }
 
+  public static ObservableList<QuotationDetail> getQuotationDetails() {
+    return quotationDetails.get();
+  }
+
+  public static void setQuotationDetails(ObservableList<QuotationDetail> quotationDetails) {
+    QuotationDetailViewModel.quotationDetails.set(quotationDetails);
+  }
+
+  public static ListProperty<QuotationDetail> quotationDetailsProperty() {
+    return quotationDetails;
+  }
+
   public static void resetProperties() {
     setId(0);
     setTempId(-1);
@@ -189,7 +203,7 @@ public class QuotationDetailViewModel {
     thread.start();
   }
 
-  public static void getQuotationDetails() {
+  public static void getAllQuotationDetails() {
     Task<Void> task =
         new Task<>() {
           @Override
@@ -232,7 +246,7 @@ public class QuotationDetailViewModel {
             setQuantity(String.valueOf(quotationDetail.getQuantity()));
             setQuotation(quotationDetail.getQuotation());
 
-            getQuotationDetails();
+            getAllQuotationDetails();
             return null;
           }
         };
@@ -262,7 +276,7 @@ public class QuotationDetailViewModel {
 
             quotationDetailDao.update(quotationDetail);
 
-            getQuotationDetails();
+            getAllQuotationDetails();
             return null;
           }
         };

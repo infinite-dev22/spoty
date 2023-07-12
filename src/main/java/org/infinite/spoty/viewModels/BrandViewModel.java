@@ -19,7 +19,9 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
 import java.sql.SQLException;
 import javafx.application.Platform;
+import javafx.beans.property.ListProperty;
 import javafx.beans.property.LongProperty;
+import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -34,6 +36,8 @@ public class BrandViewModel {
   private static final StringProperty name = new SimpleStringProperty("");
   private static final StringProperty description = new SimpleStringProperty("");
   public static ObservableList<Brand> brandsList = FXCollections.observableArrayList();
+
+  private static final ListProperty<Brand> brands = new SimpleListProperty<>(brandsList);
   public static ObservableList<Brand> brandsComboBoxList = FXCollections.observableArrayList();
 
   public static long getId() {
@@ -70,6 +74,18 @@ public class BrandViewModel {
 
   public static StringProperty descriptionProperty() {
     return description;
+  }
+
+  public static ObservableList<Brand> getBrands() {
+    return brands.get();
+  }
+
+  public static void setBrands(ObservableList<Brand> brands) {
+    BrandViewModel.brands.set(brands);
+  }
+
+  public static ListProperty<Brand> brandsProperty() {
+    return brands;
   }
 
   public static void saveBrand() {

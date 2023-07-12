@@ -27,7 +27,6 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
@@ -39,7 +38,6 @@ import org.infinite.spoty.viewModels.StockInDetailViewModel;
 
 public class StockInDetailFormController implements Initializable {
   private static StockInDetailFormController instance;
-  private final Stage stage;
   @FXML public MFXTextField stockInDetailQnty;
   @FXML public MFXFilterComboBox<ProductDetail> stockInDetailPdct;
   @FXML public MFXButton stockInDetailSaveBtn;
@@ -48,12 +46,8 @@ public class StockInDetailFormController implements Initializable {
   @FXML public Label stockInDetailPdctValidationLabel;
   @FXML public Label stockInDetailQntyValidationLabel;
 
-  private StockInDetailFormController(Stage stage) {
-    this.stage = stage;
-  }
-
-  public static StockInDetailFormController getInstance(Stage stage) {
-    if (Objects.equals(instance, null)) instance = new StockInDetailFormController(stage);
+  public static StockInDetailFormController getInstance() {
+    if (Objects.equals(instance, null)) instance = new StockInDetailFormController();
     return instance;
   }
 
@@ -133,9 +127,6 @@ public class StockInDetailFormController implements Initializable {
               notificationHolder.addNotification(notification);
 
               stockInDetailPdct.clearSelection();
-              StockInMasterFormController.getInstance(stage)
-                  .stockInDetailTable
-                  .setItems(StockInDetailViewModel.getStockInDetailsList());
 
               closeDialog(e);
               return;
@@ -151,9 +142,6 @@ public class StockInDetailFormController implements Initializable {
             notificationHolder.addNotification(notification);
 
             stockInDetailPdct.clearSelection();
-            StockInMasterFormController.getInstance(stage)
-                .stockInDetailTable
-                .setItems(StockInDetailViewModel.getStockInDetailsList());
 
             closeDialog(e);
             return;
