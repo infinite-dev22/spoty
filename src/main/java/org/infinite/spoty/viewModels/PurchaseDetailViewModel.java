@@ -204,10 +204,11 @@ public class PurchaseDetailViewModel {
                     getProduct(),
                     Long.parseLong(getQuantity()));
             purchaseDetailList.add(purchaseDetail);
-            resetProperties();
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> resetProperties());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -277,10 +278,11 @@ public class PurchaseDetailViewModel {
             purchaseDetailList.remove((int) getTempId());
             purchaseDetailList.add(getTempId(), purchaseDetail);
 
-            resetProperties();
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> resetProperties());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -312,6 +314,7 @@ public class PurchaseDetailViewModel {
             setSerial(purchaseDetail.getSerialNumber());
             setTotal(String.valueOf(purchaseDetail.getTotal()));
             setQuantity(String.valueOf(purchaseDetail.getQuantity()));
+
             return null;
           }
         };
@@ -348,10 +351,11 @@ public class PurchaseDetailViewModel {
 
             purchaseDetailDao.update(purchaseDetail);
 
-            getAllPurchaseDetails();
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> getAllPurchaseDetails());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);

@@ -30,7 +30,8 @@ public class UOMViewModel {
   public static final ObservableList<UnitOfMeasure> uomList = FXCollections.observableArrayList();
   public static final ObservableList<UnitOfMeasure> uomComboBoxList =
       FXCollections.observableArrayList();
-  private static final ListProperty<UnitOfMeasure> unitsOfMeasure = new SimpleListProperty<>(uomList);
+  private static final ListProperty<UnitOfMeasure> unitsOfMeasure =
+      new SimpleListProperty<>(uomList);
   private static final LongProperty id = new SimpleLongProperty(0);
   private static final StringProperty name = new SimpleStringProperty("");
   private static final StringProperty shortName = new SimpleStringProperty("");
@@ -139,11 +140,15 @@ public class UOMViewModel {
 
             unitOfMeasureDao.create(unitOfMeasure);
 
-            resetUOMProperties();
-            getItems();
             return null;
           }
         };
+
+    task.setOnSucceeded(
+        event -> {
+          resetUOMProperties();
+          getItems();
+        });
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -211,10 +216,11 @@ public class UOMViewModel {
             setOperatorValue(
                 String.valueOf(uom.getOperatorValue() == 0 ? "" : uom.getOperatorValue()));
 
-            getItems();
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> getItems());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -242,11 +248,15 @@ public class UOMViewModel {
 
             unitOfMeasureDao.update(uom);
 
-            resetUOMProperties();
-            getItems();
             return null;
           }
         };
+
+    task.setOnSucceeded(
+        event -> {
+          resetUOMProperties();
+          getItems();
+        });
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -265,10 +275,12 @@ public class UOMViewModel {
                 DaoManager.createDao(connectionSource, UnitOfMeasure.class);
 
             unitOfMeasureDao.deleteById(index);
-            getItems();
+
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> getItems());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);

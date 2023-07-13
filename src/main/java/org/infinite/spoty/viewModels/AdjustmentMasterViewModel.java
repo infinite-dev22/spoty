@@ -93,12 +93,15 @@ public class AdjustmentMasterViewModel {
   }
 
   public static void resetProperties() {
-    setId(0);
-    setDate("");
-    setBranch(null);
-    setNote("");
-    PENDING_DELETES.clear();
-    AdjustmentDetailViewModel.adjustmentDetailsList.clear();
+    Platform.runLater(
+        () -> {
+          setId(0);
+          setDate("");
+          setBranch(null);
+          setNote("");
+          PENDING_DELETES.clear();
+          AdjustmentDetailViewModel.adjustmentDetailsList.clear();
+        });
   }
 
   public static void saveAdjustmentMaster() {
@@ -114,18 +117,26 @@ public class AdjustmentMasterViewModel {
 
             AdjustmentMaster adjustmentMaster =
                 new AdjustmentMaster(getBranch(), getNote(), getDate());
-            if (!AdjustmentDetailViewModel.adjustmentDetailsList.isEmpty()) {
-              AdjustmentDetailViewModel.adjustmentDetailsList.forEach(
-                  adjustmentDetail -> adjustmentDetail.setAdjustment(adjustmentMaster));
+
+            if (!AdjustmentDetailViewModel.getAdjustmentDetailsList().isEmpty()) {
+              AdjustmentDetailViewModel.getAdjustmentDetailsList()
+                  .forEach(adjustmentDetail -> adjustmentDetail.setAdjustment(adjustmentMaster));
+
               adjustmentMaster.setAdjustmentDetails(
                   AdjustmentDetailViewModel.getAdjustmentDetailsList());
             }
+
             adjustmentMasterDao.create(adjustmentMaster);
-            resetProperties();
-            getAdjustmentMasters();
+
             return null;
           }
         };
+
+    task.setOnSucceeded(
+        event -> {
+          resetProperties();
+          getAdjustmentMasters();
+        });
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -190,6 +201,8 @@ public class AdjustmentMasterViewModel {
           }
         };
 
+    task.setOnSucceeded(event -> getAdjustmentMasters());
+
     Thread thread = new Thread(task);
     thread.setDaemon(true);
     thread.start();
@@ -208,17 +221,26 @@ public class AdjustmentMasterViewModel {
                 DaoManager.createDao(connectionSource, AdjustmentMaster.class);
 
             AdjustmentMaster adjustmentMaster = adjustmentMasterDao.queryForId(index);
+
             adjustmentMaster.setBranch(getBranch());
             adjustmentMaster.setNotes(getNote());
             adjustmentMaster.setDate(getDate());
+
             AdjustmentDetailViewModel.deleteAdjustmentDetails(PENDING_DELETES);
-            adjustmentMaster.setAdjustmentDetails(AdjustmentDetailViewModel.getAdjustmentDetailsList());
+
+            adjustmentMaster.setAdjustmentDetails(
+                AdjustmentDetailViewModel.getAdjustmentDetailsList());
+
             adjustmentMasterDao.update(adjustmentMaster);
-            resetProperties();
-            getAdjustmentMasters();
             return null;
           }
         };
+
+    task.setOnSucceeded(
+        event -> {
+          resetProperties();
+          getAdjustmentMasters();
+        });
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -237,10 +259,11 @@ public class AdjustmentMasterViewModel {
                 DaoManager.createDao(connectionSource, AdjustmentMaster.class);
 
             adjustmentMasterDao.deleteById(index);
-            getAdjustmentMasters();
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> getAdjustmentMasters());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);

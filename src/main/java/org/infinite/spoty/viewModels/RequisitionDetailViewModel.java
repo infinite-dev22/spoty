@@ -134,11 +134,14 @@ public class RequisitionDetailViewModel {
                     getRequisition(),
                     Long.parseLong(getQuantity()),
                     getDescription());
+
             requisitionDetailList.add(requisitionDetail);
-            resetProperties();
+
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> resetProperties());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -186,10 +189,11 @@ public class RequisitionDetailViewModel {
             requisitionDetailList.remove((int) getTempId());
             requisitionDetailList.add(getTempId(), requisitionDetail);
 
-            resetProperties();
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> resetProperties());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -214,6 +218,7 @@ public class RequisitionDetailViewModel {
             setProduct(requisitionDetail.getProduct());
             setQuantity(String.valueOf(requisitionDetail.getQuantity()));
             setDescription(requisitionDetail.getDescription());
+
             return null;
           }
         };
@@ -241,10 +246,11 @@ public class RequisitionDetailViewModel {
 
             requisitionDetailDao.update(requisitionDetail);
 
-            getAllRequisitionDetails();
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> getAllRequisitionDetails());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);

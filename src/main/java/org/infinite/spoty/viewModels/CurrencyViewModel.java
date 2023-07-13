@@ -33,7 +33,8 @@ public class CurrencyViewModel {
   private static final StringProperty symbol = new SimpleStringProperty("");
   public static ObservableList<Currency> currenciesList = FXCollections.observableArrayList();
   public static final ListProperty<Currency> currencies = new SimpleListProperty<>(currenciesList);
-  public static ObservableList<Currency> currenciesComboBoxList = FXCollections.observableArrayList();
+  public static ObservableList<Currency> currenciesComboBoxList =
+      FXCollections.observableArrayList();
 
   public static long getId() {
     return id.get();
@@ -109,11 +110,15 @@ public class CurrencyViewModel {
             Currency currency = new Currency(getCode(), getName(), getSymbol());
             currencyDao.create(currency);
 
-            clearCurrencyData();
-            getAllCurrencies();
             return null;
           }
         };
+
+    task.setOnSucceeded(
+        event -> {
+          clearCurrencyData();
+          getAllCurrencies();
+        });
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -173,10 +178,12 @@ public class CurrencyViewModel {
             setSymbol(currency.getSymbol());
             setCode(currency.getCode());
             setName(currency.getName());
-            getAllCurrencies();
+
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> getAllCurrencies());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -201,11 +208,16 @@ public class CurrencyViewModel {
             currency.setSymbol(getSymbol());
 
             currencyDao.update(currency);
-            clearCurrencyData();
-            getAllCurrencies();
+
             return null;
           }
         };
+
+    task.setOnSucceeded(
+        event -> {
+          clearCurrencyData();
+          getAllCurrencies();
+        });
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -224,10 +236,12 @@ public class CurrencyViewModel {
                 DaoManager.createDao(connectionSource, Currency.class);
 
             currencyDao.deleteById(index);
-            getAllCurrencies();
+
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> getAllCurrencies());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);

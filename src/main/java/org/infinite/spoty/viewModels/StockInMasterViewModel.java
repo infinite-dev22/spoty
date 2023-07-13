@@ -35,7 +35,8 @@ import org.infinite.spoty.database.models.StockInMaster;
 public class StockInMasterViewModel {
   public static final ObservableList<StockInMaster> stockInMasterList =
       FXCollections.observableArrayList();
-  private static final ListProperty<StockInMaster> stockIns = new SimpleListProperty<>(stockInMasterList);
+  private static final ListProperty<StockInMaster> stockIns =
+      new SimpleListProperty<>(stockInMasterList);
   private static final LongProperty id = new SimpleLongProperty(0);
   private static final StringProperty date = new SimpleStringProperty("");
   private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>(null);
@@ -132,14 +133,17 @@ public class StockInMasterViewModel {
   }
 
   public static void resetProperties() {
-    setId(0);
-    setDate("");
-    setBranch(null);
-    setNote("");
-    setStatus("");
-    setTotalCost("");
-    PENDING_DELETES.clear();
-    StockInDetailViewModel.stockInDetailsList.clear();
+    Platform.runLater(
+        () -> {
+          setId(0);
+          setDate("");
+          setBranch(null);
+          setNote("");
+          setStatus("");
+          setTotalCost("");
+          PENDING_DELETES.clear();
+          StockInDetailViewModel.stockInDetailsList.clear();
+        });
   }
 
   public static void saveStockInMaster() {
@@ -164,11 +168,15 @@ public class StockInMasterViewModel {
 
             stockInMasterDao.create(stockInMaster);
 
-            resetProperties();
-            getStockInMasters();
             return null;
           }
         };
+
+    task.setOnSucceeded(
+        event -> {
+          resetProperties();
+          getStockInMasters();
+        });
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -228,10 +236,12 @@ public class StockInMasterViewModel {
             StockInDetailViewModel.stockInDetailsList.clear();
             StockInDetailViewModel.stockInDetailsList.addAll(stockInMaster.getStockInDetails());
 
-            getStockInMasters();
             return null;
           }
         };
+
+    task.setOnSucceeded(
+            event -> getStockInMasters());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -260,11 +270,15 @@ public class StockInMasterViewModel {
 
             stockInMasterDao.update(stockInMaster);
 
-            resetProperties();
-            getStockInMasters();
             return null;
           }
         };
+
+    task.setOnSucceeded(
+            event -> {
+              resetProperties();
+              getStockInMasters();
+            });
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -283,10 +297,13 @@ public class StockInMasterViewModel {
                 DaoManager.createDao(connectionSource, StockInMaster.class);
 
             stockInMasterDao.deleteById(index);
-            getStockInMasters();
+
             return null;
           }
         };
+
+    task.setOnSucceeded(
+            event -> getStockInMasters());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);

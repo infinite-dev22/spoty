@@ -35,7 +35,8 @@ import org.infinite.spoty.database.models.TransferMaster;
 public class TransferMasterViewModel {
   public static final ObservableList<TransferMaster> transferMasterList =
       FXCollections.observableArrayList();
-  private static final ListProperty<TransferMaster> transfers = new SimpleListProperty<>(transferMasterList);
+  private static final ListProperty<TransferMaster> transfers =
+      new SimpleListProperty<>(transferMasterList);
   private static final LongProperty id = new SimpleLongProperty(0);
   private static final StringProperty date = new SimpleStringProperty("");
   private static final ObjectProperty<Branch> fromBranch = new SimpleObjectProperty<>(null);
@@ -145,15 +146,18 @@ public class TransferMasterViewModel {
   }
 
   public static void resetProperties() {
-    setId(0);
-    setDate("");
-    setFromBranch(null);
-    setToBranch(null);
-    setNote("");
-    setStatus("");
-    setTotalCost("");
-    PENDING_DELETES.clear();
-    TransferDetailViewModel.transferDetailsList.clear();
+    Platform.runLater(
+        () -> {
+          setId(0);
+          setDate("");
+          setFromBranch(null);
+          setToBranch(null);
+          setNote("");
+          setStatus("");
+          setTotalCost("");
+          PENDING_DELETES.clear();
+          TransferDetailViewModel.transferDetailsList.clear();
+        });
   }
 
   public static void saveTransferMaster() {
@@ -185,11 +189,15 @@ public class TransferMasterViewModel {
 
             transferMasterDao.create(transferMaster);
 
-            resetProperties();
-            getTransferMasters();
             return null;
           }
         };
+
+    task.setOnSucceeded(
+        event -> {
+          resetProperties();
+          getTransferMasters();
+        });
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -251,10 +259,11 @@ public class TransferMasterViewModel {
             TransferDetailViewModel.transferDetailsList.clear();
             TransferDetailViewModel.transferDetailsList.addAll(transferMaster.getTransferDetails());
 
-            getTransferMasters();
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> getTransferMasters());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -285,11 +294,15 @@ public class TransferMasterViewModel {
 
             transferMasterDao.update(transferMaster);
 
-            resetProperties();
-            getTransferMasters();
             return null;
           }
         };
+
+    task.setOnSucceeded(
+        event -> {
+          resetProperties();
+          getTransferMasters();
+        });
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -308,10 +321,12 @@ public class TransferMasterViewModel {
                 DaoManager.createDao(connectionSource, TransferMaster.class);
 
             transferMasterDao.deleteById(transferMasterID);
-            getTransferMasters();
+
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> getTransferMasters());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);

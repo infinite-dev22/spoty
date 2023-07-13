@@ -36,7 +36,8 @@ import org.infinite.spoty.database.models.Supplier;
 public class PurchaseMasterViewModel {
   public static final ObservableList<PurchaseMaster> purchaseMasterList =
       FXCollections.observableArrayList();
-  private static final ListProperty<PurchaseMaster> purchases = new SimpleListProperty<>(purchaseMasterList);
+  private static final ListProperty<PurchaseMaster> purchases =
+      new SimpleListProperty<>(purchaseMasterList);
   private static final LongProperty id = new SimpleLongProperty(0);
   private static final StringProperty date = new SimpleStringProperty("");
   private static final ObjectProperty<Supplier> supplier = new SimpleObjectProperty<>(null);
@@ -133,14 +134,17 @@ public class PurchaseMasterViewModel {
   }
 
   public static void resetProperties() {
-    setId(0);
-    setDate("");
-    setSupplier(null);
-    setBranch(null);
-    setStatus("");
-    setNote("");
-    PENDING_DELETES.clear();
-    PurchaseDetailViewModel.purchaseDetailList.clear();
+    Platform.runLater(
+        () -> {
+          setId(0);
+          setDate("");
+          setSupplier(null);
+          setBranch(null);
+          setStatus("");
+          setNote("");
+          PENDING_DELETES.clear();
+          PurchaseDetailViewModel.purchaseDetailList.clear();
+        });
   }
 
   public static void savePurchaseMaster() {
@@ -165,11 +169,15 @@ public class PurchaseMasterViewModel {
 
             purchaseMasterDao.create(purchaseMaster);
 
-            resetProperties();
-            getPurchaseMasters();
             return null;
           }
         };
+
+    task.setOnSucceeded(
+        event -> {
+          resetProperties();
+          getPurchaseMasters();
+        });
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -230,10 +238,11 @@ public class PurchaseMasterViewModel {
             PurchaseDetailViewModel.purchaseDetailList.clear();
             PurchaseDetailViewModel.purchaseDetailList.addAll(purchaseMaster.getPurchaseDetails());
 
-            getPurchaseMasters();
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> getPurchaseMasters());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -263,11 +272,15 @@ public class PurchaseMasterViewModel {
 
             purchaseMasterDao.update(purchaseMaster);
 
-            resetProperties();
-            getPurchaseMasters();
             return null;
           }
         };
+
+    task.setOnSucceeded(
+        event -> {
+          resetProperties();
+          getPurchaseMasters();
+        });
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -286,10 +299,12 @@ public class PurchaseMasterViewModel {
                 DaoManager.createDao(connectionSource, PurchaseMaster.class);
 
             purchaseMasterDao.deleteById(index);
-            getPurchaseMasters();
+
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> getPurchaseMasters());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);

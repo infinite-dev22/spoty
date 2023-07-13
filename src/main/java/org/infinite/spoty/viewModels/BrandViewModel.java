@@ -101,11 +101,15 @@ public class BrandViewModel {
             Brand brand = new Brand(getName(), getDescription());
             brandDao.create(brand);
 
-            clearBrandData();
-            getItems();
             return null;
           }
         };
+
+    task.setOnSucceeded(
+        event -> {
+          clearBrandData();
+          getItems();
+        });
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -167,6 +171,8 @@ public class BrandViewModel {
           }
         };
 
+    task.setOnSucceeded(event -> getItems());
+
     Thread thread = new Thread(task);
     thread.setDaemon(true);
     thread.start();
@@ -189,11 +195,15 @@ public class BrandViewModel {
 
             brandDao.update(brand);
 
-            clearBrandData();
-            getItems();
             return null;
           }
         };
+
+    task.setOnSucceeded(
+        event -> {
+          clearBrandData();
+          getItems();
+        });
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -211,10 +221,12 @@ public class BrandViewModel {
             Dao<Brand, Long> brandDao = DaoManager.createDao(connectionSource, Brand.class);
 
             brandDao.deleteById(index);
-            getItems();
+
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> getItems());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);

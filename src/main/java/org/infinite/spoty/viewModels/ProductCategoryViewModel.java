@@ -39,7 +39,8 @@ public class ProductCategoryViewModel {
   public static ObservableList<ProductCategory> categoriesList =
       FXCollections.observableArrayList();
 
-  public static final ListProperty<ProductCategory> categories = new SimpleListProperty<>(categoriesList);
+  public static final ListProperty<ProductCategory> categories =
+      new SimpleListProperty<>(categoriesList);
   public static ObservableList<ProductCategory> categoriesComboBoxList =
       FXCollections.observableArrayList();
 
@@ -118,11 +119,15 @@ public class ProductCategoryViewModel {
 
             productCategoryDao.create(productCategory);
 
-            clearProductCategoryData();
-            getItems();
             return null;
           }
         };
+
+    task.setOnSucceeded(
+        event -> {
+          clearProductCategoryData();
+          getItems();
+        });
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -182,10 +187,11 @@ public class ProductCategoryViewModel {
             setCode(productCategory.getCode());
             setName(productCategory.getName());
 
-            getItems();
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> getItems());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -209,11 +215,15 @@ public class ProductCategoryViewModel {
 
             productCategoryDao.update(productCategory);
 
-            clearProductCategoryData();
-            getItems();
             return null;
           }
         };
+
+    task.setOnSucceeded(
+        event -> {
+          clearProductCategoryData();
+          getItems();
+        });
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -232,10 +242,12 @@ public class ProductCategoryViewModel {
                 DaoManager.createDao(connectionSource, ProductCategory.class);
 
             productCategoryDao.deleteById(index);
-            getItems();
+
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> getItems());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);

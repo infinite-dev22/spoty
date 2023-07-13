@@ -147,14 +147,17 @@ public class SaleMasterViewModel {
   }
 
   public static void resetProperties() {
-    setId(0);
-    setDate("");
-    setCustomer(null);
-    setBranch(null);
-    setSaleStatus("");
-    setNote("");
-    PENDING_DELETES.clear();
-    SaleDetailViewModel.saleDetailList.clear();
+    Platform.runLater(
+        () -> {
+          setId(0);
+          setDate("");
+          setCustomer(null);
+          setBranch(null);
+          setSaleStatus("");
+          setNote("");
+          PENDING_DELETES.clear();
+          SaleDetailViewModel.saleDetailList.clear();
+        });
   }
 
   public static void saveSaleMaster() {
@@ -180,16 +183,21 @@ public class SaleMasterViewModel {
             if (!SaleDetailViewModel.saleDetailList.isEmpty()) {
               SaleDetailViewModel.saleDetailList.forEach(
                   saleDetail -> saleDetail.setSaleMaster(saleMaster));
+
               saleMaster.setSaleDetails(SaleDetailViewModel.getSaleDetailList());
             }
 
             saleMasterDao.create(saleMaster);
 
-            resetProperties();
-            getSaleMasters();
             return null;
           }
         };
+
+    task.setOnSucceeded(
+        event -> {
+          resetProperties();
+          getSaleMasters();
+        });
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -251,10 +259,11 @@ public class SaleMasterViewModel {
             SaleDetailViewModel.saleDetailList.clear();
             SaleDetailViewModel.saleDetailList.addAll(saleMaster.getSaleDetails());
 
-            getSaleMasters();
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> getSaleMasters());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -285,11 +294,15 @@ public class SaleMasterViewModel {
 
             saleMasterDao.update(saleMaster);
 
-            resetProperties();
-            getSaleMasters();
             return null;
           }
         };
+
+    task.setOnSucceeded(
+        event -> {
+          resetProperties();
+          getSaleMasters();
+        });
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -308,10 +321,12 @@ public class SaleMasterViewModel {
                 DaoManager.createDao(connectionSource, SaleMaster.class);
 
             saleMasterDao.deleteById(index);
-            getSaleMasters();
+
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> getSaleMasters());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);

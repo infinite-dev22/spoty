@@ -36,7 +36,8 @@ public class ExpenseCategoryViewModel {
       FXCollections.observableArrayList();
   public static final ObservableList<ExpenseCategory> categoryComboBoxList =
       FXCollections.observableArrayList();
-  private static final ListProperty<ExpenseCategory> categories = new SimpleListProperty<>(categoryList);
+  private static final ListProperty<ExpenseCategory> categories =
+      new SimpleListProperty<>(categoryList);
   private static final LongProperty id = new SimpleLongProperty(0);
   private static final StringProperty name = new SimpleStringProperty("");
   private static final StringProperty description = new SimpleStringProperty("");
@@ -110,11 +111,15 @@ public class ExpenseCategoryViewModel {
 
             expenseCategoryDao.create(expenseCategory);
 
-            resetProperties();
-            getAllCategories();
             return null;
           }
         };
+
+    task.setOnSucceeded(
+        event -> {
+          resetProperties();
+          getAllCategories();
+        });
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -167,10 +172,12 @@ public class ExpenseCategoryViewModel {
             setId(expenseCategory.getId());
             setName(expenseCategory.getName());
             setDescription(expenseCategory.getDescription());
-            getAllCategories();
+
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> getAllCategories());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -195,10 +202,11 @@ public class ExpenseCategoryViewModel {
 
             expenseCategoryDao.update(expenseCategory);
 
-            getAllCategories();
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> getAllCategories());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -217,10 +225,12 @@ public class ExpenseCategoryViewModel {
                 DaoManager.createDao(connectionSource, ExpenseCategory.class);
 
             expenseCategoryDao.deleteById(index);
-            getAllCategories();
+
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> getAllCategories());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);

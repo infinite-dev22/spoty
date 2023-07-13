@@ -199,9 +199,11 @@ public class UserViewModel {
   public static StringProperty countryProperty() {
     return country;
   }
-public static ObservableList<User> getUsers() {
+
+  public static ObservableList<User> getUsers() {
     return users.get();
-}
+  }
+
   public static void setUsers(ObservableList<User> users) {
     UserViewModel.users.set(users);
   }
@@ -247,11 +249,15 @@ public static ObservableList<User> getUsers() {
 
             userDao.create(user);
 
-            resetProperties();
-            getAllUsers();
             return null;
           }
         };
+
+    task.setOnSucceeded(
+        event -> {
+          resetProperties();
+          getAllUsers();
+        });
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -308,10 +314,11 @@ public static ObservableList<User> getUsers() {
             setActive(user.isActive());
             setAccessAllBranches(user.canAccessAllBranches());
 
-            getAllUsers();
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> getAllUsers());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -339,11 +346,15 @@ public static ObservableList<User> getUsers() {
 
             userDao.update(user);
 
-            resetProperties();
-            getAllUsers();
             return null;
           }
         };
+
+    task.setOnSucceeded(
+        event -> {
+          resetProperties();
+          getAllUsers();
+        });
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -361,10 +372,12 @@ public static ObservableList<User> getUsers() {
             Dao<User, Long> userDao = DaoManager.createDao(connectionSource, User.class);
 
             userDao.deleteById(index);
-            getAllUsers();
+
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> getAllUsers());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);

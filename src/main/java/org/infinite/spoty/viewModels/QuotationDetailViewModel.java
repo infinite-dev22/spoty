@@ -160,10 +160,12 @@ public class QuotationDetailViewModel {
                     getDiscount(),
                     getQuantity());
             quotationDetailsList.add(quotationDetail);
-            resetProperties();
+
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> resetProperties());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -193,10 +195,11 @@ public class QuotationDetailViewModel {
             quotationDetailsList.remove((int) getTempId());
             quotationDetailsList.add(getTempId(), quotationDetail);
 
-            resetProperties();
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> resetProperties());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -246,10 +249,11 @@ public class QuotationDetailViewModel {
             setQuantity(String.valueOf(quotationDetail.getQuantity()));
             setQuotation(quotationDetail.getQuotation());
 
-            getAllQuotationDetails();
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> getAllQuotationDetails());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -276,10 +280,11 @@ public class QuotationDetailViewModel {
 
             quotationDetailDao.update(quotationDetail);
 
-            getAllQuotationDetails();
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> getAllQuotationDetails());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
