@@ -73,7 +73,6 @@ public class AdjustmentDetailFormController implements Initializable {
     adjustmentType
         .textProperty()
         .bindBidirectional(AdjustmentDetailViewModel.adjustmentTypeProperty());
-    ProductDetailViewModel.getAllProductDetails();
 
     // AdjustmentType combo box properties.
     adjustmentProductVariant.setItems(ProductDetailViewModel.getProductDetailsComboBoxList());
