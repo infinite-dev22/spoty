@@ -202,11 +202,15 @@ public class CustomerViewModel {
 
             customerDao.create(customer);
 
-            resetProperties();
-            getAllCustomers();
             return null;
           }
         };
+
+    task.setOnSucceeded(
+        event -> {
+          resetProperties();
+          getAllCustomers();
+        });
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -266,10 +270,11 @@ public class CustomerViewModel {
             setAddress(customer.getAddress());
             setTaxNumber(customer.getTaxNumber());
 
-            getAllCustomers();
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> getAllCustomers());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -299,11 +304,15 @@ public class CustomerViewModel {
 
             customerDao.update(customer);
 
-            resetProperties();
-            getAllCustomers();
             return null;
           }
         };
+
+    task.setOnSucceeded(
+        event -> {
+          resetProperties();
+          getAllCustomers();
+        });
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -322,10 +331,12 @@ public class CustomerViewModel {
                 DaoManager.createDao(connectionSource, Customer.class);
 
             customerDao.deleteById(index);
-            getAllCustomers();
+
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> getAllCustomers());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);

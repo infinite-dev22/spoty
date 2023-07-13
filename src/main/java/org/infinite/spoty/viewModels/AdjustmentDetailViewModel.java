@@ -21,6 +21,7 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
 import java.sql.SQLException;
 import java.util.LinkedList;
+import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -130,11 +131,13 @@ public class AdjustmentDetailViewModel {
             AdjustmentDetail adjustmentDetail =
                 new AdjustmentDetail(getProduct(), getQuantity(), getAdjustmentType());
 
-            adjustmentDetailsList.add(adjustmentDetail);
-            resetProperties();
+            Platform.runLater(() -> adjustmentDetailsList.add(adjustmentDetail));
+
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> resetProperties());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -150,10 +153,12 @@ public class AdjustmentDetailViewModel {
             adjustmentDetail.setProduct(getProduct());
             adjustmentDetail.setQuantity(getQuantity());
             adjustmentDetail.setAdjustmentType(getAdjustmentType());
-            resetProperties();
+
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> resetProperties());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -222,11 +227,13 @@ public class AdjustmentDetailViewModel {
             adjustmentDetail.setProduct(getProduct());
             adjustmentDetail.setQuantity(getQuantity());
             adjustmentDetail.setAdjustmentType(getAdjustmentType());
+
             adjustmentDetailDao.update(adjustmentDetail);
-            getAllAdjustmentDetails();
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> getAllAdjustmentDetails());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);

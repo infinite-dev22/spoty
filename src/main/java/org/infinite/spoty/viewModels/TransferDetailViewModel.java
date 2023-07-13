@@ -178,10 +178,12 @@ public class TransferDetailViewModel {
                     getTotal());
 
             transferDetailsList.add(transferDetail);
-            resetProperties();
+
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> resetProperties());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -232,10 +234,11 @@ public class TransferDetailViewModel {
             transferDetailsList.remove((int) getTempId());
             transferDetailsList.add(getTempId(), transferDetail);
 
-            resetProperties();
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> resetProperties());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -263,6 +266,7 @@ public class TransferDetailViewModel {
             setDescription(transferDetail.getDescription());
             setPrice(String.valueOf(transferDetail.getPrice()));
             setTotal(String.valueOf(transferDetail.getTotal()));
+
             return null;
           }
         };
@@ -293,10 +297,11 @@ public class TransferDetailViewModel {
 
             transferDetailDao.update(transferDetail);
 
-            getAllTransferDetails();
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> getAllTransferDetails());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);

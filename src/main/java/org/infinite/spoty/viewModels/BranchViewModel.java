@@ -164,11 +164,15 @@ public class BranchViewModel {
 
             branchDao.create(branch);
 
-            clearBranchData();
-            getAllBranches();
             return null;
           }
         };
+
+    task.setOnSucceeded(
+        event -> {
+          clearBranchData();
+          getAllBranches();
+        });
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -233,10 +237,12 @@ public class BranchViewModel {
             setCity(branch.getCity());
             setTown(branch.getTown());
             setZipcode(branch.getZipCode());
-            getAllBranches();
+
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> getAllBranches());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -264,11 +270,15 @@ public class BranchViewModel {
 
             branchDao.update(branch);
 
-            clearBranchData();
-            getAllBranches();
             return null;
           }
         };
+
+    task.setOnSucceeded(
+        event -> {
+          clearBranchData();
+          getAllBranches();
+        });
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -287,10 +297,11 @@ public class BranchViewModel {
 
             branchDao.deleteById(index);
 
-            getAllBranches();
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> getAllBranches());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);

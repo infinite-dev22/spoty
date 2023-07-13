@@ -182,11 +182,15 @@ public class ExpenseViewModel {
 
             expenseDao.create(expense);
 
-            getAllExpenses();
-            resetProperties();
             return null;
           }
         };
+
+    task.setOnSucceeded(
+        event -> {
+          resetProperties();
+          getAllExpenses();
+        });
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -243,10 +247,11 @@ public class ExpenseViewModel {
             setAmount(expense.getAmount());
             setDetails(expense.getDetails());
 
-            getAllExpenses();
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> getAllExpenses());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -274,10 +279,11 @@ public class ExpenseViewModel {
 
             expenseDao.update(expense);
 
-            getAllExpenses();
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> getAllExpenses());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -295,10 +301,12 @@ public class ExpenseViewModel {
             Dao<Expense, Long> expenseDao = DaoManager.createDao(connectionSource, Expense.class);
 
             expenseDao.deleteById(index);
-            getAllExpenses();
+
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> getAllExpenses());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);

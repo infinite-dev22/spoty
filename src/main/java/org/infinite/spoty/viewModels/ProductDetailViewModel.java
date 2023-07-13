@@ -34,7 +34,8 @@ public class ProductDetailViewModel {
       FXCollections.observableArrayList();
   public static final ObservableList<ProductDetail> productDetailsComboBoxList =
       FXCollections.observableArrayList();
-  private static final ListProperty<ProductDetail> productDetails = new SimpleListProperty<>(productDetailsList);
+  private static final ListProperty<ProductDetail> productDetails =
+      new SimpleListProperty<>(productDetailsList);
   private static final LongProperty id = new SimpleLongProperty(0);
   private static final ObjectProperty<ProductMaster> product = new SimpleObjectProperty<>(null);
   private static final ListProperty<Branch> branches = new SimpleListProperty<>(null);
@@ -237,25 +238,26 @@ public class ProductDetailViewModel {
         new Task<>() {
           @Override
           protected Void call() {
-            Platform.runLater(() -> {
-              ProductDetail productDetail =
-                      new ProductDetail(
-                              getUnit(),
-                              getName(),
-                              getQuantity(),
-                              getCost(),
-                              getPrice(),
-                              getNetTax(),
-                              getTaxType(),
-                              getStockAlert(),
-                              getSerialNumber());
-              productDetailsList.add(productDetail);
-            });
-
-            resetProperties();
+            ProductDetail productDetail =
+                new ProductDetail(
+                    getUnit(),
+                    getName(),
+                    getQuantity(),
+                    getCost(),
+                    getPrice(),
+                    getNetTax(),
+                    getTaxType(),
+                    getStockAlert(),
+                    getSerialNumber());
+            Platform.runLater(
+                () -> {
+                  productDetailsList.add(productDetail);
+                });
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> resetProperties());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -320,10 +322,11 @@ public class ProductDetailViewModel {
             productDetailsList.remove((int) getTempId());
             productDetailsList.add(getTempId(), productDetail);
 
-            resetProperties();
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> resetProperties());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -390,10 +393,11 @@ public class ProductDetailViewModel {
 
             productDetailDao.update(productDetail);
 
-            getAllProductDetails();
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> getAllProductDetails());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -405,7 +409,8 @@ public class ProductDetailViewModel {
         new Task<>() {
           @Override
           protected Void call() {
-            productDetailsList.remove(tempIndex);
+            Platform.runLater(() -> productDetailsList.remove(tempIndex));
+
             PENDING_DELETES.add(index);
             return null;
           }

@@ -159,10 +159,13 @@ public class StockInDetailViewModel {
                     getProduct(), getQuantity(), getSerial(), getDescription(), getLocation());
 
             stockInDetailsList.add(stockInDetail);
-            resetProperties();
+
             return null;
           }
         };
+
+    task.setOnSucceeded(event ->
+            resetProperties());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -212,10 +215,12 @@ public class StockInDetailViewModel {
             stockInDetailsList.remove((int) getTempId());
             stockInDetailsList.add(getTempId(), stockInDetail);
 
-            resetProperties();
             return null;
           }
         };
+
+    task.setOnSucceeded(event ->
+            resetProperties());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -242,6 +247,7 @@ public class StockInDetailViewModel {
             setSerial(stockInDetail.getSerialNo());
             setDescription(stockInDetail.getDescription());
             setLocation(stockInDetail.getLocation());
+
             return null;
           }
         };
@@ -263,6 +269,7 @@ public class StockInDetailViewModel {
                 DaoManager.createDao(connectionSource, StockInDetail.class);
 
             StockInDetail stockInDetail = stockInDetailDao.queryForId(index);
+
             stockInDetail.setProduct(getProduct());
             stockInDetail.setQuantity(getQuantity());
             stockInDetail.setSerialNo(getSerial());
@@ -271,10 +278,12 @@ public class StockInDetailViewModel {
 
             stockInDetailDao.update(stockInDetail);
 
-            getAllStockInDetails();
             return null;
           }
         };
+
+    task.setOnSucceeded(event ->
+            getAllStockInDetails());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);

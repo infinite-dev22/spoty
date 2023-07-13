@@ -233,10 +233,12 @@ public class SaleDetailViewModel {
                     getDiscountType());
 
             saleDetailList.add(saleDetail);
-            resetProperties();
+
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> resetProperties());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -255,6 +257,7 @@ public class SaleDetailViewModel {
                 DaoManager.createDao(connectionSource, SaleDetail.class);
 
             SaleDetail saleDetail = saleDetailDao.queryForId(index);
+
             saleDetail.setProduct(getProduct());
             saleDetail.setQuantity(Long.parseLong(getQuantity()));
             saleDetail.setSerialNumber(getSerial());
@@ -266,10 +269,11 @@ public class SaleDetailViewModel {
             saleDetailList.remove((int) getTempId());
             saleDetailList.add(getTempId(), saleDetail);
 
-            resetProperties();
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> resetProperties());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -302,6 +306,7 @@ public class SaleDetailViewModel {
             setTotal(String.valueOf(saleDetail.getTotal()));
             setQuantity(String.valueOf(saleDetail.getQuantity()));
             setPrice(String.valueOf(saleDetail.getPrice()));
+
             return null;
           }
         };
@@ -323,6 +328,7 @@ public class SaleDetailViewModel {
                 DaoManager.createDao(connectionSource, SaleDetail.class);
 
             SaleDetail saleDetail = saleDetailDao.queryForId(index);
+
             saleDetail.setProduct(getProduct());
             saleDetail.setQuantity(Long.parseLong(getQuantity()));
             saleDetail.setSerialNumber(getSerial());
@@ -333,17 +339,18 @@ public class SaleDetailViewModel {
 
             saleDetailDao.update(saleDetail);
 
-            getAllSaleDetails();
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> getAllSaleDetails());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
     thread.start();
   }
 
-  public static void getAllSaleDetails() throws SQLException {
+  public static void getAllSaleDetails() {
     Task<Void> task =
         new Task<>() {
           @Override
@@ -356,6 +363,7 @@ public class SaleDetailViewModel {
 
             saleDetailList.clear();
             saleDetailList.addAll(saleDetailDao.queryForAll());
+
             return null;
           }
         };

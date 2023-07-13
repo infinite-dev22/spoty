@@ -36,7 +36,8 @@ import org.infinite.spoty.database.models.QuotationMaster;
 public class QuotationMasterViewModel {
   public static final ObservableList<QuotationMaster> quotationMasterList =
       FXCollections.observableArrayList();
-  private static final ListProperty<QuotationMaster> quotations = new SimpleListProperty<>(quotationMasterList);
+  private static final ListProperty<QuotationMaster> quotations =
+      new SimpleListProperty<>(quotationMasterList);
   private static final LongProperty id = new SimpleLongProperty(0);
   private static final StringProperty date = new SimpleStringProperty("");
   private static final ObjectProperty<Customer> customer = new SimpleObjectProperty<>(null);
@@ -133,14 +134,17 @@ public class QuotationMasterViewModel {
   }
 
   public static void resetProperties() {
-    setId(0);
-    setDate("");
-    setCustomer(null);
-    setBranch(null);
-    setStatus("");
-    setNote("");
-    PENDING_DELETES.clear();
-    QuotationDetailViewModel.quotationDetailsList.clear();
+    Platform.runLater(
+        () -> {
+          setId(0);
+          setDate("");
+          setCustomer(null);
+          setBranch(null);
+          setStatus("");
+          setNote("");
+          PENDING_DELETES.clear();
+          QuotationDetailViewModel.quotationDetailsList.clear();
+        });
   }
 
   public static void saveQuotationMaster() {
@@ -160,16 +164,21 @@ public class QuotationMasterViewModel {
             if (!QuotationDetailViewModel.quotationDetailsList.isEmpty()) {
               QuotationDetailViewModel.quotationDetailsList.forEach(
                   quotationDetail -> quotationDetail.setQuotation(quotationMaster));
-              quotationMaster.setQuotationDetails(QuotationDetailViewModel.getQuotationDetailsList());
+              quotationMaster.setQuotationDetails(
+                  QuotationDetailViewModel.getQuotationDetailsList());
             }
 
             quotationMasterDao.create(quotationMaster);
 
-            resetProperties();
-            getQuotationMasters();
             return null;
           }
         };
+
+    task.setOnSucceeded(
+        event -> {
+          resetProperties();
+          getQuotationMasters();
+        });
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -231,10 +240,11 @@ public class QuotationMasterViewModel {
             QuotationDetailViewModel.quotationDetailsList.addAll(
                 quotationMaster.getQuotationDetails());
 
-            getQuotationMasters();
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> getQuotationMasters());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -265,11 +275,15 @@ public class QuotationMasterViewModel {
 
             quotationMasterDao.update(quotationMaster);
 
-            resetProperties();
-            getQuotationMasters();
             return null;
           }
         };
+
+    task.setOnSucceeded(
+        event -> {
+          resetProperties();
+          getQuotationMasters();
+        });
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -288,10 +302,12 @@ public class QuotationMasterViewModel {
                 DaoManager.createDao(connectionSource, QuotationMaster.class);
 
             quotationMasterDao.deleteById(index);
-            getQuotationMasters();
+
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> getQuotationMasters());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);

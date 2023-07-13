@@ -32,7 +32,8 @@ public class ProductMasterViewModel {
   public static final ObservableList<ProductMaster> productMasterList =
       FXCollections.observableArrayList();
 
-  private static final ListProperty<ProductMaster> products = new SimpleListProperty<>(productMasterList);
+  private static final ListProperty<ProductMaster> products =
+      new SimpleListProperty<>(productMasterList);
   private static final LongProperty id = new SimpleLongProperty(0);
   private static final StringProperty barcodeType = new SimpleStringProperty("");
   private static final StringProperty name = new SimpleStringProperty("");
@@ -177,17 +178,20 @@ public class ProductMasterViewModel {
   }
 
   public static void resetProperties() {
-    setId(0);
-    setBarcodeType("");
-    setName("");
-    setPrice(0);
-    setNote("");
-    setNotForSale(false);
-    setHasVariants(false);
-    setCategory(null);
-    setBrand(null);
-    PENDING_DELETES.clear();
-    ProductDetailViewModel.productDetailsList.clear();
+    Platform.runLater(
+        () -> {
+          setId(0);
+          setBarcodeType("");
+          setName("");
+          setPrice(0);
+          setNote("");
+          setNotForSale(false);
+          setHasVariants(false);
+          setCategory(null);
+          setBrand(null);
+          PENDING_DELETES.clear();
+          ProductDetailViewModel.productDetailsList.clear();
+        });
   }
 
   public static void saveProductMaster() {
@@ -222,10 +226,11 @@ public class ProductMasterViewModel {
             productMasterDao.create(productMaster);
 
             resetProperties();
-            getProductMasters();
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> getProductMasters());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -285,12 +290,18 @@ public class ProductMasterViewModel {
             setHasVariants(productMaster.hasVariant());
             setBarcodeType(productMaster.getBarcodeType());
 
-            ProductDetailViewModel.productDetailsList.clear();
-            ProductDetailViewModel.productDetailsList.addAll(productMaster.getProductDetails());
-            getProductMasters();
+            Platform.runLater(
+                () -> {
+                  ProductDetailViewModel.productDetailsList.clear();
+                  ProductDetailViewModel.productDetailsList.addAll(
+                      productMaster.getProductDetails());
+                });
+
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> getProductMasters());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -323,10 +334,11 @@ public class ProductMasterViewModel {
             productMasterDao.update(productMaster);
 
             resetProperties();
-            getProductMasters();
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> getProductMasters());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -345,10 +357,12 @@ public class ProductMasterViewModel {
                 DaoManager.createDao(connectionSource, ProductMaster.class);
 
             productMasterDao.deleteById(index);
-            getProductMasters();
+
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> getProductMasters());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);

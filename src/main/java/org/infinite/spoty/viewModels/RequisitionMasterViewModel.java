@@ -36,7 +36,8 @@ import org.infinite.spoty.database.models.Supplier;
 public class RequisitionMasterViewModel {
   public static final ObservableList<RequisitionMaster> requisitionMasterList =
       FXCollections.observableArrayList();
-  private static final ListProperty<RequisitionMaster> requisitions = new SimpleListProperty<>(requisitionMasterList);
+  private static final ListProperty<RequisitionMaster> requisitions =
+      new SimpleListProperty<>(requisitionMasterList);
   private static final LongProperty id = new SimpleLongProperty(0);
   private static final StringProperty date = new SimpleStringProperty("");
   private static final ObjectProperty<Supplier> supplier = new SimpleObjectProperty<>(null);
@@ -202,19 +203,22 @@ public class RequisitionMasterViewModel {
   }
 
   public static void resetProperties() {
-    setId(0);
-    setDate("");
-    setSupplier(null);
-    setBranch(null);
-    setShipVia("");
-    setShipMethod("");
-    setShippingTerms("");
-    setDeliveryDate("");
-    setNote("");
-    setStatus("");
-    setTotalCost("");
-    PENDING_DELETES.clear();
-    RequisitionDetailViewModel.requisitionDetailList.clear();
+    Platform.runLater(
+        () -> {
+          setId(0);
+          setDate("");
+          setSupplier(null);
+          setBranch(null);
+          setShipVia("");
+          setShipMethod("");
+          setShippingTerms("");
+          setDeliveryDate("");
+          setNote("");
+          setStatus("");
+          setTotalCost("");
+          PENDING_DELETES.clear();
+          RequisitionDetailViewModel.requisitionDetailList.clear();
+        });
   }
 
   public static void saveRequisitionMaster() {
@@ -244,17 +248,22 @@ public class RequisitionMasterViewModel {
             if (!RequisitionDetailViewModel.requisitionDetailList.isEmpty()) {
               RequisitionDetailViewModel.requisitionDetailList.forEach(
                   requisitionDetail -> requisitionDetail.setRequisition(requisitionMaster));
+
               requisitionMaster.setRequisitionDetails(
                   RequisitionDetailViewModel.getRequisitionDetailList());
             }
 
             requisitionMasterDao.create(requisitionMaster);
 
-            resetProperties();
-            getRequisitionMasters();
             return null;
           }
         };
+
+    task.setOnSucceeded(
+        event -> {
+          resetProperties();
+          getRequisitionMasters();
+        });
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -320,10 +329,11 @@ public class RequisitionMasterViewModel {
             RequisitionDetailViewModel.requisitionDetailList.addAll(
                 requisitionMaster.getRequisitionDetails());
 
-            getRequisitionMasters();
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> getRequisitionMasters());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -359,11 +369,15 @@ public class RequisitionMasterViewModel {
 
             requisitionMasterDao.update(requisitionMaster);
 
-            resetProperties();
-            getRequisitionMasters();
             return null;
           }
         };
+
+    task.setOnSucceeded(
+        event -> {
+          resetProperties();
+          getRequisitionMasters();
+        });
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -382,10 +396,12 @@ public class RequisitionMasterViewModel {
                 DaoManager.createDao(connectionSource, RequisitionMaster.class);
 
             requisitionMasterDao.deleteById(index);
-            getRequisitionMasters();
+
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> getRequisitionMasters());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);

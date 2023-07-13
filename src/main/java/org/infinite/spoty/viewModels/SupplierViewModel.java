@@ -33,7 +33,8 @@ import org.infinite.spoty.database.models.Supplier;
 
 public class SupplierViewModel {
   public static final ObservableList<Supplier> suppliersList = FXCollections.observableArrayList();
-  public static final ObservableList<Supplier> suppliersComboBoxList = FXCollections.observableArrayList();
+  public static final ObservableList<Supplier> suppliersComboBoxList =
+      FXCollections.observableArrayList();
   private static final ListProperty<Supplier> suppliers = new SimpleListProperty<>(suppliersList);
   private static final LongProperty id = new SimpleLongProperty(0);
   private static final StringProperty name = new SimpleStringProperty("");
@@ -201,11 +202,15 @@ public class SupplierViewModel {
 
             supplierDao.create(supplier);
 
-            resetProperties();
-            getAllSuppliers();
             return null;
           }
         };
+
+    task.setOnSucceeded(
+        event -> {
+          resetProperties();
+          getAllSuppliers();
+        });
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -265,10 +270,11 @@ public class SupplierViewModel {
             setAddress(supplier.getAddress());
             setTaxNumber(supplier.getTaxNumber());
 
-            getAllSuppliers();
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> getAllSuppliers());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -297,11 +303,16 @@ public class SupplierViewModel {
             supplier.setCountry(getCountry());
 
             supplierDao.update(supplier);
-            resetProperties();
-            getAllSuppliers();
+
             return null;
           }
         };
+
+    task.setOnSucceeded(
+        event -> {
+          resetProperties();
+          getAllSuppliers();
+        });
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
@@ -320,10 +331,12 @@ public class SupplierViewModel {
                 DaoManager.createDao(connectionSource, Supplier.class);
 
             supplierDao.deleteById(index);
-            getAllSuppliers();
+
             return null;
           }
         };
+
+    task.setOnSucceeded(event -> getAllSuppliers());
 
     Thread thread = new Thread(task);
     thread.setDaemon(true);
