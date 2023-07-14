@@ -43,7 +43,7 @@ import org.infinite.spoty.viewModels.ProductDetailViewModel;
 
 public class AdjustmentDetailFormController implements Initializable {
   private static AdjustmentDetailFormController instance;
-    public MFXTextField adjustmentDetailID = new MFXTextField();
+  public MFXTextField adjustmentDetailID = new MFXTextField();
   @FXML public MFXTextField adjustmentProductsQnty;
   @FXML public MFXFilterComboBox<ProductDetail> adjustmentProductVariant;
   @FXML public MFXButton adjustmentProductsSaveBtn;
@@ -76,10 +76,6 @@ public class AdjustmentDetailFormController implements Initializable {
 
     // AdjustmentType combo box properties.
     adjustmentProductVariant.setItems(ProductDetailViewModel.getProductDetailsComboBoxList());
-    adjustmentProductVariant.setOnShowing(
-        e ->
-            adjustmentProductVariant.setItems(
-                ProductDetailViewModel.getProductDetailsComboBoxList()));
     adjustmentProductVariant.setConverter(
         new StringConverter<>() {
           @Override

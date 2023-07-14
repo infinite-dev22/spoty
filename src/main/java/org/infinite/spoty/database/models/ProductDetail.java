@@ -34,15 +34,16 @@ public class ProductDetail implements Serializable {
           "INTEGER CONSTRAINT FK_NAME REFERENCES product_masters(id) ON DELETE CASCADE")
   private ProductMaster product;
 
-  @DatabaseField(foreign = true, columnName = "branch_id") private Branch branch;
+  @DatabaseField(foreign = true, columnName = "branch_id", foreignAutoRefresh = true)
+  private Branch branch;
 
-  @DatabaseField(foreign = true, columnName = "unit_id")
+  @DatabaseField(foreign = true, columnName = "unit_id", foreignAutoRefresh = true)
   private UnitOfMeasure unit;
 
-  @DatabaseField(foreign = true, columnName = "sale_unit_id")
+  @DatabaseField(foreign = true, columnName = "sale_unit_id", foreignAutoRefresh = true)
   private UnitOfMeasure saleUnit;
 
-  @DatabaseField(foreign = true, columnName = "purchase_unit_id")
+  @DatabaseField(foreign = true, columnName = "purchase_unit_id", foreignAutoRefresh = true)
   private UnitOfMeasure purchaseUnit;
 
   @DatabaseField private String name;

@@ -29,7 +29,7 @@ public class UnitOfMeasure {
   @DatabaseField(columnName = "short_name")
   private String shortName;
 
-  @DatabaseField(foreign = true, columnName = "base_unit_id")
+  @DatabaseField(foreign = true, columnName = "base_unit_id", foreignAutoRefresh = true)
   private UnitOfMeasure baseUnit;
 
   @DatabaseField private String operator;

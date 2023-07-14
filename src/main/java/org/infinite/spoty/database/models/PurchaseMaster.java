@@ -27,7 +27,7 @@ public class PurchaseMaster implements Serializable {
   @DatabaseField(generatedId = true)
   private int id;
 
-  @DatabaseField(foreign = true, columnName = "user_id")
+  @DatabaseField(foreign = true, columnName = "user_id", foreignAutoRefresh = true)
   private User user;
 
   @DatabaseField private String ref;
@@ -35,10 +35,10 @@ public class PurchaseMaster implements Serializable {
   @DatabaseField(canBeNull = false)
   private Date date;
 
-  @DatabaseField(foreign = true, canBeNull = false, columnName = "supplier_id")
+  @DatabaseField(foreign = true, canBeNull = false, columnName = "supplier_id", foreignAutoRefresh = true)
   private Supplier supplier;
 
-  @DatabaseField(foreign = true, canBeNull = false, columnName = "branch_id")
+  @DatabaseField(foreign = true, canBeNull = false, columnName = "branch_id", foreignAutoRefresh = true)
   private Branch branch;
 
   @ForeignCollectionField

@@ -28,6 +28,7 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.TransferMaster;
@@ -156,7 +157,6 @@ public class TransferMasterViewModel {
           setStatus("");
           setTotalCost("");
           PENDING_DELETES.clear();
-          TransferDetailViewModel.transferDetailsList.clear();
         });
   }
 
@@ -188,6 +188,7 @@ public class TransferMasterViewModel {
             }
 
             transferMasterDao.create(transferMaster);
+            TransferDetailViewModel.saveTransferDetails();
 
             return null;
           }
@@ -199,9 +200,7 @@ public class TransferMasterViewModel {
           getTransferMasters();
         });
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void getTransferMasters() {
@@ -230,9 +229,7 @@ public class TransferMasterViewModel {
           }
         };
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void getItem(long transferMasterID) {
@@ -265,9 +262,7 @@ public class TransferMasterViewModel {
 
     task.setOnSucceeded(event -> getTransferMasters());
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void updateItem(long transferMasterID) {
@@ -293,6 +288,7 @@ public class TransferMasterViewModel {
             transferMaster.setTransferDetails(TransferDetailViewModel.getTransferDetailsList());
 
             transferMasterDao.update(transferMaster);
+            TransferDetailViewModel.updateTransferDetails();
 
             return null;
           }
@@ -304,9 +300,7 @@ public class TransferMasterViewModel {
           getTransferMasters();
         });
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void deleteItem(long transferMasterID) {
@@ -328,9 +322,7 @@ public class TransferMasterViewModel {
 
     task.setOnSucceeded(event -> getTransferMasters());
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static ObservableList<TransferMaster> getTransferMasterList() {

@@ -16,7 +16,6 @@ package org.infinite.spoty.database.models;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import jakarta.persistence.*;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.util.Date;
@@ -37,13 +36,13 @@ public class Expense implements Serializable {
   @DatabaseField(canBeNull = false)
   private String name;
   // TODO: Add not nullable when the user system works.
-  @DatabaseField(foreign = true, columnName = "user_id")
+  @DatabaseField(foreign = true, columnName = "user_id", foreignAutoRefresh = true)
   private User user;
 
-  @DatabaseField(foreign = true, canBeNull = false, columnName = "expense_category_id")
+  @DatabaseField(foreign = true, canBeNull = false, columnName = "expense_category_id", foreignAutoRefresh = true)
   private ExpenseCategory expenseCategory;
 
-  @DatabaseField(foreign = true, canBeNull = false, columnName = "branch_id")
+  @DatabaseField(foreign = true, canBeNull = false, columnName = "branch_id", foreignAutoRefresh = true)
   private Branch branch;
 
   @DatabaseField private String details;

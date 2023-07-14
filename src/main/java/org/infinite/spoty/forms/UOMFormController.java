@@ -23,7 +23,6 @@ import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
-import javafx.collections.WeakListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -93,8 +92,6 @@ public class UOMFormController implements Initializable {
 
     // ComboBox properties.
     uomFormBaseUnit.setItems(UOMViewModel.uomComboBoxList);
-    UOMViewModel.uomComboBoxList.addListener(
-        new WeakListChangeListener<>(c -> uomFormBaseUnit.setItems(UOMViewModel.uomComboBoxList)));
     uomFormBaseUnit.setConverter(
         new StringConverter<>() {
           @Override

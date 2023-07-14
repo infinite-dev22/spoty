@@ -28,7 +28,7 @@ public class PurchaseReturnDetail implements Serializable {
   @DatabaseField(canBeNull = false)
   private double cost;
 
-  @DatabaseField(foreign = true, canBeNull = false, columnName = "purchase_unit_id")
+  @DatabaseField(foreign = true, canBeNull = false, columnName = "purchase_unit_id", foreignAutoRefresh = true)
   private UnitOfMeasure purchaseUnit;
 
   @DatabaseField(
@@ -41,7 +41,7 @@ public class PurchaseReturnDetail implements Serializable {
           "INTEGER CONSTRAINT FK_NAME REFERENCES purchase_masters(id) ON DELETE CASCADE")
   private PurchaseReturnMaster purchaseReturn;
 
-  @DatabaseField(foreign = true, canBeNull = false, columnName = "product_id")
+  @DatabaseField(foreign = true, canBeNull = false, columnName = "product_id", foreignAutoRefresh = true)
   private ProductDetail product;
 
   @DatabaseField(columnName = "net_tax")

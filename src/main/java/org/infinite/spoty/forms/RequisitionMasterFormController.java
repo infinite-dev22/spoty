@@ -124,8 +124,6 @@ public class RequisitionMasterFormController implements Initializable {
 
     // ComboBox properties.
     requisitionMasterBranch.setItems(BranchViewModel.getBranchesComboBoxList());
-    requisitionMasterBranch.setOnShowing(
-        e -> requisitionMasterBranch.setItems(BranchViewModel.getBranchesComboBoxList()));
     requisitionMasterBranch.setConverter(
         new StringConverter<>() {
           @Override
@@ -141,8 +139,6 @@ public class RequisitionMasterFormController implements Initializable {
         });
 
     requisitionMasterSupplier.setItems(SupplierViewModel.getSuppliersComboBoxList());
-    requisitionMasterSupplier.setOnShowing(
-        event -> requisitionMasterSupplier.setItems(SupplierViewModel.getSuppliersComboBoxList()));
     requisitionMasterSupplier.setConverter(
         new StringConverter<>() {
           @Override

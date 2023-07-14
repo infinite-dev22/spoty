@@ -113,8 +113,6 @@ public class TransferMasterFormController implements Initializable {
 
     // ComboBox properties.
     transferMasterFromBranch.setItems(BranchViewModel.getBranchesComboBoxList());
-    transferMasterFromBranch.setOnShowing(
-        e -> transferMasterFromBranch.setItems(BranchViewModel.getBranchesComboBoxList()));
     transferMasterFromBranch.setConverter(
         new StringConverter<>() {
           @Override
@@ -130,8 +128,6 @@ public class TransferMasterFormController implements Initializable {
         });
 
     transferMasterToBranch.setItems(BranchViewModel.getBranchesComboBoxList());
-    transferMasterToBranch.setOnShowing(
-        e -> transferMasterToBranch.setItems(BranchViewModel.getBranchesComboBoxList()));
     transferMasterToBranch.setConverter(
         new StringConverter<>() {
           @Override
@@ -329,6 +325,7 @@ public class TransferMasterFormController implements Initializable {
       transferMasterFromBranch.clearSelection();
       transferMasterToBranch.clearSelection();
 
+      transferMasterCancelBtnClicked();
       return;
     }
     SimpleNotification notification =

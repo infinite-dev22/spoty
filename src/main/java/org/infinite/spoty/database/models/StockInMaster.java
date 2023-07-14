@@ -27,7 +27,7 @@ public class StockInMaster implements Serializable {
   @DatabaseField(generatedId = true)
   private int id;
 
-  @DatabaseField(foreign = true, columnName = "user_id")
+  @DatabaseField(foreign = true, columnName = "user_id", foreignAutoRefresh = true)
   private User user;
 
   @DatabaseField(columnName = "reference_number")
@@ -36,7 +36,7 @@ public class StockInMaster implements Serializable {
   @DatabaseField(canBeNull = false)
   private Date date;
 
-  @DatabaseField(foreign = true, columnName = "branch_id", canBeNull = false)
+  @DatabaseField(foreign = true, columnName = "branch_id", canBeNull = false, foreignAutoRefresh = true)
   private Branch branch;
 
   @ForeignCollectionField private Collection<StockInDetail> stockInDetails;

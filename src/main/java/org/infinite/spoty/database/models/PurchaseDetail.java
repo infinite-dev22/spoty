@@ -19,6 +19,7 @@ import com.j256.ormlite.table.DatabaseTable;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 
 // TODO: Remove total and Quantity and add them to PurchaseMaster.
 // TODO: In place of total create purchasePrice.
@@ -50,7 +51,7 @@ public class PurchaseDetail implements Serializable {
   @DatabaseField(columnName = "discount_type")
   private String discountType;
 
-  @DatabaseField(foreign = true, canBeNull = false)
+  @DatabaseField(foreign = true, canBeNull = false, foreignAutoRefresh = true)
   private ProductDetail product;
 
   @DatabaseField(columnName = "serial_number")
@@ -153,7 +154,7 @@ public class PurchaseDetail implements Serializable {
             + " "
             + product.getName()
             + " "
-            + product.getUnit().getName()
+            + (Objects.equals(product.getUnit(), null) ? "" : product.getUnit().getName())
         : null;
   }
 

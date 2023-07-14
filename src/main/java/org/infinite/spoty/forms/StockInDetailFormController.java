@@ -62,8 +62,6 @@ public class StockInDetailFormController implements Initializable {
 
     // Combo box properties.
     stockInDetailPdct.setItems(ProductDetailViewModel.getProductDetailsComboBoxList());
-    stockInDetailPdct.setOnShowing(
-        e -> stockInDetailPdct.setItems(ProductDetailViewModel.getProductDetailsComboBoxList()));
     stockInDetailPdct.setConverter(
         new StringConverter<>() {
           @Override

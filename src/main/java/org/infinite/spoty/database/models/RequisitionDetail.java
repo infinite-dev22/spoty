@@ -19,13 +19,14 @@ import com.j256.ormlite.table.DatabaseTable;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 
 @DatabaseTable(tableName = "requisition_detail")
 public class RequisitionDetail implements Serializable {
   @DatabaseField(generatedId = true)
   private long id;
 
-  @DatabaseField(foreign = true, columnName = "product_detail_id", canBeNull = false)
+  @DatabaseField(foreign = true, columnName = "product_detail_id", canBeNull = false, foreignAutoRefresh = true)
   private ProductDetail product;
 
   @DatabaseField(
@@ -94,7 +95,7 @@ public class RequisitionDetail implements Serializable {
             + " "
             + product.getName()
             + " "
-            + product.getUnit().getName()
+            + (Objects.equals(product.getUnit(), null) ? "" : product.getUnit().getName())
         : null;
   }
 

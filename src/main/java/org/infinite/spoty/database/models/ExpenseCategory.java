@@ -16,7 +16,6 @@ package org.infinite.spoty.database.models;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -25,7 +24,7 @@ public class ExpenseCategory implements Serializable {
   @DatabaseField(generatedId = true)
   private int id;
   // TODO: Add user not nullable later.
-  @DatabaseField(foreign = true, columnName = "user_id")
+  @DatabaseField(foreign = true, columnName = "user_id", foreignAutoRefresh = true)
   private User user;
 
   @DatabaseField(canBeNull = false)

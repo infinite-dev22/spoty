@@ -17,11 +17,15 @@ package org.infinite.spoty;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.stage.Stage;
 
 public class GlobalActions {
+  private static final ExecutorService executorService = Executors.newFixedThreadPool(5);
+
   public static void closeDialog(ActionEvent e) {
     final Node source = (Node) e.getSource();
     final Stage stage = (Stage) source.getScene().getWindow();
@@ -36,5 +40,9 @@ public class GlobalActions {
       throw new RuntimeException(e);
     }
     return date;
+  }
+
+  public static ExecutorService spotyThreadPool() {
+    return executorService;
   }
 }

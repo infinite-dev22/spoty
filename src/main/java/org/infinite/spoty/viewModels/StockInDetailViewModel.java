@@ -21,10 +21,12 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
 import java.sql.SQLException;
 import java.util.LinkedList;
+import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.ProductDetail;
 import org.infinite.spoty.database.models.StockInDetail;
@@ -158,18 +160,37 @@ public class StockInDetailViewModel {
                 new StockInDetail(
                     getProduct(), getQuantity(), getSerial(), getDescription(), getLocation());
 
-            stockInDetailsList.add(stockInDetail);
+            Platform.runLater(() -> stockInDetailsList.add(stockInDetail));
 
             return null;
           }
         };
 
-    task.setOnSucceeded(event ->
-            resetProperties());
+    task.setOnSucceeded(event -> resetProperties());
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
+  }
+
+  public static void clearStockInDetails() {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<StockInDetail, Long> stockInDetailDao =
+                DaoManager.createDao(connectionSource, StockInDetail.class);
+
+            stockInDetailDao.create(stockInDetailsList);
+
+            return null;
+          }
+        };
+
+    task.setOnSucceeded(event -> stockInDetailsList.clear());
+
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void getAllStockInDetails() {
@@ -189,9 +210,7 @@ public class StockInDetailViewModel {
           }
         };
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void updateStockInDetail(long index) {
@@ -212,19 +231,19 @@ public class StockInDetailViewModel {
             stockInDetail.setDescription(getDescription());
             stockInDetail.setLocation(getLocation());
 
-            stockInDetailsList.remove((int) getTempId());
-            stockInDetailsList.add(getTempId(), stockInDetail);
+            Platform.runLater(
+                () -> {
+                  stockInDetailsList.remove((int) getTempId());
+                  stockInDetailsList.add(getTempId(), stockInDetail);
+                });
 
             return null;
           }
         };
 
-    task.setOnSucceeded(event ->
-            resetProperties());
+    task.setOnSucceeded(event -> resetProperties());
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void getItem(long index, int tempIndex) {
@@ -252,9 +271,7 @@ public class StockInDetailViewModel {
           }
         };
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void updateItem(long index) {
@@ -282,12 +299,38 @@ public class StockInDetailViewModel {
           }
         };
 
-    task.setOnSucceeded(event ->
-            getAllStockInDetails());
+    task.setOnSucceeded(event -> getAllStockInDetails());
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
+  }
+
+  public static void updateStockInDetails() {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<StockInDetail, Long> stockInDetailDao =
+                DaoManager.createDao(connectionSource, StockInDetail.class);
+
+            stockInDetailsList.forEach(
+                stockInDetail -> {
+                  try {
+                    stockInDetailDao.update(stockInDetail);
+                  } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                  }
+                });
+
+            return null;
+          }
+        };
+
+    task.setOnSucceeded(event -> getAllStockInDetails());
+
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void removeStockInDetail(long index, int tempIndex) {
@@ -295,15 +338,13 @@ public class StockInDetailViewModel {
         new Task<>() {
           @Override
           protected Void call() {
-            stockInDetailsList.remove(tempIndex);
+            Platform.runLater(() -> stockInDetailsList.remove(tempIndex));
             PENDING_DELETES.add(index);
             return null;
           }
         };
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void deleteStockInDetails(LinkedList<Long> indexes) {
@@ -329,9 +370,7 @@ public class StockInDetailViewModel {
           }
         };
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static ObservableList<StockInDetail> getStockInDetailsList() {

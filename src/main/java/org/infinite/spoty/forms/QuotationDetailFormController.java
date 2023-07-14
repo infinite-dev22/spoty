@@ -70,8 +70,6 @@ public class QuotationDetailFormController implements Initializable {
 
     // Combo box properties.
     quotationProductPdct.setItems(ProductDetailViewModel.getProductDetailsComboBoxList());
-    quotationProductPdct.setOnShowing(
-        e -> quotationProductPdct.setItems(ProductDetailViewModel.getProductDetailsComboBoxList()));
     quotationProductPdct.setConverter(
         new StringConverter<>() {
           @Override

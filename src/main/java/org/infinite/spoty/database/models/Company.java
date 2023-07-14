@@ -16,7 +16,6 @@ package org.infinite.spoty.database.models;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import jakarta.persistence.*;
 import java.util.Date;
 
 @DatabaseTable(tableName = "companies")

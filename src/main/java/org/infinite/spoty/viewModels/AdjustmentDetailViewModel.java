@@ -26,6 +26,7 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.AdjustmentDetail;
 import org.infinite.spoty.database.models.AdjustmentMaster;
@@ -139,9 +140,29 @@ public class AdjustmentDetailViewModel {
 
     task.setOnSucceeded(event -> resetProperties());
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
+  }
+
+  public static void saveAdjustmentDetails() {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<AdjustmentDetail, Long> adjustmentDetailDao =
+                DaoManager.createDao(connectionSource, AdjustmentDetail.class);
+
+            adjustmentDetailDao.create(adjustmentDetailsList);
+
+            return null;
+          }
+        };
+
+    task.setOnSucceeded(event -> adjustmentDetailsList.clear());
+
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void updateAdjustmentDetail(int index) {
@@ -154,15 +175,19 @@ public class AdjustmentDetailViewModel {
             adjustmentDetail.setQuantity(getQuantity());
             adjustmentDetail.setAdjustmentType(getAdjustmentType());
 
+            Platform.runLater(
+                () -> {
+                  adjustmentDetailsList.remove((int) getTempId());
+                  adjustmentDetailsList.add(getTempId(), adjustmentDetail);
+                });
+
             return null;
           }
         };
 
     task.setOnSucceeded(event -> resetProperties());
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void getAllAdjustmentDetails() {
@@ -182,9 +207,7 @@ public class AdjustmentDetailViewModel {
           }
         };
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void getItem(long index, int tempIndex) {
@@ -207,9 +230,7 @@ public class AdjustmentDetailViewModel {
           }
         };
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void updateItem(long index) {
@@ -235,9 +256,35 @@ public class AdjustmentDetailViewModel {
 
     task.setOnSucceeded(event -> getAllAdjustmentDetails());
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
+  }
+
+  public static void updateAdjustmentDetails() {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<AdjustmentDetail, Long> adjustmentDetailDao =
+                DaoManager.createDao(connectionSource, AdjustmentDetail.class);
+
+            adjustmentDetailsList.forEach(
+                adjustmentDetail -> {
+                  try {
+                    adjustmentDetailDao.update(adjustmentDetail);
+                  } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                  }
+                });
+            return null;
+          }
+        };
+
+    task.setOnSucceeded(event -> getAllAdjustmentDetails());
+
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void removeAdjustmentDetail(long index, int tempIndex) {
@@ -245,15 +292,13 @@ public class AdjustmentDetailViewModel {
         new Task<>() {
           @Override
           protected Void call() {
-            adjustmentDetailsList.remove(tempIndex);
+            Platform.runLater(() -> adjustmentDetailsList.remove(tempIndex));
             PENDING_DELETES.add(index);
             return null;
           }
         };
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void deleteAdjustmentDetails(LinkedList<Long> indexes) {
@@ -279,9 +324,7 @@ public class AdjustmentDetailViewModel {
           }
         };
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static ObservableList<AdjustmentDetail> getAdjustmentDetailsList() {

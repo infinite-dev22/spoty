@@ -26,6 +26,7 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.*;
 
@@ -249,19 +250,16 @@ public class ProductDetailViewModel {
                     getTaxType(),
                     getStockAlert(),
                     getSerialNumber());
-            Platform.runLater(
-                () -> {
-                  productDetailsList.add(productDetail);
-                });
+
+            Platform.runLater(() -> productDetailsList.add(productDetail));
+
             return null;
           }
         };
 
     task.setOnSucceeded(event -> resetProperties());
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void resetProperties() {
@@ -281,6 +279,28 @@ public class ProductDetailViewModel {
     setTempId(-1);
   }
 
+  public static void saveProductDetails() {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<ProductDetail, Long> productDetailDao =
+                DaoManager.createDao(connectionSource, ProductDetail.class);
+
+            productDetailDao.create(productDetailsList);
+
+            return null;
+          }
+        };
+
+    task.setOnSucceeded(event -> productDetailsList.clear());
+
+    GlobalActions.spotyThreadPool().execute(task);
+  }
+
   public static void getAllProductDetails() {
     Task<Void> task =
         new Task<>() {
@@ -298,9 +318,7 @@ public class ProductDetailViewModel {
           }
         };
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void updateProductDetail(long index) {
@@ -319,8 +337,11 @@ public class ProductDetailViewModel {
             productDetail.setName(getName());
             productDetail.setSerialNumber(getSerialNumber());
 
-            productDetailsList.remove((int) getTempId());
-            productDetailsList.add(getTempId(), productDetail);
+            Platform.runLater(
+                () -> {
+                  productDetailsList.remove((int) getTempId());
+                  productDetailsList.add(getTempId(), productDetail);
+                });
 
             return null;
           }
@@ -328,9 +349,7 @@ public class ProductDetailViewModel {
 
     task.setOnSucceeded(event -> resetProperties());
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void getItem(long index, int tempIndex) {
@@ -363,9 +382,7 @@ public class ProductDetailViewModel {
           }
         };
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void updateItem(long index) {
@@ -399,9 +416,36 @@ public class ProductDetailViewModel {
 
     task.setOnSucceeded(event -> getAllProductDetails());
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
+  }
+
+  public static void updateProductDetails() {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<ProductDetail, Long> productDetailDao =
+                DaoManager.createDao(connectionSource, ProductDetail.class);
+
+            productDetailsList.forEach(
+                productDetail -> {
+                  try {
+                    productDetailDao.update(productDetail);
+                  } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                  }
+                });
+
+            return null;
+          }
+        };
+
+    task.setOnSucceeded(event -> getAllProductDetails());
+
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void removeProductDetail(long index, int tempIndex) {
@@ -410,15 +454,12 @@ public class ProductDetailViewModel {
           @Override
           protected Void call() {
             Platform.runLater(() -> productDetailsList.remove(tempIndex));
-
             PENDING_DELETES.add(index);
             return null;
           }
         };
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void deleteProductDetails(List<Long> indexes) {
@@ -443,14 +484,35 @@ public class ProductDetailViewModel {
           }
         };
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static ObservableList<ProductDetail> getProductDetailsComboBoxList() {
-    productDetailsComboBoxList.clear();
-    productDetailsComboBoxList.addAll(productDetailsList);
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<ProductDetail, Long> productDetailDao =
+                DaoManager.createDao(connectionSource, ProductDetail.class);
+
+            Platform.runLater(
+                () -> {
+                  try {
+                    productDetailsComboBoxList.clear();
+                    productDetailsComboBoxList.addAll(productDetailDao.queryForAll());
+                  } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                  }
+                });
+            return null;
+          }
+        };
+
+    GlobalActions.spotyThreadPool().execute(task);
+
     return productDetailsComboBoxList;
   }
 

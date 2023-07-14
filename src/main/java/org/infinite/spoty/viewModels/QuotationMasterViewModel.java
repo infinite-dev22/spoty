@@ -28,6 +28,7 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.Customer;
@@ -143,7 +144,6 @@ public class QuotationMasterViewModel {
           setStatus("");
           setNote("");
           PENDING_DELETES.clear();
-          QuotationDetailViewModel.quotationDetailsList.clear();
         });
   }
 
@@ -169,6 +169,7 @@ public class QuotationMasterViewModel {
             }
 
             quotationMasterDao.create(quotationMaster);
+            QuotationDetailViewModel.saveQuotationDetails();
 
             return null;
           }
@@ -180,9 +181,7 @@ public class QuotationMasterViewModel {
           getQuotationMasters();
         });
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void getQuotationMasters() {
@@ -211,9 +210,7 @@ public class QuotationMasterViewModel {
           }
         };
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void getItem(long index) {
@@ -246,9 +243,7 @@ public class QuotationMasterViewModel {
 
     task.setOnSucceeded(event -> getQuotationMasters());
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void updateItem(long index) {
@@ -274,6 +269,7 @@ public class QuotationMasterViewModel {
             quotationMaster.setQuotationDetails(QuotationDetailViewModel.getQuotationDetailsList());
 
             quotationMasterDao.update(quotationMaster);
+            QuotationDetailViewModel.updateQuotationDetails();
 
             return null;
           }
@@ -285,9 +281,7 @@ public class QuotationMasterViewModel {
           getQuotationMasters();
         });
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void deleteItem(long index) {
@@ -309,9 +303,7 @@ public class QuotationMasterViewModel {
 
     task.setOnSucceeded(event -> getQuotationMasters());
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static ObservableList<QuotationMaster> getQuotationMasterList() {
