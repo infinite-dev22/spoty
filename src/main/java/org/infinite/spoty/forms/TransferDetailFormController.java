@@ -62,8 +62,6 @@ public class TransferDetailFormController implements Initializable {
 
     // Combo box properties.
     transferDetailPdct.setItems(ProductDetailViewModel.getProductDetailsComboBoxList());
-    transferDetailPdct.setOnShowing(
-        e -> transferDetailPdct.setItems(ProductDetailViewModel.getProductDetailsComboBoxList()));
     transferDetailPdct.setConverter(
         new StringConverter<>() {
           @Override

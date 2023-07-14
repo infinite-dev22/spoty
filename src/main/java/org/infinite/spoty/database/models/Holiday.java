@@ -16,7 +16,6 @@ package org.infinite.spoty.database.models;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -27,8 +26,8 @@ public class Holiday implements Serializable {
 
   @DatabaseField(canBeNull = false)
   private String title;
-  @DatabaseField(foreign = true, canBeNull = false, columnName = "company_id")
-  @ManyToOne private Company company;
+  @DatabaseField(foreign = true, canBeNull = false, columnName = "company_id", foreignAutoRefresh = true)
+  private Company company;
 
   @DatabaseField(columnName = "start_date")
   private Date startDate;

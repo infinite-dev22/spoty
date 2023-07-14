@@ -666,7 +666,7 @@ public class SQLiteTableCreator {
                            id            INTEGER   NOT NULL
                                                    PRIMARY KEY AUTOINCREMENT,
                            price         DOUBLE    NOT NULL,
-                           sale_unit_id  INTEGER   NOT NULL,
+                           sale_unit_id  INTEGER,
                            product_id    BIGINT    NOT NULL,
                            quotation_id  INTEGER,
                            net_tax       DOUBLE,

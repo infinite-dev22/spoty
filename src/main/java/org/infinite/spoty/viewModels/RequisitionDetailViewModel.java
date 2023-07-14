@@ -22,10 +22,12 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
 import java.sql.SQLException;
 import java.util.LinkedList;
+import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.ProductDetail;
 import org.infinite.spoty.database.models.RequisitionDetail;
@@ -135,7 +137,7 @@ public class RequisitionDetailViewModel {
                     Long.parseLong(getQuantity()),
                     getDescription());
 
-            requisitionDetailList.add(requisitionDetail);
+            Platform.runLater(() -> requisitionDetailList.add(requisitionDetail));
 
             return null;
           }
@@ -143,9 +145,29 @@ public class RequisitionDetailViewModel {
 
     task.setOnSucceeded(event -> resetProperties());
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
+  }
+
+  public static void saveRequisitionDetails() {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<RequisitionDetail, Long> requisitionDetailDao =
+                DaoManager.createDao(connectionSource, RequisitionDetail.class);
+
+            requisitionDetailDao.create(requisitionDetailList);
+
+            return null;
+          }
+        };
+
+    task.setOnSucceeded(event -> requisitionDetailList.clear());
+
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void getAllRequisitionDetails() {
@@ -165,9 +187,7 @@ public class RequisitionDetailViewModel {
           }
         };
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void updateRequisitionDetail(long index) {
@@ -186,8 +206,11 @@ public class RequisitionDetailViewModel {
             requisitionDetail.setQuantity(Long.parseLong(getQuantity()));
             requisitionDetail.setDescription(getDescription());
 
-            requisitionDetailList.remove((int) getTempId());
-            requisitionDetailList.add(getTempId(), requisitionDetail);
+            Platform.runLater(
+                () -> {
+                  requisitionDetailList.remove((int) getTempId());
+                  requisitionDetailList.add(getTempId(), requisitionDetail);
+                });
 
             return null;
           }
@@ -195,9 +218,7 @@ public class RequisitionDetailViewModel {
 
     task.setOnSucceeded(event -> resetProperties());
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void getItem(long index, int tempIndex) {
@@ -223,9 +244,7 @@ public class RequisitionDetailViewModel {
           }
         };
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void updateItem(long index) {
@@ -252,9 +271,36 @@ public class RequisitionDetailViewModel {
 
     task.setOnSucceeded(event -> getAllRequisitionDetails());
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
+  }
+
+  public static void updateRequisitionDetails() {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<RequisitionDetail, Long> requisitionDetailDao =
+                DaoManager.createDao(connectionSource, RequisitionDetail.class);
+
+            requisitionDetailList.forEach(
+                requisitionDetail -> {
+                  try {
+                    requisitionDetailDao.update(requisitionDetail);
+                  } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                  }
+                });
+
+            return null;
+          }
+        };
+
+    task.setOnSucceeded(event -> getAllRequisitionDetails());
+
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void removeRequisitionDetail(long index, int tempIndex) {
@@ -262,15 +308,13 @@ public class RequisitionDetailViewModel {
         new Task<>() {
           @Override
           protected Void call() {
-            requisitionDetailList.remove(tempIndex);
+            Platform.runLater(() -> requisitionDetailList.remove(tempIndex));
             PENDING_DELETES.add(index);
             return null;
           }
         };
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void deleteRequisitionDetails(LinkedList<Long> indexes) {
@@ -296,9 +340,7 @@ public class RequisitionDetailViewModel {
           }
         };
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static ObservableList<RequisitionDetail> getRequisitionDetailList() {

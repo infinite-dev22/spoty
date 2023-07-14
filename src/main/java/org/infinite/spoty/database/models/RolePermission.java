@@ -22,9 +22,9 @@ import java.io.Serializable;
 public class RolePermission implements Serializable {
     @DatabaseField(generatedId = true)
     private long id;
-    @DatabaseField(foreign = true, columnName = "role_id")
+    @DatabaseField(foreign = true, columnName = "role_id", foreignAutoRefresh = true)
     private Role role;
-    @DatabaseField(foreign = true, columnName = "permission_id")
+    @DatabaseField(foreign = true, columnName = "permission_id", foreignAutoRefresh = true)
     private Permission permission;
 
     public RolePermission() {

@@ -34,13 +34,13 @@ public class SaleReturnDetail implements Serializable {
           "INTEGER CONSTRAINT FK_NAME REFERENCES sales_return_master(id) ON DELETE CASCADE")
   private SaleReturnMaster saleReturn;
 
-  @DatabaseField(foreign = true, columnName = "product_id", canBeNull = false)
+  @DatabaseField(foreign = true, columnName = "product_id", canBeNull = false, foreignAutoRefresh = true)
   private ProductDetail product;
 
   @DatabaseField(canBeNull = false)
   private double price;
 
-  @DatabaseField(foreign = true, columnName = "sale_unit_id", canBeNull = false)
+  @DatabaseField(foreign = true, columnName = "sale_unit_id", canBeNull = false, foreignAutoRefresh = true)
   private UnitOfMeasure saleUnit;
 
   @DatabaseField(columnName = "net_tax")

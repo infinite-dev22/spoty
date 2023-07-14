@@ -111,8 +111,6 @@ public class QuotationMasterFormController implements Initializable {
 
     // Combo box properties.
     quotationCustomer.setItems(CustomerViewModel.getCustomersComboBoxList());
-    quotationCustomer.setOnShowing(
-        e -> quotationCustomer.setItems(CustomerViewModel.getCustomersComboBoxList()));
     quotationCustomer.setConverter(
         new StringConverter<>() {
           @Override
@@ -127,8 +125,6 @@ public class QuotationMasterFormController implements Initializable {
           }
         });
     quotationBranch.setItems(BranchViewModel.getBranchesComboBoxList());
-    quotationBranch.setOnShowing(
-        e -> quotationBranch.setItems(BranchViewModel.getBranchesComboBoxList()));
     quotationBranch.setConverter(
         new StringConverter<>() {
           @Override

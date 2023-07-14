@@ -21,10 +21,12 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
 import java.sql.SQLException;
 import java.util.LinkedList;
+import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.ProductDetail;
 import org.infinite.spoty.database.models.TransferDetail;
@@ -177,7 +179,7 @@ public class TransferDetailViewModel {
                     getPrice(),
                     getTotal());
 
-            transferDetailsList.add(transferDetail);
+            Platform.runLater(() -> transferDetailsList.add(transferDetail));
 
             return null;
           }
@@ -185,9 +187,29 @@ public class TransferDetailViewModel {
 
     task.setOnSucceeded(event -> resetProperties());
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
+  }
+
+  public static void saveTransferDetails() {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<TransferDetail, Long> transferDetailDao =
+                DaoManager.createDao(connectionSource, TransferDetail.class);
+
+            transferDetailDao.create(transferDetailsList);
+
+            return null;
+          }
+        };
+
+    task.setOnSucceeded(event -> transferDetailsList.clear());
+
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void getAllTransferDetails() {
@@ -207,9 +229,7 @@ public class TransferDetailViewModel {
           }
         };
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void updateTransferDetail(long index) {
@@ -231,8 +251,11 @@ public class TransferDetailViewModel {
             transferDetail.setPrice(getPrice());
             transferDetail.setTotal(getTotal());
 
-            transferDetailsList.remove((int) getTempId());
-            transferDetailsList.add(getTempId(), transferDetail);
+            Platform.runLater(
+                () -> {
+                  transferDetailsList.remove((int) getTempId());
+                  transferDetailsList.add(getTempId(), transferDetail);
+                });
 
             return null;
           }
@@ -240,9 +263,7 @@ public class TransferDetailViewModel {
 
     task.setOnSucceeded(event -> resetProperties());
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void getItem(long index, int tempIndex) {
@@ -271,9 +292,7 @@ public class TransferDetailViewModel {
           }
         };
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void updateItem(long index) {
@@ -303,9 +322,36 @@ public class TransferDetailViewModel {
 
     task.setOnSucceeded(event -> getAllTransferDetails());
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
+  }
+
+  public static void updateTransferDetails() {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<TransferDetail, Long> transferDetailDao =
+                DaoManager.createDao(connectionSource, TransferDetail.class);
+
+            transferDetailsList.forEach(
+                transferDetail -> {
+                  try {
+                    transferDetailDao.update(transferDetail);
+                  } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                  }
+                });
+
+            return null;
+          }
+        };
+
+    task.setOnSucceeded(event -> getAllTransferDetails());
+
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void removeTransferDetail(long index, int tempIndex) {
@@ -313,15 +359,13 @@ public class TransferDetailViewModel {
         new Task<>() {
           @Override
           protected Void call() {
-            transferDetailsList.remove(tempIndex);
+            Platform.runLater(() -> transferDetailsList.remove(tempIndex));
             PENDING_DELETES.add(index);
             return null;
           }
         };
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void deleteTransferDetails(LinkedList<Long> indexes) {
@@ -347,9 +391,7 @@ public class TransferDetailViewModel {
           }
         };
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static ObservableList<TransferDetail> getTransferDetailsList() {

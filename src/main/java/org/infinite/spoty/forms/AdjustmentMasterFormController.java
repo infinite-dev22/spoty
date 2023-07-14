@@ -106,8 +106,6 @@ public class AdjustmentMasterFormController implements Initializable {
 
     // combBox properties.
     adjustmentBranch.setItems(BranchViewModel.getBranchesComboBoxList());
-    adjustmentBranch.setOnShowing(
-        e -> adjustmentBranch.setItems(BranchViewModel.getBranchesComboBoxList()));
     adjustmentBranch.setConverter(
         new StringConverter<>() {
           @Override
@@ -265,8 +263,7 @@ public class AdjustmentMasterFormController implements Initializable {
 
   public void adjustmentSaveBtnClicked() {
     SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
-    if (!adjustmentDetailTable.isDisabled()
-        && AdjustmentDetailViewModel.adjustmentDetailsList.isEmpty()) {
+    if (AdjustmentDetailViewModel.adjustmentDetailsList.isEmpty()) {
       SimpleNotification notification =
           new SimpleNotification.NotificationBuilder("Table can't be Empty")
               .duration(NotificationDuration.SHORT)
@@ -274,7 +271,6 @@ public class AdjustmentMasterFormController implements Initializable {
               .type(NotificationVariants.ERROR)
               .build();
       notificationHolder.addNotification(notification);
-      AdjustmentDetailViewModel.adjustmentDetailsList.forEach(System.out::println);
       return;
     }
     if (!adjustmentBranchValidationLabel.isVisible()

@@ -27,7 +27,7 @@ public class PurchaseReturnMaster implements Serializable {
   @DatabaseField(generatedId = true)
   private long id;
 
-  @DatabaseField(foreign = true, columnName = "user_id")
+  @DatabaseField(foreign = true, columnName = "user_id", foreignAutoRefresh = true)
   private User user;
 
   @DatabaseField(columnName = "reference_number")
@@ -36,10 +36,10 @@ public class PurchaseReturnMaster implements Serializable {
   @DatabaseField(canBeNull = false)
   private Date date;
 
-  @DatabaseField(foreign = true, canBeNull = false, columnName = "supplier_id")
+  @DatabaseField(foreign = true, canBeNull = false, columnName = "supplier_id", foreignAutoRefresh = true)
   private Supplier supplier;
 
-  @DatabaseField(foreign = true, canBeNull = false, columnName = "branch_id")
+  @DatabaseField(foreign = true, canBeNull = false, columnName = "branch_id", foreignAutoRefresh = true)
   private Branch branch;
 
   @ForeignCollectionField private Collection<PurchaseReturnDetail> purchaseReturnDetails;

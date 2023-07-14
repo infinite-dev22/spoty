@@ -28,6 +28,7 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.PurchaseMaster;
@@ -143,7 +144,6 @@ public class PurchaseMasterViewModel {
           setStatus("");
           setNote("");
           PENDING_DELETES.clear();
-          PurchaseDetailViewModel.purchaseDetailList.clear();
         });
   }
 
@@ -168,6 +168,7 @@ public class PurchaseMasterViewModel {
             }
 
             purchaseMasterDao.create(purchaseMaster);
+            PurchaseDetailViewModel.savePurchaseDetails();
 
             return null;
           }
@@ -179,9 +180,7 @@ public class PurchaseMasterViewModel {
           getPurchaseMasters();
         });
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void getPurchaseMasters() {
@@ -210,9 +209,7 @@ public class PurchaseMasterViewModel {
           }
         };
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void getItem(long index) {
@@ -244,9 +241,7 @@ public class PurchaseMasterViewModel {
 
     task.setOnSucceeded(event -> getPurchaseMasters());
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void updateItem(long index) {
@@ -271,6 +266,7 @@ public class PurchaseMasterViewModel {
             purchaseMaster.setPurchaseDetails(PurchaseDetailViewModel.getPurchaseDetailList());
 
             purchaseMasterDao.update(purchaseMaster);
+            PurchaseDetailViewModel.updatePurchaseDetails();
 
             return null;
           }
@@ -282,9 +278,7 @@ public class PurchaseMasterViewModel {
           getPurchaseMasters();
         });
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void deleteItem(long index) {
@@ -306,9 +300,7 @@ public class PurchaseMasterViewModel {
 
     task.setOnSucceeded(event -> getPurchaseMasters());
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static ObservableList<PurchaseMaster> getPurchaseMasterList() {

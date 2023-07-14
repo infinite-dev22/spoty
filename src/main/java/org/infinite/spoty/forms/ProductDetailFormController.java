@@ -60,8 +60,6 @@ public class ProductDetailFormController implements Initializable {
 
     // ProductType combo box properties.
     productVariantUOM.setItems(UOMViewModel.getUomComboBoxList());
-    productVariantUOM.setOnShowing(
-        e -> productVariantUOM.setItems(UOMViewModel.getUomComboBoxList()));
     productVariantUOM.setConverter(
         new StringConverter<>() {
           @Override

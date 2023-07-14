@@ -21,10 +21,12 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
 import java.sql.SQLException;
 import java.util.LinkedList;
+import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.*;
 
@@ -153,13 +155,9 @@ public class QuotationDetailViewModel {
           @Override
           protected Void call() {
             QuotationDetail quotationDetail =
-                new QuotationDetail(
-                    getProduct(),
-                    getProduct().getSaleUnit(),
-                    getTax(),
-                    getDiscount(),
-                    getQuantity());
-            quotationDetailsList.add(quotationDetail);
+                new QuotationDetail(getProduct(), getTax(), getDiscount(), getQuantity());
+
+            Platform.runLater(() -> quotationDetailsList.add(quotationDetail));
 
             return null;
           }
@@ -167,9 +165,29 @@ public class QuotationDetailViewModel {
 
     task.setOnSucceeded(event -> resetProperties());
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
+  }
+
+  public static void saveQuotationDetails() {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<QuotationDetail, Long> quotationDetailDao =
+                DaoManager.createDao(connectionSource, QuotationDetail.class);
+
+            quotationDetailDao.create(quotationDetailsList);
+
+            return null;
+          }
+        };
+
+    task.setOnSucceeded(event -> quotationDetailsList.clear());
+
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void updateQuotationDetail(long index) {
@@ -192,8 +210,11 @@ public class QuotationDetailViewModel {
             quotationDetail.setId(getId());
             quotationDetail.setQuotation(getQuotation());
 
-            quotationDetailsList.remove((int) getTempId());
-            quotationDetailsList.add(getTempId(), quotationDetail);
+            Platform.runLater(
+                () -> {
+                  quotationDetailsList.remove((int) getTempId());
+                  quotationDetailsList.add(getTempId(), quotationDetail);
+                });
 
             return null;
           }
@@ -201,9 +222,7 @@ public class QuotationDetailViewModel {
 
     task.setOnSucceeded(event -> resetProperties());
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void getAllQuotationDetails() {
@@ -223,9 +242,7 @@ public class QuotationDetailViewModel {
           }
         };
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void getItem(long index, int tempIndex) {
@@ -255,9 +272,7 @@ public class QuotationDetailViewModel {
 
     task.setOnSucceeded(event -> getAllQuotationDetails());
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void updateItem(long index) {
@@ -286,9 +301,36 @@ public class QuotationDetailViewModel {
 
     task.setOnSucceeded(event -> getAllQuotationDetails());
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
+  }
+
+  public static void updateQuotationDetails() {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<QuotationDetail, Long> quotationDetailDao =
+                DaoManager.createDao(connectionSource, QuotationDetail.class);
+
+            quotationDetailsList.forEach(
+                quotationDetail -> {
+                  try {
+                    quotationDetailDao.update(quotationDetail);
+                  } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                  }
+                });
+
+            return null;
+          }
+        };
+
+    task.setOnSucceeded(event -> getAllQuotationDetails());
+
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void removeQuotationDetail(long index, int tempIndex) {
@@ -296,15 +338,13 @@ public class QuotationDetailViewModel {
         new Task<>() {
           @Override
           protected Void call() {
-            quotationDetailsList.remove(tempIndex);
+            Platform.runLater(() -> quotationDetailsList.remove(tempIndex));
             PENDING_DELETES.add(index);
             return null;
           }
         };
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void deleteQuotationDetails(LinkedList<Long> indexes) {
@@ -330,9 +370,7 @@ public class QuotationDetailViewModel {
           }
         };
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static ObservableList<QuotationDetail> getQuotationDetailsList() {

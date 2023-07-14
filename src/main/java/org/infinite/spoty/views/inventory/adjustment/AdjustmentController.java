@@ -21,7 +21,7 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
-import javafx.collections.WeakListChangeListener;
+import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -74,12 +74,19 @@ public class AdjustmentController implements Initializable {
             new StringFilter<>("Reference", AdjustmentMaster::getRef),
             new StringFilter<>("Branch", AdjustmentMaster::getBranchName));
     getAdjustmentMasterTable();
-    adjustmentMasterTable.setItems(AdjustmentMasterViewModel.getAdjustmentMasterList());
-    AdjustmentMasterViewModel.adjustmentMasterList.addListener(
-        new WeakListChangeListener<>(
-            c ->
-                adjustmentMasterTable.setItems(
-                    AdjustmentMasterViewModel.getAdjustmentMasterList())));
+
+    if (AdjustmentMasterViewModel.getAdjustmentMasters().isEmpty()) {
+      AdjustmentMasterViewModel.getAdjustmentMasters()
+          .addListener(
+              (ListChangeListener<AdjustmentMaster>)
+                  c ->
+                      adjustmentMasterTable.setItems(
+                          AdjustmentMasterViewModel.getAdjustmentMasters()));
+    } else {
+      adjustmentMasterTable
+          .itemsProperty()
+          .bindBidirectional(AdjustmentMasterViewModel.adjustmentMastersProperty());
+    }
   }
 
   private void getAdjustmentMasterTable() {

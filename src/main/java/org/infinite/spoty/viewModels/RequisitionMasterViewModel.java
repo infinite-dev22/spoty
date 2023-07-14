@@ -28,6 +28,7 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.RequisitionMaster;
@@ -217,7 +218,6 @@ public class RequisitionMasterViewModel {
           setStatus("");
           setTotalCost("");
           PENDING_DELETES.clear();
-          RequisitionDetailViewModel.requisitionDetailList.clear();
         });
   }
 
@@ -254,6 +254,7 @@ public class RequisitionMasterViewModel {
             }
 
             requisitionMasterDao.create(requisitionMaster);
+            RequisitionDetailViewModel.saveRequisitionDetails();
 
             return null;
           }
@@ -265,9 +266,7 @@ public class RequisitionMasterViewModel {
           getRequisitionMasters();
         });
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void getRequisitionMasters() {
@@ -296,9 +295,7 @@ public class RequisitionMasterViewModel {
           }
         };
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void getItem(long index) {
@@ -335,9 +332,7 @@ public class RequisitionMasterViewModel {
 
     task.setOnSucceeded(event -> getRequisitionMasters());
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void updateItem(long index) {
@@ -368,6 +363,7 @@ public class RequisitionMasterViewModel {
                 RequisitionDetailViewModel.getRequisitionDetailList());
 
             requisitionMasterDao.update(requisitionMaster);
+            RequisitionDetailViewModel.updateRequisitionDetails();
 
             return null;
           }
@@ -379,9 +375,7 @@ public class RequisitionMasterViewModel {
           getRequisitionMasters();
         });
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void deleteItem(long index) {
@@ -403,9 +397,7 @@ public class RequisitionMasterViewModel {
 
     task.setOnSucceeded(event -> getRequisitionMasters());
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static ObservableList<RequisitionMaster> getRequisitionMasterList() {

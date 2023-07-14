@@ -28,6 +28,7 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.AdjustmentMaster;
 import org.infinite.spoty.database.models.Branch;
@@ -35,6 +36,8 @@ import org.infinite.spoty.database.models.Branch;
 public class AdjustmentMasterViewModel {
   public static final ObservableList<AdjustmentMaster> adjustmentMasterList =
       FXCollections.observableArrayList();
+  private static final ListProperty<AdjustmentMaster> adjustmentMasters =
+      new SimpleListProperty<>(adjustmentMasterList);
   private static final LongProperty id = new SimpleLongProperty(0);
   private static final StringProperty date = new SimpleStringProperty("");
   private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>(null);
@@ -92,6 +95,18 @@ public class AdjustmentMasterViewModel {
     return note;
   }
 
+  public static ObservableList<AdjustmentMaster> getAdjustmentMasters() {
+    return adjustmentMasters.get();
+  }
+
+  public static void setAdjustmentMasters(ObservableList<AdjustmentMaster> adjustmentMasters) {
+    AdjustmentMasterViewModel.adjustmentMasters.set(adjustmentMasters);
+  }
+
+  public static ListProperty<AdjustmentMaster> adjustmentMastersProperty() {
+    return adjustmentMasters;
+  }
+
   public static void resetProperties() {
     Platform.runLater(
         () -> {
@@ -100,7 +115,6 @@ public class AdjustmentMasterViewModel {
           setBranch(null);
           setNote("");
           PENDING_DELETES.clear();
-          AdjustmentDetailViewModel.adjustmentDetailsList.clear();
         });
   }
 
@@ -127,6 +141,7 @@ public class AdjustmentMasterViewModel {
             }
 
             adjustmentMasterDao.create(adjustmentMaster);
+            AdjustmentDetailViewModel.saveAdjustmentDetails();
 
             return null;
           }
@@ -135,15 +150,13 @@ public class AdjustmentMasterViewModel {
     task.setOnSucceeded(
         event -> {
           resetProperties();
-          getAdjustmentMasters();
+          getAllAdjustmentMasters();
         });
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
-  public static void getAdjustmentMasters() {
+  public static void getAllAdjustmentMasters() {
     Task<Void> task =
         new Task<>() {
           @Override
@@ -169,9 +182,7 @@ public class AdjustmentMasterViewModel {
           }
         };
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void getItem(long index) {
@@ -192,20 +203,21 @@ public class AdjustmentMasterViewModel {
             setNote(adjustmentMaster.getNotes());
             setDate(adjustmentMaster.getLocaleDate());
 
-            AdjustmentDetailViewModel.adjustmentDetailsList.clear();
-            AdjustmentDetailViewModel.adjustmentDetailsList.addAll(
-                adjustmentMaster.getAdjustmentDetails());
+            Platform.runLater(
+                () -> {
+                  AdjustmentDetailViewModel.adjustmentDetailsList.clear();
+                  AdjustmentDetailViewModel.adjustmentDetailsList.addAll(
+                      adjustmentMaster.getAdjustmentDetails());
+                });
 
-            getAdjustmentMasters();
+            getAllAdjustmentMasters();
             return null;
           }
         };
 
-    task.setOnSucceeded(event -> getAdjustmentMasters());
+    task.setOnSucceeded(event -> getAllAdjustmentMasters());
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void updateItem(long index) {
@@ -232,6 +244,7 @@ public class AdjustmentMasterViewModel {
                 AdjustmentDetailViewModel.getAdjustmentDetailsList());
 
             adjustmentMasterDao.update(adjustmentMaster);
+            AdjustmentDetailViewModel.updateAdjustmentDetails();
             return null;
           }
         };
@@ -239,12 +252,10 @@ public class AdjustmentMasterViewModel {
     task.setOnSucceeded(
         event -> {
           resetProperties();
-          getAdjustmentMasters();
+          getAllAdjustmentMasters();
         });
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void deleteItem(long index) {
@@ -263,11 +274,9 @@ public class AdjustmentMasterViewModel {
           }
         };
 
-    task.setOnSucceeded(event -> getAdjustmentMasters());
+    task.setOnSucceeded(event -> getAllAdjustmentMasters());
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static ObservableList<AdjustmentMaster> getAdjustmentMasterList() {

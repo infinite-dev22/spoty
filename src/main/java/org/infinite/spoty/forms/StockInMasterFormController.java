@@ -99,8 +99,6 @@ public class StockInMasterFormController implements Initializable {
 
     // ComboBox properties.
     stockInMasterBranch.setItems(BranchViewModel.getBranchesComboBoxList());
-    stockInMasterBranch.setOnShowing(
-        e -> stockInMasterBranch.setItems(BranchViewModel.getBranchesComboBoxList()));
     stockInMasterBranch.setConverter(
         new StringConverter<>() {
           @Override

@@ -61,32 +61,34 @@ public class SplashScreenController implements Initializable {
           }
         };
 
-    Task<Void> initDataFetcher = new Task<>() {
-      @Override
-      protected Void call() {
-        AdjustmentMasterViewModel.getAdjustmentMasters();
-        BranchViewModel.getAllBranches();
-        BrandViewModel.getItems();
-        CurrencyViewModel.getAllCurrencies();
-        CustomerViewModel.getAllCustomers();
-        ExpenseCategoryViewModel.getAllCategories();
-        ExpenseViewModel.getAllExpenses();
-        ProductCategoryViewModel.getItems();
-        ProductMasterViewModel.getProductMasters();
-        PurchaseMasterViewModel.getPurchaseMasters();
-        PurchaseReturnMasterViewModel.getPurchaseReturnMasters();
-        QuotationMasterViewModel.getQuotationMasters();
-        RequisitionMasterViewModel.getRequisitionMasters();
-        SaleMasterViewModel.getSaleMasters();
-        SaleReturnMasterViewModel.getSaleReturnMasters();
-        StockInMasterViewModel.getStockInMasters();
-        SupplierViewModel.getAllSuppliers();
-        TransferMasterViewModel.getTransferMasters();
-        UOMViewModel.getItems();
-        UserViewModel.getAllUsers();
-        return null;
-      }
-    };
+    Task<Void> initDataFetcher =
+        new Task<>() {
+          @Override
+          protected Void call() {
+            AdjustmentMasterViewModel.getAllAdjustmentMasters();
+            BranchViewModel.getAllBranches();
+            BrandViewModel.getItems();
+            CurrencyViewModel.getAllCurrencies();
+            CustomerViewModel.getAllCustomers();
+            ExpenseCategoryViewModel.getAllCategories();
+            ExpenseViewModel.getAllExpenses();
+            ProductCategoryViewModel.getItems();
+            ProductMasterViewModel.getProductMasters();
+            PurchaseMasterViewModel.getPurchaseMasters();
+            PurchaseReturnMasterViewModel.getPurchaseReturnMasters();
+            QuotationMasterViewModel.getQuotationMasters();
+            RequisitionMasterViewModel.getRequisitionMasters();
+            SaleMasterViewModel.getSaleMasters();
+            SaleReturnMasterViewModel.getSaleReturnMasters();
+            StockInMasterViewModel.getStockInMasters();
+            SupplierViewModel.getAllSuppliers();
+            TransferMasterViewModel.getTransferMasters();
+            UOMViewModel.getItems();
+            UserViewModel.getAllUsers();
+            ProductDetailViewModel.getProductDetailsComboBoxList();
+            return null;
+          }
+        };
 
     Thread thread1 = new Thread(databaseCreator);
     thread1.setDaemon(true);

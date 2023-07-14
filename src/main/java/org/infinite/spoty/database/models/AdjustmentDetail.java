@@ -18,18 +18,23 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 
 @DatabaseTable(tableName = "adjustment_details")
 public class AdjustmentDetail implements Serializable {
   @DatabaseField(generatedId = true)
   private long id;
 
-  @DatabaseField(foreign = true, columnName = "product_id", canBeNull = false)
+  @DatabaseField(foreign = true, columnName = "product_id", canBeNull = false, foreignAutoRefresh = true)
   private ProductDetail product;
 
-  @DatabaseField(foreign = true, columnName = "adjustment_master_id", canBeNull = false, foreignAutoRefresh = true,
-          foreignAutoCreate = true,
-          columnDefinition = "INTEGER CONSTRAINT FK_NAME REFERENCES adjustment(id) ON DELETE CASCADE")
+  @DatabaseField(
+      foreign = true,
+      columnName = "adjustment_master_id",
+      canBeNull = false,
+      foreignAutoRefresh = true,
+      foreignAutoCreate = true,
+      columnDefinition = "INTEGER CONSTRAINT FK_NAME REFERENCES adjustment(id) ON DELETE CASCADE")
   private AdjustmentMaster adjustment;
 
   @DatabaseField(columnName = "quantity")
@@ -81,8 +86,7 @@ public class AdjustmentDetail implements Serializable {
             + product.getProduct().getName()
             + " "
             + product.getName()
-            + " "
-            + product.getUnit().getName()
+            + (Objects.equals(product.getUnit(), null) ? "" : " " + product.getUnit().getName())
         : null;
   }
 

@@ -21,10 +21,12 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
 import java.sql.SQLException;
 import java.util.LinkedList;
+import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.ProductDetail;
 import org.infinite.spoty.database.models.SaleDetail;
@@ -232,7 +234,7 @@ public class SaleDetailViewModel {
                     Double.parseDouble(getDiscount()),
                     getDiscountType());
 
-            saleDetailList.add(saleDetail);
+            Platform.runLater(() -> saleDetailList.add(saleDetail));
 
             return null;
           }
@@ -240,9 +242,29 @@ public class SaleDetailViewModel {
 
     task.setOnSucceeded(event -> resetProperties());
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
+  }
+
+  public static void saveSaleDetail() {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<SaleDetail, Long> saleDetailDao =
+                DaoManager.createDao(connectionSource, SaleDetail.class);
+
+            saleDetailDao.create(saleDetailList);
+
+            return null;
+          }
+        };
+
+    task.setOnSucceeded(event -> saleDetailList.clear());
+
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void updateSaleDetail(long index) {
@@ -266,8 +288,11 @@ public class SaleDetailViewModel {
             saleDetail.setDiscount(Double.parseDouble(getDiscount()));
             saleDetail.setDiscountType(getDiscountType());
 
-            saleDetailList.remove((int) getTempId());
-            saleDetailList.add(getTempId(), saleDetail);
+            Platform.runLater(
+                () -> {
+                  saleDetailList.remove((int) getTempId());
+                  saleDetailList.add(getTempId(), saleDetail);
+                });
 
             return null;
           }
@@ -275,9 +300,7 @@ public class SaleDetailViewModel {
 
     task.setOnSucceeded(event -> resetProperties());
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void getItem(long index, int tempIndex) {
@@ -311,9 +334,7 @@ public class SaleDetailViewModel {
           }
         };
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void updateItem(long index) {
@@ -345,9 +366,36 @@ public class SaleDetailViewModel {
 
     task.setOnSucceeded(event -> getAllSaleDetails());
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
+  }
+
+  public static void updateSaleDetails() {
+    Task<Void> task =
+        new Task<>() {
+          @Override
+          protected Void call() throws SQLException {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
+
+            Dao<SaleDetail, Long> saleDetailDao =
+                DaoManager.createDao(connectionSource, SaleDetail.class);
+
+            saleDetailList.forEach(
+                saleDetail -> {
+                  try {
+                    saleDetailDao.update(saleDetail);
+                  } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                  }
+                });
+
+            return null;
+          }
+        };
+
+    task.setOnSucceeded(event -> getAllSaleDetails());
+
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void getAllSaleDetails() {
@@ -368,9 +416,7 @@ public class SaleDetailViewModel {
           }
         };
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void removeSaleDetail(long index, int tempIndex) {
@@ -378,15 +424,13 @@ public class SaleDetailViewModel {
         new Task<>() {
           @Override
           protected Void call() {
-            saleDetailList.remove(tempIndex);
+            Platform.runLater(() -> saleDetailList.remove(tempIndex));
             PENDING_DELETES.add(index);
             return null;
           }
         };
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void deleteSaleDetails(LinkedList<Long> indexes) {
@@ -412,9 +456,7 @@ public class SaleDetailViewModel {
           }
         };
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static ObservableList<SaleDetail> getSaleDetailList() {

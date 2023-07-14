@@ -66,9 +66,6 @@ public class RequisitionDetailFormController implements Initializable {
 
     // Combo box properties.
     requisitionDetailPdct.setItems(ProductDetailViewModel.getProductDetailsComboBoxList());
-    requisitionDetailPdct.setOnShowing(
-        e ->
-            requisitionDetailPdct.setItems(ProductDetailViewModel.getProductDetailsComboBoxList()));
     requisitionDetailPdct.setConverter(
         new StringConverter<>() {
           @Override

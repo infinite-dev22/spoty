@@ -27,7 +27,7 @@ public class AdjustmentMaster implements Serializable {
   @DatabaseField(generatedId = true)
   private int id;
 
-  @DatabaseField(foreign = true, columnName = "user_id")
+  @DatabaseField(foreign = true, columnName = "user_id", foreignAutoRefresh = true)
   private User user;
 
   @DatabaseField private Date date;

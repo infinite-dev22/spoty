@@ -25,6 +25,7 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.*;
 
@@ -190,7 +191,6 @@ public class ProductMasterViewModel {
           setCategory(null);
           setBrand(null);
           PENDING_DELETES.clear();
-          ProductDetailViewModel.productDetailsList.clear();
         });
   }
 
@@ -224,17 +224,19 @@ public class ProductMasterViewModel {
             }
 
             productMasterDao.create(productMaster);
+            ProductDetailViewModel.saveProductDetails();
 
-            resetProperties();
             return null;
           }
         };
 
-    task.setOnSucceeded(event -> getProductMasters());
+    task.setOnSucceeded(
+        event -> {
+          resetProperties();
+          getProductMasters();
+        });
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void getProductMasters() {
@@ -263,9 +265,7 @@ public class ProductMasterViewModel {
           }
         };
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void getItem(long index) {
@@ -303,9 +303,7 @@ public class ProductMasterViewModel {
 
     task.setOnSucceeded(event -> getProductMasters());
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void updateItem(long index) {
@@ -332,17 +330,19 @@ public class ProductMasterViewModel {
             productMaster.setProductDetails(ProductDetailViewModel.getProductDetailsList());
 
             productMasterDao.update(productMaster);
+            ProductDetailViewModel.updateProductDetails();
 
-            resetProperties();
             return null;
           }
         };
 
-    task.setOnSucceeded(event -> getProductMasters());
+    task.setOnSucceeded(
+        event -> {
+          resetProperties();
+          getProductMasters();
+        });
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void deleteItem(long index) {
@@ -364,8 +364,6 @@ public class ProductMasterViewModel {
 
     task.setOnSucceeded(event -> getProductMasters());
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 }
