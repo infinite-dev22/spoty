@@ -28,6 +28,7 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.ExpenseCategory;
 
@@ -121,9 +122,7 @@ public class ExpenseCategoryViewModel {
           getAllCategories();
         });
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void getAllCategories() {
@@ -152,9 +151,7 @@ public class ExpenseCategoryViewModel {
           }
         };
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void getItem(long index) {
@@ -179,9 +176,7 @@ public class ExpenseCategoryViewModel {
 
     task.setOnSucceeded(event -> getAllCategories());
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void updateItem(long index) {
@@ -208,9 +203,7 @@ public class ExpenseCategoryViewModel {
 
     task.setOnSucceeded(event -> getAllCategories());
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void deleteItem(long index) {
@@ -232,9 +225,7 @@ public class ExpenseCategoryViewModel {
 
     task.setOnSucceeded(event -> getAllCategories());
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static ObservableList<ExpenseCategory> getCategoryComboBoxList() {

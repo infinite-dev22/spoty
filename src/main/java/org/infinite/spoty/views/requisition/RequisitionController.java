@@ -61,9 +61,6 @@ public class RequisitionController implements Initializable {
     MFXTableColumn<RequisitionMaster> requisitionSupplier =
         new MFXTableColumn<>(
             "Supplier", false, Comparator.comparing(RequisitionMaster::getSupplierName));
-    MFXTableColumn<RequisitionMaster> requisitionDelivery =
-        new MFXTableColumn<>(
-            "Delivery Date", false, Comparator.comparing(RequisitionMaster::getDeliveryDate));
     MFXTableColumn<RequisitionMaster> requisitionStatus =
         new MFXTableColumn<>("Status", false, Comparator.comparing(RequisitionMaster::getStatus));
     MFXTableColumn<RequisitionMaster> requisitionShippingMethod =
@@ -76,8 +73,6 @@ public class RequisitionController implements Initializable {
         requisition -> new MFXTableRowCell<>(RequisitionMaster::getBranchName));
     requisitionSupplier.setRowCellFactory(
         requisition -> new MFXTableRowCell<>(RequisitionMaster::getSupplierName));
-    requisitionDelivery.setRowCellFactory(
-        requisition -> new MFXTableRowCell<>(RequisitionMaster::getDeliveryDateString));
     requisitionStatus.setRowCellFactory(
         requisition -> new MFXTableRowCell<>(RequisitionMaster::getStatus));
     requisitionShippingMethod.setRowCellFactory(
@@ -88,9 +83,6 @@ public class RequisitionController implements Initializable {
         .prefWidthProperty()
         .bind(requisitionMasterTable.widthProperty().multiply(.15));
     requisitionSupplier
-        .prefWidthProperty()
-        .bind(requisitionMasterTable.widthProperty().multiply(.15));
-    requisitionDelivery
         .prefWidthProperty()
         .bind(requisitionMasterTable.widthProperty().multiply(.15));
     requisitionStatus
@@ -106,7 +98,6 @@ public class RequisitionController implements Initializable {
             requisitionDate,
             requisitionBranch,
             requisitionSupplier,
-            requisitionDelivery,
             requisitionStatus,
             requisitionShippingMethod);
     requisitionMasterTable
@@ -115,7 +106,6 @@ public class RequisitionController implements Initializable {
             new StringFilter<>("Reference", RequisitionMaster::getRef),
             new StringFilter<>("Branch", RequisitionMaster::getBranchName),
             new StringFilter<>("Supplier", RequisitionMaster::getSupplierName),
-            new StringFilter<>("Delivery Date", RequisitionMaster::getDeliveryDateString),
             new StringFilter<>("Status", RequisitionMaster::getStatus),
             new StringFilter<>("Shipping Method", RequisitionMaster::getShipMethod));
     getRequisitionMasterTable();

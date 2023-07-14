@@ -24,7 +24,6 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.util.Collection;
 import java.util.Date;
-import java.util.LinkedList;
 
 @DatabaseTable(tableName = "requisition_master")
 public class RequisitionMaster implements Serializable {
@@ -37,17 +36,17 @@ public class RequisitionMaster implements Serializable {
   @DatabaseField(canBeNull = false)
   private Date date;
 
-  @DatabaseField(foreign = true, columnName = "user_id")
+  @DatabaseField(foreign = true, columnName = "user_id", foreignAutoRefresh = true)
   private User user;
 
-  @DatabaseField(foreign = true, columnName = "supplier_id", canBeNull = false)
+  @DatabaseField(foreign = true, columnName = "supplier_id", canBeNull = false, foreignAutoRefresh = true)
   private Supplier supplier;
 
-  @DatabaseField(foreign = true, columnName = "branch_id", canBeNull = false)
+  @DatabaseField(foreign = true, columnName = "branch_id", canBeNull = false, foreignAutoRefresh = true)
   private Branch branch;
 
   @ForeignCollectionField
-  private Collection<RequisitionDetail> requisitionDetails = new LinkedList<>();
+  private Collection<RequisitionDetail> requisitionDetails;
 
   @DatabaseField(columnName = "ship_via")
   private String shipVia;

@@ -28,7 +28,7 @@ public class QuotationMaster implements Serializable {
   @DatabaseField(generatedId = true)
   private int id;
 
-  @DatabaseField(foreign = true, columnName = "user_id")
+  @DatabaseField(foreign = true, columnName = "user_id", foreignAutoRefresh = true)
   private User user;
 
   @DatabaseField(canBeNull = false)
@@ -37,10 +37,10 @@ public class QuotationMaster implements Serializable {
   @DatabaseField(columnName = "reference_number")
   private String ref;
 
-  @DatabaseField(foreign = true, columnName = "customer_id", canBeNull = false)
+  @DatabaseField(foreign = true, columnName = "customer_id", canBeNull = false, foreignAutoRefresh = true)
   private Customer customer;
 
-  @DatabaseField(foreign = true, columnName = "branch_id", canBeNull = false)
+  @DatabaseField(foreign = true, columnName = "branch_id", canBeNull = false, foreignAutoRefresh = true)
   private Branch branch;
 
   @ForeignCollectionField

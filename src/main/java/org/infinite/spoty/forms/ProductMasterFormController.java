@@ -138,8 +138,6 @@ public class ProductMasterFormController implements Initializable {
 
     // ComboBox Properties.
     productFormCategory.setItems(ProductCategoryViewModel.getCategoriesComboBoxList());
-    productFormCategory.setOnShowing(
-        e -> productFormCategory.setItems(ProductCategoryViewModel.getCategoriesComboBoxList()));
     productFormCategory.setConverter(
         new StringConverter<>() {
           @Override
@@ -155,8 +153,6 @@ public class ProductMasterFormController implements Initializable {
         });
 
     productFormBrand.setItems(BrandViewModel.getBrandsComboBoxList());
-    productFormBrand.setOnShowing(
-        e -> productFormBrand.setItems(BrandViewModel.getBrandsComboBoxList()));
     productFormBrand.setConverter(
         new StringConverter<>() {
           @Override

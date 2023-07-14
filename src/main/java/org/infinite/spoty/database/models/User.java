@@ -38,7 +38,7 @@ public class User implements Serializable {
   @DatabaseField private String password;
   @DatabaseField private String phone;
 
-  @DatabaseField(foreign = true, columnName = "role_id", canBeNull = false)
+  @DatabaseField(foreign = true, columnName = "role_id", canBeNull = false, foreignAutoRefresh = true)
   private Role role;
 
   @DatabaseField(canBeNull = false)

@@ -28,6 +28,7 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.StockInMaster;
@@ -142,7 +143,6 @@ public class StockInMasterViewModel {
           setStatus("");
           setTotalCost("");
           PENDING_DELETES.clear();
-          StockInDetailViewModel.stockInDetailsList.clear();
         });
   }
 
@@ -167,6 +167,7 @@ public class StockInMasterViewModel {
             }
 
             stockInMasterDao.create(stockInMaster);
+            StockInDetailViewModel.clearStockInDetails();
 
             return null;
           }
@@ -178,9 +179,7 @@ public class StockInMasterViewModel {
           getStockInMasters();
         });
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void getStockInMasters() {
@@ -209,9 +208,7 @@ public class StockInMasterViewModel {
           }
         };
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void getItem(long index) {
@@ -240,12 +237,9 @@ public class StockInMasterViewModel {
           }
         };
 
-    task.setOnSucceeded(
-            event -> getStockInMasters());
+    task.setOnSucceeded(event -> getStockInMasters());
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void updateItem(long index) {
@@ -269,20 +263,19 @@ public class StockInMasterViewModel {
             stockInMaster.setStockInDetails(StockInDetailViewModel.getStockInDetailsList());
 
             stockInMasterDao.update(stockInMaster);
+            StockInDetailViewModel.updateStockInDetails();
 
             return null;
           }
         };
 
     task.setOnSucceeded(
-            event -> {
-              resetProperties();
-              getStockInMasters();
-            });
+        event -> {
+          resetProperties();
+          getStockInMasters();
+        });
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void deleteItem(long index) {
@@ -302,12 +295,9 @@ public class StockInMasterViewModel {
           }
         };
 
-    task.setOnSucceeded(
-            event -> getStockInMasters());
+    task.setOnSucceeded(event -> getStockInMasters());
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static ObservableList<StockInMaster> getStockInMasterList() {

@@ -35,10 +35,10 @@ public class ProductMaster implements Serializable {
   @DatabaseField(canBeNull = false)
   private String name;
 
-  @DatabaseField(foreign = true, canBeNull = false)
+  @DatabaseField(foreign = true, canBeNull = false, foreignAutoRefresh = true)
   private ProductCategory category;
 
-  @DatabaseField(foreign = true, canBeNull = false)
+  @DatabaseField(foreign = true, canBeNull = false, foreignAutoRefresh = true)
   private Brand brand;
 
   @ForeignCollectionField

@@ -61,8 +61,6 @@ public class PurchaseDetailFormController implements Initializable {
 
     // ComboBox properties.
     purchaseDetailPdct.setItems(ProductDetailViewModel.getProductDetailsComboBoxList());
-    purchaseDetailPdct.setOnShowing(
-        e -> purchaseDetailPdct.setItems(ProductDetailViewModel.getProductDetailsComboBoxList()));
     purchaseDetailPdct.setConverter(
         new StringConverter<>() {
           @Override

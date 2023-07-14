@@ -29,6 +29,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.components.navigation.Navigation;
 import org.infinite.spoty.components.navigation.Pages;
 import org.infinite.spoty.values.strings.Labels;
@@ -63,6 +64,7 @@ public class BaseController implements Initializable {
   void closeIconClicked() {
     stage.hide();
     stage.close();
+    GlobalActions.spotyThreadPool().shutdownNow();
     Platform.exit();
     System.exit(0);
   }

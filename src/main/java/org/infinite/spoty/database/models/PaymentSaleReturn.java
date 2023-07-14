@@ -25,7 +25,7 @@ public class PaymentSaleReturn implements Serializable {
   @DatabaseField(generatedId = true)
   private long id;
 
-  @DatabaseField(foreign = true, columnName = "user_id")
+  @DatabaseField(foreign = true, columnName = "user_id", foreignAutoRefresh = true)
   private User user;
 
   @DatabaseField(canBeNull = false)
@@ -34,7 +34,7 @@ public class PaymentSaleReturn implements Serializable {
   @DatabaseField(columnName = "reference_number")
   private String ref;
 
-  @DatabaseField(foreign = true, canBeNull = false, columnName = "sale_return_id")
+  @DatabaseField(foreign = true, canBeNull = false, columnName = "sale_return_id", foreignAutoRefresh = true)
   private SaleReturnMaster saleReturn;
 
   @DatabaseField(canBeNull = false)

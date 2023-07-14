@@ -28,6 +28,7 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.Customer;
 
@@ -212,9 +213,7 @@ public class CustomerViewModel {
           getAllCustomers();
         });
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void getAllCustomers() {
@@ -243,9 +242,7 @@ public class CustomerViewModel {
           }
         };
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void getItem(long index) {
@@ -276,9 +273,7 @@ public class CustomerViewModel {
 
     task.setOnSucceeded(event -> getAllCustomers());
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void updateItem(long index) {
@@ -314,9 +309,7 @@ public class CustomerViewModel {
           getAllCustomers();
         });
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static void deleteItem(long index) {
@@ -338,9 +331,7 @@ public class CustomerViewModel {
 
     task.setOnSucceeded(event -> getAllCustomers());
 
-    Thread thread = new Thread(task);
-    thread.setDaemon(true);
-    thread.start();
+    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static ObservableList<Customer> getCustomersComboBoxList() {

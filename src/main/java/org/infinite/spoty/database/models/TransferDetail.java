@@ -18,6 +18,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 
 @DatabaseTable(tableName = "transfer_detail")
 public class TransferDetail implements Serializable {
@@ -34,7 +35,7 @@ public class TransferDetail implements Serializable {
           "INTEGER CONSTRAINT FK_NAME REFERENCES transfer_master(id) ON DELETE CASCADE")
   private TransferMaster transfer;
 
-  @DatabaseField(foreign = true, canBeNull = false, columnName = "product_id")
+  @DatabaseField(foreign = true, canBeNull = false, columnName = "product_id", foreignAutoRefresh = true)
   private ProductDetail product;
 
   @DatabaseField(canBeNull = false)
@@ -112,7 +113,7 @@ public class TransferDetail implements Serializable {
             + " "
             + product.getName()
             + " "
-            + product.getUnit().getName()
+            + (Objects.equals(product.getUnit(), null) ? "" : product.getUnit().getName())
         : null;
   }
 

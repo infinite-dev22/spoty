@@ -76,12 +76,8 @@ public class ExpenseFormController implements Initializable {
 
     // Combo box properties.
     expenseFormBranch.setItems(BranchViewModel.getBranchesComboBoxList());
-    expenseFormBranch.setOnShowing(
-        e -> expenseFormBranch.setItems(BranchViewModel.getBranchesComboBoxList()));
 
     expenseFormCategory.setItems(ExpenseCategoryViewModel.getCategoryComboBoxList());
-    expenseFormCategory.setOnShowing(
-        e -> expenseFormCategory.setItems(ExpenseCategoryViewModel.getCategoryComboBoxList()));
 
     // Set Object property as combo display name.
     expenseFormBranch.setConverter(

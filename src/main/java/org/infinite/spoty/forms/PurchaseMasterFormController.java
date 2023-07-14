@@ -141,14 +141,10 @@ public class PurchaseMasterFormController implements Initializable {
     purchaseSupplier.setItems(SupplierViewModel.getSuppliersComboBoxList());
     purchaseSupplier.setConverter(purchaseSupplierConverter);
     purchaseSupplier.setFilterFunction(purchaseSupplierFilterFunction);
-    purchaseSupplier.setOnShowing(
-        event -> purchaseSupplier.setItems(SupplierViewModel.getSuppliersComboBoxList()));
 
     purchaseBranch.setItems(BranchViewModel.getBranchesComboBoxList());
     purchaseBranch.setConverter(purchaseBranchConverter);
     purchaseBranch.setFilterFunction(purchaseBranchFilterFunction);
-    purchaseBranch.setOnShowing(
-        e -> purchaseBranch.setItems(BranchViewModel.getBranchesComboBoxList()));
 
     purchaseStatus.setItems(FXCollections.observableArrayList(Values.PURCHASESTATUSES));
 

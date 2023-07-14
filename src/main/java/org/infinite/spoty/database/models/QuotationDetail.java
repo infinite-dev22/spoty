@@ -18,6 +18,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 
 @DatabaseTable(tableName = "quotation_detail")
 public class QuotationDetail implements Serializable {
@@ -27,10 +28,10 @@ public class QuotationDetail implements Serializable {
   @DatabaseField(canBeNull = false)
   private double price = 0;
 
-  @DatabaseField(foreign = true, columnName = "sale_unit_id", canBeNull = false)
+  @DatabaseField(foreign = true, columnName = "sale_unit_id", foreignAutoRefresh = true)
   private UnitOfMeasure saleUnit;
 
-  @DatabaseField(foreign = true, columnName = "product_id", canBeNull = false)
+  @DatabaseField(foreign = true, columnName = "product_id", canBeNull = false, foreignAutoRefresh = true)
   private ProductDetail product;
 
   @DatabaseField(
@@ -88,6 +89,13 @@ public class QuotationDetail implements Serializable {
     this.quantity = quantity;
   }
 
+  public QuotationDetail(ProductDetail product, double netTax, double discount, long quantity) {
+    this.product = product;
+    this.netTax = netTax;
+    this.discount = discount;
+    this.quantity = quantity;
+  }
+
   public QuotationDetail() {}
 
   public long getId() {
@@ -130,7 +138,7 @@ public class QuotationDetail implements Serializable {
             + " "
             + product.getName()
             + " "
-            + product.getUnit().getName()
+            + (Objects.equals(product.getUnit(), null) ? "" : product.getUnit().getName())
         : null;
   }
 

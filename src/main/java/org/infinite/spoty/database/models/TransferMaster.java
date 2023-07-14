@@ -28,24 +28,24 @@ public class TransferMaster implements Serializable {
   @DatabaseField(generatedId = true)
   private int id;
 
-  @DatabaseField(foreign = true, columnName = "user_id") private User user;
+  @DatabaseField(foreign = true, columnName = "user_id", foreignAutoRefresh = true)
+  private User user;
+
   @DatabaseField(columnName = "reference_number")
   private String ref;
 
   @DatabaseField(canBeNull = false)
   private Date date;
 
-  @DatabaseField(foreign = true, columnName = "from_branch_id", canBeNull = false)
+  @DatabaseField(foreign = true, columnName = "from_branch_id", canBeNull = false, foreignAutoRefresh = true)
   private Branch fromBranch;
 
-  @DatabaseField(foreign = true, columnName = "to_branch_id", canBeNull = false)
+  @DatabaseField(foreign = true, columnName = "to_branch_id", canBeNull = false, foreignAutoRefresh = true)
   private Branch toBranch;
 
-  @ForeignCollectionField
-  private Collection<TransferDetail> transferDetails;
+  @ForeignCollectionField private Collection<TransferDetail> transferDetails;
 
-  @DatabaseField
-  private String shipping;
+  @DatabaseField private String shipping;
 
   @DatabaseField(canBeNull = false)
   private double total;
@@ -53,18 +53,19 @@ public class TransferMaster implements Serializable {
   @DatabaseField(canBeNull = false)
   private String status;
 
-  @DatabaseField(foreign = true, columnName = "approved_by_id")
+  @DatabaseField(foreign = true, columnName = "approved_by_id", foreignAutoRefresh = true)
   private User approvedBy;
 
-  @DatabaseField(foreign = true, columnName = "received_by_id")
+  @DatabaseField(foreign = true, columnName = "received_by_id", foreignAutoRefresh = true)
   private User receivedBy;
 
   @DatabaseField(columnName = "approval_date")
   private Date approvalDate;
+
   @DatabaseField(columnName = "receive_date")
   private Date receiveDate;
-  @DatabaseField
-  private String notes;
+
+  @DatabaseField private String notes;
 
   @DatabaseField(columnName = "created_at")
   private Date createdAt;
