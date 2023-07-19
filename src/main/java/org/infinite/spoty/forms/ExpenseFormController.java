@@ -20,6 +20,7 @@ import static org.infinite.spoty.Validators.requiredValidator;
 import io.github.palexdev.materialfx.controls.MFXComboBox;
 import io.github.palexdev.materialfx.controls.MFXDatePicker;
 import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
 import java.util.Objects;
@@ -74,38 +75,20 @@ public class ExpenseFormController implements Initializable {
     expenseFormAmount.textProperty().bindBidirectional(ExpenseViewModel.amountProperty());
     expenseFormDetails.textProperty().bindBidirectional(ExpenseViewModel.detailsProperty());
 
+    // ComboBox Converters.
+    StringConverter<Branch> branchConverter =
+        FunctionalStringConverter.to(branch -> (branch == null) ? "" : branch.getName());
+
+    StringConverter<ExpenseCategory> expenseCategoryConverter =
+        FunctionalStringConverter.to(
+            expenseCategory -> (expenseCategory == null) ? "" : expenseCategory.getName());
+
     // Combo box properties.
     expenseFormBranch.setItems(BranchViewModel.getBranchesComboBoxList());
+    expenseFormBranch.setConverter(branchConverter);
 
     expenseFormCategory.setItems(ExpenseCategoryViewModel.getCategoryComboBoxList());
-
-    // Set Object property as combo display name.
-    expenseFormBranch.setConverter(
-        new StringConverter<>() {
-          @Override
-          public String toString(Branch object) {
-            if (object != null) return object.getName();
-            else return null;
-          }
-
-          @Override
-          public Branch fromString(String string) {
-            return null;
-          }
-        });
-    expenseFormCategory.setConverter(
-        new StringConverter<>() {
-          @Override
-          public String toString(ExpenseCategory object) {
-            if (object != null) return object.getName();
-            else return null;
-          }
-
-          @Override
-          public ExpenseCategory fromString(String string) {
-            return null;
-          }
-        });
+    expenseFormCategory.setConverter(expenseCategoryConverter);
 
     // Input listeners.
     requiredValidator(
@@ -127,6 +110,7 @@ public class ExpenseFormController implements Initializable {
         "Amount can't be empty.",
         expenseFormAmountValidationLabel,
         expenseFormSaveBtn);
+
     dialogOnActions();
   }
 

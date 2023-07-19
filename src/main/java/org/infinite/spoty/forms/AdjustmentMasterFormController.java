@@ -32,11 +32,15 @@ import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import io.github.palexdev.materialfx.enums.ScrimPriority;
 import io.github.palexdev.materialfx.filter.LongFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
+import io.github.palexdev.materialfx.utils.StringUtils;
+import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
@@ -104,22 +108,20 @@ public class AdjustmentMasterFormController implements Initializable {
     adjustmentDate.textProperty().bindBidirectional(AdjustmentMasterViewModel.dateProperty());
     adjustmentNote.textProperty().bindBidirectional(AdjustmentMasterViewModel.noteProperty());
 
+    // ComboBox Converters.
+    StringConverter<Branch> branchConverter =
+            FunctionalStringConverter.to(branch -> (branch == null) ? "" : branch.getName());
+
+    // ComboBox Filter Functions.
+    Function<String, Predicate<Branch>> branchFilterFunction =
+            searchStr ->
+                    branch ->
+                            StringUtils.containsIgnoreCase(branchConverter.toString(branch), searchStr);
+
     // combBox properties.
     adjustmentBranch.setItems(BranchViewModel.getBranchesComboBoxList());
-    adjustmentBranch.setConverter(
-        new StringConverter<>() {
-          @Override
-          public String toString(Branch object) {
-            if (object != null) {
-              return object.getName();
-            } else return null;
-          }
-
-          @Override
-          public Branch fromString(String string) {
-            return null;
-          }
-        });
+    adjustmentBranch.setConverter(branchConverter);
+    adjustmentBranch.setFilterFunction(branchFilterFunction);
 
     // input validators.
     requiredValidator(
