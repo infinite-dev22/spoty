@@ -15,23 +15,620 @@
   -->
 
 <?import io.github.palexdev.materialfx.controls.MFXScrollPane?>
+<?import io.github.palexdev.materialfx.controls.MFXTextField?>
 <?import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton?>
+<?import io.github.palexdev.mfxcomponents.controls.checkbox.*?>
+<?import io.github.palexdev.mfxcore.controls.Label?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.*?>
+<?import org.infinite.spoty.components.navigation.Spacer?>
+<?import org.infinite.spoty.components.title.Title?>
 <?import java.net.URL?>
 <BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:id="roleSettingsHolder" styleClass="card"
-            xmlns="http://javafx.com/javafx/20.0.1" fx:controller="org.infinite.spoty.forms.RoleSettingsFormController">
+            xmlns="http://javafx.com/javafx/20.0.1"
+            fx:controller="org.infinite.spoty.forms.RoleSettingsFormController">
     <stylesheets>
         <URL value="@../styles/Common.css"/>
         <URL value="@../styles/TextFields.css"/>
     </stylesheets>
     <center>
-        <MFXScrollPane>
-            <VBox fx:id="roleHolder"/>
-            <GridPane fx:id="roleSettings"/>
+        <MFXScrollPane BorderPane.alignment="CENTER">
+            <GridPane hgap="20.0" vgap="40.0">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="50" hgrow="ALWAYS" minWidth="10.0"/>
+                    <ColumnConstraints percentWidth="50" hgrow="ALWAYS" minWidth="10.0"/>
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints minHeight="10.0" prefHeight="90.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
+                </rowConstraints>
+                <padding>
+                    <Insets left="5.0" right="5.0" top="20.0"/>
+                </padding>
+                <VBox spacing="5.0" prefHeight="200.0" prefWidth="100.0" styleClass="card">
+                    <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                    </padding>
+                    <Title text="DASHBOARD">
+                    </Title>
+                    <Separator/>
+                    <MFXCheckBox fx:id="dashboardCheckbox" text="Access Dashboard"/>
+                </VBox>
+                <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card" GridPane.columnIndex="1"
+                      GridPane.rowIndex="8">
+                    <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                    </padding>
+                    <Title text="SETTINGS">
+                        <Spacer/>
+                        <MFXCheckBox fx:id="selectAllSettingsCheckbox" text="Select All"/>
+                    </Title>
+                    <Separator/>
+                    <GridPane hgap="20.0" vgap="10.0">
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0"/>
+                            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0"/>
+                        </columnConstraints>
+                        <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                        </rowConstraints>
+                        <padding>
+                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                        </padding>
+                        <MFXCheckBox fx:id="accessSystemSettingCheckbox" text="Access System Settings"/>
+                        <MFXCheckBox fx:id="AccessPOSSettingsCheckbox" text="Access POS Settings"
+                                     GridPane.columnIndex="1"/>
+                        <MFXCheckBox fx:id="accessCurrencyCheckbox" text="Access Currency Settings"
+                                     GridPane.rowIndex="1"/>
+                        <MFXCheckBox fx:id="accessBranchCheckbox" text="Access Branch Settings" GridPane.columnIndex="1"
+                                     GridPane.rowIndex="1"/>
+                        <MFXCheckBox fx:id="accessBackupCheckbox" text="Access Backup Settings" GridPane.rowIndex="2"/>
+                    </GridPane>
+                </VBox>
+                <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card" GridPane.columnIndex="1"
+                      GridPane.rowIndex="7">
+                    <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                    </padding>
+                    <Title text="CUSTOMER">
+                        <Spacer/>
+                        <MFXCheckBox fx:id="selectAllCustomersCheckbox" text="Select All"/>
+                    </Title>
+                    <Separator/>
+                    <GridPane hgap="20.0" vgap="10.0">
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0"/>
+                            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0"/>
+                        </columnConstraints>
+                        <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                        </rowConstraints>
+                        <padding>
+                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                        </padding>
+                        <MFXCheckBox fx:id="viewCustomersCheckbox" text="View Customers"/>
+                        <MFXCheckBox fx:id="createCustomerCheckbox" text="Create Customers" GridPane.columnIndex="1"/>
+                        <MFXCheckBox fx:id="editCustomersCheckbox" text="Edit Customers" GridPane.rowIndex="1"/>
+                        <MFXCheckBox fx:id="deleteCustomerCheckbox" text="Delete Customers" GridPane.columnIndex="1"
+                                     GridPane.rowIndex="1"/>
+                        <MFXCheckBox fx:id="importCustomersCheckbox" text="Import Customers" GridPane.rowIndex="2"/>
+                    </GridPane>
+                </VBox>
+                <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card" GridPane.columnIndex="1"
+                      GridPane.rowIndex="6">
+                    <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                    </padding>
+                    <Title text="ROLE SETTING">
+                        <Spacer/>
+                        <MFXCheckBox fx:id="selectAllRolesCheckbox" text="Select All"/>
+                    </Title>
+                    <Separator/>
+                    <GridPane hgap="20.0" vgap="10.0">
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0"/>
+                            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0"/>
+                        </columnConstraints>
+                        <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                        </rowConstraints>
+                        <padding>
+                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                        </padding>
+                        <MFXCheckBox fx:id="viewRoleCheckbox" text="View Roles"/>
+                        <MFXCheckBox fx:id="createRoleCheckbox" text="Create Roles" GridPane.columnIndex="1"/>
+                        <MFXCheckBox fx:id="editRoleCheckbox" text="Edit Roles" GridPane.rowIndex="1"/>
+                        <MFXCheckBox fx:id="deleteRoleCheckbox" text="Delete Roles" GridPane.columnIndex="1"
+                                     GridPane.rowIndex="1"/>
+                    </GridPane>
+                </VBox>
+                <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card" GridPane.columnIndex="1"
+                      GridPane.rowIndex="5">
+                    <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                    </padding>
+                    <Title text="SALES RETURN">
+                        <Spacer/>
+                        <MFXCheckBox fx:id="selectAllSalesReturnsCheckbox" text="Select All"/>
+                    </Title>
+                    <Separator/>
+                    <GridPane hgap="20.0" vgap="10.0">
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0"/>
+                            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0"/>
+                        </columnConstraints>
+                        <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                        </rowConstraints>
+                        <padding>
+                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                        </padding>
+                        <MFXCheckBox fx:id="viewSaleReturnsCheckbox" text="View Sales returns"/>
+                        <MFXCheckBox fx:id="createSaleReturnCheckbox" text="Create Sales returns"
+                                     GridPane.columnIndex="1"/>
+                        <MFXCheckBox fx:id="editSaleReturnsCheckbox" text="Edit Sales returns" GridPane.rowIndex="1"/>
+                        <MFXCheckBox fx:id="deleteSaleReturnCheckbox" text="Delete Sales returns"
+                                     GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                    </GridPane>
+                </VBox>
+                <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card" GridPane.columnIndex="1"
+                      GridPane.rowIndex="4">
+                    <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                    </padding>
+                    <Title text="EXPENSE">
+                        <Spacer/>
+                        <MFXCheckBox fx:id="selectAllExpensesCheckbox" text="Select All"/>
+                    </Title>
+                    <Separator/>
+                    <GridPane hgap="20.0" vgap="10.0">
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0"/>
+                            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0"/>
+                        </columnConstraints>
+                        <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                        </rowConstraints>
+                        <padding>
+                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                        </padding>
+                        <MFXCheckBox fx:id="viewExpensesCheckbox" text="View expenses"/>
+                        <MFXCheckBox fx:id="createExpenseCheckbox" text="Create expenses" GridPane.columnIndex="1"/>
+                        <MFXCheckBox fx:id="editExpensesCheckbox" text="Edit expenses" GridPane.rowIndex="1"/>
+                        <MFXCheckBox fx:id="deleteExpenseCheckbox" text="Delete expenses" GridPane.columnIndex="1"
+                                     GridPane.rowIndex="1"/>
+                    </GridPane>
+                </VBox>
+                <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card" GridPane.columnIndex="1"
+                      GridPane.rowIndex="3">
+                    <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                    </padding>
+                    <Title text="REQUISITION">
+                        <Spacer/>
+                        <MFXCheckBox fx:id="selectAllRequisitionsCheckbox" text="Select All"/>
+                    </Title>
+                    <Separator/>
+                    <GridPane hgap="20.0" vgap="10.0">
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0"/>
+                            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0"/>
+                        </columnConstraints>
+                        <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                        </rowConstraints>
+                        <padding>
+                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                        </padding>
+                        <MFXCheckBox fx:id="viewRequisitionCheckbox" text="View Requisitions"/>
+                        <MFXCheckBox fx:id="createRequisitionCheckbox" text="Create Requisitions"
+                                     GridPane.columnIndex="1"/>
+                        <MFXCheckBox fx:id="editRequisitionCheckbox" text="Edit Requisitions" GridPane.rowIndex="1"/>
+                        <MFXCheckBox fx:id="deleteRequisitionCheckbox" text="Delete Requisitions"
+                                     GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                    </GridPane>
+                </VBox>
+                <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card" GridPane.columnIndex="1"
+                      GridPane.rowIndex="2">
+                    <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                    </padding>
+                    <Title text="STOCKIN">
+                        <Spacer/>
+                        <MFXCheckBox fx:id="selectAllStockInsCheckbox" text="Select All"/>
+                    </Title>
+                    <Separator/>
+                    <GridPane hgap="20.0" vgap="10.0">
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0"/>
+                            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0"/>
+                        </columnConstraints>
+                        <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                        </rowConstraints>
+                        <padding>
+                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                        </padding>
+                        <MFXCheckBox fx:id="viewStockInCheckbox" text="View Stock Ins"/>
+                        <MFXCheckBox fx:id="createStockInCheckbox" text="Create Stock Ins" GridPane.columnIndex="1"/>
+                        <MFXCheckBox fx:id="editStockInCheckbox" text="Edit Stock Ins" GridPane.rowIndex="1"/>
+                        <MFXCheckBox fx:id="deleteStockInCheckbox" text="Delete Stock Ins" GridPane.columnIndex="1"
+                                     GridPane.rowIndex="1"/>
+                    </GridPane>
+                </VBox>
+                <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card" GridPane.columnIndex="1"
+                      GridPane.rowIndex="1">
+                    <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                    </padding>
+                    <Title text="PURCHASE">
+                        <Spacer/>
+                        <MFXCheckBox fx:id="selectAllPurchasesCheckbox" text="Select All"/>
+                    </Title>
+                    <Separator/>
+                    <GridPane hgap="20.0" vgap="10.0">
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0"/>
+                            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0"/>
+                        </columnConstraints>
+                        <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                        </rowConstraints>
+                        <padding>
+                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                        </padding>
+                        <MFXCheckBox fx:id="viewPurchasesCheckbox" text="View Purchases"/>
+                        <MFXCheckBox fx:id="createPurchaseCheckbox" text="Create Purchases" GridPane.columnIndex="1"/>
+                        <MFXCheckBox fx:id="editPurchasesCheckbox" text="Edit Purchases" GridPane.rowIndex="1"/>
+                        <MFXCheckBox fx:id="deletePurchaseCheckbox" text="Delete Purchases" GridPane.columnIndex="1"
+                                     GridPane.rowIndex="1"/>
+                    </GridPane>
+                </VBox>
+                <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card" GridPane.columnSpan="2"
+                      GridPane.rowIndex="10">
+                    <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                    </padding>
+                    <Title text="REPORT">
+                        <Spacer/>
+                        <MFXCheckBox fx:id="selectAllReportsCheckbox" text="Select All"/>
+                    </Title>
+                    <Separator/>
+                    <GridPane hgap="20.0" vgap="10.0">
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0"/>
+                            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0"/>
+                        </columnConstraints>
+                        <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                        </rowConstraints>
+                        <padding>
+                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                        </padding>
+                        <MFXCheckBox fx:id="paymentSalesCheckbox" text="Access Payments Sales Reports"/>
+                        <MFXCheckBox fx:id="productQuantityAlertsCheckbox" text="Access Product Quantity Reports"
+                                     GridPane.columnIndex="1"/>
+                        <MFXCheckBox fx:id="paymentPurchasesCheckbox" text="Access Payment Purchases Reports"
+                                     GridPane.rowIndex="1"/>
+                        <MFXCheckBox fx:id="branchStockChartCheckbox" text="Access Branch Stock Chart Reports"
+                                     GridPane.columnIndex="1"
+                                     GridPane.rowIndex="1"/>
+                        <MFXCheckBox fx:id="saleReturnPaymentsCheckbox" text="Access Sales Returns Payments Reports"
+                                     GridPane.rowIndex="2"/>
+                        <MFXCheckBox fx:id="topSellingProductsCheckbox" text="Access Top Selling Products Reports"
+                                     GridPane.columnIndex="1"
+                                     GridPane.rowIndex="2"/>
+                        <MFXCheckBox fx:id="purchaseReturnPaymentsCheckbox"
+                                     text="Access Purchases Returns Payments Reports" GridPane.rowIndex="3"/>
+                        <MFXCheckBox fx:id="customerRankingCheckbox" text="Access Customer Ranking Reports"
+                                     GridPane.columnIndex="1"
+                                     GridPane.rowIndex="3"/>
+                        <MFXCheckBox fx:id="saleReportCheckbox" text="Access Sales Reports" GridPane.rowIndex="4"/>
+                        <MFXCheckBox fx:id="usersReportCheckbox" text="Access Users Reports" GridPane.columnIndex="1"
+                                     GridPane.rowIndex="4"/>
+                        <MFXCheckBox fx:id="purchaseReportCheckbox" text="Access Purchases Reports"
+                                     GridPane.rowIndex="5"/>
+                        <MFXCheckBox fx:id="stockReportCheckbox" text="Access Stock Reports" GridPane.columnIndex="1"
+                                     GridPane.rowIndex="5"/>
+                        <MFXCheckBox fx:id="customerReportCheckbox" text="Access Customers Reports"
+                                     GridPane.rowIndex="6"/>
+                        <MFXCheckBox fx:id="productReportCheckbox" text="Access Products Reports"
+                                     GridPane.columnIndex="1"
+                                     GridPane.rowIndex="6"/>
+                        <MFXCheckBox fx:id="supplierReportCheckbox" text="Access Suppliers Reports"
+                                     GridPane.rowIndex="7"/>
+                        <MFXCheckBox fx:id="productSalesReportCheckbox" text="Access Products Sales Reports"
+                                     GridPane.columnIndex="1"
+                                     GridPane.rowIndex="7"/>
+                        <MFXCheckBox fx:id="profitAndLossCheckbox" text="Access Profits &amp; Losses Reports"
+                                     GridPane.rowIndex="8"/>
+                        <MFXCheckBox fx:id="productPurchasesReportCheckbox" text="Access Products Purchases Reports"
+                                     GridPane.columnIndex="1"
+                                     GridPane.rowIndex="8"/>
+                    </GridPane>
+                </VBox>
+                <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card" GridPane.rowIndex="8">
+                    <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                    </padding>
+                    <Title text="PRODUCT">
+                        <Spacer/>
+                        <MFXCheckBox fx:id="selectAllProductsCheckbox" text="Select All"/>
+                    </Title>
+                    <Separator/>
+                    <GridPane hgap="20.0" vgap="10.0">
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0"/>
+                            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0"/>
+                        </columnConstraints>
+                        <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                        </rowConstraints>
+                        <padding>
+                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                        </padding>
+                        <MFXCheckBox fx:id="viewProductsCheckbox" text="View Products"/>
+                        <MFXCheckBox fx:id="createProductCheckbox" text="Create Products" GridPane.columnIndex="1"/>
+                        <MFXCheckBox fx:id="editProductsCheckbox" text="Edit Products" GridPane.rowIndex="1"/>
+                        <MFXCheckBox fx:id="deleteProductCheckbox" text="Delete Products" GridPane.columnIndex="1"
+                                     GridPane.rowIndex="1"/>
+                        <MFXCheckBox fx:id="productBarcodesCheckbox" text="Edit Barcodes" GridPane.rowIndex="2"/>
+                        <MFXCheckBox fx:id="productImportsCheckbox" text="Import Products" GridPane.columnIndex="1"
+                                     GridPane.rowIndex="2"/>
+                        <MFXCheckBox fx:id="productBrandsCheckbox" text="Access Brands"
+                                     GridPane.rowIndex="3"/>
+                        <MFXCheckBox fx:id="productCategoriesCheckbox" text="Access Product Categories"
+                                     GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                        <MFXCheckBox fx:id="productUnitsCheckbox" text="Access Units Of Measure"
+                                     GridPane.rowIndex="4"/>
+                    </GridPane>
+                </VBox>
+                <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card" GridPane.rowIndex="7">
+                    <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                    </padding>
+                    <Title text="SUPPLIER">
+                        <Spacer/>
+                        <MFXCheckBox fx:id="selectAllSuppliersCheckbox" text="Select All"/>
+                    </Title>
+                    <Separator/>
+                    <GridPane hgap="20.0" vgap="10.0">
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0"/>
+                            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0"/>
+                        </columnConstraints>
+                        <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                        </rowConstraints>
+                        <padding>
+                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                        </padding>
+                        <MFXCheckBox fx:id="viewSuppliersCheckbox" text="View Suppliers"/>
+                        <MFXCheckBox fx:id="createSupplierCheckbox" text="Create Suppliers" GridPane.columnIndex="1"/>
+                        <MFXCheckBox fx:id="editSuppliersCheckbox" text="Edit Suppliers" GridPane.rowIndex="1"/>
+                        <MFXCheckBox fx:id="deleteSupplierCheckbox" text="Delete Suppliers" GridPane.columnIndex="1"
+                                     GridPane.rowIndex="1"/>
+                        <MFXCheckBox fx:id="importSuppliersCheckbox" text="Import Suppliers" GridPane.rowIndex="2"/>
+                    </GridPane>
+                </VBox>
+                <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card" GridPane.rowIndex="6">
+                    <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                    </padding>
+                    <Title text="USER SETTING">
+                        <Spacer/>
+                        <MFXCheckBox fx:id="selectAllUserManagementsCheckbox" text="Select All"/>
+                    </Title>
+                    <Separator/>
+                    <GridPane hgap="20.0" vgap="10.0">
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0"/>
+                            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0"/>
+                        </columnConstraints>
+                        <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                        </rowConstraints>
+                        <padding>
+                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                        </padding>
+                        <MFXCheckBox fx:id="viewUsersCheckbox" text="View Users"/>
+                        <MFXCheckBox fx:id="createUserCheckbox" text="Create Users" GridPane.columnIndex="1"/>
+                        <MFXCheckBox fx:id="editUsersCheckbox" text="Edit Users" GridPane.rowIndex="1"/>
+                        <MFXCheckBox fx:id="deleteUserCheckbox" text="Delete Users" GridPane.columnIndex="1"
+                                     GridPane.rowIndex="1"/>
+                    </GridPane>
+                </VBox>
+                <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card" GridPane.rowIndex="5">
+                    <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                    </padding>
+                    <Title text="PURCHASES RETURN">
+                        <Spacer/>
+                        <MFXCheckBox fx:id="selectAllPurchasesReturnsCheckbox" text="Select All"/>
+                    </Title>
+                    <Separator/>
+                    <GridPane hgap="20.0" vgap="10.0">
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0"/>
+                            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0"/>
+                        </columnConstraints>
+                        <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                        </rowConstraints>
+                        <padding>
+                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                        </padding>
+                        <MFXCheckBox fx:id="viewPurchaseReturnsCheckbox" text="View Purchase Returns"/>
+                        <MFXCheckBox fx:id="createPurchaseReturnCheckbox" text="Create Purchase Returns"
+                                     GridPane.columnIndex="1"/>
+                        <MFXCheckBox fx:id="editPurchaseReturnsCheckbox" text="Edit Purchase Returns"
+                                     GridPane.rowIndex="1"/>
+                        <MFXCheckBox fx:id="deletePurchaseReturnCheckbox" text="Delete Purchase Returns"
+                                     GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                    </GridPane>
+                </VBox>
+                <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card" GridPane.rowIndex="4">
+                    <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                    </padding>
+                    <Title text="ADJUSTMENT">
+                        <Spacer/>
+                        <MFXCheckBox fx:id="selectAllAdjustmentsCheckbox" text="Select All"/>
+                    </Title>
+                    <Separator/>
+                    <GridPane hgap="20.0" vgap="10.0">
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0"/>
+                            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0"/>
+                        </columnConstraints>
+                        <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                        </rowConstraints>
+                        <padding>
+                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                        </padding>
+                        <MFXCheckBox fx:id="viewAdjustmentsCheckbox" text="View Adjustments"/>
+                        <MFXCheckBox fx:id="createAdjustmentCheckbox" text="Create Adjustments"
+                                     GridPane.columnIndex="1"/>
+                        <MFXCheckBox fx:id="editAdjustmentsCheckbox" text="Edit Adjustments" GridPane.rowIndex="1"/>
+                        <MFXCheckBox fx:id="deleteAdjustmentCheckbox" text="Delete Adjustments" GridPane.columnIndex="1"
+                                     GridPane.rowIndex="1"/>
+                    </GridPane>
+                </VBox>
+                <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card" GridPane.rowIndex="3">
+                    <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                    </padding>
+                    <Title text="QUOTATION">
+                        <Spacer/>
+                        <MFXCheckBox fx:id="selectAllQuotationsCheckbox" text="Select All"/>
+                    </Title>
+                    <Separator/>
+                    <GridPane hgap="20.0" vgap="10.0">
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0"/>
+                            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0"/>
+                        </columnConstraints>
+                        <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                        </rowConstraints>
+                        <padding>
+                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                        </padding>
+                        <MFXCheckBox fx:id="viewQuotationsCheckbox" text="View Quotations"/>
+                        <MFXCheckBox fx:id="createQuotationCheckbox" text="Create Quotations" GridPane.columnIndex="1"/>
+                        <MFXCheckBox fx:id="editQuotationsCheckbox" text="Edit Quotations" GridPane.rowIndex="1"/>
+                        <MFXCheckBox fx:id="deleteQuotationCheckbox" text="Delete Quotations" GridPane.columnIndex="1"
+                                     GridPane.rowIndex="1"/>
+                    </GridPane>
+                </VBox>
+                <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card" GridPane.rowIndex="2">
+                    <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                    </padding>
+                    <Title text="TRANSFER">
+                        <Spacer/>
+                        <MFXCheckBox fx:id="selectAllTransfersCheckbox" text="Select All"/>
+                    </Title>
+                    <Separator/>
+                    <GridPane hgap="20.0" vgap="10.0">
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0"/>
+                            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0"/>
+                        </columnConstraints>
+                        <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                        </rowConstraints>
+                        <padding>
+                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                        </padding>
+                        <MFXCheckBox fx:id="viewTransfersCheckbox" text="View Transfers"/>
+                        <MFXCheckBox fx:id="createTransferCheckbox" text="Create Transfers" GridPane.columnIndex="1"/>
+                        <MFXCheckBox fx:id="editTransfersCheckbox" text="Edit Transfers" GridPane.rowIndex="1"/>
+                        <MFXCheckBox fx:id="deleteTransferCheckbox" text="Delete Transfers" GridPane.columnIndex="1"
+                                     GridPane.rowIndex="1"/>
+                    </GridPane>
+                </VBox>
+                <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card" GridPane.rowIndex="1">
+                    <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                    </padding>
+                    <Title text="SALE">
+                        <Spacer/>
+                        <MFXCheckBox fx:id="selectAllSalesCheckbox" text="Select All"/>
+                    </Title>
+                    <Separator/>
+                    <GridPane hgap="20.0" vgap="10.0">
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0"/>
+                            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0"/>
+                        </columnConstraints>
+                        <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                        </rowConstraints>
+                        <padding>
+                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                        </padding>
+                        <MFXCheckBox fx:id="viewSalesCheckbox" text="View Sales"/>
+                        <MFXCheckBox fx:id="createSaleCheckbox" text="Create Sales" GridPane.columnIndex="1"/>
+                        <MFXCheckBox fx:id="editSalesCheckbox" text="Edit Sales" GridPane.rowIndex="1"/>
+                        <MFXCheckBox fx:id="deleteSaleCheckbox" text="Delete Sales" GridPane.columnIndex="1"
+                                     GridPane.rowIndex="1"/>
+                    </GridPane>
+                </VBox>
+                <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="100.0" styleClass="card"
+                      GridPane.columnIndex="1">
+                    <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                    </padding>
+                    <Title text="POINT OF SALE">
+                    </Title>
+                    <Separator/>
+                    <MFXCheckBox fx:id="accessPOSCheckbox" text="Access Point Of Sale"/>
+                </VBox>
+            </GridPane>
         </MFXScrollPane>
     </center>
     <bottom>
@@ -39,11 +636,25 @@
             <padding>
                 <Insets topRightBottomLeft="10"/>
             </padding>
-            <MFXButton fx:id="roleSaveBtn" styleClass="filled" onAction="#save" text="Save"/>
-            <MFXButton fx:id="roleCancelBtn" styleClass="outlined" onAction="#close" text="Cancel"/>
+            <MFXButton styleClass="filled" onAction="#save" text="Save"/>
+            <MFXButton styleClass="outlined" onAction="#close" text="Cancel"/>
         </HBox>
     </bottom>
-    <padding>
-        <Insets top="3" right="3" left="3"/>
-    </padding>
+    <top>
+        <HBox spacing="20">
+            <padding>
+                <Insets topRightBottomLeft="10"/>
+            </padding>
+            <VBox BorderPane.alignment="CENTER" spacing="5.0" styleClass="spoty-role-form-header">
+                <MFXTextField fx:id="roleNameInputField" floatMode="BORDER" floatingText="Role name" prefWidth="400"/>
+                <Label fx:id="errorLabel" visible="false"/>
+            </VBox>
+            <MFXTextField fx:id="roleDescriptionInputField" floatMode="BORDER" floatingText="Role description"
+                          prefWidth="400"/>
+        </HBox>
+    </top>
+    <stylesheets>
+        <URL value="@../styles/Common.css"/>
+        <URL value="@../styles/TextFields.css"/>
+    </stylesheets>
 </BorderPane>

@@ -35,9 +35,3153 @@ public class SQLiteTableCreator {
     return instance;
   }
 
+  public static void seedDatabase() throws SQLException {
+    instance.runQuery(
+        """
+            INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        1,
+                                        'create_adjustments',
+                                        'Create Adjustments',
+                                        'User can create adjustments',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        2,
+                                        'view_adjustments',
+                                        'View Adjustments',
+                                        'User can view adjustments',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        3,
+                                        'edit_adjustments',
+                                        'Edit Adjustments',
+                                        'User can edit adjustments',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        4,
+                                        'delete_adjustments',
+                                        'Delete Adjustments',
+                                        'User can delete adjustments',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        5,
+                                        'create_purchases',
+                                        'Create Purchases',
+                                        'User can create purchases',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        6,
+                                        'view_purchases',
+                                        'View Purchases',
+                                        'User can view purchases',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        7,
+                                        'edit_purchases',
+                                        'Edit Purchases',
+                                        'User can edit purchases',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        8,
+                                        'delete_purchases',
+                                        'Delete Purchases',
+                                        'User can delete purchases',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        9,
+                                        'create_currencies',
+                                        'Create Currencies',
+                                        'User can create currencies',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        10,
+                                        'view_currencies',
+                                        'View Currencies',
+                                        'User can view currencies',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        11,
+                                        'edit_currencies',
+                                        'Edit Currencies',
+                                        'User can edit currencies',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        12,
+                                        'delete_currencies',
+                                        'Delete Currencies',
+                                        'User can delete currencies',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        13,
+                                        'access_payments_sales_reports',
+                                        'Access Payments Sales Reports',
+                                        'User can access payments sales reports',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        14,
+                                        'access_payments_purchases_reports',
+                                        'Access Payments Purchases Reports',
+                                        'User can access payments purchases reports',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        15,
+                                        'access_sales_returns_payments_reports',
+                                        'Access Sales Returns Payments Reports',
+                                        'User can access sales returns payments reports',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        16,
+                                        'access_purchases_returns_payments_reports',
+                                        'Access Purchases Returns Payments Reports',
+                                        'User can access purchases returns payments reports',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        17,
+                                        'access_sales_reports',
+                                        'Access Sales Reports',
+                                        'User can access sales reports',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        18,
+                                        'access_purchases_reports',
+                                        'Access Purchases Reports',
+                                        'User can access purchases reports',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        19,
+                                        'access_customers_reports',
+                                        'Access Customers Reports',
+                                        'User can access customers reports',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        20,
+                                        'access_suppliers_reports',
+                                        'Access Suppliers Reports',
+                                        'User can access suppliers reports',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        21,
+                                        'access_profits_and_losses_reports',
+                                        'Access Profits And Losses Reports',
+                                        'User can access profits and losses reports',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        22,
+                                        'access_product_quantity_reports',
+                                        'Access Product Quantity Reports',
+                                        'User can access product quantity reports',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        23,
+                                        'access_branch_stock_charts_reports',
+                                        'Access Branch Stock Charts Reports',
+                                        'User can access branch stock charts reports',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        24,
+                                        'access_top_selling_products_reports',
+                                        'Access Top Selling Products Reports',
+                                        'User can access top selling products reports',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        25,
+                                        'access_customer_rankings_reports',
+                                        'Access Customer Rankings Reports',
+                                        'User can access customer rankings reports',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        26,
+                                        'access_users_reports',
+                                        'Access Users Reports',
+                                        'User can access users reports',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        27,
+                                        'access_stocks_reports',
+                                        'Access Stocks Reports',
+                                        'User can access stocks reports',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        28,
+                                        'access_products_reports',
+                                        'Access Products Reports',
+                                        'User can access products reports',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        29,
+                                        'access_product_sales_reports',
+                                        'Access Product Sales Reports',
+                                        'User can access product sales reports',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        30,
+                                        'access_product_purchases_reports',
+                                        'Access Product Purchases Reports',
+                                        'User can access product purchases reports',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        31,
+                                        'create_units_of_measure',
+                                        'Create Units Of Measure',
+                                        'User can create units of measure',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        32,
+                                        'view_units_of_measure',
+                                        'View Units Of Measure',
+                                        'User can view units of measure',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        33,
+                                        'edit_units_of_measure',
+                                        'Edit Units Of Measure',
+                                        'User can edit units of measure',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        34,
+                                        'delete_units_of_measure',
+                                        'Delete Units Of Measure',
+                                        'User can delete units of measure',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        35,
+                                        'access_units_of_measure',
+                                        'Access Units Of Measure',
+                                        'User can access units of measure',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        36,
+                                        'create_users',
+                                        'Create Users',
+                                        'User can create users',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        37,
+                                        'view_users',
+                                        'View Users',
+                                        'User can view users',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        38,
+                                        'edit_users',
+                                        'Edit Users',
+                                        'User can edit users',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        39,
+                                        'delete_users',
+                                        'Delete Users',
+                                        'User can delete users',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        40,
+                                        'create_expenses',
+                                        'Create Expenses',
+                                        'User can create expenses',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        41,
+                                        'view_expenses',
+                                        'View Expenses',
+                                        'User can view expenses',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        42,
+                                        'edit_expenses',
+                                        'Edit Expenses',
+                                        'User can edit expenses',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        43,
+                                        'delete_expenses',
+                                        'Delete Expenses',
+                                        'User can delete expenses',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        44,
+                                        'create_products',
+                                        'Create Products',
+                                        'User can create products',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        45,
+                                        'view_products',
+                                        'View Products',
+                                        'User can view products',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        46,
+                                        'edit_products',
+                                        'Edit Products',
+                                        'User can edit products',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        47,
+                                        'delete_products',
+                                        'Delete Products',
+                                        'User can delete products',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        48,
+                                        'import_products',
+                                        'Import Products',
+                                        'User can import products',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        49,
+                                        'create_product_categories',
+                                        'Create Product Categories',
+                                        'User can create product categories',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        50,
+                                        'view_product_categories',
+                                        'View Product Categories',
+                                        'User can view product categories',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        51,
+                                        'edit_product_categories',
+                                        'Edit Product Categories',
+                                        'User can edit product categories',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        52,
+                                        'delete_product_categories',
+                                        'Delete Product Categories',
+                                        'User can delete product categories',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        53,
+                                        'access_product_categories',
+                                        'Access Product Categories',
+                                        'User can access product categories',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        54,
+                                        'create_payment_returns',
+                                        'Create Payment returns',
+                                        'User can create payment returns',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        55,
+                                        'view_payment_returns',
+                                        'View Payment returns',
+                                        'User can view payment returns',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        56,
+                                        'edit_payment_returns',
+                                        'Edit Payment returns',
+                                        'User can edit payment returns',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        57,
+                                        'delete_payment_returns',
+                                        'Delete Payment returns',
+                                        'User can delete payment returns',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        58,
+                                        'create_permissions',
+                                        'Create Permissions',
+                                        'User can create permissions',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        59,
+                                        'view_permissions',
+                                        'View Permissions',
+                                        'User can view permissions',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        60,
+                                        'edit_permissions',
+                                        'Edit Permissions',
+                                        'User can edit permissions',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        61,
+                                        'delete_permissions',
+                                        'Delete Permissions',
+                                        'User can delete permissions',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                       INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        62,
+                                        'create_payment_sales',
+                                        'Create Sale returns',
+                                        'User can create payment sales',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        63,
+                                        'view_payment_sales',
+                                        'View Sale returns',
+                                        'User can view payment sales',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        64,
+                                        'edit_payment_sales',
+                                        'Edit Sale returns',
+                                        'User can edit payment sales',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        65,
+                                        'delete_payment_sales',
+                                        'Delete Sale returns',
+                                        'User can delete payment sales',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        66,
+                                        'create_purchase_returns',
+                                        'Create Purchase returns',
+                                        'User can create purchase returns',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        67,
+                                        'view_purchase_returns',
+                                        'View Purchase returns',
+                                        'User can view purchase returns',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        68,
+                                        'edit_purchase_returns',
+                                        'Edit Purchase returns',
+                                        'User can edit purchase returns',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        69,
+                                        'delete_purchase_returns',
+                                        'Delete Purchase returns',
+                                        'User can delete purchase returns',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        70,
+                                        'access_pos',
+                                        'Access POS',
+                                        'User can access to a POS',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        71,
+                                        'create_sale_returns',
+                                        'Create Sale returns',
+                                        'User can create sale returns',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        72,
+                                        'view_sale_returns',
+                                        'View Sale returns',
+                                        'User can view sale returns',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        73,
+                                        'edit_sale_returns',
+                                        'Edit Sale returns',
+                                        'User can edit sale returns',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        74,
+                                        'delete_sale_returns',
+                                        'Delete Sale returns',
+                                        'User can delete sale returns',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        75,
+                                        'create_customers',
+                                        'Create Customers',
+                                        'User can create customers',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        76,
+                                        'view_customers',
+                                        'View Customers',
+                                        'User can view customers',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        77,
+                                        'edit_customers',
+                                        'Edit Customers',
+                                        'User can edit customers',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        78,
+                                        'delete_customers',
+                                        'Delete Customers',
+                                        'User can delete customers',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        79,
+                                        'import_customers',
+                                        'Import Customers',
+                                        'User can import customers',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        80,
+                                        'create_transfers',
+                                        'Create Transfers',
+                                        'User can create transfers',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        81,
+                                        'view_transfers',
+                                        'View Transfers',
+                                        'User can view transfers',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        82,
+                                        'edit_transfers',
+                                        'Edit Transfers',
+                                        'User can edit transfers',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        83,
+                                        'delete_transfers',
+                                        'Delete Transfers',
+                                        'User can delete transfers',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        84,
+                                        'create_sales',
+                                        'Create Sales',
+                                        'User can create sales',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        85,
+                                        'view_sales',
+                                        'View Sales',
+                                        'User can view sales',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        86,
+                                        'edit_sales',
+                                        'Edit Sales',
+                                        'User can edit sales',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        87,
+                                        'delete_sales',
+                                        'Delete Sales',
+                                        'User can delete sales',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        88,
+                                        'create_suppliers',
+                                        'Create Suppliers',
+                                        'User can create suppliers',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        89,
+                                        'view_suppliers',
+                                        'View Suppliers',
+                                        'User can view suppliers',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        90,
+                                        'edit_suppliers',
+                                        'Edit Suppliers',
+                                        'User can edit suppliers',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        91,
+                                        'delete_suppliers',
+                                        'Delete Suppliers',
+                                        'User can delete suppliers',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        92,
+                                        'import_suppliers',
+                                        'Import Suppliers',
+                                        'User can import suppliers',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        93,
+                                        'create_brands',
+                                        'Create Brands',
+                                        'User can create brands',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        94,
+                                        'view_brands',
+                                        'View Brands',
+                                        'User can view brands',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        95,
+                                        'edit_brands',
+                                        'Edit Brands',
+                                        'User can edit brands',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        96,
+                                        'delete_brands',
+                                        'Delete Brands',
+                                        'User can delete brands',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        97,
+                                        'access_brands',
+                                        'Access Brands',
+                                        'User can access brands',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        98,
+                                        'create_quotations',
+                                        'Create Quotations',
+                                        'User can create quotations',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        99,
+                                        'view_quotations',
+                                        'View Quotations',
+                                        'User can view quotations',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        100,
+                                        'edit_quotations',
+                                        'Edit Quotations',
+                                        'User can edit quotations',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        101,
+                                        'delete_quotations',
+                                        'Delete Quotations',
+                                        'User can delete quotations',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        102,
+                                        'access_dashboard',
+                                        'Access Dashboard',
+                                        'User can access to a Dashboard',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        103,
+                                        'view_system_settings',
+                                        'View System Settings',
+                                        'User can view system settings',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        104,
+                                        'edit_system_settings',
+                                        'Edit System Settings',
+                                        'User can edit system settings',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        105,
+                                        'access_currency_settings',
+                                        'Access Currency Settings',
+                                        'User can access currency settings',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        106,
+                                        'view_pos_settings',
+                                        'View POS Settings',
+                                        'User can view pos settings',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        107,
+                                        'edit_pos_settings',
+                                        'Edit POS Settings',
+                                        'User can edit pos settings',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        108,
+                                        'access_branch_settings',
+                                        'Access Branch Settings',
+                                        'User can access branch settings',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        109,
+                                        'view_backup_settings',
+                                        'View Backup Settings',
+                                        'User can delete backup settings',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        110,
+                                        'create_backup',
+                                        'Create Backup',
+                                        'User can create backup',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        111,
+                                        'create_payment_purchases',
+                                        'Create Purchase returns',
+                                        'User can create payment purchases',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        112,
+                                        'view_payment_purchases',
+                                        'View Purchase returns',
+                                        'User can view payment purchases',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        113,
+                                        'edit_payment_purchases',
+                                        'Edit Purchase returns',
+                                        'User can edit payment purchases',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        114,
+                                        'delete_payment_purchases',
+                                        'Delete Purchase returns',
+                                        'User can delete payment purchases',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        115,
+                                        'create_branches',
+                                        'Create Branches',
+                                        'User can create branches',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        116,
+                                        'view_branches',
+                                        'View Branches',
+                                        'User can view branches',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        117,
+                                        'edit_branches',
+                                        'Edit Branches',
+                                        'User can edit branches',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );
+
+            """,
+        Permission.class);
+
+    instance.runQuery(
+        """
+                                        INSERT OR IGNORE INTO permissions (
+                                        id,
+                                        name,
+                                        label,
+                                        description,
+                                        created_at,
+                                        created_by,
+                                        updated_at,
+                                        updated_by
+                                    )
+                                    VALUES (
+                                        118,
+                                        'delete_branches',
+                                        'Delete Branches',
+                                        'User can delete branches',
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL
+                                    );""",
+        Permission.class);
+
+    instance.runQuery(
+        """
+                                        INSERT INTO permissions (
+                                                  id,
+                                                  name,
+                                                  label,
+                                                  description,
+                                                  created_at,
+                                                  created_by,
+                                                  updated_at,
+                                                  updated_by
+                                          )
+                                          VALUES (
+                                                  119,
+                                                  'create_requisitions',
+                                                  'Create Requisitions',
+                                                  'User can create requisitions',
+                                                  NULL,
+                                                  NULL,
+                                                  NULL,
+                                                  NULL
+                                          );""",
+        Permission.class);
+
+    instance.runQuery(
+        """
+                                        INSERT INTO permissions (
+                                                  id,
+                                                  name,
+                                                  label,
+                                                  description,
+                                                  created_at,
+                                                  created_by,
+                                                  updated_at,
+                                                  updated_by
+                                          )
+                                          VALUES (
+                                                  120,
+                                                  'view_requisitions',
+                                                  'View Requisitions',
+                                                  'User can view requisitions',
+                                                  NULL,
+                                                  NULL,
+                                                  NULL,
+                                                  NULL
+                                          );""",
+        Permission.class);
+
+    instance.runQuery(
+        """
+                                        INSERT INTO permissions (
+                                                  id,
+                                                  name,
+                                                  label,
+                                                  description,
+                                                  created_at,
+                                                  created_by,
+                                                  updated_at,
+                                                  updated_by
+                                          )
+                                          VALUES (
+                                                  121,
+                                                  'edit_requisitions',
+                                                  'Edit Requisitions',
+                                                  'User can edit requisitions',
+                                                  NULL,
+                                                  NULL,
+                                                  NULL,
+                                                  NULL
+                                          );""",
+        Permission.class);
+
+    instance.runQuery(
+        """
+                                        INSERT INTO permissions (
+                                                  id,
+                                                  name,
+                                                  label,
+                                                  description,
+                                                  created_at,
+                                                  created_by,
+                                                  updated_at,
+                                                  updated_by
+                                          )
+                                          VALUES (
+                                                  122,
+                                                  'delete_requisitions',
+                                                  'Delete Requisitions',
+                                                  'User can delete requisitions',
+                                                  NULL,
+                                                  NULL,
+                                                  NULL,
+                                                  NULL
+                                          );""",
+        Permission.class);
+
+    instance.runQuery(
+        """
+                                        INSERT INTO permissions (
+                                                  id,
+                                                  name,
+                                                  label,
+                                                  description,
+                                                  created_at,
+                                                  created_by,
+                                                  updated_at,
+                                                  updated_by
+                                          )
+                                          VALUES (
+                                                  123,
+                                                  'create_stock_ins',
+                                                  'Create Stock Ins',
+                                                  'User can create stock ins',
+                                                  NULL,
+                                                  NULL,
+                                                  NULL,
+                                                  NULL
+                                          );""",
+        Permission.class);
+
+    instance.runQuery(
+        """
+                                        INSERT INTO permissions (
+                                                  id,
+                                                  name,
+                                                  label,
+                                                  description,
+                                                  created_at,
+                                                  created_by,
+                                                  updated_at,
+                                                  updated_by
+                                          )
+                                          VALUES (
+                                                  124,
+                                                  'view_stock_ins',
+                                                  'View Stock Ins',
+                                                  'User can view stock ins',
+                                                  NULL,
+                                                  NULL,
+                                                  NULL,
+                                                  NULL
+                                          );""",
+        Permission.class);
+
+    instance.runQuery(
+        """
+                                        INSERT INTO permissions (
+                                                  id,
+                                                  name,
+                                                  label,
+                                                  description,
+                                                  created_at,
+                                                  created_by,
+                                                  updated_at,
+                                                  updated_by
+                                          )
+                                          VALUES (
+                                                  125,
+                                                  'edit_stock_ins',
+                                                  'Edit Stock Ins',
+                                                  'User can edit stock ins',
+                                                  NULL,
+                                                  NULL,
+                                                  NULL,
+                                                  NULL
+                                          );""",
+        Permission.class);
+
+    instance.runQuery(
+        """
+                                        INSERT INTO permissions (
+                                                  id,
+                                                  name,
+                                                  label,
+                                                  description,
+                                                  created_at,
+                                                  created_by,
+                                                  updated_at,
+                                                  updated_by
+                                          )
+                                          VALUES (
+                                                  126,
+                                                  'delete_stock_ins',
+                                                  'Delete Stock Ins',
+                                                  'User can delete stock ins',
+                                                  NULL,
+                                                  NULL,
+                                                  NULL,
+                                                  NULL
+                                          );""",
+        Permission.class);
+  }
+
   public void createTablesIfNotExist() throws SQLException {
-    createTableIfNotExists(
-            """
+    runQuery(
+        """
                         CREATE TABLE IF NOT EXISTS branches (
                                id         INTEGER   PRIMARY KEY AUTOINCREMENT,
                                name       VARCHAR   NOT NULL,
@@ -52,10 +3196,10 @@ public class SQLiteTableCreator {
                                updated_by VARCHAR
                            );
                         """,
-            Branch.class);
+        Branch.class);
 
-    createTableIfNotExists(
-            """
+    runQuery(
+        """
                         CREATE TABLE IF NOT EXISTS brands (
                                id          INTEGER   PRIMARY KEY AUTOINCREMENT,
                                name        VARCHAR   NOT NULL,
@@ -67,10 +3211,10 @@ public class SQLiteTableCreator {
                                updated_by  VARCHAR
                            );
                         """,
-            Brand.class);
+        Brand.class);
 
-    createTableIfNotExists(
-            """
+    runQuery(
+        """
                         CREATE TABLE IF NOT EXISTS companies (
                             id         INTEGER   PRIMARY KEY AUTOINCREMENT,
                             name       VARCHAR   NOT NULL,
@@ -84,10 +3228,10 @@ public class SQLiteTableCreator {
                             updated_by VARCHAR
                         );
                         """,
-            Company.class);
+        Company.class);
 
-    createTableIfNotExists(
-            """
+    runQuery(
+        """
                         CREATE TABLE IF NOT EXISTS units_of_measure (
                             id             INTEGER   NOT NULL
                                                      PRIMARY KEY AUTOINCREMENT,
@@ -106,10 +3250,10 @@ public class SQLiteTableCreator {
                             REFERENCES units_of_measure (id)
                         );
                         """,
-            UnitOfMeasure.class);
+        UnitOfMeasure.class);
 
-    createTableIfNotExists(
-            """
+    runQuery(
+        """
                         CREATE TABLE IF NOT EXISTS supplier (
                             id         INTEGER   PRIMARY KEY AUTOINCREMENT,
                             name       VARCHAR   NOT NULL,
@@ -126,10 +3270,10 @@ public class SQLiteTableCreator {
                             updated_by VARCHAR
                         );
                         """,
-            Supplier.class);
+        Supplier.class);
 
-    createTableIfNotExists(
-            """
+    runQuery(
+        """
                         CREATE TABLE IF NOT EXISTS role (
                             id          INTEGER   NOT NULL
                                                   PRIMARY KEY AUTOINCREMENT,
@@ -143,10 +3287,10 @@ public class SQLiteTableCreator {
                             updated_by  VARCHAR
                         );
                         """,
-            Role.class);
+        Role.class);
 
-    createTableIfNotExists(
-            """
+    runQuery(
+        """
                         CREATE TABLE IF NOT EXISTS permissions (
                                id          INTEGER   NOT NULL
                                                      PRIMARY KEY AUTOINCREMENT,
@@ -156,13 +3300,14 @@ public class SQLiteTableCreator {
                                created_at  TIMESTAMP,
                                created_by  VARCHAR,
                                updated_at  TIMESTAMP,
-                               updated_by  VARCHAR
+                               updated_by  VARCHAR,
+                               UNIQUE(name, label, description)
                            );
                         """,
-            Permission.class);
+        Permission.class);
 
-    createTableIfNotExists(
-            """
+    runQuery(
+        """
                         CREATE TABLE IF NOT EXISTS leave_type (
                                id         INTEGER   PRIMARY KEY AUTOINCREMENT,
                                name       VARCHAR   NOT NULL,
@@ -172,10 +3317,10 @@ public class SQLiteTableCreator {
                                updated_by VARCHAR
                            );
                         """,
-            LeaveType.class);
+        LeaveType.class);
 
-    createTableIfNotExists(
-            """
+    runQuery(
+        """
                         CREATE TABLE IF NOT EXISTS product_category (
                             id         INTEGER   PRIMARY KEY AUTOINCREMENT,
                             code       VARCHAR,
@@ -186,10 +3331,10 @@ public class SQLiteTableCreator {
                             updated_by VARCHAR
                         );
                         """,
-            ProductCategory.class);
+        ProductCategory.class);
 
-    createTableIfNotExists(
-            """
+    runQuery(
+        """
                         CREATE TABLE IF NOT EXISTS currencies (
                             id         INTEGER   PRIMARY KEY AUTOINCREMENT,
                             code       VARCHAR   NOT NULL,
@@ -201,10 +3346,10 @@ public class SQLiteTableCreator {
                             updated_by VARCHAR
                         );
                         """,
-            Currency.class);
+        Currency.class);
 
-    createTableIfNotExists(
-            """
+    runQuery(
+        """
                         CREATE TABLE IF NOT EXISTS customers (
                                id         INTEGER   PRIMARY KEY AUTOINCREMENT,
                                name       VARCHAR   NOT NULL,
@@ -221,10 +3366,10 @@ public class SQLiteTableCreator {
                                updated_by VARCHAR
                            );
                         """,
-            Customer.class);
+        Customer.class);
 
-    createTableIfNotExists(
-            """
+    runQuery(
+        """
                     CREATE TABLE IF NOT EXISTS adjustment_masters (
                           id                   INTEGER NOT NULL  PRIMARY KEY AUTOINCREMENT ,
                           user_id              INTEGER     ,
@@ -240,10 +3385,10 @@ public class SQLiteTableCreator {
                           FOREIGN KEY ( branch_id ) REFERENCES branches( id )
                      );
                     """,
-            AdjustmentMaster.class);
+        AdjustmentMaster.class);
 
-    createTableIfNotExists(
-            """
+    runQuery(
+        """
                     CREATE TABLE IF NOT EXISTS adjustment_details (
                           id                   INTEGER NOT NULL  PRIMARY KEY AUTOINCREMENT ,
                           product_id           BIGINT NOT NULL    ,
@@ -260,7 +3405,7 @@ public class SQLiteTableCreator {
                     """,
         AdjustmentDetail.class);
 
-    createTableIfNotExists(
+    runQuery(
         """
                     CREATE TABLE IF NOT EXISTS expense_categories (
                            id          INTEGER   NOT NULL
@@ -280,7 +3425,7 @@ public class SQLiteTableCreator {
                     """,
         ExpenseCategory.class);
 
-    createTableIfNotExists(
+    runQuery(
         """
                     CREATE TABLE IF NOT EXISTS expenses (
                            id                  INTEGER   NOT NULL
@@ -313,7 +3458,7 @@ public class SQLiteTableCreator {
                     """,
         Expense.class);
 
-    createTableIfNotExists(
+    runQuery(
         """
                     CREATE TABLE IF NOT EXISTS holiday (
                            id          INTEGER   NOT NULL
@@ -335,7 +3480,7 @@ public class SQLiteTableCreator {
                     """,
         Holiday.class);
 
-    createTableIfNotExists(
+    runQuery(
         """
                     CREATE TABLE IF NOT EXISTS payment_purchases (
                         id               INTEGER   NOT NULL
@@ -364,7 +3509,7 @@ public class SQLiteTableCreator {
                     """,
         PaymentPurchase.class);
 
-    createTableIfNotExists(
+    runQuery(
         """
                     CREATE TABLE IF NOT EXISTS payments_purchase_returns (
                            id                 INTEGER   NOT NULL
@@ -393,7 +3538,7 @@ public class SQLiteTableCreator {
                     """,
         PaymentPurchaseReturn.class);
 
-    createTableIfNotExists(
+    runQuery(
         """
                     CREATE TABLE IF NOT EXISTS payments_sale_returns (
                            id               INTEGER   NOT NULL
@@ -422,7 +3567,7 @@ public class SQLiteTableCreator {
                     """,
         PaymentSaleReturn.class);
 
-    createTableIfNotExists(
+    runQuery(
         """
                     CREATE TABLE IF NOT EXISTS payments_sales (
                            id               INTEGER   NOT NULL
@@ -451,7 +3596,7 @@ public class SQLiteTableCreator {
                     """,
         PaymentSale.class);
 
-    createTableIfNotExists(
+    runQuery(
         """
                     CREATE TABLE IF NOT EXISTS product_details (
                         id               INTEGER   NOT NULL
@@ -497,7 +3642,7 @@ public class SQLiteTableCreator {
                     """,
         ProductDetail.class);
 
-    createTableIfNotExists(
+    runQuery(
         """
                     CREATE TABLE IF NOT EXISTS product_masters (
                            id           INTEGER   NOT NULL
@@ -527,7 +3672,7 @@ public class SQLiteTableCreator {
                     """,
         ProductMaster.class);
 
-    createTableIfNotExists(
+    runQuery(
         """
                     CREATE TABLE IF NOT EXISTS purchase_details (
                            id                 INTEGER            PRIMARY KEY AUTOINCREMENT,
@@ -549,7 +3694,7 @@ public class SQLiteTableCreator {
                     """,
         PurchaseDetail.class);
 
-    createTableIfNotExists(
+    runQuery(
         """
                     CREATE TABLE IF NOT EXISTS purchase_masters (
                            id             INTEGER   NOT NULL
@@ -589,7 +3734,7 @@ public class SQLiteTableCreator {
                     """,
         PurchaseMaster.class);
 
-    createTableIfNotExists(
+    runQuery(
         """
                     CREATE TABLE IF NOT EXISTS purchase_return_details (
                            id                        INTEGER   NOT NULL
@@ -621,7 +3766,7 @@ public class SQLiteTableCreator {
                     """,
         PurchaseReturnDetail.class);
 
-    createTableIfNotExists(
+    runQuery(
         """
                     CREATE TABLE IF NOT EXISTS purchase_return_masters (
                            id               INTEGER   NOT NULL
@@ -660,7 +3805,7 @@ public class SQLiteTableCreator {
                     """,
         PurchaseReturnMaster.class);
 
-    createTableIfNotExists(
+    runQuery(
         """
                     CREATE TABLE IF NOT EXISTS quotation_detail (
                            id            INTEGER   NOT NULL
@@ -696,7 +3841,7 @@ public class SQLiteTableCreator {
                     """,
         QuotationDetail.class);
 
-    createTableIfNotExists(
+    runQuery(
         """
                     CREATE TABLE IF NOT EXISTS quotation_master (
                         id               INTEGER   NOT NULL
@@ -730,7 +3875,7 @@ public class SQLiteTableCreator {
                     """,
         QuotationMaster.class);
 
-    createTableIfNotExists(
+    runQuery(
         """
                     CREATE TABLE IF NOT EXISTS requisition_detail (
                            id                INTEGER   NOT NULL
@@ -755,7 +3900,7 @@ public class SQLiteTableCreator {
                     """,
         RequisitionDetail.class);
 
-    createTableIfNotExists(
+    runQuery(
         """
                     CREATE TABLE IF NOT EXISTS requisition_master (
                            id               INTEGER   NOT NULL
@@ -792,19 +3937,13 @@ public class SQLiteTableCreator {
                     """,
         RequisitionMaster.class);
 
-    createTableIfNotExists(
+    runQuery(
         """
                     CREATE TABLE IF NOT EXISTS role_permission (
                            id            INTEGER NOT NULL
                                                  PRIMARY KEY AUTOINCREMENT,
-                           role_id       INTEGER,
-                           permission_id INTEGER,
-                           CONSTRAINT unq_role_permission_role_id UNIQUE (
-                               role_id
-                           ),
-                           CONSTRAINT unq_role_permission_permission_id UNIQUE (
-                               permission_id
-                           ),
+                           role_id       INTEGER NOT NULL,
+                           permission_id INTEGER NOT NULL,
                            FOREIGN KEY (
                                role_id
                            )
@@ -817,7 +3956,7 @@ public class SQLiteTableCreator {
                     """,
         RolePermission.class);
 
-    createTableIfNotExists(
+    runQuery(
         """
                     CREATE TABLE IF NOT EXISTS sales_detail (
                            id               INTEGER   NOT NULL
@@ -849,7 +3988,7 @@ public class SQLiteTableCreator {
                     """,
         SaleDetail.class);
 
-    createTableIfNotExists(
+    runQuery(
         """
                     CREATE TABLE IF NOT EXISTS sales_master (
                         id               INTEGER   NOT NULL
@@ -888,7 +4027,7 @@ public class SQLiteTableCreator {
                     """,
         SaleMaster.class);
 
-    createTableIfNotExists(
+    runQuery(
         """
                     CREATE TABLE IF NOT EXISTS sales_return_detail (
                            id                     INTEGER   NOT NULL
@@ -924,7 +4063,7 @@ public class SQLiteTableCreator {
                     """,
         SaleReturnDetail.class);
 
-    createTableIfNotExists(
+    runQuery(
         """
                     CREATE TABLE IF NOT EXISTS sales_return_master (
                            id               INTEGER   NOT NULL
@@ -962,7 +4101,7 @@ public class SQLiteTableCreator {
                     """,
         SaleReturnMaster.class);
 
-    createTableIfNotExists(
+    runQuery(
         """
                     CREATE TABLE IF NOT EXISTS stock_in_detail (
                         id                 INTEGER   NOT NULL
@@ -989,7 +4128,7 @@ public class SQLiteTableCreator {
                     """,
         StockInDetail.class);
 
-    createTableIfNotExists(
+    runQuery(
         """
                     CREATE TABLE IF NOT EXISTS stock_in_master (
                         id               INTEGER   NOT NULL
@@ -1030,7 +4169,7 @@ public class SQLiteTableCreator {
                     """,
         StockInMaster.class);
 
-    createTableIfNotExists(
+    runQuery(
         """
                     CREATE TABLE IF NOT EXISTS transfer_detail (
                         id            INTEGER   NOT NULL
@@ -1058,7 +4197,7 @@ public class SQLiteTableCreator {
                     """,
         TransferDetail.class);
 
-    createTableIfNotExists(
+    runQuery(
         """
                     CREATE TABLE IF NOT EXISTS transfer_master (
                         id               INTEGER   NOT NULL
@@ -1104,7 +4243,7 @@ public class SQLiteTableCreator {
                     """,
         TransferMaster.class);
 
-    createTableIfNotExists(
+    runQuery(
         """
                     CREATE TABLE IF NOT EXISTS users (
                         id                  INTEGER   NOT NULL
@@ -1134,23 +4273,7 @@ public class SQLiteTableCreator {
                     """,
         User.class);
 
-    createTableIfNotExists(
-        """
-                    CREATE UNIQUE INDEX IF NOT EXISTS unq_role_permission_permission_id ON role_permission (
-                        permission_id
-                    );
-                    """,
-        RolePermission.class);
-
-    createTableIfNotExists(
-        """
-                    CREATE UNIQUE INDEX IF NOT EXISTS unq_role_permission_role_id ON role_permission (
-                        role_id
-                    );
-                    """,
-        RolePermission.class);
-
-    createTableIfNotExists(
+    runQuery(
         """
                     CREATE UNIQUE INDEX IF NOT EXISTS unq_users_first_name ON users (
                         first_name
@@ -1159,7 +4282,7 @@ public class SQLiteTableCreator {
         User.class);
   }
 
-  private <T> void createTableIfNotExists(String query, Class<T> clazz) throws SQLException {
+  private <T> void runQuery(String query, Class<T> clazz) throws SQLException {
     DaoManager.createDao(conn, clazz).executeRawNoArgs(query);
   }
 }

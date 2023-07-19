@@ -19,7 +19,6 @@ import com.j256.ormlite.table.DatabaseTable;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 @DatabaseTable(tableName = "role")
 public class Role implements Serializable {
@@ -49,22 +48,9 @@ public class Role implements Serializable {
 
   public Role(
       String name,
-      String label,
-      boolean status,
-      String description,
-      List<Permission> permissions,
-      Date createdAt,
-      String createdBy,
-      Date updatedAt,
-      String updatedBy) {
+      String description) {
     this.name = name;
-    this.label = label;
-    this.status = status;
     this.description = description;
-    this.createdAt = createdAt;
-    this.createdBy = createdBy;
-    this.updatedAt = updatedAt;
-    this.updatedBy = updatedBy;
   }
 
   public Role() {}
