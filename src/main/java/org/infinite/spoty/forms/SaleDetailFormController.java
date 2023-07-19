@@ -20,10 +20,14 @@ import static org.infinite.spoty.values.SharedResources.tempIdProperty;
 
 import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.utils.StringUtils;
+import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -54,33 +58,32 @@ public class SaleDetailFormController implements Initializable {
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-    // Set combo box options.
-    saleDetailPdct.setItems(ProductDetailViewModel.getProductDetailsComboBoxList());
-    saleDetailPdct.setConverter(
-        new StringConverter<>() {
-          @Override
-          public String toString(ProductDetail object) {
-            return object != null
-                ? object.getProduct().getName()
-                    + " "
-                    + (object.getUnit() != null
-                        ? (object.getName().isEmpty() ? "" : object.getName())
-                            + " "
-                            + object.getUnit().getName()
-                        : object.getName())
-                : "No products";
-          }
-
-          @Override
-          public ProductDetail fromString(String string) {
-            return null;
-          }
-        });
     // Property binding.
     saleDetailQnty.textProperty().bindBidirectional(SaleDetailViewModel.quantityProperty());
     saleDetailPdct.valueProperty().bindBidirectional(SaleDetailViewModel.productProperty());
     saleDetailOrderTax.textProperty().bindBidirectional(SaleDetailViewModel.netTaxProperty());
     saleDetailDiscount.textProperty().bindBidirectional(SaleDetailViewModel.discountProperty());
+
+    // Combo box Converter.
+    StringConverter<ProductDetail> productVariantConverter =
+        FunctionalStringConverter.to(
+            productDetail ->
+                (productDetail == null)
+                    ? ""
+                    : productDetail.getProduct().getName() + " " + productDetail.getName());
+
+    // Combo box Filter Function.
+    Function<String, Predicate<ProductDetail>> productVariantFilterFunction =
+        searchStr ->
+            productDetail ->
+                StringUtils.containsIgnoreCase(
+                    productVariantConverter.toString(productDetail), searchStr);
+
+    // Set combo box options.
+    saleDetailPdct.setItems(ProductDetailViewModel.getProductDetailsComboBoxList());
+    saleDetailPdct.setConverter(productVariantConverter);
+    saleDetailPdct.setFilterFunction(productVariantFilterFunction);
+
     // Input validators.
     requiredValidator(
         saleDetailPdct, "Product is required.", saleDetailPdctValidationLabel, saleProductsSaveBtn);
@@ -89,6 +92,7 @@ public class SaleDetailFormController implements Initializable {
         "Quantity is required.",
         saleDetailQntyValidationLabel,
         saleProductsSaveBtn);
+
     dialogOnActions();
   }
 

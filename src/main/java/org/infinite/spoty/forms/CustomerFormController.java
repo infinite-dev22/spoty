@@ -25,7 +25,6 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.stage.Stage;
 import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
@@ -35,7 +34,6 @@ import org.infinite.spoty.viewModels.CustomerViewModel;
 
 public class CustomerFormController implements Initializable {
   private static CustomerFormController instance;
-  private final Stage stage;
   public MFXTextField customerID = new MFXTextField();
   @FXML public MFXButton customerFormSaveBtn;
   @FXML public MFXButton customerFormCancelBtn;
@@ -48,12 +46,8 @@ public class CustomerFormController implements Initializable {
   @FXML public MFXTextField customerFormAddress;
   @FXML public Label validationLabel1, validationLabel2, validationLabel3;
 
-  private CustomerFormController(Stage stage) {
-    this.stage = stage;
-  }
-
-  public static CustomerFormController getInstance(Stage stage) {
-    if (Objects.equals(instance, null)) instance = new CustomerFormController(stage);
+  public static CustomerFormController getInstance() {
+    if (Objects.equals(instance, null)) instance = new CustomerFormController();
     return instance;
   }
 

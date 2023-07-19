@@ -20,10 +20,14 @@ import static org.infinite.spoty.values.SharedResources.tempIdProperty;
 
 import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.utils.StringUtils;
+import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -38,7 +42,7 @@ import org.infinite.spoty.viewModels.UOMViewModel;
 
 public class ProductDetailFormController implements Initializable {
   private static ProductDetailFormController instance;
-    @FXML public MFXButton productProductsSaveBtn;
+  @FXML public MFXButton productProductsSaveBtn;
   @FXML public MFXButton productProductsCancelBtn;
   @FXML public MFXTextField productVariantSerial;
   @FXML public MFXTextField productVariantName;
@@ -58,20 +62,21 @@ public class ProductDetailFormController implements Initializable {
     productVariantSerial.textProperty().bindBidirectional(ProductDetailViewModel.serialProperty());
     productVariantName.textProperty().bindBidirectional(ProductDetailViewModel.nameProperty());
 
+    // ComboBox Converters.
+    StringConverter<UnitOfMeasure> uomConverter =
+        FunctionalStringConverter.to(
+            unitOfMeasure -> (unitOfMeasure == null) ? "" : unitOfMeasure.getName());
+
+    // ComboBox Filter Functions.
+    Function<String, Predicate<UnitOfMeasure>> uomFilterFunction =
+        searchStr ->
+            unitOfMeasure ->
+                StringUtils.containsIgnoreCase(uomConverter.toString(unitOfMeasure), searchStr);
+
     // ProductType combo box properties.
     productVariantUOM.setItems(UOMViewModel.getUomComboBoxList());
-    productVariantUOM.setConverter(
-        new StringConverter<>() {
-          @Override
-          public String toString(UnitOfMeasure object) {
-            return (object != null) ? object.getName() : "--Unit Of Measure--";
-          }
-
-          @Override
-          public UnitOfMeasure fromString(String string) {
-            return null;
-          }
-        });
+    productVariantUOM.setConverter(uomConverter);
+    productVariantUOM.setFilterFunction(uomFilterFunction);
 
     // Input validators.
     requiredValidator(

@@ -20,10 +20,14 @@ import static org.infinite.spoty.values.SharedResources.tempIdProperty;
 
 import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.utils.StringUtils;
+import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -64,28 +68,25 @@ public class RequisitionDetailFormController implements Initializable {
         .textProperty()
         .bindBidirectional(RequisitionDetailViewModel.descriptionProperty());
 
+    // Combo box Converter.
+    StringConverter<ProductDetail> productVariantConverter =
+        FunctionalStringConverter.to(
+            productDetail ->
+                (productDetail == null)
+                    ? ""
+                    : productDetail.getProduct().getName() + " " + productDetail.getName());
+
+    // Combo box Filter Function.
+    Function<String, Predicate<ProductDetail>> productVariantFilterFunction =
+        searchStr ->
+            productDetail ->
+                StringUtils.containsIgnoreCase(
+                    productVariantConverter.toString(productDetail), searchStr);
+
     // Combo box properties.
     requisitionDetailPdct.setItems(ProductDetailViewModel.getProductDetailsComboBoxList());
-    requisitionDetailPdct.setConverter(
-        new StringConverter<>() {
-          @Override
-          public String toString(ProductDetail object) {
-            return object != null
-                ? object.getProduct().getName()
-                    + " "
-                    + (object.getUnit() != null
-                        ? (object.getName().isEmpty() ? "" : object.getName())
-                            + " "
-                            + object.getUnit().getName()
-                        : object.getName())
-                : "No products";
-          }
-
-          @Override
-          public ProductDetail fromString(String string) {
-            return null;
-          }
-        });
+    requisitionDetailPdct.setConverter(productVariantConverter);
+    requisitionDetailPdct.setFilterFunction(productVariantFilterFunction);
 
     // Input validators.
     requiredValidator(

@@ -27,7 +27,6 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.stage.Stage;
 import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
@@ -37,7 +36,6 @@ import org.infinite.spoty.viewModels.BranchViewModel;
 
 public class BranchFormController implements Initializable {
   private static BranchFormController instance;
-  private final Stage stage;
   public MFXTextField branchFormID = new MFXTextField();
   @FXML public MFXButton branchFormSaveBtn;
   @FXML public MFXButton branchFormCancelBtn;
@@ -53,12 +51,8 @@ public class BranchFormController implements Initializable {
   @FXML public Label branchFormPhoneValidationLabel;
   @FXML public Label branchFormNameValidationLabel;
 
-  private BranchFormController(Stage stage) {
-    this.stage = stage;
-  }
-
-  public static BranchFormController getInstance(Stage stage) {
-    if (Objects.equals(instance, null)) instance = new BranchFormController(stage);
+  public static BranchFormController getInstance() {
+    if (Objects.equals(instance, null)) instance = new BranchFormController();
     return instance;
   }
 

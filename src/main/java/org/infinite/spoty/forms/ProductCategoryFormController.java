@@ -26,7 +26,6 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.stage.Stage;
 import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
@@ -36,7 +35,6 @@ import org.infinite.spoty.viewModels.ProductCategoryViewModel;
 
 public class ProductCategoryFormController implements Initializable {
   private static ProductCategoryFormController instance;
-  private final Stage stage;
   public MFXTextField dialogCategoryID = new MFXTextField();
   @FXML public MFXTextField dialogCategoryCode;
   @FXML public MFXTextField dialogCategoryName;
@@ -45,12 +43,8 @@ public class ProductCategoryFormController implements Initializable {
   @FXML public Label dialogCategoryCodeValidationLabel;
   @FXML public Label dialogCategoryNameValidationLabel;
 
-  public ProductCategoryFormController(Stage stage) {
-    this.stage = stage;
-  }
-
-  public static ProductCategoryFormController getInstance(Stage stage) {
-    if (Objects.equals(instance, null)) instance = new ProductCategoryFormController(stage);
+  public static ProductCategoryFormController getInstance() {
+    if (Objects.equals(instance, null)) instance = new ProductCategoryFormController();
     return instance;
   }
 

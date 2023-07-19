@@ -154,7 +154,7 @@ public class ProductCategoryController implements Initializable {
 
   private void productProductCategoryDialogPane(Stage stage) throws IOException {
     FXMLLoader fxmlLoader = fxmlLoader("forms/ProductCategoryForm.fxml");
-    fxmlLoader.setControllerFactory(c -> ProductCategoryFormController.getInstance(stage));
+    fxmlLoader.setControllerFactory(c -> ProductCategoryFormController.getInstance());
 
     MFXGenericDialog dialogContent = fxmlLoader.load();
 

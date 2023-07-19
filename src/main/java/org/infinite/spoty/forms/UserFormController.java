@@ -22,10 +22,14 @@ import static org.infinite.spoty.Validators.requiredValidator;
 import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.controls.MFXToggleButton;
+import io.github.palexdev.materialfx.utils.StringUtils;
+import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -97,38 +101,31 @@ public class UserFormController implements Initializable {
     userFormBranch.valueProperty().bindBidirectional(UserViewModel.branchProperty());
     userFormActive.selectedProperty().bindBidirectional(UserViewModel.activeProperty());
 
+    // ComboBox Converters.
+    StringConverter<Role> roleConverter =
+        FunctionalStringConverter.to(role -> (role == null) ? "" : role.getName());
+
+    StringConverter<Branch> branchConverter =
+        FunctionalStringConverter.to(branch -> (branch == null) ? "" : branch.getName());
+
+    // ComboBox Filter Functions.
+    Function<String, Predicate<Role>> roleFilterFunction =
+        searchStr ->
+            role -> StringUtils.containsIgnoreCase(roleConverter.toString(role), searchStr);
+
+    Function<String, Predicate<Branch>> branchFilterFunction =
+        searchStr ->
+            branch -> StringUtils.containsIgnoreCase(branchConverter.toString(branch), searchStr);
+
     // Combo box properties.
     userFormRole.setItems(RoleViewModel.getRoles());
-    userFormRole.setConverter(
-        new StringConverter<>() {
-          @Override
-          public String toString(Role object) {
-            if (object != null) return object.getName();
-            else return null;
-          }
-
-          @Override
-          public Role fromString(String string) {
-            return null;
-          }
-        });
+    userFormRole.setConverter(roleConverter);
+    userFormRole.setFilterFunction(roleFilterFunction);
 
     userFormBranch.setItems(BranchViewModel.getBranchesComboBoxList());
-    userFormBranch.setOnShowing(
-        e -> userFormBranch.setItems(BranchViewModel.getBranchesComboBoxList()));
-    userFormBranch.setConverter(
-        new StringConverter<>() {
-          @Override
-          public String toString(Branch object) {
-            if (object != null) return object.getName();
-            else return null;
-          }
+    userFormBranch.setConverter(branchConverter);
+    userFormBranch.setFilterFunction(branchFilterFunction);
 
-          @Override
-          public Branch fromString(String string) {
-            return null;
-          }
-        });
     // Input validations.
     // Name input validation.
     requiredValidator(

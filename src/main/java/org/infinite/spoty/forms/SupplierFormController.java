@@ -34,7 +34,7 @@ import org.infinite.spoty.viewModels.SupplierViewModel;
 
 public class SupplierFormController implements Initializable {
   private static SupplierFormController instance;
-    public MFXTextField supplierID = new MFXTextField();
+  public MFXTextField supplierID = new MFXTextField();
   @FXML public MFXButton supplierFormSaveBtn;
   @FXML public MFXButton supplierFormCancelBtn;
   @FXML public MFXTextField supplierFormName;

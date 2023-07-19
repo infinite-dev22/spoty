@@ -26,11 +26,15 @@ import io.github.palexdev.materialfx.enums.ScrimPriority;
 import io.github.palexdev.materialfx.filter.DoubleFilter;
 import io.github.palexdev.materialfx.filter.LongFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
+import io.github.palexdev.materialfx.utils.StringUtils;
+import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -109,35 +113,34 @@ public class QuotationMasterFormController implements Initializable {
     quotationStatus.textProperty().bindBidirectional(QuotationMasterViewModel.statusProperty());
     quotationNote.textProperty().bindBidirectional(QuotationMasterViewModel.noteProperty());
 
+    // ComboBox Converters.
+    StringConverter<Customer> customerConverter =
+            FunctionalStringConverter.to(customer -> (customer == null) ? "" : customer.getName());
+
+    StringConverter<Branch> branchConverter =
+            FunctionalStringConverter.to(branch -> (branch == null) ? "" : branch.getName());
+
+    // ComboBox Filter Functions.
+    Function<String, Predicate<Customer>> customerFilterFunction =
+            searchStr ->
+                    customer ->
+                            StringUtils.containsIgnoreCase(
+                                    customerConverter.toString(customer), searchStr);
+
+    Function<String, Predicate<Branch>> branchFilterFunction =
+            searchStr ->
+                    branch ->
+                            StringUtils.containsIgnoreCase(branchConverter.toString(branch), searchStr);
+
     // Combo box properties.
     quotationCustomer.setItems(CustomerViewModel.getCustomersComboBoxList());
-    quotationCustomer.setConverter(
-        new StringConverter<>() {
-          @Override
-          public String toString(Customer object) {
-            if (object != null) return object.getName();
-            else return null;
-          }
+    quotationCustomer.setConverter(customerConverter);
+    quotationCustomer.setFilterFunction(customerFilterFunction);
 
-          @Override
-          public Customer fromString(String string) {
-            return null;
-          }
-        });
     quotationBranch.setItems(BranchViewModel.getBranchesComboBoxList());
-    quotationBranch.setConverter(
-        new StringConverter<>() {
-          @Override
-          public String toString(Branch object) {
-            if (object != null) return object.getName();
-            else return null;
-          }
-
-          @Override
-          public Branch fromString(String string) {
-            return null;
-          }
-        });
+    quotationBranch.setConverter(branchConverter);
+    quotationBranch.setFilterFunction(branchFilterFunction);
+    
     quotationStatus.setItems(FXCollections.observableArrayList(Values.QUOTATIONTYPE));
 
     // input validators.
