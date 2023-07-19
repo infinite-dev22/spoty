@@ -55,6 +55,7 @@ module org.infinite.spoty {
   opens org.infinite.spoty.components.notification;
   opens org.infinite.spoty;
   opens org.infinite.spoty.components.notification.enums;
+  opens org.infinite.spoty.components.title;
 
   exports org.infinite.spoty;
 }

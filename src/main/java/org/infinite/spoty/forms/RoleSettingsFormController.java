@@ -15,15 +15,10 @@
 package org.infinite.spoty.forms;
 
 import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
-import static org.infinite.spoty.values.numbers.Constants.GRID_HGAP;
-import static org.infinite.spoty.values.numbers.Constants.GRID_VGAP;
 
 import io.github.palexdev.materialfx.controls.MFXTextField;
-import io.github.palexdev.materialfx.enums.FloatMode;
 import io.github.palexdev.materialfx.validation.Constraint;
-import io.github.palexdev.materialfx.validation.MFXValidator;
 import io.github.palexdev.materialfx.validation.Severity;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import io.github.palexdev.mfxcomponents.controls.checkbox.MFXCheckBox;
 import java.net.URL;
 import java.util.List;
@@ -31,34 +26,32 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.control.Separator;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import org.infinite.spoty.components.navigation.Navigation;
 import org.infinite.spoty.components.navigation.Pages;
-import org.infinite.spoty.components.navigation.Spacer;
+import org.infinite.spoty.components.notification.SimpleNotification;
+import org.infinite.spoty.components.notification.SimpleNotificationHolder;
+import org.infinite.spoty.components.notification.enums.NotificationDuration;
+import org.infinite.spoty.components.notification.enums.NotificationVariants;
+import org.infinite.spoty.viewModels.PermissionsViewModel;
+import org.infinite.spoty.viewModels.RoleViewModel;
 
-@SuppressWarnings("unused")
 public class RoleSettingsFormController implements Initializable {
   private static RoleSettingsFormController instance;
-  private final MFXTextField roleNameInputField;
+  @FXML public MFXTextField roleDescriptionInputField;
   // <editor-fold desc="Lots of MFXCheckBoxes here 👇️">
-  private final MFXCheckBox dashboardCheckbox, accessPOSCheckbox;
+  @FXML private MFXCheckBox dashboardCheckbox, accessPOSCheckbox;
   // Users
-  private final MFXCheckBox viewUsersCheckbox,
-      editUsersCheckbox,
-      createUserCheckbox,
-      deleteUserCheckbox;
+  @FXML
+  private MFXCheckBox viewUsersCheckbox, editUsersCheckbox, createUserCheckbox, deleteUserCheckbox;
   // User Permissions
-  private final MFXCheckBox viewUserPermissionsCheckbox,
-      editUserPermissionsCheckbox,
-      createUserPermissionCheckbox,
-      deleteUserPermissionCheckbox;
+  @FXML
+  private MFXCheckBox viewRoleCheckbox, editRoleCheckbox, createRoleCheckbox, deleteRoleCheckbox;
   // Products
-  private final MFXCheckBox viewProductsCheckbox,
+  @FXML
+  private MFXCheckBox viewProductsCheckbox,
       editProductsCheckbox,
       createProductCheckbox,
       deleteProductCheckbox,
@@ -68,88 +61,79 @@ public class RoleSettingsFormController implements Initializable {
       productImportsCheckbox,
       productBrandsCheckbox;
   // Adjustments
-  private final MFXCheckBox viewAdjustmentsCheckbox,
+  @FXML
+  private MFXCheckBox viewAdjustmentsCheckbox,
       editAdjustmentsCheckbox,
       createAdjustmentCheckbox,
       deleteAdjustmentCheckbox;
   // Transfers
-  private final MFXCheckBox viewTransfersCheckbox,
+  @FXML
+  private MFXCheckBox viewTransfersCheckbox,
       editTransfersCheckbox,
       createTransferCheckbox,
       deleteTransferCheckbox;
   // Expenses
-  private final MFXCheckBox viewExpensesCheckbox,
+  @FXML
+  private MFXCheckBox viewExpensesCheckbox,
       editExpensesCheckbox,
       createExpenseCheckbox,
       deleteExpenseCheckbox;
   // Sales
-  private final MFXCheckBox viewSalesCheckbox,
-      editSalesCheckbox,
-      createSaleCheckbox,
-      deleteSaleCheckbox;
+  @FXML
+  private MFXCheckBox viewSalesCheckbox, editSalesCheckbox, createSaleCheckbox, deleteSaleCheckbox;
   // Purchases
-  private final MFXCheckBox viewPurchasesCheckbox,
+  @FXML
+  private MFXCheckBox viewPurchasesCheckbox,
       editPurchasesCheckbox,
       createPurchaseCheckbox,
       deletePurchaseCheckbox;
   // Requisitions
-  private final MFXCheckBox viewRequisitionCheckbox,
+  @FXML
+  private MFXCheckBox viewRequisitionCheckbox,
       editRequisitionCheckbox,
       createRequisitionCheckbox,
       deleteRequisitionCheckbox;
   // StockIns
-  private final MFXCheckBox viewStockInCheckbox,
+  @FXML
+  private MFXCheckBox viewStockInCheckbox,
       editStockInCheckbox,
       createStockInCheckbox,
       deleteStockInCheckbox;
   // Quotations
-  private final MFXCheckBox viewQuotationsCheckbox,
+  @FXML
+  private MFXCheckBox viewQuotationsCheckbox,
       editQuotationsCheckbox,
       createQuotationCheckbox,
       deleteQuotationCheckbox;
   // Sale Returns
-  private final MFXCheckBox viewSaleReturnsCheckbox,
+  @FXML
+  private MFXCheckBox viewSaleReturnsCheckbox,
       editSaleReturnsCheckbox,
       createSaleReturnCheckbox,
       deleteSaleReturnCheckbox;
   // Purchase Returns
-  private final MFXCheckBox viewPurchaseReturnsCheckbox,
+  @FXML
+  private MFXCheckBox viewPurchaseReturnsCheckbox,
       editPurchaseReturnsCheckbox,
       createPurchaseReturnCheckbox,
       deletePurchaseReturnCheckbox;
-  // Payments Sales
-  private final MFXCheckBox viewPaymentsSalesCheckbox,
-      editPaymentsSalesCheckbox,
-      createPaymentsSaleCheckbox,
-      deletePaymentsSaleCheckbox;
-  // Payments Purchases
-  private final MFXCheckBox viewPaymentsPurchasesCheckbox,
-      editPaymentsPurchasesCheckbox,
-      createPaymentsPurchaseCheckbox,
-      deletePaymentsPurchaseCheckbox;
-  // Payments Returns
-  private final MFXCheckBox viewPaymentsReturnsCheckbox,
-      editPaymentsReturnsCheckbox,
-      createPaymentsReturnCheckbox,
-      deletePaymentsReturnCheckbox;
   // Customers
-  private final MFXCheckBox viewCustomersCheckbox,
+  @FXML
+  private MFXCheckBox viewCustomersCheckbox,
       editCustomersCheckbox,
       createCustomerCheckbox,
       deleteCustomerCheckbox,
-      importCustomersCheckbox,
-      payAllSellDueCheckbox,
-      payAllSellReturnDueCheckbox;
+      importCustomersCheckbox;
   // Suppliers
-  private final MFXCheckBox viewSuppliersCheckbox,
+  @FXML
+  private MFXCheckBox viewSuppliersCheckbox,
       editSuppliersCheckbox,
       createSupplierCheckbox,
       deleteSupplierCheckbox,
-      importSuppliersCheckbox,
-      payAllPurchaseDueCheckbox,
-      payAllPurchaseReturnDueCheckbox;
+      importSuppliersCheckbox;
   // Reports
-  private final MFXCheckBox paymentSalesCheckbox,
+  @FXML
+  private MFXCheckBox paymentSalesCheckbox,
       paymentPurchasesCheckbox,
       saleReturnPaymentsCheckbox,
       purchaseReturnPaymentsCheckbox,
@@ -159,34 +143,24 @@ public class RoleSettingsFormController implements Initializable {
       supplierReportCheckbox,
       profitAndLossCheckbox,
       productQuantityAlertsCheckbox,
-      warehouseStockChartCheckbox,
+      branchStockChartCheckbox,
       topSellingProductsCheckbox,
-      bestCustomersCheckbox,
+      customerRankingCheckbox,
       usersReportCheckbox,
       stockReportCheckbox,
       productReportCheckbox,
       productSalesReportCheckbox,
       productPurchasesReportCheckbox;
-  // HRM
-  private final MFXCheckBox viewEmployeeCheckbox,
-      editEmployeeCheckbox,
-      createEmployeeCheckbox,
-      deleteEmployeeCheckbox,
-      CompanyCheckbox,
-      departmentCheckbox,
-      designationCheckbox,
-      officeShiftCheckbox,
-      attendanceCheckbox,
-      leaveRequestCheckbox,
-      holidayCheckbox;
   // Settings
-  private final MFXCheckBox viewSystemSettingCheckbox,
-      viewPOSSettingsCheckbox,
-      viewCurrencyCheckbox,
-      viewBranchCheckbox,
-      viewBackupCheckbox;
+  @FXML
+  private MFXCheckBox accessSystemSettingCheckbox,
+      AccessPOSSettingsCheckbox,
+      accessCurrencyCheckbox,
+      accessBranchCheckbox,
+      accessBackupCheckbox;
   // Select All.
-  private final MFXCheckBox selectAllRequisitionsCheckbox,
+  @FXML
+  private MFXCheckBox selectAllRequisitionsCheckbox,
       selectAllPurchasesCheckbox,
       selectAllTransfersCheckbox,
       selectAllStockInsCheckbox,
@@ -195,407 +169,199 @@ public class RoleSettingsFormController implements Initializable {
       selectAllExpensesCheckbox,
       selectAllAdjustmentsCheckbox,
       selectAllPurchasesReturnsCheckbox,
-      selectAllPaymentsPurchasesCheckbox,
-      selectAllPaymentsSalesCheckbox,
-      selectAllPaymentsReturnsCheckbox,
-      selectAllRolePermissionsCheckbox,
+      selectAllRolesCheckbox,
       selectAllUserManagementsCheckbox,
       selectAllSalesReturnsCheckbox,
       selectAllSettingsCheckbox,
-      selectAllHRMCheckbox,
       selectAllSuppliersCheckbox,
       selectAllCustomersCheckbox,
       selectAllProductsCheckbox,
       selectAllReportsCheckbox;
-  // </editor-fold>
-  @FXML public MFXButton roleSaveBtn;
-  @FXML public MFXButton roleCancelBtn;
-  @FXML public VBox roleHolder;
-  // <editor-fold desc="Lots of VBoxes here 👇️">
-  VBox settingSetting,
-      hrmSetting,
-      reportSetting,
-      supplierSetting,
-      paymentReturnSetting,
-      paymentPurchaseSetting,
-      paymentSaleSetting,
-      purchaseReturnSetting,
-      saleReturnSetting,
-      quotationSetting,
-      purchaseSetting,
-      requisitionSetting,
-      stockInSetting,
-      saleSetting,
-      expenseSetting,
-      transferSetting,
-      adjustmentSetting,
-      productsSetting,
-      userPermissionsSetting,
-      dashboardSetting,
-      posSetting,
-      userMgtSetting,
-      customerSetting;
-  // </editor-fold>
-  // <editor-fold desc="Lots of GridPanes here 👇️">
-  GridPane userMgtSettingCheckboxes,
-      userPermissionsSettingCheckboxes,
-      productsSettingCheckboxes,
-      adjustmentSettingCheckboxes,
-      transferSettingCheckboxes,
-      expenseSettingCheckboxes,
-      saleSettingCheckboxes,
-      purchaseSettingCheckboxes,
-      requisitionSettingCheckboxes,
-      stockInSettingCheckboxes,
-      quotationSettingCheckboxes,
-      saleReturnSettingCheckboxes,
-      purchaseReturnSettingCheckboxes,
-      paymentSaleSettingCheckboxes,
-      paymentPurchaseSettingCheckboxes,
-      paymentReturnSettingCheckboxes,
-      supplierSettingCheckboxes,
-      reportSettingCheckboxes,
-      hrmSettingCheckboxes,
-      settingSettingCheckboxes,
-      customerSettingCheckboxes;
-  Label errorLabel;
-  VBox container;
-  MFXValidator validator;
-  List<Constraint> validate;
-  Constraint emptyConstraint;
-  Constraint lengthConstraint;
-  ColumnConstraints col1;
-  ColumnConstraints col2;
-  // </editor-fold>
-  @FXML private GridPane roleSettings;
+  private List<Constraint> constraints;
+  @FXML private Label errorLabel;
   @FXML private BorderPane roleSettingsHolder;
+  @FXML private MFXTextField roleNameInputField;
 
-  public RoleSettingsFormController() {
-    settingSetting = new VBox();
-    hrmSetting = new VBox();
-    reportSetting = new VBox();
-    customerSetting = new VBox();
-    supplierSetting = new VBox();
-    paymentReturnSetting = new VBox();
-    paymentPurchaseSetting = new VBox();
-    paymentSaleSetting = new VBox();
-    purchaseReturnSetting = new VBox();
-    saleReturnSetting = new VBox();
-    quotationSetting = new VBox();
-    purchaseSetting = new VBox();
-    requisitionSetting = new VBox();
-    stockInSetting = new VBox();
-    saleSetting = new VBox();
-    expenseSetting = new VBox();
-    transferSetting = new VBox();
-    adjustmentSetting = new VBox();
-    productsSetting = new VBox();
-    userPermissionsSetting = new VBox();
-    dashboardSetting = new VBox();
-    posSetting = new VBox();
-    userMgtSetting = new VBox();
-    roleHolder = new VBox();
-
-    userMgtSettingCheckboxes = new GridPane();
-    userPermissionsSettingCheckboxes = new GridPane();
-    productsSettingCheckboxes = new GridPane();
-    adjustmentSettingCheckboxes = new GridPane();
-    transferSettingCheckboxes = new GridPane();
-    expenseSettingCheckboxes = new GridPane();
-    saleSettingCheckboxes = new GridPane();
-    purchaseSettingCheckboxes = new GridPane();
-    requisitionSettingCheckboxes = new GridPane();
-    stockInSettingCheckboxes = new GridPane();
-    quotationSettingCheckboxes = new GridPane();
-    saleReturnSettingCheckboxes = new GridPane();
-    purchaseReturnSettingCheckboxes = new GridPane();
-    paymentSaleSettingCheckboxes = new GridPane();
-    paymentPurchaseSettingCheckboxes = new GridPane();
-    paymentReturnSettingCheckboxes = new GridPane();
-    supplierSettingCheckboxes = new GridPane();
-    reportSettingCheckboxes = new GridPane();
-    hrmSettingCheckboxes = new GridPane();
-    settingSettingCheckboxes = new GridPane();
-    customerSettingCheckboxes = new GridPane();
-
-    roleNameInputField = new MFXTextField();
-
-    dashboardCheckbox = new MFXCheckBox();
-    accessPOSCheckbox = new MFXCheckBox();
-
-    viewUsersCheckbox = new MFXCheckBox();
-    editUsersCheckbox = new MFXCheckBox();
-    createUserCheckbox = new MFXCheckBox();
-    deleteUserCheckbox = new MFXCheckBox();
-
-    viewUserPermissionsCheckbox = new MFXCheckBox();
-    editUserPermissionsCheckbox = new MFXCheckBox();
-    createUserPermissionCheckbox = new MFXCheckBox();
-    deleteUserPermissionCheckbox = new MFXCheckBox();
-
-    viewProductsCheckbox = new MFXCheckBox();
-    editProductsCheckbox = new MFXCheckBox();
-    createProductCheckbox = new MFXCheckBox();
-    deleteProductCheckbox = new MFXCheckBox();
-    productBarcodesCheckbox = new MFXCheckBox();
-    productCategoriesCheckbox = new MFXCheckBox();
-    productUnitsCheckbox = new MFXCheckBox();
-    productImportsCheckbox = new MFXCheckBox();
-    productBrandsCheckbox = new MFXCheckBox();
-
-    viewAdjustmentsCheckbox = new MFXCheckBox();
-    editAdjustmentsCheckbox = new MFXCheckBox();
-    createAdjustmentCheckbox = new MFXCheckBox();
-    deleteAdjustmentCheckbox = new MFXCheckBox();
-
-    viewTransfersCheckbox = new MFXCheckBox();
-    editTransfersCheckbox = new MFXCheckBox();
-    createTransferCheckbox = new MFXCheckBox();
-    deleteTransferCheckbox = new MFXCheckBox();
-
-    viewExpensesCheckbox = new MFXCheckBox();
-    editExpensesCheckbox = new MFXCheckBox();
-    createExpenseCheckbox = new MFXCheckBox();
-    deleteExpenseCheckbox = new MFXCheckBox();
-
-    viewSalesCheckbox = new MFXCheckBox();
-    editSalesCheckbox = new MFXCheckBox();
-    createSaleCheckbox = new MFXCheckBox();
-    deleteSaleCheckbox = new MFXCheckBox();
-
-    viewPurchasesCheckbox = new MFXCheckBox();
-    editPurchasesCheckbox = new MFXCheckBox();
-    createPurchaseCheckbox = new MFXCheckBox();
-    deletePurchaseCheckbox = new MFXCheckBox();
-
-    viewRequisitionCheckbox = new MFXCheckBox();
-    editRequisitionCheckbox = new MFXCheckBox();
-    createRequisitionCheckbox = new MFXCheckBox();
-    deleteRequisitionCheckbox = new MFXCheckBox();
-
-    viewStockInCheckbox = new MFXCheckBox();
-    editStockInCheckbox = new MFXCheckBox();
-    createStockInCheckbox = new MFXCheckBox();
-    deleteStockInCheckbox = new MFXCheckBox();
-
-    viewQuotationsCheckbox = new MFXCheckBox();
-    editQuotationsCheckbox = new MFXCheckBox();
-    createQuotationCheckbox = new MFXCheckBox();
-    deleteQuotationCheckbox = new MFXCheckBox();
-
-    viewSaleReturnsCheckbox = new MFXCheckBox();
-    editSaleReturnsCheckbox = new MFXCheckBox();
-    createSaleReturnCheckbox = new MFXCheckBox();
-    deleteSaleReturnCheckbox = new MFXCheckBox();
-
-    viewPurchaseReturnsCheckbox = new MFXCheckBox();
-    editPurchaseReturnsCheckbox = new MFXCheckBox();
-    createPurchaseReturnCheckbox = new MFXCheckBox();
-    deletePurchaseReturnCheckbox = new MFXCheckBox();
-
-    viewPaymentsSalesCheckbox = new MFXCheckBox();
-    editPaymentsSalesCheckbox = new MFXCheckBox();
-    createPaymentsSaleCheckbox = new MFXCheckBox();
-    deletePaymentsSaleCheckbox = new MFXCheckBox();
-
-    viewPaymentsPurchasesCheckbox = new MFXCheckBox();
-    editPaymentsPurchasesCheckbox = new MFXCheckBox();
-    createPaymentsPurchaseCheckbox = new MFXCheckBox();
-    deletePaymentsPurchaseCheckbox = new MFXCheckBox();
-
-    viewPaymentsReturnsCheckbox = new MFXCheckBox();
-    editPaymentsReturnsCheckbox = new MFXCheckBox();
-    createPaymentsReturnCheckbox = new MFXCheckBox();
-    deletePaymentsReturnCheckbox = new MFXCheckBox();
-
-    viewCustomersCheckbox = new MFXCheckBox();
-    editCustomersCheckbox = new MFXCheckBox();
-    createCustomerCheckbox = new MFXCheckBox();
-    deleteCustomerCheckbox = new MFXCheckBox();
-    importCustomersCheckbox = new MFXCheckBox();
-    payAllSellDueCheckbox = new MFXCheckBox();
-    payAllSellReturnDueCheckbox = new MFXCheckBox();
-
-    viewSuppliersCheckbox = new MFXCheckBox();
-    editSuppliersCheckbox = new MFXCheckBox();
-    createSupplierCheckbox = new MFXCheckBox();
-    deleteSupplierCheckbox = new MFXCheckBox();
-    importSuppliersCheckbox = new MFXCheckBox();
-    payAllPurchaseDueCheckbox = new MFXCheckBox();
-    payAllPurchaseReturnDueCheckbox = new MFXCheckBox();
-
-    paymentSalesCheckbox = new MFXCheckBox();
-    paymentPurchasesCheckbox = new MFXCheckBox();
-    saleReturnPaymentsCheckbox = new MFXCheckBox();
-    purchaseReturnPaymentsCheckbox = new MFXCheckBox();
-    saleReportCheckbox = new MFXCheckBox();
-    purchaseReportCheckbox = new MFXCheckBox();
-    customerReportCheckbox = new MFXCheckBox();
-    supplierReportCheckbox = new MFXCheckBox();
-    profitAndLossCheckbox = new MFXCheckBox();
-    productQuantityAlertsCheckbox = new MFXCheckBox();
-    warehouseStockChartCheckbox = new MFXCheckBox();
-    topSellingProductsCheckbox = new MFXCheckBox();
-    bestCustomersCheckbox = new MFXCheckBox();
-    usersReportCheckbox = new MFXCheckBox();
-    stockReportCheckbox = new MFXCheckBox();
-    productReportCheckbox = new MFXCheckBox();
-    productSalesReportCheckbox = new MFXCheckBox();
-    productPurchasesReportCheckbox = new MFXCheckBox();
-
-    viewEmployeeCheckbox = new MFXCheckBox();
-    editEmployeeCheckbox = new MFXCheckBox();
-    createEmployeeCheckbox = new MFXCheckBox();
-    deleteEmployeeCheckbox = new MFXCheckBox();
-    CompanyCheckbox = new MFXCheckBox();
-    departmentCheckbox = new MFXCheckBox();
-    designationCheckbox = new MFXCheckBox();
-    officeShiftCheckbox = new MFXCheckBox();
-    attendanceCheckbox = new MFXCheckBox();
-    leaveRequestCheckbox = new MFXCheckBox();
-    holidayCheckbox = new MFXCheckBox();
-
-    viewSystemSettingCheckbox = new MFXCheckBox();
-    viewPOSSettingsCheckbox = new MFXCheckBox();
-    viewCurrencyCheckbox = new MFXCheckBox();
-    viewBranchCheckbox = new MFXCheckBox();
-    viewBackupCheckbox = new MFXCheckBox();
-
-    selectAllRequisitionsCheckbox = new MFXCheckBox("Select All");
-    selectAllPurchasesCheckbox = new MFXCheckBox("Select All");
-    selectAllTransfersCheckbox = new MFXCheckBox("Select All");
-    selectAllStockInsCheckbox = new MFXCheckBox("Select All");
-    selectAllQuotationsCheckbox = new MFXCheckBox("Select All");
-    selectAllSalesCheckbox = new MFXCheckBox("Select All");
-    selectAllExpensesCheckbox = new MFXCheckBox("Select All");
-    selectAllAdjustmentsCheckbox = new MFXCheckBox("Select All");
-    selectAllPurchasesReturnsCheckbox = new MFXCheckBox("Select All");
-    selectAllPaymentsPurchasesCheckbox = new MFXCheckBox("Select All");
-    selectAllPaymentsSalesCheckbox = new MFXCheckBox("Select All");
-    selectAllPaymentsReturnsCheckbox = new MFXCheckBox("Select All");
-    selectAllRolePermissionsCheckbox = new MFXCheckBox("Select All");
-    selectAllUserManagementsCheckbox = new MFXCheckBox("Select All");
-    selectAllSalesReturnsCheckbox = new MFXCheckBox("Select All");
-    selectAllSettingsCheckbox = new MFXCheckBox("Select All");
-    selectAllHRMCheckbox = new MFXCheckBox("Select All");
-    selectAllSuppliersCheckbox = new MFXCheckBox("Select All");
-    selectAllCustomersCheckbox = new MFXCheckBox("Select All");
-    selectAllProductsCheckbox = new MFXCheckBox("Select All");
-    selectAllReportsCheckbox = new MFXCheckBox("Select All");
-
-    col1 = new ColumnConstraints();
-    col1.setHgrow(Priority.ALWAYS);
-    col2 = new ColumnConstraints();
-    col2.setHgrow(Priority.ALWAYS);
-  }
+  public RoleSettingsFormController() {}
+  // </editor-fold>
 
   public static RoleSettingsFormController getInstance() {
     if (Objects.equals(instance, null)) instance = new RoleSettingsFormController();
     return instance;
   }
 
+  public void resetCheckboxes() {
+    dashboardCheckbox.setSelected(false);
+    accessPOSCheckbox.setSelected(false);
+    viewUsersCheckbox.setSelected(false);
+    editUsersCheckbox.setSelected(false);
+    createUserCheckbox.setSelected(false);
+    deleteUserCheckbox.setSelected(false);
+    viewRoleCheckbox.setSelected(false);
+    editRoleCheckbox.setSelected(false);
+    createRoleCheckbox.setSelected(false);
+    deleteRoleCheckbox.setSelected(false);
+    viewProductsCheckbox.setSelected(false);
+    editProductsCheckbox.setSelected(false);
+    createProductCheckbox.setSelected(false);
+    deleteProductCheckbox.setSelected(false);
+    productBarcodesCheckbox.setSelected(false);
+    productCategoriesCheckbox.setSelected(false);
+    productUnitsCheckbox.setSelected(false);
+    productImportsCheckbox.setSelected(false);
+    productBrandsCheckbox.setSelected(false);
+    viewAdjustmentsCheckbox.setSelected(false);
+    editAdjustmentsCheckbox.setSelected(false);
+    createAdjustmentCheckbox.setSelected(false);
+    deleteAdjustmentCheckbox.setSelected(false);
+    viewTransfersCheckbox.setSelected(false);
+    editTransfersCheckbox.setSelected(false);
+    createTransferCheckbox.setSelected(false);
+    deleteTransferCheckbox.setSelected(false);
+    viewExpensesCheckbox.setSelected(false);
+    editExpensesCheckbox.setSelected(false);
+    createExpenseCheckbox.setSelected(false);
+    deleteExpenseCheckbox.setSelected(false);
+    viewSalesCheckbox.setSelected(false);
+    editSalesCheckbox.setSelected(false);
+    createSaleCheckbox.setSelected(false);
+    deleteSaleCheckbox.setSelected(false);
+    viewPurchasesCheckbox.setSelected(false);
+    editPurchasesCheckbox.setSelected(false);
+    createPurchaseCheckbox.setSelected(false);
+    deletePurchaseCheckbox.setSelected(false);
+    viewRequisitionCheckbox.setSelected(false);
+    editRequisitionCheckbox.setSelected(false);
+    createRequisitionCheckbox.setSelected(false);
+    deleteRequisitionCheckbox.setSelected(false);
+    viewStockInCheckbox.setSelected(false);
+    editStockInCheckbox.setSelected(false);
+    createStockInCheckbox.setSelected(false);
+    deleteStockInCheckbox.setSelected(false);
+    viewQuotationsCheckbox.setSelected(false);
+    editQuotationsCheckbox.setSelected(false);
+    createQuotationCheckbox.setSelected(false);
+    deleteQuotationCheckbox.setSelected(false);
+    viewSaleReturnsCheckbox.setSelected(false);
+    editSaleReturnsCheckbox.setSelected(false);
+    createSaleReturnCheckbox.setSelected(false);
+    deleteSaleReturnCheckbox.setSelected(false);
+    viewPurchaseReturnsCheckbox.setSelected(false);
+    editPurchaseReturnsCheckbox.setSelected(false);
+    createPurchaseReturnCheckbox.setSelected(false);
+    deletePurchaseReturnCheckbox.setSelected(false);
+    viewCustomersCheckbox.setSelected(false);
+    editCustomersCheckbox.setSelected(false);
+    createCustomerCheckbox.setSelected(false);
+    deleteCustomerCheckbox.setSelected(false);
+    importCustomersCheckbox.setSelected(false);
+    viewSuppliersCheckbox.setSelected(false);
+    editSuppliersCheckbox.setSelected(false);
+    createSupplierCheckbox.setSelected(false);
+    deleteSupplierCheckbox.setSelected(false);
+    importSuppliersCheckbox.setSelected(false);
+    paymentSalesCheckbox.setSelected(false);
+    paymentPurchasesCheckbox.setSelected(false);
+    saleReturnPaymentsCheckbox.setSelected(false);
+    purchaseReturnPaymentsCheckbox.setSelected(false);
+    saleReportCheckbox.setSelected(false);
+    purchaseReportCheckbox.setSelected(false);
+    customerReportCheckbox.setSelected(false);
+    supplierReportCheckbox.setSelected(false);
+    profitAndLossCheckbox.setSelected(false);
+    productQuantityAlertsCheckbox.setSelected(false);
+    branchStockChartCheckbox.setSelected(false);
+    topSellingProductsCheckbox.setSelected(false);
+    customerRankingCheckbox.setSelected(false);
+    usersReportCheckbox.setSelected(false);
+    stockReportCheckbox.setSelected(false);
+    productReportCheckbox.setSelected(false);
+    productSalesReportCheckbox.setSelected(false);
+    productPurchasesReportCheckbox.setSelected(false);
+    accessSystemSettingCheckbox.setSelected(false);
+    AccessPOSSettingsCheckbox.setSelected(false);
+    accessCurrencyCheckbox.setSelected(false);
+    accessBranchCheckbox.setSelected(false);
+    accessBackupCheckbox.setSelected(false);
+    selectAllRequisitionsCheckbox.setSelected(false);
+    selectAllPurchasesCheckbox.setSelected(false);
+    selectAllTransfersCheckbox.setSelected(false);
+    selectAllStockInsCheckbox.setSelected(false);
+    selectAllQuotationsCheckbox.setSelected(false);
+    selectAllSalesCheckbox.setSelected(false);
+    selectAllExpensesCheckbox.setSelected(false);
+    selectAllAdjustmentsCheckbox.setSelected(false);
+    selectAllPurchasesReturnsCheckbox.setSelected(false);
+    selectAllRolesCheckbox.setSelected(false);
+    selectAllUserManagementsCheckbox.setSelected(false);
+    selectAllSalesReturnsCheckbox.setSelected(false);
+    selectAllSettingsCheckbox.setSelected(false);
+    selectAllSuppliersCheckbox.setSelected(false);
+    selectAllCustomersCheckbox.setSelected(false);
+    selectAllProductsCheckbox.setSelected(false);
+    selectAllReportsCheckbox.setSelected(false);
+  }
+
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-    roleHolder.setSpacing(5);
-    roleHolder.getStyleClass().addAll("spoty-role-form-header");
-    roleHolder.getChildren().addAll(new Label("Create Role"), new Separator());
+    bindProperties();
 
-    emptyConstraint =
-        Constraint.Builder.build()
-            .setSeverity(Severity.ERROR)
-            .setMessage("Field required")
-            .setCondition(roleNameInputField.textProperty().length().greaterThan(0))
-            .get();
-    lengthConstraint =
-        Constraint.Builder.build()
-            .setSeverity(Severity.ERROR)
-            .setMessage("Role name must be at least 4 Characters long")
-            .setCondition(roleNameInputField.textProperty().length().greaterThan(3))
-            .get();
+    getDashBoardSetting();
+    getPOSSettings();
+    getRequisitionSetting();
+    getPurchaseSetting();
+    getTransferSetting();
+    getStockInSetting();
+    getQuotationSetting();
+    getSaleSetting();
+    getAdjustmentSetting();
+    getPurchaseReturnSetting();
+    getExpenseSetting();
+    getRolesSetting();
+    getUserMgtSetting();
+    getSaleReturnSetting();
+    getSettingSetting();
+    getSupplierSetting();
+    getCustomerSetting();
+    getProductsSetting();
+    getReportSetting();
 
-    roleNameInputField.setFloatMode(FloatMode.BORDER);
-    roleNameInputField.setFloatingText("Role name");
-    roleNameInputField.setPrefWidth(400);
-    roleNameInputField.requestFocus();
-    roleNameInputField.getValidator().constraint(emptyConstraint).constraint(lengthConstraint);
-
-    getRoleSettings();
+    validationConstraints();
+    validationWrapper();
   }
 
-  protected VBox validationWrapper(MFXTextField node) {
-    errorLabel = new Label();
-    container = new VBox(5, node, errorLabel);
-    container.setAlignment(Pos.CENTER);
-    errorLabel.getStyleClass().add("input-validation-error");
+  private void bindProperties() {
+    roleNameInputField.textProperty().bindBidirectional(RoleViewModel.nameProperty());
+    roleDescriptionInputField.textProperty().bindBidirectional(RoleViewModel.descriptionProperty());
+  }
 
-    node.getValidator()
-        .validProperty()
+  private void getDashBoardSetting() {
+    dashboardCheckbox
+        .selectedProperty()
         .addListener(
-            (observable, oldValue, newValue) -> {
-              if (newValue) {
-                errorLabel.setVisible(false);
-                roleNameInputField.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+            (observableVal, oldVal, newVal) -> {
+              if (!newVal) {
+                PermissionsViewModel.removePermission(PermissionsViewModel.getDashboardAccess());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getDashboardAccess());
               }
             });
-    node.delegateFocusedProperty()
+  }
+
+  private void getPOSSettings() {
+    accessPOSCheckbox
+        .selectedProperty()
         .addListener(
-            (observable, oldValue, newValue) -> {
-              if (oldValue && !newValue) {
-                List<Constraint> constraints = roleNameInputField.validate();
-                if (!constraints.isEmpty()) {
-                  roleNameInputField.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                  errorLabel.setText(constraints.get(0).getMessage());
-                  errorLabel.setVisible(true);
-                }
+            (observableVal, oldVal, newVal) -> {
+              if (!newVal) {
+                PermissionsViewModel.removePermission(PermissionsViewModel.getPosAccess());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getPosAccess());
               }
             });
-
-    roleSaveBtn.setOnAction(
-        e -> {
-          validator = node.getValidator();
-          validate = validator.validate();
-          if (!validate.isEmpty()) {
-            errorLabel.setText(validate.get(0).getMessage());
-            errorLabel.setVisible(true);
-          }
-        });
-    return container;
   }
 
-  private VBox getDashboardRoleSetting() {
-    dashboardSetting.getStyleClass().add("card");
-    dashboardSetting.setPadding(new Insets(10));
-    dashboardCheckbox.setText("Access Dashboard");
-    dashboardSetting.getChildren().addAll(title("DASHBOARD", null), dashboardCheckbox);
-    return dashboardSetting;
-  }
-
-  private VBox getPOSSetting() {
-    posSetting.getStyleClass().add("card");
-    posSetting.setPadding(new Insets(10));
-    accessPOSCheckbox.setText("Access Point Of Sale");
-    posSetting.getChildren().addAll(title("POINT OF SALE", null), accessPOSCheckbox);
-    return posSetting;
-  }
-
-  private VBox getUserMgtSetting() {
-    // Controls CRUD operations on User Management.
-    userMgtSetting.getStyleClass().add("card");
-    userMgtSetting.setPadding(new Insets(10));
-
-    viewUsersCheckbox.setText("View Users");
-    editUsersCheckbox.setText("Edit Users");
-    createUserCheckbox.setText("Create Users");
-    deleteUserCheckbox.setText("Delete Users");
-
-    userMgtSettingCheckboxes.getColumnConstraints().addAll(col1, col2);
-
-    userMgtSettingCheckboxes.addColumn(0, viewUsersCheckbox, editUsersCheckbox);
-    userMgtSettingCheckboxes.addColumn(1, createUserCheckbox, deleteUserCheckbox);
-
-    userMgtSettingCheckboxes.setHgap(GRID_HGAP);
-    userMgtSettingCheckboxes.setVgap(GRID_VGAP);
-
+  private void getUserMgtSetting() {
     selectAllUserManagementsCheckbox
         .selectedProperty()
         .addListener(
@@ -612,130 +378,112 @@ public class RoleSettingsFormController implements Initializable {
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllUserManagementsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllUserManagementsCheckbox.isSelected())
+                  selectAllUserManagementsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getViewUsers());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getViewUsers());
+              }
             });
     editUsersCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllUserManagementsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllUserManagementsCheckbox.isSelected())
+                  selectAllUserManagementsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getEditUsers());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getEditUsers());
+              }
             });
     createUserCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllUserManagementsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllUserManagementsCheckbox.isSelected())
+                  selectAllUserManagementsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getCreateUsers());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getCreateUsers());
+              }
             });
     deleteUserCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllUserManagementsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllUserManagementsCheckbox.isSelected())
+                  selectAllUserManagementsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getDeleteUsers());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getDeleteUsers());
+              }
             });
-
-    userMgtSetting
-        .getChildren()
-        .addAll(
-            title("USER MANAGEMENT", selectAllUserManagementsCheckbox), userMgtSettingCheckboxes);
-    return userMgtSetting;
   }
 
-  private VBox getUserPermissionsSetting() {
-    // Controls CRUD operations on setting User permissions.
-    userPermissionsSetting.getStyleClass().add("card");
-    userPermissionsSetting.setPadding(new Insets(10));
-
-    viewUserPermissionsCheckbox.setText("View Permissions");
-    editUserPermissionsCheckbox.setText("Edit Permissions");
-    createUserPermissionCheckbox.setText("Create Permissions");
-    deleteUserPermissionCheckbox.setText("Delete Permissions");
-
-    userPermissionsSettingCheckboxes.getColumnConstraints().addAll(col1, col2);
-
-    userPermissionsSettingCheckboxes.addColumn(
-        0, viewUserPermissionsCheckbox, editUserPermissionsCheckbox);
-    userPermissionsSettingCheckboxes.addColumn(
-        1, createUserPermissionCheckbox, deleteUserPermissionCheckbox);
-
-    userPermissionsSettingCheckboxes.setHgap(GRID_HGAP);
-    userPermissionsSettingCheckboxes.setVgap(GRID_VGAP);
-
-    selectAllRolePermissionsCheckbox
+  private void getRolesSetting() {
+    selectAllRolesCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (selectAllRolePermissionsCheckbox.isFocused()) {
-                viewUserPermissionsCheckbox.setSelected(newVal);
-                editUserPermissionsCheckbox.setSelected(newVal);
-                createUserPermissionCheckbox.setSelected(newVal);
-                deleteUserPermissionCheckbox.setSelected(newVal);
+              if (selectAllRolesCheckbox.isFocused()) {
+                viewRoleCheckbox.setSelected(newVal);
+                editRoleCheckbox.setSelected(newVal);
+                createRoleCheckbox.setSelected(newVal);
+                deleteRoleCheckbox.setSelected(newVal);
               }
             });
 
-    viewUserPermissionsCheckbox
+    viewRoleCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllRolePermissionsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllRolesCheckbox.isSelected()) selectAllRolesCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getViewPermissions());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getViewPermissions());
+              }
             });
-    editUserPermissionsCheckbox
+    editRoleCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllRolePermissionsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllRolesCheckbox.isSelected()) selectAllRolesCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getEditPermissions());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getEditPermissions());
+              }
             });
-    createUserPermissionCheckbox
+    createRoleCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllRolePermissionsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllRolesCheckbox.isSelected()) selectAllRolesCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getCreatePermissions());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getCreatePermissions());
+              }
             });
-    deleteUserPermissionCheckbox
+    deleteRoleCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllRolePermissionsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllRolesCheckbox.isSelected()) selectAllRolesCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getDeletePermissions());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getDeletePermissions());
+              }
             });
-
-    userPermissionsSetting
-        .getChildren()
-        .addAll(
-            title("ROLE PERMISSION", selectAllRolePermissionsCheckbox),
-            userPermissionsSettingCheckboxes);
-    return userPermissionsSetting;
   }
 
-  private VBox getProductsSetting() {
-    // Controls CRUD operations on setting Products.
-    productsSetting.getStyleClass().add("card");
-    productsSetting.setPadding(new Insets(10));
-
-    viewProductsCheckbox.setText("View Products");
-    editProductsCheckbox.setText("Edit Products");
-    productBarcodesCheckbox.setText("Edit Barcodes");
-    productCategoriesCheckbox.setText("Access Product Categories");
-    productUnitsCheckbox.setText("Edit Units of Measure");
-    createProductCheckbox.setText("Create Products");
-    deleteProductCheckbox.setText("Delete Products");
-    productImportsCheckbox.setText("Import Products");
-    productBrandsCheckbox.setText("Edit Brands");
-
-    productsSettingCheckboxes.getColumnConstraints().addAll(col1, col2);
-
-    productsSettingCheckboxes.addColumn(
-        0,
-        viewProductsCheckbox,
-        editProductsCheckbox,
-        productBarcodesCheckbox,
-        productCategoriesCheckbox,
-        productUnitsCheckbox);
-    productsSettingCheckboxes.addColumn(
-        1,
-        createProductCheckbox,
-        deleteProductCheckbox,
-        productImportsCheckbox,
-        productBrandsCheckbox);
-
+  private void getProductsSetting() {
     selectAllProductsCheckbox
         .selectedProperty()
         .addListener(
@@ -757,13 +505,25 @@ public class RoleSettingsFormController implements Initializable {
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllProductsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllProductsCheckbox.isSelected())
+                  selectAllProductsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getViewProducts());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getViewProducts());
+              }
             });
     editProductsCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllProductsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllProductsCheckbox.isSelected())
+                  selectAllProductsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getEditProducts());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getEditProducts());
+              }
             });
     productBarcodesCheckbox
         .selectedProperty()
@@ -775,66 +535,80 @@ public class RoleSettingsFormController implements Initializable {
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllProductsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllProductsCheckbox.isSelected())
+                  selectAllProductsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(
+                    PermissionsViewModel.getAccessProductCategories());
+              } else {
+                PermissionsViewModel.addPermission(
+                    PermissionsViewModel.getAccessProductCategories());
+              }
             });
     productUnitsCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllProductsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllProductsCheckbox.isSelected())
+                  selectAllProductsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(
+                    PermissionsViewModel.getAccessUnitsOfMeasure());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getAccessUnitsOfMeasure());
+              }
             });
     createProductCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllProductsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllProductsCheckbox.isSelected())
+                  selectAllProductsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getCreateProducts());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getCreateProducts());
+              }
             });
     deleteProductCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllProductsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllProductsCheckbox.isSelected())
+                  selectAllProductsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getDeleteProducts());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getDeleteProducts());
+              }
             });
     productImportsCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllProductsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllProductsCheckbox.isSelected())
+                  selectAllProductsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getImportProducts());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getImportProducts());
+              }
             });
     productBrandsCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllProductsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllProductsCheckbox.isSelected())
+                  selectAllProductsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getAccessBrands());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getAccessBrands());
+              }
             });
-
-    productsSettingCheckboxes.setHgap(GRID_HGAP);
-    productsSettingCheckboxes.setVgap(GRID_VGAP);
-
-    productsSetting
-        .getChildren()
-        .addAll(title("PRODUCT", selectAllProductsCheckbox), productsSettingCheckboxes);
-    return productsSetting;
   }
 
-  private VBox getAdjustmentSetting() {
-    // Controls CRUD operations on Adjustments.
-    adjustmentSetting.getStyleClass().add("card");
-    adjustmentSetting.setPadding(new Insets(10));
-
-    viewAdjustmentsCheckbox.setText("View Adjustments");
-    editAdjustmentsCheckbox.setText("Edit Adjustments");
-    createAdjustmentCheckbox.setText("Create Adjustments");
-    deleteAdjustmentCheckbox.setText("Delete Adjustments");
-
-    adjustmentSettingCheckboxes.getColumnConstraints().addAll(col1, col2);
-
-    adjustmentSettingCheckboxes.addColumn(0, viewAdjustmentsCheckbox, editAdjustmentsCheckbox);
-    adjustmentSettingCheckboxes.addColumn(1, createAdjustmentCheckbox, deleteAdjustmentCheckbox);
-
-    adjustmentSettingCheckboxes.setHgap(GRID_HGAP);
-    adjustmentSettingCheckboxes.setVgap(GRID_VGAP);
-
+  private void getAdjustmentSetting() {
     selectAllAdjustmentsCheckbox
         .selectedProperty()
         .addListener(
@@ -851,51 +625,53 @@ public class RoleSettingsFormController implements Initializable {
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllAdjustmentsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllAdjustmentsCheckbox.isSelected())
+                  selectAllAdjustmentsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getViewAdjustments());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getViewAdjustments());
+              }
             });
     editAdjustmentsCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllAdjustmentsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllAdjustmentsCheckbox.isSelected())
+                  selectAllAdjustmentsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getEditAdjustments());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getEditAdjustments());
+              }
             });
     createAdjustmentCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllAdjustmentsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllAdjustmentsCheckbox.isSelected())
+                  selectAllAdjustmentsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getCreateAdjustments());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getCreateAdjustments());
+              }
             });
     deleteAdjustmentCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllAdjustmentsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllAdjustmentsCheckbox.isSelected())
+                  selectAllAdjustmentsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getDeleteAdjustments());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getDeleteAdjustments());
+              }
             });
-
-    adjustmentSetting
-        .getChildren()
-        .addAll(title("ADJUSTMENT", selectAllAdjustmentsCheckbox), adjustmentSettingCheckboxes);
-    return adjustmentSetting;
   }
 
-  private VBox getTransferSetting() {
-    // Controls CRUD operations on Transfer.
-    transferSetting.getStyleClass().add("card");
-    transferSetting.setPadding(new Insets(10));
-
-    viewTransfersCheckbox.setText("View Transfers");
-    editTransfersCheckbox.setText("Edit Transfers");
-    createTransferCheckbox.setText("Create Transfers");
-    deleteTransferCheckbox.setText("Delete Transfers");
-
-    transferSettingCheckboxes.getColumnConstraints().addAll(col1, col2);
-
-    transferSettingCheckboxes.addColumn(0, viewTransfersCheckbox, editTransfersCheckbox);
-    transferSettingCheckboxes.addColumn(1, createTransferCheckbox, deleteTransferCheckbox);
-
-    transferSettingCheckboxes.setHgap(GRID_HGAP);
-    transferSettingCheckboxes.setVgap(GRID_VGAP);
-
+  private void getTransferSetting() {
     selectAllTransfersCheckbox
         .selectedProperty()
         .addListener(
@@ -912,51 +688,53 @@ public class RoleSettingsFormController implements Initializable {
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllTransfersCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllTransfersCheckbox.isSelected())
+                  selectAllTransfersCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getViewTransfers());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getViewTransfers());
+              }
             });
     editTransfersCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllTransfersCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllTransfersCheckbox.isSelected())
+                  selectAllTransfersCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getEditTransfers());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getEditTransfers());
+              }
             });
     createTransferCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllTransfersCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllTransfersCheckbox.isSelected())
+                  selectAllTransfersCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getCreateTransfers());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getCreateTransfers());
+              }
             });
     deleteTransferCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllTransfersCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllTransfersCheckbox.isSelected())
+                  selectAllTransfersCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getDeleteTransfers());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getDeleteTransfers());
+              }
             });
-
-    transferSetting
-        .getChildren()
-        .addAll(title("TRANSFER", selectAllTransfersCheckbox), transferSettingCheckboxes);
-    return transferSetting;
   }
 
-  private VBox getExpenseSetting() {
-    // Controls CRUD operations on Expense.
-    expenseSetting.getStyleClass().add("card");
-    expenseSetting.setPadding(new Insets(10));
-
-    viewExpensesCheckbox.setText("View Expenses");
-    editExpensesCheckbox.setText("Edit Expenses");
-    createExpenseCheckbox.setText("Create Expenses");
-    deleteExpenseCheckbox.setText("Delete Expenses");
-
-    expenseSettingCheckboxes.getColumnConstraints().addAll(col1, col2);
-
-    expenseSettingCheckboxes.addColumn(0, viewExpensesCheckbox, editExpensesCheckbox);
-    expenseSettingCheckboxes.addColumn(1, createExpenseCheckbox, deleteExpenseCheckbox);
-
-    expenseSettingCheckboxes.setHgap(GRID_HGAP);
-    expenseSettingCheckboxes.setVgap(GRID_VGAP);
-
+  private void getExpenseSetting() {
     selectAllExpensesCheckbox
         .selectedProperty()
         .addListener(
@@ -973,51 +751,53 @@ public class RoleSettingsFormController implements Initializable {
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllExpensesCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllExpensesCheckbox.isSelected())
+                  selectAllExpensesCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getViewExpenses());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getViewExpenses());
+              }
             });
     editExpensesCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllExpensesCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllExpensesCheckbox.isSelected())
+                  selectAllExpensesCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getEditExpenses());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getEditExpenses());
+              }
             });
     createExpenseCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllExpensesCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllExpensesCheckbox.isSelected())
+                  selectAllExpensesCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getCreateExpenses());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getCreateExpenses());
+              }
             });
     deleteExpenseCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllExpensesCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllExpensesCheckbox.isSelected())
+                  selectAllExpensesCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getDeleteExpenses());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getDeleteExpenses());
+              }
             });
-
-    expenseSetting
-        .getChildren()
-        .addAll(title("EXPENSE", selectAllExpensesCheckbox), expenseSettingCheckboxes);
-    return expenseSetting;
   }
 
-  private VBox getSaleSetting() {
-    // Controls CRUD operations on Sale.
-    saleSetting.getStyleClass().add("card");
-    saleSetting.setPadding(new Insets(10));
-
-    viewSalesCheckbox.setText("View Sales");
-    editSalesCheckbox.setText("Edit Sales");
-    createSaleCheckbox.setText("Create Sales");
-    deleteSaleCheckbox.setText("Delete Sales");
-
-    saleSettingCheckboxes.getColumnConstraints().addAll(col1, col2);
-
-    saleSettingCheckboxes.addColumn(0, viewSalesCheckbox, editSalesCheckbox);
-    saleSettingCheckboxes.addColumn(1, createSaleCheckbox, deleteSaleCheckbox);
-
-    saleSettingCheckboxes.setHgap(GRID_HGAP);
-    saleSettingCheckboxes.setVgap(GRID_VGAP);
-
+  private void getSaleSetting() {
     selectAllSalesCheckbox
         .selectedProperty()
         .addListener(
@@ -1034,49 +814,49 @@ public class RoleSettingsFormController implements Initializable {
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllSalesCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllSalesCheckbox.isSelected()) selectAllSalesCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getViewSales());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getViewSales());
+              }
             });
     editSalesCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllSalesCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllSalesCheckbox.isSelected()) selectAllSalesCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getEditSales());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getEditSales());
+              }
             });
     createSaleCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllSalesCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllSalesCheckbox.isSelected()) selectAllSalesCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getCreateSales());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getCreateSales());
+              }
             });
     deleteSaleCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllSalesCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllSalesCheckbox.isSelected()) selectAllSalesCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getDeleteSales());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getDeleteSales());
+              }
             });
-
-    saleSetting.getChildren().addAll(title("SALE", selectAllSalesCheckbox), saleSettingCheckboxes);
-    return saleSetting;
   }
 
-  private VBox getPurchaseSetting() {
-    // Controls CRUD operations on Purchase.
-    purchaseSetting.getStyleClass().add("card");
-    purchaseSetting.setPadding(new Insets(10));
-
-    viewPurchasesCheckbox.setText("View Purchases");
-    editPurchasesCheckbox.setText("Edit Purchases");
-    createPurchaseCheckbox.setText("Create Purchases");
-    deletePurchaseCheckbox.setText("Delete Purchases");
-
-    purchaseSettingCheckboxes.getColumnConstraints().addAll(col1, col2);
-
-    purchaseSettingCheckboxes.addColumn(0, viewPurchasesCheckbox, editPurchasesCheckbox);
-    purchaseSettingCheckboxes.addColumn(1, createPurchaseCheckbox, deletePurchaseCheckbox);
-
-    purchaseSettingCheckboxes.setHgap(GRID_HGAP);
-    purchaseSettingCheckboxes.setVgap(GRID_VGAP);
-
+  private void getPurchaseSetting() {
     selectAllPurchasesCheckbox
         .selectedProperty()
         .addListener(
@@ -1093,51 +873,53 @@ public class RoleSettingsFormController implements Initializable {
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllPurchasesCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllPurchasesCheckbox.isSelected())
+                  selectAllPurchasesCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getViewPurchases());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getViewPurchases());
+              }
             });
     editPurchasesCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllPurchasesCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllPurchasesCheckbox.isSelected())
+                  selectAllPurchasesCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getEditPurchases());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getEditPurchases());
+              }
             });
     createPurchaseCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllPurchasesCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllPurchasesCheckbox.isSelected())
+                  selectAllPurchasesCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getCreatePurchases());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getCreatePurchases());
+              }
             });
     deletePurchaseCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllPurchasesCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllPurchasesCheckbox.isSelected())
+                  selectAllPurchasesCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getDeletePurchases());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getDeletePurchases());
+              }
             });
-
-    purchaseSetting
-        .getChildren()
-        .addAll(title("PURCHASE", selectAllPurchasesCheckbox), purchaseSettingCheckboxes);
-    return purchaseSetting;
   }
 
-  private VBox getRequisitionSetting() {
-    // Controls CRUD operations on Requisition.
-    requisitionSetting.getStyleClass().add("card");
-    requisitionSetting.setPadding(new Insets(10));
-
-    viewRequisitionCheckbox.setText("View Requisitions");
-    editRequisitionCheckbox.setText("Edit Requisitions");
-    createRequisitionCheckbox.setText("Create Requisitions");
-    deleteRequisitionCheckbox.setText("Delete Requisitions");
-
-    requisitionSettingCheckboxes.getColumnConstraints().addAll(col1, col2);
-
-    requisitionSettingCheckboxes.addColumn(0, viewRequisitionCheckbox, editRequisitionCheckbox);
-    requisitionSettingCheckboxes.addColumn(1, createRequisitionCheckbox, deleteRequisitionCheckbox);
-
-    requisitionSettingCheckboxes.setHgap(GRID_HGAP);
-    requisitionSettingCheckboxes.setVgap(GRID_VGAP);
-
+  private void getRequisitionSetting() {
     selectAllRequisitionsCheckbox
         .selectedProperty()
         .addListener(
@@ -1154,51 +936,53 @@ public class RoleSettingsFormController implements Initializable {
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllRequisitionsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllRequisitionsCheckbox.isSelected())
+                  selectAllRequisitionsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getViewRequisition());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getViewRequisition());
+              }
             });
     editRequisitionCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllRequisitionsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllRequisitionsCheckbox.isSelected())
+                  selectAllRequisitionsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getEditRequisition());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getEditRequisition());
+              }
             });
     createRequisitionCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllRequisitionsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllRequisitionsCheckbox.isSelected())
+                  selectAllRequisitionsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getCreateRequisition());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getCreateRequisition());
+              }
             });
     deleteRequisitionCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllRequisitionsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllRequisitionsCheckbox.isSelected())
+                  selectAllRequisitionsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getDeleteRequisition());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getDeleteRequisition());
+              }
             });
-
-    requisitionSetting
-        .getChildren()
-        .addAll(title("REQUISITION", selectAllRequisitionsCheckbox), requisitionSettingCheckboxes);
-    return requisitionSetting;
   }
 
-  private VBox getStockInSetting() {
-    // Controls CRUD operations on StockIns.
-    stockInSetting.getStyleClass().add("card");
-    stockInSetting.setPadding(new Insets(10));
-
-    viewStockInCheckbox.setText("View Stock Ins");
-    editStockInCheckbox.setText("Edit Stock Ins");
-    createStockInCheckbox.setText("Create Stock Ins");
-    deleteStockInCheckbox.setText("Delete Stock Ins");
-
-    stockInSettingCheckboxes.getColumnConstraints().addAll(col1, col2);
-
-    stockInSettingCheckboxes.addColumn(0, viewStockInCheckbox, editStockInCheckbox);
-    stockInSettingCheckboxes.addColumn(1, createStockInCheckbox, deleteStockInCheckbox);
-
-    stockInSettingCheckboxes.setHgap(GRID_HGAP);
-    stockInSettingCheckboxes.setVgap(GRID_VGAP);
-
+  private void getStockInSetting() {
     selectAllStockInsCheckbox
         .selectedProperty()
         .addListener(
@@ -1215,51 +999,53 @@ public class RoleSettingsFormController implements Initializable {
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllStockInsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllStockInsCheckbox.isSelected())
+                  selectAllStockInsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getViewStockIn());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getViewStockIn());
+              }
             });
     editStockInCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllStockInsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllStockInsCheckbox.isSelected())
+                  selectAllStockInsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getEditStockIn());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getEditStockIn());
+              }
             });
     createStockInCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllStockInsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllStockInsCheckbox.isSelected())
+                  selectAllStockInsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getCreateStockIn());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getCreateStockIn());
+              }
             });
     deleteStockInCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllStockInsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllStockInsCheckbox.isSelected())
+                  selectAllStockInsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getDeleteStockIn());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getDeleteStockIn());
+              }
             });
-
-    stockInSetting
-        .getChildren()
-        .addAll(title("STOCK IN", selectAllStockInsCheckbox), stockInSettingCheckboxes);
-    return stockInSetting;
   }
 
-  private VBox getQuotationSetting() {
-    // Controls CRUD operations on Quotation.
-    quotationSetting.getStyleClass().add("card");
-    quotationSetting.setPadding(new Insets(10));
-
-    viewQuotationsCheckbox.setText("View Quotations");
-    editQuotationsCheckbox.setText("Edit Quotations");
-    createQuotationCheckbox.setText("Create Quotations");
-    deleteQuotationCheckbox.setText("Delete Quotations");
-
-    quotationSettingCheckboxes.getColumnConstraints().addAll(col1, col2);
-
-    quotationSettingCheckboxes.addColumn(0, viewQuotationsCheckbox, editQuotationsCheckbox);
-    quotationSettingCheckboxes.addColumn(1, createQuotationCheckbox, deleteQuotationCheckbox);
-
-    quotationSettingCheckboxes.setHgap(GRID_HGAP);
-    quotationSettingCheckboxes.setVgap(GRID_VGAP);
-
+  private void getQuotationSetting() {
     selectAllQuotationsCheckbox
         .selectedProperty()
         .addListener(
@@ -1276,51 +1062,53 @@ public class RoleSettingsFormController implements Initializable {
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllQuotationsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllQuotationsCheckbox.isSelected())
+                  selectAllQuotationsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getViewQuotations());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getViewQuotations());
+              }
             });
     editQuotationsCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllQuotationsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllQuotationsCheckbox.isSelected())
+                  selectAllQuotationsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getEditQuotations());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getEditQuotations());
+              }
             });
     createQuotationCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllQuotationsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllQuotationsCheckbox.isSelected())
+                  selectAllQuotationsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getCreateQuotations());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getCreateQuotations());
+              }
             });
     deleteQuotationCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllQuotationsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllQuotationsCheckbox.isSelected())
+                  selectAllQuotationsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getDeleteQuotations());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getDeleteQuotations());
+              }
             });
-
-    quotationSetting
-        .getChildren()
-        .addAll(title("QUOTATION", selectAllQuotationsCheckbox), quotationSettingCheckboxes);
-    return quotationSetting;
   }
 
-  private VBox getSaleReturnSetting() {
-    // Controls CRUD operations on SaleReturn.
-    saleReturnSetting.getStyleClass().add("card");
-    saleReturnSetting.setPadding(new Insets(10));
-
-    viewSaleReturnsCheckbox.setText("View Sales Returns");
-    editSaleReturnsCheckbox.setText("Edit Sales Returns");
-    createSaleReturnCheckbox.setText("Create Sales Returns");
-    deleteSaleReturnCheckbox.setText("Delete Sales Returns");
-
-    saleReturnSettingCheckboxes.getColumnConstraints().addAll(col1, col2);
-
-    saleReturnSettingCheckboxes.addColumn(0, viewSaleReturnsCheckbox, editSaleReturnsCheckbox);
-    saleReturnSettingCheckboxes.addColumn(1, createSaleReturnCheckbox, deleteSaleReturnCheckbox);
-
-    saleReturnSettingCheckboxes.setHgap(GRID_HGAP);
-    saleReturnSettingCheckboxes.setVgap(GRID_VGAP);
-
+  private void getSaleReturnSetting() {
     selectAllSalesReturnsCheckbox
         .selectedProperty()
         .addListener(
@@ -1337,53 +1125,53 @@ public class RoleSettingsFormController implements Initializable {
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllSalesReturnsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllSalesReturnsCheckbox.isSelected())
+                  selectAllSalesReturnsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getViewSaleReturns());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getViewSaleReturns());
+              }
             });
     editSaleReturnsCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllSalesReturnsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllSalesReturnsCheckbox.isSelected())
+                  selectAllSalesReturnsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getEditSaleReturns());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getEditSaleReturns());
+              }
             });
     createSaleReturnCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllSalesReturnsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllSalesReturnsCheckbox.isSelected())
+                  selectAllSalesReturnsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getCreateSaleReturns());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getCreateSaleReturns());
+              }
             });
     deleteSaleReturnCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllSalesReturnsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllSalesReturnsCheckbox.isSelected())
+                  selectAllSalesReturnsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getDeleteSaleReturns());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getDeleteSaleReturns());
+              }
             });
-
-    saleReturnSetting
-        .getChildren()
-        .addAll(title("SALES RETURN", selectAllSalesReturnsCheckbox), saleReturnSettingCheckboxes);
-    return saleReturnSetting;
   }
 
-  private VBox getPurchaseReturnSetting() {
-    // Controls CRUD operations on PurchaseReturn.
-    purchaseReturnSetting.getStyleClass().add("card");
-    purchaseReturnSetting.setPadding(new Insets(10));
-
-    viewPurchaseReturnsCheckbox.setText("View Purchase Returns");
-    editPurchaseReturnsCheckbox.setText("Edit Purchase Returns");
-    createPurchaseReturnCheckbox.setText("Create Purchase Returns");
-    deletePurchaseReturnCheckbox.setText("Delete Purchase Returns");
-
-    purchaseReturnSettingCheckboxes.getColumnConstraints().addAll(col1, col2);
-
-    purchaseReturnSettingCheckboxes.addColumn(
-        0, viewPurchaseReturnsCheckbox, editPurchaseReturnsCheckbox);
-    purchaseReturnSettingCheckboxes.addColumn(
-        1, createPurchaseReturnCheckbox, deletePurchaseReturnCheckbox);
-
-    purchaseReturnSettingCheckboxes.setHgap(GRID_HGAP);
-    purchaseReturnSettingCheckboxes.setVgap(GRID_VGAP);
-
+  private void getPurchaseReturnSetting() {
     selectAllPurchasesReturnsCheckbox
         .selectedProperty()
         .addListener(
@@ -1400,252 +1188,57 @@ public class RoleSettingsFormController implements Initializable {
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllPurchasesReturnsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllPurchasesReturnsCheckbox.isSelected())
+                  selectAllPurchasesReturnsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(
+                    PermissionsViewModel.getViewPurchaseReturns());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getViewPurchaseReturns());
+              }
             });
     editPurchaseReturnsCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllPurchasesReturnsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllPurchasesReturnsCheckbox.isSelected())
+                  selectAllPurchasesReturnsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(
+                    PermissionsViewModel.getEditPurchaseReturns());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getEditPurchaseReturns());
+              }
             });
     createPurchaseReturnCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllPurchasesReturnsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllPurchasesReturnsCheckbox.isSelected())
+                  selectAllPurchasesReturnsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(
+                    PermissionsViewModel.getCreatePurchaseReturns());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getCreatePurchaseReturns());
+              }
             });
     deletePurchaseReturnCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllPurchasesReturnsCheckbox.setSelected(false);
-            });
-
-    purchaseReturnSetting
-        .getChildren()
-        .addAll(
-            title("PURCHASES RETURN", selectAllPurchasesReturnsCheckbox),
-            purchaseReturnSettingCheckboxes);
-    return purchaseReturnSetting;
-  }
-
-  private VBox getPaymentsSaleSetting() {
-    // Controls CRUD operations on Payments Sale.
-    paymentSaleSetting.getStyleClass().add("card");
-    paymentSaleSetting.setPadding(new Insets(10));
-
-    viewPaymentsSalesCheckbox.setText("View Payments Sales");
-    editPaymentsSalesCheckbox.setText("Edit Payments Sales");
-    createPaymentsSaleCheckbox.setText("Create Payments Sales");
-    deletePaymentsSaleCheckbox.setText("Delete Payments Sales");
-
-    paymentSaleSettingCheckboxes.getColumnConstraints().addAll(col1, col2);
-
-    paymentSaleSettingCheckboxes.addColumn(0, viewPaymentsSalesCheckbox, editPaymentsSalesCheckbox);
-    paymentSaleSettingCheckboxes.addColumn(
-        1, createPaymentsSaleCheckbox, deletePaymentsSaleCheckbox);
-
-    paymentSaleSettingCheckboxes.setHgap(GRID_HGAP);
-    paymentSaleSettingCheckboxes.setVgap(GRID_VGAP);
-
-    selectAllPaymentsSalesCheckbox
-        .selectedProperty()
-        .addListener(
-            (observableVal, oldVal, newVal) -> {
-              if (selectAllPaymentsSalesCheckbox.isFocused()) {
-                viewPaymentsSalesCheckbox.setSelected(newVal);
-                editPaymentsSalesCheckbox.setSelected(newVal);
-                createPaymentsSaleCheckbox.setSelected(newVal);
-                deletePaymentsSaleCheckbox.setSelected(newVal);
+              if (!newVal) {
+                if (selectAllPurchasesReturnsCheckbox.isSelected())
+                  selectAllPurchasesReturnsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(
+                    PermissionsViewModel.getDeletePurchaseReturns());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getDeletePurchaseReturns());
               }
             });
-
-    viewPaymentsSalesCheckbox
-        .selectedProperty()
-        .addListener(
-            (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllPaymentsSalesCheckbox.setSelected(false);
-            });
-    editPaymentsSalesCheckbox
-        .selectedProperty()
-        .addListener(
-            (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllPaymentsSalesCheckbox.setSelected(false);
-            });
-    createPaymentsSaleCheckbox
-        .selectedProperty()
-        .addListener(
-            (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllPaymentsSalesCheckbox.setSelected(false);
-            });
-    deletePaymentsSaleCheckbox
-        .selectedProperty()
-        .addListener(
-            (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllPaymentsSalesCheckbox.setSelected(false);
-            });
-
-    paymentSaleSetting
-        .getChildren()
-        .addAll(
-            title("PAYMENTS SALE", selectAllPaymentsSalesCheckbox), paymentSaleSettingCheckboxes);
-    return paymentSaleSetting;
   }
 
-  private VBox getPaymentsPurchaseSetting() {
-    // Controls CRUD operations on Payments Purchase.
-    paymentPurchaseSetting.getStyleClass().add("card");
-    paymentPurchaseSetting.setPadding(new Insets(10));
-
-    viewPaymentsPurchasesCheckbox.setText("View Payments Purchases");
-    editPaymentsPurchasesCheckbox.setText("Edit Payments Purchases");
-    createPaymentsPurchaseCheckbox.setText("Create Payments Purchases");
-    deletePaymentsPurchaseCheckbox.setText("Delete Payments Purchases");
-
-    paymentPurchaseSettingCheckboxes.getColumnConstraints().addAll(col1, col2);
-
-    paymentPurchaseSettingCheckboxes.addColumn(
-        0, viewPaymentsPurchasesCheckbox, editPaymentsPurchasesCheckbox);
-    paymentPurchaseSettingCheckboxes.addColumn(
-        1, createPaymentsPurchaseCheckbox, deletePaymentsPurchaseCheckbox);
-
-    paymentPurchaseSettingCheckboxes.setHgap(GRID_HGAP);
-    paymentPurchaseSettingCheckboxes.setVgap(GRID_VGAP);
-
-    selectAllPaymentsPurchasesCheckbox
-        .selectedProperty()
-        .addListener(
-            (observableVal, oldVal, newVal) -> {
-              if (selectAllPaymentsPurchasesCheckbox.isFocused()) {
-                viewPaymentsPurchasesCheckbox.setSelected(newVal);
-                editPaymentsPurchasesCheckbox.setSelected(newVal);
-                createPaymentsPurchaseCheckbox.setSelected(newVal);
-                deletePaymentsPurchaseCheckbox.setSelected(newVal);
-              }
-            });
-
-    viewPaymentsPurchasesCheckbox
-        .selectedProperty()
-        .addListener(
-            (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllPaymentsPurchasesCheckbox.setSelected(false);
-            });
-    editPaymentsPurchasesCheckbox
-        .selectedProperty()
-        .addListener(
-            (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllPaymentsPurchasesCheckbox.setSelected(false);
-            });
-    createPaymentsPurchaseCheckbox
-        .selectedProperty()
-        .addListener(
-            (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllPaymentsPurchasesCheckbox.setSelected(false);
-            });
-    deletePaymentsPurchaseCheckbox
-        .selectedProperty()
-        .addListener(
-            (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllPaymentsPurchasesCheckbox.setSelected(false);
-            });
-
-    paymentPurchaseSetting
-        .getChildren()
-        .addAll(
-            title("PAYMENTS PURCHASE", selectAllPaymentsPurchasesCheckbox),
-            paymentPurchaseSettingCheckboxes);
-    return paymentPurchaseSetting;
-  }
-
-  private VBox getPaymentsReturnSetting() {
-    // Controls CRUD operations on Payments Returns.
-    paymentReturnSetting.getStyleClass().add("card");
-    paymentReturnSetting.setPadding(new Insets(10));
-
-    viewPaymentsReturnsCheckbox.setText("View Payments Returns");
-    editPaymentsReturnsCheckbox.setText("Edit Payments Returns");
-    createPaymentsReturnCheckbox.setText("Create Payments Returns");
-    deletePaymentsReturnCheckbox.setText("Delete Payments Returns");
-
-    paymentReturnSettingCheckboxes.getColumnConstraints().addAll(col1, col2);
-
-    paymentReturnSettingCheckboxes.addColumn(
-        0, viewPaymentsReturnsCheckbox, editPaymentsReturnsCheckbox);
-    paymentReturnSettingCheckboxes.addColumn(
-        1, createPaymentsReturnCheckbox, deletePaymentsReturnCheckbox);
-
-    paymentReturnSettingCheckboxes.setHgap(GRID_HGAP);
-    paymentReturnSettingCheckboxes.setVgap(GRID_VGAP);
-
-    selectAllPaymentsReturnsCheckbox
-        .selectedProperty()
-        .addListener(
-            (observableVal, oldVal, newVal) -> {
-              if (selectAllPaymentsReturnsCheckbox.isFocused()) {
-                viewPaymentsReturnsCheckbox.setSelected(newVal);
-                editPaymentsReturnsCheckbox.setSelected(newVal);
-                createPaymentsReturnCheckbox.setSelected(newVal);
-                deletePaymentsReturnCheckbox.setSelected(newVal);
-              }
-            });
-
-    viewPaymentsReturnsCheckbox
-        .selectedProperty()
-        .addListener(
-            (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllPaymentsReturnsCheckbox.setSelected(false);
-            });
-    editPaymentsReturnsCheckbox
-        .selectedProperty()
-        .addListener(
-            (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllPaymentsReturnsCheckbox.setSelected(false);
-            });
-    createPaymentsReturnCheckbox
-        .selectedProperty()
-        .addListener(
-            (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllPaymentsReturnsCheckbox.setSelected(false);
-            });
-    deletePaymentsReturnCheckbox
-        .selectedProperty()
-        .addListener(
-            (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllPaymentsReturnsCheckbox.setSelected(false);
-            });
-
-    paymentReturnSetting
-        .getChildren()
-        .addAll(
-            title("PAYMENTS RETURN", selectAllPaymentsReturnsCheckbox),
-            paymentReturnSettingCheckboxes);
-    return paymentReturnSetting;
-  }
-
-  private VBox getCustomerSetting() {
-    // Controls CRUD operations on Customer.
-    customerSetting.getStyleClass().add("card");
-    customerSetting.setPadding(new Insets(10));
-
-    viewCustomersCheckbox.setText("View Customers");
-    editCustomersCheckbox.setText("Edit Customers");
-    createCustomerCheckbox.setText("Create Customers");
-    deleteCustomerCheckbox.setText("Delete Customers");
-    importCustomersCheckbox.setText("Import Customers");
-    payAllSellDueCheckbox.setText("Pay all sell due at a time");
-    payAllSellReturnDueCheckbox.setText("Pay all sell return due at a time");
-
-    customerSettingCheckboxes.getColumnConstraints().addAll(col1, col2);
-
-    customerSettingCheckboxes.addRow(0, viewCustomersCheckbox, createCustomerCheckbox);
-    customerSettingCheckboxes.addRow(1, editCustomersCheckbox, deleteCustomerCheckbox);
-    customerSettingCheckboxes.addRow(2, importCustomersCheckbox);
-    customerSettingCheckboxes.add(payAllSellDueCheckbox, 0, 3, 2, 1);
-    customerSettingCheckboxes.add(payAllSellReturnDueCheckbox, 0, 4, 2, 1);
-
-    customerSettingCheckboxes.setHgap(GRID_HGAP);
-    customerSettingCheckboxes.setVgap(GRID_VGAP);
-
+  private void getCustomerSetting() {
     selectAllCustomersCheckbox
         .selectedProperty()
         .addListener(
@@ -1654,8 +1247,6 @@ public class RoleSettingsFormController implements Initializable {
                 viewCustomersCheckbox.setSelected(newVal);
                 editCustomersCheckbox.setSelected(newVal);
                 importCustomersCheckbox.setSelected(newVal);
-                payAllSellDueCheckbox.setSelected(newVal);
-                payAllSellReturnDueCheckbox.setSelected(newVal);
                 createCustomerCheckbox.setSelected(newVal);
                 deleteCustomerCheckbox.setSelected(newVal);
               }
@@ -1665,75 +1256,65 @@ public class RoleSettingsFormController implements Initializable {
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllCustomersCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllCustomersCheckbox.isSelected())
+                  selectAllCustomersCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getViewCustomers());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getViewCustomers());
+              }
             });
     editCustomersCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllCustomersCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllCustomersCheckbox.isSelected())
+                  selectAllCustomersCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getEditCustomers());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getEditCustomers());
+              }
             });
     importCustomersCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllCustomersCheckbox.setSelected(false);
-            });
-    payAllSellDueCheckbox
-        .selectedProperty()
-        .addListener(
-            (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllCustomersCheckbox.setSelected(false);
-            });
-    payAllSellReturnDueCheckbox
-        .selectedProperty()
-        .addListener(
-            (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllCustomersCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllCustomersCheckbox.isSelected())
+                  selectAllCustomersCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getImportCustomers());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getImportCustomers());
+              }
             });
     createCustomerCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllCustomersCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllCustomersCheckbox.isSelected())
+                  selectAllCustomersCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getCreateCustomers());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getCreateCustomers());
+              }
             });
     deleteCustomerCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllCustomersCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllCustomersCheckbox.isSelected())
+                  selectAllCustomersCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getDeleteCustomers());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getDeleteCustomers());
+              }
             });
-
-    customerSetting
-        .getChildren()
-        .addAll(title("CUSTOMER", selectAllCustomersCheckbox), customerSettingCheckboxes);
-    return customerSetting;
   }
 
-  private VBox getSupplierSetting() {
-    // Controls CRUD operations on Suppliers.
-    supplierSetting.getStyleClass().add("card");
-    supplierSetting.setPadding(new Insets(10));
-
-    viewSuppliersCheckbox.setText("View Suppliers");
-    editSuppliersCheckbox.setText("Edit Suppliers");
-    createSupplierCheckbox.setText("Create Suppliers");
-    deleteSupplierCheckbox.setText("Delete Suppliers");
-    importSuppliersCheckbox.setText("Import Suppliers");
-    payAllPurchaseDueCheckbox.setText("Pay all purchase due at a time");
-    payAllPurchaseReturnDueCheckbox.setText("Pay all purchase return due at a time");
-
-    supplierSettingCheckboxes.getColumnConstraints().addAll(col1, col2);
-
-    supplierSettingCheckboxes.addRow(0, viewSuppliersCheckbox, createSupplierCheckbox);
-    supplierSettingCheckboxes.addRow(1, editSuppliersCheckbox, deleteSupplierCheckbox);
-    supplierSettingCheckboxes.addRow(2, importSuppliersCheckbox);
-    supplierSettingCheckboxes.add(payAllPurchaseDueCheckbox, 0, 3, 2, 1);
-    supplierSettingCheckboxes.add(payAllPurchaseReturnDueCheckbox, 0, 4, 2, 1);
-
-    supplierSettingCheckboxes.setHgap(GRID_HGAP);
-    supplierSettingCheckboxes.setVgap(GRID_VGAP);
-
+  private void getSupplierSetting() {
     selectAllSuppliersCheckbox
         .selectedProperty()
         .addListener(
@@ -1742,8 +1323,6 @@ public class RoleSettingsFormController implements Initializable {
                 viewSuppliersCheckbox.setSelected(newVal);
                 editSuppliersCheckbox.setSelected(newVal);
                 importSuppliersCheckbox.setSelected(newVal);
-                payAllPurchaseDueCheckbox.setSelected(newVal);
-                payAllPurchaseReturnDueCheckbox.setSelected(newVal);
                 createSupplierCheckbox.setSelected(newVal);
                 deleteSupplierCheckbox.setSelected(newVal);
               }
@@ -1753,103 +1332,65 @@ public class RoleSettingsFormController implements Initializable {
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllSuppliersCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllSuppliersCheckbox.isSelected())
+                  selectAllSuppliersCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getViewSuppliers());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getViewSuppliers());
+              }
             });
     editSuppliersCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllSuppliersCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllSuppliersCheckbox.isSelected())
+                  selectAllSuppliersCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getEditSuppliers());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getEditSuppliers());
+              }
             });
     importSuppliersCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllSuppliersCheckbox.setSelected(false);
-            });
-    payAllPurchaseDueCheckbox
-        .selectedProperty()
-        .addListener(
-            (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllSuppliersCheckbox.setSelected(false);
-            });
-    payAllPurchaseReturnDueCheckbox
-        .selectedProperty()
-        .addListener(
-            (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllSuppliersCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllSuppliersCheckbox.isSelected())
+                  selectAllSuppliersCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getImportSuppliers());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getImportSuppliers());
+              }
             });
     createSupplierCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllSuppliersCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllSuppliersCheckbox.isSelected())
+                  selectAllSuppliersCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getCreateSuppliers());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getCreateSuppliers());
+              }
             });
     deleteSupplierCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllSuppliersCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllSuppliersCheckbox.isSelected())
+                  selectAllSuppliersCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getDeleteSuppliers());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getDeleteSuppliers());
+              }
             });
-
-    supplierSetting
-        .getChildren()
-        .addAll(title("SUPPLIER", selectAllSuppliersCheckbox), supplierSettingCheckboxes);
-    return supplierSetting;
   }
 
-  private VBox getReportSetting() {
-    // Controls CRUD operations on Reports.
-    reportSetting.getStyleClass().add("card");
-    reportSetting.setPadding(new Insets(10));
-
-    paymentSalesCheckbox.setText("Access Payments Sales Reports");
-    paymentPurchasesCheckbox.setText("Access Payments Purchases Reports");
-    saleReturnPaymentsCheckbox.setText("Access Sales Returns Payments Reports");
-    purchaseReturnPaymentsCheckbox.setText("Access Purchase Returns Payments Reports");
-    saleReportCheckbox.setText("Access Sales Reports");
-    purchaseReportCheckbox.setText("Access Purchase Reports");
-    customerReportCheckbox.setText("Access Customer Reports");
-    supplierReportCheckbox.setText("Access Supplier Reports");
-    profitAndLossCheckbox.setText("Access Profits and Losses Report");
-    productQuantityAlertsCheckbox.setText("Access Product Quantity Reports");
-    warehouseStockChartCheckbox.setText("Access Branch Stock Chart Reports");
-    topSellingProductsCheckbox.setText("Access Top Selling Products Reports");
-    bestCustomersCheckbox.setText("Access Customer Ranking Reports");
-    usersReportCheckbox.setText("Access Users Reports");
-    stockReportCheckbox.setText("Access Stock Reports");
-    productReportCheckbox.setText("Access Products Reports");
-    productSalesReportCheckbox.setText("Access Products Sales Reports");
-    productPurchasesReportCheckbox.setText("Access Products Purchases Reports");
-
-    reportSettingCheckboxes.getColumnConstraints().addAll(col1, col2);
-
-    reportSettingCheckboxes.addColumn(
-        0,
-        paymentSalesCheckbox,
-        paymentPurchasesCheckbox,
-        saleReturnPaymentsCheckbox,
-        purchaseReturnPaymentsCheckbox,
-        saleReportCheckbox,
-        purchaseReportCheckbox,
-        customerReportCheckbox,
-        supplierReportCheckbox,
-        profitAndLossCheckbox);
-    reportSettingCheckboxes.addColumn(
-        1,
-        productQuantityAlertsCheckbox,
-        warehouseStockChartCheckbox,
-        topSellingProductsCheckbox,
-        bestCustomersCheckbox,
-        usersReportCheckbox,
-        stockReportCheckbox,
-        productReportCheckbox,
-        productSalesReportCheckbox,
-        productPurchasesReportCheckbox);
-
-    reportSettingCheckboxes.setHgap(GRID_HGAP);
-    reportSettingCheckboxes.setVgap(GRID_VGAP);
-
+  private void getReportSetting() {
     selectAllReportsCheckbox
         .selectedProperty()
         .addListener(
@@ -1865,9 +1406,9 @@ public class RoleSettingsFormController implements Initializable {
                 supplierReportCheckbox.setSelected(newVal);
                 profitAndLossCheckbox.setSelected(newVal);
                 productQuantityAlertsCheckbox.setSelected(newVal);
-                warehouseStockChartCheckbox.setSelected(newVal);
+                branchStockChartCheckbox.setSelected(newVal);
                 topSellingProductsCheckbox.setSelected(newVal);
-                bestCustomersCheckbox.setSelected(newVal);
+                customerRankingCheckbox.setSelected(newVal);
                 usersReportCheckbox.setSelected(newVal);
                 stockReportCheckbox.setSelected(newVal);
                 productReportCheckbox.setSelected(newVal);
@@ -1880,362 +1421,442 @@ public class RoleSettingsFormController implements Initializable {
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllReportsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllReportsCheckbox.isSelected())
+                  selectAllReportsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(
+                    PermissionsViewModel.getAccessPaymentsSalesReports());
+              } else {
+                PermissionsViewModel.addPermission(
+                    PermissionsViewModel.getAccessPaymentsSalesReports());
+              }
             });
     paymentPurchasesCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllReportsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllReportsCheckbox.isSelected())
+                  selectAllReportsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(
+                    PermissionsViewModel.getAccessPaymentsPurchasesReports());
+              } else {
+                PermissionsViewModel.addPermission(
+                    PermissionsViewModel.getAccessPaymentsPurchasesReports());
+              }
             });
     saleReturnPaymentsCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllReportsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllReportsCheckbox.isSelected())
+                  selectAllReportsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(
+                    PermissionsViewModel.getAccessSalesReturnsPaymentsReports());
+              } else {
+                PermissionsViewModel.addPermission(
+                    PermissionsViewModel.getAccessSalesReturnsPaymentsReports());
+              }
             });
     purchaseReturnPaymentsCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllReportsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllReportsCheckbox.isSelected())
+                  selectAllReportsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(
+                    PermissionsViewModel.getAccessPurchasesReturnsPaymentsReports());
+              } else {
+                PermissionsViewModel.addPermission(
+                    PermissionsViewModel.getAccessPurchasesReturnsPaymentsReports());
+              }
             });
     saleReportCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllReportsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllReportsCheckbox.isSelected())
+                  selectAllReportsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getAccessSalesReports());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getAccessSalesReports());
+              }
             });
     purchaseReportCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllReportsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllReportsCheckbox.isSelected())
+                  selectAllReportsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(
+                    PermissionsViewModel.getAccessPurchasesReports());
+              } else {
+                PermissionsViewModel.addPermission(
+                    PermissionsViewModel.getAccessPurchasesReports());
+              }
             });
     customerReportCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllReportsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllReportsCheckbox.isSelected())
+                  selectAllReportsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(
+                    PermissionsViewModel.getAccessCustomersReports());
+              } else {
+                PermissionsViewModel.addPermission(
+                    PermissionsViewModel.getAccessCustomersReports());
+              }
             });
     supplierReportCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllReportsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllReportsCheckbox.isSelected())
+                  selectAllReportsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(
+                    PermissionsViewModel.getAccessSuppliersReports());
+              } else {
+                PermissionsViewModel.addPermission(
+                    PermissionsViewModel.getAccessSuppliersReports());
+              }
             });
     profitAndLossCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllReportsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllReportsCheckbox.isSelected())
+                  selectAllReportsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(
+                    PermissionsViewModel.getAccessProfitsAndLossesReports());
+              } else {
+                PermissionsViewModel.addPermission(
+                    PermissionsViewModel.getAccessProfitsAndLossesReports());
+              }
             });
     productQuantityAlertsCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllReportsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllReportsCheckbox.isSelected())
+                  selectAllReportsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(
+                    PermissionsViewModel.getAccessProductQuantityReports());
+              } else {
+                PermissionsViewModel.addPermission(
+                    PermissionsViewModel.getAccessProductQuantityReports());
+              }
             });
-    warehouseStockChartCheckbox
+    branchStockChartCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllReportsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllReportsCheckbox.isSelected())
+                  selectAllReportsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(
+                    PermissionsViewModel.getAccessBranchStockChartsReports());
+              } else {
+                PermissionsViewModel.addPermission(
+                    PermissionsViewModel.getAccessBranchStockChartsReports());
+              }
             });
     topSellingProductsCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllReportsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllReportsCheckbox.isSelected())
+                  selectAllReportsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(
+                    PermissionsViewModel.getAccessTopSellingProductsReports());
+              } else {
+                PermissionsViewModel.addPermission(
+                    PermissionsViewModel.getAccessTopSellingProductsReports());
+              }
             });
-    bestCustomersCheckbox
+    customerRankingCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllReportsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllReportsCheckbox.isSelected())
+                  selectAllReportsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(
+                    PermissionsViewModel.getAccessCustomerRankingsReports());
+              } else {
+                PermissionsViewModel.addPermission(
+                    PermissionsViewModel.getAccessCustomerRankingsReports());
+              }
             });
     usersReportCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllReportsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllReportsCheckbox.isSelected())
+                  selectAllReportsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getAccessUsersReports());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getAccessUsersReports());
+              }
             });
     stockReportCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllReportsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllReportsCheckbox.isSelected())
+                  selectAllReportsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(
+                    PermissionsViewModel.getAccessStocksReports());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getAccessStocksReports());
+              }
             });
     productReportCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllReportsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllReportsCheckbox.isSelected())
+                  selectAllReportsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(
+                    PermissionsViewModel.getAccessProductsReports());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getAccessProductsReports());
+              }
             });
     productSalesReportCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllReportsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllReportsCheckbox.isSelected())
+                  selectAllReportsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(
+                    PermissionsViewModel.getAccessProductSalesReports());
+              } else {
+                PermissionsViewModel.addPermission(
+                    PermissionsViewModel.getAccessProductSalesReports());
+              }
             });
     productPurchasesReportCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllReportsCheckbox.setSelected(false);
-            });
-
-    reportSetting
-        .getChildren()
-        .addAll(title("REPORT", selectAllReportsCheckbox), reportSettingCheckboxes);
-    return reportSetting;
-  }
-
-  private VBox getHRMSetting() {
-    // Controls CRUD operations on HRM.
-    hrmSetting.getStyleClass().add("card");
-    hrmSetting.setPadding(new Insets(10));
-
-    viewEmployeeCheckbox.setText("View Employees");
-    editEmployeeCheckbox.setText("Edit Employees");
-    createEmployeeCheckbox.setText("Create Employees");
-    deleteEmployeeCheckbox.setText("Delete Employees");
-    CompanyCheckbox.setText("Access Company");
-    departmentCheckbox.setText("Access Department");
-    designationCheckbox.setText("Access Designation");
-    officeShiftCheckbox.setText("Access Office Shift");
-    attendanceCheckbox.setText("Access Attendance");
-    leaveRequestCheckbox.setText("Access Leave Request");
-    holidayCheckbox.setText("Access Holiday");
-
-    hrmSettingCheckboxes.getColumnConstraints().addAll(col1, col2);
-
-    hrmSettingCheckboxes.addColumn(
-        0,
-        viewEmployeeCheckbox,
-        createEmployeeCheckbox,
-        CompanyCheckbox,
-        designationCheckbox,
-        attendanceCheckbox,
-        holidayCheckbox);
-    hrmSettingCheckboxes.addColumn(
-        1,
-        editEmployeeCheckbox,
-        deleteEmployeeCheckbox,
-        departmentCheckbox,
-        officeShiftCheckbox,
-        leaveRequestCheckbox);
-
-    hrmSettingCheckboxes.setHgap(20);
-
-    selectAllHRMCheckbox
-        .selectedProperty()
-        .addListener(
-            (observableVal, oldVal, newVal) -> {
-              if (selectAllHRMCheckbox.isFocused()) {
-                viewEmployeeCheckbox.setSelected(newVal);
-                createEmployeeCheckbox.setSelected(newVal);
-                CompanyCheckbox.setSelected(newVal);
-                designationCheckbox.setSelected(newVal);
-                attendanceCheckbox.setSelected(newVal);
-                holidayCheckbox.setSelected(newVal);
-                editEmployeeCheckbox.setSelected(newVal);
-                deleteEmployeeCheckbox.setSelected(newVal);
-                departmentCheckbox.setSelected(newVal);
-                officeShiftCheckbox.setSelected(newVal);
-                leaveRequestCheckbox.setSelected(newVal);
+              if (!newVal) {
+                if (selectAllReportsCheckbox.isSelected())
+                  selectAllReportsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(
+                    PermissionsViewModel.getAccessProductPurchasesReports());
+              } else {
+                PermissionsViewModel.addPermission(
+                    PermissionsViewModel.getAccessProductPurchasesReports());
               }
             });
-
-    viewEmployeeCheckbox
-        .selectedProperty()
-        .addListener(
-            (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllHRMCheckbox.setSelected(false);
-            });
-    createEmployeeCheckbox
-        .selectedProperty()
-        .addListener(
-            (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllHRMCheckbox.setSelected(false);
-            });
-    CompanyCheckbox.selectedProperty()
-        .addListener(
-            (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllHRMCheckbox.setSelected(false);
-            });
-    designationCheckbox
-        .selectedProperty()
-        .addListener(
-            (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllHRMCheckbox.setSelected(false);
-            });
-    attendanceCheckbox
-        .selectedProperty()
-        .addListener(
-            (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllHRMCheckbox.setSelected(false);
-            });
-    holidayCheckbox
-        .selectedProperty()
-        .addListener(
-            (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllHRMCheckbox.setSelected(false);
-            });
-    editEmployeeCheckbox
-        .selectedProperty()
-        .addListener(
-            (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllHRMCheckbox.setSelected(false);
-            });
-    deleteEmployeeCheckbox
-        .selectedProperty()
-        .addListener(
-            (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllHRMCheckbox.setSelected(false);
-            });
-    departmentCheckbox
-        .selectedProperty()
-        .addListener(
-            (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllHRMCheckbox.setSelected(false);
-            });
-    officeShiftCheckbox
-        .selectedProperty()
-        .addListener(
-            (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllHRMCheckbox.setSelected(false);
-            });
-    leaveRequestCheckbox
-        .selectedProperty()
-        .addListener(
-            (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllHRMCheckbox.setSelected(false);
-            });
-
-    hrmSetting.getChildren().addAll(title("HRM", selectAllHRMCheckbox), hrmSettingCheckboxes);
-    return hrmSetting;
   }
 
-  private VBox getSettingSetting() {
-    // Controls CRUD operations on Settings.
-    settingSetting.getStyleClass().add("card");
-    settingSetting.setPadding(new Insets(10));
-
-    viewSystemSettingCheckbox.setText("View System Settings");
-    viewPOSSettingsCheckbox.setText("View POS Settings");
-    viewCurrencyCheckbox.setText("View Currency Settings");
-    viewBranchCheckbox.setText("View Branch Settings");
-    viewBackupCheckbox.setText("View Backup Settings");
-
-    settingSettingCheckboxes.getColumnConstraints().addAll(col1, col2);
-    settingSettingCheckboxes.addColumn(
-        0, viewSystemSettingCheckbox, viewCurrencyCheckbox, viewBackupCheckbox);
-    settingSettingCheckboxes.addColumn(1, viewPOSSettingsCheckbox, viewBranchCheckbox);
-
-    settingSettingCheckboxes.setHgap(GRID_HGAP);
-    settingSettingCheckboxes.setVgap(GRID_VGAP);
-
+  private void getSettingSetting() {
     selectAllSettingsCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
               if (selectAllSettingsCheckbox.isFocused()) {
-                viewSystemSettingCheckbox.setSelected(newVal);
-                viewPOSSettingsCheckbox.setSelected(newVal);
-                viewCurrencyCheckbox.setSelected(newVal);
-                viewBranchCheckbox.setSelected(newVal);
-                viewBackupCheckbox.setSelected(newVal);
+                accessSystemSettingCheckbox.setSelected(newVal);
+                AccessPOSSettingsCheckbox.setSelected(newVal);
+                accessCurrencyCheckbox.setSelected(newVal);
+                accessBranchCheckbox.setSelected(newVal);
+                accessBackupCheckbox.setSelected(newVal);
               }
             });
-    viewSystemSettingCheckbox
+    accessSystemSettingCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllSettingsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllSettingsCheckbox.isSelected())
+                  selectAllSettingsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getViewSystemSettings());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getViewSystemSettings());
+              }
             });
-    viewPOSSettingsCheckbox
+    AccessPOSSettingsCheckbox.selectedProperty()
+        .addListener(
+            (observableVal, oldVal, newVal) -> {
+              if (!newVal) {
+                if (selectAllSettingsCheckbox.isSelected())
+                  selectAllSettingsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getViewPOSSettings());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getViewPOSSettings());
+              }
+            });
+    accessCurrencyCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllSettingsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllSettingsCheckbox.isSelected())
+                  selectAllSettingsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(
+                    PermissionsViewModel.getAccessCurrencySettings());
+              } else {
+                PermissionsViewModel.addPermission(
+                    PermissionsViewModel.getAccessCurrencySettings());
+              }
             });
-    viewCurrencyCheckbox
+    accessBranchCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllSettingsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllSettingsCheckbox.isSelected())
+                  selectAllSettingsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(
+                    PermissionsViewModel.getAccessBranchSettings());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getAccessBranchSettings());
+              }
             });
-    viewBranchCheckbox
+    accessBackupCheckbox
         .selectedProperty()
         .addListener(
             (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllSettingsCheckbox.setSelected(false);
+              if (!newVal) {
+                if (selectAllSettingsCheckbox.isSelected())
+                  selectAllSettingsCheckbox.setSelected(false);
+                PermissionsViewModel.removePermission(PermissionsViewModel.getViewBackupSettings());
+              } else {
+                PermissionsViewModel.addPermission(PermissionsViewModel.getViewBackupSettings());
+              }
             });
-    viewBackupCheckbox
-        .selectedProperty()
-        .addListener(
-            (observableVal, oldVal, newVal) -> {
-              if (!newVal) selectAllSettingsCheckbox.setSelected(false);
-            });
-
-    settingSetting
-        .getChildren()
-        .addAll(title("SETTINGS", selectAllSettingsCheckbox), settingSettingCheckboxes);
-    return settingSetting;
   }
 
-  private void getRoleSettings() {
-    roleSettings.getColumnConstraints().addAll(col1, col2);
+  public void save() {
+    SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
 
-    roleSettings.setPadding(new Insets(5));
-
-    roleSettings.add(validationWrapper(roleNameInputField), 0, 0, 2, 1);
-    roleSettings.addRow(1, getDashboardRoleSetting(), getPOSSetting());
-    roleSettings.addRow(2, getRequisitionSetting(), getPurchaseSetting());
-    roleSettings.addRow(3, getTransferSetting(), getStockInSetting());
-    roleSettings.addRow(4, getQuotationSetting(), getSaleSetting());
-    roleSettings.addRow(5, getAdjustmentSetting(), getPurchaseReturnSetting());
-    roleSettings.addRow(6, getPaymentsPurchaseSetting(), getPaymentsSaleSetting());
-    roleSettings.addRow(7, getExpenseSetting(), getPaymentsReturnSetting());
-    roleSettings.addRow(8, getUserPermissionsSetting(), getUserMgtSetting());
-    roleSettings.addRow(9, getSaleReturnSetting(), getSettingSetting());
-    roleSettings.addRow(10, getSupplierSetting(), getCustomerSetting());
-    roleSettings.addRow(11, getProductsSetting());
-    roleSettings.add(getReportSetting(), 0, 12, 2, 1);
-
-    roleSettings.setHgap(20);
-    roleSettings.setVgap(40);
-  }
-
-  private VBox title(String labelText, Node selectAllNode) {
-    VBox headerBox = new VBox();
-    HBox titleHolder = new HBox();
-    Separator separator = new Separator();
-    Label lbl1 = new Label();
-    Label lbl2 = new Label();
-
-    lbl1.setText(labelText);
-    lbl1.getStyleClass().add("title");
-    lbl2.setText("Permissions");
-    lbl2.getStyleClass().add("title-prefix");
-
-    titleHolder.setSpacing(10);
-    headerBox.setSpacing(5);
-
-    if (!Objects.equals(selectAllNode, null)) {
-      titleHolder.getChildren().addAll(lbl1, lbl2, new Spacer(), selectAllNode);
-    } else {
-      titleHolder.getChildren().addAll(lbl1, lbl2);
+    constraints = roleNameInputField.validate();
+    if (!constraints.isEmpty()) {
+      errorLabel.setText(constraints.get(0).getMessage());
+      errorLabel.setVisible(true);
     }
 
-    headerBox.getChildren().addAll(titleHolder, separator);
-    return headerBox;
+    if (PermissionsViewModel.getPermissionsList().isEmpty()) {
+      SimpleNotification notification =
+          new SimpleNotification.NotificationBuilder("Role has no permissions")
+              .duration(NotificationDuration.SHORT)
+              .icon("fas-triangle-exclamation")
+              .type(NotificationVariants.ERROR)
+              .build();
+
+      notificationHolder.addNotification(notification);
+
+      return;
+    }
+
+    if (!errorLabel.isVisible()) {
+      if (RoleViewModel.getId() > 0) {
+        RoleViewModel.updateItem(RoleViewModel.getId());
+
+        SimpleNotification notification =
+            new SimpleNotification.NotificationBuilder("Role updated successfully")
+                .duration(NotificationDuration.MEDIUM)
+                .icon("fas-circle-check")
+                .type(NotificationVariants.SUCCESS)
+                .build();
+
+        notificationHolder.addNotification(notification);
+        close();
+
+        return;
+      }
+
+      RoleViewModel.saveRole();
+
+      SimpleNotification notification =
+          new SimpleNotification.NotificationBuilder("Role saved successfully")
+              .duration(NotificationDuration.MEDIUM)
+              .icon("fas-circle-check")
+              .type(NotificationVariants.SUCCESS)
+              .build();
+
+      notificationHolder.addNotification(notification);
+      close();
+
+      return;
+    }
+
+    SimpleNotification notification =
+        new SimpleNotification.NotificationBuilder("Required fields missing")
+            .duration(NotificationDuration.SHORT)
+            .icon("fas-triangle-exclamation")
+            .type(NotificationVariants.ERROR)
+            .build();
+
+    notificationHolder.addNotification(notification);
   }
 
-  public void save() {}
-
   public void close() {
+    if (!Objects.equals(constraints, null) && !constraints.isEmpty()) {
+      constraints.clear();
+      errorLabel.setVisible(false);
+    }
     Navigation.navigate(Pages.getRoleSettingsPane(), (StackPane) roleSettingsHolder.getParent());
+    RoleViewModel.resetRoleProperties();
+  }
+
+  protected void validationWrapper() {
+    errorLabel.getStyleClass().add("input-validation-error");
+
+    roleNameInputField
+        .getValidator()
+        .validProperty()
+        .addListener(
+            (observable, oldValue, newValue) -> {
+              if (newValue) {
+                errorLabel.setVisible(false);
+                roleNameInputField.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+              }
+            });
+    roleNameInputField
+        .delegateFocusedProperty()
+        .addListener(
+            (observable, oldValue, newValue) -> {
+              if (oldValue && !newValue) {
+                constraints = roleNameInputField.validate();
+                if (!constraints.isEmpty()) {
+                  roleNameInputField.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                  errorLabel.setText(constraints.get(0).getMessage());
+                  errorLabel.setVisible(true);
+                }
+              }
+            });
+  }
+
+  private void validationConstraints() {
+    Constraint emptyConstraint =
+        Constraint.Builder.build()
+            .setSeverity(Severity.ERROR)
+            .setMessage("Field required")
+            .setCondition(roleNameInputField.textProperty().length().greaterThan(0))
+            .get();
+    Constraint lengthConstraint =
+        Constraint.Builder.build()
+            .setSeverity(Severity.ERROR)
+            .setMessage("Role name must be at least 4 Characters long")
+            .setCondition(roleNameInputField.textProperty().length().greaterThan(3))
+            .get();
+
+    roleNameInputField.getValidator().constraint(emptyConstraint).constraint(lengthConstraint);
   }
 }

@@ -54,6 +54,7 @@ public class SplashScreenController implements Initializable {
           protected Void call() {
             try {
               SQLiteTableCreator.getInstance().createTablesIfNotExist();
+              SQLiteTableCreator.seedDatabase();
             } catch (SQLException e) {
               throw new RuntimeException(e);
             }
@@ -64,7 +65,7 @@ public class SplashScreenController implements Initializable {
     Task<Void> initDataFetcher =
         new Task<>() {
           @Override
-          protected Void call() {
+          protected Void call() throws SQLException {
             AdjustmentMasterViewModel.getAllAdjustmentMasters();
             BranchViewModel.getAllBranches();
             BrandViewModel.getItems();
@@ -86,9 +87,115 @@ public class SplashScreenController implements Initializable {
             UOMViewModel.getItems();
             UserViewModel.getAllUsers();
             ProductDetailViewModel.getProductDetailsComboBoxList();
+            RoleViewModel.getAllRoles();
+            // Permissions.
+            PermissionsViewModel.setAccessBrands();
+            PermissionsViewModel.setAccessBranchSettings();
+            PermissionsViewModel.setAccessBranchSettings();
+            PermissionsViewModel.setAccessBranchStockChartsReports();
+            PermissionsViewModel.setAccessCurrencySettings();
+            PermissionsViewModel.setAccessCustomersReports();
+            PermissionsViewModel.setAccessCustomerRankingsReports();
+            PermissionsViewModel.setViewPermissions();
+            PermissionsViewModel.setAccessPaymentsPurchasesReports();
+            PermissionsViewModel.setViewSystemSettings();
+            PermissionsViewModel.setViewAdjustments();
+            PermissionsViewModel.setViewPurchases();
+            PermissionsViewModel.setViewBranch();
+            PermissionsViewModel.setCreateBackup();
+            PermissionsViewModel.setDeleteBranch();
+            PermissionsViewModel.setAccessPurchasesReports();
+            PermissionsViewModel.setViewUsers();
+            PermissionsViewModel.setViewSales();
+            PermissionsViewModel.setViewPOSSettings();
+            PermissionsViewModel.setViewCurrency();
+            PermissionsViewModel.setViewBackupSettings();
+            PermissionsViewModel.setEditUsers();
+            PermissionsViewModel.setEditSystemSettings();
+            PermissionsViewModel.setEditSales();
+            PermissionsViewModel.setEditPOSSettings();
+            PermissionsViewModel.setEditCurrency();
+            PermissionsViewModel.setEditBranch();
+            PermissionsViewModel.setCreateProducts();
+            PermissionsViewModel.setDeleteUsers();
+            PermissionsViewModel.setDeleteSales();
+            PermissionsViewModel.setDeleteCurrency();
+            PermissionsViewModel.setCreateSales();
+            PermissionsViewModel.setCreateCurrency();
+            PermissionsViewModel.setCreateBranch();
+            PermissionsViewModel.setViewTransfers();
+            PermissionsViewModel.setEditPermissions();
+            PermissionsViewModel.setViewSaleReturns();
+            PermissionsViewModel.setDeletePermissions();
+            PermissionsViewModel.setCreateUsers();
+            PermissionsViewModel.setViewQuotations();
+            PermissionsViewModel.setViewPurchaseReturns();
+            PermissionsViewModel.setViewExpenses();
+            PermissionsViewModel.setEditTransfers();
+            PermissionsViewModel.setEditExpenses();
+            PermissionsViewModel.setEditSaleReturns();
+            PermissionsViewModel.setEditQuotations();
+            PermissionsViewModel.setEditPurchaseReturns();
+            PermissionsViewModel.setEditAdjustments();
+            PermissionsViewModel.setDeleteTransfers();
+            PermissionsViewModel.setDeleteExpenses();
+            PermissionsViewModel.setCreatePermissions();
+            PermissionsViewModel.setDeleteSaleReturns();
+            PermissionsViewModel.setDeletePurchaseReturns();
+            PermissionsViewModel.setCreateExpenses();
+            PermissionsViewModel.setDeleteQuotations();
+            PermissionsViewModel.setCreatePurchaseReturns();
+            PermissionsViewModel.setEditPurchases();
+            PermissionsViewModel.setDeletePurchases();
+            PermissionsViewModel.setDeleteAdjustments();
+            PermissionsViewModel.setCreateTransfers();
+            PermissionsViewModel.setCreateSaleReturns();
+            PermissionsViewModel.setCreateQuotations();
+            PermissionsViewModel.setCreateAdjustments();
+            PermissionsViewModel.setCreatePurchases();
+            PermissionsViewModel.setPosAccess();
+            PermissionsViewModel.setDashboardAccess();
+            PermissionsViewModel.setAccessPaymentsSalesReports();
+            PermissionsViewModel.setAccessProductCategories();
+            PermissionsViewModel.setAccessUnitsOfMeasure();
+            PermissionsViewModel.setAccessPurchasesReturnsPaymentsReports();
+            PermissionsViewModel.setAccessSalesReports();
+            PermissionsViewModel.setAccessSalesReturnsPaymentsReports();
+            PermissionsViewModel.setCreateCustomers();
+            PermissionsViewModel.setCreateSuppliers();
+            PermissionsViewModel.setDeleteCustomers();
+            PermissionsViewModel.setDeleteProducts();
+            PermissionsViewModel.setDeleteSuppliers();
+            PermissionsViewModel.setAccessProductQuantityReports();
+            PermissionsViewModel.setEditCustomers();
+            PermissionsViewModel.setEditProducts();
+            PermissionsViewModel.setEditSuppliers();
+            PermissionsViewModel.setAccessSuppliersReports();
+            PermissionsViewModel.setImportCustomers();
+            PermissionsViewModel.setImportProducts();
+            PermissionsViewModel.setImportSuppliers();
+            PermissionsViewModel.setViewCustomers();
+            PermissionsViewModel.setViewProducts();
+            PermissionsViewModel.setAccessProductSalesReports();
+            PermissionsViewModel.setAccessProfitsAndLossesReports();
+            PermissionsViewModel.setAccessProductPurchasesReports();
+            PermissionsViewModel.setAccessProductsReports();
+            PermissionsViewModel.setAccessStocksReports();
+            PermissionsViewModel.setAccessTopSellingProductsReports();
+            PermissionsViewModel.setAccessUsersReports();
+            PermissionsViewModel.setViewSuppliers();
+            PermissionsViewModel.setViewStockIn();
+            PermissionsViewModel.setCreateStockIn();
+            PermissionsViewModel.setEditStockIn();
+            PermissionsViewModel.setDeleteStockIn();
+            PermissionsViewModel.setViewRequisition();
+            PermissionsViewModel.setCreateRequisition();
+            PermissionsViewModel.setEditRequisition();
+            PermissionsViewModel.setDeleteRequisition();
             return null;
           }
         };
+    initDataFetcher.setOnFailed(event -> initDataFetcher.getException().printStackTrace());
 
     Thread thread1 = new Thread(databaseCreator);
     thread1.setDaemon(true);

@@ -38,11 +38,12 @@ import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.Role;
 import org.infinite.spoty.viewModels.BranchViewModel;
+import org.infinite.spoty.viewModels.RoleViewModel;
 import org.infinite.spoty.viewModels.UserViewModel;
 
 public class UserFormController implements Initializable {
   public static UserFormController instance;
-    public MFXTextField userID = new MFXTextField();
+  public MFXTextField userID = new MFXTextField();
   @FXML public MFXButton userFormSaveBtn;
   @FXML public MFXButton userFormCancelBtn;
   @FXML public MFXTextField userFormEmail;
@@ -93,11 +94,11 @@ public class UserFormController implements Initializable {
     userFormEmail.textProperty().bindBidirectional(UserViewModel.emailProperty());
     userFormPhone.textProperty().bindBidirectional(UserViewModel.phoneProperty());
     userFormRole.valueProperty().bindBidirectional(UserViewModel.roleProperty());
-    //            userFormBranch.valueProperty().bindBidirectional(UserViewModel.roleProperty());
+    userFormBranch.valueProperty().bindBidirectional(UserViewModel.branchProperty());
     userFormActive.selectedProperty().bindBidirectional(UserViewModel.activeProperty());
 
     // Combo box properties.
-    //        userFormRole.setItems(UserViewModel.getUsersList());
+    userFormRole.setItems(RoleViewModel.getRoles());
     userFormRole.setConverter(
         new StringConverter<>() {
           @Override

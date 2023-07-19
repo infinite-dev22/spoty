@@ -14,10 +14,11 @@
 
 package org.infinite.spoty.views.settings.roles;
 
-import static org.infinite.spoty.data.SampleData.roleMasterSampleData;
-
 import io.github.palexdev.materialfx.controls.MFXButton;
+import io.github.palexdev.materialfx.controls.MFXContextMenu;
+import io.github.palexdev.materialfx.controls.MFXContextMenuItem;
 import io.github.palexdev.materialfx.controls.MFXTableColumn;
+import io.github.palexdev.materialfx.controls.MFXTableRow;
 import io.github.palexdev.materialfx.controls.MFXTableView;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
@@ -27,22 +28,27 @@ import java.util.Comparator;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
+import javafx.collections.ListChangeListener;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import org.infinite.spoty.components.navigation.Navigation;
 import org.infinite.spoty.components.navigation.Pages;
 import org.infinite.spoty.database.models.Role;
+import org.infinite.spoty.viewModels.RoleViewModel;
 
+@SuppressWarnings("unchecked")
 public class RoleController implements Initializable {
   private static RoleController instance;
   @FXML public MFXButton roleImportBtn;
   @FXML public HBox roleActionsPane;
   @FXML public MFXTextField roleSearchBar;
   @FXML public BorderPane roleContentPane;
-  @FXML private MFXTableView<Role> roleMasterTable;
+  @FXML private MFXTableView<Role> roleTable;
 
   public static RoleController getInstance() {
     if (Objects.equals(instance, null)) instance = new RoleController();
@@ -64,24 +70,73 @@ public class RoleController implements Initializable {
     roleMasterDescription.setRowCellFactory(
         roleMaster -> new MFXTableRowCell<>(Role::getDescription));
 
-    roleMasterRole.prefWidthProperty().bind(roleMasterTable.widthProperty().multiply(.5));
-    roleMasterDescription.prefWidthProperty().bind(roleMasterTable.widthProperty().multiply(.5));
+    roleMasterRole.prefWidthProperty().bind(roleTable.widthProperty().multiply(.5));
+    roleMasterDescription.prefWidthProperty().bind(roleTable.widthProperty().multiply(.5));
 
-    roleMasterTable.getTableColumns().addAll(roleMasterRole, roleMasterDescription);
-    roleMasterTable
+    roleTable.getTableColumns().addAll(roleMasterRole, roleMasterDescription);
+
+    roleTable
         .getFilters()
         .addAll(
             new StringFilter<>("Name", Role::getName),
             new StringFilter<>("Description", Role::getDescription));
-    getNameTable();
-    roleMasterTable.setItems(roleMasterSampleData());
+
+    getRoleTable();
+
+    if (RoleViewModel.getRoles().isEmpty()) {
+      RoleViewModel.getRoles()
+          .addListener(
+              (ListChangeListener<Role>) c -> roleTable.setItems(RoleViewModel.getRoles()));
+    } else {
+      roleTable.itemsProperty().bindBidirectional(RoleViewModel.rolesProperty());
+    }
   }
 
-  private void getNameTable() {
-    roleMasterTable.setPrefSize(1200, 1000);
-    roleMasterTable.features().enableBounceEffect();
-    roleMasterTable.autosizeColumnsOnInitialization();
-    roleMasterTable.features().enableSmoothScrolling(0.5);
+  private void getRoleTable() {
+    roleTable.setPrefSize(1200, 1000);
+    roleTable.features().enableBounceEffect();
+    roleTable.autosizeColumnsOnInitialization();
+    roleTable.features().enableSmoothScrolling(0.5);
+
+    roleTable.setTableRowFactory(
+            t -> {
+              MFXTableRow<Role> row = new MFXTableRow<>(roleTable, t);
+              EventHandler<ContextMenuEvent> eventHandler =
+                      event ->
+                              showContextMenu((MFXTableRow<Role>) event.getSource())
+                                      .show(
+                                              roleContentPane.getScene().getWindow(),
+                                              event.getScreenX(),
+                                              event.getScreenY());
+              row.setOnContextMenuRequested(eventHandler);
+              return row;
+            });
+  }
+
+  private MFXContextMenu showContextMenu(MFXTableRow<Role> obj) {
+    MFXContextMenu contextMenu = new MFXContextMenu(roleTable);
+
+    MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
+    MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+
+    // Actions
+    // Delete
+    delete.setOnAction(
+            e -> {
+              RoleViewModel.deleteItem(obj.getData().getId());
+              e.consume();
+            });
+    // Edit
+    edit.setOnAction(
+            e -> {
+              RoleViewModel.getItem(obj.getData().getId());
+              roleCreateBtnClicked();
+              e.consume();
+            });
+
+    contextMenu.addItems(edit, delete);
+
+    return contextMenu;
   }
 
   public void roleCreateBtnClicked() {

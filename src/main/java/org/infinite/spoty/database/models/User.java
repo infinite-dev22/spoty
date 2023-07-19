@@ -41,6 +41,9 @@ public class User implements Serializable {
   @DatabaseField(foreign = true, columnName = "role_id", canBeNull = false, foreignAutoRefresh = true)
   private Role role;
 
+  @DatabaseField(foreign = true, columnName = "branch_id", canBeNull = false, foreignAutoRefresh = true)
+  private Branch branch;
+
   @DatabaseField(canBeNull = false)
   private boolean active;
 
@@ -141,6 +144,14 @@ public class User implements Serializable {
 
   public void setRole(Role role) {
     this.role = role;
+  }
+
+  public Branch getBranch() {
+    return branch;
+  }
+
+  public void setBranch(Branch branch) {
+    this.branch = branch;
   }
 
   public boolean isActive() {
