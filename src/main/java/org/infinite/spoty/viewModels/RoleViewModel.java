@@ -16,6 +16,7 @@ package org.infinite.spoty.viewModels;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.support.ConnectionSource;
 import java.sql.SQLException;
 import javafx.application.Platform;
@@ -30,6 +31,7 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.database.connection.SQLiteConnection;
+import org.infinite.spoty.database.models.Permission;
 import org.infinite.spoty.database.models.Role;
 import org.infinite.spoty.database.models.RolePermission;
 
@@ -39,6 +41,7 @@ public class RoleViewModel {
   private static final LongProperty id = new SimpleLongProperty(0);
   private static final StringProperty name = new SimpleStringProperty();
   private static final StringProperty description = new SimpleStringProperty();
+  private static final PreparedQuery<Permission> permissionsForRoleQuery = null;
 
   public static long getId() {
     return id.get();
@@ -178,9 +181,9 @@ public class RoleViewModel {
             SQLiteConnection connection = SQLiteConnection.getInstance();
             ConnectionSource connectionSource = connection.getConnection();
 
-            Dao<Role, Long> unitOfMeasureDao = DaoManager.createDao(connectionSource, Role.class);
+            Dao<Role, Long> roleDao = DaoManager.createDao(connectionSource, Role.class);
 
-            Role role = unitOfMeasureDao.queryForId(index);
+            Role role = roleDao.queryForId(index);
 
             setId(role.getId());
             setName(role.getName());
@@ -203,14 +206,14 @@ public class RoleViewModel {
             SQLiteConnection connection = SQLiteConnection.getInstance();
             ConnectionSource connectionSource = connection.getConnection();
 
-            Dao<Role, Long> unitOfMeasureDao = DaoManager.createDao(connectionSource, Role.class);
+            Dao<Role, Long> roleDao = DaoManager.createDao(connectionSource, Role.class);
 
-            Role role = unitOfMeasureDao.queryForId(index);
+            Role role = roleDao.queryForId(index);
 
             role.setName(getName());
             role.setDescription(getDescription());
 
-            unitOfMeasureDao.update(role);
+            roleDao.update(role);
 
             return null;
           }
@@ -233,9 +236,9 @@ public class RoleViewModel {
             SQLiteConnection connection = SQLiteConnection.getInstance();
             ConnectionSource connectionSource = connection.getConnection();
 
-            Dao<Role, Long> unitOfMeasureDao = DaoManager.createDao(connectionSource, Role.class);
+            Dao<Role, Long> roleDao = DaoManager.createDao(connectionSource, Role.class);
 
-            unitOfMeasureDao.deleteById(index);
+            roleDao.deleteById(index);
 
             return null;
           }
