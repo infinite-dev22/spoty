@@ -4255,6 +4255,7 @@ public class SQLiteTableCreator {
                         password            VARCHAR,
                         phone               VARCHAR,
                         role_id             INTEGER   NOT NULL,
+                        branch_id             INTEGER   NOT NULL,
                         active              BOOLEAN   NOT NULL,
                         access_all_branches BOOLEAN   NOT NULL,
                         avatar              BLOB,
@@ -4268,7 +4269,11 @@ public class SQLiteTableCreator {
                         FOREIGN KEY (
                             role_id
                         )
-                        REFERENCES role (id)
+                        REFERENCES role (id),
+                        FOREIGN KEY (
+                            branch_id
+                        )
+                        REFERENCES branches (id)
                     );
                     """,
         User.class);
