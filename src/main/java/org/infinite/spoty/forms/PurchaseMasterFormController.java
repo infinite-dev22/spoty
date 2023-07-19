@@ -119,32 +119,30 @@ public class PurchaseMasterFormController implements Initializable {
     purchaseNote.textProperty().bindBidirectional(PurchaseMasterViewModel.noteProperty());
 
     // ComboBox Converters.
-    StringConverter<Supplier> purchaseSupplierConverter =
+    StringConverter<Supplier> supplierConverter =
         FunctionalStringConverter.to(supplier -> (supplier == null) ? "" : supplier.getName());
 
-    StringConverter<Branch> purchaseBranchConverter =
+    StringConverter<Branch> branchConverter =
         FunctionalStringConverter.to(branch -> (branch == null) ? "" : branch.getName());
 
     // ComboBox Filter Functions.
-    Function<String, Predicate<Supplier>> purchaseSupplierFilterFunction =
+    Function<String, Predicate<Supplier>> supplierFilterFunction =
         searchStr ->
             supplier ->
-                StringUtils.containsIgnoreCase(
-                    purchaseSupplierConverter.toString(supplier), searchStr);
+                StringUtils.containsIgnoreCase(supplierConverter.toString(supplier), searchStr);
 
-    Function<String, Predicate<Branch>> purchaseBranchFilterFunction =
+    Function<String, Predicate<Branch>> branchFilterFunction =
         searchStr ->
-            branch ->
-                StringUtils.containsIgnoreCase(purchaseBranchConverter.toString(branch), searchStr);
+            branch -> StringUtils.containsIgnoreCase(branchConverter.toString(branch), searchStr);
 
     // Set items to combo boxes and display custom text.
     purchaseSupplier.setItems(SupplierViewModel.getSuppliersComboBoxList());
-    purchaseSupplier.setConverter(purchaseSupplierConverter);
-    purchaseSupplier.setFilterFunction(purchaseSupplierFilterFunction);
+    purchaseSupplier.setConverter(supplierConverter);
+    purchaseSupplier.setFilterFunction(supplierFilterFunction);
 
     purchaseBranch.setItems(BranchViewModel.getBranchesComboBoxList());
-    purchaseBranch.setConverter(purchaseBranchConverter);
-    purchaseBranch.setFilterFunction(purchaseBranchFilterFunction);
+    purchaseBranch.setConverter(branchConverter);
+    purchaseBranch.setFilterFunction(branchFilterFunction);
 
     purchaseStatus.setItems(FXCollections.observableArrayList(Values.PURCHASESTATUSES));
 

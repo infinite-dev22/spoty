@@ -25,11 +25,15 @@ import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import io.github.palexdev.materialfx.enums.ScrimPriority;
 import io.github.palexdev.materialfx.filter.LongFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
+import io.github.palexdev.materialfx.utils.StringUtils;
+import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
@@ -122,36 +126,31 @@ public class RequisitionMasterFormController implements Initializable {
         .textProperty()
         .bindBidirectional(RequisitionMasterViewModel.noteProperty());
 
+    // ComboBox Converters.
+    StringConverter<Supplier> supplierConverter =
+        FunctionalStringConverter.to(supplier -> (supplier == null) ? "" : supplier.getName());
+
+    StringConverter<Branch> branchConverter =
+        FunctionalStringConverter.to(branch -> (branch == null) ? "" : branch.getName());
+
+    // ComboBox Filter Functions.
+    Function<String, Predicate<Supplier>> supplierFilterFunction =
+        searchStr ->
+            supplier ->
+                StringUtils.containsIgnoreCase(supplierConverter.toString(supplier), searchStr);
+
+    Function<String, Predicate<Branch>> branchFilterFunction =
+        searchStr ->
+            branch -> StringUtils.containsIgnoreCase(branchConverter.toString(branch), searchStr);
+
     // ComboBox properties.
     requisitionMasterBranch.setItems(BranchViewModel.getBranchesComboBoxList());
-    requisitionMasterBranch.setConverter(
-        new StringConverter<>() {
-          @Override
-          public String toString(Branch object) {
-            if (object != null) return object.getName();
-            else return null;
-          }
-
-          @Override
-          public Branch fromString(String string) {
-            return null;
-          }
-        });
+    requisitionMasterBranch.setConverter(branchConverter);
+    requisitionMasterBranch.setFilterFunction(branchFilterFunction);
 
     requisitionMasterSupplier.setItems(SupplierViewModel.getSuppliersComboBoxList());
-    requisitionMasterSupplier.setConverter(
-        new StringConverter<>() {
-          @Override
-          public String toString(Supplier object) {
-            if (object != null) return object.getName();
-            else return null;
-          }
-
-          @Override
-          public Supplier fromString(String string) {
-            return null;
-          }
-        });
+    requisitionMasterSupplier.setConverter(supplierConverter);
+    requisitionMasterSupplier.setFilterFunction(supplierFilterFunction);
 
     // input validators.
     requiredValidator(

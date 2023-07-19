@@ -27,7 +27,6 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.stage.Stage;
 import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
@@ -37,7 +36,6 @@ import org.infinite.spoty.viewModels.BrandViewModel;
 
 public class BrandFormController implements Initializable {
   private static BrandFormController instance;
-  private final Stage stage;
   public MFXTextField brandID = new MFXTextField();
   @FXML public MFXTextField brandFormName;
   @FXML public MFXTextField brandFormDescription;
@@ -46,12 +44,8 @@ public class BrandFormController implements Initializable {
   @FXML public Label brandFormNameValidationLabel;
   @FXML public Label brandFormDescriptionValidationLabel;
 
-  private BrandFormController(Stage stage) {
-    this.stage = stage;
-  }
-
-  public static BrandFormController getInstance(Stage stage) {
-    if (Objects.equals(instance, null)) instance = new BrandFormController(stage);
+  public static BrandFormController getInstance() {
+    if (Objects.equals(instance, null)) instance = new BrandFormController();
     return instance;
   }
 

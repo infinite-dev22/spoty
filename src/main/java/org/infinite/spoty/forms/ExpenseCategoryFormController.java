@@ -27,7 +27,6 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.stage.Stage;
 import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
@@ -37,7 +36,6 @@ import org.infinite.spoty.viewModels.ExpenseCategoryViewModel;
 
 public class ExpenseCategoryFormController implements Initializable {
   private static ExpenseCategoryFormController instance;
-  private final Stage stage;
   public MFXTextField expenseCategoryID = new MFXTextField();
   @FXML public MFXTextField categoryExpenseFormName;
   @FXML public MFXTextField categoryExpenseFormDescription;
@@ -45,12 +43,8 @@ public class ExpenseCategoryFormController implements Initializable {
   @FXML public MFXButton categoryExpenseFormCancelBtn;
   @FXML public Label categoryExpenseFormNameValidationLabel;
 
-  private ExpenseCategoryFormController(Stage stage) {
-    this.stage = stage;
-  }
-
-  public static ExpenseCategoryFormController getInstance(Stage stage) {
-    if (Objects.equals(instance, null)) instance = new ExpenseCategoryFormController(stage);
+  public static ExpenseCategoryFormController getInstance() {
+    if (Objects.equals(instance, null)) instance = new ExpenseCategoryFormController();
     return instance;
   }
 

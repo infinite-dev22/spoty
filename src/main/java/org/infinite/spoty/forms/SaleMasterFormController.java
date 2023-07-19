@@ -33,11 +33,15 @@ import io.github.palexdev.materialfx.enums.ScrimPriority;
 import io.github.palexdev.materialfx.filter.DoubleFilter;
 import io.github.palexdev.materialfx.filter.LongFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
+import io.github.palexdev.materialfx.utils.StringUtils;
+import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -106,48 +110,46 @@ public class SaleMasterFormController implements Initializable {
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-    // Set items to combo boxes and display custom text.
-    saleCustomer.setItems(CustomerViewModel.getCustomersComboBoxList());
-    saleCustomer.setConverter(
-        new StringConverter<>() {
-          @Override
-          public String toString(Customer object) {
-            if (object != null) return object.getName();
-            else return null;
-          }
-
-          @Override
-          public Customer fromString(String string) {
-            return null;
-          }
-        });
-
-    saleBranch.setItems(BranchViewModel.getBranchesComboBoxList());
-    saleBranch.setConverter(
-        new StringConverter<>() {
-          @Override
-          public String toString(Branch object) {
-            if (object != null) return object.getName();
-            else return null;
-          }
-
-          @Override
-          public Branch fromString(String string) {
-            return null;
-          }
-        });
-    saleStatus.setItems(FXCollections.observableArrayList(Values.SALESTATUSES));
-    salePaymentStatus.setItems(FXCollections.observableArrayList(Values.PAYMENTSTATUSES));
-
     // Bi~Directional Binding.
     saleMasterID
-        .textProperty()
-        .bindBidirectional(SaleMasterViewModel.idProperty(), new NumberStringConverter());
+            .textProperty()
+            .bindBidirectional(SaleMasterViewModel.idProperty(), new NumberStringConverter());
     saleDate.textProperty().bindBidirectional(SaleMasterViewModel.dateProperty());
     saleCustomer.valueProperty().bindBidirectional(SaleMasterViewModel.customerProperty());
     saleBranch.valueProperty().bindBidirectional(SaleMasterViewModel.branchProperty());
     saleStatus.textProperty().bindBidirectional(SaleMasterViewModel.saleStatusProperty());
     salePaymentStatus.textProperty().bindBidirectional(SaleMasterViewModel.payStatusProperty());
+
+    // ComboBox Converters.
+    StringConverter<Customer> customerConverter =
+            FunctionalStringConverter.to(customer -> (customer == null) ? "" : customer.getName());
+
+    StringConverter<Branch> branchConverter =
+            FunctionalStringConverter.to(branch -> (branch == null) ? "" : branch.getName());
+
+    // ComboBox Filter Functions.
+    Function<String, Predicate<Customer>> customerFilterFunction =
+            searchStr ->
+                    customer ->
+                            StringUtils.containsIgnoreCase(
+                                    customerConverter.toString(customer), searchStr);
+
+    Function<String, Predicate<Branch>> branchFilterFunction =
+            searchStr ->
+                    branch ->
+                            StringUtils.containsIgnoreCase(branchConverter.toString(branch), searchStr);
+
+    // Set items to combo boxes and display custom text.
+    saleCustomer.setItems(CustomerViewModel.getCustomersComboBoxList());
+    saleCustomer.setConverter(customerConverter);
+    saleCustomer.setFilterFunction(customerFilterFunction);
+
+    saleBranch.setItems(BranchViewModel.getBranchesComboBoxList());
+    saleBranch.setConverter(branchConverter);
+    saleBranch.setFilterFunction(branchFilterFunction);
+
+    saleStatus.setItems(FXCollections.observableArrayList(Values.SALESTATUSES));
+    salePaymentStatus.setItems(FXCollections.observableArrayList(Values.PAYMENTSTATUSES));
 
     // input validators.
     requiredValidator(

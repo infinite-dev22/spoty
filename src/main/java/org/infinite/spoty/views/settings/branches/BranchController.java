@@ -183,7 +183,7 @@ public class BranchController implements Initializable {
 
   private void branchFormDialogPane(Stage stage) throws IOException {
     FXMLLoader fxmlLoader = fxmlLoader("forms/BranchForm.fxml");
-    fxmlLoader.setControllerFactory(c -> BranchFormController.getInstance(stage));
+    fxmlLoader.setControllerFactory(c -> BranchFormController.getInstance());
 
     MFXGenericDialog dialogContent = fxmlLoader.load();
 

@@ -17,12 +17,16 @@ package org.infinite.spoty.forms;
 import static org.infinite.spoty.GlobalActions.closeDialog;
 import static org.infinite.spoty.Validators.requiredValidator;
 
-import io.github.palexdev.materialfx.controls.MFXComboBox;
+import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.utils.StringUtils;
+import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -44,12 +48,12 @@ public class UOMFormController implements Initializable {
    */
   private static UOMFormController instance;
 
-    public MFXTextField uomID = new MFXTextField();
+  public MFXTextField uomID = new MFXTextField();
   @FXML public MFXTextField uomFormName;
   @FXML public MFXTextField uomFormShortName;
   @FXML public MFXButton uomFormSaveBtn;
   @FXML public MFXButton uomFormCancelBtn;
-  @FXML public MFXComboBox<UnitOfMeasure> uomFormBaseUnit;
+  @FXML public MFXFilterComboBox<UnitOfMeasure> uomFormBaseUnit;
   @FXML public MFXTextField uomFormOperator;
   @FXML public MFXTextField uomFormOperatorValue;
   @FXML public VBox formsHolder;
@@ -90,21 +94,21 @@ public class UOMFormController implements Initializable {
               }
             });
 
-    // ComboBox properties.
-    uomFormBaseUnit.setItems(UOMViewModel.uomComboBoxList);
-    uomFormBaseUnit.setConverter(
-        new StringConverter<>() {
-          @Override
-          public String toString(UnitOfMeasure object) {
-            if (object != null) return object.getName();
-            else return "--Select--";
-          }
+    // ComboBox Converters.
+    StringConverter<UnitOfMeasure> uomConverter =
+        FunctionalStringConverter.to(
+            unitOfMeasure -> (unitOfMeasure == null) ? "" : unitOfMeasure.getName());
 
-          @Override
-          public UnitOfMeasure fromString(String string) {
-            return null;
-          }
-        });
+    // ComboBox Filter Functions.
+    Function<String, Predicate<UnitOfMeasure>> uomFilterFunction =
+        searchStr ->
+            unitOfMeasure ->
+                StringUtils.containsIgnoreCase(uomConverter.toString(unitOfMeasure), searchStr);
+
+    // ComboBox properties.
+    uomFormBaseUnit.setItems(UOMViewModel.getUomComboBoxList());
+    uomFormBaseUnit.setConverter(uomConverter);
+    uomFormBaseUnit.setFilterFunction(uomFilterFunction);
 
     // Input validators.
     requiredValidator(uomFormName, "Name is required.", uomFormNameValidationLabel, uomFormSaveBtn);

@@ -27,7 +27,6 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.stage.Stage;
 import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
@@ -37,7 +36,6 @@ import org.infinite.spoty.viewModels.CurrencyViewModel;
 
 public class CurrencyFormController implements Initializable {
   private static CurrencyFormController instance;
-  private final Stage stage;
   public MFXTextField currencyFormID = new MFXTextField();
   @FXML public MFXTextField currencyFormName;
   @FXML public MFXButton currencyFormSaveBtn;
@@ -47,12 +45,8 @@ public class CurrencyFormController implements Initializable {
   @FXML public Label currencyFormCodeValidationLabel;
   @FXML public Label currencyFormNameValidationLabel;
 
-  private CurrencyFormController(Stage stage) {
-    this.stage = stage;
-  }
-
-  public static CurrencyFormController getInstance(Stage stage) {
-    if (Objects.equals(instance, null)) instance = new CurrencyFormController(stage);
+  public static CurrencyFormController getInstance() {
+    if (Objects.equals(instance, null)) instance = new CurrencyFormController();
     return instance;
   }
 

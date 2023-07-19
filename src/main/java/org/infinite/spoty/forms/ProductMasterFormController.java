@@ -33,11 +33,15 @@ import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import io.github.palexdev.materialfx.enums.ScrimPriority;
 import io.github.palexdev.materialfx.filter.LongFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
+import io.github.palexdev.materialfx.utils.StringUtils;
+import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -136,36 +140,34 @@ public class ProductMasterFormController implements Initializable {
               productDetailTable.setDisable(!ProductMasterViewModel.getHasVariants());
             });
 
+    // ComboBox Converters.
+    StringConverter<ProductCategory> productCategoryConverter =
+        FunctionalStringConverter.to(
+            productCategory -> (productCategory == null) ? "" : productCategory.getName());
+
+    StringConverter<Brand> brandConverter =
+        FunctionalStringConverter.to(brand -> (brand == null) ? "" : brand.getName());
+
+    // ComboBox Filter Functions.
+    Function<String, Predicate<ProductCategory>> productCategoryFilterFunction =
+        searchStr ->
+            productCategory ->
+                StringUtils.containsIgnoreCase(
+                    productCategoryConverter.toString(productCategory), searchStr);
+
+    Function<String, Predicate<Brand>> brandFilterFunction =
+        searchStr ->
+            brand -> StringUtils.containsIgnoreCase(brandConverter.toString(brand), searchStr);
+
     // ComboBox Properties.
     productFormCategory.setItems(ProductCategoryViewModel.getCategoriesComboBoxList());
-    productFormCategory.setConverter(
-        new StringConverter<>() {
-          @Override
-          public String toString(ProductCategory object) {
-            if (object != null) return object.getName();
-            else return null;
-          }
-
-          @Override
-          public ProductCategory fromString(String string) {
-            return null;
-          }
-        });
+    productFormCategory.setConverter(productCategoryConverter);
+    productFormCategory.setFilterFunction(productCategoryFilterFunction);
 
     productFormBrand.setItems(BrandViewModel.getBrandsComboBoxList());
-    productFormBrand.setConverter(
-        new StringConverter<>() {
-          @Override
-          public String toString(Brand object) {
-            if (object != null) return object.getName();
-            else return null;
-          }
+    productFormBrand.setConverter(brandConverter);
+    productFormBrand.setFilterFunction(brandFilterFunction);
 
-          @Override
-          public Brand fromString(String string) {
-            return null;
-          }
-        });
     productFormBarCodeType.setItems(FXCollections.observableArrayList(Values.BARCODETYPES));
 
     // input validators.
