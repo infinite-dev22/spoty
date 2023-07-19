@@ -25,6 +25,7 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.database.connection.SQLiteConnection;
+import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.Role;
 import org.infinite.spoty.database.models.User;
 
@@ -36,6 +37,7 @@ public class UserViewModel {
   private static final StringProperty lastName = new SimpleStringProperty("");
   private static final StringProperty userName = new SimpleStringProperty("");
   private static final ObjectProperty<Role> role = new SimpleObjectProperty<>(null);
+  private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>(null);
   private static final StringProperty email = new SimpleStringProperty("");
   private static final StringProperty phone = new SimpleStringProperty("");
   private static final StringProperty city = new SimpleStringProperty("");
@@ -127,6 +129,18 @@ public class UserViewModel {
 
   public static ObjectProperty<Role> roleProperty() {
     return role;
+  }
+
+  public static Branch getBranch() {
+    return branch.get();
+  }
+
+  public static void setBranch(Branch branch) {
+    UserViewModel.branch.set(branch);
+  }
+
+  public static ObjectProperty<Branch> branchProperty() {
+    return branch;
   }
 
   public static String getEmail() {
@@ -247,6 +261,9 @@ public class UserViewModel {
                     getRole(),
                     isActive(),
                     canAccessAllBranches());
+            user.setPhone(getPhone());
+            user.setEmail(getEmail());
+            user.setBranch(getBranch());
 
             userDao.create(user);
 
@@ -303,13 +320,19 @@ public class UserViewModel {
 
             User user = userDao.queryForId(index);
 
-            setId(user.getId());
-            setFirstName(user.getFirstName());
-            setLastName(user.getLastName());
-            setUserName(user.getUserName());
-            setRole(user.getRole());
-            setActive(user.isActive());
-            setAccessAllBranches(user.canAccessAllBranches());
+            Platform.runLater(
+                () -> {
+                  setId(user.getId());
+                  setFirstName(user.getFirstName());
+                  setLastName(user.getLastName());
+                  setUserName(user.getUserName());
+                  setRole(user.getRole());
+                  setActive(user.isActive());
+                  setPhone(user.getPhone());
+                  setEmail(user.getEmail());
+                  setBranch(user.getBranch());
+                  setAccessAllBranches(user.canAccessAllBranches());
+                });
 
             return null;
           }
