@@ -36,6 +36,7 @@ public class BranchViewModel {
   private static final StringProperty town = new SimpleStringProperty("");
   private static final StringProperty city = new SimpleStringProperty("");
   private static final StringProperty zipcode = new SimpleStringProperty("");
+  private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>();
   public static ObservableList<Branch> branchesList = FXCollections.observableArrayList();
 
   private static final ListProperty<Branch> branches = new SimpleListProperty<>(branchesList);
@@ -150,6 +151,14 @@ public class BranchViewModel {
     return branches;
   }
 
+  public static Branch getBranch() {
+    return branch.get();
+  }
+
+  public static void setBranch(Branch branch) {
+    BranchViewModel.branch.set(branch);
+  }
+
   public static void saveBranch() {
     Task<Void> task =
         new Task<>() {
@@ -227,6 +236,7 @@ public class BranchViewModel {
             Dao<Branch, Long> branchDao = DaoManager.createDao(connectionSource, Branch.class);
 
             Branch branch = branchDao.queryForId(branchID);
+            setBranch(branch);
             setId(branch.getId());
             setName(branch.getName());
             setEmail(branch.getEmail());

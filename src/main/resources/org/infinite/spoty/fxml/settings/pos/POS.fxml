@@ -16,14 +16,12 @@
 
 <?import io.github.palexdev.materialfx.controls.MFXTextField?>
 <?import io.github.palexdev.materialfx.controls.MFXToggleButton?>
-<?import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton?>
-<?import java.net.URL?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import java.net.URL?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="posSettingsPane" styleClass="card"
             xmlns="http://javafx.com/javafx/19"
             fx:controller="org.infinite.spoty.views.settings.pos.POSController">
@@ -34,7 +32,8 @@
     <padding>
         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
     </padding>
-    <MFXTextField floatMode="BORDER" floatingText="Customer Message" AnchorPane.leftAnchor="0.0"
+    <MFXTextField fx:id="posReceiptMessage" floatMode="BORDER" floatingText="Customer Message"
+                  AnchorPane.leftAnchor="0.0"
                   AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
     <GridPane hgap="20.0" layoutY="51.0" vgap="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
               AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="61.0">
@@ -50,21 +49,25 @@
             <RowConstraints/>
             <RowConstraints/>
         </rowConstraints>
-        <MFXToggleButton text="Phone"/>
-        <MFXToggleButton layoutX="10.0" layoutY="32.0" text="Address" GridPane.columnIndex="1"/>
-        <MFXToggleButton layoutX="210.0" layoutY="32.0" text="Email" GridPane.columnIndex="2"/>
-        <MFXToggleButton layoutX="410.0" layoutY="32.0" text="Customer" GridPane.rowIndex="1"/>
-        <MFXToggleButton layoutX="10.0" layoutY="117.0" text="Tax" GridPane.columnIndex="1"
+        <MFXToggleButton fx:id="showReceiptBranchPhone" text="Phone"/>
+        <MFXToggleButton fx:id="showReceiptBranchAddress" layoutX="10.0" layoutY="32.0" text="Address"
+                         GridPane.columnIndex="1"/>
+        <MFXToggleButton fx:id="showReceiptBranchEmail" layoutX="210.0" layoutY="32.0" text="Email"
+                         GridPane.columnIndex="2"/>
+        <MFXToggleButton fx:id="showReceiptCustomer" layoutX="410.0" layoutY="32.0" text="Customer"
                          GridPane.rowIndex="1"/>
-        <MFXToggleButton layoutX="210.0" layoutY="117.0" text="Discount" GridPane.columnIndex="2"
+        <MFXToggleButton fx:id="showReceiptTax" layoutX="10.0" layoutY="117.0" text="Tax" GridPane.columnIndex="1"
                          GridPane.rowIndex="1"/>
-        <MFXToggleButton layoutX="410.0" layoutY="117.0" text="QR Code" GridPane.rowIndex="2"/>
-        <MFXToggleButton layoutX="10.0" layoutY="202.0" text="Customer Message" GridPane.columnIndex="1"
+        <MFXToggleButton fx:id="showReceiptDiscount" layoutX="210.0" layoutY="117.0" text="Discount"
+                         GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+        <MFXToggleButton fx:id="showReceiptQRCode" layoutX="410.0" layoutY="117.0" text="QR Code"
                          GridPane.rowIndex="2"/>
-        <HBox alignment="TOP_CENTER" GridPane.columnIndex="2" GridPane.rowIndex="4">
-            <MFXButton text="Save"/>
-        </HBox>
-        <MFXToggleButton layoutX="410.0" layoutY="117.0" text="Auto Print Receipt" GridPane.columnIndex="2"
+        <MFXToggleButton fx:id="showReceiptCustomerMessage" layoutX="10.0" layoutY="202.0" text="Customer Message"
+                         GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+        <MFXToggleButton fx:id="autoPrintReceipt" layoutX="410.0" layoutY="117.0" text="Auto Print Receipt"
+                         GridPane.columnIndex="2"
                          GridPane.rowIndex="2"/>
+        <MFXToggleButton fx:id="showServedBy" layoutX="410.0" layoutY="117.0" text="Served By"
+                         GridPane.rowIndex="3"/>
     </GridPane>
 </AnchorPane>

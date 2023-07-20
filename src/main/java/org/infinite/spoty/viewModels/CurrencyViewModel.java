@@ -32,6 +32,7 @@ public class CurrencyViewModel {
   private static final StringProperty code = new SimpleStringProperty("");
   private static final StringProperty name = new SimpleStringProperty("");
   private static final StringProperty symbol = new SimpleStringProperty("");
+  private static final ObjectProperty<Currency> currency = new SimpleObjectProperty<>();
   public static ObservableList<Currency> currenciesList = FXCollections.observableArrayList();
   public static final ListProperty<Currency> currencies = new SimpleListProperty<>(currenciesList);
   public static ObservableList<Currency> currenciesComboBoxList =
@@ -95,6 +96,14 @@ public class CurrencyViewModel {
 
   public static ListProperty<Currency> currencyProperty() {
     return currencies;
+  }
+
+  public static Currency getCurrency() {
+    return currency.get();
+  }
+
+  public static void setCurrency(Currency currency) {
+    CurrencyViewModel.currency.set(currency);
   }
 
   public static void saveCurrency() {
@@ -171,6 +180,7 @@ public class CurrencyViewModel {
                 DaoManager.createDao(connectionSource, Currency.class);
 
             Currency currency = currencyDao.queryForId(index);
+            setCurrency(currency);
             setId(currency.getId());
             setSymbol(currency.getSymbol());
             setCode(currency.getCode());
