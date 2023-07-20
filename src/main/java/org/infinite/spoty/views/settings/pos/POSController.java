@@ -14,9 +14,13 @@
 
 package org.infinite.spoty.views.settings.pos;
 
+import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.controls.MFXToggleButton;
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.AnchorPane;
@@ -24,6 +28,23 @@ import javafx.scene.layout.AnchorPane;
 public class POSController implements Initializable {
   private static POSController instance;
   @FXML public AnchorPane posSettingsPane;
+  @FXML public MFXTextField posReceiptMessage;
+  @FXML
+  public MFXToggleButton showReceiptBranchPhone,
+      showReceiptBranchAddress,
+      showReceiptBranchEmail,
+      showReceiptCustomer,
+      showReceiptTax,
+      showReceiptDiscount,
+      showReceiptQRCode,
+      showReceiptCustomerMessage,
+      autoPrintReceipt,
+      showServedBy;
+  private Preferences preferences;
+
+  public POSController() {
+    initPrefs();
+  }
 
   public static POSController getInstance() {
     if (Objects.equals(instance, null)) instance = new POSController();
@@ -31,5 +52,152 @@ public class POSController implements Initializable {
   }
 
   @Override
-  public void initialize(URL location, ResourceBundle resources) {}
+  public void initialize(URL location, ResourceBundle resources) {
+    initGUI();
+    setPOSPreferences();
+  }
+
+  private void initPrefs() {
+    if (Objects.equals(preferences, null)) {
+      preferences = Preferences.userRoot().node(this.getClass().getName());
+    }
+  }
+
+  private void initGUI() {
+    posReceiptMessage.setText(preferences.get("receiptMessage", "Thank you for choosing us."));
+    showReceiptBranchPhone.setSelected(preferences.getBoolean("branch_phone", false));
+    showReceiptBranchAddress.setSelected(preferences.getBoolean("branch_address", true));
+    showReceiptBranchEmail.setSelected(preferences.getBoolean("branch_email", false));
+    showReceiptCustomer.setSelected(preferences.getBoolean("customer_name", false));
+    showReceiptTax.setSelected(preferences.getBoolean("receipt_tax", true));
+    showReceiptDiscount.setSelected(preferences.getBoolean("receipt_discount", true));
+    showReceiptQRCode.setSelected(preferences.getBoolean("receipt_qr_code", true));
+    showReceiptCustomerMessage.setSelected(preferences.getBoolean("customer_message", true));
+    autoPrintReceipt.setSelected(preferences.getBoolean("auto_print_receipt", true));
+    showServedBy.setSelected(preferences.getBoolean("show_served_by", true));
+  }
+
+  private void setPOSPreferences() {
+    posReceiptMessage
+        .textProperty()
+        .addListener(
+            (observable, oldValue, newValue) -> {
+              preferences.put("receiptMessage", newValue);
+              try {
+                preferences.flush();
+              } catch (BackingStoreException e) {
+                throw new RuntimeException(e);
+              }
+            });
+    showReceiptBranchPhone
+        .selectedProperty()
+        .addListener(
+            (observable, oldValue, newValue) -> {
+              preferences.putBoolean("branch_phone", newValue);
+              try {
+                preferences.flush();
+              } catch (BackingStoreException e) {
+                throw new RuntimeException(e);
+              }
+            });
+    showReceiptBranchAddress
+        .selectedProperty()
+        .addListener(
+            (observable, oldValue, newValue) -> {
+              preferences.putBoolean("branch_address", newValue);
+              try {
+                preferences.flush();
+              } catch (BackingStoreException e) {
+                throw new RuntimeException(e);
+              }
+            });
+    showReceiptBranchEmail
+        .selectedProperty()
+        .addListener(
+            (observable, oldValue, newValue) -> {
+              preferences.putBoolean("branch_email", newValue);
+              try {
+                preferences.flush();
+              } catch (BackingStoreException e) {
+                throw new RuntimeException(e);
+              }
+            });
+    showReceiptCustomer
+        .selectedProperty()
+        .addListener(
+            (observable, oldValue, newValue) -> {
+              preferences.putBoolean("customer_name", newValue);
+              try {
+                preferences.flush();
+              } catch (BackingStoreException e) {
+                throw new RuntimeException(e);
+              }
+            });
+    showReceiptTax
+        .selectedProperty()
+        .addListener(
+            (observable, oldValue, newValue) -> {
+              preferences.putBoolean("receipt_tax", newValue);
+              try {
+                preferences.flush();
+              } catch (BackingStoreException e) {
+                throw new RuntimeException(e);
+              }
+            });
+    showReceiptDiscount
+        .selectedProperty()
+        .addListener(
+            (observable, oldValue, newValue) -> {
+              preferences.putBoolean("receipt_discount", newValue);
+              try {
+                preferences.flush();
+              } catch (BackingStoreException e) {
+                throw new RuntimeException(e);
+              }
+            });
+    showReceiptQRCode
+        .selectedProperty()
+        .addListener(
+            (observable, oldValue, newValue) -> {
+              preferences.putBoolean("receipt_qr_code", newValue);
+              try {
+                preferences.flush();
+              } catch (BackingStoreException e) {
+                throw new RuntimeException(e);
+              }
+            });
+    showReceiptCustomerMessage
+        .selectedProperty()
+        .addListener(
+            (observable, oldValue, newValue) -> {
+              preferences.putBoolean("customer_message", newValue);
+              try {
+                preferences.flush();
+              } catch (BackingStoreException e) {
+                throw new RuntimeException(e);
+              }
+            });
+    autoPrintReceipt
+        .selectedProperty()
+        .addListener(
+            (observable, oldValue, newValue) -> {
+              preferences.putBoolean("auto_print_receipt", newValue);
+              try {
+                preferences.flush();
+              } catch (BackingStoreException e) {
+                throw new RuntimeException(e);
+              }
+            });
+    showServedBy
+        .selectedProperty()
+        .addListener(
+            (observable, oldValue, newValue) -> {
+              preferences.putBoolean("show_served_by", newValue);
+              try {
+                preferences.flush();
+              } catch (BackingStoreException e) {
+                throw new RuntimeException(e);
+              }
+            });
+  }
 }

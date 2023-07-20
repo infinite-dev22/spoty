@@ -14,17 +14,25 @@
 
 package org.infinite.spoty.views.settings.system;
 
-import io.github.palexdev.materialfx.controls.MFXComboBox;
+import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.utils.StringUtils;
+import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.mfxcomponents.controls.checkbox.MFXCheckBox;
-import java.io.File;
 import java.net.URL;
+import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.GridPane;
-import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.Currency;
@@ -33,15 +41,20 @@ import org.infinite.spoty.viewModels.CurrencyViewModel;
 
 public class SystemController implements Initializable {
   private static SystemController instance;
-  @FXML public MFXComboBox<Currency> defaultCurrency;
-  @FXML public MFXComboBox<?> defaultLanguage;
+  @FXML public MFXFilterComboBox<Currency> defaultCurrency;
+  @FXML public MFXFilterComboBox<Locale> defaultLanguage;
   @FXML public MFXTextField defaultEmail;
   @FXML public MFXTextField companyName;
   @FXML public MFXTextField companyPhone;
-  @FXML public MFXComboBox<Branch> defaultBranch;
+  @FXML public MFXFilterComboBox<Branch> defaultBranch;
   @FXML public MFXTextField branchAddress;
   @FXML public MFXCheckBox invoiceFooter;
   @FXML public GridPane systemSettings;
+  private Preferences preferences;
+
+  public SystemController() {
+    initPrefs();
+  }
 
   public static SystemController getInstance() {
     if (Objects.equals(instance, null)) instance = new SystemController();
@@ -50,74 +63,161 @@ public class SystemController implements Initializable {
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
+    List<Locale> list = List.of(Locale.getAvailableLocales());
+    ObservableList<Locale> localeList = FXCollections.observableArrayList(list);
     // Input listeners.
     // Input bindings.
+
+    // Combo box Converter.
+    StringConverter<Currency> currencyConverter =
+        FunctionalStringConverter.to(currency -> (currency == null) ? "" : currency.getName());
+
+    StringConverter<Branch> branchConverter =
+        FunctionalStringConverter.to(branch -> (branch == null) ? "" : branch.getName());
+
+    StringConverter<Locale> localeConverter =
+        FunctionalStringConverter.to(locale -> (locale == null) ? "" : locale.getCountry());
+
+    // Combo box Filter Function.
+    Function<String, Predicate<Currency>> currencyFilterFunction =
+        searchStr ->
+            currency ->
+                StringUtils.containsIgnoreCase(currencyConverter.toString(currency), searchStr);
+
+    Function<String, Predicate<Branch>> branchFilterFunction =
+        searchStr ->
+            branch -> StringUtils.containsIgnoreCase(branchConverter.toString(branch), searchStr);
+
+    Function<String, Predicate<Locale>> localeFilterFunction =
+        searchStr ->
+            locale -> StringUtils.containsIgnoreCase(localeConverter.toString(locale), searchStr);
+
     // Combo box properties.
     defaultCurrency.setItems(CurrencyViewModel.getCurrenciesComboBoxList());
-    defaultCurrency.setOnShowing(
-        e -> defaultCurrency.setItems(CurrencyViewModel.getCurrenciesComboBoxList()));
-    defaultCurrency.setConverter(
-        new StringConverter<>() {
-          @Override
-          public String toString(Currency object) {
-            if (object != null) return object.getName() + " " + object.getSymbol();
-            else return null;
-          }
-
-          @Override
-          public Currency fromString(String string) {
-            return null;
-          }
-        });
+    defaultCurrency.setConverter(currencyConverter);
+    defaultCurrency.setFilterFunction(currencyFilterFunction);
 
     defaultBranch.setItems(BranchViewModel.getBranchesComboBoxList());
-    defaultBranch.setOnShowing(
-        e -> defaultBranch.setItems(BranchViewModel.getBranchesComboBoxList()));
-    defaultBranch.setConverter(
-        new StringConverter<>() {
-          @Override
-          public String toString(Branch object) {
-            if (object != null) return object.getName();
-            else return null;
-          }
+    defaultBranch.setConverter(branchConverter);
+    defaultBranch.setFilterFunction(branchFilterFunction);
 
-          @Override
-          public Branch fromString(String string) {
-            return null;
-          }
-        });
+    defaultLanguage.setItems(localeList);
+    defaultLanguage.setConverter(localeConverter);
+    defaultLanguage.setFilterFunction(localeFilterFunction);
+
+    initGUI();
+    setSystemPreferences();
   }
 
-  @FXML
-  private void saveClicked() {
-    defaultCurrency.getItems();
-    defaultLanguage.getItems();
-    defaultBranch.getItems();
-    defaultEmail.getText();
-    companyName.getText();
-    companyPhone.getText();
-    branchAddress.getText();
-    invoiceFooter.isSelected();
-
-    // Reset the input forms.
-    defaultCurrency.setItems(null);
-    defaultLanguage.setItems(null);
-    defaultBranch.setItems(null);
-    defaultEmail.setText("");
-    companyName.setText("");
-    companyPhone.setText("");
-    branchAddress.setText("");
-    invoiceFooter.setSelected(true);
+  private void initPrefs() {
+    if (Objects.equals(preferences, null)) {
+      preferences = Preferences.userRoot().node(this.getClass().getName());
+    }
   }
 
-  @FXML
-  private void companyLogoClicked() {
-    FileChooser fileChooser = new FileChooser();
-    fileChooser.setTitle("Choose Company Logo");
-    fileChooser
-        .getExtensionFilters()
-        .add(new FileChooser.ExtensionFilter("Images", "*.jpeg", "*.gif", "*.png", "*.jpg"));
-    File res = fileChooser.showOpenDialog(systemSettings.getScene().getWindow());
-    System.out.println(res);
+  private void initGUI() {
+    BranchViewModel.getItem(preferences.getInt("default_branch", 1));
+    CurrencyViewModel.getItem(preferences.getInt("default_currency", 1));
+    Locale locale = new Locale(preferences.get("default_language", "EN"));
+
+    defaultCurrency.setValue(CurrencyViewModel.getCurrency());
+    defaultLanguage.setValue(locale);
+    defaultBranch.setValue(BranchViewModel.getBranch());
+    defaultEmail.setText(preferences.get("branch_email", ""));
+    companyName.setText(preferences.get("company_name", ""));
+    companyPhone.setText(preferences.get("company_phone", ""));
+    branchAddress.setText(preferences.get("branch_address", ""));
+    invoiceFooter.setSelected(preferences.getBoolean("invoice_footer", false));
+  }
+
+  private void setSystemPreferences() {
+    defaultCurrency
+        .valueProperty()
+        .addListener(
+            (observable, oldValue, newValue) -> {
+              preferences.putInt("default_currency", newValue.getId());
+              try {
+                preferences.flush();
+              } catch (BackingStoreException e) {
+                throw new RuntimeException(e);
+              }
+            });
+    defaultLanguage
+        .valueProperty()
+        .addListener(
+            (observable, oldValue, newValue) -> {
+              preferences.put("default_language", newValue.getDisplayLanguage());
+              try {
+                preferences.flush();
+              } catch (BackingStoreException e) {
+                throw new RuntimeException(e);
+              }
+            });
+    defaultBranch
+        .valueProperty()
+        .addListener(
+            (observable, oldValue, newValue) -> {
+              preferences.putInt("default_branch", newValue.getId());
+              try {
+                preferences.flush();
+              } catch (BackingStoreException e) {
+                throw new RuntimeException(e);
+              }
+            });
+    defaultEmail
+        .textProperty()
+        .addListener(
+            (observable, oldValue, newValue) -> {
+              preferences.put("branch_email", newValue);
+              try {
+                preferences.flush();
+              } catch (BackingStoreException e) {
+                throw new RuntimeException(e);
+              }
+            });
+    companyName
+        .textProperty()
+        .addListener(
+            (observable, oldValue, newValue) -> {
+              preferences.put("company_name", newValue);
+              try {
+                preferences.flush();
+              } catch (BackingStoreException e) {
+                throw new RuntimeException(e);
+              }
+            });
+    companyPhone
+        .textProperty()
+        .addListener(
+            (observable, oldValue, newValue) -> {
+              preferences.put("company_phone", newValue);
+              try {
+                preferences.flush();
+              } catch (BackingStoreException e) {
+                throw new RuntimeException(e);
+              }
+            });
+    branchAddress
+        .textProperty()
+        .addListener(
+            (observable, oldValue, newValue) -> {
+              preferences.put("branch_address", newValue);
+              try {
+                preferences.flush();
+              } catch (BackingStoreException e) {
+                throw new RuntimeException(e);
+              }
+            });
+    invoiceFooter
+        .selectedProperty()
+        .addListener(
+            (observable, oldValue, newValue) -> {
+              preferences.putBoolean("invoice_footer", newValue);
+              try {
+                preferences.flush();
+              } catch (BackingStoreException e) {
+                throw new RuntimeException(e);
+              }
+            });
   }
 }
