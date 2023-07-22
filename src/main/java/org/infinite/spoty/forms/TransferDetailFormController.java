@@ -24,6 +24,7 @@ import io.github.palexdev.materialfx.utils.StringUtils;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.function.Function;
@@ -114,9 +115,13 @@ public class TransferDetailFormController implements Initializable {
           if (!transferDetailPdctValidationLabel.isVisible()
               && !transferDetailQntyValidationLabel.isVisible()) {
             if (tempIdProperty().get() > -1) {
-              TransferDetailViewModel.updateTransferDetail(TransferDetailViewModel.getId());
+                try {
+                    TransferDetailViewModel.updateTransferDetail(TransferDetailViewModel.getId());
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
 
-              SimpleNotification notification =
+                SimpleNotification notification =
                   new SimpleNotification.NotificationBuilder("Product changed successfully")
                       .duration(NotificationDuration.SHORT)
                       .icon("fas-circle-check")

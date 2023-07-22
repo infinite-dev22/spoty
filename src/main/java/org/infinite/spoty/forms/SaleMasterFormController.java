@@ -38,6 +38,7 @@ import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import java.util.function.Function;
@@ -56,6 +57,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
+import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.components.navigation.Pages;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
@@ -112,8 +114,8 @@ public class SaleMasterFormController implements Initializable {
   public void initialize(URL location, ResourceBundle resources) {
     // Bi~Directional Binding.
     saleMasterID
-            .textProperty()
-            .bindBidirectional(SaleMasterViewModel.idProperty(), new NumberStringConverter());
+        .textProperty()
+        .bindBidirectional(SaleMasterViewModel.idProperty(), new NumberStringConverter());
     saleDate.textProperty().bindBidirectional(SaleMasterViewModel.dateProperty());
     saleCustomer.valueProperty().bindBidirectional(SaleMasterViewModel.customerProperty());
     saleBranch.valueProperty().bindBidirectional(SaleMasterViewModel.branchProperty());
@@ -122,22 +124,20 @@ public class SaleMasterFormController implements Initializable {
 
     // ComboBox Converters.
     StringConverter<Customer> customerConverter =
-            FunctionalStringConverter.to(customer -> (customer == null) ? "" : customer.getName());
+        FunctionalStringConverter.to(customer -> (customer == null) ? "" : customer.getName());
 
     StringConverter<Branch> branchConverter =
-            FunctionalStringConverter.to(branch -> (branch == null) ? "" : branch.getName());
+        FunctionalStringConverter.to(branch -> (branch == null) ? "" : branch.getName());
 
     // ComboBox Filter Functions.
     Function<String, Predicate<Customer>> customerFilterFunction =
-            searchStr ->
-                    customer ->
-                            StringUtils.containsIgnoreCase(
-                                    customerConverter.toString(customer), searchStr);
+        searchStr ->
+            customer ->
+                StringUtils.containsIgnoreCase(customerConverter.toString(customer), searchStr);
 
     Function<String, Predicate<Branch>> branchFilterFunction =
-            searchStr ->
-                    branch ->
-                            StringUtils.containsIgnoreCase(branchConverter.toString(branch), searchStr);
+        searchStr ->
+            branch -> StringUtils.containsIgnoreCase(branchConverter.toString(branch), searchStr);
 
     // Set items to combo boxes and display custom text.
     saleCustomer.setItems(CustomerViewModel.getCustomersComboBoxList());
@@ -209,7 +209,15 @@ public class SaleMasterFormController implements Initializable {
         && !saleStatusValidationLabel.isVisible()
         && !salePaymentStatusValidationLabel.isVisible()) {
       if (Integer.parseInt(saleMasterID.getText()) > 0) {
-        SaleMasterViewModel.updateItem(Integer.parseInt(saleMasterID.getText()));
+        GlobalActions.spotyThreadPool()
+            .execute(
+                () -> {
+                  try {
+                    SaleMasterViewModel.updateItem(Integer.parseInt(saleMasterID.getText()));
+                  } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                  }
+                });
 
         SimpleNotification notification =
             new SimpleNotification.NotificationBuilder("Sale updated successfully")
@@ -227,7 +235,15 @@ public class SaleMasterFormController implements Initializable {
         cancelBtnClicked();
         return;
       }
-      SaleMasterViewModel.saveSaleMaster();
+      GlobalActions.spotyThreadPool()
+          .execute(
+              () -> {
+                try {
+                  SaleMasterViewModel.saveSaleMaster();
+                } catch (SQLException e) {
+                  throw new RuntimeException(e);
+                }
+              });
 
       SimpleNotification notification =
           new SimpleNotification.NotificationBuilder("Sale saved successfully")
@@ -351,15 +367,30 @@ public class SaleMasterFormController implements Initializable {
     // Delete
     delete.setOnAction(
         e -> {
-          SaleDetailViewModel.removeSaleDetail(
-              obj.getData().getId(), SaleDetailViewModel.saleDetailList.indexOf(obj.getData()));
+          GlobalActions.spotyThreadPool()
+              .execute(
+                  () ->
+                      SaleDetailViewModel.removeSaleDetail(
+                          obj.getData().getId(),
+                          SaleDetailViewModel.saleDetailList.indexOf(obj.getData())));
+
           e.consume();
         });
     // Edit
     edit.setOnAction(
         e -> {
-          SaleDetailViewModel.getItem(
-              obj.getData().getId(), SaleDetailViewModel.saleDetailList.indexOf(obj.getData()));
+          GlobalActions.spotyThreadPool()
+              .execute(
+                  () -> {
+                    try {
+                      SaleDetailViewModel.getItem(
+                          obj.getData().getId(),
+                          SaleDetailViewModel.saleDetailList.indexOf(obj.getData()));
+                    } catch (SQLException ex) {
+                      throw new RuntimeException(ex);
+                    }
+                  });
+
           dialog.showAndWait();
           e.consume();
         });

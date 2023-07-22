@@ -25,8 +25,6 @@ import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
-import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.ProductDetail;
 import org.infinite.spoty.database.models.TransferDetail;
@@ -166,232 +164,172 @@ public class TransferDetailViewModel {
   }
 
   public static void addTransferDetails() {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() {
-            TransferDetail transferDetail =
-                new TransferDetail(
-                    getProduct(),
-                    getQuantity(),
-                    getSerial(),
-                    getDescription(),
-                    getPrice(),
-                    getTotal());
+    TransferDetail transferDetail =
+        new TransferDetail(
+            getProduct(), getQuantity(), getSerial(), getDescription(), getPrice(), getTotal());
 
-            Platform.runLater(() -> transferDetailsList.add(transferDetail));
+    Platform.runLater(
+        () -> {
+          transferDetailsList.add(transferDetail);
 
-            return null;
-          }
-        };
-
-    task.setOnSucceeded(event -> resetProperties());
-
-    GlobalActions.spotyThreadPool().execute(task);
+          resetProperties();
+        });
   }
 
-  public static void saveTransferDetails() {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
+  public static void saveTransferDetails() throws SQLException {
+    SQLiteConnection connection = SQLiteConnection.getInstance();
+    ConnectionSource connectionSource = connection.getConnection();
 
-            Dao<TransferDetail, Long> transferDetailDao =
-                DaoManager.createDao(connectionSource, TransferDetail.class);
+    Dao<TransferDetail, Long> transferDetailDao =
+        DaoManager.createDao(connectionSource, TransferDetail.class);
 
-            transferDetailDao.create(transferDetailsList);
+    transferDetailDao.create(transferDetailsList);
 
-            return null;
-          }
-        };
+    updateProductDetailQuantity();
 
-    task.setOnSucceeded(event -> transferDetailsList.clear());
-
-    GlobalActions.spotyThreadPool().execute(task);
+    Platform.runLater(transferDetailsList::clear);
   }
 
-  public static void getAllTransferDetails() {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
+  private static void updateProductDetailQuantity() {
+    transferDetailsList.forEach(
+        product -> {
+          long productDetailQuantity = product.getProduct().getQuantity() - product.getQuantity();
 
-            Dao<TransferDetail, Long> transferDetailDao =
-                DaoManager.createDao(connectionSource, TransferDetail.class);
+          ProductDetailViewModel.setQuantity(productDetailQuantity);
 
-            transferDetailsList.clear();
+          try {
+            ProductDetailViewModel.updateItem(product.getProduct().getId());
+          } catch (SQLException e) {
+            throw new RuntimeException(e);
+          }
+        });
+  }
+
+  public static void getAllTransferDetails() throws SQLException {
+    SQLiteConnection connection = SQLiteConnection.getInstance();
+    ConnectionSource connectionSource = connection.getConnection();
+
+    Dao<TransferDetail, Long> transferDetailDao =
+        DaoManager.createDao(connectionSource, TransferDetail.class);
+
+    Platform.runLater(
+        () -> {
+          transferDetailsList.clear();
+          try {
             transferDetailsList.addAll(transferDetailDao.queryForAll());
-            return null;
+          } catch (SQLException e) {
+            throw new RuntimeException(e);
           }
-        };
-
-    GlobalActions.spotyThreadPool().execute(task);
+        });
   }
 
-  public static void updateTransferDetail(long index) {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
+  public static void updateTransferDetail(long index) throws SQLException {
+    SQLiteConnection connection = SQLiteConnection.getInstance();
+    ConnectionSource connectionSource = connection.getConnection();
 
-            Dao<TransferDetail, Long> transferDetailDao =
-                DaoManager.createDao(connectionSource, TransferDetail.class);
+    Dao<TransferDetail, Long> transferDetailDao =
+        DaoManager.createDao(connectionSource, TransferDetail.class);
 
-            TransferDetail transferDetail = transferDetailDao.queryForId(index);
-            transferDetail.setProduct(getProduct());
-            transferDetail.setQuantity(getQuantity());
-            transferDetail.setSerialNo(getSerial());
-            transferDetail.setDescription(getDescription());
-            transferDetail.setPrice(getPrice());
-            transferDetail.setTotal(getTotal());
+    TransferDetail transferDetail = transferDetailDao.queryForId(index);
+    transferDetail.setProduct(getProduct());
+    transferDetail.setQuantity(getQuantity());
+    transferDetail.setSerialNo(getSerial());
+    transferDetail.setDescription(getDescription());
+    transferDetail.setPrice(getPrice());
+    transferDetail.setTotal(getTotal());
 
-            Platform.runLater(
-                () -> {
-                  transferDetailsList.remove((int) getTempId());
-                  transferDetailsList.add(getTempId(), transferDetail);
-                });
+    Platform.runLater(
+        () -> {
+          transferDetailsList.remove((int) getTempId());
+          transferDetailsList.add(getTempId(), transferDetail);
 
-            return null;
-          }
-        };
-
-    task.setOnSucceeded(event -> resetProperties());
-
-    GlobalActions.spotyThreadPool().execute(task);
+          resetProperties();
+        });
   }
 
-  public static void getItem(long index, int tempIndex) {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
+  public static void getItem(long index, int tempIndex) throws SQLException {
+    SQLiteConnection connection = SQLiteConnection.getInstance();
+    ConnectionSource connectionSource = connection.getConnection();
 
-            Dao<TransferDetail, Long> transferDetailDao =
-                DaoManager.createDao(connectionSource, TransferDetail.class);
+    Dao<TransferDetail, Long> transferDetailDao =
+        DaoManager.createDao(connectionSource, TransferDetail.class);
 
-            TransferDetail transferDetail = transferDetailDao.queryForId(index);
+    TransferDetail transferDetail = transferDetailDao.queryForId(index);
 
-            setTempId(tempIndex);
-            setId(transferDetail.getId());
-            setProduct(transferDetail.getProduct());
-            setQuantity(String.valueOf(transferDetail.getQuantity()));
-            setSerial(transferDetail.getSerialNo());
-            setDescription(transferDetail.getDescription());
-            setPrice(String.valueOf(transferDetail.getPrice()));
-            setTotal(String.valueOf(transferDetail.getTotal()));
-
-            return null;
-          }
-        };
-
-    GlobalActions.spotyThreadPool().execute(task);
+    Platform.runLater(
+        () -> {
+          setTempId(tempIndex);
+          setId(transferDetail.getId());
+          setProduct(transferDetail.getProduct());
+          setQuantity(String.valueOf(transferDetail.getQuantity()));
+          setSerial(transferDetail.getSerialNo());
+          setDescription(transferDetail.getDescription());
+          setPrice(String.valueOf(transferDetail.getPrice()));
+          setTotal(String.valueOf(transferDetail.getTotal()));
+        });
   }
 
-  public static void updateItem(long index) {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
+  public static void updateItem(long index) throws SQLException {
+    SQLiteConnection connection = SQLiteConnection.getInstance();
+    ConnectionSource connectionSource = connection.getConnection();
 
-            Dao<TransferDetail, Long> transferDetailDao =
-                DaoManager.createDao(connectionSource, TransferDetail.class);
+    Dao<TransferDetail, Long> transferDetailDao =
+        DaoManager.createDao(connectionSource, TransferDetail.class);
 
-            TransferDetail transferDetail = transferDetailDao.queryForId(index);
-            transferDetail.setProduct(getProduct());
-            transferDetail.setQuantity(getQuantity());
-            transferDetail.setSerialNo(getSerial());
-            transferDetail.setDescription(getDescription());
-            transferDetail.setPrice(getPrice());
-            transferDetail.setTotal(getTotal());
+    TransferDetail transferDetail = transferDetailDao.queryForId(index);
+    transferDetail.setProduct(getProduct());
+    transferDetail.setQuantity(getQuantity());
+    transferDetail.setSerialNo(getSerial());
+    transferDetail.setDescription(getDescription());
+    transferDetail.setPrice(getPrice());
+    transferDetail.setTotal(getTotal());
 
+    transferDetailDao.update(transferDetail);
+
+    getAllTransferDetails();
+  }
+
+  public static void updateTransferDetails() throws SQLException {
+    SQLiteConnection connection = SQLiteConnection.getInstance();
+    ConnectionSource connectionSource = connection.getConnection();
+
+    Dao<TransferDetail, Long> transferDetailDao =
+        DaoManager.createDao(connectionSource, TransferDetail.class);
+
+    transferDetailsList.forEach(
+        transferDetail -> {
+          try {
             transferDetailDao.update(transferDetail);
-
-            return null;
+          } catch (SQLException e) {
+            throw new RuntimeException(e);
           }
-        };
+        });
 
-    task.setOnSucceeded(event -> getAllTransferDetails());
+    updateProductDetailQuantity();
 
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static void updateTransferDetails() {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
-            Dao<TransferDetail, Long> transferDetailDao =
-                DaoManager.createDao(connectionSource, TransferDetail.class);
-
-            transferDetailsList.forEach(
-                transferDetail -> {
-                  try {
-                    transferDetailDao.update(transferDetail);
-                  } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                  }
-                });
-
-            return null;
-          }
-        };
-
-    task.setOnSucceeded(event -> getAllTransferDetails());
-
-    GlobalActions.spotyThreadPool().execute(task);
+    getAllTransferDetails();
   }
 
   public static void removeTransferDetail(long index, int tempIndex) {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() {
-            Platform.runLater(() -> transferDetailsList.remove(tempIndex));
-            PENDING_DELETES.add(index);
-            return null;
-          }
-        };
-
-    GlobalActions.spotyThreadPool().execute(task);
+    Platform.runLater(() -> transferDetailsList.remove(tempIndex));
+    PENDING_DELETES.add(index);
   }
 
   public static void deleteTransferDetails(LinkedList<Long> indexes) {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() {
-            indexes.forEach(
-                index -> {
-                  try {
-                    SQLiteConnection connection = SQLiteConnection.getInstance();
-                    ConnectionSource connectionSource = connection.getConnection();
+    indexes.forEach(
+        index -> {
+          try {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
 
-                    Dao<TransferDetail, Long> transferDetailDao =
-                        DaoManager.createDao(connectionSource, TransferDetail.class);
+            Dao<TransferDetail, Long> transferDetailDao =
+                DaoManager.createDao(connectionSource, TransferDetail.class);
 
-                    transferDetailDao.deleteById(index);
-                  } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                  }
-                });
-            return null;
+            transferDetailDao.deleteById(index);
+          } catch (SQLException e) {
+            throw new RuntimeException(e);
           }
-        };
-
-    GlobalActions.spotyThreadPool().execute(task);
+        });
   }
 
   public static ObservableList<TransferDetail> getTransferDetailsList() {

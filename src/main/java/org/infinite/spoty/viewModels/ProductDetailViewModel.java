@@ -262,6 +262,20 @@ public class ProductDetailViewModel {
     GlobalActions.spotyThreadPool().execute(task);
   }
 
+  public static void dummyProductDetail() {
+            ProductDetail productDetail =
+                new ProductDetail(
+                    getUnit(),
+                    getName(),
+                    getQuantity(),
+                    getCost(),
+                    getPrice(),
+                    getNetTax(),
+                    getTaxType(),
+                    getStockAlert(),
+                    getSerialNumber());
+  }
+
   public static void resetProperties() {
     setId(0);
     setTempId(-1);
@@ -385,38 +399,26 @@ public class ProductDetailViewModel {
     GlobalActions.spotyThreadPool().execute(task);
   }
 
-  public static void updateItem(long index) {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
+  public static void updateItem(long index) throws SQLException {
+    SQLiteConnection connection = SQLiteConnection.getInstance();
+    ConnectionSource connectionSource = connection.getConnection();
 
-            Dao<ProductDetail, Long> productDetailDao =
-                DaoManager.createDao(connectionSource, ProductDetail.class);
+    Dao<ProductDetail, Long> productDetailDao =
+        DaoManager.createDao(connectionSource, ProductDetail.class);
 
-            ProductDetail productDetail = productDetailDao.queryForId(index);
+    ProductDetail productDetail = productDetailDao.queryForId(index);
 
-            productDetail.setUnit(getUnit());
-            productDetail.setName(getName());
-            productDetail.setQuantity(getQuantity());
-            productDetail.setCost(getCost());
-            productDetail.setPrice(getPrice());
-            productDetail.setNetTax(getNetTax());
-            productDetail.setTaxType(getTaxType());
-            productDetail.setStockAlert(getStockAlert());
-            productDetail.setSerialNumber(getSerialNumber());
+    productDetail.setUnit(getUnit());
+    productDetail.setName(getName());
+    productDetail.setQuantity(getQuantity());
+    productDetail.setCost(getCost());
+    productDetail.setPrice(getPrice());
+    productDetail.setNetTax(getNetTax());
+    productDetail.setTaxType(getTaxType());
+    productDetail.setStockAlert(getStockAlert());
+    productDetail.setSerialNumber(getSerialNumber());
 
-            productDetailDao.update(productDetail);
-
-            return null;
-          }
-        };
-
-    task.setOnSucceeded(event -> getAllProductDetails());
-
-    GlobalActions.spotyThreadPool().execute(task);
+    productDetailDao.update(productDetail);
   }
 
   public static void updateProductDetails() {

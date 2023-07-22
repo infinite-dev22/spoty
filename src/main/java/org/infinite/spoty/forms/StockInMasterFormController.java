@@ -30,6 +30,7 @@ import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import java.util.function.Function;
@@ -47,6 +48,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
+import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.components.navigation.Pages;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
@@ -103,12 +105,12 @@ public class StockInMasterFormController implements Initializable {
 
     // ComboBox Converters.
     StringConverter<Branch> branchConverter =
-            FunctionalStringConverter.to(branch -> (branch == null) ? "" : branch.getName());
+        FunctionalStringConverter.to(branch -> (branch == null) ? "" : branch.getName());
 
     // ComboBox Filter Functions.
     Function<String, Predicate<Branch>> branchFilterFunction =
-            searchStr ->
-                    branch -> StringUtils.containsIgnoreCase(branchConverter.toString(branch), searchStr);
+        searchStr ->
+            branch -> StringUtils.containsIgnoreCase(branchConverter.toString(branch), searchStr);
 
     // ComboBox properties.
     stockInMasterBranch.setItems(BranchViewModel.getBranchesComboBoxList());
@@ -199,17 +201,31 @@ public class StockInMasterFormController implements Initializable {
     // Delete
     delete.setOnAction(
         e -> {
-          StockInDetailViewModel.removeStockInDetail(
-              obj.getData().getId(),
-              StockInDetailViewModel.stockInDetailsList.indexOf(obj.getData()));
+          GlobalActions.spotyThreadPool()
+              .execute(
+                  () ->
+                      StockInDetailViewModel.removeStockInDetail(
+                          obj.getData().getId(),
+                          StockInDetailViewModel.stockInDetailsList.indexOf(obj.getData())));
+
           e.consume();
         });
+
     // Edit
     edit.setOnAction(
         e -> {
-          StockInDetailViewModel.getItem(
-              obj.getData().getId(),
-              StockInDetailViewModel.stockInDetailsList.indexOf(obj.getData()));
+          GlobalActions.spotyThreadPool()
+              .execute(
+                  () -> {
+                    try {
+                      StockInDetailViewModel.getItem(
+                          obj.getData().getId(),
+                          StockInDetailViewModel.stockInDetailsList.indexOf(obj.getData()));
+                    } catch (SQLException ex) {
+                      throw new RuntimeException(ex);
+                    }
+                  });
+
           dialog.showAndWait();
           e.consume();
         });
@@ -261,7 +277,15 @@ public class StockInMasterFormController implements Initializable {
     if (!stockInMasterBranchValidationLabel.isVisible()
         && !stockInMasterDateValidationLabel.isVisible()) {
       if (Integer.parseInt(stockInMasterID.getText()) > 0) {
-        StockInMasterViewModel.updateItem(Integer.parseInt(stockInMasterID.getText()));
+        GlobalActions.spotyThreadPool()
+            .execute(
+                () -> {
+                  try {
+                    StockInMasterViewModel.updateItem(Integer.parseInt(stockInMasterID.getText()));
+                  } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                  }
+                });
 
         SimpleNotification notification =
             new SimpleNotification.NotificationBuilder("Stock In updated successfully")
@@ -275,7 +299,15 @@ public class StockInMasterFormController implements Initializable {
         stockInMasterCancelBtnClicked();
         return;
       }
-      StockInMasterViewModel.saveStockInMaster();
+      GlobalActions.spotyThreadPool()
+          .execute(
+              () -> {
+                try {
+                  StockInMasterViewModel.saveStockInMaster();
+                } catch (SQLException e) {
+                  throw new RuntimeException(e);
+                }
+              });
 
       SimpleNotification notification =
           new SimpleNotification.NotificationBuilder("Stock In saved successfully")

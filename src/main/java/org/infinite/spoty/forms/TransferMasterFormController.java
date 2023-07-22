@@ -37,6 +37,7 @@ import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import java.util.function.Function;
@@ -54,6 +55,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
+import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.components.navigation.Pages;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
@@ -223,17 +225,29 @@ public class TransferMasterFormController implements Initializable {
     // Delete
     delete.setOnAction(
         e -> {
-          TransferDetailViewModel.removeTransferDetail(
-              obj.getData().getId(),
-              TransferDetailViewModel.transferDetailsList.indexOf(obj.getData()));
+          GlobalActions.spotyThreadPool()
+              .execute(
+                  () ->
+                      TransferDetailViewModel.removeTransferDetail(
+                          obj.getData().getId(),
+                          TransferDetailViewModel.transferDetailsList.indexOf(obj.getData())));
           e.consume();
         });
     // Edit
     edit.setOnAction(
         e -> {
-          TransferDetailViewModel.getItem(
-              obj.getData().getId(),
-              TransferDetailViewModel.transferDetailsList.indexOf(obj.getData()));
+          GlobalActions.spotyThreadPool()
+              .execute(
+                  () -> {
+                    try {
+                      TransferDetailViewModel.getItem(
+                          obj.getData().getId(),
+                          TransferDetailViewModel.transferDetailsList.indexOf(obj.getData()));
+                    } catch (SQLException ex) {
+                      throw new RuntimeException(ex);
+                    }
+                  });
+
           dialog.showAndWait();
           e.consume();
         });
@@ -287,7 +301,16 @@ public class TransferMasterFormController implements Initializable {
         && !transferMasterFromBranchValidationLabel.isVisible()
         && !transferMasterDateValidationLabel.isVisible()) {
       if (Integer.parseInt(transferMasterID.getText()) > 0) {
-        TransferMasterViewModel.updateItem(Integer.parseInt(transferMasterID.getText()));
+        GlobalActions.spotyThreadPool()
+            .execute(
+                () -> {
+                  try {
+                    TransferMasterViewModel.updateItem(
+                        Integer.parseInt(transferMasterID.getText()));
+                  } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                  }
+                });
 
         SimpleNotification notification =
             new SimpleNotification.NotificationBuilder("Transfer updated successfully")
@@ -303,7 +326,15 @@ public class TransferMasterFormController implements Initializable {
         transferMasterCancelBtnClicked();
         return;
       }
-      TransferMasterViewModel.saveTransferMaster();
+      GlobalActions.spotyThreadPool()
+          .execute(
+              () -> {
+                try {
+                  TransferMasterViewModel.saveTransferMaster();
+                } catch (SQLException e) {
+                  throw new RuntimeException(e);
+                }
+              });
 
       SimpleNotification notification =
           new SimpleNotification.NotificationBuilder("Transfer saved successfully")

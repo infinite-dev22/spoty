@@ -35,6 +35,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
+import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
@@ -141,7 +142,7 @@ public class AdjustmentDetailFormController implements Initializable {
               && !adjustmentProductsQntyValidationLabel.isVisible()
               && !adjustmentTypeValidationLabel.isVisible()) {
             if (tempIdProperty().get() > -1) {
-              AdjustmentDetailViewModel.updateAdjustmentDetail(SharedResources.getTempId());
+              GlobalActions.spotyThreadPool().execute(() -> AdjustmentDetailViewModel.updateAdjustmentDetail(SharedResources.getTempId()));
 
               SimpleNotification notification =
                   new SimpleNotification.NotificationBuilder("Entry updated successfully")
@@ -157,7 +158,7 @@ public class AdjustmentDetailFormController implements Initializable {
               closeDialog(e);
               return;
             }
-            AdjustmentDetailViewModel.addAdjustmentDetails();
+              GlobalActions.spotyThreadPool().execute(AdjustmentDetailViewModel::addAdjustmentDetails);
 
             SimpleNotification notification =
                 new SimpleNotification.NotificationBuilder("Entry added successfully")
@@ -165,6 +166,7 @@ public class AdjustmentDetailFormController implements Initializable {
                     .icon("fas-circle-check")
                     .type(NotificationVariants.SUCCESS)
                     .build();
+
             notificationHolder.addNotification(notification);
             AdjustmentDetailViewModel.resetProperties();
 

@@ -24,6 +24,7 @@ import io.github.palexdev.materialfx.utils.StringUtils;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.function.Function;
@@ -32,6 +33,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.util.StringConverter;
+import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
@@ -115,7 +117,16 @@ public class StockInDetailFormController implements Initializable {
           if (!stockInDetailPdctValidationLabel.isVisible()
               && !stockInDetailQntyValidationLabel.isVisible()) {
             if (tempIdProperty().get() > -1) {
-              StockInDetailViewModel.updateStockInDetail(StockInDetailViewModel.getId());
+              GlobalActions.spotyThreadPool()
+                  .execute(
+                      () -> {
+                        try {
+                          StockInDetailViewModel.updateStockInDetail(
+                              StockInDetailViewModel.getId());
+                        } catch (SQLException ex) {
+                          throw new RuntimeException(ex);
+                        }
+                      });
 
               SimpleNotification notification =
                   new SimpleNotification.NotificationBuilder("Product changed successfully")
@@ -130,7 +141,7 @@ public class StockInDetailFormController implements Initializable {
               closeDialog(e);
               return;
             }
-            StockInDetailViewModel.addStockInDetails();
+            GlobalActions.spotyThreadPool().execute(StockInDetailViewModel::addStockInDetails);
 
             SimpleNotification notification =
                 new SimpleNotification.NotificationBuilder("Product added successfully")

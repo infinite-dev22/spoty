@@ -37,6 +37,7 @@ import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import java.util.function.Function;
@@ -53,7 +54,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
-import javafx.util.converter.NumberStringConverter;
+import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.components.navigation.Pages;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
@@ -69,7 +70,6 @@ import org.infinite.spoty.views.BaseController;
 @SuppressWarnings("unchecked")
 public class AdjustmentMasterFormController implements Initializable {
   private static AdjustmentMasterFormController instance;
-  public MFXTextField adjustmentMasterID = new MFXTextField();
   @FXML public MFXFilterComboBox<Branch> adjustmentBranch;
   @FXML public MFXDatePicker adjustmentDate;
   @FXML public MFXTableView<AdjustmentDetail> adjustmentDetailTable;
@@ -101,22 +101,18 @@ public class AdjustmentMasterFormController implements Initializable {
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     // Input binding.
-    adjustmentMasterID
-        .textProperty()
-        .bindBidirectional(AdjustmentMasterViewModel.idProperty(), new NumberStringConverter());
     adjustmentBranch.valueProperty().bindBidirectional(AdjustmentMasterViewModel.branchProperty());
     adjustmentDate.textProperty().bindBidirectional(AdjustmentMasterViewModel.dateProperty());
     adjustmentNote.textProperty().bindBidirectional(AdjustmentMasterViewModel.noteProperty());
 
     // ComboBox Converters.
     StringConverter<Branch> branchConverter =
-            FunctionalStringConverter.to(branch -> (branch == null) ? "" : branch.getName());
+        FunctionalStringConverter.to(branch -> (branch == null) ? "" : branch.getName());
 
     // ComboBox Filter Functions.
     Function<String, Predicate<Branch>> branchFilterFunction =
-            searchStr ->
-                    branch ->
-                            StringUtils.containsIgnoreCase(branchConverter.toString(branch), searchStr);
+        searchStr ->
+            branch -> StringUtils.containsIgnoreCase(branchConverter.toString(branch), searchStr);
 
     // combBox properties.
     adjustmentBranch.setItems(BranchViewModel.getBranchesComboBoxList());
@@ -217,17 +213,28 @@ public class AdjustmentMasterFormController implements Initializable {
     // Delete
     delete.setOnAction(
         e -> {
-          AdjustmentDetailViewModel.removeAdjustmentDetail(
-              obj.getData().getId(),
-              AdjustmentDetailViewModel.adjustmentDetailsList.indexOf(obj.getData()));
+            GlobalActions.spotyThreadPool().execute(
+              () ->
+                  AdjustmentDetailViewModel.removeAdjustmentDetail(
+                      obj.getData().getId(),
+                      AdjustmentDetailViewModel.adjustmentDetailsList.indexOf(obj.getData())));
+
           e.consume();
         });
     // Edit
     edit.setOnAction(
         e -> {
-          AdjustmentDetailViewModel.getItem(
-              obj.getData().getId(),
-              AdjustmentDetailViewModel.adjustmentDetailsList.indexOf(obj.getData()));
+            GlobalActions.spotyThreadPool().execute(
+              () -> {
+                try {
+                  AdjustmentDetailViewModel.getItem(
+                      obj.getData().getId(),
+                      AdjustmentDetailViewModel.adjustmentDetailsList.indexOf(obj.getData()));
+                } catch (SQLException ex) {
+                  throw new RuntimeException(ex);
+                }
+              });
+
           dialog.showAndWait();
           e.consume();
         });
@@ -277,8 +284,16 @@ public class AdjustmentMasterFormController implements Initializable {
     }
     if (!adjustmentBranchValidationLabel.isVisible()
         && !adjustmentDateValidationLabel.isVisible()) {
-      if (Integer.parseInt(adjustmentMasterID.getText()) > 0) {
-        AdjustmentMasterViewModel.updateItem(Integer.parseInt(adjustmentMasterID.getText()));
+      if (AdjustmentMasterViewModel.getId() > 0) {
+          GlobalActions.spotyThreadPool().execute(
+            () -> {
+              try {
+                AdjustmentMasterViewModel.updateItem(AdjustmentMasterViewModel.getId());
+              } catch (SQLException e) {
+                throw new RuntimeException(e);
+              }
+            });
+
         SimpleNotification notification =
             new SimpleNotification.NotificationBuilder("Product adjustment updated successfully")
                 .duration(NotificationDuration.MEDIUM)
@@ -286,11 +301,22 @@ public class AdjustmentMasterFormController implements Initializable {
                 .type(NotificationVariants.SUCCESS)
                 .build();
         notificationHolder.addNotification(notification);
+
         adjustmentCancelBtnClicked();
+
         adjustmentBranch.clearSelection();
+
         return;
       }
-      AdjustmentMasterViewModel.saveAdjustmentMaster();
+        GlobalActions.spotyThreadPool().execute(
+          () -> {
+            try {
+              AdjustmentMasterViewModel.saveAdjustmentMaster();
+            } catch (SQLException e) {
+              throw new RuntimeException(e);
+            }
+          });
+
       SimpleNotification notification =
           new SimpleNotification.NotificationBuilder("Product adjustment saved successfully")
               .duration(NotificationDuration.MEDIUM)
@@ -298,8 +324,11 @@ public class AdjustmentMasterFormController implements Initializable {
               .type(NotificationVariants.SUCCESS)
               .build();
       notificationHolder.addNotification(notification);
+
       adjustmentCancelBtnClicked();
+
       adjustmentBranch.clearSelection();
+
       return;
     }
     SimpleNotification notification =

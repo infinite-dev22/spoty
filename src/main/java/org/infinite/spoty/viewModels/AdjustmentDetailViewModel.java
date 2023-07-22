@@ -25,8 +25,6 @@ import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
-import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.AdjustmentDetail;
 import org.infinite.spoty.database.models.AdjustmentMaster;
@@ -40,8 +38,8 @@ public class AdjustmentDetailViewModel {
   private static final LongProperty id = new SimpleLongProperty(0);
   private static final ObjectProperty<ProductDetail> product = new SimpleObjectProperty<>();
   private static final ObjectProperty<AdjustmentMaster> adjustment = new SimpleObjectProperty<>();
-  private static final StringProperty quantity = new SimpleStringProperty("");
-  private static final StringProperty adjustmentType = new SimpleStringProperty("");
+  private static final StringProperty quantity = new SimpleStringProperty();
+  private static final StringProperty adjustmentType = new SimpleStringProperty();
 
   public static long getId() {
     return id.get();
@@ -125,206 +123,159 @@ public class AdjustmentDetailViewModel {
   }
 
   public static void addAdjustmentDetails() {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() {
-            AdjustmentDetail adjustmentDetail =
-                new AdjustmentDetail(getProduct(), getQuantity(), getAdjustmentType());
+    AdjustmentDetail adjustmentDetail =
+        new AdjustmentDetail(getProduct(), getQuantity(), getAdjustmentType());
 
-            Platform.runLater(() -> adjustmentDetailsList.add(adjustmentDetail));
-
-            return null;
-          }
-        };
-
-    task.setOnSucceeded(event -> resetProperties());
-
-    GlobalActions.spotyThreadPool().execute(task);
+    Platform.runLater(
+        () -> {
+          adjustmentDetailsList.add(adjustmentDetail);
+          resetProperties();
+        });
   }
 
-  public static void saveAdjustmentDetails() {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
+  public static void saveAdjustmentDetails() throws SQLException {
+    SQLiteConnection connection = SQLiteConnection.getInstance();
+    ConnectionSource connectionSource = connection.getConnection();
 
-            Dao<AdjustmentDetail, Long> adjustmentDetailDao =
-                DaoManager.createDao(connectionSource, AdjustmentDetail.class);
+    Dao<AdjustmentDetail, Long> adjustmentDetailDao =
+        DaoManager.createDao(connectionSource, AdjustmentDetail.class);
 
-            adjustmentDetailDao.create(adjustmentDetailsList);
+    adjustmentDetailDao.create(adjustmentDetailsList);
 
-            return null;
+    updateProductDetailQuantity();
+
+    Platform.runLater(adjustmentDetailsList::clear);
+  }
+
+  private static void updateProductDetailQuantity() {
+    adjustmentDetailsList.forEach(
+        product -> {
+          long productDetailQuantity;
+          if (product.getAdjustmentType().equalsIgnoreCase("INCREMENT"))
+            productDetailQuantity = product.getProduct().getQuantity() + product.getQuantity();
+          else productDetailQuantity = product.getProduct().getQuantity() - product.getQuantity();
+
+          ProductDetailViewModel.setQuantity(productDetailQuantity);
+
+          try {
+            ProductDetailViewModel.updateItem(product.getProduct().getId());
+          } catch (SQLException e) {
+            throw new RuntimeException(e);
           }
-        };
-
-    task.setOnSucceeded(event -> adjustmentDetailsList.clear());
-
-    GlobalActions.spotyThreadPool().execute(task);
+        });
   }
 
   public static void updateAdjustmentDetail(int index) {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() {
-            AdjustmentDetail adjustmentDetail = adjustmentDetailsList.get(index);
-            adjustmentDetail.setProduct(getProduct());
-            adjustmentDetail.setQuantity(getQuantity());
-            adjustmentDetail.setAdjustmentType(getAdjustmentType());
+    AdjustmentDetail adjustmentDetail = adjustmentDetailsList.get(index);
+    adjustmentDetail.setProduct(getProduct());
+    adjustmentDetail.setQuantity(getQuantity());
+    adjustmentDetail.setAdjustmentType(getAdjustmentType());
 
-            Platform.runLater(
-                () -> {
-                  adjustmentDetailsList.remove((int) getTempId());
-                  adjustmentDetailsList.add(getTempId(), adjustmentDetail);
-                });
+    Platform.runLater(
+        () -> {
+          adjustmentDetailsList.remove((int) getTempId());
+          adjustmentDetailsList.add(getTempId(), adjustmentDetail);
 
-            return null;
-          }
-        };
-
-    task.setOnSucceeded(event -> resetProperties());
-
-    GlobalActions.spotyThreadPool().execute(task);
+          resetProperties();
+        });
   }
 
-  public static void getAllAdjustmentDetails() {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
+  public static void getAllAdjustmentDetails() throws SQLException {
+    SQLiteConnection connection = SQLiteConnection.getInstance();
+    ConnectionSource connectionSource = connection.getConnection();
 
-            Dao<AdjustmentDetail, Long> adjustmentDetailDao =
-                DaoManager.createDao(connectionSource, AdjustmentDetail.class);
+    Dao<AdjustmentDetail, Long> adjustmentDetailDao =
+        DaoManager.createDao(connectionSource, AdjustmentDetail.class);
 
-            adjustmentDetailsList.clear();
+    Platform.runLater(
+        () -> {
+          adjustmentDetailsList.clear();
+
+          try {
             adjustmentDetailsList.addAll(adjustmentDetailDao.queryForAll());
-            return null;
+          } catch (SQLException e) {
+            throw new RuntimeException(e);
           }
-        };
-
-    GlobalActions.spotyThreadPool().execute(task);
+        });
   }
 
-  public static void getItem(long index, int tempIndex) {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
+  public static void getItem(long index, int tempIndex) throws SQLException {
+    SQLiteConnection connection = SQLiteConnection.getInstance();
+    ConnectionSource connectionSource = connection.getConnection();
 
-            Dao<AdjustmentDetail, Long> adjustmentDetailDao =
-                DaoManager.createDao(connectionSource, AdjustmentDetail.class);
+    Dao<AdjustmentDetail, Long> adjustmentDetailDao =
+        DaoManager.createDao(connectionSource, AdjustmentDetail.class);
 
-            AdjustmentDetail adjustmentDetail = adjustmentDetailDao.queryForId(index);
-            setTempId(tempIndex);
-            setProduct(adjustmentDetail.getProduct());
-            setQuantity(String.valueOf(adjustmentDetail.getQuantity()));
-            setAdjustmentType(adjustmentDetail.getAdjustmentType());
-            return null;
-          }
-        };
+    AdjustmentDetail adjustmentDetail = adjustmentDetailDao.queryForId(index);
 
-    GlobalActions.spotyThreadPool().execute(task);
+    Platform.runLater(
+        () -> {
+          setTempId(tempIndex);
+          setProduct(adjustmentDetail.getProduct());
+          setQuantity(String.valueOf(adjustmentDetail.getQuantity()));
+          setAdjustmentType(adjustmentDetail.getAdjustmentType());
+        });
   }
 
-  public static void updateItem(long index) {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
+  public static void updateItem(long index) throws SQLException {
+    SQLiteConnection connection = SQLiteConnection.getInstance();
+    ConnectionSource connectionSource = connection.getConnection();
 
-            Dao<AdjustmentDetail, Long> adjustmentDetailDao =
-                DaoManager.createDao(connectionSource, AdjustmentDetail.class);
+    Dao<AdjustmentDetail, Long> adjustmentDetailDao =
+        DaoManager.createDao(connectionSource, AdjustmentDetail.class);
 
-            AdjustmentDetail adjustmentDetail = adjustmentDetailDao.queryForId(index);
-            adjustmentDetail.setProduct(getProduct());
-            adjustmentDetail.setQuantity(getQuantity());
-            adjustmentDetail.setAdjustmentType(getAdjustmentType());
+    AdjustmentDetail adjustmentDetail = adjustmentDetailDao.queryForId(index);
+    adjustmentDetail.setProduct(getProduct());
+    adjustmentDetail.setQuantity(getQuantity());
+    adjustmentDetail.setAdjustmentType(getAdjustmentType());
 
+    adjustmentDetailDao.update(adjustmentDetail);
+
+    getAllAdjustmentDetails();
+  }
+
+  public static void updateAdjustmentDetails() throws SQLException {
+    SQLiteConnection connection = SQLiteConnection.getInstance();
+    ConnectionSource connectionSource = connection.getConnection();
+
+    Dao<AdjustmentDetail, Long> adjustmentDetailDao =
+        DaoManager.createDao(connectionSource, AdjustmentDetail.class);
+
+    adjustmentDetailsList.forEach(
+        adjustmentDetail -> {
+          try {
             adjustmentDetailDao.update(adjustmentDetail);
-            return null;
+          } catch (SQLException e) {
+            throw new RuntimeException(e);
           }
-        };
+        });
 
-    task.setOnSucceeded(event -> getAllAdjustmentDetails());
+    updateProductDetailQuantity();
 
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static void updateAdjustmentDetails() {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
-            Dao<AdjustmentDetail, Long> adjustmentDetailDao =
-                DaoManager.createDao(connectionSource, AdjustmentDetail.class);
-
-            adjustmentDetailsList.forEach(
-                adjustmentDetail -> {
-                  try {
-                    adjustmentDetailDao.update(adjustmentDetail);
-                  } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                  }
-                });
-            return null;
-          }
-        };
-
-    task.setOnSucceeded(event -> getAllAdjustmentDetails());
-
-    GlobalActions.spotyThreadPool().execute(task);
+    getAllAdjustmentDetails();
   }
 
   public static void removeAdjustmentDetail(long index, int tempIndex) {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() {
-            Platform.runLater(() -> adjustmentDetailsList.remove(tempIndex));
-            PENDING_DELETES.add(index);
-            return null;
-          }
-        };
+    Platform.runLater(() -> adjustmentDetailsList.remove(tempIndex));
 
-    GlobalActions.spotyThreadPool().execute(task);
+    PENDING_DELETES.add(index);
   }
 
   public static void deleteAdjustmentDetails(LinkedList<Long> indexes) {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() {
-            indexes.forEach(
-                index -> {
-                  try {
-                    SQLiteConnection connection = SQLiteConnection.getInstance();
-                    ConnectionSource connectionSource = connection.getConnection();
+    indexes.forEach(
+        index -> {
+          try {
+            SQLiteConnection connection = SQLiteConnection.getInstance();
+            ConnectionSource connectionSource = connection.getConnection();
 
-                    Dao<AdjustmentDetail, Long> adjustmentDetailDao =
-                        DaoManager.createDao(connectionSource, AdjustmentDetail.class);
+            Dao<AdjustmentDetail, Long> adjustmentDetailDao =
+                DaoManager.createDao(connectionSource, AdjustmentDetail.class);
 
-                    adjustmentDetailDao.deleteById(index);
-                  } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                  }
-                });
-            return null;
+            adjustmentDetailDao.deleteById(index);
+          } catch (SQLException e) {
+            throw new RuntimeException(e);
           }
-        };
-
-    GlobalActions.spotyThreadPool().execute(task);
+        });
   }
 
   public static ObservableList<AdjustmentDetail> getAdjustmentDetailsList() {
