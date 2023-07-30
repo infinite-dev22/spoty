@@ -31,8 +31,12 @@ public class QuotationDetail implements Serializable {
   @DatabaseField(foreign = true, columnName = "sale_unit_id", foreignAutoRefresh = true)
   private UnitOfMeasure saleUnit;
 
-  @DatabaseField(foreign = true, columnName = "product_id", canBeNull = false, foreignAutoRefresh = true)
-  private ProductDetail product;
+  @DatabaseField(
+      foreign = true,
+      columnName = "product_id",
+      canBeNull = false,
+      foreignAutoRefresh = true)
+  private Product product;
 
   @DatabaseField(
       foreign = true,
@@ -77,11 +81,7 @@ public class QuotationDetail implements Serializable {
   private String updatedBy;
 
   public QuotationDetail(
-      ProductDetail product,
-      UnitOfMeasure saleUnit,
-      double netTax,
-      double discount,
-      long quantity) {
+      Product product, UnitOfMeasure saleUnit, double netTax, double discount, long quantity) {
     this.product = product;
     this.saleUnit = saleUnit;
     this.netTax = netTax;
@@ -89,7 +89,7 @@ public class QuotationDetail implements Serializable {
     this.quantity = quantity;
   }
 
-  public QuotationDetail(ProductDetail product, double netTax, double discount, long quantity) {
+  public QuotationDetail(Product product, double netTax, double discount, long quantity) {
     this.product = product;
     this.netTax = netTax;
     this.discount = discount;
@@ -122,19 +122,17 @@ public class QuotationDetail implements Serializable {
     this.saleUnit = saleUnit;
   }
 
-  public ProductDetail getProduct() {
+  public Product getProduct() {
     return product;
   }
 
-  public void setProduct(ProductDetail product) {
+  public void setProduct(Product product) {
     this.product = product;
   }
 
   public String getProductName() {
     return (product != null)
-        ? product.getProduct().getBrand().getName()
-            + " "
-            + product.getProduct().getName()
+        ? product.getBrand().getName()
             + " "
             + product.getName()
             + " "

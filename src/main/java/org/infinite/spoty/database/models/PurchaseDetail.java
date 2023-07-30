@@ -52,7 +52,7 @@ public class PurchaseDetail implements Serializable {
   private String discountType;
 
   @DatabaseField(foreign = true, canBeNull = false, foreignAutoRefresh = true)
-  private ProductDetail product;
+  private Product product;
 
   @DatabaseField(columnName = "serial_number")
   private String serialNumber;
@@ -75,7 +75,7 @@ public class PurchaseDetail implements Serializable {
   public PurchaseDetail() {}
 
   public PurchaseDetail(
-      PurchaseMaster purchase, double cost, ProductDetail product, long quantity) {
+      PurchaseMaster purchase, double cost, Product product, long quantity) {
     this.cost = cost;
     this.purchase = purchase;
     this.product = product;
@@ -138,19 +138,17 @@ public class PurchaseDetail implements Serializable {
     this.discountType = discountType;
   }
 
-  public ProductDetail getProduct() {
+  public Product getProduct() {
     return product;
   }
 
-  public void setProduct(ProductDetail product) {
+  public void setProduct(Product product) {
     this.product = product;
   }
 
   public String getProductName() {
     return (product != null)
-        ? product.getProduct().getBrand().getName()
-            + " "
-            + product.getProduct().getName()
+        ? product.getBrand().getName()
             + " "
             + product.getName()
             + " "

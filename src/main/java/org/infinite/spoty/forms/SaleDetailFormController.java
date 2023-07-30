@@ -16,6 +16,7 @@ package org.infinite.spoty.forms;
 
 import static org.infinite.spoty.GlobalActions.closeDialog;
 import static org.infinite.spoty.Validators.requiredValidator;
+import static org.infinite.spoty.values.SharedResources.getTempId;
 import static org.infinite.spoty.values.SharedResources.tempIdProperty;
 
 import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
@@ -38,14 +39,14 @@ import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
-import org.infinite.spoty.database.models.ProductDetail;
-import org.infinite.spoty.viewModels.ProductDetailViewModel;
+import org.infinite.spoty.database.models.Product;
+import org.infinite.spoty.viewModels.ProductViewModel;
 import org.infinite.spoty.viewModels.SaleDetailViewModel;
 
 public class SaleDetailFormController implements Initializable {
   private static SaleDetailFormController instance;
   @FXML public MFXTextField saleDetailQnty;
-  @FXML public MFXFilterComboBox<ProductDetail> saleDetailPdct;
+  @FXML public MFXFilterComboBox<Product> saleDetailPdct;
   @FXML public MFXTextField saleDetailOrderTax;
   @FXML public MFXTextField saleDetailDiscount;
   @FXML public MFXButton saleProductsSaveBtn;
@@ -67,22 +68,19 @@ public class SaleDetailFormController implements Initializable {
     saleDetailDiscount.textProperty().bindBidirectional(SaleDetailViewModel.discountProperty());
 
     // Combo box Converter.
-    StringConverter<ProductDetail> productVariantConverter =
+    StringConverter<Product> productVariantConverter =
         FunctionalStringConverter.to(
-            productDetail ->
-                (productDetail == null)
-                    ? ""
-                    : productDetail.getProduct().getName() + " " + productDetail.getName());
+            productDetail -> (productDetail == null) ? "" : productDetail.getName());
 
     // Combo box Filter Function.
-    Function<String, Predicate<ProductDetail>> productVariantFilterFunction =
+    Function<String, Predicate<Product>> productVariantFilterFunction =
         searchStr ->
             productDetail ->
                 StringUtils.containsIgnoreCase(
                     productVariantConverter.toString(productDetail), searchStr);
 
     // Set combo box options.
-    saleDetailPdct.setItems(ProductDetailViewModel.getProductDetailsComboBoxList());
+    saleDetailPdct.setItems(ProductViewModel.getProductsComboBoxList());
     saleDetailPdct.setConverter(productVariantConverter);
     saleDetailPdct.setFilterFunction(productVariantFilterFunction);
 
@@ -118,7 +116,7 @@ public class SaleDetailFormController implements Initializable {
                   .execute(
                       () -> {
                         try {
-                          SaleDetailViewModel.updateSaleDetail(SaleDetailViewModel.getId());
+                          SaleDetailViewModel.updateSaleDetail(getTempId());
                         } catch (SQLException ex) {
                           throw new RuntimeException(ex);
                         }

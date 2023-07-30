@@ -26,7 +26,7 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.infinite.spoty.database.connection.SQLiteConnection;
-import org.infinite.spoty.database.models.ProductDetail;
+import org.infinite.spoty.database.models.Product;
 import org.infinite.spoty.database.models.TransferDetail;
 import org.infinite.spoty.database.models.TransferMaster;
 
@@ -36,7 +36,7 @@ public class TransferDetailViewModel {
   private static final ListProperty<TransferDetail> transferDetails =
       new SimpleListProperty<>(transferDetailsList);
   private static final LongProperty id = new SimpleLongProperty(0);
-  private static final ObjectProperty<ProductDetail> product = new SimpleObjectProperty<>();
+  private static final ObjectProperty<Product> product = new SimpleObjectProperty<>();
   private static final ObjectProperty<TransferMaster> transfer = new SimpleObjectProperty<>();
   private static final StringProperty quantity = new SimpleStringProperty("");
   private static final StringProperty serial = new SimpleStringProperty("");
@@ -56,15 +56,15 @@ public class TransferDetailViewModel {
     return id;
   }
 
-  public static ProductDetail getProduct() {
+  public static Product getProduct() {
     return product.get();
   }
 
-  public static void setProduct(ProductDetail product) {
+  public static void setProduct(Product product) {
     TransferDetailViewModel.product.set(product);
   }
 
-  public static ObjectProperty<ProductDetail> productProperty() {
+  public static ObjectProperty<Product> productProperty() {
     return product;
   }
 
@@ -185,20 +185,20 @@ public class TransferDetailViewModel {
 
     transferDetailDao.create(transferDetailsList);
 
-    updateProductDetailQuantity();
+    updateProductQuantity();
 
     Platform.runLater(transferDetailsList::clear);
   }
 
-  private static void updateProductDetailQuantity() {
+  private static void updateProductQuantity() {
     transferDetailsList.forEach(
         product -> {
           long productDetailQuantity = product.getProduct().getQuantity() - product.getQuantity();
 
-          ProductDetailViewModel.setQuantity(productDetailQuantity);
+          ProductViewModel.setQuantity(productDetailQuantity);
 
           try {
-            ProductDetailViewModel.updateItem(product.getProduct().getId());
+            ProductViewModel.updateProduct(product.getProduct().getId());
           } catch (SQLException e) {
             throw new RuntimeException(e);
           }
@@ -305,7 +305,7 @@ public class TransferDetailViewModel {
           }
         });
 
-    updateProductDetailQuantity();
+    updateProductQuantity();
 
     getAllTransferDetails();
   }

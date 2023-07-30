@@ -14,7 +14,7 @@
 
 package org.infinite.spoty.views.splash;
 
-import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
+import static org.infinite.spoty.SpotyResourceLoader.fxmlLoader;
 
 import io.github.palexdev.materialfx.css.themes.MFXThemeManager;
 import io.github.palexdev.materialfx.css.themes.Themes;

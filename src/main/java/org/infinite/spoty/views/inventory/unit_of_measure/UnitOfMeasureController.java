@@ -14,7 +14,7 @@
 
 package org.infinite.spoty.views.inventory.unit_of_measure;
 
-import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
+import static org.infinite.spoty.SpotyResourceLoader.fxmlLoader;
 
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;

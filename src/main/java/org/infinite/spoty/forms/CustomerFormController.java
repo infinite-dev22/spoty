@@ -25,7 +25,6 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
@@ -34,7 +33,6 @@ import org.infinite.spoty.viewModels.CustomerViewModel;
 
 public class CustomerFormController implements Initializable {
   private static CustomerFormController instance;
-  public MFXTextField customerID = new MFXTextField();
   @FXML public MFXButton customerFormSaveBtn;
   @FXML public MFXButton customerFormCancelBtn;
   @FXML public MFXTextField customerFormName;
@@ -70,10 +68,8 @@ public class CustomerFormController implements Initializable {
               if (newValue != oldValue) customerFormPhone.setLeadingIcon(new Label("+"));
               System.out.println("newValue oldValue");
             });
+
     // Form input binding.
-    customerID
-        .textProperty()
-        .bindBidirectional(CustomerViewModel.idProperty(), new NumberStringConverter());
     customerFormName.textProperty().bindBidirectional(CustomerViewModel.nameProperty());
     customerFormEmail.textProperty().bindBidirectional(CustomerViewModel.emailProperty());
     customerFormPhone.textProperty().bindBidirectional(CustomerViewModel.phoneProperty());
@@ -81,11 +77,14 @@ public class CustomerFormController implements Initializable {
     customerFormCountry.textProperty().bindBidirectional(CustomerViewModel.countryProperty());
     customerFormTaxNumber.textProperty().bindBidirectional(CustomerViewModel.taxNumberProperty());
     customerFormAddress.textProperty().bindBidirectional(CustomerViewModel.addressProperty());
+
     // Name input validation.
     requiredValidator(
         customerFormName, "Name field is required.", validationLabel1, customerFormSaveBtn);
+
     // Email input validation.
     emailValidator(customerFormEmail, validationLabel2, customerFormSaveBtn);
+
     // Phone input validation.
     lengthValidator(customerFormPhone, 11, "Invalid length", validationLabel3, customerFormSaveBtn);
     dialogOnActions();
@@ -109,8 +108,8 @@ public class CustomerFormController implements Initializable {
           if (!validationLabel1.isVisible()
               && !validationLabel2.isVisible()
               && !validationLabel3.isVisible()) {
-            if (Integer.parseInt(customerID.getText()) > 0) {
-              CustomerViewModel.updateItem(Integer.parseInt(customerID.getText()));
+            if (CustomerViewModel.getId() > 0) {
+              CustomerViewModel.updateItem(CustomerViewModel.getId());
 
               SimpleNotification notification =
                   new SimpleNotification.NotificationBuilder("Customer updated successfully")

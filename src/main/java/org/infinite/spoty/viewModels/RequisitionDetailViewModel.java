@@ -29,7 +29,7 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.database.connection.SQLiteConnection;
-import org.infinite.spoty.database.models.ProductDetail;
+import org.infinite.spoty.database.models.Product;
 import org.infinite.spoty.database.models.RequisitionDetail;
 import org.infinite.spoty.database.models.RequisitionMaster;
 
@@ -39,7 +39,7 @@ public class RequisitionDetailViewModel {
   private static final ListProperty<RequisitionDetail> requisitionDetails =
       new SimpleListProperty<>(requisitionDetailList);
   private static final LongProperty id = new SimpleLongProperty(0);
-  private static final ObjectProperty<ProductDetail> product = new SimpleObjectProperty<>();
+  private static final ObjectProperty<Product> product = new SimpleObjectProperty<>();
   private static final ObjectProperty<RequisitionMaster> requisition = new SimpleObjectProperty<>();
   private static final StringProperty quantity = new SimpleStringProperty();
   private static final StringProperty description = new SimpleStringProperty();
@@ -56,15 +56,15 @@ public class RequisitionDetailViewModel {
     return id;
   }
 
-  public static ProductDetail getProduct() {
+  public static Product getProduct() {
     return product.get();
   }
 
-  public static void setProduct(ProductDetail product) {
+  public static void setProduct(Product product) {
     RequisitionDetailViewModel.product.set(product);
   }
 
-  public static ObjectProperty<ProductDetail> productProperty() {
+  public static ObjectProperty<Product> productProperty() {
     return product;
   }
 

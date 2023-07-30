@@ -29,7 +29,7 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.database.connection.SQLiteConnection;
-import org.infinite.spoty.database.models.ProductDetail;
+import org.infinite.spoty.database.models.Product;
 import org.infinite.spoty.database.models.PurchaseDetail;
 import org.infinite.spoty.database.models.PurchaseMaster;
 
@@ -45,7 +45,7 @@ public class PurchaseDetailViewModel {
   private static final StringProperty taxType = new SimpleStringProperty("");
   private static final StringProperty discount = new SimpleStringProperty("");
   private static final StringProperty discountType = new SimpleStringProperty("");
-  private static final ObjectProperty<ProductDetail> product = new SimpleObjectProperty<>(null);
+  private static final ObjectProperty<Product> product = new SimpleObjectProperty<>(null);
   private static final StringProperty serial = new SimpleStringProperty("");
   private static final StringProperty total = new SimpleStringProperty("");
   private static final StringProperty quantity = new SimpleStringProperty("");
@@ -158,15 +158,15 @@ public class PurchaseDetailViewModel {
     return discountType;
   }
 
-  public static ProductDetail getProduct() {
+  public static Product getProduct() {
     return product.get();
   }
 
-  public static void setProduct(ProductDetail product) {
+  public static void setProduct(Product product) {
     PurchaseDetailViewModel.product.set(product);
   }
 
-  public static ObjectProperty<ProductDetail> productProperty() {
+  public static ObjectProperty<Product> productProperty() {
     return product;
   }
 

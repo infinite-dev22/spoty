@@ -36,14 +36,14 @@ import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
-import org.infinite.spoty.database.models.ProductDetail;
-import org.infinite.spoty.viewModels.ProductDetailViewModel;
+import org.infinite.spoty.database.models.Product;
+import org.infinite.spoty.viewModels.ProductViewModel;
 import org.infinite.spoty.viewModels.QuotationDetailViewModel;
 
 public class QuotationDetailFormController implements Initializable {
   private static QuotationDetailFormController instance;
   @FXML public MFXTextField quotationProductQnty;
-  @FXML public MFXFilterComboBox<ProductDetail> quotationProductPdct;
+  @FXML public MFXFilterComboBox<Product> quotationProductPdct;
   @FXML public MFXTextField quotationProductsOrderTax;
   @FXML public MFXTextField quotationProductsDiscount;
   @FXML public MFXButton quotationProductsSaveBtn;
@@ -73,22 +73,19 @@ public class QuotationDetailFormController implements Initializable {
         .bindBidirectional(QuotationDetailViewModel.discountProperty());
 
     // Combo box Converter.
-    StringConverter<ProductDetail> productVariantConverter =
+    StringConverter<Product> productVariantConverter =
         FunctionalStringConverter.to(
-            productDetail ->
-                (productDetail == null)
-                    ? ""
-                    : productDetail.getProduct().getName() + " " + productDetail.getName());
+            productDetail -> (productDetail == null) ? "" : productDetail.getName());
 
     // Combo box Filter Function.
-    Function<String, Predicate<ProductDetail>> productVariantFilterFunction =
+    Function<String, Predicate<Product>> productVariantFilterFunction =
         searchStr ->
             productDetail ->
                 StringUtils.containsIgnoreCase(
                     productVariantConverter.toString(productDetail), searchStr);
 
     // Combo box properties.
-    quotationProductPdct.setItems(ProductDetailViewModel.getProductDetailsComboBoxList());
+    quotationProductPdct.setItems(ProductViewModel.getProductsComboBoxList());
     quotationProductPdct.setConverter(productVariantConverter);
     quotationProductPdct.setFilterFunction(productVariantFilterFunction);
 

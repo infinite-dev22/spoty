@@ -21,14 +21,14 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
 import java.sql.SQLException;
 import java.util.LinkedList;
+import java.util.Objects;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.infinite.spoty.database.connection.SQLiteConnection;
-import org.infinite.spoty.database.models.ProductDetail;
+import org.infinite.spoty.database.models.Product;
 import org.infinite.spoty.database.models.SaleDetail;
-import org.infinite.spoty.database.models.UnitOfMeasure;
 
 public class SaleDetailViewModel {
   public static final ObservableList<SaleDetail> saleDetailList =
@@ -37,16 +37,17 @@ public class SaleDetailViewModel {
       new SimpleListProperty<>(saleDetailList);
   private static final LongProperty id = new SimpleLongProperty(0);
   private static final StringProperty ref = new SimpleStringProperty();
-  private static final ObjectProperty<ProductDetail> product = new SimpleObjectProperty<>();
+  private static final ObjectProperty<Product> product = new SimpleObjectProperty<>();
   private static final StringProperty serial = new SimpleStringProperty();
-  private static final StringProperty price = new SimpleStringProperty();
-  private static final ObjectProperty<UnitOfMeasure> saleUnit = new SimpleObjectProperty<>();
+  private static final DoubleProperty subTotalPrice = new SimpleDoubleProperty();
   private static final StringProperty netTax = new SimpleStringProperty();
   private static final StringProperty taxType = new SimpleStringProperty();
   private static final StringProperty discount = new SimpleStringProperty();
   private static final StringProperty discountType = new SimpleStringProperty();
-  private static final StringProperty total = new SimpleStringProperty();
+  private static final DoubleProperty price = new SimpleDoubleProperty();
   private static final StringProperty quantity = new SimpleStringProperty();
+  private static final SQLiteConnection connection = SQLiteConnection.getInstance();
+  private static final ConnectionSource connectionSource = connection.getConnection();
 
   public static long getId() {
     return id.get();
@@ -72,15 +73,15 @@ public class SaleDetailViewModel {
     return ref;
   }
 
-  public static ProductDetail getProduct() {
+  public static Product getProduct() {
     return product.get();
   }
 
-  public static void setProduct(ProductDetail product) {
+  public static void setProduct(Product product) {
     SaleDetailViewModel.product.set(product);
   }
 
-  public static ObjectProperty<ProductDetail> productProperty() {
+  public static ObjectProperty<Product> productProperty() {
     return product;
   }
 
@@ -96,32 +97,22 @@ public class SaleDetailViewModel {
     return serial;
   }
 
-  public static String getPrice() {
-    return price.get();
+  public static double getSubTotalPrice() {
+    return subTotalPrice.get();
   }
 
-  public static void setPrice(String price) {
-    SaleDetailViewModel.price.set(price);
+  public static void setSubTotalPrice(double price) {
+    SaleDetailViewModel.subTotalPrice.set(price);
   }
 
-  public static StringProperty priceProperty() {
-    return price;
+  public static DoubleProperty subTotalPriceProperty() {
+    return subTotalPrice;
   }
 
-  public static UnitOfMeasure getSaleUnit() {
-    return saleUnit.get();
-  }
-
-  public static void setSaleUnit(UnitOfMeasure saleUnit) {
-    SaleDetailViewModel.saleUnit.set(saleUnit);
-  }
-
-  public static ObjectProperty<UnitOfMeasure> saleUnitProperty() {
-    return saleUnit;
-  }
-
-  public static String getNetTax() {
-    return netTax.get();
+  public static double getNetTax() {
+    return (Objects.equals(netTax.get(), null) || netTax.get().isBlank())
+        ? 0.0
+        : Double.parseDouble(netTax.get());
   }
 
   public static void setNetTax(String netTax) {
@@ -144,8 +135,10 @@ public class SaleDetailViewModel {
     return taxType;
   }
 
-  public static String getDiscount() {
-    return discount.get();
+  public static double getDiscount() {
+    return (Objects.equals(discount.get(), null) || discount.get().isBlank())
+        ? 0.0
+        : Double.parseDouble(discount.get());
   }
 
   public static void setDiscount(String discount) {
@@ -168,24 +161,24 @@ public class SaleDetailViewModel {
     return discountType;
   }
 
-  public static String getTotal() {
-    return total.get();
+  public static double getPrice() {
+    return price.get();
   }
 
-  public static void setTotal(String total) {
-    SaleDetailViewModel.total.set(total);
+  public static void setPrice(double price) {
+    SaleDetailViewModel.price.set(price);
   }
 
-  public static StringProperty totalProperty() {
-    return total;
+  public static DoubleProperty totalProperty() {
+    return price;
   }
 
-  public static String getQuantity() {
-    return quantity.get();
+  public static long getQuantity() {
+    return Long.parseLong(quantity.get());
   }
 
-  public static void setQuantity(String quantity) {
-    SaleDetailViewModel.quantity.set(quantity);
+  public static void setQuantity(long quantity) {
+    SaleDetailViewModel.quantity.set((quantity < 1) ? "" : String.valueOf(quantity));
   }
 
   public static StringProperty quantityProperty() {
@@ -209,24 +202,27 @@ public class SaleDetailViewModel {
     setTempId(-1);
     setProduct(null);
     setSerial("");
-    setSaleUnit(null);
     setNetTax("");
     setTaxType("");
     setDiscount("");
-    setQuantity("");
+    setQuantity(0);
     setDiscountType("");
+    setPrice(0);
+    setSubTotalPrice(0);
   }
 
   public static void addSaleDetail() {
     SaleDetail saleDetail =
         new SaleDetail(
             getProduct(),
-            Long.parseLong(getQuantity()),
+            getQuantity(),
             getSerial(),
-            Double.parseDouble(getNetTax()),
+            getNetTax(),
             getTaxType(),
-            Double.parseDouble(getDiscount()),
-            getDiscountType());
+            getDiscount(),
+            getDiscountType(),
+            getPrice(),
+            getSubTotalPrice());
 
     Platform.runLater(
         () -> {
@@ -236,27 +232,24 @@ public class SaleDetailViewModel {
   }
 
   public static void saveSaleDetails() throws SQLException {
-    SQLiteConnection connection = SQLiteConnection.getInstance();
-    ConnectionSource connectionSource = connection.getConnection();
-
     Dao<SaleDetail, Long> saleDetailDao = DaoManager.createDao(connectionSource, SaleDetail.class);
 
     saleDetailDao.create(saleDetailList);
 
-    updateProductDetailQuantity();
+    updateProductQuantity();
 
     Platform.runLater(saleDetailList::clear);
   }
 
-  private static void updateProductDetailQuantity() {
+  private static void updateProductQuantity() {
     saleDetailList.forEach(
         product -> {
           long productDetailQuantity = product.getProduct().getQuantity() - product.getQuantity();
 
-          ProductDetailViewModel.setQuantity(productDetailQuantity);
+          ProductViewModel.setQuantity(productDetailQuantity);
 
           try {
-            ProductDetailViewModel.updateItem(product.getProduct().getId());
+            ProductViewModel.updateProduct(product.getProduct().getId());
           } catch (SQLException e) {
             throw new RuntimeException(e);
           }
@@ -264,41 +257,32 @@ public class SaleDetailViewModel {
   }
 
   public static void updateSaleDetail(long index) throws SQLException {
-    SQLiteConnection connection = SQLiteConnection.getInstance();
-    ConnectionSource connectionSource = connection.getConnection();
-
-    Dao<SaleDetail, Long> saleDetailDao = DaoManager.createDao(connectionSource, SaleDetail.class);
-
-    SaleDetail saleDetail = saleDetailDao.queryForId(index);
+    SaleDetail saleDetail = saleDetailList.get((int) index);
 
     saleDetail.setProduct(getProduct());
-    saleDetail.setQuantity(Long.parseLong(getQuantity()));
+    saleDetail.setQuantity(getQuantity());
     saleDetail.setSerialNumber(getSerial());
-    saleDetail.setNetTax(Double.parseDouble(getNetTax()));
+    saleDetail.setPrice(getPrice());
+    saleDetail.setNetTax(getNetTax());
     saleDetail.setTaxType(getTaxType());
-    saleDetail.setDiscount(Double.parseDouble(getDiscount()));
+    saleDetail.setSubTotalPrice(getSubTotalPrice());
+    saleDetail.setDiscount(getDiscount());
     saleDetail.setDiscountType(getDiscountType());
 
     Platform.runLater(
         () -> {
-          saleDetailList.remove((int) getTempId());
-          saleDetailList.add(getTempId(), saleDetail);
+          saleDetailList.set((int) index, saleDetail);
 
           resetProperties();
         });
   }
 
-  public static void getItem(long index, int tempIndex) throws SQLException {
-    SQLiteConnection connection = SQLiteConnection.getInstance();
-    ConnectionSource connectionSource = connection.getConnection();
-
-    Dao<SaleDetail, Long> saleDetailDao = DaoManager.createDao(connectionSource, SaleDetail.class);
-
-    SaleDetail saleDetail = saleDetailDao.queryForId(index);
+  public static void getSaleDetail(long index) throws SQLException {
+    SaleDetail saleDetail = saleDetailList.get((int) index);
 
     Platform.runLater(
         () -> {
-          setTempId(tempIndex);
+          setTempId(1);
           setId(saleDetail.getId());
           setProduct(saleDetail.getProduct());
           setSerial(saleDetail.getSerialNumber());
@@ -306,28 +290,24 @@ public class SaleDetailViewModel {
           setTaxType(saleDetail.getTaxType());
           setDiscount(String.valueOf(saleDetail.getDiscount()));
           setDiscountType(saleDetail.getDiscountType());
-          setQuantity(String.valueOf(saleDetail.getQuantity()));
+          setQuantity(saleDetail.getQuantity());
           setProduct(saleDetail.getProduct());
-          setTotal(String.valueOf(saleDetail.getTotal()));
-          setQuantity(String.valueOf(saleDetail.getQuantity()));
-          setPrice(String.valueOf(saleDetail.getPrice()));
+          setPrice(saleDetail.getPrice());
+          setSubTotalPrice(saleDetail.getSubTotalPrice());
         });
   }
 
   public static void updateItem(long index) throws SQLException {
-    SQLiteConnection connection = SQLiteConnection.getInstance();
-    ConnectionSource connectionSource = connection.getConnection();
-
     Dao<SaleDetail, Long> saleDetailDao = DaoManager.createDao(connectionSource, SaleDetail.class);
 
     SaleDetail saleDetail = saleDetailDao.queryForId(index);
 
     saleDetail.setProduct(getProduct());
-    saleDetail.setQuantity(Long.parseLong(getQuantity()));
+    saleDetail.setQuantity(getQuantity());
     saleDetail.setSerialNumber(getSerial());
-    saleDetail.setNetTax(Double.parseDouble(getNetTax()));
+    saleDetail.setNetTax(getNetTax());
     saleDetail.setTaxType(getTaxType());
-    saleDetail.setDiscount(Double.parseDouble(getDiscount()));
+    saleDetail.setDiscount(getDiscount());
     saleDetail.setDiscountType(getDiscountType());
 
     saleDetailDao.update(saleDetail);
@@ -336,9 +316,6 @@ public class SaleDetailViewModel {
   }
 
   public static void updateSaleDetails() throws SQLException {
-    SQLiteConnection connection = SQLiteConnection.getInstance();
-    ConnectionSource connectionSource = connection.getConnection();
-
     Dao<SaleDetail, Long> saleDetailDao = DaoManager.createDao(connectionSource, SaleDetail.class);
 
     saleDetailList.forEach(
@@ -350,15 +327,12 @@ public class SaleDetailViewModel {
           }
         });
 
-    updateProductDetailQuantity();
+    updateProductQuantity();
 
     getAllSaleDetails();
   }
 
   public static void getAllSaleDetails() throws SQLException {
-    SQLiteConnection connection = SQLiteConnection.getInstance();
-    ConnectionSource connectionSource = connection.getConnection();
-
     Dao<SaleDetail, Long> saleDetailDao = DaoManager.createDao(connectionSource, SaleDetail.class);
 
     Platform.runLater(
@@ -382,9 +356,6 @@ public class SaleDetailViewModel {
     indexes.forEach(
         index -> {
           try {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
             Dao<SaleDetail, Long> saleDetailDao =
                 DaoManager.createDao(connectionSource, SaleDetail.class);
 

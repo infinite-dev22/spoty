@@ -14,7 +14,7 @@
 
 package org.infinite.spoty.forms;
 
-import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
+import static org.infinite.spoty.SpotyResourceLoader.fxmlLoader;
 import static org.infinite.spoty.Validators.requiredValidator;
 
 import io.github.palexdev.materialfx.controls.MFXContextMenu;
@@ -54,7 +54,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
-import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.components.navigation.Pages;
 import org.infinite.spoty.components.notification.SimpleNotification;
@@ -71,7 +70,6 @@ import org.infinite.spoty.views.BaseController;
 @SuppressWarnings("unchecked")
 public class TransferMasterFormController implements Initializable {
   private static TransferMasterFormController instance;
-  public MFXTextField transferMasterID = new MFXTextField();
   @FXML public MFXFilterComboBox<Branch> transferMasterFromBranch;
   @FXML public MFXFilterComboBox<Branch> transferMasterToBranch;
   @FXML public MFXDatePicker transferMasterDate;
@@ -105,9 +103,6 @@ public class TransferMasterFormController implements Initializable {
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     // Input binding.
-    transferMasterID
-        .textProperty()
-        .bindBidirectional(TransferMasterViewModel.idProperty(), new NumberStringConverter());
     transferMasterFromBranch
         .valueProperty()
         .bindBidirectional(TransferMasterViewModel.fromBranchProperty());
@@ -160,12 +155,12 @@ public class TransferMasterFormController implements Initializable {
   private void setupTable() {
     MFXTableColumn<TransferDetail> productName =
         new MFXTableColumn<>(
-            "Product", false, Comparator.comparing(TransferDetail::getProductDetailName));
+            "Product", false, Comparator.comparing(TransferDetail::getProductName));
     MFXTableColumn<TransferDetail> productQuantity =
         new MFXTableColumn<>("Quantity", false, Comparator.comparing(TransferDetail::getQuantity));
 
     productName.setRowCellFactory(
-        product -> new MFXTableRowCell<>(TransferDetail::getProductDetailName));
+        product -> new MFXTableRowCell<>(TransferDetail::getProductName));
     productQuantity.setRowCellFactory(
         product -> new MFXTableRowCell<>(TransferDetail::getQuantity));
 
@@ -177,7 +172,7 @@ public class TransferMasterFormController implements Initializable {
     transferDetailTable
         .getFilters()
         .addAll(
-            new StringFilter<>("Name", TransferDetail::getProductDetailName),
+            new StringFilter<>("Name", TransferDetail::getProductName),
             new LongFilter<>("Quantity", TransferDetail::getQuantity));
 
     getTransferDetailTable();
@@ -300,13 +295,12 @@ public class TransferMasterFormController implements Initializable {
     if (!transferMasterToBranchValidationLabel.isVisible()
         && !transferMasterFromBranchValidationLabel.isVisible()
         && !transferMasterDateValidationLabel.isVisible()) {
-      if (Integer.parseInt(transferMasterID.getText()) > 0) {
+      if (TransferMasterViewModel.getId() > 0) {
         GlobalActions.spotyThreadPool()
             .execute(
                 () -> {
                   try {
-                    TransferMasterViewModel.updateItem(
-                        Integer.parseInt(transferMasterID.getText()));
+                    TransferMasterViewModel.updateItem(TransferMasterViewModel.getId());
                   } catch (SQLException e) {
                     throw new RuntimeException(e);
                   }

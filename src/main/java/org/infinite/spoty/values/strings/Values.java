@@ -18,18 +18,21 @@ import java.util.Arrays;
 import java.util.LinkedList;
 
 public class Values {
-  public static final LinkedList<String> BARCODETYPES =
+  public static final LinkedList<String> BARCODE_TYPES =
       new LinkedList<>(
           Arrays.stream(new String[] {"Type 01", "Type 02", "Type 03", "Type 04"}).toList());
-  public static final LinkedList<String> PURCHASESTATUSES =
+  public static final LinkedList<String> PRODUCT_TYPES =
+      new LinkedList<>(
+          Arrays.stream(new String[] {"Product", "Service"}).toList());
+  public static final LinkedList<String> PURCHASE_STATUSES =
       new LinkedList<>(Arrays.stream(new String[] {"Ordered", "Pending", "Received"}).toList());
-  public static final LinkedList<String> SALESTATUSES =
+  public static final LinkedList<String> SALE_STATUSES =
       new LinkedList<>(Arrays.stream(new String[] {"Ordered", "Pending", "Completed"}).toList());
-  public static final LinkedList<String> PAYMENTSTATUSES =
+  public static final LinkedList<String> PAYMENT_STATUSES =
       new LinkedList<>(Arrays.stream(new String[] {"Partial", "Pending", "Paid"}).toList());
-  public static final LinkedList<String> ADJUSTMENTTYPE =
+  public static final LinkedList<String> ADJUSTMENT_TYPE =
       new LinkedList<>(Arrays.stream(new String[] {"Increment", "Decrement"}).toList());
-  public static final LinkedList<String> QUOTATIONTYPE =
+  public static final LinkedList<String> QUOTATION_TYPE =
       new LinkedList<>(Arrays.stream(new String[] {"Sent", "Pending"}).toList());
   public static final String[] SPECIALS = "@ . ".split(" ");
   public static final String[] ALPHANUMERIC =

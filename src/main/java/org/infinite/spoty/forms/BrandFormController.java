@@ -27,7 +27,6 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
@@ -36,7 +35,6 @@ import org.infinite.spoty.viewModels.BrandViewModel;
 
 public class BrandFormController implements Initializable {
   private static BrandFormController instance;
-  public MFXTextField brandID = new MFXTextField();
   @FXML public MFXTextField brandFormName;
   @FXML public MFXTextField brandFormDescription;
   @FXML public MFXButton brandFormSaveBtn;
@@ -52,9 +50,6 @@ public class BrandFormController implements Initializable {
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     // Input bindings.
-    brandID
-        .textProperty()
-        .bindBidirectional(BrandViewModel.idProperty(), new NumberStringConverter());
     brandFormName.textProperty().bindBidirectional(BrandViewModel.nameProperty());
     brandFormDescription.textProperty().bindBidirectional(BrandViewModel.descriptionProperty());
     // Input listeners.
@@ -77,8 +72,8 @@ public class BrandFormController implements Initializable {
           SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
 
           if (!brandFormNameValidationLabel.isVisible()) {
-            if (Integer.parseInt(brandID.getText()) > 0) {
-              BrandViewModel.updateItem(Integer.parseInt(brandID.getText()));
+            if (BrandViewModel.getId() > 0) {
+              BrandViewModel.updateItem(BrandViewModel.getId());
 
               SimpleNotification notification =
                   new SimpleNotification.NotificationBuilder("Brand updated successfully")

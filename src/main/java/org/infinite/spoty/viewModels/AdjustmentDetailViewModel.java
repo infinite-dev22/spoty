@@ -28,7 +28,7 @@ import javafx.collections.ObservableList;
 import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.AdjustmentDetail;
 import org.infinite.spoty.database.models.AdjustmentMaster;
-import org.infinite.spoty.database.models.ProductDetail;
+import org.infinite.spoty.database.models.Product;
 
 public class AdjustmentDetailViewModel {
   public static final ObservableList<AdjustmentDetail> adjustmentDetailsList =
@@ -36,7 +36,7 @@ public class AdjustmentDetailViewModel {
   private static final ListProperty<AdjustmentDetail> adjustmentDetails =
       new SimpleListProperty<>(adjustmentDetailsList);
   private static final LongProperty id = new SimpleLongProperty(0);
-  private static final ObjectProperty<ProductDetail> product = new SimpleObjectProperty<>();
+  private static final ObjectProperty<Product> product = new SimpleObjectProperty<>();
   private static final ObjectProperty<AdjustmentMaster> adjustment = new SimpleObjectProperty<>();
   private static final StringProperty quantity = new SimpleStringProperty();
   private static final StringProperty adjustmentType = new SimpleStringProperty();
@@ -53,15 +53,15 @@ public class AdjustmentDetailViewModel {
     return id;
   }
 
-  public static ProductDetail getProduct() {
+  public static Product getProduct() {
     return product.get();
   }
 
-  public static void setProduct(ProductDetail product) {
+  public static void setProduct(Product product) {
     AdjustmentDetailViewModel.product.set(product);
   }
 
-  public static ObjectProperty<ProductDetail> productProperty() {
+  public static ObjectProperty<Product> productProperty() {
     return product;
   }
 
@@ -142,12 +142,12 @@ public class AdjustmentDetailViewModel {
 
     adjustmentDetailDao.create(adjustmentDetailsList);
 
-    updateProductDetailQuantity();
+    updateProductQuantity();
 
     Platform.runLater(adjustmentDetailsList::clear);
   }
 
-  private static void updateProductDetailQuantity() {
+  private static void updateProductQuantity() {
     adjustmentDetailsList.forEach(
         product -> {
           long productDetailQuantity;
@@ -155,10 +155,10 @@ public class AdjustmentDetailViewModel {
             productDetailQuantity = product.getProduct().getQuantity() + product.getQuantity();
           else productDetailQuantity = product.getProduct().getQuantity() - product.getQuantity();
 
-          ProductDetailViewModel.setQuantity(productDetailQuantity);
+          ProductViewModel.setQuantity(productDetailQuantity);
 
           try {
-            ProductDetailViewModel.updateItem(product.getProduct().getId());
+            ProductViewModel.updateProduct(product.getProduct().getId());
           } catch (SQLException e) {
             throw new RuntimeException(e);
           }
@@ -250,7 +250,7 @@ public class AdjustmentDetailViewModel {
           }
         });
 
-    updateProductDetailQuantity();
+    updateProductQuantity();
 
     getAllAdjustmentDetails();
   }

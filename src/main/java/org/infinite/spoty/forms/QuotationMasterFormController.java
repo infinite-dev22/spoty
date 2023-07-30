@@ -14,7 +14,7 @@
 
 package org.infinite.spoty.forms;
 
-import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
+import static org.infinite.spoty.SpotyResourceLoader.fxmlLoader;
 import static org.infinite.spoty.Validators.requiredValidator;
 
 import io.github.palexdev.materialfx.controls.*;
@@ -48,7 +48,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
-import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.components.navigation.Pages;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
@@ -67,7 +66,6 @@ import org.infinite.spoty.views.BaseController;
 @SuppressWarnings("unchecked")
 public class QuotationMasterFormController implements Initializable {
   private static QuotationMasterFormController instance;
-  public MFXTextField quotationMasterID = new MFXTextField();
   @FXML public Label quotationFormTitle;
   @FXML public MFXDatePicker quotationDate;
   @FXML public MFXFilterComboBox<Customer> quotationCustomer;
@@ -102,9 +100,6 @@ public class QuotationMasterFormController implements Initializable {
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     // Form input binding.
-    quotationMasterID
-        .textProperty()
-        .bindBidirectional(QuotationMasterViewModel.idProperty(), new NumberStringConverter());
     quotationDate.textProperty().bindBidirectional(QuotationMasterViewModel.dateProperty());
     quotationCustomer
         .valueProperty()
@@ -141,7 +136,7 @@ public class QuotationMasterFormController implements Initializable {
     quotationBranch.setConverter(branchConverter);
     quotationBranch.setFilterFunction(branchFilterFunction);
     
-    quotationStatus.setItems(FXCollections.observableArrayList(Values.QUOTATIONTYPE));
+    quotationStatus.setItems(FXCollections.observableArrayList(Values.QUOTATION_TYPE));
 
     // input validators.
     requiredValidator(
@@ -309,8 +304,8 @@ public class QuotationMasterFormController implements Initializable {
         && !quotationCustomerValidationLabel.isVisible()
         && !quotationDateValidationLabel.isVisible()
         && !quotationStatusValidationLabel.isVisible()) {
-      if (Integer.parseInt(quotationMasterID.getText()) > 0) {
-        QuotationMasterViewModel.updateItem(Integer.parseInt(quotationMasterID.getText()));
+      if (QuotationMasterViewModel.getId() > 0) {
+        QuotationMasterViewModel.updateItem(QuotationMasterViewModel.getId());
 
         SimpleNotification notification =
             new SimpleNotification.NotificationBuilder("Quotation updated successfully")

@@ -14,7 +14,7 @@
 
 package org.infinite.spoty.views.splash;
 
-import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
+import static org.infinite.spoty.SpotyResourceLoader.fxmlLoader;
 import static org.infinite.spoty.components.navigation.Pages.setControllers;
 import static org.infinite.spoty.components.navigation.Pages.setPanes;
 
@@ -74,7 +74,7 @@ public class SplashScreenController implements Initializable {
             ExpenseCategoryViewModel.getAllCategories();
             ExpenseViewModel.getAllExpenses();
             ProductCategoryViewModel.getItems();
-            ProductMasterViewModel.getProductMasters();
+            ProductViewModel.getAllProducts();
             PurchaseMasterViewModel.getPurchaseMasters();
             PurchaseReturnMasterViewModel.getPurchaseReturnMasters();
             QuotationMasterViewModel.getQuotationMasters();
@@ -86,7 +86,6 @@ public class SplashScreenController implements Initializable {
             TransferMasterViewModel.getTransferMasters();
             UOMViewModel.getItems();
             UserViewModel.getAllUsers();
-            ProductDetailViewModel.getProductDetailsComboBoxList();
             RoleViewModel.getAllRoles();
             // Permissions.
             PermissionsViewModel.setAccessBrands();

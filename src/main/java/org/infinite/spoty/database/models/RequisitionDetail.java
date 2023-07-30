@@ -16,7 +16,6 @@ package org.infinite.spoty.database.models;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
@@ -27,7 +26,7 @@ public class RequisitionDetail implements Serializable {
   private long id;
 
   @DatabaseField(foreign = true, columnName = "product_detail_id", canBeNull = false, foreignAutoRefresh = true)
-  private ProductDetail product;
+  private Product product;
 
   @DatabaseField(
       foreign = true,
@@ -59,7 +58,7 @@ public class RequisitionDetail implements Serializable {
   public RequisitionDetail() {}
 
   public RequisitionDetail(
-      ProductDetail product,
+      Product product,
       RequisitionMaster
           requisition, // TODO: Remove this line as it ain't good being here. can't get
       // RequisitionMaster here. use setter.
@@ -79,19 +78,17 @@ public class RequisitionDetail implements Serializable {
     this.id = id;
   }
 
-  public ProductDetail getProduct() {
+  public Product getProduct() {
     return product;
   }
 
-  public void setProduct(ProductDetail product) {
+  public void setProduct(Product product) {
     this.product = product;
   }
 
-  public String getProductDetailName() {
+  public String getProductName() {
     return (product != null)
-        ? product.getProduct().getBrand().getName()
-            + " "
-            + product.getProduct().getName()
+        ? product.getBrand().getName()
             + " "
             + product.getName()
             + " "

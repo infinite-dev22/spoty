@@ -34,23 +34,21 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.util.StringConverter;
-import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
-import org.infinite.spoty.database.models.ProductDetail;
+import org.infinite.spoty.database.models.Product;
 import org.infinite.spoty.values.SharedResources;
 import org.infinite.spoty.values.strings.Values;
 import org.infinite.spoty.viewModels.AdjustmentDetailViewModel;
-import org.infinite.spoty.viewModels.ProductDetailViewModel;
+import org.infinite.spoty.viewModels.ProductViewModel;
 
 public class AdjustmentDetailFormController implements Initializable {
   private static AdjustmentDetailFormController instance;
-  public MFXTextField adjustmentDetailID = new MFXTextField();
   @FXML public MFXTextField adjustmentProductsQnty;
-  @FXML public MFXFilterComboBox<ProductDetail> adjustmentProductVariant;
+  @FXML public MFXFilterComboBox<Product> adjustmentProductVariant;
   @FXML public MFXButton adjustmentProductsSaveBtn;
   @FXML public MFXButton adjustmentProductsCancelBtn;
   @FXML public MFXComboBox<String> adjustmentType;
@@ -66,9 +64,6 @@ public class AdjustmentDetailFormController implements Initializable {
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     // Bind form input value to property value.
-    adjustmentDetailID
-        .textProperty()
-        .bindBidirectional(AdjustmentDetailViewModel.idProperty(), new NumberStringConverter());
     adjustmentProductVariant
         .valueProperty()
         .bindBidirectional(AdjustmentDetailViewModel.productProperty());
@@ -80,26 +75,23 @@ public class AdjustmentDetailFormController implements Initializable {
         .bindBidirectional(AdjustmentDetailViewModel.adjustmentTypeProperty());
 
     // Combo box Converter.
-    StringConverter<ProductDetail> productVariantConverter =
+    StringConverter<Product> productVariantConverter =
         FunctionalStringConverter.to(
-            productDetail ->
-                (productDetail == null)
-                    ? ""
-                    : productDetail.getProduct().getName() + " " + productDetail.getName());
+            productDetail -> (productDetail == null) ? "" : productDetail.getName());
 
     // Combo box Filter Function.
-    Function<String, Predicate<ProductDetail>> productVariantFilterFunction =
+    Function<String, Predicate<Product>> productVariantFilterFunction =
         searchStr ->
             productDetail ->
                 StringUtils.containsIgnoreCase(
                     productVariantConverter.toString(productDetail), searchStr);
 
     // AdjustmentType combo box properties.
-    adjustmentProductVariant.setItems(ProductDetailViewModel.getProductDetailsComboBoxList());
+    adjustmentProductVariant.setItems(ProductViewModel.getProductsComboBoxList());
     adjustmentProductVariant.setConverter(productVariantConverter);
     adjustmentProductVariant.setFilterFunction(productVariantFilterFunction);
 
-    adjustmentType.setItems(FXCollections.observableArrayList(Values.ADJUSTMENTTYPE));
+    adjustmentType.setItems(FXCollections.observableArrayList(Values.ADJUSTMENT_TYPE));
 
     // Input validators.
     requiredValidator(
@@ -142,7 +134,11 @@ public class AdjustmentDetailFormController implements Initializable {
               && !adjustmentProductsQntyValidationLabel.isVisible()
               && !adjustmentTypeValidationLabel.isVisible()) {
             if (tempIdProperty().get() > -1) {
-              GlobalActions.spotyThreadPool().execute(() -> AdjustmentDetailViewModel.updateAdjustmentDetail(SharedResources.getTempId()));
+              GlobalActions.spotyThreadPool()
+                  .execute(
+                      () ->
+                          AdjustmentDetailViewModel.updateAdjustmentDetail(
+                              SharedResources.getTempId()));
 
               SimpleNotification notification =
                   new SimpleNotification.NotificationBuilder("Entry updated successfully")
@@ -158,7 +154,8 @@ public class AdjustmentDetailFormController implements Initializable {
               closeDialog(e);
               return;
             }
-              GlobalActions.spotyThreadPool().execute(AdjustmentDetailViewModel::addAdjustmentDetails);
+            GlobalActions.spotyThreadPool()
+                .execute(AdjustmentDetailViewModel::addAdjustmentDetails);
 
             SimpleNotification notification =
                 new SimpleNotification.NotificationBuilder("Entry added successfully")

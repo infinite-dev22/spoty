@@ -14,7 +14,7 @@
 
 package org.infinite.spoty.forms;
 
-import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
+import static org.infinite.spoty.SpotyResourceLoader.fxmlLoader;
 import static org.infinite.spoty.Validators.requiredValidator;
 
 import io.github.palexdev.materialfx.controls.MFXContextMenu;
@@ -56,7 +56,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
-import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.components.navigation.Pages;
 import org.infinite.spoty.components.notification.SimpleNotification;
@@ -76,7 +75,6 @@ import org.infinite.spoty.views.BaseController;
 @SuppressWarnings("unchecked")
 public class SaleMasterFormController implements Initializable {
   private static SaleMasterFormController instance;
-  public MFXTextField saleMasterID = new MFXTextField();
   @FXML public Label saleFormTitle;
   @FXML public MFXDatePicker saleDate;
   @FXML public MFXFilterComboBox<Customer> saleCustomer;
@@ -113,9 +111,6 @@ public class SaleMasterFormController implements Initializable {
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     // Bi~Directional Binding.
-    saleMasterID
-        .textProperty()
-        .bindBidirectional(SaleMasterViewModel.idProperty(), new NumberStringConverter());
     saleDate.textProperty().bindBidirectional(SaleMasterViewModel.dateProperty());
     saleCustomer.valueProperty().bindBidirectional(SaleMasterViewModel.customerProperty());
     saleBranch.valueProperty().bindBidirectional(SaleMasterViewModel.branchProperty());
@@ -148,8 +143,8 @@ public class SaleMasterFormController implements Initializable {
     saleBranch.setConverter(branchConverter);
     saleBranch.setFilterFunction(branchFilterFunction);
 
-    saleStatus.setItems(FXCollections.observableArrayList(Values.SALESTATUSES));
-    salePaymentStatus.setItems(FXCollections.observableArrayList(Values.PAYMENTSTATUSES));
+    saleStatus.setItems(FXCollections.observableArrayList(Values.SALE_STATUSES));
+    salePaymentStatus.setItems(FXCollections.observableArrayList(Values.PAYMENT_STATUSES));
 
     // input validators.
     requiredValidator(
@@ -208,12 +203,12 @@ public class SaleMasterFormController implements Initializable {
         && !saleBranchValidationLabel.isVisible()
         && !saleStatusValidationLabel.isVisible()
         && !salePaymentStatusValidationLabel.isVisible()) {
-      if (Integer.parseInt(saleMasterID.getText()) > 0) {
+      if (SaleMasterViewModel.getId() > 0) {
         GlobalActions.spotyThreadPool()
             .execute(
                 () -> {
                   try {
-                    SaleMasterViewModel.updateItem(Integer.parseInt(saleMasterID.getText()));
+                    SaleMasterViewModel.updateItem(SaleMasterViewModel.getId());
                   } catch (SQLException e) {
                     throw new RuntimeException(e);
                   }
@@ -383,8 +378,7 @@ public class SaleMasterFormController implements Initializable {
               .execute(
                   () -> {
                     try {
-                      SaleDetailViewModel.getItem(
-                          obj.getData().getId(),
+                      SaleDetailViewModel.getSaleDetail(
                           SaleDetailViewModel.saleDetailList.indexOf(obj.getData()));
                     } catch (SQLException ex) {
                       throw new RuntimeException(ex);

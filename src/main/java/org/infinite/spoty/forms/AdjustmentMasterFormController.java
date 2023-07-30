@@ -14,7 +14,7 @@
 
 package org.infinite.spoty.forms;
 
-import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
+import static org.infinite.spoty.SpotyResourceLoader.fxmlLoader;
 import static org.infinite.spoty.Validators.requiredValidator;
 
 import io.github.palexdev.materialfx.controls.MFXContextMenu;
@@ -138,7 +138,7 @@ public class AdjustmentMasterFormController implements Initializable {
   private void setupTable() {
     MFXTableColumn<AdjustmentDetail> productName =
         new MFXTableColumn<>(
-            "Product", false, Comparator.comparing(AdjustmentDetail::getProductDetailName));
+            "Product", false, Comparator.comparing(AdjustmentDetail::getProductName));
     MFXTableColumn<AdjustmentDetail> productQuantity =
         new MFXTableColumn<>(
             "Quantity", false, Comparator.comparing(AdjustmentDetail::getQuantity));
@@ -147,7 +147,7 @@ public class AdjustmentMasterFormController implements Initializable {
             "Adjustment Type", false, Comparator.comparing(AdjustmentDetail::getAdjustmentType));
 
     productName.setRowCellFactory(
-        product -> new MFXTableRowCell<>(AdjustmentDetail::getProductDetailName));
+        product -> new MFXTableRowCell<>(AdjustmentDetail::getProductName));
     productQuantity.setRowCellFactory(
         product -> new MFXTableRowCell<>(AdjustmentDetail::getQuantity));
     adjustmentType.setRowCellFactory(
@@ -162,7 +162,7 @@ public class AdjustmentMasterFormController implements Initializable {
     adjustmentDetailTable
         .getFilters()
         .addAll(
-            new StringFilter<>("Name", AdjustmentDetail::getProductDetailName),
+            new StringFilter<>("Name", AdjustmentDetail::getProductName),
             new LongFilter<>("Quantity", AdjustmentDetail::getQuantity),
             new StringFilter<>("Adjustment Type", AdjustmentDetail::getAdjustmentType));
 

@@ -102,8 +102,8 @@ class DatabaseSeederTest {
 //    @Order(5)
 //    void productInsert() {
 //        try {
-//            ProductCategoryViewModel.getItem(1);
-//                    BrandViewModel.getItem(1);
+//            ProductCategoryViewModel.getSaleDetail(1);
+//                    BrandViewModel.getSaleDetail(1);
 //            var productMaster = new ProductMaster("Type 01",
 //                    "Coke",
 //                    4488000,

@@ -32,7 +32,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
-import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
@@ -47,8 +46,6 @@ public class UOMFormController implements Initializable {
    * present i.e. not just have a scroll view.
    */
   private static UOMFormController instance;
-
-  public MFXTextField uomID = new MFXTextField();
   @FXML public MFXTextField uomFormName;
   @FXML public MFXTextField uomFormShortName;
   @FXML public MFXButton uomFormSaveBtn;
@@ -71,7 +68,6 @@ public class UOMFormController implements Initializable {
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     // Form input binding.
-    uomID.textProperty().bindBidirectional(UOMViewModel.idProperty(), new NumberStringConverter());
     uomFormName.textProperty().bindBidirectional(UOMViewModel.nameProperty());
     uomFormShortName.textProperty().bindBidirectional(UOMViewModel.shortNameProperty());
     uomFormBaseUnit.valueProperty().bindBidirectional(UOMViewModel.baseUnitProperty());
@@ -149,8 +145,8 @@ public class UOMFormController implements Initializable {
               && !uomFormShortNameValidationLabel.isVisible()
               && !uomFormOperatorValidationLabel.isVisible()
               && !uomFormOperatorValueValidationLabel.isVisible()) {
-            if (Integer.parseInt(uomID.getText()) > 0) {
-              UOMViewModel.updateItem(Integer.parseInt(uomID.getText()));
+            if (UOMViewModel.getId() > 0) {
+              UOMViewModel.updateItem(UOMViewModel.getId());
 
               SimpleNotification notification =
                   new SimpleNotification.NotificationBuilder("Unit of measure updated successfully")

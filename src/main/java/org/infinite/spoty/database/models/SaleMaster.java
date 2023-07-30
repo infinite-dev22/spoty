@@ -84,6 +84,8 @@ public class SaleMaster implements Serializable {
   public SaleMaster(
       Customer customer,
       Branch branch,
+      Double total,
+      Double amountPaid,
       String saleStatus,
       String paymentStatus,
       String notes,
@@ -91,6 +93,8 @@ public class SaleMaster implements Serializable {
     this.date = date;
     this.customer = customer;
     this.branch = branch;
+    this.total = total;
+    this.amountPaid = amountPaid;
     this.saleStatus = saleStatus;
     this.paymentStatus = paymentStatus;
     this.notes = notes;

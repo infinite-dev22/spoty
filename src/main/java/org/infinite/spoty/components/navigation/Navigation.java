@@ -150,6 +150,7 @@ public class Navigation {
             "Transfers", "fas-arrow-right-arrow-left", Pages.getTransferPane());
     var stockIn =
         NavTree.NavTreeItem.mainPage("Stock In", "fas-cart-flatbed", Pages.getStockInPane());
+    var pos = NavTree.NavTreeItem.mainPage("POS", "fas-cart-flatbed", Pages.getPosPane());
     var sale = NavTree.NavTreeItem.mainPage("Sales", "fas-cash-register", Pages.getSalePane());
 
     var returns = NavTree.NavTreeItem.group("Returns", "fas-retweet");
@@ -172,6 +173,7 @@ public class Navigation {
             purchase,
             transfer,
             stockIn,
+            pos,
             sale,
             returns,
             expense,

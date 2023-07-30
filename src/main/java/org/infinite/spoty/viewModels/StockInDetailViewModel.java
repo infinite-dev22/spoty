@@ -26,7 +26,7 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.infinite.spoty.database.connection.SQLiteConnection;
-import org.infinite.spoty.database.models.ProductDetail;
+import org.infinite.spoty.database.models.Product;
 import org.infinite.spoty.database.models.StockInDetail;
 import org.infinite.spoty.database.models.StockInMaster;
 
@@ -36,7 +36,7 @@ public class StockInDetailViewModel {
   private static final ListProperty<StockInDetail> stockInDetails =
       new SimpleListProperty<>(stockInDetailsList);
   private static final LongProperty id = new SimpleLongProperty(0);
-  private static final ObjectProperty<ProductDetail> product = new SimpleObjectProperty<>();
+  private static final ObjectProperty<Product> product = new SimpleObjectProperty<>();
   private static final ObjectProperty<StockInMaster> stockIn = new SimpleObjectProperty<>();
   private static final StringProperty quantity = new SimpleStringProperty("");
   private static final StringProperty serial = new SimpleStringProperty("");
@@ -55,15 +55,15 @@ public class StockInDetailViewModel {
     return id;
   }
 
-  public static ProductDetail getProduct() {
+  public static Product getProduct() {
     return product.get();
   }
 
-  public static void setProduct(ProductDetail product) {
+  public static void setProduct(Product product) {
     StockInDetailViewModel.product.set(product);
   }
 
-  public static ObjectProperty<ProductDetail> productProperty() {
+  public static ObjectProperty<Product> productProperty() {
     return product;
   }
 
@@ -170,19 +170,21 @@ public class StockInDetailViewModel {
 
     stockInDetailDao.create(stockInDetailsList);
 
-    updateProductDetailQuantity();
+    updateProductQuantity();
     Platform.runLater(stockInDetailsList::clear);
   }
 
-  private static void updateProductDetailQuantity() {
+  private static void updateProductQuantity() {
     stockInDetailsList.forEach(
         product -> {
           long productDetailQuantity = product.getProduct().getQuantity() + product.getQuantity();
-
-          ProductDetailViewModel.setQuantity(productDetailQuantity);
-
+          
           try {
-            ProductDetailViewModel.updateItem(product.getProduct().getId());
+            ProductViewModel.getProduct(product.getId());
+
+            ProductViewModel.setQuantity(productDetailQuantity);
+
+            ProductViewModel.updateProduct(product.getProduct().getId());
           } catch (SQLException e) {
             throw new RuntimeException(e);
           }
@@ -288,7 +290,7 @@ public class StockInDetailViewModel {
           }
         });
 
-    updateProductDetailQuantity();
+    updateProductQuantity();
 
     getAllStockInDetails();
   }

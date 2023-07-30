@@ -35,8 +35,12 @@ public class TransferDetail implements Serializable {
           "INTEGER CONSTRAINT FK_NAME REFERENCES transfer_master(id) ON DELETE CASCADE")
   private TransferMaster transfer;
 
-  @DatabaseField(foreign = true, canBeNull = false, columnName = "product_id", foreignAutoRefresh = true)
-  private ProductDetail product;
+  @DatabaseField(
+      foreign = true,
+      canBeNull = false,
+      columnName = "product_id",
+      foreignAutoRefresh = true)
+  private Product product;
 
   @DatabaseField(canBeNull = false)
   private long quantity;
@@ -67,7 +71,7 @@ public class TransferDetail implements Serializable {
   public TransferDetail() {}
 
   public TransferDetail(
-      ProductDetail product,
+      Product product,
       long quantity,
       String serialNo,
       String description,
@@ -97,19 +101,17 @@ public class TransferDetail implements Serializable {
     this.transfer = transfer;
   }
 
-  public ProductDetail getProduct() {
+  public Product getProduct() {
     return product;
   }
 
-  public void setProduct(ProductDetail product) {
+  public void setProduct(Product product) {
     this.product = product;
   }
 
-  public String getProductDetailName() {
+  public String getProductName() {
     return (product != null)
-        ? product.getProduct().getBrand().getName()
-            + " "
-            + product.getProduct().getName()
+        ? product.getBrand().getName()
             + " "
             + product.getName()
             + " "

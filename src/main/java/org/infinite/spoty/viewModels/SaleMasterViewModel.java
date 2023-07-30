@@ -20,9 +20,12 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
 import java.sql.SQLException;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
+import java.util.Objects;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -42,6 +45,8 @@ public class SaleMasterViewModel {
   private static final ObjectProperty<Customer> customer = new SimpleObjectProperty<>(null);
   private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>(null);
   private static final StringProperty saleStatus = new SimpleStringProperty("");
+  private static final DoubleProperty total = new SimpleDoubleProperty();
+  private static final DoubleProperty paid = new SimpleDoubleProperty();
   private static final StringProperty payStatus = new SimpleStringProperty("");
   private static final StringProperty note = new SimpleStringProperty("");
 
@@ -59,6 +64,12 @@ public class SaleMasterViewModel {
 
   public static Date getDate() {
     try {
+      DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.DEFAULT, Locale.getDefault());
+
+      if (Objects.equals(date.get(), "")) {
+        setDate(dateFormat.format(new Date()));
+      }
+
       return new SimpleDateFormat("MMM dd, yyyy").parse(date.get());
     } catch (ParseException e) {
       throw new RuntimeException(e);
@@ -145,6 +156,30 @@ public class SaleMasterViewModel {
     return sales;
   }
 
+  public static double getTotal() {
+    return total.get();
+  }
+
+  public static void setTotal(double total) {
+    SaleMasterViewModel.total.set(total);
+  }
+
+  public static DoubleProperty totalProperty() {
+    return total;
+  }
+
+  public static double getPaid() {
+    return paid.get();
+  }
+
+  public static void setPaid(double paid) {
+    SaleMasterViewModel.paid.set(paid);
+  }
+
+  public static DoubleProperty paidProperty() {
+    return paid;
+  }
+
   public static void resetProperties() {
     Platform.runLater(
         () -> {
@@ -154,7 +189,10 @@ public class SaleMasterViewModel {
           setBranch(null);
           setSaleStatus("");
           setNote("");
+          setTotal(0);
+          setPaid(0);
           PENDING_DELETES.clear();
+          SaleDetailViewModel.resetProperties();
         });
   }
 
@@ -166,7 +204,14 @@ public class SaleMasterViewModel {
 
     SaleMaster saleMaster =
         new SaleMaster(
-            getCustomer(), getBranch(), getSaleStatus(), getPayStatus(), getNote(), getDate());
+            getCustomer(),
+            getBranch(),
+            getTotal(),
+            getPaid(),
+            getSaleStatus(),
+            getPayStatus(),
+            getNote(),
+            getDate());
 
     if (!SaleDetailViewModel.saleDetailList.isEmpty()) {
       SaleDetailViewModel.saleDetailList.forEach(

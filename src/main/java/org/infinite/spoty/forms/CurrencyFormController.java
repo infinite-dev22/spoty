@@ -27,7 +27,6 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
@@ -36,7 +35,6 @@ import org.infinite.spoty.viewModels.CurrencyViewModel;
 
 public class CurrencyFormController implements Initializable {
   private static CurrencyFormController instance;
-  public MFXTextField currencyFormID = new MFXTextField();
   @FXML public MFXTextField currencyFormName;
   @FXML public MFXButton currencyFormSaveBtn;
   @FXML public MFXButton currencyFormCancelBtn;
@@ -54,9 +52,6 @@ public class CurrencyFormController implements Initializable {
   public void initialize(URL location, ResourceBundle resources) {
     // Input listeners.
     // Input bindings.
-    currencyFormID
-        .textProperty()
-        .bindBidirectional(CurrencyViewModel.idProperty(), new NumberStringConverter());
     currencyFormCode.textProperty().bindBidirectional(CurrencyViewModel.codeProperty());
     currencyFormName.textProperty().bindBidirectional(CurrencyViewModel.nameProperty());
     currencyFormSymbol.textProperty().bindBidirectional(CurrencyViewModel.symbolProperty());
@@ -90,8 +85,8 @@ public class CurrencyFormController implements Initializable {
 
           if (!currencyFormNameValidationLabel.isVisible()
               && !currencyFormCodeValidationLabel.isVisible()) {
-            if (Integer.parseInt(currencyFormID.getText()) > 0) {
-              CurrencyViewModel.updateItem(Integer.parseInt(currencyFormID.getText()));
+            if (CurrencyViewModel.getId() > 0) {
+              CurrencyViewModel.updateItem(CurrencyViewModel.getId());
 
               SimpleNotification notification =
                   new SimpleNotification.NotificationBuilder("Currency updated successfully")
