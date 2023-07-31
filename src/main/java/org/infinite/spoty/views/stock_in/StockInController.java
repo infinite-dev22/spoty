@@ -56,35 +56,35 @@ public class StockInController implements Initializable {
   }
 
   private void setupTable() {
-    MFXTableColumn<StockInMaster> stockInDate =
-        new MFXTableColumn<>("Date", false, Comparator.comparing(StockInMaster::getDate));
     MFXTableColumn<StockInMaster> stockInBranch =
         new MFXTableColumn<>("Branch", false, Comparator.comparing(StockInMaster::getBranchName));
     MFXTableColumn<StockInMaster> stockInStatus =
         new MFXTableColumn<>("Status", false, Comparator.comparing(StockInMaster::getStatus));
+    MFXTableColumn<StockInMaster> stockInDate =
+        new MFXTableColumn<>("Date", false, Comparator.comparing(StockInMaster::getDate));
     MFXTableColumn<StockInMaster> stockInTotalCost =
-        new MFXTableColumn<>("Total Cost", false, Comparator.comparing(StockInMaster::getTotal));
+        new MFXTableColumn<>("Total Amount", false, Comparator.comparing(StockInMaster::getTotal));
 
-    stockInDate.setRowCellFactory(stockIn -> new MFXTableRowCell<>(StockInMaster::getLocaleDate));
     stockInBranch.setRowCellFactory(stockIn -> new MFXTableRowCell<>(StockInMaster::getBranchName));
     stockInStatus.setRowCellFactory(stockIn -> new MFXTableRowCell<>(StockInMaster::getStatus));
     stockInTotalCost.setRowCellFactory(stockIn -> new MFXTableRowCell<>(StockInMaster::getTotal));
+    stockInDate.setRowCellFactory(stockIn -> new MFXTableRowCell<>(StockInMaster::getLocaleDate));
 
-    stockInDate.prefWidthProperty().bind(stockInMasterTable.widthProperty().multiply(.2));
-    stockInBranch.prefWidthProperty().bind(stockInMasterTable.widthProperty().multiply(.2));
-    stockInStatus.prefWidthProperty().bind(stockInMasterTable.widthProperty().multiply(.2));
-    stockInTotalCost.prefWidthProperty().bind(stockInMasterTable.widthProperty().multiply(.2));
+    stockInBranch.prefWidthProperty().bind(stockInMasterTable.widthProperty().multiply(.25));
+    stockInStatus.prefWidthProperty().bind(stockInMasterTable.widthProperty().multiply(.25));
+    stockInTotalCost.prefWidthProperty().bind(stockInMasterTable.widthProperty().multiply(.25));
+    stockInDate.prefWidthProperty().bind(stockInMasterTable.widthProperty().multiply(.25));
 
     stockInMasterTable
         .getTableColumns()
-        .addAll(stockInDate, stockInBranch, stockInStatus, stockInTotalCost);
+        .addAll(stockInBranch, stockInStatus, stockInDate, stockInTotalCost);
     stockInMasterTable
         .getFilters()
         .addAll(
             new StringFilter<>("Reference", StockInMaster::getRef),
             new StringFilter<>("Branch", StockInMaster::getBranchName),
             new StringFilter<>("Status", StockInMaster::getStatus),
-            new DoubleFilter<>("Total Cost", StockInMaster::getTotal));
+            new DoubleFilter<>("Total Amount", StockInMaster::getTotal));
     getStockInMasterTable();
 
     if (StockInMasterViewModel.getStockIns().isEmpty()) {
@@ -130,16 +130,15 @@ public class StockInController implements Initializable {
     // Delete
     delete.setOnAction(
         e -> {
-
-            GlobalActions.spotyThreadPool()
-                    .execute(
-                            () -> {
-                                try {
-                                    StockInMasterViewModel.deleteItem(obj.getData().getId());
-                                } catch (SQLException ex) {
-                                    throw new RuntimeException(ex);
-                                }
-                            });
+          GlobalActions.spotyThreadPool()
+              .execute(
+                  () -> {
+                    try {
+                      StockInMasterViewModel.deleteItem(obj.getData().getId());
+                    } catch (SQLException ex) {
+                      throw new RuntimeException(ex);
+                    }
+                  });
 
           e.consume();
         });

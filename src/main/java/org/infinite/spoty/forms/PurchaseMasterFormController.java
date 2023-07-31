@@ -257,6 +257,11 @@ public class PurchaseMasterFormController implements Initializable {
         new MFXTableColumn<>("Tax", false, Comparator.comparing(PurchaseDetail::getNetTax));
     MFXTableColumn<PurchaseDetail> discount =
         new MFXTableColumn<>("Discount", false, Comparator.comparing(PurchaseDetail::getDiscount));
+    MFXTableColumn<PurchaseDetail> price =
+        new MFXTableColumn<>("Price", false, Comparator.comparing(PurchaseDetail::getPrice));
+    MFXTableColumn<PurchaseDetail> totalPrice =
+        new MFXTableColumn<>(
+            "Total Price", false, Comparator.comparing(PurchaseDetail::getTotalPrice));
 
     // Set table column data.
     product.setRowCellFactory(
@@ -266,15 +271,22 @@ public class PurchaseMasterFormController implements Initializable {
     tax.setRowCellFactory(purchaseDetail -> new MFXTableRowCell<>(PurchaseDetail::getNetTax));
     discount.setRowCellFactory(
         purchaseDetail -> new MFXTableRowCell<>(PurchaseDetail::getDiscount));
+    price.setRowCellFactory(purchaseDetail -> new MFXTableRowCell<>(PurchaseDetail::getPrice));
+    totalPrice.setRowCellFactory(
+        purchaseDetail -> new MFXTableRowCell<>(PurchaseDetail::getTotalPrice));
 
     // Set table column width.
     product.prefWidthProperty().bind(purchaseDetailTable.widthProperty().multiply(.25));
     quantity.prefWidthProperty().bind(purchaseDetailTable.widthProperty().multiply(.25));
     tax.prefWidthProperty().bind(purchaseDetailTable.widthProperty().multiply(.25));
     discount.prefWidthProperty().bind(purchaseDetailTable.widthProperty().multiply(.25));
+    price.prefWidthProperty().bind(purchaseDetailTable.widthProperty().multiply(.25));
+    totalPrice.prefWidthProperty().bind(purchaseDetailTable.widthProperty().multiply(.25));
 
     // Set table filter.
-    purchaseDetailTable.getTableColumns().addAll(product, quantity, tax, discount);
+    purchaseDetailTable
+        .getTableColumns()
+        .addAll(product, quantity, tax, discount, price, totalPrice);
 
     purchaseDetailTable
         .getFilters()
@@ -282,7 +294,9 @@ public class PurchaseMasterFormController implements Initializable {
             new StringFilter<>("Product", PurchaseDetail::getProductName),
             new LongFilter<>("Quantity", PurchaseDetail::getQuantity),
             new DoubleFilter<>("Tax", PurchaseDetail::getNetTax),
-            new DoubleFilter<>("Discount", PurchaseDetail::getDiscount));
+            new DoubleFilter<>("Discount", PurchaseDetail::getDiscount),
+            new DoubleFilter<>("Price", PurchaseDetail::getPrice),
+            new DoubleFilter<>("Total Price", PurchaseDetail::getTotalPrice));
 
     styleTable();
 

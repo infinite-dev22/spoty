@@ -39,8 +39,14 @@ public class AdjustmentMaster implements Serializable {
   @ForeignCollectionField
   private Collection<AdjustmentDetail> adjustmentDetails;
 
-  @DatabaseField(columnName = "notes")
+  @DatabaseField
   private String notes;
+
+  @DatabaseField
+  private String status;
+
+  @DatabaseField(columnName = "total_amount")
+  private double totalAmount;
 
   @DatabaseField(columnName = "created_at")
   private Date createdAt;
@@ -125,6 +131,22 @@ public class AdjustmentMaster implements Serializable {
 
   public void setNotes(String notes) {
     this.notes = notes;
+  }
+
+  public String getStatus() {
+    return status;
+  }
+
+  public void setStatus(String status) {
+    this.status = status;
+  }
+
+  public double getTotalAmount() {
+    return totalAmount;
+  }
+
+  public void setTotalAmount(double totalAmount) {
+    this.totalAmount = totalAmount;
   }
 
   public Date getCreatedAt() {

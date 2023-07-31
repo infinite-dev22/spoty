@@ -56,8 +56,6 @@ public class TransferController implements Initializable {
   }
 
   private void setupTable() {
-    MFXTableColumn<TransferMaster> transferDate =
-        new MFXTableColumn<>("Date", false, Comparator.comparing(TransferMaster::getDate));
     MFXTableColumn<TransferMaster> transferFromBranch =
         new MFXTableColumn<>(
             "Branch(From)", false, Comparator.comparing(TransferMaster::getFromBranchName));
@@ -66,29 +64,31 @@ public class TransferController implements Initializable {
             "Branch(To)", false, Comparator.comparing(TransferMaster::getToBranchName));
     MFXTableColumn<TransferMaster> transferStatus =
         new MFXTableColumn<>("Status", false, Comparator.comparing(TransferMaster::getStatus));
+    MFXTableColumn<TransferMaster> transferDate =
+        new MFXTableColumn<>("Date", false, Comparator.comparing(TransferMaster::getDate));
     MFXTableColumn<TransferMaster> transferTotalCost =
-        new MFXTableColumn<>("Total Cost", false, Comparator.comparing(TransferMaster::getTotal));
+        new MFXTableColumn<>("Total Amount", false, Comparator.comparing(TransferMaster::getTotal));
 
-    transferDate.setRowCellFactory(
-        transfer -> new MFXTableRowCell<>(TransferMaster::getLocaleDate));
     transferFromBranch.setRowCellFactory(
         transfer -> new MFXTableRowCell<>(TransferMaster::getFromBranchName));
     transferToBranch.setRowCellFactory(
         transfer -> new MFXTableRowCell<>(TransferMaster::getToBranchName));
     transferStatus.setRowCellFactory(transfer -> new MFXTableRowCell<>(TransferMaster::getStatus));
+    transferDate.setRowCellFactory(
+        transfer -> new MFXTableRowCell<>(TransferMaster::getLocaleDate));
     transferTotalCost.setRowCellFactory(
         transfer -> new MFXTableRowCell<>(TransferMaster::getTotal));
 
-    transferDate.prefWidthProperty().bind(transferMasterTable.widthProperty().multiply(.17));
-    transferFromBranch.prefWidthProperty().bind(transferMasterTable.widthProperty().multiply(.17));
-    transferToBranch.prefWidthProperty().bind(transferMasterTable.widthProperty().multiply(.17));
-    transferStatus.prefWidthProperty().bind(transferMasterTable.widthProperty().multiply(.17));
-    transferTotalCost.prefWidthProperty().bind(transferMasterTable.widthProperty().multiply(.17));
+    transferFromBranch.prefWidthProperty().bind(transferMasterTable.widthProperty().multiply(.25));
+    transferToBranch.prefWidthProperty().bind(transferMasterTable.widthProperty().multiply(.25));
+    transferStatus.prefWidthProperty().bind(transferMasterTable.widthProperty().multiply(.25));
+    transferTotalCost.prefWidthProperty().bind(transferMasterTable.widthProperty().multiply(.25));
+    transferDate.prefWidthProperty().bind(transferMasterTable.widthProperty().multiply(.25));
 
     transferMasterTable
         .getTableColumns()
         .addAll(
-            transferDate, transferFromBranch, transferToBranch, transferStatus, transferTotalCost);
+            transferFromBranch, transferToBranch, transferStatus, transferDate, transferTotalCost);
     transferMasterTable
         .getFilters()
         .addAll(
@@ -96,7 +96,7 @@ public class TransferController implements Initializable {
             new StringFilter<>("Branch(From)", TransferMaster::getFromBranchName),
             new StringFilter<>("Branch(To)", TransferMaster::getToBranchName),
             new StringFilter<>("Status", TransferMaster::getStatus),
-            new DoubleFilter<>("Total Cost", TransferMaster::getTotal));
+            new DoubleFilter<>("Total Amount", TransferMaster::getTotal));
     getTransferMasterTable();
 
     if (TransferMasterViewModel.getTransfers().isEmpty()) {

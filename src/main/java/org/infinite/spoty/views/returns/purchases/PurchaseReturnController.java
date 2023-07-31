@@ -73,22 +73,22 @@ public class PurchaseReturnController implements Initializable {
     purchaseReturnDate.prefWidthProperty().bind(purchaseReturnTable.widthProperty().multiply(.13));
     purchaseReturnSupplier
         .prefWidthProperty()
-        .bind(purchaseReturnTable.widthProperty().multiply(.13));
+        .bind(purchaseReturnTable.widthProperty().multiply(.25));
     purchaseReturnBranch
         .prefWidthProperty()
-        .bind(purchaseReturnTable.widthProperty().multiply(.13));
+        .bind(purchaseReturnTable.widthProperty().multiply(.25));
     purchaseReturnStatus
         .prefWidthProperty()
-        .bind(purchaseReturnTable.widthProperty().multiply(.13));
+        .bind(purchaseReturnTable.widthProperty().multiply(.25));
     purchaseReturnGrandTotal
         .prefWidthProperty()
-        .bind(purchaseReturnTable.widthProperty().multiply(.13));
+        .bind(purchaseReturnTable.widthProperty().multiply(.25));
     purchaseReturnAmountPaid
         .prefWidthProperty()
-        .bind(purchaseReturnTable.widthProperty().multiply(.13));
+        .bind(purchaseReturnTable.widthProperty().multiply(.25));
     purchaseReturnPaymentStatus
         .prefWidthProperty()
-        .bind(purchaseReturnTable.widthProperty().multiply(.13));
+        .bind(purchaseReturnTable.widthProperty().multiply(.25));
 
     purchaseReturnDate.setRowCellFactory(
         purchaseReturn -> new MFXTableRowCell<>(PurchaseReturnMaster::getDate));
@@ -108,13 +108,13 @@ public class PurchaseReturnController implements Initializable {
     purchaseReturnTable
         .getTableColumns()
         .addAll(
-            purchaseReturnDate,
             purchaseReturnSupplier,
             purchaseReturnBranch,
             purchaseReturnStatus,
+            purchaseReturnPaymentStatus,
+            purchaseReturnDate,
             purchaseReturnGrandTotal,
-            purchaseReturnAmountPaid,
-            purchaseReturnPaymentStatus);
+            purchaseReturnAmountPaid);
     purchaseReturnTable
         .getFilters()
         .addAll(

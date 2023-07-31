@@ -40,6 +40,8 @@ public class AdjustmentMasterViewModel {
   private static final StringProperty date = new SimpleStringProperty("");
   private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>(null);
   private static final StringProperty note = new SimpleStringProperty("");
+  private static final StringProperty status = new SimpleStringProperty("");
+  private static final DoubleProperty totalAmount = new SimpleDoubleProperty();
 
   public static long getId() {
     return id.get();
@@ -103,6 +105,30 @@ public class AdjustmentMasterViewModel {
 
   public static ListProperty<AdjustmentMaster> adjustmentMastersProperty() {
     return adjustmentMasters;
+  }
+
+  public static String getStatus() {
+    return status.get();
+  }
+
+  public static void setStatus(String status) {
+    AdjustmentMasterViewModel.status.set(status);
+  }
+
+  public static StringProperty statusProperty() {
+    return status;
+  }
+
+  public static double getTotalAmount() {
+    return totalAmount.get();
+  }
+
+  public static void setTotalAmount(double totalAmount) {
+    AdjustmentMasterViewModel.totalAmount.set(totalAmount);
+  }
+
+  public static DoubleProperty totalAmountProperty() {
+    return totalAmount;
   }
 
   public static void resetProperties() {

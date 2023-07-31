@@ -158,22 +158,28 @@ public class TransferMasterFormController implements Initializable {
             "Product", false, Comparator.comparing(TransferDetail::getProductName));
     MFXTableColumn<TransferDetail> productQuantity =
         new MFXTableColumn<>("Quantity", false, Comparator.comparing(TransferDetail::getQuantity));
+    MFXTableColumn<TransferDetail> productDescription =
+        new MFXTableColumn<>(
+            "Description", false, Comparator.comparing(TransferDetail::getDescription));
 
-    productName.setRowCellFactory(
-        product -> new MFXTableRowCell<>(TransferDetail::getProductName));
+    productName.setRowCellFactory(product -> new MFXTableRowCell<>(TransferDetail::getProductName));
     productQuantity.setRowCellFactory(
         product -> new MFXTableRowCell<>(TransferDetail::getQuantity));
+    productDescription.setRowCellFactory(
+        product -> new MFXTableRowCell<>(TransferDetail::getDescription));
 
-    productName.prefWidthProperty().bind(transferDetailTable.widthProperty().multiply(.4));
-    productQuantity.prefWidthProperty().bind(transferDetailTable.widthProperty().multiply(.4));
+    productName.prefWidthProperty().bind(transferDetailTable.widthProperty().multiply(.5));
+    productQuantity.prefWidthProperty().bind(transferDetailTable.widthProperty().multiply(.5));
+    productDescription.prefWidthProperty().bind(transferDetailTable.widthProperty().multiply(.5));
 
-    transferDetailTable.getTableColumns().addAll(productName, productQuantity);
+    transferDetailTable.getTableColumns().addAll(productName, productQuantity, productDescription);
 
     transferDetailTable
         .getFilters()
         .addAll(
             new StringFilter<>("Name", TransferDetail::getProductName),
-            new LongFilter<>("Quantity", TransferDetail::getQuantity));
+            new LongFilter<>("Quantity", TransferDetail::getQuantity),
+            new StringFilter<>("Description", TransferDetail::getDescription));
 
     getTransferDetailTable();
 

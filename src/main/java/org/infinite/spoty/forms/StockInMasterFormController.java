@@ -131,25 +131,30 @@ public class StockInMasterFormController implements Initializable {
 
   private void setupTable() {
     MFXTableColumn<StockInDetail> productName =
-        new MFXTableColumn<>(
-            "Product", false, Comparator.comparing(StockInDetail::getProductName));
+        new MFXTableColumn<>("Product", false, Comparator.comparing(StockInDetail::getProductName));
     MFXTableColumn<StockInDetail> productQuantity =
         new MFXTableColumn<>("Quantity", false, Comparator.comparing(StockInDetail::getQuantity));
+    MFXTableColumn<StockInDetail> productDescription =
+        new MFXTableColumn<>(
+            "Description", false, Comparator.comparing(StockInDetail::getDescription));
 
-    productName.setRowCellFactory(
-        product -> new MFXTableRowCell<>(StockInDetail::getProductName));
+    productName.setRowCellFactory(product -> new MFXTableRowCell<>(StockInDetail::getProductName));
     productQuantity.setRowCellFactory(product -> new MFXTableRowCell<>(StockInDetail::getQuantity));
+    productDescription.setRowCellFactory(
+        product -> new MFXTableRowCell<>(StockInDetail::getDescription));
 
-    productName.prefWidthProperty().bind(stockInDetailTable.widthProperty().multiply(.4));
-    productQuantity.prefWidthProperty().bind(stockInDetailTable.widthProperty().multiply(.4));
+    productName.prefWidthProperty().bind(stockInDetailTable.widthProperty().multiply(.5));
+    productQuantity.prefWidthProperty().bind(stockInDetailTable.widthProperty().multiply(.5));
+    productDescription.prefWidthProperty().bind(stockInDetailTable.widthProperty().multiply(.5));
 
-    stockInDetailTable.getTableColumns().addAll(productName, productQuantity);
+    stockInDetailTable.getTableColumns().addAll(productName, productQuantity, productDescription);
 
     stockInDetailTable
         .getFilters()
         .addAll(
             new StringFilter<>("Name", StockInDetail::getProductName),
-            new LongFilter<>("Quantity", StockInDetail::getQuantity));
+            new LongFilter<>("Quantity", StockInDetail::getQuantity),
+            new StringFilter<>("Description", StockInDetail::getDescription));
 
     getStockInDetailTable();
 

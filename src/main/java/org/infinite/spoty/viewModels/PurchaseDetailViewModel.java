@@ -47,7 +47,8 @@ public class PurchaseDetailViewModel {
   private static final StringProperty discountType = new SimpleStringProperty("");
   private static final ObjectProperty<Product> product = new SimpleObjectProperty<>(null);
   private static final StringProperty serial = new SimpleStringProperty("");
-  private static final StringProperty total = new SimpleStringProperty("");
+  private static final StringProperty price = new SimpleStringProperty("");
+  private static final StringProperty totalPrice = new SimpleStringProperty("");
   private static final StringProperty quantity = new SimpleStringProperty("");
 
   public static long getId() {
@@ -170,16 +171,32 @@ public class PurchaseDetailViewModel {
     return product;
   }
 
-  public static String getTotal() {
-    return total.get();
+  public static String getTotalPrice() {
+    return totalPrice.get();
   }
 
-  public static void setTotal(String total) {
-    PurchaseDetailViewModel.total.set(total);
+  public static void setTotalPrice(String totalPrice) {
+    PurchaseDetailViewModel.totalPrice.set(totalPrice);
+  }
+
+  public static StringProperty totalPriceProperty() {
+    return totalPrice;
+  }
+
+  public static String getPrice() {
+    return price.get();
+  }
+
+  public static void setPrice(String price) {
+    PurchaseDetailViewModel.price.set(price);
+  }
+
+  public static StringProperty priceProperty() {
+    return price;
   }
 
   public static StringProperty totalProperty() {
-    return total;
+    return totalPrice;
   }
 
   public static ObservableList<PurchaseDetail> getPurchaseDetails() {
@@ -250,7 +267,7 @@ public class PurchaseDetailViewModel {
     setDiscount("");
     setDiscountType(null);
     setSerial(null);
-    setTotal("");
+    setTotalPrice("");
     setQuantity("");
   }
 
@@ -294,7 +311,7 @@ public class PurchaseDetailViewModel {
             purchaseDetail.setDiscountType(purchaseDetail.getDiscountType());
             purchaseDetail.setProduct(getProduct());
             purchaseDetail.setSerialNumber(getSerial());
-            purchaseDetail.setTotal(Double.parseDouble(getTotal()));
+            purchaseDetail.setTotalPrice(Double.parseDouble(getTotalPrice()));
             purchaseDetail.setQuantity(Long.parseLong(getQuantity()));
 
             Platform.runLater(
@@ -335,7 +352,7 @@ public class PurchaseDetailViewModel {
             setDiscountType(purchaseDetail.getDiscountType());
             setProduct(purchaseDetail.getProduct());
             setSerial(purchaseDetail.getSerialNumber());
-            setTotal(String.valueOf(purchaseDetail.getTotal()));
+            setTotalPrice(String.valueOf(purchaseDetail.getTotalPrice()));
             setQuantity(String.valueOf(purchaseDetail.getQuantity()));
 
             return null;
@@ -367,7 +384,7 @@ public class PurchaseDetailViewModel {
             setDiscountType(purchaseDetail.getDiscountType());
             setProduct(purchaseDetail.getProduct());
             setSerial(purchaseDetail.getSerialNumber());
-            setTotal(String.valueOf(purchaseDetail.getTotal()));
+            setTotalPrice(String.valueOf(purchaseDetail.getTotalPrice()));
             setQuantity(String.valueOf(purchaseDetail.getQuantity()));
 
             purchaseDetailDao.update(purchaseDetail);
