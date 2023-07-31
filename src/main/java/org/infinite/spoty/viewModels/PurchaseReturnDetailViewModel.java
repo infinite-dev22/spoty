@@ -24,7 +24,7 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.database.connection.SQLiteConnection;
-import org.infinite.spoty.database.models.ProductDetail;
+import org.infinite.spoty.database.models.Product;
 import org.infinite.spoty.database.models.PurchaseReturnDetail;
 import org.infinite.spoty.database.models.PurchaseReturnMaster;
 
@@ -32,7 +32,7 @@ public class PurchaseReturnDetailViewModel {
   public static final ObservableList<PurchaseReturnDetail> purchaseReturnDetailsList =
       FXCollections.observableArrayList();
   private static final LongProperty id = new SimpleLongProperty();
-  private static final ObjectProperty<ProductDetail> product = new SimpleObjectProperty<>();
+  private static final ObjectProperty<Product> product = new SimpleObjectProperty<>();
   private static final ObjectProperty<PurchaseReturnMaster> purchaseReturn =
       new SimpleObjectProperty<>();
   private static final StringProperty quantity = new SimpleStringProperty("");
@@ -52,15 +52,15 @@ public class PurchaseReturnDetailViewModel {
     return id;
   }
 
-  public static ProductDetail getProduct() {
+  public static Product getProduct() {
     return product.get();
   }
 
-  public static void setProduct(ProductDetail product) {
+  public static void setProduct(Product product) {
     PurchaseReturnDetailViewModel.product.set(product);
   }
 
-  public static ObjectProperty<ProductDetail> productProperty() {
+  public static ObjectProperty<Product> productProperty() {
     return product;
   }
 

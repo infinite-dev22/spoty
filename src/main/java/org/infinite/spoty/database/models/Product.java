@@ -19,37 +19,31 @@ import com.j256.ormlite.table.DatabaseTable;
 import java.io.Serializable;
 import java.util.Date;
 
-@DatabaseTable(tableName = "product_details")
-public class ProductDetail implements Serializable {
+@DatabaseTable(tableName = "products")
+public class Product implements Serializable {
   @DatabaseField(generatedId = true)
   private long id;
-
-  @DatabaseField(
-      columnName = "product_id",
-      foreign = true,
-      canBeNull = false,
-      foreignAutoCreate = true,
-      foreignAutoRefresh = true,
-      columnDefinition =
-          "INTEGER CONSTRAINT FK_NAME REFERENCES product_masters(id) ON DELETE CASCADE")
-  private ProductMaster product;
-
-  @DatabaseField(foreign = true, columnName = "branch_id", foreignAutoRefresh = true)
-  private Branch branch;
 
   @DatabaseField(foreign = true, columnName = "unit_id", foreignAutoRefresh = true)
   private UnitOfMeasure unit;
 
-  @DatabaseField(foreign = true, columnName = "sale_unit_id", foreignAutoRefresh = true)
-  private UnitOfMeasure saleUnit;
+  @DatabaseField(foreign = true, canBeNull = false, foreignAutoRefresh = true)
+  private ProductCategory category;
 
-  @DatabaseField(foreign = true, columnName = "purchase_unit_id", foreignAutoRefresh = true)
-  private UnitOfMeasure purchaseUnit;
+  @DatabaseField(foreign = true, canBeNull = false, foreignAutoRefresh = true)
+  private Brand brand;
+
+  @DatabaseField(columnName = "barcode_type")
+  private String barcodeType;
+
+  @DatabaseField(columnName = "product_type")
+  private String productType;
 
   @DatabaseField private String name;
   @DatabaseField private long quantity;
   @DatabaseField private double cost;
   @DatabaseField private double price;
+  @DatabaseField private double discount;
 
   @DatabaseField(columnName = "net_tax")
   private double netTax;
@@ -63,6 +57,9 @@ public class ProductDetail implements Serializable {
   @DatabaseField(columnName = "serial_number")
   private String serialNumber;
 
+  @DatabaseField
+  private String image;
+
   @DatabaseField(columnName = "created_at")
   private Date createdAt;
 
@@ -75,28 +72,7 @@ public class ProductDetail implements Serializable {
   @DatabaseField(columnName = "updated_by")
   private String updatedBy;
 
-  public ProductDetail() {}
-
-  public ProductDetail(
-      UnitOfMeasure unit,
-      String name,
-      long quantity,
-      double cost,
-      double price,
-      double netTax,
-      String taxType,
-      long stockAlert,
-      String serialNumber) {
-    this.unit = unit;
-    this.name = name;
-    this.quantity = quantity;
-    this.cost = cost;
-    this.price = price;
-    this.netTax = netTax;
-    this.taxType = taxType;
-    this.stockAlert = stockAlert;
-    this.serialNumber = serialNumber;
-  }
+  public Product() {}
 
   public long getId() {
     return id;
@@ -104,14 +80,6 @@ public class ProductDetail implements Serializable {
 
   public void setId(long id) {
     this.id = id;
-  }
-
-  public ProductMaster getProduct() {
-    return product;
-  }
-
-  public void setProduct(ProductMaster product) {
-    this.product = product;
   }
 
   public String getName() {
@@ -130,14 +98,6 @@ public class ProductDetail implements Serializable {
     this.quantity = quantity;
   }
 
-  public Branch getBranch() {
-    return branch;
-  }
-
-  public void setBranch(Branch branch) {
-    this.branch = branch;
-  }
-
   public UnitOfMeasure getUnit() {
     return unit;
   }
@@ -148,22 +108,6 @@ public class ProductDetail implements Serializable {
 
   public String getUnitName() {
     return unit != null ? unit.getName() : null;
-  }
-
-  public UnitOfMeasure getSaleUnit() {
-    return saleUnit;
-  }
-
-  public void setSaleUnit(UnitOfMeasure saleUnit) {
-    this.saleUnit = saleUnit;
-  }
-
-  public UnitOfMeasure getPurchaseUnit() {
-    return purchaseUnit;
-  }
-
-  public void setPurchaseUnit(UnitOfMeasure purchaseUnit) {
-    this.purchaseUnit = purchaseUnit;
   }
 
   public double getCost() {
@@ -180,6 +124,14 @@ public class ProductDetail implements Serializable {
 
   public void setPrice(double price) {
     this.price = price;
+  }
+
+  public double getDiscount() {
+    return discount;
+  }
+
+  public void setDiscount(double discount) {
+    this.discount = discount;
   }
 
   public double getNetTax() {
@@ -244,5 +196,53 @@ public class ProductDetail implements Serializable {
 
   public void setUpdatedBy(String updatedBy) {
     this.updatedBy = updatedBy;
+  }
+
+  public ProductCategory getCategory() {
+    return category;
+  }
+
+  public void setCategory(ProductCategory category) {
+    this.category = category;
+  }
+
+  public Brand getBrand() {
+    return brand;
+  }
+
+  public void setBrand(Brand brand) {
+    this.brand = brand;
+  }
+
+  public String getBarcodeType() {
+    return barcodeType;
+  }
+
+  public void setBarcodeType(String barcodeType) {
+    this.barcodeType = barcodeType;
+  }
+
+  public String getProductType() {
+    return productType;
+  }
+
+  public void setProductType(String productType) {
+    this.productType = productType;
+  }
+
+  public String getImage() {
+    return image;
+  }
+
+  public void setImage(String image) {
+    this.image = image;
+  }
+
+  public String getBrandName() {
+    return brand.getName();
+  }
+
+  public String getCategoryName() {
+    return category.getName();
   }
 }

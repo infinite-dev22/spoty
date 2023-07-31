@@ -25,7 +25,6 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
@@ -34,7 +33,6 @@ import org.infinite.spoty.viewModels.SupplierViewModel;
 
 public class SupplierFormController implements Initializable {
   private static SupplierFormController instance;
-  public MFXTextField supplierID = new MFXTextField();
   @FXML public MFXButton supplierFormSaveBtn;
   @FXML public MFXButton supplierFormCancelBtn;
   @FXML public MFXTextField supplierFormName;
@@ -56,9 +54,6 @@ public class SupplierFormController implements Initializable {
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     // Form input binding.
-    supplierID
-        .textProperty()
-        .bindBidirectional(SupplierViewModel.idProperty(), new NumberStringConverter());
     supplierFormName.textProperty().bindBidirectional(SupplierViewModel.nameProperty());
     supplierFormEmail.textProperty().bindBidirectional(SupplierViewModel.emailProperty());
     supplierFormPhone.textProperty().bindBidirectional(SupplierViewModel.phoneProperty());
@@ -118,8 +113,8 @@ public class SupplierFormController implements Initializable {
           if (!supplierFormNameValidationLabel.isVisible()
               && !supplierFormEmailValidationLabel.isVisible()
               && !supplierFormPhoneValidationLabel.isVisible()) {
-            if (Integer.parseInt(supplierID.getText()) > 0) {
-              SupplierViewModel.updateItem(Integer.parseInt(supplierID.getText()));
+            if (SupplierViewModel.getId() > 0) {
+              SupplierViewModel.updateItem(SupplierViewModel.getId());
 
               SimpleNotification notification =
                   new SimpleNotification.NotificationBuilder("Supplier updated successfully")

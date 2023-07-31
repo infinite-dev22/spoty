@@ -28,7 +28,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
-import org.infinite.spoty.SpotResourceLoader;
+import org.infinite.spoty.SpotyResourceLoader;
 import org.jetbrains.annotations.NotNull;
 
 public class SimpleNotificationHolder {
@@ -75,7 +75,7 @@ public class SimpleNotificationHolder {
     root.setPrefWrapLength(70);
     root.setVgap(10);
     root.getStyleClass().add("notification-holder");
-    root.getStylesheets().add(SpotResourceLoader.load("styles/base.css"));
+    root.getStylesheets().add(SpotyResourceLoader.load("styles/base.css"));
 
     Scene scene = new Scene(root);
     scene.setFill(Color.TRANSPARENT);

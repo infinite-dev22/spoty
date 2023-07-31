@@ -20,13 +20,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
-import org.infinite.spoty.SpotResourceLoader;
+import org.infinite.spoty.SpotyResourceLoader;
 
 public class Title extends HBox {
     @FXML private Label label;
 
     public Title() {
-        FXMLLoader fxmlLoader = SpotResourceLoader.fxmlLoader("components/title/Title.fxml");
+        FXMLLoader fxmlLoader = SpotyResourceLoader.fxmlLoader("components/title/Title.fxml");
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);
 

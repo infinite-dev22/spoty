@@ -14,7 +14,7 @@
 
 package org.infinite.spoty.forms;
 
-import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
+import static org.infinite.spoty.SpotyResourceLoader.fxmlLoader;
 import static org.infinite.spoty.Validators.requiredValidator;
 
 import io.github.palexdev.materialfx.controls.MFXContextMenu;
@@ -55,7 +55,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
-import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.components.navigation.Pages;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
@@ -74,7 +73,6 @@ import org.infinite.spoty.views.BaseController;
 @SuppressWarnings("unchecked")
 public class PurchaseMasterFormController implements Initializable {
   private static PurchaseMasterFormController instance;
-  public MFXTextField purchaseMasterID = new MFXTextField();
   @FXML public Label purchaseFormTitle;
   @FXML public MFXDatePicker purchaseDate;
   @FXML public MFXFilterComboBox<Supplier> purchaseSupplier;
@@ -109,9 +107,6 @@ public class PurchaseMasterFormController implements Initializable {
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     // Bi~Directional Binding.
-    purchaseMasterID
-        .textProperty()
-        .bindBidirectional(PurchaseMasterViewModel.idProperty(), new NumberStringConverter());
     purchaseDate.textProperty().bindBidirectional(PurchaseMasterViewModel.dateProperty());
     purchaseSupplier.valueProperty().bindBidirectional(PurchaseMasterViewModel.supplierProperty());
     purchaseBranch.valueProperty().bindBidirectional(PurchaseMasterViewModel.branchProperty());
@@ -144,7 +139,7 @@ public class PurchaseMasterFormController implements Initializable {
     purchaseBranch.setConverter(branchConverter);
     purchaseBranch.setFilterFunction(branchFilterFunction);
 
-    purchaseStatus.setItems(FXCollections.observableArrayList(Values.PURCHASESTATUSES));
+    purchaseStatus.setItems(FXCollections.observableArrayList(Values.PURCHASE_STATUSES));
 
     // input validators.
     requiredValidator(
@@ -207,8 +202,8 @@ public class PurchaseMasterFormController implements Initializable {
         && !purchaseSupplierValidationLabel.isVisible()
         && !purchaseDateValidationLabel.isVisible()
         && !purchaseStatusValidationLabel.isVisible()) {
-      if (Integer.parseInt(purchaseMasterID.getText()) > 0) {
-        PurchaseMasterViewModel.updateItem(Integer.parseInt(purchaseMasterID.getText()));
+      if (PurchaseMasterViewModel.getId() > 0) {
+        PurchaseMasterViewModel.updateItem(PurchaseMasterViewModel.getId());
 
         SimpleNotification notification =
             new SimpleNotification.NotificationBuilder("Purchase updated successfully")

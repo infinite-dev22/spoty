@@ -27,7 +27,6 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
@@ -36,7 +35,6 @@ import org.infinite.spoty.viewModels.ExpenseCategoryViewModel;
 
 public class ExpenseCategoryFormController implements Initializable {
   private static ExpenseCategoryFormController instance;
-  public MFXTextField expenseCategoryID = new MFXTextField();
   @FXML public MFXTextField categoryExpenseFormName;
   @FXML public MFXTextField categoryExpenseFormDescription;
   @FXML public MFXButton categoryExpenseFormSaveBtn;
@@ -51,9 +49,6 @@ public class ExpenseCategoryFormController implements Initializable {
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     // Input bindings.
-    expenseCategoryID
-        .textProperty()
-        .bindBidirectional(ExpenseCategoryViewModel.idProperty(), new NumberStringConverter());
     categoryExpenseFormName
         .textProperty()
         .bindBidirectional(ExpenseCategoryViewModel.nameProperty());
@@ -81,8 +76,8 @@ public class ExpenseCategoryFormController implements Initializable {
           SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
 
           if (!categoryExpenseFormNameValidationLabel.isVisible()) {
-            if (Integer.parseInt(expenseCategoryID.getText()) > 0) {
-              ExpenseCategoryViewModel.updateItem(Integer.parseInt(expenseCategoryID.getText()));
+            if (ExpenseCategoryViewModel.getId() > 0) {
+              ExpenseCategoryViewModel.updateItem(ExpenseCategoryViewModel.getId());
 
               SimpleNotification notification =
                   new SimpleNotification.NotificationBuilder("Category updated successfully")

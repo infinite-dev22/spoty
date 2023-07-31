@@ -14,7 +14,7 @@
 
 package org.infinite.spoty.views.dashboard;
 
-import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
+import static org.infinite.spoty.SpotyResourceLoader.fxmlLoader;
 
 import java.io.IOException;
 import java.net.URL;

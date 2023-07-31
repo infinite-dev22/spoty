@@ -14,7 +14,7 @@
 
 package org.infinite.spoty.forms;
 
-import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
+import static org.infinite.spoty.SpotyResourceLoader.fxmlLoader;
 import static org.infinite.spoty.Validators.requiredValidator;
 
 import io.github.palexdev.materialfx.controls.*;
@@ -30,6 +30,7 @@ import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import java.util.function.Function;
@@ -46,7 +47,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
-import javafx.util.converter.NumberStringConverter;
+import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.components.navigation.Pages;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
@@ -62,7 +63,6 @@ import org.infinite.spoty.views.BaseController;
 @SuppressWarnings("unchecked")
 public class StockInMasterFormController implements Initializable {
   private static StockInMasterFormController instance;
-  public MFXTextField stockInMasterID = new MFXTextField();
   @FXML public MFXFilterComboBox<Branch> stockInMasterBranch;
   @FXML public MFXDatePicker stockInMasterDate;
   @FXML public MFXTableView<StockInDetail> stockInDetailTable;
@@ -94,21 +94,18 @@ public class StockInMasterFormController implements Initializable {
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     // Input binding.
-    stockInMasterID
-        .textProperty()
-        .bindBidirectional(StockInMasterViewModel.idProperty(), new NumberStringConverter());
     stockInMasterBranch.valueProperty().bindBidirectional(StockInMasterViewModel.branchProperty());
     stockInMasterDate.textProperty().bindBidirectional(StockInMasterViewModel.dateProperty());
     stockInMasterNote.textProperty().bindBidirectional(StockInMasterViewModel.noteProperty());
 
     // ComboBox Converters.
     StringConverter<Branch> branchConverter =
-            FunctionalStringConverter.to(branch -> (branch == null) ? "" : branch.getName());
+        FunctionalStringConverter.to(branch -> (branch == null) ? "" : branch.getName());
 
     // ComboBox Filter Functions.
     Function<String, Predicate<Branch>> branchFilterFunction =
-            searchStr ->
-                    branch -> StringUtils.containsIgnoreCase(branchConverter.toString(branch), searchStr);
+        searchStr ->
+            branch -> StringUtils.containsIgnoreCase(branchConverter.toString(branch), searchStr);
 
     // ComboBox properties.
     stockInMasterBranch.setItems(BranchViewModel.getBranchesComboBoxList());
@@ -135,12 +132,12 @@ public class StockInMasterFormController implements Initializable {
   private void setupTable() {
     MFXTableColumn<StockInDetail> productName =
         new MFXTableColumn<>(
-            "Product", false, Comparator.comparing(StockInDetail::getProductDetailName));
+            "Product", false, Comparator.comparing(StockInDetail::getProductName));
     MFXTableColumn<StockInDetail> productQuantity =
         new MFXTableColumn<>("Quantity", false, Comparator.comparing(StockInDetail::getQuantity));
 
     productName.setRowCellFactory(
-        product -> new MFXTableRowCell<>(StockInDetail::getProductDetailName));
+        product -> new MFXTableRowCell<>(StockInDetail::getProductName));
     productQuantity.setRowCellFactory(product -> new MFXTableRowCell<>(StockInDetail::getQuantity));
 
     productName.prefWidthProperty().bind(stockInDetailTable.widthProperty().multiply(.4));
@@ -151,7 +148,7 @@ public class StockInMasterFormController implements Initializable {
     stockInDetailTable
         .getFilters()
         .addAll(
-            new StringFilter<>("Name", StockInDetail::getProductDetailName),
+            new StringFilter<>("Name", StockInDetail::getProductName),
             new LongFilter<>("Quantity", StockInDetail::getQuantity));
 
     getStockInDetailTable();
@@ -199,17 +196,31 @@ public class StockInMasterFormController implements Initializable {
     // Delete
     delete.setOnAction(
         e -> {
-          StockInDetailViewModel.removeStockInDetail(
-              obj.getData().getId(),
-              StockInDetailViewModel.stockInDetailsList.indexOf(obj.getData()));
+          GlobalActions.spotyThreadPool()
+              .execute(
+                  () ->
+                      StockInDetailViewModel.removeStockInDetail(
+                          obj.getData().getId(),
+                          StockInDetailViewModel.stockInDetailsList.indexOf(obj.getData())));
+
           e.consume();
         });
+
     // Edit
     edit.setOnAction(
         e -> {
-          StockInDetailViewModel.getItem(
-              obj.getData().getId(),
-              StockInDetailViewModel.stockInDetailsList.indexOf(obj.getData()));
+          GlobalActions.spotyThreadPool()
+              .execute(
+                  () -> {
+                    try {
+                      StockInDetailViewModel.getItem(
+                          obj.getData().getId(),
+                          StockInDetailViewModel.stockInDetailsList.indexOf(obj.getData()));
+                    } catch (SQLException ex) {
+                      throw new RuntimeException(ex);
+                    }
+                  });
+
           dialog.showAndWait();
           e.consume();
         });
@@ -260,8 +271,16 @@ public class StockInMasterFormController implements Initializable {
     }
     if (!stockInMasterBranchValidationLabel.isVisible()
         && !stockInMasterDateValidationLabel.isVisible()) {
-      if (Integer.parseInt(stockInMasterID.getText()) > 0) {
-        StockInMasterViewModel.updateItem(Integer.parseInt(stockInMasterID.getText()));
+      if (StockInMasterViewModel.getId() > 0) {
+        GlobalActions.spotyThreadPool()
+            .execute(
+                () -> {
+                  try {
+                    StockInMasterViewModel.updateItem(StockInMasterViewModel.getId());
+                  } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                  }
+                });
 
         SimpleNotification notification =
             new SimpleNotification.NotificationBuilder("Stock In updated successfully")
@@ -275,7 +294,15 @@ public class StockInMasterFormController implements Initializable {
         stockInMasterCancelBtnClicked();
         return;
       }
-      StockInMasterViewModel.saveStockInMaster();
+      GlobalActions.spotyThreadPool()
+          .execute(
+              () -> {
+                try {
+                  StockInMasterViewModel.saveStockInMaster();
+                } catch (SQLException e) {
+                  throw new RuntimeException(e);
+                }
+              });
 
       SimpleNotification notification =
           new SimpleNotification.NotificationBuilder("Stock In saved successfully")

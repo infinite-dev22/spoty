@@ -14,7 +14,7 @@
 
 package org.infinite.spoty.components.navigation;
 
-import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
+import static org.infinite.spoty.SpotyResourceLoader.fxmlLoader;
 
 import java.io.IOException;
 import javafx.fxml.FXMLLoader;
@@ -35,6 +35,7 @@ import org.infinite.spoty.views.inventory.unit_of_measure.UnitOfMeasureControlle
 import org.infinite.spoty.views.people.customers.CustomerController;
 import org.infinite.spoty.views.people.suppliers.SupplierController;
 import org.infinite.spoty.views.people.users.UserController;
+import org.infinite.spoty.views.pos.PointOfSaleController;
 import org.infinite.spoty.views.purchases.PurchasesController;
 import org.infinite.spoty.views.requisition.RequisitionController;
 import org.infinite.spoty.views.returns.purchases.PurchaseReturnController;
@@ -91,8 +92,7 @@ public class Pages {
       fxmlLoader("fxml/settings/currency/Currency.fxml");
   private static final FXMLLoader exportSettingsLoader =
       fxmlLoader("fxml/settings/export/Export.fxml");
-  private static final FXMLLoader productMasterFormLoader =
-      fxmlLoader("forms/ProductMasterForm.fxml");
+  private static final FXMLLoader posLoader = fxmlLoader("fxml/pos/PointOfSale.fxml");
   private static final FXMLLoader quotationMasterFormLoader =
       fxmlLoader("forms/QuotationMasterForm.fxml");
   private static final FXMLLoader purchaseMasterFormLoader =
@@ -134,8 +134,8 @@ public class Pages {
   private static BorderPane branchSettingsPane;
   private static BorderPane currencySettingsPane;
   private static BorderPane exportSettingsPane;
+  private static BorderPane posPane;
   private static BorderPane adjustmentMasterFormPane;
-  private static BorderPane productMasterFormPane;
   private static BorderPane quotationMasterFormPane;
   private static BorderPane purchaseMasterFormPane;
   private static BorderPane requisitionMasterFormPane;
@@ -152,9 +152,10 @@ public class Pages {
     productCategoryLoader.setControllerFactory(e -> ProductCategoryController.getInstance(stage));
     brandLoader.setControllerFactory(e -> BrandController.getInstance(stage));
     unitLoader.setControllerFactory(e -> UnitOfMeasureController.getInstance(stage));
-    productLoader.setControllerFactory(e -> ProductController.getInstance());
+    productLoader.setControllerFactory(e -> ProductController.getInstance(stage));
     adjustmentLoader.setControllerFactory(e -> AdjustmentController.getInstance());
     quotationLoader.setControllerFactory(e -> QuotationController.getInstance());
+    posLoader.setControllerFactory(e -> new PointOfSaleController());
   }
 
   private static void setSingleItems() {
@@ -195,8 +196,6 @@ public class Pages {
   private static void setMasterForms(Stage stage) {
     adjustmentMasterFormLoader.setControllerFactory(
         c -> AdjustmentMasterFormController.getInstance(stage));
-    productMasterFormLoader.setControllerFactory(
-        c -> ProductMasterFormController.getInstance(stage));
     quotationMasterFormLoader.setControllerFactory(
         c -> QuotationMasterFormController.getInstance(stage));
     purchaseMasterFormLoader.setControllerFactory(
@@ -219,6 +218,7 @@ public class Pages {
     productPane = productLoader.load();
     adjustmentPane = adjustmentLoader.load();
     quotationPane = quotationLoader.load();
+    posPane = posLoader.load();
 
     requisitionPane = requisitionLoader.load();
     purchasePane = purchaseLoader.load();
@@ -246,7 +246,6 @@ public class Pages {
     roleSettingsFormPane = roleSettingsFormLoader.load();
 
     adjustmentMasterFormPane = adjustmentMasterFormLoader.load();
-    productMasterFormPane = productMasterFormLoader.load();
     quotationMasterFormPane = quotationMasterFormLoader.load();
     purchaseMasterFormPane = purchaseMasterFormLoader.load();
     requisitionMasterFormPane = requisitionMasterFormLoader.load();
@@ -370,12 +369,12 @@ public class Pages {
     return exportSettingsPane;
   }
 
-  public static BorderPane getAdjustmentMasterFormPane() {
-    return adjustmentMasterFormPane;
+  public static BorderPane getPosPane() {
+    return posPane;
   }
 
-  public static BorderPane getProductMasterFormPane() {
-    return productMasterFormPane;
+  public static BorderPane getAdjustmentMasterFormPane() {
+    return adjustmentMasterFormPane;
   }
 
   public static BorderPane getQuotationMasterFormPane() {

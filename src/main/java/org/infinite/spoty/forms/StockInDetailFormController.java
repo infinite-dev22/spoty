@@ -24,6 +24,7 @@ import io.github.palexdev.materialfx.utils.StringUtils;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.function.Function;
@@ -32,18 +33,19 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.util.StringConverter;
+import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
-import org.infinite.spoty.database.models.ProductDetail;
-import org.infinite.spoty.viewModels.ProductDetailViewModel;
+import org.infinite.spoty.database.models.Product;
+import org.infinite.spoty.viewModels.ProductViewModel;
 import org.infinite.spoty.viewModels.StockInDetailViewModel;
 
 public class StockInDetailFormController implements Initializable {
   private static StockInDetailFormController instance;
   @FXML public MFXTextField stockInDetailQnty;
-  @FXML public MFXFilterComboBox<ProductDetail> stockInDetailPdct;
+  @FXML public MFXFilterComboBox<Product> stockInDetailPdct;
   @FXML public MFXButton stockInDetailSaveBtn;
   @FXML public MFXButton stockInDetailCancelBtn;
   @FXML public MFXTextField stockInDetailDescription;
@@ -65,22 +67,19 @@ public class StockInDetailFormController implements Initializable {
         .bindBidirectional(StockInDetailViewModel.descriptionProperty());
 
     // Combo box Converter.
-    StringConverter<ProductDetail> productVariantConverter =
+    StringConverter<Product> productVariantConverter =
         FunctionalStringConverter.to(
-            productDetail ->
-                (productDetail == null)
-                    ? ""
-                    : productDetail.getProduct().getName() + " " + productDetail.getName());
+            productDetail -> (productDetail == null) ? "" : productDetail.getName());
 
     // Combo box Filter Function.
-    Function<String, Predicate<ProductDetail>> productVariantFilterFunction =
+    Function<String, Predicate<Product>> productVariantFilterFunction =
         searchStr ->
             productDetail ->
                 StringUtils.containsIgnoreCase(
                     productVariantConverter.toString(productDetail), searchStr);
 
     // Combo box properties.
-    stockInDetailPdct.setItems(ProductDetailViewModel.getProductDetailsComboBoxList());
+    stockInDetailPdct.setItems(ProductViewModel.getProductsComboBoxList());
     stockInDetailPdct.setConverter(productVariantConverter);
     stockInDetailPdct.setFilterFunction(productVariantFilterFunction);
 
@@ -115,7 +114,16 @@ public class StockInDetailFormController implements Initializable {
           if (!stockInDetailPdctValidationLabel.isVisible()
               && !stockInDetailQntyValidationLabel.isVisible()) {
             if (tempIdProperty().get() > -1) {
-              StockInDetailViewModel.updateStockInDetail(StockInDetailViewModel.getId());
+              GlobalActions.spotyThreadPool()
+                  .execute(
+                      () -> {
+                        try {
+                          StockInDetailViewModel.updateStockInDetail(
+                              StockInDetailViewModel.getId());
+                        } catch (SQLException ex) {
+                          throw new RuntimeException(ex);
+                        }
+                      });
 
               SimpleNotification notification =
                   new SimpleNotification.NotificationBuilder("Product changed successfully")
@@ -130,7 +138,7 @@ public class StockInDetailFormController implements Initializable {
               closeDialog(e);
               return;
             }
-            StockInDetailViewModel.addStockInDetails();
+            GlobalActions.spotyThreadPool().execute(StockInDetailViewModel::addStockInDetails);
 
             SimpleNotification notification =
                 new SimpleNotification.NotificationBuilder("Product added successfully")

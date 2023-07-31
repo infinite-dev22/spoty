@@ -18,6 +18,7 @@ import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
@@ -28,6 +29,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.components.navigation.Pages;
 import org.infinite.spoty.database.models.AdjustmentMaster;
 import org.infinite.spoty.viewModels.AdjustmentMasterViewModel;
@@ -120,13 +122,28 @@ public class AdjustmentController implements Initializable {
     // Delete
     delete.setOnAction(
         e -> {
-          AdjustmentMasterViewModel.deleteItem(obj.getData().getId());
+            GlobalActions.spotyThreadPool().execute(() -> {
+              try {
+                  AdjustmentMasterViewModel.deleteItem(obj.getData().getId());
+              } catch (SQLException ex) {
+                  throw new RuntimeException(ex);
+              }
+          });
+
           e.consume();
         });
     // Edit
     edit.setOnAction(
         e -> {
-          AdjustmentMasterViewModel.getItem(obj.getData().getId());
+            GlobalActions.spotyThreadPool().execute(
+              () -> {
+                try {
+                  AdjustmentMasterViewModel.getItem(obj.getData().getId());
+                } catch (SQLException ex) {
+                  throw new RuntimeException(ex);
+                }
+              });
+
           adjustmentCreateBtnClicked();
           e.consume();
         });

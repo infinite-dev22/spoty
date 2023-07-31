@@ -37,7 +37,7 @@ public class QuotationDetailViewModel {
   private static final ListProperty<QuotationDetail> quotationDetails =
       new SimpleListProperty<>(quotationDetailsList);
   private static final LongProperty id = new SimpleLongProperty(0);
-  private static final ObjectProperty<ProductDetail> product = new SimpleObjectProperty<>();
+  private static final ObjectProperty<Product> product = new SimpleObjectProperty<>();
   private static final ObjectProperty<UnitOfMeasure> saleUnit = new SimpleObjectProperty<>();
   private static final ObjectProperty<QuotationMaster> quotation = new SimpleObjectProperty<>();
   private static final StringProperty quantity = new SimpleStringProperty();
@@ -56,15 +56,15 @@ public class QuotationDetailViewModel {
     return id;
   }
 
-  public static ProductDetail getProduct() {
+  public static Product getProduct() {
     return product.get();
   }
 
-  public static void setProduct(ProductDetail product) {
+  public static void setProduct(Product product) {
     QuotationDetailViewModel.product.set(product);
   }
 
-  public static ObjectProperty<ProductDetail> productProperty() {
+  public static ObjectProperty<Product> productProperty() {
     return product;
   }
 
@@ -72,7 +72,7 @@ public class QuotationDetailViewModel {
     return saleUnit.get();
   }
 
-  public static void setSaleUnit(UnitOfMeasure saleUnit) {
+  public static void setUnit(UnitOfMeasure saleUnit) {
     QuotationDetailViewModel.saleUnit.set(saleUnit);
   }
 
@@ -260,7 +260,7 @@ public class QuotationDetailViewModel {
             setTempId(tempIndex);
             setId(quotationDetail.getId());
             setProduct(quotationDetail.getProduct());
-            setSaleUnit(quotationDetail.getProduct().getSaleUnit());
+            setUnit(quotationDetail.getProduct().getUnit());
             setTax(String.valueOf(quotationDetail.getNetTax()));
             setDiscount(String.valueOf(quotationDetail.getDiscount()));
             setQuantity(String.valueOf(quotationDetail.getQuantity()));

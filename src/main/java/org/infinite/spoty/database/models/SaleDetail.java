@@ -18,16 +18,15 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Objects;
 
 @DatabaseTable(tableName = "sales_detail")
 public class SaleDetail implements Serializable {
+  @DatabaseField(canBeNull = false)
+  private long quantity;
   @DatabaseField(generatedId = true)
   private long id;
-
   @DatabaseField(columnName = "reference_number")
   private String ref;
-
   @DatabaseField(
       foreign = true,
       columnName = "sale_id",
@@ -36,33 +35,21 @@ public class SaleDetail implements Serializable {
       foreignAutoRefresh = true,
       columnDefinition = "INTEGER CONSTRAINT FK_NAME REFERENCES sales_master(id) ON DELETE CASCADE")
   private SaleMaster sale;
-
   @DatabaseField(foreign = true, columnName = "product_id", canBeNull = false, foreignAutoRefresh = true)
-  private ProductDetail product;
-
+  private Product product;
   @DatabaseField(columnName = "serial_number")
   private String serialNumber;
-
-  @DatabaseField(canBeNull = false)
-  private double price;
-
+  @DatabaseField(canBeNull = false, columnName = "sub_total_price")
+  private double subTotalPrice;
   @DatabaseField(columnName = "net_tax")
   private double netTax;
-
   @DatabaseField(columnName = "tax_type")
   private String taxType;
-
   @DatabaseField private double discount;
-
   @DatabaseField(columnName = "discount_type")
   private String discountType;
-
   @DatabaseField(canBeNull = false)
-  private double total;
-
-  @DatabaseField(canBeNull = false)
-  private long quantity;
-
+  private double price;
   @DatabaseField(columnName = "created_at")
   private Date createdAt;
 
@@ -78,13 +65,15 @@ public class SaleDetail implements Serializable {
   public SaleDetail() {}
 
   public SaleDetail(
-      ProductDetail product,
+      Product product,
       long quantity,
       String serialNumber,
       double netTax,
       String taxType,
       double discount,
-      String discountType) {
+      String discountType,
+      double price,
+      double subTotalPrice) {
     this.product = product;
     this.quantity = quantity;
     this.serialNumber = serialNumber;
@@ -92,6 +81,19 @@ public class SaleDetail implements Serializable {
     this.taxType = taxType;
     this.discount = discount;
     this.discountType = discountType;
+    this.price = price;
+    this.subTotalPrice = subTotalPrice;
+  }
+
+  public long getSaleQuantity() {
+    return quantity;
+  }
+  public long getQuantity() {
+    return quantity;
+  }
+
+  public void setQuantity(long quantity) {
+    this.quantity = quantity;
   }
 
   public long getId() {
@@ -110,24 +112,20 @@ public class SaleDetail implements Serializable {
     this.ref = ref;
   }
 
-  public ProductDetail getProduct() {
+  public Product getProduct() {
     return product;
   }
 
-  public void setProduct(ProductDetail product) {
+  public void setProduct(Product product) {
     this.product = product;
   }
 
   public String getProductName() {
-    return (product != null)
-        ? product.getProduct().getBrand().getName()
-            + " "
-            + product.getProduct().getName()
-            + " "
-            + product.getName()
-            + " "
-            + (Objects.equals(product.getUnit(), null) ? "" : product.getUnit().getName())
-        : null;
+    return product.getName();
+  }
+
+  public double getProductPrice() {
+    return product.getPrice();
   }
 
   public String getSerialNumber() {
@@ -138,12 +136,12 @@ public class SaleDetail implements Serializable {
     this.serialNumber = serialNumber;
   }
 
-  public double getPrice() {
-    return price;
+  public double getSubTotalPrice() {
+    return subTotalPrice;
   }
 
-  public void setPrice(double price) {
-    this.price = price;
+  public void setSubTotalPrice(double subTotalPrice) {
+    this.subTotalPrice = subTotalPrice;
   }
 
   public double getNetTax() {
@@ -178,20 +176,12 @@ public class SaleDetail implements Serializable {
     this.discountType = discountType;
   }
 
-  public double getTotal() {
-    return total;
+  public double getPrice() {
+    return price;
   }
 
-  public void setTotal(double total) {
-    this.total = total;
-  }
-
-  public long getQuantity() {
-    return quantity;
-  }
-
-  public void setQuantity(long quantity) {
-    this.quantity = quantity;
+  public void setPrice(double price) {
+    this.price = price;
   }
 
   public Date getCreatedAt() {

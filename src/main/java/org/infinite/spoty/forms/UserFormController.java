@@ -34,7 +34,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.util.StringConverter;
-import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
@@ -47,7 +46,6 @@ import org.infinite.spoty.viewModels.UserViewModel;
 
 public class UserFormController implements Initializable {
   public static UserFormController instance;
-  public MFXTextField userID = new MFXTextField();
   @FXML public MFXButton userFormSaveBtn;
   @FXML public MFXButton userFormCancelBtn;
   @FXML public MFXTextField userFormEmail;
@@ -89,9 +87,6 @@ public class UserFormController implements Initializable {
             });
 
     // Input bindings.
-    userID
-        .textProperty()
-        .bindBidirectional(UserViewModel.idProperty(), new NumberStringConverter());
     userFormFirstname.textProperty().bindBidirectional(UserViewModel.firstNameProperty());
     userFormLastname.textProperty().bindBidirectional(UserViewModel.lastNameProperty());
     userFormUsername.textProperty().bindBidirectional(UserViewModel.userNameProperty());
@@ -182,8 +177,8 @@ public class UserFormController implements Initializable {
               && !userFormRoleValidationLabel.isVisible()
               && !userFormEmailValidationLabel.isVisible()
               && !userFormPhoneValidationLabel.isVisible()) {
-            if (Integer.parseInt(userID.getText()) > 0) {
-              UserViewModel.updateItem(Integer.parseInt(userID.getText()));
+            if (UserViewModel.getId() > 0) {
+              UserViewModel.updateItem(UserViewModel.getId());
               SimpleNotification notification =
                   new SimpleNotification.NotificationBuilder("User updated successfully")
                       .duration(NotificationDuration.SHORT)

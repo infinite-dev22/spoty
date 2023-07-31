@@ -35,7 +35,7 @@ public class SaleReturnDetail implements Serializable {
   private SaleReturnMaster saleReturn;
 
   @DatabaseField(foreign = true, columnName = "product_id", canBeNull = false, foreignAutoRefresh = true)
-  private ProductDetail product;
+  private Product product;
 
   @DatabaseField(canBeNull = false)
   private double price;
@@ -79,7 +79,7 @@ public class SaleReturnDetail implements Serializable {
 
   public SaleReturnDetail(
       SaleReturnMaster saleReturn,
-      ProductDetail product,
+      Product product,
       double price,
       UnitOfMeasure saleUnit,
       double netTax,
@@ -118,11 +118,11 @@ public class SaleReturnDetail implements Serializable {
     this.saleReturn = saleReturn;
   }
 
-  public ProductDetail getProduct() {
+  public Product getProduct() {
     return product;
   }
 
-  public void setProduct(ProductDetail product) {
+  public void setProduct(Product product) {
     this.product = product;
   }
 

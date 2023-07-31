@@ -3598,79 +3598,43 @@ public class SQLiteTableCreator {
 
     runQuery(
         """
-                    CREATE TABLE IF NOT EXISTS product_details (
+                    CREATE TABLE IF NOT EXISTS products (
                         id               INTEGER   NOT NULL
                                                    PRIMARY KEY AUTOINCREMENT,
-                        product_id       INTEGER,
-                        branch_id        INTEGER,
                         unit_id          INTEGER,
-                        sale_unit_id     INTEGER,
-                        purchase_unit_id INTEGER,
+                        category_id      INTEGER,
+                        brand_id         INTEGER,
+                        barcode_type     VARCHAR,
+                        product_type     VARCHAR,
                         name             VARCHAR,
                         quantity         BIGINT,
                         cost             DOUBLE,
                         price            DOUBLE,
+                        discount         DOUBLE,
                         net_tax          DOUBLE,
                         tax_type         VARCHAR,
                         stock_alert      BIGINT,
                         serial_number    VARCHAR,
+                        image            VARCHAR,
                         created_at       TIMESTAMP,
                         created_by       VARCHAR,
                         updated_at       TIMESTAMP,
                         updated_by       VARCHAR,
                         FOREIGN KEY (
-                            product_id
-                        )
-                        REFERENCES product_masters (id) ON DELETE CASCADE,
-                        FOREIGN KEY (
                             unit_id
                         )
                         REFERENCES units_of_measure (id),
                         FOREIGN KEY (
-                            sale_unit_id
+                            category_id
                         )
-                        REFERENCES units_of_measure (id),
+                        REFERENCES product_category (id),
                         FOREIGN KEY (
-                            purchase_unit_id
+                            brand_id
                         )
-                        REFERENCES units_of_measure (id),
-                        FOREIGN KEY (
-                            branch_id
-                        )
-                        REFERENCES branches (id)
+                        REFERENCES brands (id)
                     );
                     """,
-        ProductDetail.class);
-
-    runQuery(
-        """
-                    CREATE TABLE IF NOT EXISTS product_masters (
-                           id           INTEGER   NOT NULL
-                                                  PRIMARY KEY AUTOINCREMENT,
-                           code         VARCHAR,
-                           barcode_type VARCHAR,
-                           name         VARCHAR   NOT NULL,
-                           category_id  INTEGER   NOT NULL,
-                           brand_id     INTEGER   NOT NULL,
-                           image        BLOB,
-                           note         VARCHAR,
-                           not_sale     BOOLEAN   NOT NULL,
-                           has_variants BOOLEAN   NOT NULL,
-                           created_at   TIMESTAMP,
-                           created_by   VARCHAR,
-                           updated_at   TIMESTAMP,
-                           updated_by   VARCHAR,
-                           FOREIGN KEY (
-                               brand_id
-                           )
-                           REFERENCES brands (id),
-                           FOREIGN KEY (
-                               category_id
-                           )
-                           REFERENCES product_category (id)
-                       );
-                    """,
-        ProductMaster.class);
+        Product.class);
 
     runQuery(
         """
@@ -3684,7 +3648,7 @@ public class SQLiteTableCreator {
                            discount_type      VARCHAR,
                            product_id         BIGINT             NOT NULL,
                            serial_number      VARCHAR,
-                           total              [DOUBLE PRECISION],
+                           price              [DOUBLE PRECISION],
                            quantity           BIGINT,
                            created_at         TIMESTAMP,
                            created_by         VARCHAR,
@@ -3709,7 +3673,7 @@ public class SQLiteTableCreator {
                            discount       DOUBLE,
                            shipping       VARCHAR,
                            paid           DOUBLE,
-                           total          DOUBLE,
+                           price          DOUBLE,
                            due            DOUBLE,
                            status         VARCHAR,
                            payment_status VARCHAR,
@@ -3748,7 +3712,7 @@ public class SQLiteTableCreator {
                            discount                  DOUBLE,
                            discount_type             VARCHAR,
                            quantity                  INTEGER   NOT NULL,
-                           total                     DOUBLE    NOT NULL,
+                           price                     DOUBLE    NOT NULL,
                            serial_number             VARCHAR,
                            created_at                TIMESTAMP,
                            created_by                VARCHAR,
@@ -3781,7 +3745,7 @@ public class SQLiteTableCreator {
                            discount         DOUBLE,
                            shipping         VARCHAR,
                            paid             DOUBLE,
-                           total            DOUBLE,
+                           price            DOUBLE,
                            status           VARCHAR,
                            payment_status   VARCHAR,
                            notes            VARCHAR,
@@ -3810,7 +3774,7 @@ public class SQLiteTableCreator {
                     CREATE TABLE IF NOT EXISTS quotation_detail (
                            id            INTEGER   NOT NULL
                                                    PRIMARY KEY AUTOINCREMENT,
-                           price         DOUBLE    NOT NULL,
+                           subTotalPrice         DOUBLE    NOT NULL,
                            sale_unit_id  INTEGER,
                            product_id    BIGINT    NOT NULL,
                            quotation_id  INTEGER,
@@ -3818,7 +3782,7 @@ public class SQLiteTableCreator {
                            tax_type      VARCHAR,
                            discount      DOUBLE,
                            discount_type VARCHAR,
-                           total         DOUBLE    NOT NULL,
+                           price         DOUBLE    NOT NULL,
                            quantity      BIGINT    NOT NULL,
                            serial_number VARCHAR,
                            created_at    TIMESTAMP,
@@ -3852,7 +3816,7 @@ public class SQLiteTableCreator {
                         customer_id      INTEGER   NOT NULL,
                         branch_id        INTEGER   NOT NULL,
                         shipping         VARCHAR   NOT NULL,
-                        total            DOUBLE    NOT NULL,
+                        price            DOUBLE    NOT NULL,
                         status           VARCHAR   NOT NULL,
                         notes            VARCHAR,
                         created_at       TIMESTAMP,
@@ -3965,12 +3929,12 @@ public class SQLiteTableCreator {
                            sale_id          INTEGER,
                            product_id       BIGINT    NOT NULL,
                            serial_number    VARCHAR,
-                           price            DOUBLE    NOT NULL,
+                           sub_total_price  DOUBLE    NOT NULL,
                            net_tax          DOUBLE,
                            tax_type         VARCHAR,
                            discount         DOUBLE,
                            discount_type    VARCHAR,
-                           total            DOUBLE    NOT NULL,
+                           price            DOUBLE    NOT NULL,
                            quantity         BIGINT    NOT NULL,
                            created_at       TIMESTAMP,
                            created_by       VARCHAR,
@@ -4001,7 +3965,7 @@ public class SQLiteTableCreator {
                         tax_rate         DOUBLE,
                         net_tax          DOUBLE,
                         discount         DOUBLE,
-                        total            DOUBLE    NOT NULL,
+                        price            DOUBLE    NOT NULL,
                         amountPaid       DOUBLE    NOT NULL,
                         amountDue        DOUBLE    NOT NULL,
                         paymentStatus    VARCHAR   NOT NULL,
@@ -4034,7 +3998,7 @@ public class SQLiteTableCreator {
                                                             PRIMARY KEY AUTOINCREMENT,
                            sales_return_master_id INTEGER,
                            product_id             BIGINT    NOT NULL,
-                           price                  DOUBLE    NOT NULL,
+                           subTotalPrice                  DOUBLE    NOT NULL,
                            sale_unit_id           INTEGER   NOT NULL,
                            net_tax                DOUBLE,
                            tax_type               VARCHAR,
@@ -4042,7 +4006,7 @@ public class SQLiteTableCreator {
                            discount_type          VARCHAR,
                            serial_number          VARCHAR,
                            quantity               INTEGER   NOT NULL,
-                           total                  DOUBLE    NOT NULL,
+                           price                  DOUBLE    NOT NULL,
                            created_at             TIMESTAMP,
                            created_by             VARCHAR,
                            updated_at             TIMESTAMP,
@@ -4076,7 +4040,7 @@ public class SQLiteTableCreator {
                            tax_rate         DOUBLE,
                            net_tax          DOUBLE,
                            discount         DOUBLE,
-                           total            DOUBLE    NOT NULL,
+                           price            DOUBLE    NOT NULL,
                            paid             DOUBLE    NOT NULL,
                            paymentStatus    VARCHAR   NOT NULL,
                            status           VARCHAR   NOT NULL,
@@ -4179,8 +4143,8 @@ public class SQLiteTableCreator {
                         quantity      BIGINT    NOT NULL,
                         serial_number VARCHAR,
                         description   VARCHAR,
+                        subTotalPrice         DOUBLE    NOT NULL,
                         price         DOUBLE    NOT NULL,
-                        total         DOUBLE    NOT NULL,
                         created_at    TIMESTAMP,
                         created_by    VARCHAR,
                         updated_at    TIMESTAMP,
@@ -4208,7 +4172,7 @@ public class SQLiteTableCreator {
                         from_branch_id   INTEGER   NOT NULL,
                         to_branch_id     INTEGER   NOT NULL,
                         shipping         VARCHAR,
-                        total            DOUBLE    NOT NULL,
+                        price            DOUBLE    NOT NULL,
                         status           VARCHAR   NOT NULL,
                         approved_by_id   INTEGER,
                         received_by_id   INTEGER,

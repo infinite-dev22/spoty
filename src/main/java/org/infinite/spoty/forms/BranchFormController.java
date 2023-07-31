@@ -27,7 +27,6 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
@@ -36,7 +35,6 @@ import org.infinite.spoty.viewModels.BranchViewModel;
 
 public class BranchFormController implements Initializable {
   private static BranchFormController instance;
-  public MFXTextField branchFormID = new MFXTextField();
   @FXML public MFXButton branchFormSaveBtn;
   @FXML public MFXButton branchFormCancelBtn;
   @FXML public MFXTextField branchFormName;
@@ -59,9 +57,6 @@ public class BranchFormController implements Initializable {
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     // Input bindings.
-    branchFormID
-        .textProperty()
-        .bindBidirectional(BranchViewModel.idProperty(), new NumberStringConverter());
     branchFormName.textProperty().bindBidirectional(BranchViewModel.nameProperty());
     branchFormEmail.textProperty().bindBidirectional(BranchViewModel.emailProperty());
     branchFormPhone.textProperty().bindBidirectional(BranchViewModel.phoneProperty());
@@ -104,8 +99,8 @@ public class BranchFormController implements Initializable {
               && !branchFormPhoneValidationLabel.isVisible()
               && !branchFormTownValidationLabel.isVisible()
               && !branchFormCityValidationLabel.isVisible()) {
-            if (Integer.parseInt(branchFormID.getText()) > 0) {
-              BranchViewModel.updateItem(Integer.parseInt(branchFormID.getText()));
+            if (BranchViewModel.getId() > 0) {
+              BranchViewModel.updateItem(BranchViewModel.getId());
 
               SimpleNotification notification =
                   new SimpleNotification.NotificationBuilder("Branch updated successfully")

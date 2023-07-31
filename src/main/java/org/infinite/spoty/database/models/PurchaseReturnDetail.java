@@ -42,7 +42,7 @@ public class PurchaseReturnDetail implements Serializable {
   private PurchaseReturnMaster purchaseReturn;
 
   @DatabaseField(foreign = true, canBeNull = false, columnName = "product_id", foreignAutoRefresh = true)
-  private ProductDetail product;
+  private Product product;
 
   @DatabaseField(columnName = "net_tax")
   private double netTax;
@@ -80,7 +80,7 @@ public class PurchaseReturnDetail implements Serializable {
       double cost,
       UnitOfMeasure purchaseUnit,
       PurchaseReturnMaster purchaseReturn,
-      ProductDetail product,
+      Product product,
       double netTax,
       String taxType,
       double discount,
@@ -135,11 +135,11 @@ public class PurchaseReturnDetail implements Serializable {
     this.purchaseReturn = purchaseReturn;
   }
 
-  public ProductDetail getProduct() {
+  public Product getProduct() {
     return product;
   }
 
-  public void setProduct(ProductDetail product) {
+  public void setProduct(Product product) {
     this.product = product;
   }
 

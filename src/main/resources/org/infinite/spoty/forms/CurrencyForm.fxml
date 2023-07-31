@@ -22,7 +22,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import java.net.URL?>
-<MFXGenericDialog xmlns:fx="http://javafx.com/fxml/1" styleClass="card" xmlns="http://javafx.com/javafx/19"
+<MFXGenericDialog xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/19"
                   fx:controller="org.infinite.spoty.forms.CurrencyFormController">
     <stylesheets>
         <URL value="@../styles/Common.css"/>

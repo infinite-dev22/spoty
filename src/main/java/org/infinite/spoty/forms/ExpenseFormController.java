@@ -29,7 +29,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.util.StringConverter;
-import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
@@ -42,7 +41,6 @@ import org.infinite.spoty.viewModels.ExpenseViewModel;
 
 public class ExpenseFormController implements Initializable {
   private static ExpenseFormController instance;
-  public MFXTextField expenseID = new MFXTextField();
   @FXML public MFXTextField expenseFormAmount;
   @FXML public MFXTextField expenseFormDetails;
   @FXML public MFXButton expenseFormSaveBtn;
@@ -65,9 +63,6 @@ public class ExpenseFormController implements Initializable {
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     // Form Bindings.
-    expenseID
-        .textProperty()
-        .bindBidirectional(ExpenseViewModel.idProperty(), new NumberStringConverter());
     expenseFormName.textProperty().bindBidirectional(ExpenseViewModel.nameProperty());
     expenseFormDate.textProperty().bindBidirectional(ExpenseViewModel.dateProperty());
     expenseFormBranch.valueProperty().bindBidirectional(ExpenseViewModel.branchProperty());
@@ -136,8 +131,8 @@ public class ExpenseFormController implements Initializable {
               && !expenseFormBranchValidationLabel.isVisible()
               && !expenseFormCategoryValidationLabel.isVisible()
               && !expenseFormAmountValidationLabel.isVisible()) {
-            if (Integer.parseInt(expenseID.getText()) > 0) {
-              ExpenseViewModel.updateItem(Integer.parseInt(expenseID.getText()));
+            if (ExpenseViewModel.getId() > 0) {
+              ExpenseViewModel.updateItem(ExpenseViewModel.getId());
 
               SimpleNotification notification =
                   new SimpleNotification.NotificationBuilder("Expense updated successfully")

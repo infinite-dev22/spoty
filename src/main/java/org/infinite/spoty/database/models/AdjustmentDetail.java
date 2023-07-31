@@ -26,7 +26,7 @@ public class AdjustmentDetail implements Serializable {
   private long id;
 
   @DatabaseField(foreign = true, columnName = "product_id", canBeNull = false, foreignAutoRefresh = true)
-  private ProductDetail product;
+  private Product product;
 
   @DatabaseField(
       foreign = true,
@@ -57,7 +57,7 @@ public class AdjustmentDetail implements Serializable {
 
   public AdjustmentDetail() {}
 
-  public AdjustmentDetail(ProductDetail product, long quantity, String adjustmentType) {
+  public AdjustmentDetail(Product product, long quantity, String adjustmentType) {
     this.product = product;
     this.quantity = quantity;
     this.adjustmentType = adjustmentType;
@@ -71,19 +71,17 @@ public class AdjustmentDetail implements Serializable {
     this.id = id;
   }
 
-  public ProductDetail getProduct() {
+  public Product getProduct() {
     return product;
   }
 
-  public void setProduct(ProductDetail product) {
+  public void setProduct(Product product) {
     this.product = product;
   }
 
-  public String getProductDetailName() {
+  public String getProductName() {
     return (product != null)
-        ? product.getProduct().getBrand().getName()
-            + " "
-            + product.getProduct().getName()
+        ? product.getBrand().getName()
             + " "
             + product.getName()
             + (Objects.equals(product.getUnit(), null) ? "" : " " + product.getUnit().getName())

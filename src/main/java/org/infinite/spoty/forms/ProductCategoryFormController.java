@@ -26,7 +26,6 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
@@ -35,7 +34,6 @@ import org.infinite.spoty.viewModels.ProductCategoryViewModel;
 
 public class ProductCategoryFormController implements Initializable {
   private static ProductCategoryFormController instance;
-  public MFXTextField dialogCategoryID = new MFXTextField();
   @FXML public MFXTextField dialogCategoryCode;
   @FXML public MFXTextField dialogCategoryName;
   @FXML public MFXButton dialogSaveBtn;
@@ -51,9 +49,6 @@ public class ProductCategoryFormController implements Initializable {
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     // Input bindings.
-    dialogCategoryID
-        .textProperty()
-        .bindBidirectional(ProductCategoryViewModel.idProperty(), new NumberStringConverter());
     dialogCategoryCode.textProperty().bindBidirectional(ProductCategoryViewModel.codeProperty());
     dialogCategoryName.textProperty().bindBidirectional(ProductCategoryViewModel.nameProperty());
     // Input validators.
@@ -84,8 +79,8 @@ public class ProductCategoryFormController implements Initializable {
           SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
           if (!dialogCategoryCodeValidationLabel.isVisible()
               && !dialogCategoryNameValidationLabel.isVisible()) {
-            if (Integer.parseInt(dialogCategoryID.getText()) > 0) {
-              updateItem(Integer.parseInt(dialogCategoryID.getText()));
+            if (ProductCategoryViewModel.getId() > 0) {
+              updateItem(ProductCategoryViewModel.getId());
 
               SimpleNotification notification =
                   new SimpleNotification.NotificationBuilder("Category updated successfully")

@@ -14,7 +14,7 @@
 
 package org.infinite.spoty.forms;
 
-import static org.infinite.spoty.SpotResourceLoader.fxmlLoader;
+import static org.infinite.spoty.SpotyResourceLoader.fxmlLoader;
 import static org.infinite.spoty.Validators.requiredValidator;
 
 import io.github.palexdev.materialfx.controls.*;
@@ -46,7 +46,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
-import javafx.util.converter.NumberStringConverter;
 import org.infinite.spoty.components.navigation.Pages;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
@@ -64,7 +63,6 @@ import org.infinite.spoty.views.BaseController;
 @SuppressWarnings("unchecked")
 public class RequisitionMasterFormController implements Initializable {
   private static RequisitionMasterFormController instance;
-  public MFXTextField requisitionMasterID = new MFXTextField();
   @FXML public MFXFilterComboBox<Branch> requisitionMasterBranch;
   @FXML public MFXDatePicker requisitionMasterDate;
   @FXML public MFXTableView<RequisitionDetail> requisitionDetailTable;
@@ -101,9 +99,6 @@ public class RequisitionMasterFormController implements Initializable {
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     // Input binding.
-    requisitionMasterID
-        .textProperty()
-        .bindBidirectional(RequisitionMasterViewModel.idProperty(), new NumberStringConverter());
     requisitionMasterBranch
         .valueProperty()
         .bindBidirectional(RequisitionMasterViewModel.branchProperty());
@@ -177,13 +172,13 @@ public class RequisitionMasterFormController implements Initializable {
   private void setupTable() {
     MFXTableColumn<RequisitionDetail> productName =
         new MFXTableColumn<>(
-            "Product", false, Comparator.comparing(RequisitionDetail::getProductDetailName));
+            "Product", false, Comparator.comparing(RequisitionDetail::getProductName));
     MFXTableColumn<RequisitionDetail> productQuantity =
         new MFXTableColumn<>(
             "Quantity", false, Comparator.comparing(RequisitionDetail::getQuantity));
 
     productName.setRowCellFactory(
-        product -> new MFXTableRowCell<>(RequisitionDetail::getProductDetailName));
+        product -> new MFXTableRowCell<>(RequisitionDetail::getProductName));
     productQuantity.setRowCellFactory(
         product -> new MFXTableRowCell<>(RequisitionDetail::getQuantity));
 
@@ -195,7 +190,7 @@ public class RequisitionMasterFormController implements Initializable {
     requisitionDetailTable
         .getFilters()
         .addAll(
-            new StringFilter<>("Name", RequisitionDetail::getProductDetailName),
+            new StringFilter<>("Name", RequisitionDetail::getProductName),
             new LongFilter<>("Quantity", RequisitionDetail::getQuantity));
 
     getRequisitionDetailTable();
@@ -309,8 +304,8 @@ public class RequisitionMasterFormController implements Initializable {
     if (!requisitionMasterSupplierValidationLabel.isVisible()
         && !requisitionMasterDateValidationLabel.isVisible()
         && !requisitionMasterBranchValidationLabel.isVisible()) {
-      if (Integer.parseInt(requisitionMasterID.getText()) > 0) {
-        RequisitionMasterViewModel.updateItem(Integer.parseInt(requisitionMasterID.getText()));
+      if (RequisitionMasterViewModel.getId() > 0) {
+        RequisitionMasterViewModel.updateItem(RequisitionMasterViewModel.getId());
 
         SimpleNotification notification =
             new SimpleNotification.NotificationBuilder("Requisition updated successfully")

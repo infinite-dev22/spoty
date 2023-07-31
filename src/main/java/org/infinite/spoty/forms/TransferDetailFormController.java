@@ -24,6 +24,7 @@ import io.github.palexdev.materialfx.utils.StringUtils;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.function.Function;
@@ -36,14 +37,14 @@ import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
-import org.infinite.spoty.database.models.ProductDetail;
-import org.infinite.spoty.viewModels.ProductDetailViewModel;
+import org.infinite.spoty.database.models.Product;
+import org.infinite.spoty.viewModels.ProductViewModel;
 import org.infinite.spoty.viewModels.TransferDetailViewModel;
 
 public class TransferDetailFormController implements Initializable {
   private static TransferDetailFormController instance;
   @FXML public MFXTextField transferDetailQnty;
-  @FXML public MFXFilterComboBox<ProductDetail> transferDetailPdct;
+  @FXML public MFXFilterComboBox<Product> transferDetailPdct;
   @FXML public MFXButton transferDetailSaveBtn;
   @FXML public MFXButton transferDetailCancelBtn;
   @FXML public MFXTextField transferDetailDescription;
@@ -65,22 +66,19 @@ public class TransferDetailFormController implements Initializable {
         .bindBidirectional(TransferDetailViewModel.descriptionProperty());
 
     // Combo box Converter.
-    StringConverter<ProductDetail> productVariantConverter =
+    StringConverter<Product> productVariantConverter =
         FunctionalStringConverter.to(
-            productDetail ->
-                (productDetail == null)
-                    ? ""
-                    : productDetail.getProduct().getName() + " " + productDetail.getName());
+            productDetail -> (productDetail == null) ? "" : productDetail.getName());
 
     // Combo box Filter Function.
-    Function<String, Predicate<ProductDetail>> productVariantFilterFunction =
+    Function<String, Predicate<Product>> productVariantFilterFunction =
         searchStr ->
             productDetail ->
                 StringUtils.containsIgnoreCase(
                     productVariantConverter.toString(productDetail), searchStr);
 
     // Combo box properties.
-    transferDetailPdct.setItems(ProductDetailViewModel.getProductDetailsComboBoxList());
+    transferDetailPdct.setItems(ProductViewModel.getProductsComboBoxList());
     transferDetailPdct.setConverter(productVariantConverter);
     transferDetailPdct.setFilterFunction(productVariantFilterFunction);
 
@@ -114,7 +112,11 @@ public class TransferDetailFormController implements Initializable {
           if (!transferDetailPdctValidationLabel.isVisible()
               && !transferDetailQntyValidationLabel.isVisible()) {
             if (tempIdProperty().get() > -1) {
-              TransferDetailViewModel.updateTransferDetail(TransferDetailViewModel.getId());
+              try {
+                TransferDetailViewModel.updateTransferDetail(TransferDetailViewModel.getId());
+              } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+              }
 
               SimpleNotification notification =
                   new SimpleNotification.NotificationBuilder("Product changed successfully")

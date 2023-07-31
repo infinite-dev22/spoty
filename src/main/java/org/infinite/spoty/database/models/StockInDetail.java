@@ -36,7 +36,7 @@ public class StockInDetail implements Serializable {
   private StockInMaster stockIn;
 
   @DatabaseField(foreign = true, columnName = "product_id", canBeNull = false, foreignAutoRefresh = true)
-  private ProductDetail product;
+  private Product product;
 
   @DatabaseField(canBeNull = false)
   private long quantity;
@@ -62,7 +62,7 @@ public class StockInDetail implements Serializable {
   public StockInDetail() {}
 
   public StockInDetail(
-      ProductDetail product, long quantity, String serialNo, String description, String location) {
+      Product product, long quantity, String serialNo, String description, String location) {
     this.product = product;
     this.quantity = quantity;
     this.serialNo = serialNo;
@@ -86,19 +86,17 @@ public class StockInDetail implements Serializable {
     this.stockIn = stockIn;
   }
 
-  public ProductDetail getProduct() {
+  public Product getProduct() {
     return product;
   }
 
-  public void setProduct(ProductDetail product) {
+  public void setProduct(Product product) {
     this.product = product;
   }
 
-  public String getProductDetailName() {
+  public String getProductName() {
     return (product != null)
-        ? product.getProduct().getBrand().getName()
-            + " "
-            + product.getProduct().getName()
+        ? product.getBrand().getName()
             + " "
             + product.getName()
             + " "
