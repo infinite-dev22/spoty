@@ -88,6 +88,8 @@ public class ProductCard extends VBox {
     }
 
     productQuantityLbl.getStyleClass().add("pos-product-label");
+    productNameLbl.setWrappingWidth(100);
+    productNameLbl.setWrapText(true);
 
     VBox labelsHolder = new VBox();
     labelsHolder.setSpacing(10);

@@ -98,13 +98,14 @@ public class SaleReturnsController implements Initializable {
     saleReturnTable
         .getTableColumns()
         .addAll(
-            saleReturnDate,
             saleReturnCustomer,
             saleReturnBranch,
             saleReturnStatus,
+            saleReturnPaymentStatus,
+            saleReturnDate,
             saleReturnGrandTotal,
-            saleReturnAmountPaid,
-            saleReturnPaymentStatus);
+            saleReturnAmountPaid);
+
     saleReturnTable
         .getFilters()
         .addAll(
@@ -115,6 +116,7 @@ public class SaleReturnsController implements Initializable {
             new DoubleFilter<>("Total", SaleReturnMaster::getTotal),
             new DoubleFilter<>("Paid", SaleReturnMaster::getPaid),
             new StringFilter<>("Pay Status", SaleReturnMaster::getPaymentStatus));
+
     getSaleReturnMasterTable();
 
     if (SaleReturnMasterViewModel.getSaleReturns().isEmpty()) {

@@ -153,9 +153,9 @@ public class AdjustmentMasterFormController implements Initializable {
     adjustmentType.setRowCellFactory(
         product -> new MFXTableRowCell<>(AdjustmentDetail::getAdjustmentType));
 
-    productName.prefWidthProperty().bind(adjustmentDetailTable.widthProperty().multiply(.4));
-    productQuantity.prefWidthProperty().bind(adjustmentDetailTable.widthProperty().multiply(.4));
-    adjustmentType.prefWidthProperty().bind(adjustmentDetailTable.widthProperty().multiply(.4));
+    productName.prefWidthProperty().bind(adjustmentDetailTable.widthProperty().multiply(.5));
+    productQuantity.prefWidthProperty().bind(adjustmentDetailTable.widthProperty().multiply(.5));
+    adjustmentType.prefWidthProperty().bind(adjustmentDetailTable.widthProperty().multiply(.5));
 
     adjustmentDetailTable.getTableColumns().addAll(productName, productQuantity, adjustmentType);
 
@@ -213,27 +213,29 @@ public class AdjustmentMasterFormController implements Initializable {
     // Delete
     delete.setOnAction(
         e -> {
-            GlobalActions.spotyThreadPool().execute(
-              () ->
-                  AdjustmentDetailViewModel.removeAdjustmentDetail(
-                      obj.getData().getId(),
-                      AdjustmentDetailViewModel.adjustmentDetailsList.indexOf(obj.getData())));
+          GlobalActions.spotyThreadPool()
+              .execute(
+                  () ->
+                      AdjustmentDetailViewModel.removeAdjustmentDetail(
+                          obj.getData().getId(),
+                          AdjustmentDetailViewModel.adjustmentDetailsList.indexOf(obj.getData())));
 
           e.consume();
         });
     // Edit
     edit.setOnAction(
         e -> {
-            GlobalActions.spotyThreadPool().execute(
-              () -> {
-                try {
-                  AdjustmentDetailViewModel.getItem(
-                      obj.getData().getId(),
-                      AdjustmentDetailViewModel.adjustmentDetailsList.indexOf(obj.getData()));
-                } catch (SQLException ex) {
-                  throw new RuntimeException(ex);
-                }
-              });
+          GlobalActions.spotyThreadPool()
+              .execute(
+                  () -> {
+                    try {
+                      AdjustmentDetailViewModel.getItem(
+                          obj.getData().getId(),
+                          AdjustmentDetailViewModel.adjustmentDetailsList.indexOf(obj.getData()));
+                    } catch (SQLException ex) {
+                      throw new RuntimeException(ex);
+                    }
+                  });
 
           dialog.showAndWait();
           e.consume();
@@ -285,14 +287,15 @@ public class AdjustmentMasterFormController implements Initializable {
     if (!adjustmentBranchValidationLabel.isVisible()
         && !adjustmentDateValidationLabel.isVisible()) {
       if (AdjustmentMasterViewModel.getId() > 0) {
-          GlobalActions.spotyThreadPool().execute(
-            () -> {
-              try {
-                AdjustmentMasterViewModel.updateItem(AdjustmentMasterViewModel.getId());
-              } catch (SQLException e) {
-                throw new RuntimeException(e);
-              }
-            });
+        GlobalActions.spotyThreadPool()
+            .execute(
+                () -> {
+                  try {
+                    AdjustmentMasterViewModel.updateItem(AdjustmentMasterViewModel.getId());
+                  } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                  }
+                });
 
         SimpleNotification notification =
             new SimpleNotification.NotificationBuilder("Product adjustment updated successfully")
@@ -308,14 +311,15 @@ public class AdjustmentMasterFormController implements Initializable {
 
         return;
       }
-        GlobalActions.spotyThreadPool().execute(
-          () -> {
-            try {
-              AdjustmentMasterViewModel.saveAdjustmentMaster();
-            } catch (SQLException e) {
-              throw new RuntimeException(e);
-            }
-          });
+      GlobalActions.spotyThreadPool()
+          .execute(
+              () -> {
+                try {
+                  AdjustmentMasterViewModel.saveAdjustmentMaster();
+                } catch (SQLException e) {
+                  throw new RuntimeException(e);
+                }
+              });
 
       SimpleNotification notification =
           new SimpleNotification.NotificationBuilder("Product adjustment saved successfully")

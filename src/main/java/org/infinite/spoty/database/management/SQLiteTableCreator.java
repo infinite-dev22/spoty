@@ -3774,7 +3774,7 @@ public class SQLiteTableCreator {
                     CREATE TABLE IF NOT EXISTS quotation_detail (
                            id            INTEGER   NOT NULL
                                                    PRIMARY KEY AUTOINCREMENT,
-                           subTotalPrice         DOUBLE    NOT NULL,
+                           totalPrice         DOUBLE    NOT NULL,
                            sale_unit_id  INTEGER,
                            product_id    BIGINT    NOT NULL,
                            quotation_id  INTEGER,
@@ -3998,7 +3998,7 @@ public class SQLiteTableCreator {
                                                             PRIMARY KEY AUTOINCREMENT,
                            sales_return_master_id INTEGER,
                            product_id             BIGINT    NOT NULL,
-                           subTotalPrice                  DOUBLE    NOT NULL,
+                           totalPrice                  DOUBLE    NOT NULL,
                            sale_unit_id           INTEGER   NOT NULL,
                            net_tax                DOUBLE,
                            tax_type               VARCHAR,
@@ -4143,7 +4143,7 @@ public class SQLiteTableCreator {
                         quantity      BIGINT    NOT NULL,
                         serial_number VARCHAR,
                         description   VARCHAR,
-                        subTotalPrice         DOUBLE    NOT NULL,
+                        totalPrice         DOUBLE    NOT NULL,
                         price         DOUBLE    NOT NULL,
                         created_at    TIMESTAMP,
                         created_by    VARCHAR,

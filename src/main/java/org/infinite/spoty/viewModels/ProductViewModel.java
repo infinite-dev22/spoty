@@ -385,23 +385,26 @@ public class ProductViewModel {
 
     Product product = productDao.queryForId(index);
 
-    setTempId((int) index);
-    setId(product.getId());
-    setName(product.getName());
-    setBrand(product.getBrand());
-    setCategory(product.getCategory());
-    setUnit(product.getUnit());
-    setProductType(product.getProductType());
-    setBarcodeType(product.getBarcodeType());
-    setPrice(product.getPrice());
-    setCost(product.getCost());
-    setQuantity(product.getQuantity());
-    setDiscount(product.getDiscount());
-    setNetTax(product.getNetTax());
-    setTaxType(product.getTaxType());
-    setStockAlert(product.getStockAlert());
-    setSerial(product.getSerialNumber());
-    setImage(product.getImage());
+    Platform.runLater(
+        () -> {
+          setTempId((int) index);
+          setId(product.getId());
+          setName(product.getName());
+          setBrand(product.getBrand());
+          setCategory(product.getCategory());
+          setUnit(product.getUnit());
+          setProductType(product.getProductType());
+          setBarcodeType(product.getBarcodeType());
+          setPrice(product.getPrice());
+          setCost(product.getCost());
+          setQuantity(product.getQuantity());
+          setDiscount(product.getDiscount());
+          setNetTax(product.getNetTax());
+          setTaxType(product.getTaxType());
+          setStockAlert(product.getStockAlert());
+          setSerial(product.getSerialNumber());
+          setImage(product.getImage());
+        });
   }
 
   public static void deleteProduct(long index) throws SQLException {

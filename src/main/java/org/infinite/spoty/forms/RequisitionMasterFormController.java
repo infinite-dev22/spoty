@@ -176,22 +176,29 @@ public class RequisitionMasterFormController implements Initializable {
     MFXTableColumn<RequisitionDetail> productQuantity =
         new MFXTableColumn<>(
             "Quantity", false, Comparator.comparing(RequisitionDetail::getQuantity));
+    MFXTableColumn<RequisitionDetail> productDescription =
+        new MFXTableColumn<>(
+            "Description", false, Comparator.comparing(RequisitionDetail::getDescription));
 
     productName.setRowCellFactory(
         product -> new MFXTableRowCell<>(RequisitionDetail::getProductName));
     productQuantity.setRowCellFactory(
         product -> new MFXTableRowCell<>(RequisitionDetail::getQuantity));
+    productDescription.setRowCellFactory(
+        product -> new MFXTableRowCell<>(RequisitionDetail::getDescription));
 
-    productName.prefWidthProperty().bind(requisitionDetailTable.widthProperty().multiply(.4));
-    productQuantity.prefWidthProperty().bind(requisitionDetailTable.widthProperty().multiply(.4));
+    productName.prefWidthProperty().bind(requisitionDetailTable.widthProperty().multiply(.5));
+    productQuantity.prefWidthProperty().bind(requisitionDetailTable.widthProperty().multiply(.5));
+    productDescription.prefWidthProperty().bind(requisitionDetailTable.widthProperty().multiply(.5));
 
-    requisitionDetailTable.getTableColumns().addAll(productName, productQuantity);
+    requisitionDetailTable.getTableColumns().addAll(productName, productQuantity, productDescription);
 
     requisitionDetailTable
         .getFilters()
         .addAll(
             new StringFilter<>("Name", RequisitionDetail::getProductName),
-            new LongFilter<>("Quantity", RequisitionDetail::getQuantity));
+            new LongFilter<>("Quantity", RequisitionDetail::getQuantity),
+            new StringFilter<>("Description", RequisitionDetail::getDescription));
 
     getRequisitionDetailTable();
 

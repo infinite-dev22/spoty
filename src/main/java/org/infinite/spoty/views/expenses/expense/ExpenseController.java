@@ -94,15 +94,15 @@ public class ExpenseController implements Initializable {
         expense -> new MFXTableRowCell<>(Expense::getExpenseCategoryName));
     expenseBranch.setRowCellFactory(expense -> new MFXTableRowCell<>(Expense::getBranchName));
 
-    expenseDate.prefWidthProperty().bind(expenseTable.widthProperty().multiply(.1));
-    expenseName.prefWidthProperty().bind(expenseTable.widthProperty().multiply(.2));
-    expenseAmount.prefWidthProperty().bind(expenseTable.widthProperty().multiply(.2));
-    expenseCategory.prefWidthProperty().bind(expenseTable.widthProperty().multiply(.2));
-    expenseBranch.prefWidthProperty().bind(expenseTable.widthProperty().multiply(.2));
+    expenseDate.prefWidthProperty().bind(expenseTable.widthProperty().multiply(.25));
+    expenseName.prefWidthProperty().bind(expenseTable.widthProperty().multiply(.25));
+    expenseAmount.prefWidthProperty().bind(expenseTable.widthProperty().multiply(.25));
+    expenseCategory.prefWidthProperty().bind(expenseTable.widthProperty().multiply(.25));
+    expenseBranch.prefWidthProperty().bind(expenseTable.widthProperty().multiply(.25));
 
     expenseTable
         .getTableColumns()
-        .addAll(expenseDate, expenseName, expenseAmount, expenseCategory, expenseBranch);
+        .addAll(expenseName, expenseCategory, expenseBranch, expenseDate, expenseAmount);
     expenseTable
         .getFilters()
         .addAll(

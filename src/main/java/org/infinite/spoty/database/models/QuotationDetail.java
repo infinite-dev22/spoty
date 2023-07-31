@@ -60,7 +60,7 @@ public class QuotationDetail implements Serializable {
   private String discountType;
 
   @DatabaseField(canBeNull = false)
-  private double total = 0;
+  private double totalPrice = 0;
 
   @DatabaseField(canBeNull = false)
   private long quantity = 0;
@@ -180,12 +180,12 @@ public class QuotationDetail implements Serializable {
     this.discountType = discountType;
   }
 
-  public double getTotal() {
-    return total;
+  public double getTotalPrice() {
+    return totalPrice;
   }
 
-  public void setTotal(double total) {
-    this.total = total;
+  public void setTotalPrice(double totalPrice) {
+    this.totalPrice = totalPrice;
   }
 
   public long getQuantity() {

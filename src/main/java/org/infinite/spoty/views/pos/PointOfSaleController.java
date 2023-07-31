@@ -314,7 +314,10 @@ public class PointOfSaleController implements Initializable {
   }
 
   private void getTotalLabels() {
-    posTotalLabel.setText("Total: $0.0");
+    SaleDetailViewModel.getSaleDetails()
+        .addListener(
+            (ListChangeListener<SaleDetail>)
+                listener -> posTotalLabel.setText("Total: $" + calculateTotal(SaleDetailViewModel.getSaleDetails())));
   }
 
   public void clearCart() {

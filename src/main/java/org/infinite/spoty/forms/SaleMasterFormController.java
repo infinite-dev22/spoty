@@ -291,32 +291,46 @@ public class SaleMasterFormController implements Initializable {
         new MFXTableColumn<>("Product", false, Comparator.comparing(SaleDetail::getProductName));
     MFXTableColumn<SaleDetail> quantity =
         new MFXTableColumn<>("Quantity", false, Comparator.comparing(SaleDetail::getQuantity));
-    MFXTableColumn<SaleDetail> tax =
-        new MFXTableColumn<>("Tax", false, Comparator.comparing(SaleDetail::getNetTax));
     MFXTableColumn<SaleDetail> discount =
         new MFXTableColumn<>("Discount", false, Comparator.comparing(SaleDetail::getDiscount));
+    MFXTableColumn<SaleDetail> tax =
+        new MFXTableColumn<>("Tax", false, Comparator.comparing(SaleDetail::getNetTax));
+    MFXTableColumn<SaleDetail> price =
+        new MFXTableColumn<>("Price", false, Comparator.comparing(SaleDetail::getPrice));
+    MFXTableColumn<SaleDetail> totalPrice =
+        new MFXTableColumn<>(
+            "Total Price", false, Comparator.comparing(SaleDetail::getSubTotalPrice));
 
     // Set table column data.
     product.setRowCellFactory(purchaseDetail -> new MFXTableRowCell<>(SaleDetail::getProductName));
     quantity.setRowCellFactory(purchaseDetail -> new MFXTableRowCell<>(SaleDetail::getQuantity));
-    tax.setRowCellFactory(purchaseDetail -> new MFXTableRowCell<>(SaleDetail::getNetTax));
     discount.setRowCellFactory(purchaseDetail -> new MFXTableRowCell<>(SaleDetail::getDiscount));
+    tax.setRowCellFactory(purchaseDetail -> new MFXTableRowCell<>(SaleDetail::getNetTax));
+    price.setRowCellFactory(purchaseDetail -> new MFXTableRowCell<>(SaleDetail::getPrice));
+    totalPrice.setRowCellFactory(
+        purchaseDetail -> new MFXTableRowCell<>(SaleDetail::getSubTotalPrice));
 
     // Set table column width.
     product.prefWidthProperty().bind(saleDetailTable.widthProperty().multiply(.25));
     quantity.prefWidthProperty().bind(saleDetailTable.widthProperty().multiply(.25));
-    tax.prefWidthProperty().bind(saleDetailTable.widthProperty().multiply(.25));
     discount.prefWidthProperty().bind(saleDetailTable.widthProperty().multiply(.25));
+    tax.prefWidthProperty().bind(saleDetailTable.widthProperty().multiply(.25));
+    price.prefWidthProperty().bind(saleDetailTable.widthProperty().multiply(.25));
+    totalPrice.prefWidthProperty().bind(saleDetailTable.widthProperty().multiply(.25));
 
     // Set table filter.
-    saleDetailTable.getTableColumns().addAll(product, quantity, tax, discount);
+    saleDetailTable
+        .getTableColumns()
+        .addAll(product, quantity, discount, tax, price, totalPrice);
     saleDetailTable
         .getFilters()
         .addAll(
             new StringFilter<>("Product", SaleDetail::getProductName),
             new LongFilter<>("Quantity", SaleDetail::getQuantity),
+            new DoubleFilter<>("Discount", SaleDetail::getDiscount),
             new DoubleFilter<>("Tax", SaleDetail::getNetTax),
-            new DoubleFilter<>("Discount", SaleDetail::getDiscount));
+            new DoubleFilter<>("Price", SaleDetail::getPrice),
+            new DoubleFilter<>("Total Price", SaleDetail::getSubTotalPrice));
 
     styleTable();
 

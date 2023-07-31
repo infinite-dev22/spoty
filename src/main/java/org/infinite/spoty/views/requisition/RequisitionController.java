@@ -16,6 +16,7 @@ package org.infinite.spoty.views.requisition;
 
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
+import io.github.palexdev.materialfx.filter.DoubleFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import java.net.URL;
 import java.util.Comparator;
@@ -53,61 +54,71 @@ public class RequisitionController implements Initializable {
   }
 
   private void setupTable() {
-    MFXTableColumn<RequisitionMaster> requisitionDate =
-        new MFXTableColumn<>("Date", false, Comparator.comparing(RequisitionMaster::getDate));
-    MFXTableColumn<RequisitionMaster> requisitionBranch =
-        new MFXTableColumn<>(
-            "Branch", false, Comparator.comparing(RequisitionMaster::getBranchName));
     MFXTableColumn<RequisitionMaster> requisitionSupplier =
         new MFXTableColumn<>(
             "Supplier", false, Comparator.comparing(RequisitionMaster::getSupplierName));
+    MFXTableColumn<RequisitionMaster> requisitionBranch =
+        new MFXTableColumn<>(
+            "Branch", false, Comparator.comparing(RequisitionMaster::getBranchName));
     MFXTableColumn<RequisitionMaster> requisitionStatus =
         new MFXTableColumn<>("Status", false, Comparator.comparing(RequisitionMaster::getStatus));
     MFXTableColumn<RequisitionMaster> requisitionShippingMethod =
         new MFXTableColumn<>(
             "Shipping Method", false, Comparator.comparing(RequisitionMaster::getShipMethod));
+    MFXTableColumn<RequisitionMaster> requisitionDate =
+        new MFXTableColumn<>("Date", false, Comparator.comparing(RequisitionMaster::getDate));
+    MFXTableColumn<RequisitionMaster> requisitionTotalAmount =
+        new MFXTableColumn<>(
+            "Total Amount", false, Comparator.comparing(RequisitionMaster::getTotalCost));
 
-    requisitionDate.setRowCellFactory(
-        requisition -> new MFXTableRowCell<>(RequisitionMaster::getLocaleDate));
-    requisitionBranch.setRowCellFactory(
-        requisition -> new MFXTableRowCell<>(RequisitionMaster::getBranchName));
     requisitionSupplier.setRowCellFactory(
         requisition -> new MFXTableRowCell<>(RequisitionMaster::getSupplierName));
+    requisitionBranch.setRowCellFactory(
+        requisition -> new MFXTableRowCell<>(RequisitionMaster::getBranchName));
     requisitionStatus.setRowCellFactory(
         requisition -> new MFXTableRowCell<>(RequisitionMaster::getStatus));
     requisitionShippingMethod.setRowCellFactory(
         requisition -> new MFXTableRowCell<>(RequisitionMaster::getShipMethod));
+    requisitionDate.setRowCellFactory(
+        requisition -> new MFXTableRowCell<>(RequisitionMaster::getLocaleDate));
+    requisitionTotalAmount.setRowCellFactory(
+        requisition -> new MFXTableRowCell<>(RequisitionMaster::getTotalCost));
 
-    requisitionDate.prefWidthProperty().bind(requisitionMasterTable.widthProperty().multiply(.15));
-    requisitionBranch
-        .prefWidthProperty()
-        .bind(requisitionMasterTable.widthProperty().multiply(.15));
     requisitionSupplier
         .prefWidthProperty()
-        .bind(requisitionMasterTable.widthProperty().multiply(.15));
+        .bind(requisitionMasterTable.widthProperty().multiply(.25));
+    requisitionBranch
+        .prefWidthProperty()
+        .bind(requisitionMasterTable.widthProperty().multiply(.25));
     requisitionStatus
         .prefWidthProperty()
-        .bind(requisitionMasterTable.widthProperty().multiply(.15));
+        .bind(requisitionMasterTable.widthProperty().multiply(.25));
     requisitionShippingMethod
         .prefWidthProperty()
-        .bind(requisitionMasterTable.widthProperty().multiply(.15));
+        .bind(requisitionMasterTable.widthProperty().multiply(.25));
+    requisitionDate.prefWidthProperty().bind(requisitionMasterTable.widthProperty().multiply(.25));
+    requisitionTotalAmount
+        .prefWidthProperty()
+        .bind(requisitionMasterTable.widthProperty().multiply(.25));
 
     requisitionMasterTable
         .getTableColumns()
         .addAll(
-            requisitionDate,
-            requisitionBranch,
             requisitionSupplier,
+            requisitionBranch,
             requisitionStatus,
-            requisitionShippingMethod);
+            requisitionShippingMethod,
+            requisitionDate,
+            requisitionTotalAmount);
     requisitionMasterTable
         .getFilters()
         .addAll(
             new StringFilter<>("Reference", RequisitionMaster::getRef),
-            new StringFilter<>("Branch", RequisitionMaster::getBranchName),
             new StringFilter<>("Supplier", RequisitionMaster::getSupplierName),
+            new StringFilter<>("Branch", RequisitionMaster::getBranchName),
             new StringFilter<>("Status", RequisitionMaster::getStatus),
-            new StringFilter<>("Shipping Method", RequisitionMaster::getShipMethod));
+            new StringFilter<>("Shipping Method", RequisitionMaster::getShipMethod),
+            new DoubleFilter<>("Total Amount", RequisitionMaster::getTotalCost));
     getRequisitionMasterTable();
 
     if (RequisitionMasterViewModel.getRequisitions().isEmpty()) {

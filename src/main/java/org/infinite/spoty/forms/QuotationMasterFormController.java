@@ -110,22 +110,20 @@ public class QuotationMasterFormController implements Initializable {
 
     // ComboBox Converters.
     StringConverter<Customer> customerConverter =
-            FunctionalStringConverter.to(customer -> (customer == null) ? "" : customer.getName());
+        FunctionalStringConverter.to(customer -> (customer == null) ? "" : customer.getName());
 
     StringConverter<Branch> branchConverter =
-            FunctionalStringConverter.to(branch -> (branch == null) ? "" : branch.getName());
+        FunctionalStringConverter.to(branch -> (branch == null) ? "" : branch.getName());
 
     // ComboBox Filter Functions.
     Function<String, Predicate<Customer>> customerFilterFunction =
-            searchStr ->
-                    customer ->
-                            StringUtils.containsIgnoreCase(
-                                    customerConverter.toString(customer), searchStr);
+        searchStr ->
+            customer ->
+                StringUtils.containsIgnoreCase(customerConverter.toString(customer), searchStr);
 
     Function<String, Predicate<Branch>> branchFilterFunction =
-            searchStr ->
-                    branch ->
-                            StringUtils.containsIgnoreCase(branchConverter.toString(branch), searchStr);
+        searchStr ->
+            branch -> StringUtils.containsIgnoreCase(branchConverter.toString(branch), searchStr);
 
     // Combo box properties.
     quotationCustomer.setItems(CustomerViewModel.getCustomersComboBoxList());
@@ -135,7 +133,7 @@ public class QuotationMasterFormController implements Initializable {
     quotationBranch.setItems(BranchViewModel.getBranchesComboBoxList());
     quotationBranch.setConverter(branchConverter);
     quotationBranch.setFilterFunction(branchFilterFunction);
-    
+
     quotationStatus.setItems(FXCollections.observableArrayList(Values.QUOTATION_TYPE));
 
     // input validators.
@@ -170,6 +168,11 @@ public class QuotationMasterFormController implements Initializable {
         new MFXTableColumn<>("Discount", false, Comparator.comparing(QuotationDetail::getDiscount));
     MFXTableColumn<QuotationDetail> productTax =
         new MFXTableColumn<>("Tax", false, Comparator.comparing(QuotationDetail::getNetTax));
+    MFXTableColumn<QuotationDetail> productPrice =
+        new MFXTableColumn<>("Price", false, Comparator.comparing(QuotationDetail::getPrice));
+    MFXTableColumn<QuotationDetail> totalPrice =
+        new MFXTableColumn<>(
+            "Total Price", false, Comparator.comparing(QuotationDetail::getTotalPrice));
 
     productName.setRowCellFactory(
         product -> new MFXTableRowCell<>(QuotationDetail::getProductName));
@@ -178,15 +181,21 @@ public class QuotationMasterFormController implements Initializable {
     productDiscount.setRowCellFactory(
         product -> new MFXTableRowCell<>(QuotationDetail::getDiscount));
     productTax.setRowCellFactory(product -> new MFXTableRowCell<>(QuotationDetail::getNetTax));
+    productPrice.setRowCellFactory(product -> new MFXTableRowCell<>(QuotationDetail::getPrice));
+    totalPrice.setRowCellFactory(
+        product -> new MFXTableRowCell<>(QuotationDetail::getTotalPrice));
 
     productName.prefWidthProperty().bind(quotationDetailTable.widthProperty().multiply(.25));
     productQuantity.prefWidthProperty().bind(quotationDetailTable.widthProperty().multiply(.25));
     productDiscount.prefWidthProperty().bind(quotationDetailTable.widthProperty().multiply(.25));
     productTax.prefWidthProperty().bind(quotationDetailTable.widthProperty().multiply(.25));
+    productPrice.prefWidthProperty().bind(quotationDetailTable.widthProperty().multiply(.25));
+    totalPrice.prefWidthProperty().bind(quotationDetailTable.widthProperty().multiply(.25));
 
     quotationDetailTable
         .getTableColumns()
-        .addAll(productName, productQuantity, productDiscount, productTax);
+        .addAll(
+            productName, productQuantity, productDiscount, productTax, productPrice, totalPrice);
 
     quotationDetailTable
         .getFilters()
@@ -194,7 +203,9 @@ public class QuotationMasterFormController implements Initializable {
             new StringFilter<>("Product", QuotationDetail::getProductName),
             new LongFilter<>("Quantity", QuotationDetail::getQuantity),
             new DoubleFilter<>("Discount", QuotationDetail::getDiscount),
-            new DoubleFilter<>("Tax", QuotationDetail::getNetTax));
+            new DoubleFilter<>("Tax", QuotationDetail::getNetTax),
+            new DoubleFilter<>("Price", QuotationDetail::getPrice),
+            new DoubleFilter<>("Total Price", QuotationDetail::getTotalPrice));
 
     getQuotationDetailTable();
 

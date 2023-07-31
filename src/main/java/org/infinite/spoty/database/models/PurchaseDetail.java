@@ -16,13 +16,12 @@ package org.infinite.spoty.database.models;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
 
-// TODO: Remove total and Quantity and add them to PurchaseMaster.
-// TODO: In place of total create purchasePrice.
+// TODO: Remove totalPrice and Quantity and add them to PurchaseMaster.
+// TODO: In place of totalPrice create purchasePrice.
 @DatabaseTable(tableName = "purchase_details")
 public class PurchaseDetail implements Serializable {
   @DatabaseField(generatedId = true)
@@ -57,7 +56,8 @@ public class PurchaseDetail implements Serializable {
   @DatabaseField(columnName = "serial_number")
   private String serialNumber;
 
-  @DatabaseField private double total;
+  @DatabaseField private double totalPrice;
+  @DatabaseField private double price;
   @DatabaseField private long quantity;
 
   @DatabaseField(columnName = "created_at")
@@ -96,6 +96,14 @@ public class PurchaseDetail implements Serializable {
 
   public void setCost(double cost) {
     this.cost = cost;
+  }
+
+  public double getPrice() {
+    return price;
+  }
+
+  public void setPrice(double price) {
+    this.price = price;
   }
 
   public PurchaseMaster getPurchase() {
@@ -164,12 +172,12 @@ public class PurchaseDetail implements Serializable {
     this.serialNumber = serialNumber;
   }
 
-  public double getTotal() {
-    return total;
+  public double getTotalPrice() {
+    return totalPrice;
   }
 
-  public void setTotal(double total) {
-    this.total = total;
+  public void setTotalPrice(double totalPrice) {
+    this.totalPrice = totalPrice;
   }
 
   public long getQuantity() {

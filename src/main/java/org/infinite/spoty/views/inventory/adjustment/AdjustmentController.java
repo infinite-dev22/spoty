@@ -16,6 +16,7 @@ package org.infinite.spoty.views.inventory.adjustment;
 
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
+import io.github.palexdev.materialfx.filter.DoubleFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import java.net.URL;
 import java.sql.SQLException;
@@ -60,21 +61,38 @@ public class AdjustmentController implements Initializable {
     MFXTableColumn<AdjustmentMaster> adjustmentBranch =
         new MFXTableColumn<>(
             "Branch", false, Comparator.comparing(AdjustmentMaster::getBranchName));
+    MFXTableColumn<AdjustmentMaster> adjustmentStatus =
+        new MFXTableColumn<>("Status", false, Comparator.comparing(AdjustmentMaster::getStatus));
+    MFXTableColumn<AdjustmentMaster> adjustmentTotalAmount =
+        new MFXTableColumn<>(
+            "Total Amount", false, Comparator.comparing(AdjustmentMaster::getTotalAmount));
 
     adjustmentDate.setRowCellFactory(
         adjustment -> new MFXTableRowCell<>(AdjustmentMaster::getLocaleDate));
     adjustmentBranch.setRowCellFactory(
         adjustment -> new MFXTableRowCell<>(AdjustmentMaster::getBranchName));
+    adjustmentStatus.setRowCellFactory(
+        adjustment -> new MFXTableRowCell<>(AdjustmentMaster::getBranchName));
+    adjustmentTotalAmount.setRowCellFactory(
+        adjustment -> new MFXTableRowCell<>(AdjustmentMaster::getBranchName));
 
     adjustmentDate.prefWidthProperty().bind(adjustmentMasterTable.widthProperty().multiply(.5));
     adjustmentBranch.prefWidthProperty().bind(adjustmentMasterTable.widthProperty().multiply(.5));
+    adjustmentStatus.prefWidthProperty().bind(adjustmentMasterTable.widthProperty().multiply(.5));
+    adjustmentTotalAmount
+        .prefWidthProperty()
+        .bind(adjustmentMasterTable.widthProperty().multiply(.5));
 
-    adjustmentMasterTable.getTableColumns().addAll(adjustmentDate, adjustmentBranch);
+    adjustmentMasterTable
+        .getTableColumns()
+        .addAll(adjustmentDate, adjustmentBranch, adjustmentStatus, adjustmentTotalAmount);
     adjustmentMasterTable
         .getFilters()
         .addAll(
             new StringFilter<>("Reference", AdjustmentMaster::getRef),
-            new StringFilter<>("Branch", AdjustmentMaster::getBranchName));
+            new StringFilter<>("Branch", AdjustmentMaster::getBranchName),
+            new StringFilter<>("Status", AdjustmentMaster::getStatus),
+            new DoubleFilter<>("Total Amount", AdjustmentMaster::getTotalAmount));
     getAdjustmentMasterTable();
 
     if (AdjustmentMasterViewModel.getAdjustmentMasters().isEmpty()) {
@@ -122,27 +140,30 @@ public class AdjustmentController implements Initializable {
     // Delete
     delete.setOnAction(
         e -> {
-            GlobalActions.spotyThreadPool().execute(() -> {
-              try {
-                  AdjustmentMasterViewModel.deleteItem(obj.getData().getId());
-              } catch (SQLException ex) {
-                  throw new RuntimeException(ex);
-              }
-          });
+          GlobalActions.spotyThreadPool()
+              .execute(
+                  () -> {
+                    try {
+                      AdjustmentMasterViewModel.deleteItem(obj.getData().getId());
+                    } catch (SQLException ex) {
+                      throw new RuntimeException(ex);
+                    }
+                  });
 
           e.consume();
         });
     // Edit
     edit.setOnAction(
         e -> {
-            GlobalActions.spotyThreadPool().execute(
-              () -> {
-                try {
-                  AdjustmentMasterViewModel.getItem(obj.getData().getId());
-                } catch (SQLException ex) {
-                  throw new RuntimeException(ex);
-                }
-              });
+          GlobalActions.spotyThreadPool()
+              .execute(
+                  () -> {
+                    try {
+                      AdjustmentMasterViewModel.getItem(obj.getData().getId());
+                    } catch (SQLException ex) {
+                      throw new RuntimeException(ex);
+                    }
+                  });
 
           adjustmentCreateBtnClicked();
           e.consume();

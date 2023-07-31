@@ -54,8 +54,6 @@ public class QuotationController implements Initializable {
   }
 
   private void setupTable() {
-    MFXTableColumn<QuotationMaster> quotationDate =
-        new MFXTableColumn<>("Date", false, Comparator.comparing(QuotationMaster::getDate));
     MFXTableColumn<QuotationMaster> quotationCustomer =
         new MFXTableColumn<>(
             "Customer", false, Comparator.comparing(QuotationMaster::getCustomerName));
@@ -63,34 +61,37 @@ public class QuotationController implements Initializable {
         new MFXTableColumn<>("Branch", false, Comparator.comparing(QuotationMaster::getBranchName));
     MFXTableColumn<QuotationMaster> quotationStatus =
         new MFXTableColumn<>("Status", false, Comparator.comparing(QuotationMaster::getStatus));
-    MFXTableColumn<QuotationMaster> quotationGrandTotal =
-        new MFXTableColumn<>("Grand Total", false, Comparator.comparing(QuotationMaster::getTotal));
+    MFXTableColumn<QuotationMaster> quotationDate =
+        new MFXTableColumn<>("Date", false, Comparator.comparing(QuotationMaster::getDate));
+    MFXTableColumn<QuotationMaster> quotationTotalAmount =
+        new MFXTableColumn<>(
+            "Total Amount", false, Comparator.comparing(QuotationMaster::getTotal));
 
-    quotationDate.setRowCellFactory(
-        quotation -> new MFXTableRowCell<>(QuotationMaster::getLocaleDate));
     quotationCustomer.setRowCellFactory(
         quotation -> new MFXTableRowCell<>(QuotationMaster::getCustomerName));
     quotationBranch.setRowCellFactory(
         quotation -> new MFXTableRowCell<>(QuotationMaster::getBranchName));
     quotationStatus.setRowCellFactory(
         quotation -> new MFXTableRowCell<>(QuotationMaster::getStatus));
-    quotationGrandTotal.setRowCellFactory(
+    quotationDate.setRowCellFactory(
+        quotation -> new MFXTableRowCell<>(QuotationMaster::getLocaleDate));
+    quotationTotalAmount.setRowCellFactory(
         quotation -> new MFXTableRowCell<>(QuotationMaster::getTotal));
 
-    quotationDate.prefWidthProperty().bind(quotationsTable.widthProperty().multiply(.17));
-    quotationCustomer.prefWidthProperty().bind(quotationsTable.widthProperty().multiply(.17));
-    quotationBranch.prefWidthProperty().bind(quotationsTable.widthProperty().multiply(.17));
-    quotationStatus.prefWidthProperty().bind(quotationsTable.widthProperty().multiply(.17));
-    quotationGrandTotal.prefWidthProperty().bind(quotationsTable.widthProperty().multiply(.17));
+    quotationCustomer.prefWidthProperty().bind(quotationsTable.widthProperty().multiply(.25));
+    quotationBranch.prefWidthProperty().bind(quotationsTable.widthProperty().multiply(.25));
+    quotationStatus.prefWidthProperty().bind(quotationsTable.widthProperty().multiply(.25));
+    quotationDate.prefWidthProperty().bind(quotationsTable.widthProperty().multiply(.25));
+    quotationTotalAmount.prefWidthProperty().bind(quotationsTable.widthProperty().multiply(.25));
 
     quotationsTable
         .getTableColumns()
         .addAll(
-            quotationDate,
             quotationCustomer,
             quotationBranch,
             quotationStatus,
-            quotationGrandTotal);
+            quotationDate,
+            quotationTotalAmount);
     quotationsTable
         .getFilters()
         .addAll(
