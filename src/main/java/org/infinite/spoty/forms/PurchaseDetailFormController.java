@@ -76,7 +76,7 @@ public class PurchaseDetailFormController implements Initializable {
                     productVariantConverter.toString(productDetail), searchStr);
 
     // ComboBox properties.
-    purchaseDetailPdct.setItems(ProductViewModel.getProductsComboBoxList());
+    purchaseDetailPdct.setItems(ProductViewModel.getProducts());
     purchaseDetailPdct.setConverter(productVariantConverter);
     purchaseDetailPdct.setFilterFunction(productVariantFilterFunction);
 

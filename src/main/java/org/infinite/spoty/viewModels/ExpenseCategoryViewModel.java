@@ -227,14 +227,4 @@ public class ExpenseCategoryViewModel {
 
     GlobalActions.spotyThreadPool().execute(task);
   }
-
-  public static ObservableList<ExpenseCategory> getCategoryComboBoxList() {
-    categoryComboBoxList.clear();
-    categoryComboBoxList.addAll(categoryList);
-    return categoryComboBoxList;
-  }
-
-  public static ObservableList<ExpenseCategory> getCategoryList() {
-    return categoryList;
-  }
 }

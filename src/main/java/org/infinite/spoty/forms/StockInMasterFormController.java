@@ -59,6 +59,7 @@ import org.infinite.spoty.viewModels.BranchViewModel;
 import org.infinite.spoty.viewModels.StockInDetailViewModel;
 import org.infinite.spoty.viewModels.StockInMasterViewModel;
 import org.infinite.spoty.views.BaseController;
+import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unchecked")
 public class StockInMasterFormController implements Initializable {
@@ -108,7 +109,7 @@ public class StockInMasterFormController implements Initializable {
             branch -> StringUtils.containsIgnoreCase(branchConverter.toString(branch), searchStr);
 
     // ComboBox properties.
-    stockInMasterBranch.setItems(BranchViewModel.getBranchesComboBoxList());
+    stockInMasterBranch.setItems(BranchViewModel.getBranches());
     stockInMasterBranch.setConverter(branchConverter);
     stockInMasterBranch.setFilterFunction(branchFilterFunction);
 
@@ -192,7 +193,7 @@ public class StockInMasterFormController implements Initializable {
         });
   }
 
-  private MFXContextMenu showContextMenu(MFXTableRow<StockInDetail> obj) {
+  private @NotNull MFXContextMenu showContextMenu(MFXTableRow<StockInDetail> obj) {
     MFXContextMenu contextMenu = new MFXContextMenu(stockInDetailTable);
     MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
     MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
@@ -218,9 +219,7 @@ public class StockInMasterFormController implements Initializable {
               .execute(
                   () -> {
                     try {
-                      StockInDetailViewModel.getItem(
-                          obj.getData().getId(),
-                          StockInDetailViewModel.stockInDetailsList.indexOf(obj.getData()));
+                      StockInDetailViewModel.getItem(obj.getData());
                     } catch (SQLException ex) {
                       throw new RuntimeException(ex);
                     }

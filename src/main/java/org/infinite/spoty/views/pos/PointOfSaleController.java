@@ -119,11 +119,11 @@ public class PointOfSaleController implements Initializable {
             branch -> StringUtils.containsIgnoreCase(branchConverter.toString(branch), searchStr);
 
     // Set items to combo boxes and display custom text.
-    posCustomerComboBox.setItems(CustomerViewModel.getCustomersComboBoxList());
+    posCustomerComboBox.setItems(CustomerViewModel.getCustomers());
     posCustomerComboBox.setConverter(customerConverter);
     posCustomerComboBox.setFilterFunction(customerFilterFunction);
 
-    posBranchComboBox.setItems(BranchViewModel.getBranchesComboBoxList());
+    posBranchComboBox.setItems(BranchViewModel.getBranches());
     posBranchComboBox.setConverter(branchConverter);
     posBranchComboBox.setFilterFunction(branchFilterFunction);
   }
@@ -181,8 +181,7 @@ public class PointOfSaleController implements Initializable {
             if (optionalSaleDetail.isPresent()) {
               SaleDetail saleDetail = optionalSaleDetail.get();
               try {
-                SaleDetailViewModel.getSaleDetail(
-                    SaleDetailViewModel.getSaleDetails().indexOf(saleDetail));
+                SaleDetailViewModel.getSaleDetail(saleDetail);
                 SaleDetailViewModel.setProduct(productCard.getProduct());
                 SaleDetailViewModel.setPrice(productCard.getProduct().getPrice());
                 SaleDetailViewModel.setQuantity(calculateQuantity(saleDetail));

@@ -308,14 +308,4 @@ public class BranchViewModel {
 
     GlobalActions.spotyThreadPool().execute(task);
   }
-
-  public static ObservableList<Branch> getBranchesComboBoxList() {
-    branchesComboBoxList.clear();
-    branchesComboBoxList.addAll(branchesList);
-    return branchesComboBoxList;
-  }
-
-  public static ObservableList<Branch> getBranchesList() {
-    return branchesList;
-  }
 }

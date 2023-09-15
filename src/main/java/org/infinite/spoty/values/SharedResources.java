@@ -15,22 +15,22 @@
 package org.infinite.spoty.values;
 
 import java.util.LinkedList;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.LongProperty;
+import javafx.beans.property.SimpleLongProperty;
 
 public class SharedResources {
   public static final LinkedList<Long> PENDING_DELETES = new LinkedList<>();
-  private static final IntegerProperty TEMP_ID = new SimpleIntegerProperty(-1);
+  private static final LongProperty TEMP_ID = new SimpleLongProperty(-1);
 
-  public static Integer getTempId() {
-    return TEMP_ID.get();
+  public static int getTempId() {
+    return (int) TEMP_ID.get();
   }
 
-  public static void setTempId(int tempId) {
+  public static void setTempId(long tempId) {
     SharedResources.TEMP_ID.set(tempId);
   }
 
-  public static IntegerProperty tempIdProperty() {
+  public static LongProperty tempIdProperty() {
     return TEMP_ID;
   }
 }

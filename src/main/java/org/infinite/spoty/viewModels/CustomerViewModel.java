@@ -333,14 +333,4 @@ public class CustomerViewModel {
 
     GlobalActions.spotyThreadPool().execute(task);
   }
-
-  public static ObservableList<Customer> getCustomersComboBoxList() {
-    customersComboBoxList.clear();
-    customersComboBoxList.addAll(customersList);
-    return customersComboBoxList;
-  }
-
-  public static ObservableList<Customer> getCustomersList() {
-    return customersList;
-  }
 }

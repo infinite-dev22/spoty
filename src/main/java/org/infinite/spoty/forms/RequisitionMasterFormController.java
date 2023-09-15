@@ -139,11 +139,11 @@ public class RequisitionMasterFormController implements Initializable {
             branch -> StringUtils.containsIgnoreCase(branchConverter.toString(branch), searchStr);
 
     // ComboBox properties.
-    requisitionMasterBranch.setItems(BranchViewModel.getBranchesComboBoxList());
+    requisitionMasterBranch.setItems(BranchViewModel.getBranches());
     requisitionMasterBranch.setConverter(branchConverter);
     requisitionMasterBranch.setFilterFunction(branchFilterFunction);
 
-    requisitionMasterSupplier.setItems(SupplierViewModel.getSuppliersComboBoxList());
+    requisitionMasterSupplier.setItems(SupplierViewModel.getSuppliers());
     requisitionMasterSupplier.setConverter(supplierConverter);
     requisitionMasterSupplier.setFilterFunction(supplierFilterFunction);
 

@@ -131,11 +131,11 @@ public class PurchaseMasterFormController implements Initializable {
             branch -> StringUtils.containsIgnoreCase(branchConverter.toString(branch), searchStr);
 
     // Set items to combo boxes and display custom text.
-    purchaseSupplier.setItems(SupplierViewModel.getSuppliersComboBoxList());
+    purchaseSupplier.setItems(SupplierViewModel.getSuppliers());
     purchaseSupplier.setConverter(supplierConverter);
     purchaseSupplier.setFilterFunction(supplierFilterFunction);
 
-    purchaseBranch.setItems(BranchViewModel.getBranchesComboBoxList());
+    purchaseBranch.setItems(BranchViewModel.getBranches());
     purchaseBranch.setConverter(branchConverter);
     purchaseBranch.setFilterFunction(branchFilterFunction);
 

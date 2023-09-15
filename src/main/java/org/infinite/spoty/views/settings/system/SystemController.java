@@ -93,11 +93,11 @@ public class SystemController implements Initializable {
             locale -> StringUtils.containsIgnoreCase(localeConverter.toString(locale), searchStr);
 
     // Combo box properties.
-    defaultCurrency.setItems(CurrencyViewModel.getCurrenciesComboBoxList());
+    defaultCurrency.setItems(CurrencyViewModel.getCurrencies());
     defaultCurrency.setConverter(currencyConverter);
     defaultCurrency.setFilterFunction(currencyFilterFunction);
 
-    defaultBranch.setItems(BranchViewModel.getBranchesComboBoxList());
+    defaultBranch.setItems(BranchViewModel.getBranches());
     defaultBranch.setConverter(branchConverter);
     defaultBranch.setFilterFunction(branchFilterFunction);
 

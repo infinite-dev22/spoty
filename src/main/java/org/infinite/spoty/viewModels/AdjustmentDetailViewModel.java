@@ -18,8 +18,10 @@ import static org.infinite.spoty.values.SharedResources.*;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.support.ConnectionSource;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.LinkedList;
 import javafx.application.Platform;
 import javafx.beans.property.*;
@@ -28,18 +30,22 @@ import javafx.collections.ObservableList;
 import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.AdjustmentDetail;
 import org.infinite.spoty.database.models.AdjustmentMaster;
+import org.infinite.spoty.database.models.AdjustmentTransaction;
 import org.infinite.spoty.database.models.Product;
+import org.jetbrains.annotations.NotNull;
 
 public class AdjustmentDetailViewModel {
   public static final ObservableList<AdjustmentDetail> adjustmentDetailsList =
       FXCollections.observableArrayList();
   private static final ListProperty<AdjustmentDetail> adjustmentDetails =
       new SimpleListProperty<>(adjustmentDetailsList);
-  private static final LongProperty id = new SimpleLongProperty(0);
+  private static final LongProperty id = new SimpleLongProperty();
   private static final ObjectProperty<Product> product = new SimpleObjectProperty<>();
   private static final ObjectProperty<AdjustmentMaster> adjustment = new SimpleObjectProperty<>();
   private static final StringProperty quantity = new SimpleStringProperty();
   private static final StringProperty adjustmentType = new SimpleStringProperty();
+  private static final SQLiteConnection connection = SQLiteConnection.getInstance();
+  private static final ConnectionSource connectionSource = connection.getConnection();
 
   public static long getId() {
     return id.get();
@@ -134,46 +140,85 @@ public class AdjustmentDetailViewModel {
   }
 
   public static void saveAdjustmentDetails() throws SQLException {
-    SQLiteConnection connection = SQLiteConnection.getInstance();
-    ConnectionSource connectionSource = connection.getConnection();
-
     Dao<AdjustmentDetail, Long> adjustmentDetailDao =
         DaoManager.createDao(connectionSource, AdjustmentDetail.class);
 
     adjustmentDetailDao.create(adjustmentDetailsList);
 
-    updateProductQuantity();
+    setProductQuantity();
 
     Platform.runLater(adjustmentDetailsList::clear);
   }
 
-  private static void updateProductQuantity() {
+  private static void setProductQuantity() {
     adjustmentDetailsList.forEach(
-        product -> {
-          long productDetailQuantity;
-          if (product.getAdjustmentType().equalsIgnoreCase("INCREMENT"))
-            productDetailQuantity = product.getProduct().getQuantity() + product.getQuantity();
-          else productDetailQuantity = product.getProduct().getQuantity() - product.getQuantity();
-
-          ProductViewModel.setQuantity(productDetailQuantity);
+        adjustmentDetail -> {
+          long productQuantity = 0;
 
           try {
-            ProductViewModel.updateProduct(product.getProduct().getId());
+
+            if (adjustmentDetail.getAdjustmentType().equalsIgnoreCase("INCREMENT")) {
+              productQuantity =
+                  adjustmentDetail.getProduct().getQuantity() + adjustmentDetail.getQuantity();
+            } else if (adjustmentDetail.getAdjustmentType().equalsIgnoreCase("DECREMENT")) {
+              productQuantity =
+                  adjustmentDetail.getProduct().getQuantity() - adjustmentDetail.getQuantity();
+            }
+
+            createAdjustmentTransaction(adjustmentDetail);
+
+            ProductViewModel.setQuantity(productQuantity);
+
+            ProductViewModel.updateProductQuantity(adjustmentDetail.getProduct().getId());
           } catch (SQLException e) {
             throw new RuntimeException(e);
           }
         });
   }
 
-  public static void updateAdjustmentDetail(int index) {
-    AdjustmentDetail adjustmentDetail = adjustmentDetailsList.get(index);
+  private static void updateProductQuantity() {
+    adjustmentDetailsList.forEach(
+        adjustmentDetail -> {
+          long productQuantity = 0;
+          long currentProductQuantity = adjustmentDetail.getProduct().getQuantity();
+
+          try {
+            AdjustmentTransaction adjustmentTransaction =
+                getAdjustmentTransaction(adjustmentDetail.getId());
+
+            long adjustQuantity = adjustmentTransaction.getAdjustQuantity();
+
+            if (adjustmentDetail.getAdjustmentType().equalsIgnoreCase("INCREMENT")) {
+              productQuantity =
+                  (currentProductQuantity - adjustQuantity) + adjustmentDetail.getQuantity();
+
+              adjustmentTransaction.setAdjustmentType(adjustmentDetail.getAdjustmentType());
+            } else if (adjustmentDetail.getAdjustmentType().equalsIgnoreCase("DECREMENT")) {
+              productQuantity =
+                  (currentProductQuantity + adjustQuantity) - adjustmentDetail.getQuantity();
+
+              adjustmentTransaction.setAdjustmentType(adjustmentDetail.getAdjustmentType());
+            }
+
+            ProductViewModel.setQuantity(productQuantity);
+            ProductViewModel.updateProductQuantity(adjustmentDetail.getProduct().getId());
+
+            updateAdjustmentTransaction(adjustmentDetail);
+          } catch (SQLException e) {
+            throw new RuntimeException(e);
+          }
+        });
+  }
+
+  public static void updateAdjustmentDetail(long index) {
+    AdjustmentDetail adjustmentDetail = adjustmentDetailsList.get((int) index);
     adjustmentDetail.setProduct(getProduct());
     adjustmentDetail.setQuantity(getQuantity());
     adjustmentDetail.setAdjustmentType(getAdjustmentType());
 
     Platform.runLater(
         () -> {
-          adjustmentDetailsList.remove((int) getTempId());
+          adjustmentDetailsList.remove(getTempId());
           adjustmentDetailsList.add(getTempId(), adjustmentDetail);
 
           resetProperties();
@@ -181,9 +226,6 @@ public class AdjustmentDetailViewModel {
   }
 
   public static void getAllAdjustmentDetails() throws SQLException {
-    SQLiteConnection connection = SQLiteConnection.getInstance();
-    ConnectionSource connectionSource = connection.getConnection();
-
     Dao<AdjustmentDetail, Long> adjustmentDetailDao =
         DaoManager.createDao(connectionSource, AdjustmentDetail.class);
 
@@ -199,45 +241,17 @@ public class AdjustmentDetailViewModel {
         });
   }
 
-  public static void getItem(long index, int tempIndex) throws SQLException {
-    SQLiteConnection connection = SQLiteConnection.getInstance();
-    ConnectionSource connectionSource = connection.getConnection();
-
-    Dao<AdjustmentDetail, Long> adjustmentDetailDao =
-        DaoManager.createDao(connectionSource, AdjustmentDetail.class);
-
-    AdjustmentDetail adjustmentDetail = adjustmentDetailDao.queryForId(index);
-
+  public static void getAdjustmentDetail(AdjustmentDetail adjustmentDetail) throws SQLException {
     Platform.runLater(
         () -> {
-          setTempId(tempIndex);
+          setTempId(getAdjustmentDetails().indexOf(adjustmentDetail));
           setProduct(adjustmentDetail.getProduct());
           setQuantity(String.valueOf(adjustmentDetail.getQuantity()));
           setAdjustmentType(adjustmentDetail.getAdjustmentType());
         });
   }
 
-  public static void updateItem(long index) throws SQLException {
-    SQLiteConnection connection = SQLiteConnection.getInstance();
-    ConnectionSource connectionSource = connection.getConnection();
-
-    Dao<AdjustmentDetail, Long> adjustmentDetailDao =
-        DaoManager.createDao(connectionSource, AdjustmentDetail.class);
-
-    AdjustmentDetail adjustmentDetail = adjustmentDetailDao.queryForId(index);
-    adjustmentDetail.setProduct(getProduct());
-    adjustmentDetail.setQuantity(getQuantity());
-    adjustmentDetail.setAdjustmentType(getAdjustmentType());
-
-    adjustmentDetailDao.update(adjustmentDetail);
-
-    getAllAdjustmentDetails();
-  }
-
   public static void updateAdjustmentDetails() throws SQLException {
-    SQLiteConnection connection = SQLiteConnection.getInstance();
-    ConnectionSource connectionSource = connection.getConnection();
-
     Dao<AdjustmentDetail, Long> adjustmentDetailDao =
         DaoManager.createDao(connectionSource, AdjustmentDetail.class);
 
@@ -257,17 +271,13 @@ public class AdjustmentDetailViewModel {
 
   public static void removeAdjustmentDetail(long index, int tempIndex) {
     Platform.runLater(() -> adjustmentDetailsList.remove(tempIndex));
-
     PENDING_DELETES.add(index);
   }
 
-  public static void deleteAdjustmentDetails(LinkedList<Long> indexes) {
+  public static void deleteAdjustmentDetails(@NotNull LinkedList<Long> indexes) {
     indexes.forEach(
         index -> {
           try {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
             Dao<AdjustmentDetail, Long> adjustmentDetailDao =
                 DaoManager.createDao(connectionSource, AdjustmentDetail.class);
 
@@ -280,5 +290,53 @@ public class AdjustmentDetailViewModel {
 
   public static ObservableList<AdjustmentDetail> getAdjustmentDetailsList() {
     return adjustmentDetailsList;
+  }
+
+  private static AdjustmentTransaction getAdjustmentTransaction(long adjustmentIndex)
+      throws SQLException {
+    Dao<AdjustmentTransaction, Long> adjustmentTransactionDao =
+        DaoManager.createDao(connectionSource, AdjustmentTransaction.class);
+
+    PreparedQuery<AdjustmentTransaction> preparedQuery =
+        adjustmentTransactionDao
+            .queryBuilder()
+            .where()
+            .eq("adjustment_detail_id", adjustmentIndex)
+            .prepare();
+
+    return adjustmentTransactionDao.queryForFirst(preparedQuery);
+  }
+
+  private static void createAdjustmentTransaction(@NotNull AdjustmentDetail adjustmentDetail)
+      throws SQLException {
+    Dao<AdjustmentTransaction, Long> adjustmentTransactionDao =
+        DaoManager.createDao(connectionSource, AdjustmentTransaction.class);
+
+    AdjustmentTransaction adjustmentTransaction = new AdjustmentTransaction();
+    adjustmentTransaction.setBranch(adjustmentDetail.getAdjustment().getBranch());
+    adjustmentTransaction.setAdjustmentDetail(adjustmentDetail);
+    adjustmentTransaction.setProduct(adjustmentDetail.getProduct());
+    adjustmentTransaction.setAdjustQuantity(adjustmentDetail.getQuantity());
+    adjustmentTransaction.setAdjustmentType(adjustmentDetail.getAdjustmentType());
+    adjustmentTransaction.setDate(new Date());
+
+    adjustmentTransactionDao.create(adjustmentTransaction);
+  }
+
+  private static void updateAdjustmentTransaction(@NotNull AdjustmentDetail adjustmentDetail)
+      throws SQLException {
+    Dao<AdjustmentTransaction, Long> adjustmentTransactionDao =
+        DaoManager.createDao(connectionSource, AdjustmentTransaction.class);
+
+    AdjustmentTransaction adjustmentTransaction =
+        getAdjustmentTransaction(adjustmentDetail.getId());
+    adjustmentTransaction.setBranch(adjustmentDetail.getAdjustment().getBranch());
+    adjustmentTransaction.setAdjustmentDetail(adjustmentDetail);
+    adjustmentTransaction.setProduct(adjustmentDetail.getProduct());
+    adjustmentTransaction.setAdjustQuantity(adjustmentDetail.getQuantity());
+    adjustmentTransaction.setAdjustmentType(adjustmentDetail.getAdjustmentType());
+    adjustmentTransaction.setDate(new Date());
+
+    adjustmentTransactionDao.update(adjustmentTransaction);
   }
 }

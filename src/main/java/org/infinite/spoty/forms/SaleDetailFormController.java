@@ -80,7 +80,7 @@ public class SaleDetailFormController implements Initializable {
                     productVariantConverter.toString(productDetail), searchStr);
 
     // Set combo box options.
-    saleDetailPdct.setItems(ProductViewModel.getProductsComboBoxList());
+    saleDetailPdct.setItems(ProductViewModel.getProducts());
     saleDetailPdct.setConverter(productVariantConverter);
     saleDetailPdct.setFilterFunction(productVariantFilterFunction);
 

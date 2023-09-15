@@ -87,7 +87,7 @@ public class AdjustmentDetailFormController implements Initializable {
                     productVariantConverter.toString(productDetail), searchStr);
 
     // AdjustmentType combo box properties.
-    adjustmentProductVariant.setItems(ProductViewModel.getProductsComboBoxList());
+    adjustmentProductVariant.setItems(ProductViewModel.getProducts());
     adjustmentProductVariant.setConverter(productVariantConverter);
     adjustmentProductVariant.setFilterFunction(productVariantFilterFunction);
 

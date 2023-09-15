@@ -199,7 +199,7 @@ public class StockInMasterViewModel {
           setId(stockInMaster.getId());
           setDate(stockInMaster.getLocaleDate());
           setBranch(stockInMaster.getBranch());
-          setTotalCost(String.valueOf(stockInMaster.getTotalCost()));
+          setTotalCost(String.valueOf(stockInMaster.getTotalAmount()));
           setStatus(stockInMaster.getStatus());
           setNote(stockInMaster.getNotes());
 

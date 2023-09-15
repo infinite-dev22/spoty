@@ -79,7 +79,7 @@ public class StockInDetailFormController implements Initializable {
                     productVariantConverter.toString(productDetail), searchStr);
 
     // Combo box properties.
-    stockInDetailPdct.setItems(ProductViewModel.getProductsComboBoxList());
+    stockInDetailPdct.setItems(ProductViewModel.getProducts());
     stockInDetailPdct.setConverter(productVariantConverter);
     stockInDetailPdct.setFilterFunction(productVariantFilterFunction);
 

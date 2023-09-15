@@ -223,14 +223,4 @@ public class BrandViewModel {
 
     GlobalActions.spotyThreadPool().execute(task);
   }
-
-  public static ObservableList<Brand> getBrandsComboBoxList() {
-    brandsComboBoxList.clear();
-    brandsComboBoxList.addAll(brandsList);
-    return brandsComboBoxList;
-  }
-
-  public static ObservableList<Brand> getBrandsList() {
-    return brandsList;
-  }
 }

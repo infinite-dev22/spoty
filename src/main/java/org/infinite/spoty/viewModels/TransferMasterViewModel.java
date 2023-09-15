@@ -173,7 +173,7 @@ public class TransferMasterViewModel {
       TransferDetailViewModel.transferDetailsList.forEach(
           transferDetail -> transferDetail.setTransfer(transferMaster));
 
-      transferMaster.setTransferDetails(TransferDetailViewModel.getTransferDetailsList());
+      transferMaster.setTransferDetails(TransferDetailViewModel.getTransferDetails());
     }
 
     transferMasterDao.create(transferMaster);
@@ -245,7 +245,7 @@ public class TransferMasterViewModel {
     transferMaster.setNotes(getNote());
 
     TransferDetailViewModel.deleteTransferDetails(PENDING_DELETES);
-    transferMaster.setTransferDetails(TransferDetailViewModel.getTransferDetailsList());
+    transferMaster.setTransferDetails(TransferDetailViewModel.getTransferDetails());
 
     transferMasterDao.update(transferMaster);
     TransferDetailViewModel.updateTransferDetails();

@@ -159,6 +159,7 @@ public class AdjustmentMasterViewModel {
     }
 
     adjustmentMasterDao.create(adjustmentMaster);
+
     AdjustmentDetailViewModel.saveAdjustmentDetails();
 
     Platform.runLater(AdjustmentMasterViewModel::resetProperties);
@@ -227,6 +228,7 @@ public class AdjustmentMasterViewModel {
     adjustmentMaster.setAdjustmentDetails(AdjustmentDetailViewModel.getAdjustmentDetailsList());
 
     adjustmentMasterDao.update(adjustmentMaster);
+    
     AdjustmentDetailViewModel.updateAdjustmentDetails();
 
     Platform.runLater(AdjustmentMasterViewModel::resetProperties);

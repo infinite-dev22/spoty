@@ -248,14 +248,4 @@ public class CurrencyViewModel {
 
     GlobalActions.spotyThreadPool().execute(task);
   }
-
-  public static ObservableList<Currency> getCurrenciesComboBoxList() {
-    currenciesComboBoxList.clear();
-    currenciesComboBoxList.addAll(currenciesList);
-    return currenciesComboBoxList;
-  }
-
-  public static ObservableList<Currency> getCurrenciesList() {
-    return currenciesList;
-  }
 }
