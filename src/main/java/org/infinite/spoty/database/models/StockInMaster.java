@@ -43,8 +43,8 @@ public class StockInMaster implements Serializable {
 
   @DatabaseField private String shipping;
 
-  @DatabaseField(canBeNull = false, columnName = "total_cost")
-  private double totalCost;
+  @DatabaseField(canBeNull = false, columnName = "total_amount")
+  private double totalAmount;
 
   @DatabaseField(canBeNull = false)
   private String status;
@@ -137,11 +137,11 @@ public class StockInMaster implements Serializable {
   }
 
   public double getTotal() {
-    return totalCost;
+    return totalAmount;
   }
 
   public void setTotal(double totalCost) {
-    this.totalCost = totalCost;
+    this.totalAmount = totalCost;
   }
 
   public String getStatus() {
@@ -200,12 +200,12 @@ public class StockInMaster implements Serializable {
     this.recordDate = recordDate;
   }
 
-  public double getTotalCost() {
-    return totalCost;
+  public double getTotalAmount() {
+    return totalAmount;
   }
 
-  public void setTotalCost(double totalCost) {
-    this.totalCost = totalCost;
+  public void setTotalAmount(double totalAmount) {
+    this.totalAmount = totalAmount;
   }
 
   public User getRecordedBy() {

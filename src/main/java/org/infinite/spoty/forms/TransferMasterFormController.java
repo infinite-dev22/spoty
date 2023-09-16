@@ -122,11 +122,11 @@ public class TransferMasterFormController implements Initializable {
             branch -> StringUtils.containsIgnoreCase(branchConverter.toString(branch), searchStr);
 
     // ComboBox properties.
-    transferMasterFromBranch.setItems(BranchViewModel.getBranchesComboBoxList());
+    transferMasterFromBranch.setItems(BranchViewModel.getBranches());
     transferMasterFromBranch.setConverter(branchConverter);
     transferMasterFromBranch.setFilterFunction(branchFilterFunction);
 
-    transferMasterToBranch.setItems(BranchViewModel.getBranchesComboBoxList());
+    transferMasterToBranch.setItems(BranchViewModel.getBranches());
     transferMasterToBranch.setConverter(branchConverter);
     transferMasterToBranch.setFilterFunction(branchFilterFunction);
 

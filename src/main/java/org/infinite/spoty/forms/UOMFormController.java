@@ -102,7 +102,7 @@ public class UOMFormController implements Initializable {
                 StringUtils.containsIgnoreCase(uomConverter.toString(unitOfMeasure), searchStr);
 
     // ComboBox properties.
-    uomFormBaseUnit.setItems(UOMViewModel.getUomComboBoxList());
+    uomFormBaseUnit.setItems(UOMViewModel.getUnitsOfMeasure());
     uomFormBaseUnit.setConverter(uomConverter);
     uomFormBaseUnit.setFilterFunction(uomFilterFunction);
 

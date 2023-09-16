@@ -39,124 +39,74 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
             INSERT OR IGNORE INTO permissions (
-                                        id,
-                                        name,
-                                        label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
-                                    )
-                                    VALUES (
-                                        1,
-                                        'create_adjustments',
-                                        'Create Adjustments',
-                                        'User can create adjustments',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
-                                    );
+                name,
+                label,
+                description
+            )
+            VALUES (
+                'create_adjustments',
+                'Create Adjustments',
+                'User can create adjustments'
+            );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+            INSERT OR IGNORE INTO permissions (
+                name,
+                label,
+                description
+            )
+            VALUES (
+                'view_adjustments',
+                'View Adjustments',
+                'User can view adjustments'
+            );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+            INSERT OR IGNORE INTO permissions (
+                name,
+                label,
+                description
+            )
+            VALUES (
+                'edit_adjustments',
+                'Edit Adjustments',
+                'User can edit adjustments'
+            );
+
+            """,
+        Permission.class);
+    instance.runQuery(
+        """
+            INSERT OR IGNORE INTO permissions (
+                name,
+                label,
+                description
+            )
+            VALUES (
+                'delete_adjustments',
+                'Delete Adjustments',
+                'User can delete adjustments'
+            );
 
             """,
         Permission.class);
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        2,
-                                        'view_adjustments',
-                                        'View Adjustments',
-                                        'User can view adjustments',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
-                                    );
-
-            """,
-        Permission.class);
-    instance.runQuery(
-        """
-                                        INSERT OR IGNORE INTO permissions (
-                                        id,
-                                        name,
-                                        label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
-                                    )
-                                    VALUES (
-                                        3,
-                                        'edit_adjustments',
-                                        'Edit Adjustments',
-                                        'User can edit adjustments',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
-                                    );
-
-            """,
-        Permission.class);
-    instance.runQuery(
-        """
-                                        INSERT OR IGNORE INTO permissions (
-                                        id,
-                                        name,
-                                        label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
-                                    )
-                                    VALUES (
-                                        4,
-                                        'delete_adjustments',
-                                        'Delete Adjustments',
-                                        'User can delete adjustments',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
-                                    );
-
-            """,
-        Permission.class);
-    instance.runQuery(
-        """
-                                        INSERT OR IGNORE INTO permissions (
-                                        id,
-                                        name,
-                                        label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
-                                    )
-                                    VALUES (
-                                        5,
                                         'create_purchases',
                                         'Create Purchases',
-                                        'User can create purchases',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can create purchases'
                                     );
 
             """,
@@ -164,24 +114,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        6,
                                         'view_purchases',
                                         'View Purchases',
-                                        'User can view purchases',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can view purchases'
                                     );
 
             """,
@@ -189,24 +129,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        7,
                                         'edit_purchases',
                                         'Edit Purchases',
-                                        'User can edit purchases',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can edit purchases'
                                     );
 
             """,
@@ -214,24 +144,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        8,
                                         'delete_purchases',
                                         'Delete Purchases',
-                                        'User can delete purchases',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can delete purchases'
                                     );
 
             """,
@@ -239,24 +159,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        9,
                                         'create_currencies',
                                         'Create Currencies',
-                                        'User can create currencies',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can create currencies'
                                     );
 
             """,
@@ -264,24 +174,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        10,
                                         'view_currencies',
                                         'View Currencies',
-                                        'User can view currencies',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can view currencies'
                                     );
 
             """,
@@ -289,24 +189,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        11,
                                         'edit_currencies',
                                         'Edit Currencies',
-                                        'User can edit currencies',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can edit currencies'
                                     );
 
             """,
@@ -314,24 +204,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        12,
                                         'delete_currencies',
                                         'Delete Currencies',
-                                        'User can delete currencies',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can delete currencies'
                                     );
 
             """,
@@ -339,24 +219,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        13,
                                         'access_payments_sales_reports',
                                         'Access Payments Sales Reports',
-                                        'User can access payments sales reports',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can access payments sales reports'
                                     );
 
             """,
@@ -364,24 +234,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        14,
                                         'access_payments_purchases_reports',
                                         'Access Payments Purchases Reports',
-                                        'User can access payments purchases reports',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can access payments purchases reports'
                                     );
 
             """,
@@ -389,24 +249,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        15,
                                         'access_sales_returns_payments_reports',
                                         'Access Sales Returns Payments Reports',
-                                        'User can access sales returns payments reports',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can access sales returns payments reports'
                                     );
 
             """,
@@ -414,24 +264,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        16,
                                         'access_purchases_returns_payments_reports',
                                         'Access Purchases Returns Payments Reports',
-                                        'User can access purchases returns payments reports',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can access purchases returns payments reports'
                                     );
 
             """,
@@ -439,24 +279,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        17,
                                         'access_sales_reports',
                                         'Access Sales Reports',
-                                        'User can access sales reports',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can access sales reports'
                                     );
 
             """,
@@ -464,24 +294,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        18,
                                         'access_purchases_reports',
                                         'Access Purchases Reports',
-                                        'User can access purchases reports',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can access purchases reports'
                                     );
 
             """,
@@ -489,24 +309,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        19,
                                         'access_customers_reports',
                                         'Access Customers Reports',
-                                        'User can access customers reports',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can access customers reports'
                                     );
 
             """,
@@ -514,24 +324,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        20,
                                         'access_suppliers_reports',
                                         'Access Suppliers Reports',
-                                        'User can access suppliers reports',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can access suppliers reports'
                                     );
 
             """,
@@ -539,24 +339,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        21,
                                         'access_profits_and_losses_reports',
                                         'Access Profits And Losses Reports',
-                                        'User can access profits and losses reports',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can access profits and losses reports'
                                     );
 
             """,
@@ -564,24 +354,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        22,
                                         'access_product_quantity_reports',
                                         'Access Product Quantity Reports',
-                                        'User can access product quantity reports',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can access product quantity reports'
                                     );
 
             """,
@@ -589,24 +369,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        23,
                                         'access_branch_stock_charts_reports',
                                         'Access Branch Stock Charts Reports',
-                                        'User can access branch stock charts reports',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can access branch stock charts reports'
                                     );
 
             """,
@@ -614,24 +384,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        24,
                                         'access_top_selling_products_reports',
                                         'Access Top Selling Products Reports',
-                                        'User can access top selling products reports',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can access top selling products reports'
                                     );
 
             """,
@@ -639,24 +399,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        25,
                                         'access_customer_rankings_reports',
                                         'Access Customer Rankings Reports',
-                                        'User can access customer rankings reports',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can access customer rankings reports'
                                     );
 
             """,
@@ -664,24 +414,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        26,
                                         'access_users_reports',
                                         'Access Users Reports',
-                                        'User can access users reports',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can access users reports'
                                     );
 
             """,
@@ -689,24 +429,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        27,
                                         'access_stocks_reports',
                                         'Access Stocks Reports',
-                                        'User can access stocks reports',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can access stocks reports'
                                     );
 
             """,
@@ -714,24 +444,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        28,
                                         'access_products_reports',
                                         'Access Products Reports',
-                                        'User can access products reports',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can access products reports'
                                     );
 
             """,
@@ -739,24 +459,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        29,
                                         'access_product_sales_reports',
                                         'Access Product Sales Reports',
-                                        'User can access product sales reports',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can access product sales reports'
                                     );
 
             """,
@@ -764,24 +474,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        30,
                                         'access_product_purchases_reports',
                                         'Access Product Purchases Reports',
-                                        'User can access product purchases reports',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can access product purchases reports'
                                     );
 
             """,
@@ -789,24 +489,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        31,
                                         'create_units_of_measure',
                                         'Create Units Of Measure',
-                                        'User can create units of measure',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can create units of measure'
                                     );
 
             """,
@@ -814,24 +504,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        32,
                                         'view_units_of_measure',
                                         'View Units Of Measure',
-                                        'User can view units of measure',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can view units of measure'
                                     );
 
             """,
@@ -839,24 +519,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        33,
                                         'edit_units_of_measure',
                                         'Edit Units Of Measure',
-                                        'User can edit units of measure',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can edit units of measure'
                                     );
 
             """,
@@ -864,24 +534,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        34,
                                         'delete_units_of_measure',
                                         'Delete Units Of Measure',
-                                        'User can delete units of measure',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can delete units of measure'
                                     );
 
             """,
@@ -889,24 +549,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        35,
                                         'access_units_of_measure',
                                         'Access Units Of Measure',
-                                        'User can access units of measure',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can access units of measure'
                                     );
 
             """,
@@ -914,24 +564,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        36,
                                         'create_users',
                                         'Create Users',
-                                        'User can create users',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can create users'
                                     );
 
             """,
@@ -939,24 +579,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        37,
                                         'view_users',
                                         'View Users',
-                                        'User can view users',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can view users'
                                     );
 
             """,
@@ -964,24 +594,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        38,
                                         'edit_users',
                                         'Edit Users',
-                                        'User can edit users',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can edit users'
                                     );
 
             """,
@@ -989,24 +609,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        39,
                                         'delete_users',
                                         'Delete Users',
-                                        'User can delete users',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can delete users'
                                     );
 
             """,
@@ -1014,24 +624,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        40,
                                         'create_expenses',
                                         'Create Expenses',
-                                        'User can create expenses',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can create expenses'
                                     );
 
             """,
@@ -1039,24 +639,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        41,
                                         'view_expenses',
                                         'View Expenses',
-                                        'User can view expenses',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can view expenses'
                                     );
 
             """,
@@ -1064,24 +654,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        42,
                                         'edit_expenses',
                                         'Edit Expenses',
-                                        'User can edit expenses',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can edit expenses'
                                     );
 
             """,
@@ -1089,24 +669,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        43,
                                         'delete_expenses',
                                         'Delete Expenses',
-                                        'User can delete expenses',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can delete expenses'
                                     );
 
             """,
@@ -1114,24 +684,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        44,
                                         'create_products',
                                         'Create Products',
-                                        'User can create products',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can create products'
                                     );
 
             """,
@@ -1139,24 +699,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        45,
                                         'view_products',
                                         'View Products',
-                                        'User can view products',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can view products'
                                     );
 
             """,
@@ -1164,24 +714,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        46,
                                         'edit_products',
                                         'Edit Products',
-                                        'User can edit products',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can edit products'
                                     );
 
             """,
@@ -1189,24 +729,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        47,
                                         'delete_products',
                                         'Delete Products',
-                                        'User can delete products',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can delete products'
                                     );
 
             """,
@@ -1214,24 +744,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        48,
                                         'import_products',
                                         'Import Products',
-                                        'User can import products',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can import products'
                                     );
 
             """,
@@ -1239,24 +759,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        49,
                                         'create_product_categories',
                                         'Create Product Categories',
-                                        'User can create product categories',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can create product categories'
                                     );
 
             """,
@@ -1264,24 +774,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        50,
                                         'view_product_categories',
                                         'View Product Categories',
-                                        'User can view product categories',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can view product categories'
                                     );
 
             """,
@@ -1289,24 +789,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        51,
                                         'edit_product_categories',
                                         'Edit Product Categories',
-                                        'User can edit product categories',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can edit product categories'
                                     );
 
             """,
@@ -1314,24 +804,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        52,
                                         'delete_product_categories',
                                         'Delete Product Categories',
-                                        'User can delete product categories',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can delete product categories'
                                     );
 
             """,
@@ -1339,24 +819,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        53,
                                         'access_product_categories',
                                         'Access Product Categories',
-                                        'User can access product categories',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can access product categories'
                                     );
 
             """,
@@ -1364,24 +834,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        54,
                                         'create_payment_returns',
                                         'Create Payment returns',
-                                        'User can create payment returns',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can create payment returns'
                                     );
 
             """,
@@ -1389,24 +849,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        55,
                                         'view_payment_returns',
                                         'View Payment returns',
-                                        'User can view payment returns',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can view payment returns'
                                     );
 
             """,
@@ -1414,24 +864,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        56,
                                         'edit_payment_returns',
                                         'Edit Payment returns',
-                                        'User can edit payment returns',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can edit payment returns'
                                     );
 
             """,
@@ -1439,24 +879,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        57,
                                         'delete_payment_returns',
                                         'Delete Payment returns',
-                                        'User can delete payment returns',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can delete payment returns'
                                     );
 
             """,
@@ -1464,24 +894,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        58,
                                         'create_permissions',
                                         'Create Permissions',
-                                        'User can create permissions',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can create permissions'
                                     );
 
             """,
@@ -1489,24 +909,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        59,
                                         'view_permissions',
                                         'View Permissions',
-                                        'User can view permissions',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can view permissions'
                                     );
 
             """,
@@ -1514,24 +924,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        60,
                                         'edit_permissions',
                                         'Edit Permissions',
-                                        'User can edit permissions',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can edit permissions'
                                     );
 
             """,
@@ -1539,24 +939,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        61,
                                         'delete_permissions',
                                         'Delete Permissions',
-                                        'User can delete permissions',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can delete permissions'
                                     );
 
             """,
@@ -1564,24 +954,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                        INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        62,
                                         'create_payment_sales',
                                         'Create Sale returns',
-                                        'User can create payment sales',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can create payment sales'
                                     );
 
             """,
@@ -1589,24 +969,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        63,
                                         'view_payment_sales',
                                         'View Sale returns',
-                                        'User can view payment sales',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can view payment sales'
                                     );
 
             """,
@@ -1614,24 +984,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        64,
                                         'edit_payment_sales',
                                         'Edit Sale returns',
-                                        'User can edit payment sales',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can edit payment sales'
                                     );
 
             """,
@@ -1639,24 +999,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        65,
                                         'delete_payment_sales',
                                         'Delete Sale returns',
-                                        'User can delete payment sales',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can delete payment sales'
                                     );
 
             """,
@@ -1664,24 +1014,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        66,
                                         'create_purchase_returns',
                                         'Create Purchase returns',
-                                        'User can create purchase returns',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can create purchase returns'
                                     );
 
             """,
@@ -1689,24 +1029,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        67,
                                         'view_purchase_returns',
                                         'View Purchase returns',
-                                        'User can view purchase returns',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can view purchase returns'
                                     );
 
             """,
@@ -1714,24 +1044,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        68,
                                         'edit_purchase_returns',
                                         'Edit Purchase returns',
-                                        'User can edit purchase returns',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can edit purchase returns'
                                     );
 
             """,
@@ -1739,24 +1059,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        69,
                                         'delete_purchase_returns',
                                         'Delete Purchase returns',
-                                        'User can delete purchase returns',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can delete purchase returns'
                                     );
 
             """,
@@ -1764,24 +1074,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        70,
                                         'access_pos',
                                         'Access POS',
-                                        'User can access to a POS',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can access to a POS'
                                     );
 
             """,
@@ -1789,24 +1089,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        71,
                                         'create_sale_returns',
                                         'Create Sale returns',
-                                        'User can create sale returns',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can create sale returns'
                                     );
 
             """,
@@ -1814,24 +1104,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        72,
                                         'view_sale_returns',
                                         'View Sale returns',
-                                        'User can view sale returns',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can view sale returns'
                                     );
 
             """,
@@ -1839,24 +1119,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        73,
                                         'edit_sale_returns',
                                         'Edit Sale returns',
-                                        'User can edit sale returns',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can edit sale returns'
                                     );
 
             """,
@@ -1864,24 +1134,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        74,
                                         'delete_sale_returns',
                                         'Delete Sale returns',
-                                        'User can delete sale returns',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can delete sale returns'
                                     );
 
             """,
@@ -1889,24 +1149,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        75,
                                         'create_customers',
                                         'Create Customers',
-                                        'User can create customers',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can create customers'
                                     );
 
             """,
@@ -1914,24 +1164,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        76,
                                         'view_customers',
                                         'View Customers',
-                                        'User can view customers',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can view customers'
                                     );
 
             """,
@@ -1939,24 +1179,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        77,
                                         'edit_customers',
                                         'Edit Customers',
-                                        'User can edit customers',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can edit customers'
                                     );
 
             """,
@@ -1964,24 +1194,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        78,
                                         'delete_customers',
                                         'Delete Customers',
-                                        'User can delete customers',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can delete customers'
                                     );
 
             """,
@@ -1989,24 +1209,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        79,
                                         'import_customers',
                                         'Import Customers',
-                                        'User can import customers',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can import customers'
                                     );
 
             """,
@@ -2014,24 +1224,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        80,
                                         'create_transfers',
                                         'Create Transfers',
-                                        'User can create transfers',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can create transfers'
                                     );
 
             """,
@@ -2039,24 +1239,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        81,
                                         'view_transfers',
                                         'View Transfers',
-                                        'User can view transfers',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can view transfers'
                                     );
 
             """,
@@ -2064,24 +1254,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        82,
                                         'edit_transfers',
                                         'Edit Transfers',
-                                        'User can edit transfers',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can edit transfers'
                                     );
 
             """,
@@ -2089,24 +1269,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        83,
                                         'delete_transfers',
                                         'Delete Transfers',
-                                        'User can delete transfers',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can delete transfers'
                                     );
 
             """,
@@ -2114,24 +1284,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        84,
                                         'create_sales',
                                         'Create Sales',
-                                        'User can create sales',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can create sales'
                                     );
 
             """,
@@ -2139,24 +1299,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        85,
                                         'view_sales',
                                         'View Sales',
-                                        'User can view sales',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can view sales'
                                     );
 
             """,
@@ -2164,24 +1314,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        86,
                                         'edit_sales',
                                         'Edit Sales',
-                                        'User can edit sales',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can edit sales'
                                     );
 
             """,
@@ -2189,24 +1329,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        87,
                                         'delete_sales',
                                         'Delete Sales',
-                                        'User can delete sales',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can delete sales'
                                     );
 
             """,
@@ -2214,24 +1344,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        88,
                                         'create_suppliers',
                                         'Create Suppliers',
-                                        'User can create suppliers',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can create suppliers'
                                     );
 
             """,
@@ -2239,24 +1359,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        89,
                                         'view_suppliers',
                                         'View Suppliers',
-                                        'User can view suppliers',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can view suppliers'
                                     );
 
             """,
@@ -2264,24 +1374,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        90,
                                         'edit_suppliers',
                                         'Edit Suppliers',
-                                        'User can edit suppliers',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can edit suppliers'
                                     );
 
             """,
@@ -2289,24 +1389,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        91,
                                         'delete_suppliers',
                                         'Delete Suppliers',
-                                        'User can delete suppliers',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can delete suppliers'
                                     );
 
             """,
@@ -2314,24 +1404,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        92,
                                         'import_suppliers',
                                         'Import Suppliers',
-                                        'User can import suppliers',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can import suppliers'
                                     );
 
             """,
@@ -2339,24 +1419,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        93,
                                         'create_brands',
                                         'Create Brands',
-                                        'User can create brands',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can create brands'
                                     );
 
             """,
@@ -2364,24 +1434,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        94,
                                         'view_brands',
                                         'View Brands',
-                                        'User can view brands',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can view brands'
                                     );
 
             """,
@@ -2389,24 +1449,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        95,
                                         'edit_brands',
                                         'Edit Brands',
-                                        'User can edit brands',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can edit brands'
                                     );
 
             """,
@@ -2414,24 +1464,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        96,
                                         'delete_brands',
                                         'Delete Brands',
-                                        'User can delete brands',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can delete brands'
                                     );
 
             """,
@@ -2439,24 +1479,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        97,
                                         'access_brands',
                                         'Access Brands',
-                                        'User can access brands',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can access brands'
                                     );
 
             """,
@@ -2464,24 +1494,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        98,
                                         'create_quotations',
                                         'Create Quotations',
-                                        'User can create quotations',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can create quotations'
                                     );
 
             """,
@@ -2489,24 +1509,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        99,
                                         'view_quotations',
                                         'View Quotations',
-                                        'User can view quotations',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can view quotations'
                                     );
 
             """,
@@ -2514,24 +1524,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        100,
                                         'edit_quotations',
                                         'Edit Quotations',
-                                        'User can edit quotations',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can edit quotations'
                                     );
 
             """,
@@ -2539,24 +1539,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        101,
                                         'delete_quotations',
                                         'Delete Quotations',
-                                        'User can delete quotations',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can delete quotations'
                                     );
 
             """,
@@ -2564,24 +1554,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        102,
                                         'access_dashboard',
                                         'Access Dashboard',
-                                        'User can access to a Dashboard',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can access to a Dashboard'
                                     );
 
             """,
@@ -2589,24 +1569,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        103,
                                         'view_system_settings',
                                         'View System Settings',
-                                        'User can view system settings',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can view system settings'
                                     );
 
             """,
@@ -2614,24 +1584,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        104,
                                         'edit_system_settings',
                                         'Edit System Settings',
-                                        'User can edit system settings',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can edit system settings'
                                     );
 
             """,
@@ -2639,24 +1599,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        105,
                                         'access_currency_settings',
                                         'Access Currency Settings',
-                                        'User can access currency settings',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can access currency settings'
                                     );
 
             """,
@@ -2664,24 +1614,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        106,
                                         'view_pos_settings',
                                         'View POS Settings',
-                                        'User can view pos settings',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can view pos settings'
                                     );
 
             """,
@@ -2689,24 +1629,14 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        107,
                                         'edit_pos_settings',
                                         'Edit POS Settings',
-                                        'User can edit pos settings',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can edit pos settings'
                                     );
 
             """,
@@ -2714,468 +1644,260 @@ public class SQLiteTableCreator {
     instance.runQuery(
         """
                                         INSERT OR IGNORE INTO permissions (
-                                        id,
                                         name,
                                         label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
+                                        description
                                     )
                                     VALUES (
-                                        108,
                                         'access_branch_settings',
                                         'Access Branch Settings',
-                                        'User can access branch settings',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
+                                        'User can access branch settings'
                                     );
 
             """,
         Permission.class);
     instance.runQuery(
         """
-                                        INSERT OR IGNORE INTO permissions (
-                                        id,
-                                        name,
-                                        label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
-                                    )
-                                    VALUES (
-                                        109,
-                                        'view_backup_settings',
-                                        'View Backup Settings',
-                                        'User can delete backup settings',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
-                                    );
-
-            """,
+            INSERT OR IGNORE INTO permissions (
+                name,
+                label,
+                description
+            )
+            VALUES (
+                'view_backup_settings',
+                'View Backup Settings',
+                'User can delete backup settings'
+            );""",
         Permission.class);
     instance.runQuery(
         """
-                                        INSERT OR IGNORE INTO permissions (
-                                        id,
-                                        name,
-                                        label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
-                                    )
-                                    VALUES (
-                                        110,
-                                        'create_backup',
-                                        'Create Backup',
-                                        'User can create backup',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
-                                    );
-
-            """,
+            INSERT OR IGNORE INTO permissions (
+                name,
+                label,
+                description
+            )
+            VALUES (
+                'create_backup',
+                'Create Backup',
+                'User can create backup'
+            );""",
         Permission.class);
     instance.runQuery(
         """
-                                        INSERT OR IGNORE INTO permissions (
-                                        id,
-                                        name,
-                                        label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
-                                    )
-                                    VALUES (
-                                        111,
-                                        'create_payment_purchases',
-                                        'Create Purchase returns',
-                                        'User can create payment purchases',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
-                                    );
-
-            """,
+            INSERT OR IGNORE INTO permissions (
+                name,
+                label,
+                description
+            )
+            VALUES (
+                'create_payment_purchases',
+                'Create Purchase returns',
+                'User can create payment purchases'
+            );""",
         Permission.class);
     instance.runQuery(
         """
-                                        INSERT OR IGNORE INTO permissions (
-                                        id,
-                                        name,
-                                        label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
-                                    )
-                                    VALUES (
-                                        112,
-                                        'view_payment_purchases',
-                                        'View Purchase returns',
-                                        'User can view payment purchases',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
-                                    );
-
-            """,
+            INSERT OR IGNORE INTO permissions (
+                name,
+                label,
+                description
+            )
+            VALUES (
+                'view_payment_purchases',
+                'View Purchase returns',
+                'User can view payment purchases'
+            );""",
         Permission.class);
     instance.runQuery(
         """
-                                        INSERT OR IGNORE INTO permissions (
-                                        id,
-                                        name,
-                                        label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
-                                    )
-                                    VALUES (
-                                        113,
-                                        'edit_payment_purchases',
-                                        'Edit Purchase returns',
-                                        'User can edit payment purchases',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
-                                    );
-
-            """,
+            INSERT OR IGNORE INTO permissions (
+                name,
+                label,
+                description
+            )
+            VALUES (
+                'edit_payment_purchases',
+                'Edit Purchase returns',
+                'User can edit payment purchases'
+            );""",
         Permission.class);
     instance.runQuery(
         """
-                                        INSERT OR IGNORE INTO permissions (
-                                        id,
-                                        name,
-                                        label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
-                                    )
-                                    VALUES (
-                                        114,
-                                        'delete_payment_purchases',
-                                        'Delete Purchase returns',
-                                        'User can delete payment purchases',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
-                                    );
-
-            """,
+            INSERT OR IGNORE INTO permissions (
+                name,
+                label,
+                description
+            )
+            VALUES (
+                'delete_payment_purchases',
+                'Delete Purchase returns',
+                'User can delete payment purchases'
+            );""",
         Permission.class);
     instance.runQuery(
         """
-                                        INSERT OR IGNORE INTO permissions (
-                                        id,
-                                        name,
-                                        label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
-                                    )
-                                    VALUES (
-                                        115,
-                                        'create_branches',
-                                        'Create Branches',
-                                        'User can create branches',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
-                                    );
-
-            """,
+            INSERT OR IGNORE INTO permissions (
+                name,
+                label,
+                description
+            )
+            VALUES (
+                'create_branches',
+                'Create Branches',
+                'User can create branches'
+            );""",
         Permission.class);
     instance.runQuery(
         """
-                                        INSERT OR IGNORE INTO permissions (
-                                        id,
-                                        name,
-                                        label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
-                                    )
-                                    VALUES (
-                                        116,
-                                        'view_branches',
-                                        'View Branches',
-                                        'User can view branches',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
-                                    );
-
-            """,
+            INSERT OR IGNORE INTO permissions (
+                name,
+                label,
+                description
+            )
+            VALUES (
+                'view_branches',
+                'View Branches',
+                'User can view branches'
+            );""",
         Permission.class);
     instance.runQuery(
         """
-                                        INSERT OR IGNORE INTO permissions (
-                                        id,
-                                        name,
-                                        label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
-                                    )
-                                    VALUES (
-                                        117,
-                                        'edit_branches',
-                                        'Edit Branches',
-                                        'User can edit branches',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
-                                    );
-
-            """,
+            INSERT OR IGNORE INTO permissions (
+                name,
+                label,
+                description
+            )
+            VALUES (
+                'edit_branches',
+                'Edit Branches',
+                'User can edit branches'
+            );""",
         Permission.class);
 
     instance.runQuery(
         """
-                                        INSERT OR IGNORE INTO permissions (
-                                        id,
-                                        name,
-                                        label,
-                                        description,
-                                        created_at,
-                                        created_by,
-                                        updated_at,
-                                        updated_by
-                                    )
-                                    VALUES (
-                                        118,
-                                        'delete_branches',
-                                        'Delete Branches',
-                                        'User can delete branches',
-                                        NULL,
-                                        NULL,
-                                        NULL,
-                                        NULL
-                                    );""",
+            INSERT OR IGNORE INTO permissions (
+                name,
+                label,
+                description
+            )
+            VALUES (
+                'delete_branches',
+                'Delete Branches',
+                'User can delete branches'
+            );""",
         Permission.class);
 
     instance.runQuery(
         """
-                                        INSERT INTO permissions (
-                                                  id,
-                                                  name,
-                                                  label,
-                                                  description,
-                                                  created_at,
-                                                  created_by,
-                                                  updated_at,
-                                                  updated_by
-                                          )
-                                          VALUES (
-                                                  119,
-                                                  'create_requisitions',
-                                                  'Create Requisitions',
-                                                  'User can create requisitions',
-                                                  NULL,
-                                                  NULL,
-                                                  NULL,
-                                                  NULL
-                                          );""",
+            INSERT OR IGNORE INTO permissions (
+                      name,
+                      label,
+                      description
+            )
+            VALUES (
+                    'create_requisitions',
+                    'Create Requisitions',
+                    'User can create requisitions'
+            );""",
         Permission.class);
 
     instance.runQuery(
         """
-                                        INSERT INTO permissions (
-                                                  id,
-                                                  name,
-                                                  label,
-                                                  description,
-                                                  created_at,
-                                                  created_by,
-                                                  updated_at,
-                                                  updated_by
-                                          )
-                                          VALUES (
-                                                  120,
-                                                  'view_requisitions',
-                                                  'View Requisitions',
-                                                  'User can view requisitions',
-                                                  NULL,
-                                                  NULL,
-                                                  NULL,
-                                                  NULL
-                                          );""",
+            INSERT OR IGNORE INTO permissions (
+                      name,
+                      label,
+                      description
+            )
+            VALUES (
+                    'view_requisitions',
+                    'View Requisitions',
+                    'User can view requisitions'
+            );""",
         Permission.class);
 
     instance.runQuery(
         """
-                                        INSERT INTO permissions (
-                                                  id,
-                                                  name,
-                                                  label,
-                                                  description,
-                                                  created_at,
-                                                  created_by,
-                                                  updated_at,
-                                                  updated_by
-                                          )
-                                          VALUES (
-                                                  121,
-                                                  'edit_requisitions',
-                                                  'Edit Requisitions',
-                                                  'User can edit requisitions',
-                                                  NULL,
-                                                  NULL,
-                                                  NULL,
-                                                  NULL
-                                          );""",
+            INSERT OR IGNORE INTO permissions (
+                      name,
+                      label,
+                      description
+            )
+            VALUES (
+                    'edit_requisitions',
+                    'Edit Requisitions',
+                    'User can edit requisitions'
+            );""",
         Permission.class);
 
     instance.runQuery(
         """
-                                        INSERT INTO permissions (
-                                                  id,
-                                                  name,
-                                                  label,
-                                                  description,
-                                                  created_at,
-                                                  created_by,
-                                                  updated_at,
-                                                  updated_by
-                                          )
-                                          VALUES (
-                                                  122,
-                                                  'delete_requisitions',
-                                                  'Delete Requisitions',
-                                                  'User can delete requisitions',
-                                                  NULL,
-                                                  NULL,
-                                                  NULL,
-                                                  NULL
-                                          );""",
+            INSERT OR IGNORE INTO permissions (
+                      name,
+                      label,
+                      description
+            )
+            VALUES (
+                    'delete_requisitions',
+                    'Delete Requisitions',
+                    'User can delete requisitions'
+            );""",
         Permission.class);
 
     instance.runQuery(
         """
-                                        INSERT INTO permissions (
-                                                  id,
-                                                  name,
-                                                  label,
-                                                  description,
-                                                  created_at,
-                                                  created_by,
-                                                  updated_at,
-                                                  updated_by
-                                          )
-                                          VALUES (
-                                                  123,
-                                                  'create_stock_ins',
-                                                  'Create Stock Ins',
-                                                  'User can create stock ins',
-                                                  NULL,
-                                                  NULL,
-                                                  NULL,
-                                                  NULL
-                                          );""",
+            INSERT OR IGNORE INTO permissions (
+                      name,
+                      label,
+                      description
+            )
+            VALUES (
+                    'create_stock_ins',
+                    'Create Stock Ins',
+                    'User can create stock ins'
+            );""",
         Permission.class);
 
     instance.runQuery(
         """
-                                        INSERT INTO permissions (
-                                                  id,
-                                                  name,
-                                                  label,
-                                                  description,
-                                                  created_at,
-                                                  created_by,
-                                                  updated_at,
-                                                  updated_by
-                                          )
-                                          VALUES (
-                                                  124,
-                                                  'view_stock_ins',
-                                                  'View Stock Ins',
-                                                  'User can view stock ins',
-                                                  NULL,
-                                                  NULL,
-                                                  NULL,
-                                                  NULL
-                                          );""",
+            INSERT OR IGNORE INTO permissions (
+                      name,
+                      label,
+                      description
+            )
+            VALUES (
+                    'view_stock_ins',
+                    'View Stock Ins',
+                    'User can view stock ins'
+            );""",
         Permission.class);
 
     instance.runQuery(
         """
-                                        INSERT INTO permissions (
-                                                  id,
-                                                  name,
-                                                  label,
-                                                  description,
-                                                  created_at,
-                                                  created_by,
-                                                  updated_at,
-                                                  updated_by
-                                          )
-                                          VALUES (
-                                                  125,
-                                                  'edit_stock_ins',
-                                                  'Edit Stock Ins',
-                                                  'User can edit stock ins',
-                                                  NULL,
-                                                  NULL,
-                                                  NULL,
-                                                  NULL
-                                          );""",
+            INSERT OR IGNORE INTO permissions (
+                      name,
+                      label,
+                      description
+            )
+            VALUES (
+                    'edit_stock_ins',
+                    'Edit Stock Ins',
+                    'User can edit stock ins'
+            );""",
         Permission.class);
 
     instance.runQuery(
         """
-                                        INSERT INTO permissions (
-                                                  id,
-                                                  name,
-                                                  label,
-                                                  description,
-                                                  created_at,
-                                                  created_by,
-                                                  updated_at,
-                                                  updated_by
-                                          )
-                                          VALUES (
-                                                  126,
-                                                  'delete_stock_ins',
-                                                  'Delete Stock Ins',
-                                                  'User can delete stock ins',
-                                                  NULL,
-                                                  NULL,
-                                                  NULL,
-                                                  NULL
-                                          );""",
+            INSERT OR IGNORE INTO permissions (
+                      name,
+                      label,
+                      description
+            )
+            VALUES (
+                    'delete_stock_ins',
+                    'Delete Stock Ins',
+                    'User can delete stock ins'
+            );""",
         Permission.class);
   }
 
@@ -3377,6 +2099,8 @@ public class SQLiteTableCreator {
                           ref                  VARCHAR     ,
                           branch_id            INTEGER NOT NULL    ,
                           notes                VARCHAR     ,
+                          status               VARCHAR     ,
+                          total_amount         double,
                           created_at           TIMESTAMP     ,
                           created_by           VARCHAR     ,
                           updated_at           TIMESTAMP     ,
@@ -3400,7 +2124,7 @@ public class SQLiteTableCreator {
                           updated_at           TIMESTAMP     ,
                           updated_by           VARCHAR     ,
                           FOREIGN KEY ( adjustment_master_id ) REFERENCES adjustment_masters( id )  ,
-                          FOREIGN KEY ( product_id ) REFERENCES product_details( id )
+                          FOREIGN KEY ( product_id ) REFERENCES products( id )
                     );
                     """,
         AdjustmentDetail.class);
@@ -3641,19 +2365,27 @@ public class SQLiteTableCreator {
                     CREATE TABLE IF NOT EXISTS purchase_details (
                            id                 INTEGER            PRIMARY KEY AUTOINCREMENT,
                            cost               [DOUBLE PRECISION],
-                           purchase_master_id INTEGER            CONSTRAINT FK_NAME REFERENCES purchase_masters (id) ON DELETE CASCADE,
+                           purchase_master_id INTEGER,
                            net_tax            [DOUBLE PRECISION],
                            tax_type           VARCHAR,
                            discount           [DOUBLE PRECISION],
                            discount_type      VARCHAR,
-                           product_id         BIGINT             NOT NULL,
+                           product_id         INTEGER            NOT NULL,
                            serial_number      VARCHAR,
                            price              [DOUBLE PRECISION],
                            quantity           BIGINT,
                            created_at         TIMESTAMP,
                            created_by         VARCHAR,
                            updated_at         TIMESTAMP,
-                           updated_by         VARCHAR
+                           updated_by         VARCHAR,
+                           FOREIGN KEY (
+                               purchase_master_id
+                           )
+                           REFERENCES purchase_masters (id) ON DELETE CASCADE,
+                           FOREIGN KEY (
+                               product_id
+                           )
+                           REFERENCES products (id)
                        );
                     """,
         PurchaseDetail.class);
@@ -3721,7 +2453,7 @@ public class SQLiteTableCreator {
                            FOREIGN KEY (
                                product_id
                            )
-                           REFERENCES product_details (id),
+                           REFERENCES products (id),
                            FOREIGN KEY (
                                purchase_return_master_id
                            )
@@ -3796,7 +2528,7 @@ public class SQLiteTableCreator {
                            FOREIGN KEY (
                                product_id
                            )
-                           REFERENCES product_details (id),
+                           REFERENCES products (id),
                            FOREIGN KEY (
                                sale_unit_id
                            )
@@ -3844,7 +2576,7 @@ public class SQLiteTableCreator {
                     CREATE TABLE IF NOT EXISTS requisition_detail (
                            id                INTEGER   NOT NULL
                                                        PRIMARY KEY AUTOINCREMENT,
-                           product_detail_id BIGINT    NOT NULL,
+                           product_id BIGINT    NOT NULL,
                            requisition_id    INTEGER,
                            quantity          BIGINT    NOT NULL,
                            description       VARCHAR,
@@ -3857,9 +2589,9 @@ public class SQLiteTableCreator {
                            )
                            REFERENCES requisition_master (id) ON DELETE CASCADE,
                            FOREIGN KEY (
-                               product_detail_id
+                               product_id
                            )
-                           REFERENCES product_details (id)
+                           REFERENCES products (id)
                        );
                     """,
         RequisitionDetail.class);
@@ -3947,7 +2679,7 @@ public class SQLiteTableCreator {
                            FOREIGN KEY (
                                product_id
                            )
-                           REFERENCES product_details (id)
+                           REFERENCES products (id)
                        );
                     """,
         SaleDetail.class);
@@ -3965,7 +2697,7 @@ public class SQLiteTableCreator {
                         tax_rate         DOUBLE,
                         net_tax          DOUBLE,
                         discount         DOUBLE,
-                        price            DOUBLE    NOT NULL,
+                        total            DOUBLE    NOT NULL,
                         amountPaid       DOUBLE    NOT NULL,
                         amountDue        DOUBLE    NOT NULL,
                         paymentStatus    VARCHAR   NOT NULL,
@@ -4022,7 +2754,7 @@ public class SQLiteTableCreator {
                            FOREIGN KEY (
                                product_id
                            )
-                           REFERENCES product_details (id)
+                           REFERENCES products (id)
                        );
                     """,
         SaleReturnDetail.class);
@@ -4087,7 +2819,7 @@ public class SQLiteTableCreator {
                         FOREIGN KEY (
                             product_id
                         )
-                        REFERENCES product_details (id)
+                        REFERENCES products (id)
                     );
                     """,
         StockInDetail.class);
@@ -4102,7 +2834,7 @@ public class SQLiteTableCreator {
                         date             TIMESTAMP NOT NULL,
                         branch_id        INTEGER   NOT NULL,
                         shipping         VARCHAR,
-                        total_cost       DOUBLE    NOT NULL,
+                        total_amount     DOUBLE    NOT NULL,
                         status           VARCHAR   NOT NULL,
                         approved_by_id   INTEGER,
                         recorded_by_id   INTEGER,
@@ -4156,7 +2888,7 @@ public class SQLiteTableCreator {
                         FOREIGN KEY (
                             product_id
                         )
-                        REFERENCES product_details (id)
+                        REFERENCES products (id)
                     );
                     """,
         TransferDetail.class);
@@ -4244,11 +2976,133 @@ public class SQLiteTableCreator {
 
     runQuery(
         """
-                    CREATE UNIQUE INDEX IF NOT EXISTS unq_users_first_name ON users (
-                        first_name
-                    );
-                    """,
+                        CREATE UNIQUE INDEX IF NOT EXISTS unq_users_first_name ON users (
+                            first_name
+                        );
+                        """,
         User.class);
+
+    runQuery(
+        """
+              CREATE TABLE IF NOT EXISTS sale_transactions (
+                  id                  INTEGER   NOT NULL
+                                                PRIMARY KEY AUTOINCREMENT,
+                  branch_id           INTEGER   NOT NULL,
+                  product_id          BIGINT    NOT NULL,
+                  sale_detail_id      BIGINT    NOT NULL,
+                  date                TIMESTAMP,
+                  sale_quantity       BIGINT,
+                  created_at          TIMESTAMP,
+                  created_by          VARCHAR,
+                  updated_at          TIMESTAMP,
+                  updated_by          VARCHAR,
+                  FOREIGN KEY (
+                      product_id
+                  )
+                  REFERENCES products (id),
+                  FOREIGN KEY (
+                      sale_detail_id
+                  )
+                  REFERENCES sales_detail (id),
+                  FOREIGN KEY (
+                      branch_id
+                  )
+                  REFERENCES branches (id)
+              );""",
+        SaleTransaction.class);
+
+    runQuery(
+        """
+              CREATE TABLE IF NOT EXISTS adjustment_transactions (
+                  id                        INTEGER   NOT NULL
+                                                      PRIMARY KEY AUTOINCREMENT,
+                  branch_id                 INTEGER   NOT NULL,
+                  product_id                BIGINT    NOT NULL,
+                  adjustment_detail_id      INTEGER   NOT NULL,
+                  date                      TIMESTAMP,
+                  adjust_quantity           BIGINT,
+                  adjustment_type           VARCHAR,
+                  created_at                TIMESTAMP,
+                  created_by                VARCHAR,
+                  updated_at                TIMESTAMP,
+                  updated_by                VARCHAR,
+                  FOREIGN KEY (
+                      adjustment_detail_id
+                  )
+                  REFERENCES adjustment_details (id),
+                  FOREIGN KEY (
+                      product_id
+                  )
+                  REFERENCES products (id),
+                  FOREIGN KEY (
+                      branch_id
+                  )
+                  REFERENCES branches (id)
+              );""",
+        AdjustmentTransaction.class);
+
+    runQuery(
+        """
+              CREATE TABLE IF NOT EXISTS stock_in_transactions (
+                  id                      INTEGER   NOT NULL
+                                                    PRIMARY KEY AUTOINCREMENT,
+                  branch_id               INTEGER   NOT NULL,
+                  product_id              BIGINT    NOT NULL,
+                  stock_in_detail_id      INTEGER   NOT NULL,
+                  date                    TIMESTAMP,
+                  stock_in_quantity       BIGINT,
+                  created_at              TIMESTAMP,
+                  created_by              VARCHAR,
+                  updated_at              TIMESTAMP,
+                  updated_by              VARCHAR,
+                  FOREIGN KEY (
+                      branch_id
+                  )
+                  REFERENCES branches (id),
+                  FOREIGN KEY (
+                      stock_in_detail_id
+                  )
+                  REFERENCES stock_in_detail (id),
+                  FOREIGN KEY (
+                      product_id
+                  )
+                  REFERENCES products (id)
+              );""",
+        StockInTransaction.class);
+
+    runQuery(
+        """
+                    CREATE TABLE IF NOT EXISTS transfer_transactions (
+                        id                INTEGER   NOT NULL
+                                                    PRIMARY KEY AUTOINCREMENT,
+                        from_branch       INTEGER   NOT NULL,
+                        to_branch         INTEGER   NOT NULL,
+                        product_id        BIGINT    NOT NULL,
+                        transfer_detail   INTEGER   NOT NULL,
+                        date              TIMESTAMP,
+                        transfer_quantity BIGINT,
+                        created_at        TIMESTAMP,
+                        created_by        VARCHAR,
+                        updated_at        TIMESTAMP,
+                        updated_by        VARCHAR,
+                        FOREIGN KEY (
+                            from_branch
+                        )
+                        REFERENCES branches (id),
+                        FOREIGN KEY (
+                            to_branch
+                        )
+                        REFERENCES branches (id),
+                        FOREIGN KEY (
+                            transfer_detail
+                        )
+                        REFERENCES transfer_detail (id),
+                        FOREIGN KEY (
+                            product_id
+                        )
+                        REFERENCES products (id)
+                    );""",
+        TransferTransaction.class);
   }
 
   private <T> void runQuery(String query, Class<T> clazz) throws SQLException {

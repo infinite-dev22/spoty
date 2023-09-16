@@ -117,7 +117,7 @@ public class UserFormController implements Initializable {
     userFormRole.setConverter(roleConverter);
     userFormRole.setFilterFunction(roleFilterFunction);
 
-    userFormBranch.setItems(BranchViewModel.getBranchesComboBoxList());
+    userFormBranch.setItems(BranchViewModel.getBranches());
     userFormBranch.setConverter(branchConverter);
     userFormBranch.setFilterFunction(branchFilterFunction);
 

@@ -18,8 +18,10 @@ import static org.infinite.spoty.values.SharedResources.*;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.support.ConnectionSource;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.LinkedList;
 import javafx.application.Platform;
 import javafx.beans.property.*;
@@ -29,6 +31,8 @@ import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.Product;
 import org.infinite.spoty.database.models.TransferDetail;
 import org.infinite.spoty.database.models.TransferMaster;
+import org.infinite.spoty.database.models.TransferTransaction;
+import org.jetbrains.annotations.NotNull;
 
 public class TransferDetailViewModel {
   public static final ObservableList<TransferDetail> transferDetailsList =
@@ -43,6 +47,8 @@ public class TransferDetailViewModel {
   private static final StringProperty description = new SimpleStringProperty("");
   private static final StringProperty price = new SimpleStringProperty("");
   private static final StringProperty total = new SimpleStringProperty("");
+  private static final SQLiteConnection connection = SQLiteConnection.getInstance();
+  private static final ConnectionSource connectionSource = connection.getConnection();
 
   public static long getId() {
     return id.get();
@@ -177,38 +183,17 @@ public class TransferDetailViewModel {
   }
 
   public static void saveTransferDetails() throws SQLException {
-    SQLiteConnection connection = SQLiteConnection.getInstance();
-    ConnectionSource connectionSource = connection.getConnection();
-
     Dao<TransferDetail, Long> transferDetailDao =
         DaoManager.createDao(connectionSource, TransferDetail.class);
 
     transferDetailDao.create(transferDetailsList);
 
-    updateProductQuantity();
+    setProductQuantity();
 
     Platform.runLater(transferDetailsList::clear);
   }
 
-  private static void updateProductQuantity() {
-    transferDetailsList.forEach(
-        product -> {
-          long productDetailQuantity = product.getProduct().getQuantity() - product.getQuantity();
-
-          ProductViewModel.setQuantity(productDetailQuantity);
-
-          try {
-            ProductViewModel.updateProduct(product.getProduct().getId());
-          } catch (SQLException e) {
-            throw new RuntimeException(e);
-          }
-        });
-  }
-
   public static void getAllTransferDetails() throws SQLException {
-    SQLiteConnection connection = SQLiteConnection.getInstance();
-    ConnectionSource connectionSource = connection.getConnection();
-
     Dao<TransferDetail, Long> transferDetailDao =
         DaoManager.createDao(connectionSource, TransferDetail.class);
 
@@ -224,9 +209,6 @@ public class TransferDetailViewModel {
   }
 
   public static void updateTransferDetail(long index) throws SQLException {
-    SQLiteConnection connection = SQLiteConnection.getInstance();
-    ConnectionSource connectionSource = connection.getConnection();
-
     Dao<TransferDetail, Long> transferDetailDao =
         DaoManager.createDao(connectionSource, TransferDetail.class);
 
@@ -240,7 +222,7 @@ public class TransferDetailViewModel {
 
     Platform.runLater(
         () -> {
-          transferDetailsList.remove((int) getTempId());
+          transferDetailsList.remove(getTempId());
           transferDetailsList.add(getTempId(), transferDetail);
 
           resetProperties();
@@ -248,9 +230,6 @@ public class TransferDetailViewModel {
   }
 
   public static void getItem(long index, int tempIndex) throws SQLException {
-    SQLiteConnection connection = SQLiteConnection.getInstance();
-    ConnectionSource connectionSource = connection.getConnection();
-
     Dao<TransferDetail, Long> transferDetailDao =
         DaoManager.createDao(connectionSource, TransferDetail.class);
 
@@ -270,9 +249,6 @@ public class TransferDetailViewModel {
   }
 
   public static void updateItem(long index) throws SQLException {
-    SQLiteConnection connection = SQLiteConnection.getInstance();
-    ConnectionSource connectionSource = connection.getConnection();
-
     Dao<TransferDetail, Long> transferDetailDao =
         DaoManager.createDao(connectionSource, TransferDetail.class);
 
@@ -290,9 +266,6 @@ public class TransferDetailViewModel {
   }
 
   public static void updateTransferDetails() throws SQLException {
-    SQLiteConnection connection = SQLiteConnection.getInstance();
-    ConnectionSource connectionSource = connection.getConnection();
-
     Dao<TransferDetail, Long> transferDetailDao =
         DaoManager.createDao(connectionSource, TransferDetail.class);
 
@@ -319,9 +292,6 @@ public class TransferDetailViewModel {
     indexes.forEach(
         index -> {
           try {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
             Dao<TransferDetail, Long> transferDetailDao =
                 DaoManager.createDao(connectionSource, TransferDetail.class);
 
@@ -332,7 +302,92 @@ public class TransferDetailViewModel {
         });
   }
 
-  public static ObservableList<TransferDetail> getTransferDetailsList() {
-    return transferDetailsList;
+  private static void setProductQuantity() {
+    getTransferDetails()
+        .forEach(
+            transferDetails -> {
+              long productDetailQuantity =
+                  transferDetails.getProduct().getQuantity() - transferDetails.getQuantity();
+
+              ProductViewModel.setQuantity(productDetailQuantity);
+
+              try {
+                ProductViewModel.updateProductQuantity(transferDetails.getProduct().getId());
+                createTransferTransaction(transferDetails);
+              } catch (SQLException e) {
+                throw new RuntimeException(e);
+              }
+            });
+  }
+
+  private static void updateProductQuantity() {
+    getTransferDetails()
+        .forEach(
+            transferDetails -> {
+              try {
+                TransferTransaction saleTransaction =
+                    getTransferTransaction(transferDetails.getId());
+
+                long adjustQuantity = saleTransaction.getTransferQuantity();
+                long currentProductQuantity = transferDetails.getProduct().getQuantity();
+                long productQuantity =
+                    (currentProductQuantity - adjustQuantity) + transferDetails.getQuantity();
+
+                ProductViewModel.setQuantity(productQuantity);
+
+                ProductViewModel.updateProductQuantity(transferDetails.getProduct().getId());
+
+                updateTransferTransaction(transferDetails);
+              } catch (SQLException e) {
+                throw new RuntimeException(e);
+              }
+            });
+  }
+
+  private static TransferTransaction getTransferTransaction(long transferIndex)
+      throws SQLException {
+    Dao<TransferTransaction, Long> transferTransactionDao =
+        DaoManager.createDao(connectionSource, TransferTransaction.class);
+
+    PreparedQuery<TransferTransaction> preparedQuery =
+        transferTransactionDao
+            .queryBuilder()
+            .where()
+            .eq("stock_in_detail_id", transferIndex)
+            .prepare();
+
+    return transferTransactionDao.queryForFirst(preparedQuery);
+  }
+
+  private static void createTransferTransaction(@NotNull TransferDetail transferDetails)
+      throws SQLException {
+    Dao<TransferTransaction, Long> transferTransactionDao =
+        DaoManager.createDao(connectionSource, TransferTransaction.class);
+
+    TransferTransaction transferTransaction = new TransferTransaction();
+    transferTransaction.setFromBranch(transferDetails.getTransfer().getFromBranch());
+    transferTransaction.setToBranch(transferDetails.getTransfer().getToBranch());
+    transferTransaction.setTransferDetail(transferDetails);
+    transferTransaction.setProduct(transferDetails.getProduct());
+    transferTransaction.setTransferQuantity(transferDetails.getQuantity());
+    transferTransaction.setDate(new Date());
+
+    transferTransactionDao.create(transferTransaction);
+  }
+
+  private static void updateTransferTransaction(@NotNull TransferDetail transferDetails)
+      throws SQLException {
+    Dao<TransferTransaction, Long> transferTransactionDao =
+        DaoManager.createDao(connectionSource, TransferTransaction.class);
+
+    TransferTransaction transferTransaction = getTransferTransaction(transferDetails.getId());
+    transferTransaction.setFromBranch(transferDetails.getTransfer().getFromBranch());
+    transferTransaction.setToBranch(transferDetails.getTransfer().getToBranch());
+    transferTransaction.setTransferDetail(transferDetails);
+    transferTransaction.setProduct(transferDetails.getProduct());
+    transferTransaction.setTransferQuantity(transferDetails.getQuantity());
+    transferTransaction.setDate(new Date());
+
+    transferTransactionDao.update(transferTransaction);
   }
 }

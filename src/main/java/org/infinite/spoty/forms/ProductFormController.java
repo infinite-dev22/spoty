@@ -158,15 +158,15 @@ public class ProductFormController implements Initializable {
             brand -> StringUtils.containsIgnoreCase(brandConverter.toString(brand), searchStr);
 
     // ProductType combo box properties.
-    productUOM.setItems(UOMViewModel.getUomComboBoxList());
+    productUOM.setItems(UOMViewModel.getUnitsOfMeasure());
     productUOM.setConverter(uomConverter);
     productUOM.setFilterFunction(uomFilterFunction);
 
-    productCategory.setItems(ProductCategoryViewModel.getCategoriesComboBoxList());
+    productCategory.setItems(ProductCategoryViewModel.getCategories());
     productCategory.setConverter(productCategoryConverter);
     productCategory.setFilterFunction(productCategoryFilterFunction);
 
-    productBrand.setItems(BrandViewModel.getBrandsComboBoxList());
+    productBrand.setItems(BrandViewModel.getBrands());
     productBrand.setConverter(brandConverter);
     productBrand.setFilterFunction(brandFilterFunction);
 

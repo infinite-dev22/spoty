@@ -81,7 +81,7 @@ public class RequisitionDetailFormController implements Initializable {
                     productVariantConverter.toString(productDetail), searchStr);
 
     // Combo box properties.
-    requisitionDetailPdct.setItems(ProductViewModel.getProductsComboBoxList());
+    requisitionDetailPdct.setItems(ProductViewModel.getProducts());
     requisitionDetailPdct.setConverter(productVariantConverter);
     requisitionDetailPdct.setFilterFunction(productVariantFilterFunction);
 

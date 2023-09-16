@@ -397,8 +397,4 @@ public class UserViewModel {
 
     GlobalActions.spotyThreadPool().execute(task);
   }
-
-  public static ObservableList<User> getUsersList() {
-    return usersList;
-  }
 }

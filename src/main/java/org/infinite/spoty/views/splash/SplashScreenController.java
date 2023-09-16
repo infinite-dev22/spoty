@@ -38,6 +38,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.database.management.SQLiteTableCreator;
+import org.infinite.spoty.startup.Dialogs;
 import org.infinite.spoty.values.strings.Labels;
 import org.infinite.spoty.viewModels.*;
 import org.infinite.spoty.views.BaseController;
@@ -61,6 +62,7 @@ public class SplashScreenController implements Initializable {
             return null;
           }
         };
+    databaseCreator.setOnFailed(event -> databaseCreator.getException().printStackTrace());
 
     Task<Void> initDataFetcher =
         new Task<>() {
@@ -216,7 +218,9 @@ public class SplashScreenController implements Initializable {
             CSSFX.start();
             Stage stage = new Stage();
             setControllers(stage);
+            Dialogs.setControllers();
             setPanes();
+            Dialogs.setDialogContent();
             FXMLLoader loader = fxmlLoader("fxml/Base.fxml");
             loader.setControllerFactory(c -> BaseController.getInstance(stage));
             Parent root = loader.load();

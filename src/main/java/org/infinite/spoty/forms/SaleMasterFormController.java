@@ -135,11 +135,11 @@ public class SaleMasterFormController implements Initializable {
             branch -> StringUtils.containsIgnoreCase(branchConverter.toString(branch), searchStr);
 
     // Set items to combo boxes and display custom text.
-    saleCustomer.setItems(CustomerViewModel.getCustomersComboBoxList());
+    saleCustomer.setItems(CustomerViewModel.getCustomers());
     saleCustomer.setConverter(customerConverter);
     saleCustomer.setFilterFunction(customerFilterFunction);
 
-    saleBranch.setItems(BranchViewModel.getBranchesComboBoxList());
+    saleBranch.setItems(BranchViewModel.getBranches());
     saleBranch.setConverter(branchConverter);
     saleBranch.setFilterFunction(branchFilterFunction);
 
@@ -392,8 +392,7 @@ public class SaleMasterFormController implements Initializable {
               .execute(
                   () -> {
                     try {
-                      SaleDetailViewModel.getSaleDetail(
-                          SaleDetailViewModel.saleDetailList.indexOf(obj.getData()));
+                      SaleDetailViewModel.getSaleDetail(obj.getData());
                     } catch (SQLException ex) {
                       throw new RuntimeException(ex);
                     }

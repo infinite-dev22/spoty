@@ -79,10 +79,10 @@ public class ExpenseFormController implements Initializable {
             expenseCategory -> (expenseCategory == null) ? "" : expenseCategory.getName());
 
     // Combo box properties.
-    expenseFormBranch.setItems(BranchViewModel.getBranchesComboBoxList());
+    expenseFormBranch.setItems(BranchViewModel.getBranches());
     expenseFormBranch.setConverter(branchConverter);
 
-    expenseFormCategory.setItems(ExpenseCategoryViewModel.getCategoryComboBoxList());
+    expenseFormCategory.setItems(ExpenseCategoryViewModel.getCategories());
     expenseFormCategory.setConverter(expenseCategoryConverter);
 
     // Input listeners.

@@ -333,14 +333,4 @@ public class SupplierViewModel {
 
     GlobalActions.spotyThreadPool().execute(task);
   }
-
-  public static ObservableList<Supplier> getSuppliersList() {
-    return suppliersList;
-  }
-
-  public static ObservableList<Supplier> getSuppliersComboBoxList() {
-    suppliersComboBoxList.clear();
-    suppliersComboBoxList.addAll(suppliersList);
-    return suppliersComboBoxList;
-  }
 }

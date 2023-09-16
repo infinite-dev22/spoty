@@ -277,14 +277,4 @@ public class UOMViewModel {
 
     GlobalActions.spotyThreadPool().execute(task);
   }
-
-  public static ObservableList<UnitOfMeasure> getUomComboBoxList() {
-    uomComboBoxList.clear();
-    uomComboBoxList.addAll(uomList);
-    return uomComboBoxList;
-  }
-
-  public static ObservableList<UnitOfMeasure> getUomList() {
-    return uomList;
-  }
 }

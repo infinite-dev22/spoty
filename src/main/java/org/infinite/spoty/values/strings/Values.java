@@ -25,9 +25,9 @@ public class Values {
       new LinkedList<>(
           Arrays.stream(new String[] {"Product", "Service"}).toList());
   public static final LinkedList<String> PURCHASE_STATUSES =
-      new LinkedList<>(Arrays.stream(new String[] {"Ordered", "Pending", "Received"}).toList());
+      new LinkedList<>(Arrays.stream(new String[] {"Ordered", "Pending", "Received", "Returned"}).toList());
   public static final LinkedList<String> SALE_STATUSES =
-      new LinkedList<>(Arrays.stream(new String[] {"Ordered", "Pending", "Completed"}).toList());
+      new LinkedList<>(Arrays.stream(new String[] {"Ordered", "Pending", "Completed", "Returned"}).toList());
   public static final LinkedList<String> PAYMENT_STATUSES =
       new LinkedList<>(Arrays.stream(new String[] {"Partial", "Pending", "Paid"}).toList());
   public static final LinkedList<String> ADJUSTMENT_TYPE =

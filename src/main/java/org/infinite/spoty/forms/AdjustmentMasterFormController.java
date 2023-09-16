@@ -115,7 +115,7 @@ public class AdjustmentMasterFormController implements Initializable {
             branch -> StringUtils.containsIgnoreCase(branchConverter.toString(branch), searchStr);
 
     // combBox properties.
-    adjustmentBranch.setItems(BranchViewModel.getBranchesComboBoxList());
+    adjustmentBranch.setItems(BranchViewModel.getBranches());
     adjustmentBranch.setConverter(branchConverter);
     adjustmentBranch.setFilterFunction(branchFilterFunction);
 
@@ -229,9 +229,7 @@ public class AdjustmentMasterFormController implements Initializable {
               .execute(
                   () -> {
                     try {
-                      AdjustmentDetailViewModel.getItem(
-                          obj.getData().getId(),
-                          AdjustmentDetailViewModel.adjustmentDetailsList.indexOf(obj.getData()));
+                      AdjustmentDetailViewModel.getAdjustmentDetail(obj.getData());
                     } catch (SQLException ex) {
                       throw new RuntimeException(ex);
                     }

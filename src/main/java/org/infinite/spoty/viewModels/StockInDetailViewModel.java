@@ -18,8 +18,10 @@ import static org.infinite.spoty.values.SharedResources.*;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.support.ConnectionSource;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.LinkedList;
 import javafx.application.Platform;
 import javafx.beans.property.*;
@@ -29,6 +31,8 @@ import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.Product;
 import org.infinite.spoty.database.models.StockInDetail;
 import org.infinite.spoty.database.models.StockInMaster;
+import org.infinite.spoty.database.models.StockInTransaction;
+import org.jetbrains.annotations.NotNull;
 
 public class StockInDetailViewModel {
   public static final ObservableList<StockInDetail> stockInDetailsList =
@@ -42,6 +46,8 @@ public class StockInDetailViewModel {
   private static final StringProperty serial = new SimpleStringProperty("");
   private static final StringProperty description = new SimpleStringProperty("");
   private static final StringProperty location = new SimpleStringProperty("");
+  private static final SQLiteConnection connection = SQLiteConnection.getInstance();
+  private static final ConnectionSource connectionSource = connection.getConnection();
 
   public static long getId() {
     return id.get();
@@ -162,39 +168,16 @@ public class StockInDetailViewModel {
   }
 
   public static void createStockInDetails() throws SQLException {
-    SQLiteConnection connection = SQLiteConnection.getInstance();
-    ConnectionSource connectionSource = connection.getConnection();
-
     Dao<StockInDetail, Long> stockInDetailDao =
         DaoManager.createDao(connectionSource, StockInDetail.class);
 
     stockInDetailDao.create(stockInDetailsList);
 
-    updateProductQuantity();
+    setProductQuantity();
     Platform.runLater(stockInDetailsList::clear);
   }
 
-  private static void updateProductQuantity() {
-    stockInDetailsList.forEach(
-        product -> {
-          long productDetailQuantity = product.getProduct().getQuantity() + product.getQuantity();
-          
-          try {
-            ProductViewModel.getProduct(product.getId());
-
-            ProductViewModel.setQuantity(productDetailQuantity);
-
-            ProductViewModel.updateProduct(product.getProduct().getId());
-          } catch (SQLException e) {
-            throw new RuntimeException(e);
-          }
-        });
-  }
-
   public static void getAllStockInDetails() throws SQLException {
-    SQLiteConnection connection = SQLiteConnection.getInstance();
-    ConnectionSource connectionSource = connection.getConnection();
-
     Dao<StockInDetail, Long> stockInDetailDao =
         DaoManager.createDao(connectionSource, StockInDetail.class);
 
@@ -210,9 +193,6 @@ public class StockInDetailViewModel {
   }
 
   public static void updateStockInDetail(long index) throws SQLException {
-    SQLiteConnection connection = SQLiteConnection.getInstance();
-    ConnectionSource connectionSource = connection.getConnection();
-
     Dao<StockInDetail, Long> stockInDetailDao =
         DaoManager.createDao(connectionSource, StockInDetail.class);
 
@@ -226,25 +206,17 @@ public class StockInDetailViewModel {
           stockInDetail.setDescription(getDescription());
           stockInDetail.setLocation(getLocation());
 
-          stockInDetailsList.remove((int) getTempId());
+          stockInDetailsList.remove(getTempId());
           stockInDetailsList.add(getTempId(), stockInDetail);
 
           resetProperties();
         });
   }
 
-  public static void getItem(long index, int tempIndex) throws SQLException {
-    SQLiteConnection connection = SQLiteConnection.getInstance();
-    ConnectionSource connectionSource = connection.getConnection();
-
-    Dao<StockInDetail, Long> stockInDetailDao =
-        DaoManager.createDao(connectionSource, StockInDetail.class);
-
-    StockInDetail stockInDetail = stockInDetailDao.queryForId(index);
-
+  public static void getItem(StockInDetail stockInDetail) throws SQLException {
     Platform.runLater(
         () -> {
-          setTempId(tempIndex);
+          setTempId(getStockInDetails().indexOf(stockInDetail));
           setId(stockInDetail.getId());
           setProduct(stockInDetail.getProduct());
           setQuantity(String.valueOf(stockInDetail.getQuantity()));
@@ -255,9 +227,6 @@ public class StockInDetailViewModel {
   }
 
   public static void updateItem(long index) throws SQLException {
-    SQLiteConnection connection = SQLiteConnection.getInstance();
-    ConnectionSource connectionSource = connection.getConnection();
-
     Dao<StockInDetail, Long> stockInDetailDao =
         DaoManager.createDao(connectionSource, StockInDetail.class);
 
@@ -275,9 +244,6 @@ public class StockInDetailViewModel {
   }
 
   public static void updateStockInDetails() throws SQLException {
-    SQLiteConnection connection = SQLiteConnection.getInstance();
-    ConnectionSource connectionSource = connection.getConnection();
-
     Dao<StockInDetail, Long> stockInDetailDao =
         DaoManager.createDao(connectionSource, StockInDetail.class);
 
@@ -304,9 +270,6 @@ public class StockInDetailViewModel {
     indexes.forEach(
         index -> {
           try {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
             Dao<StockInDetail, Long> stockInDetailDao =
                 DaoManager.createDao(connectionSource, StockInDetail.class);
 
@@ -319,5 +282,90 @@ public class StockInDetailViewModel {
 
   public static ObservableList<StockInDetail> getStockInDetailsList() {
     return stockInDetailsList;
+  }
+
+  private static void setProductQuantity() {
+    getStockInDetails()
+        .forEach(
+            stockInDetail -> {
+              long productDetailQuantity =
+                  stockInDetail.getProduct().getQuantity() + stockInDetail.getQuantity();
+
+              ProductViewModel.setQuantity(productDetailQuantity);
+
+              try {
+                ProductViewModel.updateProductQuantity(stockInDetail.getProduct().getId());
+                createStockInTransaction(stockInDetail);
+              } catch (SQLException e) {
+                throw new RuntimeException(e);
+              }
+            });
+  }
+
+  private static void updateProductQuantity() {
+    getStockInDetails()
+        .forEach(
+            stockInDetail -> {
+              try {
+                StockInTransaction stockInTransaction = getStockInTransaction(stockInDetail.getId());
+
+                long adjustQuantity = stockInTransaction.getStockInQuantity();
+                long currentProductQuantity = stockInDetail.getProduct().getQuantity();
+                long productQuantity =
+                    (currentProductQuantity - adjustQuantity) + stockInDetail.getQuantity();
+
+                ProductViewModel.setQuantity(productQuantity);
+
+                ProductViewModel.updateProductQuantity(stockInDetail.getProduct().getId());
+
+                updateStockInTransaction(stockInDetail);
+              } catch (SQLException e) {
+                throw new RuntimeException(e);
+              }
+            });
+  }
+
+  private static StockInTransaction getStockInTransaction(long stockInIndex) throws SQLException {
+    Dao<StockInTransaction, Long> stockInTransactionDao =
+        DaoManager.createDao(connectionSource, StockInTransaction.class);
+
+    PreparedQuery<StockInTransaction> preparedQuery =
+        stockInTransactionDao
+            .queryBuilder()
+            .where()
+            .eq("stock_in_detail_id", stockInIndex)
+            .prepare();
+
+    return stockInTransactionDao.queryForFirst(preparedQuery);
+  }
+
+  private static void createStockInTransaction(@NotNull StockInDetail stockInDetail)
+      throws SQLException {
+    Dao<StockInTransaction, Long> stockInTransactionDao =
+        DaoManager.createDao(connectionSource, StockInTransaction.class);
+
+    StockInTransaction stockInTransaction = new StockInTransaction();
+    stockInTransaction.setBranch(stockInDetail.getStockIn().getBranch());
+    stockInTransaction.setStockInDetail(stockInDetail);
+    stockInTransaction.setProduct(stockInDetail.getProduct());
+    stockInTransaction.setStockInQuantity(stockInDetail.getQuantity());
+    stockInTransaction.setDate(new Date());
+
+    stockInTransactionDao.create(stockInTransaction);
+  }
+
+  private static void updateStockInTransaction(@NotNull StockInDetail stockInDetail)
+      throws SQLException {
+    Dao<StockInTransaction, Long> stockInTransactionDao =
+        DaoManager.createDao(connectionSource, StockInTransaction.class);
+
+    StockInTransaction stockInTransaction = getStockInTransaction(stockInDetail.getId());
+    stockInTransaction.setBranch(stockInDetail.getStockIn().getBranch());
+    stockInTransaction.setStockInDetail(stockInDetail);
+    stockInTransaction.setProduct(stockInDetail.getProduct());
+    stockInTransaction.setStockInQuantity(stockInDetail.getQuantity());
+    stockInTransaction.setDate(new Date());
+
+    stockInTransactionDao.update(stockInTransaction);
   }
 }

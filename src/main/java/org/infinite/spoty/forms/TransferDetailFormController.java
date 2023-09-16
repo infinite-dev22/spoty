@@ -78,7 +78,7 @@ public class TransferDetailFormController implements Initializable {
                     productVariantConverter.toString(productDetail), searchStr);
 
     // Combo box properties.
-    transferDetailPdct.setItems(ProductViewModel.getProductsComboBoxList());
+    transferDetailPdct.setItems(ProductViewModel.getProducts());
     transferDetailPdct.setConverter(productVariantConverter);
     transferDetailPdct.setFilterFunction(productVariantFilterFunction);
 

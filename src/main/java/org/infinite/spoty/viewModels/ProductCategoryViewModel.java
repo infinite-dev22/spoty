@@ -244,14 +244,4 @@ public class ProductCategoryViewModel {
 
     GlobalActions.spotyThreadPool().execute(task);
   }
-
-  public static ObservableList<ProductCategory> getCategoriesComboBoxList() {
-    categoriesComboBoxList.clear();
-    categoriesComboBoxList.addAll(categoriesList);
-    return categoriesComboBoxList;
-  }
-
-  public static ObservableList<ProductCategory> getCategoriesList() {
-    return categoriesList;
-  }
 }

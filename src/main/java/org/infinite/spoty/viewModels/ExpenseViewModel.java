@@ -303,8 +303,4 @@ public class ExpenseViewModel {
 
     GlobalActions.spotyThreadPool().execute(task);
   }
-
-  public static ObservableList<Expense> getExpenseList() {
-    return expenseList;
-  }
 }

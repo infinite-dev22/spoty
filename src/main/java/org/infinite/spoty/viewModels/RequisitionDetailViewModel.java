@@ -208,7 +208,7 @@ public class RequisitionDetailViewModel {
 
             Platform.runLater(
                 () -> {
-                  requisitionDetailList.remove((int) getTempId());
+                  requisitionDetailList.remove(getTempId());
                   requisitionDetailList.add(getTempId(), requisitionDetail);
                 });
 

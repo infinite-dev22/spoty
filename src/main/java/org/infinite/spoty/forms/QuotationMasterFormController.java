@@ -14,12 +14,10 @@
 
 package org.infinite.spoty.forms;
 
-import static org.infinite.spoty.SpotyResourceLoader.fxmlLoader;
 import static org.infinite.spoty.Validators.requiredValidator;
 
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
-import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
 import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import io.github.palexdev.materialfx.enums.ScrimPriority;
@@ -40,7 +38,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.input.ContextMenuEvent;
@@ -56,6 +53,7 @@ import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.Customer;
 import org.infinite.spoty.database.models.QuotationDetail;
+import org.infinite.spoty.startup.Dialogs;
 import org.infinite.spoty.values.strings.Values;
 import org.infinite.spoty.viewModels.BranchViewModel;
 import org.infinite.spoty.viewModels.CustomerViewModel;
@@ -126,11 +124,11 @@ public class QuotationMasterFormController implements Initializable {
             branch -> StringUtils.containsIgnoreCase(branchConverter.toString(branch), searchStr);
 
     // Combo box properties.
-    quotationCustomer.setItems(CustomerViewModel.getCustomersComboBoxList());
+    quotationCustomer.setItems(CustomerViewModel.getCustomers());
     quotationCustomer.setConverter(customerConverter);
     quotationCustomer.setFilterFunction(customerFilterFunction);
 
-    quotationBranch.setItems(BranchViewModel.getBranchesComboBoxList());
+    quotationBranch.setItems(BranchViewModel.getBranches());
     quotationBranch.setConverter(branchConverter);
     quotationBranch.setFilterFunction(branchFilterFunction);
 
@@ -182,8 +180,7 @@ public class QuotationMasterFormController implements Initializable {
         product -> new MFXTableRowCell<>(QuotationDetail::getDiscount));
     productTax.setRowCellFactory(product -> new MFXTableRowCell<>(QuotationDetail::getNetTax));
     productPrice.setRowCellFactory(product -> new MFXTableRowCell<>(QuotationDetail::getPrice));
-    totalPrice.setRowCellFactory(
-        product -> new MFXTableRowCell<>(QuotationDetail::getTotalPrice));
+    totalPrice.setRowCellFactory(product -> new MFXTableRowCell<>(QuotationDetail::getTotalPrice));
 
     productName.prefWidthProperty().bind(quotationDetailTable.widthProperty().multiply(.25));
     productQuantity.prefWidthProperty().bind(quotationDetailTable.widthProperty().multiply(.25));
@@ -262,9 +259,7 @@ public class QuotationMasterFormController implements Initializable {
     // Edit
     edit.setOnAction(
         e -> {
-          QuotationDetailViewModel.getItem(
-              obj.getData().getId(),
-              QuotationDetailViewModel.quotationDetailsList.indexOf(obj.getData()));
+          QuotationDetailViewModel.getQuotationDetail(obj.getData());
           dialog.showAndWait();
           e.consume();
         });
@@ -275,16 +270,8 @@ public class QuotationMasterFormController implements Initializable {
   }
 
   private void quotationProductDialogPane(Stage stage) throws IOException {
-    FXMLLoader fxmlLoader = fxmlLoader("forms/QuotationDetailForm.fxml");
-    fxmlLoader.setControllerFactory(c -> QuotationDetailFormController.getInstance());
-
-    MFXGenericDialog dialogContent = fxmlLoader.load();
-
-    dialogContent.setShowMinimize(false);
-    dialogContent.setShowAlwaysOnTop(false);
-
     dialog =
-        MFXGenericDialogBuilder.build(dialogContent)
+        MFXGenericDialogBuilder.build(Dialogs.getQuotationDialogContent())
             .toStageDialogBuilder()
             .initOwner(stage)
             .initModality(Modality.WINDOW_MODAL)

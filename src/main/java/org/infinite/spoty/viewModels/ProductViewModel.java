@@ -31,8 +31,6 @@ import org.infinite.spoty.database.models.*;
 
 public class ProductViewModel {
   public static final ObservableList<Product> productsList = FXCollections.observableArrayList();
-  public static final ObservableList<Product> productsComboBoxList =
-      FXCollections.observableArrayList();
   private static final ListProperty<Product> products = new SimpleListProperty<>(productsList);
   private static final LongProperty id = new SimpleLongProperty(0);
   private static final ObjectProperty<Brand> brand = new SimpleObjectProperty<>(null);
@@ -380,6 +378,22 @@ public class ProductViewModel {
     getAllProducts();
   }
 
+  public static void updateProductQuantity(long index) throws SQLException {
+    Dao<Product, Long> productDao = DaoManager.createDao(connectionSource, Product.class);
+
+    Product product = productDao.queryForId(index);
+
+    product.setQuantity(getQuantity());
+    product.setUpdatedBy(getName());
+    product.setUpdatedAt(new Date());
+
+    productDao.update(product);
+
+    Platform.runLater(ProductViewModel::resetProperties);
+
+    getAllProducts();
+  }
+
   public static void getProduct(long index) throws SQLException {
     Dao<Product, Long> productDao = DaoManager.createDao(connectionSource, Product.class);
 
@@ -411,15 +425,5 @@ public class ProductViewModel {
     Dao<Product, Long> productDao = DaoManager.createDao(connectionSource, Product.class);
 
     productDao.deleteById(index);
-  }
-
-  public static ObservableList<Product> getProductsComboBoxList() {
-    productsComboBoxList.clear();
-    productsComboBoxList.addAll(getProducts());
-    return productsComboBoxList;
-  }
-
-  public static ObservableList<Product> getProductsList() {
-    return productsList;
   }
 }
