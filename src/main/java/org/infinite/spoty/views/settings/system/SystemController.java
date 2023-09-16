@@ -18,7 +18,7 @@ import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.utils.StringUtils;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
-import io.github.palexdev.mfxcomponents.controls.checkbox.MFXCheckBox;
+import io.github.palexdev.mfxcomponents.controls.checkbox.MFXCheckbox;
 import java.net.URL;
 import java.util.List;
 import java.util.Locale;
@@ -48,7 +48,7 @@ public class SystemController implements Initializable {
   @FXML public MFXTextField companyPhone;
   @FXML public MFXFilterComboBox<Branch> defaultBranch;
   @FXML public MFXTextField branchAddress;
-  @FXML public MFXCheckBox invoiceFooter;
+  @FXML public MFXCheckbox invoiceFooter;
   @FXML public GridPane systemSettings;
   private Preferences preferences;
 

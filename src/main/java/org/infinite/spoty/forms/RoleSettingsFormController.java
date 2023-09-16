@@ -19,7 +19,7 @@ import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.validation.Constraint;
 import io.github.palexdev.materialfx.validation.Severity;
-import io.github.palexdev.mfxcomponents.controls.checkbox.MFXCheckBox;
+import io.github.palexdev.mfxcomponents.controls.checkbox.MFXCheckbox;
 import java.net.URL;
 import java.util.List;
 import java.util.Objects;
@@ -41,17 +41,17 @@ import org.infinite.spoty.viewModels.RoleViewModel;
 public class RoleSettingsFormController implements Initializable {
   private static RoleSettingsFormController instance;
   @FXML public MFXTextField roleDescriptionInputField;
-  // <editor-fold desc="Lots of MFXCheckBoxes here 👇️">
-  @FXML private MFXCheckBox dashboardCheckbox, accessPOSCheckbox;
+  // <editor-fold desc="Lots of MFXCheckboxes here 👇️">
+  @FXML private MFXCheckbox dashboardCheckbox, accessPOSCheckbox;
   // Users
   @FXML
-  private MFXCheckBox viewUsersCheckbox, editUsersCheckbox, createUserCheckbox, deleteUserCheckbox;
+  private MFXCheckbox viewUsersCheckbox, editUsersCheckbox, createUserCheckbox, deleteUserCheckbox;
   // User Permissions
   @FXML
-  private MFXCheckBox viewRoleCheckbox, editRoleCheckbox, createRoleCheckbox, deleteRoleCheckbox;
+  private MFXCheckbox viewRoleCheckbox, editRoleCheckbox, createRoleCheckbox, deleteRoleCheckbox;
   // Products
   @FXML
-  private MFXCheckBox viewProductsCheckbox,
+  private MFXCheckbox viewProductsCheckbox,
       editProductsCheckbox,
       createProductCheckbox,
       deleteProductCheckbox,
@@ -62,78 +62,78 @@ public class RoleSettingsFormController implements Initializable {
       productBrandsCheckbox;
   // Adjustments
   @FXML
-  private MFXCheckBox viewAdjustmentsCheckbox,
+  private MFXCheckbox viewAdjustmentsCheckbox,
       editAdjustmentsCheckbox,
       createAdjustmentCheckbox,
       deleteAdjustmentCheckbox;
   // Transfers
   @FXML
-  private MFXCheckBox viewTransfersCheckbox,
+  private MFXCheckbox viewTransfersCheckbox,
       editTransfersCheckbox,
       createTransferCheckbox,
       deleteTransferCheckbox;
   // Expenses
   @FXML
-  private MFXCheckBox viewExpensesCheckbox,
+  private MFXCheckbox viewExpensesCheckbox,
       editExpensesCheckbox,
       createExpenseCheckbox,
       deleteExpenseCheckbox;
   // Sales
   @FXML
-  private MFXCheckBox viewSalesCheckbox, editSalesCheckbox, createSaleCheckbox, deleteSaleCheckbox;
+  private MFXCheckbox viewSalesCheckbox, editSalesCheckbox, createSaleCheckbox, deleteSaleCheckbox;
   // Purchases
   @FXML
-  private MFXCheckBox viewPurchasesCheckbox,
+  private MFXCheckbox viewPurchasesCheckbox,
       editPurchasesCheckbox,
       createPurchaseCheckbox,
       deletePurchaseCheckbox;
   // Requisitions
   @FXML
-  private MFXCheckBox viewRequisitionCheckbox,
+  private MFXCheckbox viewRequisitionCheckbox,
       editRequisitionCheckbox,
       createRequisitionCheckbox,
       deleteRequisitionCheckbox;
   // StockIns
   @FXML
-  private MFXCheckBox viewStockInCheckbox,
+  private MFXCheckbox viewStockInCheckbox,
       editStockInCheckbox,
       createStockInCheckbox,
       deleteStockInCheckbox;
   // Quotations
   @FXML
-  private MFXCheckBox viewQuotationsCheckbox,
+  private MFXCheckbox viewQuotationsCheckbox,
       editQuotationsCheckbox,
       createQuotationCheckbox,
       deleteQuotationCheckbox;
   // Sale Returns
   @FXML
-  private MFXCheckBox viewSaleReturnsCheckbox,
+  private MFXCheckbox viewSaleReturnsCheckbox,
       editSaleReturnsCheckbox,
       createSaleReturnCheckbox,
       deleteSaleReturnCheckbox;
   // Purchase Returns
   @FXML
-  private MFXCheckBox viewPurchaseReturnsCheckbox,
+  private MFXCheckbox viewPurchaseReturnsCheckbox,
       editPurchaseReturnsCheckbox,
       createPurchaseReturnCheckbox,
       deletePurchaseReturnCheckbox;
   // Customers
   @FXML
-  private MFXCheckBox viewCustomersCheckbox,
+  private MFXCheckbox viewCustomersCheckbox,
       editCustomersCheckbox,
       createCustomerCheckbox,
       deleteCustomerCheckbox,
       importCustomersCheckbox;
   // Suppliers
   @FXML
-  private MFXCheckBox viewSuppliersCheckbox,
+  private MFXCheckbox viewSuppliersCheckbox,
       editSuppliersCheckbox,
       createSupplierCheckbox,
       deleteSupplierCheckbox,
       importSuppliersCheckbox;
   // Reports
   @FXML
-  private MFXCheckBox paymentSalesCheckbox,
+  private MFXCheckbox paymentSalesCheckbox,
       paymentPurchasesCheckbox,
       saleReturnPaymentsCheckbox,
       purchaseReturnPaymentsCheckbox,
@@ -153,14 +153,14 @@ public class RoleSettingsFormController implements Initializable {
       productPurchasesReportCheckbox;
   // Settings
   @FXML
-  private MFXCheckBox accessSystemSettingCheckbox,
+  private MFXCheckbox accessSystemSettingCheckbox,
       AccessPOSSettingsCheckbox,
       accessCurrencyCheckbox,
       accessBranchCheckbox,
       accessBackupCheckbox;
   // Select All.
   @FXML
-  private MFXCheckBox selectAllRequisitionsCheckbox,
+  private MFXCheckbox selectAllRequisitionsCheckbox,
       selectAllPurchasesCheckbox,
       selectAllTransfersCheckbox,
       selectAllStockInsCheckbox,
