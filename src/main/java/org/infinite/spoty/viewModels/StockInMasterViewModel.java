@@ -19,10 +19,12 @@ import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
+
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -32,220 +34,207 @@ import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.StockInMaster;
 
 public class StockInMasterViewModel {
-  public static final ObservableList<StockInMaster> stockInMasterList =
-      FXCollections.observableArrayList();
-  private static final ListProperty<StockInMaster> stockIns =
-      new SimpleListProperty<>(stockInMasterList);
-  private static final LongProperty id = new SimpleLongProperty(0);
-  private static final StringProperty date = new SimpleStringProperty("");
-  private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>(null);
-  private static final StringProperty totalCost = new SimpleStringProperty("");
-  private static final StringProperty status = new SimpleStringProperty("");
-  private static final StringProperty note = new SimpleStringProperty("");
+    public static final ObservableList<StockInMaster> stockInMasterList =
+            FXCollections.observableArrayList();
+    private static final ListProperty<StockInMaster> stockIns =
+            new SimpleListProperty<>(stockInMasterList);
+    private static final LongProperty id = new SimpleLongProperty(0);
+    private static final StringProperty date = new SimpleStringProperty("");
+    private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>(null);
+    private static final StringProperty totalCost = new SimpleStringProperty("");
+    private static final StringProperty status = new SimpleStringProperty("");
+    private static final StringProperty note = new SimpleStringProperty("");
+    private static final SQLiteConnection connection = SQLiteConnection.getInstance();
+    private static final ConnectionSource connectionSource = connection.getConnection();
 
-  public static long getId() {
-    return id.get();
-  }
-
-  public static void setId(long id) {
-    StockInMasterViewModel.id.set(id);
-  }
-
-  public static LongProperty idProperty() {
-    return id;
-  }
-
-  public static Date getDate() {
-    try {
-      return new SimpleDateFormat("MMM dd, yyyy").parse(date.get());
-    } catch (ParseException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
-  public static void setDate(String date) {
-    StockInMasterViewModel.date.set(date);
-  }
-
-  public static StringProperty dateProperty() {
-    return date;
-  }
-
-  public static Branch getBranch() {
-    return branch.get();
-  }
-
-  public static void setBranch(Branch branch) {
-    StockInMasterViewModel.branch.set(branch);
-  }
-
-  public static ObjectProperty<Branch> branchProperty() {
-    return branch;
-  }
-
-  public static String getNote() {
-    return note.get();
-  }
-
-  public static void setNote(String note) {
-    StockInMasterViewModel.note.set(note);
-  }
-
-  public static StringProperty noteProperty() {
-    return note;
-  }
-
-  public static String getStatus() {
-    return status.get();
-  }
-
-  public static void setStatus(String status) {
-    StockInMasterViewModel.status.set(status);
-  }
-
-  public static StringProperty statusProperty() {
-    return status;
-  }
-
-  public static double getTotalCost() {
-    return Double.parseDouble(!totalCost.get().isEmpty() ? totalCost.get() : "0");
-  }
-
-  public static void setTotalCost(String totalCost) {
-    StockInMasterViewModel.totalCost.set(totalCost);
-  }
-
-  public static StringProperty totalCostProperty() {
-    return totalCost;
-  }
-
-  public static ObservableList<StockInMaster> getStockIns() {
-    return stockIns.get();
-  }
-
-  public static void setStockIns(ObservableList<StockInMaster> stockIns) {
-    StockInMasterViewModel.stockIns.set(stockIns);
-  }
-
-  public static ListProperty<StockInMaster> stockInsProperty() {
-    return stockIns;
-  }
-
-  public static void resetProperties() {
-    Platform.runLater(
-        () -> {
-          setId(0);
-          setDate("");
-          setBranch(null);
-          setNote("");
-          setStatus("");
-          setTotalCost("");
-          PENDING_DELETES.clear();
-        });
-  }
-
-  public static void saveStockInMaster() throws SQLException {
-    SQLiteConnection connection = SQLiteConnection.getInstance();
-    ConnectionSource connectionSource = connection.getConnection();
-
-    Dao<StockInMaster, Long> stockInMasterDao =
-        DaoManager.createDao(connectionSource, StockInMaster.class);
-
-    StockInMaster stockInMaster = new StockInMaster(getDate(), getBranch(), getStatus(), getNote());
-
-    if (!StockInDetailViewModel.stockInDetailsList.isEmpty()) {
-      StockInDetailViewModel.stockInDetailsList.forEach(
-          stockInDetail -> stockInDetail.setStockIn(stockInMaster));
-      stockInMaster.setStockInDetails(StockInDetailViewModel.getStockInDetailsList());
+    public static long getId() {
+        return id.get();
     }
 
-    stockInMasterDao.create(stockInMaster);
-    StockInDetailViewModel.createStockInDetails();
+    public static void setId(long id) {
+        StockInMasterViewModel.id.set(id);
+    }
 
-    resetProperties();
-    getStockInMasters();
-  }
+    public static LongProperty idProperty() {
+        return id;
+    }
 
-  public static void getStockInMasters() throws SQLException {
-    SQLiteConnection connection = SQLiteConnection.getInstance();
-    ConnectionSource connectionSource = connection.getConnection();
-
-    Dao<StockInMaster, Long> stockInMasterDao =
-        DaoManager.createDao(connectionSource, StockInMaster.class);
-
-    Platform.runLater(
-        () -> {
-          stockInMasterList.clear();
-
-          try {
-            stockInMasterList.addAll(stockInMasterDao.queryForAll());
-          } catch (SQLException e) {
+    public static Date getDate() {
+        try {
+            return new SimpleDateFormat("MMM dd, yyyy").parse(date.get());
+        } catch (ParseException e) {
             throw new RuntimeException(e);
-          }
-        });
-  }
+        }
+    }
 
-  public static void getItem(long index) throws SQLException {
-    SQLiteConnection connection = SQLiteConnection.getInstance();
-    ConnectionSource connectionSource = connection.getConnection();
+    public static void setDate(String date) {
+        StockInMasterViewModel.date.set(date);
+    }
 
-    Dao<StockInMaster, Long> stockInMasterDao =
-        DaoManager.createDao(connectionSource, StockInMaster.class);
+    public static StringProperty dateProperty() {
+        return date;
+    }
 
-    StockInMaster stockInMaster = stockInMasterDao.queryForId(index);
+    public static Branch getBranch() {
+        return branch.get();
+    }
 
-    Platform.runLater(
-        () -> {
-          setId(stockInMaster.getId());
-          setDate(stockInMaster.getLocaleDate());
-          setBranch(stockInMaster.getBranch());
-          setTotalCost(String.valueOf(stockInMaster.getTotalAmount()));
-          setStatus(stockInMaster.getStatus());
-          setNote(stockInMaster.getNotes());
+    public static void setBranch(Branch branch) {
+        StockInMasterViewModel.branch.set(branch);
+    }
 
-          StockInDetailViewModel.stockInDetailsList.clear();
-          StockInDetailViewModel.stockInDetailsList.addAll(stockInMaster.getStockInDetails());
-        });
+    public static ObjectProperty<Branch> branchProperty() {
+        return branch;
+    }
 
-    getStockInMasters();
-  }
+    public static String getNote() {
+        return note.get();
+    }
 
-  public static void updateItem(long index) throws SQLException {
-    SQLiteConnection connection = SQLiteConnection.getInstance();
-    ConnectionSource connectionSource = connection.getConnection();
+    public static void setNote(String note) {
+        StockInMasterViewModel.note.set(note);
+    }
 
-    Dao<StockInMaster, Long> stockInMasterDao =
-        DaoManager.createDao(connectionSource, StockInMaster.class);
+    public static StringProperty noteProperty() {
+        return note;
+    }
 
-    StockInMaster stockInMaster = stockInMasterDao.queryForId(index);
-    stockInMaster.setDate(getDate());
-    stockInMaster.setBranch(getBranch());
-    stockInMaster.setStatus(getStatus());
-    stockInMaster.setNotes(getNote());
+    public static String getStatus() {
+        return status.get();
+    }
 
-    StockInDetailViewModel.deleteStockInDetails(PENDING_DELETES);
-    stockInMaster.setStockInDetails(StockInDetailViewModel.getStockInDetailsList());
+    public static void setStatus(String status) {
+        StockInMasterViewModel.status.set(status);
+    }
 
-    stockInMasterDao.update(stockInMaster);
-    StockInDetailViewModel.updateStockInDetails();
+    public static StringProperty statusProperty() {
+        return status;
+    }
 
-    resetProperties();
-    getStockInMasters();
-  }
+    public static double getTotalCost() {
+        return Double.parseDouble(!totalCost.get().isEmpty() ? totalCost.get() : "0");
+    }
 
-  public static void deleteItem(long index) throws SQLException {
-    SQLiteConnection connection = SQLiteConnection.getInstance();
-    ConnectionSource connectionSource = connection.getConnection();
+    public static void setTotalCost(String totalCost) {
+        StockInMasterViewModel.totalCost.set(totalCost);
+    }
 
-    Dao<StockInMaster, Long> stockInMasterDao =
-        DaoManager.createDao(connectionSource, StockInMaster.class);
+    public static StringProperty totalCostProperty() {
+        return totalCost;
+    }
 
-    stockInMasterDao.deleteById(index);
+    public static ObservableList<StockInMaster> getStockIns() {
+        return stockIns.get();
+    }
 
-    getStockInMasters();
-  }
+    public static void setStockIns(ObservableList<StockInMaster> stockIns) {
+        StockInMasterViewModel.stockIns.set(stockIns);
+    }
 
-  public static ObservableList<StockInMaster> getStockInMasterList() {
-    return stockInMasterList;
-  }
+    public static ListProperty<StockInMaster> stockInsProperty() {
+        return stockIns;
+    }
+
+    public static void resetProperties() {
+        Platform.runLater(
+                () -> {
+                    setId(0);
+                    setDate("");
+                    setBranch(null);
+                    setNote("");
+                    setStatus("");
+                    setTotalCost("");
+                    PENDING_DELETES.clear();
+                });
+    }
+
+    public static void saveStockInMaster() throws SQLException {
+        Dao<StockInMaster, Long> stockInMasterDao =
+                DaoManager.createDao(connectionSource, StockInMaster.class);
+
+        StockInMaster stockInMaster = new StockInMaster(getDate(), getBranch(), getStatus(), getNote());
+
+        if (!StockInDetailViewModel.stockInDetailsList.isEmpty()) {
+            StockInDetailViewModel.stockInDetailsList.forEach(
+                    stockInDetail -> stockInDetail.setStockIn(stockInMaster));
+            stockInMaster.setStockInDetails(StockInDetailViewModel.getStockInDetailsList());
+        }
+
+        stockInMasterDao.create(stockInMaster);
+        StockInDetailViewModel.createStockInDetails();
+
+        resetProperties();
+        getStockInMasters();
+    }
+
+    public static void getStockInMasters() throws SQLException {
+        Dao<StockInMaster, Long> stockInMasterDao =
+                DaoManager.createDao(connectionSource, StockInMaster.class);
+
+        Platform.runLater(
+                () -> {
+                    stockInMasterList.clear();
+
+                    try {
+                        stockInMasterList.addAll(stockInMasterDao.queryForAll());
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+    }
+
+    public static void getItem(long index) throws SQLException {
+        Dao<StockInMaster, Long> stockInMasterDao =
+                DaoManager.createDao(connectionSource, StockInMaster.class);
+
+        StockInMaster stockInMaster = stockInMasterDao.queryForId(index);
+
+        Platform.runLater(
+                () -> {
+                    setId(stockInMaster.getId());
+                    setDate(stockInMaster.getLocaleDate());
+                    setBranch(stockInMaster.getBranch());
+                    setTotalCost(String.valueOf(stockInMaster.getTotalAmount()));
+                    setStatus(stockInMaster.getStatus());
+                    setNote(stockInMaster.getNotes());
+
+                    StockInDetailViewModel.stockInDetailsList.clear();
+                    StockInDetailViewModel.stockInDetailsList.addAll(stockInMaster.getStockInDetails());
+                });
+
+        getStockInMasters();
+    }
+
+    public static void updateItem(long index) throws SQLException {
+        Dao<StockInMaster, Long> stockInMasterDao =
+                DaoManager.createDao(connectionSource, StockInMaster.class);
+
+        StockInMaster stockInMaster = stockInMasterDao.queryForId(index);
+        stockInMaster.setDate(getDate());
+        stockInMaster.setBranch(getBranch());
+        stockInMaster.setStatus(getStatus());
+        stockInMaster.setNotes(getNote());
+
+        StockInDetailViewModel.deleteStockInDetails(PENDING_DELETES);
+        stockInMaster.setStockInDetails(StockInDetailViewModel.getStockInDetailsList());
+
+        stockInMasterDao.update(stockInMaster);
+        StockInDetailViewModel.updateStockInDetails();
+
+        resetProperties();
+        getStockInMasters();
+    }
+
+    public static void deleteItem(long index) throws SQLException {
+        Dao<StockInMaster, Long> stockInMasterDao =
+                DaoManager.createDao(connectionSource, StockInMaster.class);
+
+        stockInMasterDao.deleteById(index);
+
+        getStockInMasters();
+    }
+
+    public static ObservableList<StockInMaster> getStockInMasterList() {
+        return stockInMasterList;
+    }
 }

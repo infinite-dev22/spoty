@@ -21,12 +21,16 @@ import static org.infinite.spoty.viewModels.BrandViewModel.saveBrand;
 
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.Objects;
 import java.util.ResourceBundle;
+
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
@@ -34,78 +38,96 @@ import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.viewModels.BrandViewModel;
 
 public class BrandFormController implements Initializable {
-  private static BrandFormController instance;
-  @FXML public MFXTextField brandFormName;
-  @FXML public MFXTextField brandFormDescription;
-  @FXML public MFXButton brandFormSaveBtn;
-  @FXML public MFXButton brandFormCancelBtn;
-  @FXML public Label brandFormNameValidationLabel;
-  @FXML public Label brandFormDescriptionValidationLabel;
+    private static BrandFormController instance;
+    @FXML
+    public MFXTextField brandFormName;
+    @FXML
+    public MFXTextField brandFormDescription;
+    @FXML
+    public MFXButton brandFormSaveBtn;
+    @FXML
+    public MFXButton brandFormCancelBtn;
+    @FXML
+    public Label brandFormNameValidationLabel;
+    @FXML
+    public Label brandFormDescriptionValidationLabel;
 
-  public static BrandFormController getInstance() {
-    if (Objects.equals(instance, null)) instance = new BrandFormController();
-    return instance;
-  }
+    public static BrandFormController getInstance() {
+        if (Objects.equals(instance, null)) instance = new BrandFormController();
+        return instance;
+    }
 
-  @Override
-  public void initialize(URL location, ResourceBundle resources) {
-    // Input bindings.
-    brandFormName.textProperty().bindBidirectional(BrandViewModel.nameProperty());
-    brandFormDescription.textProperty().bindBidirectional(BrandViewModel.descriptionProperty());
-    // Input listeners.
-    requiredValidator(
-        brandFormName, "Brand name is required.", brandFormNameValidationLabel, brandFormSaveBtn);
-    dialogOnActions();
-  }
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        // Input bindings.
+        brandFormName.textProperty().bindBidirectional(BrandViewModel.nameProperty());
+        brandFormDescription.textProperty().bindBidirectional(BrandViewModel.descriptionProperty());
+        // Input listeners.
+        requiredValidator(
+                brandFormName, "Brand name is required.", brandFormNameValidationLabel, brandFormSaveBtn);
+        dialogOnActions();
+    }
 
-  private void dialogOnActions() {
-    brandFormCancelBtn.setOnAction(
-        (e) -> {
-          closeDialog(e);
+    private void dialogOnActions() {
+        brandFormCancelBtn.setOnAction(
+                (e) -> {
+                    closeDialog(e);
 
-          clearBrandData();
+                    clearBrandData();
 
-          brandFormNameValidationLabel.setVisible(false);
-        });
-    brandFormSaveBtn.setOnAction(
-        (e) -> {
-          SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
+                    brandFormNameValidationLabel.setVisible(false);
+                });
+        brandFormSaveBtn.setOnAction(
+                (e) -> {
+                    SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
 
-          if (!brandFormNameValidationLabel.isVisible()) {
-            if (BrandViewModel.getId() > 0) {
-              BrandViewModel.updateItem(BrandViewModel.getId());
+                    if (!brandFormNameValidationLabel.isVisible()) {
+                        if (BrandViewModel.getId() > 0) {
+                            GlobalActions.spotyThreadPool().execute(() -> {
+                                try {
+                                    BrandViewModel.updateItem(BrandViewModel.getId());
+                                } catch (SQLException ex) {
+                                    throw new RuntimeException(ex);
+                                }
+                            });
 
-              SimpleNotification notification =
-                  new SimpleNotification.NotificationBuilder("Brand updated successfully")
-                      .duration(NotificationDuration.SHORT)
-                      .icon("fas-circle-check")
-                      .type(NotificationVariants.SUCCESS)
-                      .build();
-              notificationHolder.addNotification(notification);
+                            SimpleNotification notification =
+                                    new SimpleNotification.NotificationBuilder("Brand updated successfully")
+                                            .duration(NotificationDuration.SHORT)
+                                            .icon("fas-circle-check")
+                                            .type(NotificationVariants.SUCCESS)
+                                            .build();
+                            notificationHolder.addNotification(notification);
 
-              closeDialog(e);
-              return;
-            }
-            saveBrand();
+                            closeDialog(e);
+                            return;
+                        }
+                        GlobalActions.spotyThreadPool().execute(() -> {
+                            try {
+                                saveBrand();
+                            } catch (SQLException ex) {
+                                throw new RuntimeException(ex);
+                            }
+                        });
 
-            SimpleNotification notification =
-                new SimpleNotification.NotificationBuilder("Brand saved successfully")
-                    .duration(NotificationDuration.SHORT)
-                    .icon("fas-circle-check")
-                    .type(NotificationVariants.SUCCESS)
-                    .build();
-            notificationHolder.addNotification(notification);
+                        SimpleNotification notification =
+                                new SimpleNotification.NotificationBuilder("Brand saved successfully")
+                                        .duration(NotificationDuration.SHORT)
+                                        .icon("fas-circle-check")
+                                        .type(NotificationVariants.SUCCESS)
+                                        .build();
+                        notificationHolder.addNotification(notification);
 
-            closeDialog(e);
-            return;
-          }
-          SimpleNotification notification =
-              new SimpleNotification.NotificationBuilder("Required fields missing")
-                  .duration(NotificationDuration.SHORT)
-                  .icon("fas-triangle-exclamation")
-                  .type(NotificationVariants.ERROR)
-                  .build();
-          notificationHolder.addNotification(notification);
-        });
-  }
+                        closeDialog(e);
+                        return;
+                    }
+                    SimpleNotification notification =
+                            new SimpleNotification.NotificationBuilder("Required fields missing")
+                                    .duration(NotificationDuration.SHORT)
+                                    .icon("fas-triangle-exclamation")
+                                    .type(NotificationVariants.ERROR)
+                                    .build();
+                    notificationHolder.addNotification(notification);
+                });
+    }
 }

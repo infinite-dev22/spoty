@@ -21,12 +21,16 @@ import static org.infinite.spoty.viewModels.CurrencyViewModel.saveCurrency;
 
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.Objects;
 import java.util.ResourceBundle;
+
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
@@ -34,91 +38,110 @@ import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.viewModels.CurrencyViewModel;
 
 public class CurrencyFormController implements Initializable {
-  private static CurrencyFormController instance;
-  @FXML public MFXTextField currencyFormName;
-  @FXML public MFXButton currencyFormSaveBtn;
-  @FXML public MFXButton currencyFormCancelBtn;
-  @FXML public MFXTextField currencyFormCode;
-  @FXML public MFXTextField currencyFormSymbol;
-  @FXML public Label currencyFormCodeValidationLabel;
-  @FXML public Label currencyFormNameValidationLabel;
+    private static CurrencyFormController instance;
+    @FXML
+    public MFXTextField currencyFormName;
+    @FXML
+    public MFXButton currencyFormSaveBtn;
+    @FXML
+    public MFXButton currencyFormCancelBtn;
+    @FXML
+    public MFXTextField currencyFormCode;
+    @FXML
+    public MFXTextField currencyFormSymbol;
+    @FXML
+    public Label currencyFormCodeValidationLabel;
+    @FXML
+    public Label currencyFormNameValidationLabel;
 
-  public static CurrencyFormController getInstance() {
-    if (Objects.equals(instance, null)) instance = new CurrencyFormController();
-    return instance;
-  }
+    public static CurrencyFormController getInstance() {
+        if (Objects.equals(instance, null)) instance = new CurrencyFormController();
+        return instance;
+    }
 
-  @Override
-  public void initialize(URL location, ResourceBundle resources) {
-    // Input listeners.
-    // Input bindings.
-    currencyFormCode.textProperty().bindBidirectional(CurrencyViewModel.codeProperty());
-    currencyFormName.textProperty().bindBidirectional(CurrencyViewModel.nameProperty());
-    currencyFormSymbol.textProperty().bindBidirectional(CurrencyViewModel.symbolProperty());
-    // Input listeners.
-    requiredValidator(
-        currencyFormName,
-        "Name is required.",
-        currencyFormNameValidationLabel,
-        currencyFormSaveBtn);
-    requiredValidator(
-        currencyFormCode,
-        "Code is required.",
-        currencyFormCodeValidationLabel,
-        currencyFormSaveBtn);
-    dialogOnActions();
-  }
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        // Input listeners.
+        // Input bindings.
+        currencyFormCode.textProperty().bindBidirectional(CurrencyViewModel.codeProperty());
+        currencyFormName.textProperty().bindBidirectional(CurrencyViewModel.nameProperty());
+        currencyFormSymbol.textProperty().bindBidirectional(CurrencyViewModel.symbolProperty());
+        // Input listeners.
+        requiredValidator(
+                currencyFormName,
+                "Name is required.",
+                currencyFormNameValidationLabel,
+                currencyFormSaveBtn);
+        requiredValidator(
+                currencyFormCode,
+                "Code is required.",
+                currencyFormCodeValidationLabel,
+                currencyFormSaveBtn);
+        dialogOnActions();
+    }
 
-  private void dialogOnActions() {
-    currencyFormCancelBtn.setOnAction(
-        (e) -> {
-          clearCurrencyData();
+    private void dialogOnActions() {
+        currencyFormCancelBtn.setOnAction(
+                (e) -> {
+                    clearCurrencyData();
 
-          closeDialog(e);
+                    closeDialog(e);
 
-          currencyFormNameValidationLabel.setVisible(false);
-          currencyFormCodeValidationLabel.setVisible(false);
-        });
-    currencyFormSaveBtn.setOnAction(
-        (e) -> {
-          SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
+                    currencyFormNameValidationLabel.setVisible(false);
+                    currencyFormCodeValidationLabel.setVisible(false);
+                });
+        currencyFormSaveBtn.setOnAction(
+                (e) -> {
+                    SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
 
-          if (!currencyFormNameValidationLabel.isVisible()
-              && !currencyFormCodeValidationLabel.isVisible()) {
-            if (CurrencyViewModel.getId() > 0) {
-              CurrencyViewModel.updateItem(CurrencyViewModel.getId());
+                    if (!currencyFormNameValidationLabel.isVisible()
+                            && !currencyFormCodeValidationLabel.isVisible()) {
+                        if (CurrencyViewModel.getId() > 0) {
+                            GlobalActions.spotyThreadPool().execute(() -> {
+                                try {
+                                    CurrencyViewModel.updateItem(CurrencyViewModel.getId());
+                                } catch (SQLException ex) {
+                                    throw new RuntimeException(ex);
+                                }
+                            });
 
-              SimpleNotification notification =
-                  new SimpleNotification.NotificationBuilder("Currency updated successfully")
-                      .duration(NotificationDuration.SHORT)
-                      .icon("fas-circle-check")
-                      .type(NotificationVariants.SUCCESS)
-                      .build();
-              notificationHolder.addNotification(notification);
+                            SimpleNotification notification =
+                                    new SimpleNotification.NotificationBuilder("Currency updated successfully")
+                                            .duration(NotificationDuration.SHORT)
+                                            .icon("fas-circle-check")
+                                            .type(NotificationVariants.SUCCESS)
+                                            .build();
+                            notificationHolder.addNotification(notification);
 
-              closeDialog(e);
-              return;
-            }
-            saveCurrency();
+                            closeDialog(e);
+                            return;
+                        }
+                        GlobalActions.spotyThreadPool().execute(() -> {
+                            try {
+                                saveCurrency();
+                            } catch (SQLException ex) {
+                                throw new RuntimeException(ex);
+                            }
+                        });
 
-            SimpleNotification notification =
-                new SimpleNotification.NotificationBuilder("Currency saved successfully")
-                    .duration(NotificationDuration.SHORT)
-                    .icon("fas-circle-check")
-                    .type(NotificationVariants.SUCCESS)
-                    .build();
-            notificationHolder.addNotification(notification);
+                        SimpleNotification notification =
+                                new SimpleNotification.NotificationBuilder("Currency saved successfully")
+                                        .duration(NotificationDuration.SHORT)
+                                        .icon("fas-circle-check")
+                                        .type(NotificationVariants.SUCCESS)
+                                        .build();
+                        notificationHolder.addNotification(notification);
 
-            closeDialog(e);
-            return;
-          }
-          SimpleNotification notification =
-              new SimpleNotification.NotificationBuilder("Required fields missing")
-                  .duration(NotificationDuration.SHORT)
-                  .icon("fas-triangle-exclamation")
-                  .type(NotificationVariants.ERROR)
-                  .build();
-          notificationHolder.addNotification(notification);
-        });
-  }
+                        closeDialog(e);
+                        return;
+                    }
+                    SimpleNotification notification =
+                            new SimpleNotification.NotificationBuilder("Required fields missing")
+                                    .duration(NotificationDuration.SHORT)
+                                    .icon("fas-triangle-exclamation")
+                                    .type(NotificationVariants.ERROR)
+                                    .build();
+                    notificationHolder.addNotification(notification);
+                });
+    }
 }

@@ -20,8 +20,10 @@ import static org.infinite.spoty.values.SharedResources.getTempId;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
+
 import java.sql.SQLException;
 import java.util.LinkedList;
+
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -34,440 +36,337 @@ import org.infinite.spoty.database.models.PurchaseDetail;
 import org.infinite.spoty.database.models.PurchaseMaster;
 
 public class PurchaseDetailViewModel {
-  public static final ObservableList<PurchaseDetail> purchaseDetailList =
-      FXCollections.observableArrayList();
-  private static final ListProperty<PurchaseDetail> purchaseDetails =
-      new SimpleListProperty<>(purchaseDetailList);
-  private static final LongProperty id = new SimpleLongProperty(0);
-  private static final ObjectProperty<PurchaseMaster> purchase = new SimpleObjectProperty<>(null);
-  private static final StringProperty cost = new SimpleStringProperty("");
-  private static final StringProperty netTax = new SimpleStringProperty("");
-  private static final StringProperty taxType = new SimpleStringProperty("");
-  private static final StringProperty discount = new SimpleStringProperty("");
-  private static final StringProperty discountType = new SimpleStringProperty("");
-  private static final ObjectProperty<Product> product = new SimpleObjectProperty<>(null);
-  private static final StringProperty serial = new SimpleStringProperty("");
-  private static final StringProperty price = new SimpleStringProperty("");
-  private static final StringProperty totalPrice = new SimpleStringProperty("");
-  private static final StringProperty quantity = new SimpleStringProperty("");
+    public static final ObservableList<PurchaseDetail> purchaseDetailList =
+            FXCollections.observableArrayList();
+    private static final ListProperty<PurchaseDetail> purchaseDetails =
+            new SimpleListProperty<>(purchaseDetailList);
+    private static final LongProperty id = new SimpleLongProperty(0);
+    private static final ObjectProperty<PurchaseMaster> purchase = new SimpleObjectProperty<>(null);
+    private static final StringProperty cost = new SimpleStringProperty("");
+    private static final StringProperty netTax = new SimpleStringProperty("");
+    private static final StringProperty taxType = new SimpleStringProperty("");
+    private static final StringProperty discount = new SimpleStringProperty("");
+    private static final StringProperty discountType = new SimpleStringProperty("");
+    private static final ObjectProperty<Product> product = new SimpleObjectProperty<>(null);
+    private static final StringProperty serial = new SimpleStringProperty("");
+    private static final StringProperty price = new SimpleStringProperty("");
+    private static final StringProperty totalPrice = new SimpleStringProperty("");
+    private static final StringProperty quantity = new SimpleStringProperty("");
+    private static final SQLiteConnection connection = SQLiteConnection.getInstance();
+    private static final ConnectionSource connectionSource = connection.getConnection();
 
-  public static long getId() {
-    return id.get();
-  }
+    public static long getId() {
+        return id.get();
+    }
 
-  public static void setId(long id) {
-    PurchaseDetailViewModel.id.set(id);
-  }
+    public static void setId(long id) {
+        PurchaseDetailViewModel.id.set(id);
+    }
 
-  public static LongProperty idProperty() {
-    return id;
-  }
+    public static LongProperty idProperty() {
+        return id;
+    }
 
-  public static PurchaseMaster getPurchase() {
-    return purchase.get();
-  }
+    public static PurchaseMaster getPurchase() {
+        return purchase.get();
+    }
 
-  public static void setPurchase(PurchaseMaster purchase) {
-    PurchaseDetailViewModel.purchase.set(purchase);
-  }
+    public static void setPurchase(PurchaseMaster purchase) {
+        PurchaseDetailViewModel.purchase.set(purchase);
+    }
 
-  public static ObjectProperty<PurchaseMaster> purchaseProperty() {
-    return purchase;
-  }
+    public static ObjectProperty<PurchaseMaster> purchaseProperty() {
+        return purchase;
+    }
 
-  public static String getQuantity() {
-    return quantity.get();
-  }
+    public static String getQuantity() {
+        return quantity.get();
+    }
 
-  public static void setQuantity(String quantity) {
-    PurchaseDetailViewModel.quantity.set(quantity);
-  }
+    public static void setQuantity(String quantity) {
+        PurchaseDetailViewModel.quantity.set(quantity);
+    }
 
-  public static StringProperty quantityProperty() {
-    return quantity;
-  }
+    public static StringProperty quantityProperty() {
+        return quantity;
+    }
 
-  public static String getCost() {
-    return cost.get();
-  }
+    public static String getCost() {
+        return cost.get();
+    }
 
-  public static void setCost(String cost) {
-    PurchaseDetailViewModel.cost.set(cost);
-  }
+    public static void setCost(String cost) {
+        PurchaseDetailViewModel.cost.set(cost);
+    }
 
-  public static StringProperty costProperty() {
-    return cost;
-  }
+    public static StringProperty costProperty() {
+        return cost;
+    }
 
-  public static String getNetTax() {
-    return netTax.get();
-  }
+    public static String getNetTax() {
+        return netTax.get();
+    }
 
-  public static void setNetTax(String netTax) {
-    PurchaseDetailViewModel.netTax.set(netTax);
-  }
+    public static void setNetTax(String netTax) {
+        PurchaseDetailViewModel.netTax.set(netTax);
+    }
 
-  public static StringProperty netTaxProperty() {
-    return netTax;
-  }
+    public static StringProperty netTaxProperty() {
+        return netTax;
+    }
 
-  public static String getTaxType() {
-    return taxType.get();
-  }
+    public static String getTaxType() {
+        return taxType.get();
+    }
 
-  public static void setTaxType(String taxType) {
-    PurchaseDetailViewModel.taxType.set(taxType);
-  }
+    public static void setTaxType(String taxType) {
+        PurchaseDetailViewModel.taxType.set(taxType);
+    }
 
-  public static StringProperty taxTypeProperty() {
-    return taxType;
-  }
+    public static StringProperty taxTypeProperty() {
+        return taxType;
+    }
 
-  public static String getSerial() {
-    return serial.get();
-  }
+    public static String getSerial() {
+        return serial.get();
+    }
 
-  public static void setSerial(String serial) {
-    PurchaseDetailViewModel.serial.set(serial);
-  }
+    public static void setSerial(String serial) {
+        PurchaseDetailViewModel.serial.set(serial);
+    }
 
-  public static StringProperty serialProperty() {
-    return serial;
-  }
+    public static StringProperty serialProperty() {
+        return serial;
+    }
 
-  public static String getDiscount() {
-    return discount.get();
-  }
+    public static String getDiscount() {
+        return discount.get();
+    }
 
-  public static void setDiscount(String discount) {
-    PurchaseDetailViewModel.discount.set(discount);
-  }
+    public static void setDiscount(String discount) {
+        PurchaseDetailViewModel.discount.set(discount);
+    }
 
-  public static StringProperty discountProperty() {
-    return discount;
-  }
+    public static StringProperty discountProperty() {
+        return discount;
+    }
 
-  public static String getDiscountType() {
-    return discountType.get();
-  }
+    public static String getDiscountType() {
+        return discountType.get();
+    }
 
-  public static void setDiscountType(String discountType) {
-    PurchaseDetailViewModel.discountType.set(discountType);
-  }
+    public static void setDiscountType(String discountType) {
+        PurchaseDetailViewModel.discountType.set(discountType);
+    }
 
-  public static StringProperty discountTypeProperty() {
-    return discountType;
-  }
+    public static StringProperty discountTypeProperty() {
+        return discountType;
+    }
 
-  public static Product getProduct() {
-    return product.get();
-  }
+    public static Product getProduct() {
+        return product.get();
+    }
 
-  public static void setProduct(Product product) {
-    PurchaseDetailViewModel.product.set(product);
-  }
+    public static void setProduct(Product product) {
+        PurchaseDetailViewModel.product.set(product);
+    }
 
-  public static ObjectProperty<Product> productProperty() {
-    return product;
-  }
+    public static ObjectProperty<Product> productProperty() {
+        return product;
+    }
 
-  public static String getTotalPrice() {
-    return totalPrice.get();
-  }
+    public static String getTotalPrice() {
+        return totalPrice.get();
+    }
 
-  public static void setTotalPrice(String totalPrice) {
-    PurchaseDetailViewModel.totalPrice.set(totalPrice);
-  }
+    public static void setTotalPrice(String totalPrice) {
+        PurchaseDetailViewModel.totalPrice.set(totalPrice);
+    }
 
-  public static StringProperty totalPriceProperty() {
-    return totalPrice;
-  }
+    public static StringProperty totalPriceProperty() {
+        return totalPrice;
+    }
 
-  public static String getPrice() {
-    return price.get();
-  }
+    public static String getPrice() {
+        return price.get();
+    }
 
-  public static void setPrice(String price) {
-    PurchaseDetailViewModel.price.set(price);
-  }
+    public static void setPrice(String price) {
+        PurchaseDetailViewModel.price.set(price);
+    }
 
-  public static StringProperty priceProperty() {
-    return price;
-  }
+    public static StringProperty priceProperty() {
+        return price;
+    }
 
-  public static StringProperty totalProperty() {
-    return totalPrice;
-  }
+    public static StringProperty totalProperty() {
+        return totalPrice;
+    }
 
-  public static ObservableList<PurchaseDetail> getPurchaseDetails() {
-    return purchaseDetails.get();
-  }
+    public static ObservableList<PurchaseDetail> getPurchaseDetails() {
+        return purchaseDetails.get();
+    }
 
-  public static void setPurchaseDetails(ObservableList<PurchaseDetail> purchaseDetails) {
-    PurchaseDetailViewModel.purchaseDetails.set(purchaseDetails);
-  }
+    public static void setPurchaseDetails(ObservableList<PurchaseDetail> purchaseDetails) {
+        PurchaseDetailViewModel.purchaseDetails.set(purchaseDetails);
+    }
 
-  public static ListProperty<PurchaseDetail> purchaseDetailsProperty() {
-    return purchaseDetails;
-  }
+    public static ListProperty<PurchaseDetail> purchaseDetailsProperty() {
+        return purchaseDetails;
+    }
 
-  public static void addPurchaseDetail() {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() {
-            PurchaseDetail purchaseDetail =
+    public static void addPurchaseDetail() {
+        PurchaseDetail purchaseDetail =
                 new PurchaseDetail(
-                    getPurchase(),
-                    Double.parseDouble(getCost()),
-                    getProduct(),
-                    Long.parseLong(getQuantity()));
+                        getPurchase(),
+                        Double.parseDouble(getCost()),
+                        getProduct(),
+                        Long.parseLong(getQuantity()));
 
-            Platform.runLater(() -> purchaseDetailList.add(purchaseDetail));
+        Platform.runLater(() -> purchaseDetailList.add(purchaseDetail));
 
-            return null;
-          }
-        };
+        resetProperties();
+    }
 
-    task.setOnSucceeded(event -> resetProperties());
-
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static void savePurchaseDetails() {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
-            Dao<PurchaseDetail, Long> purchaseDetailDao =
+    public static void savePurchaseDetails() throws SQLException {
+        Dao<PurchaseDetail, Long> purchaseDetailDao =
                 DaoManager.createDao(connectionSource, PurchaseDetail.class);
 
-            purchaseDetailDao.create(purchaseDetailList);
+        purchaseDetailDao.create(purchaseDetailList);
 
-            return null;
-          }
-        };
+        purchaseDetailList.clear();
+    }
 
-    task.setOnSucceeded(event -> purchaseDetailList.clear());
+    public static void resetProperties() {
+        setId(0);
+        setTempId(-1);
+        setPurchase(null);
+        setProduct(null);
+        setCost("");
+        setNetTax("");
+        setTaxType(null);
+        setDiscount("");
+        setDiscountType(null);
+        setSerial(null);
+        setTotalPrice("");
+        setQuantity("");
+    }
 
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static void resetProperties() {
-    setId(0);
-    setTempId(-1);
-    setPurchase(null);
-    setProduct(null);
-    setCost("");
-    setNetTax("");
-    setTaxType(null);
-    setDiscount("");
-    setDiscountType(null);
-    setSerial(null);
-    setTotalPrice("");
-    setQuantity("");
-  }
-
-  public static void getAllPurchaseDetails() {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
-            Dao<PurchaseDetail, Long> purchaseDetailDao =
+    public static void getAllPurchaseDetails() throws SQLException {
+        Dao<PurchaseDetail, Long> purchaseDetailDao =
                 DaoManager.createDao(connectionSource, PurchaseDetail.class);
 
-            purchaseDetailList.clear();
-            purchaseDetailList.addAll(purchaseDetailDao.queryForAll());
-            return null;
-          }
-        };
+        purchaseDetailList.clear();
+        purchaseDetailList.addAll(purchaseDetailDao.queryForAll());
+    }
 
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static void updatePurchaseDetail(long index) {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
-            Dao<PurchaseDetail, Long> purchaseDetailDao =
+    public static void updatePurchaseDetail(long index) throws SQLException {
+        Dao<PurchaseDetail, Long> purchaseDetailDao =
                 DaoManager.createDao(connectionSource, PurchaseDetail.class);
 
-            PurchaseDetail purchaseDetail = purchaseDetailDao.queryForId(index);
-            purchaseDetail.setPurchase(getPurchase());
-            purchaseDetail.setCost(Double.parseDouble(getCost()));
-            purchaseDetail.setNetTax(Double.parseDouble(getNetTax()));
-            purchaseDetail.setTaxType(purchaseDetail.getTaxType());
-            purchaseDetail.setDiscount(Double.parseDouble(getDiscount()));
-            purchaseDetail.setDiscountType(purchaseDetail.getDiscountType());
-            purchaseDetail.setProduct(getProduct());
-            purchaseDetail.setSerialNumber(getSerial());
-            purchaseDetail.setTotalPrice(Double.parseDouble(getTotalPrice()));
-            purchaseDetail.setQuantity(Long.parseLong(getQuantity()));
+        PurchaseDetail purchaseDetail = purchaseDetailDao.queryForId(index);
+        purchaseDetail.setPurchase(getPurchase());
+        purchaseDetail.setCost(Double.parseDouble(getCost()));
+        purchaseDetail.setNetTax(Double.parseDouble(getNetTax()));
+        purchaseDetail.setTaxType(purchaseDetail.getTaxType());
+        purchaseDetail.setDiscount(Double.parseDouble(getDiscount()));
+        purchaseDetail.setDiscountType(purchaseDetail.getDiscountType());
+        purchaseDetail.setProduct(getProduct());
+        purchaseDetail.setSerialNumber(getSerial());
+        purchaseDetail.setTotalPrice(Double.parseDouble(getTotalPrice()));
+        purchaseDetail.setQuantity(Long.parseLong(getQuantity()));
 
-            Platform.runLater(
+        Platform.runLater(
                 () -> {
-                  purchaseDetailList.remove((int) getTempId());
-                  purchaseDetailList.add(getTempId(), purchaseDetail);
+                    purchaseDetailList.remove((int) getTempId());
+                    purchaseDetailList.add(getTempId(), purchaseDetail);
                 });
 
-            return null;
-          }
-        };
+        resetProperties();
+    }
 
-    task.setOnSucceeded(event -> resetProperties());
-
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static void getItem(long index, int tempIndex) {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
-            Dao<PurchaseDetail, Long> purchaseDetailDao =
+    public static void getItem(long index, int tempIndex) throws SQLException {
+        Dao<PurchaseDetail, Long> purchaseDetailDao =
                 DaoManager.createDao(connectionSource, PurchaseDetail.class);
 
-            PurchaseDetail purchaseDetail = purchaseDetailDao.queryForId(index);
+        PurchaseDetail purchaseDetail = purchaseDetailDao.queryForId(index);
 
-            setTempId(tempIndex);
-            setId(purchaseDetail.getId());
-            setPurchase(purchaseDetail.getPurchase());
-            setCost(String.valueOf(purchaseDetail.getCost()));
-            setNetTax(String.valueOf(purchaseDetail.getNetTax()));
-            setTaxType(purchaseDetail.getTaxType());
-            setDiscount(String.valueOf(purchaseDetail.getDiscount()));
-            setDiscountType(purchaseDetail.getDiscountType());
-            setProduct(purchaseDetail.getProduct());
-            setSerial(purchaseDetail.getSerialNumber());
-            setTotalPrice(String.valueOf(purchaseDetail.getTotalPrice()));
-            setQuantity(String.valueOf(purchaseDetail.getQuantity()));
+        setTempId(tempIndex);
+        setId(purchaseDetail.getId());
+        setPurchase(purchaseDetail.getPurchase());
+        setCost(String.valueOf(purchaseDetail.getCost()));
+        setNetTax(String.valueOf(purchaseDetail.getNetTax()));
+        setTaxType(purchaseDetail.getTaxType());
+        setDiscount(String.valueOf(purchaseDetail.getDiscount()));
+        setDiscountType(purchaseDetail.getDiscountType());
+        setProduct(purchaseDetail.getProduct());
+        setSerial(purchaseDetail.getSerialNumber());
+        setTotalPrice(String.valueOf(purchaseDetail.getTotalPrice()));
+        setQuantity(String.valueOf(purchaseDetail.getQuantity()));
+    }
 
-            return null;
-          }
-        };
-
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static void updateItem(long index) {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
-            Dao<PurchaseDetail, Long> purchaseDetailDao =
+    public static void updateItem(long index) throws SQLException {
+        Dao<PurchaseDetail, Long> purchaseDetailDao =
                 DaoManager.createDao(connectionSource, PurchaseDetail.class);
 
-            PurchaseDetail purchaseDetail = purchaseDetailDao.queryForId(index);
+        PurchaseDetail purchaseDetail = purchaseDetailDao.queryForId(index);
 
-            setId(purchaseDetail.getId());
-            setPurchase(purchaseDetail.getPurchase());
-            setCost(String.valueOf(purchaseDetail.getCost()));
-            setNetTax(String.valueOf(purchaseDetail.getNetTax()));
-            setTaxType(purchaseDetail.getTaxType());
-            setDiscount(String.valueOf(purchaseDetail.getDiscount()));
-            setDiscountType(purchaseDetail.getDiscountType());
-            setProduct(purchaseDetail.getProduct());
-            setSerial(purchaseDetail.getSerialNumber());
-            setTotalPrice(String.valueOf(purchaseDetail.getTotalPrice()));
-            setQuantity(String.valueOf(purchaseDetail.getQuantity()));
+        setId(purchaseDetail.getId());
+        setPurchase(purchaseDetail.getPurchase());
+        setCost(String.valueOf(purchaseDetail.getCost()));
+        setNetTax(String.valueOf(purchaseDetail.getNetTax()));
+        setTaxType(purchaseDetail.getTaxType());
+        setDiscount(String.valueOf(purchaseDetail.getDiscount()));
+        setDiscountType(purchaseDetail.getDiscountType());
+        setProduct(purchaseDetail.getProduct());
+        setSerial(purchaseDetail.getSerialNumber());
+        setTotalPrice(String.valueOf(purchaseDetail.getTotalPrice()));
+        setQuantity(String.valueOf(purchaseDetail.getQuantity()));
 
-            purchaseDetailDao.update(purchaseDetail);
+        purchaseDetailDao.update(purchaseDetail);
 
-            return null;
-          }
-        };
+        getAllPurchaseDetails();
+    }
 
-    task.setOnSucceeded(event -> getAllPurchaseDetails());
-
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static void updatePurchaseDetails() {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
-            Dao<PurchaseDetail, Long> purchaseDetailDao =
+    public static void updatePurchaseDetails() throws SQLException {
+        Dao<PurchaseDetail, Long> purchaseDetailDao =
                 DaoManager.createDao(connectionSource, PurchaseDetail.class);
 
-            purchaseDetailList.forEach(
+        purchaseDetailList.forEach(
                 purchaseDetail -> {
-                  try {
-                    purchaseDetailDao.update(purchaseDetail);
-                  } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                  }
+                    try {
+                        purchaseDetailDao.update(purchaseDetail);
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
                 });
 
-            return null;
-          }
-        };
+        getAllPurchaseDetails();
+    }
 
-    task.setOnSucceeded(event -> getAllPurchaseDetails());
+    public static void removePurchaseDetail(long index, int tempIndex) {
+        Platform.runLater(() -> purchaseDetailList.remove(tempIndex));
+        PENDING_DELETES.add(index);
+    }
 
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static void removePurchaseDetail(long index, int tempIndex) {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() {
-            Platform.runLater(() -> purchaseDetailList.remove(tempIndex));
-            PENDING_DELETES.add(index);
-            return null;
-          }
-        };
-
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static void deletePurchaseDetails(LinkedList<Long> indexes) {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() {
-            indexes.forEach(
+    public static void deletePurchaseDetails(LinkedList<Long> indexes) {
+        indexes.forEach(
                 index -> {
-                  try {
-                    SQLiteConnection connection = SQLiteConnection.getInstance();
-                    ConnectionSource connectionSource = connection.getConnection();
+                    try {
+                        SQLiteConnection connection = SQLiteConnection.getInstance();
+                        ConnectionSource connectionSource = connection.getConnection();
 
-                    Dao<PurchaseDetail, Long> purchaseDetailDao =
-                        DaoManager.createDao(connectionSource, PurchaseDetail.class);
+                        Dao<PurchaseDetail, Long> purchaseDetailDao =
+                                DaoManager.createDao(connectionSource, PurchaseDetail.class);
 
-                    purchaseDetailDao.deleteById(index);
-                  } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                  }
+                        purchaseDetailDao.deleteById(index);
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
                 });
-            return null;
-          }
-        };
+    }
 
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static ObservableList<PurchaseDetail> getPurchaseDetailList() {
-    return purchaseDetailList;
-  }
+    public static ObservableList<PurchaseDetail> getPurchaseDetailList() {
+        return purchaseDetailList;
+    }
 }

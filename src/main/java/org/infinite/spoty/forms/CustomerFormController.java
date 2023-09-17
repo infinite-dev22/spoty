@@ -19,12 +19,16 @@ import static org.infinite.spoty.Validators.*;
 
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.Objects;
 import java.util.ResourceBundle;
+
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
@@ -32,116 +36,138 @@ import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.viewModels.CustomerViewModel;
 
 public class CustomerFormController implements Initializable {
-  private static CustomerFormController instance;
-  @FXML public MFXButton customerFormSaveBtn;
-  @FXML public MFXButton customerFormCancelBtn;
-  @FXML public MFXTextField customerFormName;
-  @FXML public MFXTextField customerFormEmail;
-  @FXML public MFXTextField customerFormPhone;
-  @FXML public MFXTextField customerFormCity;
-  @FXML public MFXTextField customerFormCountry;
-  @FXML public MFXTextField customerFormTaxNumber;
-  @FXML public MFXTextField customerFormAddress;
-  @FXML public Label validationLabel1, validationLabel2, validationLabel3;
+    private static CustomerFormController instance;
+    @FXML
+    public MFXButton customerFormSaveBtn;
+    @FXML
+    public MFXButton customerFormCancelBtn;
+    @FXML
+    public MFXTextField customerFormName;
+    @FXML
+    public MFXTextField customerFormEmail;
+    @FXML
+    public MFXTextField customerFormPhone;
+    @FXML
+    public MFXTextField customerFormCity;
+    @FXML
+    public MFXTextField customerFormCountry;
+    @FXML
+    public MFXTextField customerFormTaxNumber;
+    @FXML
+    public MFXTextField customerFormAddress;
+    @FXML
+    public Label validationLabel1, validationLabel2, validationLabel3;
 
-  public static CustomerFormController getInstance() {
-    if (Objects.equals(instance, null)) instance = new CustomerFormController();
-    return instance;
-  }
+    public static CustomerFormController getInstance() {
+        if (Objects.equals(instance, null)) instance = new CustomerFormController();
+        return instance;
+    }
 
-  @Override
-  public void initialize(URL location, ResourceBundle resources) {
-    // Form input listeners.
-    // These don't work, not sure why.
-    // TODO: Get a better way for input filtering.
-    customerFormPhone
-        .textProperty()
-        .addListener(
-            (observable, oldValue, newValue) -> {
-              if (!newValue.matches("\\d*"))
-                customerFormPhone.setText(newValue.replaceAll("\\D", ""));
-            });
-    customerFormPhone
-        .focusedProperty()
-        .addListener(
-            (observable, oldValue, newValue) -> {
-              if (newValue != oldValue) customerFormPhone.setLeadingIcon(new Label("+"));
-              System.out.println("newValue oldValue");
-            });
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        // Form input listeners.
+        // These don't work, not sure why.
+        // TODO: Get a better way for input filtering.
+        customerFormPhone
+                .textProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (!newValue.matches("\\d*"))
+                                customerFormPhone.setText(newValue.replaceAll("\\D", ""));
+                        });
+        customerFormPhone
+                .focusedProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue != oldValue) customerFormPhone.setLeadingIcon(new Label("+"));
+                            System.out.println("newValue oldValue");
+                        });
 
-    // Form input binding.
-    customerFormName.textProperty().bindBidirectional(CustomerViewModel.nameProperty());
-    customerFormEmail.textProperty().bindBidirectional(CustomerViewModel.emailProperty());
-    customerFormPhone.textProperty().bindBidirectional(CustomerViewModel.phoneProperty());
-    customerFormCity.textProperty().bindBidirectional(CustomerViewModel.cityProperty());
-    customerFormCountry.textProperty().bindBidirectional(CustomerViewModel.countryProperty());
-    customerFormTaxNumber.textProperty().bindBidirectional(CustomerViewModel.taxNumberProperty());
-    customerFormAddress.textProperty().bindBidirectional(CustomerViewModel.addressProperty());
+        // Form input binding.
+        customerFormName.textProperty().bindBidirectional(CustomerViewModel.nameProperty());
+        customerFormEmail.textProperty().bindBidirectional(CustomerViewModel.emailProperty());
+        customerFormPhone.textProperty().bindBidirectional(CustomerViewModel.phoneProperty());
+        customerFormCity.textProperty().bindBidirectional(CustomerViewModel.cityProperty());
+        customerFormCountry.textProperty().bindBidirectional(CustomerViewModel.countryProperty());
+        customerFormTaxNumber.textProperty().bindBidirectional(CustomerViewModel.taxNumberProperty());
+        customerFormAddress.textProperty().bindBidirectional(CustomerViewModel.addressProperty());
 
-    // Name input validation.
-    requiredValidator(
-        customerFormName, "Name field is required.", validationLabel1, customerFormSaveBtn);
+        // Name input validation.
+        requiredValidator(
+                customerFormName, "Name field is required.", validationLabel1, customerFormSaveBtn);
 
-    // Email input validation.
-    emailValidator(customerFormEmail, validationLabel2, customerFormSaveBtn);
+        // Email input validation.
+        emailValidator(customerFormEmail, validationLabel2, customerFormSaveBtn);
 
-    // Phone input validation.
-    lengthValidator(customerFormPhone, 11, "Invalid length", validationLabel3, customerFormSaveBtn);
-    dialogOnActions();
-  }
+        // Phone input validation.
+        lengthValidator(customerFormPhone, 11, "Invalid length", validationLabel3, customerFormSaveBtn);
+        dialogOnActions();
+    }
 
-  private void dialogOnActions() {
-    customerFormCancelBtn.setOnAction(
-        (e) -> {
-          closeDialog(e);
+    private void dialogOnActions() {
+        customerFormCancelBtn.setOnAction(
+                (e) -> {
+                    closeDialog(e);
 
-          validationLabel1.setVisible(false);
-          validationLabel2.setVisible(false);
-          validationLabel3.setVisible(false);
+                    validationLabel1.setVisible(false);
+                    validationLabel2.setVisible(false);
+                    validationLabel3.setVisible(false);
 
-          CustomerViewModel.resetProperties();
-        });
-    customerFormSaveBtn.setOnAction(
-        (e) -> {
-          SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
+                    CustomerViewModel.resetProperties();
+                });
+        customerFormSaveBtn.setOnAction(
+                (e) -> {
+                    SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
 
-          if (!validationLabel1.isVisible()
-              && !validationLabel2.isVisible()
-              && !validationLabel3.isVisible()) {
-            if (CustomerViewModel.getId() > 0) {
-              CustomerViewModel.updateItem(CustomerViewModel.getId());
+                    if (!validationLabel1.isVisible()
+                            && !validationLabel2.isVisible()
+                            && !validationLabel3.isVisible()) {
+                        if (CustomerViewModel.getId() > 0) {
+                            GlobalActions.spotyThreadPool().execute(() -> {
+                                try {
+                                    CustomerViewModel.updateItem(CustomerViewModel.getId());
+                                } catch (SQLException ex) {
+                                    throw new RuntimeException(ex);
+                                }
+                            });
 
-              SimpleNotification notification =
-                  new SimpleNotification.NotificationBuilder("Customer updated successfully")
-                      .duration(NotificationDuration.SHORT)
-                      .icon("fas-circle-check")
-                      .type(NotificationVariants.SUCCESS)
-                      .build();
-              notificationHolder.addNotification(notification);
+                            SimpleNotification notification =
+                                    new SimpleNotification.NotificationBuilder("Customer updated successfully")
+                                            .duration(NotificationDuration.SHORT)
+                                            .icon("fas-circle-check")
+                                            .type(NotificationVariants.SUCCESS)
+                                            .build();
+                            notificationHolder.addNotification(notification);
 
-              closeDialog(e);
-              return;
-            }
-            CustomerViewModel.saveCustomer();
+                            closeDialog(e);
+                            return;
+                        }
+                        GlobalActions.spotyThreadPool().execute(() -> {
+                            try {
+                                CustomerViewModel.saveCustomer();
+                            } catch (SQLException ex) {
+                                throw new RuntimeException(ex);
+                            }
+                        });
 
-            SimpleNotification notification =
-                new SimpleNotification.NotificationBuilder("Customer saved successfully")
-                    .duration(NotificationDuration.SHORT)
-                    .icon("fas-circle-check")
-                    .type(NotificationVariants.SUCCESS)
-                    .build();
-            notificationHolder.addNotification(notification);
+                        SimpleNotification notification =
+                                new SimpleNotification.NotificationBuilder("Customer saved successfully")
+                                        .duration(NotificationDuration.SHORT)
+                                        .icon("fas-circle-check")
+                                        .type(NotificationVariants.SUCCESS)
+                                        .build();
+                        notificationHolder.addNotification(notification);
 
-            closeDialog(e);
-            return;
-          }
-          SimpleNotification notification =
-              new SimpleNotification.NotificationBuilder("Required fields missing")
-                  .duration(NotificationDuration.SHORT)
-                  .icon("fas-triangle-exclamation")
-                  .type(NotificationVariants.ERROR)
-                  .build();
-          notificationHolder.addNotification(notification);
-        });
-  }
+                        closeDialog(e);
+                        return;
+                    }
+                    SimpleNotification notification =
+                            new SimpleNotification.NotificationBuilder("Required fields missing")
+                                    .duration(NotificationDuration.SHORT)
+                                    .icon("fas-triangle-exclamation")
+                                    .type(NotificationVariants.ERROR)
+                                    .build();
+                    notificationHolder.addNotification(notification);
+                });
+    }
 }

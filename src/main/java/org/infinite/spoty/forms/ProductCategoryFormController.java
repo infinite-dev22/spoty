@@ -20,12 +20,16 @@ import static org.infinite.spoty.viewModels.ProductCategoryViewModel.*;
 
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.Objects;
 import java.util.ResourceBundle;
+
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
@@ -33,86 +37,104 @@ import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.viewModels.ProductCategoryViewModel;
 
 public class ProductCategoryFormController implements Initializable {
-  private static ProductCategoryFormController instance;
-  @FXML public MFXTextField dialogCategoryCode;
-  @FXML public MFXTextField dialogCategoryName;
-  @FXML public MFXButton dialogSaveBtn;
-  @FXML public MFXButton dialogCancelBtn;
-  @FXML public Label dialogCategoryCodeValidationLabel;
-  @FXML public Label dialogCategoryNameValidationLabel;
+    private static ProductCategoryFormController instance;
+    @FXML
+    public MFXTextField dialogCategoryCode;
+    @FXML
+    public MFXTextField dialogCategoryName;
+    @FXML
+    public MFXButton dialogSaveBtn;
+    @FXML
+    public MFXButton dialogCancelBtn;
+    @FXML
+    public Label dialogCategoryCodeValidationLabel;
+    @FXML
+    public Label dialogCategoryNameValidationLabel;
 
-  public static ProductCategoryFormController getInstance() {
-    if (Objects.equals(instance, null)) instance = new ProductCategoryFormController();
-    return instance;
-  }
+    public static ProductCategoryFormController getInstance() {
+        if (Objects.equals(instance, null)) instance = new ProductCategoryFormController();
+        return instance;
+    }
 
-  @Override
-  public void initialize(URL location, ResourceBundle resources) {
-    // Input bindings.
-    dialogCategoryCode.textProperty().bindBidirectional(ProductCategoryViewModel.codeProperty());
-    dialogCategoryName.textProperty().bindBidirectional(ProductCategoryViewModel.nameProperty());
-    // Input validators.
-    requiredValidator(
-        dialogCategoryCode,
-        "Name field is required.",
-        dialogCategoryCodeValidationLabel,
-        dialogSaveBtn);
-    requiredValidator(
-        dialogCategoryName,
-        "Name field is required.",
-        dialogCategoryNameValidationLabel,
-        dialogSaveBtn);
-    dialogOnActions();
-  }
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        // Input bindings.
+        dialogCategoryCode.textProperty().bindBidirectional(ProductCategoryViewModel.codeProperty());
+        dialogCategoryName.textProperty().bindBidirectional(ProductCategoryViewModel.nameProperty());
+        // Input validators.
+        requiredValidator(
+                dialogCategoryCode,
+                "Name field is required.",
+                dialogCategoryCodeValidationLabel,
+                dialogSaveBtn);
+        requiredValidator(
+                dialogCategoryName,
+                "Name field is required.",
+                dialogCategoryNameValidationLabel,
+                dialogSaveBtn);
+        dialogOnActions();
+    }
 
-  private void dialogOnActions() {
-    dialogCancelBtn.setOnAction(
-        (e) -> {
-          closeDialog(e);
-          clearProductCategoryData();
+    private void dialogOnActions() {
+        dialogCancelBtn.setOnAction(
+                (e) -> {
+                    closeDialog(e);
+                    clearProductCategoryData();
 
-          dialogCategoryCodeValidationLabel.setVisible(false);
-          dialogCategoryNameValidationLabel.setVisible(false);
-        });
-    dialogSaveBtn.setOnAction(
-        (e) -> {
-          SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
-          if (!dialogCategoryCodeValidationLabel.isVisible()
-              && !dialogCategoryNameValidationLabel.isVisible()) {
-            if (ProductCategoryViewModel.getId() > 0) {
-              updateItem(ProductCategoryViewModel.getId());
+                    dialogCategoryCodeValidationLabel.setVisible(false);
+                    dialogCategoryNameValidationLabel.setVisible(false);
+                });
+        dialogSaveBtn.setOnAction(
+                (e) -> {
+                    SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
+                    if (!dialogCategoryCodeValidationLabel.isVisible()
+                            && !dialogCategoryNameValidationLabel.isVisible()) {
+                        if (ProductCategoryViewModel.getId() > 0) {
+                            GlobalActions.spotyThreadPool().execute(() -> {
+                                try {
+                                    updateItem(ProductCategoryViewModel.getId());
+                                } catch (SQLException ex) {
+                                    throw new RuntimeException(ex);
+                                }
+                            });
 
-              SimpleNotification notification =
-                  new SimpleNotification.NotificationBuilder("Category updated successfully")
-                      .duration(NotificationDuration.SHORT)
-                      .icon("fas-circle-check")
-                      .type(NotificationVariants.SUCCESS)
-                      .build();
-              notificationHolder.addNotification(notification);
+                            SimpleNotification notification =
+                                    new SimpleNotification.NotificationBuilder("Category updated successfully")
+                                            .duration(NotificationDuration.SHORT)
+                                            .icon("fas-circle-check")
+                                            .type(NotificationVariants.SUCCESS)
+                                            .build();
+                            notificationHolder.addNotification(notification);
 
-              closeDialog(e);
-              return;
-            }
-            saveProductCategory();
+                            closeDialog(e);
+                            return;
+                        }
+                        GlobalActions.spotyThreadPool().execute(() -> {
+                            try {
+                                saveProductCategory();
+                            } catch (SQLException ex) {
+                                throw new RuntimeException(ex);
+                            }
+                        });
 
-            SimpleNotification notification =
-                new SimpleNotification.NotificationBuilder("Category added successfully")
-                    .duration(NotificationDuration.SHORT)
-                    .icon("fas-circle-check")
-                    .type(NotificationVariants.SUCCESS)
-                    .build();
-            notificationHolder.addNotification(notification);
+                        SimpleNotification notification =
+                                new SimpleNotification.NotificationBuilder("Category added successfully")
+                                        .duration(NotificationDuration.SHORT)
+                                        .icon("fas-circle-check")
+                                        .type(NotificationVariants.SUCCESS)
+                                        .build();
+                        notificationHolder.addNotification(notification);
 
-            closeDialog(e);
-            return;
-          }
-          SimpleNotification notification =
-              new SimpleNotification.NotificationBuilder("Required fields missing")
-                  .duration(NotificationDuration.SHORT)
-                  .icon("fas-triangle-exclamation")
-                  .type(NotificationVariants.ERROR)
-                  .build();
-          notificationHolder.addNotification(notification);
-        });
-  }
+                        closeDialog(e);
+                        return;
+                    }
+                    SimpleNotification notification =
+                            new SimpleNotification.NotificationBuilder("Required fields missing")
+                                    .duration(NotificationDuration.SHORT)
+                                    .icon("fas-triangle-exclamation")
+                                    .type(NotificationVariants.ERROR)
+                                    .build();
+                    notificationHolder.addNotification(notification);
+                });
+    }
 }

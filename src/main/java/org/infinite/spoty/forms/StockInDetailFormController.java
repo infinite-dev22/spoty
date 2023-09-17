@@ -138,7 +138,7 @@ public class StockInDetailFormController implements Initializable {
               closeDialog(e);
               return;
             }
-            GlobalActions.spotyThreadPool().execute(StockInDetailViewModel::addStockInDetails);
+            StockInDetailViewModel.addStockInDetails();
 
             SimpleNotification notification =
                 new SimpleNotification.NotificationBuilder("Product added successfully")

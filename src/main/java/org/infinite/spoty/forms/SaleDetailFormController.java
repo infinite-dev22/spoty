@@ -135,7 +135,7 @@ public class SaleDetailFormController implements Initializable {
               closeDialog(e);
               return;
             }
-            GlobalActions.spotyThreadPool().execute(SaleDetailViewModel::addSaleDetail);
+            SaleDetailViewModel.addSaleDetail();
 
             SimpleNotification notification =
                 new SimpleNotification.NotificationBuilder("Product added successfully")

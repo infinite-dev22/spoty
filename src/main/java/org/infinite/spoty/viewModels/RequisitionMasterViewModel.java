@@ -19,10 +19,12 @@ import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
+
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -35,372 +37,304 @@ import org.infinite.spoty.database.models.RequisitionMaster;
 import org.infinite.spoty.database.models.Supplier;
 
 public class RequisitionMasterViewModel {
-  public static final ObservableList<RequisitionMaster> requisitionMasterList =
-      FXCollections.observableArrayList();
-  private static final ListProperty<RequisitionMaster> requisitions =
-      new SimpleListProperty<>(requisitionMasterList);
-  private static final LongProperty id = new SimpleLongProperty(0);
-  private static final StringProperty date = new SimpleStringProperty("");
-  private static final ObjectProperty<Supplier> supplier = new SimpleObjectProperty<>(null);
-  private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>(null);
-  private static final StringProperty shipVia = new SimpleStringProperty("");
-  private static final StringProperty shipMethod = new SimpleStringProperty("");
-  private static final StringProperty shippingTerms = new SimpleStringProperty("");
-  private static final StringProperty deliveryDate = new SimpleStringProperty("");
-  private static final StringProperty note = new SimpleStringProperty("");
-  private static final StringProperty status = new SimpleStringProperty("");
-  private static final StringProperty totalCost = new SimpleStringProperty("");
+    public static final ObservableList<RequisitionMaster> requisitionMasterList =
+            FXCollections.observableArrayList();
+    private static final ListProperty<RequisitionMaster> requisitions =
+            new SimpleListProperty<>(requisitionMasterList);
+    private static final LongProperty id = new SimpleLongProperty(0);
+    private static final StringProperty date = new SimpleStringProperty("");
+    private static final ObjectProperty<Supplier> supplier = new SimpleObjectProperty<>(null);
+    private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>(null);
+    private static final StringProperty shipVia = new SimpleStringProperty("");
+    private static final StringProperty shipMethod = new SimpleStringProperty("");
+    private static final StringProperty shippingTerms = new SimpleStringProperty("");
+    private static final StringProperty deliveryDate = new SimpleStringProperty("");
+    private static final StringProperty note = new SimpleStringProperty("");
+    private static final StringProperty status = new SimpleStringProperty("");
+    private static final StringProperty totalCost = new SimpleStringProperty("");
+    private static final SQLiteConnection connection = SQLiteConnection.getInstance();
+    private static final ConnectionSource connectionSource = connection.getConnection();
 
-  public static long getId() {
-    return id.get();
-  }
-
-  public static void setId(long id) {
-    RequisitionMasterViewModel.id.set(id);
-  }
-
-  public static LongProperty idProperty() {
-    return id;
-  }
-
-  public static Date getDate() {
-    try {
-      return new SimpleDateFormat("MMM dd, yyyy").parse(date.get());
-    } catch (ParseException e) {
-      throw new RuntimeException(e);
+    public static long getId() {
+        return id.get();
     }
-  }
 
-  public static void setDate(String date) {
-    RequisitionMasterViewModel.date.set(date);
-  }
-
-  public static StringProperty dateProperty() {
-    return date;
-  }
-
-  public static Branch getBranch() {
-    return branch.get();
-  }
-
-  public static void setBranch(Branch branch) {
-    RequisitionMasterViewModel.branch.set(branch);
-  }
-
-  public static ObjectProperty<Branch> branchProperty() {
-    return branch;
-  }
-
-  public static String getNote() {
-    return note.get();
-  }
-
-  public static void setNote(String note) {
-    RequisitionMasterViewModel.note.set(note);
-  }
-
-  public static StringProperty noteProperty() {
-    return note;
-  }
-
-  public static Supplier getSupplier() {
-    return supplier.get();
-  }
-
-  public static void setSupplier(Supplier supplier) {
-    RequisitionMasterViewModel.supplier.set(supplier);
-  }
-
-  public static ObjectProperty<Supplier> supplierProperty() {
-    return supplier;
-  }
-
-  public static String getShipVia() {
-    return shipVia.get();
-  }
-
-  public static void setShipVia(String shipVia) {
-    RequisitionMasterViewModel.shipVia.set(shipVia);
-  }
-
-  public static StringProperty shipViaProperty() {
-    return shipVia;
-  }
-
-  public static String getShipMethod() {
-    return shipMethod.get();
-  }
-
-  public static void setShipMethod(String shipMethod) {
-    RequisitionMasterViewModel.shipMethod.set(shipMethod);
-  }
-
-  public static StringProperty shipMethodProperty() {
-    return shipMethod;
-  }
-
-  public static String getShippingTerms() {
-    return shippingTerms.get();
-  }
-
-  public static void setShippingTerms(String shippingTerms) {
-    RequisitionMasterViewModel.shippingTerms.set(shippingTerms);
-  }
-
-  public static StringProperty shippingTermsProperty() {
-    return shippingTerms;
-  }
-
-  public static Date getDeliveryDate() {
-    try {
-      return new SimpleDateFormat("MMM dd, yyyy").parse(date.get());
-    } catch (ParseException e) {
-      throw new RuntimeException(e);
+    public static void setId(long id) {
+        RequisitionMasterViewModel.id.set(id);
     }
-  }
 
-  public static void setDeliveryDate(String deliveryDate) {
-    RequisitionMasterViewModel.deliveryDate.set(deliveryDate);
-  }
+    public static LongProperty idProperty() {
+        return id;
+    }
 
-  public static StringProperty deliveryDateProperty() {
-    return deliveryDate;
-  }
+    public static Date getDate() {
+        try {
+            return new SimpleDateFormat("MMM dd, yyyy").parse(date.get());
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-  public static String getStatus() {
-    return status.get();
-  }
+    public static void setDate(String date) {
+        RequisitionMasterViewModel.date.set(date);
+    }
 
-  public static void setStatus(String status) {
-    RequisitionMasterViewModel.status.set(status);
-  }
+    public static StringProperty dateProperty() {
+        return date;
+    }
 
-  public static StringProperty statusProperty() {
-    return status;
-  }
+    public static Branch getBranch() {
+        return branch.get();
+    }
 
-  public static double getTotalCost() {
-    return Double.parseDouble(!totalCost.get().isEmpty() ? totalCost.get() : "0");
-  }
+    public static void setBranch(Branch branch) {
+        RequisitionMasterViewModel.branch.set(branch);
+    }
 
-  public static void setTotalCost(String totalCost) {
-    RequisitionMasterViewModel.totalCost.set(totalCost);
-  }
+    public static ObjectProperty<Branch> branchProperty() {
+        return branch;
+    }
 
-  public static StringProperty totalCostProperty() {
-    return totalCost;
-  }
+    public static String getNote() {
+        return note.get();
+    }
 
-  public static ObservableList<RequisitionMaster> getRequisitions() {
-    return requisitions.get();
-  }
+    public static void setNote(String note) {
+        RequisitionMasterViewModel.note.set(note);
+    }
 
-  public static void setRequisitions(ObservableList<RequisitionMaster> requisitions) {
-    RequisitionMasterViewModel.requisitions.set(requisitions);
-  }
+    public static StringProperty noteProperty() {
+        return note;
+    }
 
-  public static ListProperty<RequisitionMaster> requisitionsProperty() {
-    return requisitions;
-  }
+    public static Supplier getSupplier() {
+        return supplier.get();
+    }
 
-  public static void resetProperties() {
-    Platform.runLater(
-        () -> {
-          setId(0);
-          setDate("");
-          setSupplier(null);
-          setBranch(null);
-          setShipVia("");
-          setShipMethod("");
-          setShippingTerms("");
-          setDeliveryDate("");
-          setNote("");
-          setStatus("");
-          setTotalCost("");
-          PENDING_DELETES.clear();
-        });
-  }
+    public static void setSupplier(Supplier supplier) {
+        RequisitionMasterViewModel.supplier.set(supplier);
+    }
 
-  public static void saveRequisitionMaster() {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
+    public static ObjectProperty<Supplier> supplierProperty() {
+        return supplier;
+    }
 
-            Dao<RequisitionMaster, Long> requisitionMasterDao =
-                DaoManager.createDao(connectionSource, RequisitionMaster.class);
+    public static String getShipVia() {
+        return shipVia.get();
+    }
 
-            RequisitionMaster requisitionMaster =
-                new RequisitionMaster(
-                    getDate(),
-                    getSupplier(),
-                    getBranch(),
-                    getShipVia(),
-                    getShipMethod(),
-                    getShippingTerms(),
-                    getDeliveryDate(),
-                    getNote(),
-                    getStatus(),
-                    getTotalCost());
+    public static void setShipVia(String shipVia) {
+        RequisitionMasterViewModel.shipVia.set(shipVia);
+    }
 
-            if (!RequisitionDetailViewModel.requisitionDetailList.isEmpty()) {
-              RequisitionDetailViewModel.requisitionDetailList.forEach(
-                  requisitionDetail -> requisitionDetail.setRequisition(requisitionMaster));
+    public static StringProperty shipViaProperty() {
+        return shipVia;
+    }
 
-              requisitionMaster.setRequisitionDetails(
-                  RequisitionDetailViewModel.getRequisitionDetailList());
-            }
+    public static String getShipMethod() {
+        return shipMethod.get();
+    }
 
-            requisitionMasterDao.create(requisitionMaster);
-            RequisitionDetailViewModel.saveRequisitionDetails();
+    public static void setShipMethod(String shipMethod) {
+        RequisitionMasterViewModel.shipMethod.set(shipMethod);
+    }
 
-            return null;
-          }
-        };
+    public static StringProperty shipMethodProperty() {
+        return shipMethod;
+    }
 
-    task.setOnSucceeded(
-        event -> {
-          resetProperties();
-          getRequisitionMasters();
-        });
+    public static String getShippingTerms() {
+        return shippingTerms.get();
+    }
 
-    GlobalActions.spotyThreadPool().execute(task);
-  }
+    public static void setShippingTerms(String shippingTerms) {
+        RequisitionMasterViewModel.shippingTerms.set(shippingTerms);
+    }
 
-  public static void getRequisitionMasters() {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
+    public static StringProperty shippingTermsProperty() {
+        return shippingTerms;
+    }
 
-            Dao<RequisitionMaster, Long> requisitionMasterDao =
-                DaoManager.createDao(connectionSource, RequisitionMaster.class);
+    public static Date getDeliveryDate() {
+        try {
+            return new SimpleDateFormat("MMM dd, yyyy").parse(date.get());
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-            Platform.runLater(
+    public static void setDeliveryDate(String deliveryDate) {
+        RequisitionMasterViewModel.deliveryDate.set(deliveryDate);
+    }
+
+    public static StringProperty deliveryDateProperty() {
+        return deliveryDate;
+    }
+
+    public static String getStatus() {
+        return status.get();
+    }
+
+    public static void setStatus(String status) {
+        RequisitionMasterViewModel.status.set(status);
+    }
+
+    public static StringProperty statusProperty() {
+        return status;
+    }
+
+    public static double getTotalCost() {
+        return Double.parseDouble(!totalCost.get().isEmpty() ? totalCost.get() : "0");
+    }
+
+    public static void setTotalCost(String totalCost) {
+        RequisitionMasterViewModel.totalCost.set(totalCost);
+    }
+
+    public static StringProperty totalCostProperty() {
+        return totalCost;
+    }
+
+    public static ObservableList<RequisitionMaster> getRequisitions() {
+        return requisitions.get();
+    }
+
+    public static void setRequisitions(ObservableList<RequisitionMaster> requisitions) {
+        RequisitionMasterViewModel.requisitions.set(requisitions);
+    }
+
+    public static ListProperty<RequisitionMaster> requisitionsProperty() {
+        return requisitions;
+    }
+
+    public static void resetProperties() {
+        Platform.runLater(
                 () -> {
-                  requisitionMasterList.clear();
-
-                  try {
-                    requisitionMasterList.addAll(requisitionMasterDao.queryForAll());
-                  } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                  }
+                    setId(0);
+                    setDate("");
+                    setSupplier(null);
+                    setBranch(null);
+                    setShipVia("");
+                    setShipMethod("");
+                    setShippingTerms("");
+                    setDeliveryDate("");
+                    setNote("");
+                    setStatus("");
+                    setTotalCost("");
+                    PENDING_DELETES.clear();
                 });
+    }
 
-            return null;
-          }
-        };
-
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static void getItem(long index) {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
-            Dao<RequisitionMaster, Long> requisitionMasterDao =
+    public static void saveRequisitionMaster() throws SQLException {
+        Dao<RequisitionMaster, Long> requisitionMasterDao =
                 DaoManager.createDao(connectionSource, RequisitionMaster.class);
 
-            RequisitionMaster requisitionMaster = requisitionMasterDao.queryForId(index);
+        RequisitionMaster requisitionMaster =
+                new RequisitionMaster(
+                        getDate(),
+                        getSupplier(),
+                        getBranch(),
+                        getShipVia(),
+                        getShipMethod(),
+                        getShippingTerms(),
+                        getDeliveryDate(),
+                        getNote(),
+                        getStatus(),
+                        getTotalCost());
 
-            setId(requisitionMaster.getId());
-            setSupplier(requisitionMaster.getSupplier());
-            setBranch(requisitionMaster.getBranch());
-            setShipVia(requisitionMaster.getShipVia());
-            setShipMethod(requisitionMaster.getShipMethod());
-            setShippingTerms(requisitionMaster.getShippingTerms());
-            setNote(requisitionMaster.getNotes());
-            setStatus(requisitionMaster.getStatus());
-            setTotalCost(String.valueOf(requisitionMaster.getTotalCost()));
-            setDate(requisitionMaster.getLocaleDate());
+        if (!RequisitionDetailViewModel.requisitionDetailList.isEmpty()) {
+            RequisitionDetailViewModel.requisitionDetailList.forEach(
+                    requisitionDetail -> requisitionDetail.setRequisition(requisitionMaster));
 
-            RequisitionDetailViewModel.requisitionDetailList.clear();
-            RequisitionDetailViewModel.requisitionDetailList.addAll(
+            requisitionMaster.setRequisitionDetails(
+                    RequisitionDetailViewModel.getRequisitionDetailList());
+        }
+
+        requisitionMasterDao.create(requisitionMaster);
+        RequisitionDetailViewModel.saveRequisitionDetails();
+
+
+        resetProperties();
+        getRequisitionMasters();
+    }
+
+    public static void getRequisitionMasters() throws SQLException {
+        Dao<RequisitionMaster, Long> requisitionMasterDao =
+                DaoManager.createDao(connectionSource, RequisitionMaster.class);
+
+        Platform.runLater(
+                () -> {
+                    requisitionMasterList.clear();
+
+                    try {
+                        requisitionMasterList.addAll(requisitionMasterDao.queryForAll());
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+    }
+
+    public static void getItem(long index) throws SQLException {
+        Dao<RequisitionMaster, Long> requisitionMasterDao =
+                DaoManager.createDao(connectionSource, RequisitionMaster.class);
+
+        RequisitionMaster requisitionMaster = requisitionMasterDao.queryForId(index);
+
+        setId(requisitionMaster.getId());
+        setSupplier(requisitionMaster.getSupplier());
+        setBranch(requisitionMaster.getBranch());
+        setShipVia(requisitionMaster.getShipVia());
+        setShipMethod(requisitionMaster.getShipMethod());
+        setShippingTerms(requisitionMaster.getShippingTerms());
+        setNote(requisitionMaster.getNotes());
+        setStatus(requisitionMaster.getStatus());
+        setTotalCost(String.valueOf(requisitionMaster.getTotalCost()));
+        setDate(requisitionMaster.getLocaleDate());
+
+        RequisitionDetailViewModel.requisitionDetailList.clear();
+        RequisitionDetailViewModel.requisitionDetailList.addAll(
                 requisitionMaster.getRequisitionDetails());
 
-            return null;
-          }
-        };
+        getRequisitionMasters();
+    }
 
-    task.setOnSucceeded(event -> getRequisitionMasters());
-
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static void updateItem(long index) {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
-            Dao<RequisitionMaster, Long> requisitionMasterDao =
+    public static void updateItem(long index) throws SQLException {
+        Dao<RequisitionMaster, Long> requisitionMasterDao =
                 DaoManager.createDao(connectionSource, RequisitionMaster.class);
 
-            RequisitionMaster requisitionMaster = requisitionMasterDao.queryForId(index);
-            requisitionMaster.setDate(getDate());
-            requisitionMaster.setSupplier(getSupplier());
-            requisitionMaster.setBranch(getBranch());
-            requisitionMaster.setShipVia(getShipVia());
-            requisitionMaster.setShipMethod(getShipMethod());
-            requisitionMaster.setShippingTerms(getShippingTerms());
-            requisitionMaster.setDeliveryDate(getDeliveryDate());
-            requisitionMaster.setNotes(getNote());
-            requisitionMaster.setStatus(getStatus());
-            requisitionMaster.setTotalCost(getTotalCost());
+        RequisitionMaster requisitionMaster = requisitionMasterDao.queryForId(index);
+        requisitionMaster.setDate(getDate());
+        requisitionMaster.setSupplier(getSupplier());
+        requisitionMaster.setBranch(getBranch());
+        requisitionMaster.setShipVia(getShipVia());
+        requisitionMaster.setShipMethod(getShipMethod());
+        requisitionMaster.setShippingTerms(getShippingTerms());
+        requisitionMaster.setDeliveryDate(getDeliveryDate());
+        requisitionMaster.setNotes(getNote());
+        requisitionMaster.setStatus(getStatus());
+        requisitionMaster.setTotalCost(getTotalCost());
 
-            RequisitionDetailViewModel.deleteRequisitionDetails(PENDING_DELETES);
-            requisitionMaster.setRequisitionDetails(
+        RequisitionDetailViewModel.deleteRequisitionDetails(PENDING_DELETES);
+        requisitionMaster.setRequisitionDetails(
                 RequisitionDetailViewModel.getRequisitionDetailList());
 
-            requisitionMasterDao.update(requisitionMaster);
-            RequisitionDetailViewModel.updateRequisitionDetails();
+        requisitionMasterDao.update(requisitionMaster);
+        RequisitionDetailViewModel.updateRequisitionDetails();
 
-            return null;
-          }
-        };
+        resetProperties();
+        getRequisitionMasters();
+    }
 
-    task.setOnSucceeded(
-        event -> {
-          resetProperties();
-          getRequisitionMasters();
-        });
-
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static void deleteItem(long index) {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
-            Dao<RequisitionMaster, Long> requisitionMasterDao =
+    public static void deleteItem(long index) throws SQLException {
+        Dao<RequisitionMaster, Long> requisitionMasterDao =
                 DaoManager.createDao(connectionSource, RequisitionMaster.class);
 
-            requisitionMasterDao.deleteById(index);
+        requisitionMasterDao.deleteById(index);
 
-            return null;
-          }
-        };
+        getRequisitionMasters();
+    }
 
-    task.setOnSucceeded(event -> getRequisitionMasters());
-
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static ObservableList<RequisitionMaster> getRequisitionMasterList() {
-    return requisitionMasterList;
-  }
+    public static ObservableList<RequisitionMaster> getRequisitionMasterList() {
+        return requisitionMasterList;
+    }
 }

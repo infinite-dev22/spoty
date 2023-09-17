@@ -24,6 +24,7 @@ import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import io.github.palexdev.mfxcore.controls.Label;
 import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
+
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.Objects;
@@ -31,6 +32,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.function.Function;
 import java.util.function.Predicate;
+
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -67,286 +69,300 @@ import org.infinite.spoty.views.pos.components.ProductCard;
 import org.jetbrains.annotations.NotNull;
 
 public class PointOfSaleController implements Initializable {
-  private final ToggleGroup toggleGroup = new ToggleGroup();
-  private final ToggleButton allToggleButton = createToggle("All Categories", toggleGroup);
-  @FXML public MFXFilterComboBox<Customer> posCustomerComboBox;
-  @FXML public MFXFilterComboBox<Branch> posBranchComboBox;
-  @FXML public MFXLegacyTableView<SaleDetail> posItemsTable;
-  @FXML public MFXTextField posDiscountTextField, posProductSearch;
-  @FXML public Label posTotalLabel;
-  @FXML public MFXButton posCheckOutBtn, posEmptyCartBtn;
-  @FXML public HBox posFilterPane;
-  @FXML public MFXScrollPane posProductHolder;
-  public TableColumn<SaleDetail, SaleDetail> cartName;
-  public TableColumn<SaleDetail, Long> cartQuantity;
-  public TableColumn<SaleDetail, Double> cartPrice;
-  public TableColumn<SaleDetail, Double> cartSubTotal;
-  public TableColumn<SaleDetail, SaleDetail> cartActions;
+    private final ToggleGroup toggleGroup = new ToggleGroup();
+    private final ToggleButton allToggleButton = createToggle("All Categories", toggleGroup);
+    @FXML
+    public MFXFilterComboBox<Customer> posCustomerComboBox;
+    @FXML
+    public MFXFilterComboBox<Branch> posBranchComboBox;
+    @FXML
+    public MFXLegacyTableView<SaleDetail> posItemsTable;
+    @FXML
+    public MFXTextField posDiscountTextField, posProductSearch;
+    @FXML
+    public Label posTotalLabel;
+    @FXML
+    public MFXButton posCheckOutBtn, posEmptyCartBtn;
+    @FXML
+    public HBox posFilterPane;
+    @FXML
+    public MFXScrollPane posProductHolder;
+    public TableColumn<SaleDetail, SaleDetail> cartName;
+    public TableColumn<SaleDetail, Long> cartQuantity;
+    public TableColumn<SaleDetail, Double> cartPrice;
+    public TableColumn<SaleDetail, Double> cartSubTotal;
+    public TableColumn<SaleDetail, SaleDetail> cartActions;
 
-  @Override
-  public void initialize(URL location, ResourceBundle resources) {
-    setPOSComboBoxes();
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        setPOSComboBoxes();
 
-    getCategoryFilters();
+        getCategoryFilters();
 
-    getProductsGridView();
+        getProductsGridView();
 
-    setCheckoutProductsTable();
+        setCheckoutProductsTable();
 
-    getTotalLabels();
-  }
-
-  private void setPOSComboBoxes() {
-    // Bi~Directional Binding.
-    posCustomerComboBox.valueProperty().bindBidirectional(SaleMasterViewModel.customerProperty());
-    posBranchComboBox.valueProperty().bindBidirectional(SaleMasterViewModel.branchProperty());
-
-    // ComboBox Converters.
-    StringConverter<Customer> customerConverter =
-        FunctionalStringConverter.to(customer -> (customer == null) ? "" : customer.getName());
-
-    StringConverter<Branch> branchConverter =
-        FunctionalStringConverter.to(branch -> (branch == null) ? "" : branch.getName());
-
-    // ComboBox Filter Functions.
-    Function<String, Predicate<Customer>> customerFilterFunction =
-        searchStr ->
-            customer ->
-                StringUtils.containsIgnoreCase(customerConverter.toString(customer), searchStr);
-
-    Function<String, Predicate<Branch>> branchFilterFunction =
-        searchStr ->
-            branch -> StringUtils.containsIgnoreCase(branchConverter.toString(branch), searchStr);
-
-    // Set items to combo boxes and display custom text.
-    posCustomerComboBox.setItems(CustomerViewModel.getCustomers());
-    posCustomerComboBox.setConverter(customerConverter);
-    posCustomerComboBox.setFilterFunction(customerFilterFunction);
-
-    posBranchComboBox.setItems(BranchViewModel.getBranches());
-    posBranchComboBox.setConverter(branchConverter);
-    posBranchComboBox.setFilterFunction(branchFilterFunction);
-  }
-
-  private void getProductsGridView() {
-    setProductsGridView();
-    updateProductsGridView();
-  }
-
-  private void getCategoryFilters() {
-    setCategoryFilters();
-    updateCategoryFilters();
-  }
-
-  private void updateProductsGridView() {
-    ProductViewModel.getProducts()
-        .addListener((ListChangeListener<Product>) c -> setProductsGridView());
-  }
-
-  private void setProductsGridView() {
-    GridPane productsGridView = new GridPane();
-    productsGridView.setHgap(20);
-    productsGridView.setVgap(20);
-    productsGridView.setPadding(new Insets(5));
-
-    int row = 1;
-    int column = 0;
-
-    for (Product product : ProductViewModel.getProducts()) {
-      ProductCard productCard = new ProductCard(product);
-      productCardOnAction(productCard);
-
-      if (column == 6) {
-        column = 0;
-        ++row;
-      }
-
-      productsGridView.add(productCard, column++, row);
-      GridPane.setMargin(productsGridView, new Insets(10));
+        getTotalLabels();
     }
 
-    posProductHolder.setContent(productsGridView);
-  }
+    private void setPOSComboBoxes() {
+        // Bi~Directional Binding.
+        posCustomerComboBox.valueProperty().bindBidirectional(SaleMasterViewModel.customerProperty());
+        posBranchComboBox.valueProperty().bindBidirectional(SaleMasterViewModel.branchProperty());
 
-  private void productCardOnAction(@NotNull ProductCard productCard) {
-    productCard.setOnMouseClicked(
-        event -> {
-          if (SaleDetailViewModel.getSaleDetails().stream()
-              .anyMatch(saleDetail -> saleDetail.getProduct() == productCard.getProduct())) {
-            Optional<SaleDetail> optionalSaleDetail =
-                SaleDetailViewModel.getSaleDetails().stream()
-                    .filter(saleDetail -> saleDetail.getProduct() == productCard.getProduct())
-                    .findAny();
+        // ComboBox Converters.
+        StringConverter<Customer> customerConverter =
+                FunctionalStringConverter.to(customer -> (customer == null) ? "" : customer.getName());
 
-            if (optionalSaleDetail.isPresent()) {
-              SaleDetail saleDetail = optionalSaleDetail.get();
-              try {
-                SaleDetailViewModel.getSaleDetail(saleDetail);
-                SaleDetailViewModel.setProduct(productCard.getProduct());
-                SaleDetailViewModel.setPrice(productCard.getProduct().getPrice());
-                SaleDetailViewModel.setQuantity(calculateQuantity(saleDetail));
-                SaleDetailViewModel.setSubTotalPrice(calculateSubTotal(productCard.getProduct()));
+        StringConverter<Branch> branchConverter =
+                FunctionalStringConverter.to(branch -> (branch == null) ? "" : branch.getName());
 
-                SaleDetailViewModel.updateSaleDetail(
-                    SaleDetailViewModel.getSaleDetails().indexOf(saleDetail));
+        // ComboBox Filter Functions.
+        Function<String, Predicate<Customer>> customerFilterFunction =
+                searchStr ->
+                        customer ->
+                                StringUtils.containsIgnoreCase(customerConverter.toString(customer), searchStr);
 
-              } catch (SQLException e) {
-                throw new RuntimeException(e);
-              }
+        Function<String, Predicate<Branch>> branchFilterFunction =
+                searchStr ->
+                        branch -> StringUtils.containsIgnoreCase(branchConverter.toString(branch), searchStr);
+
+        // Set items to combo boxes and display custom text.
+        posCustomerComboBox.setItems(CustomerViewModel.getCustomers());
+        posCustomerComboBox.setConverter(customerConverter);
+        posCustomerComboBox.setFilterFunction(customerFilterFunction);
+
+        posBranchComboBox.setItems(BranchViewModel.getBranches());
+        posBranchComboBox.setConverter(branchConverter);
+        posBranchComboBox.setFilterFunction(branchFilterFunction);
+    }
+
+    private void getProductsGridView() {
+        setProductsGridView();
+        updateProductsGridView();
+    }
+
+    private void getCategoryFilters() {
+        setCategoryFilters();
+        updateCategoryFilters();
+    }
+
+    private void updateProductsGridView() {
+        ProductViewModel.getProducts()
+                .addListener((ListChangeListener<Product>) c -> setProductsGridView());
+    }
+
+    private void setProductsGridView() {
+        GridPane productsGridView = new GridPane();
+        productsGridView.setHgap(20);
+        productsGridView.setVgap(20);
+        productsGridView.setPadding(new Insets(5));
+
+        int row = 1;
+        int column = 0;
+
+        for (Product product : ProductViewModel.getProducts()) {
+            ProductCard productCard = new ProductCard(product);
+            productCardOnAction(productCard);
+
+            if (column == 6) {
+                column = 0;
+                ++row;
             }
-          } else {
-            SaleDetailViewModel.setProduct(productCard.getProduct());
-            SaleDetailViewModel.setPrice(productCard.getProduct().getPrice());
-            SaleDetailViewModel.setQuantity(1);
-            SaleDetailViewModel.setSubTotalPrice(calculateSubTotal(productCard.getProduct()));
-            SaleDetailViewModel.addSaleDetail();
-          }
-        });
-  }
 
-  private double calculateSubTotal(Product product) {
-    return (SaleDetailViewModel.getQuantity()
-            * ((product.getNetTax() > 0) ? product.getNetTax() : 1.0))
-        * product.getPrice();
-  }
+            productsGridView.add(productCard, column++, row);
+            GridPane.setMargin(productsGridView, new Insets(10));
+        }
 
-  private double calculateTotal(ObservableList<SaleDetail> saleDetails) {
-    double totalPrice = 0;
-
-    for (SaleDetail saleDetail : saleDetails) {
-      totalPrice += saleDetail.getSubTotalPrice();
+        posProductHolder.setContent(productsGridView);
     }
 
-    return totalPrice;
-  }
+    private void productCardOnAction(@NotNull ProductCard productCard) {
+        productCard.setOnMouseClicked(
+                event -> {
+                    if (SaleDetailViewModel.getSaleDetails().stream()
+                            .anyMatch(saleDetail -> saleDetail.getProduct() == productCard.getProduct())) {
+                        Optional<SaleDetail> optionalSaleDetail =
+                                SaleDetailViewModel.getSaleDetails().stream()
+                                        .filter(saleDetail -> saleDetail.getProduct() == productCard.getProduct())
+                                        .findAny();
 
-  private long calculateQuantity(SaleDetail saleDetail) {
-    return saleDetail.getQuantity() + 1;
-  }
+                        if (optionalSaleDetail.isPresent()) {
+                            SaleDetail saleDetail = optionalSaleDetail.get();
+                            try {
+                                GlobalActions.spotyThreadPool().execute(() -> {
+                                    try {
+                                        SaleDetailViewModel.getSaleDetail(saleDetail);
+                                    } catch (SQLException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                });
+                                SaleDetailViewModel.setProduct(productCard.getProduct());
+                                SaleDetailViewModel.setPrice(productCard.getProduct().getPrice());
+                                SaleDetailViewModel.setQuantity(calculateQuantity(saleDetail));
+                                SaleDetailViewModel.setSubTotalPrice(calculateSubTotal(productCard.getProduct()));
 
-  private void setCategoryFilters() {
-    posFilterPane.getChildren().addAll(allToggleButton);
+                                SaleDetailViewModel.updateSaleDetail(
+                                        SaleDetailViewModel.getSaleDetails().indexOf(saleDetail));
 
-    toggleGroup.selectToggle(allToggleButton);
-
-    ProductCategoryViewModel.getCategories()
-        .forEach(
-            productCategory -> {
-              ToggleButton toggleButton = createToggle(productCategory.getName(), toggleGroup);
-              posFilterPane.getChildren().addAll(toggleButton);
-            });
-  }
-
-  private void updateCategoryFilters() {
-    ProductCategoryViewModel.getCategories()
-        .addListener(
-            (ListChangeListener<ProductCategory>)
-                c -> {
-                  posFilterPane.getChildren().clear();
-                  ProductCategoryViewModel.getCategories()
-                      .forEach(
-                          productCategory -> {
-                            ToggleButton toggleButton =
-                                createToggle(productCategory.getName(), toggleGroup);
-                            posFilterPane.getChildren().addAll(toggleButton);
-                          });
+                            } catch (SQLException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    } else {
+                        SaleDetailViewModel.setProduct(productCard.getProduct());
+                        SaleDetailViewModel.setPrice(productCard.getProduct().getPrice());
+                        SaleDetailViewModel.setQuantity(1);
+                        SaleDetailViewModel.setSubTotalPrice(calculateSubTotal(productCard.getProduct()));
+                        SaleDetailViewModel.addSaleDetail();
+                    }
                 });
-  }
+    }
 
-  private @NotNull ToggleButton createToggle(String text, ToggleGroup toggleGroup) {
-    MFXRectangleToggleNode toggleNode = new MFXRectangleToggleNode(text);
-    toggleNode.setAlignment(Pos.CENTER_LEFT);
-    toggleNode.setMaxWidth(Double.MAX_VALUE);
-    toggleNode.setToggleGroup(toggleGroup);
-    toggleNode.setAlignment(Pos.CENTER);
-    toggleNode.getStyleClass().add("shadow");
-    return toggleNode;
-  }
+    private double calculateSubTotal(Product product) {
+        return (SaleDetailViewModel.getQuantity()
+                * ((product.getNetTax() > 0) ? product.getNetTax() : 1.0))
+                * product.getPrice();
+    }
 
-  private void setCheckoutProductsTable() {
-    cartName.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
-    cartName.setCellFactory(
-        tc ->
-            new TableCell<>() {
-              @Override
-              public void updateItem(SaleDetail item, boolean empty) {
-                super.updateItem(item, empty);
+    private double calculateTotal(ObservableList<SaleDetail> saleDetails) {
+        double totalPrice = 0;
 
-                if (empty || item == null) {
-                  setText(null);
-                  setGraphic(null);
-                } else {
-                  setText(item.getProductName());
-                }
-              }
-            });
+        for (SaleDetail saleDetail : saleDetails) {
+            totalPrice += saleDetail.getSubTotalPrice();
+        }
 
-    cartQuantity.setCellValueFactory(new PropertyValueFactory<>("quantity"));
-    cartPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
+        return totalPrice;
+    }
 
-    cartSubTotal.setCellValueFactory(new PropertyValueFactory<>("subTotalPrice"));
-    cartActions.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
-    cartActions.setCellFactory(
-        param ->
-            new TableCell<>() {
-              final MFXFontIcon delete = new MFXFontIcon("fas-trash", Color.RED);
+    private long calculateQuantity(SaleDetail saleDetail) {
+        return saleDetail.getQuantity() + 1;
+    }
 
-              @Override
-              protected void updateItem(SaleDetail item, boolean empty) {
-                super.updateItem(item, empty);
+    private void setCategoryFilters() {
+        posFilterPane.getChildren().addAll(allToggleButton);
 
-                if (Objects.equals(item, null)) {
-                  setGraphic(null);
-                  return;
-                }
+        toggleGroup.selectToggle(allToggleButton);
 
-                setGraphic(delete);
+        ProductCategoryViewModel.getCategories()
+                .forEach(
+                        productCategory -> {
+                            ToggleButton toggleButton = createToggle(productCategory.getName(), toggleGroup);
+                            posFilterPane.getChildren().addAll(toggleButton);
+                        });
+    }
 
-                delete.setOnMouseClicked(event -> getTableView().getItems().remove(item));
-              }
-            });
+    private void updateCategoryFilters() {
+        ProductCategoryViewModel.getCategories()
+                .addListener(
+                        (ListChangeListener<ProductCategory>)
+                                c -> {
+                                    posFilterPane.getChildren().clear();
+                                    ProductCategoryViewModel.getCategories()
+                                            .forEach(
+                                                    productCategory -> {
+                                                        ToggleButton toggleButton =
+                                                                createToggle(productCategory.getName(), toggleGroup);
+                                                        posFilterPane.getChildren().addAll(toggleButton);
+                                                    });
+                                });
+    }
 
-    SaleDetailViewModel.getSaleDetails()
-        .addListener(
-            (ListChangeListener<SaleDetail>)
-                c -> posItemsTable.setItems(SaleDetailViewModel.getSaleDetails()));
-  }
+    private @NotNull ToggleButton createToggle(String text, ToggleGroup toggleGroup) {
+        MFXRectangleToggleNode toggleNode = new MFXRectangleToggleNode(text);
+        toggleNode.setAlignment(Pos.CENTER_LEFT);
+        toggleNode.setMaxWidth(Double.MAX_VALUE);
+        toggleNode.setToggleGroup(toggleGroup);
+        toggleNode.setAlignment(Pos.CENTER);
+        toggleNode.getStyleClass().add("shadow");
+        return toggleNode;
+    }
 
-  private void getTotalLabels() {
-    SaleDetailViewModel.getSaleDetails()
-        .addListener(
-            (ListChangeListener<SaleDetail>)
-                listener -> posTotalLabel.setText("Total: $" + calculateTotal(SaleDetailViewModel.getSaleDetails())));
-  }
+    private void setCheckoutProductsTable() {
+        cartName.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue()));
+        cartName.setCellFactory(
+                tc ->
+                        new TableCell<>() {
+                            @Override
+                            public void updateItem(SaleDetail item, boolean empty) {
+                                super.updateItem(item, empty);
 
-  public void clearCart() {
-    SaleDetailViewModel.getSaleDetails().clear();
-  }
+                                if (empty || item == null) {
+                                    setText(null);
+                                    setGraphic(null);
+                                } else {
+                                    setText(item.getProductName());
+                                }
+                            }
+                        });
 
-  public void savePOSSale() {
-    SaleMasterViewModel.setSaleStatus("Complete");
-    SaleMasterViewModel.setPayStatus("Paid");
-    SaleMasterViewModel.setTotal(calculateTotal(SaleDetailViewModel.getSaleDetails()));
-    SaleMasterViewModel.setPaid(calculateTotal(SaleDetailViewModel.getSaleDetails()));
-    SaleMasterViewModel.setNote("Approved.");
+        cartQuantity.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+        cartPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
 
-    SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
-    GlobalActions.spotyThreadPool()
-        .execute(
-            () -> {
-              try {
-                SaleMasterViewModel.saveSaleMaster();
-              } catch (SQLException e) {
-                throw new RuntimeException(e);
-              }
-            });
+        cartSubTotal.setCellValueFactory(new PropertyValueFactory<>("subTotalPrice"));
+        cartActions.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
+        cartActions.setCellFactory(
+                param ->
+                        new TableCell<>() {
+                            final MFXFontIcon delete = new MFXFontIcon("fas-trash", Color.RED);
 
-    SimpleNotification notification =
-        new SimpleNotification.NotificationBuilder("Sale saved successfully")
-            .duration(NotificationDuration.MEDIUM)
-            .icon("fas-circle-check")
-            .type(NotificationVariants.SUCCESS)
-            .build();
-    notificationHolder.addNotification(notification);
-  }
+                            @Override
+                            protected void updateItem(SaleDetail item, boolean empty) {
+                                super.updateItem(item, empty);
+
+                                if (Objects.equals(item, null)) {
+                                    setGraphic(null);
+                                    return;
+                                }
+
+                                setGraphic(delete);
+
+                                delete.setOnMouseClicked(event -> getTableView().getItems().remove(item));
+                            }
+                        });
+
+        SaleDetailViewModel.getSaleDetails()
+                .addListener(
+                        (ListChangeListener<SaleDetail>)
+                                c -> posItemsTable.setItems(SaleDetailViewModel.getSaleDetails()));
+    }
+
+    private void getTotalLabels() {
+        SaleDetailViewModel.getSaleDetails()
+                .addListener(
+                        (ListChangeListener<SaleDetail>)
+                                listener -> posTotalLabel.setText("Total: $" + calculateTotal(SaleDetailViewModel.getSaleDetails())));
+    }
+
+    public void clearCart() {
+        SaleDetailViewModel.getSaleDetails().clear();
+    }
+
+    public void savePOSSale() {
+        SaleMasterViewModel.setSaleStatus("Complete");
+        SaleMasterViewModel.setPayStatus("Paid");
+        SaleMasterViewModel.setTotal(calculateTotal(SaleDetailViewModel.getSaleDetails()));
+        SaleMasterViewModel.setPaid(calculateTotal(SaleDetailViewModel.getSaleDetails()));
+        SaleMasterViewModel.setNote("Approved.");
+
+        SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
+        GlobalActions.spotyThreadPool()
+                .execute(
+                        () -> {
+                            try {
+                                SaleMasterViewModel.saveSaleMaster();
+                            } catch (SQLException e) {
+                                throw new RuntimeException(e);
+                            }
+                        });
+
+        SimpleNotification notification =
+                new SimpleNotification.NotificationBuilder("Sale saved successfully")
+                        .duration(NotificationDuration.MEDIUM)
+                        .icon("fas-circle-check")
+                        .type(NotificationVariants.SUCCESS)
+                        .build();
+        notificationHolder.addNotification(notification);
+    }
 }

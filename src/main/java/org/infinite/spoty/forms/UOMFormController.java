@@ -23,6 +23,7 @@ import io.github.palexdev.materialfx.utils.StringUtils;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.function.Function;
@@ -32,6 +33,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
+import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
@@ -146,7 +148,13 @@ public class UOMFormController implements Initializable {
               && !uomFormOperatorValidationLabel.isVisible()
               && !uomFormOperatorValueValidationLabel.isVisible()) {
             if (UOMViewModel.getId() > 0) {
-              UOMViewModel.updateItem(UOMViewModel.getId());
+                GlobalActions.spotyThreadPool().execute(() -> {
+                    try {
+                        UOMViewModel.updateItem(UOMViewModel.getId());
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                });
 
               SimpleNotification notification =
                   new SimpleNotification.NotificationBuilder("Unit of measure updated successfully")
@@ -161,7 +169,13 @@ public class UOMFormController implements Initializable {
               closeDialog(e);
               return;
             }
-            UOMViewModel.saveUOM();
+              GlobalActions.spotyThreadPool().execute(() -> {
+                  try {
+                      UOMViewModel.saveUOM();
+                  } catch (SQLException ex) {
+                      throw new RuntimeException(ex);
+                  }
+              });
 
             SimpleNotification notification =
                 new SimpleNotification.NotificationBuilder("Unit of measure saved successfully")

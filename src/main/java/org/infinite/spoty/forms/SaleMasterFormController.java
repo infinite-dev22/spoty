@@ -36,6 +36,7 @@ import io.github.palexdev.materialfx.filter.StringFilter;
 import io.github.palexdev.materialfx.utils.StringUtils;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -43,6 +44,7 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 import java.util.function.Function;
 import java.util.function.Predicate;
+
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -74,336 +76,348 @@ import org.infinite.spoty.views.BaseController;
 
 @SuppressWarnings("unchecked")
 public class SaleMasterFormController implements Initializable {
-  private static SaleMasterFormController instance;
-  @FXML public Label saleFormTitle;
-  @FXML public MFXDatePicker saleDate;
-  @FXML public MFXFilterComboBox<Customer> saleCustomer;
-  @FXML public MFXFilterComboBox<Branch> saleBranch;
-  @FXML public MFXTableView<SaleDetail> saleDetailTable;
-  @FXML public MFXTextField saleNote;
-  @FXML public BorderPane saleFormContentPane;
-  @FXML public MFXFilterComboBox<String> saleStatus;
-  @FXML public MFXFilterComboBox<String> salePaymentStatus;
-  @FXML public Label saleBranchValidationLabel;
-  @FXML public Label saleCustomerValidationLabel;
-  @FXML public Label saleDateValidationLabel;
-  @FXML public Label saleStatusValidationLabel;
-  @FXML public Label salePaymentStatusValidationLabel;
-  @FXML public MFXButton saleMasterSaveBtn;
-  private MFXStageDialog dialog;
+    private static SaleMasterFormController instance;
+    @FXML
+    public Label saleFormTitle;
+    @FXML
+    public MFXDatePicker saleDate;
+    @FXML
+    public MFXFilterComboBox<Customer> saleCustomer;
+    @FXML
+    public MFXFilterComboBox<Branch> saleBranch;
+    @FXML
+    public MFXTableView<SaleDetail> saleDetailTable;
+    @FXML
+    public MFXTextField saleNote;
+    @FXML
+    public BorderPane saleFormContentPane;
+    @FXML
+    public MFXFilterComboBox<String> saleStatus;
+    @FXML
+    public MFXFilterComboBox<String> salePaymentStatus;
+    @FXML
+    public Label saleBranchValidationLabel;
+    @FXML
+    public Label saleCustomerValidationLabel;
+    @FXML
+    public Label saleDateValidationLabel;
+    @FXML
+    public Label saleStatusValidationLabel;
+    @FXML
+    public Label salePaymentStatusValidationLabel;
+    @FXML
+    public MFXButton saleMasterSaveBtn;
+    private MFXStageDialog dialog;
 
-  private SaleMasterFormController(Stage stage) {
-    Platform.runLater(
-        () -> {
-          try {
-            saleProductDialogPane(stage);
-          } catch (IOException ex) {
-            throw new RuntimeException(ex);
-          }
-        });
-  }
-
-  public static SaleMasterFormController getInstance(Stage stage) {
-    if (instance == null) instance = new SaleMasterFormController(stage);
-    return instance;
-  }
-
-  @Override
-  public void initialize(URL location, ResourceBundle resources) {
-    // Bi~Directional Binding.
-    saleDate.textProperty().bindBidirectional(SaleMasterViewModel.dateProperty());
-    saleCustomer.valueProperty().bindBidirectional(SaleMasterViewModel.customerProperty());
-    saleBranch.valueProperty().bindBidirectional(SaleMasterViewModel.branchProperty());
-    saleStatus.textProperty().bindBidirectional(SaleMasterViewModel.saleStatusProperty());
-    salePaymentStatus.textProperty().bindBidirectional(SaleMasterViewModel.payStatusProperty());
-
-    // ComboBox Converters.
-    StringConverter<Customer> customerConverter =
-        FunctionalStringConverter.to(customer -> (customer == null) ? "" : customer.getName());
-
-    StringConverter<Branch> branchConverter =
-        FunctionalStringConverter.to(branch -> (branch == null) ? "" : branch.getName());
-
-    // ComboBox Filter Functions.
-    Function<String, Predicate<Customer>> customerFilterFunction =
-        searchStr ->
-            customer ->
-                StringUtils.containsIgnoreCase(customerConverter.toString(customer), searchStr);
-
-    Function<String, Predicate<Branch>> branchFilterFunction =
-        searchStr ->
-            branch -> StringUtils.containsIgnoreCase(branchConverter.toString(branch), searchStr);
-
-    // Set items to combo boxes and display custom text.
-    saleCustomer.setItems(CustomerViewModel.getCustomers());
-    saleCustomer.setConverter(customerConverter);
-    saleCustomer.setFilterFunction(customerFilterFunction);
-
-    saleBranch.setItems(BranchViewModel.getBranches());
-    saleBranch.setConverter(branchConverter);
-    saleBranch.setFilterFunction(branchFilterFunction);
-
-    saleStatus.setItems(FXCollections.observableArrayList(Values.SALE_STATUSES));
-    salePaymentStatus.setItems(FXCollections.observableArrayList(Values.PAYMENT_STATUSES));
-
-    // input validators.
-    requiredValidator(
-        saleBranch, "Branch is required.", saleBranchValidationLabel, saleMasterSaveBtn);
-    requiredValidator(
-        saleCustomer, "Customer is required.", saleCustomerValidationLabel, saleMasterSaveBtn);
-    requiredValidator(saleDate, "Date is required.", saleDateValidationLabel, saleMasterSaveBtn);
-    requiredValidator(
-        saleStatus, "Sale Status is required.", saleStatusValidationLabel, saleMasterSaveBtn);
-    requiredValidator(
-        salePaymentStatus,
-        "Payment status is required.",
-        salePaymentStatusValidationLabel,
-        saleMasterSaveBtn);
-
-    setupTable();
-  }
-
-  private void saleProductDialogPane(Stage stage) throws IOException {
-    FXMLLoader fxmlLoader = fxmlLoader("forms/SaleDetailForm.fxml");
-    fxmlLoader.setControllerFactory(c -> SaleDetailFormController.getInstance());
-
-    MFXGenericDialog dialogContent = fxmlLoader.load();
-
-    dialogContent.setShowMinimize(false);
-    dialogContent.setShowAlwaysOnTop(false);
-
-    dialog =
-        MFXGenericDialogBuilder.build(dialogContent)
-            .toStageDialogBuilder()
-            .initOwner(stage)
-            .initModality(Modality.WINDOW_MODAL)
-            .setOwnerNode(saleFormContentPane)
-            .setScrimPriority(ScrimPriority.WINDOW)
-            .setScrimOwner(true)
-            .get();
-
-    io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
-  }
-
-  public void saveBtnClicked() {
-    SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
-
-    if (!saleDetailTable.isDisabled() && SaleDetailViewModel.saleDetailList.isEmpty()) {
-      SimpleNotification notification =
-          new SimpleNotification.NotificationBuilder("Table can't be Empty")
-              .duration(NotificationDuration.SHORT)
-              .icon("fas-triangle-exclamation")
-              .type(NotificationVariants.ERROR)
-              .build();
-      notificationHolder.addNotification(notification);
-      return;
-    }
-    if (!saleCustomerValidationLabel.isVisible()
-        && !saleDateValidationLabel.isVisible()
-        && !saleBranchValidationLabel.isVisible()
-        && !saleStatusValidationLabel.isVisible()
-        && !salePaymentStatusValidationLabel.isVisible()) {
-      if (SaleMasterViewModel.getId() > 0) {
-        GlobalActions.spotyThreadPool()
-            .execute(
+    private SaleMasterFormController(Stage stage) {
+        Platform.runLater(
                 () -> {
-                  try {
-                    SaleMasterViewModel.updateItem(SaleMasterViewModel.getId());
-                  } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                  }
+                    try {
+                        saleProductDialogPane(stage);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
                 });
+    }
 
+    public static SaleMasterFormController getInstance(Stage stage) {
+        if (instance == null) instance = new SaleMasterFormController(stage);
+        return instance;
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        // Bi~Directional Binding.
+        saleDate.textProperty().bindBidirectional(SaleMasterViewModel.dateProperty());
+        saleCustomer.valueProperty().bindBidirectional(SaleMasterViewModel.customerProperty());
+        saleBranch.valueProperty().bindBidirectional(SaleMasterViewModel.branchProperty());
+        saleStatus.textProperty().bindBidirectional(SaleMasterViewModel.saleStatusProperty());
+        salePaymentStatus.textProperty().bindBidirectional(SaleMasterViewModel.payStatusProperty());
+
+        // ComboBox Converters.
+        StringConverter<Customer> customerConverter =
+                FunctionalStringConverter.to(customer -> (customer == null) ? "" : customer.getName());
+
+        StringConverter<Branch> branchConverter =
+                FunctionalStringConverter.to(branch -> (branch == null) ? "" : branch.getName());
+
+        // ComboBox Filter Functions.
+        Function<String, Predicate<Customer>> customerFilterFunction =
+                searchStr ->
+                        customer ->
+                                StringUtils.containsIgnoreCase(customerConverter.toString(customer), searchStr);
+
+        Function<String, Predicate<Branch>> branchFilterFunction =
+                searchStr ->
+                        branch -> StringUtils.containsIgnoreCase(branchConverter.toString(branch), searchStr);
+
+        // Set items to combo boxes and display custom text.
+        saleCustomer.setItems(CustomerViewModel.getCustomers());
+        saleCustomer.setConverter(customerConverter);
+        saleCustomer.setFilterFunction(customerFilterFunction);
+
+        saleBranch.setItems(BranchViewModel.getBranches());
+        saleBranch.setConverter(branchConverter);
+        saleBranch.setFilterFunction(branchFilterFunction);
+
+        saleStatus.setItems(FXCollections.observableArrayList(Values.SALE_STATUSES));
+        salePaymentStatus.setItems(FXCollections.observableArrayList(Values.PAYMENT_STATUSES));
+
+        // input validators.
+        requiredValidator(
+                saleBranch, "Branch is required.", saleBranchValidationLabel, saleMasterSaveBtn);
+        requiredValidator(
+                saleCustomer, "Customer is required.", saleCustomerValidationLabel, saleMasterSaveBtn);
+        requiredValidator(saleDate, "Date is required.", saleDateValidationLabel, saleMasterSaveBtn);
+        requiredValidator(
+                saleStatus, "Sale Status is required.", saleStatusValidationLabel, saleMasterSaveBtn);
+        requiredValidator(
+                salePaymentStatus,
+                "Payment status is required.",
+                salePaymentStatusValidationLabel,
+                saleMasterSaveBtn);
+
+        setupTable();
+    }
+
+    private void saleProductDialogPane(Stage stage) throws IOException {
+        FXMLLoader fxmlLoader = fxmlLoader("forms/SaleDetailForm.fxml");
+        fxmlLoader.setControllerFactory(c -> SaleDetailFormController.getInstance());
+
+        MFXGenericDialog dialogContent = fxmlLoader.load();
+
+        dialogContent.setShowMinimize(false);
+        dialogContent.setShowAlwaysOnTop(false);
+
+        dialog =
+                MFXGenericDialogBuilder.build(dialogContent)
+                        .toStageDialogBuilder()
+                        .initOwner(stage)
+                        .initModality(Modality.WINDOW_MODAL)
+                        .setOwnerNode(saleFormContentPane)
+                        .setScrimPriority(ScrimPriority.WINDOW)
+                        .setScrimOwner(true)
+                        .get();
+
+        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
+    }
+
+    public void saveBtnClicked() {
+        SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
+
+        if (!saleDetailTable.isDisabled() && SaleDetailViewModel.saleDetailList.isEmpty()) {
+            SimpleNotification notification =
+                    new SimpleNotification.NotificationBuilder("Table can't be Empty")
+                            .duration(NotificationDuration.SHORT)
+                            .icon("fas-triangle-exclamation")
+                            .type(NotificationVariants.ERROR)
+                            .build();
+            notificationHolder.addNotification(notification);
+            return;
+        }
+        if (!saleCustomerValidationLabel.isVisible()
+                && !saleDateValidationLabel.isVisible()
+                && !saleBranchValidationLabel.isVisible()
+                && !saleStatusValidationLabel.isVisible()
+                && !salePaymentStatusValidationLabel.isVisible()) {
+            if (SaleMasterViewModel.getId() > 0) {
+                GlobalActions.spotyThreadPool()
+                        .execute(
+                                () -> {
+                                    try {
+                                        SaleMasterViewModel.updateItem(SaleMasterViewModel.getId());
+                                    } catch (SQLException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                });
+
+                SimpleNotification notification =
+                        new SimpleNotification.NotificationBuilder("Sale updated successfully")
+                                .duration(NotificationDuration.MEDIUM)
+                                .icon("fas-circle-check")
+                                .type(NotificationVariants.SUCCESS)
+                                .build();
+                notificationHolder.addNotification(notification);
+
+                saleCustomer.clearSelection();
+                saleBranch.clearSelection();
+                saleStatus.clearSelection();
+                salePaymentStatus.clearSelection();
+
+                cancelBtnClicked();
+                return;
+            }
+            GlobalActions.spotyThreadPool()
+                    .execute(
+                            () -> {
+                                try {
+                                    SaleMasterViewModel.saveSaleMaster();
+                                } catch (SQLException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            });
+
+            SimpleNotification notification =
+                    new SimpleNotification.NotificationBuilder("Sale saved successfully")
+                            .duration(NotificationDuration.MEDIUM)
+                            .icon("fas-circle-check")
+                            .type(NotificationVariants.SUCCESS)
+                            .build();
+            notificationHolder.addNotification(notification);
+
+            saleCustomer.clearSelection();
+            saleBranch.clearSelection();
+            saleStatus.clearSelection();
+            salePaymentStatus.clearSelection();
+
+            cancelBtnClicked();
+            return;
+        }
         SimpleNotification notification =
-            new SimpleNotification.NotificationBuilder("Sale updated successfully")
-                .duration(NotificationDuration.MEDIUM)
-                .icon("fas-circle-check")
-                .type(NotificationVariants.SUCCESS)
-                .build();
+                new SimpleNotification.NotificationBuilder("Required fields missing")
+                        .duration(NotificationDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(NotificationVariants.ERROR)
+                        .build();
         notificationHolder.addNotification(notification);
+    }
+
+    public void cancelBtnClicked() {
+        BaseController.navigation.navigate(Pages.getSalePane());
+        SaleMasterViewModel.resetProperties();
 
         saleCustomer.clearSelection();
         saleBranch.clearSelection();
         saleStatus.clearSelection();
         salePaymentStatus.clearSelection();
 
-        cancelBtnClicked();
-        return;
-      }
-      GlobalActions.spotyThreadPool()
-          .execute(
-              () -> {
-                try {
-                  SaleMasterViewModel.saveSaleMaster();
-                } catch (SQLException e) {
-                  throw new RuntimeException(e);
-                }
-              });
-
-      SimpleNotification notification =
-          new SimpleNotification.NotificationBuilder("Sale saved successfully")
-              .duration(NotificationDuration.MEDIUM)
-              .icon("fas-circle-check")
-              .type(NotificationVariants.SUCCESS)
-              .build();
-      notificationHolder.addNotification(notification);
-
-      saleCustomer.clearSelection();
-      saleBranch.clearSelection();
-      saleStatus.clearSelection();
-      salePaymentStatus.clearSelection();
-
-      cancelBtnClicked();
-      return;
+        saleBranchValidationLabel.setVisible(false);
+        saleCustomerValidationLabel.setVisible(false);
+        saleDateValidationLabel.setVisible(false);
+        saleStatusValidationLabel.setVisible(false);
+        salePaymentStatusValidationLabel.setVisible(false);
     }
-    SimpleNotification notification =
-        new SimpleNotification.NotificationBuilder("Required fields missing")
-            .duration(NotificationDuration.SHORT)
-            .icon("fas-triangle-exclamation")
-            .type(NotificationVariants.ERROR)
-            .build();
-    notificationHolder.addNotification(notification);
-  }
 
-  public void cancelBtnClicked() {
-    BaseController.navigation.navigate(Pages.getSalePane());
-    SaleMasterViewModel.resetProperties();
-
-    saleCustomer.clearSelection();
-    saleBranch.clearSelection();
-    saleStatus.clearSelection();
-    salePaymentStatus.clearSelection();
-
-    saleBranchValidationLabel.setVisible(false);
-    saleCustomerValidationLabel.setVisible(false);
-    saleDateValidationLabel.setVisible(false);
-    saleStatusValidationLabel.setVisible(false);
-    salePaymentStatusValidationLabel.setVisible(false);
-  }
-
-  public void addBtnClicked() {
-    dialog.showAndWait();
-  }
-
-  private void setupTable() {
-    // Set table column titles.
-    MFXTableColumn<SaleDetail> product =
-        new MFXTableColumn<>("Product", false, Comparator.comparing(SaleDetail::getProductName));
-    MFXTableColumn<SaleDetail> quantity =
-        new MFXTableColumn<>("Quantity", false, Comparator.comparing(SaleDetail::getQuantity));
-    MFXTableColumn<SaleDetail> discount =
-        new MFXTableColumn<>("Discount", false, Comparator.comparing(SaleDetail::getDiscount));
-    MFXTableColumn<SaleDetail> tax =
-        new MFXTableColumn<>("Tax", false, Comparator.comparing(SaleDetail::getNetTax));
-    MFXTableColumn<SaleDetail> price =
-        new MFXTableColumn<>("Price", false, Comparator.comparing(SaleDetail::getPrice));
-    MFXTableColumn<SaleDetail> totalPrice =
-        new MFXTableColumn<>(
-            "Total Price", false, Comparator.comparing(SaleDetail::getSubTotalPrice));
-
-    // Set table column data.
-    product.setRowCellFactory(purchaseDetail -> new MFXTableRowCell<>(SaleDetail::getProductName));
-    quantity.setRowCellFactory(purchaseDetail -> new MFXTableRowCell<>(SaleDetail::getQuantity));
-    discount.setRowCellFactory(purchaseDetail -> new MFXTableRowCell<>(SaleDetail::getDiscount));
-    tax.setRowCellFactory(purchaseDetail -> new MFXTableRowCell<>(SaleDetail::getNetTax));
-    price.setRowCellFactory(purchaseDetail -> new MFXTableRowCell<>(SaleDetail::getPrice));
-    totalPrice.setRowCellFactory(
-        purchaseDetail -> new MFXTableRowCell<>(SaleDetail::getSubTotalPrice));
-
-    // Set table column width.
-    product.prefWidthProperty().bind(saleDetailTable.widthProperty().multiply(.25));
-    quantity.prefWidthProperty().bind(saleDetailTable.widthProperty().multiply(.25));
-    discount.prefWidthProperty().bind(saleDetailTable.widthProperty().multiply(.25));
-    tax.prefWidthProperty().bind(saleDetailTable.widthProperty().multiply(.25));
-    price.prefWidthProperty().bind(saleDetailTable.widthProperty().multiply(.25));
-    totalPrice.prefWidthProperty().bind(saleDetailTable.widthProperty().multiply(.25));
-
-    // Set table filter.
-    saleDetailTable
-        .getTableColumns()
-        .addAll(product, quantity, discount, tax, price, totalPrice);
-    saleDetailTable
-        .getFilters()
-        .addAll(
-            new StringFilter<>("Product", SaleDetail::getProductName),
-            new LongFilter<>("Quantity", SaleDetail::getQuantity),
-            new DoubleFilter<>("Discount", SaleDetail::getDiscount),
-            new DoubleFilter<>("Tax", SaleDetail::getNetTax),
-            new DoubleFilter<>("Price", SaleDetail::getPrice),
-            new DoubleFilter<>("Total Price", SaleDetail::getSubTotalPrice));
-
-    styleTable();
-
-    // Populate table.
-    if (SaleDetailViewModel.getSaleDetails().isEmpty()) {
-      SaleDetailViewModel.getSaleDetails()
-          .addListener(
-              (ListChangeListener<SaleDetail>)
-                  c -> saleDetailTable.setItems(SaleDetailViewModel.getSaleDetails()));
-    } else {
-      saleDetailTable.itemsProperty().bindBidirectional(SaleDetailViewModel.saleDetailsProperty());
+    public void addBtnClicked() {
+        dialog.showAndWait();
     }
-  }
 
-  private void styleTable() {
-    saleDetailTable.setPrefSize(1000, 1000);
-    saleDetailTable.features().enableBounceEffect();
-    saleDetailTable.features().enableSmoothScrolling(0.5);
+    private void setupTable() {
+        // Set table column titles.
+        MFXTableColumn<SaleDetail> product =
+                new MFXTableColumn<>("Product", false, Comparator.comparing(SaleDetail::getProductName));
+        MFXTableColumn<SaleDetail> quantity =
+                new MFXTableColumn<>("Quantity", false, Comparator.comparing(SaleDetail::getQuantity));
+        MFXTableColumn<SaleDetail> discount =
+                new MFXTableColumn<>("Discount", false, Comparator.comparing(SaleDetail::getDiscount));
+        MFXTableColumn<SaleDetail> tax =
+                new MFXTableColumn<>("Tax", false, Comparator.comparing(SaleDetail::getNetTax));
+        MFXTableColumn<SaleDetail> price =
+                new MFXTableColumn<>("Price", false, Comparator.comparing(SaleDetail::getPrice));
+        MFXTableColumn<SaleDetail> totalPrice =
+                new MFXTableColumn<>(
+                        "Total Price", false, Comparator.comparing(SaleDetail::getSubTotalPrice));
 
-    saleDetailTable.setTableRowFactory(
-        t -> {
-          MFXTableRow<SaleDetail> row = new MFXTableRow<>(saleDetailTable, t);
-          EventHandler<ContextMenuEvent> eventHandler =
-              event -> {
-                showContextMenu((MFXTableRow<SaleDetail>) event.getSource())
-                    .show(
-                        saleDetailTable.getScene().getWindow(),
-                        event.getScreenX(),
-                        event.getScreenY());
-                event.consume();
-              };
-          row.setOnContextMenuRequested(eventHandler);
-          return row;
-        });
-  }
+        // Set table column data.
+        product.setRowCellFactory(purchaseDetail -> new MFXTableRowCell<>(SaleDetail::getProductName));
+        quantity.setRowCellFactory(purchaseDetail -> new MFXTableRowCell<>(SaleDetail::getQuantity));
+        discount.setRowCellFactory(purchaseDetail -> new MFXTableRowCell<>(SaleDetail::getDiscount));
+        tax.setRowCellFactory(purchaseDetail -> new MFXTableRowCell<>(SaleDetail::getNetTax));
+        price.setRowCellFactory(purchaseDetail -> new MFXTableRowCell<>(SaleDetail::getPrice));
+        totalPrice.setRowCellFactory(
+                purchaseDetail -> new MFXTableRowCell<>(SaleDetail::getSubTotalPrice));
 
-  private MFXContextMenu showContextMenu(MFXTableRow<SaleDetail> obj) {
-    MFXContextMenu contextMenu = new MFXContextMenu(saleDetailTable);
-    MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
-    MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+        // Set table column width.
+        product.prefWidthProperty().bind(saleDetailTable.widthProperty().multiply(.25));
+        quantity.prefWidthProperty().bind(saleDetailTable.widthProperty().multiply(.25));
+        discount.prefWidthProperty().bind(saleDetailTable.widthProperty().multiply(.25));
+        tax.prefWidthProperty().bind(saleDetailTable.widthProperty().multiply(.25));
+        price.prefWidthProperty().bind(saleDetailTable.widthProperty().multiply(.25));
+        totalPrice.prefWidthProperty().bind(saleDetailTable.widthProperty().multiply(.25));
 
-    // Actions
-    // Delete
-    delete.setOnAction(
-        e -> {
-          GlobalActions.spotyThreadPool()
-              .execute(
-                  () ->
-                      SaleDetailViewModel.removeSaleDetail(
-                          obj.getData().getId(),
-                          SaleDetailViewModel.saleDetailList.indexOf(obj.getData())));
+        // Set table filter.
+        saleDetailTable
+                .getTableColumns()
+                .addAll(product, quantity, discount, tax, price, totalPrice);
+        saleDetailTable
+                .getFilters()
+                .addAll(
+                        new StringFilter<>("Product", SaleDetail::getProductName),
+                        new LongFilter<>("Quantity", SaleDetail::getQuantity),
+                        new DoubleFilter<>("Discount", SaleDetail::getDiscount),
+                        new DoubleFilter<>("Tax", SaleDetail::getNetTax),
+                        new DoubleFilter<>("Price", SaleDetail::getPrice),
+                        new DoubleFilter<>("Total Price", SaleDetail::getSubTotalPrice));
 
-          e.consume();
-        });
-    // Edit
-    edit.setOnAction(
-        e -> {
-          GlobalActions.spotyThreadPool()
-              .execute(
-                  () -> {
-                    try {
-                      SaleDetailViewModel.getSaleDetail(obj.getData());
-                    } catch (SQLException ex) {
-                      throw new RuntimeException(ex);
-                    }
-                  });
+        styleTable();
 
-          dialog.showAndWait();
-          e.consume();
-        });
+        // Populate table.
+        if (SaleDetailViewModel.getSaleDetails().isEmpty()) {
+            SaleDetailViewModel.getSaleDetails()
+                    .addListener(
+                            (ListChangeListener<SaleDetail>)
+                                    c -> saleDetailTable.setItems(SaleDetailViewModel.getSaleDetails()));
+        } else {
+            saleDetailTable.itemsProperty().bindBidirectional(SaleDetailViewModel.saleDetailsProperty());
+        }
+    }
 
-    contextMenu.addItems(edit, delete);
+    private void styleTable() {
+        saleDetailTable.setPrefSize(1000, 1000);
+        saleDetailTable.features().enableBounceEffect();
+        saleDetailTable.features().enableSmoothScrolling(0.5);
 
-    return contextMenu;
-  }
+        saleDetailTable.setTableRowFactory(
+                t -> {
+                    MFXTableRow<SaleDetail> row = new MFXTableRow<>(saleDetailTable, t);
+                    EventHandler<ContextMenuEvent> eventHandler =
+                            event -> {
+                                showContextMenu((MFXTableRow<SaleDetail>) event.getSource())
+                                        .show(
+                                                saleDetailTable.getScene().getWindow(),
+                                                event.getScreenX(),
+                                                event.getScreenY());
+                                event.consume();
+                            };
+                    row.setOnContextMenuRequested(eventHandler);
+                    return row;
+                });
+    }
+
+    private MFXContextMenu showContextMenu(MFXTableRow<SaleDetail> obj) {
+        MFXContextMenu contextMenu = new MFXContextMenu(saleDetailTable);
+        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
+        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+
+        // Actions
+        // Delete
+        delete.setOnAction(
+                e -> {
+                    SaleDetailViewModel.removeSaleDetail(
+                            obj.getData().getId(),
+                            SaleDetailViewModel.saleDetailList.indexOf(obj.getData()));
+
+                    e.consume();
+                });
+        // Edit
+        edit.setOnAction(
+                e -> {
+                    GlobalActions.spotyThreadPool()
+                            .execute(
+                                    () -> {
+                                        try {
+                                            SaleDetailViewModel.getSaleDetail(obj.getData());
+                                        } catch (SQLException ex) {
+                                            throw new RuntimeException(ex);
+                                        }
+                                    });
+
+                    dialog.showAndWait();
+                    e.consume();
+                });
+
+        contextMenu.addItems(edit, delete);
+
+        return contextMenu;
+    }
 }

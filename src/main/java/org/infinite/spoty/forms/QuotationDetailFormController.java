@@ -23,11 +23,13 @@ import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.utils.StringUtils;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.function.Function;
 import java.util.function.Predicate;
+
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -42,127 +44,132 @@ import org.infinite.spoty.viewModels.ProductViewModel;
 import org.infinite.spoty.viewModels.QuotationDetailViewModel;
 
 public class QuotationDetailFormController implements Initializable {
-  private static QuotationDetailFormController instance;
-  @FXML public MFXTextField quotationProductQnty;
-  @FXML public MFXFilterComboBox<Product> quotationProductPdct;
-  @FXML public MFXTextField quotationProductsOrderTax;
-  @FXML public MFXTextField quotationProductsDiscount;
-  @FXML public MFXButton quotationProductsSaveBtn;
-  @FXML public MFXButton quotationProductsCancelBtn;
-  @FXML public Label quotationProductPdctValidationLabel;
-  @FXML public Label quotationProductQntyValidationLabel;
+    private static QuotationDetailFormController instance;
+    @FXML
+    public MFXTextField quotationProductQnty;
+    @FXML
+    public MFXFilterComboBox<Product> quotationProductPdct;
+    @FXML
+    public MFXTextField quotationProductsOrderTax;
+    @FXML
+    public MFXTextField quotationProductsDiscount;
+    @FXML
+    public MFXButton quotationProductsSaveBtn;
+    @FXML
+    public MFXButton quotationProductsCancelBtn;
+    @FXML
+    public Label quotationProductPdctValidationLabel;
+    @FXML
+    public Label quotationProductQntyValidationLabel;
 
-  public static QuotationDetailFormController getInstance() {
-    if (Objects.equals(instance, null)) instance = new QuotationDetailFormController();
-    return instance;
-  }
+    public static QuotationDetailFormController getInstance() {
+        if (Objects.equals(instance, null)) instance = new QuotationDetailFormController();
+        return instance;
+    }
 
-  @Override
-  public void initialize(URL location, ResourceBundle resources) {
-    // Bind form input values.
-    quotationProductQnty
-        .textProperty()
-        .bindBidirectional(QuotationDetailViewModel.quantityProperty());
-    quotationProductPdct
-        .valueProperty()
-        .bindBidirectional(QuotationDetailViewModel.productProperty());
-    quotationProductsOrderTax
-        .textProperty()
-        .bindBidirectional(QuotationDetailViewModel.taxProperty());
-    quotationProductsDiscount
-        .textProperty()
-        .bindBidirectional(QuotationDetailViewModel.discountProperty());
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        // Bind form input values.
+        quotationProductQnty
+                .textProperty()
+                .bindBidirectional(QuotationDetailViewModel.quantityProperty());
+        quotationProductPdct
+                .valueProperty()
+                .bindBidirectional(QuotationDetailViewModel.productProperty());
+        quotationProductsOrderTax
+                .textProperty()
+                .bindBidirectional(QuotationDetailViewModel.taxProperty());
+        quotationProductsDiscount
+                .textProperty()
+                .bindBidirectional(QuotationDetailViewModel.discountProperty());
 
-    // Combo box Converter.
-    StringConverter<Product> productVariantConverter =
-        FunctionalStringConverter.to(
-            productDetail -> (productDetail == null) ? "" : productDetail.getName());
+        // Combo box Converter.
+        StringConverter<Product> productVariantConverter =
+                FunctionalStringConverter.to(
+                        productDetail -> (productDetail == null) ? "" : productDetail.getName());
 
-    // Combo box Filter Function.
-    Function<String, Predicate<Product>> productVariantFilterFunction =
-        searchStr ->
-            productDetail ->
-                StringUtils.containsIgnoreCase(
-                    productVariantConverter.toString(productDetail), searchStr);
+        // Combo box Filter Function.
+        Function<String, Predicate<Product>> productVariantFilterFunction =
+                searchStr ->
+                        productDetail ->
+                                StringUtils.containsIgnoreCase(
+                                        productVariantConverter.toString(productDetail), searchStr);
 
-    // Combo box properties.
-    quotationProductPdct.setItems(ProductViewModel.getProducts());
-    quotationProductPdct.setConverter(productVariantConverter);
-    quotationProductPdct.setFilterFunction(productVariantFilterFunction);
+        // Combo box properties.
+        quotationProductPdct.setItems(ProductViewModel.getProducts());
+        quotationProductPdct.setConverter(productVariantConverter);
+        quotationProductPdct.setFilterFunction(productVariantFilterFunction);
 
-    // Input validators.
-    requiredValidator(
-        quotationProductPdct,
-        "Product is required.",
-        quotationProductPdctValidationLabel,
-        quotationProductsSaveBtn);
-    requiredValidator(
-        quotationProductQnty,
-        "Quantity is required.",
-        quotationProductQntyValidationLabel,
-        quotationProductsSaveBtn);
+        // Input validators.
+        requiredValidator(
+                quotationProductPdct,
+                "Product is required.",
+                quotationProductPdctValidationLabel,
+                quotationProductsSaveBtn);
+        requiredValidator(
+                quotationProductQnty,
+                "Quantity is required.",
+                quotationProductQntyValidationLabel,
+                quotationProductsSaveBtn);
 
-    dialogOnActions();
-  }
+        dialogOnActions();
+    }
 
-  private void dialogOnActions() {
-    quotationProductsCancelBtn.setOnAction(
-        (e) -> {
-          closeDialog(e);
-          QuotationDetailViewModel.resetProperties();
-          quotationProductPdct.clearSelection();
-          quotationProductPdctValidationLabel.setVisible(false);
-          quotationProductQntyValidationLabel.setVisible(false);
-        });
-    quotationProductsSaveBtn.setOnAction(
-        (e) -> {
-          SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
+    private void dialogOnActions() {
+        quotationProductsCancelBtn.setOnAction(
+                (e) -> {
+                    closeDialog(e);
+                    QuotationDetailViewModel.resetProperties();
+                    quotationProductPdct.clearSelection();
+                    quotationProductPdctValidationLabel.setVisible(false);
+                    quotationProductQntyValidationLabel.setVisible(false);
+                });
+        quotationProductsSaveBtn.setOnAction(
+                (e) -> {
+                    SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
 
-          if (!quotationProductPdctValidationLabel.isVisible()
-              && !quotationProductQntyValidationLabel.isVisible()) {
-            if (tempIdProperty().get() > -1) {
-              GlobalActions.spotyThreadPool()
-                  .execute(
-                      () ->
-                          QuotationDetailViewModel.updateQuotationDetail(
-                              QuotationDetailViewModel.getId()));
+                    if (!quotationProductPdctValidationLabel.isVisible()
+                            && !quotationProductQntyValidationLabel.isVisible()) {
+                        if (tempIdProperty().get() > -1) {
+                            QuotationDetailViewModel.updateQuotationDetail(
+                                    QuotationDetailViewModel.getId());
 
-              SimpleNotification notification =
-                  new SimpleNotification.NotificationBuilder("Product changed successfully")
-                      .duration(NotificationDuration.SHORT)
-                      .icon("fas-circle-check")
-                      .type(NotificationVariants.SUCCESS)
-                      .build();
-              notificationHolder.addNotification(notification);
+                            SimpleNotification notification =
+                                    new SimpleNotification.NotificationBuilder("Product changed successfully")
+                                            .duration(NotificationDuration.SHORT)
+                                            .icon("fas-circle-check")
+                                            .type(NotificationVariants.SUCCESS)
+                                            .build();
+                            notificationHolder.addNotification(notification);
 
-              quotationProductPdct.clearSelection();
+                            quotationProductPdct.clearSelection();
 
-              closeDialog(e);
-              return;
-            }
-            GlobalActions.spotyThreadPool().execute(QuotationDetailViewModel::addQuotationDetails);
+                            closeDialog(e);
+                            return;
+                        }
+                        QuotationDetailViewModel.addQuotationDetails();
 
-            SimpleNotification notification =
-                new SimpleNotification.NotificationBuilder("Product added successfully")
-                    .duration(NotificationDuration.SHORT)
-                    .icon("fas-circle-check")
-                    .type(NotificationVariants.SUCCESS)
-                    .build();
+                        SimpleNotification notification =
+                                new SimpleNotification.NotificationBuilder("Product added successfully")
+                                        .duration(NotificationDuration.SHORT)
+                                        .icon("fas-circle-check")
+                                        .type(NotificationVariants.SUCCESS)
+                                        .build();
 
-            notificationHolder.addNotification(notification);
+                        notificationHolder.addNotification(notification);
 
-            quotationProductPdct.clearSelection();
+                        quotationProductPdct.clearSelection();
 
-            closeDialog(e);
-            return;
-          }
-          SimpleNotification notification =
-              new SimpleNotification.NotificationBuilder("Required fields missing")
-                  .duration(NotificationDuration.SHORT)
-                  .icon("fas-triangle-exclamation")
-                  .type(NotificationVariants.ERROR)
-                  .build();
-          notificationHolder.addNotification(notification);
-        });
-  }
+                        closeDialog(e);
+                        return;
+                    }
+                    SimpleNotification notification =
+                            new SimpleNotification.NotificationBuilder("Required fields missing")
+                                    .duration(NotificationDuration.SHORT)
+                                    .icon("fas-triangle-exclamation")
+                                    .type(NotificationVariants.ERROR)
+                                    .build();
+                    notificationHolder.addNotification(notification);
+                });
+    }
 }

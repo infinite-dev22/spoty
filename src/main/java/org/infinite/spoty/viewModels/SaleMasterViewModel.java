@@ -49,6 +49,8 @@ public class SaleMasterViewModel {
   private static final DoubleProperty paid = new SimpleDoubleProperty();
   private static final StringProperty payStatus = new SimpleStringProperty("");
   private static final StringProperty note = new SimpleStringProperty("");
+  private static final SQLiteConnection connection = SQLiteConnection.getInstance();
+  private static final ConnectionSource connectionSource = connection.getConnection();
 
   public static long getId() {
     return id.get();
@@ -197,9 +199,6 @@ public class SaleMasterViewModel {
   }
 
   public static void saveSaleMaster() throws SQLException {
-    SQLiteConnection connection = SQLiteConnection.getInstance();
-    ConnectionSource connectionSource = connection.getConnection();
-
     Dao<SaleMaster, Long> saleMasterDao = DaoManager.createDao(connectionSource, SaleMaster.class);
 
     SaleMaster saleMaster =
@@ -228,9 +227,6 @@ public class SaleMasterViewModel {
   }
 
   public static void getSaleMasters() throws SQLException {
-    SQLiteConnection connection = SQLiteConnection.getInstance();
-    ConnectionSource connectionSource = connection.getConnection();
-
     Dao<SaleMaster, Long> saleMasterDao = DaoManager.createDao(connectionSource, SaleMaster.class);
 
     Platform.runLater(
@@ -246,9 +242,6 @@ public class SaleMasterViewModel {
   }
 
   public static void getItem(long index) throws SQLException {
-    SQLiteConnection connection = SQLiteConnection.getInstance();
-    ConnectionSource connectionSource = connection.getConnection();
-
     Dao<SaleMaster, Long> saleMasterDao = DaoManager.createDao(connectionSource, SaleMaster.class);
 
     SaleMaster saleMaster = saleMasterDao.queryForId(index);
@@ -271,9 +264,6 @@ public class SaleMasterViewModel {
   }
 
   public static void updateItem(long index) throws SQLException {
-    SQLiteConnection connection = SQLiteConnection.getInstance();
-    ConnectionSource connectionSource = connection.getConnection();
-
     Dao<SaleMaster, Long> saleMasterDao = DaoManager.createDao(connectionSource, SaleMaster.class);
 
     SaleMaster saleMaster = saleMasterDao.queryForId(index);
@@ -295,9 +285,6 @@ public class SaleMasterViewModel {
   }
 
   public static void deleteItem(long index) throws SQLException {
-    SQLiteConnection connection = SQLiteConnection.getInstance();
-    ConnectionSource connectionSource = connection.getConnection();
-
     Dao<SaleMaster, Long> saleMasterDao = DaoManager.createDao(connectionSource, SaleMaster.class);
 
     saleMasterDao.deleteById(index);

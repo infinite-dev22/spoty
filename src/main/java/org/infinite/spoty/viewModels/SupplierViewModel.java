@@ -17,7 +17,9 @@ package org.infinite.spoty.viewModels;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
+
 import java.sql.SQLException;
+
 import javafx.application.Platform;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.LongProperty;
@@ -33,304 +35,235 @@ import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.Supplier;
 
 public class SupplierViewModel {
-  public static final ObservableList<Supplier> suppliersList = FXCollections.observableArrayList();
-  public static final ObservableList<Supplier> suppliersComboBoxList =
-      FXCollections.observableArrayList();
-  private static final ListProperty<Supplier> suppliers = new SimpleListProperty<>(suppliersList);
-  private static final LongProperty id = new SimpleLongProperty(0);
-  private static final StringProperty name = new SimpleStringProperty("");
-  private static final StringProperty code = new SimpleStringProperty("");
-  private static final StringProperty email = new SimpleStringProperty("");
-  private static final StringProperty phone = new SimpleStringProperty("");
-  private static final StringProperty city = new SimpleStringProperty("");
-  private static final StringProperty address = new SimpleStringProperty("");
-  private static final StringProperty taxNumber = new SimpleStringProperty("");
-  private static final StringProperty country = new SimpleStringProperty("");
+    public static final ObservableList<Supplier> suppliersList = FXCollections.observableArrayList();
+    public static final ObservableList<Supplier> suppliersComboBoxList =
+            FXCollections.observableArrayList();
+    private static final ListProperty<Supplier> suppliers = new SimpleListProperty<>(suppliersList);
+    private static final LongProperty id = new SimpleLongProperty(0);
+    private static final StringProperty name = new SimpleStringProperty("");
+    private static final StringProperty code = new SimpleStringProperty("");
+    private static final StringProperty email = new SimpleStringProperty("");
+    private static final StringProperty phone = new SimpleStringProperty("");
+    private static final StringProperty city = new SimpleStringProperty("");
+    private static final StringProperty address = new SimpleStringProperty("");
+    private static final StringProperty taxNumber = new SimpleStringProperty("");
+    private static final StringProperty country = new SimpleStringProperty("");
+    private static final SQLiteConnection connection = SQLiteConnection.getInstance();
+    private static final ConnectionSource connectionSource = connection.getConnection();
 
-  public static long getId() {
-    return id.get();
-  }
+    public static long getId() {
+        return id.get();
+    }
 
-  public static void setId(long id) {
-    SupplierViewModel.id.set(id);
-  }
+    public static void setId(long id) {
+        SupplierViewModel.id.set(id);
+    }
 
-  public static LongProperty idProperty() {
-    return id;
-  }
+    public static LongProperty idProperty() {
+        return id;
+    }
 
-  public static String getName() {
-    return name.get();
-  }
+    public static String getName() {
+        return name.get();
+    }
 
-  public static void setName(String name) {
-    SupplierViewModel.name.set(name);
-  }
+    public static void setName(String name) {
+        SupplierViewModel.name.set(name);
+    }
 
-  public static StringProperty nameProperty() {
-    return name;
-  }
+    public static StringProperty nameProperty() {
+        return name;
+    }
 
-  public static String getCode() {
-    return code.get();
-  }
+    public static String getCode() {
+        return code.get();
+    }
 
-  public static void setCode(String code) {
-    SupplierViewModel.code.set(code);
-  }
+    public static void setCode(String code) {
+        SupplierViewModel.code.set(code);
+    }
 
-  public static StringProperty codeProperty() {
-    return code;
-  }
+    public static StringProperty codeProperty() {
+        return code;
+    }
 
-  public static String getEmail() {
-    return email.get();
-  }
+    public static String getEmail() {
+        return email.get();
+    }
 
-  public static void setEmail(String email) {
-    SupplierViewModel.email.set(email);
-  }
+    public static void setEmail(String email) {
+        SupplierViewModel.email.set(email);
+    }
 
-  public static StringProperty emailProperty() {
-    return email;
-  }
+    public static StringProperty emailProperty() {
+        return email;
+    }
 
-  public static String getPhone() {
-    return phone.get();
-  }
+    public static String getPhone() {
+        return phone.get();
+    }
 
-  public static void setPhone(String phone) {
-    SupplierViewModel.phone.set(phone);
-  }
+    public static void setPhone(String phone) {
+        SupplierViewModel.phone.set(phone);
+    }
 
-  public static StringProperty phoneProperty() {
-    return phone;
-  }
+    public static StringProperty phoneProperty() {
+        return phone;
+    }
 
-  public static String getCity() {
-    return city.get();
-  }
+    public static String getCity() {
+        return city.get();
+    }
 
-  public static void setCity(String city) {
-    SupplierViewModel.city.set(city);
-  }
+    public static void setCity(String city) {
+        SupplierViewModel.city.set(city);
+    }
 
-  public static StringProperty cityProperty() {
-    return city;
-  }
+    public static StringProperty cityProperty() {
+        return city;
+    }
 
-  public static String getAddress() {
-    return address.get();
-  }
+    public static String getAddress() {
+        return address.get();
+    }
 
-  public static void setAddress(String address) {
-    SupplierViewModel.address.set(address);
-  }
+    public static void setAddress(String address) {
+        SupplierViewModel.address.set(address);
+    }
 
-  public static StringProperty addressProperty() {
-    return address;
-  }
+    public static StringProperty addressProperty() {
+        return address;
+    }
 
-  public static String getTaxNumber() {
-    return taxNumber.get();
-  }
+    public static String getTaxNumber() {
+        return taxNumber.get();
+    }
 
-  public static void setTaxNumber(String taxNumber) {
-    SupplierViewModel.taxNumber.set(taxNumber);
-  }
+    public static void setTaxNumber(String taxNumber) {
+        SupplierViewModel.taxNumber.set(taxNumber);
+    }
 
-  public static StringProperty taxNumberProperty() {
-    return taxNumber;
-  }
+    public static StringProperty taxNumberProperty() {
+        return taxNumber;
+    }
 
-  public static String getCountry() {
-    return country.get();
-  }
+    public static String getCountry() {
+        return country.get();
+    }
 
-  public static void setCountry(String country) {
-    SupplierViewModel.country.set(country);
-  }
+    public static void setCountry(String country) {
+        SupplierViewModel.country.set(country);
+    }
 
-  public static StringProperty countryProperty() {
-    return country;
-  }
+    public static StringProperty countryProperty() {
+        return country;
+    }
 
-  public static ObservableList<Supplier> getSuppliers() {
-    return suppliers.get();
-  }
+    public static ObservableList<Supplier> getSuppliers() {
+        return suppliers.get();
+    }
 
-  public static void setSuppliers(ObservableList<Supplier> suppliers) {
-    SupplierViewModel.suppliers.set(suppliers);
-  }
+    public static void setSuppliers(ObservableList<Supplier> suppliers) {
+        SupplierViewModel.suppliers.set(suppliers);
+    }
 
-  public static ListProperty<Supplier> suppliersProperty() {
-    return suppliers;
-  }
+    public static ListProperty<Supplier> suppliersProperty() {
+        return suppliers;
+    }
 
-  public static void resetProperties() {
-    setId(0);
-    setName("");
-    setCode("");
-    setEmail("");
-    setEmail("");
-    setPhone("");
-    setCity("");
-    setAddress("");
-    setTaxNumber("");
-    setCountry("");
-  }
+    public static void resetProperties() {
+        setId(0);
+        setName("");
+        setCode("");
+        setEmail("");
+        setEmail("");
+        setPhone("");
+        setCity("");
+        setAddress("");
+        setTaxNumber("");
+        setCountry("");
+    }
 
-  public static void saveSupplier() {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
-            Dao<Supplier, Long> supplierDao =
+    public static void saveSupplier() throws SQLException {
+        Dao<Supplier, Long> supplierDao =
                 DaoManager.createDao(connectionSource, Supplier.class);
 
-            Supplier supplier =
+        Supplier supplier =
                 new Supplier(
-                    getName(),
-                    getEmail(),
-                    getPhone(),
-                    getCity(),
-                    getAddress(),
-                    getTaxNumber(),
-                    getCountry());
+                        getName(),
+                        getEmail(),
+                        getPhone(),
+                        getCity(),
+                        getAddress(),
+                        getTaxNumber(),
+                        getCountry());
 
-            supplierDao.create(supplier);
+        supplierDao.create(supplier);
 
-            return null;
-          }
-        };
+        resetProperties();
+        getAllSuppliers();
+    }
 
-    task.setOnSucceeded(
-        event -> {
-          resetProperties();
-          getAllSuppliers();
-        });
-
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static void getAllSuppliers() {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
-            Dao<Supplier, Long> supplierDao =
+    public static void getAllSuppliers() throws SQLException {
+        Dao<Supplier, Long> supplierDao =
                 DaoManager.createDao(connectionSource, Supplier.class);
 
-            Platform.runLater(
+        Platform.runLater(
                 () -> {
-                  suppliersList.clear();
+                    suppliersList.clear();
 
-                  try {
-                    suppliersList.addAll(supplierDao.queryForAll());
-                  } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                  }
+                    try {
+                        suppliersList.addAll(supplierDao.queryForAll());
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
                 });
+    }
 
-            return null;
-          }
-        };
-
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static void getItem(long index) {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
-            Dao<Supplier, Long> supplierDao =
+    public static void getItem(long index) throws SQLException {
+        Dao<Supplier, Long> supplierDao =
                 DaoManager.createDao(connectionSource, Supplier.class);
 
-            Supplier supplier = supplierDao.queryForId(index);
+        Supplier supplier = supplierDao.queryForId(index);
 
-            setId(supplier.getId());
-            setName(supplier.getName());
-            setEmail(supplier.getEmail());
-            setPhone(supplier.getPhone());
-            setCity(supplier.getCity());
-            setCountry(supplier.getCountry());
-            setAddress(supplier.getAddress());
-            setTaxNumber(supplier.getTaxNumber());
+        setId(supplier.getId());
+        setName(supplier.getName());
+        setEmail(supplier.getEmail());
+        setPhone(supplier.getPhone());
+        setCity(supplier.getCity());
+        setCountry(supplier.getCountry());
+        setAddress(supplier.getAddress());
+        setTaxNumber(supplier.getTaxNumber());
 
-            return null;
-          }
-        };
+        getAllSuppliers();
+    }
 
-    task.setOnSucceeded(event -> getAllSuppliers());
-
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static void updateItem(long index) {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
-            Dao<Supplier, Long> supplierDao =
+    public static void updateItem(long index) throws SQLException {
+        Dao<Supplier, Long> supplierDao =
                 DaoManager.createDao(connectionSource, Supplier.class);
 
-            Supplier supplier = supplierDao.queryForId(index);
+        Supplier supplier = supplierDao.queryForId(index);
 
-            supplier.setName(getName());
-            supplier.setEmail(getEmail());
-            supplier.setPhone(getPhone());
-            supplier.setTaxNumber(getTaxNumber());
-            supplier.setAddress(getAddress());
-            supplier.setCity(getCity());
-            supplier.setCountry(getCountry());
+        supplier.setName(getName());
+        supplier.setEmail(getEmail());
+        supplier.setPhone(getPhone());
+        supplier.setTaxNumber(getTaxNumber());
+        supplier.setAddress(getAddress());
+        supplier.setCity(getCity());
+        supplier.setCountry(getCountry());
 
-            supplierDao.update(supplier);
+        supplierDao.update(supplier);
 
-            return null;
-          }
-        };
+        resetProperties();
+        getAllSuppliers();
+    }
 
-    task.setOnSucceeded(
-        event -> {
-          resetProperties();
-          getAllSuppliers();
-        });
-
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static void deleteItem(long index) {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
-            Dao<Supplier, Long> supplierDao =
+    public static void deleteItem(long index) throws SQLException {
+        Dao<Supplier, Long> supplierDao =
                 DaoManager.createDao(connectionSource, Supplier.class);
 
-            supplierDao.deleteById(index);
+        supplierDao.deleteById(index);
 
-            return null;
-          }
-        };
-
-    task.setOnSucceeded(event -> getAllSuppliers());
-
-    GlobalActions.spotyThreadPool().execute(task);
-  }
+        getAllSuppliers();
+    }
 }

@@ -42,6 +42,8 @@ public class AdjustmentMasterViewModel {
   private static final StringProperty note = new SimpleStringProperty("");
   private static final StringProperty status = new SimpleStringProperty("");
   private static final DoubleProperty totalAmount = new SimpleDoubleProperty();
+  private static final SQLiteConnection connection = SQLiteConnection.getInstance();
+  private static final ConnectionSource connectionSource = connection.getConnection();
 
   public static long getId() {
     return id.get();
@@ -143,9 +145,6 @@ public class AdjustmentMasterViewModel {
   }
 
   public static void saveAdjustmentMaster() throws SQLException {
-    SQLiteConnection connection = SQLiteConnection.getInstance();
-    ConnectionSource connectionSource = connection.getConnection();
-
     Dao<AdjustmentMaster, Long> adjustmentMasterDao =
         DaoManager.createDao(connectionSource, AdjustmentMaster.class);
 
@@ -168,9 +167,6 @@ public class AdjustmentMasterViewModel {
   }
 
   public static void getAllAdjustmentMasters() throws SQLException {
-    SQLiteConnection connection = SQLiteConnection.getInstance();
-    ConnectionSource connectionSource = connection.getConnection();
-
     Dao<AdjustmentMaster, Long> adjustmentMasterDao =
         DaoManager.createDao(connectionSource, AdjustmentMaster.class);
 
@@ -187,9 +183,6 @@ public class AdjustmentMasterViewModel {
   }
 
   public static void getItem(long index) throws SQLException {
-    SQLiteConnection connection = SQLiteConnection.getInstance();
-    ConnectionSource connectionSource = connection.getConnection();
-
     Dao<AdjustmentMaster, Long> adjustmentMasterDao =
         DaoManager.createDao(connectionSource, AdjustmentMaster.class);
 
@@ -211,9 +204,6 @@ public class AdjustmentMasterViewModel {
   }
 
   public static void updateItem(long index) throws SQLException {
-    SQLiteConnection connection = SQLiteConnection.getInstance();
-    ConnectionSource connectionSource = connection.getConnection();
-
     Dao<AdjustmentMaster, Long> adjustmentMasterDao =
         DaoManager.createDao(connectionSource, AdjustmentMaster.class);
 
@@ -237,9 +227,6 @@ public class AdjustmentMasterViewModel {
   }
 
   public static void deleteItem(long index) throws SQLException {
-    SQLiteConnection connection = SQLiteConnection.getInstance();
-    ConnectionSource connectionSource = connection.getConnection();
-
     Dao<AdjustmentMaster, Long> adjustmentMasterDao =
         DaoManager.createDao(connectionSource, AdjustmentMaster.class);
 

@@ -18,9 +18,12 @@ import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.filter.DoubleFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
+
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.ResourceBundle;
+
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
@@ -29,6 +32,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.components.navigation.Pages;
 import org.infinite.spoty.database.models.QuotationMaster;
 import org.infinite.spoty.viewModels.QuotationMasterViewModel;
@@ -36,133 +40,150 @@ import org.infinite.spoty.views.BaseController;
 
 @SuppressWarnings("unchecked")
 public class QuotationController implements Initializable {
-  private static QuotationController instance;
-  @FXML public MFXTextField quotationSearchBar;
-  @FXML public HBox quotationActionsPane;
-  @FXML public MFXButton quotationImportBtn;
-  @FXML public BorderPane quotationContentPane;
-  @FXML private MFXTableView<QuotationMaster> quotationsTable;
+    private static QuotationController instance;
+    @FXML
+    public MFXTextField quotationSearchBar;
+    @FXML
+    public HBox quotationActionsPane;
+    @FXML
+    public MFXButton quotationImportBtn;
+    @FXML
+    public BorderPane quotationContentPane;
+    @FXML
+    private MFXTableView<QuotationMaster> quotationsTable;
 
-  public static QuotationController getInstance() {
-    if (instance == null) instance = new QuotationController();
-    return instance;
-  }
-
-  @Override
-  public void initialize(URL location, ResourceBundle resources) {
-    Platform.runLater(this::setupTable);
-  }
-
-  private void setupTable() {
-    MFXTableColumn<QuotationMaster> quotationCustomer =
-        new MFXTableColumn<>(
-            "Customer", false, Comparator.comparing(QuotationMaster::getCustomerName));
-    MFXTableColumn<QuotationMaster> quotationBranch =
-        new MFXTableColumn<>("Branch", false, Comparator.comparing(QuotationMaster::getBranchName));
-    MFXTableColumn<QuotationMaster> quotationStatus =
-        new MFXTableColumn<>("Status", false, Comparator.comparing(QuotationMaster::getStatus));
-    MFXTableColumn<QuotationMaster> quotationDate =
-        new MFXTableColumn<>("Date", false, Comparator.comparing(QuotationMaster::getDate));
-    MFXTableColumn<QuotationMaster> quotationTotalAmount =
-        new MFXTableColumn<>(
-            "Total Amount", false, Comparator.comparing(QuotationMaster::getTotal));
-
-    quotationCustomer.setRowCellFactory(
-        quotation -> new MFXTableRowCell<>(QuotationMaster::getCustomerName));
-    quotationBranch.setRowCellFactory(
-        quotation -> new MFXTableRowCell<>(QuotationMaster::getBranchName));
-    quotationStatus.setRowCellFactory(
-        quotation -> new MFXTableRowCell<>(QuotationMaster::getStatus));
-    quotationDate.setRowCellFactory(
-        quotation -> new MFXTableRowCell<>(QuotationMaster::getLocaleDate));
-    quotationTotalAmount.setRowCellFactory(
-        quotation -> new MFXTableRowCell<>(QuotationMaster::getTotal));
-
-    quotationCustomer.prefWidthProperty().bind(quotationsTable.widthProperty().multiply(.25));
-    quotationBranch.prefWidthProperty().bind(quotationsTable.widthProperty().multiply(.25));
-    quotationStatus.prefWidthProperty().bind(quotationsTable.widthProperty().multiply(.25));
-    quotationDate.prefWidthProperty().bind(quotationsTable.widthProperty().multiply(.25));
-    quotationTotalAmount.prefWidthProperty().bind(quotationsTable.widthProperty().multiply(.25));
-
-    quotationsTable
-        .getTableColumns()
-        .addAll(
-            quotationCustomer,
-            quotationBranch,
-            quotationStatus,
-            quotationDate,
-            quotationTotalAmount);
-    quotationsTable
-        .getFilters()
-        .addAll(
-            new StringFilter<>("Reference", QuotationMaster::getRef),
-            new StringFilter<>("Customer", QuotationMaster::getCustomerName),
-            new StringFilter<>("Branch", QuotationMaster::getBranchName),
-            new StringFilter<>("Status", QuotationMaster::getStatus),
-            new DoubleFilter<>("Grand Total", QuotationMaster::getTotal));
-    getQuotationMasterTable();
-
-    if (QuotationMasterViewModel.getQuotations().isEmpty()) {
-      QuotationMasterViewModel.getQuotations()
-          .addListener(
-              (ListChangeListener<QuotationMaster>)
-                  c -> quotationsTable.setItems(QuotationMasterViewModel.getQuotations()));
-    } else {
-      quotationsTable
-          .itemsProperty()
-          .bindBidirectional(QuotationMasterViewModel.quotationsProperty());
+    public static QuotationController getInstance() {
+        if (instance == null) instance = new QuotationController();
+        return instance;
     }
-  }
 
-  private void getQuotationMasterTable() {
-    quotationsTable.setPrefSize(1000, 1000);
-    quotationsTable.features().enableBounceEffect();
-    quotationsTable.features().enableSmoothScrolling(0.5);
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        Platform.runLater(this::setupTable);
+    }
 
-    quotationsTable.setTableRowFactory(
-        t -> {
-          MFXTableRow<QuotationMaster> row = new MFXTableRow<>(quotationsTable, t);
-          EventHandler<ContextMenuEvent> eventHandler =
-              event -> {
-                showContextMenu((MFXTableRow<QuotationMaster>) event.getSource())
-                    .show(
-                        quotationsTable.getScene().getWindow(),
-                        event.getScreenX(),
-                        event.getScreenY());
-                event.consume();
-              };
-          row.setOnContextMenuRequested(eventHandler);
-          return row;
-        });
-  }
+    private void setupTable() {
+        MFXTableColumn<QuotationMaster> quotationCustomer =
+                new MFXTableColumn<>(
+                        "Customer", false, Comparator.comparing(QuotationMaster::getCustomerName));
+        MFXTableColumn<QuotationMaster> quotationBranch =
+                new MFXTableColumn<>("Branch", false, Comparator.comparing(QuotationMaster::getBranchName));
+        MFXTableColumn<QuotationMaster> quotationStatus =
+                new MFXTableColumn<>("Status", false, Comparator.comparing(QuotationMaster::getStatus));
+        MFXTableColumn<QuotationMaster> quotationDate =
+                new MFXTableColumn<>("Date", false, Comparator.comparing(QuotationMaster::getDate));
+        MFXTableColumn<QuotationMaster> quotationTotalAmount =
+                new MFXTableColumn<>(
+                        "Total Amount", false, Comparator.comparing(QuotationMaster::getTotal));
 
-  private MFXContextMenu showContextMenu(MFXTableRow<QuotationMaster> obj) {
-    MFXContextMenu contextMenu = new MFXContextMenu(quotationsTable);
-    MFXContextMenuItem view = new MFXContextMenuItem("View");
-    MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
-    MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+        quotationCustomer.setRowCellFactory(
+                quotation -> new MFXTableRowCell<>(QuotationMaster::getCustomerName));
+        quotationBranch.setRowCellFactory(
+                quotation -> new MFXTableRowCell<>(QuotationMaster::getBranchName));
+        quotationStatus.setRowCellFactory(
+                quotation -> new MFXTableRowCell<>(QuotationMaster::getStatus));
+        quotationDate.setRowCellFactory(
+                quotation -> new MFXTableRowCell<>(QuotationMaster::getLocaleDate));
+        quotationTotalAmount.setRowCellFactory(
+                quotation -> new MFXTableRowCell<>(QuotationMaster::getTotal));
 
-    // Actions
-    // Delete
-    delete.setOnAction(
-        e -> {
-          QuotationMasterViewModel.deleteItem(obj.getData().getId());
-          e.consume();
-        });
-    // Edit
-    edit.setOnAction(
-        e -> {
-          QuotationMasterViewModel.getItem(obj.getData().getId());
-          quotationCreateBtnClicked();
-          e.consume();
-        });
+        quotationCustomer.prefWidthProperty().bind(quotationsTable.widthProperty().multiply(.25));
+        quotationBranch.prefWidthProperty().bind(quotationsTable.widthProperty().multiply(.25));
+        quotationStatus.prefWidthProperty().bind(quotationsTable.widthProperty().multiply(.25));
+        quotationDate.prefWidthProperty().bind(quotationsTable.widthProperty().multiply(.25));
+        quotationTotalAmount.prefWidthProperty().bind(quotationsTable.widthProperty().multiply(.25));
 
-    contextMenu.addItems(view, edit, delete);
+        quotationsTable
+                .getTableColumns()
+                .addAll(
+                        quotationCustomer,
+                        quotationBranch,
+                        quotationStatus,
+                        quotationDate,
+                        quotationTotalAmount);
+        quotationsTable
+                .getFilters()
+                .addAll(
+                        new StringFilter<>("Reference", QuotationMaster::getRef),
+                        new StringFilter<>("Customer", QuotationMaster::getCustomerName),
+                        new StringFilter<>("Branch", QuotationMaster::getBranchName),
+                        new StringFilter<>("Status", QuotationMaster::getStatus),
+                        new DoubleFilter<>("Grand Total", QuotationMaster::getTotal));
+        getQuotationMasterTable();
 
-    return contextMenu;
-  }
+        if (QuotationMasterViewModel.getQuotations().isEmpty()) {
+            QuotationMasterViewModel.getQuotations()
+                    .addListener(
+                            (ListChangeListener<QuotationMaster>)
+                                    c -> quotationsTable.setItems(QuotationMasterViewModel.getQuotations()));
+        } else {
+            quotationsTable
+                    .itemsProperty()
+                    .bindBidirectional(QuotationMasterViewModel.quotationsProperty());
+        }
+    }
 
-  public void quotationCreateBtnClicked() {
-    BaseController.navigation.navigate(Pages.getQuotationMasterFormPane());
-  }
+    private void getQuotationMasterTable() {
+        quotationsTable.setPrefSize(1000, 1000);
+        quotationsTable.features().enableBounceEffect();
+        quotationsTable.features().enableSmoothScrolling(0.5);
+
+        quotationsTable.setTableRowFactory(
+                t -> {
+                    MFXTableRow<QuotationMaster> row = new MFXTableRow<>(quotationsTable, t);
+                    EventHandler<ContextMenuEvent> eventHandler =
+                            event -> {
+                                showContextMenu((MFXTableRow<QuotationMaster>) event.getSource())
+                                        .show(
+                                                quotationsTable.getScene().getWindow(),
+                                                event.getScreenX(),
+                                                event.getScreenY());
+                                event.consume();
+                            };
+                    row.setOnContextMenuRequested(eventHandler);
+                    return row;
+                });
+    }
+
+    private MFXContextMenu showContextMenu(MFXTableRow<QuotationMaster> obj) {
+        MFXContextMenu contextMenu = new MFXContextMenu(quotationsTable);
+        MFXContextMenuItem view = new MFXContextMenuItem("View");
+        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
+        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+
+        // Actions
+        // Delete
+        delete.setOnAction(
+                e -> {
+                    GlobalActions.spotyThreadPool().execute(() -> {
+                        try {
+                            QuotationMasterViewModel.deleteItem(obj.getData().getId());
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                    });
+                    e.consume();
+                });
+        // Edit
+        edit.setOnAction(
+                e -> {
+                    GlobalActions.spotyThreadPool().execute(() -> {
+                        try {
+                            QuotationMasterViewModel.getItem(obj.getData().getId());
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                    });
+                    quotationCreateBtnClicked();
+                    e.consume();
+                });
+
+        contextMenu.addItems(view, edit, delete);
+
+        return contextMenu;
+    }
+
+    public void quotationCreateBtnClicked() {
+        BaseController.navigation.navigate(Pages.getQuotationMasterFormPane());
+    }
 }

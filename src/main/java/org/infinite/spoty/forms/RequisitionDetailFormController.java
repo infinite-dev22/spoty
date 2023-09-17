@@ -23,15 +23,19 @@ import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.utils.StringUtils;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.function.Function;
 import java.util.function.Predicate;
+
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.util.StringConverter;
+import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
@@ -41,118 +45,131 @@ import org.infinite.spoty.viewModels.ProductViewModel;
 import org.infinite.spoty.viewModels.RequisitionDetailViewModel;
 
 public class RequisitionDetailFormController implements Initializable {
-  private static RequisitionDetailFormController instance;
-  @FXML public MFXTextField requisitionDetailQnty;
-  @FXML public MFXFilterComboBox<Product> requisitionDetailPdct;
-  @FXML public MFXButton requisitionDetailSaveBtn;
-  @FXML public MFXButton requisitionDetailCancelBtn;
-  @FXML public MFXTextField requisitionDetailDescription;
-  @FXML public Label requisitionDetailPdctValidationLabel;
-  @FXML public Label requisitionDetailQntyValidationLabel;
+    private static RequisitionDetailFormController instance;
+    @FXML
+    public MFXTextField requisitionDetailQnty;
+    @FXML
+    public MFXFilterComboBox<Product> requisitionDetailPdct;
+    @FXML
+    public MFXButton requisitionDetailSaveBtn;
+    @FXML
+    public MFXButton requisitionDetailCancelBtn;
+    @FXML
+    public MFXTextField requisitionDetailDescription;
+    @FXML
+    public Label requisitionDetailPdctValidationLabel;
+    @FXML
+    public Label requisitionDetailQntyValidationLabel;
 
-  public static RequisitionDetailFormController getInstance() {
-    if (Objects.equals(instance, null)) instance = new RequisitionDetailFormController();
-    return instance;
-  }
+    public static RequisitionDetailFormController getInstance() {
+        if (Objects.equals(instance, null)) instance = new RequisitionDetailFormController();
+        return instance;
+    }
 
-  @Override
-  public void initialize(URL location, ResourceBundle resources) {
-    // Form input binding.
-    requisitionDetailPdct
-        .valueProperty()
-        .bindBidirectional(RequisitionDetailViewModel.productProperty());
-    requisitionDetailQnty
-        .textProperty()
-        .bindBidirectional(RequisitionDetailViewModel.quantityProperty());
-    requisitionDetailDescription
-        .textProperty()
-        .bindBidirectional(RequisitionDetailViewModel.descriptionProperty());
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        // Form input binding.
+        requisitionDetailPdct
+                .valueProperty()
+                .bindBidirectional(RequisitionDetailViewModel.productProperty());
+        requisitionDetailQnty
+                .textProperty()
+                .bindBidirectional(RequisitionDetailViewModel.quantityProperty());
+        requisitionDetailDescription
+                .textProperty()
+                .bindBidirectional(RequisitionDetailViewModel.descriptionProperty());
 
-    // Combo box Converter.
-    StringConverter<Product> productVariantConverter =
-        FunctionalStringConverter.to(
-            productDetail -> (productDetail == null) ? "" : productDetail.getName());
+        // Combo box Converter.
+        StringConverter<Product> productVariantConverter =
+                FunctionalStringConverter.to(
+                        productDetail -> (productDetail == null) ? "" : productDetail.getName());
 
-    // Combo box Filter Function.
-    Function<String, Predicate<Product>> productVariantFilterFunction =
-        searchStr ->
-            productDetail ->
-                StringUtils.containsIgnoreCase(
-                    productVariantConverter.toString(productDetail), searchStr);
+        // Combo box Filter Function.
+        Function<String, Predicate<Product>> productVariantFilterFunction =
+                searchStr ->
+                        productDetail ->
+                                StringUtils.containsIgnoreCase(
+                                        productVariantConverter.toString(productDetail), searchStr);
 
-    // Combo box properties.
-    requisitionDetailPdct.setItems(ProductViewModel.getProducts());
-    requisitionDetailPdct.setConverter(productVariantConverter);
-    requisitionDetailPdct.setFilterFunction(productVariantFilterFunction);
+        // Combo box properties.
+        requisitionDetailPdct.setItems(ProductViewModel.getProducts());
+        requisitionDetailPdct.setConverter(productVariantConverter);
+        requisitionDetailPdct.setFilterFunction(productVariantFilterFunction);
 
-    // Input validators.
-    requiredValidator(
-        requisitionDetailPdct,
-        "Product is required.",
-        requisitionDetailPdctValidationLabel,
-        requisitionDetailSaveBtn);
-    requiredValidator(
-        requisitionDetailQnty,
-        "Quantity is required.",
-        requisitionDetailQntyValidationLabel,
-        requisitionDetailSaveBtn);
-    dialogOnActions();
-  }
+        // Input validators.
+        requiredValidator(
+                requisitionDetailPdct,
+                "Product is required.",
+                requisitionDetailPdctValidationLabel,
+                requisitionDetailSaveBtn);
+        requiredValidator(
+                requisitionDetailQnty,
+                "Quantity is required.",
+                requisitionDetailQntyValidationLabel,
+                requisitionDetailSaveBtn);
+        dialogOnActions();
+    }
 
-  private void dialogOnActions() {
-    requisitionDetailCancelBtn.setOnAction(
-        (e) -> {
-          closeDialog(e);
-          RequisitionDetailViewModel.resetProperties();
-          requisitionDetailPdct.clearSelection();
-          requisitionDetailPdctValidationLabel.setVisible(false);
-          requisitionDetailQntyValidationLabel.setVisible(false);
-        });
-    requisitionDetailSaveBtn.setOnAction(
-        (e) -> {
-          SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
+    private void dialogOnActions() {
+        requisitionDetailCancelBtn.setOnAction(
+                (e) -> {
+                    closeDialog(e);
+                    RequisitionDetailViewModel.resetProperties();
+                    requisitionDetailPdct.clearSelection();
+                    requisitionDetailPdctValidationLabel.setVisible(false);
+                    requisitionDetailQntyValidationLabel.setVisible(false);
+                });
+        requisitionDetailSaveBtn.setOnAction(
+                (e) -> {
+                    SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
 
-          if (!requisitionDetailPdctValidationLabel.isVisible()
-              && !requisitionDetailQntyValidationLabel.isVisible()) {
-            if (tempIdProperty().get() > -1) {
-              RequisitionDetailViewModel.updateRequisitionDetail(
-                  RequisitionDetailViewModel.getId());
+                    if (!requisitionDetailPdctValidationLabel.isVisible()
+                            && !requisitionDetailQntyValidationLabel.isVisible()) {
+                        if (tempIdProperty().get() > -1) {
+                            GlobalActions.spotyThreadPool().execute(() -> {
+                                try {
+                                    RequisitionDetailViewModel.updateRequisitionDetail(
+                                            RequisitionDetailViewModel.getId());
+                                } catch (SQLException ex) {
+                                    throw new RuntimeException(ex);
+                                }
+                            });
 
-              SimpleNotification notification =
-                  new SimpleNotification.NotificationBuilder("Product changed successfully")
-                      .duration(NotificationDuration.SHORT)
-                      .icon("fas-circle-check")
-                      .type(NotificationVariants.SUCCESS)
-                      .build();
-              notificationHolder.addNotification(notification);
+                            SimpleNotification notification =
+                                    new SimpleNotification.NotificationBuilder("Product changed successfully")
+                                            .duration(NotificationDuration.SHORT)
+                                            .icon("fas-circle-check")
+                                            .type(NotificationVariants.SUCCESS)
+                                            .build();
+                            notificationHolder.addNotification(notification);
 
-              requisitionDetailPdct.clearSelection();
+                            requisitionDetailPdct.clearSelection();
 
-              closeDialog(e);
-              return;
-            }
-            RequisitionDetailViewModel.addRequisitionDetails();
+                            closeDialog(e);
+                            return;
+                        }
+                        RequisitionDetailViewModel.addRequisitionDetails();
 
-            SimpleNotification notification =
-                new SimpleNotification.NotificationBuilder("Product added successfully")
-                    .duration(NotificationDuration.SHORT)
-                    .icon("fas-circle-check")
-                    .type(NotificationVariants.SUCCESS)
-                    .build();
-            notificationHolder.addNotification(notification);
+                        SimpleNotification notification =
+                                new SimpleNotification.NotificationBuilder("Product added successfully")
+                                        .duration(NotificationDuration.SHORT)
+                                        .icon("fas-circle-check")
+                                        .type(NotificationVariants.SUCCESS)
+                                        .build();
+                        notificationHolder.addNotification(notification);
 
-            requisitionDetailPdct.clearSelection();
+                        requisitionDetailPdct.clearSelection();
 
-            closeDialog(e);
-            return;
-          }
-          SimpleNotification notification =
-              new SimpleNotification.NotificationBuilder("Required fields missing")
-                  .duration(NotificationDuration.SHORT)
-                  .icon("fas-triangle-exclamation")
-                  .type(NotificationVariants.ERROR)
-                  .build();
-          notificationHolder.addNotification(notification);
-        });
-  }
+                        closeDialog(e);
+                        return;
+                    }
+                    SimpleNotification notification =
+                            new SimpleNotification.NotificationBuilder("Required fields missing")
+                                    .duration(NotificationDuration.SHORT)
+                                    .icon("fas-triangle-exclamation")
+                                    .type(NotificationVariants.ERROR)
+                                    .build();
+                    notificationHolder.addNotification(notification);
+                });
+    }
 }

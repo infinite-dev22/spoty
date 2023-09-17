@@ -17,7 +17,9 @@ package org.infinite.spoty.viewModels;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
+
 import java.sql.SQLException;
+
 import javafx.application.Platform;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.LongProperty;
@@ -33,198 +35,136 @@ import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.ExpenseCategory;
 
 public class ExpenseCategoryViewModel {
-  public static final ObservableList<ExpenseCategory> categoryList =
-      FXCollections.observableArrayList();
-  public static final ObservableList<ExpenseCategory> categoryComboBoxList =
-      FXCollections.observableArrayList();
-  private static final ListProperty<ExpenseCategory> categories =
-      new SimpleListProperty<>(categoryList);
-  private static final LongProperty id = new SimpleLongProperty(0);
-  private static final StringProperty name = new SimpleStringProperty("");
-  private static final StringProperty description = new SimpleStringProperty("");
+    public static final ObservableList<ExpenseCategory> categoryList =
+            FXCollections.observableArrayList();
+    public static final ObservableList<ExpenseCategory> categoryComboBoxList =
+            FXCollections.observableArrayList();
+    private static final ListProperty<ExpenseCategory> categories =
+            new SimpleListProperty<>(categoryList);
+    private static final LongProperty id = new SimpleLongProperty(0);
+    private static final StringProperty name = new SimpleStringProperty("");
+    private static final StringProperty description = new SimpleStringProperty("");
+    private static final SQLiteConnection connection = SQLiteConnection.getInstance();
+    private static final ConnectionSource connectionSource = connection.getConnection();
 
-  public static long getId() {
-    return id.get();
-  }
+    public static long getId() {
+        return id.get();
+    }
 
-  public static void setId(long id) {
-    ExpenseCategoryViewModel.id.set(id);
-  }
+    public static void setId(long id) {
+        ExpenseCategoryViewModel.id.set(id);
+    }
 
-  public static LongProperty idProperty() {
-    return id;
-  }
+    public static LongProperty idProperty() {
+        return id;
+    }
 
-  public static String getName() {
-    return name.get();
-  }
+    public static String getName() {
+        return name.get();
+    }
 
-  public static void setName(String name) {
-    ExpenseCategoryViewModel.name.set(name);
-  }
+    public static void setName(String name) {
+        ExpenseCategoryViewModel.name.set(name);
+    }
 
-  public static StringProperty nameProperty() {
-    return name;
-  }
+    public static StringProperty nameProperty() {
+        return name;
+    }
 
-  public static String getDescription() {
-    return description.get();
-  }
+    public static String getDescription() {
+        return description.get();
+    }
 
-  public static void setDescription(String description) {
-    ExpenseCategoryViewModel.description.set(description);
-  }
+    public static void setDescription(String description) {
+        ExpenseCategoryViewModel.description.set(description);
+    }
 
-  public static StringProperty descriptionProperty() {
-    return description;
-  }
+    public static StringProperty descriptionProperty() {
+        return description;
+    }
 
-  public static ObservableList<ExpenseCategory> getCategories() {
-    return categories.get();
-  }
+    public static ObservableList<ExpenseCategory> getCategories() {
+        return categories.get();
+    }
 
-  public static void setCategories(ObservableList<ExpenseCategory> categories) {
-    ExpenseCategoryViewModel.categories.set(categories);
-  }
+    public static void setCategories(ObservableList<ExpenseCategory> categories) {
+        ExpenseCategoryViewModel.categories.set(categories);
+    }
 
-  public static ListProperty<ExpenseCategory> categoriesProperty() {
-    return categories;
-  }
+    public static ListProperty<ExpenseCategory> categoriesProperty() {
+        return categories;
+    }
 
-  public static void resetProperties() {
-    setId(0);
-    setName("");
-    setDescription("");
-  }
+    public static void resetProperties() {
+        setId(0);
+        setName("");
+        setDescription("");
+    }
 
-  public static void saveExpenseCategory() {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
-            Dao<ExpenseCategory, Long> expenseCategoryDao =
+    public static void saveExpenseCategory() throws SQLException {
+        Dao<ExpenseCategory, Long> expenseCategoryDao =
                 DaoManager.createDao(connectionSource, ExpenseCategory.class);
 
-            ExpenseCategory expenseCategory = new ExpenseCategory(getName(), getDescription());
+        ExpenseCategory expenseCategory = new ExpenseCategory(getName(), getDescription());
 
-            expenseCategoryDao.create(expenseCategory);
+        expenseCategoryDao.create(expenseCategory);
 
-            return null;
-          }
-        };
+        resetProperties();
+        getAllCategories();
+    }
 
-    task.setOnSucceeded(
-        event -> {
-          resetProperties();
-          getAllCategories();
-        });
-
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static void getAllCategories() {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
-            Dao<ExpenseCategory, Long> expenseCategoryDao =
+    public static void getAllCategories() throws SQLException {
+        Dao<ExpenseCategory, Long> expenseCategoryDao =
                 DaoManager.createDao(connectionSource, ExpenseCategory.class);
 
-            Platform.runLater(
+        Platform.runLater(
                 () -> {
-                  categoryList.clear();
+                    categoryList.clear();
 
-                  try {
-                    categoryList.addAll(expenseCategoryDao.queryForAll());
-                  } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                  }
+                    try {
+                        categoryList.addAll(expenseCategoryDao.queryForAll());
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
                 });
+    }
 
-            return null;
-          }
-        };
-
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static void getItem(long index) {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
-            Dao<ExpenseCategory, Long> expenseCategoryDao =
+    public static void getItem(long index) throws SQLException {
+        Dao<ExpenseCategory, Long> expenseCategoryDao =
                 DaoManager.createDao(connectionSource, ExpenseCategory.class);
 
-            ExpenseCategory expenseCategory = expenseCategoryDao.queryForId(index);
-            setId(expenseCategory.getId());
-            setName(expenseCategory.getName());
-            setDescription(expenseCategory.getDescription());
+        ExpenseCategory expenseCategory = expenseCategoryDao.queryForId(index);
+        setId(expenseCategory.getId());
+        setName(expenseCategory.getName());
+        setDescription(expenseCategory.getDescription());
+        getAllCategories();
+    }
 
-            return null;
-          }
-        };
+    public static void updateItem(long index) throws SQLException {
+        SQLiteConnection connection = SQLiteConnection.getInstance();
+        ConnectionSource connectionSource = connection.getConnection();
 
-    task.setOnSucceeded(event -> getAllCategories());
-
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static void updateItem(long index) {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
-            Dao<ExpenseCategory, Long> expenseCategoryDao =
+        Dao<ExpenseCategory, Long> expenseCategoryDao =
                 DaoManager.createDao(connectionSource, ExpenseCategory.class);
 
-            ExpenseCategory expenseCategory = expenseCategoryDao.queryForId(index);
+        ExpenseCategory expenseCategory = expenseCategoryDao.queryForId(index);
 
-            expenseCategory.setName(getName());
-            expenseCategory.setDescription(getDescription());
+        expenseCategory.setName(getName());
+        expenseCategory.setDescription(getDescription());
 
-            expenseCategoryDao.update(expenseCategory);
+        expenseCategoryDao.update(expenseCategory);
+        getAllCategories();
+    }
 
-            return null;
-          }
-        };
+    public static void deleteItem(long index) throws SQLException {
+        SQLiteConnection connection = SQLiteConnection.getInstance();
+        ConnectionSource connectionSource = connection.getConnection();
 
-    task.setOnSucceeded(event -> getAllCategories());
-
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static void deleteItem(long index) {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
-            Dao<ExpenseCategory, Long> expenseCategoryDao =
+        Dao<ExpenseCategory, Long> expenseCategoryDao =
                 DaoManager.createDao(connectionSource, ExpenseCategory.class);
 
-            expenseCategoryDao.deleteById(index);
+        expenseCategoryDao.deleteById(index);
 
-            return null;
-          }
-        };
-
-    task.setOnSucceeded(event -> getAllCategories());
-
-    GlobalActions.spotyThreadPool().execute(task);
-  }
+        getAllCategories();
+    }
 }

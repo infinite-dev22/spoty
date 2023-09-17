@@ -17,7 +17,9 @@ package org.infinite.spoty.viewModels;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
+
 import java.sql.SQLException;
+
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -30,371 +32,302 @@ import org.infinite.spoty.database.models.Role;
 import org.infinite.spoty.database.models.User;
 
 public class UserViewModel {
-  public static final ObservableList<User> usersList = FXCollections.observableArrayList();
-  public static final ListProperty<User> users = new SimpleListProperty<>(usersList);
-  private static final LongProperty id = new SimpleLongProperty(0);
-  private static final StringProperty firstName = new SimpleStringProperty("");
-  private static final StringProperty lastName = new SimpleStringProperty("");
-  private static final StringProperty userName = new SimpleStringProperty("");
-  private static final ObjectProperty<Role> role = new SimpleObjectProperty<>(null);
-  private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>(null);
-  private static final StringProperty email = new SimpleStringProperty("");
-  private static final StringProperty phone = new SimpleStringProperty("");
-  private static final StringProperty city = new SimpleStringProperty("");
-  private static final StringProperty address = new SimpleStringProperty("");
-  private static final StringProperty taxNumber = new SimpleStringProperty("");
-  private static final StringProperty country = new SimpleStringProperty("");
-  private static final BooleanProperty active = new SimpleBooleanProperty(true);
-  private static final BooleanProperty accessAllBranches = new SimpleBooleanProperty(false);
+    public static final ObservableList<User> usersList = FXCollections.observableArrayList();
+    public static final ListProperty<User> users = new SimpleListProperty<>(usersList);
+    private static final LongProperty id = new SimpleLongProperty(0);
+    private static final StringProperty firstName = new SimpleStringProperty("");
+    private static final StringProperty lastName = new SimpleStringProperty("");
+    private static final StringProperty userName = new SimpleStringProperty("");
+    private static final ObjectProperty<Role> role = new SimpleObjectProperty<>(null);
+    private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>(null);
+    private static final StringProperty email = new SimpleStringProperty("");
+    private static final StringProperty phone = new SimpleStringProperty("");
+    private static final StringProperty city = new SimpleStringProperty("");
+    private static final StringProperty address = new SimpleStringProperty("");
+    private static final StringProperty taxNumber = new SimpleStringProperty("");
+    private static final StringProperty country = new SimpleStringProperty("");
+    private static final BooleanProperty active = new SimpleBooleanProperty(true);
+    private static final BooleanProperty accessAllBranches = new SimpleBooleanProperty(false);
+    private static final SQLiteConnection connection = SQLiteConnection.getInstance();
+    private static final ConnectionSource connectionSource = connection.getConnection();
 
-  public static long getId() {
-    return id.get();
-  }
+    public static long getId() {
+        return id.get();
+    }
 
-  public static void setId(long id) {
-    UserViewModel.id.set(id);
-  }
+    public static void setId(long id) {
+        UserViewModel.id.set(id);
+    }
 
-  public static LongProperty idProperty() {
-    return id;
-  }
+    public static LongProperty idProperty() {
+        return id;
+    }
 
-  public static String getFirstName() {
-    return firstName.get();
-  }
+    public static String getFirstName() {
+        return firstName.get();
+    }
 
-  public static void setFirstName(String firstName) {
-    UserViewModel.firstName.set(firstName);
-  }
+    public static void setFirstName(String firstName) {
+        UserViewModel.firstName.set(firstName);
+    }
 
-  public static StringProperty firstNameProperty() {
-    return firstName;
-  }
+    public static StringProperty firstNameProperty() {
+        return firstName;
+    }
 
-  public static String getLastName() {
-    return lastName.get();
-  }
+    public static String getLastName() {
+        return lastName.get();
+    }
 
-  public static void setLastName(String lastName) {
-    UserViewModel.lastName.set(lastName);
-  }
+    public static void setLastName(String lastName) {
+        UserViewModel.lastName.set(lastName);
+    }
 
-  public static StringProperty lastNameProperty() {
-    return lastName;
-  }
+    public static StringProperty lastNameProperty() {
+        return lastName;
+    }
 
-  public static boolean isActive() {
-    return active.get();
-  }
+    public static boolean isActive() {
+        return active.get();
+    }
 
-  public static void setActive(boolean active) {
-    UserViewModel.active.set(active);
-  }
+    public static void setActive(boolean active) {
+        UserViewModel.active.set(active);
+    }
 
-  public static BooleanProperty activeProperty() {
-    return active;
-  }
+    public static BooleanProperty activeProperty() {
+        return active;
+    }
 
-  public static boolean canAccessAllBranches() {
-    return accessAllBranches.get();
-  }
+    public static boolean canAccessAllBranches() {
+        return accessAllBranches.get();
+    }
 
-  public static void setAccessAllBranches(boolean accessAllBranches) {
-    UserViewModel.accessAllBranches.set(accessAllBranches);
-  }
+    public static void setAccessAllBranches(boolean accessAllBranches) {
+        UserViewModel.accessAllBranches.set(accessAllBranches);
+    }
 
-  public static BooleanProperty accessAllBranchesProperty() {
-    return accessAllBranches;
-  }
+    public static BooleanProperty accessAllBranchesProperty() {
+        return accessAllBranches;
+    }
 
-  public static String getUserName() {
-    return userName.get();
-  }
+    public static String getUserName() {
+        return userName.get();
+    }
 
-  public static void setUserName(String userName) {
-    UserViewModel.userName.set(userName);
-  }
+    public static void setUserName(String userName) {
+        UserViewModel.userName.set(userName);
+    }
 
-  public static StringProperty userNameProperty() {
-    return userName;
-  }
+    public static StringProperty userNameProperty() {
+        return userName;
+    }
 
-  public static Role getRole() {
-    return role.get();
-  }
+    public static Role getRole() {
+        return role.get();
+    }
 
-  public static void setRole(Role role) {
-    UserViewModel.role.set(role);
-  }
+    public static void setRole(Role role) {
+        UserViewModel.role.set(role);
+    }
 
-  public static ObjectProperty<Role> roleProperty() {
-    return role;
-  }
+    public static ObjectProperty<Role> roleProperty() {
+        return role;
+    }
 
-  public static Branch getBranch() {
-    return branch.get();
-  }
+    public static Branch getBranch() {
+        return branch.get();
+    }
 
-  public static void setBranch(Branch branch) {
-    UserViewModel.branch.set(branch);
-  }
+    public static void setBranch(Branch branch) {
+        UserViewModel.branch.set(branch);
+    }
 
-  public static ObjectProperty<Branch> branchProperty() {
-    return branch;
-  }
+    public static ObjectProperty<Branch> branchProperty() {
+        return branch;
+    }
 
-  public static String getEmail() {
-    return email.get();
-  }
+    public static String getEmail() {
+        return email.get();
+    }
 
-  public static void setEmail(String email) {
-    UserViewModel.email.set(email);
-  }
+    public static void setEmail(String email) {
+        UserViewModel.email.set(email);
+    }
 
-  public static StringProperty emailProperty() {
-    return email;
-  }
+    public static StringProperty emailProperty() {
+        return email;
+    }
 
-  public static String getPhone() {
-    return phone.get();
-  }
+    public static String getPhone() {
+        return phone.get();
+    }
 
-  public static void setPhone(String phone) {
-    UserViewModel.phone.set(phone);
-  }
+    public static void setPhone(String phone) {
+        UserViewModel.phone.set(phone);
+    }
 
-  public static StringProperty phoneProperty() {
-    return phone;
-  }
+    public static StringProperty phoneProperty() {
+        return phone;
+    }
 
-  public static String getCity() {
-    return city.get();
-  }
+    public static String getCity() {
+        return city.get();
+    }
 
-  public static void setCity(String city) {
-    UserViewModel.city.set(city);
-  }
+    public static void setCity(String city) {
+        UserViewModel.city.set(city);
+    }
 
-  public static StringProperty cityProperty() {
-    return city;
-  }
+    public static StringProperty cityProperty() {
+        return city;
+    }
 
-  public static String getAddress() {
-    return address.get();
-  }
+    public static String getAddress() {
+        return address.get();
+    }
 
-  public static void setAddress(String address) {
-    UserViewModel.address.set(address);
-  }
+    public static void setAddress(String address) {
+        UserViewModel.address.set(address);
+    }
 
-  public static StringProperty addressProperty() {
-    return address;
-  }
+    public static StringProperty addressProperty() {
+        return address;
+    }
 
-  public static String getTaxNumber() {
-    return taxNumber.get();
-  }
+    public static String getTaxNumber() {
+        return taxNumber.get();
+    }
 
-  public static void setTaxNumber(String taxNumber) {
-    UserViewModel.taxNumber.set(taxNumber);
-  }
+    public static void setTaxNumber(String taxNumber) {
+        UserViewModel.taxNumber.set(taxNumber);
+    }
 
-  public static StringProperty taxNumberProperty() {
-    return taxNumber;
-  }
+    public static StringProperty taxNumberProperty() {
+        return taxNumber;
+    }
 
-  public static String getCountry() {
-    return country.get();
-  }
+    public static String getCountry() {
+        return country.get();
+    }
 
-  public static void setCountry(String country) {
-    UserViewModel.country.set(country);
-  }
+    public static void setCountry(String country) {
+        UserViewModel.country.set(country);
+    }
 
-  public static StringProperty countryProperty() {
-    return country;
-  }
+    public static StringProperty countryProperty() {
+        return country;
+    }
 
-  public static ObservableList<User> getUsers() {
-    return users.get();
-  }
+    public static ObservableList<User> getUsers() {
+        return users.get();
+    }
 
-  public static void setUsers(ObservableList<User> users) {
-    UserViewModel.users.set(users);
-  }
+    public static void setUsers(ObservableList<User> users) {
+        UserViewModel.users.set(users);
+    }
 
-  public static ListProperty<User> usersProperty() {
-    return users;
-  }
+    public static ListProperty<User> usersProperty() {
+        return users;
+    }
 
-  public static void resetProperties() {
-    setId(0);
-    setFirstName("");
-    setLastName("");
-    setUserName("");
-    setRole(null);
-    setEmail("");
-    setEmail("");
-    setPhone("");
-    setCity("");
-    setAddress("");
-    setTaxNumber("");
-    setCountry("");
-    setActive(true);
-  }
+    public static void resetProperties() {
+        setId(0);
+        setFirstName("");
+        setLastName("");
+        setUserName("");
+        setRole(null);
+        setEmail("");
+        setEmail("");
+        setPhone("");
+        setCity("");
+        setAddress("");
+        setTaxNumber("");
+        setCountry("");
+        setActive(true);
+    }
 
-  public static void saveUser() {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
+    public static void saveUser() throws SQLException {
+        Dao<User, Long> userDao = DaoManager.createDao(connectionSource, User.class);
 
-            Dao<User, Long> userDao = DaoManager.createDao(connectionSource, User.class);
-
-            User user =
+        User user =
                 new User(
-                    getFirstName(),
-                    getLastName(),
-                    getUserName(),
-                    getRole(),
-                    isActive(),
-                    canAccessAllBranches());
-            user.setPhone(getPhone());
-            user.setEmail(getEmail());
-            user.setBranch(getBranch());
+                        getFirstName(),
+                        getLastName(),
+                        getUserName(),
+                        getRole(),
+                        isActive(),
+                        canAccessAllBranches());
+        user.setPhone(getPhone());
+        user.setEmail(getEmail());
+        user.setBranch(getBranch());
 
-            userDao.create(user);
+        userDao.create(user);
 
-            return null;
-          }
-        };
+        resetProperties();
+        getAllUsers();
+    }
 
-    task.setOnSucceeded(
-        event -> {
-          resetProperties();
-          getAllUsers();
-        });
+    public static void getAllUsers() throws SQLException {
+        Dao<User, Long> userDao = DaoManager.createDao(connectionSource, User.class);
 
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static void getAllUsers() {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
-            Dao<User, Long> userDao = DaoManager.createDao(connectionSource, User.class);
-
-            Platform.runLater(
+        Platform.runLater(
                 () -> {
-                  usersList.clear();
+                    usersList.clear();
 
-                  try {
-                    usersList.addAll(userDao.queryForAll());
-                  } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                  }
+                    try {
+                        usersList.addAll(userDao.queryForAll());
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+    }
+
+    public static void getItem(long index) throws SQLException {
+        Dao<User, Long> userDao = DaoManager.createDao(connectionSource, User.class);
+
+        User user = userDao.queryForId(index);
+
+        Platform.runLater(
+                () -> {
+                    setId(user.getId());
+                    setFirstName(user.getFirstName());
+                    setLastName(user.getLastName());
+                    setUserName(user.getUserName());
+                    setRole(user.getRole());
+                    setActive(user.isActive());
+                    setPhone(user.getPhone());
+                    setEmail(user.getEmail());
+                    setBranch(user.getBranch());
+                    setAccessAllBranches(user.canAccessAllBranches());
                 });
 
-            return null;
-          }
-        };
+        getAllUsers();
+    }
 
-    GlobalActions.spotyThreadPool().execute(task);
-  }
+    public static void updateItem(long index) throws SQLException {
+        Dao<User, Long> userDao = DaoManager.createDao(connectionSource, User.class);
 
-  public static void getItem(long index) {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
+        User user = userDao.queryForId(index);
 
-            Dao<User, Long> userDao = DaoManager.createDao(connectionSource, User.class);
+        user.setFirstName(getFirstName());
+        user.setLastName(getLastName());
+        user.setUserName(getUserName());
+        user.setRole(getRole());
+        user.setActive(isActive());
+        user.setAccessAllBranches(canAccessAllBranches());
 
-            User user = userDao.queryForId(index);
+        userDao.update(user);
 
-            Platform.runLater(
-                () -> {
-                  setId(user.getId());
-                  setFirstName(user.getFirstName());
-                  setLastName(user.getLastName());
-                  setUserName(user.getUserName());
-                  setRole(user.getRole());
-                  setActive(user.isActive());
-                  setPhone(user.getPhone());
-                  setEmail(user.getEmail());
-                  setBranch(user.getBranch());
-                  setAccessAllBranches(user.canAccessAllBranches());
-                });
+        resetProperties();
+        getAllUsers();
+    }
 
-            return null;
-          }
-        };
+    public static void deleteItem(long index) throws SQLException {
+        Dao<User, Long> userDao = DaoManager.createDao(connectionSource, User.class);
 
-    task.setOnSucceeded(event -> getAllUsers());
+        userDao.deleteById(index);
 
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static void updateItem(long index) {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
-            Dao<User, Long> userDao = DaoManager.createDao(connectionSource, User.class);
-
-            User user = userDao.queryForId(index);
-
-            user.setFirstName(getFirstName());
-            user.setLastName(getLastName());
-            user.setUserName(getUserName());
-            user.setRole(getRole());
-            user.setActive(isActive());
-            user.setAccessAllBranches(canAccessAllBranches());
-
-            userDao.update(user);
-
-            return null;
-          }
-        };
-
-    task.setOnSucceeded(
-        event -> {
-          resetProperties();
-          getAllUsers();
-        });
-
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static void deleteItem(long index) {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
-            Dao<User, Long> userDao = DaoManager.createDao(connectionSource, User.class);
-
-            userDao.deleteById(index);
-
-            return null;
-          }
-        };
-
-    task.setOnSucceeded(event -> getAllUsers());
-
-    GlobalActions.spotyThreadPool().execute(task);
-  }
+        getAllUsers();
+    }
 }

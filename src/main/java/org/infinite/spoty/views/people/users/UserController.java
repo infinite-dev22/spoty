@@ -26,6 +26,7 @@ import io.github.palexdev.materialfx.filter.BooleanFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
@@ -39,6 +40,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.database.models.User;
 import org.infinite.spoty.forms.UserFormController;
 import org.infinite.spoty.viewModels.UserViewModel;
@@ -151,13 +153,25 @@ public class UserController implements Initializable {
     // Delete
     delete.setOnAction(
         e -> {
-          UserViewModel.deleteItem(obj.getData().getId());
+            GlobalActions.spotyThreadPool().execute(() -> {
+                try {
+                    UserViewModel.deleteItem(obj.getData().getId());
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
           e.consume();
         });
     // Edit
     edit.setOnAction(
         e -> {
-          UserViewModel.getItem(obj.getData().getId());
+            GlobalActions.spotyThreadPool().execute(() -> {
+                try {
+                    UserViewModel.getItem(obj.getData().getId());
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
           dialog.showAndWait();
           e.consume();
         });

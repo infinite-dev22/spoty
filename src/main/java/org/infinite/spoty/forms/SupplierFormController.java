@@ -19,12 +19,16 @@ import static org.infinite.spoty.Validators.*;
 
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.Objects;
 import java.util.ResourceBundle;
+
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
@@ -32,121 +36,145 @@ import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.viewModels.SupplierViewModel;
 
 public class SupplierFormController implements Initializable {
-  private static SupplierFormController instance;
-  @FXML public MFXButton supplierFormSaveBtn;
-  @FXML public MFXButton supplierFormCancelBtn;
-  @FXML public MFXTextField supplierFormName;
-  @FXML public MFXTextField supplierFormEmail;
-  @FXML public MFXTextField supplierFormPhone;
-  @FXML public MFXTextField supplierFormCity;
-  @FXML public MFXTextField supplierFormCountry;
-  @FXML public MFXTextField supplierFormTaxNumber;
-  @FXML public MFXTextField supplierFormAddress;
-  @FXML public Label supplierFormNameValidationLabel;
-  @FXML public Label supplierFormEmailValidationLabel;
-  @FXML public Label supplierFormPhoneValidationLabel;
+    private static SupplierFormController instance;
+    @FXML
+    public MFXButton supplierFormSaveBtn;
+    @FXML
+    public MFXButton supplierFormCancelBtn;
+    @FXML
+    public MFXTextField supplierFormName;
+    @FXML
+    public MFXTextField supplierFormEmail;
+    @FXML
+    public MFXTextField supplierFormPhone;
+    @FXML
+    public MFXTextField supplierFormCity;
+    @FXML
+    public MFXTextField supplierFormCountry;
+    @FXML
+    public MFXTextField supplierFormTaxNumber;
+    @FXML
+    public MFXTextField supplierFormAddress;
+    @FXML
+    public Label supplierFormNameValidationLabel;
+    @FXML
+    public Label supplierFormEmailValidationLabel;
+    @FXML
+    public Label supplierFormPhoneValidationLabel;
 
-  public static SupplierFormController getInstance() {
-    if (Objects.equals(instance, null)) instance = new SupplierFormController();
-    return instance;
-  }
+    public static SupplierFormController getInstance() {
+        if (Objects.equals(instance, null)) instance = new SupplierFormController();
+        return instance;
+    }
 
-  @Override
-  public void initialize(URL location, ResourceBundle resources) {
-    // Form input binding.
-    supplierFormName.textProperty().bindBidirectional(SupplierViewModel.nameProperty());
-    supplierFormEmail.textProperty().bindBidirectional(SupplierViewModel.emailProperty());
-    supplierFormPhone.textProperty().bindBidirectional(SupplierViewModel.phoneProperty());
-    supplierFormCity.textProperty().bindBidirectional(SupplierViewModel.cityProperty());
-    supplierFormCountry.textProperty().bindBidirectional(SupplierViewModel.countryProperty());
-    supplierFormTaxNumber.textProperty().bindBidirectional(SupplierViewModel.taxNumberProperty());
-    supplierFormAddress.textProperty().bindBidirectional(SupplierViewModel.addressProperty());
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        // Form input binding.
+        supplierFormName.textProperty().bindBidirectional(SupplierViewModel.nameProperty());
+        supplierFormEmail.textProperty().bindBidirectional(SupplierViewModel.emailProperty());
+        supplierFormPhone.textProperty().bindBidirectional(SupplierViewModel.phoneProperty());
+        supplierFormCity.textProperty().bindBidirectional(SupplierViewModel.cityProperty());
+        supplierFormCountry.textProperty().bindBidirectional(SupplierViewModel.countryProperty());
+        supplierFormTaxNumber.textProperty().bindBidirectional(SupplierViewModel.taxNumberProperty());
+        supplierFormAddress.textProperty().bindBidirectional(SupplierViewModel.addressProperty());
 
-    // Input listeners.
-    supplierFormPhone
-        .textProperty()
-        .addListener(
-            (observable, oldValue, newValue) -> {
-              if (!newValue.matches("\\d*"))
-                supplierFormPhone.setText(newValue.replaceAll("\\D", ""));
-            });
-    supplierFormPhone
-        .focusedProperty()
-        .addListener(
-            (observable, oldValue, newValue) -> {
-              if (newValue != oldValue) supplierFormPhone.setLeadingIcon(new Label("+"));
-            });
+        // Input listeners.
+        supplierFormPhone
+                .textProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (!newValue.matches("\\d*"))
+                                supplierFormPhone.setText(newValue.replaceAll("\\D", ""));
+                        });
+        supplierFormPhone
+                .focusedProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue != oldValue) supplierFormPhone.setLeadingIcon(new Label("+"));
+                        });
 
-    // Input validations.
-    // Name input validation.
-    requiredValidator(
-        supplierFormName,
-        "Name field is required.",
-        supplierFormNameValidationLabel,
-        supplierFormSaveBtn);
+        // Input validations.
+        // Name input validation.
+        requiredValidator(
+                supplierFormName,
+                "Name field is required.",
+                supplierFormNameValidationLabel,
+                supplierFormSaveBtn);
 
-    // Email input validation.
-    emailValidator(supplierFormEmail, supplierFormEmailValidationLabel, supplierFormSaveBtn);
+        // Email input validation.
+        emailValidator(supplierFormEmail, supplierFormEmailValidationLabel, supplierFormSaveBtn);
 
-    // Phone input validation.
-    lengthValidator(
-        supplierFormPhone,
-        11,
-        "Invalid length",
-        supplierFormPhoneValidationLabel,
-        supplierFormSaveBtn);
-    dialogOnActions();
-  }
+        // Phone input validation.
+        lengthValidator(
+                supplierFormPhone,
+                11,
+                "Invalid length",
+                supplierFormPhoneValidationLabel,
+                supplierFormSaveBtn);
+        dialogOnActions();
+    }
 
-  private void dialogOnActions() {
-    supplierFormCancelBtn.setOnAction(
-        (e) -> {
-          closeDialog(e);
-          SupplierViewModel.resetProperties();
-          supplierFormNameValidationLabel.setVisible(false);
-          supplierFormEmailValidationLabel.setVisible(false);
-          supplierFormPhoneValidationLabel.setVisible(false);
-        });
-    supplierFormSaveBtn.setOnAction(
-        (e) -> {
-          SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
-          if (!supplierFormNameValidationLabel.isVisible()
-              && !supplierFormEmailValidationLabel.isVisible()
-              && !supplierFormPhoneValidationLabel.isVisible()) {
-            if (SupplierViewModel.getId() > 0) {
-              SupplierViewModel.updateItem(SupplierViewModel.getId());
+    private void dialogOnActions() {
+        supplierFormCancelBtn.setOnAction(
+                (e) -> {
+                    closeDialog(e);
+                    SupplierViewModel.resetProperties();
+                    supplierFormNameValidationLabel.setVisible(false);
+                    supplierFormEmailValidationLabel.setVisible(false);
+                    supplierFormPhoneValidationLabel.setVisible(false);
+                });
+        supplierFormSaveBtn.setOnAction(
+                (e) -> {
+                    SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
+                    if (!supplierFormNameValidationLabel.isVisible()
+                            && !supplierFormEmailValidationLabel.isVisible()
+                            && !supplierFormPhoneValidationLabel.isVisible()) {
+                        if (SupplierViewModel.getId() > 0) {
+                            GlobalActions.spotyThreadPool().execute(() -> {
+                                try {
+                                    SupplierViewModel.updateItem(SupplierViewModel.getId());
+                                } catch (SQLException ex) {
+                                    throw new RuntimeException(ex);
+                                }
+                            });
 
-              SimpleNotification notification =
-                  new SimpleNotification.NotificationBuilder("Supplier updated successfully")
-                      .duration(NotificationDuration.SHORT)
-                      .icon("fas-circle-check")
-                      .type(NotificationVariants.SUCCESS)
-                      .build();
-              notificationHolder.addNotification(notification);
+                            SimpleNotification notification =
+                                    new SimpleNotification.NotificationBuilder("Supplier updated successfully")
+                                            .duration(NotificationDuration.SHORT)
+                                            .icon("fas-circle-check")
+                                            .type(NotificationVariants.SUCCESS)
+                                            .build();
+                            notificationHolder.addNotification(notification);
 
-              closeDialog(e);
-              return;
-            }
-            SupplierViewModel.saveSupplier();
+                            closeDialog(e);
+                            return;
+                        }
+                        GlobalActions.spotyThreadPool().execute(() -> {
+                            try {
+                                SupplierViewModel.saveSupplier();
+                            } catch (SQLException ex) {
+                                throw new RuntimeException(ex);
+                            }
+                        });
 
-            SimpleNotification notification =
-                new SimpleNotification.NotificationBuilder("Supplier saved successfully")
-                    .duration(NotificationDuration.SHORT)
-                    .icon("fas-circle-check")
-                    .type(NotificationVariants.SUCCESS)
-                    .build();
-            notificationHolder.addNotification(notification);
+                        SimpleNotification notification =
+                                new SimpleNotification.NotificationBuilder("Supplier saved successfully")
+                                        .duration(NotificationDuration.SHORT)
+                                        .icon("fas-circle-check")
+                                        .type(NotificationVariants.SUCCESS)
+                                        .build();
+                        notificationHolder.addNotification(notification);
 
-            closeDialog(e);
-            return;
-          }
-          SimpleNotification notification =
-              new SimpleNotification.NotificationBuilder("Required fields missing")
-                  .duration(NotificationDuration.SHORT)
-                  .icon("fas-triangle-exclamation")
-                  .type(NotificationVariants.ERROR)
-                  .build();
-          notificationHolder.addNotification(notification);
-        });
-  }
+                        closeDialog(e);
+                        return;
+                    }
+                    SimpleNotification notification =
+                            new SimpleNotification.NotificationBuilder("Required fields missing")
+                                    .duration(NotificationDuration.SHORT)
+                                    .icon("fas-triangle-exclamation")
+                                    .type(NotificationVariants.ERROR)
+                                    .build();
+                    notificationHolder.addNotification(notification);
+                });
+    }
 }
