@@ -14,27 +14,15 @@
 
 package org.infinite.spoty.forms;
 
-import static org.infinite.spoty.GlobalActions.closeDialog;
-import static org.infinite.spoty.Validators.requiredValidator;
-import static org.infinite.spoty.values.SharedResources.tempIdProperty;
-
 import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.utils.StringUtils;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-
-import java.net.URL;
-import java.util.Objects;
-import java.util.ResourceBundle;
-import java.util.function.Function;
-import java.util.function.Predicate;
-
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.util.StringConverter;
-import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
@@ -42,6 +30,16 @@ import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.database.models.Product;
 import org.infinite.spoty.viewModels.ProductViewModel;
 import org.infinite.spoty.viewModels.QuotationDetailViewModel;
+
+import java.net.URL;
+import java.util.Objects;
+import java.util.ResourceBundle;
+import java.util.function.Function;
+import java.util.function.Predicate;
+
+import static org.infinite.spoty.GlobalActions.closeDialog;
+import static org.infinite.spoty.Validators.requiredValidator;
+import static org.infinite.spoty.values.SharedResources.tempIdProperty;
 
 public class QuotationDetailFormController implements Initializable {
     private static QuotationDetailFormController instance;
@@ -117,15 +115,15 @@ public class QuotationDetailFormController implements Initializable {
 
     private void dialogOnActions() {
         quotationProductsCancelBtn.setOnAction(
-                (e) -> {
-                    closeDialog(e);
+                (event) -> {
+                    closeDialog(event);
                     QuotationDetailViewModel.resetProperties();
                     quotationProductPdct.clearSelection();
                     quotationProductPdctValidationLabel.setVisible(false);
                     quotationProductQntyValidationLabel.setVisible(false);
                 });
         quotationProductsSaveBtn.setOnAction(
-                (e) -> {
+                (event) -> {
                     SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
 
                     if (!quotationProductPdctValidationLabel.isVisible()
@@ -144,7 +142,7 @@ public class QuotationDetailFormController implements Initializable {
 
                             quotationProductPdct.clearSelection();
 
-                            closeDialog(e);
+                            closeDialog(event);
                             return;
                         }
                         QuotationDetailViewModel.addQuotationDetails();
@@ -160,7 +158,7 @@ public class QuotationDetailFormController implements Initializable {
 
                         quotationProductPdct.clearSelection();
 
-                        closeDialog(e);
+                        closeDialog(event);
                         return;
                     }
                     SimpleNotification notification =

@@ -19,6 +19,18 @@ import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.utils.StringUtils;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.mfxcomponents.controls.checkbox.MFXCheckbox;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.layout.GridPane;
+import javafx.util.StringConverter;
+import org.infinite.spoty.GlobalActions;
+import org.infinite.spoty.database.models.Branch;
+import org.infinite.spoty.database.models.Currency;
+import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.viewModels.BranchViewModel;
+import org.infinite.spoty.viewModels.CurrencyViewModel;
 
 import java.net.URL;
 import java.sql.SQLException;
@@ -30,18 +42,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
-
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.layout.GridPane;
-import javafx.util.StringConverter;
-import org.infinite.spoty.GlobalActions;
-import org.infinite.spoty.database.models.Branch;
-import org.infinite.spoty.database.models.Currency;
-import org.infinite.spoty.viewModels.BranchViewModel;
-import org.infinite.spoty.viewModels.CurrencyViewModel;
 
 public class SystemController implements Initializable {
     private static SystemController instance;
@@ -121,7 +121,7 @@ public class SystemController implements Initializable {
         try {
             initGUI();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            SpotyLogger.writeToFile(e, this.getClass());
         }
         setSystemPreferences();
     }
@@ -138,7 +138,7 @@ public class SystemController implements Initializable {
                 BranchViewModel.getItem(preferences.getInt("default_branch", 1));
                 CurrencyViewModel.getItem(preferences.getInt("default_currency", 1));
             } catch (SQLException e) {
-                throw new RuntimeException(e);
+                SpotyLogger.writeToFile(e, this.getClass());
             }
         });
         Locale locale = new Locale(preferences.get("default_language", "EN"));
@@ -162,7 +162,7 @@ public class SystemController implements Initializable {
                             try {
                                 preferences.flush();
                             } catch (BackingStoreException e) {
-                                throw new RuntimeException(e);
+                                SpotyLogger.writeToFile(e, this.getClass());
                             }
                         });
         defaultLanguage
@@ -173,7 +173,7 @@ public class SystemController implements Initializable {
                             try {
                                 preferences.flush();
                             } catch (BackingStoreException e) {
-                                throw new RuntimeException(e);
+                                SpotyLogger.writeToFile(e, this.getClass());
                             }
                         });
         defaultBranch
@@ -184,7 +184,7 @@ public class SystemController implements Initializable {
                             try {
                                 preferences.flush();
                             } catch (BackingStoreException e) {
-                                throw new RuntimeException(e);
+                                SpotyLogger.writeToFile(e, this.getClass());
                             }
                         });
         defaultEmail
@@ -195,7 +195,7 @@ public class SystemController implements Initializable {
                             try {
                                 preferences.flush();
                             } catch (BackingStoreException e) {
-                                throw new RuntimeException(e);
+                                SpotyLogger.writeToFile(e, this.getClass());
                             }
                         });
         companyName
@@ -206,7 +206,7 @@ public class SystemController implements Initializable {
                             try {
                                 preferences.flush();
                             } catch (BackingStoreException e) {
-                                throw new RuntimeException(e);
+                                SpotyLogger.writeToFile(e, this.getClass());
                             }
                         });
         companyPhone
@@ -217,7 +217,7 @@ public class SystemController implements Initializable {
                             try {
                                 preferences.flush();
                             } catch (BackingStoreException e) {
-                                throw new RuntimeException(e);
+                                SpotyLogger.writeToFile(e, this.getClass());
                             }
                         });
         branchAddress
@@ -228,7 +228,7 @@ public class SystemController implements Initializable {
                             try {
                                 preferences.flush();
                             } catch (BackingStoreException e) {
-                                throw new RuntimeException(e);
+                                SpotyLogger.writeToFile(e, this.getClass());
                             }
                         });
         invoiceFooter
@@ -239,7 +239,7 @@ public class SystemController implements Initializable {
                             try {
                                 preferences.flush();
                             } catch (BackingStoreException e) {
-                                throw new RuntimeException(e);
+                                SpotyLogger.writeToFile(e, this.getClass());
                             }
                         });
     }

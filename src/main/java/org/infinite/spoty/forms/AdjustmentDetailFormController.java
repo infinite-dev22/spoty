@@ -36,7 +36,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.util.StringConverter;
-import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
@@ -125,8 +124,8 @@ public class AdjustmentDetailFormController implements Initializable {
 
     private void dialogOnActions() {
         adjustmentProductsCancelBtn.setOnAction(
-                (e) -> {
-                    closeDialog(e);
+                (event) -> {
+                    closeDialog(event);
 
                     AdjustmentDetailViewModel.resetProperties();
                     adjustmentProductVariant.clearSelection();
@@ -137,7 +136,7 @@ public class AdjustmentDetailFormController implements Initializable {
                     adjustmentTypeValidationLabel.setVisible(false);
                 });
         adjustmentProductsSaveBtn.setOnAction(
-                (e) -> {
+                (event) -> {
                     SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
 
                     if (!adjustmentProductVariantValidationLabel.isVisible()
@@ -158,7 +157,7 @@ public class AdjustmentDetailFormController implements Initializable {
                             adjustmentProductVariant.clearSelection();
                             adjustmentType.clearSelection();
 
-                            closeDialog(e);
+                            closeDialog(event);
                             return;
                         }
                         AdjustmentDetailViewModel.addAdjustmentDetails();
@@ -176,7 +175,7 @@ public class AdjustmentDetailFormController implements Initializable {
                         adjustmentProductVariant.clearSelection();
                         adjustmentType.clearSelection();
 
-                        closeDialog(e);
+                        closeDialog(event);
                         return;
                     }
                     SimpleNotification notification =

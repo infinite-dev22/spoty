@@ -14,17 +14,7 @@
 
 package org.infinite.spoty.forms;
 
-import static org.infinite.spoty.SpotyResourceLoader.fxmlLoader;
-import static org.infinite.spoty.Validators.requiredValidator;
-
-import io.github.palexdev.materialfx.controls.MFXContextMenu;
-import io.github.palexdev.materialfx.controls.MFXContextMenuItem;
-import io.github.palexdev.materialfx.controls.MFXDatePicker;
-import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
-import io.github.palexdev.materialfx.controls.MFXTableColumn;
-import io.github.palexdev.materialfx.controls.MFXTableRow;
-import io.github.palexdev.materialfx.controls.MFXTableView;
-import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
@@ -35,18 +25,6 @@ import io.github.palexdev.materialfx.filter.StringFilter;
 import io.github.palexdev.materialfx.utils.StringUtils;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-
-import java.io.IOException;
-import java.net.URL;
-import java.sql.SQLException;
-import java.util.Comparator;
-import java.util.ResourceBundle;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.logging.FileHandler;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
-
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
@@ -68,10 +46,22 @@ import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.database.models.AdjustmentDetail;
 import org.infinite.spoty.database.models.Branch;
+import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.viewModels.AdjustmentDetailViewModel;
 import org.infinite.spoty.viewModels.AdjustmentMasterViewModel;
 import org.infinite.spoty.viewModels.BranchViewModel;
 import org.infinite.spoty.views.BaseController;
+
+import java.io.IOException;
+import java.net.URL;
+import java.sql.SQLException;
+import java.util.Comparator;
+import java.util.ResourceBundle;
+import java.util.function.Function;
+import java.util.function.Predicate;
+
+import static org.infinite.spoty.SpotyResourceLoader.fxmlLoader;
+import static org.infinite.spoty.Validators.requiredValidator;
 
 @SuppressWarnings("unchecked")
 public class AdjustmentMasterFormController implements Initializable {
@@ -104,8 +94,8 @@ public class AdjustmentMasterFormController implements Initializable {
                 () -> {
                     try {
                         quotationProductDialogPane(stage);
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
+                    } catch (IOException e) {
+                        SpotyLogger.writeToFile(e, this.getClass());
                     }
                 });
     }
@@ -189,7 +179,7 @@ public class AdjustmentMasterFormController implements Initializable {
             AdjustmentDetailViewModel.getAdjustmentDetails()
                     .addListener(
                             (ListChangeListener<AdjustmentDetail>)
-                                    c ->
+                                    change ->
                                             adjustmentDetailTable.setItems(
                                                     AdjustmentDetailViewModel.getAdjustmentDetails()));
         } else {
@@ -205,8 +195,8 @@ public class AdjustmentMasterFormController implements Initializable {
         adjustmentDetailTable.features().enableSmoothScrolling(0.5);
 
         adjustmentDetailTable.setTableRowFactory(
-                t -> {
-                    MFXTableRow<AdjustmentDetail> row = new MFXTableRow<>(adjustmentDetailTable, t);
+                adjustmentDetail -> {
+                    MFXTableRow<AdjustmentDetail> row = new MFXTableRow<>(adjustmentDetailTable, adjustmentDetail);
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
                                 showContextMenu((MFXTableRow<AdjustmentDetail>) event.getSource())
@@ -229,28 +219,28 @@ public class AdjustmentMasterFormController implements Initializable {
         // Actions
         // Delete
         delete.setOnAction(
-                e -> {
+                event -> {
                     AdjustmentDetailViewModel.removeAdjustmentDetail(
                             obj.getData().getId(),
                             AdjustmentDetailViewModel.adjustmentDetailsList.indexOf(obj.getData()));
 
-                    e.consume();
+                    event.consume();
                 });
         // Edit
         edit.setOnAction(
-                e -> {
+                event -> {
                     GlobalActions.spotyThreadPool()
                             .execute(
                                     () -> {
                                         try {
                                             AdjustmentDetailViewModel.getAdjustmentDetail(obj.getData());
-                                        } catch (SQLException ex) {
-                                            throw new RuntimeException(ex);
+                                        } catch (SQLException e) {
+                                            SpotyLogger.writeToFile(e, this.getClass());
                                         }
                                     });
 
                     dialog.showAndWait();
-                    e.consume();
+                    event.consume();
                 });
 
         contextMenu.addItems(edit, delete);
@@ -259,7 +249,7 @@ public class AdjustmentMasterFormController implements Initializable {
     }
 
     private void adjustmentAddProductBtnClicked() {
-        adjustmentProductAddBtn.setOnAction(e -> dialog.showAndWait());
+        adjustmentProductAddBtn.setOnAction(e -> dialog.show());
     }
 
     private void quotationProductDialogPane(Stage stage) throws IOException {
@@ -305,7 +295,7 @@ public class AdjustmentMasterFormController implements Initializable {
                                     try {
                                         AdjustmentMasterViewModel.updateItem(AdjustmentMasterViewModel.getId());
                                     } catch (SQLException e) {
-                                        throw new RuntimeException(e);
+                                        SpotyLogger.writeToFile(e, this.getClass());
                                     }
                                 });
 
@@ -329,7 +319,7 @@ public class AdjustmentMasterFormController implements Initializable {
                                 try {
                                     AdjustmentMasterViewModel.saveAdjustmentMaster();
                                 } catch (SQLException e) {
-                                    throw new RuntimeException(e);
+                                    SpotyLogger.writeToFile(e, this.getClass());
                                 }
                             });
 

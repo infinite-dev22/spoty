@@ -14,8 +14,6 @@
 
 package org.infinite.spoty.forms;
 
-import static org.infinite.spoty.Validators.requiredValidator;
-
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
@@ -27,15 +25,6 @@ import io.github.palexdev.materialfx.filter.StringFilter;
 import io.github.palexdev.materialfx.utils.StringUtils;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-
-import java.io.IOException;
-import java.net.URL;
-import java.sql.SQLException;
-import java.util.Comparator;
-import java.util.ResourceBundle;
-import java.util.function.Function;
-import java.util.function.Predicate;
-
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -58,12 +47,23 @@ import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.Customer;
 import org.infinite.spoty.database.models.QuotationDetail;
 import org.infinite.spoty.startup.Dialogs;
+import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.values.strings.Values;
 import org.infinite.spoty.viewModels.BranchViewModel;
 import org.infinite.spoty.viewModels.CustomerViewModel;
 import org.infinite.spoty.viewModels.QuotationDetailViewModel;
 import org.infinite.spoty.viewModels.QuotationMasterViewModel;
 import org.infinite.spoty.views.BaseController;
+
+import java.io.IOException;
+import java.net.URL;
+import java.sql.SQLException;
+import java.util.Comparator;
+import java.util.ResourceBundle;
+import java.util.function.Function;
+import java.util.function.Predicate;
+
+import static org.infinite.spoty.Validators.requiredValidator;
 
 @SuppressWarnings("unchecked")
 public class QuotationMasterFormController implements Initializable {
@@ -101,8 +101,8 @@ public class QuotationMasterFormController implements Initializable {
                 () -> {
                     try {
                         quotationProductDialogPane(stage);
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
+                    } catch (IOException e) {
+                        SpotyLogger.writeToFile(e, this.getClass());
                     }
                 });
     }
@@ -227,7 +227,7 @@ public class QuotationMasterFormController implements Initializable {
             QuotationDetailViewModel.getQuotationDetails()
                     .addListener(
                             (ListChangeListener<QuotationDetail>)
-                                    c ->
+                                    change ->
                                             quotationDetailTable.setItems(
                                                     QuotationDetailViewModel.getQuotationDetails()));
         } else {
@@ -243,8 +243,8 @@ public class QuotationMasterFormController implements Initializable {
         quotationDetailTable.features().enableSmoothScrolling(0.5);
 
         quotationDetailTable.setTableRowFactory(
-                t -> {
-                    MFXTableRow<QuotationDetail> row = new MFXTableRow<>(quotationDetailTable, t);
+                quotationDetail -> {
+                    MFXTableRow<QuotationDetail> row = new MFXTableRow<>(quotationDetailTable, quotationDetail);
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
                                 showContextMenu((MFXTableRow<QuotationDetail>) event.getSource())
@@ -267,18 +267,18 @@ public class QuotationMasterFormController implements Initializable {
         // Actions
         // Delete
         delete.setOnAction(
-                e -> {
+                event -> {
                     QuotationDetailViewModel.removeQuotationDetail(
                             obj.getData().getId(),
                             QuotationDetailViewModel.quotationDetailsList.indexOf(obj.getData()));
-                    e.consume();
+                    event.consume();
                 });
         // Edit
         edit.setOnAction(
-                e -> {
+                event -> {
                     QuotationDetailViewModel.getQuotationDetail(obj.getData());
                     dialog.showAndWait();
-                    e.consume();
+                    event.consume();
                 });
 
         contextMenu.addItems(edit, delete);
@@ -324,7 +324,7 @@ public class QuotationMasterFormController implements Initializable {
                     try {
                         QuotationMasterViewModel.updateItem(QuotationMasterViewModel.getId());
                     } catch (SQLException e) {
-                        throw new RuntimeException(e);
+                        SpotyLogger.writeToFile(e, this.getClass());
                     }
                 });
 
@@ -347,7 +347,7 @@ public class QuotationMasterFormController implements Initializable {
                 try {
                     QuotationMasterViewModel.saveQuotationMaster();
                 } catch (SQLException e) {
-                    throw new RuntimeException(e);
+                    SpotyLogger.writeToFile(e, this.getClass());
                 }
             });
 

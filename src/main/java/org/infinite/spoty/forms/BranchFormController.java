@@ -14,19 +14,8 @@
 
 package org.infinite.spoty.forms;
 
-import static org.infinite.spoty.GlobalActions.closeDialog;
-import static org.infinite.spoty.Validators.requiredValidator;
-import static org.infinite.spoty.viewModels.BranchViewModel.clearBranchData;
-import static org.infinite.spoty.viewModels.BranchViewModel.saveBranch;
-
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-
-import java.net.URL;
-import java.sql.SQLException;
-import java.util.Objects;
-import java.util.ResourceBundle;
-
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -35,7 +24,18 @@ import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
+import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.viewModels.BranchViewModel;
+
+import java.net.URL;
+import java.sql.SQLException;
+import java.util.Objects;
+import java.util.ResourceBundle;
+
+import static org.infinite.spoty.GlobalActions.closeDialog;
+import static org.infinite.spoty.Validators.requiredValidator;
+import static org.infinite.spoty.viewModels.BranchViewModel.clearBranchData;
+import static org.infinite.spoty.viewModels.BranchViewModel.saveBranch;
 
 public class BranchFormController implements Initializable {
     private static BranchFormController instance;
@@ -96,10 +96,10 @@ public class BranchFormController implements Initializable {
 
     private void dialogOnActions() {
         branchFormCancelBtn.setOnAction(
-                (e) -> {
+                (event) -> {
                     clearBranchData();
 
-                    closeDialog(e);
+                    closeDialog(event);
 
                     branchFormNameValidationLabel.setVisible(false);
                     branchFormEmailValidationLabel.setVisible(false);
@@ -108,7 +108,7 @@ public class BranchFormController implements Initializable {
                     branchFormCityValidationLabel.setVisible(false);
                 });
         branchFormSaveBtn.setOnAction(
-                (e) -> {
+                (event) -> {
                     SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
 
                     if (!branchFormNameValidationLabel.isVisible()
@@ -120,8 +120,8 @@ public class BranchFormController implements Initializable {
                             GlobalActions.spotyThreadPool().execute(() -> {
                                 try {
                                     BranchViewModel.updateItem(BranchViewModel.getId());
-                                } catch (SQLException ex) {
-                                    throw new RuntimeException(ex);
+                                } catch (SQLException e) {
+                                    SpotyLogger.writeToFile(e, this.getClass());
                                 }
                             });
 
@@ -133,14 +133,14 @@ public class BranchFormController implements Initializable {
                                             .build();
                             notificationHolder.addNotification(notification);
 
-                            closeDialog(e);
+                            closeDialog(event);
                             return;
                         }
                         GlobalActions.spotyThreadPool().execute(() -> {
                             try {
                                 saveBranch();
-                            } catch (SQLException ex) {
-                                throw new RuntimeException(ex);
+                            } catch (SQLException e) {
+                                SpotyLogger.writeToFile(e, this.getClass());
                             }
                         });
 
@@ -152,7 +152,7 @@ public class BranchFormController implements Initializable {
                                         .build();
                         notificationHolder.addNotification(notification);
 
-                        closeDialog(e);
+                        closeDialog(event);
                         return;
                     }
                     SimpleNotification notification =

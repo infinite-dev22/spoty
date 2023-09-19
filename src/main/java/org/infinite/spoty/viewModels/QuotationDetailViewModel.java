@@ -30,6 +30,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.*;
+import org.infinite.spoty.utils.SpotyLogger;
+import org.jetbrains.annotations.NotNull;
 
 public class QuotationDetailViewModel {
     // TODO: Add more fields according to DB design and necessity.
@@ -205,7 +207,7 @@ public class QuotationDetailViewModel {
                     try {
                         quotationDetailsList.addAll(quotationDetailDao.queryForAll());
                     } catch (SQLException e) {
-                        throw new RuntimeException(e);
+                        SpotyLogger.writeToFile(e, QuotationDetailViewModel.class);
                     }
                 });
     }
@@ -233,7 +235,7 @@ public class QuotationDetailViewModel {
                     try {
                         quotationDetailDao.update(quotationDetail);
                     } catch (SQLException e) {
-                        throw new RuntimeException(e);
+                        SpotyLogger.writeToFile(e, QuotationDetailViewModel.class);
                     }
                 });
 
@@ -245,7 +247,7 @@ public class QuotationDetailViewModel {
         PENDING_DELETES.add(index);
     }
 
-    public static void deleteQuotationDetails(LinkedList<Long> indexes) {
+    public static void deleteQuotationDetails(@NotNull LinkedList<Long> indexes) {
         indexes.forEach(
                 index -> {
                     try {
@@ -254,7 +256,7 @@ public class QuotationDetailViewModel {
 
                         quotationDetailDao.deleteById(index);
                     } catch (SQLException e) {
-                        throw new RuntimeException(e);
+                        SpotyLogger.writeToFile(e, QuotationDetailViewModel.class);
                     }
                 });
     }

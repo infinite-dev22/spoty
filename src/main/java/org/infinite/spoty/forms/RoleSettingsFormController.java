@@ -14,19 +14,10 @@
 
 package org.infinite.spoty.forms;
 
-import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
-
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.validation.Constraint;
 import io.github.palexdev.materialfx.validation.Severity;
 import io.github.palexdev.mfxcomponents.controls.checkbox.MFXCheckbox;
-
-import java.net.URL;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Objects;
-import java.util.ResourceBundle;
-
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -39,8 +30,17 @@ import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
+import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.viewModels.PermissionsViewModel;
 import org.infinite.spoty.viewModels.RoleViewModel;
+
+import java.net.URL;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Objects;
+import java.util.ResourceBundle;
+
+import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
 
 public class RoleSettingsFormController implements Initializable {
     private static RoleSettingsFormController instance;
@@ -1780,7 +1780,7 @@ public class RoleSettingsFormController implements Initializable {
                     try {
                         RoleViewModel.updateItem(RoleViewModel.getId());
                     } catch (SQLException e) {
-                        throw new RuntimeException(e);
+                        SpotyLogger.writeToFile(e, this.getClass());
                     }
                 });
 
@@ -1801,7 +1801,7 @@ public class RoleSettingsFormController implements Initializable {
                 try {
                     RoleViewModel.saveRole();
                 } catch (SQLException e) {
-                    throw new RuntimeException(e);
+                    SpotyLogger.writeToFile(e, this.getClass());
                 }
             });
 

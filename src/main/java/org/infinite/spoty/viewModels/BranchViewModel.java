@@ -17,17 +17,15 @@ package org.infinite.spoty.viewModels;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
-
-import java.sql.SQLException;
-
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
-import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.Branch;
+import org.infinite.spoty.utils.SpotyLogger;
+
+import java.sql.SQLException;
 
 public class BranchViewModel {
     private static final LongProperty id = new SimpleLongProperty(0);
@@ -39,14 +37,11 @@ public class BranchViewModel {
     private static final StringProperty city = new SimpleStringProperty("");
     private static final StringProperty zipcode = new SimpleStringProperty("");
     private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>();
-    public static ObservableList<Branch> branchesList = FXCollections.observableArrayList();
-
-    private static final ListProperty<Branch> branches = new SimpleListProperty<>(branchesList);
-
-    public static ObservableList<Branch> branchesComboBoxList = FXCollections.observableArrayList();
     private static final SQLiteConnection connection = SQLiteConnection.getInstance();
     private static final ConnectionSource connectionSource = connection.getConnection();
-
+    public static ObservableList<Branch> branchesList = FXCollections.observableArrayList();
+    private static final ListProperty<Branch> branches = new SimpleListProperty<>(branchesList);
+    public static ObservableList<Branch> branchesComboBoxList = FXCollections.observableArrayList();
 
     public static long getId() {
         return id.get();
@@ -196,7 +191,7 @@ public class BranchViewModel {
                     try {
                         branchesList.addAll(branchDao.queryForAll());
                     } catch (SQLException e) {
-                        throw new RuntimeException(e);
+                        SpotyLogger.writeToFile(e, BranchViewModel.class);
                     }
                 });
     }

@@ -33,6 +33,7 @@ import javafx.concurrent.Task;
 import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.ProductCategory;
+import org.infinite.spoty.utils.SpotyLogger;
 
 public class ProductCategoryViewModel {
     private static final LongProperty id = new SimpleLongProperty(0);
@@ -137,7 +138,7 @@ public class ProductCategoryViewModel {
                     try {
                         categoriesList.addAll(productCategoryDao.queryForAll());
                     } catch (SQLException e) {
-                        throw new RuntimeException(e);
+                        SpotyLogger.writeToFile(e, ProductCategoryViewModel.class);
                     }
                 });
     }

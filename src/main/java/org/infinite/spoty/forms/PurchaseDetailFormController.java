@@ -14,23 +14,11 @@
 
 package org.infinite.spoty.forms;
 
-import static org.infinite.spoty.GlobalActions.closeDialog;
-import static org.infinite.spoty.Validators.requiredValidator;
-import static org.infinite.spoty.values.SharedResources.tempIdProperty;
-
 import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.utils.StringUtils;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-
-import java.net.URL;
-import java.sql.SQLException;
-import java.util.Objects;
-import java.util.ResourceBundle;
-import java.util.function.Function;
-import java.util.function.Predicate;
-
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -41,8 +29,20 @@ import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.database.models.Product;
+import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.viewModels.ProductViewModel;
 import org.infinite.spoty.viewModels.PurchaseDetailViewModel;
+
+import java.net.URL;
+import java.sql.SQLException;
+import java.util.Objects;
+import java.util.ResourceBundle;
+import java.util.function.Function;
+import java.util.function.Predicate;
+
+import static org.infinite.spoty.GlobalActions.closeDialog;
+import static org.infinite.spoty.Validators.requiredValidator;
+import static org.infinite.spoty.values.SharedResources.tempIdProperty;
 
 public class PurchaseDetailFormController implements Initializable {
     private static PurchaseDetailFormController instance;
@@ -113,8 +113,8 @@ public class PurchaseDetailFormController implements Initializable {
 
     private void dialogOnActions() {
         purchaseDetailCancelBtn.setOnAction(
-                (e) -> {
-                    closeDialog(e);
+                (event) -> {
+                    closeDialog(event);
                     PurchaseDetailViewModel.resetProperties();
                     purchaseDetailPdct.clearSelection();
                     purchaseDetailPdctValidationLabel.setVisible(false);
@@ -122,7 +122,7 @@ public class PurchaseDetailFormController implements Initializable {
                     purchaseDetailCostValidationLabel.setVisible(false);
                 });
         purchaseDetailSaveBtn.setOnAction(
-                (e) -> {
+                (event) -> {
                     SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
 
                     if (!purchaseDetailPdctValidationLabel.isVisible()
@@ -132,8 +132,8 @@ public class PurchaseDetailFormController implements Initializable {
                             GlobalActions.spotyThreadPool().execute(() -> {
                                 try {
                                     PurchaseDetailViewModel.updatePurchaseDetail(PurchaseDetailViewModel.getId());
-                                } catch (SQLException ex) {
-                                    throw new RuntimeException(ex);
+                                } catch (SQLException e) {
+                                    SpotyLogger.writeToFile(e, this.getClass());
                                 }
                             });
 
@@ -147,7 +147,7 @@ public class PurchaseDetailFormController implements Initializable {
 
                             purchaseDetailPdct.clearSelection();
 
-                            closeDialog(e);
+                            closeDialog(event);
                             return;
                         }
                         PurchaseDetailViewModel.addPurchaseDetail();
@@ -160,7 +160,7 @@ public class PurchaseDetailFormController implements Initializable {
                                         .build();
                         notificationHolder.addNotification(notification);
 
-                        closeDialog(e);
+                        closeDialog(event);
                         purchaseDetailPdct.clearSelection();
                         return;
                     }

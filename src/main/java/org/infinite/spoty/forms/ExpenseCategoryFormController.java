@@ -14,19 +14,8 @@
 
 package org.infinite.spoty.forms;
 
-import static org.infinite.spoty.GlobalActions.closeDialog;
-import static org.infinite.spoty.Validators.requiredValidator;
-import static org.infinite.spoty.viewModels.ExpenseCategoryViewModel.resetProperties;
-import static org.infinite.spoty.viewModels.ExpenseCategoryViewModel.saveExpenseCategory;
-
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-
-import java.net.URL;
-import java.sql.SQLException;
-import java.util.Objects;
-import java.util.ResourceBundle;
-
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -35,7 +24,18 @@ import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
+import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.viewModels.ExpenseCategoryViewModel;
+
+import java.net.URL;
+import java.sql.SQLException;
+import java.util.Objects;
+import java.util.ResourceBundle;
+
+import static org.infinite.spoty.GlobalActions.closeDialog;
+import static org.infinite.spoty.Validators.requiredValidator;
+import static org.infinite.spoty.viewModels.ExpenseCategoryViewModel.resetProperties;
+import static org.infinite.spoty.viewModels.ExpenseCategoryViewModel.saveExpenseCategory;
 
 public class ExpenseCategoryFormController implements Initializable {
     private static ExpenseCategoryFormController instance;
@@ -75,13 +75,13 @@ public class ExpenseCategoryFormController implements Initializable {
 
     private void dialogOnActions() {
         categoryExpenseFormCancelBtn.setOnAction(
-                (e) -> {
-                    closeDialog(e);
+                (event) -> {
+                    closeDialog(event);
                     resetProperties();
                     categoryExpenseFormNameValidationLabel.setVisible(false);
                 });
         categoryExpenseFormSaveBtn.setOnAction(
-                (e) -> {
+                (event) -> {
                     SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
 
                     if (!categoryExpenseFormNameValidationLabel.isVisible()) {
@@ -89,8 +89,8 @@ public class ExpenseCategoryFormController implements Initializable {
                             GlobalActions.spotyThreadPool().execute(() -> {
                                 try {
                                     ExpenseCategoryViewModel.updateItem(ExpenseCategoryViewModel.getId());
-                                } catch (SQLException ex) {
-                                    throw new RuntimeException(ex);
+                                } catch (SQLException e) {
+                                    SpotyLogger.writeToFile(e, this.getClass());
                                 }
                             });
 
@@ -102,14 +102,14 @@ public class ExpenseCategoryFormController implements Initializable {
                                             .build();
                             notificationHolder.addNotification(notification);
 
-                            closeDialog(e);
+                            closeDialog(event);
                             return;
                         }
                         GlobalActions.spotyThreadPool().execute(() -> {
                             try {
                                 saveExpenseCategory();
-                            } catch (SQLException ex) {
-                                throw new RuntimeException(ex);
+                            } catch (SQLException e) {
+                                SpotyLogger.writeToFile(e, this.getClass());
                             }
                         });
                         SimpleNotification notification =
@@ -120,7 +120,7 @@ public class ExpenseCategoryFormController implements Initializable {
                                         .build();
                         notificationHolder.addNotification(notification);
 
-                        closeDialog(e);
+                        closeDialog(event);
                         return;
                     }
                     SimpleNotification notification =

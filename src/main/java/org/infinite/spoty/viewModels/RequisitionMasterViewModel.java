@@ -14,27 +14,26 @@
 
 package org.infinite.spoty.viewModels;
 
-import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
-
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
+import javafx.application.Platform;
+import javafx.beans.property.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import org.infinite.spoty.database.connection.SQLiteConnection;
+import org.infinite.spoty.database.models.Branch;
+import org.infinite.spoty.database.models.RequisitionMaster;
+import org.infinite.spoty.database.models.Supplier;
+import org.infinite.spoty.utils.SpotyLogger;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import javafx.application.Platform;
-import javafx.beans.property.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
-import org.infinite.spoty.GlobalActions;
-import org.infinite.spoty.database.connection.SQLiteConnection;
-import org.infinite.spoty.database.models.Branch;
-import org.infinite.spoty.database.models.RequisitionMaster;
-import org.infinite.spoty.database.models.Supplier;
+import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
 
 public class RequisitionMasterViewModel {
     public static final ObservableList<RequisitionMaster> requisitionMasterList =
@@ -67,12 +66,13 @@ public class RequisitionMasterViewModel {
         return id;
     }
 
-    public static Date getDate() {
+    public static @Nullable Date getDate() {
         try {
             return new SimpleDateFormat("MMM dd, yyyy").parse(date.get());
         } catch (ParseException e) {
-            throw new RuntimeException(e);
+            SpotyLogger.writeToFile(e, RequisitionMasterViewModel.class);
         }
+        return null;
     }
 
     public static void setDate(String date) {
@@ -155,12 +155,13 @@ public class RequisitionMasterViewModel {
         return shippingTerms;
     }
 
-    public static Date getDeliveryDate() {
+    public static @Nullable Date getDeliveryDate() {
         try {
             return new SimpleDateFormat("MMM dd, yyyy").parse(date.get());
         } catch (ParseException e) {
-            throw new RuntimeException(e);
+            SpotyLogger.writeToFile(e, RequisitionMasterViewModel.class);
         }
+        return null;
     }
 
     public static void setDeliveryDate(String deliveryDate) {
@@ -269,7 +270,7 @@ public class RequisitionMasterViewModel {
                     try {
                         requisitionMasterList.addAll(requisitionMasterDao.queryForAll());
                     } catch (SQLException e) {
-                        throw new RuntimeException(e);
+                        SpotyLogger.writeToFile(e, RequisitionMasterViewModel.class);
                     }
                 });
     }

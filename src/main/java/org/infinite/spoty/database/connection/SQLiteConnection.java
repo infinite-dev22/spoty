@@ -18,6 +18,8 @@ import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.logger.Level;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.support.ConnectionSource;
+import org.infinite.spoty.utils.SpotyLogger;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -25,17 +27,6 @@ import java.util.Objects;
 
 public class SQLiteConnection {
   private static SQLiteConnection instance;
-
-  private SQLiteConnection() {
-    // Create DB Location path on system.
-    try {
-      Files.createDirectories(
-          Paths.get(
-              System.getProperty("user.home") + "/.config/ZenmartERP/datastores/databases/sqlite"));
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-  }
 
   public static SQLiteConnection getInstance() {
     if (Objects.equals(instance, null)) instance = new SQLiteConnection();
@@ -52,7 +43,7 @@ public class SQLiteConnection {
                 + System.getProperty("user.home")
                 + "/.config/ZenmartERP/datastores/databases/sqlite/database.sqlite3");
       } catch (Exception e) {
-        throw new RuntimeException(e);
+        SpotyLogger.writeToFile(e, this.getClass());
       }
     }
 
@@ -63,7 +54,7 @@ public class SQLiteConnection {
                 + System.getProperty("user.home")
                 + "/.config/ZenmartERP/datastores/databases/sqlite/database.sqlite3");
       } catch (Exception e) {
-        throw new RuntimeException(e);
+        SpotyLogger.writeToFile(e, this.getClass());
       }
     }
 
@@ -74,7 +65,7 @@ public class SQLiteConnection {
                 + System.getenv("APPDATA")
                 + "/.config/ZenmartERP/datastores/databases/sqlite/database.sqlite3");
       } catch (Exception e) {
-        throw new RuntimeException(e);
+        SpotyLogger.writeToFile(e, this.getClass());
       }
     }
     return null;

@@ -14,17 +14,7 @@
 
 package org.infinite.spoty.forms;
 
-import static org.infinite.spoty.SpotyResourceLoader.fxmlLoader;
-import static org.infinite.spoty.Validators.requiredValidator;
-
-import io.github.palexdev.materialfx.controls.MFXContextMenu;
-import io.github.palexdev.materialfx.controls.MFXContextMenuItem;
-import io.github.palexdev.materialfx.controls.MFXDatePicker;
-import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
-import io.github.palexdev.materialfx.controls.MFXTableColumn;
-import io.github.palexdev.materialfx.controls.MFXTableRow;
-import io.github.palexdev.materialfx.controls.MFXTableView;
-import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
@@ -36,15 +26,6 @@ import io.github.palexdev.materialfx.filter.StringFilter;
 import io.github.palexdev.materialfx.utils.StringUtils;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-
-import java.io.IOException;
-import java.net.URL;
-import java.sql.SQLException;
-import java.util.Comparator;
-import java.util.ResourceBundle;
-import java.util.function.Function;
-import java.util.function.Predicate;
-
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -67,12 +48,24 @@ import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.PurchaseDetail;
 import org.infinite.spoty.database.models.Supplier;
+import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.values.strings.Values;
 import org.infinite.spoty.viewModels.BranchViewModel;
 import org.infinite.spoty.viewModels.PurchaseDetailViewModel;
 import org.infinite.spoty.viewModels.PurchaseMasterViewModel;
 import org.infinite.spoty.viewModels.SupplierViewModel;
 import org.infinite.spoty.views.BaseController;
+
+import java.io.IOException;
+import java.net.URL;
+import java.sql.SQLException;
+import java.util.Comparator;
+import java.util.ResourceBundle;
+import java.util.function.Function;
+import java.util.function.Predicate;
+
+import static org.infinite.spoty.SpotyResourceLoader.fxmlLoader;
+import static org.infinite.spoty.Validators.requiredValidator;
 
 @SuppressWarnings("unchecked")
 public class PurchaseMasterFormController implements Initializable {
@@ -110,8 +103,8 @@ public class PurchaseMasterFormController implements Initializable {
                 () -> {
                     try {
                         createPurchaseProductDialog(stage);
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
+                    } catch (IOException e) {
+                        SpotyLogger.writeToFile(e, this.getClass());
                     }
                 });
     }
@@ -224,7 +217,7 @@ public class PurchaseMasterFormController implements Initializable {
                     try {
                         PurchaseMasterViewModel.updateItem(PurchaseMasterViewModel.getId());
                     } catch (SQLException e) {
-                        throw new RuntimeException(e);
+                        SpotyLogger.writeToFile(e, this.getClass());
                     }
                 });
 
@@ -247,7 +240,7 @@ public class PurchaseMasterFormController implements Initializable {
                 try {
                     PurchaseMasterViewModel.savePurchaseMaster();
                 } catch (SQLException e) {
-                    throw new RuntimeException(e);
+                    SpotyLogger.writeToFile(e, this.getClass());
                 }
             });
 
@@ -334,7 +327,7 @@ public class PurchaseMasterFormController implements Initializable {
             PurchaseDetailViewModel.getPurchaseDetails()
                     .addListener(
                             (ListChangeListener<PurchaseDetail>)
-                                    c -> purchaseDetailTable.setItems(PurchaseDetailViewModel.getPurchaseDetails()));
+                                    change -> purchaseDetailTable.setItems(PurchaseDetailViewModel.getPurchaseDetails()));
         } else {
             purchaseDetailTable
                     .itemsProperty()
@@ -372,26 +365,26 @@ public class PurchaseMasterFormController implements Initializable {
         // Actions
         // Delete
         delete.setOnAction(
-                e -> {
+                event -> {
                     PurchaseDetailViewModel.removePurchaseDetail(
                             obj.getData().getId(),
                             PurchaseDetailViewModel.purchaseDetailList.indexOf(obj.getData()));
-                    e.consume();
+                    event.consume();
                 });
         // Edit
         edit.setOnAction(
-                e -> {
+                event -> {
                     GlobalActions.spotyThreadPool().execute(() -> {
                         try {
                             PurchaseDetailViewModel.getItem(
                                     obj.getData().getId(),
                                     PurchaseDetailViewModel.purchaseDetailList.indexOf(obj.getData()));
-                        } catch (SQLException ex) {
-                            throw new RuntimeException(ex);
+                        } catch (SQLException e) {
+                            SpotyLogger.writeToFile(e, this.getClass());
                         }
                     });
                     dialog.showAndWait();
-                    e.consume();
+                    event.consume();
                 });
 
         contextMenu.addItems(edit, delete);

@@ -33,6 +33,7 @@ import javafx.concurrent.Task;
 import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.Brand;
+import org.infinite.spoty.utils.SpotyLogger;
 
 public class BrandViewModel {
     private static final LongProperty id = new SimpleLongProperty(0);
@@ -123,7 +124,7 @@ public class BrandViewModel {
                     try {
                         brandsList.addAll(brandDao.queryForAll());
                     } catch (SQLException e) {
-                        throw new RuntimeException(e);
+                        SpotyLogger.writeToFile(e, BrandViewModel.class);
                     }
                 });
     }

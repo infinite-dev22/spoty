@@ -14,26 +14,24 @@
 
 package org.infinite.spoty.viewModels;
 
-import static org.infinite.spoty.values.SharedResources.*;
-import static org.infinite.spoty.values.SharedResources.getTempId;
-
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
-
-import java.sql.SQLException;
-import java.util.LinkedList;
-
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
-import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.Product;
 import org.infinite.spoty.database.models.RequisitionDetail;
 import org.infinite.spoty.database.models.RequisitionMaster;
+import org.infinite.spoty.utils.SpotyLogger;
+import org.jetbrains.annotations.NotNull;
+
+import java.sql.SQLException;
+import java.util.LinkedList;
+
+import static org.infinite.spoty.values.SharedResources.*;
 
 public class RequisitionDetailViewModel {
     public static final ObservableList<RequisitionDetail> requisitionDetailList =
@@ -213,7 +211,7 @@ public class RequisitionDetailViewModel {
                     try {
                         requisitionDetailDao.update(requisitionDetail);
                     } catch (SQLException e) {
-                        throw new RuntimeException(e);
+                        SpotyLogger.writeToFile(e, RequisitionDetailViewModel.class);
                     }
                 });
 
@@ -225,7 +223,7 @@ public class RequisitionDetailViewModel {
         PENDING_DELETES.add(index);
     }
 
-    public static void deleteRequisitionDetails(LinkedList<Long> indexes) {
+    public static void deleteRequisitionDetails(@NotNull LinkedList<Long> indexes) {
         indexes.forEach(
                 index -> {
                     try {
@@ -234,7 +232,7 @@ public class RequisitionDetailViewModel {
 
                         requisitionDetailDao.deleteById(index);
                     } catch (SQLException e) {
-                        throw new RuntimeException(e);
+                        SpotyLogger.writeToFile(e, RequisitionDetailViewModel.class);
                     }
                 });
     }

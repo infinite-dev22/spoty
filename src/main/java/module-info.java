@@ -59,4 +59,6 @@ module org.infinite.spoty {
   opens org.infinite.spoty.views.pos;
 
   exports org.infinite.spoty;
+    exports org.infinite.spoty.utils;
+    opens org.infinite.spoty.utils;
 }

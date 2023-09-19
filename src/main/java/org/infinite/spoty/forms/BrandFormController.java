@@ -14,19 +14,8 @@
 
 package org.infinite.spoty.forms;
 
-import static org.infinite.spoty.GlobalActions.closeDialog;
-import static org.infinite.spoty.Validators.requiredValidator;
-import static org.infinite.spoty.viewModels.BrandViewModel.clearBrandData;
-import static org.infinite.spoty.viewModels.BrandViewModel.saveBrand;
-
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-
-import java.net.URL;
-import java.sql.SQLException;
-import java.util.Objects;
-import java.util.ResourceBundle;
-
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -35,7 +24,18 @@ import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
+import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.viewModels.BrandViewModel;
+
+import java.net.URL;
+import java.sql.SQLException;
+import java.util.Objects;
+import java.util.ResourceBundle;
+
+import static org.infinite.spoty.GlobalActions.closeDialog;
+import static org.infinite.spoty.Validators.requiredValidator;
+import static org.infinite.spoty.viewModels.BrandViewModel.clearBrandData;
+import static org.infinite.spoty.viewModels.BrandViewModel.saveBrand;
 
 public class BrandFormController implements Initializable {
     private static BrandFormController instance;
@@ -70,15 +70,15 @@ public class BrandFormController implements Initializable {
 
     private void dialogOnActions() {
         brandFormCancelBtn.setOnAction(
-                (e) -> {
-                    closeDialog(e);
+                (event) -> {
+                    closeDialog(event);
 
                     clearBrandData();
 
                     brandFormNameValidationLabel.setVisible(false);
                 });
         brandFormSaveBtn.setOnAction(
-                (e) -> {
+                (event) -> {
                     SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
 
                     if (!brandFormNameValidationLabel.isVisible()) {
@@ -86,8 +86,8 @@ public class BrandFormController implements Initializable {
                             GlobalActions.spotyThreadPool().execute(() -> {
                                 try {
                                     BrandViewModel.updateItem(BrandViewModel.getId());
-                                } catch (SQLException ex) {
-                                    throw new RuntimeException(ex);
+                                } catch (SQLException e) {
+                                    SpotyLogger.writeToFile(e, this.getClass());
                                 }
                             });
 
@@ -99,14 +99,14 @@ public class BrandFormController implements Initializable {
                                             .build();
                             notificationHolder.addNotification(notification);
 
-                            closeDialog(e);
+                            closeDialog(event);
                             return;
                         }
                         GlobalActions.spotyThreadPool().execute(() -> {
                             try {
                                 saveBrand();
-                            } catch (SQLException ex) {
-                                throw new RuntimeException(ex);
+                            } catch (SQLException e) {
+                                SpotyLogger.writeToFile(e, this.getClass());
                             }
                         });
 
@@ -118,7 +118,7 @@ public class BrandFormController implements Initializable {
                                         .build();
                         notificationHolder.addNotification(notification);
 
-                        closeDialog(e);
+                        closeDialog(event);
                         return;
                     }
                     SimpleNotification notification =

@@ -14,17 +14,8 @@
 
 package org.infinite.spoty.forms;
 
-import static org.infinite.spoty.GlobalActions.closeDialog;
-import static org.infinite.spoty.Validators.*;
-
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-
-import java.net.URL;
-import java.sql.SQLException;
-import java.util.Objects;
-import java.util.ResourceBundle;
-
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -33,7 +24,16 @@ import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
+import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.viewModels.SupplierViewModel;
+
+import java.net.URL;
+import java.sql.SQLException;
+import java.util.Objects;
+import java.util.ResourceBundle;
+
+import static org.infinite.spoty.GlobalActions.closeDialog;
+import static org.infinite.spoty.Validators.*;
 
 public class SupplierFormController implements Initializable {
     private static SupplierFormController instance;
@@ -116,15 +116,15 @@ public class SupplierFormController implements Initializable {
 
     private void dialogOnActions() {
         supplierFormCancelBtn.setOnAction(
-                (e) -> {
-                    closeDialog(e);
+                (event) -> {
+                    closeDialog(event);
                     SupplierViewModel.resetProperties();
                     supplierFormNameValidationLabel.setVisible(false);
                     supplierFormEmailValidationLabel.setVisible(false);
                     supplierFormPhoneValidationLabel.setVisible(false);
                 });
         supplierFormSaveBtn.setOnAction(
-                (e) -> {
+                (event) -> {
                     SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
                     if (!supplierFormNameValidationLabel.isVisible()
                             && !supplierFormEmailValidationLabel.isVisible()
@@ -133,8 +133,8 @@ public class SupplierFormController implements Initializable {
                             GlobalActions.spotyThreadPool().execute(() -> {
                                 try {
                                     SupplierViewModel.updateItem(SupplierViewModel.getId());
-                                } catch (SQLException ex) {
-                                    throw new RuntimeException(ex);
+                                } catch (SQLException e) {
+                                    SpotyLogger.writeToFile(e, this.getClass());
                                 }
                             });
 
@@ -146,14 +146,14 @@ public class SupplierFormController implements Initializable {
                                             .build();
                             notificationHolder.addNotification(notification);
 
-                            closeDialog(e);
+                            closeDialog(event);
                             return;
                         }
                         GlobalActions.spotyThreadPool().execute(() -> {
                             try {
                                 SupplierViewModel.saveSupplier();
-                            } catch (SQLException ex) {
-                                throw new RuntimeException(ex);
+                            } catch (SQLException e) {
+                                SpotyLogger.writeToFile(e, this.getClass());
                             }
                         });
 
@@ -165,7 +165,7 @@ public class SupplierFormController implements Initializable {
                                         .build();
                         notificationHolder.addNotification(notification);
 
-                        closeDialog(e);
+                        closeDialog(event);
                         return;
                     }
                     SimpleNotification notification =

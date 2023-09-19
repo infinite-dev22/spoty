@@ -14,17 +14,9 @@
 
 package org.infinite.spoty.viewModels;
 
-import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
-
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
-
-import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -32,6 +24,14 @@ import javafx.collections.ObservableList;
 import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.TransferMaster;
+import org.infinite.spoty.utils.SpotyLogger;
+
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
 
 public class TransferMasterViewModel {
     public static final ObservableList<TransferMaster> transferMasterList =
@@ -64,8 +64,9 @@ public class TransferMasterViewModel {
         try {
             return new SimpleDateFormat("MMM dd, yyyy").parse(date.get());
         } catch (ParseException e) {
-            throw new RuntimeException(e);
+            SpotyLogger.writeToFile(e, TransferMasterViewModel.class);
         }
+        return null;
     }
 
     public static void setDate(String date) {
@@ -199,7 +200,7 @@ public class TransferMasterViewModel {
                     try {
                         transferMasterList.addAll(transferMasterDao.queryForAll());
                     } catch (SQLException e) {
-                        throw new RuntimeException(e);
+                        SpotyLogger.writeToFile(e, TransferMasterViewModel.class);
                     }
                 });
     }

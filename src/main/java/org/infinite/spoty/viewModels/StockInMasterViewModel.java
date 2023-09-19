@@ -14,17 +14,9 @@
 
 package org.infinite.spoty.viewModels;
 
-import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
-
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
-
-import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -32,6 +24,15 @@ import javafx.collections.ObservableList;
 import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.StockInMaster;
+import org.infinite.spoty.utils.SpotyLogger;
+import org.jetbrains.annotations.Nullable;
+
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
 
 public class StockInMasterViewModel {
     public static final ObservableList<StockInMaster> stockInMasterList =
@@ -59,12 +60,13 @@ public class StockInMasterViewModel {
         return id;
     }
 
-    public static Date getDate() {
+    public static @Nullable Date getDate() {
         try {
             return new SimpleDateFormat("MMM dd, yyyy").parse(date.get());
         } catch (ParseException e) {
-            throw new RuntimeException(e);
+            SpotyLogger.writeToFile(e, StockInMasterViewModel.class);
         }
+        return null;
     }
 
     public static void setDate(String date) {
@@ -178,7 +180,7 @@ public class StockInMasterViewModel {
                     try {
                         stockInMasterList.addAll(stockInMasterDao.queryForAll());
                     } catch (SQLException e) {
-                        throw new RuntimeException(e);
+                        SpotyLogger.writeToFile(e, StockInMasterViewModel.class);
                     }
                 });
     }

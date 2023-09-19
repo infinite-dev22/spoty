@@ -14,17 +14,8 @@
 
 package org.infinite.spoty.forms;
 
-import static org.infinite.spoty.GlobalActions.closeDialog;
-import static org.infinite.spoty.Validators.*;
-
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-
-import java.net.URL;
-import java.sql.SQLException;
-import java.util.Objects;
-import java.util.ResourceBundle;
-
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -33,7 +24,16 @@ import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
+import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.viewModels.CustomerViewModel;
+
+import java.net.URL;
+import java.sql.SQLException;
+import java.util.Objects;
+import java.util.ResourceBundle;
+
+import static org.infinite.spoty.GlobalActions.closeDialog;
+import static org.infinite.spoty.Validators.*;
 
 public class CustomerFormController implements Initializable {
     private static CustomerFormController instance;
@@ -106,8 +106,8 @@ public class CustomerFormController implements Initializable {
 
     private void dialogOnActions() {
         customerFormCancelBtn.setOnAction(
-                (e) -> {
-                    closeDialog(e);
+                (event) -> {
+                    closeDialog(event);
 
                     validationLabel1.setVisible(false);
                     validationLabel2.setVisible(false);
@@ -116,7 +116,7 @@ public class CustomerFormController implements Initializable {
                     CustomerViewModel.resetProperties();
                 });
         customerFormSaveBtn.setOnAction(
-                (e) -> {
+                (event) -> {
                     SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
 
                     if (!validationLabel1.isVisible()
@@ -126,8 +126,8 @@ public class CustomerFormController implements Initializable {
                             GlobalActions.spotyThreadPool().execute(() -> {
                                 try {
                                     CustomerViewModel.updateItem(CustomerViewModel.getId());
-                                } catch (SQLException ex) {
-                                    throw new RuntimeException(ex);
+                                } catch (SQLException e) {
+                                    SpotyLogger.writeToFile(e, this.getClass());
                                 }
                             });
 
@@ -139,14 +139,14 @@ public class CustomerFormController implements Initializable {
                                             .build();
                             notificationHolder.addNotification(notification);
 
-                            closeDialog(e);
+                            closeDialog(event);
                             return;
                         }
                         GlobalActions.spotyThreadPool().execute(() -> {
                             try {
                                 CustomerViewModel.saveCustomer();
-                            } catch (SQLException ex) {
-                                throw new RuntimeException(ex);
+                            } catch (SQLException e) {
+                                SpotyLogger.writeToFile(e, this.getClass());
                             }
                         });
 
@@ -158,7 +158,7 @@ public class CustomerFormController implements Initializable {
                                         .build();
                         notificationHolder.addNotification(notification);
 
-                        closeDialog(e);
+                        closeDialog(event);
                         return;
                     }
                     SimpleNotification notification =

@@ -14,17 +14,7 @@
 
 package org.infinite.spoty.forms;
 
-import static org.infinite.spoty.SpotyResourceLoader.fxmlLoader;
-import static org.infinite.spoty.Validators.requiredValidator;
-
-import io.github.palexdev.materialfx.controls.MFXContextMenu;
-import io.github.palexdev.materialfx.controls.MFXContextMenuItem;
-import io.github.palexdev.materialfx.controls.MFXDatePicker;
-import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
-import io.github.palexdev.materialfx.controls.MFXTableColumn;
-import io.github.palexdev.materialfx.controls.MFXTableRow;
-import io.github.palexdev.materialfx.controls.MFXTableView;
-import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
@@ -36,15 +26,6 @@ import io.github.palexdev.materialfx.filter.StringFilter;
 import io.github.palexdev.materialfx.utils.StringUtils;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-
-import java.io.IOException;
-import java.net.URL;
-import java.sql.SQLException;
-import java.util.Comparator;
-import java.util.ResourceBundle;
-import java.util.function.Function;
-import java.util.function.Predicate;
-
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -67,12 +48,24 @@ import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.Customer;
 import org.infinite.spoty.database.models.SaleDetail;
+import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.values.strings.Values;
 import org.infinite.spoty.viewModels.BranchViewModel;
 import org.infinite.spoty.viewModels.CustomerViewModel;
 import org.infinite.spoty.viewModels.SaleDetailViewModel;
 import org.infinite.spoty.viewModels.SaleMasterViewModel;
 import org.infinite.spoty.views.BaseController;
+
+import java.io.IOException;
+import java.net.URL;
+import java.sql.SQLException;
+import java.util.Comparator;
+import java.util.ResourceBundle;
+import java.util.function.Function;
+import java.util.function.Predicate;
+
+import static org.infinite.spoty.SpotyResourceLoader.fxmlLoader;
+import static org.infinite.spoty.Validators.requiredValidator;
 
 @SuppressWarnings("unchecked")
 public class SaleMasterFormController implements Initializable {
@@ -114,8 +107,8 @@ public class SaleMasterFormController implements Initializable {
                 () -> {
                     try {
                         saleProductDialogPane(stage);
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
+                    } catch (IOException e) {
+                        SpotyLogger.writeToFile(e, this.getClass());
                     }
                 });
     }
@@ -227,7 +220,7 @@ public class SaleMasterFormController implements Initializable {
                                     try {
                                         SaleMasterViewModel.updateItem(SaleMasterViewModel.getId());
                                     } catch (SQLException e) {
-                                        throw new RuntimeException(e);
+                                        SpotyLogger.writeToFile(e, this.getClass());
                                     }
                                 });
 
@@ -253,7 +246,7 @@ public class SaleMasterFormController implements Initializable {
                                 try {
                                     SaleMasterViewModel.saveSaleMaster();
                                 } catch (SQLException e) {
-                                    throw new RuntimeException(e);
+                                    SpotyLogger.writeToFile(e, this.getClass());
                                 }
                             });
 
@@ -356,7 +349,7 @@ public class SaleMasterFormController implements Initializable {
             SaleDetailViewModel.getSaleDetails()
                     .addListener(
                             (ListChangeListener<SaleDetail>)
-                                    c -> saleDetailTable.setItems(SaleDetailViewModel.getSaleDetails()));
+                                    change -> saleDetailTable.setItems(SaleDetailViewModel.getSaleDetails()));
         } else {
             saleDetailTable.itemsProperty().bindBidirectional(SaleDetailViewModel.saleDetailsProperty());
         }
@@ -368,8 +361,8 @@ public class SaleMasterFormController implements Initializable {
         saleDetailTable.features().enableSmoothScrolling(0.5);
 
         saleDetailTable.setTableRowFactory(
-                t -> {
-                    MFXTableRow<SaleDetail> row = new MFXTableRow<>(saleDetailTable, t);
+                saleDetail -> {
+                    MFXTableRow<SaleDetail> row = new MFXTableRow<>(saleDetailTable, saleDetail);
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
                                 showContextMenu((MFXTableRow<SaleDetail>) event.getSource())
@@ -392,28 +385,28 @@ public class SaleMasterFormController implements Initializable {
         // Actions
         // Delete
         delete.setOnAction(
-                e -> {
+                event -> {
                     SaleDetailViewModel.removeSaleDetail(
                             obj.getData().getId(),
                             SaleDetailViewModel.saleDetailList.indexOf(obj.getData()));
 
-                    e.consume();
+                    event.consume();
                 });
         // Edit
         edit.setOnAction(
-                e -> {
+                event -> {
                     GlobalActions.spotyThreadPool()
                             .execute(
                                     () -> {
                                         try {
                                             SaleDetailViewModel.getSaleDetail(obj.getData());
-                                        } catch (SQLException ex) {
-                                            throw new RuntimeException(ex);
+                                        } catch (SQLException e) {
+                                            SpotyLogger.writeToFile(e, this.getClass());
                                         }
                                     });
 
                     dialog.showAndWait();
-                    e.consume();
+                    event.consume();
                 });
 
         contextMenu.addItems(edit, delete);

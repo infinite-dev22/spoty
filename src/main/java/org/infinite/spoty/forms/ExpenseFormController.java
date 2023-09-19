@@ -14,20 +14,11 @@
 
 package org.infinite.spoty.forms;
 
-import static org.infinite.spoty.GlobalActions.closeDialog;
-import static org.infinite.spoty.Validators.requiredValidator;
-
 import io.github.palexdev.materialfx.controls.MFXComboBox;
 import io.github.palexdev.materialfx.controls.MFXDatePicker;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-
-import java.net.URL;
-import java.sql.SQLException;
-import java.util.Objects;
-import java.util.ResourceBundle;
-
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -39,9 +30,18 @@ import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.ExpenseCategory;
+import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.viewModels.BranchViewModel;
 import org.infinite.spoty.viewModels.ExpenseCategoryViewModel;
 import org.infinite.spoty.viewModels.ExpenseViewModel;
+
+import java.net.URL;
+import java.sql.SQLException;
+import java.util.Objects;
+import java.util.ResourceBundle;
+
+import static org.infinite.spoty.GlobalActions.closeDialog;
+import static org.infinite.spoty.Validators.requiredValidator;
 
 public class ExpenseFormController implements Initializable {
     private static ExpenseFormController instance;
@@ -128,8 +128,8 @@ public class ExpenseFormController implements Initializable {
 
     private void dialogOnActions() {
         expenseFormCancelBtn.setOnAction(
-                (e) -> {
-                    closeDialog(e);
+                (event) -> {
+                    closeDialog(event);
                     ExpenseViewModel.resetProperties();
                     expenseFormBranch.clearSelection();
                     expenseFormCategory.clearSelection();
@@ -141,7 +141,7 @@ public class ExpenseFormController implements Initializable {
                     expenseFormAmountValidationLabel.setVisible(false);
                 });
         expenseFormSaveBtn.setOnAction(
-                (e) -> {
+                (event) -> {
                     SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
                     if (!expenseFormNameValidationLabel.isVisible()
                             && !expenseFormDateValidationLabel.isVisible()
@@ -152,8 +152,8 @@ public class ExpenseFormController implements Initializable {
                             GlobalActions.spotyThreadPool().execute(() -> {
                                 try {
                                     ExpenseViewModel.updateItem(ExpenseViewModel.getId());
-                                } catch (SQLException ex) {
-                                    throw new RuntimeException(ex);
+                                } catch (SQLException e) {
+                                    SpotyLogger.writeToFile(e, this.getClass());
                                 }
                             });
 
@@ -168,14 +168,14 @@ public class ExpenseFormController implements Initializable {
                             expenseFormBranch.clearSelection();
                             expenseFormCategory.clearSelection();
 
-                            closeDialog(e);
+                            closeDialog(event);
                             return;
                         }
                         GlobalActions.spotyThreadPool().execute(() -> {
                             try {
                                 ExpenseViewModel.saveExpense();
-                            } catch (SQLException ex) {
-                                throw new RuntimeException(ex);
+                            } catch (SQLException e) {
+                                SpotyLogger.writeToFile(e, this.getClass());
                             }
                         });
 
@@ -190,7 +190,7 @@ public class ExpenseFormController implements Initializable {
                         expenseFormBranch.clearSelection();
                         expenseFormCategory.clearSelection();
 
-                        closeDialog(e);
+                        closeDialog(event);
                         return;
                     }
                     SimpleNotification notification =

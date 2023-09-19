@@ -33,6 +33,7 @@ import javafx.concurrent.Task;
 import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.Customer;
+import org.infinite.spoty.utils.SpotyLogger;
 
 public class CustomerViewModel {
     public static final ObservableList<Customer> customersList = FXCollections.observableArrayList();
@@ -215,7 +216,7 @@ public class CustomerViewModel {
                     try {
                         customersList.addAll(customerDao.queryForAll());
                     } catch (SQLException e) {
-                        throw new RuntimeException(e);
+                        SpotyLogger.writeToFile(e, CustomerViewModel.class);
                     }
                 });
     }

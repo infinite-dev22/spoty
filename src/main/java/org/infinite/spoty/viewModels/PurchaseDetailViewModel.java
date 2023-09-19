@@ -34,6 +34,8 @@ import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.Product;
 import org.infinite.spoty.database.models.PurchaseDetail;
 import org.infinite.spoty.database.models.PurchaseMaster;
+import org.infinite.spoty.utils.SpotyLogger;
+import org.jetbrains.annotations.NotNull;
 
 public class PurchaseDetailViewModel {
     public static final ObservableList<PurchaseDetail> purchaseDetailList =
@@ -337,7 +339,7 @@ public class PurchaseDetailViewModel {
                     try {
                         purchaseDetailDao.update(purchaseDetail);
                     } catch (SQLException e) {
-                        throw new RuntimeException(e);
+                        SpotyLogger.writeToFile(e, PurchaseDetailViewModel.class);
                     }
                 });
 
@@ -349,7 +351,7 @@ public class PurchaseDetailViewModel {
         PENDING_DELETES.add(index);
     }
 
-    public static void deletePurchaseDetails(LinkedList<Long> indexes) {
+    public static void deletePurchaseDetails(@NotNull LinkedList<Long> indexes) {
         indexes.forEach(
                 index -> {
                     try {
@@ -361,7 +363,7 @@ public class PurchaseDetailViewModel {
 
                         purchaseDetailDao.deleteById(index);
                     } catch (SQLException e) {
-                        throw new RuntimeException(e);
+                        SpotyLogger.writeToFile(e, PurchaseDetailViewModel.class);
                     }
                 });
     }

@@ -14,20 +14,12 @@
 
 package org.infinite.spoty.forms;
 
-import static org.infinite.spoty.GlobalActions.closeDialog;
-
 import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.utils.StringUtils;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import io.github.palexdev.mfxcore.controls.Label;
-import java.net.URL;
-import java.sql.SQLException;
-import java.util.Objects;
-import java.util.ResourceBundle;
-import java.util.function.Function;
-import java.util.function.Predicate;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -46,229 +38,246 @@ import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.database.models.Brand;
 import org.infinite.spoty.database.models.ProductCategory;
 import org.infinite.spoty.database.models.UnitOfMeasure;
+import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.values.strings.Values;
 import org.infinite.spoty.viewModels.BrandViewModel;
 import org.infinite.spoty.viewModels.ProductCategoryViewModel;
 import org.infinite.spoty.viewModels.ProductViewModel;
 import org.infinite.spoty.viewModels.UOMViewModel;
 
+import java.net.URL;
+import java.sql.SQLException;
+import java.util.Objects;
+import java.util.ResourceBundle;
+import java.util.function.Function;
+import java.util.function.Predicate;
+
+import static org.infinite.spoty.GlobalActions.closeDialog;
+
 public class ProductFormController implements Initializable {
-  private static ProductFormController instance;
-  private final String placeholderImage =
-      SpotyResourceLoader.load("images/product-image-place-holder.png");
-  @FXML
-  public MFXTextField productName,
-      productSerial,
-      productPrice,
-      productDiscount,
-      productDescription,
-      productTax,
-      productStockAlert;
-  @FXML public MFXFilterComboBox<Brand> productBrand;
-  @FXML public MFXFilterComboBox<ProductCategory> productCategory;
-  @FXML public MFXFilterComboBox<UnitOfMeasure> productUOM;
-  @FXML public MFXFilterComboBox<String> productBarcodeType;
-  @FXML public MFXFilterComboBox<String> productType;
-  @FXML public ImageView productImageView;
-  @FXML public MFXButton productSaveBtn, productCancelBtn;
-  public Image productImage;
-  @FXML
-  public Label productBarcodeTypeValidationLabel,
-      productUOMValidationLabel,
-      productCategoryValidationLabel,
-      productBrandValidationLabel,
-      productPriceValidationLabel,
-      productNameValidationLabel;
-  private FileChooser fileChooser;
+    private static ProductFormController instance;
+    private final String placeholderImage =
+            SpotyResourceLoader.load("images/product-image-place-holder.png");
+    @FXML
+    public MFXTextField productName,
+            productSerial,
+            productPrice,
+            productDiscount,
+            productDescription,
+            productTax,
+            productStockAlert;
+    @FXML
+    public MFXFilterComboBox<Brand> productBrand;
+    @FXML
+    public MFXFilterComboBox<ProductCategory> productCategory;
+    @FXML
+    public MFXFilterComboBox<UnitOfMeasure> productUOM;
+    @FXML
+    public MFXFilterComboBox<String> productBarcodeType;
+    @FXML
+    public MFXFilterComboBox<String> productType;
+    @FXML
+    public ImageView productImageView;
+    @FXML
+    public MFXButton productSaveBtn, productCancelBtn;
+    public Image productImage;
+    @FXML
+    public Label productBarcodeTypeValidationLabel,
+            productUOMValidationLabel,
+            productCategoryValidationLabel,
+            productBrandValidationLabel,
+            productPriceValidationLabel,
+            productNameValidationLabel;
+    private FileChooser fileChooser;
 
-  public static ProductFormController getInstance() {
-    if (Objects.equals(instance, null)) instance = new ProductFormController();
-    return instance;
-  }
-
-  @Override
-  public void initialize(URL location, ResourceBundle resources) {
-    getFieldBindings();
-    getComboBoxProperties();
-    dialogOnActions();
-    addImage();
-    setProductImage(placeholderImage);
-  }
-
-  private void setProductImage(String image) {
-    if (Objects.equals(productImage, null)) {
-      productImage = new Image(image, 200, 200, true, false);
+    public static ProductFormController getInstance() {
+        if (Objects.equals(instance, null)) instance = new ProductFormController();
+        return instance;
     }
 
-    productImageView.setImage(productImage);
-    productImageView.setCache(true);
-    productImageView.setCacheHint(CacheHint.SPEED);
-  }
-
-  private void addImage() {
-    if (Objects.equals(fileChooser, null)) {
-      fileChooser = new FileChooser();
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        getFieldBindings();
+        getComboBoxProperties();
+        dialogOnActions();
+        addImage();
+        setProductImage(placeholderImage);
     }
 
-    productImageView.setOnMouseClicked(event -> fileChooser.showOpenDialog(new Stage()));
-  }
+    private void setProductImage(String image) {
+        if (Objects.equals(productImage, null)) {
+            productImage = new Image(image, 200, 200, true, false);
+        }
 
-  private void getFieldBindings() {
-    productName.textProperty().bindBidirectional(ProductViewModel.nameProperty());
-    productSerial.textProperty().bindBidirectional(ProductViewModel.serialProperty());
-    productPrice.textProperty().bindBidirectional(ProductViewModel.priceProperty());
-    productDiscount.textProperty().bindBidirectional(ProductViewModel.discountProperty());
-    productDescription.textProperty().bindBidirectional(ProductViewModel.descriptionProperty());
-    productTax.textProperty().bindBidirectional(ProductViewModel.netTaxProperty());
-    productStockAlert.textProperty().bindBidirectional(ProductViewModel.stockAlertProperty());
-    productBrand.valueProperty().bindBidirectional(ProductViewModel.brandProperty());
-    productCategory.valueProperty().bindBidirectional(ProductViewModel.categoryProperty());
-    productUOM.valueProperty().bindBidirectional(ProductViewModel.unitProperty());
-    productBarcodeType.valueProperty().bindBidirectional(ProductViewModel.barcodeTypeProperty());
-    productType.valueProperty().bindBidirectional(ProductViewModel.productTypeProperty());
-  }
+        productImageView.setImage(productImage);
+        productImageView.setCache(true);
+        productImageView.setCacheHint(CacheHint.SPEED);
+    }
 
-  private void getComboBoxProperties() {
-    // ComboBox Converters.
-    StringConverter<UnitOfMeasure> uomConverter =
-        FunctionalStringConverter.to(
-            unitOfMeasure -> (unitOfMeasure == null) ? "" : unitOfMeasure.getName());
+    private void addImage() {
+        if (Objects.equals(fileChooser, null)) {
+            fileChooser = new FileChooser();
+        }
 
-    StringConverter<ProductCategory> productCategoryConverter =
-        FunctionalStringConverter.to(
-            productCategory -> (productCategory == null) ? "" : productCategory.getName());
+        productImageView.setOnMouseClicked(event -> fileChooser.showOpenDialog(new Stage()));
+    }
 
-    StringConverter<Brand> brandConverter =
-        FunctionalStringConverter.to(brand -> (brand == null) ? "" : brand.getName());
+    private void getFieldBindings() {
+        productName.textProperty().bindBidirectional(ProductViewModel.nameProperty());
+        productSerial.textProperty().bindBidirectional(ProductViewModel.serialProperty());
+        productPrice.textProperty().bindBidirectional(ProductViewModel.priceProperty());
+        productDiscount.textProperty().bindBidirectional(ProductViewModel.discountProperty());
+        productDescription.textProperty().bindBidirectional(ProductViewModel.descriptionProperty());
+        productTax.textProperty().bindBidirectional(ProductViewModel.netTaxProperty());
+        productStockAlert.textProperty().bindBidirectional(ProductViewModel.stockAlertProperty());
+        productBrand.valueProperty().bindBidirectional(ProductViewModel.brandProperty());
+        productCategory.valueProperty().bindBidirectional(ProductViewModel.categoryProperty());
+        productUOM.valueProperty().bindBidirectional(ProductViewModel.unitProperty());
+        productBarcodeType.valueProperty().bindBidirectional(ProductViewModel.barcodeTypeProperty());
+        productType.valueProperty().bindBidirectional(ProductViewModel.productTypeProperty());
+    }
 
-    // ComboBox Filter Functions.
-    Function<String, Predicate<UnitOfMeasure>> uomFilterFunction =
-        searchStr ->
-            unitOfMeasure ->
-                StringUtils.containsIgnoreCase(uomConverter.toString(unitOfMeasure), searchStr);
+    private void getComboBoxProperties() {
+        // ComboBox Converters.
+        StringConverter<UnitOfMeasure> uomConverter =
+                FunctionalStringConverter.to(
+                        unitOfMeasure -> (unitOfMeasure == null) ? "" : unitOfMeasure.getName());
 
-    Function<String, Predicate<ProductCategory>> productCategoryFilterFunction =
-        searchStr ->
-            productCategory ->
-                StringUtils.containsIgnoreCase(
-                    productCategoryConverter.toString(productCategory), searchStr);
+        StringConverter<ProductCategory> productCategoryConverter =
+                FunctionalStringConverter.to(
+                        productCategory -> (productCategory == null) ? "" : productCategory.getName());
 
-    Function<String, Predicate<Brand>> brandFilterFunction =
-        searchStr ->
-            brand -> StringUtils.containsIgnoreCase(brandConverter.toString(brand), searchStr);
+        StringConverter<Brand> brandConverter =
+                FunctionalStringConverter.to(brand -> (brand == null) ? "" : brand.getName());
 
-    // ProductType combo box properties.
-    productUOM.setItems(UOMViewModel.getUnitsOfMeasure());
-    productUOM.setConverter(uomConverter);
-    productUOM.setFilterFunction(uomFilterFunction);
+        // ComboBox Filter Functions.
+        Function<String, Predicate<UnitOfMeasure>> uomFilterFunction =
+                searchStr ->
+                        unitOfMeasure ->
+                                StringUtils.containsIgnoreCase(uomConverter.toString(unitOfMeasure), searchStr);
 
-    productCategory.setItems(ProductCategoryViewModel.getCategories());
-    productCategory.setConverter(productCategoryConverter);
-    productCategory.setFilterFunction(productCategoryFilterFunction);
+        Function<String, Predicate<ProductCategory>> productCategoryFilterFunction =
+                searchStr ->
+                        productCategory ->
+                                StringUtils.containsIgnoreCase(
+                                        productCategoryConverter.toString(productCategory), searchStr);
 
-    productBrand.setItems(BrandViewModel.getBrands());
-    productBrand.setConverter(brandConverter);
-    productBrand.setFilterFunction(brandFilterFunction);
+        Function<String, Predicate<Brand>> brandFilterFunction =
+                searchStr ->
+                        brand -> StringUtils.containsIgnoreCase(brandConverter.toString(brand), searchStr);
 
-    productBarcodeType.setItems(FXCollections.observableArrayList(Values.BARCODE_TYPES));
+        // ProductType combo box properties.
+        productUOM.setItems(UOMViewModel.getUnitsOfMeasure());
+        productUOM.setConverter(uomConverter);
+        productUOM.setFilterFunction(uomFilterFunction);
 
-    productType.setItems(FXCollections.observableArrayList(Values.PRODUCT_TYPES));
-  }
+        productCategory.setItems(ProductCategoryViewModel.getCategories());
+        productCategory.setConverter(productCategoryConverter);
+        productCategory.setFilterFunction(productCategoryFilterFunction);
 
-  private void dialogOnActions() {
-    productCancelBtn.setOnAction(
-        (e) -> {
-          ProductViewModel.resetProperties();
+        productBrand.setItems(BrandViewModel.getBrands());
+        productBrand.setConverter(brandConverter);
+        productBrand.setFilterFunction(brandFilterFunction);
 
-          closeDialog(e);
+        productBarcodeType.setItems(FXCollections.observableArrayList(Values.BARCODE_TYPES));
 
-          productBrand.clearSelection();
-          productCategory.clearSelection();
-          productUOM.clearSelection();
-          productBarcodeType.clearSelection();
-          productType.clearSelection();
+        productType.setItems(FXCollections.observableArrayList(Values.PRODUCT_TYPES));
+    }
 
-          productBarcodeTypeValidationLabel.setVisible(false);
-          productUOMValidationLabel.setVisible(false);
-          productCategoryValidationLabel.setVisible(false);
-          productBrandValidationLabel.setVisible(false);
-          productPriceValidationLabel.setVisible(false);
-          productNameValidationLabel.setVisible(false);
-        });
-    productSaveBtn.setOnAction(
-        (e) -> {
-          SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
+    private void dialogOnActions() {
+        productCancelBtn.setOnAction(
+                (event) -> {
+                    ProductViewModel.resetProperties();
 
-          if (!productBarcodeTypeValidationLabel.isVisible()
-              && !productUOMValidationLabel.isVisible()
-              && !productCategoryValidationLabel.isVisible()
-              && !productBrandValidationLabel.isVisible()
-              && !productPriceValidationLabel.isVisible()
-              && !productNameValidationLabel.isVisible()) {
-            if (ProductViewModel.getId() > 0) {
-              GlobalActions.spotyThreadPool()
-                  .execute(
-                      () -> {
-                        try {
-                          ProductViewModel.updateProduct(ProductViewModel.getId());
-                        } catch (SQLException ex) {
-                          throw new RuntimeException(ex);
+                    closeDialog(event);
+
+                    productBrand.clearSelection();
+                    productCategory.clearSelection();
+                    productUOM.clearSelection();
+                    productBarcodeType.clearSelection();
+                    productType.clearSelection();
+
+                    productBarcodeTypeValidationLabel.setVisible(false);
+                    productUOMValidationLabel.setVisible(false);
+                    productCategoryValidationLabel.setVisible(false);
+                    productBrandValidationLabel.setVisible(false);
+                    productPriceValidationLabel.setVisible(false);
+                    productNameValidationLabel.setVisible(false);
+                });
+        productSaveBtn.setOnAction(
+                (event) -> {
+                    SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
+
+                    if (!productBarcodeTypeValidationLabel.isVisible()
+                            && !productUOMValidationLabel.isVisible()
+                            && !productCategoryValidationLabel.isVisible()
+                            && !productBrandValidationLabel.isVisible()
+                            && !productPriceValidationLabel.isVisible()
+                            && !productNameValidationLabel.isVisible()) {
+                        if (ProductViewModel.getId() > 0) {
+                            GlobalActions.spotyThreadPool()
+                                    .execute(
+                                            () -> {
+                                                try {
+                                                    ProductViewModel.updateProduct(ProductViewModel.getId());
+                                                } catch (SQLException e) {
+                                                    SpotyLogger.writeToFile(e, this.getClass());
+                                                }
+                                            });
+
+                            SimpleNotification notification =
+                                    new SimpleNotification.NotificationBuilder("Branch updated successfully")
+                                            .duration(NotificationDuration.SHORT)
+                                            .icon("fas-circle-check")
+                                            .type(NotificationVariants.SUCCESS)
+                                            .build();
+                            notificationHolder.addNotification(notification);
+
+                            closeDialog(event);
+
+                            productBrand.clearSelection();
+                            productCategory.clearSelection();
+                            productUOM.clearSelection();
+                            productBarcodeType.clearSelection();
+                            productType.clearSelection();
+
+                            return;
                         }
-                      });
+                        GlobalActions.spotyThreadPool()
+                                .execute(
+                                        () -> {
+                                            try {
+                                                ProductViewModel.saveProduct();
+                                            } catch (SQLException e) {
+                                                SpotyLogger.writeToFile(e, this.getClass());
+                                            }
+                                        });
 
-              SimpleNotification notification =
-                  new SimpleNotification.NotificationBuilder("Branch updated successfully")
-                      .duration(NotificationDuration.SHORT)
-                      .icon("fas-circle-check")
-                      .type(NotificationVariants.SUCCESS)
-                      .build();
-              notificationHolder.addNotification(notification);
+                        SimpleNotification notification =
+                                new SimpleNotification.NotificationBuilder("Branch saved successfully")
+                                        .duration(NotificationDuration.SHORT)
+                                        .icon("fas-circle-check")
+                                        .type(NotificationVariants.SUCCESS)
+                                        .build();
+                        notificationHolder.addNotification(notification);
 
-              closeDialog(e);
+                        closeDialog(event);
 
-              productBrand.clearSelection();
-              productCategory.clearSelection();
-              productUOM.clearSelection();
-              productBarcodeType.clearSelection();
-              productType.clearSelection();
+                        productBrand.clearSelection();
+                        productCategory.clearSelection();
+                        productUOM.clearSelection();
+                        productBarcodeType.clearSelection();
+                        productType.clearSelection();
 
-              return;
-            }
-            GlobalActions.spotyThreadPool()
-                .execute(
-                    () -> {
-                      try {
-                        ProductViewModel.saveProduct();
-                      } catch (SQLException ex) {
-                        throw new RuntimeException(ex);
-                      }
-                    });
-
-            SimpleNotification notification =
-                new SimpleNotification.NotificationBuilder("Branch saved successfully")
-                    .duration(NotificationDuration.SHORT)
-                    .icon("fas-circle-check")
-                    .type(NotificationVariants.SUCCESS)
-                    .build();
-            notificationHolder.addNotification(notification);
-
-            closeDialog(e);
-
-            productBrand.clearSelection();
-            productCategory.clearSelection();
-            productUOM.clearSelection();
-            productBarcodeType.clearSelection();
-            productType.clearSelection();
-
-            return;
-          }
-          SimpleNotification notification =
-              new SimpleNotification.NotificationBuilder("Required fields missing")
-                  .duration(NotificationDuration.SHORT)
-                  .icon("fas-triangle-exclamation")
-                  .type(NotificationVariants.ERROR)
-                  .build();
-          notificationHolder.addNotification(notification);
-        });
-  }
+                        return;
+                    }
+                    SimpleNotification notification =
+                            new SimpleNotification.NotificationBuilder("Required fields missing")
+                                    .duration(NotificationDuration.SHORT)
+                                    .icon("fas-triangle-exclamation")
+                                    .type(NotificationVariants.ERROR)
+                                    .build();
+                    notificationHolder.addNotification(notification);
+                });
+    }
 }

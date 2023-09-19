@@ -14,25 +14,12 @@
 
 package org.infinite.spoty.forms;
 
-import static org.infinite.spoty.GlobalActions.closeDialog;
-import static org.infinite.spoty.Validators.emailValidator;
-import static org.infinite.spoty.Validators.lengthValidator;
-import static org.infinite.spoty.Validators.requiredValidator;
-
 import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.controls.MFXToggleButton;
 import io.github.palexdev.materialfx.utils.StringUtils;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-
-import java.net.URL;
-import java.sql.SQLException;
-import java.util.Objects;
-import java.util.ResourceBundle;
-import java.util.function.Function;
-import java.util.function.Predicate;
-
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -44,9 +31,20 @@ import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.Role;
+import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.viewModels.BranchViewModel;
 import org.infinite.spoty.viewModels.RoleViewModel;
 import org.infinite.spoty.viewModels.UserViewModel;
+
+import java.net.URL;
+import java.sql.SQLException;
+import java.util.Objects;
+import java.util.ResourceBundle;
+import java.util.function.Function;
+import java.util.function.Predicate;
+
+import static org.infinite.spoty.GlobalActions.closeDialog;
+import static org.infinite.spoty.Validators.*;
 
 public class UserFormController implements Initializable {
     public static UserFormController instance;
@@ -173,8 +171,8 @@ public class UserFormController implements Initializable {
 
     private void dialogOnActions() {
         userFormCancelBtn.setOnAction(
-                (e) -> {
-                    closeDialog(e);
+                (event) -> {
+                    closeDialog(event);
                     UserViewModel.resetProperties();
 
                     userFormRole.clearSelection();
@@ -189,7 +187,7 @@ public class UserFormController implements Initializable {
                     userFormPhoneValidationLabel.setVisible(false);
                 });
         userFormSaveBtn.setOnAction(
-                (e) -> {
+                (event) -> {
                     SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
                     if (!userFormFirstNameValidationLabel.isVisible()
                             && !userFormLastNameValidationLabel.isVisible()
@@ -202,8 +200,8 @@ public class UserFormController implements Initializable {
                             GlobalActions.spotyThreadPool().execute(() -> {
                                 try {
                                     UserViewModel.updateItem(UserViewModel.getId());
-                                } catch (SQLException ex) {
-                                    throw new RuntimeException(ex);
+                                } catch (SQLException e) {
+                                    SpotyLogger.writeToFile(e, this.getClass());
                                 }
                             });
                             SimpleNotification notification =
@@ -217,14 +215,14 @@ public class UserFormController implements Initializable {
                             userFormRole.clearSelection();
                             userFormBranch.clearSelection();
 
-                            closeDialog(e);
+                            closeDialog(event);
                             return;
                         }
                         GlobalActions.spotyThreadPool().execute(() -> {
                             try {
                                 UserViewModel.saveUser();
-                            } catch (SQLException ex) {
-                                throw new RuntimeException(ex);
+                            } catch (SQLException e) {
+                                SpotyLogger.writeToFile(e, this.getClass());
                             }
                         });
                         SimpleNotification notification =
@@ -238,7 +236,7 @@ public class UserFormController implements Initializable {
                         userFormRole.clearSelection();
                         userFormBranch.clearSelection();
 
-                        closeDialog(e);
+                        closeDialog(event);
                         return;
                     }
                     SimpleNotification notification =

@@ -59,6 +59,7 @@ import org.infinite.spoty.database.models.Customer;
 import org.infinite.spoty.database.models.Product;
 import org.infinite.spoty.database.models.ProductCategory;
 import org.infinite.spoty.database.models.SaleDetail;
+import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.viewModels.BranchViewModel;
 import org.infinite.spoty.viewModels.CustomerViewModel;
 import org.infinite.spoty.viewModels.ProductCategoryViewModel;
@@ -195,7 +196,7 @@ public class PointOfSaleController implements Initializable {
                                     try {
                                         SaleDetailViewModel.getSaleDetail(saleDetail);
                                     } catch (SQLException e) {
-                                        throw new RuntimeException(e);
+                                        SpotyLogger.writeToFile(e, this.getClass());
                                     }
                                 });
                                 SaleDetailViewModel.setProduct(productCard.getProduct());
@@ -207,7 +208,7 @@ public class PointOfSaleController implements Initializable {
                                         SaleDetailViewModel.getSaleDetails().indexOf(saleDetail));
 
                             } catch (SQLException e) {
-                                throw new RuntimeException(e);
+                                SpotyLogger.writeToFile(e, this.getClass());
                             }
                         }
                     } else {
@@ -353,7 +354,7 @@ public class PointOfSaleController implements Initializable {
                             try {
                                 SaleMasterViewModel.saveSaleMaster();
                             } catch (SQLException e) {
-                                throw new RuntimeException(e);
+                                SpotyLogger.writeToFile(e, this.getClass());
                             }
                         });
 

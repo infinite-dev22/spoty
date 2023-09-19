@@ -17,22 +17,15 @@ package org.infinite.spoty.viewModels;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
-
-import java.sql.SQLException;
-
 import javafx.application.Platform;
-import javafx.beans.property.ListProperty;
-import javafx.beans.property.LongProperty;
-import javafx.beans.property.SimpleListProperty;
-import javafx.beans.property.SimpleLongProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
-import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.Supplier;
+import org.infinite.spoty.utils.SpotyLogger;
+
+import java.sql.SQLException;
 
 public class SupplierViewModel {
     public static final ObservableList<Supplier> suppliersList = FXCollections.observableArrayList();
@@ -215,7 +208,7 @@ public class SupplierViewModel {
                     try {
                         suppliersList.addAll(supplierDao.queryForAll());
                     } catch (SQLException e) {
-                        throw new RuntimeException(e);
+                        SpotyLogger.writeToFile(e, SupplierViewModel.class);
                     }
                 });
     }

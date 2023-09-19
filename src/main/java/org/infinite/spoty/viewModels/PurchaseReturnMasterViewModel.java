@@ -17,21 +17,20 @@ package org.infinite.spoty.viewModels;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
+import javafx.application.Platform;
+import javafx.beans.property.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import org.infinite.spoty.database.connection.SQLiteConnection;
+import org.infinite.spoty.database.models.Branch;
+import org.infinite.spoty.database.models.PurchaseReturnMaster;
+import org.infinite.spoty.utils.SpotyLogger;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import javafx.application.Platform;
-import javafx.beans.property.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
-import org.infinite.spoty.GlobalActions;
-import org.infinite.spoty.database.connection.SQLiteConnection;
-import org.infinite.spoty.database.models.Branch;
-import org.infinite.spoty.database.models.PurchaseReturnMaster;
 
 public class PurchaseReturnMasterViewModel {
     public static final ObservableList<PurchaseReturnMaster> purchaseReturnMasterList =
@@ -59,12 +58,13 @@ public class PurchaseReturnMasterViewModel {
         return id;
     }
 
-    public static Date getDate() {
+    public static @Nullable Date getDate() {
         try {
             return new SimpleDateFormat("MMM dd, yyyy").parse(date.get());
         } catch (ParseException e) {
-            throw new RuntimeException(e);
+            SpotyLogger.writeToFile(e, PurchaseReturnMasterViewModel.class);
         }
+        return null;
     }
 
     public static void setDate(String date) {
@@ -155,7 +155,7 @@ public class PurchaseReturnMasterViewModel {
                     try {
                         purchaseReturnMasterList.addAll(purchaseReturnMasterDao.queryForAll());
                     } catch (SQLException e) {
-                        throw new RuntimeException(e);
+                        SpotyLogger.writeToFile(e, PurchaseReturnMasterViewModel.class);
                     }
                 });
     }
