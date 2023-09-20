@@ -38,7 +38,7 @@ public class SQLiteTableCreator {
         return instance;
     }
 
-    public static void seedDatabase() throws SQLException {
+    public void seedDatabase() throws SQLException {
         instance.runQuery(
                 "INSERT OR IGNORE INTO branches ("
                         + "name,"
@@ -49,10 +49,10 @@ public class SQLiteTableCreator {
                         + "created_by)"
                         + "VALUES ("
                         + "'Default Branch',"
-                        + Locale.getDefault().getDisplayCountry() + ","
+                        + "'" + Locale.getDefault().getDisplayCountry() + "',"
                         + "'',"
-                        + Locale.getDefault().getDisplayCountry() + "'',"
-                        + "''"
+                        + "'" + Locale.getDefault().getDisplayCountry() + "',"
+                        + "'',"
                         + "'Zenmart ERP');",
                 Branch.class);
         instance.runQuery(
@@ -63,10 +63,10 @@ public class SQLiteTableCreator {
                         + "created_at,"
                         + "created_by)"
                         + "VALUES ("
-                        + "CUR-0001,"
-                        + java.util.Currency.getInstance(Locale.getDefault()).getDisplayName() + ","
-                        + java.util.Currency.getInstance(Locale.getDefault()).getSymbol() + ","
-                        + new Date() + ","
+                        + "'CUR-0001',"
+                        + "'" + java.util.Currency.getInstance(Locale.getDefault()).getDisplayName() + "',"
+                        + "'" + java.util.Currency.getInstance(Locale.getDefault()).getSymbol() + "',"
+                        + "'" + new Date() + "',"
                         + "'Zenmart ERP');",
                 Currency.class);
         instance.runQuery(
@@ -77,10 +77,10 @@ public class SQLiteTableCreator {
                         + "created_at,"
                         + "created_by)"
                         + "VALUES ("
-                        + "Walk-In Customer,"
+                        + "'Walk-In Customer',"
                         + "'',"
-                        + Locale.getDefault().getDisplayName() + ","
-                        + new Date() + ","
+                        + "'" + Locale.getDefault().getDisplayName() + "',"
+                        + "'" + new Date() + "',"
                         + "'Zenmart ERP');",
                 Customer.class);
         instance.runQuery(
@@ -93,12 +93,12 @@ public class SQLiteTableCreator {
                         + "created_at,"
                         + "created_by)"
                         + "VALUES ("
-                        + "Walk-In Customer,"
+                        + "'Walk-In Supplier',"
                         + "'',"
                         + "'',"
                         + "'',"
-                        + Locale.getDefault().getDisplayName() + ","
-                        + new Date() + ","
+                        + "'" + Locale.getDefault().getDisplayName() + "',"
+                        + "'" + new Date() + "',"
                         + "'Zenmart ERP');",
                 Supplier.class);
         instance.runQuery(
@@ -2038,7 +2038,7 @@ public class SQLiteTableCreator {
 
         runQuery(
                 """
-                        CREATE TABLE IF NOT EXISTS supplier (
+                        CREATE TABLE IF NOT EXISTS suppliers (
                             id         INTEGER   PRIMARY KEY AUTOINCREMENT,
                             name       VARCHAR   NOT NULL,
                             code       VARCHAR,

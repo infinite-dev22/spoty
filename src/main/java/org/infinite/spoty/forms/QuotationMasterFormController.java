@@ -287,17 +287,22 @@ public class QuotationMasterFormController implements Initializable {
     }
 
     private void quotationProductDialogPane(Stage stage) throws IOException {
-        dialog =
-                MFXGenericDialogBuilder.build(Dialogs.getQuotationDialogContent())
-                        .toStageDialogBuilder()
-                        .initOwner(stage)
-                        .initModality(Modality.WINDOW_MODAL)
-                        .setOwnerNode(quotationFormContentPane)
-                        .setScrimPriority(ScrimPriority.WINDOW)
-                        .setScrimOwner(true)
-                        .get();
 
-        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
+        try {
+            dialog =
+                    MFXGenericDialogBuilder.build(Dialogs.getQuotationDialogContent())
+                            .toStageDialogBuilder()
+                            .initOwner(stage)
+                            .initModality(Modality.WINDOW_MODAL)
+                            .setOwnerNode(quotationFormContentPane)
+                            .setScrimPriority(ScrimPriority.WINDOW)
+                            .setScrimOwner(true)
+                            .get();
+
+            io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
+        } catch (Exception e){
+            SpotyLogger.writeToFile(e, QuotationMasterFormController.class);
+        }
     }
 
     public void saveBtnClicked() {
@@ -390,6 +395,10 @@ public class QuotationMasterFormController implements Initializable {
     }
 
     public void addBtnClicked() {
-        dialog.showAndWait();
+        try {
+            dialog.showAndWait();
+        } catch (Exception e){
+            SpotyLogger.writeToFile(e, QuotationMasterFormController.class);
+        }
     }
 }

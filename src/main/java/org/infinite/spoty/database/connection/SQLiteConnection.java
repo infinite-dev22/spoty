@@ -34,7 +34,7 @@ public class SQLiteConnection {
   }
 
   public ConnectionSource getConnection() {
-    Logger.setGlobalLogLevel(Level.OFF);
+//    Logger.setGlobalLogLevel(Level.OFF);
     // Create the database if not exists or connect it exists.
     if (System.getProperty("os.name").contains("Linux")) {
       try {

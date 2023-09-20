@@ -55,7 +55,7 @@ test {
 }
 
 javafx {
-    version = "20.0.1"
+    version = "21"
     modules = ['javafx.controls', 'javafx.fxml', 'javafx.web', 'javafx.media', 'javafx.graphics']
 }
 

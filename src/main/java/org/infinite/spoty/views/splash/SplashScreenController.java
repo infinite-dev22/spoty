@@ -242,18 +242,21 @@ public class SplashScreenController implements Initializable {
         Task<Void> databaseCreator =
                 new Task<>() {
                     @Override
-                    protected Void call() {
-                        try {
+                    protected Void call() throws SQLException {
+//                        try {
                             SpotyPaths.createPaths();
                             SQLiteTableCreator.getInstance().createTablesIfNotExist();
-                            SQLiteTableCreator.seedDatabase();
-                        } catch (SQLException e) {
-                            SpotyLogger.writeToFile(e, SplashScreenController.class);
-                        }
+                            SQLiteTableCreator.getInstance().seedDatabase();
+//                        } catch (SQLException e) {
+//                            SpotyLogger.writeToFile(e, SplashScreenController.class);
+//                        }
                         return null;
                     }
                 };
-        databaseCreator.setOnFailed(event -> databaseCreator.getException().printStackTrace());
+        databaseCreator.setOnFailed(event -> {
+            SpotyLogger.writeToFile(databaseCreator.getException(), SplashScreenController.class);
+            databaseCreator.getException().printStackTrace();
+        });
         return databaseCreator;
     }
 

@@ -100,7 +100,7 @@ public class CurrencyFormController implements Initializable {
                                 try {
                                     CurrencyViewModel.updateItem(CurrencyViewModel.getId());
                                 } catch (SQLException e) {
-                                    SpotyLogger.writeToFile(e, this.getClass());
+                                    SpotyLogger.writeToFile(e.getCause(), this.getClass());
                                 }
                             });
 
