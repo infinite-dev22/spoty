@@ -14,7 +14,7 @@
 
 package org.infinite.spoty.views.settings;
 
-import static org.infinite.spoty.Utils.createToggle;
+import static org.infinite.spoty.utils.Utils.createToggle;
 
 import io.github.palexdev.materialfx.controls.MFXButton;
 import java.net.URL;

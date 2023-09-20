@@ -38,6 +38,8 @@ public class SaleReturnDetailViewModel {
   private static final StringProperty serial = new SimpleStringProperty("");
   private static final StringProperty description = new SimpleStringProperty("");
   private static final StringProperty location = new SimpleStringProperty("");
+  private static final SQLiteConnection connection = SQLiteConnection.getInstance();
+  private static final ConnectionSource connectionSource = connection.getConnection();
 
   public static long getId() {
     return id.get();
@@ -132,24 +134,12 @@ public class SaleReturnDetailViewModel {
     setLocation("");
   }
 
-  public static void getSaleReturnDetails() {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
+  public static void getSaleReturnDetails() throws SQLException {
             Dao<SaleReturnDetail, Long> saleReturnDetailDao =
                 DaoManager.createDao(connectionSource, SaleReturnDetail.class);
 
             saleReturnDetailsList.clear();
             saleReturnDetailsList.addAll(saleReturnDetailDao.queryForAll());
-            return null;
-          }
-        };
-
-    GlobalActions.spotyThreadPool().execute(task);
   }
 
   public static ObservableList<SaleReturnDetail> getSaleReturnDetailsList() {

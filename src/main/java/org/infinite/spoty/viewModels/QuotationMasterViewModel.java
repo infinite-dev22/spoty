@@ -14,299 +14,232 @@
 
 package org.infinite.spoty.viewModels;
 
-import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
-
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
-import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
-import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.Customer;
 import org.infinite.spoty.database.models.QuotationMaster;
+import org.infinite.spoty.utils.SpotyLogger;
+import org.jetbrains.annotations.Nullable;
+
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
 
 public class QuotationMasterViewModel {
-  public static final ObservableList<QuotationMaster> quotationMasterList =
-      FXCollections.observableArrayList();
-  private static final ListProperty<QuotationMaster> quotations =
-      new SimpleListProperty<>(quotationMasterList);
-  private static final LongProperty id = new SimpleLongProperty(0);
-  private static final StringProperty date = new SimpleStringProperty("");
-  private static final ObjectProperty<Customer> customer = new SimpleObjectProperty<>(null);
-  private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>(null);
-  private static final StringProperty status = new SimpleStringProperty("");
-  private static final StringProperty note = new SimpleStringProperty("");
+    public static final ObservableList<QuotationMaster> quotationMasterList =
+            FXCollections.observableArrayList();
+    private static final ListProperty<QuotationMaster> quotations =
+            new SimpleListProperty<>(quotationMasterList);
+    private static final LongProperty id = new SimpleLongProperty(0);
+    private static final StringProperty date = new SimpleStringProperty("");
+    private static final ObjectProperty<Customer> customer = new SimpleObjectProperty<>(null);
+    private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>(null);
+    private static final StringProperty status = new SimpleStringProperty("");
+    private static final StringProperty note = new SimpleStringProperty("");
+    private final static SQLiteConnection connection = SQLiteConnection.getInstance();
+    private final static ConnectionSource connectionSource = connection.getConnection();
 
-  public static long getId() {
-    return id.get();
-  }
-
-  public static void setId(long id) {
-    QuotationMasterViewModel.id.set(id);
-  }
-
-  public static LongProperty idProperty() {
-    return id;
-  }
-
-  public static Date getDate() {
-    try {
-      return new SimpleDateFormat("MMM dd, yyyy").parse(date.get());
-    } catch (ParseException e) {
-      throw new RuntimeException(e);
+    public static long getId() {
+        return id.get();
     }
-  }
 
-  public static void setDate(String date) {
-    QuotationMasterViewModel.date.set(date);
-  }
+    public static void setId(long id) {
+        QuotationMasterViewModel.id.set(id);
+    }
 
-  public static StringProperty dateProperty() {
-    return date;
-  }
+    public static LongProperty idProperty() {
+        return id;
+    }
 
-  public static Branch getBranch() {
-    return branch.get();
-  }
+    public static @Nullable Date getDate() {
+        try {
+            return new SimpleDateFormat("MMM dd, yyyy").parse(date.get());
+        } catch (ParseException e) {
+            SpotyLogger.writeToFile(e, QuotationMasterViewModel.class);
+        }
+        return null;
+    }
 
-  public static void setBranch(Branch branch) {
-    QuotationMasterViewModel.branch.set(branch);
-  }
+    public static void setDate(String date) {
+        QuotationMasterViewModel.date.set(date);
+    }
 
-  public static ObjectProperty<Branch> branchProperty() {
-    return branch;
-  }
+    public static StringProperty dateProperty() {
+        return date;
+    }
 
-  public static String getNote() {
-    return note.get();
-  }
+    public static Branch getBranch() {
+        return branch.get();
+    }
 
-  public static void setNote(String note) {
-    QuotationMasterViewModel.note.set(note);
-  }
+    public static void setBranch(Branch branch) {
+        QuotationMasterViewModel.branch.set(branch);
+    }
 
-  public static StringProperty noteProperty() {
-    return note;
-  }
+    public static ObjectProperty<Branch> branchProperty() {
+        return branch;
+    }
 
-  public static Customer getCustomer() {
-    return customer.get();
-  }
+    public static String getNote() {
+        return note.get();
+    }
 
-  public static void setCustomer(Customer customer) {
-    QuotationMasterViewModel.customer.set(customer);
-  }
+    public static void setNote(String note) {
+        QuotationMasterViewModel.note.set(note);
+    }
 
-  public static ObjectProperty<Customer> customerProperty() {
-    return customer;
-  }
+    public static StringProperty noteProperty() {
+        return note;
+    }
 
-  public static String getStatus() {
-    return status.get();
-  }
+    public static Customer getCustomer() {
+        return customer.get();
+    }
 
-  public static void setStatus(String status) {
-    QuotationMasterViewModel.status.set(status);
-  }
+    public static void setCustomer(Customer customer) {
+        QuotationMasterViewModel.customer.set(customer);
+    }
 
-  public static StringProperty statusProperty() {
-    return status;
-  }
+    public static ObjectProperty<Customer> customerProperty() {
+        return customer;
+    }
 
-  public static ObservableList<QuotationMaster> getQuotations() {
-    return quotations.get();
-  }
+    public static String getStatus() {
+        return status.get();
+    }
 
-  public static void setQuotations(ObservableList<QuotationMaster> quotations) {
-    QuotationMasterViewModel.quotations.set(quotations);
-  }
+    public static void setStatus(String status) {
+        QuotationMasterViewModel.status.set(status);
+    }
 
-  public static ListProperty<QuotationMaster> quotationsProperty() {
-    return quotations;
-  }
+    public static StringProperty statusProperty() {
+        return status;
+    }
 
-  public static void resetProperties() {
-    Platform.runLater(
-        () -> {
-          setId(0);
-          setDate("");
-          setCustomer(null);
-          setBranch(null);
-          setStatus("");
-          setNote("");
-          PENDING_DELETES.clear();
-        });
-  }
+    public static ObservableList<QuotationMaster> getQuotations() {
+        return quotations.get();
+    }
 
-  public static void saveQuotationMaster() {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
+    public static void setQuotations(ObservableList<QuotationMaster> quotations) {
+        QuotationMasterViewModel.quotations.set(quotations);
+    }
 
-            Dao<QuotationMaster, Long> quotationMasterDao =
+    public static ListProperty<QuotationMaster> quotationsProperty() {
+        return quotations;
+    }
+
+    public static void resetProperties() {
+        Platform.runLater(
+                () -> {
+                    setId(0);
+                    setDate("");
+                    setCustomer(null);
+                    setBranch(null);
+                    setStatus("");
+                    setNote("");
+                    PENDING_DELETES.clear();
+                });
+    }
+
+    public static void saveQuotationMaster() throws SQLException {
+        Dao<QuotationMaster, Long> quotationMasterDao =
                 DaoManager.createDao(connectionSource, QuotationMaster.class);
 
-            QuotationMaster quotationMaster =
+        QuotationMaster quotationMaster =
                 new QuotationMaster(getDate(), getCustomer(), getBranch(), getStatus(), getNote());
 
-            if (!QuotationDetailViewModel.quotationDetailsList.isEmpty()) {
-              QuotationDetailViewModel.quotationDetailsList.forEach(
-                  quotationDetail -> quotationDetail.setQuotation(quotationMaster));
-              quotationMaster.setQuotationDetails(
-                  QuotationDetailViewModel.getQuotationDetailsList());
-            }
+        if (!QuotationDetailViewModel.quotationDetailsList.isEmpty()) {
+            QuotationDetailViewModel.quotationDetailsList.forEach(
+                    quotationDetail -> quotationDetail.setQuotation(quotationMaster));
+            quotationMaster.setQuotationDetails(
+                    QuotationDetailViewModel.getQuotationDetailsList());
+        }
 
-            quotationMasterDao.create(quotationMaster);
-            QuotationDetailViewModel.saveQuotationDetails();
+        quotationMasterDao.create(quotationMaster);
+        QuotationDetailViewModel.saveQuotationDetails();
 
-            return null;
-          }
-        };
+        resetProperties();
+        getQuotationMasters();
+    }
 
-    task.setOnSucceeded(
-        event -> {
-          resetProperties();
-          getQuotationMasters();
-        });
-
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static void getQuotationMasters() {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
-            Dao<QuotationMaster, Long> quotationMasterDao =
+    public static void getQuotationMasters() throws SQLException {
+        Dao<QuotationMaster, Long> quotationMasterDao =
                 DaoManager.createDao(connectionSource, QuotationMaster.class);
 
-            Platform.runLater(
+        Platform.runLater(
                 () -> {
-                  quotationMasterList.clear();
+                    quotationMasterList.clear();
 
-                  try {
-                    quotationMasterList.addAll(quotationMasterDao.queryForAll());
-                  } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                  }
+                    try {
+                        quotationMasterList.addAll(quotationMasterDao.queryForAll());
+                    } catch (SQLException e) {
+                        SpotyLogger.writeToFile(e, QuotationMasterViewModel.class);
+                    }
                 });
+    }
 
-            return null;
-          }
-        };
-
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static void getItem(long index) {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
-            Dao<QuotationMaster, Long> quotationMasterDao =
+    public static void getItem(long index) throws SQLException {
+        Dao<QuotationMaster, Long> quotationMasterDao =
                 DaoManager.createDao(connectionSource, QuotationMaster.class);
 
-            QuotationMaster quotationMaster = quotationMasterDao.queryForId(index);
+        QuotationMaster quotationMaster = quotationMasterDao.queryForId(index);
 
-            setId(quotationMaster.getId());
-            setDate(quotationMaster.getLocaleDate());
-            setCustomer(quotationMaster.getCustomer());
-            setBranch(quotationMaster.getBranch());
-            setStatus(quotationMaster.getStatus());
-            setNote(quotationMaster.getNotes());
+        setId(quotationMaster.getId());
+        setDate(quotationMaster.getLocaleDate());
+        setCustomer(quotationMaster.getCustomer());
+        setBranch(quotationMaster.getBranch());
+        setStatus(quotationMaster.getStatus());
+        setNote(quotationMaster.getNotes());
 
-            QuotationDetailViewModel.quotationDetailsList.clear();
-            QuotationDetailViewModel.quotationDetailsList.addAll(
+        QuotationDetailViewModel.quotationDetailsList.clear();
+        QuotationDetailViewModel.quotationDetailsList.addAll(
                 quotationMaster.getQuotationDetails());
 
-            return null;
-          }
-        };
+        getQuotationMasters();
+    }
 
-    task.setOnSucceeded(event -> getQuotationMasters());
-
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static void updateItem(long index) {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
-            Dao<QuotationMaster, Long> quotationMasterDao =
+    public static void updateItem(long index) throws SQLException {
+        Dao<QuotationMaster, Long> quotationMasterDao =
                 DaoManager.createDao(connectionSource, QuotationMaster.class);
 
-            QuotationMaster quotationMaster = quotationMasterDao.queryForId(index);
+        QuotationMaster quotationMaster = quotationMasterDao.queryForId(index);
 
-            quotationMaster.setDate(getDate());
-            quotationMaster.setCustomer(getCustomer());
-            quotationMaster.setBranch(getBranch());
-            quotationMaster.setStatus(getStatus());
-            quotationMaster.setNotes(getNote());
+        quotationMaster.setDate(getDate());
+        quotationMaster.setCustomer(getCustomer());
+        quotationMaster.setBranch(getBranch());
+        quotationMaster.setStatus(getStatus());
+        quotationMaster.setNotes(getNote());
 
-            QuotationDetailViewModel.deleteQuotationDetails(PENDING_DELETES);
-            quotationMaster.setQuotationDetails(QuotationDetailViewModel.getQuotationDetailsList());
+        QuotationDetailViewModel.deleteQuotationDetails(PENDING_DELETES);
+        quotationMaster.setQuotationDetails(QuotationDetailViewModel.getQuotationDetailsList());
 
-            quotationMasterDao.update(quotationMaster);
-            QuotationDetailViewModel.updateQuotationDetails();
+        quotationMasterDao.update(quotationMaster);
+        QuotationDetailViewModel.updateQuotationDetails();
 
-            return null;
-          }
-        };
+        resetProperties();
+        getQuotationMasters();
+    }
 
-    task.setOnSucceeded(
-        event -> {
-          resetProperties();
-          getQuotationMasters();
-        });
-
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static void deleteItem(long index) {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
-            Dao<QuotationMaster, Long> quotationMasterDao =
+    public static void deleteItem(long index) throws SQLException {
+        Dao<QuotationMaster, Long> quotationMasterDao =
                 DaoManager.createDao(connectionSource, QuotationMaster.class);
 
-            quotationMasterDao.deleteById(index);
+        quotationMasterDao.deleteById(index);
 
-            return null;
-          }
-        };
+        getQuotationMasters();
+    }
 
-    task.setOnSucceeded(event -> getQuotationMasters());
-
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static ObservableList<QuotationMaster> getQuotationMasterList() {
-    return quotationMasterList;
-  }
+    public static ObservableList<QuotationMaster> getQuotationMasterList() {
+        return quotationMasterList;
+    }
 }

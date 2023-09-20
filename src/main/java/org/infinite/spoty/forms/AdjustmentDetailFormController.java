@@ -24,17 +24,18 @@ import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.utils.StringUtils;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.function.Function;
 import java.util.function.Predicate;
+
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.util.StringConverter;
-import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
@@ -46,140 +47,144 @@ import org.infinite.spoty.viewModels.AdjustmentDetailViewModel;
 import org.infinite.spoty.viewModels.ProductViewModel;
 
 public class AdjustmentDetailFormController implements Initializable {
-  private static AdjustmentDetailFormController instance;
-  @FXML public MFXTextField adjustmentProductsQnty;
-  @FXML public MFXFilterComboBox<Product> adjustmentProductVariant;
-  @FXML public MFXButton adjustmentProductsSaveBtn;
-  @FXML public MFXButton adjustmentProductsCancelBtn;
-  @FXML public MFXComboBox<String> adjustmentType;
-  @FXML public Label adjustmentProductVariantValidationLabel;
-  @FXML public Label adjustmentProductsQntyValidationLabel;
-  @FXML public Label adjustmentTypeValidationLabel;
+    private static AdjustmentDetailFormController instance;
+    @FXML
+    public MFXTextField adjustmentProductsQnty;
+    @FXML
+    public MFXFilterComboBox<Product> adjustmentProductVariant;
+    @FXML
+    public MFXButton adjustmentProductsSaveBtn;
+    @FXML
+    public MFXButton adjustmentProductsCancelBtn;
+    @FXML
+    public MFXComboBox<String> adjustmentType;
+    @FXML
+    public Label adjustmentProductVariantValidationLabel;
+    @FXML
+    public Label adjustmentProductsQntyValidationLabel;
+    @FXML
+    public Label adjustmentTypeValidationLabel;
 
-  public static AdjustmentDetailFormController getInstance() {
-    if (Objects.equals(instance, null)) instance = new AdjustmentDetailFormController();
-    return instance;
-  }
+    public static AdjustmentDetailFormController getInstance() {
+        if (Objects.equals(instance, null)) instance = new AdjustmentDetailFormController();
+        return instance;
+    }
 
-  @Override
-  public void initialize(URL location, ResourceBundle resources) {
-    // Bind form input value to property value.
-    adjustmentProductVariant
-        .valueProperty()
-        .bindBidirectional(AdjustmentDetailViewModel.productProperty());
-    adjustmentProductsQnty
-        .textProperty()
-        .bindBidirectional(AdjustmentDetailViewModel.quantityProperty());
-    adjustmentType
-        .textProperty()
-        .bindBidirectional(AdjustmentDetailViewModel.adjustmentTypeProperty());
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        // Bind form input value to property value.
+        adjustmentProductVariant
+                .valueProperty()
+                .bindBidirectional(AdjustmentDetailViewModel.productProperty());
+        adjustmentProductsQnty
+                .textProperty()
+                .bindBidirectional(AdjustmentDetailViewModel.quantityProperty());
+        adjustmentType
+                .textProperty()
+                .bindBidirectional(AdjustmentDetailViewModel.adjustmentTypeProperty());
 
-    // Combo box Converter.
-    StringConverter<Product> productVariantConverter =
-        FunctionalStringConverter.to(
-            productDetail -> (productDetail == null) ? "" : productDetail.getName());
+        // Combo box Converter.
+        StringConverter<Product> productVariantConverter =
+                FunctionalStringConverter.to(
+                        productDetail -> (productDetail == null) ? "" : productDetail.getName());
 
-    // Combo box Filter Function.
-    Function<String, Predicate<Product>> productVariantFilterFunction =
-        searchStr ->
-            productDetail ->
-                StringUtils.containsIgnoreCase(
-                    productVariantConverter.toString(productDetail), searchStr);
+        // Combo box Filter Function.
+        Function<String, Predicate<Product>> productVariantFilterFunction =
+                searchStr ->
+                        productDetail ->
+                                StringUtils.containsIgnoreCase(
+                                        productVariantConverter.toString(productDetail), searchStr);
 
-    // AdjustmentType combo box properties.
-    adjustmentProductVariant.setItems(ProductViewModel.getProducts());
-    adjustmentProductVariant.setConverter(productVariantConverter);
-    adjustmentProductVariant.setFilterFunction(productVariantFilterFunction);
+        // AdjustmentType combo box properties.
+        adjustmentProductVariant.setItems(ProductViewModel.getProducts());
+        adjustmentProductVariant.setConverter(productVariantConverter);
+        adjustmentProductVariant.setFilterFunction(productVariantFilterFunction);
 
-    adjustmentType.setItems(FXCollections.observableArrayList(Values.ADJUSTMENT_TYPE));
+        adjustmentType.setItems(FXCollections.observableArrayList(Values.ADJUSTMENT_TYPE));
 
-    // Input validators.
-    requiredValidator(
-        adjustmentProductVariant,
-        "Product is required.",
-        adjustmentProductVariantValidationLabel,
-        adjustmentProductsSaveBtn);
-    requiredValidator(
-        adjustmentProductsQnty,
-        "Quantity is required.",
-        adjustmentProductsQntyValidationLabel,
-        adjustmentProductsSaveBtn);
-    requiredValidator(
-        adjustmentType,
-        "Type is required.",
-        adjustmentTypeValidationLabel,
-        adjustmentProductsSaveBtn);
+        // Input validators.
+        requiredValidator(
+                adjustmentProductVariant,
+                "Product is required.",
+                adjustmentProductVariantValidationLabel,
+                adjustmentProductsSaveBtn);
+        requiredValidator(
+                adjustmentProductsQnty,
+                "Quantity is required.",
+                adjustmentProductsQntyValidationLabel,
+                adjustmentProductsSaveBtn);
+        requiredValidator(
+                adjustmentType,
+                "Type is required.",
+                adjustmentTypeValidationLabel,
+                adjustmentProductsSaveBtn);
 
-    dialogOnActions();
-  }
+        dialogOnActions();
+    }
 
-  private void dialogOnActions() {
-    adjustmentProductsCancelBtn.setOnAction(
-        (e) -> {
-          closeDialog(e);
+    private void dialogOnActions() {
+        adjustmentProductsCancelBtn.setOnAction(
+                (event) -> {
+                    closeDialog(event);
 
-          AdjustmentDetailViewModel.resetProperties();
-          adjustmentProductVariant.clearSelection();
-          adjustmentType.clearSelection();
+                    AdjustmentDetailViewModel.resetProperties();
+                    adjustmentProductVariant.clearSelection();
+                    adjustmentType.clearSelection();
 
-          adjustmentProductVariantValidationLabel.setVisible(false);
-          adjustmentProductsQntyValidationLabel.setVisible(false);
-          adjustmentTypeValidationLabel.setVisible(false);
-        });
-    adjustmentProductsSaveBtn.setOnAction(
-        (e) -> {
-          SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
+                    adjustmentProductVariantValidationLabel.setVisible(false);
+                    adjustmentProductsQntyValidationLabel.setVisible(false);
+                    adjustmentTypeValidationLabel.setVisible(false);
+                });
+        adjustmentProductsSaveBtn.setOnAction(
+                (event) -> {
+                    SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
 
-          if (!adjustmentProductVariantValidationLabel.isVisible()
-              && !adjustmentProductsQntyValidationLabel.isVisible()
-              && !adjustmentTypeValidationLabel.isVisible()) {
-            if (tempIdProperty().get() > -1) {
-              GlobalActions.spotyThreadPool()
-                  .execute(
-                      () ->
-                          AdjustmentDetailViewModel.updateAdjustmentDetail(
-                              SharedResources.getTempId()));
+                    if (!adjustmentProductVariantValidationLabel.isVisible()
+                            && !adjustmentProductsQntyValidationLabel.isVisible()
+                            && !adjustmentTypeValidationLabel.isVisible()) {
+                        if (tempIdProperty().get() > -1) {
+                            AdjustmentDetailViewModel.updateAdjustmentDetail(
+                                    SharedResources.getTempId());
 
-              SimpleNotification notification =
-                  new SimpleNotification.NotificationBuilder("Entry updated successfully")
-                      .duration(NotificationDuration.MEDIUM)
-                      .icon("fas-circle-check")
-                      .type(NotificationVariants.SUCCESS)
-                      .build();
-              notificationHolder.addNotification(notification);
+                            SimpleNotification notification =
+                                    new SimpleNotification.NotificationBuilder("Entry updated successfully")
+                                            .duration(NotificationDuration.MEDIUM)
+                                            .icon("fas-circle-check")
+                                            .type(NotificationVariants.SUCCESS)
+                                            .build();
+                            notificationHolder.addNotification(notification);
 
-              adjustmentProductVariant.clearSelection();
-              adjustmentType.clearSelection();
+                            adjustmentProductVariant.clearSelection();
+                            adjustmentType.clearSelection();
 
-              closeDialog(e);
-              return;
-            }
-            GlobalActions.spotyThreadPool()
-                .execute(AdjustmentDetailViewModel::addAdjustmentDetails);
+                            closeDialog(event);
+                            return;
+                        }
+                        AdjustmentDetailViewModel.addAdjustmentDetails();
 
-            SimpleNotification notification =
-                new SimpleNotification.NotificationBuilder("Entry added successfully")
-                    .duration(NotificationDuration.SHORT)
-                    .icon("fas-circle-check")
-                    .type(NotificationVariants.SUCCESS)
-                    .build();
+                        SimpleNotification notification =
+                                new SimpleNotification.NotificationBuilder("Entry added successfully")
+                                        .duration(NotificationDuration.SHORT)
+                                        .icon("fas-circle-check")
+                                        .type(NotificationVariants.SUCCESS)
+                                        .build();
 
-            notificationHolder.addNotification(notification);
-            AdjustmentDetailViewModel.resetProperties();
+                        notificationHolder.addNotification(notification);
+                        AdjustmentDetailViewModel.resetProperties();
 
-            adjustmentProductVariant.clearSelection();
-            adjustmentType.clearSelection();
+                        adjustmentProductVariant.clearSelection();
+                        adjustmentType.clearSelection();
 
-            closeDialog(e);
-            return;
-          }
-          SimpleNotification notification =
-              new SimpleNotification.NotificationBuilder("Required fields missing")
-                  .duration(NotificationDuration.SHORT)
-                  .icon("fas-triangle-exclamation")
-                  .type(NotificationVariants.ERROR)
-                  .build();
-          notificationHolder.addNotification(notification);
-        });
-  }
+                        closeDialog(event);
+                        return;
+                    }
+                    SimpleNotification notification =
+                            new SimpleNotification.NotificationBuilder("Required fields missing")
+                                    .duration(NotificationDuration.SHORT)
+                                    .icon("fas-triangle-exclamation")
+                                    .type(NotificationVariants.ERROR)
+                                    .build();
+                    notificationHolder.addNotification(notification);
+                });
+    }
 }

@@ -14,15 +14,10 @@
 
 package org.infinite.spoty.viewModels;
 
-import static org.infinite.spoty.values.SharedResources.*;
-
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.support.ConnectionSource;
-import java.sql.SQLException;
-import java.util.Date;
-import java.util.LinkedList;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -32,362 +27,369 @@ import org.infinite.spoty.database.models.Product;
 import org.infinite.spoty.database.models.TransferDetail;
 import org.infinite.spoty.database.models.TransferMaster;
 import org.infinite.spoty.database.models.TransferTransaction;
+import org.infinite.spoty.utils.SpotyLogger;
 import org.jetbrains.annotations.NotNull;
 
+import java.sql.SQLException;
+import java.util.Date;
+import java.util.LinkedList;
+
+import static org.infinite.spoty.values.SharedResources.*;
+
 public class TransferDetailViewModel {
-  public static final ObservableList<TransferDetail> transferDetailsList =
-      FXCollections.observableArrayList();
-  private static final ListProperty<TransferDetail> transferDetails =
-      new SimpleListProperty<>(transferDetailsList);
-  private static final LongProperty id = new SimpleLongProperty(0);
-  private static final ObjectProperty<Product> product = new SimpleObjectProperty<>();
-  private static final ObjectProperty<TransferMaster> transfer = new SimpleObjectProperty<>();
-  private static final StringProperty quantity = new SimpleStringProperty("");
-  private static final StringProperty serial = new SimpleStringProperty("");
-  private static final StringProperty description = new SimpleStringProperty("");
-  private static final StringProperty price = new SimpleStringProperty("");
-  private static final StringProperty total = new SimpleStringProperty("");
-  private static final SQLiteConnection connection = SQLiteConnection.getInstance();
-  private static final ConnectionSource connectionSource = connection.getConnection();
+    public static final ObservableList<TransferDetail> transferDetailsList =
+            FXCollections.observableArrayList();
+    private static final ListProperty<TransferDetail> transferDetails =
+            new SimpleListProperty<>(transferDetailsList);
+    private static final LongProperty id = new SimpleLongProperty(0);
+    private static final ObjectProperty<Product> product = new SimpleObjectProperty<>();
+    private static final ObjectProperty<TransferMaster> transfer = new SimpleObjectProperty<>();
+    private static final StringProperty quantity = new SimpleStringProperty("");
+    private static final StringProperty serial = new SimpleStringProperty("");
+    private static final StringProperty description = new SimpleStringProperty("");
+    private static final StringProperty price = new SimpleStringProperty("");
+    private static final StringProperty total = new SimpleStringProperty("");
+    private static final SQLiteConnection connection = SQLiteConnection.getInstance();
+    private static final ConnectionSource connectionSource = connection.getConnection();
 
-  public static long getId() {
-    return id.get();
-  }
+    public static long getId() {
+        return id.get();
+    }
 
-  public static void setId(long id) {
-    TransferDetailViewModel.id.set(id);
-  }
+    public static void setId(long id) {
+        TransferDetailViewModel.id.set(id);
+    }
 
-  public static LongProperty idProperty() {
-    return id;
-  }
+    public static LongProperty idProperty() {
+        return id;
+    }
 
-  public static Product getProduct() {
-    return product.get();
-  }
+    public static Product getProduct() {
+        return product.get();
+    }
 
-  public static void setProduct(Product product) {
-    TransferDetailViewModel.product.set(product);
-  }
+    public static void setProduct(Product product) {
+        TransferDetailViewModel.product.set(product);
+    }
 
-  public static ObjectProperty<Product> productProperty() {
-    return product;
-  }
+    public static ObjectProperty<Product> productProperty() {
+        return product;
+    }
 
-  public static TransferMaster getTransfer() {
-    return transfer.get();
-  }
+    public static TransferMaster getTransfer() {
+        return transfer.get();
+    }
 
-  public static void setTransfer(TransferMaster transfer) {
-    TransferDetailViewModel.transfer.set(transfer);
-  }
+    public static void setTransfer(TransferMaster transfer) {
+        TransferDetailViewModel.transfer.set(transfer);
+    }
 
-  public static ObjectProperty<TransferMaster> transferProperty() {
-    return transfer;
-  }
+    public static ObjectProperty<TransferMaster> transferProperty() {
+        return transfer;
+    }
 
-  public static long getQuantity() {
-    return Long.parseLong(!quantity.get().isEmpty() ? quantity.get() : "0");
-  }
+    public static long getQuantity() {
+        return Long.parseLong(!quantity.get().isEmpty() ? quantity.get() : "0");
+    }
 
-  public static void setQuantity(String quantity) {
-    TransferDetailViewModel.quantity.set(quantity);
-  }
+    public static void setQuantity(String quantity) {
+        TransferDetailViewModel.quantity.set(quantity);
+    }
 
-  public static StringProperty quantityProperty() {
-    return quantity;
-  }
+    public static StringProperty quantityProperty() {
+        return quantity;
+    }
 
-  public static String getDescription() {
-    return description.get();
-  }
+    public static String getDescription() {
+        return description.get();
+    }
 
-  public static void setDescription(String description) {
-    TransferDetailViewModel.description.set(description);
-  }
+    public static void setDescription(String description) {
+        TransferDetailViewModel.description.set(description);
+    }
 
-  public static StringProperty descriptionProperty() {
-    return description;
-  }
+    public static StringProperty descriptionProperty() {
+        return description;
+    }
 
-  public static String getSerial() {
-    return serial.get();
-  }
+    public static String getSerial() {
+        return serial.get();
+    }
 
-  public static void setSerial(String serial) {
-    TransferDetailViewModel.serial.set(serial);
-  }
+    public static void setSerial(String serial) {
+        TransferDetailViewModel.serial.set(serial);
+    }
 
-  public static StringProperty serialProperty() {
-    return serial;
-  }
+    public static StringProperty serialProperty() {
+        return serial;
+    }
 
-  public static double getPrice() {
-    return Double.parseDouble(!price.get().isEmpty() ? price.get() : "0");
-  }
+    public static double getPrice() {
+        return Double.parseDouble(!price.get().isEmpty() ? price.get() : "0");
+    }
 
-  public static void setPrice(String price) {
-    TransferDetailViewModel.price.set(price);
-  }
+    public static void setPrice(String price) {
+        TransferDetailViewModel.price.set(price);
+    }
 
-  public static StringProperty priceProperty() {
-    return price;
-  }
+    public static StringProperty priceProperty() {
+        return price;
+    }
 
-  public static double getTotal() {
-    return Double.parseDouble(!total.get().isEmpty() ? total.get() : "0");
-  }
+    public static double getTotal() {
+        return Double.parseDouble(!total.get().isEmpty() ? total.get() : "0");
+    }
 
-  public static void setTotal(String total) {
-    TransferDetailViewModel.total.set(total);
-  }
+    public static void setTotal(String total) {
+        TransferDetailViewModel.total.set(total);
+    }
 
-  public static StringProperty totalProperty() {
-    return total;
-  }
+    public static StringProperty totalProperty() {
+        return total;
+    }
 
-  public static ObservableList<TransferDetail> getTransferDetails() {
-    return transferDetails.get();
-  }
+    public static ObservableList<TransferDetail> getTransferDetails() {
+        return transferDetails.get();
+    }
 
-  public static void setTransferDetails(ObservableList<TransferDetail> transferDetails) {
-    TransferDetailViewModel.transferDetails.set(transferDetails);
-  }
+    public static void setTransferDetails(ObservableList<TransferDetail> transferDetails) {
+        TransferDetailViewModel.transferDetails.set(transferDetails);
+    }
 
-  public static ListProperty<TransferDetail> transferDetailsProperty() {
-    return transferDetails;
-  }
+    public static ListProperty<TransferDetail> transferDetailsProperty() {
+        return transferDetails;
+    }
 
-  public static void resetProperties() {
-    setId(0);
-    setTempId(-1);
-    setProduct(null);
-    setQuantity("");
-    setSerial("");
-    setDescription("");
-    setPrice("");
-    setTotal("");
-  }
+    public static void resetProperties() {
+        setId(0);
+        setTempId(-1);
+        setProduct(null);
+        setQuantity("");
+        setSerial("");
+        setDescription("");
+        setPrice("");
+        setTotal("");
+    }
 
-  public static void addTransferDetails() {
-    TransferDetail transferDetail =
-        new TransferDetail(
-            getProduct(), getQuantity(), getSerial(), getDescription(), getPrice(), getTotal());
+    public static void addTransferDetails() {
+        TransferDetail transferDetail =
+                new TransferDetail(
+                        getProduct(), getQuantity(), getSerial(), getDescription(), getPrice(), getTotal());
 
-    Platform.runLater(
-        () -> {
-          transferDetailsList.add(transferDetail);
+        Platform.runLater(
+                () -> {
+                    transferDetailsList.add(transferDetail);
 
-          resetProperties();
-        });
-  }
+                    resetProperties();
+                });
+    }
 
-  public static void saveTransferDetails() throws SQLException {
-    Dao<TransferDetail, Long> transferDetailDao =
-        DaoManager.createDao(connectionSource, TransferDetail.class);
-
-    transferDetailDao.create(transferDetailsList);
-
-    setProductQuantity();
-
-    Platform.runLater(transferDetailsList::clear);
-  }
-
-  public static void getAllTransferDetails() throws SQLException {
-    Dao<TransferDetail, Long> transferDetailDao =
-        DaoManager.createDao(connectionSource, TransferDetail.class);
-
-    Platform.runLater(
-        () -> {
-          transferDetailsList.clear();
-          try {
-            transferDetailsList.addAll(transferDetailDao.queryForAll());
-          } catch (SQLException e) {
-            throw new RuntimeException(e);
-          }
-        });
-  }
-
-  public static void updateTransferDetail(long index) throws SQLException {
-    Dao<TransferDetail, Long> transferDetailDao =
-        DaoManager.createDao(connectionSource, TransferDetail.class);
-
-    TransferDetail transferDetail = transferDetailDao.queryForId(index);
-    transferDetail.setProduct(getProduct());
-    transferDetail.setQuantity(getQuantity());
-    transferDetail.setSerialNo(getSerial());
-    transferDetail.setDescription(getDescription());
-    transferDetail.setPrice(getPrice());
-    transferDetail.setTotal(getTotal());
-
-    Platform.runLater(
-        () -> {
-          transferDetailsList.remove(getTempId());
-          transferDetailsList.add(getTempId(), transferDetail);
-
-          resetProperties();
-        });
-  }
-
-  public static void getItem(long index, int tempIndex) throws SQLException {
-    Dao<TransferDetail, Long> transferDetailDao =
-        DaoManager.createDao(connectionSource, TransferDetail.class);
-
-    TransferDetail transferDetail = transferDetailDao.queryForId(index);
-
-    Platform.runLater(
-        () -> {
-          setTempId(tempIndex);
-          setId(transferDetail.getId());
-          setProduct(transferDetail.getProduct());
-          setQuantity(String.valueOf(transferDetail.getQuantity()));
-          setSerial(transferDetail.getSerialNo());
-          setDescription(transferDetail.getDescription());
-          setPrice(String.valueOf(transferDetail.getPrice()));
-          setTotal(String.valueOf(transferDetail.getTotal()));
-        });
-  }
-
-  public static void updateItem(long index) throws SQLException {
-    Dao<TransferDetail, Long> transferDetailDao =
-        DaoManager.createDao(connectionSource, TransferDetail.class);
-
-    TransferDetail transferDetail = transferDetailDao.queryForId(index);
-    transferDetail.setProduct(getProduct());
-    transferDetail.setQuantity(getQuantity());
-    transferDetail.setSerialNo(getSerial());
-    transferDetail.setDescription(getDescription());
-    transferDetail.setPrice(getPrice());
-    transferDetail.setTotal(getTotal());
-
-    transferDetailDao.update(transferDetail);
-
-    getAllTransferDetails();
-  }
-
-  public static void updateTransferDetails() throws SQLException {
-    Dao<TransferDetail, Long> transferDetailDao =
-        DaoManager.createDao(connectionSource, TransferDetail.class);
-
-    transferDetailsList.forEach(
-        transferDetail -> {
-          try {
-            transferDetailDao.update(transferDetail);
-          } catch (SQLException e) {
-            throw new RuntimeException(e);
-          }
-        });
-
-    updateProductQuantity();
-
-    getAllTransferDetails();
-  }
-
-  public static void removeTransferDetail(long index, int tempIndex) {
-    Platform.runLater(() -> transferDetailsList.remove(tempIndex));
-    PENDING_DELETES.add(index);
-  }
-
-  public static void deleteTransferDetails(LinkedList<Long> indexes) {
-    indexes.forEach(
-        index -> {
-          try {
-            Dao<TransferDetail, Long> transferDetailDao =
+    public static void saveTransferDetails() throws SQLException {
+        Dao<TransferDetail, Long> transferDetailDao =
                 DaoManager.createDao(connectionSource, TransferDetail.class);
 
-            transferDetailDao.deleteById(index);
-          } catch (SQLException e) {
-            throw new RuntimeException(e);
-          }
-        });
-  }
+        transferDetailDao.create(transferDetailsList);
 
-  private static void setProductQuantity() {
-    getTransferDetails()
-        .forEach(
-            transferDetails -> {
-              long productDetailQuantity =
-                  transferDetails.getProduct().getQuantity() - transferDetails.getQuantity();
+        setProductQuantity();
 
-              ProductViewModel.setQuantity(productDetailQuantity);
+        Platform.runLater(transferDetailsList::clear);
+    }
 
-              try {
-                ProductViewModel.updateProductQuantity(transferDetails.getProduct().getId());
-                createTransferTransaction(transferDetails);
-              } catch (SQLException e) {
-                throw new RuntimeException(e);
-              }
-            });
-  }
+    public static void getAllTransferDetails() throws SQLException {
+        Dao<TransferDetail, Long> transferDetailDao =
+                DaoManager.createDao(connectionSource, TransferDetail.class);
 
-  private static void updateProductQuantity() {
-    getTransferDetails()
-        .forEach(
-            transferDetails -> {
-              try {
-                TransferTransaction saleTransaction =
-                    getTransferTransaction(transferDetails.getId());
+        Platform.runLater(
+                () -> {
+                    transferDetailsList.clear();
+                    try {
+                        transferDetailsList.addAll(transferDetailDao.queryForAll());
+                    } catch (SQLException e) {
+                        SpotyLogger.writeToFile(e, TransferDetailViewModel.class);
+                    }
+                });
+    }
 
-                long adjustQuantity = saleTransaction.getTransferQuantity();
-                long currentProductQuantity = transferDetails.getProduct().getQuantity();
-                long productQuantity =
-                    (currentProductQuantity - adjustQuantity) + transferDetails.getQuantity();
+    public static void updateTransferDetail(long index) throws SQLException {
+        Dao<TransferDetail, Long> transferDetailDao =
+                DaoManager.createDao(connectionSource, TransferDetail.class);
 
-                ProductViewModel.setQuantity(productQuantity);
+        TransferDetail transferDetail = transferDetailDao.queryForId(index);
+        transferDetail.setProduct(getProduct());
+        transferDetail.setQuantity(getQuantity());
+        transferDetail.setSerialNo(getSerial());
+        transferDetail.setDescription(getDescription());
+        transferDetail.setPrice(getPrice());
+        transferDetail.setTotal(getTotal());
 
-                ProductViewModel.updateProductQuantity(transferDetails.getProduct().getId());
+        Platform.runLater(
+                () -> {
+                    transferDetailsList.remove(getTempId());
+                    transferDetailsList.add(getTempId(), transferDetail);
 
-                updateTransferTransaction(transferDetails);
-              } catch (SQLException e) {
-                throw new RuntimeException(e);
-              }
-            });
-  }
+                    resetProperties();
+                });
+    }
 
-  private static TransferTransaction getTransferTransaction(long transferIndex)
-      throws SQLException {
-    Dao<TransferTransaction, Long> transferTransactionDao =
-        DaoManager.createDao(connectionSource, TransferTransaction.class);
+    public static void getItem(long index, int tempIndex) throws SQLException {
+        Dao<TransferDetail, Long> transferDetailDao =
+                DaoManager.createDao(connectionSource, TransferDetail.class);
 
-    PreparedQuery<TransferTransaction> preparedQuery =
-        transferTransactionDao
-            .queryBuilder()
-            .where()
-            .eq("stock_in_detail_id", transferIndex)
-            .prepare();
+        TransferDetail transferDetail = transferDetailDao.queryForId(index);
 
-    return transferTransactionDao.queryForFirst(preparedQuery);
-  }
+        Platform.runLater(
+                () -> {
+                    setTempId(tempIndex);
+                    setId(transferDetail.getId());
+                    setProduct(transferDetail.getProduct());
+                    setQuantity(String.valueOf(transferDetail.getQuantity()));
+                    setSerial(transferDetail.getSerialNo());
+                    setDescription(transferDetail.getDescription());
+                    setPrice(String.valueOf(transferDetail.getPrice()));
+                    setTotal(String.valueOf(transferDetail.getTotal()));
+                });
+    }
 
-  private static void createTransferTransaction(@NotNull TransferDetail transferDetails)
-      throws SQLException {
-    Dao<TransferTransaction, Long> transferTransactionDao =
-        DaoManager.createDao(connectionSource, TransferTransaction.class);
+    public static void updateItem(long index) throws SQLException {
+        Dao<TransferDetail, Long> transferDetailDao =
+                DaoManager.createDao(connectionSource, TransferDetail.class);
 
-    TransferTransaction transferTransaction = new TransferTransaction();
-    transferTransaction.setFromBranch(transferDetails.getTransfer().getFromBranch());
-    transferTransaction.setToBranch(transferDetails.getTransfer().getToBranch());
-    transferTransaction.setTransferDetail(transferDetails);
-    transferTransaction.setProduct(transferDetails.getProduct());
-    transferTransaction.setTransferQuantity(transferDetails.getQuantity());
-    transferTransaction.setDate(new Date());
+        TransferDetail transferDetail = transferDetailDao.queryForId(index);
+        transferDetail.setProduct(getProduct());
+        transferDetail.setQuantity(getQuantity());
+        transferDetail.setSerialNo(getSerial());
+        transferDetail.setDescription(getDescription());
+        transferDetail.setPrice(getPrice());
+        transferDetail.setTotal(getTotal());
 
-    transferTransactionDao.create(transferTransaction);
-  }
+        transferDetailDao.update(transferDetail);
 
-  private static void updateTransferTransaction(@NotNull TransferDetail transferDetails)
-      throws SQLException {
-    Dao<TransferTransaction, Long> transferTransactionDao =
-        DaoManager.createDao(connectionSource, TransferTransaction.class);
+        getAllTransferDetails();
+    }
 
-    TransferTransaction transferTransaction = getTransferTransaction(transferDetails.getId());
-    transferTransaction.setFromBranch(transferDetails.getTransfer().getFromBranch());
-    transferTransaction.setToBranch(transferDetails.getTransfer().getToBranch());
-    transferTransaction.setTransferDetail(transferDetails);
-    transferTransaction.setProduct(transferDetails.getProduct());
-    transferTransaction.setTransferQuantity(transferDetails.getQuantity());
-    transferTransaction.setDate(new Date());
+    public static void updateTransferDetails() throws SQLException {
+        Dao<TransferDetail, Long> transferDetailDao =
+                DaoManager.createDao(connectionSource, TransferDetail.class);
 
-    transferTransactionDao.update(transferTransaction);
-  }
+        transferDetailsList.forEach(
+                transferDetail -> {
+                    try {
+                        transferDetailDao.update(transferDetail);
+                    } catch (SQLException e) {
+                        SpotyLogger.writeToFile(e, TransferDetailViewModel.class);
+                    }
+                });
+
+        updateProductQuantity();
+
+        getAllTransferDetails();
+    }
+
+    public static void removeTransferDetail(long index, int tempIndex) {
+        Platform.runLater(() -> transferDetailsList.remove(tempIndex));
+        PENDING_DELETES.add(index);
+    }
+
+    public static void deleteTransferDetails(@NotNull LinkedList<Long> indexes) {
+        indexes.forEach(
+                index -> {
+                    try {
+                        Dao<TransferDetail, Long> transferDetailDao =
+                                DaoManager.createDao(connectionSource, TransferDetail.class);
+
+                        transferDetailDao.deleteById(index);
+                    } catch (SQLException e) {
+                        SpotyLogger.writeToFile(e, TransferDetailViewModel.class);
+                    }
+                });
+    }
+
+    private static void setProductQuantity() {
+        getTransferDetails()
+                .forEach(
+                        transferDetails -> {
+                            long productDetailQuantity =
+                                    transferDetails.getProduct().getQuantity() - transferDetails.getQuantity();
+
+                            ProductViewModel.setQuantity(productDetailQuantity);
+
+                            try {
+                                ProductViewModel.updateProductQuantity(transferDetails.getProduct().getId());
+                                createTransferTransaction(transferDetails);
+                            } catch (SQLException e) {
+                                SpotyLogger.writeToFile(e, TransferDetailViewModel.class);
+                            }
+                        });
+    }
+
+    private static void updateProductQuantity() {
+        getTransferDetails()
+                .forEach(
+                        transferDetails -> {
+                            try {
+                                TransferTransaction saleTransaction =
+                                        getTransferTransaction(transferDetails.getId());
+
+                                long adjustQuantity = saleTransaction.getTransferQuantity();
+                                long currentProductQuantity = transferDetails.getProduct().getQuantity();
+                                long productQuantity =
+                                        (currentProductQuantity - adjustQuantity) + transferDetails.getQuantity();
+
+                                ProductViewModel.setQuantity(productQuantity);
+
+                                ProductViewModel.updateProductQuantity(transferDetails.getProduct().getId());
+
+                                updateTransferTransaction(transferDetails);
+                            } catch (SQLException e) {
+                                SpotyLogger.writeToFile(e, TransferDetailViewModel.class);
+                            }
+                        });
+    }
+
+    private static TransferTransaction getTransferTransaction(long transferIndex)
+            throws SQLException {
+        Dao<TransferTransaction, Long> transferTransactionDao =
+                DaoManager.createDao(connectionSource, TransferTransaction.class);
+
+        PreparedQuery<TransferTransaction> preparedQuery =
+                transferTransactionDao
+                        .queryBuilder()
+                        .where()
+                        .eq("stock_in_detail_id", transferIndex)
+                        .prepare();
+
+        return transferTransactionDao.queryForFirst(preparedQuery);
+    }
+
+    private static void createTransferTransaction(@NotNull TransferDetail transferDetails)
+            throws SQLException {
+        Dao<TransferTransaction, Long> transferTransactionDao =
+                DaoManager.createDao(connectionSource, TransferTransaction.class);
+
+        TransferTransaction transferTransaction = new TransferTransaction();
+        transferTransaction.setFromBranch(transferDetails.getTransfer().getFromBranch());
+        transferTransaction.setToBranch(transferDetails.getTransfer().getToBranch());
+        transferTransaction.setTransferDetail(transferDetails);
+        transferTransaction.setProduct(transferDetails.getProduct());
+        transferTransaction.setTransferQuantity(transferDetails.getQuantity());
+        transferTransaction.setDate(new Date());
+
+        transferTransactionDao.create(transferTransaction);
+    }
+
+    private static void updateTransferTransaction(@NotNull TransferDetail transferDetails)
+            throws SQLException {
+        Dao<TransferTransaction, Long> transferTransactionDao =
+                DaoManager.createDao(connectionSource, TransferTransaction.class);
+
+        TransferTransaction transferTransaction = getTransferTransaction(transferDetails.getId());
+        transferTransaction.setFromBranch(transferDetails.getTransfer().getFromBranch());
+        transferTransaction.setToBranch(transferDetails.getTransfer().getToBranch());
+        transferTransaction.setTransferDetail(transferDetails);
+        transferTransaction.setProduct(transferDetails.getProduct());
+        transferTransaction.setTransferQuantity(transferDetails.getQuantity());
+        transferTransaction.setDate(new Date());
+
+        transferTransactionDao.update(transferTransaction);
+    }
 }

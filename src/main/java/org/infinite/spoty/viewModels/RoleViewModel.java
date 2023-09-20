@@ -18,234 +18,160 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.support.ConnectionSource;
-import java.sql.SQLException;
 import javafx.application.Platform;
-import javafx.beans.property.ListProperty;
-import javafx.beans.property.LongProperty;
-import javafx.beans.property.SimpleListProperty;
-import javafx.beans.property.SimpleLongProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
-import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.Permission;
 import org.infinite.spoty.database.models.Role;
 import org.infinite.spoty.database.models.RolePermission;
+import org.infinite.spoty.utils.SpotyLogger;
+
+import java.sql.SQLException;
 
 public class RoleViewModel {
-  private static final ObservableList<Role> rolesList = FXCollections.observableArrayList();
-  private static final ListProperty<Role> roles = new SimpleListProperty<>(rolesList);
-  private static final LongProperty id = new SimpleLongProperty(0);
-  private static final StringProperty name = new SimpleStringProperty();
-  private static final StringProperty description = new SimpleStringProperty();
-  private static final PreparedQuery<Permission> permissionsForRoleQuery = null;
+    private static final ObservableList<Role> rolesList = FXCollections.observableArrayList();
+    private static final ListProperty<Role> roles = new SimpleListProperty<>(rolesList);
+    private static final LongProperty id = new SimpleLongProperty(0);
+    private static final StringProperty name = new SimpleStringProperty();
+    private static final StringProperty description = new SimpleStringProperty();
+    private static final PreparedQuery<Permission> permissionsForRoleQuery = null;
+    private static final SQLiteConnection connection = SQLiteConnection.getInstance();
+    private static final ConnectionSource connectionSource = connection.getConnection();
 
-  public static long getId() {
-    return id.get();
-  }
+    public static long getId() {
+        return id.get();
+    }
 
-  public static void setId(long id) {
-    RoleViewModel.id.set(id);
-  }
+    public static void setId(long id) {
+        RoleViewModel.id.set(id);
+    }
 
-  public static LongProperty idProperty() {
-    return id;
-  }
+    public static LongProperty idProperty() {
+        return id;
+    }
 
-  public static String getName() {
-    return name.get();
-  }
+    public static String getName() {
+        return name.get();
+    }
 
-  public static void setName(String name) {
-    RoleViewModel.name.set(name);
-  }
+    public static void setName(String name) {
+        RoleViewModel.name.set(name);
+    }
 
-  public static StringProperty nameProperty() {
-    return name;
-  }
+    public static StringProperty nameProperty() {
+        return name;
+    }
 
-  public static String getDescription() {
-    return description.get();
-  }
+    public static String getDescription() {
+        return description.get();
+    }
 
-  public static void setDescription(String description) {
-    RoleViewModel.description.set(description);
-  }
+    public static void setDescription(String description) {
+        RoleViewModel.description.set(description);
+    }
 
-  public static StringProperty descriptionProperty() {
-    return description;
-  }
+    public static StringProperty descriptionProperty() {
+        return description;
+    }
 
-  public static void saveRole() {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
-            Dao<Role, Long> roleDao = DaoManager.createDao(connectionSource, Role.class);
-            Dao<RolePermission, Long> rolePermissionDao =
+    public static void saveRole() throws SQLException {
+        Dao<Role, Long> roleDao = DaoManager.createDao(connectionSource, Role.class);
+        Dao<RolePermission, Long> rolePermissionDao =
                 DaoManager.createDao(connectionSource, RolePermission.class);
 
-            Role role = new Role(getName(), getDescription());
+        Role role = new Role(getName(), getDescription());
 
-            roleDao.create(role);
+        roleDao.create(role);
 
-            Platform.runLater(
+        Platform.runLater(
                 () ->
-                    PermissionsViewModel.getPermissionsList()
-                        .forEach(
-                            permission -> {
-                              try {
-                                rolePermissionDao.create(new RolePermission(role, permission));
-                              } catch (SQLException e) {
-                                throw new RuntimeException(e);
-                              }
-                            }));
+                        PermissionsViewModel.getPermissionsList()
+                                .forEach(
+                                        permission -> {
+                                            try {
+                                                rolePermissionDao.create(new RolePermission(role, permission));
+                                            } catch (SQLException e) {
+                                                SpotyLogger.writeToFile(e, RoleViewModel.class);
+                                            }
+                                        }));
 
-            return null;
-          }
-        };
+        resetRoleProperties();
+        PermissionsViewModel.getPermissionsList().clear();
+        getAllRoles();
+    }
 
-    task.setOnSucceeded(
-        event -> {
-          resetRoleProperties();
-          PermissionsViewModel.getPermissionsList().clear();
-          getAllRoles();
-        });
-    task.setOnFailed(event -> task.getException().printStackTrace());
+    public static void resetRoleProperties() {
+        setId(0);
+        setName("");
+        setDescription("");
+        PermissionsViewModel.resetPermissionsProperties();
+    }
 
-    GlobalActions.spotyThreadPool().execute(task);
-  }
+    public static ObservableList<Role> getRolesList() {
+        return rolesList;
+    }
 
-  public static void resetRoleProperties() {
-    setId(0);
-    setName("");
-    setDescription("");
-    PermissionsViewModel.resetPermissionsProperties();
-  }
+    public static ObservableList<Role> getRoles() {
+        return roles.get();
+    }
 
-  public static ObservableList<Role> getRolesList() {
-    return rolesList;
-  }
+    public static void setRoles(ObservableList<Role> roles) {
+        RoleViewModel.roles.set(roles);
+    }
 
-  public static ObservableList<Role> getRoles() {
-    return roles.get();
-  }
+    public static ListProperty<Role> rolesProperty() {
+        return roles;
+    }
 
-  public static void setRoles(ObservableList<Role> roles) {
-    RoleViewModel.roles.set(roles);
-  }
+    public static void getAllRoles() throws SQLException {
+        Dao<Role, Long> roleDao = DaoManager.createDao(connectionSource, Role.class);
 
-  public static ListProperty<Role> rolesProperty() {
-    return roles;
-  }
-
-  public static void getAllRoles() {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
-            Dao<Role, Long> roleDao = DaoManager.createDao(connectionSource, Role.class);
-
-            Platform.runLater(
+        Platform.runLater(
                 () -> {
-                  rolesList.clear();
+                    rolesList.clear();
 
-                  try {
-                    rolesList.addAll(roleDao.queryForAll());
-                  } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                  }
+                    try {
+                        rolesList.addAll(roleDao.queryForAll());
+                    } catch (SQLException e) {
+                        SpotyLogger.writeToFile(e, RoleViewModel.class);
+                    }
                 });
+    }
 
-            return null;
-          }
-        };
+    public static void getItem(long index) throws SQLException {
+        Dao<Role, Long> roleDao = DaoManager.createDao(connectionSource, Role.class);
 
-    GlobalActions.spotyThreadPool().execute(task);
-  }
+        Role role = roleDao.queryForId(index);
 
-  public static void getItem(long index) {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
+        setId(role.getId());
+        setName(role.getName());
+        setDescription(role.getDescription());
 
-            Dao<Role, Long> roleDao = DaoManager.createDao(connectionSource, Role.class);
+        getAllRoles();
+    }
 
-            Role role = roleDao.queryForId(index);
+    public static void updateItem(long index) throws SQLException {
+        Dao<Role, Long> roleDao = DaoManager.createDao(connectionSource, Role.class);
 
-            setId(role.getId());
-            setName(role.getName());
-            setDescription(role.getDescription());
+        Role role = roleDao.queryForId(index);
 
-            return null;
-          }
-        };
+        role.setName(getName());
+        role.setDescription(getDescription());
 
-    task.setOnSucceeded(event -> getAllRoles());
+        roleDao.update(role);
 
-    GlobalActions.spotyThreadPool().execute(task);
-  }
 
-  public static void updateItem(long index) {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
+        resetRoleProperties();
+        getAllRoles();
+    }
 
-            Dao<Role, Long> roleDao = DaoManager.createDao(connectionSource, Role.class);
+    public static void deleteItem(long index) throws SQLException {
+        Dao<Role, Long> roleDao = DaoManager.createDao(connectionSource, Role.class);
 
-            Role role = roleDao.queryForId(index);
+        roleDao.deleteById(index);
 
-            role.setName(getName());
-            role.setDescription(getDescription());
-
-            roleDao.update(role);
-
-            return null;
-          }
-        };
-
-    task.setOnSucceeded(
-        event -> {
-          resetRoleProperties();
-          getAllRoles();
-        });
-
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static void deleteItem(long index) {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
-            Dao<Role, Long> roleDao = DaoManager.createDao(connectionSource, Role.class);
-
-            roleDao.deleteById(index);
-
-            return null;
-          }
-        };
-
-    task.setOnSucceeded(event -> getAllRoles());
-
-    GlobalActions.spotyThreadPool().execute(task);
-  }
+        getAllRoles();
+    }
 }

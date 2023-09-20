@@ -37,7 +37,6 @@ class DatabaseSeederTest {
     Customer customer;
     Supplier supplier;
     Branch branch;
-    ProductDetail productDetail;
     SQLiteConnection connection = SQLiteConnection.getInstance();
     ConnectionSource connectionSource = connection.getConnection();
 

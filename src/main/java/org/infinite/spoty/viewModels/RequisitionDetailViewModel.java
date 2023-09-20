@@ -14,336 +14,230 @@
 
 package org.infinite.spoty.viewModels;
 
-import static org.infinite.spoty.values.SharedResources.*;
-import static org.infinite.spoty.values.SharedResources.getTempId;
-
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
-import java.sql.SQLException;
-import java.util.LinkedList;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
-import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.Product;
 import org.infinite.spoty.database.models.RequisitionDetail;
 import org.infinite.spoty.database.models.RequisitionMaster;
+import org.infinite.spoty.utils.SpotyLogger;
+import org.jetbrains.annotations.NotNull;
+
+import java.sql.SQLException;
+import java.util.LinkedList;
+
+import static org.infinite.spoty.values.SharedResources.*;
 
 public class RequisitionDetailViewModel {
-  public static final ObservableList<RequisitionDetail> requisitionDetailList =
-      FXCollections.observableArrayList();
-  private static final ListProperty<RequisitionDetail> requisitionDetails =
-      new SimpleListProperty<>(requisitionDetailList);
-  private static final LongProperty id = new SimpleLongProperty(0);
-  private static final ObjectProperty<Product> product = new SimpleObjectProperty<>();
-  private static final ObjectProperty<RequisitionMaster> requisition = new SimpleObjectProperty<>();
-  private static final StringProperty quantity = new SimpleStringProperty();
-  private static final StringProperty description = new SimpleStringProperty();
+    public static final ObservableList<RequisitionDetail> requisitionDetailList =
+            FXCollections.observableArrayList();
+    private static final ListProperty<RequisitionDetail> requisitionDetails =
+            new SimpleListProperty<>(requisitionDetailList);
+    private static final LongProperty id = new SimpleLongProperty(0);
+    private static final ObjectProperty<Product> product = new SimpleObjectProperty<>();
+    private static final ObjectProperty<RequisitionMaster> requisition = new SimpleObjectProperty<>();
+    private static final StringProperty quantity = new SimpleStringProperty();
+    private static final StringProperty description = new SimpleStringProperty();
+    private static final SQLiteConnection connection = SQLiteConnection.getInstance();
+    private static final ConnectionSource connectionSource = connection.getConnection();
 
-  public static long getId() {
-    return id.get();
-  }
+    public static long getId() {
+        return id.get();
+    }
 
-  public static void setId(long id) {
-    RequisitionDetailViewModel.id.set(id);
-  }
+    public static void setId(long id) {
+        RequisitionDetailViewModel.id.set(id);
+    }
 
-  public static LongProperty idProperty() {
-    return id;
-  }
+    public static LongProperty idProperty() {
+        return id;
+    }
 
-  public static Product getProduct() {
-    return product.get();
-  }
+    public static Product getProduct() {
+        return product.get();
+    }
 
-  public static void setProduct(Product product) {
-    RequisitionDetailViewModel.product.set(product);
-  }
+    public static void setProduct(Product product) {
+        RequisitionDetailViewModel.product.set(product);
+    }
 
-  public static ObjectProperty<Product> productProperty() {
-    return product;
-  }
+    public static ObjectProperty<Product> productProperty() {
+        return product;
+    }
 
-  public static RequisitionMaster getRequisition() {
-    return requisition.get();
-  }
+    public static RequisitionMaster getRequisition() {
+        return requisition.get();
+    }
 
-  public static void setRequisition(RequisitionMaster requisition) {
-    RequisitionDetailViewModel.requisition.set(requisition);
-  }
+    public static void setRequisition(RequisitionMaster requisition) {
+        RequisitionDetailViewModel.requisition.set(requisition);
+    }
 
-  public static ObjectProperty<RequisitionMaster> requisitionProperty() {
-    return requisition;
-  }
+    public static ObjectProperty<RequisitionMaster> requisitionProperty() {
+        return requisition;
+    }
 
-  public static String getQuantity() {
-    return quantity.get();
-  }
+    public static String getQuantity() {
+        return quantity.get();
+    }
 
-  public static void setQuantity(String quantity) {
-    RequisitionDetailViewModel.quantity.set(quantity);
-  }
+    public static void setQuantity(String quantity) {
+        RequisitionDetailViewModel.quantity.set(quantity);
+    }
 
-  public static StringProperty quantityProperty() {
-    return quantity;
-  }
+    public static StringProperty quantityProperty() {
+        return quantity;
+    }
 
-  public static String getDescription() {
-    return description.get();
-  }
+    public static String getDescription() {
+        return description.get();
+    }
 
-  public static void setDescription(String description) {
-    RequisitionDetailViewModel.description.set(description);
-  }
+    public static void setDescription(String description) {
+        RequisitionDetailViewModel.description.set(description);
+    }
 
-  public static StringProperty descriptionProperty() {
-    return description;
-  }
+    public static StringProperty descriptionProperty() {
+        return description;
+    }
 
-  public static ObservableList<RequisitionDetail> getRequisitionDetails() {
-    return requisitionDetails.get();
-  }
+    public static ObservableList<RequisitionDetail> getRequisitionDetails() {
+        return requisitionDetails.get();
+    }
 
-  public static void setRequisitionDetails(ObservableList<RequisitionDetail> requisitionDetails) {
-    RequisitionDetailViewModel.requisitionDetails.set(requisitionDetails);
-  }
+    public static void setRequisitionDetails(ObservableList<RequisitionDetail> requisitionDetails) {
+        RequisitionDetailViewModel.requisitionDetails.set(requisitionDetails);
+    }
 
-  public static ListProperty<RequisitionDetail> requisitionDetailsProperty() {
-    return requisitionDetails;
-  }
+    public static ListProperty<RequisitionDetail> requisitionDetailsProperty() {
+        return requisitionDetails;
+    }
 
-  public static void resetProperties() {
-    setId(0);
-    setTempId(-1);
-    setProduct(null);
-    setRequisition(null);
-    setDescription("");
-    setQuantity("");
-  }
+    public static void resetProperties() {
+        setId(0);
+        setTempId(-1);
+        setProduct(null);
+        setRequisition(null);
+        setDescription("");
+        setQuantity("");
+    }
 
-  public static void addRequisitionDetails() {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() {
-            RequisitionDetail requisitionDetail =
+    public static void addRequisitionDetails() {
+        RequisitionDetail requisitionDetail =
                 new RequisitionDetail(
-                    getProduct(),
-                    getRequisition(),
-                    Long.parseLong(getQuantity()),
-                    getDescription());
+                        getProduct(),
+                        getRequisition(),
+                        Long.parseLong(getQuantity()),
+                        getDescription());
 
-            Platform.runLater(() -> requisitionDetailList.add(requisitionDetail));
+        Platform.runLater(() -> requisitionDetailList.add(requisitionDetail));
 
-            return null;
-          }
-        };
+        resetProperties();
+    }
 
-    task.setOnSucceeded(event -> resetProperties());
-
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static void saveRequisitionDetails() {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
-            Dao<RequisitionDetail, Long> requisitionDetailDao =
+    public static void saveRequisitionDetails() throws SQLException {
+        Dao<RequisitionDetail, Long> requisitionDetailDao =
                 DaoManager.createDao(connectionSource, RequisitionDetail.class);
 
-            requisitionDetailDao.create(requisitionDetailList);
+        requisitionDetailDao.create(requisitionDetailList);
 
-            return null;
-          }
-        };
+        requisitionDetailList.clear();
+    }
 
-    task.setOnSucceeded(event -> requisitionDetailList.clear());
-
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static void getAllRequisitionDetails() {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
-            Dao<RequisitionDetail, Long> requisitionDetailDao =
+    public static void getAllRequisitionDetails() throws SQLException {
+        Dao<RequisitionDetail, Long> requisitionDetailDao =
                 DaoManager.createDao(connectionSource, RequisitionDetail.class);
 
-            requisitionDetailList.clear();
-            requisitionDetailList.addAll(requisitionDetailDao.queryForAll());
-            return null;
-          }
-        };
+        requisitionDetailList.clear();
+        requisitionDetailList.addAll(requisitionDetailDao.queryForAll());
+    }
 
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static void updateRequisitionDetail(long index) {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
-            Dao<RequisitionDetail, Long> requisitionDetailDao =
+    public static void updateRequisitionDetail(long index) throws SQLException {
+        Dao<RequisitionDetail, Long> requisitionDetailDao =
                 DaoManager.createDao(connectionSource, RequisitionDetail.class);
 
-            RequisitionDetail requisitionDetail = requisitionDetailDao.queryForId(index);
-            requisitionDetail.setProduct(getProduct());
-            requisitionDetail.setQuantity(Long.parseLong(getQuantity()));
-            requisitionDetail.setDescription(getDescription());
+        RequisitionDetail requisitionDetail = requisitionDetailDao.queryForId(index);
+        requisitionDetail.setProduct(getProduct());
+        requisitionDetail.setQuantity(Long.parseLong(getQuantity()));
+        requisitionDetail.setDescription(getDescription());
 
-            Platform.runLater(
+        Platform.runLater(
                 () -> {
-                  requisitionDetailList.remove(getTempId());
-                  requisitionDetailList.add(getTempId(), requisitionDetail);
+                    requisitionDetailList.remove(getTempId());
+                    requisitionDetailList.add(getTempId(), requisitionDetail);
                 });
 
-            return null;
-          }
-        };
+        resetProperties();
+    }
 
-    task.setOnSucceeded(event -> resetProperties());
-
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static void getItem(long index, int tempIndex) {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
-            Dao<RequisitionDetail, Long> requisitionDetailDao =
+    public static void getItem(long index, int tempIndex) throws SQLException {
+        Dao<RequisitionDetail, Long> requisitionDetailDao =
                 DaoManager.createDao(connectionSource, RequisitionDetail.class);
 
-            RequisitionDetail requisitionDetail = requisitionDetailDao.queryForId(index);
+        RequisitionDetail requisitionDetail = requisitionDetailDao.queryForId(index);
 
-            setTempId(tempIndex);
-            setId(requisitionDetail.getId());
-            setProduct(requisitionDetail.getProduct());
-            setQuantity(String.valueOf(requisitionDetail.getQuantity()));
-            setDescription(requisitionDetail.getDescription());
+        setTempId(tempIndex);
+        setId(requisitionDetail.getId());
+        setProduct(requisitionDetail.getProduct());
+        setQuantity(String.valueOf(requisitionDetail.getQuantity()));
+        setDescription(requisitionDetail.getDescription());
+    }
 
-            return null;
-          }
-        };
-
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static void updateItem(long index) {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
-            Dao<RequisitionDetail, Long> requisitionDetailDao =
+    public static void updateItem(long index) throws SQLException {
+        Dao<RequisitionDetail, Long> requisitionDetailDao =
                 DaoManager.createDao(connectionSource, RequisitionDetail.class);
 
-            RequisitionDetail requisitionDetail = requisitionDetailDao.queryForId(index);
-            requisitionDetail.setProduct(getProduct());
-            requisitionDetail.setQuantity(Long.parseLong(getQuantity()));
-            requisitionDetail.setDescription(getDescription());
+        RequisitionDetail requisitionDetail = requisitionDetailDao.queryForId(index);
+        requisitionDetail.setProduct(getProduct());
+        requisitionDetail.setQuantity(Long.parseLong(getQuantity()));
+        requisitionDetail.setDescription(getDescription());
 
-            requisitionDetailDao.update(requisitionDetail);
+        requisitionDetailDao.update(requisitionDetail);
 
-            return null;
-          }
-        };
+        getAllRequisitionDetails();
+    }
 
-    task.setOnSucceeded(event -> getAllRequisitionDetails());
-
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static void updateRequisitionDetails() {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
-            Dao<RequisitionDetail, Long> requisitionDetailDao =
+    public static void updateRequisitionDetails() throws SQLException {
+        Dao<RequisitionDetail, Long> requisitionDetailDao =
                 DaoManager.createDao(connectionSource, RequisitionDetail.class);
 
-            requisitionDetailList.forEach(
+        requisitionDetailList.forEach(
                 requisitionDetail -> {
-                  try {
-                    requisitionDetailDao.update(requisitionDetail);
-                  } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                  }
+                    try {
+                        requisitionDetailDao.update(requisitionDetail);
+                    } catch (SQLException e) {
+                        SpotyLogger.writeToFile(e, RequisitionDetailViewModel.class);
+                    }
                 });
 
-            return null;
-          }
-        };
+        getAllRequisitionDetails();
+    }
 
-    task.setOnSucceeded(event -> getAllRequisitionDetails());
+    public static void removeRequisitionDetail(long index, int tempIndex) {
+        Platform.runLater(() -> requisitionDetailList.remove(tempIndex));
+        PENDING_DELETES.add(index);
+    }
 
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static void removeRequisitionDetail(long index, int tempIndex) {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() {
-            Platform.runLater(() -> requisitionDetailList.remove(tempIndex));
-            PENDING_DELETES.add(index);
-            return null;
-          }
-        };
-
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static void deleteRequisitionDetails(LinkedList<Long> indexes) {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() {
-            indexes.forEach(
+    public static void deleteRequisitionDetails(@NotNull LinkedList<Long> indexes) {
+        indexes.forEach(
                 index -> {
-                  try {
-                    SQLiteConnection connection = SQLiteConnection.getInstance();
-                    ConnectionSource connectionSource = connection.getConnection();
+                    try {
+                        Dao<RequisitionDetail, Long> requisitionDetailDao =
+                                DaoManager.createDao(connectionSource, RequisitionDetail.class);
 
-                    Dao<RequisitionDetail, Long> requisitionDetailDao =
-                        DaoManager.createDao(connectionSource, RequisitionDetail.class);
-
-                    requisitionDetailDao.deleteById(index);
-                  } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                  }
+                        requisitionDetailDao.deleteById(index);
+                    } catch (SQLException e) {
+                        SpotyLogger.writeToFile(e, RequisitionDetailViewModel.class);
+                    }
                 });
-            return null;
-          }
-        };
+    }
 
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static ObservableList<RequisitionDetail> getRequisitionDetailList() {
-    return requisitionDetailList;
-  }
+    public static ObservableList<RequisitionDetail> getRequisitionDetailList() {
+        return requisitionDetailList;
+    }
 }

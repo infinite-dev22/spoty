@@ -12,30 +12,26 @@
  * Jonathan Mark Mwigo makes no warranties, express or implied, with respect to the computer system code. Jonathan Mark Mwigo shall not be liable for any damages, including, but not limited to, direct, indirect, incidental, special, consequential, or punitive damages, arising out of or in connection with the use of the computer system code.
  */
 
-package org.infinite.spoty;
+package org.infinite.spoty.startup;
 
-import io.github.palexdev.materialfx.controls.MFXButton;
-import io.github.palexdev.materialfx.controls.MFXIconWrapper;
-import io.github.palexdev.materialfx.utils.ToggleButtonsUtil;
-import java.io.Serializable;
-import javafx.geometry.Pos;
-import javafx.scene.control.ToggleGroup;
+import org.infinite.spoty.utils.SpotyLogger;
 
-public class Utils implements Serializable {
-  public Utils(ToggleGroup toggleGroup) {
-    ToggleButtonsUtil.addAlwaysOneSelectedSupport(toggleGroup);
-  }
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
-  public static MFXButton createToggle(String icon, String text) {
-    return createToggle(icon, text, 0);
-  }
-
-  private static MFXButton createToggle(String icon, String text, double rotate) {
-    MFXIconWrapper wrapper = new MFXIconWrapper(icon, 24, 32);
-    MFXButton toggleNode = new MFXButton(text, wrapper);
-    toggleNode.setAlignment(Pos.CENTER_LEFT);
-    toggleNode.setMaxWidth(Double.MAX_VALUE);
-    if (rotate != 0) wrapper.getIcon().setRotate(rotate);
-    return toggleNode;
-  }
+public class SpotyPaths {
+    public static void createPaths() {
+        // Create DB Location path on system.
+        try {
+            Files.createDirectories(
+                    Paths.get(
+                            System.getProperty("user.home") + "/.config/ZenmartERP/datastores/databases/sqlite"));
+            Files.createDirectories(
+                    Paths.get(
+                            System.getProperty("user.home") + "/.config/ZenmartERP/logs"));
+        } catch (IOException e) {
+            SpotyLogger.writeToFile(e, SpotyPaths.class);
+        }
+    }
 }

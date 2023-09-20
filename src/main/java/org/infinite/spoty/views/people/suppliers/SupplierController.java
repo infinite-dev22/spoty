@@ -23,10 +23,13 @@ import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
 import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import io.github.palexdev.materialfx.enums.ScrimPriority;
 import io.github.palexdev.materialfx.filter.StringFilter;
+
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.ResourceBundle;
+
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
@@ -38,158 +41,177 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.database.models.Supplier;
 import org.infinite.spoty.forms.SupplierFormController;
 import org.infinite.spoty.viewModels.SupplierViewModel;
 
 @SuppressWarnings("unchecked")
 public class SupplierController implements Initializable {
-  private static SupplierController instance;
-  @FXML public MFXTextField supplierSearchBar;
-  @FXML public HBox supplierActionsPane;
-  @FXML public MFXButton supplierImportBtn;
-  @FXML public MFXTableView<Supplier> suppliersTable;
-  @FXML public BorderPane suppliersContentPane;
-  private MFXStageDialog dialog;
+    private static SupplierController instance;
+    @FXML
+    public MFXTextField supplierSearchBar;
+    @FXML
+    public HBox supplierActionsPane;
+    @FXML
+    public MFXButton supplierImportBtn;
+    @FXML
+    public MFXTableView<Supplier> suppliersTable;
+    @FXML
+    public BorderPane suppliersContentPane;
+    private MFXStageDialog dialog;
 
-  private SupplierController(Stage stage) {
-    Platform.runLater(
-        () -> {
-          try {
-            supplierFormDialogPane(stage);
-          } catch (IOException ex) {
-            throw new RuntimeException(ex);
-          }
-        });
-  }
-
-  public static SupplierController getInstance(Stage stage) {
-    if (instance == null) instance = new SupplierController(stage);
-    return instance;
-  }
-
-  @Override
-  public void initialize(URL location, ResourceBundle resources) {
-    Platform.runLater(this::setupTable);
-  }
-
-  private void setupTable() {
-    MFXTableColumn<Supplier> supplierCode =
-        new MFXTableColumn<>("Code", false, Comparator.comparing(Supplier::getCode));
-    MFXTableColumn<Supplier> supplierName =
-        new MFXTableColumn<>("Name", false, Comparator.comparing(Supplier::getName));
-    MFXTableColumn<Supplier> supplierPhone =
-        new MFXTableColumn<>("Phone", false, Comparator.comparing(Supplier::getPhone));
-    MFXTableColumn<Supplier> supplierEmail =
-        new MFXTableColumn<>("Email", false, Comparator.comparing(Supplier::getEmail));
-    MFXTableColumn<Supplier> supplierTax =
-        new MFXTableColumn<>("Tax No.", false, Comparator.comparing(Supplier::getTaxNumber));
-
-    supplierCode.setRowCellFactory(supplier -> new MFXTableRowCell<>(Supplier::getCode));
-    supplierName.setRowCellFactory(supplier -> new MFXTableRowCell<>(Supplier::getName));
-    supplierPhone.setRowCellFactory(supplier -> new MFXTableRowCell<>(Supplier::getPhone));
-    supplierEmail.setRowCellFactory(supplier -> new MFXTableRowCell<>(Supplier::getEmail));
-    supplierTax.setRowCellFactory(supplier -> new MFXTableRowCell<>(Supplier::getTaxNumber));
-
-    supplierCode.prefWidthProperty().bind(suppliersTable.widthProperty().multiply(.1));
-    supplierName.prefWidthProperty().bind(suppliersTable.widthProperty().multiply(.3));
-    supplierPhone.prefWidthProperty().bind(suppliersTable.widthProperty().multiply(.2));
-    supplierEmail.prefWidthProperty().bind(suppliersTable.widthProperty().multiply(.2));
-    supplierTax.prefWidthProperty().bind(suppliersTable.widthProperty().multiply(.2));
-
-    suppliersTable
-        .getTableColumns()
-        .addAll(supplierCode, supplierName, supplierPhone, supplierEmail, supplierTax);
-    suppliersTable
-        .getFilters()
-        .addAll(
-            new StringFilter<>("Code", Supplier::getCode),
-            new StringFilter<>("Name", Supplier::getName),
-            new StringFilter<>("Phone", Supplier::getPhone),
-            new StringFilter<>("Email", Supplier::getEmail),
-            new StringFilter<>("Tax No.", Supplier::getTaxNumber));
-    getTable();
-
-    if (SupplierViewModel.getSuppliers().isEmpty()) {
-      SupplierViewModel.getSuppliers()
-          .addListener(
-              (ListChangeListener<Supplier>)
-                  c -> suppliersTable.setItems(SupplierViewModel.getSuppliers()));
-    } else {
-      suppliersTable.itemsProperty().bindBidirectional(SupplierViewModel.suppliersProperty());
+    private SupplierController(Stage stage) {
+        Platform.runLater(
+                () -> {
+                    try {
+                        supplierFormDialogPane(stage);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                });
     }
-  }
 
-  private void getTable() {
-    suppliersTable.setPrefSize(1000, 1000);
-    suppliersTable.features().enableBounceEffect();
-    suppliersTable.features().enableSmoothScrolling(0.5);
+    public static SupplierController getInstance(Stage stage) {
+        if (instance == null) instance = new SupplierController(stage);
+        return instance;
+    }
 
-    suppliersTable.setTableRowFactory(
-        t -> {
-          MFXTableRow<Supplier> row = new MFXTableRow<>(suppliersTable, t);
-          EventHandler<ContextMenuEvent> eventHandler =
-              event -> {
-                showContextMenu((MFXTableRow<Supplier>) event.getSource())
-                    .show(
-                        suppliersTable.getScene().getWindow(),
-                        event.getScreenX(),
-                        event.getScreenY());
-                event.consume();
-              };
-          row.setOnContextMenuRequested(eventHandler);
-          return row;
-        });
-  }
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        Platform.runLater(this::setupTable);
+    }
 
-  private MFXContextMenu showContextMenu(MFXTableRow<Supplier> obj) {
-    MFXContextMenu contextMenu = new MFXContextMenu(suppliersTable);
-    MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
-    MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+    private void setupTable() {
+        MFXTableColumn<Supplier> supplierCode =
+                new MFXTableColumn<>("Code", false, Comparator.comparing(Supplier::getCode));
+        MFXTableColumn<Supplier> supplierName =
+                new MFXTableColumn<>("Name", false, Comparator.comparing(Supplier::getName));
+        MFXTableColumn<Supplier> supplierPhone =
+                new MFXTableColumn<>("Phone", false, Comparator.comparing(Supplier::getPhone));
+        MFXTableColumn<Supplier> supplierEmail =
+                new MFXTableColumn<>("Email", false, Comparator.comparing(Supplier::getEmail));
+        MFXTableColumn<Supplier> supplierTax =
+                new MFXTableColumn<>("Tax No.", false, Comparator.comparing(Supplier::getTaxNumber));
 
-    // Actions
-    // Delete
-    delete.setOnAction(
-        e -> {
-          SupplierViewModel.deleteItem(obj.getData().getId());
-          e.consume();
-        });
-    // Edit
-    edit.setOnAction(
-        e -> {
-          SupplierViewModel.getItem(obj.getData().getId());
-          dialog.showAndWait();
-          e.consume();
-        });
+        supplierCode.setRowCellFactory(supplier -> new MFXTableRowCell<>(Supplier::getCode));
+        supplierName.setRowCellFactory(supplier -> new MFXTableRowCell<>(Supplier::getName));
+        supplierPhone.setRowCellFactory(supplier -> new MFXTableRowCell<>(Supplier::getPhone));
+        supplierEmail.setRowCellFactory(supplier -> new MFXTableRowCell<>(Supplier::getEmail));
+        supplierTax.setRowCellFactory(supplier -> new MFXTableRowCell<>(Supplier::getTaxNumber));
 
-    contextMenu.addItems(edit, delete);
+        supplierCode.prefWidthProperty().bind(suppliersTable.widthProperty().multiply(.1));
+        supplierName.prefWidthProperty().bind(suppliersTable.widthProperty().multiply(.3));
+        supplierPhone.prefWidthProperty().bind(suppliersTable.widthProperty().multiply(.2));
+        supplierEmail.prefWidthProperty().bind(suppliersTable.widthProperty().multiply(.2));
+        supplierTax.prefWidthProperty().bind(suppliersTable.widthProperty().multiply(.2));
 
-    return contextMenu;
-  }
+        suppliersTable
+                .getTableColumns()
+                .addAll(supplierCode, supplierName, supplierPhone, supplierEmail, supplierTax);
+        suppliersTable
+                .getFilters()
+                .addAll(
+                        new StringFilter<>("Code", Supplier::getCode),
+                        new StringFilter<>("Name", Supplier::getName),
+                        new StringFilter<>("Phone", Supplier::getPhone),
+                        new StringFilter<>("Email", Supplier::getEmail),
+                        new StringFilter<>("Tax No.", Supplier::getTaxNumber));
+        getTable();
 
-  private void supplierFormDialogPane(Stage stage) throws IOException {
-    FXMLLoader fxmlLoader = fxmlLoader("forms/SupplierForm.fxml");
-    fxmlLoader.setControllerFactory(c -> SupplierFormController.getInstance());
+        if (SupplierViewModel.getSuppliers().isEmpty()) {
+            SupplierViewModel.getSuppliers()
+                    .addListener(
+                            (ListChangeListener<Supplier>)
+                                    c -> suppliersTable.setItems(SupplierViewModel.getSuppliers()));
+        } else {
+            suppliersTable.itemsProperty().bindBidirectional(SupplierViewModel.suppliersProperty());
+        }
+    }
 
-    MFXGenericDialog dialogContent = fxmlLoader.load();
+    private void getTable() {
+        suppliersTable.setPrefSize(1000, 1000);
+        suppliersTable.features().enableBounceEffect();
+        suppliersTable.features().enableSmoothScrolling(0.5);
 
-    dialogContent.setShowMinimize(false);
-    dialogContent.setShowAlwaysOnTop(false);
+        suppliersTable.setTableRowFactory(
+                t -> {
+                    MFXTableRow<Supplier> row = new MFXTableRow<>(suppliersTable, t);
+                    EventHandler<ContextMenuEvent> eventHandler =
+                            event -> {
+                                showContextMenu((MFXTableRow<Supplier>) event.getSource())
+                                        .show(
+                                                suppliersTable.getScene().getWindow(),
+                                                event.getScreenX(),
+                                                event.getScreenY());
+                                event.consume();
+                            };
+                    row.setOnContextMenuRequested(eventHandler);
+                    return row;
+                });
+    }
 
-    dialog =
-        MFXGenericDialogBuilder.build(dialogContent)
-            .toStageDialogBuilder()
-            .initOwner(stage)
-            .initModality(Modality.WINDOW_MODAL)
-            .setOwnerNode(suppliersContentPane)
-            .setScrimPriority(ScrimPriority.WINDOW)
-            .setScrimOwner(true)
-            .get();
+    private MFXContextMenu showContextMenu(MFXTableRow<Supplier> obj) {
+        MFXContextMenu contextMenu = new MFXContextMenu(suppliersTable);
+        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
+        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
 
-    io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
-  }
+        // Actions
+        // Delete
+        delete.setOnAction(
+                e -> {
+                    GlobalActions.spotyThreadPool().execute(() -> {
+                        try {
+                            SupplierViewModel.deleteItem(obj.getData().getId());
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                    });
+                    ;
+                    e.consume();
+                });
+        // Edit
+        edit.setOnAction(
+                e -> {
+                    GlobalActions.spotyThreadPool().execute(() -> {
+                        try {
+                            SupplierViewModel.getItem(obj.getData().getId());
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                    });
+                    dialog.showAndWait();
+                    e.consume();
+                });
 
-  public void supplierCreateBtnClicked() {
-    dialog.showAndWait();
-  }
+        contextMenu.addItems(edit, delete);
+
+        return contextMenu;
+    }
+
+    private void supplierFormDialogPane(Stage stage) throws IOException {
+        FXMLLoader fxmlLoader = fxmlLoader("forms/SupplierForm.fxml");
+        fxmlLoader.setControllerFactory(c -> SupplierFormController.getInstance());
+
+        MFXGenericDialog dialogContent = fxmlLoader.load();
+
+        dialogContent.setShowMinimize(false);
+        dialogContent.setShowAlwaysOnTop(false);
+
+        dialog =
+                MFXGenericDialogBuilder.build(dialogContent)
+                        .toStageDialogBuilder()
+                        .initOwner(stage)
+                        .initModality(Modality.WINDOW_MODAL)
+                        .setOwnerNode(suppliersContentPane)
+                        .setScrimPriority(ScrimPriority.WINDOW)
+                        .setScrimOwner(true)
+                        .get();
+
+        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
+    }
+
+    public void supplierCreateBtnClicked() {
+        dialog.showAndWait();
+    }
 }

@@ -17,7 +17,9 @@ package org.infinite.spoty.viewModels;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
+
 import java.sql.SQLException;
+
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -26,226 +28,162 @@ import javafx.concurrent.Task;
 import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.Currency;
+import org.infinite.spoty.utils.SpotyLogger;
 
 public class CurrencyViewModel {
-  private static final LongProperty id = new SimpleLongProperty(0);
-  private static final StringProperty code = new SimpleStringProperty("");
-  private static final StringProperty name = new SimpleStringProperty("");
-  private static final StringProperty symbol = new SimpleStringProperty("");
-  private static final ObjectProperty<Currency> currency = new SimpleObjectProperty<>();
-  public static ObservableList<Currency> currenciesList = FXCollections.observableArrayList();
-  public static final ListProperty<Currency> currencies = new SimpleListProperty<>(currenciesList);
-  public static ObservableList<Currency> currenciesComboBoxList =
-      FXCollections.observableArrayList();
+    private static final LongProperty id = new SimpleLongProperty(0);
+    private static final StringProperty code = new SimpleStringProperty("");
+    private static final StringProperty name = new SimpleStringProperty("");
+    private static final StringProperty symbol = new SimpleStringProperty("");
+    private static final ObjectProperty<Currency> currency = new SimpleObjectProperty<>();
+    public static ObservableList<Currency> currenciesList = FXCollections.observableArrayList();
+    public static final ListProperty<Currency> currencies = new SimpleListProperty<>(currenciesList);
+    public static ObservableList<Currency> currenciesComboBoxList =
+            FXCollections.observableArrayList();
+    private static final SQLiteConnection connection = SQLiteConnection.getInstance();
+    private static final ConnectionSource connectionSource = connection.getConnection();
 
-  public static long getId() {
-    return id.get();
-  }
+    public static long getId() {
+        return id.get();
+    }
 
-  public static void setId(long id) {
-    CurrencyViewModel.id.set(id);
-  }
+    public static void setId(long id) {
+        CurrencyViewModel.id.set(id);
+    }
 
-  public static LongProperty idProperty() {
-    return id;
-  }
+    public static LongProperty idProperty() {
+        return id;
+    }
 
-  public static String getName() {
-    return name.get();
-  }
+    public static String getName() {
+        return name.get();
+    }
 
-  public static void setName(String name) {
-    CurrencyViewModel.name.set(name);
-  }
+    public static void setName(String name) {
+        CurrencyViewModel.name.set(name);
+    }
 
-  public static StringProperty nameProperty() {
-    return name;
-  }
+    public static StringProperty nameProperty() {
+        return name;
+    }
 
-  public static String getSymbol() {
-    return symbol.get();
-  }
+    public static String getSymbol() {
+        return symbol.get();
+    }
 
-  public static void setSymbol(String symbol) {
-    CurrencyViewModel.symbol.set(symbol);
-  }
+    public static void setSymbol(String symbol) {
+        CurrencyViewModel.symbol.set(symbol);
+    }
 
-  public static StringProperty symbolProperty() {
-    return symbol;
-  }
+    public static StringProperty symbolProperty() {
+        return symbol;
+    }
 
-  public static String getCode() {
-    return code.get();
-  }
+    public static String getCode() {
+        return code.get();
+    }
 
-  public static void setCode(String code) {
-    CurrencyViewModel.code.set(code);
-  }
+    public static void setCode(String code) {
+        CurrencyViewModel.code.set(code);
+    }
 
-  public static StringProperty codeProperty() {
-    return code;
-  }
+    public static StringProperty codeProperty() {
+        return code;
+    }
 
-  public static ObservableList<Currency> getCurrencies() {
-    return currencies.get();
-  }
+    public static ObservableList<Currency> getCurrencies() {
+        return currencies.get();
+    }
 
-  public static void setCurrencies(ObservableList<Currency> currencies) {
-    CurrencyViewModel.currencies.set(currencies);
-  }
+    public static void setCurrencies(ObservableList<Currency> currencies) {
+        CurrencyViewModel.currencies.set(currencies);
+    }
 
-  public static ListProperty<Currency> currencyProperty() {
-    return currencies;
-  }
+    public static ListProperty<Currency> currencyProperty() {
+        return currencies;
+    }
 
-  public static Currency getCurrency() {
-    return currency.get();
-  }
+    public static Currency getCurrency() {
+        return currency.get();
+    }
 
-  public static void setCurrency(Currency currency) {
-    CurrencyViewModel.currency.set(currency);
-  }
+    public static void setCurrency(Currency currency) {
+        CurrencyViewModel.currency.set(currency);
+    }
 
-  public static void saveCurrency() {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
-            Dao<Currency, Long> currencyDao =
+    public static void saveCurrency() throws SQLException {
+        Dao<Currency, Long> currencyDao =
                 DaoManager.createDao(connectionSource, Currency.class);
 
-            Currency currency = new Currency(getCode(), getName(), getSymbol());
-            currencyDao.create(currency);
+        Currency currency = new Currency(getCode(), getName(), getSymbol());
+        currencyDao.create(currency);
 
-            return null;
-          }
-        };
+        clearCurrencyData();
+        getAllCurrencies();
+    }
 
-    task.setOnSucceeded(
-        event -> {
-          clearCurrencyData();
-          getAllCurrencies();
-        });
+    public static void clearCurrencyData() {
+        setId(0);
+        setName("");
+        setCode("");
+        setSymbol("");
+    }
 
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static void clearCurrencyData() {
-    setId(0);
-    setName("");
-    setCode("");
-    setSymbol("");
-  }
-
-  public static void getAllCurrencies() {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
-            Dao<Currency, Long> currencyDao =
+    public static void getAllCurrencies() throws SQLException {
+        Dao<Currency, Long> currencyDao =
                 DaoManager.createDao(connectionSource, Currency.class);
-            Platform.runLater(
+        Platform.runLater(
                 () -> {
-                  currenciesList.clear();
+                    currenciesList.clear();
 
-                  try {
-                    currenciesList.addAll(currencyDao.queryForAll());
-                  } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                  }
+                    try {
+                        currenciesList.addAll(currencyDao.queryForAll());
+                    } catch (SQLException e) {
+                        SpotyLogger.writeToFile(e, CurrencyViewModel.class);
+                    }
                 });
+    }
 
-            return null;
-          }
-        };
-
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static void getItem(long index) {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
-            Dao<Currency, Long> currencyDao =
+    public static void getItem(long index) throws SQLException {
+        Dao<Currency, Long> currencyDao =
                 DaoManager.createDao(connectionSource, Currency.class);
 
-            Currency currency = currencyDao.queryForId(index);
-            setCurrency(currency);
-            setId(currency.getId());
-            setSymbol(currency.getSymbol());
-            setCode(currency.getCode());
-            setName(currency.getName());
+        Currency currency = currencyDao.queryForId(index);
+        setCurrency(currency);
+        setId(currency.getId());
+        setSymbol(currency.getSymbol());
+        setCode(currency.getCode());
+        setName(currency.getName());
+        getAllCurrencies();
+    }
 
-            return null;
-          }
-        };
+    public static void updateItem(long index) throws SQLException {
+        SQLiteConnection connection = SQLiteConnection.getInstance();
+        ConnectionSource connectionSource = connection.getConnection();
 
-    task.setOnSucceeded(event -> getAllCurrencies());
-
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static void updateItem(long index) {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
-            Dao<Currency, Long> currencyDao =
+        Dao<Currency, Long> currencyDao =
                 DaoManager.createDao(connectionSource, Currency.class);
 
-            Currency currency = currencyDao.queryForId(index);
+        Currency currency = currencyDao.queryForId(index);
 
-            currency.setCode(getCode());
-            currency.setName(getName());
-            currency.setSymbol(getSymbol());
+        currency.setCode(getCode());
+        currency.setName(getName());
+        currency.setSymbol(getSymbol());
 
-            currencyDao.update(currency);
+        currencyDao.update(currency);
 
-            return null;
-          }
-        };
+        clearCurrencyData();
+        getAllCurrencies();
+    }
 
-    task.setOnSucceeded(
-        event -> {
-          clearCurrencyData();
-          getAllCurrencies();
-        });
+    public static void deleteItem(long index) throws SQLException {
+        SQLiteConnection connection = SQLiteConnection.getInstance();
+        ConnectionSource connectionSource = connection.getConnection();
 
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static void deleteItem(long index) {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
-            Dao<Currency, Long> currencyDao =
+        Dao<Currency, Long> currencyDao =
                 DaoManager.createDao(connectionSource, Currency.class);
 
-            currencyDao.deleteById(index);
-
-            return null;
-          }
-        };
-
-    task.setOnSucceeded(event -> getAllCurrencies());
-
-    GlobalActions.spotyThreadPool().execute(task);
-  }
+        currencyDao.deleteById(index);
+        getAllCurrencies();
+    }
 }

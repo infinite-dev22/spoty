@@ -23,10 +23,13 @@ import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
 import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import io.github.palexdev.materialfx.enums.ScrimPriority;
 import io.github.palexdev.materialfx.filter.StringFilter;
+
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.ResourceBundle;
+
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
@@ -38,147 +41,165 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.database.models.Currency;
 import org.infinite.spoty.forms.CurrencyFormController;
 import org.infinite.spoty.viewModels.CurrencyViewModel;
 
 @SuppressWarnings("unchecked")
 public class CurrencyController implements Initializable {
-  private static CurrencyController instance;
-  @FXML public MFXTextField currencySearchBar;
-  @FXML public HBox currencyActionsPane;
-  @FXML public MFXButton currencyImportBtn;
-  @FXML public MFXTableView<Currency> currencyTable;
-  @FXML public BorderPane currencyContentPane;
-  private MFXStageDialog dialog;
+    private static CurrencyController instance;
+    @FXML
+    public MFXTextField currencySearchBar;
+    @FXML
+    public HBox currencyActionsPane;
+    @FXML
+    public MFXButton currencyImportBtn;
+    @FXML
+    public MFXTableView<Currency> currencyTable;
+    @FXML
+    public BorderPane currencyContentPane;
+    private MFXStageDialog dialog;
 
-  private CurrencyController(Stage stage) {
-    Platform.runLater(
-        () -> {
-          try {
-            currencyFormDialogPane(stage);
-          } catch (IOException ex) {
-            throw new RuntimeException(ex);
-          }
-        });
-  }
-
-  public static CurrencyController getInstance(Stage stage) {
-    if (instance == null) instance = new CurrencyController(stage);
-    return instance;
-  }
-
-  @Override
-  public void initialize(URL location, ResourceBundle resources) {
-    Platform.runLater(this::setupTable);
-  }
-
-  private void setupTable() {
-    MFXTableColumn<Currency> currencyName =
-        new MFXTableColumn<>("Name", false, Comparator.comparing(Currency::getName));
-    MFXTableColumn<Currency> currencyCode =
-        new MFXTableColumn<>("Code", false, Comparator.comparing(Currency::getCode));
-    MFXTableColumn<Currency> currencySymbol =
-        new MFXTableColumn<>("Symbol", false, Comparator.comparing(Currency::getSymbol));
-
-    currencyName.setRowCellFactory(currency -> new MFXTableRowCell<>(Currency::getName));
-    currencyCode.setRowCellFactory(currency -> new MFXTableRowCell<>(Currency::getCode));
-    currencySymbol.setRowCellFactory(currency -> new MFXTableRowCell<>(Currency::getSymbol));
-
-    currencyName.prefWidthProperty().bind(currencyTable.widthProperty().multiply(.34));
-    currencyCode.prefWidthProperty().bind(currencyTable.widthProperty().multiply(.34));
-    currencySymbol.prefWidthProperty().bind(currencyTable.widthProperty().multiply(.34));
-
-    currencyTable.getTableColumns().addAll(currencyName, currencyCode, currencySymbol);
-    currencyTable
-        .getFilters()
-        .addAll(
-            new StringFilter<>("Name", Currency::getName),
-            new StringFilter<>("Code", Currency::getCode),
-            new StringFilter<>("Symbol", Currency::getSymbol));
-
-    getCurrencyTable();
-
-    if (CurrencyViewModel.getCurrencies().isEmpty()) {
-      CurrencyViewModel.getCurrencies()
-          .addListener(
-              (ListChangeListener<Currency>)
-                  c -> currencyTable.setItems(CurrencyViewModel.getCurrencies()));
-    } else {
-      currencyTable.itemsProperty().bindBidirectional(CurrencyViewModel.currencyProperty());
+    private CurrencyController(Stage stage) {
+        Platform.runLater(
+                () -> {
+                    try {
+                        currencyFormDialogPane(stage);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                });
     }
-  }
 
-  private void getCurrencyTable() {
-    currencyTable.setPrefSize(1200, 1000);
-    currencyTable.features().enableBounceEffect();
-    currencyTable.features().enableSmoothScrolling(0.5);
+    public static CurrencyController getInstance(Stage stage) {
+        if (instance == null) instance = new CurrencyController(stage);
+        return instance;
+    }
 
-    currencyTable.setTableRowFactory(
-        t -> {
-          MFXTableRow<Currency> row = new MFXTableRow<>(currencyTable, t);
-          EventHandler<ContextMenuEvent> eventHandler =
-              event ->
-                  showContextMenu((MFXTableRow<Currency>) event.getSource())
-                      .show(
-                          currencyContentPane.getScene().getWindow(),
-                          event.getScreenX(),
-                          event.getScreenY());
-          row.setOnContextMenuRequested(eventHandler);
-          return row;
-        });
-  }
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        Platform.runLater(this::setupTable);
+    }
 
-  private MFXContextMenu showContextMenu(MFXTableRow<Currency> obj) {
-    MFXContextMenu contextMenu = new MFXContextMenu(currencyTable);
+    private void setupTable() {
+        MFXTableColumn<Currency> currencyName =
+                new MFXTableColumn<>("Name", false, Comparator.comparing(Currency::getName));
+        MFXTableColumn<Currency> currencyCode =
+                new MFXTableColumn<>("Code", false, Comparator.comparing(Currency::getCode));
+        MFXTableColumn<Currency> currencySymbol =
+                new MFXTableColumn<>("Symbol", false, Comparator.comparing(Currency::getSymbol));
 
-    MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
-    MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+        currencyName.setRowCellFactory(currency -> new MFXTableRowCell<>(Currency::getName));
+        currencyCode.setRowCellFactory(currency -> new MFXTableRowCell<>(Currency::getCode));
+        currencySymbol.setRowCellFactory(currency -> new MFXTableRowCell<>(Currency::getSymbol));
 
-    // Actions
-    // Delete
-    delete.setOnAction(
-        e -> {
-          CurrencyViewModel.deleteItem(obj.getData().getId());
-          e.consume();
-        });
-    // Edit
-    edit.setOnAction(
-        e -> {
-          CurrencyViewModel.getItem(obj.getData().getId());
-          currencyCreateBtnClicked();
-          e.consume();
-        });
+        currencyName.prefWidthProperty().bind(currencyTable.widthProperty().multiply(.34));
+        currencyCode.prefWidthProperty().bind(currencyTable.widthProperty().multiply(.34));
+        currencySymbol.prefWidthProperty().bind(currencyTable.widthProperty().multiply(.34));
 
-    contextMenu.addItems(edit, delete);
+        currencyTable.getTableColumns().addAll(currencyName, currencyCode, currencySymbol);
+        currencyTable
+                .getFilters()
+                .addAll(
+                        new StringFilter<>("Name", Currency::getName),
+                        new StringFilter<>("Code", Currency::getCode),
+                        new StringFilter<>("Symbol", Currency::getSymbol));
 
-    return contextMenu;
-  }
+        getCurrencyTable();
 
-  @FXML
-  private void currencyCreateBtnClicked() {
-    dialog.showAndWait();
-  }
+        if (CurrencyViewModel.getCurrencies().isEmpty()) {
+            CurrencyViewModel.getCurrencies()
+                    .addListener(
+                            (ListChangeListener<Currency>)
+                                    c -> currencyTable.setItems(CurrencyViewModel.getCurrencies()));
+        } else {
+            currencyTable.itemsProperty().bindBidirectional(CurrencyViewModel.currencyProperty());
+        }
+    }
 
-  private void currencyFormDialogPane(Stage stage) throws IOException {
-    FXMLLoader fxmlLoader = fxmlLoader("forms/CurrencyForm.fxml");
-    fxmlLoader.setControllerFactory(c -> CurrencyFormController.getInstance());
+    private void getCurrencyTable() {
+        currencyTable.setPrefSize(1200, 1000);
+        currencyTable.features().enableBounceEffect();
+        currencyTable.features().enableSmoothScrolling(0.5);
 
-    MFXGenericDialog dialogContent = fxmlLoader.load();
+        currencyTable.setTableRowFactory(
+                t -> {
+                    MFXTableRow<Currency> row = new MFXTableRow<>(currencyTable, t);
+                    EventHandler<ContextMenuEvent> eventHandler =
+                            event ->
+                                    showContextMenu((MFXTableRow<Currency>) event.getSource())
+                                            .show(
+                                                    currencyContentPane.getScene().getWindow(),
+                                                    event.getScreenX(),
+                                                    event.getScreenY());
+                    row.setOnContextMenuRequested(eventHandler);
+                    return row;
+                });
+    }
 
-    dialogContent.setShowMinimize(false);
-    dialogContent.setShowAlwaysOnTop(false);
+    private MFXContextMenu showContextMenu(MFXTableRow<Currency> obj) {
+        MFXContextMenu contextMenu = new MFXContextMenu(currencyTable);
 
-    dialog =
-        MFXGenericDialogBuilder.build(dialogContent)
-            .toStageDialogBuilder()
-            .initOwner(stage)
-            .initModality(Modality.WINDOW_MODAL)
-            .setOwnerNode(currencyContentPane)
-            .setScrimPriority(ScrimPriority.WINDOW)
-            .setScrimOwner(true)
-            .get();
+        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
+        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
 
-    io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
-  }
+        // Actions
+        // Delete
+        delete.setOnAction(
+                e -> {
+                    GlobalActions.spotyThreadPool().execute(() -> {
+                        try {
+                            CurrencyViewModel.deleteItem(obj.getData().getId());
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                    });
+                    e.consume();
+                });
+        // Edit
+        edit.setOnAction(
+                e -> {
+                    GlobalActions.spotyThreadPool().execute(() -> {
+                        try {
+                            CurrencyViewModel.getItem(obj.getData().getId());
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                    });
+                    currencyCreateBtnClicked();
+                    e.consume();
+                });
+
+        contextMenu.addItems(edit, delete);
+
+        return contextMenu;
+    }
+
+    @FXML
+    private void currencyCreateBtnClicked() {
+        dialog.showAndWait();
+    }
+
+    private void currencyFormDialogPane(Stage stage) throws IOException {
+        FXMLLoader fxmlLoader = fxmlLoader("forms/CurrencyForm.fxml");
+        fxmlLoader.setControllerFactory(c -> CurrencyFormController.getInstance());
+
+        MFXGenericDialog dialogContent = fxmlLoader.load();
+
+        dialogContent.setShowMinimize(false);
+        dialogContent.setShowAlwaysOnTop(false);
+
+        dialog =
+                MFXGenericDialogBuilder.build(dialogContent)
+                        .toStageDialogBuilder()
+                        .initOwner(stage)
+                        .initModality(Modality.WINDOW_MODAL)
+                        .setOwnerNode(currencyContentPane)
+                        .setScrimPriority(ScrimPriority.WINDOW)
+                        .setScrimOwner(true)
+                        .get();
+
+        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
+    }
 }

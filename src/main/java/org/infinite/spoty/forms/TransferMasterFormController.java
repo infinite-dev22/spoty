@@ -14,17 +14,7 @@
 
 package org.infinite.spoty.forms;
 
-import static org.infinite.spoty.SpotyResourceLoader.fxmlLoader;
-import static org.infinite.spoty.Validators.requiredValidator;
-
-import io.github.palexdev.materialfx.controls.MFXContextMenu;
-import io.github.palexdev.materialfx.controls.MFXContextMenuItem;
-import io.github.palexdev.materialfx.controls.MFXDatePicker;
-import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
-import io.github.palexdev.materialfx.controls.MFXTableColumn;
-import io.github.palexdev.materialfx.controls.MFXTableRow;
-import io.github.palexdev.materialfx.controls.MFXTableView;
-import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
@@ -35,13 +25,6 @@ import io.github.palexdev.materialfx.filter.StringFilter;
 import io.github.palexdev.materialfx.utils.StringUtils;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import java.io.IOException;
-import java.net.URL;
-import java.sql.SQLException;
-import java.util.Comparator;
-import java.util.ResourceBundle;
-import java.util.function.Function;
-import java.util.function.Predicate;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
@@ -62,310 +45,334 @@ import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.TransferDetail;
+import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.viewModels.BranchViewModel;
 import org.infinite.spoty.viewModels.TransferDetailViewModel;
 import org.infinite.spoty.viewModels.TransferMasterViewModel;
 import org.infinite.spoty.views.BaseController;
 
+import java.io.IOException;
+import java.net.URL;
+import java.sql.SQLException;
+import java.util.Comparator;
+import java.util.ResourceBundle;
+import java.util.function.Function;
+import java.util.function.Predicate;
+
+import static org.infinite.spoty.SpotyResourceLoader.fxmlLoader;
+import static org.infinite.spoty.Validators.requiredValidator;
+
 @SuppressWarnings("unchecked")
 public class TransferMasterFormController implements Initializable {
-  private static TransferMasterFormController instance;
-  @FXML public MFXFilterComboBox<Branch> transferMasterFromBranch;
-  @FXML public MFXFilterComboBox<Branch> transferMasterToBranch;
-  @FXML public MFXDatePicker transferMasterDate;
-  @FXML public MFXTableView<TransferDetail> transferDetailTable;
-  @FXML public MFXTextField transferMasterNote;
-  @FXML public BorderPane transferMasterFormContentPane;
-  @FXML public Label transferMasterFormTitle;
-  @FXML public MFXButton transferMasterProductAddBtn;
-  @FXML public Label transferMasterDateValidationLabel;
-  @FXML public Label transferMasterToBranchValidationLabel;
-  @FXML public Label transferMasterFromBranchValidationLabel;
-  @FXML public MFXButton transferMasterSaveBtn;
-  private MFXStageDialog dialog;
+    private static TransferMasterFormController instance;
+    @FXML
+    public MFXFilterComboBox<Branch> transferMasterFromBranch;
+    @FXML
+    public MFXFilterComboBox<Branch> transferMasterToBranch;
+    @FXML
+    public MFXDatePicker transferMasterDate;
+    @FXML
+    public MFXTableView<TransferDetail> transferDetailTable;
+    @FXML
+    public MFXTextField transferMasterNote;
+    @FXML
+    public BorderPane transferMasterFormContentPane;
+    @FXML
+    public Label transferMasterFormTitle;
+    @FXML
+    public MFXButton transferMasterProductAddBtn;
+    @FXML
+    public Label transferMasterDateValidationLabel;
+    @FXML
+    public Label transferMasterToBranchValidationLabel;
+    @FXML
+    public Label transferMasterFromBranchValidationLabel;
+    @FXML
+    public MFXButton transferMasterSaveBtn;
+    private MFXStageDialog dialog;
 
-  private TransferMasterFormController(Stage stage) {
-    Platform.runLater(
-        () -> {
-          try {
-            quotationProductDialogPane(stage);
-          } catch (IOException ex) {
-            throw new RuntimeException(ex);
-          }
-        });
-  }
-
-  public static TransferMasterFormController getInstance(Stage stage) {
-    if (instance == null) instance = new TransferMasterFormController(stage);
-    return instance;
-  }
-
-  @Override
-  public void initialize(URL location, ResourceBundle resources) {
-    // Input binding.
-    transferMasterFromBranch
-        .valueProperty()
-        .bindBidirectional(TransferMasterViewModel.fromBranchProperty());
-    transferMasterToBranch
-        .valueProperty()
-        .bindBidirectional(TransferMasterViewModel.toBranchProperty());
-    transferMasterDate.textProperty().bindBidirectional(TransferMasterViewModel.dateProperty());
-    transferMasterNote.textProperty().bindBidirectional(TransferMasterViewModel.noteProperty());
-
-    // ComboBox Converters.
-    StringConverter<Branch> branchConverter =
-        FunctionalStringConverter.to(branch -> (branch == null) ? "" : branch.getName());
-
-    // ComboBox Filter Functions.
-    Function<String, Predicate<Branch>> branchFilterFunction =
-        searchStr ->
-            branch -> StringUtils.containsIgnoreCase(branchConverter.toString(branch), searchStr);
-
-    // ComboBox properties.
-    transferMasterFromBranch.setItems(BranchViewModel.getBranches());
-    transferMasterFromBranch.setConverter(branchConverter);
-    transferMasterFromBranch.setFilterFunction(branchFilterFunction);
-
-    transferMasterToBranch.setItems(BranchViewModel.getBranches());
-    transferMasterToBranch.setConverter(branchConverter);
-    transferMasterToBranch.setFilterFunction(branchFilterFunction);
-
-    // input validators.
-    requiredValidator(
-        transferMasterToBranch,
-        "Receiving branch is required.",
-        transferMasterToBranchValidationLabel,
-        transferMasterSaveBtn);
-    requiredValidator(
-        transferMasterFromBranch,
-        "Supplying branch is required.",
-        transferMasterFromBranchValidationLabel,
-        transferMasterSaveBtn);
-    requiredValidator(
-        transferMasterDate,
-        "Date is required.",
-        transferMasterDateValidationLabel,
-        transferMasterSaveBtn);
-
-    transferMasterAddProductBtnClicked();
-
-    Platform.runLater(this::setupTable);
-  }
-
-  private void setupTable() {
-    MFXTableColumn<TransferDetail> productName =
-        new MFXTableColumn<>(
-            "Product", false, Comparator.comparing(TransferDetail::getProductName));
-    MFXTableColumn<TransferDetail> productQuantity =
-        new MFXTableColumn<>("Quantity", false, Comparator.comparing(TransferDetail::getQuantity));
-    MFXTableColumn<TransferDetail> productDescription =
-        new MFXTableColumn<>(
-            "Description", false, Comparator.comparing(TransferDetail::getDescription));
-
-    productName.setRowCellFactory(product -> new MFXTableRowCell<>(TransferDetail::getProductName));
-    productQuantity.setRowCellFactory(
-        product -> new MFXTableRowCell<>(TransferDetail::getQuantity));
-    productDescription.setRowCellFactory(
-        product -> new MFXTableRowCell<>(TransferDetail::getDescription));
-
-    productName.prefWidthProperty().bind(transferDetailTable.widthProperty().multiply(.5));
-    productQuantity.prefWidthProperty().bind(transferDetailTable.widthProperty().multiply(.5));
-    productDescription.prefWidthProperty().bind(transferDetailTable.widthProperty().multiply(.5));
-
-    transferDetailTable.getTableColumns().addAll(productName, productQuantity, productDescription);
-
-    transferDetailTable
-        .getFilters()
-        .addAll(
-            new StringFilter<>("Name", TransferDetail::getProductName),
-            new LongFilter<>("Quantity", TransferDetail::getQuantity),
-            new StringFilter<>("Description", TransferDetail::getDescription));
-
-    getTransferDetailTable();
-
-    if (TransferDetailViewModel.getTransferDetails().isEmpty()) {
-      TransferDetailViewModel.getTransferDetails()
-          .addListener(
-              (ListChangeListener<TransferDetail>)
-                  c -> transferDetailTable.setItems(TransferDetailViewModel.getTransferDetails()));
-    } else {
-      transferDetailTable
-          .itemsProperty()
-          .bindBidirectional(TransferDetailViewModel.transferDetailsProperty());
-    }
-  }
-
-  private void getTransferDetailTable() {
-    transferDetailTable.setPrefSize(1000, 1000);
-    transferDetailTable.features().enableBounceEffect();
-    transferDetailTable.features().enableSmoothScrolling(0.5);
-
-    transferDetailTable.setTableRowFactory(
-        t -> {
-          MFXTableRow<TransferDetail> row = new MFXTableRow<>(transferDetailTable, t);
-          EventHandler<ContextMenuEvent> eventHandler =
-              event -> {
-                showContextMenu((MFXTableRow<TransferDetail>) event.getSource())
-                    .show(
-                        transferDetailTable.getScene().getWindow(),
-                        event.getScreenX(),
-                        event.getScreenY());
-                event.consume();
-              };
-          row.setOnContextMenuRequested(eventHandler);
-          return row;
-        });
-  }
-
-  private MFXContextMenu showContextMenu(MFXTableRow<TransferDetail> obj) {
-    MFXContextMenu contextMenu = new MFXContextMenu(transferDetailTable);
-    MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
-    MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
-
-    // Actions
-    // Delete
-    delete.setOnAction(
-        e -> {
-          GlobalActions.spotyThreadPool()
-              .execute(
-                  () ->
-                      TransferDetailViewModel.removeTransferDetail(
-                          obj.getData().getId(),
-                          TransferDetailViewModel.transferDetailsList.indexOf(obj.getData())));
-          e.consume();
-        });
-    // Edit
-    edit.setOnAction(
-        e -> {
-          GlobalActions.spotyThreadPool()
-              .execute(
-                  () -> {
-                    try {
-                      TransferDetailViewModel.getItem(
-                          obj.getData().getId(),
-                          TransferDetailViewModel.transferDetailsList.indexOf(obj.getData()));
-                    } catch (SQLException ex) {
-                      throw new RuntimeException(ex);
-                    }
-                  });
-
-          dialog.showAndWait();
-          e.consume();
-        });
-
-    contextMenu.addItems(edit, delete);
-
-    return contextMenu;
-  }
-
-  private void transferMasterAddProductBtnClicked() {
-    transferMasterProductAddBtn.setOnAction(e -> dialog.showAndWait());
-  }
-
-  private void quotationProductDialogPane(Stage stage) throws IOException {
-    FXMLLoader fxmlLoader = fxmlLoader("forms/TransferDetailForm.fxml");
-    fxmlLoader.setControllerFactory(c -> TransferDetailFormController.getInstance());
-
-    MFXGenericDialog dialogContent = fxmlLoader.load();
-
-    dialogContent.setShowMinimize(false);
-    dialogContent.setShowAlwaysOnTop(false);
-
-    dialog =
-        MFXGenericDialogBuilder.build(dialogContent)
-            .toStageDialogBuilder()
-            .initOwner(stage)
-            .initModality(Modality.WINDOW_MODAL)
-            .setOwnerNode(transferMasterFormContentPane)
-            .setScrimPriority(ScrimPriority.WINDOW)
-            .setScrimOwner(true)
-            .get();
-
-    io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
-  }
-
-  public void transferMasterSaveBtnClicked() {
-    SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
-
-    if (!transferDetailTable.isDisabled()
-        && TransferDetailViewModel.transferDetailsList.isEmpty()) {
-      SimpleNotification notification =
-          new SimpleNotification.NotificationBuilder("Table can't be Empty")
-              .duration(NotificationDuration.SHORT)
-              .icon("fas-triangle-exclamation")
-              .type(NotificationVariants.ERROR)
-              .build();
-      notificationHolder.addNotification(notification);
-      return;
-    }
-    if (!transferMasterToBranchValidationLabel.isVisible()
-        && !transferMasterFromBranchValidationLabel.isVisible()
-        && !transferMasterDateValidationLabel.isVisible()) {
-      if (TransferMasterViewModel.getId() > 0) {
-        GlobalActions.spotyThreadPool()
-            .execute(
+    private TransferMasterFormController(Stage stage) {
+        Platform.runLater(
                 () -> {
-                  try {
-                    TransferMasterViewModel.updateItem(TransferMasterViewModel.getId());
-                  } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                  }
+                    try {
+                        quotationProductDialogPane(stage);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                });
+    }
+
+    public static TransferMasterFormController getInstance(Stage stage) {
+        if (instance == null) instance = new TransferMasterFormController(stage);
+        return instance;
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        // Input binding.
+        transferMasterFromBranch
+                .valueProperty()
+                .bindBidirectional(TransferMasterViewModel.fromBranchProperty());
+        transferMasterToBranch
+                .valueProperty()
+                .bindBidirectional(TransferMasterViewModel.toBranchProperty());
+        transferMasterDate.textProperty().bindBidirectional(TransferMasterViewModel.dateProperty());
+        transferMasterNote.textProperty().bindBidirectional(TransferMasterViewModel.noteProperty());
+
+        // ComboBox Converters.
+        StringConverter<Branch> branchConverter =
+                FunctionalStringConverter.to(branch -> (branch == null) ? "" : branch.getName());
+
+        // ComboBox Filter Functions.
+        Function<String, Predicate<Branch>> branchFilterFunction =
+                searchStr ->
+                        branch -> StringUtils.containsIgnoreCase(branchConverter.toString(branch), searchStr);
+
+        // ComboBox properties.
+        transferMasterFromBranch.setItems(BranchViewModel.getBranches());
+        transferMasterFromBranch.setConverter(branchConverter);
+        transferMasterFromBranch.setFilterFunction(branchFilterFunction);
+
+        transferMasterToBranch.setItems(BranchViewModel.getBranches());
+        transferMasterToBranch.setConverter(branchConverter);
+        transferMasterToBranch.setFilterFunction(branchFilterFunction);
+
+        // input validators.
+        requiredValidator(
+                transferMasterToBranch,
+                "Receiving branch is required.",
+                transferMasterToBranchValidationLabel,
+                transferMasterSaveBtn);
+        requiredValidator(
+                transferMasterFromBranch,
+                "Supplying branch is required.",
+                transferMasterFromBranchValidationLabel,
+                transferMasterSaveBtn);
+        requiredValidator(
+                transferMasterDate,
+                "Date is required.",
+                transferMasterDateValidationLabel,
+                transferMasterSaveBtn);
+
+        transferMasterAddProductBtnClicked();
+
+        Platform.runLater(this::setupTable);
+    }
+
+    private void setupTable() {
+        MFXTableColumn<TransferDetail> productName =
+                new MFXTableColumn<>(
+                        "Product", false, Comparator.comparing(TransferDetail::getProductName));
+        MFXTableColumn<TransferDetail> productQuantity =
+                new MFXTableColumn<>("Quantity", false, Comparator.comparing(TransferDetail::getQuantity));
+        MFXTableColumn<TransferDetail> productDescription =
+                new MFXTableColumn<>(
+                        "Description", false, Comparator.comparing(TransferDetail::getDescription));
+
+        productName.setRowCellFactory(product -> new MFXTableRowCell<>(TransferDetail::getProductName));
+        productQuantity.setRowCellFactory(
+                product -> new MFXTableRowCell<>(TransferDetail::getQuantity));
+        productDescription.setRowCellFactory(
+                product -> new MFXTableRowCell<>(TransferDetail::getDescription));
+
+        productName.prefWidthProperty().bind(transferDetailTable.widthProperty().multiply(.5));
+        productQuantity.prefWidthProperty().bind(transferDetailTable.widthProperty().multiply(.5));
+        productDescription.prefWidthProperty().bind(transferDetailTable.widthProperty().multiply(.5));
+
+        transferDetailTable.getTableColumns().addAll(productName, productQuantity, productDescription);
+
+        transferDetailTable
+                .getFilters()
+                .addAll(
+                        new StringFilter<>("Name", TransferDetail::getProductName),
+                        new LongFilter<>("Quantity", TransferDetail::getQuantity),
+                        new StringFilter<>("Description", TransferDetail::getDescription));
+
+        getTransferDetailTable();
+
+        if (TransferDetailViewModel.getTransferDetails().isEmpty()) {
+            TransferDetailViewModel.getTransferDetails()
+                    .addListener(
+                            (ListChangeListener<TransferDetail>)
+                                    change -> transferDetailTable.setItems(TransferDetailViewModel.getTransferDetails()));
+        } else {
+            transferDetailTable
+                    .itemsProperty()
+                    .bindBidirectional(TransferDetailViewModel.transferDetailsProperty());
+        }
+    }
+
+    private void getTransferDetailTable() {
+        transferDetailTable.setPrefSize(1000, 1000);
+        transferDetailTable.features().enableBounceEffect();
+        transferDetailTable.features().enableSmoothScrolling(0.5);
+
+        transferDetailTable.setTableRowFactory(
+                transferDetail -> {
+                    MFXTableRow<TransferDetail> row = new MFXTableRow<>(transferDetailTable, transferDetail);
+                    EventHandler<ContextMenuEvent> eventHandler =
+                            event -> {
+                                showContextMenu((MFXTableRow<TransferDetail>) event.getSource())
+                                        .show(
+                                                transferDetailTable.getScene().getWindow(),
+                                                event.getScreenX(),
+                                                event.getScreenY());
+                                event.consume();
+                            };
+                    row.setOnContextMenuRequested(eventHandler);
+                    return row;
+                });
+    }
+
+    private MFXContextMenu showContextMenu(MFXTableRow<TransferDetail> obj) {
+        MFXContextMenu contextMenu = new MFXContextMenu(transferDetailTable);
+        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
+        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+
+        // Actions
+        // Delete
+        delete.setOnAction(
+                event -> {
+                    GlobalActions.spotyThreadPool()
+                            .execute(
+                                    () ->
+                                            TransferDetailViewModel.removeTransferDetail(
+                                                    obj.getData().getId(),
+                                                    TransferDetailViewModel.transferDetailsList.indexOf(obj.getData())));
+                    event.consume();
+                });
+        // Edit
+        edit.setOnAction(
+                event -> {
+                    GlobalActions.spotyThreadPool()
+                            .execute(
+                                    () -> {
+                                        try {
+                                            TransferDetailViewModel.getItem(
+                                                    obj.getData().getId(),
+                                                    TransferDetailViewModel.transferDetailsList.indexOf(obj.getData()));
+                                        } catch (SQLException e) {
+                                            SpotyLogger.writeToFile(e, this.getClass());
+                                        }
+                                    });
+
+                    dialog.showAndWait();
+                    event.consume();
                 });
 
-        SimpleNotification notification =
-            new SimpleNotification.NotificationBuilder("Transfer updated successfully")
-                .duration(NotificationDuration.MEDIUM)
-                .icon("fas-circle-check")
-                .type(NotificationVariants.SUCCESS)
-                .build();
-        notificationHolder.addNotification(notification);
+        contextMenu.addItems(edit, delete);
 
+        return contextMenu;
+    }
+
+    private void transferMasterAddProductBtnClicked() {
+        transferMasterProductAddBtn.setOnAction(e -> dialog.showAndWait());
+    }
+
+    private void quotationProductDialogPane(Stage stage) throws IOException {
+        FXMLLoader fxmlLoader = fxmlLoader("forms/TransferDetailForm.fxml");
+        fxmlLoader.setControllerFactory(c -> TransferDetailFormController.getInstance());
+
+        MFXGenericDialog dialogContent = fxmlLoader.load();
+
+        dialogContent.setShowMinimize(false);
+        dialogContent.setShowAlwaysOnTop(false);
+
+        dialog =
+                MFXGenericDialogBuilder.build(dialogContent)
+                        .toStageDialogBuilder()
+                        .initOwner(stage)
+                        .initModality(Modality.WINDOW_MODAL)
+                        .setOwnerNode(transferMasterFormContentPane)
+                        .setScrimPriority(ScrimPriority.WINDOW)
+                        .setScrimOwner(true)
+                        .get();
+
+        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
+    }
+
+    public void transferMasterSaveBtnClicked() {
+        SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
+
+        if (!transferDetailTable.isDisabled()
+                && TransferDetailViewModel.transferDetailsList.isEmpty()) {
+            SimpleNotification notification =
+                    new SimpleNotification.NotificationBuilder("Table can't be Empty")
+                            .duration(NotificationDuration.SHORT)
+                            .icon("fas-triangle-exclamation")
+                            .type(NotificationVariants.ERROR)
+                            .build();
+            notificationHolder.addNotification(notification);
+            return;
+        }
+        if (!transferMasterToBranchValidationLabel.isVisible()
+                && !transferMasterFromBranchValidationLabel.isVisible()
+                && !transferMasterDateValidationLabel.isVisible()) {
+            if (TransferMasterViewModel.getId() > 0) {
+                GlobalActions.spotyThreadPool()
+                        .execute(
+                                () -> {
+                                    try {
+                                        TransferMasterViewModel.updateItem(TransferMasterViewModel.getId());
+                                    } catch (SQLException e) {
+                                        SpotyLogger.writeToFile(e, this.getClass());
+                                    }
+                                });
+
+                SimpleNotification notification =
+                        new SimpleNotification.NotificationBuilder("Transfer updated successfully")
+                                .duration(NotificationDuration.MEDIUM)
+                                .icon("fas-circle-check")
+                                .type(NotificationVariants.SUCCESS)
+                                .build();
+                notificationHolder.addNotification(notification);
+
+                transferMasterFromBranch.clearSelection();
+                transferMasterToBranch.clearSelection();
+
+                transferMasterCancelBtnClicked();
+                return;
+            }
+            GlobalActions.spotyThreadPool()
+                    .execute(
+                            () -> {
+                                try {
+                                    TransferMasterViewModel.saveTransferMaster();
+                                } catch (SQLException e) {
+                                    SpotyLogger.writeToFile(e, this.getClass());
+                                }
+                            });
+
+            SimpleNotification notification =
+                    new SimpleNotification.NotificationBuilder("Transfer saved successfully")
+                            .duration(NotificationDuration.MEDIUM)
+                            .icon("fas-circle-check")
+                            .type(NotificationVariants.SUCCESS)
+                            .build();
+            notificationHolder.addNotification(notification);
+
+            transferMasterFromBranch.clearSelection();
+            transferMasterToBranch.clearSelection();
+
+            transferMasterCancelBtnClicked();
+            return;
+        }
+        SimpleNotification notification =
+                new SimpleNotification.NotificationBuilder("Required fields missing")
+                        .duration(NotificationDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(NotificationVariants.ERROR)
+                        .build();
+        notificationHolder.addNotification(notification);
+    }
+
+    public void transferMasterCancelBtnClicked() {
+        BaseController.navigation.navigate(Pages.getTransferPane());
+        TransferMasterViewModel.resetProperties();
+        transferMasterToBranchValidationLabel.setVisible(false);
+        transferMasterFromBranchValidationLabel.setVisible(false);
+        transferMasterDateValidationLabel.setVisible(false);
         transferMasterFromBranch.clearSelection();
         transferMasterToBranch.clearSelection();
-
-        transferMasterCancelBtnClicked();
-        return;
-      }
-      GlobalActions.spotyThreadPool()
-          .execute(
-              () -> {
-                try {
-                  TransferMasterViewModel.saveTransferMaster();
-                } catch (SQLException e) {
-                  throw new RuntimeException(e);
-                }
-              });
-
-      SimpleNotification notification =
-          new SimpleNotification.NotificationBuilder("Transfer saved successfully")
-              .duration(NotificationDuration.MEDIUM)
-              .icon("fas-circle-check")
-              .type(NotificationVariants.SUCCESS)
-              .build();
-      notificationHolder.addNotification(notification);
-
-      transferMasterFromBranch.clearSelection();
-      transferMasterToBranch.clearSelection();
-
-      transferMasterCancelBtnClicked();
-      return;
     }
-    SimpleNotification notification =
-        new SimpleNotification.NotificationBuilder("Required fields missing")
-            .duration(NotificationDuration.SHORT)
-            .icon("fas-triangle-exclamation")
-            .type(NotificationVariants.ERROR)
-            .build();
-    notificationHolder.addNotification(notification);
-  }
-
-  public void transferMasterCancelBtnClicked() {
-    BaseController.navigation.navigate(Pages.getTransferPane());
-    TransferMasterViewModel.resetProperties();
-    transferMasterToBranchValidationLabel.setVisible(false);
-    transferMasterFromBranchValidationLabel.setVisible(false);
-    transferMasterDateValidationLabel.setVisible(false);
-    transferMasterFromBranch.clearSelection();
-    transferMasterToBranch.clearSelection();
-  }
 }

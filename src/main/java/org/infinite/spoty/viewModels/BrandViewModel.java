@@ -17,7 +17,9 @@ package org.infinite.spoty.viewModels;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
+
 import java.sql.SQLException;
+
 import javafx.application.Platform;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.LongProperty;
@@ -31,196 +33,140 @@ import javafx.concurrent.Task;
 import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.Brand;
+import org.infinite.spoty.utils.SpotyLogger;
 
 public class BrandViewModel {
-  private static final LongProperty id = new SimpleLongProperty(0);
-  private static final StringProperty name = new SimpleStringProperty("");
-  private static final StringProperty description = new SimpleStringProperty("");
-  public static ObservableList<Brand> brandsList = FXCollections.observableArrayList();
+    private static final LongProperty id = new SimpleLongProperty(0);
+    private static final StringProperty name = new SimpleStringProperty("");
+    private static final StringProperty description = new SimpleStringProperty("");
+    public static ObservableList<Brand> brandsList = FXCollections.observableArrayList();
 
-  private static final ListProperty<Brand> brands = new SimpleListProperty<>(brandsList);
-  public static ObservableList<Brand> brandsComboBoxList = FXCollections.observableArrayList();
+    private static final ListProperty<Brand> brands = new SimpleListProperty<>(brandsList);
+    public static ObservableList<Brand> brandsComboBoxList = FXCollections.observableArrayList();
 
-  public static long getId() {
-    return id.get();
-  }
+    private static final SQLiteConnection connection = SQLiteConnection.getInstance();
+    private static final ConnectionSource connectionSource = connection.getConnection();
 
-  public static void setId(long id) {
-    BrandViewModel.id.set(id);
-  }
+    public static long getId() {
+        return id.get();
+    }
 
-  public static LongProperty idProperty() {
-    return id;
-  }
+    public static void setId(long id) {
+        BrandViewModel.id.set(id);
+    }
 
-  public static String getName() {
-    return name.get();
-  }
+    public static LongProperty idProperty() {
+        return id;
+    }
 
-  public static void setName(String name) {
-    BrandViewModel.name.set(name);
-  }
+    public static String getName() {
+        return name.get();
+    }
 
-  public static StringProperty nameProperty() {
-    return name;
-  }
+    public static void setName(String name) {
+        BrandViewModel.name.set(name);
+    }
 
-  public static String getDescription() {
-    return description.get();
-  }
+    public static StringProperty nameProperty() {
+        return name;
+    }
 
-  public static void setDescription(String description) {
-    BrandViewModel.description.set(description);
-  }
+    public static String getDescription() {
+        return description.get();
+    }
 
-  public static StringProperty descriptionProperty() {
-    return description;
-  }
+    public static void setDescription(String description) {
+        BrandViewModel.description.set(description);
+    }
 
-  public static ObservableList<Brand> getBrands() {
-    return brands.get();
-  }
+    public static StringProperty descriptionProperty() {
+        return description;
+    }
 
-  public static void setBrands(ObservableList<Brand> brands) {
-    BrandViewModel.brands.set(brands);
-  }
+    public static ObservableList<Brand> getBrands() {
+        return brands.get();
+    }
 
-  public static ListProperty<Brand> brandsProperty() {
-    return brands;
-  }
+    public static void setBrands(ObservableList<Brand> brands) {
+        BrandViewModel.brands.set(brands);
+    }
 
-  public static void saveBrand() {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
+    public static ListProperty<Brand> brandsProperty() {
+        return brands;
+    }
 
-            Dao<Brand, Long> brandDao = DaoManager.createDao(connectionSource, Brand.class);
+    public static void saveBrand() throws SQLException {
+        Dao<Brand, Long> brandDao = DaoManager.createDao(connectionSource, Brand.class);
 
-            Brand brand = new Brand(getName(), getDescription());
-            brandDao.create(brand);
+        Brand brand = new Brand(getName(), getDescription());
+        brandDao.create(brand);
 
-            return null;
-          }
-        };
+        clearBrandData();
+        getItems();
+    }
 
-    task.setOnSucceeded(
-        event -> {
-          clearBrandData();
-          getItems();
-        });
+    public static void clearBrandData() {
+        setId(0);
+        setName("");
+        setDescription("");
+    }
 
-    GlobalActions.spotyThreadPool().execute(task);
-  }
+    public static void getItems() throws SQLException {
+        SQLiteConnection connection = SQLiteConnection.getInstance();
+        ConnectionSource connectionSource = connection.getConnection();
 
-  public static void clearBrandData() {
-    setId(0);
-    setName("");
-    setDescription("");
-  }
+        Dao<Brand, Long> brandDao = DaoManager.createDao(connectionSource, Brand.class);
 
-  public static void getItems() {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
-            Dao<Brand, Long> brandDao = DaoManager.createDao(connectionSource, Brand.class);
-
-            Platform.runLater(
+        Platform.runLater(
                 () -> {
-                  brandsList.clear();
+                    brandsList.clear();
 
-                  try {
-                    brandsList.addAll(brandDao.queryForAll());
-                  } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                  }
+                    try {
+                        brandsList.addAll(brandDao.queryForAll());
+                    } catch (SQLException e) {
+                        SpotyLogger.writeToFile(e, BrandViewModel.class);
+                    }
                 });
+    }
 
-            return null;
-          }
-        };
+    public static void getItem(long brandID) throws SQLException {
+        SQLiteConnection connection = SQLiteConnection.getInstance();
+        ConnectionSource connectionSource = connection.getConnection();
 
-    GlobalActions.spotyThreadPool().execute(task);
-  }
+        Dao<Brand, Long> brandDao = DaoManager.createDao(connectionSource, Brand.class);
 
-  public static void getItem(long brandID) {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
+        Brand brand = brandDao.queryForId(brandID);
+        setId(brand.getId());
+        setName(brand.getName());
+        setDescription(brand.getDescription());
+        getItems();
+    }
 
-            Dao<Brand, Long> brandDao = DaoManager.createDao(connectionSource, Brand.class);
+    public static void updateItem(long index) throws SQLException {
+        SQLiteConnection connection = SQLiteConnection.getInstance();
+        ConnectionSource connectionSource = connection.getConnection();
 
-            Brand brand = brandDao.queryForId(brandID);
-            setId(brand.getId());
-            setName(brand.getName());
-            setDescription(brand.getDescription());
-            getItems();
-            return null;
-          }
-        };
+        Dao<Brand, Long> brandDao = DaoManager.createDao(connectionSource, Brand.class);
 
-    task.setOnSucceeded(event -> getItems());
+        Brand brand = brandDao.queryForId(index);
 
-    GlobalActions.spotyThreadPool().execute(task);
-  }
+        brand.setName(getName());
+        brand.setDescription(getDescription());
 
-  public static void updateItem(long index) {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
+        brandDao.update(brand);
 
-            Dao<Brand, Long> brandDao = DaoManager.createDao(connectionSource, Brand.class);
+        clearBrandData();
+        getItems();
+    }
 
-            Brand brand = brandDao.queryForId(index);
+    public static void deleteItem(long index) throws SQLException {
+        SQLiteConnection connection = SQLiteConnection.getInstance();
+        ConnectionSource connectionSource = connection.getConnection();
 
-            brand.setName(getName());
-            brand.setDescription(getDescription());
+        Dao<Brand, Long> brandDao = DaoManager.createDao(connectionSource, Brand.class);
 
-            brandDao.update(brand);
+        brandDao.deleteById(index);
 
-            return null;
-          }
-        };
-
-    task.setOnSucceeded(
-        event -> {
-          clearBrandData();
-          getItems();
-        });
-
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static void deleteItem(long index) {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
-            Dao<Brand, Long> brandDao = DaoManager.createDao(connectionSource, Brand.class);
-
-            brandDao.deleteById(index);
-
-            return null;
-          }
-        };
-
-    task.setOnSucceeded(event -> getItems());
-
-    GlobalActions.spotyThreadPool().execute(task);
-  }
+        getItems();
+    }
 }

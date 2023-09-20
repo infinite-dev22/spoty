@@ -23,6 +23,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.infinite.spoty.database.models.Product;
+import org.jetbrains.annotations.NotNull;
 
 public class PointOfSaleViewModel {
     public static final LongProperty itemQuantity = new SimpleLongProperty(1);
@@ -36,7 +37,7 @@ public class PointOfSaleViewModel {
     private static final DoubleProperty discount = new SimpleDoubleProperty();
     private static final ObservableList<Product> posCartList = FXCollections.observableArrayList();
 
-    public static Long getItemQuantity() {
+    public static @NotNull Long getItemQuantity() {
         return itemQuantity.get();
     }
 

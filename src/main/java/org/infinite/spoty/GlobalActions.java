@@ -14,35 +14,38 @@
 
 package org.infinite.spoty;
 
+import javafx.event.ActionEvent;
+import javafx.scene.Node;
+import javafx.stage.Stage;
+import org.infinite.spoty.utils.SpotyLogger;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import javafx.event.ActionEvent;
-import javafx.scene.Node;
-import javafx.stage.Stage;
 
 public class GlobalActions {
-  private static final ExecutorService executorService = Executors.newFixedThreadPool(5);
+    private static final ExecutorService executorService = Executors.newFixedThreadPool(5);
 
-  public static void closeDialog(ActionEvent e) {
-    final Node source = (Node) e.getSource();
-    final Stage stage = (Stage) source.getScene().getWindow();
-    stage.close();
-  }
-
-  public static Date fineDate(String dateString) {
-    Date date;
-    try {
-      date = new SimpleDateFormat("yyyy-MM-dd").parse(dateString);
-    } catch (ParseException e) {
-      throw new RuntimeException(e);
+    public static void closeDialog(ActionEvent e) {
+        final Node source = (Node) e.getSource();
+        final Stage stage = (Stage) source.getScene().getWindow();
+        stage.close();
     }
-    return date;
-  }
 
-  public static ExecutorService spotyThreadPool() {
-    return executorService;
-  }
+    public static Date fineDate(String dateString) {
+        Date date;
+        try {
+            date = new SimpleDateFormat("yyyy-MM-dd").parse(dateString);
+            return date;
+        } catch (ParseException e) {
+            SpotyLogger.writeToFile(e, GlobalActions.class);
+        }
+        return null;
+    }
+
+    public static ExecutorService spotyThreadPool() {
+        return executorService;
+    }
 }

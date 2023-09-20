@@ -28,6 +28,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.*;
+import org.infinite.spoty.utils.SpotyLogger;
+import org.jetbrains.annotations.NotNull;
 
 public class ProductViewModel {
   public static final ObservableList<Product> productsList = FXCollections.observableArrayList();
@@ -52,7 +54,7 @@ public class ProductViewModel {
   private static final SQLiteConnection connection = SQLiteConnection.getInstance();
   private static final ConnectionSource connectionSource = connection.getConnection();
 
-  public static Long getId() {
+  public static @NotNull Long getId() {
     return id.get();
   }
 
@@ -343,7 +345,7 @@ public class ProductViewModel {
 
             productsList.addAll(productDao.queryForAll());
           } catch (SQLException e) {
-            throw new RuntimeException(e);
+            SpotyLogger.writeToFile(e, ProductViewModel.class);
           }
         });
   }

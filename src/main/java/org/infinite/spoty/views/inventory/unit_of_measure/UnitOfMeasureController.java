@@ -26,6 +26,7 @@ import io.github.palexdev.materialfx.filter.DoubleFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
@@ -39,6 +40,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.database.models.UnitOfMeasure;
 import org.infinite.spoty.forms.UOMFormController;
 import org.infinite.spoty.viewModels.UOMViewModel;
@@ -153,13 +155,25 @@ public class UnitOfMeasureController implements Initializable {
     // Delete
     delete.setOnAction(
         e -> {
-          UOMViewModel.deleteItem(obj.getData().getId());
+            GlobalActions.spotyThreadPool().execute(() -> {
+                try {
+                    UOMViewModel.deleteItem(obj.getData().getId());
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
           e.consume();
         });
     // Edit
     edit.setOnAction(
         e -> {
-          UOMViewModel.getItem(obj.getData().getId());
+            GlobalActions.spotyThreadPool().execute(() -> {
+                try {
+                    UOMViewModel.getItem(obj.getData().getId());
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
           dialog.showAndWait();
           e.consume();
         });

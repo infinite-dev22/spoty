@@ -14,163 +14,192 @@
 
 package org.infinite.spoty.forms;
 
-import static org.infinite.spoty.GlobalActions.closeDialog;
-import static org.infinite.spoty.Validators.requiredValidator;
-
 import io.github.palexdev.materialfx.controls.MFXComboBox;
 import io.github.palexdev.materialfx.controls.MFXDatePicker;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import java.net.URL;
-import java.util.Objects;
-import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.util.StringConverter;
+import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.ExpenseCategory;
+import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.viewModels.BranchViewModel;
 import org.infinite.spoty.viewModels.ExpenseCategoryViewModel;
 import org.infinite.spoty.viewModels.ExpenseViewModel;
 
+import java.net.URL;
+import java.sql.SQLException;
+import java.util.Objects;
+import java.util.ResourceBundle;
+
+import static org.infinite.spoty.GlobalActions.closeDialog;
+import static org.infinite.spoty.Validators.requiredValidator;
+
 public class ExpenseFormController implements Initializable {
-  private static ExpenseFormController instance;
-  @FXML public MFXTextField expenseFormAmount;
-  @FXML public MFXTextField expenseFormDetails;
-  @FXML public MFXButton expenseFormSaveBtn;
-  @FXML public MFXButton expenseFormCancelBtn;
-  @FXML public MFXDatePicker expenseFormDate;
-  @FXML public MFXComboBox<Branch> expenseFormBranch;
-  @FXML public MFXComboBox<ExpenseCategory> expenseFormCategory;
-  @FXML public MFXTextField expenseFormName;
-  @FXML public Label expenseFormNameValidationLabel;
-  @FXML public Label expenseFormDateValidationLabel;
-  @FXML public Label expenseFormBranchValidationLabel;
-  @FXML public Label expenseFormCategoryValidationLabel;
-  @FXML public Label expenseFormAmountValidationLabel;
+    private static ExpenseFormController instance;
+    @FXML
+    public MFXTextField expenseFormAmount;
+    @FXML
+    public MFXTextField expenseFormDetails;
+    @FXML
+    public MFXButton expenseFormSaveBtn;
+    @FXML
+    public MFXButton expenseFormCancelBtn;
+    @FXML
+    public MFXDatePicker expenseFormDate;
+    @FXML
+    public MFXComboBox<Branch> expenseFormBranch;
+    @FXML
+    public MFXComboBox<ExpenseCategory> expenseFormCategory;
+    @FXML
+    public MFXTextField expenseFormName;
+    @FXML
+    public Label expenseFormNameValidationLabel;
+    @FXML
+    public Label expenseFormDateValidationLabel;
+    @FXML
+    public Label expenseFormBranchValidationLabel;
+    @FXML
+    public Label expenseFormCategoryValidationLabel;
+    @FXML
+    public Label expenseFormAmountValidationLabel;
 
-  public static ExpenseFormController getInstance() {
-    if (Objects.equals(instance, null)) instance = new ExpenseFormController();
-    return instance;
-  }
+    public static ExpenseFormController getInstance() {
+        if (Objects.equals(instance, null)) instance = new ExpenseFormController();
+        return instance;
+    }
 
-  @Override
-  public void initialize(URL location, ResourceBundle resources) {
-    // Form Bindings.
-    expenseFormName.textProperty().bindBidirectional(ExpenseViewModel.nameProperty());
-    expenseFormDate.textProperty().bindBidirectional(ExpenseViewModel.dateProperty());
-    expenseFormBranch.valueProperty().bindBidirectional(ExpenseViewModel.branchProperty());
-    expenseFormCategory.valueProperty().bindBidirectional(ExpenseViewModel.categoryProperty());
-    expenseFormAmount.textProperty().bindBidirectional(ExpenseViewModel.amountProperty());
-    expenseFormDetails.textProperty().bindBidirectional(ExpenseViewModel.detailsProperty());
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        // Form Bindings.
+        expenseFormName.textProperty().bindBidirectional(ExpenseViewModel.nameProperty());
+        expenseFormDate.textProperty().bindBidirectional(ExpenseViewModel.dateProperty());
+        expenseFormBranch.valueProperty().bindBidirectional(ExpenseViewModel.branchProperty());
+        expenseFormCategory.valueProperty().bindBidirectional(ExpenseViewModel.categoryProperty());
+        expenseFormAmount.textProperty().bindBidirectional(ExpenseViewModel.amountProperty());
+        expenseFormDetails.textProperty().bindBidirectional(ExpenseViewModel.detailsProperty());
 
-    // ComboBox Converters.
-    StringConverter<Branch> branchConverter =
-        FunctionalStringConverter.to(branch -> (branch == null) ? "" : branch.getName());
+        // ComboBox Converters.
+        StringConverter<Branch> branchConverter =
+                FunctionalStringConverter.to(branch -> (branch == null) ? "" : branch.getName());
 
-    StringConverter<ExpenseCategory> expenseCategoryConverter =
-        FunctionalStringConverter.to(
-            expenseCategory -> (expenseCategory == null) ? "" : expenseCategory.getName());
+        StringConverter<ExpenseCategory> expenseCategoryConverter =
+                FunctionalStringConverter.to(
+                        expenseCategory -> (expenseCategory == null) ? "" : expenseCategory.getName());
 
-    // Combo box properties.
-    expenseFormBranch.setItems(BranchViewModel.getBranches());
-    expenseFormBranch.setConverter(branchConverter);
+        // Combo box properties.
+        expenseFormBranch.setItems(BranchViewModel.getBranches());
+        expenseFormBranch.setConverter(branchConverter);
 
-    expenseFormCategory.setItems(ExpenseCategoryViewModel.getCategories());
-    expenseFormCategory.setConverter(expenseCategoryConverter);
+        expenseFormCategory.setItems(ExpenseCategoryViewModel.getCategories());
+        expenseFormCategory.setConverter(expenseCategoryConverter);
 
-    // Input listeners.
-    requiredValidator(
-        expenseFormName, "Name is required.", expenseFormNameValidationLabel, expenseFormSaveBtn);
-    requiredValidator(
-        expenseFormDate, "Date is required.", expenseFormDateValidationLabel, expenseFormSaveBtn);
-    requiredValidator(
-        expenseFormBranch,
-        "Branch is required.",
-        expenseFormBranchValidationLabel,
-        expenseFormSaveBtn);
-    requiredValidator(
-        expenseFormCategory,
-        "Category is required.",
-        expenseFormCategoryValidationLabel,
-        expenseFormSaveBtn);
-    requiredValidator(
-        expenseFormAmount,
-        "Amount can't be empty.",
-        expenseFormAmountValidationLabel,
-        expenseFormSaveBtn);
+        // Input listeners.
+        requiredValidator(
+                expenseFormName, "Name is required.", expenseFormNameValidationLabel, expenseFormSaveBtn);
+        requiredValidator(
+                expenseFormDate, "Date is required.", expenseFormDateValidationLabel, expenseFormSaveBtn);
+        requiredValidator(
+                expenseFormBranch,
+                "Branch is required.",
+                expenseFormBranchValidationLabel,
+                expenseFormSaveBtn);
+        requiredValidator(
+                expenseFormCategory,
+                "Category is required.",
+                expenseFormCategoryValidationLabel,
+                expenseFormSaveBtn);
+        requiredValidator(
+                expenseFormAmount,
+                "Amount can't be empty.",
+                expenseFormAmountValidationLabel,
+                expenseFormSaveBtn);
 
-    dialogOnActions();
-  }
+        dialogOnActions();
+    }
 
-  private void dialogOnActions() {
-    expenseFormCancelBtn.setOnAction(
-        (e) -> {
-          closeDialog(e);
-          ExpenseViewModel.resetProperties();
-          expenseFormBranch.clearSelection();
-          expenseFormCategory.clearSelection();
+    private void dialogOnActions() {
+        expenseFormCancelBtn.setOnAction(
+                (event) -> {
+                    closeDialog(event);
+                    ExpenseViewModel.resetProperties();
+                    expenseFormBranch.clearSelection();
+                    expenseFormCategory.clearSelection();
 
-          expenseFormNameValidationLabel.setVisible(false);
-          expenseFormDateValidationLabel.setVisible(false);
-          expenseFormBranchValidationLabel.setVisible(false);
-          expenseFormCategoryValidationLabel.setVisible(false);
-          expenseFormAmountValidationLabel.setVisible(false);
-        });
-    expenseFormSaveBtn.setOnAction(
-        (e) -> {
-          SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
-          if (!expenseFormNameValidationLabel.isVisible()
-              && !expenseFormDateValidationLabel.isVisible()
-              && !expenseFormBranchValidationLabel.isVisible()
-              && !expenseFormCategoryValidationLabel.isVisible()
-              && !expenseFormAmountValidationLabel.isVisible()) {
-            if (ExpenseViewModel.getId() > 0) {
-              ExpenseViewModel.updateItem(ExpenseViewModel.getId());
+                    expenseFormNameValidationLabel.setVisible(false);
+                    expenseFormDateValidationLabel.setVisible(false);
+                    expenseFormBranchValidationLabel.setVisible(false);
+                    expenseFormCategoryValidationLabel.setVisible(false);
+                    expenseFormAmountValidationLabel.setVisible(false);
+                });
+        expenseFormSaveBtn.setOnAction(
+                (event) -> {
+                    SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
+                    if (!expenseFormNameValidationLabel.isVisible()
+                            && !expenseFormDateValidationLabel.isVisible()
+                            && !expenseFormBranchValidationLabel.isVisible()
+                            && !expenseFormCategoryValidationLabel.isVisible()
+                            && !expenseFormAmountValidationLabel.isVisible()) {
+                        if (ExpenseViewModel.getId() > 0) {
+                            GlobalActions.spotyThreadPool().execute(() -> {
+                                try {
+                                    ExpenseViewModel.updateItem(ExpenseViewModel.getId());
+                                } catch (SQLException e) {
+                                    SpotyLogger.writeToFile(e, this.getClass());
+                                }
+                            });
 
-              SimpleNotification notification =
-                  new SimpleNotification.NotificationBuilder("Expense updated successfully")
-                      .duration(NotificationDuration.SHORT)
-                      .icon("fas-circle-check")
-                      .type(NotificationVariants.SUCCESS)
-                      .build();
-              notificationHolder.addNotification(notification);
+                            SimpleNotification notification =
+                                    new SimpleNotification.NotificationBuilder("Expense updated successfully")
+                                            .duration(NotificationDuration.SHORT)
+                                            .icon("fas-circle-check")
+                                            .type(NotificationVariants.SUCCESS)
+                                            .build();
+                            notificationHolder.addNotification(notification);
 
-              expenseFormBranch.clearSelection();
-              expenseFormCategory.clearSelection();
+                            expenseFormBranch.clearSelection();
+                            expenseFormCategory.clearSelection();
 
-              closeDialog(e);
-              return;
-            }
-            ExpenseViewModel.saveExpense();
+                            closeDialog(event);
+                            return;
+                        }
+                        GlobalActions.spotyThreadPool().execute(() -> {
+                            try {
+                                ExpenseViewModel.saveExpense();
+                            } catch (SQLException e) {
+                                SpotyLogger.writeToFile(e, this.getClass());
+                            }
+                        });
 
-            SimpleNotification notification =
-                new SimpleNotification.NotificationBuilder("Expense saved successfully")
-                    .duration(NotificationDuration.SHORT)
-                    .icon("fas-circle-check")
-                    .type(NotificationVariants.SUCCESS)
-                    .build();
-            notificationHolder.addNotification(notification);
+                        SimpleNotification notification =
+                                new SimpleNotification.NotificationBuilder("Expense saved successfully")
+                                        .duration(NotificationDuration.SHORT)
+                                        .icon("fas-circle-check")
+                                        .type(NotificationVariants.SUCCESS)
+                                        .build();
+                        notificationHolder.addNotification(notification);
 
-            expenseFormBranch.clearSelection();
-            expenseFormCategory.clearSelection();
+                        expenseFormBranch.clearSelection();
+                        expenseFormCategory.clearSelection();
 
-            closeDialog(e);
-            return;
-          }
-          SimpleNotification notification =
-              new SimpleNotification.NotificationBuilder("Required fields missing")
-                  .duration(NotificationDuration.SHORT)
-                  .icon("fas-triangle-exclamation")
-                  .type(NotificationVariants.ERROR)
-                  .build();
-          notificationHolder.addNotification(notification);
-        });
-  }
+                        closeDialog(event);
+                        return;
+                    }
+                    SimpleNotification notification =
+                            new SimpleNotification.NotificationBuilder("Required fields missing")
+                                    .duration(NotificationDuration.SHORT)
+                                    .icon("fas-triangle-exclamation")
+                                    .type(NotificationVariants.ERROR)
+                                    .build();
+                    notificationHolder.addNotification(notification);
+                });
+    }
 }

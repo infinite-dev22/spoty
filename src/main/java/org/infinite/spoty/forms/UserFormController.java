@@ -14,207 +14,238 @@
 
 package org.infinite.spoty.forms;
 
-import static org.infinite.spoty.GlobalActions.closeDialog;
-import static org.infinite.spoty.Validators.emailValidator;
-import static org.infinite.spoty.Validators.lengthValidator;
-import static org.infinite.spoty.Validators.requiredValidator;
-
 import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.controls.MFXToggleButton;
 import io.github.palexdev.materialfx.utils.StringUtils;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import java.net.URL;
-import java.util.Objects;
-import java.util.ResourceBundle;
-import java.util.function.Function;
-import java.util.function.Predicate;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.util.StringConverter;
+import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.Role;
+import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.viewModels.BranchViewModel;
 import org.infinite.spoty.viewModels.RoleViewModel;
 import org.infinite.spoty.viewModels.UserViewModel;
 
+import java.net.URL;
+import java.sql.SQLException;
+import java.util.Objects;
+import java.util.ResourceBundle;
+import java.util.function.Function;
+import java.util.function.Predicate;
+
+import static org.infinite.spoty.GlobalActions.closeDialog;
+import static org.infinite.spoty.Validators.*;
+
 public class UserFormController implements Initializable {
-  public static UserFormController instance;
-  @FXML public MFXButton userFormSaveBtn;
-  @FXML public MFXButton userFormCancelBtn;
-  @FXML public MFXTextField userFormEmail;
-  @FXML public MFXTextField userFormPhone;
-  @FXML public MFXTextField userFormFirstname;
-  @FXML public MFXTextField userFormLastname;
-  @FXML public MFXTextField userFormUsername;
-  @FXML public MFXFilterComboBox<Role> userFormRole;
-  @FXML public MFXFilterComboBox<Branch> userFormBranch;
-  @FXML public MFXToggleButton userFormActive;
-  @FXML public Label userFormFirstNameValidationLabel;
-  @FXML public Label userFormEmailValidationLabel;
-  @FXML public Label userFormPhoneValidationLabel;
-  @FXML public Label userFormLastNameValidationLabel;
-  @FXML public Label userFormUserNameValidationLabel;
-  @FXML public Label userFormBranchValidationLabel;
-  @FXML public Label userFormRoleValidationLabel;
+    public static UserFormController instance;
+    @FXML
+    public MFXButton userFormSaveBtn;
+    @FXML
+    public MFXButton userFormCancelBtn;
+    @FXML
+    public MFXTextField userFormEmail;
+    @FXML
+    public MFXTextField userFormPhone;
+    @FXML
+    public MFXTextField userFormFirstname;
+    @FXML
+    public MFXTextField userFormLastname;
+    @FXML
+    public MFXTextField userFormUsername;
+    @FXML
+    public MFXFilterComboBox<Role> userFormRole;
+    @FXML
+    public MFXFilterComboBox<Branch> userFormBranch;
+    @FXML
+    public MFXToggleButton userFormActive;
+    @FXML
+    public Label userFormFirstNameValidationLabel;
+    @FXML
+    public Label userFormEmailValidationLabel;
+    @FXML
+    public Label userFormPhoneValidationLabel;
+    @FXML
+    public Label userFormLastNameValidationLabel;
+    @FXML
+    public Label userFormUserNameValidationLabel;
+    @FXML
+    public Label userFormBranchValidationLabel;
+    @FXML
+    public Label userFormRoleValidationLabel;
 
-  public static UserFormController getInstance() {
-    if (Objects.equals(instance, null)) instance = new UserFormController();
-    return instance;
-  }
+    public static UserFormController getInstance() {
+        if (Objects.equals(instance, null)) instance = new UserFormController();
+        return instance;
+    }
 
-  @Override
-  public void initialize(URL location, ResourceBundle resources) {
-    // Input listeners.
-    userFormPhone
-        .textProperty()
-        .addListener(
-            (observable, oldValue, newValue) -> {
-              if (!newValue.matches("\\d*")) userFormPhone.setText(newValue.replaceAll("\\D", ""));
-            });
-    userFormPhone
-        .focusedProperty()
-        .addListener(
-            (observable, oldValue, newValue) -> {
-              if (newValue != oldValue) userFormPhone.setLeadingIcon(new Label("+"));
-              System.out.println("newValue oldValue");
-            });
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        // Input listeners.
+        userFormPhone
+                .textProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (!newValue.matches("\\d*")) userFormPhone.setText(newValue.replaceAll("\\D", ""));
+                        });
+        userFormPhone
+                .focusedProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue != oldValue) userFormPhone.setLeadingIcon(new Label("+"));
+                            System.out.println("newValue oldValue");
+                        });
 
-    // Input bindings.
-    userFormFirstname.textProperty().bindBidirectional(UserViewModel.firstNameProperty());
-    userFormLastname.textProperty().bindBidirectional(UserViewModel.lastNameProperty());
-    userFormUsername.textProperty().bindBidirectional(UserViewModel.userNameProperty());
-    userFormEmail.textProperty().bindBidirectional(UserViewModel.emailProperty());
-    userFormPhone.textProperty().bindBidirectional(UserViewModel.phoneProperty());
-    userFormRole.valueProperty().bindBidirectional(UserViewModel.roleProperty());
-    userFormBranch.valueProperty().bindBidirectional(UserViewModel.branchProperty());
-    userFormActive.selectedProperty().bindBidirectional(UserViewModel.activeProperty());
+        // Input bindings.
+        userFormFirstname.textProperty().bindBidirectional(UserViewModel.firstNameProperty());
+        userFormLastname.textProperty().bindBidirectional(UserViewModel.lastNameProperty());
+        userFormUsername.textProperty().bindBidirectional(UserViewModel.userNameProperty());
+        userFormEmail.textProperty().bindBidirectional(UserViewModel.emailProperty());
+        userFormPhone.textProperty().bindBidirectional(UserViewModel.phoneProperty());
+        userFormRole.valueProperty().bindBidirectional(UserViewModel.roleProperty());
+        userFormBranch.valueProperty().bindBidirectional(UserViewModel.branchProperty());
+        userFormActive.selectedProperty().bindBidirectional(UserViewModel.activeProperty());
 
-    // ComboBox Converters.
-    StringConverter<Role> roleConverter =
-        FunctionalStringConverter.to(role -> (role == null) ? "" : role.getName());
+        // ComboBox Converters.
+        StringConverter<Role> roleConverter =
+                FunctionalStringConverter.to(role -> (role == null) ? "" : role.getName());
 
-    StringConverter<Branch> branchConverter =
-        FunctionalStringConverter.to(branch -> (branch == null) ? "" : branch.getName());
+        StringConverter<Branch> branchConverter =
+                FunctionalStringConverter.to(branch -> (branch == null) ? "" : branch.getName());
 
-    // ComboBox Filter Functions.
-    Function<String, Predicate<Role>> roleFilterFunction =
-        searchStr ->
-            role -> StringUtils.containsIgnoreCase(roleConverter.toString(role), searchStr);
+        // ComboBox Filter Functions.
+        Function<String, Predicate<Role>> roleFilterFunction =
+                searchStr ->
+                        role -> StringUtils.containsIgnoreCase(roleConverter.toString(role), searchStr);
 
-    Function<String, Predicate<Branch>> branchFilterFunction =
-        searchStr ->
-            branch -> StringUtils.containsIgnoreCase(branchConverter.toString(branch), searchStr);
+        Function<String, Predicate<Branch>> branchFilterFunction =
+                searchStr ->
+                        branch -> StringUtils.containsIgnoreCase(branchConverter.toString(branch), searchStr);
 
-    // Combo box properties.
-    userFormRole.setItems(RoleViewModel.getRoles());
-    userFormRole.setConverter(roleConverter);
-    userFormRole.setFilterFunction(roleFilterFunction);
+        // Combo box properties.
+        userFormRole.setItems(RoleViewModel.getRoles());
+        userFormRole.setConverter(roleConverter);
+        userFormRole.setFilterFunction(roleFilterFunction);
 
-    userFormBranch.setItems(BranchViewModel.getBranches());
-    userFormBranch.setConverter(branchConverter);
-    userFormBranch.setFilterFunction(branchFilterFunction);
+        userFormBranch.setItems(BranchViewModel.getBranches());
+        userFormBranch.setConverter(branchConverter);
+        userFormBranch.setFilterFunction(branchFilterFunction);
 
-    // Input validations.
-    // Name input validation.
-    requiredValidator(
-        userFormFirstname,
-        "First name is required.",
-        userFormFirstNameValidationLabel,
-        userFormSaveBtn);
-    requiredValidator(
-        userFormLastname,
-        "Last name is required.",
-        userFormLastNameValidationLabel,
-        userFormSaveBtn);
-    requiredValidator(
-        userFormUsername,
-        "Username is required.",
-        userFormUserNameValidationLabel,
-        userFormSaveBtn);
-    requiredValidator(
-        userFormBranch, "Branch is required.", userFormBranchValidationLabel, userFormSaveBtn);
-    requiredValidator(
-        userFormRole, "User role is required.", userFormRoleValidationLabel, userFormSaveBtn);
-    // Email input validation.
-    emailValidator(userFormEmail, userFormEmailValidationLabel, userFormSaveBtn);
-    // Phone input validation.
-    lengthValidator(
-        userFormPhone, 11, "Invalid Phone length", userFormPhoneValidationLabel, userFormSaveBtn);
-    dialogOnActions();
-  }
+        // Input validations.
+        // Name input validation.
+        requiredValidator(
+                userFormFirstname,
+                "First name is required.",
+                userFormFirstNameValidationLabel,
+                userFormSaveBtn);
+        requiredValidator(
+                userFormLastname,
+                "Last name is required.",
+                userFormLastNameValidationLabel,
+                userFormSaveBtn);
+        requiredValidator(
+                userFormUsername,
+                "Username is required.",
+                userFormUserNameValidationLabel,
+                userFormSaveBtn);
+        requiredValidator(
+                userFormBranch, "Branch is required.", userFormBranchValidationLabel, userFormSaveBtn);
+        requiredValidator(
+                userFormRole, "User role is required.", userFormRoleValidationLabel, userFormSaveBtn);
+        // Email input validation.
+        emailValidator(userFormEmail, userFormEmailValidationLabel, userFormSaveBtn);
+        // Phone input validation.
+        lengthValidator(
+                userFormPhone, 11, "Invalid Phone length", userFormPhoneValidationLabel, userFormSaveBtn);
+        dialogOnActions();
+    }
 
-  private void dialogOnActions() {
-    userFormCancelBtn.setOnAction(
-        (e) -> {
-          closeDialog(e);
-          UserViewModel.resetProperties();
+    private void dialogOnActions() {
+        userFormCancelBtn.setOnAction(
+                (event) -> {
+                    closeDialog(event);
+                    UserViewModel.resetProperties();
 
-          userFormRole.clearSelection();
-          userFormBranch.clearSelection();
+                    userFormRole.clearSelection();
+                    userFormBranch.clearSelection();
 
-          userFormFirstNameValidationLabel.setVisible(false);
-          userFormLastNameValidationLabel.setVisible(false);
-          userFormUserNameValidationLabel.setVisible(false);
-          userFormBranchValidationLabel.setVisible(false);
-          userFormRoleValidationLabel.setVisible(false);
-          userFormEmailValidationLabel.setVisible(false);
-          userFormPhoneValidationLabel.setVisible(false);
-        });
-    userFormSaveBtn.setOnAction(
-        (e) -> {
-          SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
-          if (!userFormFirstNameValidationLabel.isVisible()
-              && !userFormLastNameValidationLabel.isVisible()
-              && !userFormUserNameValidationLabel.isVisible()
-              && !userFormBranchValidationLabel.isVisible()
-              && !userFormRoleValidationLabel.isVisible()
-              && !userFormEmailValidationLabel.isVisible()
-              && !userFormPhoneValidationLabel.isVisible()) {
-            if (UserViewModel.getId() > 0) {
-              UserViewModel.updateItem(UserViewModel.getId());
-              SimpleNotification notification =
-                  new SimpleNotification.NotificationBuilder("User updated successfully")
-                      .duration(NotificationDuration.SHORT)
-                      .icon("fas-circle-check")
-                      .type(NotificationVariants.SUCCESS)
-                      .build();
-              notificationHolder.addNotification(notification);
+                    userFormFirstNameValidationLabel.setVisible(false);
+                    userFormLastNameValidationLabel.setVisible(false);
+                    userFormUserNameValidationLabel.setVisible(false);
+                    userFormBranchValidationLabel.setVisible(false);
+                    userFormRoleValidationLabel.setVisible(false);
+                    userFormEmailValidationLabel.setVisible(false);
+                    userFormPhoneValidationLabel.setVisible(false);
+                });
+        userFormSaveBtn.setOnAction(
+                (event) -> {
+                    SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
+                    if (!userFormFirstNameValidationLabel.isVisible()
+                            && !userFormLastNameValidationLabel.isVisible()
+                            && !userFormUserNameValidationLabel.isVisible()
+                            && !userFormBranchValidationLabel.isVisible()
+                            && !userFormRoleValidationLabel.isVisible()
+                            && !userFormEmailValidationLabel.isVisible()
+                            && !userFormPhoneValidationLabel.isVisible()) {
+                        if (UserViewModel.getId() > 0) {
+                            GlobalActions.spotyThreadPool().execute(() -> {
+                                try {
+                                    UserViewModel.updateItem(UserViewModel.getId());
+                                } catch (SQLException e) {
+                                    SpotyLogger.writeToFile(e, this.getClass());
+                                }
+                            });
+                            SimpleNotification notification =
+                                    new SimpleNotification.NotificationBuilder("User updated successfully")
+                                            .duration(NotificationDuration.SHORT)
+                                            .icon("fas-circle-check")
+                                            .type(NotificationVariants.SUCCESS)
+                                            .build();
+                            notificationHolder.addNotification(notification);
 
-              userFormRole.clearSelection();
-              userFormBranch.clearSelection();
+                            userFormRole.clearSelection();
+                            userFormBranch.clearSelection();
 
-              closeDialog(e);
-              return;
-            }
-            UserViewModel.saveUser();
-            SimpleNotification notification =
-                new SimpleNotification.NotificationBuilder("User saved successfully")
-                    .duration(NotificationDuration.SHORT)
-                    .icon("fas-circle-check")
-                    .type(NotificationVariants.SUCCESS)
-                    .build();
-            notificationHolder.addNotification(notification);
+                            closeDialog(event);
+                            return;
+                        }
+                        GlobalActions.spotyThreadPool().execute(() -> {
+                            try {
+                                UserViewModel.saveUser();
+                            } catch (SQLException e) {
+                                SpotyLogger.writeToFile(e, this.getClass());
+                            }
+                        });
+                        SimpleNotification notification =
+                                new SimpleNotification.NotificationBuilder("User saved successfully")
+                                        .duration(NotificationDuration.SHORT)
+                                        .icon("fas-circle-check")
+                                        .type(NotificationVariants.SUCCESS)
+                                        .build();
+                        notificationHolder.addNotification(notification);
 
-            userFormRole.clearSelection();
-            userFormBranch.clearSelection();
+                        userFormRole.clearSelection();
+                        userFormBranch.clearSelection();
 
-            closeDialog(e);
-            return;
-          }
-          SimpleNotification notification =
-              new SimpleNotification.NotificationBuilder("Required fields missing")
-                  .duration(NotificationDuration.SHORT)
-                  .icon("fas-triangle-exclamation")
-                  .type(NotificationVariants.ERROR)
-                  .build();
-          notificationHolder.addNotification(notification);
-        });
-  }
+                        closeDialog(event);
+                        return;
+                    }
+                    SimpleNotification notification =
+                            new SimpleNotification.NotificationBuilder("Required fields missing")
+                                    .duration(NotificationDuration.SHORT)
+                                    .icon("fas-triangle-exclamation")
+                                    .type(NotificationVariants.ERROR)
+                                    .build();
+                    notificationHolder.addNotification(notification);
+                });
+    }
 }

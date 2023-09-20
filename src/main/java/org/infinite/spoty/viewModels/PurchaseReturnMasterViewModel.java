@@ -17,159 +17,150 @@ package org.infinite.spoty.viewModels;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
-import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
-import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.PurchaseReturnMaster;
+import org.infinite.spoty.utils.SpotyLogger;
+import org.jetbrains.annotations.Nullable;
+
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class PurchaseReturnMasterViewModel {
-  public static final ObservableList<PurchaseReturnMaster> purchaseReturnMasterList =
-      FXCollections.observableArrayList();
-  private static final ListProperty<PurchaseReturnMaster> purchaseReturns =
-      new SimpleListProperty<>(purchaseReturnMasterList);
-  private static final LongProperty id = new SimpleLongProperty(0);
-  private static final StringProperty date = new SimpleStringProperty("");
-  private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>(null);
-  private static final StringProperty totalCost = new SimpleStringProperty("");
-  private static final StringProperty status = new SimpleStringProperty("");
-  private static final StringProperty note = new SimpleStringProperty("");
+    public static final ObservableList<PurchaseReturnMaster> purchaseReturnMasterList =
+            FXCollections.observableArrayList();
+    private static final ListProperty<PurchaseReturnMaster> purchaseReturns =
+            new SimpleListProperty<>(purchaseReturnMasterList);
+    private static final LongProperty id = new SimpleLongProperty(0);
+    private static final StringProperty date = new SimpleStringProperty("");
+    private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>(null);
+    private static final StringProperty totalCost = new SimpleStringProperty("");
+    private static final StringProperty status = new SimpleStringProperty("");
+    private static final StringProperty note = new SimpleStringProperty("");
+    private static final SQLiteConnection connection = SQLiteConnection.getInstance();
+    private static final ConnectionSource connectionSource = connection.getConnection();
 
-  public static long getId() {
-    return id.get();
-  }
-
-  public static void setId(long id) {
-    PurchaseReturnMasterViewModel.id.set(id);
-  }
-
-  public static LongProperty idProperty() {
-    return id;
-  }
-
-  public static Date getDate() {
-    try {
-      return new SimpleDateFormat("MMM dd, yyyy").parse(date.get());
-    } catch (ParseException e) {
-      throw new RuntimeException(e);
+    public static long getId() {
+        return id.get();
     }
-  }
 
-  public static void setDate(String date) {
-    PurchaseReturnMasterViewModel.date.set(date);
-  }
+    public static void setId(long id) {
+        PurchaseReturnMasterViewModel.id.set(id);
+    }
 
-  public static StringProperty dateProperty() {
-    return date;
-  }
+    public static LongProperty idProperty() {
+        return id;
+    }
 
-  public static Branch getBranch() {
-    return branch.get();
-  }
+    public static @Nullable Date getDate() {
+        try {
+            return new SimpleDateFormat("MMM dd, yyyy").parse(date.get());
+        } catch (ParseException e) {
+            SpotyLogger.writeToFile(e, PurchaseReturnMasterViewModel.class);
+        }
+        return null;
+    }
 
-  public static void setBranch(Branch branch) {
-    PurchaseReturnMasterViewModel.branch.set(branch);
-  }
+    public static void setDate(String date) {
+        PurchaseReturnMasterViewModel.date.set(date);
+    }
 
-  public static ObjectProperty<Branch> branchProperty() {
-    return branch;
-  }
+    public static StringProperty dateProperty() {
+        return date;
+    }
 
-  public static String getNote() {
-    return note.get();
-  }
+    public static Branch getBranch() {
+        return branch.get();
+    }
 
-  public static void setNote(String note) {
-    PurchaseReturnMasterViewModel.note.set(note);
-  }
+    public static void setBranch(Branch branch) {
+        PurchaseReturnMasterViewModel.branch.set(branch);
+    }
 
-  public static StringProperty noteProperty() {
-    return note;
-  }
+    public static ObjectProperty<Branch> branchProperty() {
+        return branch;
+    }
 
-  public static String getStatus() {
-    return status.get();
-  }
+    public static String getNote() {
+        return note.get();
+    }
 
-  public static void setStatus(String status) {
-    PurchaseReturnMasterViewModel.status.set(status);
-  }
+    public static void setNote(String note) {
+        PurchaseReturnMasterViewModel.note.set(note);
+    }
 
-  public static StringProperty statusProperty() {
-    return status;
-  }
+    public static StringProperty noteProperty() {
+        return note;
+    }
 
-  public static double getTotalCost() {
-    return Double.parseDouble(!totalCost.get().isEmpty() ? totalCost.get() : "0");
-  }
+    public static String getStatus() {
+        return status.get();
+    }
 
-  public static void setTotalCost(String totalCost) {
-    PurchaseReturnMasterViewModel.totalCost.set(totalCost);
-  }
+    public static void setStatus(String status) {
+        PurchaseReturnMasterViewModel.status.set(status);
+    }
 
-  public static StringProperty totalCostProperty() {
-    return totalCost;
-  }
+    public static StringProperty statusProperty() {
+        return status;
+    }
 
-  public static ObservableList<PurchaseReturnMaster> getPurchaseReturns() {
-    return purchaseReturns.get();
-  }
+    public static double getTotalCost() {
+        return Double.parseDouble(!totalCost.get().isEmpty() ? totalCost.get() : "0");
+    }
 
-  public static void setPurchaseReturns(ObservableList<PurchaseReturnMaster> purchaseReturns) {
-    PurchaseReturnMasterViewModel.purchaseReturns.set(purchaseReturns);
-  }
+    public static void setTotalCost(String totalCost) {
+        PurchaseReturnMasterViewModel.totalCost.set(totalCost);
+    }
 
-  public static ListProperty<PurchaseReturnMaster> purchaseReturnsProperty() {
-    return purchaseReturns;
-  }
+    public static StringProperty totalCostProperty() {
+        return totalCost;
+    }
 
-  public static void resetProperties() {
-    setId(0);
-    setDate("");
-    setBranch(null);
-    setNote("");
-    setStatus("");
-    setTotalCost("");
-  }
+    public static ObservableList<PurchaseReturnMaster> getPurchaseReturns() {
+        return purchaseReturns.get();
+    }
 
-  public static void getPurchaseReturnMasters() {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
+    public static void setPurchaseReturns(ObservableList<PurchaseReturnMaster> purchaseReturns) {
+        PurchaseReturnMasterViewModel.purchaseReturns.set(purchaseReturns);
+    }
 
-            Dao<PurchaseReturnMaster, Long> purchaseReturnMasterDao =
+    public static ListProperty<PurchaseReturnMaster> purchaseReturnsProperty() {
+        return purchaseReturns;
+    }
+
+    public static void resetProperties() {
+        setId(0);
+        setDate("");
+        setBranch(null);
+        setNote("");
+        setStatus("");
+        setTotalCost("");
+    }
+
+    public static void getPurchaseReturnMasters() throws SQLException {
+        Dao<PurchaseReturnMaster, Long> purchaseReturnMasterDao =
                 DaoManager.createDao(connectionSource, PurchaseReturnMaster.class);
 
-            Platform.runLater(
+        Platform.runLater(
                 () -> {
-                  purchaseReturnMasterList.clear();
+                    purchaseReturnMasterList.clear();
 
-                  try {
-                    purchaseReturnMasterList.addAll(purchaseReturnMasterDao.queryForAll());
-                  } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                  }
+                    try {
+                        purchaseReturnMasterList.addAll(purchaseReturnMasterDao.queryForAll());
+                    } catch (SQLException e) {
+                        SpotyLogger.writeToFile(e, PurchaseReturnMasterViewModel.class);
+                    }
                 });
+    }
 
-            return null;
-          }
-        };
-
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static ObservableList<PurchaseReturnMaster> getPurchaseReturnMasterList() {
-    return purchaseReturnMasterList;
-  }
+    public static ObservableList<PurchaseReturnMaster> getPurchaseReturnMasterList() {
+        return purchaseReturnMasterList;
+    }
 }

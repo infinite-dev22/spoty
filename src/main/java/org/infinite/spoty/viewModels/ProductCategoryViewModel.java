@@ -17,7 +17,9 @@ package org.infinite.spoty.viewModels;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
+
 import java.sql.SQLException;
+
 import javafx.application.Platform;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.LongProperty;
@@ -31,217 +33,148 @@ import javafx.concurrent.Task;
 import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.ProductCategory;
+import org.infinite.spoty.utils.SpotyLogger;
 
 public class ProductCategoryViewModel {
-  private static final LongProperty id = new SimpleLongProperty(0);
-  private static final StringProperty code = new SimpleStringProperty("");
-  private static final StringProperty title = new SimpleStringProperty("");
-  private static final StringProperty name = new SimpleStringProperty("");
-  public static ObservableList<ProductCategory> categoriesList =
-      FXCollections.observableArrayList();
+    private static final LongProperty id = new SimpleLongProperty(0);
+    private static final StringProperty code = new SimpleStringProperty("");
+    private static final StringProperty title = new SimpleStringProperty("");
+    private static final StringProperty name = new SimpleStringProperty("");
+    public static ObservableList<ProductCategory> categoriesList =
+            FXCollections.observableArrayList();
+    public static final ListProperty<ProductCategory> categories =
+            new SimpleListProperty<>(categoriesList);
+    public static ObservableList<ProductCategory> categoriesComboBoxList =
+            FXCollections.observableArrayList();
+    private static final SQLiteConnection connection = SQLiteConnection.getInstance();
+    private static final ConnectionSource connectionSource = connection.getConnection();
 
-  public static final ListProperty<ProductCategory> categories =
-      new SimpleListProperty<>(categoriesList);
-  public static ObservableList<ProductCategory> categoriesComboBoxList =
-      FXCollections.observableArrayList();
+    public static long getId() {
+        return id.get();
+    }
 
-  public static long getId() {
-    return id.get();
-  }
+    public static void setId(long id) {
+        ProductCategoryViewModel.id.set(id);
+    }
 
-  public static void setId(long id) {
-    ProductCategoryViewModel.id.set(id);
-  }
+    public static LongProperty idProperty() {
+        return id;
+    }
 
-  public static LongProperty idProperty() {
-    return id;
-  }
+    public static String getTitle() {
+        return title.get();
+    }
 
-  public static String getTitle() {
-    return title.get();
-  }
+    public static void setTitle(String title) {
+        ProductCategoryViewModel.title.set(title);
+    }
 
-  public static void setTitle(String title) {
-    ProductCategoryViewModel.title.set(title);
-  }
+    public static StringProperty titleProperty() {
+        return title;
+    }
 
-  public static StringProperty titleProperty() {
-    return title;
-  }
+    public static String getCode() {
+        return code.get();
+    }
 
-  public static String getCode() {
-    return code.get();
-  }
+    public static void setCode(String code) {
+        ProductCategoryViewModel.code.set(code);
+    }
 
-  public static void setCode(String code) {
-    ProductCategoryViewModel.code.set(code);
-  }
+    public static StringProperty codeProperty() {
+        return code;
+    }
 
-  public static StringProperty codeProperty() {
-    return code;
-  }
+    public static String getName() {
+        return name.get();
+    }
 
-  public static String getName() {
-    return name.get();
-  }
+    public static void setName(String name) {
+        ProductCategoryViewModel.name.set(name);
+    }
 
-  public static void setName(String name) {
-    ProductCategoryViewModel.name.set(name);
-  }
+    public static StringProperty nameProperty() {
+        return name;
+    }
 
-  public static StringProperty nameProperty() {
-    return name;
-  }
+    public static ObservableList<ProductCategory> getCategories() {
+        return categories.get();
+    }
 
-  public static ObservableList<ProductCategory> getCategories() {
-    return categories.get();
-  }
+    public static void setCategories(ObservableList<ProductCategory> categories) {
+        ProductCategoryViewModel.categories.set(categories);
+    }
 
-  public static void setCategories(ObservableList<ProductCategory> categories) {
-    ProductCategoryViewModel.categories.set(categories);
-  }
+    public static ListProperty<ProductCategory> categoriesProperty() {
+        return categories;
+    }
 
-  public static ListProperty<ProductCategory> categoriesProperty() {
-    return categories;
-  }
-
-  public static void saveProductCategory() {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
-            Dao<ProductCategory, Long> productCategoryDao =
+    public static void saveProductCategory() throws SQLException {
+        Dao<ProductCategory, Long> productCategoryDao =
                 DaoManager.createDao(connectionSource, ProductCategory.class);
 
-            ProductCategory productCategory = new ProductCategory(getCode(), getName());
+        ProductCategory productCategory = new ProductCategory(getCode(), getName());
 
-            productCategoryDao.create(productCategory);
+        productCategoryDao.create(productCategory);
 
-            return null;
-          }
-        };
+        clearProductCategoryData();
+        getItems();
+    }
 
-    task.setOnSucceeded(
-        event -> {
-          clearProductCategoryData();
-          getItems();
-        });
+    public static void clearProductCategoryData() {
+        setId(0);
+        setCode("");
+        setName("");
+    }
 
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static void clearProductCategoryData() {
-    setId(0);
-    setCode("");
-    setName("");
-  }
-
-  public static void getItems() {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
-            Dao<ProductCategory, Long> productCategoryDao =
+    public static void getItems() throws SQLException {
+        Dao<ProductCategory, Long> productCategoryDao =
                 DaoManager.createDao(connectionSource, ProductCategory.class);
 
-            Platform.runLater(
+        Platform.runLater(
                 () -> {
-                  categoriesList.clear();
+                    categoriesList.clear();
 
-                  try {
-                    categoriesList.addAll(productCategoryDao.queryForAll());
-                  } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                  }
+                    try {
+                        categoriesList.addAll(productCategoryDao.queryForAll());
+                    } catch (SQLException e) {
+                        SpotyLogger.writeToFile(e, ProductCategoryViewModel.class);
+                    }
                 });
+    }
 
-            return null;
-          }
-        };
-
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static void getItem(long index) {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
-            Dao<ProductCategory, Long> productCategoryDao =
+    public static void getItem(long index) throws SQLException {
+        Dao<ProductCategory, Long> productCategoryDao =
                 DaoManager.createDao(connectionSource, ProductCategory.class);
-            ProductCategory productCategory = productCategoryDao.queryForId(index);
+        ProductCategory productCategory = productCategoryDao.queryForId(index);
 
-            setId(productCategory.getId());
-            setCode(productCategory.getCode());
-            setName(productCategory.getName());
+        setId(productCategory.getId());
+        setCode(productCategory.getCode());
+        setName(productCategory.getName());
 
-            return null;
-          }
-        };
+        getItems();
+    }
 
-    task.setOnSucceeded(event -> getItems());
-
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static void updateItem(long index) {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
-            Dao<ProductCategory, Long> productCategoryDao =
+    public static void updateItem(long index) throws SQLException {
+        Dao<ProductCategory, Long> productCategoryDao =
                 DaoManager.createDao(connectionSource, ProductCategory.class);
 
-            ProductCategory productCategory = productCategoryDao.queryForId(index);
-            productCategory.setCode(getCode());
-            productCategory.setName(getName());
+        ProductCategory productCategory = productCategoryDao.queryForId(index);
+        productCategory.setCode(getCode());
+        productCategory.setName(getName());
 
-            productCategoryDao.update(productCategory);
+        productCategoryDao.update(productCategory);
 
-            return null;
-          }
-        };
+        clearProductCategoryData();
+        getItems();
+    }
 
-    task.setOnSucceeded(
-        event -> {
-          clearProductCategoryData();
-          getItems();
-        });
-
-    GlobalActions.spotyThreadPool().execute(task);
-  }
-
-  public static void deleteItem(long index) {
-    Task<Void> task =
-        new Task<>() {
-          @Override
-          protected Void call() throws SQLException {
-            SQLiteConnection connection = SQLiteConnection.getInstance();
-            ConnectionSource connectionSource = connection.getConnection();
-
-            Dao<ProductCategory, Long> productCategoryDao =
+    public static void deleteItem(long index) throws SQLException {
+        Dao<ProductCategory, Long> productCategoryDao =
                 DaoManager.createDao(connectionSource, ProductCategory.class);
 
-            productCategoryDao.deleteById(index);
+        productCategoryDao.deleteById(index);
 
-            return null;
-          }
-        };
-
-    task.setOnSucceeded(event -> getItems());
-
-    GlobalActions.spotyThreadPool().execute(task);
-  }
+        getItems();
+    }
 }
