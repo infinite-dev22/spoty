@@ -38,9 +38,6 @@ public class Branch {
   @DatabaseField(canBeNull = false)
   private String town;
 
-  @DatabaseField(columnName = "zip_code")
-  private String zipCode;
-
   @DatabaseField(columnName = "created_at")
   private Date createdAt;
 
@@ -53,24 +50,15 @@ public class Branch {
   @DatabaseField(columnName = "updated_by")
   private String updatedBy;
 
-  public Branch(String name, String city, String phone, String email, String town, String zipCode) {
+  public Branch(String name, String city, String phone, String email, String town) {
     this.name = name;
     this.city = city;
     this.phone = phone;
     this.email = email;
     this.town = town;
-    this.zipCode = zipCode;
   }
 
   public Branch() {}
-
-  public String getZipCode() {
-    return zipCode;
-  }
-
-  public void setZipCode(String zipCode) {
-    this.zipCode = zipCode;
-  }
 
   public int getId() {
     return id;

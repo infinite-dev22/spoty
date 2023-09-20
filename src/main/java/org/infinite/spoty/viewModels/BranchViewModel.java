@@ -35,7 +35,6 @@ public class BranchViewModel {
     private static final StringProperty phone = new SimpleStringProperty("");
     private static final StringProperty town = new SimpleStringProperty("");
     private static final StringProperty city = new SimpleStringProperty("");
-    private static final StringProperty zipcode = new SimpleStringProperty("");
     private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>();
     private static final SQLiteConnection connection = SQLiteConnection.getInstance();
     private static final ConnectionSource connectionSource = connection.getConnection();
@@ -115,18 +114,6 @@ public class BranchViewModel {
         return city;
     }
 
-    public static String getZipcode() {
-        return zipcode.get();
-    }
-
-    public static void setZipcode(String zipcode) {
-        BranchViewModel.zipcode.set(zipcode);
-    }
-
-    public static StringProperty zipcodeProperty() {
-        return zipcode;
-    }
-
     public static String getTitle() {
         return title.get();
     }
@@ -163,7 +150,7 @@ public class BranchViewModel {
         Dao<Branch, Long> branchDao = DaoManager.createDao(connectionSource, Branch.class);
 
         Branch branch =
-                new Branch(getName(), getCity(), getPhone(), getEmail(), getTown(), getZipcode());
+                new Branch(getName(), getCity(), getPhone(), getEmail(), getTown());
 
         branchDao.create(branch);
 
@@ -178,7 +165,6 @@ public class BranchViewModel {
         setPhone("");
         setEmail("");
         setTown("");
-        setZipcode("");
     }
 
     public static void getAllBranches() throws SQLException {
@@ -207,7 +193,6 @@ public class BranchViewModel {
         setPhone(branch.getPhone());
         setCity(branch.getCity());
         setTown(branch.getTown());
-        setZipcode(branch.getZipCode());
 
         getAllBranches();
     }
@@ -222,7 +207,6 @@ public class BranchViewModel {
         branch.setPhone(getPhone());
         branch.setEmail(getEmail());
         branch.setTown(getTown());
-        branch.setZipCode(getZipcode());
 
         branchDao.update(branch);
 

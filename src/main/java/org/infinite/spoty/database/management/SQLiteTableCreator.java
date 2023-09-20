@@ -20,6 +20,7 @@ import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.*;
 
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
@@ -41,6 +42,7 @@ public class SQLiteTableCreator {
     public void seedDatabase() throws SQLException {
         instance.runQuery(
                 "INSERT OR IGNORE INTO branches ("
+                        + "id,"
                         + "name,"
                         + "city,"
                         + "phone,"
@@ -48,43 +50,49 @@ public class SQLiteTableCreator {
                         + "created_at,"
                         + "created_by)"
                         + "VALUES ("
+                        + "'1',"
                         + "'Default Branch',"
                         + "'" + Locale.getDefault().getDisplayCountry() + "',"
-                        + "'',"
+                        + "'+123456789012',"
                         + "'" + Locale.getDefault().getDisplayCountry() + "',"
-                        + "'',"
+                        + "'" + Timestamp.from(new Date().toInstant()) + "',"
                         + "'Zenmart ERP');",
                 Branch.class);
         instance.runQuery(
                 "INSERT OR IGNORE INTO currencies ( "
+                        + "id,"
                         + "code,"
                         + "name,"
                         + "symbol,"
                         + "created_at,"
                         + "created_by)"
                         + "VALUES ("
-                        + "'CUR-0001',"
+                        + "'1',"
+                        + "'" + java.util.Currency.getInstance(Locale.getDefault()).getCurrencyCode() + "',"
                         + "'" + java.util.Currency.getInstance(Locale.getDefault()).getDisplayName() + "',"
                         + "'" + java.util.Currency.getInstance(Locale.getDefault()).getSymbol() + "',"
-                        + "'" + new Date() + "',"
+                        + "'" + Timestamp.from(new Date().toInstant()) + "',"
                         + "'Zenmart ERP');",
                 Currency.class);
         instance.runQuery(
                 "INSERT OR IGNORE INTO customers ( "
+                        + "id,"
                         + "name,"
                         + "phone,"
                         + "country,"
                         + "created_at,"
                         + "created_by)"
                         + "VALUES ("
+                        + "'1',"
                         + "'Walk-In Customer',"
                         + "'',"
                         + "'" + Locale.getDefault().getDisplayName() + "',"
-                        + "'" + new Date() + "',"
+                        + "'" + Timestamp.from(new Date().toInstant()) + "',"
                         + "'Zenmart ERP');",
                 Customer.class);
         instance.runQuery(
                 "INSERT OR IGNORE INTO suppliers ( "
+                        + "id,"
                         + "name,"
                         + "phone,"
                         + "address,"
@@ -93,12 +101,13 @@ public class SQLiteTableCreator {
                         + "created_at,"
                         + "created_by)"
                         + "VALUES ("
+                        + "'1',"
                         + "'Walk-In Supplier',"
                         + "'',"
                         + "'',"
                         + "'',"
                         + "'" + Locale.getDefault().getDisplayName() + "',"
-                        + "'" + new Date() + "',"
+                        + "'" + Timestamp.from(new Date().toInstant()) + "',"
                         + "'Zenmart ERP');",
                 Supplier.class);
         instance.runQuery(
@@ -1973,7 +1982,6 @@ public class SQLiteTableCreator {
                                phone      VARCHAR   NOT NULL,
                                email      VARCHAR,
                                town       VARCHAR   NOT NULL,
-                               zip_code   VARCHAR,
                                created_at TIMESTAMP,
                                created_by VARCHAR,
                                updated_at TIMESTAMP,

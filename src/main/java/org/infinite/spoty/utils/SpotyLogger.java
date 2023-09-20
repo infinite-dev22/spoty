@@ -17,11 +17,11 @@ package org.infinite.spoty.utils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.logging.*;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 /**
  * @author infinite
@@ -93,44 +93,26 @@ public class SpotyLogger {
      */
     public static <T> void writeToFile(Throwable throwable, @NotNull Class<T> currentClass) {
         Logger logger = Logger.getLogger(currentClass.getName());
-        Formatter formatter = new Formatter() {
-            @Override
-            public String format(LogRecord record) {
-                SimpleDateFormat logTime = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");
-                Calendar cal = new GregorianCalendar();
-                cal.setTimeInMillis(record.getMillis());
-                return "<h4>" + record.getLevel() + "</h4> <h6>" + logTime.format(cal.getTime()) + "</h6>"
-                        + "Logger Name: " + record.getLoggerName() + "<br/>"
-                        + "Thread: " + record.getLongThreadID() + "<br/>"
-                        + "Stacktrace: " + record.getMessage() + "<br/><hr/>";
-            }
-        };
+
+        SimpleFormatter formatter = new SimpleFormatter();
+
         FileHandler fileHandler;
 
         try {
             fileHandler =
                     new FileHandler(
                             System.getProperty("user.home")
-                                    + "/.config/ZenmartERP/logs/spoty_log.html", true);
+                                    + "/.config/ZenmartERP/logs/spoty_log.log", true);
             fileHandler.setFormatter(formatter);
 
             logger.addHandler(fileHandler);
 
-            if (logger.isLoggable(Level.INFO)) {
-                logger.log(Level.INFO, Arrays.toString(throwable.getStackTrace()));
-            }
-            if (logger.isLoggable(Level.WARNING)) {
-                logger.log(Level.WARNING, Arrays.toString(throwable.getStackTrace()));
-            }
-            if (logger.isLoggable(Level.SEVERE)) {
-                logger.log(Level.SEVERE, Arrays.toString(throwable.getStackTrace()));
-            }
-            if (logger.isLoggable(Level.CONFIG)) {
-                logger.log(Level.CONFIG, Arrays.toString(throwable.getStackTrace()));
-            }
-            if (logger.isLoggable(Level.ALL)) {
-                logger.log(Level.ALL, Arrays.toString(throwable.getStackTrace()));
-            }
+            logger.log(
+                    Level.INFO,
+                    throwable.getMessage()
+                            + "\n"
+                            + Arrays.toString(throwable.getStackTrace())
+                            + "\n\n");
         } catch (IOException e) {
             SpotyLogger.writeToFile(e, SpotyLogger.class);
             throw new RuntimeException(e);

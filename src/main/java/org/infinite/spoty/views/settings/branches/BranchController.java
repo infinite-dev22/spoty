@@ -93,8 +93,6 @@ public class BranchController implements Initializable {
                 new MFXTableColumn<>("City", false, Comparator.comparing(Branch::getCity));
         MFXTableColumn<Branch> branchTown =
                 new MFXTableColumn<>("Town", false, Comparator.comparing(Branch::getTown));
-        MFXTableColumn<Branch> branchLocation =
-                new MFXTableColumn<>("Location", false, Comparator.comparing(Branch::getZipCode));
         MFXTableColumn<Branch> branchEmail =
                 new MFXTableColumn<>("Email", false, Comparator.comparing(Branch::getEmail));
 
@@ -102,19 +100,17 @@ public class BranchController implements Initializable {
         branchPhone.setRowCellFactory(branch -> new MFXTableRowCell<>(Branch::getPhone));
         branchCity.setRowCellFactory(branch -> new MFXTableRowCell<>(Branch::getCity));
         branchTown.setRowCellFactory(branch -> new MFXTableRowCell<>(Branch::getTown));
-        branchLocation.setRowCellFactory(branch -> new MFXTableRowCell<>(Branch::getZipCode));
         branchEmail.setRowCellFactory(branch -> new MFXTableRowCell<>(Branch::getEmail));
 
         branchName.prefWidthProperty().bind(branchTable.widthProperty().multiply(.2));
-        branchPhone.prefWidthProperty().bind(branchTable.widthProperty().multiply(.14));
-        branchCity.prefWidthProperty().bind(branchTable.widthProperty().multiply(.16));
-        branchTown.prefWidthProperty().bind(branchTable.widthProperty().multiply(.16));
-        branchLocation.prefWidthProperty().bind(branchTable.widthProperty().multiply(.16));
-        branchEmail.prefWidthProperty().bind(branchTable.widthProperty().multiply(.18));
+        branchPhone.prefWidthProperty().bind(branchTable.widthProperty().multiply(.18));
+        branchCity.prefWidthProperty().bind(branchTable.widthProperty().multiply(.18));
+        branchTown.prefWidthProperty().bind(branchTable.widthProperty().multiply(.2));
+        branchEmail.prefWidthProperty().bind(branchTable.widthProperty().multiply(.2));
 
         branchTable
                 .getTableColumns()
-                .addAll(branchName, branchPhone, branchCity, branchTown, branchLocation, branchEmail);
+                .addAll(branchName, branchPhone, branchCity, branchTown, branchEmail);
 
         branchTable
                 .getFilters()
@@ -123,7 +119,6 @@ public class BranchController implements Initializable {
                         new StringFilter<>("Phone", Branch::getPhone),
                         new StringFilter<>("City", Branch::getCity),
                         new StringFilter<>("Town", Branch::getTown),
-                        new StringFilter<>("Location", Branch::getZipCode),
                         new StringFilter<>("Email", Branch::getEmail));
 
         getBranchTable();

@@ -79,7 +79,6 @@ public class BranchFormController implements Initializable {
         branchFormPhone.textProperty().bindBidirectional(BranchViewModel.phoneProperty());
         branchFormTown.textProperty().bindBidirectional(BranchViewModel.townProperty());
         branchFormCity.textProperty().bindBidirectional(BranchViewModel.cityProperty());
-        branchFormZipCode.textProperty().bindBidirectional(BranchViewModel.zipcodeProperty());
         // Input listeners.
         requiredValidator(
                 branchFormName, "Name is required.", branchFormNameValidationLabel, branchFormSaveBtn);
