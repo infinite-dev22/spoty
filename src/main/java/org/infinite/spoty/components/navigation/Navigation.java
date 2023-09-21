@@ -14,10 +14,6 @@
 
 package org.infinite.spoty.components.navigation;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-
 import javafx.animation.FadeTransition;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -27,6 +23,11 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 public class Navigation {
     static final int PAGE_TRANSITION_DURATION = 300;
@@ -48,7 +49,7 @@ public class Navigation {
         return instance;
     }
 
-    public static Map<String, NavTree.NavTreeItem> createNavItems() {
+    public static @NotNull Map<String, NavTree.NavTreeItem> createNavItems() {
         var map = new HashMap<String, NavTree.NavTreeItem>();
 
         map.put("CATEGORY", NavTree.NavTreeItem.page("Category", Pages.getProductCategoryPane()));
@@ -58,11 +59,11 @@ public class Navigation {
         map.put("ADJUSTMENTS", NavTree.NavTreeItem.page("Adjustments", Pages.getAdjustmentPane()));
         map.put("QUOTATIONS", NavTree.NavTreeItem.page("Quotations", Pages.getQuotationPane()));
 
-        map.put("SALERETURN", NavTree.NavTreeItem.page("Sales", Pages.getSaleReturnPane()));
-        map.put("PURCHASERETURN", NavTree.NavTreeItem.page("Purchases", Pages.getPurchaseReturnPane()));
+        map.put("SALE RETURN", NavTree.NavTreeItem.page("Sales", Pages.getSaleReturnPane()));
+        map.put("PURCHASE RETURN", NavTree.NavTreeItem.page("Purchases", Pages.getPurchaseReturnPane()));
 
         map.put(
-                "EXPENSECATEGORY", NavTree.NavTreeItem.page("Category", Pages.getExpenseCategoryPane()));
+                "EXPENSE CATEGORY", NavTree.NavTreeItem.page("Category", Pages.getExpenseCategoryPane()));
         map.put("EXPENSE", NavTree.NavTreeItem.page("Expenses", Pages.getExpensePane()));
 
         map.put("CUSTOMER", NavTree.NavTreeItem.page("Customers", Pages.getCustomerPane()));
@@ -73,10 +74,10 @@ public class Navigation {
     }
 
     public static void navigate(Pane view, Pane viewWindow) {
-        loadView(view, viewWindow);
+        loadIntoView(view, viewWindow);
     }
 
-    private static void loadView(Pane view, Pane viewWindow) {
+    private static void loadIntoView(Pane view, Pane viewWindow) {
         try {
             final Pane prevWindow =
                     (Pane)
@@ -100,7 +101,7 @@ public class Navigation {
                 transition.setFromValue(0.0);
                 transition.setToValue(1.0);
                 transition.setOnFinished(
-                        t -> viewWindow.getChildren().get((int) existingNextChild.getViewOrder()).toFront());
+                        event -> viewWindow.getChildren().get((int) existingNextChild.getViewOrder()).toFront());
                 transition.play();
                 return;
             }
@@ -112,7 +113,7 @@ public class Navigation {
             var transition = new FadeTransition(Duration.millis(PAGE_TRANSITION_DURATION), nextWindow);
             transition.setFromValue(0.0);
             transition.setToValue(1.0);
-            transition.setOnFinished(t -> nextWindow.toFront());
+            transition.setOnFinished(event -> nextWindow.toFront());
             transition.play();
         } catch (RuntimeException e) {
             SpotyLogger.writeToFile(e, Navigation.class);
@@ -127,7 +128,7 @@ public class Navigation {
         return new NavTree(this);
     }
 
-    private NavTree.NavTreeItem createTree() {
+    private NavTree.@NotNull NavTreeItem createTree() {
         var dashboard =
                 NavTree.NavTreeItem.mainPage("Dashboard", "fas-chart-simple", Pages.getDashboardPane());
 
@@ -154,12 +155,11 @@ public class Navigation {
                 NavTree.NavTreeItem.mainPage("Stock In", "fas-cart-flatbed", Pages.getStockInPane());
         var pos = NavTree.NavTreeItem.mainPage("POS", "fas-cart-flatbed", Pages.getPosPane());
         var sale = NavTree.NavTreeItem.mainPage("Sales", "fas-cash-register", Pages.getSalePane());
-
         var returns = NavTree.NavTreeItem.group("Returns", "fas-retweet");
-        returns.getChildren().setAll(NAV_TREE.get("SALERETURN"), NAV_TREE.get("PURCHASERETURN"));
+        returns.getChildren().setAll(NAV_TREE.get("SALE RETURN"), NAV_TREE.get("PURCHASE RETURN"));
 
         var expense = NavTree.NavTreeItem.group("Expenses", "fas-wallet");
-        expense.getChildren().setAll(NAV_TREE.get("EXPENSECATEGORY"), NAV_TREE.get("EXPENSE"));
+        expense.getChildren().setAll(NAV_TREE.get("EXPENSE CATEGORY"), NAV_TREE.get("EXPENSE"));
 
         var people = NavTree.NavTreeItem.group("People", "fas-users");
         people

@@ -145,7 +145,7 @@ public class SimpleNotificationHolder {
                 root.getChildren().remove(POPUP);
                 popups.remove(POPUP);
                 // Close notifications stage if no more popups are visible
-                if (popups.size() == 0) {
+                if (popups.isEmpty()) {
                   this.hide();
                 }
               });

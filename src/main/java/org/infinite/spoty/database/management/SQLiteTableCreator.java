@@ -39,6 +39,10 @@ public class SQLiteTableCreator {
         return instance;
     }
 
+    /**
+     * create initial required data into database.
+     * @throws SQLException returned on fail.
+     */
     public void seedDatabase() throws SQLException {
         instance.runQuery(
                 "INSERT OR IGNORE INTO branches ("

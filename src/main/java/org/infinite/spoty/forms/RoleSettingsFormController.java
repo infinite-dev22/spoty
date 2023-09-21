@@ -23,7 +23,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
-import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.components.navigation.Navigation;
 import org.infinite.spoty.components.navigation.Pages;
 import org.infinite.spoty.components.notification.SimpleNotification;
@@ -31,6 +30,7 @@ import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.PermissionsViewModel;
 import org.infinite.spoty.viewModels.RoleViewModel;
 
@@ -1776,7 +1776,7 @@ public class RoleSettingsFormController implements Initializable {
 
         if (!errorLabel.isVisible()) {
             if (RoleViewModel.getId() > 0) {
-                GlobalActions.spotyThreadPool().execute(() -> {
+                SpotyThreader.spotyThreadPool(() -> {
                     try {
                         RoleViewModel.updateItem(RoleViewModel.getId());
                     } catch (SQLException e) {
@@ -1797,7 +1797,7 @@ public class RoleSettingsFormController implements Initializable {
                 return;
             }
 
-            GlobalActions.spotyThreadPool().execute(() -> {
+            SpotyThreader.spotyThreadPool(() -> {
                 try {
                     RoleViewModel.saveRole();
                 } catch (SQLException e) {

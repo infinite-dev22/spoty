@@ -33,6 +33,11 @@ public class SQLiteConnection {
     return instance;
   }
 
+  /**
+   * Get connection to local sqlite database.
+   *
+   * @return JdbcConnectionSource else null
+   */
   public ConnectionSource getConnection() {
     Logger.setGlobalLogLevel(Level.OFF);
     // Create the database if not exists or connect it exists.

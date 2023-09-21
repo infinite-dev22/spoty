@@ -37,7 +37,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
-import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.components.navigation.Pages;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
@@ -47,6 +46,7 @@ import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.RequisitionDetail;
 import org.infinite.spoty.database.models.Supplier;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.BranchViewModel;
 import org.infinite.spoty.viewModels.RequisitionDetailViewModel;
 import org.infinite.spoty.viewModels.RequisitionMasterViewModel;
@@ -274,7 +274,7 @@ public class RequisitionMasterFormController implements Initializable {
         // Edit
         edit.setOnAction(
                 event -> {
-                    GlobalActions.spotyThreadPool().execute(() -> {
+                    SpotyThreader.spotyThreadPool(() -> {
                         try {
                             RequisitionDetailViewModel.getItem(
                                     obj.getData().getId(),
@@ -337,7 +337,7 @@ public class RequisitionMasterFormController implements Initializable {
                 && !requisitionMasterDateValidationLabel.isVisible()
                 && !requisitionMasterBranchValidationLabel.isVisible()) {
             if (RequisitionMasterViewModel.getId() > 0) {
-                GlobalActions.spotyThreadPool().execute(() -> {
+                SpotyThreader.spotyThreadPool(() -> {
                     try {
                         RequisitionMasterViewModel.updateItem(RequisitionMasterViewModel.getId());
                     } catch (SQLException e) {
@@ -359,7 +359,7 @@ public class RequisitionMasterFormController implements Initializable {
                 requisitionMasterCancelBtnClicked();
                 return;
             }
-            GlobalActions.spotyThreadPool().execute(() -> {
+            SpotyThreader.spotyThreadPool(() -> {
                 try {
                     RequisitionMasterViewModel.saveRequisitionMaster();
                 } catch (SQLException e) {

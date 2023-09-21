@@ -32,6 +32,7 @@ import javafx.stage.Stage;
 import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.components.navigation.Navigation;
 import org.infinite.spoty.components.navigation.Pages;
+import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.values.strings.Labels;
 
 public class BaseController implements Initializable {
@@ -64,7 +65,7 @@ public class BaseController implements Initializable {
   void closeIconClicked() {
     stage.hide();
     stage.close();
-    GlobalActions.spotyThreadPool().shutdownNow();
+    SpotyThreader.disposeSpotyThreadPool();
     Platform.exit();
     System.exit(0);
   }

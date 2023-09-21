@@ -19,12 +19,12 @@ import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.BrandViewModel;
 
 import java.net.URL;
@@ -83,7 +83,7 @@ public class BrandFormController implements Initializable {
 
                     if (!brandFormNameValidationLabel.isVisible()) {
                         if (BrandViewModel.getId() > 0) {
-                            GlobalActions.spotyThreadPool().execute(() -> {
+                            SpotyThreader.spotyThreadPool(() -> {
                                 try {
                                     BrandViewModel.updateItem(BrandViewModel.getId());
                                 } catch (SQLException e) {
@@ -102,7 +102,7 @@ public class BrandFormController implements Initializable {
                             closeDialog(event);
                             return;
                         }
-                        GlobalActions.spotyThreadPool().execute(() -> {
+                        SpotyThreader.spotyThreadPool(() -> {
                             try {
                                 saveBrand();
                             } catch (SQLException e) {

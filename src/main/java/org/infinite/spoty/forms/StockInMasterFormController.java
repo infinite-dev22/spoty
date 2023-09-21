@@ -37,7 +37,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
-import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.components.navigation.Pages;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
@@ -46,6 +45,7 @@ import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.StockInDetail;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.BranchViewModel;
 import org.infinite.spoty.viewModels.StockInDetailViewModel;
 import org.infinite.spoty.viewModels.StockInMasterViewModel;
@@ -223,7 +223,7 @@ public class StockInMasterFormController implements Initializable {
         // Edit
         edit.setOnAction(
                 event -> {
-                    GlobalActions.spotyThreadPool().execute(() -> {
+                    SpotyThreader.spotyThreadPool(() -> {
                         try {
                             StockInDetailViewModel.getItem(obj.getData());
                         } catch (SQLException e) {
@@ -282,15 +282,14 @@ public class StockInMasterFormController implements Initializable {
         if (!stockInMasterBranchValidationLabel.isVisible()
                 && !stockInMasterDateValidationLabel.isVisible()) {
             if (StockInMasterViewModel.getId() > 0) {
-                GlobalActions.spotyThreadPool()
-                        .execute(
-                                () -> {
-                                    try {
-                                        StockInMasterViewModel.updateItem(StockInMasterViewModel.getId());
-                                    } catch (SQLException e) {
-                                        SpotyLogger.writeToFile(e, this.getClass());
-                                    }
-                                });
+                SpotyThreader.spotyThreadPool(
+                        () -> {
+                            try {
+                                StockInMasterViewModel.updateItem(StockInMasterViewModel.getId());
+                            } catch (SQLException e) {
+                                SpotyLogger.writeToFile(e, this.getClass());
+                            }
+                        });
 
                 SimpleNotification notification =
                         new SimpleNotification.NotificationBuilder("Stock In updated successfully")
@@ -304,15 +303,14 @@ public class StockInMasterFormController implements Initializable {
                 stockInMasterCancelBtnClicked();
                 return;
             }
-            GlobalActions.spotyThreadPool()
-                    .execute(
-                            () -> {
-                                try {
-                                    StockInMasterViewModel.saveStockInMaster();
-                                } catch (SQLException e) {
-                                    SpotyLogger.writeToFile(e, this.getClass());
-                                }
-                            });
+            SpotyThreader.spotyThreadPool(
+                    () -> {
+                        try {
+                            StockInMasterViewModel.saveStockInMaster();
+                        } catch (SQLException e) {
+                            SpotyLogger.writeToFile(e, this.getClass());
+                        }
+                    });
 
             SimpleNotification notification =
                     new SimpleNotification.NotificationBuilder("Stock In saved successfully")

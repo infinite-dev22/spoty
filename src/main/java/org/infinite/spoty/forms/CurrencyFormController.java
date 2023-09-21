@@ -19,12 +19,12 @@ import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.CurrencyViewModel;
 
 import java.net.URL;
@@ -96,7 +96,7 @@ public class CurrencyFormController implements Initializable {
                     if (!currencyFormNameValidationLabel.isVisible()
                             && !currencyFormCodeValidationLabel.isVisible()) {
                         if (CurrencyViewModel.getId() > 0) {
-                            GlobalActions.spotyThreadPool().execute(() -> {
+                            SpotyThreader.spotyThreadPool(() -> {
                                 try {
                                     CurrencyViewModel.updateItem(CurrencyViewModel.getId());
                                 } catch (SQLException e) {
@@ -115,7 +115,7 @@ public class CurrencyFormController implements Initializable {
                             closeDialog(event);
                             return;
                         }
-                        GlobalActions.spotyThreadPool().execute(() -> {
+                        SpotyThreader.spotyThreadPool(() -> {
                             try {
                                 saveCurrency();
                             } catch (SQLException e) {

@@ -24,13 +24,13 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
-import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.database.models.UnitOfMeasure;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.UOMViewModel;
 
 import java.net.URL;
@@ -163,7 +163,7 @@ public class UOMFormController implements Initializable {
                             && !uomFormOperatorValidationLabel.isVisible()
                             && !uomFormOperatorValueValidationLabel.isVisible()) {
                         if (UOMViewModel.getId() > 0) {
-                            GlobalActions.spotyThreadPool().execute(() -> {
+                            SpotyThreader.spotyThreadPool(() -> {
                                 try {
                                     UOMViewModel.updateItem(UOMViewModel.getId());
                                 } catch (SQLException e) {
@@ -184,7 +184,7 @@ public class UOMFormController implements Initializable {
                             closeDialog(event);
                             return;
                         }
-                        GlobalActions.spotyThreadPool().execute(() -> {
+                        SpotyThreader.spotyThreadPool(() -> {
                             try {
                                 UOMViewModel.saveUOM();
                             } catch (SQLException e) {

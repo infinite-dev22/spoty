@@ -1,13 +1,3 @@
-buildscript {
-    ext {
-        junitVersion = '5.10.0'
-    }
-    repositories {
-        mavenLocal()
-        mavenCentral()
-    }
-}
-
 plugins {
     id 'java'
     id 'org.javamodularity.moduleplugin' version "1.8.12"
@@ -19,8 +9,18 @@ plugins {
 
 apply plugin: 'java'
 
-jar {
-    version = '0.0.1-beta'
+version '0.0.1-beta'
+project.description = "Zenmart ERP - Fintech Software."
+project.ext.buildDate = new Date()
+project.version = "1.0.0"
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+ext {
+    junitVersion = '5.10.0'
 }
 
 repositories {
@@ -29,9 +29,27 @@ repositories {
     gradlePluginPortal()
 }
 
-compileJava {
-    targetCompatibility = "17"
-    sourceCompatibility = "17"
+sourceCompatibility = '21'
+targetCompatibility = '21'
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+application {
+    mainModule = 'org.infinite.spoty'
+    mainClass = 'org.infinite.spoty.Main'
+}
+
+javafx {
+    version = "21"
+    modules = ['javafx.controls', 'javafx.fxml', 'javafx.web', 'javafx.media', 'javafx.graphics']
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
 }
 
 //graalvmNative {
@@ -46,22 +64,8 @@ compileJava {
 //    }
 //}
 
-project.description = "Zenmart ERP - Fintech Software."
-project.ext.buildDate = new Date()
-project.version = "1.0.0"
-
 test {
     useJUnitPlatform()
-}
-
-javafx {
-    version = "21"
-    modules = ['javafx.controls', 'javafx.fxml', 'javafx.web', 'javafx.media', 'javafx.graphics']
-}
-
-application {
-    mainModule = 'org.infinite.spoty'
-    mainClass = 'org.infinite.spoty.Main'
 }
 
 run {
@@ -113,43 +117,32 @@ jlink {
         // you can do lots of magic here too...
         // resourceDir = file('package/')
 
-        if (targetPlatformName == 'mac') { // we are on mac
+        if (targetPlatformName == 'mac') {
             targetPlatform("mac") {
-                // Use downloaded Eclipse Temurin JDK
                 jdkHome = '/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home'
-                // Use another local JDK
-                //jdkHome = '/Library/Java/JavaVirtualMachines/jdk-17.0.2.jdk/Contents/Home'
             }
-            installerType = 'pkg' // we want to have macOS PKG
+            installerType = 'pkg'
         }
-        if (targetPlatformName == 'win') { // we are on Windows
+        if (targetPlatformName == 'win') {
             targetPlatform("win") {
                 jdkHome = 'C:/Applications/JDKs/Adoptium/temurin-17.jdk'
             }
             installerType = 'exe'
         }
-        if (targetPlatformName == 'linux-x64') { // we are on linux
+        if (targetPlatformName == 'linux-x64') {
             targetPlatform("linux-x64") {
                 addExtraModulePath("/home/infinite/Java_FX/javafx-jmods-20/linux_x64")
             }
             installerType = 'deb'
         }
 
-        // Add jpackage-specific options
         installerOptions = [
-                '--name', 'Zenmart-ERP', // installer name
-                // '--app-version', version.replace('-', '.'),
+                '--name', 'Zenmart-ERP',
                 '--description', project.description,
                 '--copyright', 'Copyrigth 2023 infinite Studios',
                 '--vendor', 'infinite Studios'
         ]
 
-        // We also could take the installer type from comand line
-        // installerType = project.findProperty('installerType')
-        // We would pass this from the command line
-        //    (example: -PinstallerType=msi)
-
-        // Add platform-specific options for the target image and for jpackage
         if (installerType == 'pkg') {
             imageOptions += ['--icon', 'src/main/resources/icon.icns']
             installerOptions += [
@@ -159,8 +152,8 @@ jlink {
         if (installerType == 'exe') {
             imageOptions += ['--icon', 'src/main/resources/icon.ico']
             installerOptions += [
-                    // '--win-per-user-install', // Install only for current user
-                    // '--win-console', // Shows what Java outputs to the console
+                    // '--win-per-user-install',
+                    // '--win-console',
                     '--win-dir-chooser',
                     '--win-menu', '--win-shortcut'
             ]

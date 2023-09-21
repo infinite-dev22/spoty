@@ -18,12 +18,6 @@ import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.filter.DoubleFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
-
-import java.net.URL;
-import java.sql.SQLException;
-import java.util.Comparator;
-import java.util.ResourceBundle;
-
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
@@ -32,11 +26,16 @@ import javafx.fxml.Initializable;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.components.navigation.Pages;
 import org.infinite.spoty.database.models.QuotationMaster;
+import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.QuotationMasterViewModel;
 import org.infinite.spoty.views.BaseController;
+
+import java.net.URL;
+import java.sql.SQLException;
+import java.util.Comparator;
+import java.util.ResourceBundle;
 
 @SuppressWarnings("unchecked")
 public class QuotationController implements Initializable {
@@ -155,7 +154,7 @@ public class QuotationController implements Initializable {
         // Delete
         delete.setOnAction(
                 e -> {
-                    GlobalActions.spotyThreadPool().execute(() -> {
+                    SpotyThreader.spotyThreadPool(() -> {
                         try {
                             QuotationMasterViewModel.deleteItem(obj.getData().getId());
                         } catch (SQLException ex) {
@@ -167,7 +166,7 @@ public class QuotationController implements Initializable {
         // Edit
         edit.setOnAction(
                 e -> {
-                    GlobalActions.spotyThreadPool().execute(() -> {
+                    SpotyThreader.spotyThreadPool(() -> {
                         try {
                             QuotationMasterViewModel.getItem(obj.getData().getId());
                         } catch (SQLException ex) {

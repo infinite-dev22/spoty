@@ -18,10 +18,6 @@ import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.filter.DoubleFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
-import java.net.URL;
-import java.sql.SQLException;
-import java.util.Comparator;
-import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
@@ -30,151 +26,159 @@ import javafx.fxml.Initializable;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.components.navigation.Pages;
 import org.infinite.spoty.database.models.AdjustmentMaster;
+import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.AdjustmentMasterViewModel;
 import org.infinite.spoty.views.BaseController;
 
+import java.net.URL;
+import java.sql.SQLException;
+import java.util.Comparator;
+import java.util.ResourceBundle;
+
 @SuppressWarnings("unchecked")
 public class AdjustmentController implements Initializable {
-  private static AdjustmentController instance;
-  @FXML public BorderPane adjustmentContentPane;
-  @FXML public MFXTextField adjustmentSearchBar;
-  @FXML public HBox adjustmentActionsPane;
-  @FXML public MFXButton adjustmentImportBtn;
-  @FXML private MFXTableView<AdjustmentMaster> adjustmentMasterTable;
+    private static AdjustmentController instance;
+    @FXML
+    public BorderPane adjustmentContentPane;
+    @FXML
+    public MFXTextField adjustmentSearchBar;
+    @FXML
+    public HBox adjustmentActionsPane;
+    @FXML
+    public MFXButton adjustmentImportBtn;
+    @FXML
+    private MFXTableView<AdjustmentMaster> adjustmentMasterTable;
 
-  public static AdjustmentController getInstance() {
-    if (instance == null) instance = new AdjustmentController();
-    return instance;
-  }
-
-  @Override
-  public void initialize(URL location, ResourceBundle resources) {
-    Platform.runLater(this::setupTable);
-  }
-
-  private void setupTable() {
-    MFXTableColumn<AdjustmentMaster> adjustmentDate =
-        new MFXTableColumn<>("Date", false, Comparator.comparing(AdjustmentMaster::getDate));
-    MFXTableColumn<AdjustmentMaster> adjustmentBranch =
-        new MFXTableColumn<>(
-            "Branch", false, Comparator.comparing(AdjustmentMaster::getBranchName));
-    MFXTableColumn<AdjustmentMaster> adjustmentStatus =
-        new MFXTableColumn<>("Status", false, Comparator.comparing(AdjustmentMaster::getStatus));
-    MFXTableColumn<AdjustmentMaster> adjustmentTotalAmount =
-        new MFXTableColumn<>(
-            "Total Amount", false, Comparator.comparing(AdjustmentMaster::getTotalAmount));
-
-    adjustmentDate.setRowCellFactory(
-        adjustment -> new MFXTableRowCell<>(AdjustmentMaster::getLocaleDate));
-    adjustmentBranch.setRowCellFactory(
-        adjustment -> new MFXTableRowCell<>(AdjustmentMaster::getBranchName));
-    adjustmentStatus.setRowCellFactory(
-        adjustment -> new MFXTableRowCell<>(AdjustmentMaster::getBranchName));
-    adjustmentTotalAmount.setRowCellFactory(
-        adjustment -> new MFXTableRowCell<>(AdjustmentMaster::getBranchName));
-
-    adjustmentDate.prefWidthProperty().bind(adjustmentMasterTable.widthProperty().multiply(.5));
-    adjustmentBranch.prefWidthProperty().bind(adjustmentMasterTable.widthProperty().multiply(.5));
-    adjustmentStatus.prefWidthProperty().bind(adjustmentMasterTable.widthProperty().multiply(.5));
-    adjustmentTotalAmount
-        .prefWidthProperty()
-        .bind(adjustmentMasterTable.widthProperty().multiply(.5));
-
-    adjustmentMasterTable
-        .getTableColumns()
-        .addAll(adjustmentDate, adjustmentBranch, adjustmentStatus, adjustmentTotalAmount);
-    adjustmentMasterTable
-        .getFilters()
-        .addAll(
-            new StringFilter<>("Reference", AdjustmentMaster::getRef),
-            new StringFilter<>("Branch", AdjustmentMaster::getBranchName),
-            new StringFilter<>("Status", AdjustmentMaster::getStatus),
-            new DoubleFilter<>("Total Amount", AdjustmentMaster::getTotalAmount));
-    getAdjustmentMasterTable();
-
-    if (AdjustmentMasterViewModel.getAdjustmentMasters().isEmpty()) {
-      AdjustmentMasterViewModel.getAdjustmentMasters()
-          .addListener(
-              (ListChangeListener<AdjustmentMaster>)
-                  c ->
-                      adjustmentMasterTable.setItems(
-                          AdjustmentMasterViewModel.getAdjustmentMasters()));
-    } else {
-      adjustmentMasterTable
-          .itemsProperty()
-          .bindBidirectional(AdjustmentMasterViewModel.adjustmentMastersProperty());
+    public static AdjustmentController getInstance() {
+        if (instance == null) instance = new AdjustmentController();
+        return instance;
     }
-  }
 
-  private void getAdjustmentMasterTable() {
-    adjustmentMasterTable.setPrefSize(1000, 1000);
-    adjustmentMasterTable.features().enableBounceEffect();
-    adjustmentMasterTable.features().enableSmoothScrolling(0.5);
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        Platform.runLater(this::setupTable);
+    }
 
-    adjustmentMasterTable.setTableRowFactory(
-        t -> {
-          MFXTableRow<AdjustmentMaster> row = new MFXTableRow<>(adjustmentMasterTable, t);
-          EventHandler<ContextMenuEvent> eventHandler =
-              event -> {
-                showContextMenu((MFXTableRow<AdjustmentMaster>) event.getSource())
-                    .show(
-                        adjustmentMasterTable.getScene().getWindow(),
-                        event.getScreenX(),
-                        event.getScreenY());
-                event.consume();
-              };
-          row.setOnContextMenuRequested(eventHandler);
-          return row;
-        });
-  }
+    private void setupTable() {
+        MFXTableColumn<AdjustmentMaster> adjustmentDate =
+                new MFXTableColumn<>("Date", false, Comparator.comparing(AdjustmentMaster::getDate));
+        MFXTableColumn<AdjustmentMaster> adjustmentBranch =
+                new MFXTableColumn<>(
+                        "Branch", false, Comparator.comparing(AdjustmentMaster::getBranchName));
+        MFXTableColumn<AdjustmentMaster> adjustmentStatus =
+                new MFXTableColumn<>("Status", false, Comparator.comparing(AdjustmentMaster::getStatus));
+        MFXTableColumn<AdjustmentMaster> adjustmentTotalAmount =
+                new MFXTableColumn<>(
+                        "Total Amount", false, Comparator.comparing(AdjustmentMaster::getTotalAmount));
 
-  private MFXContextMenu showContextMenu(MFXTableRow<AdjustmentMaster> obj) {
-    MFXContextMenu contextMenu = new MFXContextMenu(adjustmentMasterTable);
-    MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
-    MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+        adjustmentDate.setRowCellFactory(
+                adjustment -> new MFXTableRowCell<>(AdjustmentMaster::getLocaleDate));
+        adjustmentBranch.setRowCellFactory(
+                adjustment -> new MFXTableRowCell<>(AdjustmentMaster::getBranchName));
+        adjustmentStatus.setRowCellFactory(
+                adjustment -> new MFXTableRowCell<>(AdjustmentMaster::getBranchName));
+        adjustmentTotalAmount.setRowCellFactory(
+                adjustment -> new MFXTableRowCell<>(AdjustmentMaster::getBranchName));
 
-    // Actions
-    // Delete
-    delete.setOnAction(
-        e -> {
-          GlobalActions.spotyThreadPool()
-              .execute(
-                  () -> {
-                    try {
-                      AdjustmentMasterViewModel.deleteItem(obj.getData().getId());
-                    } catch (SQLException ex) {
-                      throw new RuntimeException(ex);
-                    }
-                  });
+        adjustmentDate.prefWidthProperty().bind(adjustmentMasterTable.widthProperty().multiply(.5));
+        adjustmentBranch.prefWidthProperty().bind(adjustmentMasterTable.widthProperty().multiply(.5));
+        adjustmentStatus.prefWidthProperty().bind(adjustmentMasterTable.widthProperty().multiply(.5));
+        adjustmentTotalAmount
+                .prefWidthProperty()
+                .bind(adjustmentMasterTable.widthProperty().multiply(.5));
 
-          e.consume();
-        });
-    // Edit
-    edit.setOnAction(
-        e -> {
-          GlobalActions.spotyThreadPool()
-              .execute(
-                  () -> {
-                    try {
-                      AdjustmentMasterViewModel.getItem(obj.getData().getId());
-                    } catch (SQLException ex) {
-                      throw new RuntimeException(ex);
-                    }
-                  });
+        adjustmentMasterTable
+                .getTableColumns()
+                .addAll(adjustmentDate, adjustmentBranch, adjustmentStatus, adjustmentTotalAmount);
+        adjustmentMasterTable
+                .getFilters()
+                .addAll(
+                        new StringFilter<>("Reference", AdjustmentMaster::getRef),
+                        new StringFilter<>("Branch", AdjustmentMaster::getBranchName),
+                        new StringFilter<>("Status", AdjustmentMaster::getStatus),
+                        new DoubleFilter<>("Total Amount", AdjustmentMaster::getTotalAmount));
+        getAdjustmentMasterTable();
 
-          adjustmentCreateBtnClicked();
-          e.consume();
-        });
+        if (AdjustmentMasterViewModel.getAdjustmentMasters().isEmpty()) {
+            AdjustmentMasterViewModel.getAdjustmentMasters()
+                    .addListener(
+                            (ListChangeListener<AdjustmentMaster>)
+                                    c ->
+                                            adjustmentMasterTable.setItems(
+                                                    AdjustmentMasterViewModel.getAdjustmentMasters()));
+        } else {
+            adjustmentMasterTable
+                    .itemsProperty()
+                    .bindBidirectional(AdjustmentMasterViewModel.adjustmentMastersProperty());
+        }
+    }
 
-    contextMenu.addItems(edit, delete);
+    private void getAdjustmentMasterTable() {
+        adjustmentMasterTable.setPrefSize(1000, 1000);
+        adjustmentMasterTable.features().enableBounceEffect();
+        adjustmentMasterTable.features().enableSmoothScrolling(0.5);
 
-    return contextMenu;
-  }
+        adjustmentMasterTable.setTableRowFactory(
+                t -> {
+                    MFXTableRow<AdjustmentMaster> row = new MFXTableRow<>(adjustmentMasterTable, t);
+                    EventHandler<ContextMenuEvent> eventHandler =
+                            event -> {
+                                showContextMenu((MFXTableRow<AdjustmentMaster>) event.getSource())
+                                        .show(
+                                                adjustmentMasterTable.getScene().getWindow(),
+                                                event.getScreenX(),
+                                                event.getScreenY());
+                                event.consume();
+                            };
+                    row.setOnContextMenuRequested(eventHandler);
+                    return row;
+                });
+    }
 
-  public void adjustmentCreateBtnClicked() {
-    BaseController.navigation.navigate(Pages.getAdjustmentMasterFormPane());
-  }
+    private MFXContextMenu showContextMenu(MFXTableRow<AdjustmentMaster> obj) {
+        MFXContextMenu contextMenu = new MFXContextMenu(adjustmentMasterTable);
+        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
+        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+
+        // Actions
+        // Delete
+        delete.setOnAction(
+                e -> {
+                    SpotyThreader.spotyThreadPool(
+                            () -> {
+                                try {
+                                    AdjustmentMasterViewModel.deleteItem(obj.getData().getId());
+                                } catch (SQLException ex) {
+                                    throw new RuntimeException(ex);
+                                }
+                            });
+
+                    e.consume();
+                });
+        // Edit
+        edit.setOnAction(
+                e -> {
+                    SpotyThreader.spotyThreadPool(
+                            () -> {
+                                try {
+                                    AdjustmentMasterViewModel.getItem(obj.getData().getId());
+                                } catch (SQLException ex) {
+                                    throw new RuntimeException(ex);
+                                }
+                            });
+
+                    adjustmentCreateBtnClicked();
+                    e.consume();
+                });
+
+        contextMenu.addItems(edit, delete);
+
+        return contextMenu;
+    }
+
+    public void adjustmentCreateBtnClicked() {
+        BaseController.navigation.navigate(Pages.getAdjustmentMasterFormPane());
+    }
 }

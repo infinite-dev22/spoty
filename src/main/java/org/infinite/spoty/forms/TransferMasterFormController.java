@@ -37,7 +37,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
-import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.components.navigation.Pages;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
@@ -46,6 +45,7 @@ import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.TransferDetail;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.BranchViewModel;
 import org.infinite.spoty.viewModels.TransferDetailViewModel;
 import org.infinite.spoty.viewModels.TransferMasterViewModel;
@@ -233,28 +233,26 @@ public class TransferMasterFormController implements Initializable {
         // Delete
         delete.setOnAction(
                 event -> {
-                    GlobalActions.spotyThreadPool()
-                            .execute(
-                                    () ->
-                                            TransferDetailViewModel.removeTransferDetail(
-                                                    obj.getData().getId(),
-                                                    TransferDetailViewModel.transferDetailsList.indexOf(obj.getData())));
+                    SpotyThreader.spotyThreadPool(
+                            () ->
+                                    TransferDetailViewModel.removeTransferDetail(
+                                            obj.getData().getId(),
+                                            TransferDetailViewModel.transferDetailsList.indexOf(obj.getData())));
                     event.consume();
                 });
         // Edit
         edit.setOnAction(
                 event -> {
-                    GlobalActions.spotyThreadPool()
-                            .execute(
-                                    () -> {
-                                        try {
-                                            TransferDetailViewModel.getItem(
-                                                    obj.getData().getId(),
-                                                    TransferDetailViewModel.transferDetailsList.indexOf(obj.getData()));
-                                        } catch (SQLException e) {
-                                            SpotyLogger.writeToFile(e, this.getClass());
-                                        }
-                                    });
+                    SpotyThreader.spotyThreadPool(
+                            () -> {
+                                try {
+                                    TransferDetailViewModel.getItem(
+                                            obj.getData().getId(),
+                                            TransferDetailViewModel.transferDetailsList.indexOf(obj.getData()));
+                                } catch (SQLException e) {
+                                    SpotyLogger.writeToFile(e, this.getClass());
+                                }
+                            });
 
                     dialog.showAndWait();
                     event.consume();
@@ -309,15 +307,14 @@ public class TransferMasterFormController implements Initializable {
                 && !transferMasterFromBranchValidationLabel.isVisible()
                 && !transferMasterDateValidationLabel.isVisible()) {
             if (TransferMasterViewModel.getId() > 0) {
-                GlobalActions.spotyThreadPool()
-                        .execute(
-                                () -> {
-                                    try {
-                                        TransferMasterViewModel.updateItem(TransferMasterViewModel.getId());
-                                    } catch (SQLException e) {
-                                        SpotyLogger.writeToFile(e, this.getClass());
-                                    }
-                                });
+                SpotyThreader.spotyThreadPool(
+                        () -> {
+                            try {
+                                TransferMasterViewModel.updateItem(TransferMasterViewModel.getId());
+                            } catch (SQLException e) {
+                                SpotyLogger.writeToFile(e, this.getClass());
+                            }
+                        });
 
                 SimpleNotification notification =
                         new SimpleNotification.NotificationBuilder("Transfer updated successfully")
@@ -333,15 +330,14 @@ public class TransferMasterFormController implements Initializable {
                 transferMasterCancelBtnClicked();
                 return;
             }
-            GlobalActions.spotyThreadPool()
-                    .execute(
-                            () -> {
-                                try {
-                                    TransferMasterViewModel.saveTransferMaster();
-                                } catch (SQLException e) {
-                                    SpotyLogger.writeToFile(e, this.getClass());
-                                }
-                            });
+            SpotyThreader.spotyThreadPool(
+                    () -> {
+                        try {
+                            TransferMasterViewModel.saveTransferMaster();
+                        } catch (SQLException e) {
+                            SpotyLogger.writeToFile(e, this.getClass());
+                        }
+                    });
 
             SimpleNotification notification =
                     new SimpleNotification.NotificationBuilder("Transfer saved successfully")

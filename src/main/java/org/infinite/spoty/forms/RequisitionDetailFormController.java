@@ -23,13 +23,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.util.StringConverter;
-import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.database.models.Product;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.ProductViewModel;
 import org.infinite.spoty.viewModels.RequisitionDetailViewModel;
 
@@ -126,7 +126,7 @@ public class RequisitionDetailFormController implements Initializable {
                     if (!requisitionDetailPdctValidationLabel.isVisible()
                             && !requisitionDetailQntyValidationLabel.isVisible()) {
                         if (tempIdProperty().get() > -1) {
-                            GlobalActions.spotyThreadPool().execute(() -> {
+                            SpotyThreader.spotyThreadPool(() -> {
                                 try {
                                     RequisitionDetailViewModel.updateRequisitionDetail(
                                             RequisitionDetailViewModel.getId());

@@ -23,7 +23,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.util.StringConverter;
-import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
@@ -31,6 +30,7 @@ import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.ExpenseCategory;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.BranchViewModel;
 import org.infinite.spoty.viewModels.ExpenseCategoryViewModel;
 import org.infinite.spoty.viewModels.ExpenseViewModel;
@@ -149,7 +149,7 @@ public class ExpenseFormController implements Initializable {
                             && !expenseFormCategoryValidationLabel.isVisible()
                             && !expenseFormAmountValidationLabel.isVisible()) {
                         if (ExpenseViewModel.getId() > 0) {
-                            GlobalActions.spotyThreadPool().execute(() -> {
+                            SpotyThreader.spotyThreadPool(() -> {
                                 try {
                                     ExpenseViewModel.updateItem(ExpenseViewModel.getId());
                                 } catch (SQLException e) {
@@ -171,7 +171,7 @@ public class ExpenseFormController implements Initializable {
                             closeDialog(event);
                             return;
                         }
-                        GlobalActions.spotyThreadPool().execute(() -> {
+                        SpotyThreader.spotyThreadPool(() -> {
                             try {
                                 ExpenseViewModel.saveExpense();
                             } catch (SQLException e) {

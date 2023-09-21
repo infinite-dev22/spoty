@@ -39,7 +39,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
-import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.components.navigation.Pages;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
@@ -49,6 +48,7 @@ import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.Customer;
 import org.infinite.spoty.database.models.SaleDetail;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.values.strings.Values;
 import org.infinite.spoty.viewModels.BranchViewModel;
 import org.infinite.spoty.viewModels.CustomerViewModel;
@@ -214,15 +214,14 @@ public class SaleMasterFormController implements Initializable {
                 && !saleStatusValidationLabel.isVisible()
                 && !salePaymentStatusValidationLabel.isVisible()) {
             if (SaleMasterViewModel.getId() > 0) {
-                GlobalActions.spotyThreadPool()
-                        .execute(
-                                () -> {
-                                    try {
-                                        SaleMasterViewModel.updateItem(SaleMasterViewModel.getId());
-                                    } catch (SQLException e) {
-                                        SpotyLogger.writeToFile(e, this.getClass());
-                                    }
-                                });
+                SpotyThreader.spotyThreadPool(
+                        () -> {
+                            try {
+                                SaleMasterViewModel.updateItem(SaleMasterViewModel.getId());
+                            } catch (SQLException e) {
+                                SpotyLogger.writeToFile(e, this.getClass());
+                            }
+                        });
 
                 SimpleNotification notification =
                         new SimpleNotification.NotificationBuilder("Sale updated successfully")
@@ -240,15 +239,14 @@ public class SaleMasterFormController implements Initializable {
                 cancelBtnClicked();
                 return;
             }
-            GlobalActions.spotyThreadPool()
-                    .execute(
-                            () -> {
-                                try {
-                                    SaleMasterViewModel.saveSaleMaster();
-                                } catch (SQLException e) {
-                                    SpotyLogger.writeToFile(e, this.getClass());
-                                }
-                            });
+            SpotyThreader.spotyThreadPool(
+                    () -> {
+                        try {
+                            SaleMasterViewModel.saveSaleMaster();
+                        } catch (SQLException e) {
+                            SpotyLogger.writeToFile(e, this.getClass());
+                        }
+                    });
 
             SimpleNotification notification =
                     new SimpleNotification.NotificationBuilder("Sale saved successfully")
@@ -395,15 +393,14 @@ public class SaleMasterFormController implements Initializable {
         // Edit
         edit.setOnAction(
                 event -> {
-                    GlobalActions.spotyThreadPool()
-                            .execute(
-                                    () -> {
-                                        try {
-                                            SaleDetailViewModel.getSaleDetail(obj.getData());
-                                        } catch (SQLException e) {
-                                            SpotyLogger.writeToFile(e, this.getClass());
-                                        }
-                                    });
+                    SpotyThreader.spotyThreadPool(
+                            () -> {
+                                try {
+                                    SaleDetailViewModel.getSaleDetail(obj.getData());
+                                } catch (SQLException e) {
+                                    SpotyLogger.writeToFile(e, this.getClass());
+                                }
+                            });
 
                     dialog.showAndWait();
                     event.consume();

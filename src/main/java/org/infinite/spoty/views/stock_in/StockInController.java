@@ -18,10 +18,6 @@ import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.filter.DoubleFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
-import java.net.URL;
-import java.sql.SQLException;
-import java.util.Comparator;
-import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
@@ -30,143 +26,151 @@ import javafx.fxml.Initializable;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.components.navigation.Pages;
 import org.infinite.spoty.database.models.StockInMaster;
+import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.StockInMasterViewModel;
 import org.infinite.spoty.views.BaseController;
 
+import java.net.URL;
+import java.sql.SQLException;
+import java.util.Comparator;
+import java.util.ResourceBundle;
+
 @SuppressWarnings("unchecked")
 public class StockInController implements Initializable {
-  private static StockInController instance;
-  @FXML public MFXTextField stockInSearchBar;
-  @FXML public HBox stockInActionsPane;
-  @FXML public MFXButton stockInImportBtn;
-  @FXML public MFXTableView<StockInMaster> stockInMasterTable;
-  @FXML public BorderPane stockInContentPane;
+    private static StockInController instance;
+    @FXML
+    public MFXTextField stockInSearchBar;
+    @FXML
+    public HBox stockInActionsPane;
+    @FXML
+    public MFXButton stockInImportBtn;
+    @FXML
+    public MFXTableView<StockInMaster> stockInMasterTable;
+    @FXML
+    public BorderPane stockInContentPane;
 
-  public static StockInController getInstance() {
-    if (instance == null) instance = new StockInController();
-    return instance;
-  }
-
-  @Override
-  public void initialize(URL location, ResourceBundle resources) {
-    Platform.runLater(this::setupTable);
-  }
-
-  private void setupTable() {
-    MFXTableColumn<StockInMaster> stockInBranch =
-        new MFXTableColumn<>("Branch", false, Comparator.comparing(StockInMaster::getBranchName));
-    MFXTableColumn<StockInMaster> stockInStatus =
-        new MFXTableColumn<>("Status", false, Comparator.comparing(StockInMaster::getStatus));
-    MFXTableColumn<StockInMaster> stockInDate =
-        new MFXTableColumn<>("Date", false, Comparator.comparing(StockInMaster::getDate));
-    MFXTableColumn<StockInMaster> stockInTotalCost =
-        new MFXTableColumn<>("Total Amount", false, Comparator.comparing(StockInMaster::getTotal));
-
-    stockInBranch.setRowCellFactory(stockIn -> new MFXTableRowCell<>(StockInMaster::getBranchName));
-    stockInStatus.setRowCellFactory(stockIn -> new MFXTableRowCell<>(StockInMaster::getStatus));
-    stockInTotalCost.setRowCellFactory(stockIn -> new MFXTableRowCell<>(StockInMaster::getTotal));
-    stockInDate.setRowCellFactory(stockIn -> new MFXTableRowCell<>(StockInMaster::getLocaleDate));
-
-    stockInBranch.prefWidthProperty().bind(stockInMasterTable.widthProperty().multiply(.25));
-    stockInStatus.prefWidthProperty().bind(stockInMasterTable.widthProperty().multiply(.25));
-    stockInTotalCost.prefWidthProperty().bind(stockInMasterTable.widthProperty().multiply(.25));
-    stockInDate.prefWidthProperty().bind(stockInMasterTable.widthProperty().multiply(.25));
-
-    stockInMasterTable
-        .getTableColumns()
-        .addAll(stockInBranch, stockInStatus, stockInDate, stockInTotalCost);
-    stockInMasterTable
-        .getFilters()
-        .addAll(
-            new StringFilter<>("Reference", StockInMaster::getRef),
-            new StringFilter<>("Branch", StockInMaster::getBranchName),
-            new StringFilter<>("Status", StockInMaster::getStatus),
-            new DoubleFilter<>("Total Amount", StockInMaster::getTotal));
-    getStockInMasterTable();
-
-    if (StockInMasterViewModel.getStockIns().isEmpty()) {
-      StockInMasterViewModel.getStockIns()
-          .addListener(
-              (ListChangeListener<StockInMaster>)
-                  c -> stockInMasterTable.setItems(StockInMasterViewModel.getStockIns()));
-    } else {
-      stockInMasterTable
-          .itemsProperty()
-          .bindBidirectional(StockInMasterViewModel.stockInsProperty());
+    public static StockInController getInstance() {
+        if (instance == null) instance = new StockInController();
+        return instance;
     }
-  }
 
-  private void getStockInMasterTable() {
-    stockInMasterTable.setPrefSize(1000, 1000);
-    stockInMasterTable.features().enableBounceEffect();
-    stockInMasterTable.features().enableSmoothScrolling(0.5);
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        Platform.runLater(this::setupTable);
+    }
 
-    stockInMasterTable.setTableRowFactory(
-        t -> {
-          MFXTableRow<StockInMaster> row = new MFXTableRow<>(stockInMasterTable, t);
-          EventHandler<ContextMenuEvent> eventHandler =
-              event -> {
-                showContextMenu((MFXTableRow<StockInMaster>) event.getSource())
-                    .show(
-                        stockInMasterTable.getScene().getWindow(),
-                        event.getScreenX(),
-                        event.getScreenY());
-                event.consume();
-              };
-          row.setOnContextMenuRequested(eventHandler);
-          return row;
-        });
-  }
+    private void setupTable() {
+        MFXTableColumn<StockInMaster> stockInBranch =
+                new MFXTableColumn<>("Branch", false, Comparator.comparing(StockInMaster::getBranchName));
+        MFXTableColumn<StockInMaster> stockInStatus =
+                new MFXTableColumn<>("Status", false, Comparator.comparing(StockInMaster::getStatus));
+        MFXTableColumn<StockInMaster> stockInDate =
+                new MFXTableColumn<>("Date", false, Comparator.comparing(StockInMaster::getDate));
+        MFXTableColumn<StockInMaster> stockInTotalCost =
+                new MFXTableColumn<>("Total Amount", false, Comparator.comparing(StockInMaster::getTotal));
 
-  private MFXContextMenu showContextMenu(MFXTableRow<StockInMaster> obj) {
-    MFXContextMenu contextMenu = new MFXContextMenu(stockInMasterTable);
-    MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
-    MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+        stockInBranch.setRowCellFactory(stockIn -> new MFXTableRowCell<>(StockInMaster::getBranchName));
+        stockInStatus.setRowCellFactory(stockIn -> new MFXTableRowCell<>(StockInMaster::getStatus));
+        stockInTotalCost.setRowCellFactory(stockIn -> new MFXTableRowCell<>(StockInMaster::getTotal));
+        stockInDate.setRowCellFactory(stockIn -> new MFXTableRowCell<>(StockInMaster::getLocaleDate));
 
-    // Actions
-    // Delete
-    delete.setOnAction(
-        e -> {
-          GlobalActions.spotyThreadPool()
-              .execute(
-                  () -> {
-                    try {
-                      StockInMasterViewModel.deleteItem(obj.getData().getId());
-                    } catch (SQLException ex) {
-                      throw new RuntimeException(ex);
-                    }
-                  });
+        stockInBranch.prefWidthProperty().bind(stockInMasterTable.widthProperty().multiply(.25));
+        stockInStatus.prefWidthProperty().bind(stockInMasterTable.widthProperty().multiply(.25));
+        stockInTotalCost.prefWidthProperty().bind(stockInMasterTable.widthProperty().multiply(.25));
+        stockInDate.prefWidthProperty().bind(stockInMasterTable.widthProperty().multiply(.25));
 
-          e.consume();
-        });
-    // Edit
-    edit.setOnAction(
-        e -> {
-          GlobalActions.spotyThreadPool()
-              .execute(
-                  () -> {
-                    try {
-                      StockInMasterViewModel.getItem(obj.getData().getId());
-                    } catch (SQLException ex) {
-                      throw new RuntimeException(ex);
-                    }
-                  });
+        stockInMasterTable
+                .getTableColumns()
+                .addAll(stockInBranch, stockInStatus, stockInDate, stockInTotalCost);
+        stockInMasterTable
+                .getFilters()
+                .addAll(
+                        new StringFilter<>("Reference", StockInMaster::getRef),
+                        new StringFilter<>("Branch", StockInMaster::getBranchName),
+                        new StringFilter<>("Status", StockInMaster::getStatus),
+                        new DoubleFilter<>("Total Amount", StockInMaster::getTotal));
+        getStockInMasterTable();
 
-          stockInCreateBtnClicked();
+        if (StockInMasterViewModel.getStockIns().isEmpty()) {
+            StockInMasterViewModel.getStockIns()
+                    .addListener(
+                            (ListChangeListener<StockInMaster>)
+                                    c -> stockInMasterTable.setItems(StockInMasterViewModel.getStockIns()));
+        } else {
+            stockInMasterTable
+                    .itemsProperty()
+                    .bindBidirectional(StockInMasterViewModel.stockInsProperty());
+        }
+    }
 
-          e.consume();
-        });
+    private void getStockInMasterTable() {
+        stockInMasterTable.setPrefSize(1000, 1000);
+        stockInMasterTable.features().enableBounceEffect();
+        stockInMasterTable.features().enableSmoothScrolling(0.5);
 
-    contextMenu.addItems(edit, delete);
+        stockInMasterTable.setTableRowFactory(
+                t -> {
+                    MFXTableRow<StockInMaster> row = new MFXTableRow<>(stockInMasterTable, t);
+                    EventHandler<ContextMenuEvent> eventHandler =
+                            event -> {
+                                showContextMenu((MFXTableRow<StockInMaster>) event.getSource())
+                                        .show(
+                                                stockInMasterTable.getScene().getWindow(),
+                                                event.getScreenX(),
+                                                event.getScreenY());
+                                event.consume();
+                            };
+                    row.setOnContextMenuRequested(eventHandler);
+                    return row;
+                });
+    }
 
-    return contextMenu;
-  }
+    private MFXContextMenu showContextMenu(MFXTableRow<StockInMaster> obj) {
+        MFXContextMenu contextMenu = new MFXContextMenu(stockInMasterTable);
+        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
+        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
 
-  @FXML
-  private void stockInCreateBtnClicked() {
-    BaseController.navigation.navigate(Pages.getStockinMasterFormPane());
-  }
+        // Actions
+        // Delete
+        delete.setOnAction(
+                e -> {
+                    SpotyThreader.spotyThreadPool(
+                            () -> {
+                                try {
+                                    StockInMasterViewModel.deleteItem(obj.getData().getId());
+                                } catch (SQLException ex) {
+                                    throw new RuntimeException(ex);
+                                }
+                            });
+
+                    e.consume();
+                });
+        // Edit
+        edit.setOnAction(
+                e -> {
+                    SpotyThreader.spotyThreadPool(
+                            () -> {
+                                try {
+                                    StockInMasterViewModel.getItem(obj.getData().getId());
+                                } catch (SQLException ex) {
+                                    throw new RuntimeException(ex);
+                                }
+                            });
+
+                    stockInCreateBtnClicked();
+
+                    e.consume();
+                });
+
+        contextMenu.addItems(edit, delete);
+
+        return contextMenu;
+    }
+
+    @FXML
+    private void stockInCreateBtnClicked() {
+        BaseController.navigation.navigate(Pages.getStockinMasterFormPane());
+    }
 }

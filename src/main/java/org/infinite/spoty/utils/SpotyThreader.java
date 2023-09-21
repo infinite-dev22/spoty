@@ -12,30 +12,20 @@
  * Jonathan Mark Mwigo makes no warranties, express or implied, with respect to the computer system code. Jonathan Mark Mwigo shall not be liable for any damages, including, but not limited to, direct, indirect, incidental, special, consequential, or punitive damages, arising out of or in connection with the use of the computer system code.
  */
 
-package org.infinite.spoty;
+package org.infinite.spoty.utils;
 
-import javafx.event.ActionEvent;
-import javafx.scene.Node;
-import javafx.stage.Stage;
-import org.infinite.spoty.utils.SpotyLogger;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+public class SpotyThreader {
+    private static final ExecutorService executorService = Executors.newVirtualThreadPerTaskExecutor();
 
-public class GlobalActions {
-    public static void closeDialog(ActionEvent e) {
-        final var source = (Node) e.getSource();
-        final var stage = (Stage) source.getScene().getWindow();
-        stage.close();
+    public static void spotyThreadPool(Runnable runnable) {
+        executorService.submit(runnable);
     }
 
-    public static Date fineDate(String dateString) {
-        try {
-            return new SimpleDateFormat("yyyy-MM-dd").parse(dateString);
-        } catch (ParseException e) {
-            SpotyLogger.writeToFile(e, GlobalActions.class);
-        }
-        return null;
+    public static void disposeSpotyThreadPool() {
+        if (!executorService.isShutdown())
+            executorService.shutdownNow();
     }
 }

@@ -29,7 +29,6 @@ import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
-import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.SpotyResourceLoader;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
@@ -39,6 +38,7 @@ import org.infinite.spoty.database.models.Brand;
 import org.infinite.spoty.database.models.ProductCategory;
 import org.infinite.spoty.database.models.UnitOfMeasure;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.values.strings.Values;
 import org.infinite.spoty.viewModels.BrandViewModel;
 import org.infinite.spoty.viewModels.ProductCategoryViewModel;
@@ -215,15 +215,14 @@ public class ProductFormController implements Initializable {
                             && !productPriceValidationLabel.isVisible()
                             && !productNameValidationLabel.isVisible()) {
                         if (ProductViewModel.getId() > 0) {
-                            GlobalActions.spotyThreadPool()
-                                    .execute(
-                                            () -> {
-                                                try {
-                                                    ProductViewModel.updateProduct(ProductViewModel.getId());
-                                                } catch (SQLException e) {
-                                                    SpotyLogger.writeToFile(e, this.getClass());
-                                                }
-                                            });
+                            SpotyThreader.spotyThreadPool(
+                                    () -> {
+                                        try {
+                                            ProductViewModel.updateProduct(ProductViewModel.getId());
+                                        } catch (SQLException e) {
+                                            SpotyLogger.writeToFile(e, this.getClass());
+                                        }
+                                    });
 
                             SimpleNotification notification =
                                     new SimpleNotification.NotificationBuilder("Branch updated successfully")
@@ -243,15 +242,14 @@ public class ProductFormController implements Initializable {
 
                             return;
                         }
-                        GlobalActions.spotyThreadPool()
-                                .execute(
-                                        () -> {
-                                            try {
-                                                ProductViewModel.saveProduct();
-                                            } catch (SQLException e) {
-                                                SpotyLogger.writeToFile(e, this.getClass());
-                                            }
-                                        });
+                        SpotyThreader.spotyThreadPool(
+                                () -> {
+                                    try {
+                                        ProductViewModel.saveProduct();
+                                    } catch (SQLException e) {
+                                        SpotyLogger.writeToFile(e, this.getClass());
+                                    }
+                                });
 
                         SimpleNotification notification =
                                 new SimpleNotification.NotificationBuilder("Branch saved successfully")

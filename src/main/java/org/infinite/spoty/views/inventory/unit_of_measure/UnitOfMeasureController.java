@@ -14,8 +14,6 @@
 
 package org.infinite.spoty.views.inventory.unit_of_measure;
 
-import static org.infinite.spoty.SpotyResourceLoader.fxmlLoader;
-
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
@@ -24,11 +22,6 @@ import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import io.github.palexdev.materialfx.enums.ScrimPriority;
 import io.github.palexdev.materialfx.filter.DoubleFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
-import java.io.IOException;
-import java.net.URL;
-import java.sql.SQLException;
-import java.util.Comparator;
-import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
@@ -40,172 +33,185 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.database.models.UnitOfMeasure;
 import org.infinite.spoty.forms.UOMFormController;
+import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.UOMViewModel;
+
+import java.io.IOException;
+import java.net.URL;
+import java.sql.SQLException;
+import java.util.Comparator;
+import java.util.ResourceBundle;
+
+import static org.infinite.spoty.SpotyResourceLoader.fxmlLoader;
 
 @SuppressWarnings("unchecked")
 public class UnitOfMeasureController implements Initializable {
-  private static UnitOfMeasureController instance;
-  @FXML public MFXTableView<UnitOfMeasure> uomTable;
-  @FXML public MFXTextField uomSearchBar;
-  @FXML public HBox uomActionsPane;
-  @FXML public MFXButton uomImportBtn;
-  @FXML public BorderPane uomContentPane;
-  private MFXStageDialog dialog;
+    private static UnitOfMeasureController instance;
+    @FXML
+    public MFXTableView<UnitOfMeasure> uomTable;
+    @FXML
+    public MFXTextField uomSearchBar;
+    @FXML
+    public HBox uomActionsPane;
+    @FXML
+    public MFXButton uomImportBtn;
+    @FXML
+    public BorderPane uomContentPane;
+    private MFXStageDialog dialog;
 
-  public UnitOfMeasureController(Stage stage) {
-    Platform.runLater(
-        () -> {
-          try {
-            uomFormDialogPane(stage);
-          } catch (IOException ex) {
-            throw new RuntimeException(ex);
-          }
-        });
-  }
-
-  public static UnitOfMeasureController getInstance(Stage stage) {
-    if (instance == null) instance = new UnitOfMeasureController(stage);
-    return instance;
-  }
-
-  @Override
-  public void initialize(URL location, ResourceBundle resources) {
-    Platform.runLater(this::setupTable);
-  }
-
-  private void setupTable() {
-    MFXTableColumn<UnitOfMeasure> uomName =
-        new MFXTableColumn<>("Name", false, Comparator.comparing(UnitOfMeasure::getName));
-    MFXTableColumn<UnitOfMeasure> uomShortName =
-        new MFXTableColumn<>(
-            "Short Name", false, Comparator.comparing(UnitOfMeasure::getShortName));
-    MFXTableColumn<UnitOfMeasure> uomBaseUnit =
-        new MFXTableColumn<>(
-            "Base Unit", false, Comparator.comparing(UnitOfMeasure::getBaseUnitName));
-    MFXTableColumn<UnitOfMeasure> uomOperator =
-        new MFXTableColumn<>("Operator", false, Comparator.comparing(UnitOfMeasure::getOperator));
-    MFXTableColumn<UnitOfMeasure> uomOperationValue =
-        new MFXTableColumn<>(
-            "Operation Value", false, Comparator.comparing(UnitOfMeasure::getOperatorValue));
-
-    uomName.setRowCellFactory(brand -> new MFXTableRowCell<>(UnitOfMeasure::getName));
-    uomShortName.setRowCellFactory(brand -> new MFXTableRowCell<>(UnitOfMeasure::getShortName));
-    uomBaseUnit.setRowCellFactory(brand -> new MFXTableRowCell<>(UnitOfMeasure::getBaseUnitName));
-    uomOperator.setRowCellFactory(brand -> new MFXTableRowCell<>(UnitOfMeasure::getOperator));
-    uomOperationValue.setRowCellFactory(
-        brand -> new MFXTableRowCell<>(UnitOfMeasure::getOperatorValue));
-
-    uomName.prefWidthProperty().bind(uomTable.widthProperty().multiply(.25));
-    uomShortName.prefWidthProperty().bind(uomTable.widthProperty().multiply(.25));
-    uomBaseUnit.prefWidthProperty().bind(uomTable.widthProperty().multiply(.25));
-    uomOperator.prefWidthProperty().bind(uomTable.widthProperty().multiply(.2));
-    uomOperationValue.prefWidthProperty().bind(uomTable.widthProperty().multiply(.15));
-
-    uomTable
-        .getTableColumns()
-        .addAll(uomName, uomShortName, uomBaseUnit, uomOperator, uomOperationValue);
-    uomTable
-        .getFilters()
-        .addAll(
-            new StringFilter<>("Name", UnitOfMeasure::getName),
-            new StringFilter<>("Short Name", UnitOfMeasure::getShortName),
-            new StringFilter<>("Base Unit", UnitOfMeasure::getBaseUnitName),
-            new StringFilter<>("Operator", UnitOfMeasure::getOperator),
-            new DoubleFilter<>("Operation Value", UnitOfMeasure::getOperatorValue));
-    getUnitOfMeasureTable();
-
-    if (UOMViewModel.getUnitsOfMeasure().isEmpty()) {
-      UOMViewModel.getUnitsOfMeasure()
-          .addListener(
-              (ListChangeListener<UnitOfMeasure>)
-                  c -> uomTable.setItems(UOMViewModel.getUnitsOfMeasure()));
-    } else {
-      uomTable.itemsProperty().bindBidirectional(UOMViewModel.unitsOfMeasureProperty());
+    public UnitOfMeasureController(Stage stage) {
+        Platform.runLater(
+                () -> {
+                    try {
+                        uomFormDialogPane(stage);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                });
     }
-  }
 
-  private void getUnitOfMeasureTable() {
-    uomTable.setPrefSize(1000, 1000);
-    uomTable.features().enableBounceEffect();
-    uomTable.features().enableSmoothScrolling(0.5);
+    public static UnitOfMeasureController getInstance(Stage stage) {
+        if (instance == null) instance = new UnitOfMeasureController(stage);
+        return instance;
+    }
 
-    uomTable.setTableRowFactory(
-        t -> {
-          MFXTableRow<UnitOfMeasure> row = new MFXTableRow<>(uomTable, t);
-          EventHandler<ContextMenuEvent> eventHandler =
-              event -> {
-                showContextMenu((MFXTableRow<UnitOfMeasure>) event.getSource())
-                    .show(uomTable.getScene().getWindow(), event.getScreenX(), event.getScreenY());
-                event.consume();
-              };
-          row.setOnContextMenuRequested(eventHandler);
-          return row;
-        });
-  }
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        Platform.runLater(this::setupTable);
+    }
 
-  private MFXContextMenu showContextMenu(MFXTableRow<UnitOfMeasure> obj) {
-    MFXContextMenu contextMenu = new MFXContextMenu(uomTable);
-    MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
-    MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+    private void setupTable() {
+        MFXTableColumn<UnitOfMeasure> uomName =
+                new MFXTableColumn<>("Name", false, Comparator.comparing(UnitOfMeasure::getName));
+        MFXTableColumn<UnitOfMeasure> uomShortName =
+                new MFXTableColumn<>(
+                        "Short Name", false, Comparator.comparing(UnitOfMeasure::getShortName));
+        MFXTableColumn<UnitOfMeasure> uomBaseUnit =
+                new MFXTableColumn<>(
+                        "Base Unit", false, Comparator.comparing(UnitOfMeasure::getBaseUnitName));
+        MFXTableColumn<UnitOfMeasure> uomOperator =
+                new MFXTableColumn<>("Operator", false, Comparator.comparing(UnitOfMeasure::getOperator));
+        MFXTableColumn<UnitOfMeasure> uomOperationValue =
+                new MFXTableColumn<>(
+                        "Operation Value", false, Comparator.comparing(UnitOfMeasure::getOperatorValue));
 
-    // Actions
-    // Delete
-    delete.setOnAction(
-        e -> {
-            GlobalActions.spotyThreadPool().execute(() -> {
-                try {
-                    UOMViewModel.deleteItem(obj.getData().getId());
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
-                }
-            });
-          e.consume();
-        });
-    // Edit
-    edit.setOnAction(
-        e -> {
-            GlobalActions.spotyThreadPool().execute(() -> {
-                try {
-                    UOMViewModel.getItem(obj.getData().getId());
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
-                }
-            });
-          dialog.showAndWait();
-          e.consume();
-        });
+        uomName.setRowCellFactory(brand -> new MFXTableRowCell<>(UnitOfMeasure::getName));
+        uomShortName.setRowCellFactory(brand -> new MFXTableRowCell<>(UnitOfMeasure::getShortName));
+        uomBaseUnit.setRowCellFactory(brand -> new MFXTableRowCell<>(UnitOfMeasure::getBaseUnitName));
+        uomOperator.setRowCellFactory(brand -> new MFXTableRowCell<>(UnitOfMeasure::getOperator));
+        uomOperationValue.setRowCellFactory(
+                brand -> new MFXTableRowCell<>(UnitOfMeasure::getOperatorValue));
 
-    contextMenu.addItems(edit, delete);
+        uomName.prefWidthProperty().bind(uomTable.widthProperty().multiply(.25));
+        uomShortName.prefWidthProperty().bind(uomTable.widthProperty().multiply(.25));
+        uomBaseUnit.prefWidthProperty().bind(uomTable.widthProperty().multiply(.25));
+        uomOperator.prefWidthProperty().bind(uomTable.widthProperty().multiply(.2));
+        uomOperationValue.prefWidthProperty().bind(uomTable.widthProperty().multiply(.15));
 
-    return contextMenu;
-  }
+        uomTable
+                .getTableColumns()
+                .addAll(uomName, uomShortName, uomBaseUnit, uomOperator, uomOperationValue);
+        uomTable
+                .getFilters()
+                .addAll(
+                        new StringFilter<>("Name", UnitOfMeasure::getName),
+                        new StringFilter<>("Short Name", UnitOfMeasure::getShortName),
+                        new StringFilter<>("Base Unit", UnitOfMeasure::getBaseUnitName),
+                        new StringFilter<>("Operator", UnitOfMeasure::getOperator),
+                        new DoubleFilter<>("Operation Value", UnitOfMeasure::getOperatorValue));
+        getUnitOfMeasureTable();
 
-  private void uomFormDialogPane(Stage stage) throws IOException {
-    FXMLLoader fxmlLoader = fxmlLoader("forms/UOMForm.fxml");
-    fxmlLoader.setControllerFactory(c -> UOMFormController.getInstance());
+        if (UOMViewModel.getUnitsOfMeasure().isEmpty()) {
+            UOMViewModel.getUnitsOfMeasure()
+                    .addListener(
+                            (ListChangeListener<UnitOfMeasure>)
+                                    c -> uomTable.setItems(UOMViewModel.getUnitsOfMeasure()));
+        } else {
+            uomTable.itemsProperty().bindBidirectional(UOMViewModel.unitsOfMeasureProperty());
+        }
+    }
 
-    MFXGenericDialog dialogContent = fxmlLoader.load();
+    private void getUnitOfMeasureTable() {
+        uomTable.setPrefSize(1000, 1000);
+        uomTable.features().enableBounceEffect();
+        uomTable.features().enableSmoothScrolling(0.5);
 
-    dialogContent.setShowMinimize(false);
-    dialogContent.setShowAlwaysOnTop(false);
+        uomTable.setTableRowFactory(
+                t -> {
+                    MFXTableRow<UnitOfMeasure> row = new MFXTableRow<>(uomTable, t);
+                    EventHandler<ContextMenuEvent> eventHandler =
+                            event -> {
+                                showContextMenu((MFXTableRow<UnitOfMeasure>) event.getSource())
+                                        .show(uomTable.getScene().getWindow(), event.getScreenX(), event.getScreenY());
+                                event.consume();
+                            };
+                    row.setOnContextMenuRequested(eventHandler);
+                    return row;
+                });
+    }
 
-    dialog =
-        MFXGenericDialogBuilder.build(dialogContent)
-            .toStageDialogBuilder()
-            .initOwner(stage)
-            .initModality(Modality.WINDOW_MODAL)
-            .setOwnerNode(uomContentPane)
-            .setScrimPriority(ScrimPriority.WINDOW)
-            .setScrimOwner(true)
-            .get();
+    private MFXContextMenu showContextMenu(MFXTableRow<UnitOfMeasure> obj) {
+        MFXContextMenu contextMenu = new MFXContextMenu(uomTable);
+        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
+        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
 
-    io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
-  }
+        // Actions
+        // Delete
+        delete.setOnAction(
+                e -> {
+                    SpotyThreader.spotyThreadPool(() -> {
+                        try {
+                            UOMViewModel.deleteItem(obj.getData().getId());
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                    });
+                    e.consume();
+                });
+        // Edit
+        edit.setOnAction(
+                e -> {
+                    SpotyThreader.spotyThreadPool(() -> {
+                        try {
+                            UOMViewModel.getItem(obj.getData().getId());
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                    });
+                    dialog.showAndWait();
+                    e.consume();
+                });
 
-  public void uomCreateBtnClicked() {
-    dialog.showAndWait();
-  }
+        contextMenu.addItems(edit, delete);
+
+        return contextMenu;
+    }
+
+    private void uomFormDialogPane(Stage stage) throws IOException {
+        FXMLLoader fxmlLoader = fxmlLoader("forms/UOMForm.fxml");
+        fxmlLoader.setControllerFactory(c -> UOMFormController.getInstance());
+
+        MFXGenericDialog dialogContent = fxmlLoader.load();
+
+        dialogContent.setShowMinimize(false);
+        dialogContent.setShowAlwaysOnTop(false);
+
+        dialog =
+                MFXGenericDialogBuilder.build(dialogContent)
+                        .toStageDialogBuilder()
+                        .initOwner(stage)
+                        .initModality(Modality.WINDOW_MODAL)
+                        .setOwnerNode(uomContentPane)
+                        .setScrimPriority(ScrimPriority.WINDOW)
+                        .setScrimOwner(true)
+                        .get();
+
+        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
+    }
+
+    public void uomCreateBtnClicked() {
+        dialog.showAndWait();
+    }
 }

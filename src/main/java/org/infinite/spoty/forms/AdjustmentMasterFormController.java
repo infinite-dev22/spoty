@@ -31,14 +31,12 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
-import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.components.navigation.Pages;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
@@ -47,6 +45,7 @@ import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.database.models.AdjustmentDetail;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.AdjustmentDetailViewModel;
 import org.infinite.spoty.viewModels.AdjustmentMasterViewModel;
 import org.infinite.spoty.viewModels.BranchViewModel;
@@ -87,7 +86,6 @@ public class AdjustmentMasterFormController implements Initializable {
     @FXML
     public MFXButton adjustmentProductSaveBtn;
     private MFXStageDialog dialog;
-    private Dialog dialog1;
 
     private AdjustmentMasterFormController(Stage stage) {
         Platform.runLater(
@@ -229,15 +227,14 @@ public class AdjustmentMasterFormController implements Initializable {
         // Edit
         edit.setOnAction(
                 event -> {
-                    GlobalActions.spotyThreadPool()
-                            .execute(
-                                    () -> {
-                                        try {
-                                            AdjustmentDetailViewModel.getAdjustmentDetail(obj.getData());
-                                        } catch (SQLException e) {
-                                            SpotyLogger.writeToFile(e, this.getClass());
-                                        }
-                                    });
+                    SpotyThreader.spotyThreadPool(
+                            () -> {
+                                try {
+                                    AdjustmentDetailViewModel.getAdjustmentDetail(obj.getData());
+                                } catch (SQLException e) {
+                                    SpotyLogger.writeToFile(e, this.getClass());
+                                }
+                            });
 
                     dialog.showAndWait();
                     event.consume();
@@ -289,15 +286,14 @@ public class AdjustmentMasterFormController implements Initializable {
         if (!adjustmentBranchValidationLabel.isVisible()
                 && !adjustmentDateValidationLabel.isVisible()) {
             if (AdjustmentMasterViewModel.getId() > 0) {
-                GlobalActions.spotyThreadPool()
-                        .execute(
-                                () -> {
-                                    try {
-                                        AdjustmentMasterViewModel.updateItem(AdjustmentMasterViewModel.getId());
-                                    } catch (SQLException e) {
-                                        SpotyLogger.writeToFile(e, this.getClass());
-                                    }
-                                });
+                SpotyThreader.spotyThreadPool(
+                        () -> {
+                            try {
+                                AdjustmentMasterViewModel.updateItem(AdjustmentMasterViewModel.getId());
+                            } catch (SQLException e) {
+                                SpotyLogger.writeToFile(e, this.getClass());
+                            }
+                        });
 
                 SimpleNotification notification =
                         new SimpleNotification.NotificationBuilder("Product adjustment updated successfully")
@@ -313,15 +309,14 @@ public class AdjustmentMasterFormController implements Initializable {
 
                 return;
             }
-            GlobalActions.spotyThreadPool()
-                    .execute(
-                            () -> {
-                                try {
-                                    AdjustmentMasterViewModel.saveAdjustmentMaster();
-                                } catch (SQLException e) {
-                                    SpotyLogger.writeToFile(e, this.getClass());
-                                }
-                            });
+            SpotyThreader.spotyThreadPool(
+                    () -> {
+                        try {
+                            AdjustmentMasterViewModel.saveAdjustmentMaster();
+                        } catch (SQLException e) {
+                            SpotyLogger.writeToFile(e, this.getClass());
+                        }
+                    });
 
             SimpleNotification notification =
                     new SimpleNotification.NotificationBuilder("Product adjustment saved successfully")

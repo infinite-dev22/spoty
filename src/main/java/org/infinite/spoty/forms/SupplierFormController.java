@@ -19,12 +19,12 @@ import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.SupplierViewModel;
 
 import java.net.URL;
@@ -130,7 +130,7 @@ public class SupplierFormController implements Initializable {
                             && !supplierFormEmailValidationLabel.isVisible()
                             && !supplierFormPhoneValidationLabel.isVisible()) {
                         if (SupplierViewModel.getId() > 0) {
-                            GlobalActions.spotyThreadPool().execute(() -> {
+                            SpotyThreader.spotyThreadPool(() -> {
                                 try {
                                     SupplierViewModel.updateItem(SupplierViewModel.getId());
                                 } catch (SQLException e) {
@@ -149,7 +149,7 @@ public class SupplierFormController implements Initializable {
                             closeDialog(event);
                             return;
                         }
-                        GlobalActions.spotyThreadPool().execute(() -> {
+                        SpotyThreader.spotyThreadPool(() -> {
                             try {
                                 SupplierViewModel.saveSupplier();
                             } catch (SQLException e) {

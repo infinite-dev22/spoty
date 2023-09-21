@@ -14,39 +14,42 @@
 
 package org.infinite.spoty.components.navigation;
 
+import javafx.scene.Node;
+import javafx.scene.layout.BorderPane;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import javafx.scene.Node;
-import javafx.scene.layout.BorderPane;
-import org.jetbrains.annotations.Nullable;
 
 record Nav(
-    String title, @Nullable Node graphic, BorderPane view, @Nullable List<String> searchKeywords) {
+        String title, @Nullable Node graphic, BorderPane view, @Nullable List<String> searchKeywords) {
 
-  public static final Nav ROOT = new Nav("ROOT", null, null, null);
+    // Treeview parent not.
+    public static final Nav ROOT = new Nav("ROOT", null, null, null);
 
-  public Nav {
-    Objects.requireNonNull(title, "title");
-    searchKeywords = Objects.requireNonNullElse(searchKeywords, Collections.emptyList());
-  }
+    public Nav {
+        Objects.requireNonNull(title, "title");
+        searchKeywords = Objects.requireNonNullElse(searchKeywords, Collections.emptyList());
+    }
 
-  public boolean isGroup() {
-    return Objects.equals(view, null);
-  }
+    public boolean isGroup() {
+        return Objects.equals(view, null);
+    }
 
-  public boolean isMainPage() {
-    return !Objects.equals(view, null) && !Objects.equals(graphic, null);
-  }
+    public boolean isMainPage() {
+        return !Objects.equals(view, null) && !Objects.equals(graphic, null);
+    }
 
-  public boolean matches(String filter) {
-    Objects.requireNonNull(filter);
-    return contains(title, filter)
-        || (searchKeywords != null
-            && searchKeywords.stream().anyMatch(keyword -> contains(keyword, filter)));
-  }
+    public boolean matches(String filter) {
+        Objects.requireNonNull(filter);
+        return contains(title, filter)
+                || (searchKeywords != null
+                && searchKeywords.stream().anyMatch(keyword -> contains(keyword, filter)));
+    }
 
-  private boolean contains(String text, String filter) {
-    return text.toLowerCase().contains(filter.toLowerCase());
-  }
+    private boolean contains(@NotNull String text, @NotNull String filter) {
+        return text.toLowerCase().contains(filter.toLowerCase());
+    }
 }

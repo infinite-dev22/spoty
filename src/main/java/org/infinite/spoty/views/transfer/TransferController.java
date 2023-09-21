@@ -18,10 +18,6 @@ import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.filter.DoubleFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
-import java.net.URL;
-import java.sql.SQLException;
-import java.util.Comparator;
-import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
@@ -30,155 +26,163 @@ import javafx.fxml.Initializable;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.components.navigation.Pages;
 import org.infinite.spoty.database.models.TransferMaster;
+import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.TransferMasterViewModel;
 import org.infinite.spoty.views.BaseController;
 
+import java.net.URL;
+import java.sql.SQLException;
+import java.util.Comparator;
+import java.util.ResourceBundle;
+
 @SuppressWarnings("unchecked")
 public class TransferController implements Initializable {
-  private static TransferController instance;
-  @FXML public MFXTextField transferSearchBar;
-  @FXML public HBox transferActionsPane;
-  @FXML public MFXButton transferImportBtn;
-  @FXML public MFXTableView<TransferMaster> transferMasterTable;
-  @FXML public BorderPane transferContentPane;
+    private static TransferController instance;
+    @FXML
+    public MFXTextField transferSearchBar;
+    @FXML
+    public HBox transferActionsPane;
+    @FXML
+    public MFXButton transferImportBtn;
+    @FXML
+    public MFXTableView<TransferMaster> transferMasterTable;
+    @FXML
+    public BorderPane transferContentPane;
 
-  public static TransferController getInstance() {
-    if (instance == null) instance = new TransferController();
-    return instance;
-  }
-
-  @Override
-  public void initialize(URL location, ResourceBundle resources) {
-    Platform.runLater(this::setupTable);
-  }
-
-  private void setupTable() {
-    MFXTableColumn<TransferMaster> transferFromBranch =
-        new MFXTableColumn<>(
-            "Branch(From)", false, Comparator.comparing(TransferMaster::getFromBranchName));
-    MFXTableColumn<TransferMaster> transferToBranch =
-        new MFXTableColumn<>(
-            "Branch(To)", false, Comparator.comparing(TransferMaster::getToBranchName));
-    MFXTableColumn<TransferMaster> transferStatus =
-        new MFXTableColumn<>("Status", false, Comparator.comparing(TransferMaster::getStatus));
-    MFXTableColumn<TransferMaster> transferDate =
-        new MFXTableColumn<>("Date", false, Comparator.comparing(TransferMaster::getDate));
-    MFXTableColumn<TransferMaster> transferTotalCost =
-        new MFXTableColumn<>("Total Amount", false, Comparator.comparing(TransferMaster::getTotal));
-
-    transferFromBranch.setRowCellFactory(
-        transfer -> new MFXTableRowCell<>(TransferMaster::getFromBranchName));
-    transferToBranch.setRowCellFactory(
-        transfer -> new MFXTableRowCell<>(TransferMaster::getToBranchName));
-    transferStatus.setRowCellFactory(transfer -> new MFXTableRowCell<>(TransferMaster::getStatus));
-    transferDate.setRowCellFactory(
-        transfer -> new MFXTableRowCell<>(TransferMaster::getLocaleDate));
-    transferTotalCost.setRowCellFactory(
-        transfer -> new MFXTableRowCell<>(TransferMaster::getTotal));
-
-    transferFromBranch.prefWidthProperty().bind(transferMasterTable.widthProperty().multiply(.25));
-    transferToBranch.prefWidthProperty().bind(transferMasterTable.widthProperty().multiply(.25));
-    transferStatus.prefWidthProperty().bind(transferMasterTable.widthProperty().multiply(.25));
-    transferTotalCost.prefWidthProperty().bind(transferMasterTable.widthProperty().multiply(.25));
-    transferDate.prefWidthProperty().bind(transferMasterTable.widthProperty().multiply(.25));
-
-    transferMasterTable
-        .getTableColumns()
-        .addAll(
-            transferFromBranch, transferToBranch, transferStatus, transferDate, transferTotalCost);
-    transferMasterTable
-        .getFilters()
-        .addAll(
-            new StringFilter<>("Reference", TransferMaster::getRef),
-            new StringFilter<>("Branch(From)", TransferMaster::getFromBranchName),
-            new StringFilter<>("Branch(To)", TransferMaster::getToBranchName),
-            new StringFilter<>("Status", TransferMaster::getStatus),
-            new DoubleFilter<>("Total Amount", TransferMaster::getTotal));
-    getTransferMasterTable();
-
-    if (TransferMasterViewModel.getTransfers().isEmpty()) {
-      TransferMasterViewModel.getTransfers()
-          .addListener(
-              (ListChangeListener<TransferMaster>)
-                  c -> transferMasterTable.setItems(TransferMasterViewModel.getTransfers()));
-    } else {
-      transferMasterTable
-          .itemsProperty()
-          .bindBidirectional(TransferMasterViewModel.transfersProperty());
+    public static TransferController getInstance() {
+        if (instance == null) instance = new TransferController();
+        return instance;
     }
-  }
 
-  private void getTransferMasterTable() {
-    transferMasterTable.setPrefSize(1000, 1000);
-    transferMasterTable.features().enableBounceEffect();
-    transferMasterTable.features().enableSmoothScrolling(0.5);
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        Platform.runLater(this::setupTable);
+    }
 
-    transferMasterTable.setTableRowFactory(
-        t -> {
-          MFXTableRow<TransferMaster> row = new MFXTableRow<>(transferMasterTable, t);
-          EventHandler<ContextMenuEvent> eventHandler =
-              event -> {
-                showContextMenu((MFXTableRow<TransferMaster>) event.getSource())
-                    .show(
-                        transferMasterTable.getScene().getWindow(),
-                        event.getScreenX(),
-                        event.getScreenY());
-                event.consume();
-              };
-          row.setOnContextMenuRequested(eventHandler);
-          return row;
-        });
-  }
+    private void setupTable() {
+        MFXTableColumn<TransferMaster> transferFromBranch =
+                new MFXTableColumn<>(
+                        "Branch(From)", false, Comparator.comparing(TransferMaster::getFromBranchName));
+        MFXTableColumn<TransferMaster> transferToBranch =
+                new MFXTableColumn<>(
+                        "Branch(To)", false, Comparator.comparing(TransferMaster::getToBranchName));
+        MFXTableColumn<TransferMaster> transferStatus =
+                new MFXTableColumn<>("Status", false, Comparator.comparing(TransferMaster::getStatus));
+        MFXTableColumn<TransferMaster> transferDate =
+                new MFXTableColumn<>("Date", false, Comparator.comparing(TransferMaster::getDate));
+        MFXTableColumn<TransferMaster> transferTotalCost =
+                new MFXTableColumn<>("Total Amount", false, Comparator.comparing(TransferMaster::getTotal));
 
-  private MFXContextMenu showContextMenu(MFXTableRow<TransferMaster> obj) {
-    MFXContextMenu contextMenu = new MFXContextMenu(transferMasterTable);
-    MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
-    MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+        transferFromBranch.setRowCellFactory(
+                transfer -> new MFXTableRowCell<>(TransferMaster::getFromBranchName));
+        transferToBranch.setRowCellFactory(
+                transfer -> new MFXTableRowCell<>(TransferMaster::getToBranchName));
+        transferStatus.setRowCellFactory(transfer -> new MFXTableRowCell<>(TransferMaster::getStatus));
+        transferDate.setRowCellFactory(
+                transfer -> new MFXTableRowCell<>(TransferMaster::getLocaleDate));
+        transferTotalCost.setRowCellFactory(
+                transfer -> new MFXTableRowCell<>(TransferMaster::getTotal));
 
-    // Actions
-    // Delete
-    delete.setOnAction(
-        e -> {
-          GlobalActions.spotyThreadPool()
-              .execute(
-                  () -> {
-                    try {
-                      TransferMasterViewModel.deleteItem(obj.getData().getId());
-                    } catch (SQLException ex) {
-                      throw new RuntimeException(ex);
-                    }
-                  });
+        transferFromBranch.prefWidthProperty().bind(transferMasterTable.widthProperty().multiply(.25));
+        transferToBranch.prefWidthProperty().bind(transferMasterTable.widthProperty().multiply(.25));
+        transferStatus.prefWidthProperty().bind(transferMasterTable.widthProperty().multiply(.25));
+        transferTotalCost.prefWidthProperty().bind(transferMasterTable.widthProperty().multiply(.25));
+        transferDate.prefWidthProperty().bind(transferMasterTable.widthProperty().multiply(.25));
 
-          e.consume();
-        });
-    // Edit
-    edit.setOnAction(
-        e -> {
-          GlobalActions.spotyThreadPool()
-              .execute(
-                  () -> {
-                    try {
-                      TransferMasterViewModel.getItem(obj.getData().getId());
-                    } catch (SQLException ex) {
-                      throw new RuntimeException(ex);
-                    }
-                  });
+        transferMasterTable
+                .getTableColumns()
+                .addAll(
+                        transferFromBranch, transferToBranch, transferStatus, transferDate, transferTotalCost);
+        transferMasterTable
+                .getFilters()
+                .addAll(
+                        new StringFilter<>("Reference", TransferMaster::getRef),
+                        new StringFilter<>("Branch(From)", TransferMaster::getFromBranchName),
+                        new StringFilter<>("Branch(To)", TransferMaster::getToBranchName),
+                        new StringFilter<>("Status", TransferMaster::getStatus),
+                        new DoubleFilter<>("Total Amount", TransferMaster::getTotal));
+        getTransferMasterTable();
 
-          transferCreateBtnClicked();
+        if (TransferMasterViewModel.getTransfers().isEmpty()) {
+            TransferMasterViewModel.getTransfers()
+                    .addListener(
+                            (ListChangeListener<TransferMaster>)
+                                    c -> transferMasterTable.setItems(TransferMasterViewModel.getTransfers()));
+        } else {
+            transferMasterTable
+                    .itemsProperty()
+                    .bindBidirectional(TransferMasterViewModel.transfersProperty());
+        }
+    }
 
-          e.consume();
-        });
+    private void getTransferMasterTable() {
+        transferMasterTable.setPrefSize(1000, 1000);
+        transferMasterTable.features().enableBounceEffect();
+        transferMasterTable.features().enableSmoothScrolling(0.5);
 
-    contextMenu.addItems(edit, delete);
+        transferMasterTable.setTableRowFactory(
+                t -> {
+                    MFXTableRow<TransferMaster> row = new MFXTableRow<>(transferMasterTable, t);
+                    EventHandler<ContextMenuEvent> eventHandler =
+                            event -> {
+                                showContextMenu((MFXTableRow<TransferMaster>) event.getSource())
+                                        .show(
+                                                transferMasterTable.getScene().getWindow(),
+                                                event.getScreenX(),
+                                                event.getScreenY());
+                                event.consume();
+                            };
+                    row.setOnContextMenuRequested(eventHandler);
+                    return row;
+                });
+    }
 
-    return contextMenu;
-  }
+    private MFXContextMenu showContextMenu(MFXTableRow<TransferMaster> obj) {
+        MFXContextMenu contextMenu = new MFXContextMenu(transferMasterTable);
+        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
+        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
 
-  @FXML
-  private void transferCreateBtnClicked() {
-    BaseController.navigation.navigate(Pages.getTransferMasterFormPane());
-  }
+        // Actions
+        // Delete
+        delete.setOnAction(
+                e -> {
+                    SpotyThreader.spotyThreadPool(
+                            () -> {
+                                try {
+                                    TransferMasterViewModel.deleteItem(obj.getData().getId());
+                                } catch (SQLException ex) {
+                                    throw new RuntimeException(ex);
+                                }
+                            });
+
+                    e.consume();
+                });
+        // Edit
+        edit.setOnAction(
+                e -> {
+                    SpotyThreader.spotyThreadPool(
+                            () -> {
+                                try {
+                                    TransferMasterViewModel.getItem(obj.getData().getId());
+                                } catch (SQLException ex) {
+                                    throw new RuntimeException(ex);
+                                }
+                            });
+
+                    transferCreateBtnClicked();
+
+                    e.consume();
+                });
+
+        contextMenu.addItems(edit, delete);
+
+        return contextMenu;
+    }
+
+    @FXML
+    private void transferCreateBtnClicked() {
+        BaseController.navigation.navigate(Pages.getTransferMasterFormPane());
+    }
 }

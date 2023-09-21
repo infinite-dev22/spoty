@@ -14,8 +14,6 @@
 
 package org.infinite.spoty.views.expenses.category;
 
-import static org.infinite.spoty.SpotyResourceLoader.fxmlLoader;
-
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
@@ -23,13 +21,6 @@ import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
 import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import io.github.palexdev.materialfx.enums.ScrimPriority;
 import io.github.palexdev.materialfx.filter.StringFilter;
-
-import java.io.IOException;
-import java.net.URL;
-import java.sql.SQLException;
-import java.util.Comparator;
-import java.util.ResourceBundle;
-
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
@@ -41,10 +32,18 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.database.models.ExpenseCategory;
 import org.infinite.spoty.forms.ExpenseCategoryFormController;
+import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.ExpenseCategoryViewModel;
+
+import java.io.IOException;
+import java.net.URL;
+import java.sql.SQLException;
+import java.util.Comparator;
+import java.util.ResourceBundle;
+
+import static org.infinite.spoty.SpotyResourceLoader.fxmlLoader;
 
 @SuppressWarnings("unchecked")
 public class ExpenseCategoryController implements Initializable {
@@ -147,7 +146,7 @@ public class ExpenseCategoryController implements Initializable {
         // Delete
         delete.setOnAction(
                 e -> {
-                    GlobalActions.spotyThreadPool().execute(() -> {
+                    SpotyThreader.spotyThreadPool(() -> {
                         try {
                             ExpenseCategoryViewModel.deleteItem(obj.getData().getId());
                         } catch (SQLException ex) {
@@ -159,7 +158,7 @@ public class ExpenseCategoryController implements Initializable {
         // Edit
         edit.setOnAction(
                 e -> {
-                    GlobalActions.spotyThreadPool().execute(() -> {
+                    SpotyThreader.spotyThreadPool(() -> {
                         try {
                             ExpenseCategoryViewModel.getItem(obj.getData().getId());
                         } catch (SQLException ex) {

@@ -24,15 +24,6 @@ import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import io.github.palexdev.mfxcore.controls.Label;
 import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
-
-import java.net.URL;
-import java.sql.SQLException;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.ResourceBundle;
-import java.util.function.Function;
-import java.util.function.Predicate;
-
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -54,20 +45,20 @@ import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
-import org.infinite.spoty.database.models.Branch;
-import org.infinite.spoty.database.models.Customer;
-import org.infinite.spoty.database.models.Product;
-import org.infinite.spoty.database.models.ProductCategory;
-import org.infinite.spoty.database.models.SaleDetail;
+import org.infinite.spoty.database.models.*;
 import org.infinite.spoty.utils.SpotyLogger;
-import org.infinite.spoty.viewModels.BranchViewModel;
-import org.infinite.spoty.viewModels.CustomerViewModel;
-import org.infinite.spoty.viewModels.ProductCategoryViewModel;
-import org.infinite.spoty.viewModels.ProductViewModel;
-import org.infinite.spoty.viewModels.SaleDetailViewModel;
-import org.infinite.spoty.viewModels.SaleMasterViewModel;
+import org.infinite.spoty.utils.SpotyThreader;
+import org.infinite.spoty.viewModels.*;
 import org.infinite.spoty.views.pos.components.ProductCard;
 import org.jetbrains.annotations.NotNull;
+
+import java.net.URL;
+import java.sql.SQLException;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.ResourceBundle;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class PointOfSaleController implements Initializable {
     private final ToggleGroup toggleGroup = new ToggleGroup();
@@ -192,7 +183,7 @@ public class PointOfSaleController implements Initializable {
                         if (optionalSaleDetail.isPresent()) {
                             SaleDetail saleDetail = optionalSaleDetail.get();
                             try {
-                                GlobalActions.spotyThreadPool().execute(() -> {
+                                SpotyThreader.spotyThreadPool(() -> {
                                     try {
                                         SaleDetailViewModel.getSaleDetail(saleDetail);
                                     } catch (SQLException e) {
@@ -348,8 +339,7 @@ public class PointOfSaleController implements Initializable {
         SaleMasterViewModel.setNote("Approved.");
 
         SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
-        GlobalActions.spotyThreadPool()
-                .execute(
+        SpotyThreader.spotyThreadPool(
                         () -> {
                             try {
                                 SaleMasterViewModel.saveSaleMaster();

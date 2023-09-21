@@ -37,7 +37,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
-import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.components.navigation.Pages;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
@@ -48,6 +47,7 @@ import org.infinite.spoty.database.models.Customer;
 import org.infinite.spoty.database.models.QuotationDetail;
 import org.infinite.spoty.startup.Dialogs;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.values.strings.Values;
 import org.infinite.spoty.viewModels.BranchViewModel;
 import org.infinite.spoty.viewModels.CustomerViewModel;
@@ -300,7 +300,7 @@ public class QuotationMasterFormController implements Initializable {
                             .get();
 
             io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
-        } catch (Exception e){
+        } catch (Exception e) {
             SpotyLogger.writeToFile(e, QuotationMasterFormController.class);
         }
     }
@@ -325,7 +325,7 @@ public class QuotationMasterFormController implements Initializable {
                 && !quotationDateValidationLabel.isVisible()
                 && !quotationStatusValidationLabel.isVisible()) {
             if (QuotationMasterViewModel.getId() > 0) {
-                GlobalActions.spotyThreadPool().execute(() -> {
+                SpotyThreader.spotyThreadPool(() -> {
                     try {
                         QuotationMasterViewModel.updateItem(QuotationMasterViewModel.getId());
                     } catch (SQLException e) {
@@ -348,7 +348,7 @@ public class QuotationMasterFormController implements Initializable {
                 cancelBtnClicked();
                 return;
             }
-            GlobalActions.spotyThreadPool().execute(() -> {
+            SpotyThreader.spotyThreadPool(() -> {
                 try {
                     QuotationMasterViewModel.saveQuotationMaster();
                 } catch (SQLException e) {
@@ -397,7 +397,7 @@ public class QuotationMasterFormController implements Initializable {
     public void addBtnClicked() {
         try {
             dialog.showAndWait();
-        } catch (Exception e){
+        } catch (Exception e) {
             SpotyLogger.writeToFile(e, QuotationMasterFormController.class);
         }
     }

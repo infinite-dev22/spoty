@@ -25,10 +25,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.GridPane;
 import javafx.util.StringConverter;
-import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.Currency;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.BranchViewModel;
 import org.infinite.spoty.viewModels.CurrencyViewModel;
 
@@ -133,7 +133,7 @@ public class SystemController implements Initializable {
     }
 
     private void initGUI() throws SQLException {
-        GlobalActions.spotyThreadPool().execute(() -> {
+        SpotyThreader.spotyThreadPool(() -> {
             try {
                 BranchViewModel.getItem(preferences.getInt("default_branch", 1));
                 CurrencyViewModel.getItem(preferences.getInt("default_currency", 1));
@@ -141,7 +141,7 @@ public class SystemController implements Initializable {
                 SpotyLogger.writeToFile(e, this.getClass());
             }
         });
-        Locale locale = new Locale(preferences.get("default_language", "EN"));
+        Locale locale = Locale.of(preferences.get("default_language", "EN"));
 
         defaultCurrency.setValue(CurrencyViewModel.getCurrency());
         defaultLanguage.setValue(locale);

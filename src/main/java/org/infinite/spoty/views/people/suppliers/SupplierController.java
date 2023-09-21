@@ -14,8 +14,6 @@
 
 package org.infinite.spoty.views.people.suppliers;
 
-import static org.infinite.spoty.SpotyResourceLoader.fxmlLoader;
-
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
@@ -23,13 +21,6 @@ import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
 import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import io.github.palexdev.materialfx.enums.ScrimPriority;
 import io.github.palexdev.materialfx.filter.StringFilter;
-
-import java.io.IOException;
-import java.net.URL;
-import java.sql.SQLException;
-import java.util.Comparator;
-import java.util.ResourceBundle;
-
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
@@ -41,10 +32,18 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.database.models.Supplier;
 import org.infinite.spoty.forms.SupplierFormController;
+import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.SupplierViewModel;
+
+import java.io.IOException;
+import java.net.URL;
+import java.sql.SQLException;
+import java.util.Comparator;
+import java.util.ResourceBundle;
+
+import static org.infinite.spoty.SpotyResourceLoader.fxmlLoader;
 
 @SuppressWarnings("unchecked")
 public class SupplierController implements Initializable {
@@ -160,20 +159,19 @@ public class SupplierController implements Initializable {
         // Delete
         delete.setOnAction(
                 e -> {
-                    GlobalActions.spotyThreadPool().execute(() -> {
+                    SpotyThreader.spotyThreadPool(() -> {
                         try {
                             SupplierViewModel.deleteItem(obj.getData().getId());
                         } catch (SQLException ex) {
                             throw new RuntimeException(ex);
                         }
                     });
-                    ;
                     e.consume();
                 });
         // Edit
         edit.setOnAction(
                 e -> {
-                    GlobalActions.spotyThreadPool().execute(() -> {
+                    SpotyThreader.spotyThreadPool(() -> {
                         try {
                             SupplierViewModel.getItem(obj.getData().getId());
                         } catch (SQLException ex) {

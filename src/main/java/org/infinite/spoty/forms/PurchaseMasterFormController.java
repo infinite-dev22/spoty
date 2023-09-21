@@ -39,7 +39,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
-import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.components.navigation.Pages;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
@@ -49,6 +48,7 @@ import org.infinite.spoty.database.models.Branch;
 import org.infinite.spoty.database.models.PurchaseDetail;
 import org.infinite.spoty.database.models.Supplier;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.values.strings.Values;
 import org.infinite.spoty.viewModels.BranchViewModel;
 import org.infinite.spoty.viewModels.PurchaseDetailViewModel;
@@ -213,7 +213,7 @@ public class PurchaseMasterFormController implements Initializable {
                 && !purchaseDateValidationLabel.isVisible()
                 && !purchaseStatusValidationLabel.isVisible()) {
             if (PurchaseMasterViewModel.getId() > 0) {
-                GlobalActions.spotyThreadPool().execute(() -> {
+                SpotyThreader.spotyThreadPool(() -> {
                     try {
                         PurchaseMasterViewModel.updateItem(PurchaseMasterViewModel.getId());
                     } catch (SQLException e) {
@@ -236,7 +236,7 @@ public class PurchaseMasterFormController implements Initializable {
                 cancelBtnClicked();
                 return;
             }
-            GlobalActions.spotyThreadPool().execute(() -> {
+            SpotyThreader.spotyThreadPool(() -> {
                 try {
                     PurchaseMasterViewModel.savePurchaseMaster();
                 } catch (SQLException e) {
@@ -374,7 +374,7 @@ public class PurchaseMasterFormController implements Initializable {
         // Edit
         edit.setOnAction(
                 event -> {
-                    GlobalActions.spotyThreadPool().execute(() -> {
+                    SpotyThreader.spotyThreadPool(() -> {
                         try {
                             PurchaseDetailViewModel.getItem(
                                     obj.getData().getId(),

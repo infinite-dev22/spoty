@@ -18,7 +18,6 @@ import fr.brouillard.oss.cssfx.CSSFX;
 import io.github.palexdev.materialfx.css.themes.MFXThemeManager;
 import io.github.palexdev.materialfx.css.themes.Themes;
 import javafx.application.Platform;
-import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -56,12 +55,68 @@ public class SplashScreenController implements Initializable {
     public Label companyName;
 
     public static void checkFunctions() {
-        Task<Void> databaseCreator = getTask();
+        var tableCreate = tableCreate();
+        var dataInit = dataInit();
 
-        Task<Void> initDataFetcher =
-                new Task<>() {
-                    @Override
-                    protected Void call() throws SQLException {
+        try {
+            tableCreate.join();
+            dataInit.join();
+            startApp();
+        } catch (InterruptedException e) {
+            SpotyLogger.writeToFile(e, SplashScreenController.class);
+        }
+    }
+
+    @NotNull
+    private static Thread tableCreate() {
+        return virtualThread(
+                "data-storage-man",
+                () -> {
+                    try {
+                        SpotyPaths.createPaths();
+                        SQLiteTableCreator.getInstance().createTablesIfNotExist();
+                        SQLiteTableCreator.getInstance().seedDatabase();
+                    } catch (SQLException e) {
+                        SpotyLogger.writeToFile(e, SplashScreenController.class);
+                    }
+                });
+    }
+
+    private static void startApp() {
+        Platform.runLater(
+                () -> {
+                    try {
+                        CSSFX.start();
+                        Stage stage = new Stage();
+                        setControllers(stage);
+                        Dialogs.setControllers();
+                        setPanes();
+                        Dialogs.setDialogContent();
+                        FXMLLoader loader = fxmlLoader("fxml/Base.fxml");
+                        loader.setControllerFactory(c -> BaseController.getInstance(stage));
+                        Parent root = loader.load();
+                        Scene scene = new Scene(root);
+                        MFXThemeManager.addOn(scene, Themes.DEFAULT, Themes.LEGACY);
+                        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(scene);
+                        scene.setFill(null);
+                        stage.setScene(scene);
+                        stage.initStyle(StageStyle.TRANSPARENT);
+                        stage.setMaximized(true);
+                        stage.setTitle(Labels.APP_NAME);
+                        stage.show();
+                        SimpleNotificationHolder.setNotificationOwner(stage);
+                    } catch (IOException e) {
+                        SpotyLogger.writeToFile(e, SplashScreenController.class);
+                    }
+                });
+    }
+
+    @NotNull
+    private static Thread dataInit() {
+        return virtualThread(
+                "data-tracker",
+                () -> {
+                    try {
                         AdjustmentMasterViewModel.getAllAdjustmentMasters();
                         BranchViewModel.getAllBranches();
                         BrandViewModel.getItems();
@@ -187,77 +242,14 @@ public class SplashScreenController implements Initializable {
                         PermissionsViewModel.setCreateRequisition();
                         PermissionsViewModel.setEditRequisition();
                         PermissionsViewModel.setDeleteRequisition();
-                        return null;
-                    }
-                };
-        initDataFetcher.setOnFailed(event -> initDataFetcher.getException().printStackTrace());
-
-        Thread thread1 = new Thread(databaseCreator);
-        thread1.setDaemon(true);
-        Thread thread2 = new Thread(initDataFetcher);
-        thread2.setDaemon(true);
-
-//        GlobalActions.spotyThreadPool().execute(databaseCreator);
-//        GlobalActions.spotyThreadPool().execute(initDataFetcher);
-
-        try {
-            thread1.start();
-            thread1.join();
-            thread2.start();
-            thread2.join();
-        } catch (InterruptedException e) {
-            SpotyLogger.writeToFile(e, SplashScreenController.class);
-        }
-
-        Platform.runLater(
-                () -> {
-                    try {
-                        CSSFX.start();
-                        Stage stage = new Stage();
-                        setControllers(stage);
-                        Dialogs.setControllers();
-                        setPanes();
-                        Dialogs.setDialogContent();
-                        FXMLLoader loader = fxmlLoader("fxml/Base.fxml");
-                        loader.setControllerFactory(c -> BaseController.getInstance(stage));
-                        Parent root = loader.load();
-                        Scene scene = new Scene(root);
-                        MFXThemeManager.addOn(scene, Themes.DEFAULT, Themes.LEGACY);
-                        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(scene);
-                        scene.setFill(null);
-                        stage.setScene(scene);
-                        stage.initStyle(StageStyle.TRANSPARENT);
-                        stage.setMaximized(true);
-                        stage.setTitle(Labels.APP_NAME);
-                        stage.show();
-                        SimpleNotificationHolder.setNotificationOwner(stage);
-                    } catch (IOException e) {
+                    } catch (SQLException e) {
                         SpotyLogger.writeToFile(e, SplashScreenController.class);
                     }
                 });
     }
 
-    @NotNull
-    private static Task<Void> getTask() {
-        Task<Void> databaseCreator =
-                new Task<>() {
-                    @Override
-                    protected Void call() throws SQLException {
-//                        try {
-                            SpotyPaths.createPaths();
-                            SQLiteTableCreator.getInstance().createTablesIfNotExist();
-                            SQLiteTableCreator.getInstance().seedDatabase();
-//                        } catch (SQLException e) {
-//                            SpotyLogger.writeToFile(e, SplashScreenController.class);
-//                        }
-                        return null;
-                    }
-                };
-        databaseCreator.setOnFailed(event -> {
-            SpotyLogger.writeToFile(databaseCreator.getException(), SplashScreenController.class);
-            databaseCreator.getException().printStackTrace();
-        });
-        return databaseCreator;
+    private static Thread virtualThread(String name, Runnable runnable) {
+        return Thread.ofVirtual().name(name).start(runnable);
     }
 
     @Override
