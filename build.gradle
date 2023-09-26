@@ -2,8 +2,8 @@ plugins {
     id 'java'
     id 'org.javamodularity.moduleplugin' version "1.8.12"
     id 'application'
-    id 'org.openjfx.javafxplugin' version '0.0.13'
-    id 'org.beryx.jlink' version '2.26.0'
+    id 'org.openjfx.javafxplugin' version '0.1.0'
+    id 'org.beryx.jlink' version '3.0.0'
 //    id 'org.graalvm.buildtools.native' version '0.9.23'
 }
 
@@ -79,14 +79,10 @@ run {
             '-XX:SoftRefLRUPolicyMSPerMB=50',
             '-XX:CICompilerCount=2',
             '-XX:+HeapDumpOnOutOfMemoryError',
-            '-XX:-OmitStackTraceInFastThrow',
-            '-XX:+IgnoreUnrecognizedVMOptions',
             '-Dsun.io.useCanonCaches=false',
-            '-Dsun.java2d.metal=true',
             '-Djbr.catch.SIGABRT=true',
-            '-Djdk.http.auth.tunneling.disabledSchemes=""',
             '-Djdk.attach.allowAttachSelf=true',
-            '-Djdk.module.illegalAccess.silent=true'
+            '-XX:ErrorFile=/home/infinite-dev/IdeaProjects/spoty/error%p.log',
     ]
 }
 
@@ -133,14 +129,16 @@ jlink {
             targetPlatform("linux-x64") {
                 addExtraModulePath("/home/infinite/Java_FX/javafx-jmods-20/linux_x64")
             }
-            installerType = 'deb'
+//            installerType = 'deb'
+            installerType = 'app-image'
         }
 
         installerOptions = [
-                '--name', 'Zenmart-ERP',
+//                '--name', 'Zenmart-ERP',
                 '--description', project.description,
                 '--copyright', 'Copyrigth 2023 infinite Studios',
-                '--vendor', 'infinite Studios'
+                '--vendor', 'infinite Studios',
+                '--verbose'
         ]
 
         if (installerType == 'pkg') {
@@ -208,7 +206,7 @@ dependencies {
     implementation "fr.brouillard.oss:cssfx:11.5.1"
     implementation "io.github.palexdev:scenicview:17.0.2"
     implementation "io.github.palexdev:virtualizedfx:11.9.6"
-    implementation "io.github.palexdev:mfxcomponents:11.22.0"
+    implementation "io.github.palexdev:mfxcomponents:11.23.0"
     implementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
     implementation "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
 }
