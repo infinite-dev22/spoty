@@ -67,8 +67,8 @@ public class SQLiteConnection {
       try {
         return new JdbcConnectionSource(
             "jdbc:sqlite:"
-                + System.getenv("APPDATA")
-                + "/.config/ZenmartERP/datastores/databases/sqlite/database.sqlite3");
+                + System.getProperty("user.home")
+                    + "\\AppData\\Local\\ZenmartERP\\data\\datastores\\databases\\offline\\sync\\sqlite\\db\\database.sqlite3");
       } catch (Exception e) {
         SpotyLogger.writeToFile(e, this.getClass());
       }

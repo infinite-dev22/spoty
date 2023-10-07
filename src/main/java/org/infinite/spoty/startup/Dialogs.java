@@ -20,23 +20,34 @@ import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
 import java.io.IOException;
 import javafx.fxml.FXMLLoader;
 import org.infinite.spoty.forms.QuotationDetailFormController;
+import org.infinite.spoty.printable.general.GeneralViewController;
 
 public class Dialogs {
   private static final FXMLLoader fxmlLoader = fxmlLoader("forms/QuotationDetailForm.fxml");
+  private static final FXMLLoader printableLoader = fxmlLoader("printable/general/General.fxml");
 
   private static MFXGenericDialog quotationDialogContent;
+  private static MFXGenericDialog printableDialogContent;
 
   public static void setControllers() {
     fxmlLoader.setControllerFactory(c -> QuotationDetailFormController.getInstance());
+    printableLoader.setControllerFactory(c -> GeneralViewController.getInstance());
   }
 
   public static void setDialogContent() throws IOException {
     quotationDialogContent = fxmlLoader.load();
+    printableDialogContent = printableLoader.load();
   }
 
   public static MFXGenericDialog getQuotationDialogContent() {
     quotationDialogContent.setShowMinimize(false);
     quotationDialogContent.setShowAlwaysOnTop(false);
     return quotationDialogContent;
+  }
+
+  public static MFXGenericDialog getGeneralPrintableFxmlLoader() {
+    printableDialogContent.setShowMinimize(false);
+    printableDialogContent.setShowAlwaysOnTop(false);
+    return printableDialogContent;
   }
 }

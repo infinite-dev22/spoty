@@ -35,7 +35,7 @@ public class LaunchPreloader extends Preloader {
     scene.setFill(null);
     primaryStage.initStyle(StageStyle.TRANSPARENT);
     primaryStage.setScene(scene);
-    primaryStage.setAlwaysOnTop(true);
+    primaryStage.setAlwaysOnTop(false);
     primaryStage.show();
   }
 

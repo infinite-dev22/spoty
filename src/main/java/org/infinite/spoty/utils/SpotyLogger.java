@@ -17,6 +17,8 @@ package org.infinite.spoty.utils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
@@ -32,59 +34,6 @@ import java.util.logging.SimpleFormatter;
  * Contains a single function <code>writeToFile</code> taking two parameters <b>exception</b> and <b>currentClass</b>
  */
 public class SpotyLogger {
-
-    /**
-     * Write logs to file.
-     *
-     * @param exception    exception to be written to log file.
-     * @param currentClass class in which the exception is handled.
-     */
-//    public static <T> void writeToFile(Exception exception, @NotNull Class<T> currentClass) {
-//        Logger logger = Logger.getLogger(currentClass.getName());
-//        Formatter formatter = new Formatter() {
-//            @Override
-//            public String format(LogRecord record) {
-//                SimpleDateFormat logTime = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");
-//                Calendar cal = new GregorianCalendar();
-//                cal.setTimeInMillis(record.getMillis());
-//                return "<h4>" + record.getLevel() + "</h4> <h6>" + logTime.format(cal.getTime()) + "</h6>"
-//                        + "Logger Name: " + record.getLoggerName() + "<br/>"
-//                        + "Thread: " + record.getLongThreadID() + "<br/>"
-//                        + "Stacktrace: " + record.getMessage() + "<br/><hr/>";
-//            }
-//        };
-//        FileHandler fileHandler;
-//
-//        try {
-//            fileHandler =
-//                    new FileHandler(
-//                            System.getProperty("user.home")
-//                                    + "/.config/ZenmartERP/logs/spoty_log.html", true);
-//            fileHandler.setFormatter(formatter);
-//
-//            logger.addHandler(fileHandler);
-//
-//            if (logger.isLoggable(Level.INFO)) {
-//                logger.log(Level.INFO, Arrays.toString(exception.getStackTrace()));
-//            }
-//            if (logger.isLoggable(Level.WARNING)) {
-//                logger.log(Level.WARNING, Arrays.toString(exception.getStackTrace()));
-//            }
-//            if (logger.isLoggable(Level.SEVERE)) {
-//                logger.log(Level.SEVERE, Arrays.toString(exception.getStackTrace()));
-//            }
-//            if (logger.isLoggable(Level.CONFIG)) {
-//                logger.log(Level.CONFIG, Arrays.toString(exception.getStackTrace()));
-//            }
-//            if (logger.isLoggable(Level.ALL)) {
-//                logger.log(Level.ALL, Arrays.toString(exception.getStackTrace()));
-//            }
-//        } catch (IOException e) {
-//            SpotyLogger.writeToFile(e, SpotyLogger.class);
-//            throw new RuntimeException(e);
-//        }
-//    }
-
     /**
      * Write logs to file.
      *
@@ -97,18 +46,26 @@ public class SpotyLogger {
         SimpleFormatter formatter = new SimpleFormatter();
 
         FileHandler fileHandler;
+        Path path;
 
         try {
+            if (System.getProperty("os.name").contains("Windows")) {
+                path = Paths.get(System.getProperty("user.home")
+                        + "\\AppData\\Local\\Zenmart ERP\\event-log-data\\logs\\stack\\spoty_log.log");
+            } else {
+                path = Paths.get(System.getProperty("user.home")
+                        + "/.config/ZenmartERP/event-log-data/logs/stack/spoty_log.log");
+            }
+
             fileHandler =
                     new FileHandler(
-                            System.getProperty("user.home")
-                                    + "/.config/ZenmartERP/logs/spoty_log.log", true);
+                            path.toString(), 1000, 1, true);
             fileHandler.setFormatter(formatter);
 
             logger.addHandler(fileHandler);
 
             logger.log(
-                    Level.INFO,
+                    Level.ALL,
                     throwable.getMessage()
                             + "\n"
                             + Arrays.toString(throwable.getStackTrace())

@@ -287,7 +287,6 @@ public class QuotationMasterFormController implements Initializable {
     }
 
     private void quotationProductDialogPane(Stage stage) throws IOException {
-
         try {
             dialog =
                     MFXGenericDialogBuilder.build(Dialogs.getQuotationDialogContent())

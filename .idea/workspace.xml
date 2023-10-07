@@ -5,20 +5,24 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1a27fa9e-5f29-4084-9097-b156dd85e41b" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/copyright/Personal_copyright.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/copyright/profiles_settings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/google-java-format.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/kotlinc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/uiDesigner.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/printable/general/GeneralViewController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.jar" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradlew" beforeDir="false" afterPath="$PROJECT_DIR$/gradlew" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradlew.bat" beforeDir="false" afterPath="$PROJECT_DIR$/gradlew.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/module-info.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/components/navigation/Pages.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/components/navigation/Pages.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/connection/SQLiteConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/connection/SQLiteConnection.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/AdjustmentMasterFormController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/AdjustmentMasterFormController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/QuotationMasterFormController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/QuotationMasterFormController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/startup/Dialogs.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/startup/Dialogs.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/startup/SpotyPaths.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/startup/SpotyPaths.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/utils/SpotyLogger.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/utils/SpotyLogger.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/inventory/products/ProductController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/inventory/products/ProductController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/splash/LaunchPreloader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/splash/LaunchPreloader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/printable/general/General.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/printable/general/General.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,6 +49,13 @@
       </state>
     </system>
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -62,10 +73,42 @@
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/infinite-dev/AppData/Local/SceneBuilder/SceneBuilder.exe&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
   }
 }</component>
-  <component name="RunManager" selected="Gradle.spoty [clean]">
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\infinite-dev\IdeaProjects\spoty\src\main\java\org\infinite\spoty\printable\general" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Gradle.spoty [build]">
+    <configuration name="spoty [build]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="build" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <method v="2" />
+    </configuration>
     <configuration name="spoty [clean]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -134,9 +177,10 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.spoty [clean]" />
-        <item itemvalue="Gradle.spoty [run]" />
+        <item itemvalue="Gradle.spoty [build]" />
         <item itemvalue="Gradle.spoty [jpackage]" />
+        <item itemvalue="Gradle.spoty [run]" />
+        <item itemvalue="Gradle.spoty [clean]" />
       </list>
     </recent_temporary>
   </component>
@@ -150,6 +194,17 @@
       <updated>1695437024687</updated>
     </task>
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

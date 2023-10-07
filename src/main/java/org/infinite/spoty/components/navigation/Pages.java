@@ -14,9 +14,6 @@
 
 package org.infinite.spoty.components.navigation;
 
-import static org.infinite.spoty.SpotyResourceLoader.fxmlLoader;
-
-import java.io.IOException;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -51,357 +48,361 @@ import org.infinite.spoty.views.settings.system.SystemController;
 import org.infinite.spoty.views.stock_in.StockInController;
 import org.infinite.spoty.views.transfer.TransferController;
 
+import java.io.IOException;
+
+import static org.infinite.spoty.SpotyResourceLoader.fxmlLoader;
+
 public class Pages {
-  private static final FXMLLoader dashboardLoader = fxmlLoader("fxml/dashboard/Dashboard.fxml");
-  private static final FXMLLoader productCategoryLoader =
-      fxmlLoader("fxml/inventory/category/ProductCategory.fxml");
-  private static final FXMLLoader brandLoader = fxmlLoader("fxml/inventory/brand/Brand.fxml");
-  private static final FXMLLoader unitLoader =
-      fxmlLoader("fxml/inventory/unit_of_measure/UnitOfMeasure.fxml");
-  private static final FXMLLoader productLoader =
-      fxmlLoader("fxml/inventory/products/Products.fxml");
-  private static final FXMLLoader adjustmentLoader =
-      fxmlLoader("fxml/inventory/adjustment/Adjustment.fxml");
-  private static final FXMLLoader quotationLoader =
-      fxmlLoader("fxml/inventory/quotation/Quotation.fxml");
-  private static final FXMLLoader requisitionLoader =
-      fxmlLoader("fxml/requisition/Requisition.fxml");
-  private static final FXMLLoader purchaseLoader = fxmlLoader("fxml/purchases/Purchases.fxml");
-  private static final FXMLLoader transferLoader = fxmlLoader("fxml/transfer/Transfer.fxml");
-  private static final FXMLLoader stockInLoader = fxmlLoader("fxml/stock_in/StockIn.fxml");
-  private static final FXMLLoader saleLoader = fxmlLoader("fxml/sales/Sales.fxml");
-  private static final FXMLLoader saleReturnLoader = fxmlLoader("fxml/returns/sales/Sales.fxml");
-  private static final FXMLLoader purchaseReturnLoader =
-      fxmlLoader("fxml/returns/purchases/Purchases.fxml");
-  private static final FXMLLoader expenseCategoryLoader =
-      fxmlLoader("fxml/expenses/category/Category.fxml");
-  private static final FXMLLoader expenseLoader = fxmlLoader("fxml/expenses/expense/Expense.fxml");
-  private static final FXMLLoader customerLoader =
-      fxmlLoader("fxml/people/customers/Customers.fxml");
-  private static final FXMLLoader supplierLoader =
-      fxmlLoader("fxml/people/suppliers/Suppliers.fxml");
-  private static final FXMLLoader userLoader = fxmlLoader("fxml/people/users/Users.fxml");
-  private static final FXMLLoader settingsLoader = fxmlLoader("fxml/settings/Settings.fxml");
-  private static final FXMLLoader systemSettingsLoader =
-      fxmlLoader("fxml/settings/system/System.fxml");
-  private static final FXMLLoader posSettingsLoader = fxmlLoader("fxml/settings/pos/POS.fxml");
-  private static final FXMLLoader roleSettingsLoader = fxmlLoader("fxml/settings/roles/Roles.fxml");
-  private static final FXMLLoader branchSettingsLoader =
-      fxmlLoader("fxml/settings/branches/Branches.fxml");
-  private static final FXMLLoader currencySettingsLoader =
-      fxmlLoader("fxml/settings/currency/Currency.fxml");
-  private static final FXMLLoader exportSettingsLoader =
-      fxmlLoader("fxml/settings/export/Export.fxml");
-  private static final FXMLLoader posLoader = fxmlLoader("fxml/pos/PointOfSale.fxml");
-  private static final FXMLLoader quotationMasterFormLoader =
-      fxmlLoader("forms/QuotationMasterForm.fxml");
-  private static final FXMLLoader purchaseMasterFormLoader =
-      fxmlLoader("forms/PurchaseMasterForm.fxml");
-  private static final FXMLLoader requisitionMasterFormLoader =
-      fxmlLoader("forms/RequisitionMasterForm.fxml");
-  private static final FXMLLoader saleMasterFormLoader = fxmlLoader("forms/SaleMasterForm.fxml");
-  private static final FXMLLoader stockinMasterFormLoader =
-      fxmlLoader("forms/StockInMasterForm.fxml");
-  private static final FXMLLoader transferMasterFormLoader =
-      fxmlLoader("forms/TransferMasterForm.fxml");
-  private static final FXMLLoader adjustmentMasterFormLoader =
-      fxmlLoader("forms/AdjustmentMasterForm.fxml");
-  private static final FXMLLoader roleSettingsFormLoader =
-      fxmlLoader("forms/RoleSettingsForm.fxml");
-  private static BorderPane dashboardPane;
-  private static BorderPane productCategoryPane;
-  private static BorderPane brandPane;
-  private static BorderPane unitPane;
-  private static BorderPane productPane;
-  private static BorderPane adjustmentPane;
-  private static BorderPane quotationPane;
-  private static BorderPane requisitionPane;
-  private static BorderPane purchasePane;
-  private static BorderPane transferPane;
-  private static BorderPane stockInPane;
-  private static BorderPane salePane;
-  private static BorderPane saleReturnPane;
-  private static BorderPane purchaseReturnPane;
-  private static BorderPane expenseCategoryPane;
-  private static BorderPane expensePane;
-  private static BorderPane customerPane;
-  private static BorderPane supplierPane;
-  private static BorderPane userPane;
-  private static BorderPane settingsPane;
-  private static GridPane systemSettingsPane;
-  private static AnchorPane posSettingsPane;
-  private static BorderPane roleSettingsPane;
-  private static BorderPane branchSettingsPane;
-  private static BorderPane currencySettingsPane;
-  private static BorderPane exportSettingsPane;
-  private static BorderPane posPane;
-  private static BorderPane adjustmentMasterFormPane;
-  private static BorderPane quotationMasterFormPane;
-  private static BorderPane purchaseMasterFormPane;
-  private static BorderPane requisitionMasterFormPane;
-  private static BorderPane saleMasterFormPane;
-  private static BorderPane stockinMasterFormPane;
-  private static BorderPane transferMasterFormPane;
-  private static BorderPane roleSettingsFormPane;
+    private static final FXMLLoader dashboardLoader = fxmlLoader("fxml/dashboard/Dashboard.fxml");
+    private static final FXMLLoader productCategoryLoader =
+            fxmlLoader("fxml/inventory/category/ProductCategory.fxml");
+    private static final FXMLLoader brandLoader = fxmlLoader("fxml/inventory/brand/Brand.fxml");
+    private static final FXMLLoader unitLoader =
+            fxmlLoader("fxml/inventory/unit_of_measure/UnitOfMeasure.fxml");
+    private static final FXMLLoader productLoader =
+            fxmlLoader("fxml/inventory/products/Products.fxml");
+    private static final FXMLLoader adjustmentLoader =
+            fxmlLoader("fxml/inventory/adjustment/Adjustment.fxml");
+    private static final FXMLLoader quotationLoader =
+            fxmlLoader("fxml/inventory/quotation/Quotation.fxml");
+    private static final FXMLLoader requisitionLoader =
+            fxmlLoader("fxml/requisition/Requisition.fxml");
+    private static final FXMLLoader purchaseLoader = fxmlLoader("fxml/purchases/Purchases.fxml");
+    private static final FXMLLoader transferLoader = fxmlLoader("fxml/transfer/Transfer.fxml");
+    private static final FXMLLoader stockInLoader = fxmlLoader("fxml/stock_in/StockIn.fxml");
+    private static final FXMLLoader saleLoader = fxmlLoader("fxml/sales/Sales.fxml");
+    private static final FXMLLoader saleReturnLoader = fxmlLoader("fxml/returns/sales/Sales.fxml");
+    private static final FXMLLoader purchaseReturnLoader =
+            fxmlLoader("fxml/returns/purchases/Purchases.fxml");
+    private static final FXMLLoader expenseCategoryLoader =
+            fxmlLoader("fxml/expenses/category/Category.fxml");
+    private static final FXMLLoader expenseLoader = fxmlLoader("fxml/expenses/expense/Expense.fxml");
+    private static final FXMLLoader customerLoader =
+            fxmlLoader("fxml/people/customers/Customers.fxml");
+    private static final FXMLLoader supplierLoader =
+            fxmlLoader("fxml/people/suppliers/Suppliers.fxml");
+    private static final FXMLLoader userLoader = fxmlLoader("fxml/people/users/Users.fxml");
+    private static final FXMLLoader settingsLoader = fxmlLoader("fxml/settings/Settings.fxml");
+    private static final FXMLLoader systemSettingsLoader =
+            fxmlLoader("fxml/settings/system/System.fxml");
+    private static final FXMLLoader posSettingsLoader = fxmlLoader("fxml/settings/pos/POS.fxml");
+    private static final FXMLLoader roleSettingsLoader = fxmlLoader("fxml/settings/roles/Roles.fxml");
+    private static final FXMLLoader branchSettingsLoader =
+            fxmlLoader("fxml/settings/branches/Branches.fxml");
+    private static final FXMLLoader currencySettingsLoader =
+            fxmlLoader("fxml/settings/currency/Currency.fxml");
+    private static final FXMLLoader exportSettingsLoader =
+            fxmlLoader("fxml/settings/export/Export.fxml");
+    private static final FXMLLoader posLoader = fxmlLoader("fxml/pos/PointOfSale.fxml");
+    private static final FXMLLoader quotationMasterFormLoader =
+            fxmlLoader("forms/QuotationMasterForm.fxml");
+    private static final FXMLLoader purchaseMasterFormLoader =
+            fxmlLoader("forms/PurchaseMasterForm.fxml");
+    private static final FXMLLoader requisitionMasterFormLoader =
+            fxmlLoader("forms/RequisitionMasterForm.fxml");
+    private static final FXMLLoader saleMasterFormLoader = fxmlLoader("forms/SaleMasterForm.fxml");
+    private static final FXMLLoader stockinMasterFormLoader =
+            fxmlLoader("forms/StockInMasterForm.fxml");
+    private static final FXMLLoader transferMasterFormLoader =
+            fxmlLoader("forms/TransferMasterForm.fxml");
+    private static final FXMLLoader adjustmentMasterFormLoader =
+            fxmlLoader("forms/AdjustmentMasterForm.fxml");
+    private static final FXMLLoader roleSettingsFormLoader =
+            fxmlLoader("forms/RoleSettingsForm.fxml");
+    private static BorderPane dashboardPane;
+    private static BorderPane productCategoryPane;
+    private static BorderPane brandPane;
+    private static BorderPane unitPane;
+    private static BorderPane productPane;
+    private static BorderPane adjustmentPane;
+    private static BorderPane quotationPane;
+    private static BorderPane requisitionPane;
+    private static BorderPane purchasePane;
+    private static BorderPane transferPane;
+    private static BorderPane stockInPane;
+    private static BorderPane salePane;
+    private static BorderPane saleReturnPane;
+    private static BorderPane purchaseReturnPane;
+    private static BorderPane expenseCategoryPane;
+    private static BorderPane expensePane;
+    private static BorderPane customerPane;
+    private static BorderPane supplierPane;
+    private static BorderPane userPane;
+    private static BorderPane settingsPane;
+    private static GridPane systemSettingsPane;
+    private static AnchorPane posSettingsPane;
+    private static BorderPane roleSettingsPane;
+    private static BorderPane branchSettingsPane;
+    private static BorderPane currencySettingsPane;
+    private static BorderPane exportSettingsPane;
+    private static BorderPane posPane;
+    private static BorderPane adjustmentMasterFormPane;
+    private static BorderPane quotationMasterFormPane;
+    private static BorderPane purchaseMasterFormPane;
+    private static BorderPane requisitionMasterFormPane;
+    private static BorderPane saleMasterFormPane;
+    private static BorderPane stockinMasterFormPane;
+    private static BorderPane transferMasterFormPane;
+    private static BorderPane roleSettingsFormPane;
 
-  private static void setDashboard() {
-    dashboardLoader.setControllerFactory(e -> new DashboardController());
-  }
+    private static void setDashboard() {
+        dashboardLoader.setControllerFactory(e -> new DashboardController());
+    }
 
-  private static void setInventory(Stage stage) {
-    productCategoryLoader.setControllerFactory(e -> ProductCategoryController.getInstance(stage));
-    brandLoader.setControllerFactory(e -> BrandController.getInstance(stage));
-    unitLoader.setControllerFactory(e -> UnitOfMeasureController.getInstance(stage));
-    productLoader.setControllerFactory(e -> ProductController.getInstance(stage));
-    adjustmentLoader.setControllerFactory(e -> AdjustmentController.getInstance());
-    quotationLoader.setControllerFactory(e -> QuotationController.getInstance());
-    posLoader.setControllerFactory(e -> new PointOfSaleController());
-  }
+    private static void setInventory(Stage stage) {
+        productCategoryLoader.setControllerFactory(e -> ProductCategoryController.getInstance(stage));
+        brandLoader.setControllerFactory(e -> BrandController.getInstance(stage));
+        unitLoader.setControllerFactory(e -> UnitOfMeasureController.getInstance(stage));
+        productLoader.setControllerFactory(e -> ProductController.getInstance(stage));
+        adjustmentLoader.setControllerFactory(e -> AdjustmentController.getInstance());
+        quotationLoader.setControllerFactory(e -> QuotationController.getInstance());
+        posLoader.setControllerFactory(e -> new PointOfSaleController());
+    }
 
-  private static void setSingleItems() {
-    requisitionLoader.setControllerFactory(e -> RequisitionController.getInstance());
-    purchaseLoader.setControllerFactory(e -> PurchasesController.getInstance());
-    transferLoader.setControllerFactory(e -> TransferController.getInstance());
-    stockInLoader.setControllerFactory(e -> StockInController.getInstance());
-    saleLoader.setControllerFactory(e -> SalesController.getInstance());
-  }
+    private static void setSingleItems() {
+        requisitionLoader.setControllerFactory(e -> RequisitionController.getInstance());
+        purchaseLoader.setControllerFactory(e -> PurchasesController.getInstance());
+        transferLoader.setControllerFactory(e -> TransferController.getInstance());
+        stockInLoader.setControllerFactory(e -> StockInController.getInstance());
+        saleLoader.setControllerFactory(e -> SalesController.getInstance());
+    }
 
-  private static void setReturns() {
-    saleReturnLoader.setControllerFactory(e -> new SaleReturnsController());
-    purchaseReturnLoader.setControllerFactory(e -> new PurchaseReturnController());
-  }
+    private static void setReturns() {
+        saleReturnLoader.setControllerFactory(e -> new SaleReturnsController());
+        purchaseReturnLoader.setControllerFactory(e -> new PurchaseReturnController());
+    }
 
-  private static void setExpenses(Stage stage) {
-    expenseCategoryLoader.setControllerFactory(e -> ExpenseCategoryController.getInstance(stage));
-    expenseLoader.setControllerFactory(e -> ExpenseController.getInstance(stage));
-  }
+    private static void setExpenses(Stage stage) {
+        expenseCategoryLoader.setControllerFactory(e -> ExpenseCategoryController.getInstance(stage));
+        expenseLoader.setControllerFactory(e -> ExpenseController.getInstance(stage));
+    }
 
-  private static void setPeople(Stage stage) {
-    customerLoader.setControllerFactory(e -> CustomerController.getInstance(stage));
-    supplierLoader.setControllerFactory(e -> SupplierController.getInstance(stage));
-    userLoader.setControllerFactory(e -> UserController.getInstance(stage));
-  }
+    private static void setPeople(Stage stage) {
+        customerLoader.setControllerFactory(e -> CustomerController.getInstance(stage));
+        supplierLoader.setControllerFactory(e -> SupplierController.getInstance(stage));
+        userLoader.setControllerFactory(e -> UserController.getInstance(stage));
+    }
 
-  private static void setSettings(Stage stage) {
-    settingsLoader.setControllerFactory(c -> SettingsController.getInstance());
-    systemSettingsLoader.setControllerFactory(c -> SystemController.getInstance());
-    posSettingsLoader.setControllerFactory(c -> POSController.getInstance());
-    roleSettingsLoader.setControllerFactory(c -> RoleController.getInstance());
-    branchSettingsLoader.setControllerFactory(c -> BranchController.getInstance(stage));
-    currencySettingsLoader.setControllerFactory(c -> CurrencyController.getInstance(stage));
-    exportSettingsLoader.setControllerFactory(c -> ExportController.getInstance());
-    roleSettingsFormLoader.setControllerFactory(c -> RoleSettingsFormController.getInstance());
-  }
+    private static void setSettings(Stage stage) {
+        settingsLoader.setControllerFactory(c -> SettingsController.getInstance());
+        systemSettingsLoader.setControllerFactory(c -> SystemController.getInstance());
+        posSettingsLoader.setControllerFactory(c -> POSController.getInstance());
+        roleSettingsLoader.setControllerFactory(c -> RoleController.getInstance());
+        branchSettingsLoader.setControllerFactory(c -> BranchController.getInstance(stage));
+        currencySettingsLoader.setControllerFactory(c -> CurrencyController.getInstance(stage));
+        exportSettingsLoader.setControllerFactory(c -> ExportController.getInstance());
+        roleSettingsFormLoader.setControllerFactory(c -> RoleSettingsFormController.getInstance());
+    }
 
-  private static void setMasterForms(Stage stage) {
-    adjustmentMasterFormLoader.setControllerFactory(
-        c -> AdjustmentMasterFormController.getInstance(stage));
-    quotationMasterFormLoader.setControllerFactory(
-        c -> QuotationMasterFormController.getInstance(stage));
-    purchaseMasterFormLoader.setControllerFactory(
-        c -> PurchaseMasterFormController.getInstance(stage));
-    requisitionMasterFormLoader.setControllerFactory(
-        c -> RequisitionMasterFormController.getInstance(stage));
-    saleMasterFormLoader.setControllerFactory(c -> SaleMasterFormController.getInstance(stage));
-    stockinMasterFormLoader.setControllerFactory(
-        c -> StockInMasterFormController.getInstance(stage));
-    transferMasterFormLoader.setControllerFactory(
-        c -> TransferMasterFormController.getInstance(stage));
-  }
+    private static void setMasterForms(Stage stage) {
+        adjustmentMasterFormLoader.setControllerFactory(
+                c -> AdjustmentMasterFormController.getInstance(stage));
+        quotationMasterFormLoader.setControllerFactory(
+                c -> QuotationMasterFormController.getInstance(stage));
+        purchaseMasterFormLoader.setControllerFactory(
+                c -> PurchaseMasterFormController.getInstance(stage));
+        requisitionMasterFormLoader.setControllerFactory(
+                c -> RequisitionMasterFormController.getInstance(stage));
+        saleMasterFormLoader.setControllerFactory(c -> SaleMasterFormController.getInstance(stage));
+        stockinMasterFormLoader.setControllerFactory(
+                c -> StockInMasterFormController.getInstance(stage));
+        transferMasterFormLoader.setControllerFactory(
+                c -> TransferMasterFormController.getInstance(stage));
+    }
 
-  public static void setPanes() throws IOException {
-    dashboardPane = dashboardLoader.load();
+    public static void setPanes() throws IOException {
+        dashboardPane = dashboardLoader.load();
 
-    productCategoryPane = productCategoryLoader.load();
-    brandPane = brandLoader.load();
-    unitPane = unitLoader.load();
-    productPane = productLoader.load();
-    adjustmentPane = adjustmentLoader.load();
-    quotationPane = quotationLoader.load();
-    posPane = posLoader.load();
+        productCategoryPane = productCategoryLoader.load();
+        brandPane = brandLoader.load();
+        unitPane = unitLoader.load();
+        productPane = productLoader.load();
+        adjustmentPane = adjustmentLoader.load();
+        quotationPane = quotationLoader.load();
+        posPane = posLoader.load();
 
-    requisitionPane = requisitionLoader.load();
-    purchasePane = purchaseLoader.load();
-    transferPane = transferLoader.load();
-    stockInPane = stockInLoader.load();
-    salePane = saleLoader.load();
+        requisitionPane = requisitionLoader.load();
+        purchasePane = purchaseLoader.load();
+        transferPane = transferLoader.load();
+        stockInPane = stockInLoader.load();
+        salePane = saleLoader.load();
 
-    saleReturnPane = saleReturnLoader.load();
-    purchaseReturnPane = purchaseReturnLoader.load();
+        saleReturnPane = saleReturnLoader.load();
+        purchaseReturnPane = purchaseReturnLoader.load();
 
-    expenseCategoryPane = expenseCategoryLoader.load();
-    expensePane = expenseLoader.load();
+        expenseCategoryPane = expenseCategoryLoader.load();
+        expensePane = expenseLoader.load();
 
-    customerPane = customerLoader.load();
-    supplierPane = supplierLoader.load();
-    userPane = userLoader.load();
+        customerPane = customerLoader.load();
+        supplierPane = supplierLoader.load();
+        userPane = userLoader.load();
 
-    settingsPane = settingsLoader.load();
-    systemSettingsPane = systemSettingsLoader.load();
-    posSettingsPane = posSettingsLoader.load();
-    roleSettingsPane = roleSettingsLoader.load();
-    branchSettingsPane = branchSettingsLoader.load();
-    currencySettingsPane = currencySettingsLoader.load();
-    exportSettingsPane = exportSettingsLoader.load();
-    roleSettingsFormPane = roleSettingsFormLoader.load();
+        settingsPane = settingsLoader.load();
+        systemSettingsPane = systemSettingsLoader.load();
+        posSettingsPane = posSettingsLoader.load();
+        roleSettingsPane = roleSettingsLoader.load();
+        branchSettingsPane = branchSettingsLoader.load();
+        currencySettingsPane = currencySettingsLoader.load();
+        exportSettingsPane = exportSettingsLoader.load();
+        roleSettingsFormPane = roleSettingsFormLoader.load();
 
-    adjustmentMasterFormPane = adjustmentMasterFormLoader.load();
-    quotationMasterFormPane = quotationMasterFormLoader.load();
-    purchaseMasterFormPane = purchaseMasterFormLoader.load();
-    requisitionMasterFormPane = requisitionMasterFormLoader.load();
-    saleMasterFormPane = saleMasterFormLoader.load();
-    stockinMasterFormPane = stockinMasterFormLoader.load();
-    transferMasterFormPane = transferMasterFormLoader.load();
-  }
+        adjustmentMasterFormPane = adjustmentMasterFormLoader.load();
+        quotationMasterFormPane = quotationMasterFormLoader.load();
+        purchaseMasterFormPane = purchaseMasterFormLoader.load();
+        requisitionMasterFormPane = requisitionMasterFormLoader.load();
+        saleMasterFormPane = saleMasterFormLoader.load();
+        stockinMasterFormPane = stockinMasterFormLoader.load();
+        transferMasterFormPane = transferMasterFormLoader.load();
+    }
 
-  public static void setControllers(Stage stage) {
-    setDashboard();
-    setInventory(stage);
-    setSingleItems();
-    setReturns();
-    setExpenses(stage);
-    setPeople(stage);
-    setMasterForms(stage);
-    setSettings(stage);
-  }
+    public static void setControllers(Stage stage) {
+        setDashboard();
+        setInventory(stage);
+        setSingleItems();
+        setReturns();
+        setExpenses(stage);
+        setPeople(stage);
+        setMasterForms(stage);
+        setSettings(stage);
+    }
 
-  public static BorderPane getDashboardPane() {
-    return dashboardPane;
-  }
+    public static BorderPane getDashboardPane() {
+        return dashboardPane;
+    }
 
-  public static BorderPane getProductCategoryPane() {
-    return productCategoryPane;
-  }
+    public static BorderPane getProductCategoryPane() {
+        return productCategoryPane;
+    }
 
-  public static BorderPane getBrandPane() {
-    return brandPane;
-  }
+    public static BorderPane getBrandPane() {
+        return brandPane;
+    }
 
-  public static BorderPane getUnitPane() {
-    return unitPane;
-  }
+    public static BorderPane getUnitPane() {
+        return unitPane;
+    }
 
-  public static BorderPane getProductPane() {
-    return productPane;
-  }
+    public static BorderPane getProductPane() {
+        return productPane;
+    }
 
-  public static BorderPane getAdjustmentPane() {
-    return adjustmentPane;
-  }
+    public static BorderPane getAdjustmentPane() {
+        return adjustmentPane;
+    }
 
-  public static BorderPane getQuotationPane() {
-    return quotationPane;
-  }
+    public static BorderPane getQuotationPane() {
+        return quotationPane;
+    }
 
-  public static BorderPane getRequisitionPane() {
-    return requisitionPane;
-  }
+    public static BorderPane getRequisitionPane() {
+        return requisitionPane;
+    }
 
-  public static BorderPane getPurchasePane() {
-    return purchasePane;
-  }
+    public static BorderPane getPurchasePane() {
+        return purchasePane;
+    }
 
-  public static BorderPane getTransferPane() {
-    return transferPane;
-  }
+    public static BorderPane getTransferPane() {
+        return transferPane;
+    }
 
-  public static BorderPane getStockInPane() {
-    return stockInPane;
-  }
+    public static BorderPane getStockInPane() {
+        return stockInPane;
+    }
 
-  public static BorderPane getSalePane() {
-    return salePane;
-  }
+    public static BorderPane getSalePane() {
+        return salePane;
+    }
 
-  public static BorderPane getSaleReturnPane() {
-    return saleReturnPane;
-  }
+    public static BorderPane getSaleReturnPane() {
+        return saleReturnPane;
+    }
 
-  public static BorderPane getPurchaseReturnPane() {
-    return purchaseReturnPane;
-  }
+    public static BorderPane getPurchaseReturnPane() {
+        return purchaseReturnPane;
+    }
 
-  public static BorderPane getExpenseCategoryPane() {
-    return expenseCategoryPane;
-  }
+    public static BorderPane getExpenseCategoryPane() {
+        return expenseCategoryPane;
+    }
 
-  public static BorderPane getExpensePane() {
-    return expensePane;
-  }
+    public static BorderPane getExpensePane() {
+        return expensePane;
+    }
 
-  public static BorderPane getCustomerPane() {
-    return customerPane;
-  }
+    public static BorderPane getCustomerPane() {
+        return customerPane;
+    }
 
-  public static BorderPane getSupplierPane() {
-    return supplierPane;
-  }
+    public static BorderPane getSupplierPane() {
+        return supplierPane;
+    }
 
-  public static BorderPane getUserPane() {
-    return userPane;
-  }
+    public static BorderPane getUserPane() {
+        return userPane;
+    }
 
-  public static BorderPane getSettingsPane() {
-    return settingsPane;
-  }
+    public static BorderPane getSettingsPane() {
+        return settingsPane;
+    }
 
-  public static GridPane getSystemSettingsPane() {
-    return systemSettingsPane;
-  }
+    public static GridPane getSystemSettingsPane() {
+        return systemSettingsPane;
+    }
 
-  public static AnchorPane getPosSettingsPane() {
-    return posSettingsPane;
-  }
+    public static AnchorPane getPosSettingsPane() {
+        return posSettingsPane;
+    }
 
-  public static BorderPane getRoleSettingsPane() {
-    return roleSettingsPane;
-  }
+    public static BorderPane getRoleSettingsPane() {
+        return roleSettingsPane;
+    }
 
-  public static BorderPane getBranchSettingsPane() {
-    return branchSettingsPane;
-  }
+    public static BorderPane getBranchSettingsPane() {
+        return branchSettingsPane;
+    }
 
-  public static BorderPane getCurrencySettingsPane() {
-    return currencySettingsPane;
-  }
+    public static BorderPane getCurrencySettingsPane() {
+        return currencySettingsPane;
+    }
 
-  public static BorderPane getExportSettingsPane() {
-    return exportSettingsPane;
-  }
+    public static BorderPane getExportSettingsPane() {
+        return exportSettingsPane;
+    }
 
-  public static BorderPane getPosPane() {
-    return posPane;
-  }
+    public static BorderPane getPosPane() {
+        return posPane;
+    }
 
-  public static BorderPane getAdjustmentMasterFormPane() {
-    return adjustmentMasterFormPane;
-  }
+    public static BorderPane getAdjustmentMasterFormPane() {
+        return adjustmentMasterFormPane;
+    }
 
-  public static BorderPane getQuotationMasterFormPane() {
-    return quotationMasterFormPane;
-  }
+    public static BorderPane getQuotationMasterFormPane() {
+        return quotationMasterFormPane;
+    }
 
-  public static BorderPane getPurchaseMasterFormPane() {
-    return purchaseMasterFormPane;
-  }
+    public static BorderPane getPurchaseMasterFormPane() {
+        return purchaseMasterFormPane;
+    }
 
-  public static BorderPane getRequisitionMasterFormPane() {
-    return requisitionMasterFormPane;
-  }
+    public static BorderPane getRequisitionMasterFormPane() {
+        return requisitionMasterFormPane;
+    }
 
-  public static BorderPane getSaleMasterFormPane() {
-    return saleMasterFormPane;
-  }
+    public static BorderPane getSaleMasterFormPane() {
+        return saleMasterFormPane;
+    }
 
-  public static BorderPane getStockinMasterFormPane() {
-    return stockinMasterFormPane;
-  }
+    public static BorderPane getStockinMasterFormPane() {
+        return stockinMasterFormPane;
+    }
 
-  public static BorderPane getTransferMasterFormPane() {
-    return transferMasterFormPane;
-  }
+    public static BorderPane getTransferMasterFormPane() {
+        return transferMasterFormPane;
+    }
 
-  public static BorderPane getRoleSettingsFormPane() {
-    return roleSettingsFormPane;
-  }
+    public static BorderPane getRoleSettingsFormPane() {
+        return roleSettingsFormPane;
+    }
 }

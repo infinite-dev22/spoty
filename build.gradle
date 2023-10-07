@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'org.javamodularity.moduleplugin' version "1.8.12"
+    id 'org.javamodularity.moduleplugin' version '1.8.12'
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.1.0'
     id 'org.beryx.jlink' version '3.0.0'
@@ -10,9 +10,9 @@ plugins {
 apply plugin: 'java'
 
 version '0.0.1-beta'
-project.description = "Zenmart ERP - Fintech Software."
+project.description = 'Zenmart ERP - Fintech Software.'
 project.ext.buildDate = new Date()
-project.version = "1.0.0"
+project.version = '1.0.0'
 
 repositories {
     mavenLocal()
@@ -42,14 +42,8 @@ application {
 }
 
 javafx {
-    version = "21"
-    modules = ['javafx.controls', 'javafx.fxml', 'javafx.web', 'javafx.media', 'javafx.graphics']
-}
-
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
-    }
+    version = '21'
+    modules = ['javafx.controls', 'javafx.fxml', 'javafx.media', 'javafx.graphics']
 }
 
 //graalvmNative {
@@ -58,7 +52,7 @@ java {
 //        main {
 //            javaLauncher = javaToolchains.launcherFor {
 //                languageVersion = JavaLanguageVersion.of(17)
-//                vendor = JvmVendorSpec.matching("Oracle Corporation")
+//                vendor = JvmVendorSpec.matching('Oracle Corporation')
 //            }
 //        }
 //    }
@@ -95,84 +89,40 @@ jar {
 }
 
 jlink {
-    imageZip = project.file("${buildDir}/distributions/app-${javafx.platform.classifier}.zip")
+    imageZip = project.file('${buildDir}/distributions/app-${javafx.platform.classifier}.zip')
     options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
     launcher {
         name = 'Zenmart ERP'
         jvmArgs = [
-                '-Djdk.gtk.version=3'
+                '-Djdk.gtk.version=3',
+                '-XX:NewRatio=1',
+                '-Xms256m',
+                '-Xmx2G',
+                '-XX:ReservedCodeCacheSize=512m',
+                '-XX:+UseG1GC',
+                '-XX:SoftRefLRUPolicyMSPerMB=50',
+                '-XX:CICompilerCount=2',
+                '-XX:+HeapDumpOnOutOfMemoryError',
+                '-Dsun.io.useCanonCaches=false',
+                '-Djbr.catch.SIGABRT=true',
+                '-Djdk.attach.allowAttachSelf=true',
+                '-XX:ErrorFile=/home/infinite-dev/IdeaProjects/spoty/error%p.log',
         ]
     }
 
     jpackage {
-        // Could be taken from command line, here it is defined statically
-        // project.findProperty('installerOs')
-        //    (example: -PinstallerOs=mac)
-        targetPlatformName = 'linux-x64'
-        // Resource directory for native package overrides,
-        // you can do lots of magic here too...
-        // resourceDir = file('package/')
-
-        if (targetPlatformName == 'mac') {
-            targetPlatform("mac") {
-                jdkHome = '/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home'
-            }
-            installerType = 'pkg'
-        }
-        if (targetPlatformName == 'win') {
-            targetPlatform("win") {
-                jdkHome = 'C:/Applications/JDKs/Adoptium/temurin-17.jdk'
-            }
-            installerType = 'exe'
-        }
-        if (targetPlatformName == 'linux-x64') {
-            targetPlatform("linux-x64") {
-                addExtraModulePath("/home/infinite/Java_FX/javafx-jmods-20/linux_x64")
-            }
-//            installerType = 'deb'
-            installerType = 'app-image'
-        }
-
+        installerType == 'msi'
         installerOptions = [
-//                '--name', 'Zenmart-ERP',
+                '--name', 'Zenmart-ERP',
                 '--description', project.description,
                 '--copyright', 'Copyrigth 2023 infinite Studios',
                 '--vendor', 'infinite Studios',
-                '--verbose'
+                '--win-dir-chooser',
+                '--win-menu', '--win-shortcut',
+                '--win-dir-chooser', '--win-menu',
+                '--win-per-user-install', '--win-shortcut-prompt',
+                '--icon', 'src/main/resources/logo.ico',
         ]
-
-        if (installerType == 'pkg') {
-            imageOptions += ['--icon', 'src/main/resources/icon.icns']
-            installerOptions += [
-                    '--license-file', 'package/LICENSE-OS-Installer.txt'
-            ]
-        }
-        if (installerType == 'exe') {
-            imageOptions += ['--icon', 'src/main/resources/icon.ico']
-            installerOptions += [
-                    // '--win-per-user-install',
-                    // '--win-console',
-                    '--win-dir-chooser',
-                    '--win-menu', '--win-shortcut'
-            ]
-        }
-        if (installerType in ['deb', 'rpm']) {
-            imageOptions += ['--icon', 'src/main/resources/logo.png']
-            installerOptions += [
-                    '--linux-menu-group', 'Work',
-                    '--linux-shortcut'
-            ]
-        }
-        if (installerType == 'deb') {
-            installerOptions += [
-                    '--linux-deb-maintainer', 'info@codecellar.com'
-            ]
-        }
-        if (installerType == 'rpm') {
-            installerOptions += [
-                    '--linux-rpm-license-type', 'GPLv3'
-            ]
-        }
     }
     addExtraDependencies('javafx')
 }
@@ -181,9 +131,9 @@ tasks.register('doPackageAll') {
     doLast {
         if (Os.isFamily(Os.FAMILY_UNIX)) {
             exec {
-                mkdir("$buildDir/distributions")
-                executable "$projectDir/scripts/JLinkPackage.sh"
-                args = ["$buildDir"]
+                mkdir('$buildDir/distributions')
+                executable '$projectDir/scripts/JLinkPackage.sh'
+                args = ['$buildDir']
             }
         }
     }
@@ -198,15 +148,15 @@ dependencies {
     implementation 'com.j256.ormlite:ormlite-jdbc:6.1'
     implementation 'org.jetbrains:annotations:24.0.1'
     implementation 'io.github.palexdev:materialfx:11.16.1'
-    implementation('org.kordamp.ikonli:ikonli-javafx:12.3.1')
-    implementation "org.kordamp.ikonli:ikonli-core:12.3.1"
-    implementation "org.kordamp.ikonli:ikonli-fontawesome5-pack:12.3.1"
+    implementation 'org.kordamp.ikonli:ikonli-javafx:12.3.1'
+    implementation 'org.kordamp.ikonli:ikonli-core:12.3.1'
+    implementation 'org.kordamp.ikonli:ikonli-fontawesome5-pack:12.3.1'
     implementation 'jakarta.persistence:jakarta.persistence-api:3.1.0'
     implementation 'jakarta.enterprise:jakarta.enterprise.cdi-api:4.0.1'
-    implementation "fr.brouillard.oss:cssfx:11.5.1"
-    implementation "io.github.palexdev:scenicview:17.0.2"
-    implementation "io.github.palexdev:virtualizedfx:11.9.6"
-    implementation "io.github.palexdev:mfxcomponents:11.23.0"
-    implementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
-    implementation "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
+    implementation 'fr.brouillard.oss:cssfx:11.5.1'
+//    implementation 'io.github.palexdev:scenicview:17.0.2'
+    implementation 'io.github.palexdev:virtualizedfx:11.9.6'
+    implementation 'io.github.palexdev:mfxcomponents:11.23.0'
+    implementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
+    implementation 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
 }

@@ -32,9 +32,11 @@ import javafx.fxml.Initializable;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.infinite.spoty.database.models.Product;
 import org.infinite.spoty.forms.ProductFormController;
+import org.infinite.spoty.startup.Dialogs;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.ProductViewModel;
 import org.infinite.spoty.views.BaseController;
@@ -58,13 +60,15 @@ public class ProductController implements Initializable {
     public MFXTextField productsSearchBar;
     @FXML
     public MFXButton productImportBtn;
-    private MFXStageDialog dialog;
+    private MFXStageDialog formDialog;
+    private MFXStageDialog viewDialog;
 
     public ProductController(Stage stage) {
         Platform.runLater(
                 () -> {
                     try {
                         productFormDialogPane(stage);
+                        productViewDialogPane(stage);
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
@@ -74,6 +78,26 @@ public class ProductController implements Initializable {
     public static ProductController getInstance(Stage stage) {
         if (instance == null) instance = new ProductController(stage);
         return instance;
+    }
+
+    private void productViewDialogPane(Stage stage) throws IOException {
+        double screenHeight = Screen.getPrimary().getBounds().getHeight();
+        MFXGenericDialog genericDialog = Dialogs.getGeneralPrintableFxmlLoader();
+        genericDialog.setPrefHeight(screenHeight * .98);
+        genericDialog.setPrefWidth(700);
+
+        viewDialog =
+                MFXGenericDialogBuilder.build(genericDialog)
+                        .toStageDialogBuilder()
+                        .initOwner(stage)
+                        .initModality(Modality.WINDOW_MODAL)
+                        .setOwnerNode(productsContentPane)
+                        .setScrimPriority(ScrimPriority.WINDOW)
+                        .setScrimOwner(true)
+                        .setCenterInOwnerNode(false)
+                        .get();
+
+        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(viewDialog.getScene());
     }
 
     @Override
@@ -162,9 +186,13 @@ public class ProductController implements Initializable {
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
 
         // Actions
+        // View
+        view.setOnAction(event -> {
+            productViewShow();
+        });
         // Delete
         delete.setOnAction(
-                e -> {
+                event -> {
                     SpotyThreader.spotyThreadPool(
                             () -> {
                                 try {
@@ -174,11 +202,11 @@ public class ProductController implements Initializable {
                                 }
                             });
 
-                    e.consume();
+                    event.consume();
                 });
         // Edit
         edit.setOnAction(
-                e -> {
+                event -> {
                     SpotyThreader.spotyThreadPool(
                             () -> {
                                 try {
@@ -188,7 +216,7 @@ public class ProductController implements Initializable {
                                 }
                             });
                     productCreateBtnClicked();
-                    e.consume();
+                    event.consume();
                 });
 
         contextMenu.addItems(view, edit, delete);
@@ -205,7 +233,7 @@ public class ProductController implements Initializable {
         dialogContent.setShowMinimize(false);
         dialogContent.setShowAlwaysOnTop(false);
 
-        dialog =
+        formDialog =
                 MFXGenericDialogBuilder.build(dialogContent)
                         .toStageDialogBuilder()
                         .initOwner(stage)
@@ -215,10 +243,14 @@ public class ProductController implements Initializable {
                         .setScrimOwner(true)
                         .get();
 
-        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
+        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(formDialog.getScene());
     }
 
     public void productCreateBtnClicked() {
-        dialog.showAndWait();
+        formDialog.showAndWait();
+    }
+
+    public void productViewShow() {
+        viewDialog.showAndWait();
     }
 }

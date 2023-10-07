@@ -18,18 +18,30 @@ import org.infinite.spoty.utils.SpotyLogger;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class SpotyPaths {
     public static void createPaths() {
         // Create DB Location path on system.
+        Path dbPath;
+        Path logPath;
+
         try {
-            Files.createDirectories(
-                    Paths.get(
-                            System.getProperty("user.home") + "/.config/ZenmartERP/datastores/databases/sqlite"));
-            Files.createDirectories(
-                    Paths.get(
-                            System.getProperty("user.home") + "/.config/ZenmartERP/logs"));
+            if (System.getProperty("os.name").contains("Windows")) {
+                dbPath = Paths.get(System.getProperty("user.home")
+                        + "\\AppData\\Local\\Zenmart ERP\\data\\datastores\\databases\\offline\\sync\\sqlite\\db");
+                logPath = Paths.get(System.getProperty("user.home")
+                        + "\\AppData\\Local\\Zenmart ERP\\event-log-data\\logs\\stack");
+            } else {
+                dbPath = Paths.get(
+                        System.getProperty("user.home") + "/.config/ZenmartERP/data/datastores/databases/offline/sync/sqlite/db");
+                logPath = Paths.get(
+                        System.getProperty("user.home") + "/.config/ZenmartERP/event-log-data/logs/stack");
+            }
+
+            Files.createDirectories(dbPath);
+            Files.createDirectories(logPath);
         } catch (IOException e) {
             SpotyLogger.writeToFile(e, SpotyPaths.class);
         }

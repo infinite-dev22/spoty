@@ -246,7 +246,7 @@ public class AdjustmentMasterFormController implements Initializable {
     }
 
     private void adjustmentAddProductBtnClicked() {
-        adjustmentProductAddBtn.setOnAction(e -> dialog.show());
+        adjustmentProductAddBtn.setOnAction(e -> dialog.showAndWait());
     }
 
     private void quotationProductDialogPane(Stage stage) throws IOException {
