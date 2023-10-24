@@ -33,7 +33,7 @@ class BranchDaoTest {
     BranchViewModel.setPhone("+1234567890");
     BranchViewModel.setEmail("branchone@email.com");
     BranchViewModel.setTown("Bwaise");
-    BranchViewModel.setZipcode("617867838");
+//    BranchViewModel.setZipcode("617867838");
 
     BranchViewModel.saveBranch();
 
@@ -42,7 +42,7 @@ class BranchDaoTest {
     BranchViewModel.setPhone("+0987654321");
     BranchViewModel.setEmail("branchtwo@email.com");
     BranchViewModel.setTown("Ark Town");
-    BranchViewModel.setZipcode("617863228");
+//    BranchViewModel.setZipcode("617863228");
 
     BranchViewModel.saveBranch();
     } catch (Exception e) {
@@ -58,7 +58,7 @@ class BranchDaoTest {
     BranchViewModel.setPhone("+2567123456789");
     BranchViewModel.setEmail("branch1@email.com");
     BranchViewModel.setTown("Kisaasi");
-    BranchViewModel.setZipcode("76782");
+//    BranchViewModel.setZipcode("76782");
 
     BranchViewModel.saveBranch();
   }

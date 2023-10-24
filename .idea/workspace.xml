@@ -5,24 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1a27fa9e-5f29-4084-9097-b156dd85e41b" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/printable/general/GeneralViewController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.jar" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradlew" beforeDir="false" afterPath="$PROJECT_DIR$/gradlew" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradlew.bat" beforeDir="false" afterPath="$PROJECT_DIR$/gradlew.bat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/module-info.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/components/navigation/Pages.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/components/navigation/Pages.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/connection/SQLiteConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/connection/SQLiteConnection.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/AdjustmentMasterFormController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/AdjustmentMasterFormController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/QuotationMasterFormController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/QuotationMasterFormController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/startup/Dialogs.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/startup/Dialogs.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/startup/SpotyPaths.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/startup/SpotyPaths.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/utils/SpotyLogger.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/utils/SpotyLogger.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/inventory/products/ProductController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/inventory/products/ProductController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/splash/LaunchPreloader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/splash/LaunchPreloader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/printable/general/General.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/printable/general/General.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/infinite/spoty/database/dao/BranchDaoTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/infinite/spoty/database/dao/BranchDaoTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/infinite/spoty/database/dao/DatabaseSeederTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/infinite/spoty/database/dao/DatabaseSeederTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -86,7 +73,7 @@
       <recent name="C:\Users\infinite-dev\IdeaProjects\spoty\src\main\java\org\infinite\spoty\printable\general" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.spoty [build]">
+  <component name="RunManager" selected="Gradle.spoty [jpackage]">
     <configuration name="spoty [build]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -177,9 +164,9 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.spoty [build]" />
         <item itemvalue="Gradle.spoty [jpackage]" />
         <item itemvalue="Gradle.spoty [run]" />
+        <item itemvalue="Gradle.spoty [build]" />
         <item itemvalue="Gradle.spoty [clean]" />
       </list>
     </recent_temporary>

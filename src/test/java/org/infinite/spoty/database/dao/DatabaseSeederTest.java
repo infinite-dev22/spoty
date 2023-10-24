@@ -48,7 +48,7 @@ class DatabaseSeederTest {
 
             branch = new Branch("Default Branch",
                     "St Helena", "123456789012",
-                    "defaultbranch@email.com", "Burgaw", "5675676");
+                    "defaultbranch@email.com", "Burgaw");
             branch.setCreatedAt(new Date());
             branch.setCreatedBy("User One");
             productMasterDao.create(branch);
