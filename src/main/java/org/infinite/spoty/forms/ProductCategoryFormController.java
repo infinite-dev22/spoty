@@ -95,11 +95,8 @@ public class ProductCategoryFormController implements Initializable {
                                     updateItem(ProductCategoryViewModel.getId());
                                 } catch (SQLException e) {
                                     SpotyLogger.writeToFile(e, this.getClass());
-                                    e.printStackTrace();
                                 }
                             });
-
-                            System.out.println("Add to database with no error");
 
                             SimpleNotification notification =
                                     new SimpleNotification.NotificationBuilder("Category updated successfully")
@@ -108,8 +105,6 @@ public class ProductCategoryFormController implements Initializable {
                                             .type(NotificationVariants.SUCCESS)
                                             .build();
                             notificationHolder.addNotification(notification);
-
-                            System.out.println("Shown notification");
 
                             closeDialog(event);
                             return;

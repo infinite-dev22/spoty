@@ -115,7 +115,7 @@ public class ProductCategoryViewModel {
 
         ProductCategory productCategory = new ProductCategory(getCode(), getName());
 
-        productCategoryDao.create(productCategory);
+        productCategoryDao.createIfNotExists(productCategory);
 
         clearProductCategoryData();
         getItems();

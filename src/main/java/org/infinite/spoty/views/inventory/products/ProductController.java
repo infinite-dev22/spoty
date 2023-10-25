@@ -36,7 +36,7 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.infinite.spoty.database.models.Product;
 import org.infinite.spoty.forms.ProductFormController;
-import org.infinite.spoty.startup.Dialogs;
+import org.infinite.spoty.printable.general.GeneralViewController;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.ProductViewModel;
 import org.infinite.spoty.views.BaseController;
@@ -82,7 +82,12 @@ public class ProductController implements Initializable {
 
     private void productViewDialogPane(Stage stage) throws IOException {
         double screenHeight = Screen.getPrimary().getBounds().getHeight();
-        MFXGenericDialog genericDialog = Dialogs.getGeneralPrintableFxmlLoader();
+        final FXMLLoader printableLoader = fxmlLoader("printable/general/General.fxml");
+        printableLoader.setControllerFactory(c -> GeneralViewController.getInstance());
+        MFXGenericDialog genericDialog = printableLoader.load();
+        genericDialog.setShowMinimize(false);
+        genericDialog.setShowAlwaysOnTop(false);
+
         genericDialog.setPrefHeight(screenHeight * .98);
         genericDialog.setPrefWidth(700);
 

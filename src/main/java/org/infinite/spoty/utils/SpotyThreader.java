@@ -30,6 +30,6 @@ public class SpotyThreader {
     }
 
     public static Thread singleThreadCreator(String name, Runnable runnable) {
-        return Thread.ofPlatform().name(name).start(runnable);
+        return Thread.ofPlatform().name(name).daemon(true).start(runnable);
     }
 }

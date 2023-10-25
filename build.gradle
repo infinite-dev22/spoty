@@ -149,7 +149,7 @@ dependencies {
     // https://mvnrepository.com/artifact/net.java.dev.jna/jna-platform
     implementation 'net.java.dev.jna:jna-platform:5.13.0'
 
-    implementation 'org.xerial:sqlite-jdbc:3.43.2.1'
+    implementation 'org.xerial:sqlite-jdbc:3.42.0.0'
     implementation 'com.j256.ormlite:ormlite-jdbc:6.1'
     implementation 'org.jetbrains:annotations:24.0.1'
     implementation 'io.github.palexdev:materialfx:11.16.1'

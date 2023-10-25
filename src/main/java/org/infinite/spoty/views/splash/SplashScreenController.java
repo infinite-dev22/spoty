@@ -29,6 +29,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.infinite.spoty.components.navigation.Pages;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.database.management.SQLiteTableCreator;
 import org.infinite.spoty.startup.Dialogs;
@@ -46,8 +47,6 @@ import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotyResourceLoader.fxmlLoader;
-import static org.infinite.spoty.components.navigation.Pages.setControllers;
-import static org.infinite.spoty.components.navigation.Pages.setPanes;
 import static org.infinite.spoty.utils.SpotyThreader.singleThreadCreator;
 
 public class SplashScreenController implements Initializable {
@@ -89,29 +88,43 @@ public class SplashScreenController implements Initializable {
     private static void startApp() {
         Platform.runLater(
                 () -> {
-                    Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
+                    Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
                     try {
+                        // handle CSS dynamically.
                         CSSFX.start();
-                        Stage stage = new Stage();
-                        setControllers(stage);
+                        Stage primaryStage = new Stage();
+                        // Load app views.
+                        Pages.setControllers(primaryStage);
+                        Pages.setPanes();
+                        // Load dialog views.
                         Dialogs.setControllers();
-                        setPanes();
                         Dialogs.setDialogContent();
+                        // Set base view.
                         FXMLLoader loader = fxmlLoader("fxml/Base.fxml");
-                        loader.setControllerFactory(c -> BaseController.getInstance(stage));
+                        loader.setControllerFactory(c -> BaseController.getInstance(primaryStage));
+                        // Base view parent.
                         Parent root = loader.load();
-                        Scene scene = new Scene(root, 800, 600);
+                        Scene scene = new Scene(root);
+                        // Set application scene theme to MFX modern themes.
                         MFXThemeManager.addOn(scene, Themes.DEFAULT, Themes.LEGACY);
                         io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(scene);
+                        // Fixes black edges showing in main app scene.
                         scene.setFill(null);
-                        stage.setScene(scene);
-                        stage.initStyle(StageStyle.TRANSPARENT);
+                        primaryStage.setScene(scene);
+                        primaryStage.initStyle(StageStyle.TRANSPARENT);
                         // Set initial window size.
-                        stage.setHeight(bounds.getHeight());
-                        stage.setWidth(bounds.getWidth());
-                        stage.setTitle(Labels.APP_NAME);
-                        stage.show();
-                        SimpleNotificationHolder.setNotificationOwner(stage);
+                        primaryStage.setHeight(primScreenBounds.getHeight());
+                        primaryStage.setWidth(primScreenBounds.getWidth());
+                        // Set window position to center of screen.
+                        // This isn't necessary, just felt like adding it here.
+                        primaryStage.setX((primScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
+                        primaryStage.setY((primScreenBounds.getHeight() - primaryStage.getHeight()) / 2);
+                        // Set window title name, this name will only be seen when cursor hovers over app icon in
+                        // taskbar. Not necessary too but added since other apps also do this.
+                        primaryStage.setTitle(Labels.APP_NAME);
+                        primaryStage.show();
+                        // Initialize app notification handler.
+                        SimpleNotificationHolder.setNotificationOwner(primaryStage);
                     } catch (IOException e) {
                         SpotyLogger.writeToFile(e, SplashScreenController.class);
                     }
@@ -145,7 +158,7 @@ public class SplashScreenController implements Initializable {
                         UOMViewModel.getItems();
                         UserViewModel.getAllUsers();
                         RoleViewModel.getAllRoles();
-                        // Permissions.
+                        // Initialize Permissions.
                         PermissionsViewModel.setAccessBrands();
                         PermissionsViewModel.setAccessBranchSettings();
                         PermissionsViewModel.setAccessBranchSettings();

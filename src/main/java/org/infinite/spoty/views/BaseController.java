@@ -14,35 +14,36 @@
 
 package org.infinite.spoty.views;
 
-import static org.infinite.spoty.utils.Utils.createToggle;
-
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXScrollPane;
 import io.github.palexdev.materialfx.utils.ScrollUtils;
 import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
-
-import java.net.URL;
-import java.util.ResourceBundle;
-
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Label;
-import javafx.scene.layout.*;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.components.navigation.Navigation;
 import org.infinite.spoty.components.navigation.Pages;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.values.strings.Labels;
 
+import java.net.URL;
+import java.util.ResourceBundle;
+
+import static org.infinite.spoty.utils.Utils.createToggle;
+
 public class BaseController implements Initializable {
     public static Navigation navigation;
     private static BaseController instance;
-    public final Stage stage;
+    public final Stage primaryStage;
     @FXML
     public MFXFontIcon closeIcon;
     @FXML
@@ -67,7 +68,7 @@ public class BaseController implements Initializable {
     private double yOffset;
 
     private BaseController(Stage stage) {
-        this.stage = stage;
+        this.primaryStage = stage;
     }
 
     public static BaseController getInstance(Stage stage) {
@@ -77,8 +78,8 @@ public class BaseController implements Initializable {
 
     @FXML
     void closeIconClicked() {
-        stage.hide();
-        stage.close();
+        primaryStage.hide();
+        primaryStage.close();
         SpotyThreader.disposeSpotyThreadPool();
         Platform.exit();
         System.exit(0);
@@ -86,24 +87,31 @@ public class BaseController implements Initializable {
 
     @FXML
     void maximizeIconClicked() {
-        Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
+        Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
 //        ((Stage) rootPane.getScene().getWindow())
 //                .setMaximized(!((Stage) rootPane.getScene().getWindow()).isMaximized());
 
-//      stage.setFullScreen(!stage.isFullScreen());
-        if (stage.getHeight() == bounds.getHeight() && stage.getWidth() == bounds.getWidth()) {
-            stage.setHeight(bounds.getHeight() * .8);
-            stage.setWidth(bounds.getWidth() * .8);
+//      primaryStage.setFullScreen(!primaryStage.isFullScreen());
+        if (primaryStage.getHeight() == primScreenBounds.getHeight() && primaryStage.getWidth() == primScreenBounds.getWidth()) {
+            primaryStage.setHeight(primScreenBounds.getHeight() * .9);
+            primaryStage.setWidth(primScreenBounds.getWidth() * .8);
+            // Center window in screen.
+            primaryStage.setX((primScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
+            primaryStage.setY((primScreenBounds.getHeight() - primaryStage.getHeight()) / 2);
         } else {
-            stage.setHeight(bounds.getHeight());
-            stage.setWidth(bounds.getWidth());
+            // Place window at matrix (0, 0) of screen.
+            primaryStage.setX(0);
+            primaryStage.setY(0);
+            // Set window to full screen.
+            primaryStage.setHeight(primScreenBounds.getHeight());
+            primaryStage.setWidth(primScreenBounds.getWidth());
         }
     }
 
     @FXML
     void minimizeIconClicked() {
 //        ((Stage) rootPane.getScene().getWindow()).setIconified(true);
-        stage.setIconified(true);
+        primaryStage.setIconified(true);
     }
 
     @Override
@@ -112,13 +120,13 @@ public class BaseController implements Initializable {
         appNameLabel.setFont(new Font(48));
         windowHeader.setOnMousePressed(
                 event -> {
-                    xOffset = stage.getX() - event.getScreenX();
-                    yOffset = stage.getY() - event.getScreenY();
+                    xOffset = primaryStage.getX() - event.getScreenX();
+                    yOffset = primaryStage.getY() - event.getScreenY();
                 });
         windowHeader.setOnMouseDragged(
                 event -> {
-                    stage.setX(event.getScreenX() + xOffset);
-                    stage.setY(event.getScreenY() + yOffset);
+                    primaryStage.setX(event.getScreenX() + xOffset);
+                    primaryStage.setY(event.getScreenY() + yOffset);
                 });
 
         initializeLoader();
