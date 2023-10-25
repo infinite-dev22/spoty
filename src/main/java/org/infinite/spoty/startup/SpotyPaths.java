@@ -30,9 +30,9 @@ public class SpotyPaths {
         try {
             if (System.getProperty("os.name").contains("Windows")) {
                 dbPath = Paths.get(System.getProperty("user.home")
-                        + "\\AppData\\Local\\Zenmart ERP\\data\\datastores\\databases\\offline\\sync\\sqlite\\db");
+                        + "\\AppData\\Local\\ZenmartERP\\data\\datastores\\databases\\offline\\sync\\sqlite\\db");
                 logPath = Paths.get(System.getProperty("user.home")
-                        + "\\AppData\\Local\\Zenmart ERP\\event-log-data\\logs\\stack");
+                        + "\\AppData\\Local\\ZenmartERP\\event-log-data\\logs\\stack");
             } else {
                 dbPath = Paths.get(
                         System.getProperty("user.home") + "/.config/ZenmartERP/data/datastores/databases/offline/sync/sqlite/db");

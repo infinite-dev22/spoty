@@ -51,7 +51,7 @@ public class SpotyLogger {
         try {
             if (System.getProperty("os.name").contains("Windows")) {
                 path = Paths.get(System.getProperty("user.home")
-                        + "\\AppData\\Local\\Zenmart ERP\\event-log-data\\logs\\stack\\spoty_log.log");
+                        + "\\AppData\\Local\\ZenmartERP\\event-log-data\\logs\\stack\\spoty_log.log");
             } else {
                 path = Paths.get(System.getProperty("user.home")
                         + "/.config/ZenmartERP/event-log-data/logs/stack/spoty_log.log");

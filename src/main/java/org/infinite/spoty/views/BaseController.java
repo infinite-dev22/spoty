@@ -20,14 +20,18 @@ import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXScrollPane;
 import io.github.palexdev.materialfx.utils.ScrollUtils;
 import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
+
 import java.net.URL;
 import java.util.ResourceBundle;
+
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.components.navigation.Navigation;
@@ -36,81 +40,102 @@ import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.values.strings.Labels;
 
 public class BaseController implements Initializable {
-  public static Navigation navigation;
-  private static BaseController instance;
-  public final Stage stage;
-  @FXML public MFXFontIcon closeIcon;
-  @FXML public MFXFontIcon maximizeIcon;
-  @FXML public MFXFontIcon minimizeIcon;
-  @FXML public StackPane contentPane;
-  @FXML public StackPane navBar;
-  @FXML public HBox windowHeader;
-  @FXML public MFXScrollPane scrollPane;
-  @FXML public AnchorPane rootPane;
-  @FXML public VBox settingsHolder;
-  @FXML public Label appNameLabel;
-  private double xOffset;
-  private double yOffset;
+    public static Navigation navigation;
+    private static BaseController instance;
+    public final Stage stage;
+    @FXML
+    public MFXFontIcon closeIcon;
+    @FXML
+    public MFXFontIcon maximizeIcon;
+    @FXML
+    public MFXFontIcon minimizeIcon;
+    @FXML
+    public StackPane contentPane;
+    @FXML
+    public StackPane navBar;
+    @FXML
+    public HBox windowHeader;
+    @FXML
+    public MFXScrollPane scrollPane;
+    @FXML
+    public AnchorPane rootPane;
+    @FXML
+    public VBox settingsHolder;
+    @FXML
+    public Label appNameLabel;
+    private double xOffset;
+    private double yOffset;
 
-  private BaseController(Stage stage) {
-    this.stage = stage;
-  }
+    private BaseController(Stage stage) {
+        this.stage = stage;
+    }
 
-  public static BaseController getInstance(Stage stage) {
-    if (instance == null) instance = new BaseController(stage);
-    return instance;
-  }
+    public static BaseController getInstance(Stage stage) {
+        if (instance == null) instance = new BaseController(stage);
+        return instance;
+    }
 
-  @FXML
-  void closeIconClicked() {
-    stage.hide();
-    stage.close();
-    SpotyThreader.disposeSpotyThreadPool();
-    Platform.exit();
-    System.exit(0);
-  }
+    @FXML
+    void closeIconClicked() {
+        stage.hide();
+        stage.close();
+        SpotyThreader.disposeSpotyThreadPool();
+        Platform.exit();
+        System.exit(0);
+    }
 
-  @FXML
-  void maximizeIconClicked() {
-    ((Stage) rootPane.getScene().getWindow())
-        .setMaximized(!((Stage) rootPane.getScene().getWindow()).isMaximized());
-  }
+    @FXML
+    void maximizeIconClicked() {
+        Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
+//        ((Stage) rootPane.getScene().getWindow())
+//                .setMaximized(!((Stage) rootPane.getScene().getWindow()).isMaximized());
 
-  @FXML
-  void minimizeIconClicked() {
-    ((Stage) rootPane.getScene().getWindow()).setIconified(true);
-  }
+//      stage.setFullScreen(!stage.isFullScreen());
+        if (stage.getHeight() == bounds.getHeight() && stage.getWidth() == bounds.getWidth()) {
+            stage.setHeight(bounds.getHeight() * .8);
+            stage.setWidth(bounds.getWidth() * .8);
+        } else {
+            stage.setHeight(bounds.getHeight());
+            stage.setWidth(bounds.getWidth());
+        }
+    }
 
-  @Override
-  public void initialize(URL location, ResourceBundle resources) {
-    appNameLabel.setText(Labels.APP_NAME);
-    appNameLabel.setFont(new Font(48));
-    windowHeader.setOnMousePressed(
-        event -> {
-          xOffset = stage.getX() - event.getScreenX();
-          yOffset = stage.getY() - event.getScreenY();
-        });
-    windowHeader.setOnMouseDragged(
-        event -> {
-          stage.setX(event.getScreenX() + xOffset);
-          stage.setY(event.getScreenY() + yOffset);
-        });
+    @FXML
+    void minimizeIconClicked() {
+//        ((Stage) rootPane.getScene().getWindow()).setIconified(true);
+        stage.setIconified(true);
+    }
 
-    initializeLoader();
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        appNameLabel.setText(Labels.APP_NAME);
+        appNameLabel.setFont(new Font(48));
+        windowHeader.setOnMousePressed(
+                event -> {
+                    xOffset = stage.getX() - event.getScreenX();
+                    yOffset = stage.getY() - event.getScreenY();
+                });
+        windowHeader.setOnMouseDragged(
+                event -> {
+                    stage.setX(event.getScreenX() + xOffset);
+                    stage.setY(event.getScreenY() + yOffset);
+                });
 
-    ScrollUtils.animateScrollBars(scrollPane);
+        initializeLoader();
 
-    ScrollUtils.addSmoothScrolling(scrollPane);
-  }
+        ScrollUtils.animateScrollBars(scrollPane);
 
-  public void initializeLoader() {
-    navigation = Navigation.getInstance(contentPane);
-    navBar.getChildren().add(navigation.createNavigation());
+        ScrollUtils.addSmoothScrolling(scrollPane);
+    }
+
+    public void initializeLoader() {
+        navigation = Navigation.getInstance(contentPane);
+        navBar.getChildren().add(navigation.createNavigation());
 
 //    navBar.setStyle("-fx-background-color: red;");
 
-    MFXButton settings = createToggle("fas-gears", "Settings");
-    settings.setOnAction(e -> navigation.navigate(Pages.getSettingsPane()));
-    settingsHolder.getChildren().add(settings);
-  }
+        MFXButton settings = createToggle("fas-gears", "Settings");
+        settings.setOnAction(e -> navigation.navigate(Pages.getSettingsPane()));
+        settingsHolder.getChildren().add(settings);
+    }
 }

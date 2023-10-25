@@ -64,7 +64,6 @@ test {
 
 run {
     jvmArgs = [
-            '-Djdk.gtk.version=3',
             '-XX:NewRatio=1',
             '-Xms256m',
             '-Xmx2G',
@@ -76,7 +75,6 @@ run {
             '-Dsun.io.useCanonCaches=false',
             '-Djbr.catch.SIGABRT=true',
             '-Djdk.attach.allowAttachSelf=true',
-            '-XX:ErrorFile=/home/infinite-dev/IdeaProjects/spoty/error%p.log',
     ]
 }
 
@@ -94,7 +92,6 @@ jlink {
     launcher {
         name = 'Zenmart ERP'
         jvmArgs = [
-                '-Djdk.gtk.version=3',
                 '-XX:NewRatio=1',
                 '-Xms256m',
                 '-Xmx2G',
@@ -144,6 +141,14 @@ jlinkZip.doLast {
 }
 
 dependencies {
+    // To fix SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+    //SLF4J: Defaulting to no-operation (NOP) logger implementation
+    implementation 'org.slf4j:slf4j-simple:2.0.9'
+    // https://mvnrepository.com/artifact/net.java.dev.jna/jna
+    implementation 'net.java.dev.jna:jna:5.13.0'
+    // https://mvnrepository.com/artifact/net.java.dev.jna/jna-platform
+    implementation 'net.java.dev.jna:jna-platform:5.13.0'
+
     implementation 'org.xerial:sqlite-jdbc:3.43.2.1'
     implementation 'com.j256.ormlite:ormlite-jdbc:6.1'
     implementation 'org.jetbrains:annotations:24.0.1'
@@ -151,7 +156,7 @@ dependencies {
     implementation 'org.kordamp.ikonli:ikonli-javafx:12.3.1'
     implementation 'org.kordamp.ikonli:ikonli-core:12.3.1'
     implementation 'org.kordamp.ikonli:ikonli-fontawesome5-pack:12.3.1'
-    implementation 'jakarta.persistence:jakarta.persistence-api:3.1.0'
+    implementation 'jakarta.persistence:jakarta.persistence-api:3.2.0-B01'
     implementation 'jakarta.enterprise:jakarta.enterprise.cdi-api:4.0.1'
     implementation 'fr.brouillard.oss:cssfx:11.5.1'
 //    implementation 'io.github.palexdev:scenicview:17.0.2'

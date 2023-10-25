@@ -5,11 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1a27fa9e-5f29-4084-9097-b156dd85e41b" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/infinite/spoty/database/dao/BranchDaoTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/infinite/spoty/database/dao/BranchDaoTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/infinite/spoty/database/dao/DatabaseSeederTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/infinite/spoty/database/dao/DatabaseSeederTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/ProductCategoryFormController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/ProductCategoryFormController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/startup/SpotyPaths.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/startup/SpotyPaths.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/utils/SpotyLogger.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/utils/SpotyLogger.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/utils/SpotyThreader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/utils/SpotyThreader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/BaseController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/BaseController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/splash/SplashScreenController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/splash/SplashScreenController.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -73,7 +76,7 @@
       <recent name="C:\Users\infinite-dev\IdeaProjects\spoty\src\main\java\org\infinite\spoty\printable\general" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.spoty [jpackage]">
+  <component name="RunManager" selected="Gradle.spoty [run]">
     <configuration name="spoty [build]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -164,8 +167,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.spoty [jpackage]" />
         <item itemvalue="Gradle.spoty [run]" />
+        <item itemvalue="Gradle.spoty [jpackage]" />
         <item itemvalue="Gradle.spoty [build]" />
         <item itemvalue="Gradle.spoty [clean]" />
       </list>
@@ -180,6 +183,15 @@
       <option name="presentableId" value="Default" />
       <updated>1695437024687</updated>
     </task>
+    <task id="LOCAL-00001" summary="Fix errors in Tests">
+      <option name="closed" value="true" />
+      <created>1698153297211</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1698153297211</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -192,6 +204,10 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Fix errors in Tests" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix errors in Tests" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

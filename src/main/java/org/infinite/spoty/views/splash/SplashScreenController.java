@@ -21,10 +21,12 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
@@ -32,6 +34,7 @@ import org.infinite.spoty.database.management.SQLiteTableCreator;
 import org.infinite.spoty.startup.Dialogs;
 import org.infinite.spoty.startup.SpotyPaths;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.values.strings.Labels;
 import org.infinite.spoty.viewModels.*;
 import org.infinite.spoty.views.BaseController;
@@ -45,6 +48,7 @@ import java.util.ResourceBundle;
 import static org.infinite.spoty.SpotyResourceLoader.fxmlLoader;
 import static org.infinite.spoty.components.navigation.Pages.setControllers;
 import static org.infinite.spoty.components.navigation.Pages.setPanes;
+import static org.infinite.spoty.utils.SpotyThreader.singleThreadCreator;
 
 public class SplashScreenController implements Initializable {
     @FXML
@@ -69,7 +73,7 @@ public class SplashScreenController implements Initializable {
 
     @NotNull
     private static Thread tableCreate() {
-        return virtualThread(
+        return SpotyThreader.singleThreadCreator(
                 "data-storage-man",
                 () -> {
                     try {
@@ -85,6 +89,7 @@ public class SplashScreenController implements Initializable {
     private static void startApp() {
         Platform.runLater(
                 () -> {
+                    Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
                     try {
                         CSSFX.start();
                         Stage stage = new Stage();
@@ -95,13 +100,15 @@ public class SplashScreenController implements Initializable {
                         FXMLLoader loader = fxmlLoader("fxml/Base.fxml");
                         loader.setControllerFactory(c -> BaseController.getInstance(stage));
                         Parent root = loader.load();
-                        Scene scene = new Scene(root);
+                        Scene scene = new Scene(root, 800, 600);
                         MFXThemeManager.addOn(scene, Themes.DEFAULT, Themes.LEGACY);
                         io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(scene);
                         scene.setFill(null);
                         stage.setScene(scene);
                         stage.initStyle(StageStyle.TRANSPARENT);
-                        stage.setMaximized(true);
+                        // Set initial window size.
+                        stage.setHeight(bounds.getHeight());
+                        stage.setWidth(bounds.getWidth());
                         stage.setTitle(Labels.APP_NAME);
                         stage.show();
                         SimpleNotificationHolder.setNotificationOwner(stage);
@@ -113,7 +120,7 @@ public class SplashScreenController implements Initializable {
 
     @NotNull
     private static Thread dataInit() {
-        return virtualThread(
+        return singleThreadCreator(
                 "data-tracker",
                 () -> {
                     try {
@@ -246,10 +253,6 @@ public class SplashScreenController implements Initializable {
                         SpotyLogger.writeToFile(e, SplashScreenController.class);
                     }
                 });
-    }
-
-    private static Thread virtualThread(String name, Runnable runnable) {
-        return Thread.ofVirtual().name(name).start(runnable);
     }
 
     @Override
