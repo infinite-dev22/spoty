@@ -4,16 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1a27fa9e-5f29-4084-9097-b156dd85e41b" name="Changes" comment="Fix issues with database handling, issues were dependency related(SQLite Driver). Fixed by downgrading dependency version.">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/ProductCategoryFormController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/ProductCategoryFormController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/utils/SpotyThreader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/utils/SpotyThreader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/ProductCategoryViewModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/ProductCategoryViewModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/BaseController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/BaseController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/inventory/products/ProductController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/inventory/products/ProductController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/splash/SplashScreenController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/splash/SplashScreenController.java" afterDir="false" />
-    </list>
+    <list default="true" id="1a27fa9e-5f29-4084-9097-b156dd85e41b" name="Changes" comment="Fix jpackage issues" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -76,7 +67,7 @@
       <recent name="C:\Users\infinite-dev\IdeaProjects\spoty\src\main\java\org\infinite\spoty\printable\general" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.spoty [run]">
+  <component name="RunManager" selected="Gradle.spoty [jpackage]">
     <configuration name="spoty [build]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -167,8 +158,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.spoty [run]" />
         <item itemvalue="Gradle.spoty [jpackage]" />
+        <item itemvalue="Gradle.spoty [run]" />
         <item itemvalue="Gradle.spoty [build]" />
         <item itemvalue="Gradle.spoty [clean]" />
       </list>
@@ -199,7 +190,23 @@
       <option name="project" value="LOCAL" />
       <updated>1698205948324</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Fix issues with database handling, issues were dependency related(SQLite Driver). Fixed by downgrading dependency version.">
+      <option name="closed" value="true" />
+      <created>1698270728368</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1698270728368</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Fix jpackage issues">
+      <option name="closed" value="true" />
+      <created>1698308456502</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1698308456502</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -216,7 +223,9 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Fix errors in Tests" />
     <MESSAGE value="Revert back from Virtual threads to platform threads: Virtual threads were noticed to be expensive and affected performance greatly.&#10;Rework on windows decoration behaviour: handle minimize and maximize events differently.&#10;Fix sl4j no being able to load into memory: Add sl4j-simple to combat this as advised or noted on sl4j website." />
-    <option name="LAST_COMMIT_MESSAGE" value="Revert back from Virtual threads to platform threads: Virtual threads were noticed to be expensive and affected performance greatly.&#10;Rework on windows decoration behaviour: handle minimize and maximize events differently.&#10;Fix sl4j no being able to load into memory: Add sl4j-simple to combat this as advised or noted on sl4j website." />
+    <MESSAGE value="Fix issues with database handling, issues were dependency related(SQLite Driver). Fixed by downgrading dependency version." />
+    <MESSAGE value="Fix jpackage issues" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix jpackage issues" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

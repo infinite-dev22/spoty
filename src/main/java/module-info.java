@@ -15,6 +15,7 @@ module org.infinite.spoty {
     requires org.xerial.sqlitejdbc;
     requires org.kordamp.ikonli.core;
     requires org.kordamp.ikonli.fontawesome5;
+    requires org.slf4j;
 
     opens org.infinite.spoty.views;
     opens org.infinite.spoty.views.components;

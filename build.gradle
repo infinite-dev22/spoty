@@ -148,6 +148,8 @@ dependencies {
     implementation 'net.java.dev.jna:jna:5.13.0'
     // https://mvnrepository.com/artifact/net.java.dev.jna/jna-platform
     implementation 'net.java.dev.jna:jna-platform:5.13.0'
+    // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
+    implementation 'org.slf4j:slf4j-api:2.0.9'
 
     implementation 'org.xerial:sqlite-jdbc:3.42.0.0'
     implementation 'com.j256.ormlite:ormlite-jdbc:6.1'
