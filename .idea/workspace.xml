@@ -5,8 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1a27fa9e-5f29-4084-9097-b156dd85e41b" name="Changes" comment="Fix jpackage issues">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/connection/SQLiteConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/connection/SQLiteConnection.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/management/SQLiteTableCreator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/management/SQLiteTableCreator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/startup/SpotyPaths.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/startup/SpotyPaths.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/utils/SpotyLogger.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/utils/SpotyLogger.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,6 +52,11 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="history/orm/hibernate/Version6.2.5.Final" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectColorInfo">{
@@ -69,7 +80,7 @@
     &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settings.ide.settings.new.ui&quot;
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settingsdialog.project.gradle&quot;
   }
 }</component>
   <component name="RecentsManager">
@@ -170,14 +181,16 @@
       <list>
         <item itemvalue="Gradle.spoty [run]" />
         <item itemvalue="Gradle.spoty [jpackage]" />
-        <item itemvalue="Gradle.spoty [build]" />
         <item itemvalue="Gradle.spoty [clean]" />
+        <item itemvalue="Gradle.spoty [build]" />
+        <item itemvalue="Gradle.spoty [run]" />
       </list>
     </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
+        <option value="jdk-17.0.9-corretto-17.0.9-8336523bb0d9-9b5c8e75" />
         <option value="jdk-21.0.1-openjdk-21.0.1-8336523bb0d9-cc9f59e6" />
       </set>
     </attachedChunks>
@@ -243,52 +256,6 @@
     <MESSAGE value="Fix issues with database handling, issues were dependency related(SQLite Driver). Fixed by downgrading dependency version." />
     <MESSAGE value="Fix jpackage issues" />
     <option name="LAST_COMMIT_MESSAGE" value="Fix jpackage issues" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/ProductCategoryViewModel.java</url>
-          <line>158</line>
-          <option name="timeStamp" value="6" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/ProductCategoryViewModel.java</url>
-          <line>161</line>
-          <option name="timeStamp" value="7" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/ProductCategoryViewModel.java</url>
-          <line>162</line>
-          <option name="timeStamp" value="8" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/ProductCategoryViewModel.java</url>
-          <line>163</line>
-          <option name="timeStamp" value="9" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/ProductCategoryViewModel.java</url>
-          <line>165</line>
-          <option name="timeStamp" value="10" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/ProductCategoryViewModel.java</url>
-          <line>167</line>
-          <option name="timeStamp" value="11" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/ProductCategoryViewModel.java</url>
-          <line>168</line>
-          <option name="timeStamp" value="12" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/ProductCategoryFormController.java</url>
-          <line>113</line>
-          <option name="timeStamp" value="13" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

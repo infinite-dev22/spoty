@@ -154,7 +154,7 @@ dependencies {
     implementation 'org.xerial:sqlite-jdbc:3.43.2.2'
     implementation 'com.j256.ormlite:ormlite-jdbc:6.1'
     implementation 'org.jetbrains:annotations:24.0.1'
-    implementation 'io.github.palexdev:materialfx:11.17.0'
+    implementation 'io.github.palexdev:materialfx:11.16.1' // update to version -> 11.17.0 breaks the system.
     implementation 'org.kordamp.ikonli:ikonli-javafx:12.3.1'
     implementation 'org.kordamp.ikonli:ikonli-core:12.3.1'
     implementation 'org.kordamp.ikonli:ikonli-fontawesome5-pack:12.3.1'
@@ -162,7 +162,7 @@ dependencies {
     implementation 'jakarta.enterprise:jakarta.enterprise.cdi-api:4.0.1'
     implementation 'fr.brouillard.oss:cssfx:11.5.1'
 //    implementation 'io.github.palexdev:scenicview:17.0.2'
-    implementation 'io.github.palexdev:virtualizedfx:21.1.0'
+    implementation 'io.github.palexdev:virtualizedfx:11.9.6' // update to version -> 21.1.0 breaks the system.
     implementation 'io.github.palexdev:mfxcomponents:11.24.1'
     implementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
     implementation 'org.junit.jupiter:junit-jupiter-engine:5.10.0'

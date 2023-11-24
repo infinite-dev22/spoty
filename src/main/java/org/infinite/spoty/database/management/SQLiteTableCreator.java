@@ -41,6 +41,7 @@ public class SQLiteTableCreator {
 
     /**
      * create initial required data into database.
+     *
      * @throws SQLException returned on fail.
      */
     public void seedDatabase() throws SQLException {

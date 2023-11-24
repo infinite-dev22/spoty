@@ -32,12 +32,12 @@ public class SpotyPaths {
                 dbPath = Paths.get(System.getProperty("user.home")
                         + "\\AppData\\Local\\ZenmartERP\\data\\datastores\\databases\\offline\\sync\\sqlite\\db");
                 logPath = Paths.get(System.getProperty("user.home")
-                        + "\\AppData\\Local\\ZenmartERP\\event-log-data\\logs\\stack");
+                        + "\\AppData\\Local\\ZenmartERP\\sys-log-data\\logs\\stack");
             } else {
                 dbPath = Paths.get(
                         System.getProperty("user.home") + "/.config/ZenmartERP/data/datastores/databases/offline/sync/sqlite/db");
                 logPath = Paths.get(
-                        System.getProperty("user.home") + "/.config/ZenmartERP/event-log-data/logs/stack");
+                        System.getProperty("user.home") + "/.config/ZenmartERP/sys-log-data/logs/stack");
             }
 
             Files.createDirectories(dbPath);

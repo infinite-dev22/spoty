@@ -46,7 +46,7 @@ public class SQLiteConnection {
         return new JdbcConnectionSource(
             "jdbc:sqlite:"
                 + System.getProperty("user.home")
-                + "/.config/ZenmartERP/datastores/databases/sqlite/database.sqlite3");
+                + "/.config/ZenmartERP/data/datastores/databases/offline/sync/sqlite/db/database.sqlite3");
       } catch (Exception e) {
         SpotyLogger.writeToFile(e, this.getClass());
       }
@@ -57,7 +57,7 @@ public class SQLiteConnection {
         return new JdbcConnectionSource(
             "jdbc:sqlite:"
                 + System.getProperty("user.home")
-                + "/.config/ZenmartERP/datastores/databases/sqlite/database.sqlite3");
+                + "/.config/ZenmartERP/data/datastores/databases/offline/sync/sqlite/db/database.sqlite3");
       } catch (Exception e) {
         SpotyLogger.writeToFile(e, this.getClass());
       }

@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,6 +35,10 @@ import java.util.logging.SimpleFormatter;
  * Contains a single function <code>writeToFile</code> taking two parameters <b>exception</b> and <b>currentClass</b>
  */
 public class SpotyLogger {
+    static SimpleFormatter formatter = new SimpleFormatter();
+
+    static FileHandler fileHandler;
+
     /**
      * Write logs to file.
      *
@@ -41,38 +46,38 @@ public class SpotyLogger {
      * @param currentClass class in which the exception is handled.
      */
     public static <T> void writeToFile(Throwable throwable, @NotNull Class<T> currentClass) {
-        Logger logger = Logger.getLogger(currentClass.getName());
-
-        SimpleFormatter formatter = new SimpleFormatter();
-
-        FileHandler fileHandler;
-        Path path;
-
-        try {
-            if (System.getProperty("os.name").contains("Windows")) {
-                path = Paths.get(System.getProperty("user.home")
-                        + "\\AppData\\Local\\ZenmartERP\\event-log-data\\logs\\stack\\spoty_log.log");
-            } else {
-                path = Paths.get(System.getProperty("user.home")
-                        + "/.config/ZenmartERP/event-log-data/logs/stack/spoty_log.log");
-            }
-
-            fileHandler =
-                    new FileHandler(
-                            path.toString(), 1000, 1, true);
-            fileHandler.setFormatter(formatter);
-
-            logger.addHandler(fileHandler);
-
-            logger.log(
-                    Level.ALL,
-                    throwable.getMessage()
-                            + "\n"
-                            + Arrays.toString(throwable.getStackTrace())
-                            + "\n\n");
-        } catch (IOException e) {
-            SpotyLogger.writeToFile(e, SpotyLogger.class);
-            throw new RuntimeException(e);
-        }
+        throwable.printStackTrace();
     }
+//    public static <T> void writeToFile(Throwable throwable, @NotNull Class<T> currentClass) {
+//        Logger logger = Logger.getLogger(currentClass.getName());
+//
+//        Path path;
+//
+//        try {
+//            if (System.getProperty("os.name").contains("Windows")) {
+//                path = Paths.get(System.getProperty("user.home")
+//                        + "\\AppData\\Local\\ZenmartERP\\sys-log-data\\logs\\stack\\spoty_log.log");
+//            } else {
+//                path = Paths.get(System.getProperty("user.home")
+//                        + "/.config/ZenmartERP/sys-log-data/logs/stack/spoty_log.log");
+//            }
+//            if (Objects.isNull(fileHandler)) fileHandler =
+//                    new FileHandler(
+//                            path.toString(), 1000, 1, true);
+//
+//            fileHandler.setFormatter(formatter);
+//
+//            logger.addHandler(fileHandler);
+//
+//            logger.log(
+//                    Level.ALL,
+//                    throwable.getMessage()
+//                            + "\n"
+//                            + Arrays.toString(throwable.getStackTrace())
+//                            + "\n\n");
+//        } catch (IOException e) {
+//            SpotyLogger.writeToFile(e, SpotyLogger.class);
+//            throw new RuntimeException(e);
+//        }
+//    }
 }
