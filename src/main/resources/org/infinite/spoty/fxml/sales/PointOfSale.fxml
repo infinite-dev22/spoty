@@ -30,7 +30,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import java.net.URL?>
 <BorderPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/20.0.1"
-            fx:controller="org.infinite.spoty.views.pos.PointOfSaleController">
+            fx:controller="org.infinite.spoty.views.sales.pos.PointOfSaleController">
     <right>
         <VBox prefWidth="400.0" spacing="10.0" styleClass="card" BorderPane.alignment="CENTER">
             <BorderPane.margin>

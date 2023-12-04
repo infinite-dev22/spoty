@@ -171,6 +171,6 @@ public class StockInController implements Initializable {
 
     @FXML
     private void stockInCreateBtnClicked() {
-        BaseController.navigation.navigate(Pages.getStockinMasterFormPane());
+        BaseController.navigation.navigate(Pages.getStockInMasterFormPane());
     }
 }

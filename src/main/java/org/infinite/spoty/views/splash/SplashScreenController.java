@@ -15,8 +15,11 @@
 package org.infinite.spoty.views.splash;
 
 import fr.brouillard.oss.cssfx.CSSFX;
-import io.github.palexdev.materialfx.css.themes.MFXThemeManager;
-import io.github.palexdev.materialfx.css.themes.Themes;
+//import io.github.palexdev.materialfx.css.themes.MFXThemeManager;
+//import io.github.palexdev.materialfx.css.themes.Themes;
+import io.github.palexdev.materialfx.theming.JavaFXThemes;
+import io.github.palexdev.materialfx.theming.MaterialFXStylesheets;
+import io.github.palexdev.materialfx.theming.UserAgentBuilder;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -86,6 +89,14 @@ public class SplashScreenController implements Initializable {
     }
 
     private static void startApp() {
+        UserAgentBuilder.builder()
+                .themes(JavaFXThemes.MODENA)
+                .themes(MaterialFXStylesheets.forAssemble(true))
+                .setDeploy(true)
+                .setResolveAssets(true)
+                .build()
+                .setGlobal();
+
         Platform.runLater(
                 () -> {
                     Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
@@ -106,7 +117,7 @@ public class SplashScreenController implements Initializable {
                         Parent root = loader.load();
                         Scene scene = new Scene(root);
                         // Set application scene theme to MFX modern themes.
-                        MFXThemeManager.addOn(scene, Themes.DEFAULT, Themes.LEGACY);
+//                        MFXThemeManager.addOn(scene, Themes.DEFAULT, Themes.LEGACY);
                         io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(scene);
                         // Fixes black edges showing in main app scene.
                         scene.setFill(null);

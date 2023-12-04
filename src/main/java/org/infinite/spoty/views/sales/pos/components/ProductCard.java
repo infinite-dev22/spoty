@@ -12,7 +12,7 @@
  * Jonathan Mark Mwigo makes no warranties, express or implied, with respect to the computer system code. Jonathan Mark Mwigo shall not be liable for any damages, including, but not limited to, direct, indirect, incidental, special, consequential, or punitive damages, arising out of or in connection with the use of the computer system code.
  */
 
-package org.infinite.spoty.views.pos.components;
+package org.infinite.spoty.views.sales.pos.components;
 
 import io.github.palexdev.mfxcore.controls.Label;
 import java.util.Objects;

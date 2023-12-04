@@ -16,8 +16,11 @@ package org.infinite.spoty.views.splash;
 
 import static org.infinite.spoty.SpotyResourceLoader.fxmlLoader;
 
-import io.github.palexdev.materialfx.css.themes.MFXThemeManager;
-import io.github.palexdev.materialfx.css.themes.Themes;
+//import io.github.palexdev.materialfx.css.themes.MFXThemeManager;
+//import io.github.palexdev.materialfx.css.themes.Themes;
+import io.github.palexdev.materialfx.theming.JavaFXThemes;
+import io.github.palexdev.materialfx.theming.MaterialFXStylesheets;
+import io.github.palexdev.materialfx.theming.UserAgentBuilder;
 import javafx.application.Preloader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -28,9 +31,17 @@ public class LaunchPreloader extends Preloader {
 
   @Override
   public void start(Stage primaryStage) throws Exception {
+    UserAgentBuilder.builder()
+            .themes(JavaFXThemes.MODENA)
+            .themes(MaterialFXStylesheets.forAssemble(true))
+            .setDeploy(true)
+            .setResolveAssets(true)
+            .build()
+            .setGlobal();
+
     this.preloadStage = primaryStage;
     Scene scene = new Scene(fxmlLoader("fxml/splash/SplashScreen.fxml").load());
-    MFXThemeManager.addOn(scene, Themes.DEFAULT, Themes.LEGACY);
+//    MFXThemeManager.addOn(scene, Themes.DEFAULT, Themes.LEGACY);
     io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(scene);
     scene.setFill(null);
     primaryStage.initStyle(StageStyle.TRANSPARENT);

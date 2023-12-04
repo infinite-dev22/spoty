@@ -4,15 +4,137 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1a27fa9e-5f29-4084-9097-b156dd85e41b" name="Changes" comment="Fix jpackage issues">
+    <list default="true" id="1a27fa9e-5f29-4084-9097-b156dd85e41b" name="Changes" comment="Adding more features and functionality(More screens too)&#10;Try adding MFXTreeView for animated navbar">
+      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/components/navigation/new_nav/Nav.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/components/navigation/new_nav/NavTree.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/components/navigation/new_nav/Navigation.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/components/navigation/new_nav/Spacer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/account/BankReconciliationController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/account/CashAdjustmentController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/account/CashPaymentController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/account/ChartOfAccountController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/account/ContraVoucherController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/account/CreditVoucherController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/account/CustomerReceiveController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/account/DebitVoucherController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/account/FinancialYearController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/account/JournalVoucherController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/account/OpeningBalanceController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/account/PaymentMethodsController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/account/PreDefinedAccountsController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/account/ServicePaymentController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/account/SubAccountController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/account/SupplierPaymentController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/account/VoucherApprovalController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/account/report/BalanceSheetController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/account/report/BankBookController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/account/report/BankReconciliationReportController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/account/report/CashBookController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/account/report/CoaPrintController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/account/report/DayBookController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/account/report/ExpenditureStatementController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/account/report/FixedAssetScheduleController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/account/report/GeneralLedgerController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/account/report/IncomeStatementController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/account/report/ProfitLossController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/account/report/ReceiptAndPaymentController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/account/report/SubLedgerController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/account/report/TrialBalanceController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/sales/SaleTermsController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/stock_report/StockReportController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/BankReconciliation.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/CashAdjustment.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/CashPayment.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/ChartOfAccount.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/ContraVoucher.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/CreditVoucher.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/CustomerReceive.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/DebitVoucher.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/FinancialYear.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/JournalVoucher.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/OpeningBalance.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/PaymentMethods.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/PreDefinedAccounts.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/ServicePayment.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/SubAccount.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/SupplierPayment.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/VoucherApproval.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/report/BalanceSheet.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/report/BankBook.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/report/BankReconciliationReport.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/report/CashBook.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/report/CoaPrint.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/report/DayBook.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/report/ExpenditureStatement.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/report/FixedAssetSchedule.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/report/GeneralLedger.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/report/IncomeStatement.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/report/ProfitLoss.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/report/ReceiptAndPayment.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/report/SubLedger.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/report/TrialBalance.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/bank/Banks.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/human_resource/attendance/AttendanceReport.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/human_resource/attendance/attendances.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/human_resource/hrm/Designations.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/human_resource/hrm/Employees.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/human_resource/pay_roll/ManageEmployeeSalary.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/human_resource/pay_roll/SalaryAdvances.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/human_resource/pay_roll/SalaryGenerate.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/report/Closing.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/report/ClosingReport.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/report/DueReport.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/report/ProfitReport.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/report/PurchaseReport.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/report/SalesReport.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/report/SalesReturn.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/report/ShippingCostReport.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/report/TaxReport.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/report/TodayCustomerReport.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/report/TodayReport.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/report/UserSalesReport.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/returns/Returns.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/returns/StockReturns.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/returns/SupplierReturns.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/returns/WastageReturns.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/sales/SaleTerms.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/service/ServiceInvoices.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/service/Services.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/settings/new_settings/data_synchronizer/Backup.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/settings/new_settings/data_synchronizer/Import.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/settings/new_settings/data_synchronizer/Restore.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/settings/new_settings/role_permission/Roles.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/settings/new_settings/role_permission/UserAssignRole.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/settings/new_settings/software_settings/AppSettings.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/settings/new_settings/software_settings/Currency.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/settings/new_settings/software_settings/Language.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/settings/new_settings/software_settings/MailSettings.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/settings/new_settings/software_settings/ManageCompany.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/settings/new_settings/software_settings/PrintSettings.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/settings/new_settings/software_settings/Settings.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/settings/new_settings/software_settings/Users.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/stock_report/StockReport.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/tax/TaxSettings.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/tax/VATAndTaxSettings.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/connection/SQLiteConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/connection/SQLiteConnection.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/management/SQLiteTableCreator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/management/SQLiteTableCreator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/startup/SpotyPaths.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/startup/SpotyPaths.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/utils/SpotyLogger.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/utils/SpotyLogger.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/module-info.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/components/navigation/Nav.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/components/navigation/Nav.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/components/navigation/NavTree.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/components/navigation/NavTree.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/components/navigation/Navigation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/components/navigation/Navigation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/components/navigation/Pages.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/components/navigation/Pages.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/values/strings/Labels.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/values/strings/Labels.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/BaseController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/BaseController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/pos/PointOfSaleController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/sales/pos/PointOfSaleController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/pos/components/ProductCard.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/sales/pos/components/ProductCard.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/splash/LaunchPreloader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/splash/LaunchPreloader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/splash/SplashScreenController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/splash/SplashScreenController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/stock_in/StockInController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/stock_in/StockInController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/Base.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/Base.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/pos/PointOfSale.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/sales/PointOfSale.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/styles/base.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/styles/base.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,6 +169,7 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="FxmlFile" />
         <option value="Class" />
       </list>
     </option>
@@ -63,29 +186,51 @@
   &quot;associatedIndex&quot;: 2
 }</component>
   <component name="ProjectId" id="2VmMu88YyedMcz0PT8CaKHV0nhH" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Gradle.spoty [run].executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/infinite-dev/AppData/Local/SceneBuilder/SceneBuilder.exe&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settingsdialog.project.gradle&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Gradle.spoty [run].executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "aspect.path.notification.shown": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/home/infinitedev/IdeaProjects/spoty/src/main/resources/org/infinite/spoty/fxml/account/report",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/report" />
+      <recent name="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account" />
+      <recent name="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/settings/new_settings/data_synchronizer" />
+      <recent name="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/settings/new_settings/role_permission" />
+      <recent name="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/settings/new_settings/software_settings" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/sales" />
       <recent name="C:\Users\infinite-dev\IdeaProjects\spoty\src\main\java\org\infinite\spoty\printable\general" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="org.infinite.spoty.views.account.report" />
+      <recent name="org.infinite.spoty.views.account" />
     </key>
   </component>
   <component name="RunManager" selected="Gradle.spoty [run]">
@@ -190,8 +335,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="jdk-17.0.9-corretto-17.0.9-8336523bb0d9-9b5c8e75" />
-        <option value="jdk-21.0.1-openjdk-21.0.1-8336523bb0d9-cc9f59e6" />
+        <option value="jdk-21.0.1-openjdk-21.0.1-3183f394aec4-920bfa72" />
       </set>
     </attachedChunks>
   </component>
@@ -203,6 +347,35 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1695437024687</updated>
+      <workItem from="1701068422940" duration="25000" />
+      <workItem from="1701068467282" duration="347000" />
+      <workItem from="1701068869501" duration="20000" />
+      <workItem from="1701068907131" duration="978000" />
+      <workItem from="1701101997074" duration="162000" />
+      <workItem from="1701102302636" duration="15000" />
+      <workItem from="1701102372777" duration="118000" />
+      <workItem from="1701104692651" duration="61000" />
+      <workItem from="1701108705642" duration="9000" />
+      <workItem from="1701108926736" duration="607000" />
+      <workItem from="1701190012726" duration="34000" />
+      <workItem from="1701192182086" duration="31000" />
+      <workItem from="1701192711952" duration="614000" />
+      <workItem from="1701193932926" duration="38000" />
+      <workItem from="1701194524006" duration="82000" />
+      <workItem from="1701194714893" duration="109000" />
+      <workItem from="1701194846559" duration="8000" />
+      <workItem from="1701198550177" duration="79000" />
+      <workItem from="1701201476407" duration="3842000" />
+      <workItem from="1701282986400" duration="6795000" />
+      <workItem from="1701334221740" duration="3000" />
+      <workItem from="1701334311013" duration="3000" />
+      <workItem from="1701370669885" duration="1422000" />
+      <workItem from="1701405818087" duration="3531000" />
+      <workItem from="1701437801425" duration="125000" />
+      <workItem from="1701447498724" duration="4012000" />
+      <workItem from="1701486994010" duration="3417000" />
+      <workItem from="1701509999475" duration="6331000" />
+      <workItem from="1701620469979" duration="21312000" />
     </task>
     <task id="LOCAL-00001" summary="Fix errors in Tests">
       <option name="closed" value="true" />
@@ -239,6 +412,9 @@
     <option name="localTasksCounter" value="5" />
     <servers />
   </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
       <map>
@@ -255,7 +431,9 @@
     <MESSAGE value="Revert back from Virtual threads to platform threads: Virtual threads were noticed to be expensive and affected performance greatly.&#10;Rework on windows decoration behaviour: handle minimize and maximize events differently.&#10;Fix sl4j no being able to load into memory: Add sl4j-simple to combat this as advised or noted on sl4j website." />
     <MESSAGE value="Fix issues with database handling, issues were dependency related(SQLite Driver). Fixed by downgrading dependency version." />
     <MESSAGE value="Fix jpackage issues" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fix jpackage issues" />
+    <MESSAGE value="Adding more features and functionality(More screens too)" />
+    <MESSAGE value="Adding more features and functionality(More screens too)&#10;Try adding MFXTreeView for animated navbar" />
+    <option name="LAST_COMMIT_MESSAGE" value="Adding more features and functionality(More screens too)&#10;Try adding MFXTreeView for animated navbar" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

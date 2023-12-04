@@ -57,8 +57,6 @@ public class BaseController implements Initializable {
     @FXML
     public HBox windowHeader;
     @FXML
-    public MFXScrollPane scrollPane;
-    @FXML
     public AnchorPane rootPane;
     @FXML
     public VBox settingsHolder;
@@ -130,10 +128,6 @@ public class BaseController implements Initializable {
                 });
 
         initializeLoader();
-
-        ScrollUtils.animateScrollBars(scrollPane);
-
-        ScrollUtils.addSmoothScrolling(scrollPane);
     }
 
     public void initializeLoader() {

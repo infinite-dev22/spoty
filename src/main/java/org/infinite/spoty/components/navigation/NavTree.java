@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class NavTree extends TreeView<Nav> {
-    public static final double SIDEBAR_WIDTH = 194.0;
+    public static final double SIDEBAR_WIDTH = 250.0;
 
     /**
      * Removes external control borders.
@@ -65,8 +65,8 @@ public class NavTree extends TreeView<Nav> {
                             if (!navTreeItem.isGroup()) {
                                 navigation.navigate(navTreeItem.view());
                             }
-
-                            if (navTreeItem.isGroup()) {
+                            // Collapse an already expanded node when another is clicked
+                            if (navTreeItem.isGroup() && !navTreeItem.isInnerGroup()) {
                                 navTreeItem.expandedProperty().addListener(expandedListener);
                             }
                         });
@@ -79,6 +79,11 @@ public class NavTree extends TreeView<Nav> {
                         for (TreeItem<Nav> item : getRoot().getChildren()) {
                             if (item != itemThatWasJustExpanded) {
                                 item.setExpanded(false);
+                                item.getChildren().forEach(child -> {
+                                    if (child.isExpanded()) {
+                                        child.setExpanded(false);
+                                    }
+                                });
                             }
                         }
                     }
@@ -94,8 +99,7 @@ public class NavTree extends TreeView<Nav> {
      * Controls side navigation dropdown arrow visibility.
      *
      * @param icon dropdown icon.
-     *
-     * @param on show icon(boolean).
+     * @param on   show icon(boolean).
      */
     public static void toggleVisibility(@NotNull Node icon, boolean on) {
         icon.setVisible(on);
@@ -159,10 +163,10 @@ public class NavTree extends TreeView<Nav> {
         }
 
         /**
-         * @param nav The new item for the cell.
-         * @param empty whether or not this cell represents data from the list. If it
-         *        is empty, then it does not represent any domain data, but is a cell
-         *        being used to render an "empty" row.
+         * @param nav   The new item for the cell.
+         * @param empty whether this cell represents data from the list. If it
+         *              is empty, then it does not represent any domain data, but is a cell
+         *              being used to render an "empty" row.
          */
         @Override
         protected void updateItem(Nav nav, boolean empty) {
@@ -214,7 +218,7 @@ public class NavTree extends TreeView<Nav> {
          * Nested treeview.
          *
          * @param title display name on treeview item.
-         * @param icon display icon on treeview item.
+         * @param icon  display icon on treeview item.
          * @return NavTreeItem
          */
         public static @NotNull NavTreeItem group(String title, String icon) {
@@ -223,11 +227,21 @@ public class NavTree extends TreeView<Nav> {
         }
 
         /**
+         * Nested treeview.
+         *
+         * @param title display name on treeview item.
+         * @return NavTreeItem
+         */
+        public static @NotNull NavTreeItem group(String title) {
+            return new NavTreeItem(new Nav(title, null, null, null));
+        }
+
+        /**
          * Treeview item without child treeview items.
          *
          * @param title display name on treeview item.
-         * @param icon display icon on treeview item.
-         * @param view node to display on treeview item clicked.
+         * @param icon  display icon on treeview item.
+         * @param view  node to display on treeview item clicked.
          * @return NavTreeItem
          */
         public static @NotNull NavTreeItem mainPage(String title, String icon, BorderPane view) {
@@ -239,7 +253,7 @@ public class NavTree extends TreeView<Nav> {
          * Child treeview item of nested treeview.
          *
          * @param title display name on treeview item.
-         * @param view node to display on treeview item clicked.
+         * @param view  node to display on treeview item clicked.
          * @return NavTreeItem
          */
         @Contract("_, _ -> new")
@@ -251,7 +265,7 @@ public class NavTree extends TreeView<Nav> {
          * Child treeview item of nested treeview that can be searched.
          *
          * @param title display name on treeview item.
-         * @param view node to display on treeview item clicked.
+         * @param view  node to display on treeview item clicked.
          * @return NavTreeItem
          */
         @Contract("_, _, _ -> new")
@@ -265,6 +279,10 @@ public class NavTree extends TreeView<Nav> {
 
         public boolean isGroup() {
             return nav.isGroup();
+        }
+
+        public boolean isInnerGroup() {
+            return nav.isInnerGroup();
         }
 
         public boolean isMainPage() {

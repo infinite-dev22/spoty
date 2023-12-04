@@ -38,6 +38,10 @@ record Nav(
         return Objects.equals(view, null);
     }
 
+    public boolean isInnerGroup() {
+        return Objects.equals(graphic, null) && Objects.equals(view, null);
+    }
+
     public boolean isMainPage() {
         return !Objects.equals(view, null) && !Objects.equals(graphic, null);
     }

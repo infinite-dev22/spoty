@@ -31,6 +31,8 @@ module org.infinite.spoty {
     opens org.infinite.spoty.views.inventory.products;
     opens org.infinite.spoty.views.inventory.adjustment;
     opens org.infinite.spoty.views.inventory.quotation;
+    opens org.infinite.spoty.views.account;
+    opens org.infinite.spoty.views.account.report;
     opens org.infinite.spoty.views.expenses.expense;
     opens org.infinite.spoty.views.expenses.category;
     opens org.infinite.spoty.views.people.customers;
@@ -53,7 +55,7 @@ module org.infinite.spoty {
     opens org.infinite.spoty;
     opens org.infinite.spoty.components.notification.enums;
     opens org.infinite.spoty.components.title;
-    opens org.infinite.spoty.views.pos;
+    opens org.infinite.spoty.views.sales.pos;
     opens org.infinite.spoty.printable.general;
 
     exports org.infinite.spoty;

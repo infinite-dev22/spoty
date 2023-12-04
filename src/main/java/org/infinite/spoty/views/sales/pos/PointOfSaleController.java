@@ -12,7 +12,7 @@
  * Jonathan Mark Mwigo makes no warranties, express or implied, with respect to the computer system code. Jonathan Mark Mwigo shall not be liable for any damages, including, but not limited to, direct, indirect, incidental, special, consequential, or punitive damages, arising out of or in connection with the use of the computer system code.
  */
 
-package org.infinite.spoty.views.pos;
+package org.infinite.spoty.views.sales.pos;
 
 import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXRectangleToggleNode;
@@ -40,7 +40,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.util.StringConverter;
-import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
@@ -49,7 +48,7 @@ import org.infinite.spoty.database.models.*;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.*;
-import org.infinite.spoty.views.pos.components.ProductCard;
+import org.infinite.spoty.views.sales.pos.components.ProductCard;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URL;

@@ -29,9 +29,6 @@ repositories {
     gradlePluginPortal()
 }
 
-sourceCompatibility = '21'
-targetCompatibility = '21'
-
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
@@ -154,7 +151,7 @@ dependencies {
     implementation 'org.xerial:sqlite-jdbc:3.43.2.2'
     implementation 'com.j256.ormlite:ormlite-jdbc:6.1'
     implementation 'org.jetbrains:annotations:24.0.1'
-    implementation 'io.github.palexdev:materialfx:11.16.1' // update to version -> 11.17.0 breaks the system.
+    implementation 'io.github.palexdev:materialfx:11.17.0' // update to version -> 11.17.0 breaks the system.
     implementation 'org.kordamp.ikonli:ikonli-javafx:12.3.1'
     implementation 'org.kordamp.ikonli:ikonli-core:12.3.1'
     implementation 'org.kordamp.ikonli:ikonli-fontawesome5-pack:12.3.1'
