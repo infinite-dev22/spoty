@@ -22,6 +22,7 @@ public class PreDefinedAccountsController implements Initializable {
 
     public void createBtnClicked(MouseEvent mouseEvent) {
     }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 

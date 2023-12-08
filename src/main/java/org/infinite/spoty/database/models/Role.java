@@ -16,114 +16,115 @@ package org.infinite.spoty.database.models;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import jakarta.persistence.*;
+
 import java.io.Serializable;
 import java.util.Date;
 
 @DatabaseTable(tableName = "role")
 public class Role implements Serializable {
-  @DatabaseField(generatedId = true)
-  private int id;
+    @DatabaseField(generatedId = true)
+    private int id;
 
-  @DatabaseField(canBeNull = false)
-  private String name;
+    @DatabaseField(canBeNull = false)
+    private String name;
 
-  @DatabaseField
-  private String label;
+    @DatabaseField
+    private String label;
 
-  @DatabaseField(canBeNull = false)
-  private boolean status;
+    @DatabaseField(canBeNull = false)
+    private boolean status;
 
-  @DatabaseField
-  private String description;
+    @DatabaseField
+    private String description;
 
-  @DatabaseField(columnName = "created_at")
-  private Date createdAt;
-  @DatabaseField(columnName = "created_by")
-  private String createdBy;
-  @DatabaseField(columnName = "updated_at")
-  private Date updatedAt;
-  @DatabaseField(columnName = "updated_by")
-  private String updatedBy;
+    @DatabaseField(columnName = "created_at")
+    private Date createdAt;
+    @DatabaseField(columnName = "created_by")
+    private String createdBy;
+    @DatabaseField(columnName = "updated_at")
+    private Date updatedAt;
+    @DatabaseField(columnName = "updated_by")
+    private String updatedBy;
 
-  public Role(
-      String name,
-      String description) {
-    this.name = name;
-    this.description = description;
-  }
+    public Role(
+            String name,
+            String description) {
+        this.name = name;
+        this.description = description;
+    }
 
-  public Role() {}
+    public Role() {
+    }
 
-  public int getId() {
-    return id;
-  }
+    public int getId() {
+        return id;
+    }
 
-  public void setId(int id) {
-    this.id = id;
-  }
+    public void setId(int id) {
+        this.id = id;
+    }
 
-  public String getName() {
-    return name;
-  }
+    public String getName() {
+        return name;
+    }
 
-  public void setName(String name) {
-    this.name = name;
-  }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-  public String getLabel() {
-    return label;
-  }
+    public String getLabel() {
+        return label;
+    }
 
-  public void setLabel(String label) {
-    this.label = label;
-  }
+    public void setLabel(String label) {
+        this.label = label;
+    }
 
-  public boolean isActive() {
-    return status;
-  }
+    public boolean isActive() {
+        return status;
+    }
 
-  public void setActive(boolean status) {
-    this.status = status;
-  }
+    public void setActive(boolean status) {
+        this.status = status;
+    }
 
-  public String getDescription() {
-    return description;
-  }
+    public String getDescription() {
+        return description;
+    }
 
-  public void setDescription(String description) {
-    this.description = description;
-  }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-  public Date getCreatedAt() {
-    return createdAt;
-  }
+    public Date getCreatedAt() {
+        return createdAt;
+    }
 
-  public void setCreatedAt(Date createdAt) {
-    this.createdAt = createdAt;
-  }
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
 
-  public String getCreatedBy() {
-    return createdBy;
-  }
+    public String getCreatedBy() {
+        return createdBy;
+    }
 
-  public void setCreatedBy(String createdBy) {
-    this.createdBy = createdBy;
-  }
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
 
-  public Date getUpdatedAt() {
-    return updatedAt;
-  }
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
 
-  public void setUpdatedAt(Date updatedAt) {
-    this.updatedAt = updatedAt;
-  }
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 
-  public String getUpdatedBy() {
-    return updatedBy;
-  }
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
 
-  public void setUpdatedBy(String updatedBy) {
-    this.updatedBy = updatedBy;
-  }
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
+    }
 }

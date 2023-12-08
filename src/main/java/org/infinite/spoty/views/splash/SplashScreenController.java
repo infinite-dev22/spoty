@@ -15,8 +15,6 @@
 package org.infinite.spoty.views.splash;
 
 import fr.brouillard.oss.cssfx.CSSFX;
-//import io.github.palexdev.materialfx.css.themes.MFXThemeManager;
-//import io.github.palexdev.materialfx.css.themes.Themes;
 import io.github.palexdev.materialfx.theming.JavaFXThemes;
 import io.github.palexdev.materialfx.theming.MaterialFXStylesheets;
 import io.github.palexdev.materialfx.theming.UserAgentBuilder;
@@ -28,10 +26,12 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.infinite.spoty.SpotyResourceLoader;
 import org.infinite.spoty.components.navigation.Pages;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.database.management.SQLiteTableCreator;
@@ -133,6 +133,7 @@ public class SplashScreenController implements Initializable {
                         // Set window title name, this name will only be seen when cursor hovers over app icon in
                         // taskbar. Not necessary too but added since other apps also do this.
                         primaryStage.setTitle(Labels.APP_NAME);
+                        primaryStage.getIcons().add(new Image(SpotyResourceLoader.load("icon.png")));
                         primaryStage.show();
                         // Initialize app notification handler.
                         SimpleNotificationHolder.setNotificationOwner(primaryStage);

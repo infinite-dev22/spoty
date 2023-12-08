@@ -16,102 +16,105 @@ package org.infinite.spoty.database.models;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+
 import java.util.Date;
 
 @DatabaseTable(tableName = "currencies")
 public class Currency {
-  @DatabaseField(generatedId = true)
-  private int id;
+    @DatabaseField(generatedId = true)
+    private int id;
 
-  @DatabaseField(canBeNull = false)
-  private String code;
+    @DatabaseField(canBeNull = false)
+    private String code;
 
-  @DatabaseField(canBeNull = false)
-  private String name;
+    @DatabaseField(canBeNull = false)
+    private String name;
 
-  @DatabaseField private String symbol;
+    @DatabaseField
+    private String symbol;
 
-  @DatabaseField(columnName = "created_at")
-  private Date createdAt;
+    @DatabaseField(columnName = "created_at")
+    private Date createdAt;
 
-  @DatabaseField(columnName = "created_by")
-  private String createdBy;
+    @DatabaseField(columnName = "created_by")
+    private String createdBy;
 
-  @DatabaseField(columnName = "updated_at")
-  private Date updatedAt;
+    @DatabaseField(columnName = "updated_at")
+    private Date updatedAt;
 
-  @DatabaseField(columnName = "updated_by")
-  private String updatedBy;
+    @DatabaseField(columnName = "updated_by")
+    private String updatedBy;
 
-  public Currency(String code, String name, String symbol) {
-    this.code = code;
-    this.name = name;
-    this.symbol = symbol;
-  }
+    public Currency(String code, String name, String symbol) {
+        this.code = code;
+        this.name = name;
+        this.symbol = symbol;
+    }
 
-  public Currency() {}
+    public Currency() {
+    }
 
-  public int getId() {
-    return id;
-  }
+    public int getId() {
+        return id;
+    }
 
-  public void setId(int id) {
-    this.id = id;
-  }
+    public void setId(int id) {
+        this.id = id;
+    }
 
-  public String getCode() {
-    return code;
-  }
+    public String getCode() {
+        return code;
+    }
 
-  public void setCode(String code) {
-    this.code = code;
-  }
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-  public String getName() {
-    return name;
-  }
+    public String getName() {
+        return name;
+    }
 
-  public void setName(String name) {
-    this.name = name;
-  }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-  public String getSymbol() {
-    return symbol;
-  }
+    public String getSymbol() {
+        return symbol;
+    }
 
-  public void setSymbol(String symbol) {
-    this.symbol = symbol;
-  }
+    public void setSymbol(String symbol) {
+        this.symbol = symbol;
+    }
 
-  public Date getCreatedAt() {
-    return createdAt;
-  }
+    public Date getCreatedAt() {
+        return createdAt;
+    }
 
-  public void setCreatedAt(Date createdAt) {
-    this.createdAt = createdAt;
-  }
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
 
-  public String getCreatedBy() {
-    return createdBy;
-  }
+    public String getCreatedBy() {
+        return createdBy;
+    }
 
-  public void setCreatedBy(String createdBy) {
-    this.createdBy = createdBy;
-  }
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
 
-  public Date getUpdatedAt() {
-    return updatedAt;
-  }
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
 
-  public void setUpdatedAt(Date updatedAt) {
-    this.updatedAt = updatedAt;
-  }
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 
-  public String getUpdatedBy() {
-    return updatedBy;
-  }
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
 
-  public void setUpdatedBy(String updatedBy) {
-    this.updatedBy = updatedBy;
-  }
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
+    }
 }

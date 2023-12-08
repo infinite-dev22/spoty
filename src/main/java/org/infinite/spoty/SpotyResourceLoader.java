@@ -14,26 +14,28 @@
 
 package org.infinite.spoty;
 
-import java.io.InputStream;
-import java.net.URL;
 import javafx.fxml.FXMLLoader;
 
+import java.io.InputStream;
+import java.net.URL;
+
 public class SpotyResourceLoader {
-  public SpotyResourceLoader() {}
+    public SpotyResourceLoader() {
+    }
 
-  public static FXMLLoader fxmlLoader(String path) {
-    return new FXMLLoader(SpotyResourceLoader.class.getResource(path));
-  }
+    public static FXMLLoader fxmlLoader(String path) {
+        return new FXMLLoader(SpotyResourceLoader.class.getResource(path));
+    }
 
-  public static URL loadURL(String path) {
-    return SpotyResourceLoader.class.getResource(path);
-  }
+    public static URL loadURL(String path) {
+        return SpotyResourceLoader.class.getResource(path);
+    }
 
-  public static String load(String path) {
-    return loadURL(path).toString();
-  }
+    public static String load(String path) {
+        return loadURL(path).toString();
+    }
 
-  public static InputStream loadStream(String name) {
-    return SpotyResourceLoader.class.getResourceAsStream(name);
-  }
+    public static InputStream loadStream(String name) {
+        return SpotyResourceLoader.class.getResourceAsStream(name);
+    }
 }

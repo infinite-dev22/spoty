@@ -16,164 +16,170 @@ package org.infinite.spoty.database.models;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+
 import java.util.Date;
 
 @DatabaseTable(tableName = "customers")
 public class Customer {
 
-  @DatabaseField(generatedId = true)
-  private int id;
+    @DatabaseField(generatedId = true)
+    private int id;
 
-  @DatabaseField(canBeNull = false)
-  private String name;
+    @DatabaseField(canBeNull = false)
+    private String name;
 
-  @DatabaseField private String code;
-  @DatabaseField private String email;
+    @DatabaseField
+    private String code;
+    @DatabaseField
+    private String email;
 
-  @DatabaseField(canBeNull = false)
-  private String phone;
+    @DatabaseField(canBeNull = false)
+    private String phone;
 
-  @DatabaseField private String city;
-  @DatabaseField private String address;
+    @DatabaseField
+    private String city;
+    @DatabaseField
+    private String address;
 
-  @DatabaseField(columnName = "tax_number")
-  private String taxNumber;
+    @DatabaseField(columnName = "tax_number")
+    private String taxNumber;
 
-  @DatabaseField(canBeNull = false)
-  private String country;
+    @DatabaseField(canBeNull = false)
+    private String country;
 
-  @DatabaseField(columnName = "created_at")
-  private Date createdAt = null;
+    @DatabaseField(columnName = "created_at")
+    private Date createdAt = null;
 
-  @DatabaseField(columnName = "created_by")
-  private String createdBy = null;
+    @DatabaseField(columnName = "created_by")
+    private String createdBy = null;
 
-  @DatabaseField(columnName = "updated_at")
-  private Date updatedAt = null;
+    @DatabaseField(columnName = "updated_at")
+    private Date updatedAt = null;
 
-  @DatabaseField(columnName = "updated_by")
-  private String updatedBy = null;
+    @DatabaseField(columnName = "updated_by")
+    private String updatedBy = null;
 
-  public Customer(
-      String name,
-      String email,
-      String phone,
-      String city,
-      String address,
-      String taxNumber,
-      String country) {
-    this.name = name;
-    this.email = email;
-    this.phone = phone;
-    this.city = city;
-    this.address = address;
-    this.taxNumber = taxNumber;
-    this.country = country;
-  }
+    public Customer(
+            String name,
+            String email,
+            String phone,
+            String city,
+            String address,
+            String taxNumber,
+            String country) {
+        this.name = name;
+        this.email = email;
+        this.phone = phone;
+        this.city = city;
+        this.address = address;
+        this.taxNumber = taxNumber;
+        this.country = country;
+    }
 
-  public Customer() {}
+    public Customer() {
+    }
 
-  public int getId() {
-    return id;
-  }
+    public int getId() {
+        return id;
+    }
 
-  public void setId(int id) {
-    this.id = id;
-  }
+    public void setId(int id) {
+        this.id = id;
+    }
 
-  public String getName() {
-    return name;
-  }
+    public String getName() {
+        return name;
+    }
 
-  public void setName(String name) {
-    this.name = name;
-  }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-  public String getCode() {
-    return code;
-  }
+    public String getCode() {
+        return code;
+    }
 
-  public void setCode(String code) {
-    this.code = code;
-  }
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-  public String getEmail() {
-    return email;
-  }
+    public String getEmail() {
+        return email;
+    }
 
-  public void setEmail(String email) {
-    this.email = email;
-  }
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-  public String getPhone() {
-    return phone;
-  }
+    public String getPhone() {
+        return phone;
+    }
 
-  public void setPhone(String phone) {
-    this.phone = phone;
-  }
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
 
-  public String getCity() {
-    return city;
-  }
+    public String getCity() {
+        return city;
+    }
 
-  public void setCity(String city) {
-    this.city = city;
-  }
+    public void setCity(String city) {
+        this.city = city;
+    }
 
-  public String getAddress() {
-    return address;
-  }
+    public String getAddress() {
+        return address;
+    }
 
-  public void setAddress(String address) {
-    this.address = address;
-  }
+    public void setAddress(String address) {
+        this.address = address;
+    }
 
-  public String getTaxNumber() {
-    return taxNumber;
-  }
+    public String getTaxNumber() {
+        return taxNumber;
+    }
 
-  public void setTaxNumber(String taxNumber) {
-    this.taxNumber = taxNumber;
-  }
+    public void setTaxNumber(String taxNumber) {
+        this.taxNumber = taxNumber;
+    }
 
-  public String getCountry() {
-    return country;
-  }
+    public String getCountry() {
+        return country;
+    }
 
-  public void setCountry(String country) {
-    this.country = country;
-  }
+    public void setCountry(String country) {
+        this.country = country;
+    }
 
-  public Date getCreatedAt() {
-    return createdAt;
-  }
+    public Date getCreatedAt() {
+        return createdAt;
+    }
 
-  public void setCreatedAt(Date createdAt) {
-    this.createdAt = createdAt;
-  }
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
 
-  public String getCreatedBy() {
-    return createdBy;
-  }
+    public String getCreatedBy() {
+        return createdBy;
+    }
 
-  public void setCreatedBy(String createdBy) {
-    this.createdBy = createdBy;
-  }
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
 
-  public Date getUpdatedAt() {
-    return updatedAt;
-  }
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
 
-  public void setUpdatedAt(Date updatedAt) {
-    this.updatedAt = updatedAt;
-  }
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 
-  public String getUpdatedBy() {
-    return updatedBy;
-  }
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
 
-  public void setUpdatedBy(String updatedBy) {
-    this.updatedBy = updatedBy;
-  }
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
+    }
 }

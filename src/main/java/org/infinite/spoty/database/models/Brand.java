@@ -17,101 +17,104 @@ package org.infinite.spoty.database.models;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+
 import java.util.Date;
 
 @DatabaseTable(tableName = "brands")
 public class Brand {
-  @DatabaseField(generatedId = true)
-  private int id;
+    @DatabaseField(generatedId = true)
+    private int id;
 
-  @DatabaseField(canBeNull = false)
-  private String name;
+    @DatabaseField(canBeNull = false)
+    private String name;
 
-  @DatabaseField private String description;
+    @DatabaseField
+    private String description;
 
-  @DatabaseField(dataType = DataType.BYTE_ARRAY)
-  private byte[] image;
+    @DatabaseField(dataType = DataType.BYTE_ARRAY)
+    private byte[] image;
 
-  @DatabaseField(columnName = "created_at")
-  private Date createdAt;
+    @DatabaseField(columnName = "created_at")
+    private Date createdAt;
 
-  @DatabaseField(columnName = "created_by")
-  private String createdBy;
+    @DatabaseField(columnName = "created_by")
+    private String createdBy;
 
-  @DatabaseField(columnName = "updated_at")
-  private Date updatedAt;
+    @DatabaseField(columnName = "updated_at")
+    private Date updatedAt;
 
-  @DatabaseField(columnName = "updated_by")
-  private String updatedBy;
+    @DatabaseField(columnName = "updated_by")
+    private String updatedBy;
 
-  public Brand() {}
+    public Brand() {
+    }
 
-  public Brand(String name, String description) {
-    this.name = name;
-    this.description = description;
-  }
+    public Brand(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
 
-  public Date getCreatedAt() {
-    return createdAt;
-  }
+    public Date getCreatedAt() {
+        return createdAt;
+    }
 
-  public void setCreatedAt(Date createdAt) {
-    this.createdAt = createdAt;
-  }
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
 
-  public String getCreatedBy() {
-    return createdBy;
-  }
+    public String getCreatedBy() {
+        return createdBy;
+    }
 
-  public void setCreatedBy(String createdBy) {
-    this.createdBy = createdBy;
-  }
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
 
-  public Date getUpdatedAt() {
-    return updatedAt;
-  }
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
 
-  public void setUpdatedAt(Date updatedAt) {
-    this.updatedAt = updatedAt;
-  }
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 
-  public String getUpdatedBy() {
-    return updatedBy;
-  }
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
 
-  public void setUpdatedBy(String updatedBy) {
-    this.updatedBy = updatedBy;
-  }
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
+    }
 
-  public int getId() {
-    return id;
-  }
+    public int getId() {
+        return id;
+    }
 
-  public void setId(int id) {
-    this.id = id;
-  }
+    public void setId(int id) {
+        this.id = id;
+    }
 
-  public String getName() {
-    return name;
-  }
+    public String getName() {
+        return name;
+    }
 
-  public void setName(String name) {
-    this.name = name;
-  }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-  public String getDescription() {
-    return description;
-  }
+    public String getDescription() {
+        return description;
+    }
 
-  public void setDescription(String description) {
-    this.description = description;
-  }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-  public byte[] getImage() {
-    return image;
-  }
+    public byte[] getImage() {
+        return image;
+    }
 
-  public void setImage(byte[] image) {
-    this.image = image;
-  }
+    public void setImage(byte[] image) {
+        this.image = image;
+    }
 }

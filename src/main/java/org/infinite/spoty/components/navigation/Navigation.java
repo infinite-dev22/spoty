@@ -61,7 +61,6 @@ public class Navigation {
         map.put("UNIT", NavTree.NavTreeItem.page("Unit", Pages.getUnitPane()));
         map.put("PRODUCTS", NavTree.NavTreeItem.page("Products", Pages.getProductPane()));
         map.put("ADJUSTMENTS", NavTree.NavTreeItem.page("Adjustments", Pages.getAdjustmentPane()));
-        map.put("QUOTATIONS", NavTree.NavTreeItem.page("Quotations", Pages.getQuotationPane()));
         // Accounts
         map.put("CHART_OF_ACCOUNT", NavTree.NavTreeItem.page("Chart Of Account", Pages.getChartOfAccountPane()));
         map.put("SUB_ACCOUNT", NavTree.NavTreeItem.page("Sub Account", Pages.getSubAccountPane()));
@@ -75,7 +74,7 @@ public class Navigation {
         map.put("BANK_RECONCILIATION", NavTree.NavTreeItem.page("Bank Reconciliation", Pages.getBankReconciliationPane()));
         map.put("PAYMENT_METHODS", NavTree.NavTreeItem.page("Payment Methods", Pages.getPaymentMethodsPane()));
         map.put("SUPPLIER_PAYMENT", NavTree.NavTreeItem.page("Supplier Payments", Pages.getSupplierPaymentPane()));
-        map.put("CUSTOMER_PAYMENT", NavTree.NavTreeItem.page("Customer Payments", Pages.getCashPaymentPane()));
+        map.put("CUSTOMER_RECEIVE", NavTree.NavTreeItem.page("Customer Receive", Pages.getCustomerReceivePane()));
         map.put("SERVICE_PAYMENT", NavTree.NavTreeItem.page("Service Payments", Pages.getServicePaymentPane()));
         map.put("CASH_ADJUSTMENT", NavTree.NavTreeItem.page("Cash Adjustment", Pages.getCashAdjustmentPane()));
         map.put("VOUCHER_APPROVAL", NavTree.NavTreeItem.page("Voucher Approval", Pages.getVoucherApprovalPane()));
@@ -84,6 +83,7 @@ public class Navigation {
         map.put("BANK_BOOK", NavTree.NavTreeItem.page("Bank Book", Pages.getBankBookPane()));
         map.put("DAY_BOOK", NavTree.NavTreeItem.page("Day Book", Pages.getDayBookPane()));
         map.put("GENERAL_LEDGER", NavTree.NavTreeItem.page("General Ledger", Pages.getGeneralLedgerPane()));
+        map.put("SUB_LEDGER", NavTree.NavTreeItem.page("Sub Ledger", Pages.getSubLedgerPane()));
         map.put("TRIAL_BALANCE", NavTree.NavTreeItem.page("Trial Balance", Pages.getTrialBalancePane()));
         map.put("INCOME_STATEMENT", NavTree.NavTreeItem.page("Income Statement", Pages.getIncomeStatementPane()));
         map.put("EXPENDITURE_STATEMENT", NavTree.NavTreeItem.page("Expenditure Statement", Pages.getExpenditureStatementPane()));
@@ -93,16 +93,65 @@ public class Navigation {
         map.put("RECEIPT_PAYMENT", NavTree.NavTreeItem.page("Receipt & Payment", Pages.getReceiptAndPaymentPane()));
         map.put("BANK_RECONCILIATION_REPORT", NavTree.NavTreeItem.page("Bank Reconciliation", Pages.getBankReconciliationReportPane()));
         map.put("COA_PRINT", NavTree.NavTreeItem.page("Coa Print", Pages.getCoaPrintPane()));
-
-        map.put("SALE RETURN", NavTree.NavTreeItem.page("Sales", Pages.getSaleReturnPane()));
-        map.put("PURCHASE RETURN", NavTree.NavTreeItem.page("Purchases", Pages.getPurchaseReturnPane()));
-
+        // Reports
+        map.put("CLOSING", NavTree.NavTreeItem.page("Closing", Pages.getClosingPane()));
+        map.put("CLOSING_REPORT", NavTree.NavTreeItem.page("Closing Report", Pages.getClosingReportPane()));
+        map.put("DAILY_CUSTOMER_REPORT", NavTree.NavTreeItem.page("Daily Customer Report", Pages.getDailyCustomerReportPane()));
+        map.put("DAILY_REPORT", NavTree.NavTreeItem.page("Daily Report", Pages.getDailyReportPane()));
+        map.put("DUE_REPORT", NavTree.NavTreeItem.page("Due Report", Pages.getDueReportPane()));
+        map.put("PROFIT_REPORT", NavTree.NavTreeItem.page("Profit Report", Pages.getProfitReportPane()));
+        map.put("PURCHASE_REPORT", NavTree.NavTreeItem.page("Purchase Report", Pages.getPurchaseReportPane()));
+        map.put("SALES_REPORT", NavTree.NavTreeItem.page("Sales Report", Pages.getSalesReportPane()));
+        map.put("SALES_RETURN", NavTree.NavTreeItem.page("Sales Return", Pages.getSalesReturnPane()));
+        map.put("SHIPPING_COST_REPORT", NavTree.NavTreeItem.page("Shipping Cost Report", Pages.getShippingCostReportPane()));
+        map.put("TAX_REPORT", NavTree.NavTreeItem.page("Tax Report", Pages.getTaxReportPane()));
+        map.put("USER_SALES_REPORT", NavTree.NavTreeItem.page("User Sales Report", Pages.getUserSalesReportPane()));
+        // HUMAN RESOURCE
+        // Attendance
+        map.put("ATTENDANCE", NavTree.NavTreeItem.page("Attendance", Pages.getAttendancePane()));
+        map.put("ATTENDANCE_REPORT", NavTree.NavTreeItem.page("Attendance Report", Pages.getAttendanceReportPane()));
+        map.put("CHECK_IN", NavTree.NavTreeItem.page("Check In", Pages.getCheckInPane()));
+        // Human Resource Management
+        map.put("DESIGNATION", NavTree.NavTreeItem.page("Designation", Pages.getDesignationsPane()));
+        map.put("EMPLOYEES", NavTree.NavTreeItem.page("Employees", Pages.getEmployeesPane()));
+        // PayRoll
+        map.put("SALARIES", NavTree.NavTreeItem.page("Salaries", Pages.getSalariesPane()));
+        map.put("SALARY_ADVANCES", NavTree.NavTreeItem.page("Salary Advances", Pages.getSalaryAdvancesPane()));
+        map.put("SALARY_GENERATE", NavTree.NavTreeItem.page("Salary Generate", Pages.getSalaryGeneratePane()));
+        // Service
+        map.put("SERVICES", NavTree.NavTreeItem.page("Services", Pages.getServicesPane()));
+        map.put("SERVICE_INVOICE", NavTree.NavTreeItem.page("Service Invoices", Pages.getServiceInvoicesPane()));
+        // Tax
+        map.put("TAXES", NavTree.NavTreeItem.page("Taxes", Pages.getTaxesPane()));
+        map.put("TAX_SETTINGS", NavTree.NavTreeItem.page("Tax Settings", Pages.getTaxSettingsPane()));
+        // Returns
+        map.put("SALE_RETURN", NavTree.NavTreeItem.page("Sales Returns", Pages.getSaleReturnPane()));
+        map.put("PURCHASE_RETURN", NavTree.NavTreeItem.page("Purchases Returns", Pages.getPurchaseReturnPane()));
+        // Expenses
         map.put(
-                "EXPENSE CATEGORY", NavTree.NavTreeItem.page("Category", Pages.getExpenseCategoryPane()));
+                "EXPENSE_CATEGORY", NavTree.NavTreeItem.page("Category", Pages.getExpenseCategoryPane()));
         map.put("EXPENSE", NavTree.NavTreeItem.page("Expenses", Pages.getExpensePane()));
-
-        map.put("SUPPLIER", NavTree.NavTreeItem.page("Suppliers", Pages.getSupplierPane()));
-        map.put("USER", NavTree.NavTreeItem.page("Users", Pages.getUserPane()));
+        // SETTINGS
+        // Data Synchronizer
+        map.put("BACK_UP", NavTree.NavTreeItem.page("Back up", Pages.getBackUpPane()));
+        map.put("EXPORT", NavTree.NavTreeItem.page("Export", Pages.getExportPane()));
+        map.put("IMPORT", NavTree.NavTreeItem.page("Import", Pages.getImportPane()));
+        map.put("RESTORE", NavTree.NavTreeItem.page("Restore", Pages.getRestorePane()));
+        // Role Permission
+        map.put("ASSIGN_USER_ROLE", NavTree.NavTreeItem.page("Users & roles", Pages.getAssignUserRolePane()));
+        map.put("ROLES", NavTree.NavTreeItem.page("Roles", Pages.getRolesPane()));
+        // System Settings
+        map.put("APP_SETTINGS", NavTree.NavTreeItem.page("App Settings", Pages.getAppSettingsPane()));
+        map.put("BRANCHES", NavTree.NavTreeItem.page("Branches", Pages.getBranchesPane()));
+        map.put("COMPANY", NavTree.NavTreeItem.page("Company Details", Pages.getCompanyDetailsPane()));
+        map.put("CURRENCIES", NavTree.NavTreeItem.page("Currencies", Pages.getCurrencyPane()));
+        map.put("LANGUAGES", NavTree.NavTreeItem.page("Languages & Input", Pages.getLanguagesPane()));
+        map.put("MAIL", NavTree.NavTreeItem.page("Mail", Pages.getMailSettingsPane()));
+        map.put("POS", NavTree.NavTreeItem.page("POS", Pages.getPosPane()));
+        map.put("PRINT", NavTree.NavTreeItem.page("Print", Pages.getPrintSettingsPane()));
+        map.put("SETTINGS", NavTree.NavTreeItem.page("Settings", Pages.getSettingsPane()));
+        map.put("SYSTEM", NavTree.NavTreeItem.page("System", Pages.getSystemPane()));
+        map.put("USERS", NavTree.NavTreeItem.page("Users", Pages.getUsersPane()));
 
         return map;
     }
@@ -166,7 +215,7 @@ public class Navigation {
         var dashboard =
                 NavTree.NavTreeItem.mainPage("Dashboard", "fas-chart-simple", Pages.getDashboardPane());
 
-        var sale = NavTree.NavTreeItem.group("Sale", "fas-cash-register");
+        var sale = NavTree.NavTreeItem.group("Sale", "fas-scale-balanced");
         sale
                 .getChildren()
                 .setAll(
@@ -178,7 +227,7 @@ public class Navigation {
                 NavTree.NavTreeItem.mainPage("Customers", "fas-users", Pages.getCustomerPane());
 
         var suppliers =
-                NavTree.NavTreeItem.mainPage("Suppliers", "fas-users", Pages.getSupplierPane());
+                NavTree.NavTreeItem.mainPage("Suppliers", "fas-users-line", Pages.getSupplierPane());
 
         var product = NavTree.NavTreeItem.group("Product", "fas-cubes");
         product
@@ -188,21 +237,24 @@ public class Navigation {
                         NAV_TREE.get("BRAND"),
                         NAV_TREE.get("UNIT"),
                         NAV_TREE.get("PRODUCTS"),
-                        NAV_TREE.get("ADJUSTMENTS"),
-                        NAV_TREE.get("QUOTATIONS"));
+                        NAV_TREE.get("ADJUSTMENTS"));
 
         var purchase =
                 NavTree.NavTreeItem.mainPage("Purchases", "fas-cart-plus", Pages.getPurchasePane());
 
-        var account = NavTree.NavTreeItem.group("Account", "fas-cubes");
-        var reports = NavTree.NavTreeItem.group("Reports");
-        reports
+        var stockReport =
+                NavTree.NavTreeItem.mainPage("Stock Report", "fas-chart-line", Pages.getStockReportPane());
+
+        var account = NavTree.NavTreeItem.group("Account", "fas-credit-card");
+        var accountReports = NavTree.NavTreeItem.group("Reports");
+        accountReports
                 .getChildren()
                 .setAll(
                         NAV_TREE.get("CASH_BOOK"),
                         NAV_TREE.get("BANK_BOOK"),
                         NAV_TREE.get("DAY_BOOK"),
                         NAV_TREE.get("GENERAL_LEDGER"),
+                        NAV_TREE.get("SUB_LEDGER"),
                         NAV_TREE.get("TRIAL_BALANCE"),
                         NAV_TREE.get("INCOME_STATEMENT"),
                         NAV_TREE.get("EXPENDITURE_STATEMENT"),
@@ -226,11 +278,79 @@ public class Navigation {
                         NAV_TREE.get("BANK_RECONCILIATION"),
                         NAV_TREE.get("PAYMENT_METHODS"),
                         NAV_TREE.get("SUPPLIER_PAYMENT"),
-                        NAV_TREE.get("CUSTOMER_PAYMENT"),
+                        NAV_TREE.get("CUSTOMER_RECEIVE"),
                         NAV_TREE.get("SERVICE_PAYMENT"),
                         NAV_TREE.get("CASH_ADJUSTMENT"),
                         NAV_TREE.get("VOUCHER_APPROVAL"),
-                        reports);
+                        accountReports);
+
+        var reports = NavTree.NavTreeItem.group("Reports", "fas-clipboard-list");
+        reports
+                .getChildren()
+                .setAll(
+                        NAV_TREE.get("CLOSING"),
+                        NAV_TREE.get("CLOSING_REPORT"),
+                        NAV_TREE.get("DAILY_CUSTOMER_REPORT"),
+                        NAV_TREE.get("DAILY_REPORT"),
+                        NAV_TREE.get("DUE_REPORT"),
+                        NAV_TREE.get("PROFIT_REPORT"),
+                        NAV_TREE.get("PURCHASE_REPORT"),
+                        NAV_TREE.get("SALES_REPORT"),
+                        NAV_TREE.get("SALES_RETURN"),
+                        NAV_TREE.get("SHIPPING_COST_REPORT"),
+                        NAV_TREE.get("TAX_REPORT"),
+                        NAV_TREE.get("USER_SALES_REPORT"));
+
+        var attendance = NavTree.NavTreeItem.group("Attendance");
+        attendance
+                .getChildren()
+                .setAll(
+                        NAV_TREE.get("ATTENDANCE"),
+                        NAV_TREE.get("ATTENDANCE_REPORT"),
+                        NAV_TREE.get("CHECK_IN"));
+
+        var humanResourceManagement = NavTree.NavTreeItem.group("HRM");
+        humanResourceManagement
+                .getChildren()
+                .setAll(
+                        NAV_TREE.get("DESIGNATION"),
+                        NAV_TREE.get("EMPLOYEES"));
+
+        var payRoll = NavTree.NavTreeItem.group("PayRoll");
+        payRoll
+                .getChildren()
+                .setAll(
+                        NAV_TREE.get("SALARIES"),
+                        NAV_TREE.get("SALARY_ADVANCES"),
+                        NAV_TREE.get("SALARY_GENERATE"));
+        var humanResource = NavTree.NavTreeItem.group("Human Resource", "fas-user-tie");
+        humanResource
+                .getChildren()
+                .setAll(attendance,
+                        humanResourceManagement,
+                        payRoll);
+
+        var bank =
+                NavTree.NavTreeItem.mainPage(
+                        "Banks", "fas-building-columns", Pages.getBankPane());
+
+        var service = NavTree.NavTreeItem.group("Service", "fas-handshake");
+        service
+                .getChildren()
+                .setAll(
+                        NAV_TREE.get("SERVICES"),
+                        NAV_TREE.get("SERVICE_INVOICE"));
+
+        var quotation = NavTree.NavTreeItem.mainPage("Quotations", "fas-receipt", Pages.getQuotationPane());
+
+        var tax = NavTree.NavTreeItem.group("Tax", "fas-money-bill-wheat");
+        tax.getChildren()
+                .setAll(
+                        NAV_TREE.get("TAXES"),
+                        NAV_TREE.get("TAX_SETTINGS"));
+
+        var returns = NavTree.NavTreeItem.group("Return", "fas-retweet");
+        returns.getChildren().setAll(NAV_TREE.get("SALE_RETURN"), NAV_TREE.get("PURCHASE_RETURN"));
 
         var requisition =
                 NavTree.NavTreeItem.mainPage(
@@ -239,17 +359,47 @@ public class Navigation {
                 NavTree.NavTreeItem.mainPage(
                         "Transfers", "fas-arrow-right-arrow-left", Pages.getTransferPane());
         var stockIn =
-                NavTree.NavTreeItem.mainPage("Stock In", "fas-cart-flatbed", Pages.getStockInPane());
-        var returns = NavTree.NavTreeItem.group("Returns", "fas-retweet");
-        returns.getChildren().setAll(NAV_TREE.get("SALE RETURN"), NAV_TREE.get("PURCHASE RETURN"));
+                NavTree.NavTreeItem.mainPage("Stock In", "fas-cart-arrow-down", Pages.getStockInPane());
 
         var expense = NavTree.NavTreeItem.group("Expenses", "fas-wallet");
-        expense.getChildren().setAll(NAV_TREE.get("EXPENSE CATEGORY"), NAV_TREE.get("EXPENSE"));
+        expense.getChildren().setAll(NAV_TREE.get("EXPENSE_CATEGORY"), NAV_TREE.get("EXPENSE"));
 
-        var people = NavTree.NavTreeItem.group("People", "fas-users");
-        people
+        var dataSynchronizer = NavTree.NavTreeItem.group("Data Synchronizer");
+        dataSynchronizer
                 .getChildren()
-                .setAll(NAV_TREE.get("USER"));
+                .setAll(
+                        NAV_TREE.get("BACK_UP"),
+                        NAV_TREE.get("EXPORT"),
+                        NAV_TREE.get("IMPORT"),
+                        NAV_TREE.get("RESTORE"));
+        var rolePermission = NavTree.NavTreeItem.group("Role Permission");
+        rolePermission
+                .getChildren()
+                .setAll(
+                        NAV_TREE.get("ASSIGN_USER_ROLE"),
+                        NAV_TREE.get("ROLES"));
+        var systemSettings = NavTree.NavTreeItem.group("System Settings");
+        systemSettings
+                .getChildren()
+                .setAll(
+                        NAV_TREE.get("APP_SETTINGS"),
+                        NAV_TREE.get("BRANCHES"),
+                        NAV_TREE.get("COMPANY"),
+                        NAV_TREE.get("CURRENCIES"),
+                        NAV_TREE.get("LANGUAGES"),
+                        NAV_TREE.get("MAIL"),
+                        NAV_TREE.get("POS"),
+                        NAV_TREE.get("PRINT"),
+                        NAV_TREE.get("SETTINGS"),
+                        NAV_TREE.get("SYSTEM"),
+                        NAV_TREE.get("USERS"));
+        var settings = NavTree.NavTreeItem.group("Settings", "fas-gears");
+        settings
+                .getChildren()
+                .setAll(
+                        systemSettings,
+                        rolePermission,
+                        dataSynchronizer);
 
         var root = NavTree.NavTreeItem.root();
         root.getChildren()
@@ -260,13 +410,20 @@ public class Navigation {
                         suppliers,
                         product,
                         purchase,
+                        stockReport,
                         account,
+                        reports,
+                        humanResource,
+                        bank,
+                        service,
+                        quotation,
+                        tax,
+                        returns,
                         requisition,
                         transfer,
                         stockIn,
-                        returns,
                         expense,
-                        people);
+                        settings);
         return root;
     }
 

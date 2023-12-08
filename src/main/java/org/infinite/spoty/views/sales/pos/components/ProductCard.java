@@ -15,7 +15,6 @@
 package org.infinite.spoty.views.sales.pos.components;
 
 import io.github.palexdev.mfxcore.controls.Label;
-import java.util.Objects;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.CacheHint;
@@ -28,117 +27,120 @@ import org.infinite.spoty.database.models.Product;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public class ProductCard extends VBox {
 
-  private final String imageSrc = SpotyResourceLoader.load("images/no-image-available-icon.png");
-  private final ImageView productImageView = new ImageView();
-  private Image productImage;
-  private Label productNameLbl;
-  private Label productPriceLbl;
-  private Label productQuantityLbl;
-  private Product product;
+    private final String imageSrc = SpotyResourceLoader.load("images/no-image-available-icon.png");
+    private final ImageView productImageView = new ImageView();
+    private Image productImage;
+    private Label productNameLbl;
+    private Label productPriceLbl;
+    private Label productQuantityLbl;
+    private Product product;
 
-  public ProductCard(
-      String productName, double productPrice, double productQuantity, String imageUrl) {
-    if (Objects.equals(productNameLbl, null)) {
-      productNameLbl = new Label(productName);
-    }
-    if (Objects.equals(productPriceLbl, null)) {
-      productPriceLbl = new Label(String.valueOf(productPrice));
-    }
-    if (Objects.equals(productQuantityLbl, null)) {
-      productQuantityLbl = new Label(String.valueOf(productQuantity));
-    }
+    public ProductCard(
+            String productName, double productPrice, double productQuantity, String imageUrl) {
+        if (Objects.equals(productNameLbl, null)) {
+            productNameLbl = new Label(productName);
+        }
+        if (Objects.equals(productPriceLbl, null)) {
+            productPriceLbl = new Label(String.valueOf(productPrice));
+        }
+        if (Objects.equals(productQuantityLbl, null)) {
+            productQuantityLbl = new Label(String.valueOf(productQuantity));
+        }
 
-    setSpacing(10);
-    getChildren()
-        .addAll(getProductImage(imageUrl, productQuantityLbl), productNameLbl, productPriceLbl);
-    getStyleClass().add("card");
-  }
-
-  public ProductCard(String productName, double productPrice, double productQuantity) {
-    if (Objects.equals(productNameLbl, null)) {
-      productNameLbl = new Label(productName);
-    }
-    if (Objects.equals(productPriceLbl, null)) {
-      productPriceLbl = new Label(String.valueOf(productPrice));
-    }
-    if (Objects.equals(productQuantityLbl, null)) {
-      productQuantityLbl = new Label(String.valueOf(productQuantity));
+        setSpacing(10);
+        getChildren()
+                .addAll(getProductImage(imageUrl, productQuantityLbl), productNameLbl, productPriceLbl);
+        getStyleClass().add("card");
     }
 
-    setSpacing(10);
-    setPadding(new Insets(10));
-    getStyleClass().add("card");
-    getChildren()
-        .addAll(getProductImage(imageSrc, productQuantityLbl), productNameLbl, productPriceLbl);
-  }
+    public ProductCard(String productName, double productPrice, double productQuantity) {
+        if (Objects.equals(productNameLbl, null)) {
+            productNameLbl = new Label(productName);
+        }
+        if (Objects.equals(productPriceLbl, null)) {
+            productPriceLbl = new Label(String.valueOf(productPrice));
+        }
+        if (Objects.equals(productQuantityLbl, null)) {
+            productQuantityLbl = new Label(String.valueOf(productQuantity));
+        }
 
-  public ProductCard(Product product) {
-    this.product = product;
-
-    if (Objects.equals(productNameLbl, null)) {
-      productNameLbl = new Label(product.getName() + " - " + product.getUnit().getShortName());
-    }
-    if (Objects.equals(productPriceLbl, null)) {
-      productPriceLbl = new Label(String.valueOf(product.getPrice()));
-    }
-    if (Objects.equals(productQuantityLbl, null)) {
-      productQuantityLbl = new Label(product.getQuantity() + " Pcs");
+        setSpacing(10);
+        setPadding(new Insets(10));
+        getStyleClass().add("card");
+        getChildren()
+                .addAll(getProductImage(imageSrc, productQuantityLbl), productNameLbl, productPriceLbl);
     }
 
-    productQuantityLbl.getStyleClass().add("pos-product-label");
-    productNameLbl.setWrappingWidth(100);
-    productNameLbl.setWrapText(true);
+    public ProductCard(Product product) {
+        this.product = product;
 
-    VBox labelsHolder = new VBox();
-    labelsHolder.setSpacing(10);
-    labelsHolder.setPadding(new Insets(10));
-    labelsHolder.getChildren().addAll(productNameLbl, productPriceLbl);
+        if (Objects.equals(productNameLbl, null)) {
+            productNameLbl = new Label(product.getName() + " - " + product.getUnit().getShortName());
+        }
+        if (Objects.equals(productPriceLbl, null)) {
+            productPriceLbl = new Label(String.valueOf(product.getPrice()));
+        }
+        if (Objects.equals(productQuantityLbl, null)) {
+            productQuantityLbl = new Label(product.getQuantity() + " Pcs");
+        }
 
-    getStyleClass().add("pos-product-card");
-    setAlignment(Pos.CENTER);
-    getChildren()
-        .addAll(getProductImage(imageSrc, productQuantityLbl), labelsHolder);
-  }
+        productQuantityLbl.getStyleClass().add("pos-product-label");
+        productNameLbl.setWrappingWidth(100);
+        productNameLbl.setWrapText(true);
 
-  public Product getProduct() {
-    return product;
-  }
+        VBox labelsHolder = new VBox();
+        labelsHolder.setSpacing(10);
+        labelsHolder.setPadding(new Insets(10));
+        labelsHolder.getChildren().addAll(productNameLbl, productPriceLbl);
 
-  @Contract("_, _ -> new")
-  private @NotNull AnchorPane getProductImage(String image, Label productQuantityLbl) {
-    AnchorPane.setTopAnchor(productQuantityLbl, -12.0);
-    AnchorPane.setRightAnchor(productQuantityLbl, -12.0);
-
-    if (Objects.equals(productImage, null)) {
-      productImage = new Image(image, 100, 200, true, false);
+        getStyleClass().add("pos-product-card");
+        setAlignment(Pos.CENTER);
+        getChildren()
+                .addAll(getProductImage(imageSrc, productQuantityLbl), labelsHolder);
     }
 
-    productImageView.setImage(productImage);
-    productImageView.setCache(true);
-    productImageView.setCacheHint(CacheHint.SPEED);
-    
-    centerImage();
-
-    return new AnchorPane(productImageView, productQuantityLbl);
-  }
-  public void centerImage() {
-    if (productImage != null) {
-      double w;
-      double h;
-
-      double ratioX = productImageView.getFitWidth() / productImage.getWidth();
-      double ratioY = productImageView.getFitHeight() / productImage.getHeight();
-
-      double reduceCoEff = Math.min(ratioX, ratioY);
-
-      w = productImage.getWidth() * reduceCoEff;
-      h = productImage.getHeight() * reduceCoEff;
-
-      productImageView.setX((productImageView.getFitWidth() - w) / 2);
-      productImageView.setY((productImageView.getFitHeight() - h) / 2);
-
+    public Product getProduct() {
+        return product;
     }
-  }
+
+    @Contract("_, _ -> new")
+    private @NotNull AnchorPane getProductImage(String image, Label productQuantityLbl) {
+        AnchorPane.setTopAnchor(productQuantityLbl, -12.0);
+        AnchorPane.setRightAnchor(productQuantityLbl, -12.0);
+
+        if (Objects.equals(productImage, null)) {
+            productImage = new Image(image, 100, 200, true, false);
+        }
+
+        productImageView.setImage(productImage);
+        productImageView.setCache(true);
+        productImageView.setCacheHint(CacheHint.SPEED);
+
+        centerImage();
+
+        return new AnchorPane(productImageView, productQuantityLbl);
+    }
+
+    public void centerImage() {
+        if (productImage != null) {
+            double w;
+            double h;
+
+            double ratioX = productImageView.getFitWidth() / productImage.getWidth();
+            double ratioY = productImageView.getFitHeight() / productImage.getHeight();
+
+            double reduceCoEff = Math.min(ratioX, ratioY);
+
+            w = productImage.getWidth() * reduceCoEff;
+            h = productImage.getHeight() * reduceCoEff;
+
+            productImageView.setX((productImageView.getFitWidth() - w) / 2);
+            productImageView.setY((productImageView.getFitHeight() - h) / 2);
+
+        }
+    }
 }

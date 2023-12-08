@@ -17,132 +17,131 @@ package org.infinite.spoty.viewModels;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
-import java.sql.SQLException;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
-import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.Product;
 import org.infinite.spoty.database.models.SaleReturnDetail;
 import org.infinite.spoty.database.models.SaleReturnMaster;
 
+import java.sql.SQLException;
+
 public class SaleReturnDetailViewModel {
-  public static final ObservableList<SaleReturnDetail> saleReturnDetailsList =
-      FXCollections.observableArrayList();
-  private static final LongProperty id = new SimpleLongProperty();
-  private static final ObjectProperty<Product> product = new SimpleObjectProperty<>();
-  private static final ObjectProperty<SaleReturnMaster> SaleReturn = new SimpleObjectProperty<>();
-  private static final StringProperty quantity = new SimpleStringProperty("");
-  private static final StringProperty serial = new SimpleStringProperty("");
-  private static final StringProperty description = new SimpleStringProperty("");
-  private static final StringProperty location = new SimpleStringProperty("");
-  private static final SQLiteConnection connection = SQLiteConnection.getInstance();
-  private static final ConnectionSource connectionSource = connection.getConnection();
+    public static final ObservableList<SaleReturnDetail> saleReturnDetailsList =
+            FXCollections.observableArrayList();
+    private static final LongProperty id = new SimpleLongProperty();
+    private static final ObjectProperty<Product> product = new SimpleObjectProperty<>();
+    private static final ObjectProperty<SaleReturnMaster> SaleReturn = new SimpleObjectProperty<>();
+    private static final StringProperty quantity = new SimpleStringProperty("");
+    private static final StringProperty serial = new SimpleStringProperty("");
+    private static final StringProperty description = new SimpleStringProperty("");
+    private static final StringProperty location = new SimpleStringProperty("");
+    private static final SQLiteConnection connection = SQLiteConnection.getInstance();
+    private static final ConnectionSource connectionSource = connection.getConnection();
 
-  public static long getId() {
-    return id.get();
-  }
+    public static long getId() {
+        return id.get();
+    }
 
-  public static void setId(long id) {
-    SaleReturnDetailViewModel.id.set(id);
-  }
+    public static void setId(long id) {
+        SaleReturnDetailViewModel.id.set(id);
+    }
 
-  public static LongProperty idProperty() {
-    return id;
-  }
+    public static LongProperty idProperty() {
+        return id;
+    }
 
-  public static Product getProduct() {
-    return product.get();
-  }
+    public static Product getProduct() {
+        return product.get();
+    }
 
-  public static void setProduct(Product product) {
-    SaleReturnDetailViewModel.product.set(product);
-  }
+    public static void setProduct(Product product) {
+        SaleReturnDetailViewModel.product.set(product);
+    }
 
-  public static ObjectProperty<Product> productProperty() {
-    return product;
-  }
+    public static ObjectProperty<Product> productProperty() {
+        return product;
+    }
 
-  public static SaleReturnMaster getSaleReturn() {
-    return SaleReturn.get();
-  }
+    public static SaleReturnMaster getSaleReturn() {
+        return SaleReturn.get();
+    }
 
-  public static void setSaleReturn(SaleReturnMaster SaleReturn) {
-    SaleReturnDetailViewModel.SaleReturn.set(SaleReturn);
-  }
+    public static void setSaleReturn(SaleReturnMaster SaleReturn) {
+        SaleReturnDetailViewModel.SaleReturn.set(SaleReturn);
+    }
 
-  public static ObjectProperty<SaleReturnMaster> SaleReturnProperty() {
-    return SaleReturn;
-  }
+    public static ObjectProperty<SaleReturnMaster> SaleReturnProperty() {
+        return SaleReturn;
+    }
 
-  public static long getQuantity() {
-    return Long.parseLong(!quantity.get().isEmpty() ? quantity.get() : "0");
-  }
+    public static long getQuantity() {
+        return Long.parseLong(!quantity.get().isEmpty() ? quantity.get() : "0");
+    }
 
-  public static void setQuantity(String quantity) {
-    SaleReturnDetailViewModel.quantity.set(quantity);
-  }
+    public static void setQuantity(String quantity) {
+        SaleReturnDetailViewModel.quantity.set(quantity);
+    }
 
-  public static StringProperty quantityProperty() {
-    return quantity;
-  }
+    public static StringProperty quantityProperty() {
+        return quantity;
+    }
 
-  public static String getDescription() {
-    return description.get();
-  }
+    public static String getDescription() {
+        return description.get();
+    }
 
-  public static void setDescription(String description) {
-    SaleReturnDetailViewModel.description.set(description);
-  }
+    public static void setDescription(String description) {
+        SaleReturnDetailViewModel.description.set(description);
+    }
 
-  public static StringProperty descriptionProperty() {
-    return description;
-  }
+    public static StringProperty descriptionProperty() {
+        return description;
+    }
 
-  public static String getSerial() {
-    return serial.get();
-  }
+    public static String getSerial() {
+        return serial.get();
+    }
 
-  public static void setSerial(String serial) {
-    SaleReturnDetailViewModel.serial.set(serial);
-  }
+    public static void setSerial(String serial) {
+        SaleReturnDetailViewModel.serial.set(serial);
+    }
 
-  public static StringProperty serialProperty() {
-    return serial;
-  }
+    public static StringProperty serialProperty() {
+        return serial;
+    }
 
-  public static String getLocation() {
-    return location.get();
-  }
+    public static String getLocation() {
+        return location.get();
+    }
 
-  public static void setLocation(String location) {
-    SaleReturnDetailViewModel.location.set(location);
-  }
+    public static void setLocation(String location) {
+        SaleReturnDetailViewModel.location.set(location);
+    }
 
-  public static StringProperty locationProperty() {
-    return location;
-  }
+    public static StringProperty locationProperty() {
+        return location;
+    }
 
-  public static void resetProperties() {
-    setId(0);
-    setProduct(null);
-    setQuantity("");
-    setSerial("");
-    setDescription("");
-    setLocation("");
-  }
+    public static void resetProperties() {
+        setId(0);
+        setProduct(null);
+        setQuantity("");
+        setSerial("");
+        setDescription("");
+        setLocation("");
+    }
 
-  public static void getSaleReturnDetails() throws SQLException {
-            Dao<SaleReturnDetail, Long> saleReturnDetailDao =
+    public static void getSaleReturnDetails() throws SQLException {
+        Dao<SaleReturnDetail, Long> saleReturnDetailDao =
                 DaoManager.createDao(connectionSource, SaleReturnDetail.class);
 
-            saleReturnDetailsList.clear();
-            saleReturnDetailsList.addAll(saleReturnDetailDao.queryForAll());
-  }
+        saleReturnDetailsList.clear();
+        saleReturnDetailsList.addAll(saleReturnDetailDao.queryForAll());
+    }
 
-  public static ObservableList<SaleReturnDetail> getSaleReturnDetailsList() {
-    return saleReturnDetailsList;
-  }
+    public static ObservableList<SaleReturnDetail> getSaleReturnDetailsList() {
+        return saleReturnDetailsList;
+    }
 }

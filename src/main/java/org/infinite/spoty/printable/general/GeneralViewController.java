@@ -10,6 +10,7 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class GeneralViewController implements Initializable {
+    private static GeneralViewController instance;
     public Label dateLabel;
     public Label refLabel;
     public Label nameLabel;
@@ -25,7 +26,6 @@ public class GeneralViewController implements Initializable {
     public Label netCost;
     public Label signerNameLabel;
     public Label signerIdLabel;
-    private static GeneralViewController instance;
 
     public static GeneralViewController getInstance() {
         if (Objects.equals(instance, null))

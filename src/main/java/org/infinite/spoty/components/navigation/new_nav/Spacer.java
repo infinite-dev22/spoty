@@ -9,7 +9,9 @@ import javafx.scene.layout.VBox;
 
 public class Spacer extends Region {
 
-    /** Creates a new horizontally oriented Spacer that expands to fill remaining space. */
+    /**
+     * Creates a new horizontally oriented Spacer that expands to fill remaining space.
+     */
     public Spacer() {
         this(Orientation.HORIZONTAL);
     }
@@ -40,7 +42,7 @@ public class Spacer extends Region {
     /**
      * Creates a new Spacer with the fixed size and orientation.
      *
-     * @param size The size of the spacer.
+     * @param size        The size of the spacer.
      * @param orientation The orientation of the spacer.
      */
     public Spacer(double size, Orientation orientation) {

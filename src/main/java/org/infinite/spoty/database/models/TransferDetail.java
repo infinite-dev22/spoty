@@ -16,178 +16,181 @@ package org.infinite.spoty.database.models;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
 
 @DatabaseTable(tableName = "transfer_detail")
 public class TransferDetail implements Serializable {
-  @DatabaseField(generatedId = true)
-  private long id;
+    @DatabaseField(generatedId = true)
+    private long id;
 
-  @DatabaseField(
-      foreign = true,
-      columnName = "transfer_id",
-      canBeNull = false,
-      foreignAutoCreate = true,
-      foreignAutoRefresh = true,
-      columnDefinition =
-          "INTEGER CONSTRAINT FK_NAME REFERENCES transfer_master(id) ON DELETE CASCADE")
-  private TransferMaster transfer;
+    @DatabaseField(
+            foreign = true,
+            columnName = "transfer_id",
+            canBeNull = false,
+            foreignAutoCreate = true,
+            foreignAutoRefresh = true,
+            columnDefinition =
+                    "INTEGER CONSTRAINT FK_NAME REFERENCES transfer_master(id) ON DELETE CASCADE")
+    private TransferMaster transfer;
 
-  @DatabaseField(
-      foreign = true,
-      canBeNull = false,
-      columnName = "product_id",
-      foreignAutoRefresh = true)
-  private Product product;
+    @DatabaseField(
+            foreign = true,
+            canBeNull = false,
+            columnName = "product_id",
+            foreignAutoRefresh = true)
+    private Product product;
 
-  @DatabaseField(canBeNull = false)
-  private long quantity;
+    @DatabaseField(canBeNull = false)
+    private long quantity;
 
-  @DatabaseField(columnName = "serial_number")
-  private String serialNo;
+    @DatabaseField(columnName = "serial_number")
+    private String serialNo;
 
-  @DatabaseField private String description;
+    @DatabaseField
+    private String description;
 
-  @DatabaseField(canBeNull = false)
-  private double price;
+    @DatabaseField(canBeNull = false)
+    private double price;
 
-  @DatabaseField(canBeNull = false)
-  private double total;
+    @DatabaseField(canBeNull = false)
+    private double total;
 
-  @DatabaseField(columnName = "created_at")
-  private Date createdAt;
+    @DatabaseField(columnName = "created_at")
+    private Date createdAt;
 
-  @DatabaseField(columnName = "created_by")
-  private String createdBy;
+    @DatabaseField(columnName = "created_by")
+    private String createdBy;
 
-  @DatabaseField(columnName = "updated_at")
-  private Date updatedAt;
+    @DatabaseField(columnName = "updated_at")
+    private Date updatedAt;
 
-  @DatabaseField(columnName = "updated_by")
-  private String updatedBy;
+    @DatabaseField(columnName = "updated_by")
+    private String updatedBy;
 
-  public TransferDetail() {}
+    public TransferDetail() {
+    }
 
-  public TransferDetail(
-      Product product,
-      long quantity,
-      String serialNo,
-      String description,
-      double price,
-      double total) {
-    this.product = product;
-    this.quantity = quantity;
-    this.serialNo = serialNo;
-    this.description = description;
-    this.price = price;
-    this.total = total;
-  }
+    public TransferDetail(
+            Product product,
+            long quantity,
+            String serialNo,
+            String description,
+            double price,
+            double total) {
+        this.product = product;
+        this.quantity = quantity;
+        this.serialNo = serialNo;
+        this.description = description;
+        this.price = price;
+        this.total = total;
+    }
 
-  public long getId() {
-    return id;
-  }
+    public long getId() {
+        return id;
+    }
 
-  public void setId(long id) {
-    this.id = id;
-  }
+    public void setId(long id) {
+        this.id = id;
+    }
 
-  public TransferMaster getTransfer() {
-    return transfer;
-  }
+    public TransferMaster getTransfer() {
+        return transfer;
+    }
 
-  public void setTransfer(TransferMaster transfer) {
-    this.transfer = transfer;
-  }
+    public void setTransfer(TransferMaster transfer) {
+        this.transfer = transfer;
+    }
 
-  public Product getProduct() {
-    return product;
-  }
+    public Product getProduct() {
+        return product;
+    }
 
-  public void setProduct(Product product) {
-    this.product = product;
-  }
+    public void setProduct(Product product) {
+        this.product = product;
+    }
 
-  public String getProductName() {
-    return (product != null)
-        ? product.getBrand().getName()
-            + " "
-            + product.getName()
-            + " "
-            + (Objects.equals(product.getUnit(), null) ? "" : product.getUnit().getName())
-        : null;
-  }
+    public String getProductName() {
+        return (product != null)
+                ? product.getBrand().getName()
+                + " "
+                + product.getName()
+                + " "
+                + (Objects.equals(product.getUnit(), null) ? "" : product.getUnit().getName())
+                : null;
+    }
 
-  public long getQuantity() {
-    return quantity;
-  }
+    public long getQuantity() {
+        return quantity;
+    }
 
-  public void setQuantity(long quantity) {
-    this.quantity = quantity;
-  }
+    public void setQuantity(long quantity) {
+        this.quantity = quantity;
+    }
 
-  public String getSerialNo() {
-    return serialNo;
-  }
+    public String getSerialNo() {
+        return serialNo;
+    }
 
-  public void setSerialNo(String serialNo) {
-    this.serialNo = serialNo;
-  }
+    public void setSerialNo(String serialNo) {
+        this.serialNo = serialNo;
+    }
 
-  public String getDescription() {
-    return description;
-  }
+    public String getDescription() {
+        return description;
+    }
 
-  public void setDescription(String description) {
-    this.description = description;
-  }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-  public double getPrice() {
-    return price;
-  }
+    public double getPrice() {
+        return price;
+    }
 
-  public void setPrice(double price) {
-    this.price = price;
-  }
+    public void setPrice(double price) {
+        this.price = price;
+    }
 
-  public double getTotal() {
-    return total;
-  }
+    public double getTotal() {
+        return total;
+    }
 
-  public void setTotal(double total) {
-    this.total = total;
-  }
+    public void setTotal(double total) {
+        this.total = total;
+    }
 
-  public Date getCreatedAt() {
-    return createdAt;
-  }
+    public Date getCreatedAt() {
+        return createdAt;
+    }
 
-  public void setCreatedAt(Date createdAt) {
-    this.createdAt = createdAt;
-  }
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
 
-  public String getCreatedBy() {
-    return createdBy;
-  }
+    public String getCreatedBy() {
+        return createdBy;
+    }
 
-  public void setCreatedBy(String createdBy) {
-    this.createdBy = createdBy;
-  }
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
 
-  public Date getUpdatedAt() {
-    return updatedAt;
-  }
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
 
-  public void setUpdatedAt(Date updatedAt) {
-    this.updatedAt = updatedAt;
-  }
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 
-  public String getUpdatedBy() {
-    return updatedBy;
-  }
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
 
-  public void setUpdatedBy(String updatedBy) {
-    this.updatedBy = updatedBy;
-  }
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
+    }
 }

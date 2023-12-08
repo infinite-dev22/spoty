@@ -59,7 +59,7 @@
                 </padding>
                 <VBox spacing="5.0" prefHeight="200.0" prefWidth="100.0" styleClass="card">
                     <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                        <Insets bottom="5.0" left="5.0" right="10.0" top="5.0"/>
                     </padding>
                     <Title text="DASHBOARD">
                     </Title>
@@ -69,7 +69,7 @@
                 <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card" GridPane.columnIndex="1"
                       GridPane.rowIndex="8">
                     <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                        <Insets bottom="5.0" left="5.0" right="10.0" top="5.0"/>
                     </padding>
                     <Title text="SETTINGS">
                         <Spacer/>
@@ -87,7 +87,7 @@
                             <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
                         </rowConstraints>
                         <padding>
-                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                            <Insets bottom="5.0" left="5.0" right="10.0" top="5.0"/>
                         </padding>
                         <MFXCheckbox fx:id="accessSystemSettingCheckbox" text="Access System Settings"/>
                         <MFXCheckbox fx:id="AccessPOSSettingsCheckbox" text="Access POS Settings"
@@ -102,7 +102,7 @@
                 <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card" GridPane.columnIndex="1"
                       GridPane.rowIndex="7">
                     <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                        <Insets bottom="5.0" left="5.0" right="10.0" top="5.0"/>
                     </padding>
                     <Title text="CUSTOMER">
                         <Spacer/>
@@ -120,7 +120,7 @@
                             <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
                         </rowConstraints>
                         <padding>
-                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                            <Insets bottom="5.0" left="5.0" right="10.0" top="5.0"/>
                         </padding>
                         <MFXCheckbox fx:id="viewCustomersCheckbox" text="View Customers"/>
                         <MFXCheckbox fx:id="createCustomerCheckbox" text="Create Customers" GridPane.columnIndex="1"/>
@@ -133,7 +133,7 @@
                 <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card" GridPane.columnIndex="1"
                       GridPane.rowIndex="6">
                     <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                        <Insets bottom="5.0" left="5.0" right="10.0" top="5.0"/>
                     </padding>
                     <Title text="ROLE SETTING">
                         <Spacer/>
@@ -150,7 +150,7 @@
                             <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
                         </rowConstraints>
                         <padding>
-                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                            <Insets bottom="5.0" left="5.0" right="10.0" top="5.0"/>
                         </padding>
                         <MFXCheckbox fx:id="viewRoleCheckbox" text="View Roles"/>
                         <MFXCheckbox fx:id="createRoleCheckbox" text="Create Roles" GridPane.columnIndex="1"/>
@@ -162,7 +162,7 @@
                 <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card" GridPane.columnIndex="1"
                       GridPane.rowIndex="5">
                     <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                        <Insets bottom="5.0" left="5.0" right="10.0" top="5.0"/>
                     </padding>
                     <Title text="SALES RETURN">
                         <Spacer/>
@@ -179,7 +179,7 @@
                             <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
                         </rowConstraints>
                         <padding>
-                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                            <Insets bottom="5.0" left="5.0" right="10.0" top="5.0"/>
                         </padding>
                         <MFXCheckbox fx:id="viewSaleReturnsCheckbox" text="View Sales returns"/>
                         <MFXCheckbox fx:id="createSaleReturnCheckbox" text="Create Sales returns"
@@ -192,7 +192,7 @@
                 <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card" GridPane.columnIndex="1"
                       GridPane.rowIndex="4">
                     <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                        <Insets bottom="5.0" left="5.0" right="10.0" top="5.0"/>
                     </padding>
                     <Title text="EXPENSE">
                         <Spacer/>
@@ -209,7 +209,7 @@
                             <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
                         </rowConstraints>
                         <padding>
-                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                            <Insets bottom="5.0" left="5.0" right="10.0" top="5.0"/>
                         </padding>
                         <MFXCheckbox fx:id="viewExpensesCheckbox" text="View expenses"/>
                         <MFXCheckbox fx:id="createExpenseCheckbox" text="Create expenses" GridPane.columnIndex="1"/>
@@ -221,7 +221,7 @@
                 <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card" GridPane.columnIndex="1"
                       GridPane.rowIndex="3">
                     <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                        <Insets bottom="5.0" left="5.0" right="10.0" top="5.0"/>
                     </padding>
                     <Title text="REQUISITION">
                         <Spacer/>
@@ -238,7 +238,7 @@
                             <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
                         </rowConstraints>
                         <padding>
-                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                            <Insets bottom="5.0" left="5.0" right="10.0" top="5.0"/>
                         </padding>
                         <MFXCheckbox fx:id="viewRequisitionCheckbox" text="View Requisitions"/>
                         <MFXCheckbox fx:id="createRequisitionCheckbox" text="Create Requisitions"
@@ -251,7 +251,7 @@
                 <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card" GridPane.columnIndex="1"
                       GridPane.rowIndex="2">
                     <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                        <Insets bottom="5.0" left="5.0" right="10.0" top="5.0"/>
                     </padding>
                     <Title text="STOCKIN">
                         <Spacer/>
@@ -268,7 +268,7 @@
                             <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
                         </rowConstraints>
                         <padding>
-                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                            <Insets bottom="5.0" left="5.0" right="10.0" top="5.0"/>
                         </padding>
                         <MFXCheckbox fx:id="viewStockInCheckbox" text="View Stock Ins"/>
                         <MFXCheckbox fx:id="createStockInCheckbox" text="Create Stock Ins" GridPane.columnIndex="1"/>
@@ -280,7 +280,7 @@
                 <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card" GridPane.columnIndex="1"
                       GridPane.rowIndex="1">
                     <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                        <Insets bottom="5.0" left="5.0" right="10.0" top="5.0"/>
                     </padding>
                     <Title text="PURCHASE">
                         <Spacer/>
@@ -297,7 +297,7 @@
                             <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
                         </rowConstraints>
                         <padding>
-                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                            <Insets bottom="5.0" left="5.0" right="10.0" top="5.0"/>
                         </padding>
                         <MFXCheckbox fx:id="viewPurchasesCheckbox" text="View Purchases"/>
                         <MFXCheckbox fx:id="createPurchaseCheckbox" text="Create Purchases" GridPane.columnIndex="1"/>
@@ -309,7 +309,7 @@
                 <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card" GridPane.columnSpan="2"
                       GridPane.rowIndex="10">
                     <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                        <Insets bottom="5.0" left="5.0" right="10.0" top="5.0"/>
                     </padding>
                     <Title text="REPORT">
                         <Spacer/>
@@ -333,7 +333,7 @@
                             <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
                         </rowConstraints>
                         <padding>
-                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                            <Insets bottom="5.0" left="5.0" right="10.0" top="5.0"/>
                         </padding>
                         <MFXCheckbox fx:id="paymentSalesCheckbox" text="Access Payments Sales Reports"/>
                         <MFXCheckbox fx:id="productQuantityAlertsCheckbox" text="Access Product Quantity Reports"
@@ -379,7 +379,7 @@
                 </VBox>
                 <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card" GridPane.rowIndex="8">
                     <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                        <Insets bottom="5.0" left="5.0" right="10.0" top="5.0"/>
                     </padding>
                     <Title text="PRODUCT">
                         <Spacer/>
@@ -399,7 +399,7 @@
                             <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
                         </rowConstraints>
                         <padding>
-                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                            <Insets bottom="5.0" left="5.0" right="10.0" top="5.0"/>
                         </padding>
                         <MFXCheckbox fx:id="viewProductsCheckbox" text="View Products"/>
                         <MFXCheckbox fx:id="createProductCheckbox" text="Create Products" GridPane.columnIndex="1"/>
@@ -419,7 +419,7 @@
                 </VBox>
                 <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card" GridPane.rowIndex="7">
                     <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                        <Insets bottom="5.0" left="5.0" right="10.0" top="5.0"/>
                     </padding>
                     <Title text="SUPPLIER">
                         <Spacer/>
@@ -437,7 +437,7 @@
                             <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
                         </rowConstraints>
                         <padding>
-                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                            <Insets bottom="5.0" left="5.0" right="10.0" top="5.0"/>
                         </padding>
                         <MFXCheckbox fx:id="viewSuppliersCheckbox" text="View Suppliers"/>
                         <MFXCheckbox fx:id="createSupplierCheckbox" text="Create Suppliers" GridPane.columnIndex="1"/>
@@ -449,7 +449,7 @@
                 </VBox>
                 <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card" GridPane.rowIndex="6">
                     <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                        <Insets bottom="5.0" left="5.0" right="10.0" top="5.0"/>
                     </padding>
                     <Title text="USER SETTING">
                         <Spacer/>
@@ -466,7 +466,7 @@
                             <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
                         </rowConstraints>
                         <padding>
-                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                            <Insets bottom="5.0" left="5.0" right="10.0" top="5.0"/>
                         </padding>
                         <MFXCheckbox fx:id="viewUsersCheckbox" text="View Users"/>
                         <MFXCheckbox fx:id="createUserCheckbox" text="Create Users" GridPane.columnIndex="1"/>
@@ -477,7 +477,7 @@
                 </VBox>
                 <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card" GridPane.rowIndex="5">
                     <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                        <Insets bottom="5.0" left="5.0" right="10.0" top="5.0"/>
                     </padding>
                     <Title text="PURCHASES RETURN">
                         <Spacer/>
@@ -494,7 +494,7 @@
                             <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
                         </rowConstraints>
                         <padding>
-                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                            <Insets bottom="5.0" left="5.0" right="10.0" top="5.0"/>
                         </padding>
                         <MFXCheckbox fx:id="viewPurchaseReturnsCheckbox" text="View Purchase Returns"/>
                         <MFXCheckbox fx:id="createPurchaseReturnCheckbox" text="Create Purchase Returns"
@@ -507,7 +507,7 @@
                 </VBox>
                 <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card" GridPane.rowIndex="4">
                     <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                        <Insets bottom="5.0" left="5.0" right="10.0" top="5.0"/>
                     </padding>
                     <Title text="ADJUSTMENT">
                         <Spacer/>
@@ -524,7 +524,7 @@
                             <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
                         </rowConstraints>
                         <padding>
-                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                            <Insets bottom="5.0" left="5.0" right="10.0" top="5.0"/>
                         </padding>
                         <MFXCheckbox fx:id="viewAdjustmentsCheckbox" text="View Adjustments"/>
                         <MFXCheckbox fx:id="createAdjustmentCheckbox" text="Create Adjustments"
@@ -536,7 +536,7 @@
                 </VBox>
                 <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card" GridPane.rowIndex="3">
                     <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                        <Insets bottom="5.0" left="5.0" right="10.0" top="5.0"/>
                     </padding>
                     <Title text="QUOTATION">
                         <Spacer/>
@@ -553,7 +553,7 @@
                             <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
                         </rowConstraints>
                         <padding>
-                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                            <Insets bottom="5.0" left="5.0" right="10.0" top="5.0"/>
                         </padding>
                         <MFXCheckbox fx:id="viewQuotationsCheckbox" text="View Quotations"/>
                         <MFXCheckbox fx:id="createQuotationCheckbox" text="Create Quotations" GridPane.columnIndex="1"/>
@@ -564,7 +564,7 @@
                 </VBox>
                 <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card" GridPane.rowIndex="2">
                     <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                        <Insets bottom="5.0" left="5.0" right="10.0" top="5.0"/>
                     </padding>
                     <Title text="TRANSFER">
                         <Spacer/>
@@ -581,7 +581,7 @@
                             <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
                         </rowConstraints>
                         <padding>
-                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                            <Insets bottom="5.0" left="5.0" right="10.0" top="5.0"/>
                         </padding>
                         <MFXCheckbox fx:id="viewTransfersCheckbox" text="View Transfers"/>
                         <MFXCheckbox fx:id="createTransferCheckbox" text="Create Transfers" GridPane.columnIndex="1"/>
@@ -592,7 +592,7 @@
                 </VBox>
                 <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card" GridPane.rowIndex="1">
                     <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                        <Insets bottom="5.0" left="5.0" right="10.0" top="5.0"/>
                     </padding>
                     <Title text="SALE">
                         <Spacer/>
@@ -609,7 +609,7 @@
                             <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
                         </rowConstraints>
                         <padding>
-                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                            <Insets bottom="5.0" left="5.0" right="10.0" top="5.0"/>
                         </padding>
                         <MFXCheckbox fx:id="viewSalesCheckbox" text="View Sales"/>
                         <MFXCheckbox fx:id="createSaleCheckbox" text="Create Sales" GridPane.columnIndex="1"/>
@@ -621,7 +621,7 @@
                 <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="100.0" styleClass="card"
                       GridPane.columnIndex="1">
                     <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                        <Insets bottom="5.0" left="5.0" right="10.0" top="5.0"/>
                     </padding>
                     <Title text="POINT OF SALE">
                     </Title>

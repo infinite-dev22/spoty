@@ -16,6 +16,7 @@ package org.infinite.spoty.database.models;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
@@ -24,199 +25,205 @@ import java.util.Objects;
 // TODO: In place of totalPrice create purchasePrice.
 @DatabaseTable(tableName = "purchase_details")
 public class PurchaseDetail implements Serializable {
-  @DatabaseField(generatedId = true)
-  private long id;
+    @DatabaseField(generatedId = true)
+    private long id;
 
-  @DatabaseField private double cost;
+    @DatabaseField
+    private double cost;
 
-  @DatabaseField(
-      foreign = true,
-      columnName = "purchase_master_id",
-      canBeNull = false,
-      foreignAutoCreate = true,
-      foreignAutoRefresh = true,
-      columnDefinition =
-          "INTEGER CONSTRAINT FK_NAME REFERENCES purchase_masters(id) ON DELETE CASCADE")
-  private PurchaseMaster purchase;
+    @DatabaseField(
+            foreign = true,
+            columnName = "purchase_master_id",
+            canBeNull = false,
+            foreignAutoCreate = true,
+            foreignAutoRefresh = true,
+            columnDefinition =
+                    "INTEGER CONSTRAINT FK_NAME REFERENCES purchase_masters(id) ON DELETE CASCADE")
+    private PurchaseMaster purchase;
 
-  @DatabaseField(columnName = "net_tax")
-  private double netTax;
+    @DatabaseField(columnName = "net_tax")
+    private double netTax;
 
-  @DatabaseField(columnName = "tax_type")
-  private String taxType;
+    @DatabaseField(columnName = "tax_type")
+    private String taxType;
 
-  @DatabaseField private double discount;
+    @DatabaseField
+    private double discount;
 
-  @DatabaseField(columnName = "discount_type")
-  private String discountType;
+    @DatabaseField(columnName = "discount_type")
+    private String discountType;
 
-  @DatabaseField(foreign = true, canBeNull = false, foreignAutoRefresh = true)
-  private Product product;
+    @DatabaseField(foreign = true, canBeNull = false, foreignAutoRefresh = true)
+    private Product product;
 
-  @DatabaseField(columnName = "serial_number")
-  private String serialNumber;
+    @DatabaseField(columnName = "serial_number")
+    private String serialNumber;
 
-  @DatabaseField private double totalPrice;
-  @DatabaseField private double price;
-  @DatabaseField private long quantity;
+    @DatabaseField
+    private double totalPrice;
+    @DatabaseField
+    private double price;
+    @DatabaseField
+    private long quantity;
 
-  @DatabaseField(columnName = "created_at")
-  private Date createdAt;
+    @DatabaseField(columnName = "created_at")
+    private Date createdAt;
 
-  @DatabaseField(columnName = "created_by")
-  private String createdBy;
+    @DatabaseField(columnName = "created_by")
+    private String createdBy;
 
-  @DatabaseField(columnName = "updated_at")
-  private Date updatedAt;
+    @DatabaseField(columnName = "updated_at")
+    private Date updatedAt;
 
-  @DatabaseField(columnName = "updated_by")
-  private String updatedBy;
+    @DatabaseField(columnName = "updated_by")
+    private String updatedBy;
 
-  public PurchaseDetail() {}
+    public PurchaseDetail() {
+    }
 
-  public PurchaseDetail(
-      PurchaseMaster purchase, double cost, Product product, long quantity) {
-    this.cost = cost;
-    this.purchase = purchase;
-    this.product = product;
-    this.quantity = quantity;
-  }
+    public PurchaseDetail(
+            PurchaseMaster purchase, double cost, Product product, long quantity) {
+        this.cost = cost;
+        this.purchase = purchase;
+        this.product = product;
+        this.quantity = quantity;
+    }
 
-  public long getId() {
-    return id;
-  }
+    public long getId() {
+        return id;
+    }
 
-  public void setId(long id) {
-    this.id = id;
-  }
+    public void setId(long id) {
+        this.id = id;
+    }
 
-  public double getCost() {
-    return cost;
-  }
+    public double getCost() {
+        return cost;
+    }
 
-  public void setCost(double cost) {
-    this.cost = cost;
-  }
+    public void setCost(double cost) {
+        this.cost = cost;
+    }
 
-  public double getPrice() {
-    return price;
-  }
+    public double getPrice() {
+        return price;
+    }
 
-  public void setPrice(double price) {
-    this.price = price;
-  }
+    public void setPrice(double price) {
+        this.price = price;
+    }
 
-  public PurchaseMaster getPurchase() {
-    return purchase;
-  }
+    public PurchaseMaster getPurchase() {
+        return purchase;
+    }
 
-  public void setPurchase(PurchaseMaster purchase) {
-    this.purchase = purchase;
-  }
+    public void setPurchase(PurchaseMaster purchase) {
+        this.purchase = purchase;
+    }
 
-  public double getNetTax() {
-    return netTax;
-  }
+    public double getNetTax() {
+        return netTax;
+    }
 
-  public void setNetTax(double netTax) {
-    this.netTax = netTax;
-  }
+    public void setNetTax(double netTax) {
+        this.netTax = netTax;
+    }
 
-  public String getTaxType() {
-    return taxType;
-  }
+    public String getTaxType() {
+        return taxType;
+    }
 
-  public void setTaxType(String taxType) {
-    this.taxType = taxType;
-  }
+    public void setTaxType(String taxType) {
+        this.taxType = taxType;
+    }
 
-  public double getDiscount() {
-    return discount;
-  }
+    public double getDiscount() {
+        return discount;
+    }
 
-  public void setDiscount(double discount) {
-    this.discount = discount;
-  }
+    public void setDiscount(double discount) {
+        this.discount = discount;
+    }
 
-  public String getDiscountType() {
-    return discountType;
-  }
+    public String getDiscountType() {
+        return discountType;
+    }
 
-  public void setDiscountType(String discountType) {
-    this.discountType = discountType;
-  }
+    public void setDiscountType(String discountType) {
+        this.discountType = discountType;
+    }
 
-  public Product getProduct() {
-    return product;
-  }
+    public Product getProduct() {
+        return product;
+    }
 
-  public void setProduct(Product product) {
-    this.product = product;
-  }
+    public void setProduct(Product product) {
+        this.product = product;
+    }
 
-  public String getProductName() {
-    return (product != null)
-        ? product.getBrand().getName()
-            + " "
-            + product.getName()
-            + " "
-            + (Objects.equals(product.getUnit(), null) ? "" : product.getUnit().getName())
-        : null;
-  }
+    public String getProductName() {
+        return (product != null)
+                ? product.getBrand().getName()
+                + " "
+                + product.getName()
+                + " "
+                + (Objects.equals(product.getUnit(), null) ? "" : product.getUnit().getName())
+                : null;
+    }
 
-  public String getSerialNumber() {
-    return serialNumber;
-  }
+    public String getSerialNumber() {
+        return serialNumber;
+    }
 
-  public void setSerialNumber(String serialNumber) {
-    this.serialNumber = serialNumber;
-  }
+    public void setSerialNumber(String serialNumber) {
+        this.serialNumber = serialNumber;
+    }
 
-  public double getTotalPrice() {
-    return totalPrice;
-  }
+    public double getTotalPrice() {
+        return totalPrice;
+    }
 
-  public void setTotalPrice(double totalPrice) {
-    this.totalPrice = totalPrice;
-  }
+    public void setTotalPrice(double totalPrice) {
+        this.totalPrice = totalPrice;
+    }
 
-  public long getQuantity() {
-    return quantity;
-  }
+    public long getQuantity() {
+        return quantity;
+    }
 
-  public void setQuantity(long quantity) {
-    this.quantity = quantity;
-  }
+    public void setQuantity(long quantity) {
+        this.quantity = quantity;
+    }
 
-  public Date getCreatedAt() {
-    return createdAt;
-  }
+    public Date getCreatedAt() {
+        return createdAt;
+    }
 
-  public void setCreatedAt(Date createdAt) {
-    this.createdAt = createdAt;
-  }
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
 
-  public String getCreatedBy() {
-    return createdBy;
-  }
+    public String getCreatedBy() {
+        return createdBy;
+    }
 
-  public void setCreatedBy(String createdBy) {
-    this.createdBy = createdBy;
-  }
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
 
-  public Date getUpdatedAt() {
-    return updatedAt;
-  }
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
 
-  public void setUpdatedAt(Date updatedAt) {
-    this.updatedAt = updatedAt;
-  }
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 
-  public String getUpdatedBy() {
-    return updatedBy;
-  }
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
 
-  public void setUpdatedBy(String updatedBy) {
-    this.updatedBy = updatedBy;
-  }
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
+    }
 }

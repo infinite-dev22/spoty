@@ -15,41 +15,52 @@
 package org.infinite.spoty.components.navigation;
 
 import javafx.fxml.FXMLLoader;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import org.infinite.spoty.forms.*;
-import org.infinite.spoty.views.account.BankReconciliationController;
 import org.infinite.spoty.views.account.*;
 import org.infinite.spoty.views.account.report.*;
+import org.infinite.spoty.views.bank.BankController;
+import org.infinite.spoty.views.customers.CustomerController;
 import org.infinite.spoty.views.dashboard.DashboardController;
 import org.infinite.spoty.views.expenses.category.ExpenseCategoryController;
 import org.infinite.spoty.views.expenses.expense.ExpenseController;
+import org.infinite.spoty.views.human_resource.attendance.AttendanceController;
+import org.infinite.spoty.views.human_resource.attendance.AttendanceReportController;
+import org.infinite.spoty.views.human_resource.attendance.CheckInController;
+import org.infinite.spoty.views.human_resource.hrm.DesignationsController;
+import org.infinite.spoty.views.human_resource.hrm.EmployeesController;
+import org.infinite.spoty.views.human_resource.pay_roll.SalariesController;
+import org.infinite.spoty.views.human_resource.pay_roll.SalaryAdvancesController;
+import org.infinite.spoty.views.human_resource.pay_roll.SalaryGenerateController;
 import org.infinite.spoty.views.inventory.adjustment.AdjustmentController;
 import org.infinite.spoty.views.inventory.brand.BrandController;
 import org.infinite.spoty.views.inventory.category.ProductCategoryController;
 import org.infinite.spoty.views.inventory.products.ProductController;
-import org.infinite.spoty.views.inventory.quotation.QuotationController;
 import org.infinite.spoty.views.inventory.unit_of_measure.UnitOfMeasureController;
-import org.infinite.spoty.views.people.customers.CustomerController;
-import org.infinite.spoty.views.people.suppliers.SupplierController;
-import org.infinite.spoty.views.people.users.UserController;
 import org.infinite.spoty.views.purchases.PurchasesController;
+import org.infinite.spoty.views.quotation.QuotationController;
+import org.infinite.spoty.views.report.*;
 import org.infinite.spoty.views.requisition.RequisitionController;
 import org.infinite.spoty.views.returns.purchases.PurchaseReturnController;
 import org.infinite.spoty.views.returns.sales.SaleReturnsController;
 import org.infinite.spoty.views.sales.SaleTermsController;
 import org.infinite.spoty.views.sales.SalesController;
 import org.infinite.spoty.views.sales.pos.PointOfSaleController;
-import org.infinite.spoty.views.settings.SettingsController;
-import org.infinite.spoty.views.settings.branches.BranchController;
-import org.infinite.spoty.views.settings.currency.CurrencyController;
-import org.infinite.spoty.views.settings.export.ExportController;
-import org.infinite.spoty.views.settings.pos.POSController;
-import org.infinite.spoty.views.settings.roles.RoleController;
-import org.infinite.spoty.views.settings.system.SystemController;
+import org.infinite.spoty.views.service.ServiceInvoicesController;
+import org.infinite.spoty.views.service.ServicesController;
+import org.infinite.spoty.views.settings.data_synchronizer.BackupController;
+import org.infinite.spoty.views.settings.data_synchronizer.ExportController;
+import org.infinite.spoty.views.settings.data_synchronizer.ImportController;
+import org.infinite.spoty.views.settings.data_synchronizer.RestoreController;
+import org.infinite.spoty.views.settings.role_permission.AssignUserRoleController;
+import org.infinite.spoty.views.settings.role_permission.RolesController;
+import org.infinite.spoty.views.settings.system_settings.*;
 import org.infinite.spoty.views.stock_in.StockInController;
+import org.infinite.spoty.views.stock_report.StockReportController;
+import org.infinite.spoty.views.suppliers.SupplierController;
+import org.infinite.spoty.views.tax.TaxSettingsController;
+import org.infinite.spoty.views.tax.TaxesController;
 import org.infinite.spoty.views.transfer.TransferController;
 
 import java.io.IOException;
@@ -65,10 +76,12 @@ public class Pages {
     private static final FXMLLoader salesTermLoader = fxmlLoader("fxml/sales/SaleTerms.fxml");
     // Customer
     private static final FXMLLoader customerLoader =
-            fxmlLoader("fxml/people/customers/Customers.fxml");
+            fxmlLoader("fxml/customers/Customers.fxml");
     // Supplier
     private static final FXMLLoader supplierLoader =
-            fxmlLoader("fxml/people/suppliers/Suppliers.fxml");
+            fxmlLoader("fxml/suppliers/Suppliers.fxml");
+    // Stock Report
+    private static final FXMLLoader stockReportLoader = fxmlLoader("fxml/stock_report/StockReport.fxml");
     // Account
     private static final FXMLLoader bankReconciliationLoader = fxmlLoader("fxml/account/BankReconciliation.fxml");
     private static final FXMLLoader cashAdjustmentLoader = fxmlLoader("fxml/account/CashAdjustment.fxml");
@@ -102,7 +115,65 @@ public class Pages {
     private static final FXMLLoader subLedgerLoader = fxmlLoader("fxml/account/report/SubLedger.fxml");
     private static final FXMLLoader trialBalanceLoader = fxmlLoader("fxml/account/report/TrialBalance.fxml");
     private static final FXMLLoader bankReconciliationReportLoader = fxmlLoader("fxml/account/report/BankReconciliationReport.fxml");
-
+    // Reports
+    private static final FXMLLoader closingLoader = fxmlLoader("fxml/report/Closing.fxml");
+    private static final FXMLLoader closingReportLoader = fxmlLoader("fxml/report/ClosingReport.fxml");
+    private static final FXMLLoader dailyCustomerReportLoader = fxmlLoader("fxml/report/DailyCustomerReport.fxml");
+    private static final FXMLLoader dailyReportLoader = fxmlLoader("fxml/report/DailyReport.fxml");
+    private static final FXMLLoader dueReportLoader = fxmlLoader("fxml/report/DueReport.fxml");
+    private static final FXMLLoader profitReportLoader = fxmlLoader("fxml/report/ProfitReport.fxml");
+    private static final FXMLLoader purchaseReportLoader = fxmlLoader("fxml/report/PurchaseReport.fxml");
+    private static final FXMLLoader salesReportLoader = fxmlLoader("fxml/report/SalesReport.fxml");
+    private static final FXMLLoader salesReturnLoader = fxmlLoader("fxml/report/SalesReturn.fxml");
+    private static final FXMLLoader shippingCostReportLoader = fxmlLoader("fxml/report/ShippingCostReport.fxml");
+    private static final FXMLLoader taxReportLoader = fxmlLoader("fxml/report/TaxReport.fxml");
+    private static final FXMLLoader userSalesReportLoader = fxmlLoader("fxml/report/UserSalesReport.fxml");
+    // HUMAN RESOURCE
+    // Attendance
+    private static final FXMLLoader attendanceLoader = fxmlLoader("fxml/human_resource/attendance/Attendance.fxml");
+    private static final FXMLLoader attendanceReportLoader = fxmlLoader("fxml/human_resource/attendance/AttendanceReport.fxml");
+    private static final FXMLLoader checkInsLoader = fxmlLoader("fxml/human_resource/attendance/CheckIn.fxml");
+    // Human Resource Management
+    private static final FXMLLoader designationsLoader = fxmlLoader("fxml/human_resource/hrm/Designations.fxml");
+    private static final FXMLLoader employeesLoader = fxmlLoader("fxml/human_resource/hrm/Employees.fxml");
+    // PayRoll
+    private static final FXMLLoader salariesLoader = fxmlLoader("fxml/human_resource/pay_roll/Salaries.fxml");
+    private static final FXMLLoader salaryAdvancesLoader = fxmlLoader("fxml/human_resource/pay_roll/SalaryAdvances.fxml");
+    private static final FXMLLoader salaryGenerateLoader = fxmlLoader("fxml/human_resource/pay_roll/SalaryGenerate.fxml");
+    // Bank
+    private static final FXMLLoader banksLoader = fxmlLoader("fxml/bank/Bank.fxml");
+    // Service
+    private static final FXMLLoader servicesLoader = fxmlLoader("fxml/service/Services.fxml");
+    private static final FXMLLoader serviceInvoicesLoader = fxmlLoader("fxml/service/ServiceInvoices.fxml");
+    // Quotation
+    private static final FXMLLoader quotationLoader =
+            fxmlLoader("fxml/quotation/Quotation.fxml");
+    // Tax
+    private static final FXMLLoader taxesLoader =
+            fxmlLoader("fxml/tax/Taxes.fxml");
+    private static final FXMLLoader taxSettingsLoader =
+            fxmlLoader("fxml/tax/TaxSettings.fxml");
+    // SETTINGS
+    // Data Synchronizer
+    private static final FXMLLoader backUpLoader = fxmlLoader("fxml/settings/data_synchronizer/Backup.fxml");
+    private static final FXMLLoader exportLoader = fxmlLoader("fxml/settings/data_synchronizer/Export.fxml");
+    private static final FXMLLoader importLoader = fxmlLoader("fxml/settings/data_synchronizer/Import.fxml");
+    private static final FXMLLoader restoreLoader = fxmlLoader("fxml/settings/data_synchronizer/Restore.fxml");
+    // Role Permission
+    private static final FXMLLoader assignUserRoleLoader = fxmlLoader("fxml/settings/role_permission/AssignUserRole.fxml");
+    private static final FXMLLoader rolesLoader = fxmlLoader("fxml/settings/role_permission/Roles.fxml");
+    // System Settings
+    private static final FXMLLoader appSettingsLoader = fxmlLoader("fxml/settings/system_settings/AppSettings.fxml");
+    private static final FXMLLoader branchesLoader = fxmlLoader("fxml/settings/system_settings/Branches.fxml");
+    private static final FXMLLoader companySettingsLoader = fxmlLoader("fxml/settings/system_settings/CompanyDetails.fxml");
+    private static final FXMLLoader currencyLoader = fxmlLoader("fxml/settings/system_settings/Currency.fxml");
+    private static final FXMLLoader languagesLoader = fxmlLoader("fxml/settings/system_settings/Languages.fxml");
+    private static final FXMLLoader mailSettingsLoader = fxmlLoader("fxml/settings/system_settings/MailSettings.fxml");
+    private static final FXMLLoader posSettingsLoader = fxmlLoader("fxml/settings/system_settings/POS.fxml");
+    private static final FXMLLoader printSettingsLoader = fxmlLoader("fxml/settings/system_settings/PrintSettings.fxml");
+    private static final FXMLLoader settingsLoader = fxmlLoader("fxml/settings/system_settings/Settings.fxml");
+    private static final FXMLLoader systemLoader = fxmlLoader("fxml/settings/system_settings/System.fxml");
+    private static final FXMLLoader usersLoader = fxmlLoader("fxml/settings/system_settings/Users.fxml");
 
     private static final FXMLLoader saleMasterFormLoader = fxmlLoader("forms/SaleMasterForm.fxml");
     private static final FXMLLoader productCategoryLoader =
@@ -114,8 +185,6 @@ public class Pages {
             fxmlLoader("fxml/inventory/products/Products.fxml");
     private static final FXMLLoader adjustmentLoader =
             fxmlLoader("fxml/inventory/adjustment/Adjustment.fxml");
-    private static final FXMLLoader quotationLoader =
-            fxmlLoader("fxml/inventory/quotation/Quotation.fxml");
     private static final FXMLLoader requisitionLoader =
             fxmlLoader("fxml/requisition/Requisition.fxml");
     private static final FXMLLoader purchaseLoader = fxmlLoader("fxml/purchases/Purchases.fxml");
@@ -127,25 +196,13 @@ public class Pages {
     private static final FXMLLoader expenseCategoryLoader =
             fxmlLoader("fxml/expenses/category/Category.fxml");
     private static final FXMLLoader expenseLoader = fxmlLoader("fxml/expenses/expense/Expense.fxml");
-    private static final FXMLLoader userLoader = fxmlLoader("fxml/people/users/Users.fxml");
-    private static final FXMLLoader settingsLoader = fxmlLoader("fxml/settings/Settings.fxml");
-    private static final FXMLLoader systemSettingsLoader =
-            fxmlLoader("fxml/settings/system/System.fxml");
-    private static final FXMLLoader posSettingsLoader = fxmlLoader("fxml/settings/pos/POS.fxml");
-    private static final FXMLLoader roleSettingsLoader = fxmlLoader("fxml/settings/roles/Roles.fxml");
-    private static final FXMLLoader branchSettingsLoader =
-            fxmlLoader("fxml/settings/branches/Branches.fxml");
-    private static final FXMLLoader currencySettingsLoader =
-            fxmlLoader("fxml/settings/currency/Currency.fxml");
-    private static final FXMLLoader exportSettingsLoader =
-            fxmlLoader("fxml/settings/export/Export.fxml");
     private static final FXMLLoader quotationMasterFormLoader =
             fxmlLoader("forms/QuotationMasterForm.fxml");
     private static final FXMLLoader purchaseMasterFormLoader =
             fxmlLoader("forms/PurchaseMasterForm.fxml");
     private static final FXMLLoader requisitionMasterFormLoader =
             fxmlLoader("forms/RequisitionMasterForm.fxml");
-    private static final FXMLLoader stockinMasterFormLoader =
+    private static final FXMLLoader stockInMasterFormLoader =
             fxmlLoader("forms/StockInMasterForm.fxml");
     private static final FXMLLoader transferMasterFormLoader =
             fxmlLoader("forms/TransferMasterForm.fxml");
@@ -164,6 +221,8 @@ public class Pages {
     private static BorderPane customerPane;
     // Supplier
     private static BorderPane supplierPane;
+    // Stock Report
+    private static BorderPane stockReportPane;
     // Account
     private static BorderPane bankReconciliationPane;
     private static BorderPane cashAdjustmentPane;
@@ -197,6 +256,60 @@ public class Pages {
     private static BorderPane subLedgerPane;
     private static BorderPane trialBalancePane;
     private static BorderPane bankReconciliationReportPane;
+    // Reports
+    private static BorderPane closingPane;
+    private static BorderPane closingReportPane;
+    private static BorderPane dailyCustomerReportPane;
+    private static BorderPane dailyReportPane;
+    private static BorderPane dueReportPane;
+    private static BorderPane profitReportPane;
+    private static BorderPane purchaseReportPane;
+    private static BorderPane salesReportPane;
+    private static BorderPane salesReturnPane;
+    private static BorderPane shippingCostReportPane;
+    private static BorderPane taxReportPane;
+    private static BorderPane userSalesReportPane;
+    // HUMAN RESOURCE
+    // Attendance
+    private static BorderPane attendancePane;
+    private static BorderPane attendanceReportPane;
+    private static BorderPane checkInPane;
+    // Human Resource Management
+    private static BorderPane designationsPane;
+    private static BorderPane employeesPane;
+    // PayRoll
+    private static BorderPane salariesPane;
+    private static BorderPane salaryAdvancesPane;
+    private static BorderPane salaryGeneratePane;
+    // Bank
+    private static BorderPane bankPane;
+    // Service
+    private static BorderPane servicesPane;
+    private static BorderPane serviceInvoicesPane;
+    // Quotation
+    private static BorderPane quotationPane;
+    // Quotation
+    private static BorderPane taxesPane;
+    private static BorderPane taxSettingsPane;
+    // SETTINGS
+    // Data Synchronizer
+    private static BorderPane backUpPane;
+    private static BorderPane exportPane;
+    private static BorderPane importPane;
+    private static BorderPane restorePane;
+    // Role Permission
+    private static BorderPane assignUserRolePane;
+    private static BorderPane rolesPane;
+    // System Settings
+    private static BorderPane appSettingsPane;
+    private static BorderPane branchesPane;
+    private static BorderPane companySettingsPane;
+    private static BorderPane currencyPane;
+    private static BorderPane languagesPane;
+    private static BorderPane mailSettingsPane;
+    private static BorderPane printSettingsPane;
+    private static BorderPane systemPane;
+    private static BorderPane usersPane;
 
 
     private static BorderPane productCategoryPane;
@@ -204,7 +317,6 @@ public class Pages {
     private static BorderPane unitPane;
     private static BorderPane productPane;
     private static BorderPane adjustmentPane;
-    private static BorderPane quotationPane;
     private static BorderPane requisitionPane;
     private static BorderPane purchasePane;
     private static BorderPane transferPane;
@@ -213,20 +325,13 @@ public class Pages {
     private static BorderPane purchaseReturnPane;
     private static BorderPane expenseCategoryPane;
     private static BorderPane expensePane;
-    private static BorderPane userPane;
     private static BorderPane settingsPane;
-    private static GridPane systemSettingsPane;
-    private static AnchorPane posSettingsPane;
-    private static BorderPane roleSettingsPane;
-    private static BorderPane branchSettingsPane;
-    private static BorderPane currencySettingsPane;
-    private static BorderPane exportSettingsPane;
     private static BorderPane adjustmentMasterFormPane;
     private static BorderPane quotationMasterFormPane;
     private static BorderPane purchaseMasterFormPane;
     private static BorderPane requisitionMasterFormPane;
     private static BorderPane saleMasterFormPane;
-    private static BorderPane stockinMasterFormPane;
+    private static BorderPane stockInMasterFormPane;
     private static BorderPane transferMasterFormPane;
     private static BorderPane roleSettingsFormPane;
 
@@ -246,6 +351,18 @@ public class Pages {
 
     private static void setSupplier(Stage stage) {
         supplierLoader.setControllerFactory(e -> SupplierController.getInstance(stage));
+    }
+
+    private static void setProduct(Stage stage) {
+        productCategoryLoader.setControllerFactory(e -> ProductCategoryController.getInstance(stage));
+        brandLoader.setControllerFactory(e -> BrandController.getInstance(stage));
+        unitLoader.setControllerFactory(e -> UnitOfMeasureController.getInstance(stage));
+        productLoader.setControllerFactory(e -> ProductController.getInstance(stage));
+        adjustmentLoader.setControllerFactory(e -> AdjustmentController.getInstance());
+    }
+
+    private static void setStockReport(Stage stage) {
+        stockReportLoader.setControllerFactory(e -> new StockReportController());
     }
 
     private static void setAccounts(Stage stage) {
@@ -285,13 +402,54 @@ public class Pages {
         bankReconciliationReportLoader.setControllerFactory(e -> new BankReconciliationReportController());
     }
 
-    private static void setProduct(Stage stage) {
-        productCategoryLoader.setControllerFactory(e -> ProductCategoryController.getInstance(stage));
-        brandLoader.setControllerFactory(e -> BrandController.getInstance(stage));
-        unitLoader.setControllerFactory(e -> UnitOfMeasureController.getInstance(stage));
-        productLoader.setControllerFactory(e -> ProductController.getInstance(stage));
-        adjustmentLoader.setControllerFactory(e -> AdjustmentController.getInstance());
+    private static void setReports(Stage stage) {
+        closingLoader.setControllerFactory(e -> new ClosingController());
+        closingReportLoader.setControllerFactory(e -> new ClosingReportController());
+        dailyCustomerReportLoader.setControllerFactory(e -> new DailyCustomerReportController());
+        dailyReportLoader.setControllerFactory(e -> new DailyReportController());
+        dueReportLoader.setControllerFactory(e -> new DueReportController());
+        profitReportLoader.setControllerFactory(e -> new ProfitReportController());
+        purchaseReportLoader.setControllerFactory(e -> new PurchaseReportController());
+        salesReportLoader.setControllerFactory(e -> new SalesReportController());
+        salesReturnLoader.setControllerFactory(e -> new SalesReturnController());
+        shippingCostReportLoader.setControllerFactory(e -> new ShippingCostReportController());
+        taxReportLoader.setControllerFactory(e -> new TaxReportController());
+        userSalesReportLoader.setControllerFactory(e -> new UserSalesReportController());
+    }
+
+    private static void setAttendance(Stage stage) {
+        attendanceLoader.setControllerFactory(e -> new AttendanceController());
+        attendanceReportLoader.setControllerFactory(e -> new AttendanceReportController());
+        checkInsLoader.setControllerFactory(e -> new CheckInController());
+    }
+
+    private static void setHRM(Stage stage) {
+        designationsLoader.setControllerFactory(e -> new DesignationsController());
+        employeesLoader.setControllerFactory(e -> new EmployeesController());
+    }
+
+    private static void setPayRoll(Stage stage) {
+        salariesLoader.setControllerFactory(e -> new SalariesController());
+        salaryAdvancesLoader.setControllerFactory(e -> new SalaryAdvancesController());
+        salaryGenerateLoader.setControllerFactory(e -> new SalaryGenerateController());
+    }
+
+    private static void setBank(Stage stage) {
+        banksLoader.setControllerFactory(e -> new BankController());
+    }
+
+    private static void setService(Stage stage) {
+        servicesLoader.setControllerFactory(e -> new ServicesController());
+        serviceInvoicesLoader.setControllerFactory(e -> new ServiceInvoicesController());
+    }
+
+    private static void setQuotation(Stage stage) {
         quotationLoader.setControllerFactory(e -> QuotationController.getInstance());
+    }
+
+    private static void setTax(Stage stage) {
+        taxesLoader.setControllerFactory(e -> new TaxesController());
+        taxSettingsLoader.setControllerFactory(e -> new TaxSettingsController());
     }
 
     private static void setSingleItems() {
@@ -306,24 +464,35 @@ public class Pages {
         purchaseReturnLoader.setControllerFactory(e -> new PurchaseReturnController());
     }
 
+    private static void setDataSynchronizer(Stage stage) {
+        backUpLoader.setControllerFactory(c -> new BackupController());
+        exportLoader.setControllerFactory(c -> new ExportController());
+        importLoader.setControllerFactory(c -> new ImportController());
+        restoreLoader.setControllerFactory(c -> new RestoreController());
+    }
+
+    private static void setRolePermission(Stage stage) {
+        assignUserRoleLoader.setControllerFactory(c -> new AssignUserRoleController());
+        rolesLoader.setControllerFactory(c -> new RolesController());
+    }
+
+    private static void setSystemSettings(Stage stage) {
+        appSettingsLoader.setControllerFactory(c -> new AppSettingsController());
+        branchesLoader.setControllerFactory(c -> BranchController.getInstance(stage));
+        companySettingsLoader.setControllerFactory(c -> new CompanyDetailsController());
+        currencyLoader.setControllerFactory(c -> CurrencyController.getInstance(stage));
+        languagesLoader.setControllerFactory(c -> new LanguagesController());
+        mailSettingsLoader.setControllerFactory(c -> new MailSettingsController());
+        posSettingsLoader.setControllerFactory(c -> POSController.getInstance());
+        printSettingsLoader.setControllerFactory(c -> new PrintSettingsController());
+        settingsLoader.setControllerFactory(c -> new SettingsController());
+        systemLoader.setControllerFactory(c -> new SystemController());
+        usersLoader.setControllerFactory(c -> UserController.getInstance(stage));
+    }
+
     private static void setExpenses(Stage stage) {
         expenseCategoryLoader.setControllerFactory(e -> ExpenseCategoryController.getInstance(stage));
         expenseLoader.setControllerFactory(e -> ExpenseController.getInstance(stage));
-    }
-
-    private static void setPeople(Stage stage) {
-        userLoader.setControllerFactory(e -> UserController.getInstance(stage));
-    }
-
-    private static void setSettings(Stage stage) {
-        settingsLoader.setControllerFactory(c -> SettingsController.getInstance());
-        systemSettingsLoader.setControllerFactory(c -> SystemController.getInstance());
-        posSettingsLoader.setControllerFactory(c -> POSController.getInstance());
-        roleSettingsLoader.setControllerFactory(c -> RoleController.getInstance());
-        branchSettingsLoader.setControllerFactory(c -> BranchController.getInstance(stage));
-        currencySettingsLoader.setControllerFactory(c -> CurrencyController.getInstance(stage));
-        exportSettingsLoader.setControllerFactory(c -> ExportController.getInstance());
-        roleSettingsFormLoader.setControllerFactory(c -> RoleSettingsFormController.getInstance());
     }
 
     private static void setMasterForms(Stage stage) {
@@ -336,7 +505,7 @@ public class Pages {
         requisitionMasterFormLoader.setControllerFactory(
                 c -> RequisitionMasterFormController.getInstance(stage));
         saleMasterFormLoader.setControllerFactory(c -> SaleMasterFormController.getInstance(stage));
-        stockinMasterFormLoader.setControllerFactory(
+        stockInMasterFormLoader.setControllerFactory(
                 c -> StockInMasterFormController.getInstance(stage));
         transferMasterFormLoader.setControllerFactory(
                 c -> TransferMasterFormController.getInstance(stage));
@@ -353,6 +522,8 @@ public class Pages {
         customerPane = customerLoader.load();
         // Supplier
         supplierPane = supplierLoader.load();
+        // Stock Report
+        stockReportPane = stockReportLoader.load();
         // Account
         bankReconciliationPane = bankReconciliationLoader.load();
         cashAdjustmentPane = cashAdjustmentLoader.load();
@@ -386,13 +557,68 @@ public class Pages {
         subLedgerPane = subLedgerLoader.load();
         trialBalancePane = trialBalanceLoader.load();
         bankReconciliationReportPane = bankReconciliationReportLoader.load();
+        // Reports
+        closingPane = closingLoader.load();
+        closingReportPane = closingReportLoader.load();
+        dailyCustomerReportPane = dailyCustomerReportLoader.load();
+        dailyReportPane = dailyReportLoader.load();
+        dueReportPane = dueReportLoader.load();
+        profitReportPane = profitReportLoader.load();
+        purchaseReportPane = purchaseReportLoader.load();
+        salesReportPane = salesReportLoader.load();
+        salesReturnPane = salesReturnLoader.load();
+        shippingCostReportPane = shippingCostReportLoader.load();
+        taxReportPane = taxReportLoader.load();
+        userSalesReportPane = userSalesReportLoader.load();
+        // HUMAN RESOURCE
+        // Attendance
+        attendancePane = attendanceLoader.load();
+        attendanceReportPane = attendanceReportLoader.load();
+        checkInPane = checkInsLoader.load();
+        // HUMAN RESOURCE
+        // Human Resource Management
+        designationsPane = designationsLoader.load();
+        employeesPane = employeesLoader.load();
+        // HUMAN RESOURCE
+        // PayRoll
+        salariesPane = salariesLoader.load();
+        salaryAdvancesPane = salaryAdvancesLoader.load();
+        salaryGeneratePane = salaryGenerateLoader.load();
+        // Bank
+        bankPane = banksLoader.load();
+        // Service
+        servicesPane = servicesLoader.load();
+        serviceInvoicesPane = serviceInvoicesLoader.load();
+        // Quotation
+        quotationPane = quotationLoader.load();
+        // Tax
+        taxesPane = taxesLoader.load();
+        taxSettingsPane = taxSettingsLoader.load();
+        // SETTINGS
+        // Data Synchronizer
+        backUpPane = backUpLoader.load();
+        exportPane = exportLoader.load();
+        importPane = importLoader.load();
+        restorePane = restoreLoader.load();
+        // Role Permission
+        assignUserRolePane = assignUserRoleLoader.load();
+        rolesPane = rolesLoader.load();
+        // System Settings
+        appSettingsPane = appSettingsLoader.load();
+        branchesPane = branchesLoader.load();
+        companySettingsPane = companySettingsLoader.load();
+        currencyPane = currencyLoader.load();
+        languagesPane = languagesLoader.load();
+        mailSettingsPane = mailSettingsLoader.load();
+        printSettingsPane = printSettingsLoader.load();
+        systemPane = systemLoader.load();
+        usersPane = usersLoader.load();
 
         productCategoryPane = productCategoryLoader.load();
         brandPane = brandLoader.load();
         unitPane = unitLoader.load();
         productPane = productLoader.load();
         adjustmentPane = adjustmentLoader.load();
-        quotationPane = quotationLoader.load();
 
         requisitionPane = requisitionLoader.load();
         purchasePane = purchaseLoader.load();
@@ -405,15 +631,7 @@ public class Pages {
         expenseCategoryPane = expenseCategoryLoader.load();
         expensePane = expenseLoader.load();
 
-        userPane = userLoader.load();
-
         settingsPane = settingsLoader.load();
-        systemSettingsPane = systemSettingsLoader.load();
-        posSettingsPane = posSettingsLoader.load();
-        roleSettingsPane = roleSettingsLoader.load();
-        branchSettingsPane = branchSettingsLoader.load();
-        currencySettingsPane = currencySettingsLoader.load();
-        exportSettingsPane = exportSettingsLoader.load();
         roleSettingsFormPane = roleSettingsFormLoader.load();
 
         adjustmentMasterFormPane = adjustmentMasterFormLoader.load();
@@ -421,7 +639,7 @@ public class Pages {
         purchaseMasterFormPane = purchaseMasterFormLoader.load();
         requisitionMasterFormPane = requisitionMasterFormLoader.load();
         saleMasterFormPane = saleMasterFormLoader.load();
-        stockinMasterFormPane = stockinMasterFormLoader.load();
+        stockInMasterFormPane = stockInMasterFormLoader.load();
         transferMasterFormPane = transferMasterFormLoader.load();
     }
 
@@ -431,14 +649,24 @@ public class Pages {
         setCustomer(stage);
         setSupplier(stage);
         setProduct(stage);
+        setStockReport(stage);
         setAccounts(stage);
         setAccountReports(stage);
+        setReports(stage);
+        setAttendance(stage);
+        setHRM(stage);
+        setPayRoll(stage);
+        setBank(stage);
+        setService(stage);
+        setQuotation(stage);
+        setTax(stage);
         setSingleItems();
         setReturns();
         setExpenses(stage);
-        setPeople(stage);
         setMasterForms(stage);
-        setSettings(stage);
+        setDataSynchronizer(stage);
+        setRolePermission(stage);
+        setSystemSettings(stage);
     }
 
     // Dashboard
@@ -467,6 +695,11 @@ public class Pages {
     // Supplier
     public static BorderPane getSupplierPane() {
         return supplierPane;
+    }
+
+    // Supplier
+    public static BorderPane getStockReportPane() {
+        return stockReportPane;
     }
 
     // Account
@@ -595,6 +828,183 @@ public class Pages {
         return trialBalancePane;
     }
 
+    // Reports
+    public static BorderPane getClosingPane() {
+        return closingPane;
+    }
+
+    public static BorderPane getClosingReportPane() {
+        return closingReportPane;
+    }
+
+    public static BorderPane getDailyCustomerReportPane() {
+        return dailyCustomerReportPane;
+    }
+
+    public static BorderPane getDailyReportPane() {
+        return dailyReportPane;
+    }
+
+    public static BorderPane getDueReportPane() {
+        return dueReportPane;
+    }
+
+    public static BorderPane getProfitReportPane() {
+        return profitReportPane;
+    }
+
+    public static BorderPane getPurchaseReportPane() {
+        return purchaseReportPane;
+    }
+
+    public static BorderPane getSalesReportPane() {
+        return salesReportPane;
+    }
+
+    public static BorderPane getSalesReturnPane() {
+        return salesReturnPane;
+    }
+
+    public static BorderPane getShippingCostReportPane() {
+        return shippingCostReportPane;
+    }
+
+    public static BorderPane getTaxReportPane() {
+        return taxReportPane;
+    }
+
+    public static BorderPane getUserSalesReportPane() {
+        return userSalesReportPane;
+    }
+
+    // HUMAN RESOURCE
+    // Attendance
+    public static BorderPane getAttendancePane() {
+        return attendancePane;
+    }
+
+    public static BorderPane getAttendanceReportPane() {
+        return attendanceReportPane;
+    }
+
+    public static BorderPane getCheckInPane() {
+        return checkInPane;
+    }
+
+    // Human Resource Management
+    public static BorderPane getDesignationsPane() {
+        return designationsPane;
+    }
+
+    public static BorderPane getEmployeesPane() {
+        return employeesPane;
+    }
+
+    // PayRoll
+    public static BorderPane getSalariesPane() {
+        return salariesPane;
+    }
+
+    public static BorderPane getSalaryAdvancesPane() {
+        return salaryAdvancesPane;
+    }
+
+    public static BorderPane getSalaryGeneratePane() {
+        return salaryGeneratePane;
+    }
+
+    // Bank
+    public static BorderPane getBankPane() {
+        return bankPane;
+    }
+
+    // Service
+    public static BorderPane getServicesPane() {
+        return servicesPane;
+    }
+
+    public static BorderPane getServiceInvoicesPane() {
+        return serviceInvoicesPane;
+    }
+
+    // Quotation
+    public static BorderPane getQuotationPane() {
+        return quotationPane;
+    }
+
+    // Tax
+    public static BorderPane getTaxesPane() {
+        return taxesPane;
+    }
+
+    public static BorderPane getTaxSettingsPane() {
+        return taxSettingsPane;
+    }
+
+    // SETTINGS
+    // Data Synchronizer
+    public static BorderPane getBackUpPane() {
+        return backUpPane;
+    }
+
+    public static BorderPane getExportPane() {
+        return exportPane;
+    }
+
+    public static BorderPane getImportPane() {
+        return importPane;
+    }
+
+    public static BorderPane getRestorePane() {
+        return restorePane;
+    }
+
+    // Role Permission
+    public static BorderPane getAssignUserRolePane() {
+        return assignUserRolePane;
+    }
+
+    public static BorderPane getRolesPane() {
+        return rolesPane;
+    }
+
+    // System Settings
+    public static BorderPane getAppSettingsPane() {
+        return appSettingsPane;
+    }
+
+    public static BorderPane getBranchesPane() {
+        return branchesPane;
+    }
+
+    public static BorderPane getCompanyDetailsPane() {
+        return companySettingsPane;
+    }
+
+    public static BorderPane getCurrencyPane() {
+        return currencyPane;
+    }
+
+    public static BorderPane getLanguagesPane() {
+        return languagesPane;
+    }
+
+    public static BorderPane getMailSettingsPane() {
+        return mailSettingsPane;
+    }
+
+    public static BorderPane getPrintSettingsPane() {
+        return printSettingsPane;
+    }
+
+    public static BorderPane getSystemPane() {
+        return systemPane;
+    }
+
+    public static BorderPane getUsersPane() {
+        return usersPane;
+    }
+
 
     public static BorderPane getProductCategoryPane() {
         return productCategoryPane;
@@ -614,10 +1024,6 @@ public class Pages {
 
     public static BorderPane getAdjustmentPane() {
         return adjustmentPane;
-    }
-
-    public static BorderPane getQuotationPane() {
-        return quotationPane;
     }
 
     public static BorderPane getRequisitionPane() {
@@ -652,36 +1058,8 @@ public class Pages {
         return expensePane;
     }
 
-    public static BorderPane getUserPane() {
-        return userPane;
-    }
-
     public static BorderPane getSettingsPane() {
         return settingsPane;
-    }
-
-    public static GridPane getSystemSettingsPane() {
-        return systemSettingsPane;
-    }
-
-    public static AnchorPane getPosSettingsPane() {
-        return posSettingsPane;
-    }
-
-    public static BorderPane getRoleSettingsPane() {
-        return roleSettingsPane;
-    }
-
-    public static BorderPane getBranchSettingsPane() {
-        return branchSettingsPane;
-    }
-
-    public static BorderPane getCurrencySettingsPane() {
-        return currencySettingsPane;
-    }
-
-    public static BorderPane getExportSettingsPane() {
-        return exportSettingsPane;
     }
 
     public static BorderPane getAdjustmentMasterFormPane() {
@@ -705,7 +1083,7 @@ public class Pages {
     }
 
     public static BorderPane getStockInMasterFormPane() {
-        return stockinMasterFormPane;
+        return stockInMasterFormPane;
     }
 
     public static BorderPane getTransferMasterFormPane() {

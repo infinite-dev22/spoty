@@ -339,13 +339,13 @@ public class PointOfSaleController implements Initializable {
 
         SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
         SpotyThreader.spotyThreadPool(
-                        () -> {
-                            try {
-                                SaleMasterViewModel.saveSaleMaster();
-                            } catch (SQLException e) {
-                                SpotyLogger.writeToFile(e, this.getClass());
-                            }
-                        });
+                () -> {
+                    try {
+                        SaleMasterViewModel.saveSaleMaster();
+                    } catch (SQLException e) {
+                        SpotyLogger.writeToFile(e, this.getClass());
+                    }
+                });
 
         SimpleNotification notification =
                 new SimpleNotification.NotificationBuilder("Sale saved successfully")

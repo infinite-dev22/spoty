@@ -17,6 +17,7 @@ package org.infinite.spoty.database.models;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
@@ -24,244 +25,248 @@ import java.util.List;
 
 @DatabaseTable(tableName = "sales_return_master")
 public class SaleReturnMaster implements Serializable {
-  @DatabaseField(generatedId = true)
-  private long id;
+    @DatabaseField(generatedId = true)
+    private long id;
 
-  @DatabaseField(foreign = true, columnName = "user_id", foreignAutoRefresh = true)
-  private User user;
+    @DatabaseField(foreign = true, columnName = "user_id", foreignAutoRefresh = true)
+    private User user;
 
-  @DatabaseField(canBeNull = false)
-  private Date date;
+    @DatabaseField(canBeNull = false)
+    private Date date;
 
-  @DatabaseField(columnName = "reference_number")
-  private String ref;
+    @DatabaseField(columnName = "reference_number")
+    private String ref;
 
-  @DatabaseField(foreign = true, columnName = "customer_id", canBeNull = false, foreignAutoRefresh = true)
-  private Customer customer;
+    @DatabaseField(foreign = true, columnName = "customer_id", canBeNull = false, foreignAutoRefresh = true)
+    private Customer customer;
 
-  @DatabaseField(foreign = true, columnName = "branch_id", canBeNull = false, foreignAutoRefresh = true)
-  private Branch branch;
+    @DatabaseField(foreign = true, columnName = "branch_id", canBeNull = false, foreignAutoRefresh = true)
+    private Branch branch;
 
-  @ForeignCollectionField private Collection<SaleReturnDetail> saleReturnDetails;
+    @ForeignCollectionField
+    private Collection<SaleReturnDetail> saleReturnDetails;
 
-  @DatabaseField(columnName = "tax_rate")
-  private double taxRate;
+    @DatabaseField(columnName = "tax_rate")
+    private double taxRate;
 
-  @DatabaseField(columnName = "net_tax")
-  private double netTax;
+    @DatabaseField(columnName = "net_tax")
+    private double netTax;
 
-  @DatabaseField private double discount;
+    @DatabaseField
+    private double discount;
 
-  @DatabaseField(canBeNull = false)
-  private double total;
+    @DatabaseField(canBeNull = false)
+    private double total;
 
-  @DatabaseField(canBeNull = false)
-  private double paid;
+    @DatabaseField(canBeNull = false)
+    private double paid;
 
-  @DatabaseField(canBeNull = false)
-  private String paymentStatus;
+    @DatabaseField(canBeNull = false)
+    private String paymentStatus;
 
-  @DatabaseField(canBeNull = false)
-  private String status;
+    @DatabaseField(canBeNull = false)
+    private String status;
 
-  @DatabaseField private String notes;
+    @DatabaseField
+    private String notes;
 
-  @DatabaseField(columnName = "created_at")
-  private Date createdAt;
+    @DatabaseField(columnName = "created_at")
+    private Date createdAt;
 
-  @DatabaseField(columnName = "created_by")
-  private String createdBy;
+    @DatabaseField(columnName = "created_by")
+    private String createdBy;
 
-  @DatabaseField(columnName = "updated_at")
-  private Date updatedAt;
+    @DatabaseField(columnName = "updated_at")
+    private Date updatedAt;
 
-  @DatabaseField(columnName = "updated_by")
-  private String updatedBy;
+    @DatabaseField(columnName = "updated_by")
+    private String updatedBy;
 
-  public SaleReturnMaster() {}
+    public SaleReturnMaster() {
+    }
 
-  public SaleReturnMaster(
-      Date date,
-      Customer customer,
-      Branch branch,
-      double taxRate,
-      double netTax,
-      double discount,
-      double total,
-      double paid,
-      String paymentStatus,
-      String status,
-      String notes) {
-    this.date = date;
-    this.customer = customer;
-    this.branch = branch;
-    this.taxRate = taxRate;
-    this.netTax = netTax;
-    this.discount = discount;
-    this.total = total;
-    this.paid = paid;
-    this.paymentStatus = paymentStatus;
-    this.status = status;
-    this.notes = notes;
-  }
+    public SaleReturnMaster(
+            Date date,
+            Customer customer,
+            Branch branch,
+            double taxRate,
+            double netTax,
+            double discount,
+            double total,
+            double paid,
+            String paymentStatus,
+            String status,
+            String notes) {
+        this.date = date;
+        this.customer = customer;
+        this.branch = branch;
+        this.taxRate = taxRate;
+        this.netTax = netTax;
+        this.discount = discount;
+        this.total = total;
+        this.paid = paid;
+        this.paymentStatus = paymentStatus;
+        this.status = status;
+        this.notes = notes;
+    }
 
-  public User getUser() {
-    return user;
-  }
+    public User getUser() {
+        return user;
+    }
 
-  public void setUser(User user_detail) {
-    this.user = user_detail;
-  }
+    public void setUser(User user_detail) {
+        this.user = user_detail;
+    }
 
-  public Date getDate() {
-    return date;
-  }
+    public Date getDate() {
+        return date;
+    }
 
-  public void setDate(Date date) {
-    this.date = date;
-  }
+    public void setDate(Date date) {
+        this.date = date;
+    }
 
-  public String getRef() {
-    return ref;
-  }
+    public String getRef() {
+        return ref;
+    }
 
-  public void setRef(String ref) {
-    this.ref = ref;
-  }
+    public void setRef(String ref) {
+        this.ref = ref;
+    }
 
-  public Customer getCustomer() {
-    return customer;
-  }
+    public Customer getCustomer() {
+        return customer;
+    }
 
-  public void setCustomer(Customer customer) {
-    this.customer = customer;
-  }
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
 
-  public String getCustomerName() {
-    return (customer != null) ? customer.getName() : null;
-  }
+    public String getCustomerName() {
+        return (customer != null) ? customer.getName() : null;
+    }
 
-  public Branch getBranch() {
-    return branch;
-  }
+    public Branch getBranch() {
+        return branch;
+    }
 
-  public void setBranch(Branch branch) {
-    this.branch = branch;
-  }
+    public void setBranch(Branch branch) {
+        this.branch = branch;
+    }
 
-  public String getBranchName() {
-    return (branch != null) ? branch.getName() : null;
-  }
+    public String getBranchName() {
+        return (branch != null) ? branch.getName() : null;
+    }
 
-  public long getId() {
-    return id;
-  }
+    public long getId() {
+        return id;
+    }
 
-  public void setId(long id) {
-    this.id = id;
-  }
+    public void setId(long id) {
+        this.id = id;
+    }
 
-  public Collection<SaleReturnDetail> getSaleReturnDetails() {
-    return saleReturnDetails;
-  }
+    public Collection<SaleReturnDetail> getSaleReturnDetails() {
+        return saleReturnDetails;
+    }
 
-  public void setSaleReturnDetails(List<SaleReturnDetail> saleReturnDetails) {
-    this.saleReturnDetails = saleReturnDetails;
-  }
+    public void setSaleReturnDetails(List<SaleReturnDetail> saleReturnDetails) {
+        this.saleReturnDetails = saleReturnDetails;
+    }
 
-  public double getTaxRate() {
-    return taxRate;
-  }
+    public double getTaxRate() {
+        return taxRate;
+    }
 
-  public void setTaxRate(double taxRate) {
-    this.taxRate = taxRate;
-  }
+    public void setTaxRate(double taxRate) {
+        this.taxRate = taxRate;
+    }
 
-  public double getNetTax() {
-    return netTax;
-  }
+    public double getNetTax() {
+        return netTax;
+    }
 
-  public void setNetTax(double netTax) {
-    this.netTax = netTax;
-  }
+    public void setNetTax(double netTax) {
+        this.netTax = netTax;
+    }
 
-  public double getDiscount() {
-    return discount;
-  }
+    public double getDiscount() {
+        return discount;
+    }
 
-  public void setDiscount(double discount) {
-    this.discount = discount;
-  }
+    public void setDiscount(double discount) {
+        this.discount = discount;
+    }
 
-  public double getTotal() {
-    return total;
-  }
+    public double getTotal() {
+        return total;
+    }
 
-  public void setTotal(double total) {
-    this.total = total;
-  }
+    public void setTotal(double total) {
+        this.total = total;
+    }
 
-  public double getPaid() {
-    return paid;
-  }
+    public double getPaid() {
+        return paid;
+    }
 
-  public void setPaid(double paid) {
-    this.paid = paid;
-  }
+    public void setPaid(double paid) {
+        this.paid = paid;
+    }
 
-  public String getPaymentStatus() {
-    return paymentStatus;
-  }
+    public String getPaymentStatus() {
+        return paymentStatus;
+    }
 
-  public void setPaymentStatus(String paymentStatus) {
-    this.paymentStatus = paymentStatus;
-  }
+    public void setPaymentStatus(String paymentStatus) {
+        this.paymentStatus = paymentStatus;
+    }
 
-  public String getStatus() {
-    return status;
-  }
+    public String getStatus() {
+        return status;
+    }
 
-  public void setStatus(String status) {
-    this.status = status;
-  }
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-  public String getNotes() {
-    return notes;
-  }
+    public String getNotes() {
+        return notes;
+    }
 
-  public void setNotes(String notes) {
-    this.notes = notes;
-  }
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
 
-  public Date getCreatedAt() {
-    return createdAt;
-  }
+    public Date getCreatedAt() {
+        return createdAt;
+    }
 
-  public void setCreatedAt(Date createdAt) {
-    this.createdAt = createdAt;
-  }
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
 
-  public String getCreatedBy() {
-    return createdBy;
-  }
+    public String getCreatedBy() {
+        return createdBy;
+    }
 
-  public void setCreatedBy(String createdBy) {
-    this.createdBy = createdBy;
-  }
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
 
-  public Date getUpdatedAt() {
-    return updatedAt;
-  }
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
 
-  public void setUpdatedAt(Date updatedAt) {
-    this.updatedAt = updatedAt;
-  }
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 
-  public String getUpdatedBy() {
-    return updatedBy;
-  }
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
 
-  public void setUpdatedBy(String updatedBy) {
-    this.updatedBy = updatedBy;
-  }
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
+    }
 }

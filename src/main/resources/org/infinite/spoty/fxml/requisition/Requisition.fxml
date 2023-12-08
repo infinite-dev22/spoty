@@ -25,9 +25,9 @@
     <top>
         <AnchorPane styleClass="card" BorderPane.alignment="CENTER">
             <padding>
-                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                <Insets bottom="5.0" left="5.0" right="10.0" top="5.0"/>
             </padding>
-            <MFXTextField fx:id="requisitionSearchBar" floatMode="BORDER" floatingText=" Search requisition"
+            <MFXTextField fx:id="requisitionSearchBar" floatMode="DISABLED" promptText="Search requisition"
                           prefWidth="300.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                           AnchorPane.topAnchor="0.0"/>
             <HBox fx:id="requisitionActionsPane" alignment="CENTER_RIGHT" spacing="20.0" AnchorPane.bottomAnchor="0.0"
@@ -48,6 +48,6 @@
         </AnchorPane>
     </center>
     <padding>
-        <Insets bottom="10.0" left="10.0" right="10.0" top="40.0"/>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="20.0"/>
     </padding>
 </BorderPane>

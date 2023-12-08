@@ -1833,7 +1833,7 @@ public class RoleSettingsFormController implements Initializable {
             constraints.clear();
             errorLabel.setVisible(false);
         }
-        Navigation.navigate(Pages.getRoleSettingsPane(), (StackPane) roleSettingsHolder.getParent());
+        Navigation.navigate(Pages.getRolesPane(), (StackPane) roleSettingsHolder.getParent());
         RoleViewModel.resetRoleProperties();
     }
 

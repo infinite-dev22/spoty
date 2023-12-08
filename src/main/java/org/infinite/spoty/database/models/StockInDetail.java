@@ -16,155 +16,159 @@ package org.infinite.spoty.database.models;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
 
 @DatabaseTable(tableName = "stock_in_detail")
 public class StockInDetail implements Serializable {
-  @DatabaseField(generatedId = true)
-  private long id;
+    @DatabaseField(generatedId = true)
+    private long id;
 
-  @DatabaseField(
-      foreign = true,
-      columnName = "stock_in_master_id",
-      canBeNull = false,
-      foreignAutoCreate = true,
-      foreignAutoRefresh = true,
-      columnDefinition =
-          "INTEGER CONSTRAINT FK_NAME REFERENCES stock_in_master(id) ON DELETE CASCADE")
-  private StockInMaster stockIn;
+    @DatabaseField(
+            foreign = true,
+            columnName = "stock_in_master_id",
+            canBeNull = false,
+            foreignAutoCreate = true,
+            foreignAutoRefresh = true,
+            columnDefinition =
+                    "INTEGER CONSTRAINT FK_NAME REFERENCES stock_in_master(id) ON DELETE CASCADE")
+    private StockInMaster stockIn;
 
-  @DatabaseField(foreign = true, columnName = "product_id", canBeNull = false, foreignAutoRefresh = true)
-  private Product product;
+    @DatabaseField(foreign = true, columnName = "product_id", canBeNull = false, foreignAutoRefresh = true)
+    private Product product;
 
-  @DatabaseField(canBeNull = false)
-  private long quantity;
+    @DatabaseField(canBeNull = false)
+    private long quantity;
 
-  @DatabaseField(columnName = "serial_number")
-  private String serialNo;
+    @DatabaseField(columnName = "serial_number")
+    private String serialNo;
 
-  @DatabaseField private String description;
-  @DatabaseField private String location;
+    @DatabaseField
+    private String description;
+    @DatabaseField
+    private String location;
 
-  @DatabaseField(columnName = "created_at")
-  private Date createdAt;
+    @DatabaseField(columnName = "created_at")
+    private Date createdAt;
 
-  @DatabaseField(columnName = "created_by")
-  private String createdBy;
+    @DatabaseField(columnName = "created_by")
+    private String createdBy;
 
-  @DatabaseField(columnName = "updated_at")
-  private Date updatedAt;
+    @DatabaseField(columnName = "updated_at")
+    private Date updatedAt;
 
-  @DatabaseField(columnName = "updated_by")
-  private String updatedBy;
+    @DatabaseField(columnName = "updated_by")
+    private String updatedBy;
 
-  public StockInDetail() {}
+    public StockInDetail() {
+    }
 
-  public StockInDetail(
-      Product product, long quantity, String serialNo, String description, String location) {
-    this.product = product;
-    this.quantity = quantity;
-    this.serialNo = serialNo;
-    this.description = description;
-    this.location = location;
-  }
+    public StockInDetail(
+            Product product, long quantity, String serialNo, String description, String location) {
+        this.product = product;
+        this.quantity = quantity;
+        this.serialNo = serialNo;
+        this.description = description;
+        this.location = location;
+    }
 
-  public long getId() {
-    return id;
-  }
+    public long getId() {
+        return id;
+    }
 
-  public void setId(long id) {
-    this.id = id;
-  }
+    public void setId(long id) {
+        this.id = id;
+    }
 
-  public StockInMaster getStockIn() {
-    return stockIn;
-  }
+    public StockInMaster getStockIn() {
+        return stockIn;
+    }
 
-  public void setStockIn(StockInMaster stockIn) {
-    this.stockIn = stockIn;
-  }
+    public void setStockIn(StockInMaster stockIn) {
+        this.stockIn = stockIn;
+    }
 
-  public Product getProduct() {
-    return product;
-  }
+    public Product getProduct() {
+        return product;
+    }
 
-  public void setProduct(Product product) {
-    this.product = product;
-  }
+    public void setProduct(Product product) {
+        this.product = product;
+    }
 
-  public String getProductName() {
-    return (product != null)
-        ? product.getBrand().getName()
-            + " "
-            + product.getName()
-            + " "
-            + (Objects.equals(product.getUnit(), null) ? "" : product.getUnit().getName())
-        : null;
-  }
+    public String getProductName() {
+        return (product != null)
+                ? product.getBrand().getName()
+                + " "
+                + product.getName()
+                + " "
+                + (Objects.equals(product.getUnit(), null) ? "" : product.getUnit().getName())
+                : null;
+    }
 
-  public long getQuantity() {
-    return quantity;
-  }
+    public long getQuantity() {
+        return quantity;
+    }
 
-  public void setQuantity(long quantity) {
-    this.quantity = quantity;
-  }
+    public void setQuantity(long quantity) {
+        this.quantity = quantity;
+    }
 
-  public String getSerialNo() {
-    return serialNo;
-  }
+    public String getSerialNo() {
+        return serialNo;
+    }
 
-  public void setSerialNo(String serialNo) {
-    this.serialNo = serialNo;
-  }
+    public void setSerialNo(String serialNo) {
+        this.serialNo = serialNo;
+    }
 
-  public String getDescription() {
-    return description;
-  }
+    public String getDescription() {
+        return description;
+    }
 
-  public void setDescription(String description) {
-    this.description = description;
-  }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-  public String getLocation() {
-    return location;
-  }
+    public String getLocation() {
+        return location;
+    }
 
-  public void setLocation(String location) {
-    this.location = location;
-  }
+    public void setLocation(String location) {
+        this.location = location;
+    }
 
-  public Date getCreatedAt() {
-    return createdAt;
-  }
+    public Date getCreatedAt() {
+        return createdAt;
+    }
 
-  public void setCreatedAt(Date createdAt) {
-    this.createdAt = createdAt;
-  }
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
 
-  public String getCreatedBy() {
-    return createdBy;
-  }
+    public String getCreatedBy() {
+        return createdBy;
+    }
 
-  public void setCreatedBy(String createdBy) {
-    this.createdBy = createdBy;
-  }
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
 
-  public Date getUpdatedAt() {
-    return updatedAt;
-  }
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
 
-  public void setUpdatedAt(Date updatedAt) {
-    this.updatedAt = updatedAt;
-  }
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 
-  public String getUpdatedBy() {
-    return updatedBy;
-  }
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
 
-  public void setUpdatedBy(String updatedBy) {
-    this.updatedBy = updatedBy;
-  }
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
+    }
 }

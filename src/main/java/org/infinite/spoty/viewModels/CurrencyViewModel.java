@@ -17,18 +17,15 @@ package org.infinite.spoty.viewModels;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
-
-import java.sql.SQLException;
-
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
-import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.Currency;
 import org.infinite.spoty.utils.SpotyLogger;
+
+import java.sql.SQLException;
 
 public class CurrencyViewModel {
     private static final LongProperty id = new SimpleLongProperty(0);
@@ -36,12 +33,12 @@ public class CurrencyViewModel {
     private static final StringProperty name = new SimpleStringProperty("");
     private static final StringProperty symbol = new SimpleStringProperty("");
     private static final ObjectProperty<Currency> currency = new SimpleObjectProperty<>();
+    private static final SQLiteConnection connection = SQLiteConnection.getInstance();
+    private static final ConnectionSource connectionSource = connection.getConnection();
     public static ObservableList<Currency> currenciesList = FXCollections.observableArrayList();
     public static final ListProperty<Currency> currencies = new SimpleListProperty<>(currenciesList);
     public static ObservableList<Currency> currenciesComboBoxList =
             FXCollections.observableArrayList();
-    private static final SQLiteConnection connection = SQLiteConnection.getInstance();
-    private static final ConnectionSource connectionSource = connection.getConnection();
 
     public static long getId() {
         return id.get();

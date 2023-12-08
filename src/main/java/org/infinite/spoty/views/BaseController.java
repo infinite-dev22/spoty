@@ -14,15 +14,14 @@
 
 package org.infinite.spoty.views;
 
-import io.github.palexdev.materialfx.controls.MFXButton;
-import io.github.palexdev.materialfx.controls.MFXScrollPane;
-import io.github.palexdev.materialfx.utils.ScrollUtils;
 import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -30,15 +29,13 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import org.infinite.spoty.SpotyResourceLoader;
 import org.infinite.spoty.components.navigation.Navigation;
-import org.infinite.spoty.components.navigation.Pages;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.values.strings.Labels;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-
-import static org.infinite.spoty.utils.Utils.createToggle;
 
 public class BaseController implements Initializable {
     public static Navigation navigation;
@@ -62,6 +59,8 @@ public class BaseController implements Initializable {
     public VBox settingsHolder;
     @FXML
     public Label appNameLabel;
+    @FXML
+    public ImageView appLogo;
     private double xOffset;
     private double yOffset;
 
@@ -114,6 +113,7 @@ public class BaseController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        appLogo.setImage(new Image(SpotyResourceLoader.load("icon.png"), 42, 42, true, true));
         appNameLabel.setText(Labels.APP_NAME);
         appNameLabel.setFont(new Font(48));
         windowHeader.setOnMousePressed(
@@ -133,11 +133,5 @@ public class BaseController implements Initializable {
     public void initializeLoader() {
         navigation = Navigation.getInstance(contentPane);
         navBar.getChildren().add(navigation.createNavigation());
-
-//    navBar.setStyle("-fx-background-color: red;");
-
-        MFXButton settings = createToggle("fas-gears", "Settings");
-        settings.setOnAction(e -> navigation.navigate(Pages.getSettingsPane()));
-        settingsHolder.getChildren().add(settings);
     }
 }

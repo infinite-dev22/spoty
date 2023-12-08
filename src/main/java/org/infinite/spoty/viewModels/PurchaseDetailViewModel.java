@@ -14,28 +14,24 @@
 
 package org.infinite.spoty.viewModels;
 
-import static org.infinite.spoty.values.SharedResources.*;
-import static org.infinite.spoty.values.SharedResources.getTempId;
-
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
-
-import java.sql.SQLException;
-import java.util.LinkedList;
-
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
-import org.infinite.spoty.GlobalActions;
 import org.infinite.spoty.database.connection.SQLiteConnection;
 import org.infinite.spoty.database.models.Product;
 import org.infinite.spoty.database.models.PurchaseDetail;
 import org.infinite.spoty.database.models.PurchaseMaster;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.jetbrains.annotations.NotNull;
+
+import java.sql.SQLException;
+import java.util.LinkedList;
+
+import static org.infinite.spoty.values.SharedResources.*;
 
 public class PurchaseDetailViewModel {
     public static final ObservableList<PurchaseDetail> purchaseDetailList =
@@ -280,7 +276,7 @@ public class PurchaseDetailViewModel {
 
         Platform.runLater(
                 () -> {
-                    purchaseDetailList.remove((int) getTempId());
+                    purchaseDetailList.remove(getTempId());
                     purchaseDetailList.add(getTempId(), purchaseDetail);
                 });
 

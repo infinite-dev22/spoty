@@ -14,259 +14,261 @@
 
 package org.infinite.spoty.database.models;
 
-import static org.infinite.spoty.GlobalActions.fineDate;
-
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
-import jakarta.persistence.*;
+
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.util.Collection;
 import java.util.Date;
 
+import static org.infinite.spoty.GlobalActions.fineDate;
+
 @DatabaseTable(tableName = "requisition_master")
 public class RequisitionMaster implements Serializable {
-  @DatabaseField(generatedId = true)
-  private int id;
+    @DatabaseField(generatedId = true)
+    private int id;
 
-  @DatabaseField(columnName = "reference_number")
-  private String ref;
+    @DatabaseField(columnName = "reference_number")
+    private String ref;
 
-  @DatabaseField(canBeNull = false)
-  private Date date;
+    @DatabaseField(canBeNull = false)
+    private Date date;
 
-  @DatabaseField(foreign = true, columnName = "user_id", foreignAutoRefresh = true)
-  private User user;
+    @DatabaseField(foreign = true, columnName = "user_id", foreignAutoRefresh = true)
+    private User user;
 
-  @DatabaseField(foreign = true, columnName = "supplier_id", canBeNull = false, foreignAutoRefresh = true)
-  private Supplier supplier;
+    @DatabaseField(foreign = true, columnName = "supplier_id", canBeNull = false, foreignAutoRefresh = true)
+    private Supplier supplier;
 
-  @DatabaseField(foreign = true, columnName = "branch_id", canBeNull = false, foreignAutoRefresh = true)
-  private Branch branch;
+    @DatabaseField(foreign = true, columnName = "branch_id", canBeNull = false, foreignAutoRefresh = true)
+    private Branch branch;
 
-  @ForeignCollectionField
-  private Collection<RequisitionDetail> requisitionDetails;
+    @ForeignCollectionField
+    private Collection<RequisitionDetail> requisitionDetails;
 
-  @DatabaseField(columnName = "ship_via")
-  private String shipVia;
+    @DatabaseField(columnName = "ship_via")
+    private String shipVia;
 
-  @DatabaseField(columnName = "ship_method")
-  private String shipMethod;
+    @DatabaseField(columnName = "ship_method")
+    private String shipMethod;
 
-  @DatabaseField(columnName = "shipping_terms")
-  private String shippingTerms;
+    @DatabaseField(columnName = "shipping_terms")
+    private String shippingTerms;
 
-  @DatabaseField(columnName = "delivery_date")
-  private Date deliveryDate;
+    @DatabaseField(columnName = "delivery_date")
+    private Date deliveryDate;
 
-  @DatabaseField private String notes;
+    @DatabaseField
+    private String notes;
 
-  @DatabaseField(canBeNull = false)
-  private String status;
+    @DatabaseField(canBeNull = false)
+    private String status;
 
-  @DatabaseField(canBeNull = false, columnName = "total_cost")
-  private double totalCost;
+    @DatabaseField(canBeNull = false, columnName = "total_cost")
+    private double totalCost;
 
-  @DatabaseField(columnName = "created_at")
-  private Date createdAt;
+    @DatabaseField(columnName = "created_at")
+    private Date createdAt;
 
-  @DatabaseField(columnName = "created_by")
-  private String createdBy;
+    @DatabaseField(columnName = "created_by")
+    private String createdBy;
 
-  @DatabaseField(columnName = "updated_at")
-  private Date updatedAt;
+    @DatabaseField(columnName = "updated_at")
+    private Date updatedAt;
 
-  @DatabaseField(columnName = "updated_by")
-  private String updatedBy;
+    @DatabaseField(columnName = "updated_by")
+    private String updatedBy;
 
-  public RequisitionMaster() {}
+    public RequisitionMaster() {
+    }
 
-  public RequisitionMaster(
-      Date date,
-      Supplier supplier,
-      Branch branch,
-      String shipVia,
-      String shipMethod,
-      String shippingTerms,
-      Date deliveryDate,
-      String notes,
-      String status,
-      double totalCost) {
-    this.date = date;
-    this.supplier = supplier;
-    this.branch = branch;
-    this.shipVia = shipVia;
-    this.shipMethod = shipMethod;
-    this.shippingTerms = shippingTerms;
-    this.deliveryDate = deliveryDate;
-    this.notes = notes;
-    this.status = status;
-    this.totalCost = totalCost;
-  }
+    public RequisitionMaster(
+            Date date,
+            Supplier supplier,
+            Branch branch,
+            String shipVia,
+            String shipMethod,
+            String shippingTerms,
+            Date deliveryDate,
+            String notes,
+            String status,
+            double totalCost) {
+        this.date = date;
+        this.supplier = supplier;
+        this.branch = branch;
+        this.shipVia = shipVia;
+        this.shipMethod = shipMethod;
+        this.shippingTerms = shippingTerms;
+        this.deliveryDate = deliveryDate;
+        this.notes = notes;
+        this.status = status;
+        this.totalCost = totalCost;
+    }
 
-  public int getId() {
-    return id;
-  }
+    public int getId() {
+        return id;
+    }
 
-  public void setId(int id) {
-    this.id = id;
-  }
+    public void setId(int id) {
+        this.id = id;
+    }
 
-  public User getUser() {
-    return user;
-  }
+    public User getUser() {
+        return user;
+    }
 
-  public void setUser(User user_detail) {
-    this.user = user_detail;
-  }
+    public void setUser(User user_detail) {
+        this.user = user_detail;
+    }
 
-  public Date getDate() {
-    return date;
-  }
+    public Date getDate() {
+        return date;
+    }
 
-  public void setDate(Date date) {
-    this.date = date;
-  }
+    public void setDate(Date date) {
+        this.date = date;
+    }
 
-  public String getRef() {
-    return ref;
-  }
+    public String getRef() {
+        return ref;
+    }
 
-  public void setRef(String ref) {
-    this.ref = ref;
-  }
+    public void setRef(String ref) {
+        this.ref = ref;
+    }
 
-  public Branch getBranch() {
-    return branch;
-  }
+    public Branch getBranch() {
+        return branch;
+    }
 
-  public void setBranch(Branch branch) {
-    this.branch = branch;
-  }
+    public void setBranch(Branch branch) {
+        this.branch = branch;
+    }
 
-  public String getBranchName() {
-    if (branch != null) return branch.getName();
-    else return null;
-  }
+    public String getBranchName() {
+        if (branch != null) return branch.getName();
+        else return null;
+    }
 
-  public Collection<RequisitionDetail> getRequisitionDetails() {
-    return requisitionDetails;
-  }
+    public Collection<RequisitionDetail> getRequisitionDetails() {
+        return requisitionDetails;
+    }
 
-  public void setRequisitionDetails(Collection<RequisitionDetail> requisitionDetails) {
-    this.requisitionDetails = requisitionDetails;
-  }
+    public void setRequisitionDetails(Collection<RequisitionDetail> requisitionDetails) {
+        this.requisitionDetails = requisitionDetails;
+    }
 
-  public String getNotes() {
-    return notes;
-  }
+    public String getNotes() {
+        return notes;
+    }
 
-  public void setNotes(String notes) {
-    this.notes = notes;
-  }
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
 
-  public Date getCreatedAt() {
-    return createdAt;
-  }
+    public Date getCreatedAt() {
+        return createdAt;
+    }
 
-  public void setCreatedAt(Date createdAt) {
-    this.createdAt = createdAt;
-  }
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
 
-  public String getCreatedBy() {
-    return createdBy;
-  }
+    public String getCreatedBy() {
+        return createdBy;
+    }
 
-  public void setCreatedBy(String createdBy) {
-    this.createdBy = createdBy;
-  }
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
 
-  public Date getUpdatedAt() {
-    return updatedAt;
-  }
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
 
-  public void setUpdatedAt(Date updatedAt) {
-    this.updatedAt = updatedAt;
-  }
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 
-  public String getUpdatedBy() {
-    return updatedBy;
-  }
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
 
-  public void setUpdatedBy(String updatedBy) {
-    this.updatedBy = updatedBy;
-  }
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
+    }
 
-  public Supplier getSupplier() {
-    return supplier;
-  }
+    public Supplier getSupplier() {
+        return supplier;
+    }
 
-  public void setSupplier(Supplier supplier) {
-    this.supplier = supplier;
-  }
+    public void setSupplier(Supplier supplier) {
+        this.supplier = supplier;
+    }
 
-  public String getSupplierName() {
-    return (supplier != null) ? supplier.getName() : null;
-  }
+    public String getSupplierName() {
+        return (supplier != null) ? supplier.getName() : null;
+    }
 
-  public String getShipVia() {
-    return shipVia;
-  }
+    public String getShipVia() {
+        return shipVia;
+    }
 
-  public void setShipVia(String shipVia) {
-    this.shipVia = shipVia;
-  }
+    public void setShipVia(String shipVia) {
+        this.shipVia = shipVia;
+    }
 
-  public String getShipMethod() {
-    return shipMethod;
-  }
+    public String getShipMethod() {
+        return shipMethod;
+    }
 
-  public void setShipMethod(String shipMethod) {
-    this.shipMethod = shipMethod;
-  }
+    public void setShipMethod(String shipMethod) {
+        this.shipMethod = shipMethod;
+    }
 
-  public String getShippingTerms() {
-    return shippingTerms;
-  }
+    public String getShippingTerms() {
+        return shippingTerms;
+    }
 
-  public void setShippingTerms(String shippingTerms) {
-    this.shippingTerms = shippingTerms;
-  }
+    public void setShippingTerms(String shippingTerms) {
+        this.shippingTerms = shippingTerms;
+    }
 
-  public Date getDeliveryDate() {
-    return deliveryDate;
-  }
+    public Date getDeliveryDate() {
+        return deliveryDate;
+    }
 
-  public void setDeliveryDate(Date deliveryDate) {
-    this.deliveryDate = deliveryDate;
-  }
+    public void setDeliveryDate(Date deliveryDate) {
+        this.deliveryDate = deliveryDate;
+    }
 
-  public String getDeliveryLocaleDate() {
-    return DateFormat.getDateInstance().format(deliveryDate);
-  }
+    public String getDeliveryLocaleDate() {
+        return DateFormat.getDateInstance().format(deliveryDate);
+    }
 
-  public String getDeliveryDateString() {
-    return fineDate(deliveryDate.toString()).toString();
-  }
+    public String getDeliveryDateString() {
+        return fineDate(deliveryDate.toString()).toString();
+    }
 
-  public String getStatus() {
-    return status;
-  }
+    public String getStatus() {
+        return status;
+    }
 
-  public void setStatus(String status) {
-    this.status = status;
-  }
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-  public double getTotalCost() {
-    return totalCost;
-  }
+    public double getTotalCost() {
+        return totalCost;
+    }
 
-  public void setTotalCost(double totalCost) {
-    this.totalCost = totalCost;
-  }
+    public void setTotalCost(double totalCost) {
+        this.totalCost = totalCost;
+    }
 
-  public String getLocaleDate() {
-    return DateFormat.getDateInstance().format(date);
-  }
+    public String getLocaleDate() {
+        return DateFormat.getDateInstance().format(date);
+    }
 }

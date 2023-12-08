@@ -26,98 +26,98 @@ import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.jetbrains.annotations.NotNull;
 
 public class SimpleNotification extends StackPane {
-  private static int layoutHeight;
-  private static int layoutWidth;
-  private Duration notificationDuration;
-
-  public SimpleNotification(@NotNull NotificationBuilder notificationBuilder) {
-    this.notificationDuration = notificationBuilder.notificationDuration;
-    layoutHeight = notificationBuilder.height;
-    layoutWidth = notificationBuilder.width;
-
-    StackPane icon = new StackPane(notificationBuilder.icon);
-    icon.setAlignment(Pos.CENTER);
-    icon.getStyleClass().add("notification-icon");
-
-    Label message = new Label(notificationBuilder.message);
-    message.getStyleClass().add("notification-message");
-
-    HBox notificationLayout = new HBox();
-    notificationLayout.getStyleClass().addAll("notification-layout", notificationBuilder.styleClass);
-    notificationLayout.setSpacing(10);
-    notificationLayout.setAlignment(Pos.CENTER_LEFT);
-    notificationLayout.setPadding(new Insets(10, 10, 10, 10));
-    notificationLayout.setMinHeight(layoutHeight);
-    notificationLayout.setMinWidth(layoutWidth);
-    notificationLayout.getChildren().addAll(icon, message);
-
-    getStyleClass().add("notification");
-    getChildren().addAll(notificationLayout);
-  }
-
-  public static int getLayoutHeight() {
-    return layoutHeight;
-  }
-
-  public void setLayoutHeight(int layoutHeight) {
-    SimpleNotification.layoutHeight = layoutHeight;
-  }
-
-  public static int getLayoutWidth() {
-    return layoutWidth;
-  }
-
-  public void setLayoutWidth(int layoutWidth) {
-    SimpleNotification.layoutWidth = layoutWidth;
-  }
-
-  public Duration getNotificationDuration() {
-    return notificationDuration;
-  }
-
-  public void setNotificationDuration(Duration notificationDuration) {
-    this.notificationDuration = notificationDuration;
-  }
-
-  public static class NotificationBuilder {
-    private final String message;
-    private int height = 0;
-    private int width = 300;
-    private MFXFontIcon icon;
+    private static int layoutHeight;
+    private static int layoutWidth;
     private Duration notificationDuration;
-    private String  styleClass;
 
-    public NotificationBuilder(String message) {
-      this.message = message;
+    public SimpleNotification(@NotNull NotificationBuilder notificationBuilder) {
+        this.notificationDuration = notificationBuilder.notificationDuration;
+        layoutHeight = notificationBuilder.height;
+        layoutWidth = notificationBuilder.width;
+
+        StackPane icon = new StackPane(notificationBuilder.icon);
+        icon.setAlignment(Pos.CENTER);
+        icon.getStyleClass().add("notification-icon");
+
+        Label message = new Label(notificationBuilder.message);
+        message.getStyleClass().add("notification-message");
+
+        HBox notificationLayout = new HBox();
+        notificationLayout.getStyleClass().addAll("notification-layout", notificationBuilder.styleClass);
+        notificationLayout.setSpacing(10);
+        notificationLayout.setAlignment(Pos.CENTER_LEFT);
+        notificationLayout.setPadding(new Insets(10, 10, 10, 10));
+        notificationLayout.setMinHeight(layoutHeight);
+        notificationLayout.setMinWidth(layoutWidth);
+        notificationLayout.getChildren().addAll(icon, message);
+
+        getStyleClass().add("notification");
+        getChildren().addAll(notificationLayout);
     }
 
-    public NotificationBuilder icon(String  icon) {
-      this.icon = new MFXFontIcon(icon);
-      return this;
+    public static int getLayoutHeight() {
+        return layoutHeight;
     }
 
-    public NotificationBuilder width(int width) {
-      this.width = width;
-      return this;
+    public void setLayoutHeight(int layoutHeight) {
+        SimpleNotification.layoutHeight = layoutHeight;
     }
 
-    public NotificationBuilder height(int height) {
-      this.height = height;
-      return this;
+    public static int getLayoutWidth() {
+        return layoutWidth;
     }
 
-    public NotificationBuilder duration(NotificationDuration duration) {
-      this.notificationDuration = new Duration(duration.getDuration());
-      return this;
+    public void setLayoutWidth(int layoutWidth) {
+        SimpleNotification.layoutWidth = layoutWidth;
     }
 
-    public NotificationBuilder type(NotificationVariants variant) {
-      this.styleClass = variant.getStyleClass();
-      return this;
+    public Duration getNotificationDuration() {
+        return notificationDuration;
     }
 
-    public SimpleNotification build() {
-      return new SimpleNotification(this);
+    public void setNotificationDuration(Duration notificationDuration) {
+        this.notificationDuration = notificationDuration;
     }
-  }
+
+    public static class NotificationBuilder {
+        private final String message;
+        private int height = 0;
+        private int width = 300;
+        private MFXFontIcon icon;
+        private Duration notificationDuration;
+        private String styleClass;
+
+        public NotificationBuilder(String message) {
+            this.message = message;
+        }
+
+        public NotificationBuilder icon(String icon) {
+            this.icon = new MFXFontIcon(icon);
+            return this;
+        }
+
+        public NotificationBuilder width(int width) {
+            this.width = width;
+            return this;
+        }
+
+        public NotificationBuilder height(int height) {
+            this.height = height;
+            return this;
+        }
+
+        public NotificationBuilder duration(NotificationDuration duration) {
+            this.notificationDuration = new Duration(duration.getDuration());
+            return this;
+        }
+
+        public NotificationBuilder type(NotificationVariants variant) {
+            this.styleClass = variant.getStyleClass();
+            return this;
+        }
+
+        public SimpleNotification build() {
+            return new SimpleNotification(this);
+        }
+    }
 }

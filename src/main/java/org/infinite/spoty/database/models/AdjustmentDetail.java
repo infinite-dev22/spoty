@@ -16,131 +16,133 @@ package org.infinite.spoty.database.models;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
 
 @DatabaseTable(tableName = "adjustment_details")
 public class AdjustmentDetail implements Serializable {
-  @DatabaseField(generatedId = true)
-  private long id;
+    @DatabaseField(generatedId = true)
+    private long id;
 
-  @DatabaseField(foreign = true, columnName = "product_id", canBeNull = false, foreignAutoRefresh = true)
-  private Product product;
+    @DatabaseField(foreign = true, columnName = "product_id", canBeNull = false, foreignAutoRefresh = true)
+    private Product product;
 
-  @DatabaseField(
-      foreign = true,
-      columnName = "adjustment_master_id",
-      canBeNull = false,
-      foreignAutoRefresh = true,
-      foreignAutoCreate = true,
-      columnDefinition = "INTEGER CONSTRAINT FK_NAME REFERENCES adjustment(id) ON DELETE CASCADE")
-  private AdjustmentMaster adjustment;
+    @DatabaseField(
+            foreign = true,
+            columnName = "adjustment_master_id",
+            canBeNull = false,
+            foreignAutoRefresh = true,
+            foreignAutoCreate = true,
+            columnDefinition = "INTEGER CONSTRAINT FK_NAME REFERENCES adjustment(id) ON DELETE CASCADE")
+    private AdjustmentMaster adjustment;
 
-  @DatabaseField(columnName = "quantity")
-  private long quantity;
+    @DatabaseField(columnName = "quantity")
+    private long quantity;
 
-  @DatabaseField(columnName = "adjustment_type")
-  private String adjustmentType;
+    @DatabaseField(columnName = "adjustment_type")
+    private String adjustmentType;
 
-  @DatabaseField(columnName = "created_at")
-  private Date createdAt;
+    @DatabaseField(columnName = "created_at")
+    private Date createdAt;
 
-  @DatabaseField(columnName = "created_by")
-  private String createdBy;
+    @DatabaseField(columnName = "created_by")
+    private String createdBy;
 
-  @DatabaseField(columnName = "updated_at")
-  private Date updatedAt;
+    @DatabaseField(columnName = "updated_at")
+    private Date updatedAt;
 
-  @DatabaseField(columnName = "updated_by")
-  private String updatedBy;
+    @DatabaseField(columnName = "updated_by")
+    private String updatedBy;
 
-  public AdjustmentDetail() {}
+    public AdjustmentDetail() {
+    }
 
-  public AdjustmentDetail(Product product, long quantity, String adjustmentType) {
-    this.product = product;
-    this.quantity = quantity;
-    this.adjustmentType = adjustmentType;
-  }
+    public AdjustmentDetail(Product product, long quantity, String adjustmentType) {
+        this.product = product;
+        this.quantity = quantity;
+        this.adjustmentType = adjustmentType;
+    }
 
-  public long getId() {
-    return id;
-  }
+    public long getId() {
+        return id;
+    }
 
-  public void setId(long id) {
-    this.id = id;
-  }
+    public void setId(long id) {
+        this.id = id;
+    }
 
-  public Product getProduct() {
-    return product;
-  }
+    public Product getProduct() {
+        return product;
+    }
 
-  public void setProduct(Product product) {
-    this.product = product;
-  }
+    public void setProduct(Product product) {
+        this.product = product;
+    }
 
-  public String getProductName() {
-    return (product != null)
-        ? product.getBrand().getName()
-            + " "
-            + product.getName()
-            + (Objects.equals(product.getUnit(), null) ? "" : " " + product.getUnit().getName())
-        : null;
-  }
+    public String getProductName() {
+        return (product != null)
+                ? product.getBrand().getName()
+                + " "
+                + product.getName()
+                + (Objects.equals(product.getUnit(), null) ? "" : " " + product.getUnit().getName())
+                : null;
+    }
 
-  public AdjustmentMaster getAdjustment() {
-    return adjustment;
-  }
+    public AdjustmentMaster getAdjustment() {
+        return adjustment;
+    }
 
-  public void setAdjustment(AdjustmentMaster adjustment) {
-    this.adjustment = adjustment;
-  }
+    public void setAdjustment(AdjustmentMaster adjustment) {
+        this.adjustment = adjustment;
+    }
 
-  public long getQuantity() {
-    return quantity;
-  }
+    public long getQuantity() {
+        return quantity;
+    }
 
-  public void setQuantity(long quantity) {
-    this.quantity = quantity;
-  }
+    public void setQuantity(long quantity) {
+        this.quantity = quantity;
+    }
 
-  public String getAdjustmentType() {
-    return adjustmentType;
-  }
+    public String getAdjustmentType() {
+        return adjustmentType;
+    }
 
-  public void setAdjustmentType(String adjustmentType) {
-    this.adjustmentType = adjustmentType;
-  }
+    public void setAdjustmentType(String adjustmentType) {
+        this.adjustmentType = adjustmentType;
+    }
 
-  public Date getCreatedAt() {
-    return createdAt;
-  }
+    public Date getCreatedAt() {
+        return createdAt;
+    }
 
-  public void setCreatedAt(Date createdAt) {
-    this.createdAt = createdAt;
-  }
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
 
-  public String getCreatedBy() {
-    return createdBy;
-  }
+    public String getCreatedBy() {
+        return createdBy;
+    }
 
-  public void setCreatedBy(String createdBy) {
-    this.createdBy = createdBy;
-  }
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
 
-  public Date getUpdatedAt() {
-    return updatedAt;
-  }
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
 
-  public void setUpdatedAt(Date updatedAt) {
-    this.updatedAt = updatedAt;
-  }
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 
-  public String getUpdatedBy() {
-    return updatedBy;
-  }
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
 
-  public void setUpdatedBy(String updatedBy) {
-    this.updatedBy = updatedBy;
-  }
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
+    }
 }

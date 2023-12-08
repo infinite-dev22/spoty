@@ -14,47 +14,51 @@
 
 package org.infinite.spoty.views.splash;
 
-import static org.infinite.spoty.SpotyResourceLoader.fxmlLoader;
-
-//import io.github.palexdev.materialfx.css.themes.MFXThemeManager;
-//import io.github.palexdev.materialfx.css.themes.Themes;
 import io.github.palexdev.materialfx.theming.JavaFXThemes;
 import io.github.palexdev.materialfx.theming.MaterialFXStylesheets;
 import io.github.palexdev.materialfx.theming.UserAgentBuilder;
 import javafx.application.Preloader;
+import javafx.beans.NamedArg;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.infinite.spoty.SpotyResourceLoader;
+import org.infinite.spoty.values.strings.Labels;
+
+import static org.infinite.spoty.SpotyResourceLoader.fxmlLoader;
 
 public class LaunchPreloader extends Preloader {
-  private Stage preloadStage;
+    private Stage preloadStage;
 
-  @Override
-  public void start(Stage primaryStage) throws Exception {
-    UserAgentBuilder.builder()
-            .themes(JavaFXThemes.MODENA)
-            .themes(MaterialFXStylesheets.forAssemble(true))
-            .setDeploy(true)
-            .setResolveAssets(true)
-            .build()
-            .setGlobal();
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        UserAgentBuilder.builder()
+                .themes(JavaFXThemes.MODENA)
+                .themes(MaterialFXStylesheets.forAssemble(true))
+                .setDeploy(true)
+                .setResolveAssets(true)
+                .build()
+                .setGlobal();
 
-    this.preloadStage = primaryStage;
-    Scene scene = new Scene(fxmlLoader("fxml/splash/SplashScreen.fxml").load());
+        this.preloadStage = primaryStage;
+        Scene scene = new Scene(fxmlLoader("fxml/splash/SplashScreen.fxml").load());
 //    MFXThemeManager.addOn(scene, Themes.DEFAULT, Themes.LEGACY);
-    io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(scene);
-    scene.setFill(null);
-    primaryStage.initStyle(StageStyle.TRANSPARENT);
-    primaryStage.setScene(scene);
-    primaryStage.setAlwaysOnTop(false);
-    primaryStage.show();
-  }
-
-  @Override
-  public void handleStateChangeNotification(StateChangeNotification info) {
-    if (info.getType() == StateChangeNotification.Type.BEFORE_START) {
-      preloadStage.hide();
-      preloadStage.close();
+        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(scene);
+        scene.setFill(null);
+        primaryStage.initStyle(StageStyle.TRANSPARENT);
+        primaryStage.setScene(scene);
+        primaryStage.setTitle(Labels.APP_NAME);
+        primaryStage.getIcons().add(new Image(SpotyResourceLoader.load("icon.png")));
+        primaryStage.setAlwaysOnTop(false);
+        primaryStage.show();
     }
-  }
+
+    @Override
+    public void handleStateChangeNotification(StateChangeNotification info) {
+        if (info.getType() == StateChangeNotification.Type.BEFORE_START) {
+            preloadStage.hide();
+            preloadStage.close();
+        }
+    }
 }

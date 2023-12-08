@@ -17,25 +17,26 @@ package org.infinite.spoty.utils;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXIconWrapper;
 import io.github.palexdev.materialfx.utils.ToggleButtonsUtil;
-import java.io.Serializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.ToggleGroup;
 
+import java.io.Serializable;
+
 public class Utils implements Serializable {
-  public Utils(ToggleGroup toggleGroup) {
-    ToggleButtonsUtil.addAlwaysOneSelectedSupport(toggleGroup);
-  }
+    public Utils(ToggleGroup toggleGroup) {
+        ToggleButtonsUtil.addAlwaysOneSelectedSupport(toggleGroup);
+    }
 
-  public static MFXButton createToggle(String icon, String text) {
-    return createToggle(icon, text, 0);
-  }
+    public static MFXButton createToggle(String icon, String text) {
+        return createToggle(icon, text, 0);
+    }
 
-  private static MFXButton createToggle(String icon, String text, double rotate) {
-    MFXIconWrapper wrapper = new MFXIconWrapper(icon, 24, 32);
-    MFXButton toggleNode = new MFXButton(text, wrapper);
-    toggleNode.setAlignment(Pos.CENTER_LEFT);
-    toggleNode.setMaxWidth(Double.MAX_VALUE);
-    if (rotate != 0) wrapper.getIcon().setRotate(rotate);
-    return toggleNode;
-  }
+    private static MFXButton createToggle(String icon, String text, double rotate) {
+        MFXIconWrapper wrapper = new MFXIconWrapper(icon, 24, 32);
+        MFXButton toggleNode = new MFXButton(text, wrapper);
+        toggleNode.setAlignment(Pos.CENTER_LEFT);
+        toggleNode.setMaxWidth(Double.MAX_VALUE);
+        if (rotate != 0) wrapper.getIcon().setRotate(rotate);
+        return toggleNode;
+    }
 }

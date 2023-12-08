@@ -17,7 +17,7 @@ package org.infinite.spoty.database.models;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
-import jakarta.persistence.*;
+
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.util.Collection;
@@ -25,191 +25,193 @@ import java.util.Date;
 
 @DatabaseTable(tableName = "quotation_master")
 public class QuotationMaster implements Serializable {
-  @DatabaseField(generatedId = true)
-  private int id;
+    @DatabaseField(generatedId = true)
+    private int id;
 
-  @DatabaseField(foreign = true, columnName = "user_id", foreignAutoRefresh = true)
-  private User user;
+    @DatabaseField(foreign = true, columnName = "user_id", foreignAutoRefresh = true)
+    private User user;
 
-  @DatabaseField(canBeNull = false)
-  private Date date = new Date();
+    @DatabaseField(canBeNull = false)
+    private Date date = new Date();
 
-  @DatabaseField(columnName = "reference_number")
-  private String ref;
+    @DatabaseField(columnName = "reference_number")
+    private String ref;
 
-  @DatabaseField(foreign = true, columnName = "customer_id", canBeNull = false, foreignAutoRefresh = true)
-  private Customer customer;
+    @DatabaseField(foreign = true, columnName = "customer_id", canBeNull = false, foreignAutoRefresh = true)
+    private Customer customer;
 
-  @DatabaseField(foreign = true, columnName = "branch_id", canBeNull = false, foreignAutoRefresh = true)
-  private Branch branch;
+    @DatabaseField(foreign = true, columnName = "branch_id", canBeNull = false, foreignAutoRefresh = true)
+    private Branch branch;
 
-  @ForeignCollectionField
-  private Collection<QuotationDetail> quotationDetails;
+    @ForeignCollectionField
+    private Collection<QuotationDetail> quotationDetails;
 
-  @DatabaseField(canBeNull = false)
-  private String shipping = "";
+    @DatabaseField(canBeNull = false)
+    private String shipping = "";
 
-  @DatabaseField(canBeNull = false)
-  private double total = 0;
+    @DatabaseField(canBeNull = false)
+    private double total = 0;
 
-  @DatabaseField(canBeNull = false)
-  private String status;
+    @DatabaseField(canBeNull = false)
+    private String status;
 
-  @DatabaseField private String notes;
+    @DatabaseField
+    private String notes;
 
-  @DatabaseField(columnName = "created_at")
-  private Date createdAt;
+    @DatabaseField(columnName = "created_at")
+    private Date createdAt;
 
-  @DatabaseField(columnName = "created_by")
-  private String createdBy;
+    @DatabaseField(columnName = "created_by")
+    private String createdBy;
 
-  @DatabaseField(columnName = "updated_at")
-  private Date updatedAt;
+    @DatabaseField(columnName = "updated_at")
+    private Date updatedAt;
 
-  @DatabaseField(columnName = "updated_by")
-  private String updatedBy;
+    @DatabaseField(columnName = "updated_by")
+    private String updatedBy;
 
-  public QuotationMaster() {}
+    public QuotationMaster() {
+    }
 
-  public QuotationMaster(Date date, Customer customer, Branch branch, String status, String notes) {
-    this.date = date;
-    this.customer = customer;
-    this.branch = branch;
-    this.status = status;
-    this.notes = notes;
-  }
+    public QuotationMaster(Date date, Customer customer, Branch branch, String status, String notes) {
+        this.date = date;
+        this.customer = customer;
+        this.branch = branch;
+        this.status = status;
+        this.notes = notes;
+    }
 
-  public int getId() {
-    return id;
-  }
+    public int getId() {
+        return id;
+    }
 
-  public void setId(int id) {
-    this.id = id;
-  }
+    public void setId(int id) {
+        this.id = id;
+    }
 
-  public User getUser() {
-    return user;
-  }
+    public User getUser() {
+        return user;
+    }
 
-  public void setUser(User user_detail) {
-    this.user = user_detail;
-  }
+    public void setUser(User user_detail) {
+        this.user = user_detail;
+    }
 
-  public Date getDate() {
-    return date;
-  }
+    public Date getDate() {
+        return date;
+    }
 
-  public void setDate(Date date) {
-    this.date = date;
-  }
+    public void setDate(Date date) {
+        this.date = date;
+    }
 
-  public String getRef() {
-    return ref;
-  }
+    public String getRef() {
+        return ref;
+    }
 
-  public void setRef(String ref) {
-    this.ref = ref;
-  }
+    public void setRef(String ref) {
+        this.ref = ref;
+    }
 
-  public Customer getCustomer() {
-    return customer;
-  }
+    public Customer getCustomer() {
+        return customer;
+    }
 
-  public void setCustomer(Customer customer) {
-    this.customer = customer;
-  }
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
 
-  public String getCustomerName() {
-    if (customer != null) return customer.getName();
-    else return null;
-  }
+    public String getCustomerName() {
+        if (customer != null) return customer.getName();
+        else return null;
+    }
 
-  public Branch getBranch() {
-    return branch;
-  }
+    public Branch getBranch() {
+        return branch;
+    }
 
-  public void setBranch(Branch branch) {
-    this.branch = branch;
-  }
+    public void setBranch(Branch branch) {
+        this.branch = branch;
+    }
 
-  public String getBranchName() {
-    if (branch != null) return branch.getName();
-    else return null;
-  }
+    public String getBranchName() {
+        if (branch != null) return branch.getName();
+        else return null;
+    }
 
-  public Collection<QuotationDetail> getQuotationDetails() {
-    return quotationDetails;
-  }
+    public Collection<QuotationDetail> getQuotationDetails() {
+        return quotationDetails;
+    }
 
-  public void setQuotationDetails(Collection<QuotationDetail> quotationDetails) {
-    this.quotationDetails = quotationDetails;
-  }
+    public void setQuotationDetails(Collection<QuotationDetail> quotationDetails) {
+        this.quotationDetails = quotationDetails;
+    }
 
-  public String getShipping() {
-    return shipping;
-  }
+    public String getShipping() {
+        return shipping;
+    }
 
-  public void setShipping(String shipping) {
-    this.shipping = shipping;
-  }
+    public void setShipping(String shipping) {
+        this.shipping = shipping;
+    }
 
-  public double getTotal() {
-    return total;
-  }
+    public double getTotal() {
+        return total;
+    }
 
-  public void setTotal(double total) {
-    this.total = total;
-  }
+    public void setTotal(double total) {
+        this.total = total;
+    }
 
-  public String getStatus() {
-    return status;
-  }
+    public String getStatus() {
+        return status;
+    }
 
-  public void setStatus(String status) {
-    this.status = status;
-  }
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-  public String getNotes() {
-    return notes;
-  }
+    public String getNotes() {
+        return notes;
+    }
 
-  public void setNotes(String notes) {
-    this.notes = notes;
-  }
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
 
-  public Date getCreatedAt() {
-    return createdAt;
-  }
+    public Date getCreatedAt() {
+        return createdAt;
+    }
 
-  public void setCreatedAt(Date createdAt) {
-    this.createdAt = createdAt;
-  }
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
 
-  public String getCreatedBy() {
-    return createdBy;
-  }
+    public String getCreatedBy() {
+        return createdBy;
+    }
 
-  public void setCreatedBy(String createdBy) {
-    this.createdBy = createdBy;
-  }
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
 
-  public Date getUpdatedAt() {
-    return updatedAt;
-  }
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
 
-  public void setUpdatedAt(Date updatedAt) {
-    this.updatedAt = updatedAt;
-  }
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 
-  public String getUpdatedBy() {
-    return updatedBy;
-  }
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
 
-  public void setUpdatedBy(String updatedBy) {
-    this.updatedBy = updatedBy;
-  }
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
+    }
 
-  public String getLocaleDate() {
-    return DateFormat.getDateInstance().format(date);
-  }
+    public String getLocaleDate() {
+        return DateFormat.getDateInstance().format(date);
+    }
 }

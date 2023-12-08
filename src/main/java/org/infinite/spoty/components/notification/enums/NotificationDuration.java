@@ -15,17 +15,17 @@
 package org.infinite.spoty.components.notification.enums;
 
 public enum NotificationDuration {
-  SHORT(3000),
-  MEDIUM(5000),
-  LONG(7000);
+    SHORT(3000),
+    MEDIUM(5000),
+    LONG(7000);
 
-  private final int duration;
+    private final int duration;
 
-  NotificationDuration(int duration) {
-    this.duration = duration;
-  }
+    NotificationDuration(int duration) {
+        this.duration = duration;
+    }
 
-  public int getDuration() {
-      return duration;
-  }
+    public int getDuration() {
+        return duration;
+    }
 }

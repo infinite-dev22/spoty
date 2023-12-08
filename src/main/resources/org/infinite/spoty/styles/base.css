@@ -146,7 +146,7 @@
 .rootPane .sidebar .navbar .tree-view .tree-cell .container {
 	-fx-background-radius: 30;
 	-fx-fill: -mfx-charcoal;
-	-fx-padding: 4 5 4 10;
+	-fx-padding: 4 4 4 4;
 	-fx-text-fill: -mfx-nav-white-text;
 }
 
@@ -321,7 +321,7 @@
 .appBar {
 	-fx-background-color: -mfx-app-components-light;
 	-fx-background-radius: 10 10 10 10;
-	-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0.12, -1.0, 2.0);
+	-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.12, -1.0, 1.5);
 }
 
                                           /*NOTIFICATION STYLES*/
@@ -415,4 +415,31 @@
 	-fx-background-radius: 10;
 	-fx-border-radius: 10;
 	-fx-border-color: -spoty-primary-color;
+}
+
+/*Styling MFX TreeView*/
+.mfx-tree-view {
+	-fx-background-color: -mfx-charcoal;
+}
+
+.mfx-tree-cell {
+	-fx-background-color: -mfx-charcoal;
+	-fx-text-fill: #e3e7e9;
+}
+
+.mfx-tree-cell:selected {
+	-fx-background-color: -mfx-selected-nav;
+	-fx-text-fill: -mfx-nav-white-text;
+}
+
+.mfx-tree-cell:hover {
+	-fx-background-color: -mfx-charcoal-disabled;
+}
+/*Scrollbar*/
+.mfx-tree-view .scroll-bar:vertical {
+	-fx-background-color: transparent;
+}
+
+.mfx-tree-view .scroll-bar:vertical .thumb {
+	-fx-background-color: derive(#20601cbe, 90.0%);
 }

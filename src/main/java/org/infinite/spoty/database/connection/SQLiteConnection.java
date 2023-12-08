@@ -20,59 +20,56 @@ import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.support.ConnectionSource;
 import org.infinite.spoty.utils.SpotyLogger;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Objects;
 
 public class SQLiteConnection {
-  private static SQLiteConnection instance;
+    private static SQLiteConnection instance;
 
-  public static SQLiteConnection getInstance() {
-    if (Objects.equals(instance, null)) instance = new SQLiteConnection();
-    return instance;
-  }
-
-  /**
-   * Get connection to local sqlite database.
-   *
-   * @return JdbcConnectionSource else null
-   */
-  public ConnectionSource getConnection() {
-    Logger.setGlobalLogLevel(Level.OFF);
-    // Create the database if not exists or connect it exists.
-    if (System.getProperty("os.name").contains("Linux")) {
-      try {
-        return new JdbcConnectionSource(
-            "jdbc:sqlite:"
-                + System.getProperty("user.home")
-                + "/.config/ZenmartERP/data/datastores/databases/offline/sync/sqlite/db/database.sqlite3");
-      } catch (Exception e) {
-        SpotyLogger.writeToFile(e, this.getClass());
-      }
+    public static SQLiteConnection getInstance() {
+        if (Objects.equals(instance, null)) instance = new SQLiteConnection();
+        return instance;
     }
 
-    if (System.getProperty("os.name").contains("mac")) {
-      try {
-        return new JdbcConnectionSource(
-            "jdbc:sqlite:"
-                + System.getProperty("user.home")
-                + "/.config/ZenmartERP/data/datastores/databases/offline/sync/sqlite/db/database.sqlite3");
-      } catch (Exception e) {
-        SpotyLogger.writeToFile(e, this.getClass());
-      }
-    }
+    /**
+     * Get connection to local sqlite database.
+     *
+     * @return JdbcConnectionSource else null
+     */
+    public ConnectionSource getConnection() {
+        Logger.setGlobalLogLevel(Level.OFF);
+        // Create the database if not exists or connect it exists.
+        if (System.getProperty("os.name").contains("Linux")) {
+            try {
+                return new JdbcConnectionSource(
+                        "jdbc:sqlite:"
+                                + System.getProperty("user.home")
+                                + "/.config/ZenmartERP/data/datastores/databases/offline/sync/sqlite/db/database.sqlite3");
+            } catch (Exception e) {
+                SpotyLogger.writeToFile(e, this.getClass());
+            }
+        }
 
-    if (System.getProperty("os.name").contains("Windows")) {
-      try {
-        return new JdbcConnectionSource(
-            "jdbc:sqlite:"
-                + System.getProperty("user.home")
-                    + "\\AppData\\Local\\ZenmartERP\\data\\datastores\\databases\\offline\\sync\\sqlite\\db\\database.sqlite3");
-      } catch (Exception e) {
-        SpotyLogger.writeToFile(e, this.getClass());
-      }
+        if (System.getProperty("os.name").contains("mac")) {
+            try {
+                return new JdbcConnectionSource(
+                        "jdbc:sqlite:"
+                                + System.getProperty("user.home")
+                                + "/.config/ZenmartERP/data/datastores/databases/offline/sync/sqlite/db/database.sqlite3");
+            } catch (Exception e) {
+                SpotyLogger.writeToFile(e, this.getClass());
+            }
+        }
+
+        if (System.getProperty("os.name").contains("Windows")) {
+            try {
+                return new JdbcConnectionSource(
+                        "jdbc:sqlite:"
+                                + System.getProperty("user.home")
+                                + "\\AppData\\Local\\ZenmartERP\\data\\datastores\\databases\\offline\\sync\\sqlite\\db\\database.sqlite3");
+            } catch (Exception e) {
+                SpotyLogger.writeToFile(e, this.getClass());
+            }
+        }
+        return null;
     }
-    return null;
-  }
 }

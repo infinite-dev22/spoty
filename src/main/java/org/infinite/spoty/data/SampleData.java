@@ -14,49 +14,50 @@
 
 package org.infinite.spoty.data;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.infinite.spoty.database.models.Role;
 import org.infinite.spoty.models.QuickStats;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 public class SampleData implements Serializable {
-  public static List<QuickStats> quickStatsSampleData() {
-    List<QuickStats> samples = new ArrayList<>();
+    public static List<QuickStats> quickStatsSampleData() {
+        List<QuickStats> samples = new ArrayList<>();
 
-    QuickStats quickStats = new QuickStats();
-    quickStats.setTitle("2050");
-    quickStats.setSubtitle("Total Orders");
-    samples.add(quickStats);
+        QuickStats quickStats = new QuickStats();
+        quickStats.setTitle("2050");
+        quickStats.setSubtitle("Total Orders");
+        samples.add(quickStats);
 
-    quickStats = new QuickStats();
-    quickStats.setTitle("3250");
-    quickStats.setSubtitle("Total Expense");
-    samples.add(quickStats);
+        quickStats = new QuickStats();
+        quickStats.setTitle("3250");
+        quickStats.setSubtitle("Total Expense");
+        samples.add(quickStats);
 
-    quickStats = new QuickStats();
-    quickStats.setTitle("87.5%");
-    quickStats.setSubtitle("Total Revenue");
-    samples.add(quickStats);
+        quickStats = new QuickStats();
+        quickStats.setTitle("87.5%");
+        quickStats.setSubtitle("Total Revenue");
+        samples.add(quickStats);
 
-    quickStats = new QuickStats();
-    quickStats.setTitle("2550");
-    quickStats.setSubtitle("New Users");
-    samples.add(quickStats);
+        quickStats = new QuickStats();
+        quickStats.setTitle("2550");
+        quickStats.setSubtitle("New Users");
+        samples.add(quickStats);
 
-    return samples;
-  }
+        return samples;
+    }
 
-  public static ObservableList<Role> roleMasterSampleData() {
-    ObservableList<Role> roleMasterList = FXCollections.observableArrayList();
+    public static ObservableList<Role> roleMasterSampleData() {
+        ObservableList<Role> roleMasterList = FXCollections.observableArrayList();
 
-    Role roleMaster = new Role();
-    roleMaster.setName("Owner");
-    roleMaster.setDescription("Administrator role");
-    roleMasterList.add(roleMaster);
+        Role roleMaster = new Role();
+        roleMaster.setName("Owner");
+        roleMaster.setDescription("Administrator role");
+        roleMasterList.add(roleMaster);
 
-    return roleMasterList;
-  }
+        return roleMasterList;
+    }
 }

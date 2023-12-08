@@ -20,6 +20,7 @@ import javafx.scene.control.Label;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import org.infinite.spoty.components.navigation.Navigation;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -52,7 +53,7 @@ public class NavTree extends MFXTreeView<Nav> {
 
         getStyleClass().addAll(EDGE_TO_EDGE);
         setShowRoot(false);
-        rootProperty().bind(navigation.navTreeProperty());
+//        rootProperty().bind(navigation.navTreeProperty());
     }
 
     public static final class NavTreeCell<T> extends AbstractMFXTreeCell<T> {

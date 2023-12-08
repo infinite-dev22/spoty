@@ -14,7 +14,6 @@
 
 package org.infinite.spoty.components.title;
 
-import java.io.IOException;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -22,8 +21,11 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import org.infinite.spoty.SpotyResourceLoader;
 
+import java.io.IOException;
+
 public class Title extends HBox {
-    @FXML private Label label;
+    @FXML
+    private Label label;
 
     public Title() {
         FXMLLoader fxmlLoader = SpotyResourceLoader.fxmlLoader("components/title/Title.fxml");
