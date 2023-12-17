@@ -9,6 +9,7 @@ build/
 .idea/jarRepositories.xml
 .idea/compiler.xml
 .idea/libraries/
+.idea/shelf/
 *.iws
 *.iml
 *.ipr
@@ -43,3 +44,6 @@ bin/
 # Ignore Gradle build output directory
 build
 out
+
+### VCS ###
+*.patch
