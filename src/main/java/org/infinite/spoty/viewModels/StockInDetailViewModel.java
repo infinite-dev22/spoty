@@ -14,27 +14,21 @@
 
 package org.infinite.spoty.viewModels;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.stmt.PreparedQuery;
-import com.j256.ormlite.support.ConnectionSource;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.database.connection.SQLiteConnection;
-import org.infinite.spoty.database.models.Product;
-import org.infinite.spoty.database.models.StockInDetail;
-import org.infinite.spoty.database.models.StockInMaster;
-import org.infinite.spoty.database.models.StockInTransaction;
+import org.infinite.spoty.data_source.dtos.Product;
+import org.infinite.spoty.data_source.dtos.stock_ins.StockInDetail;
+import org.infinite.spoty.data_source.dtos.stock_ins.StockInMaster;
+import org.infinite.spoty.data_source.dtos.stock_ins.StockInTransaction;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.SQLException;
-import java.util.Date;
 import java.util.LinkedList;
 
-import static org.infinite.spoty.values.SharedResources.*;
+import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
+import static org.infinite.spoty.values.SharedResources.setTempId;
 
 public class StockInDetailViewModel {
     public static final ObservableList<StockInDetail> stockInDetailsList =
@@ -48,8 +42,6 @@ public class StockInDetailViewModel {
     private static final StringProperty serial = new SimpleStringProperty("");
     private static final StringProperty description = new SimpleStringProperty("");
     private static final StringProperty location = new SimpleStringProperty("");
-    private static final SQLiteConnection connection = SQLiteConnection.getInstance();
-    private static final ConnectionSource connectionSource = connection.getConnection();
 
     public static long getId() {
         return id.get();
@@ -158,64 +150,64 @@ public class StockInDetailViewModel {
     }
 
     public static void addStockInDetails() {
-        StockInDetail stockInDetail =
-                new StockInDetail(
-                        getProduct(), getQuantity(), getSerial(), getDescription(), getLocation());
-
-        Platform.runLater(
-                () -> {
-                    stockInDetailsList.add(stockInDetail);
-                    resetProperties();
-                });
+//        StockInDetail stockInDetail =
+//                new StockInDetail(
+//                        getProduct(), getQuantity(), getSerial(), getDescription(), getLocation());
+//
+//        Platform.runLater(
+//                () -> {
+//                    stockInDetailsList.add(stockInDetail);
+//                    resetProperties();
+//                });
     }
 
-    public static void createStockInDetails() throws SQLException {
-        Dao<StockInDetail, Long> stockInDetailDao =
-                DaoManager.createDao(connectionSource, StockInDetail.class);
-
-        stockInDetailDao.create(stockInDetailsList);
+    public static void createStockInDetails() throws Exception {
+//        Dao<StockInDetail, Long> stockInDetailDao =
+//                DaoManager.createDao(connectionSource, StockInDetail.class);
+//
+//        stockInDetailDao.create(stockInDetailsList);
 
         setProductQuantity();
         Platform.runLater(stockInDetailsList::clear);
     }
 
-    public static void getAllStockInDetails() throws SQLException {
-        Dao<StockInDetail, Long> stockInDetailDao =
-                DaoManager.createDao(connectionSource, StockInDetail.class);
-
-        Platform.runLater(
-                () -> {
-                    stockInDetailsList.clear();
-                    try {
-                        stockInDetailsList.addAll(stockInDetailDao.queryForAll());
-                    } catch (SQLException e) {
-                        SpotyLogger.writeToFile(e, StockInDetailViewModel.class);
-                    }
-                });
+    public static void getAllStockInDetails() throws Exception {
+//        Dao<StockInDetail, Long> stockInDetailDao =
+//                DaoManager.createDao(connectionSource, StockInDetail.class);
+//
+//        Platform.runLater(
+//                () -> {
+//                    stockInDetailsList.clear();
+//                    try {
+//                        stockInDetailsList.addAll(stockInDetailDao.queryForAll());
+//                    } catch (Exception e) {
+//                        SpotyLogger.writeToFile(e, StockInDetailViewModel.class);
+//                    }
+//                });
     }
 
-    public static void updateStockInDetail(long index) throws SQLException {
-        Dao<StockInDetail, Long> stockInDetailDao =
-                DaoManager.createDao(connectionSource, StockInDetail.class);
-
-        StockInDetail stockInDetail = stockInDetailDao.queryForId(index);
-
-        Platform.runLater(
-                () -> {
-                    stockInDetail.setProduct(getProduct());
-                    stockInDetail.setQuantity(getQuantity());
-                    stockInDetail.setSerialNo(getSerial());
-                    stockInDetail.setDescription(getDescription());
-                    stockInDetail.setLocation(getLocation());
-
-                    stockInDetailsList.remove(getTempId());
-                    stockInDetailsList.add(getTempId(), stockInDetail);
-
-                    resetProperties();
-                });
+    public static void updateStockInDetail(long index) throws Exception {
+//        Dao<StockInDetail, Long> stockInDetailDao =
+//                DaoManager.createDao(connectionSource, StockInDetail.class);
+//
+//        StockInDetail stockInDetail = stockInDetailDao.queryForId(index);
+//
+//        Platform.runLater(
+//                () -> {
+//                    stockInDetail.setProduct(getProduct());
+//                    stockInDetail.setQuantity(getQuantity());
+//                    stockInDetail.setSerialNo(getSerial());
+//                    stockInDetail.setDescription(getDescription());
+//                    stockInDetail.setLocation(getLocation());
+//
+//                    stockInDetailsList.remove(getTempId());
+//                    stockInDetailsList.add(getTempId(), stockInDetail);
+//
+//                    resetProperties();
+//                });
     }
 
-    public static void getItem(StockInDetail stockInDetail) throws SQLException {
+    public static void getItem(StockInDetail stockInDetail) throws Exception {
         Platform.runLater(
                 () -> {
                     setTempId(getStockInDetails().indexOf(stockInDetail));
@@ -228,35 +220,35 @@ public class StockInDetailViewModel {
                 });
     }
 
-    public static void updateItem(long index) throws SQLException {
-        Dao<StockInDetail, Long> stockInDetailDao =
-                DaoManager.createDao(connectionSource, StockInDetail.class);
-
-        StockInDetail stockInDetail = stockInDetailDao.queryForId(index);
-
-        stockInDetail.setProduct(getProduct());
-        stockInDetail.setQuantity(getQuantity());
-        stockInDetail.setSerialNo(getSerial());
-        stockInDetail.setDescription(getDescription());
-        stockInDetail.setLocation(getLocation());
-
-        stockInDetailDao.update(stockInDetail);
+    public static void updateItem(long index) throws Exception {
+//        Dao<StockInDetail, Long> stockInDetailDao =
+//                DaoManager.createDao(connectionSource, StockInDetail.class);
+//
+//        StockInDetail stockInDetail = stockInDetailDao.queryForId(index);
+//
+//        stockInDetail.setProduct(getProduct());
+//        stockInDetail.setQuantity(getQuantity());
+//        stockInDetail.setSerialNo(getSerial());
+//        stockInDetail.setDescription(getDescription());
+//        stockInDetail.setLocation(getLocation());
+//
+//        stockInDetailDao.update(stockInDetail);
 
         getAllStockInDetails();
     }
 
-    public static void updateStockInDetails() throws SQLException {
-        Dao<StockInDetail, Long> stockInDetailDao =
-                DaoManager.createDao(connectionSource, StockInDetail.class);
-
-        stockInDetailsList.forEach(
-                stockInDetail -> {
-                    try {
-                        stockInDetailDao.update(stockInDetail);
-                    } catch (SQLException e) {
-                        SpotyLogger.writeToFile(e, StockInDetailViewModel.class);
-                    }
-                });
+    public static void updateStockInDetails() throws Exception {
+//        Dao<StockInDetail, Long> stockInDetailDao =
+//                DaoManager.createDao(connectionSource, StockInDetail.class);
+//
+//        stockInDetailsList.forEach(
+//                stockInDetail -> {
+//                    try {
+//                        stockInDetailDao.update(stockInDetail);
+//                    } catch (Exception e) {
+//                        SpotyLogger.writeToFile(e, StockInDetailViewModel.class);
+//                    }
+//                });
 
         updateProductQuantity();
 
@@ -269,17 +261,17 @@ public class StockInDetailViewModel {
     }
 
     public static void deleteStockInDetails(@NotNull LinkedList<Long> indexes) {
-        indexes.forEach(
-                index -> {
-                    try {
-                        Dao<StockInDetail, Long> stockInDetailDao =
-                                DaoManager.createDao(connectionSource, StockInDetail.class);
-
-                        stockInDetailDao.deleteById(index);
-                    } catch (SQLException e) {
-                        SpotyLogger.writeToFile(e, StockInDetailViewModel.class);
-                    }
-                });
+//        indexes.forEach(
+//                index -> {
+//                    try {
+//                        Dao<StockInDetail, Long> stockInDetailDao =
+//                                DaoManager.createDao(connectionSource, StockInDetail.class);
+//
+//                        stockInDetailDao.deleteById(index);
+//                    } catch (Exception e) {
+//                        SpotyLogger.writeToFile(e, StockInDetailViewModel.class);
+//                    }
+//                });
     }
 
     public static ObservableList<StockInDetail> getStockInDetailsList() {
@@ -298,7 +290,7 @@ public class StockInDetailViewModel {
                             try {
                                 ProductViewModel.updateProductQuantity(stockInDetail.getProduct().getId());
                                 createStockInTransaction(stockInDetail);
-                            } catch (SQLException e) {
+                            } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, StockInDetailViewModel.class);
                             }
                         });
@@ -321,53 +313,54 @@ public class StockInDetailViewModel {
                                 ProductViewModel.updateProductQuantity(stockInDetail.getProduct().getId());
 
                                 updateStockInTransaction(stockInDetail);
-                            } catch (SQLException e) {
+                            } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, StockInDetailViewModel.class);
                             }
                         });
     }
 
-    private static StockInTransaction getStockInTransaction(long stockInIndex) throws SQLException {
-        Dao<StockInTransaction, Long> stockInTransactionDao =
-                DaoManager.createDao(connectionSource, StockInTransaction.class);
-
-        PreparedQuery<StockInTransaction> preparedQuery =
-                stockInTransactionDao
-                        .queryBuilder()
-                        .where()
-                        .eq("stock_in_detail_id", stockInIndex)
-                        .prepare();
-
-        return stockInTransactionDao.queryForFirst(preparedQuery);
+    private static StockInTransaction getStockInTransaction(long stockInIndex) throws Exception {
+//        Dao<StockInTransaction, Long> stockInTransactionDao =
+//                DaoManager.createDao(connectionSource, StockInTransaction.class);
+//
+//        PreparedQuery<StockInTransaction> preparedQuery =
+//                stockInTransactionDao
+//                        .queryBuilder()
+//                        .where()
+//                        .eq("stock_in_detail_id", stockInIndex)
+//                        .prepare();
+//
+//        return stockInTransactionDao.queryForFirst(preparedQuery);
+        return new StockInTransaction();
     }
 
     private static void createStockInTransaction(@NotNull StockInDetail stockInDetail)
-            throws SQLException {
-        Dao<StockInTransaction, Long> stockInTransactionDao =
-                DaoManager.createDao(connectionSource, StockInTransaction.class);
-
-        StockInTransaction stockInTransaction = new StockInTransaction();
-        stockInTransaction.setBranch(stockInDetail.getStockIn().getBranch());
-        stockInTransaction.setStockInDetail(stockInDetail);
-        stockInTransaction.setProduct(stockInDetail.getProduct());
-        stockInTransaction.setStockInQuantity(stockInDetail.getQuantity());
-        stockInTransaction.setDate(new Date());
-
-        stockInTransactionDao.create(stockInTransaction);
+            throws Exception {
+//        Dao<StockInTransaction, Long> stockInTransactionDao =
+//                DaoManager.createDao(connectionSource, StockInTransaction.class);
+//
+//        StockInTransaction stockInTransaction = new StockInTransaction();
+//        stockInTransaction.setBranch(stockInDetail.getStockIn().getBranch());
+//        stockInTransaction.setStockInDetail(stockInDetail);
+//        stockInTransaction.setProduct(stockInDetail.getProduct());
+//        stockInTransaction.setStockInQuantity(stockInDetail.getQuantity());
+//        stockInTransaction.setDate(new Date());
+//
+//        stockInTransactionDao.create(stockInTransaction);
     }
 
     private static void updateStockInTransaction(@NotNull StockInDetail stockInDetail)
-            throws SQLException {
-        Dao<StockInTransaction, Long> stockInTransactionDao =
-                DaoManager.createDao(connectionSource, StockInTransaction.class);
-
-        StockInTransaction stockInTransaction = getStockInTransaction(stockInDetail.getId());
-        stockInTransaction.setBranch(stockInDetail.getStockIn().getBranch());
-        stockInTransaction.setStockInDetail(stockInDetail);
-        stockInTransaction.setProduct(stockInDetail.getProduct());
-        stockInTransaction.setStockInQuantity(stockInDetail.getQuantity());
-        stockInTransaction.setDate(new Date());
-
-        stockInTransactionDao.update(stockInTransaction);
+            throws Exception {
+//        Dao<StockInTransaction, Long> stockInTransactionDao =
+//                DaoManager.createDao(connectionSource, StockInTransaction.class);
+//
+//        StockInTransaction stockInTransaction = getStockInTransaction(stockInDetail.getId());
+//        stockInTransaction.setBranch(stockInDetail.getStockIn().getBranch());
+//        stockInTransaction.setStockInDetail(stockInDetail);
+//        stockInTransaction.setProduct(stockInDetail.getProduct());
+//        stockInTransaction.setStockInQuantity(stockInDetail.getQuantity());
+//        stockInTransaction.setDate(new Date());
+//
+//        stockInTransactionDao.update(stockInTransaction);
     }
 }

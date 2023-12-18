@@ -20,7 +20,7 @@ import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
 import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import io.github.palexdev.materialfx.enums.ScrimPriority;
-import io.github.palexdev.materialfx.filter.LongFilter;
+import io.github.palexdev.materialfx.filter.IntegerFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import io.github.palexdev.materialfx.utils.StringUtils;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
@@ -42,8 +42,8 @@ import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
-import org.infinite.spoty.database.models.Branch;
-import org.infinite.spoty.database.models.TransferDetail;
+import org.infinite.spoty.data_source.dtos.Branch;
+import org.infinite.spoty.data_source.dtos.transfers.TransferDetail;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.BranchViewModel;
@@ -53,7 +53,6 @@ import org.infinite.spoty.views.BaseController;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import java.util.function.Function;
@@ -185,7 +184,7 @@ public class TransferMasterFormController implements Initializable {
                 .getFilters()
                 .addAll(
                         new StringFilter<>("Name", TransferDetail::getProductName),
-                        new LongFilter<>("Quantity", TransferDetail::getQuantity),
+                        new IntegerFilter<>("Quantity", TransferDetail::getQuantity),
                         new StringFilter<>("Description", TransferDetail::getDescription));
 
         getTransferDetailTable();
@@ -249,7 +248,7 @@ public class TransferMasterFormController implements Initializable {
                                     TransferDetailViewModel.getItem(
                                             obj.getData().getId(),
                                             TransferDetailViewModel.transferDetailsList.indexOf(obj.getData()));
-                                } catch (SQLException e) {
+                                } catch (Exception e) {
                                     SpotyLogger.writeToFile(e, this.getClass());
                                 }
                             });
@@ -311,7 +310,7 @@ public class TransferMasterFormController implements Initializable {
                         () -> {
                             try {
                                 TransferMasterViewModel.updateItem(TransferMasterViewModel.getId());
-                            } catch (SQLException e) {
+                            } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }
                         });
@@ -334,7 +333,7 @@ public class TransferMasterFormController implements Initializable {
                     () -> {
                         try {
                             TransferMasterViewModel.saveTransferMaster();
-                        } catch (SQLException e) {
+                        } catch (Exception e) {
                             SpotyLogger.writeToFile(e, this.getClass());
                         }
                     });

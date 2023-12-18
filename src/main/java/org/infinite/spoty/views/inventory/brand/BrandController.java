@@ -32,14 +32,13 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.infinite.spoty.database.models.Brand;
+import org.infinite.spoty.data_source.dtos.Brand;
 import org.infinite.spoty.forms.BrandFormController;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.BrandViewModel;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 
@@ -141,7 +140,7 @@ public class BrandController implements Initializable {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
                             BrandViewModel.deleteItem(obj.getData().getId());
-                        } catch (SQLException ex) {
+                        } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
                     });
@@ -153,7 +152,7 @@ public class BrandController implements Initializable {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
                             BrandViewModel.getItem(obj.getData().getId());
-                        } catch (SQLException ex) {
+                        } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
                     });

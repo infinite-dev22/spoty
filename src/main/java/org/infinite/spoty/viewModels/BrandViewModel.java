@@ -14,25 +14,16 @@
 
 package org.infinite.spoty.viewModels;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.support.ConnectionSource;
-import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.database.connection.SQLiteConnection;
-import org.infinite.spoty.database.models.Brand;
-import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.data_source.dtos.Brand;
 
-import java.sql.SQLException;
 
 public class BrandViewModel {
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final StringProperty name = new SimpleStringProperty("");
     private static final StringProperty description = new SimpleStringProperty("");
-    private static final SQLiteConnection connection = SQLiteConnection.getInstance();
-    private static final ConnectionSource connectionSource = connection.getConnection();
     public static ObservableList<Brand> brandsList = FXCollections.observableArrayList();
     private static final ListProperty<Brand> brands = new SimpleListProperty<>(brandsList);
     public static ObservableList<Brand> brandsComboBoxList = FXCollections.observableArrayList();
@@ -85,11 +76,11 @@ public class BrandViewModel {
         return brands;
     }
 
-    public static void saveBrand() throws SQLException {
-        Dao<Brand, Long> brandDao = DaoManager.createDao(connectionSource, Brand.class);
-
-        Brand brand = new Brand(getName(), getDescription());
-        brandDao.create(brand);
+    public static void saveBrand() throws Exception {
+//        Dao<Brand, Long> brandDao = DaoManager.createDao(connectionSource, Brand.class);
+//
+//        Brand brand = new Brand(getName(), getDescription());
+//        brandDao.create(brand);
 
         clearBrandData();
         getItems();
@@ -101,61 +92,61 @@ public class BrandViewModel {
         setDescription("");
     }
 
-    public static void getItems() throws SQLException {
-        SQLiteConnection connection = SQLiteConnection.getInstance();
-        ConnectionSource connectionSource = connection.getConnection();
+    public static void getItems() throws Exception {
+//        SQLiteConnection connection = SQLiteConnection.getInstance();
+//        ConnectionSource connectionSource = connection.getConnection();
+//
+//        Dao<Brand, Long> brandDao = DaoManager.createDao(connectionSource, Brand.class);
 
-        Dao<Brand, Long> brandDao = DaoManager.createDao(connectionSource, Brand.class);
-
-        Platform.runLater(
-                () -> {
-                    brandsList.clear();
-
-                    try {
-                        brandsList.addAll(brandDao.queryForAll());
-                    } catch (SQLException e) {
-                        SpotyLogger.writeToFile(e, BrandViewModel.class);
-                    }
-                });
+//        Platform.runLater(
+//                () -> {
+//                    brandsList.clear();
+//
+//                    try {
+//                        brandsList.addAll(brandDao.queryForAll());
+//                    } catch (Exception e) {
+//                        SpotyLogger.writeToFile(e, BrandViewModel.class);
+//                    }
+//                });
     }
 
-    public static void getItem(long brandID) throws SQLException {
-        SQLiteConnection connection = SQLiteConnection.getInstance();
-        ConnectionSource connectionSource = connection.getConnection();
-
-        Dao<Brand, Long> brandDao = DaoManager.createDao(connectionSource, Brand.class);
-
-        Brand brand = brandDao.queryForId(brandID);
-        setId(brand.getId());
-        setName(brand.getName());
-        setDescription(brand.getDescription());
+    public static void getItem(long brandID) throws Exception {
+//        SQLiteConnection connection = SQLiteConnection.getInstance();
+//        ConnectionSource connectionSource = connection.getConnection();
+//
+//        Dao<Brand, Long> brandDao = DaoManager.createDao(connectionSource, Brand.class);
+//
+//        Brand brand = brandDao.queryForId(brandID);
+//        setId(brand.getId());
+//        setName(brand.getName());
+//        setDescription(brand.getDescription());
         getItems();
     }
 
-    public static void updateItem(long index) throws SQLException {
-        SQLiteConnection connection = SQLiteConnection.getInstance();
-        ConnectionSource connectionSource = connection.getConnection();
-
-        Dao<Brand, Long> brandDao = DaoManager.createDao(connectionSource, Brand.class);
-
-        Brand brand = brandDao.queryForId(index);
-
-        brand.setName(getName());
-        brand.setDescription(getDescription());
-
-        brandDao.update(brand);
+    public static void updateItem(long index) throws Exception {
+//        SQLiteConnection connection = SQLiteConnection.getInstance();
+//        ConnectionSource connectionSource = connection.getConnection();
+//
+//        Dao<Brand, Long> brandDao = DaoManager.createDao(connectionSource, Brand.class);
+//
+//        Brand brand = brandDao.queryForId(index);
+//
+//        brand.setName(getName());
+//        brand.setDescription(getDescription());
+//
+//        brandDao.update(brand);
 
         clearBrandData();
         getItems();
     }
 
-    public static void deleteItem(long index) throws SQLException {
-        SQLiteConnection connection = SQLiteConnection.getInstance();
-        ConnectionSource connectionSource = connection.getConnection();
-
-        Dao<Brand, Long> brandDao = DaoManager.createDao(connectionSource, Brand.class);
-
-        brandDao.deleteById(index);
+    public static void deleteItem(long index) throws Exception {
+//        SQLiteConnection connection = SQLiteConnection.getInstance();
+//        ConnectionSource connectionSource = connection.getConnection();
+//
+//        Dao<Brand, Long> brandDao = DaoManager.createDao(connectionSource, Brand.class);
+//
+//        brandDao.deleteById(index);
 
         getItems();
     }

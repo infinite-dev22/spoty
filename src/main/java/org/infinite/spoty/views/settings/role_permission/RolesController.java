@@ -28,12 +28,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import org.infinite.spoty.components.navigation.Navigation;
 import org.infinite.spoty.components.navigation.Pages;
-import org.infinite.spoty.database.models.Role;
+import org.infinite.spoty.data_source.dtos.Role;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.RoleViewModel;
 
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.Objects;
 import java.util.ResourceBundle;
@@ -128,7 +127,7 @@ public class RolesController implements Initializable {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
                             RoleViewModel.deleteItem(obj.getData().getId());
-                        } catch (SQLException ex) {
+                        } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
                     });
@@ -140,7 +139,7 @@ public class RolesController implements Initializable {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
                             RoleViewModel.getItem(obj.getData().getId());
-                        } catch (SQLException ex) {
+                        } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
                     });

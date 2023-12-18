@@ -44,7 +44,11 @@ import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
-import org.infinite.spoty.database.models.*;
+import org.infinite.spoty.data_source.dtos.Branch;
+import org.infinite.spoty.data_source.dtos.Customer;
+import org.infinite.spoty.data_source.dtos.Product;
+import org.infinite.spoty.data_source.dtos.ProductCategory;
+import org.infinite.spoty.data_source.dtos.sales.SaleDetail;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.*;
@@ -52,7 +56,6 @@ import org.infinite.spoty.views.sales.pos.components.ProductCard;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -185,7 +188,7 @@ public class PointOfSaleController implements Initializable {
                                 SpotyThreader.spotyThreadPool(() -> {
                                     try {
                                         SaleDetailViewModel.getSaleDetail(saleDetail);
-                                    } catch (SQLException e) {
+                                    } catch (Exception e) {
                                         SpotyLogger.writeToFile(e, this.getClass());
                                     }
                                 });
@@ -197,7 +200,7 @@ public class PointOfSaleController implements Initializable {
                                 SaleDetailViewModel.updateSaleDetail(
                                         SaleDetailViewModel.getSaleDetails().indexOf(saleDetail));
 
-                            } catch (SQLException e) {
+                            } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }
                         }
@@ -342,7 +345,7 @@ public class PointOfSaleController implements Initializable {
                 () -> {
                     try {
                         SaleMasterViewModel.saveSaleMaster();
-                    } catch (SQLException e) {
+                    } catch (Exception e) {
                         SpotyLogger.writeToFile(e, this.getClass());
                     }
                 });

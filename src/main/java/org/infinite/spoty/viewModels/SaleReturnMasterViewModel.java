@@ -14,25 +14,21 @@
 
 package org.infinite.spoty.viewModels;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.support.ConnectionSource;
-import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.database.connection.SQLiteConnection;
-import org.infinite.spoty.database.models.Branch;
-import org.infinite.spoty.database.models.SaleReturnMaster;
+import lombok.Getter;
+import org.infinite.spoty.data_source.dtos.Branch;
+import org.infinite.spoty.data_source.dtos.returns.sale_returns.SaleReturnMaster;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.jetbrains.annotations.Nullable;
 
-import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class SaleReturnMasterViewModel {
+    @Getter
     public static final ObservableList<SaleReturnMaster> saleReturnMasterList =
             FXCollections.observableArrayList();
     private static final ListProperty<SaleReturnMaster> saleReturns = new SimpleListProperty<>(saleReturnMasterList);
@@ -42,8 +38,6 @@ public class SaleReturnMasterViewModel {
     private static final StringProperty totalCost = new SimpleStringProperty("");
     private static final StringProperty status = new SimpleStringProperty("");
     private static final StringProperty note = new SimpleStringProperty("");
-    private static final SQLiteConnection connection = SQLiteConnection.getInstance();
-    private static final ConnectionSource connectionSource = connection.getConnection();
 
     public static long getId() {
         return id.get();
@@ -143,23 +137,19 @@ public class SaleReturnMasterViewModel {
         setTotalCost("");
     }
 
-    public static void getSaleReturnMasters() throws SQLException {
-        Dao<SaleReturnMaster, Long> saleReturnMasterDao =
-                DaoManager.createDao(connectionSource, SaleReturnMaster.class);
-
-        Platform.runLater(
-                () -> {
-                    saleReturnMasterList.clear();
-
-                    try {
-                        saleReturnMasterList.addAll(saleReturnMasterDao.queryForAll());
-                    } catch (SQLException e) {
-                        SpotyLogger.writeToFile(e, SaleReturnMasterViewModel.class);
-                    }
-                });
-    }
-
-    public static ObservableList<SaleReturnMaster> getSaleReturnMasterList() {
-        return saleReturnMasterList;
+    public static void getSaleReturnMasters() throws Exception {
+//        Dao<SaleReturnMaster, Long> saleReturnMasterDao =
+//                DaoManager.createDao(connectionSource, SaleReturnMaster.class);
+//
+//        Platform.runLater(
+//                () -> {
+//                    saleReturnMasterList.clear();
+//
+//                    try {
+//                        saleReturnMasterList.addAll(saleReturnMasterDao.queryForAll());
+//                    } catch (Exception e) {
+//                        SpotyLogger.writeToFile(e, SaleReturnMasterViewModel.class);
+//                    }
+//                });
     }
 }

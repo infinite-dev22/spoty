@@ -16,14 +16,13 @@ package org.infinite.spoty.data;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.database.models.Role;
+import org.infinite.spoty.data_source.dtos.Role;
 import org.infinite.spoty.models.QuickStats;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SampleData implements Serializable {
+public class SampleData {
     public static List<QuickStats> quickStatsSampleData() {
         List<QuickStats> samples = new ArrayList<>();
 

@@ -29,7 +29,7 @@ import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
-import org.infinite.spoty.database.models.Product;
+import org.infinite.spoty.data_source.dtos.Product;
 import org.infinite.spoty.values.SharedResources;
 import org.infinite.spoty.values.strings.Values;
 import org.infinite.spoty.viewModels.AdjustmentDetailViewModel;

@@ -28,7 +28,6 @@ import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.ProductCategoryViewModel;
 
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
@@ -93,7 +92,7 @@ public class ProductCategoryFormController implements Initializable {
                             SpotyThreader.spotyThreadPool(() -> {
                                 try {
                                     updateItem(ProductCategoryViewModel.getId());
-                                } catch (SQLException e) {
+                                } catch (Exception e) {
                                     SpotyLogger.writeToFile(e, this.getClass());
                                 }
                             });
@@ -112,7 +111,7 @@ public class ProductCategoryFormController implements Initializable {
                         SpotyThreader.spotyThreadPool(() -> {
                             try {
                                 saveProductCategory();
-                            } catch (SQLException e) {
+                            } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }
                         });

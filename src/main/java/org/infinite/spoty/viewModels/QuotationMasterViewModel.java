@@ -14,21 +14,17 @@
 
 package org.infinite.spoty.viewModels;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.support.ConnectionSource;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.database.connection.SQLiteConnection;
-import org.infinite.spoty.database.models.Branch;
-import org.infinite.spoty.database.models.Customer;
-import org.infinite.spoty.database.models.QuotationMaster;
+import lombok.Getter;
+import org.infinite.spoty.data_source.dtos.Branch;
+import org.infinite.spoty.data_source.dtos.Customer;
+import org.infinite.spoty.data_source.dtos.quotations.QuotationMaster;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.jetbrains.annotations.Nullable;
 
-import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -36,6 +32,7 @@ import java.util.Date;
 import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
 
 public class QuotationMasterViewModel {
+    @Getter
     public static final ObservableList<QuotationMaster> quotationMasterList =
             FXCollections.observableArrayList();
     private static final ListProperty<QuotationMaster> quotations =
@@ -46,8 +43,6 @@ public class QuotationMasterViewModel {
     private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>(null);
     private static final StringProperty status = new SimpleStringProperty("");
     private static final StringProperty note = new SimpleStringProperty("");
-    private final static SQLiteConnection connection = SQLiteConnection.getInstance();
-    private final static ConnectionSource connectionSource = connection.getConnection();
 
     public static long getId() {
         return id.get();
@@ -151,95 +146,92 @@ public class QuotationMasterViewModel {
                 });
     }
 
-    public static void saveQuotationMaster() throws SQLException {
-        Dao<QuotationMaster, Long> quotationMasterDao =
-                DaoManager.createDao(connectionSource, QuotationMaster.class);
-
-        QuotationMaster quotationMaster =
-                new QuotationMaster(getDate(), getCustomer(), getBranch(), getStatus(), getNote());
-
-        if (!QuotationDetailViewModel.quotationDetailsList.isEmpty()) {
-            QuotationDetailViewModel.quotationDetailsList.forEach(
-                    quotationDetail -> quotationDetail.setQuotation(quotationMaster));
-            quotationMaster.setQuotationDetails(
-                    QuotationDetailViewModel.getQuotationDetailsList());
-        }
-
-        quotationMasterDao.create(quotationMaster);
+    public static void saveQuotationMaster() throws Exception {
+//        Dao<QuotationMaster, Long> quotationMasterDao =
+//                DaoManager.createDao(connectionSource, QuotationMaster.class);
+//
+//        QuotationMaster quotationMaster =
+//                new QuotationMaster(getDate(), getCustomer(), getBranch(), getStatus(), getNote());
+//
+//        if (!QuotationDetailViewModel.quotationDetailsList.isEmpty()) {
+//            QuotationDetailViewModel.quotationDetailsList.forEach(
+//                    quotationDetail -> quotationDetail.setQuotation(quotationMaster));
+//            quotationMaster.setQuotationDetails(
+//                    QuotationDetailViewModel.getQuotationDetailsList());
+//        }
+//
+//        quotationMasterDao.create(quotationMaster);
         QuotationDetailViewModel.saveQuotationDetails();
 
         resetProperties();
         getQuotationMasters();
     }
 
-    public static void getQuotationMasters() throws SQLException {
-        Dao<QuotationMaster, Long> quotationMasterDao =
-                DaoManager.createDao(connectionSource, QuotationMaster.class);
-
-        Platform.runLater(
-                () -> {
-                    quotationMasterList.clear();
-
-                    try {
-                        quotationMasterList.addAll(quotationMasterDao.queryForAll());
-                    } catch (SQLException e) {
-                        SpotyLogger.writeToFile(e, QuotationMasterViewModel.class);
-                    }
-                });
+    public static void getQuotationMasters() throws Exception {
+//        Dao<QuotationMaster, Long> quotationMasterDao =
+//                DaoManager.createDao(connectionSource, QuotationMaster.class);
+//
+//        Platform.runLater(
+//                () -> {
+//                    quotationMasterList.clear();
+//
+//                    try {
+//                        quotationMasterList.addAll(quotationMasterDao.queryForAll());
+//                    } catch (Exception e) {
+//                        SpotyLogger.writeToFile(e, QuotationMasterViewModel.class);
+//                    }
+//                });
     }
 
-    public static void getItem(long index) throws SQLException {
-        Dao<QuotationMaster, Long> quotationMasterDao =
-                DaoManager.createDao(connectionSource, QuotationMaster.class);
-
-        QuotationMaster quotationMaster = quotationMasterDao.queryForId(index);
-
-        setId(quotationMaster.getId());
-        setDate(quotationMaster.getLocaleDate());
-        setCustomer(quotationMaster.getCustomer());
-        setBranch(quotationMaster.getBranch());
-        setStatus(quotationMaster.getStatus());
-        setNote(quotationMaster.getNotes());
-
-        QuotationDetailViewModel.quotationDetailsList.clear();
-        QuotationDetailViewModel.quotationDetailsList.addAll(
-                quotationMaster.getQuotationDetails());
+    public static void getItem(long index) throws Exception {
+//        Dao<QuotationMaster, Long> quotationMasterDao =
+//                DaoManager.createDao(connectionSource, QuotationMaster.class);
+//
+//        QuotationMaster quotationMaster = quotationMasterDao.queryForId(index);
+//
+//        setId(quotationMaster.getId());
+//        setDate(quotationMaster.getLocaleDate());
+//        setCustomer(quotationMaster.getCustomer());
+//        setBranch(quotationMaster.getBranch());
+//        setStatus(quotationMaster.getStatus());
+//        setNote(quotationMaster.getNotes());
+//
+//        QuotationDetailViewModel.quotationDetailsList.clear();
+//        QuotationDetailViewModel.quotationDetailsList.addAll(
+//                quotationMaster.getQuotationDetails());
 
         getQuotationMasters();
     }
 
-    public static void updateItem(long index) throws SQLException {
-        Dao<QuotationMaster, Long> quotationMasterDao =
-                DaoManager.createDao(connectionSource, QuotationMaster.class);
-
-        QuotationMaster quotationMaster = quotationMasterDao.queryForId(index);
-
-        quotationMaster.setDate(getDate());
-        quotationMaster.setCustomer(getCustomer());
-        quotationMaster.setBranch(getBranch());
-        quotationMaster.setStatus(getStatus());
-        quotationMaster.setNotes(getNote());
-
-        QuotationDetailViewModel.deleteQuotationDetails(PENDING_DELETES);
-        quotationMaster.setQuotationDetails(QuotationDetailViewModel.getQuotationDetailsList());
-
-        quotationMasterDao.update(quotationMaster);
-        QuotationDetailViewModel.updateQuotationDetails();
+    public static void updateItem(long index) throws Exception {
+//        Dao<QuotationMaster, Long> quotationMasterDao =
+//                DaoManager.createDao(connectionSource, QuotationMaster.class);
+//
+//        QuotationMaster quotationMaster = quotationMasterDao.queryForId(index);
+//
+//        quotationMaster.setDate(getDate());
+//        quotationMaster.setCustomer(getCustomer());
+//        quotationMaster.setBranch(getBranch());
+//        quotationMaster.setStatus(getStatus());
+//        quotationMaster.setNotes(getNote());
+//
+//        QuotationDetailViewModel.deleteQuotationDetails(PENDING_DELETES);
+//        quotationMaster.setQuotationDetails(QuotationDetailViewModel.getQuotationDetailsList());
+//
+//        quotationMasterDao.update(quotationMaster);
+//        QuotationDetailViewModel.updateQuotationDetails();
 
         resetProperties();
         getQuotationMasters();
     }
 
-    public static void deleteItem(long index) throws SQLException {
-        Dao<QuotationMaster, Long> quotationMasterDao =
-                DaoManager.createDao(connectionSource, QuotationMaster.class);
-
-        quotationMasterDao.deleteById(index);
+    public static void deleteItem(long index) throws Exception {
+//        Dao<QuotationMaster, Long> quotationMasterDao =
+//                DaoManager.createDao(connectionSource, QuotationMaster.class);
+//
+//        quotationMasterDao.deleteById(index);
 
         getQuotationMasters();
     }
 
-    public static ObservableList<QuotationMaster> getQuotationMasterList() {
-        return quotationMasterList;
-    }
 }

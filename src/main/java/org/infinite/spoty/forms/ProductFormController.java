@@ -34,9 +34,9 @@ import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
-import org.infinite.spoty.database.models.Brand;
-import org.infinite.spoty.database.models.ProductCategory;
-import org.infinite.spoty.database.models.UnitOfMeasure;
+import org.infinite.spoty.data_source.dtos.Brand;
+import org.infinite.spoty.data_source.dtos.ProductCategory;
+import org.infinite.spoty.data_source.dtos.UnitOfMeasure;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.values.strings.Values;
@@ -46,7 +46,6 @@ import org.infinite.spoty.viewModels.ProductViewModel;
 import org.infinite.spoty.viewModels.UOMViewModel;
 
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.function.Function;
@@ -219,7 +218,7 @@ public class ProductFormController implements Initializable {
                                     () -> {
                                         try {
                                             ProductViewModel.updateProduct(ProductViewModel.getId());
-                                        } catch (SQLException e) {
+                                        } catch (Exception e) {
                                             SpotyLogger.writeToFile(e, this.getClass());
                                         }
                                     });
@@ -246,7 +245,7 @@ public class ProductFormController implements Initializable {
                                 () -> {
                                     try {
                                         ProductViewModel.saveProduct();
-                                    } catch (SQLException e) {
+                                    } catch (Exception e) {
                                         SpotyLogger.writeToFile(e, this.getClass());
                                     }
                                 });

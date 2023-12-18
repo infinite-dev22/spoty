@@ -35,7 +35,6 @@ import org.infinite.spoty.viewModels.PermissionsViewModel;
 import org.infinite.spoty.viewModels.RoleViewModel;
 
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
@@ -1779,7 +1778,7 @@ public class RoleSettingsFormController implements Initializable {
                 SpotyThreader.spotyThreadPool(() -> {
                     try {
                         RoleViewModel.updateItem(RoleViewModel.getId());
-                    } catch (SQLException e) {
+                    } catch (Exception e) {
                         SpotyLogger.writeToFile(e, this.getClass());
                     }
                 });
@@ -1800,7 +1799,7 @@ public class RoleSettingsFormController implements Initializable {
             SpotyThreader.spotyThreadPool(() -> {
                 try {
                     RoleViewModel.saveRole();
-                } catch (SQLException e) {
+                } catch (Exception e) {
                     SpotyLogger.writeToFile(e, this.getClass());
                 }
             });

@@ -30,6 +30,9 @@ public class SpotyThreader {
     }
 
     public static Thread singleThreadCreator(String name, Runnable runnable) {
+//        var thread = new Thread(runnable, name);
+//        thread.setDaemon(true);
+//        return thread;
         return Thread.ofPlatform().name(name).daemon(true).start(runnable);
     }
 }

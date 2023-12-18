@@ -19,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.infinite.spoty.viewModels.BranchViewModel;
 import org.junit.jupiter.api.*;
 
-import java.sql.SQLException;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class BranchDaoTest {
@@ -53,7 +52,7 @@ class BranchDaoTest {
 
   @Test
   @Order(2)
-  void updateBranch() throws SQLException {
+  void updateBranch() throws Exception {
     BranchViewModel.setName("Branch 1");
     BranchViewModel.setPhone("+2567123456789");
     BranchViewModel.setEmail("branch1@email.com");
@@ -65,7 +64,7 @@ class BranchDaoTest {
 
   @Test
   @Order(3)
-  void findBranch() throws SQLException {
+  void findBranch() throws Exception {
     BranchViewModel.getItem(2);
     System.out.println(BranchViewModel.getName());
     assertEquals(BranchViewModel.getTown(), "");
@@ -73,7 +72,7 @@ class BranchDaoTest {
 
   @Test
   @Order(4)
-  void getBranch() throws SQLException {
+  void getBranch() throws Exception {
     BranchViewModel.getAllBranches();
     BranchViewModel.branchesList.forEach(e -> System.out.println(e.getName()));
     assertEquals(BranchViewModel.branchesList.size(), 2);
@@ -81,7 +80,7 @@ class BranchDaoTest {
 
   @Test
   @Order(5)
-  void deleteBranch() throws SQLException {
+  void deleteBranch() throws Exception {
     BranchViewModel.deleteItem(2);
     BranchViewModel.deleteItem(1);
   }

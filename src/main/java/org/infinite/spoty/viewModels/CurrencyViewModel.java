@@ -14,18 +14,11 @@
 
 package org.infinite.spoty.viewModels;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.support.ConnectionSource;
-import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.database.connection.SQLiteConnection;
-import org.infinite.spoty.database.models.Currency;
-import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.data_source.dtos.Currency;
 
-import java.sql.SQLException;
 
 public class CurrencyViewModel {
     private static final LongProperty id = new SimpleLongProperty(0);
@@ -33,8 +26,6 @@ public class CurrencyViewModel {
     private static final StringProperty name = new SimpleStringProperty("");
     private static final StringProperty symbol = new SimpleStringProperty("");
     private static final ObjectProperty<Currency> currency = new SimpleObjectProperty<>();
-    private static final SQLiteConnection connection = SQLiteConnection.getInstance();
-    private static final ConnectionSource connectionSource = connection.getConnection();
     public static ObservableList<Currency> currenciesList = FXCollections.observableArrayList();
     public static final ListProperty<Currency> currencies = new SimpleListProperty<>(currenciesList);
     public static ObservableList<Currency> currenciesComboBoxList =
@@ -108,12 +99,12 @@ public class CurrencyViewModel {
         CurrencyViewModel.currency.set(currency);
     }
 
-    public static void saveCurrency() throws SQLException {
-        Dao<Currency, Long> currencyDao =
-                DaoManager.createDao(connectionSource, Currency.class);
-
-        Currency currency = new Currency(getCode(), getName(), getSymbol());
-        currencyDao.create(currency);
+    public static void saveCurrency() throws Exception {
+//        Dao<Currency, Long> currencyDao =
+//                DaoManager.createDao(connectionSource, Currency.class);
+//
+//        Currency currency = new Currency(getCode(), getName(), getSymbol());
+//        currencyDao.create(currency);
 
         clearCurrencyData();
         getAllCurrencies();
@@ -126,61 +117,61 @@ public class CurrencyViewModel {
         setSymbol("");
     }
 
-    public static void getAllCurrencies() throws SQLException {
-        Dao<Currency, Long> currencyDao =
-                DaoManager.createDao(connectionSource, Currency.class);
-        Platform.runLater(
-                () -> {
-                    currenciesList.clear();
-
-                    try {
-                        currenciesList.addAll(currencyDao.queryForAll());
-                    } catch (SQLException e) {
-                        SpotyLogger.writeToFile(e, CurrencyViewModel.class);
-                    }
-                });
+    public static void getAllCurrencies() throws Exception {
+//        Dao<Currency, Long> currencyDao =
+//                DaoManager.createDao(connectionSource, Currency.class);
+//        Platform.runLater(
+//                () -> {
+//                    currenciesList.clear();
+//
+//                    try {
+//                        currenciesList.addAll(currencyDao.queryForAll());
+//                    } catch (Exception e) {
+//                        SpotyLogger.writeToFile(e, CurrencyViewModel.class);
+//                    }
+//                });
     }
 
-    public static void getItem(long index) throws SQLException {
-        Dao<Currency, Long> currencyDao =
-                DaoManager.createDao(connectionSource, Currency.class);
-
-        Currency currency = currencyDao.queryForId(index);
-        setCurrency(currency);
-        setId(currency.getId());
-        setSymbol(currency.getSymbol());
-        setCode(currency.getCode());
-        setName(currency.getName());
+    public static void getItem(long index) throws Exception {
+//        Dao<Currency, Long> currencyDao =
+//                DaoManager.createDao(connectionSource, Currency.class);
+//
+//        Currency currency = currencyDao.queryForId(index);
+//        setCurrency(currency);
+//        setId(currency.getId());
+//        setSymbol(currency.getSymbol());
+//        setCode(currency.getCode());
+//        setName(currency.getName());
         getAllCurrencies();
     }
 
-    public static void updateItem(long index) throws SQLException {
-        SQLiteConnection connection = SQLiteConnection.getInstance();
-        ConnectionSource connectionSource = connection.getConnection();
-
-        Dao<Currency, Long> currencyDao =
-                DaoManager.createDao(connectionSource, Currency.class);
-
-        Currency currency = currencyDao.queryForId(index);
-
-        currency.setCode(getCode());
-        currency.setName(getName());
-        currency.setSymbol(getSymbol());
-
-        currencyDao.update(currency);
+    public static void updateItem(long index) throws Exception {
+//        SQLiteConnection connection = SQLiteConnection.getInstance();
+//        ConnectionSource connectionSource = connection.getConnection();
+//
+//        Dao<Currency, Long> currencyDao =
+//                DaoManager.createDao(connectionSource, Currency.class);
+//
+//        Currency currency = currencyDao.queryForId(index);
+//
+//        currency.setCode(getCode());
+//        currency.setName(getName());
+//        currency.setSymbol(getSymbol());
+//
+//        currencyDao.update(currency);
 
         clearCurrencyData();
         getAllCurrencies();
     }
 
-    public static void deleteItem(long index) throws SQLException {
-        SQLiteConnection connection = SQLiteConnection.getInstance();
-        ConnectionSource connectionSource = connection.getConnection();
-
-        Dao<Currency, Long> currencyDao =
-                DaoManager.createDao(connectionSource, Currency.class);
-
-        currencyDao.deleteById(index);
+    public static void deleteItem(long index) throws Exception {
+//        SQLiteConnection connection = SQLiteConnection.getInstance();
+//        ConnectionSource connectionSource = connection.getConnection();
+//
+//        Dao<Currency, Long> currencyDao =
+//                DaoManager.createDao(connectionSource, Currency.class);
+//
+//        currencyDao.deleteById(index);
         getAllCurrencies();
     }
 }

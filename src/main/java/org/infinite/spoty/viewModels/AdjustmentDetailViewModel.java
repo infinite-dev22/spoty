@@ -14,29 +14,25 @@
 
 package org.infinite.spoty.viewModels;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.stmt.PreparedQuery;
-import com.j256.ormlite.support.ConnectionSource;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.database.connection.SQLiteConnection;
-import org.infinite.spoty.database.models.AdjustmentDetail;
-import org.infinite.spoty.database.models.AdjustmentMaster;
-import org.infinite.spoty.database.models.AdjustmentTransaction;
-import org.infinite.spoty.database.models.Product;
+import lombok.Getter;
+import org.infinite.spoty.data_source.dtos.Product;
+import org.infinite.spoty.data_source.dtos.adjustments.AdjustmentDetail;
+import org.infinite.spoty.data_source.dtos.adjustments.AdjustmentMaster;
+import org.infinite.spoty.data_source.dtos.adjustments.AdjustmentTransaction;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.LinkedList;
 
 import static org.infinite.spoty.values.SharedResources.*;
 
 public class AdjustmentDetailViewModel {
+    @Getter
     public static final ObservableList<AdjustmentDetail> adjustmentDetailsList =
             FXCollections.observableArrayList();
     private static final ListProperty<AdjustmentDetail> adjustmentDetails =
@@ -46,8 +42,6 @@ public class AdjustmentDetailViewModel {
     private static final ObjectProperty<AdjustmentMaster> adjustment = new SimpleObjectProperty<>();
     private static final StringProperty quantity = new SimpleStringProperty();
     private static final StringProperty adjustmentType = new SimpleStringProperty();
-    private static final SQLiteConnection connection = SQLiteConnection.getInstance();
-    private static final ConnectionSource connectionSource = connection.getConnection();
 
     public static long getId() {
         return id.get();
@@ -131,8 +125,11 @@ public class AdjustmentDetailViewModel {
     }
 
     public static void addAdjustmentDetails() {
-        AdjustmentDetail adjustmentDetail =
-                new AdjustmentDetail(getProduct(), getQuantity(), getAdjustmentType());
+        var adjustmentDetail = AdjustmentDetail.builder()
+                .product(getProduct())
+                .quantity(getQuantity())
+                .adjustmentType(getAdjustmentType())
+                .build();
 
         Platform.runLater(
                 () -> {
@@ -141,12 +138,8 @@ public class AdjustmentDetailViewModel {
                 });
     }
 
-    public static void saveAdjustmentDetails() throws SQLException {
-        Dao<AdjustmentDetail, Long> adjustmentDetailDao =
-                DaoManager.createDao(connectionSource, AdjustmentDetail.class);
-
-        adjustmentDetailDao.create(adjustmentDetailsList);
-
+    public static void saveAdjustmentDetails() throws Exception {
+        // TODO: Save adjustment detail list.
         setProductQuantity();
 
         Platform.runLater(adjustmentDetailsList::clear);
@@ -172,7 +165,7 @@ public class AdjustmentDetailViewModel {
                         ProductViewModel.setQuantity(productQuantity);
 
                         ProductViewModel.updateProductQuantity(adjustmentDetail.getProduct().getId());
-                    } catch (SQLException e) {
+                    } catch (Exception e) {
                         SpotyLogger.writeToFile(e, AdjustmentDetailViewModel.class);
                     }
                 });
@@ -206,7 +199,7 @@ public class AdjustmentDetailViewModel {
                         ProductViewModel.updateProductQuantity(adjustmentDetail.getProduct().getId());
 
                         updateAdjustmentTransaction(adjustmentDetail);
-                    } catch (SQLException e) {
+                    } catch (Exception e) {
                         SpotyLogger.writeToFile(e, AdjustmentDetailViewModel.class);
                     }
                 });
@@ -227,23 +220,21 @@ public class AdjustmentDetailViewModel {
                 });
     }
 
-    public static void getAllAdjustmentDetails() throws SQLException {
-        Dao<AdjustmentDetail, Long> adjustmentDetailDao =
-                DaoManager.createDao(connectionSource, AdjustmentDetail.class);
-
-        Platform.runLater(
-                () -> {
-                    adjustmentDetailsList.clear();
-
-                    try {
-                        adjustmentDetailsList.addAll(adjustmentDetailDao.queryForAll());
-                    } catch (SQLException e) {
-                        SpotyLogger.writeToFile(e, AdjustmentDetailViewModel.class);
-                    }
-                });
+    public static void getAllAdjustmentDetails() throws Exception {
+//        Platform.runLater(
+//                () -> {
+//                    adjustmentDetailsList.clear();
+//
+//                    try {
+//                         TODO: Fetch all adjustment details.
+//                         adjustmentDetailsList.addAll(adjustmentDetailDao.queryForAll());
+//                    } catch (Exception e) {
+//                        SpotyLogger.writeToFile(e, AdjustmentDetailViewModel.class);
+//                    }
+//                });
     }
 
-    public static void getAdjustmentDetail(AdjustmentDetail adjustmentDetail) throws SQLException {
+    public static void getAdjustmentDetail(AdjustmentDetail adjustmentDetail) throws Exception {
         Platform.runLater(
                 () -> {
                     setTempId(getAdjustmentDetails().indexOf(adjustmentDetail));
@@ -253,18 +244,16 @@ public class AdjustmentDetailViewModel {
                 });
     }
 
-    public static void updateAdjustmentDetails() throws SQLException {
-        Dao<AdjustmentDetail, Long> adjustmentDetailDao =
-                DaoManager.createDao(connectionSource, AdjustmentDetail.class);
-
-        adjustmentDetailsList.forEach(
-                adjustmentDetail -> {
-                    try {
-                        adjustmentDetailDao.update(adjustmentDetail);
-                    } catch (SQLException e) {
-                        SpotyLogger.writeToFile(e, AdjustmentDetailViewModel.class);
-                    }
-                });
+    public static void updateAdjustmentDetails() throws Exception {
+//        adjustmentDetailsList.forEach(
+//                adjustmentDetail -> {
+//                    try {
+//                         TODO: Update adjustment details.
+//                         adjustmentDetailDao.update(adjustmentDetail);
+//                    } catch (Exception e) {
+//                        SpotyLogger.writeToFile(e, AdjustmentDetailViewModel.class);
+//                    }
+//                });
 
         updateProductQuantity();
 
@@ -277,42 +266,34 @@ public class AdjustmentDetailViewModel {
     }
 
     public static void deleteAdjustmentDetails(@NotNull LinkedList<Long> indexes) {
-        indexes.forEach(
-                index -> {
-                    try {
-                        Dao<AdjustmentDetail, Long> adjustmentDetailDao =
-                                DaoManager.createDao(connectionSource, AdjustmentDetail.class);
-
-                        adjustmentDetailDao.deleteById(index);
-                    } catch (SQLException e) {
-                        SpotyLogger.writeToFile(e, AdjustmentDetailViewModel.class);
-                    }
-                });
-    }
-
-    public static ObservableList<AdjustmentDetail> getAdjustmentDetailsList() {
-        return adjustmentDetailsList;
+//        indexes.forEach(
+//                index -> {
+//                    try {
+//                         TODO: Delete adjustment details.
+//                         adjustmentDetailDao.deleteById(index);
+//                    } catch (Exception e) {
+//                        SpotyLogger.writeToFile(e, AdjustmentDetailViewModel.class);
+//                    }
+//                });
     }
 
     private static AdjustmentTransaction getAdjustmentTransaction(long adjustmentIndex)
-            throws SQLException {
-        Dao<AdjustmentTransaction, Long> adjustmentTransactionDao =
-                DaoManager.createDao(connectionSource, AdjustmentTransaction.class);
+            throws Exception {
+//        PreparedQuery<AdjustmentTransaction> preparedQuery =
+//                adjustmentTransactionDao
+//                        .queryBuilder()
+//                        .where()
+//                        .eq("adjustment_detail_id", adjustmentIndex)
+//                        .prepare();
 
-        PreparedQuery<AdjustmentTransaction> preparedQuery =
-                adjustmentTransactionDao
-                        .queryBuilder()
-                        .where()
-                        .eq("adjustment_detail_id", adjustmentIndex)
-                        .prepare();
+        // TODO: Query for adjustment transaction by adjustment detail id.
 
-        return adjustmentTransactionDao.queryForFirst(preparedQuery);
+//        return adjustmentTransactionDao.queryForFirst(preparedQuery);
+        return new AdjustmentTransaction();
     }
 
     private static void createAdjustmentTransaction(@NotNull AdjustmentDetail adjustmentDetail)
-            throws SQLException {
-        Dao<AdjustmentTransaction, Long> adjustmentTransactionDao =
-                DaoManager.createDao(connectionSource, AdjustmentTransaction.class);
+            throws Exception {
 
         AdjustmentTransaction adjustmentTransaction = new AdjustmentTransaction();
         adjustmentTransaction.setBranch(adjustmentDetail.getAdjustment().getBranch());
@@ -322,14 +303,12 @@ public class AdjustmentDetailViewModel {
         adjustmentTransaction.setAdjustmentType(adjustmentDetail.getAdjustmentType());
         adjustmentTransaction.setDate(new Date());
 
-        adjustmentTransactionDao.create(adjustmentTransaction);
+//        adjustmentTransactionDao.create(adjustmentTransaction);
+        // TODO: Create adjustment transaction.
     }
 
     private static void updateAdjustmentTransaction(@NotNull AdjustmentDetail adjustmentDetail)
-            throws SQLException {
-        Dao<AdjustmentTransaction, Long> adjustmentTransactionDao =
-                DaoManager.createDao(connectionSource, AdjustmentTransaction.class);
-
+            throws Exception {
         AdjustmentTransaction adjustmentTransaction =
                 getAdjustmentTransaction(adjustmentDetail.getId());
         adjustmentTransaction.setBranch(adjustmentDetail.getAdjustment().getBranch());
@@ -339,6 +318,7 @@ public class AdjustmentDetailViewModel {
         adjustmentTransaction.setAdjustmentType(adjustmentDetail.getAdjustmentType());
         adjustmentTransaction.setDate(new Date());
 
-        adjustmentTransactionDao.update(adjustmentTransaction);
+//        adjustmentTransactionDao.update(adjustmentTransaction);
+        // TODO: Update adjustment transaction.
     }
 }

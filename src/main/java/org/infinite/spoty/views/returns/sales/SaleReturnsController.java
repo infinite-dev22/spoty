@@ -28,7 +28,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import org.infinite.spoty.database.models.SaleReturnMaster;
+import org.infinite.spoty.data_source.dtos.returns.sale_returns.SaleReturnMaster;
 import org.infinite.spoty.viewModels.SaleReturnMasterViewModel;
 
 import java.net.URL;

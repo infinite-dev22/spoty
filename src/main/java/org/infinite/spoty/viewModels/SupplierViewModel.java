@@ -14,18 +14,11 @@
 
 package org.infinite.spoty.viewModels;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.support.ConnectionSource;
-import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.database.connection.SQLiteConnection;
-import org.infinite.spoty.database.models.Supplier;
-import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.data_source.dtos.Supplier;
 
-import java.sql.SQLException;
 
 public class SupplierViewModel {
     public static final ObservableList<Supplier> suppliersList = FXCollections.observableArrayList();
@@ -41,8 +34,6 @@ public class SupplierViewModel {
     private static final StringProperty address = new SimpleStringProperty("");
     private static final StringProperty taxNumber = new SimpleStringProperty("");
     private static final StringProperty country = new SimpleStringProperty("");
-    private static final SQLiteConnection connection = SQLiteConnection.getInstance();
-    private static final ConnectionSource connectionSource = connection.getConnection();
 
     public static long getId() {
         return id.get();
@@ -177,85 +168,85 @@ public class SupplierViewModel {
         setCountry("");
     }
 
-    public static void saveSupplier() throws SQLException {
-        Dao<Supplier, Long> supplierDao =
-                DaoManager.createDao(connectionSource, Supplier.class);
-
-        Supplier supplier =
-                new Supplier(
-                        getName(),
-                        getEmail(),
-                        getPhone(),
-                        getCity(),
-                        getAddress(),
-                        getTaxNumber(),
-                        getCountry());
-
-        supplierDao.create(supplier);
-
-        resetProperties();
-        getAllSuppliers();
-    }
-
-    public static void getAllSuppliers() throws SQLException {
-        Dao<Supplier, Long> supplierDao =
-                DaoManager.createDao(connectionSource, Supplier.class);
-
-        Platform.runLater(
-                () -> {
-                    suppliersList.clear();
-
-                    try {
-                        suppliersList.addAll(supplierDao.queryForAll());
-                    } catch (SQLException e) {
-                        SpotyLogger.writeToFile(e, SupplierViewModel.class);
-                    }
-                });
-    }
-
-    public static void getItem(long index) throws SQLException {
-        Dao<Supplier, Long> supplierDao =
-                DaoManager.createDao(connectionSource, Supplier.class);
-
-        Supplier supplier = supplierDao.queryForId(index);
-
-        setId(supplier.getId());
-        setName(supplier.getName());
-        setEmail(supplier.getEmail());
-        setPhone(supplier.getPhone());
-        setCity(supplier.getCity());
-        setCountry(supplier.getCountry());
-        setAddress(supplier.getAddress());
-        setTaxNumber(supplier.getTaxNumber());
-
-        getAllSuppliers();
-    }
-
-    public static void updateItem(long index) throws SQLException {
-        Dao<Supplier, Long> supplierDao =
-                DaoManager.createDao(connectionSource, Supplier.class);
-
-        Supplier supplier = supplierDao.queryForId(index);
-
-        supplier.setName(getName());
-        supplier.setEmail(getEmail());
-        supplier.setPhone(getPhone());
-        supplier.setTaxNumber(getTaxNumber());
-        supplier.setAddress(getAddress());
-        supplier.setCity(getCity());
-        supplier.setCountry(getCountry());
-
-        supplierDao.update(supplier);
+    public static void saveSupplier() throws Exception {
+//        Dao<Supplier, Long> supplierDao =
+//                DaoManager.createDao(connectionSource, Supplier.class);
+//
+//        Supplier supplier =
+//                new Supplier(
+//                        getName(),
+//                        getEmail(),
+//                        getPhone(),
+//                        getCity(),
+//                        getAddress(),
+//                        getTaxNumber(),
+//                        getCountry());
+//
+//        supplierDao.create(supplier);
 
         resetProperties();
         getAllSuppliers();
     }
 
-    public static void deleteItem(long index) throws SQLException {
-        Dao<Supplier, Long> supplierDao =
-                DaoManager.createDao(connectionSource, Supplier.class);
+    public static void getAllSuppliers() throws Exception {
+//        Dao<Supplier, Long> supplierDao =
+//                DaoManager.createDao(connectionSource, Supplier.class);
+//
+//        Platform.runLater(
+//                () -> {
+//                    suppliersList.clear();
+//
+//                    try {
+//                        suppliersList.addAll(supplierDao.queryForAll());
+//                    } catch (Exception e) {
+//                        SpotyLogger.writeToFile(e, SupplierViewModel.class);
+//                    }
+//                });
+    }
 
-        supplierDao.deleteById(index);
+    public static void getItem(long index) throws Exception {
+//        Dao<Supplier, Long> supplierDao =
+//                DaoManager.createDao(connectionSource, Supplier.class);
+//
+//        Supplier supplier = supplierDao.queryForId(index);
+//
+//        setId(supplier.getId());
+//        setName(supplier.getName());
+//        setEmail(supplier.getEmail());
+//        setPhone(supplier.getPhone());
+//        setCity(supplier.getCity());
+//        setCountry(supplier.getCountry());
+//        setAddress(supplier.getAddress());
+//        setTaxNumber(supplier.getTaxNumber());
+
+        getAllSuppliers();
+    }
+
+    public static void updateItem(long index) throws Exception {
+//        Dao<Supplier, Long> supplierDao =
+//                DaoManager.createDao(connectionSource, Supplier.class);
+//
+//        Supplier supplier = supplierDao.queryForId(index);
+//
+//        supplier.setName(getName());
+//        supplier.setEmail(getEmail());
+//        supplier.setPhone(getPhone());
+//        supplier.setTaxNumber(getTaxNumber());
+//        supplier.setAddress(getAddress());
+//        supplier.setCity(getCity());
+//        supplier.setCountry(getCountry());
+//
+//        supplierDao.update(supplier);
+
+        resetProperties();
+        getAllSuppliers();
+    }
+
+    public static void deleteItem(long index) throws Exception {
+//        Dao<Supplier, Long> supplierDao =
+//                DaoManager.createDao(connectionSource, Supplier.class);
+//
+//        supplierDao.deleteById(index);
 
         getAllSuppliers();
     }

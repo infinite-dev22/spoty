@@ -14,21 +14,15 @@
 
 package org.infinite.spoty.viewModels;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.support.ConnectionSource;
-import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.database.connection.SQLiteConnection;
-import org.infinite.spoty.database.models.Branch;
-import org.infinite.spoty.database.models.Expense;
-import org.infinite.spoty.database.models.ExpenseCategory;
+import org.infinite.spoty.data_source.dtos.Branch;
+import org.infinite.spoty.data_source.dtos.Expense;
+import org.infinite.spoty.data_source.dtos.ExpenseCategory;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.jetbrains.annotations.Nullable;
 
-import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -44,8 +38,6 @@ public class ExpenseViewModel {
     private static final ObjectProperty<ExpenseCategory> category = new SimpleObjectProperty<>(null);
     private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>(null);
     private static final StringProperty details = new SimpleStringProperty("");
-    private static final SQLiteConnection connection = SQLiteConnection.getInstance();
-    private static final ConnectionSource connectionSource = connection.getConnection();
 
     public static long getId() {
         return id.get();
@@ -171,71 +163,71 @@ public class ExpenseViewModel {
         setDetails("");
     }
 
-    public static void saveExpense() throws SQLException {
-        Dao<Expense, Long> expenseDao = DaoManager.createDao(connectionSource, Expense.class);
-
-        Expense expense =
-                new Expense(
-                        getDate(), getName(), getCategory(), getBranch(), getDetails(), getAmount());
-
-        expenseDao.create(expense);
+    public static void saveExpense() throws Exception {
+//        Dao<Expense, Long> expenseDao = DaoManager.createDao(connectionSource, Expense.class);
+//
+//        Expense expense =
+//                new Expense(
+//                        getDate(), getName(), getCategory(), getBranch(), getDetails(), getAmount());
+//
+//        expenseDao.create(expense);
 
         resetProperties();
         getAllExpenses();
     }
 
-    public static void getAllExpenses() throws SQLException {
-        Dao<Expense, Long> expenseDao = DaoManager.createDao(connectionSource, Expense.class);
-
-        Platform.runLater(
-                () -> {
-                    expenseList.clear();
-
-                    try {
-                        expenseList.addAll(expenseDao.queryForAll());
-                    } catch (SQLException e) {
-                        SpotyLogger.writeToFile(e, ExpenseViewModel.class);
-                    }
-                });
+    public static void getAllExpenses() throws Exception {
+//        Dao<Expense, Long> expenseDao = DaoManager.createDao(connectionSource, Expense.class);
+//
+//        Platform.runLater(
+//                () -> {
+//                    expenseList.clear();
+//
+//                    try {
+//                        expenseList.addAll(expenseDao.queryForAll());
+//                    } catch (Exception e) {
+//                        SpotyLogger.writeToFile(e, ExpenseViewModel.class);
+//                    }
+//                });
     }
 
-    public static void getItem(long index) throws SQLException {
-        Dao<Expense, Long> expenseDao = DaoManager.createDao(connectionSource, Expense.class);
-
-        Expense expense = expenseDao.queryForId(index);
-
-        setId(expense.getId());
-        setDate(expense.getLocaleDate());
-        setName(expense.getName());
-        setBranch(expense.getBranch());
-        setCategory(expense.getExpenseCategory());
-        setAmount(expense.getAmount());
-        setDetails(expense.getDetails());
+    public static void getItem(long index) throws Exception {
+//        Dao<Expense, Long> expenseDao = DaoManager.createDao(connectionSource, Expense.class);
+//
+//        Expense expense = expenseDao.queryForId(index);
+//
+//        setId(expense.getId());
+//        setDate(expense.getLocaleDate());
+//        setName(expense.getName());
+//        setBranch(expense.getBranch());
+//        setCategory(expense.getExpenseCategory());
+//        setAmount(expense.getAmount());
+//        setDetails(expense.getDetails());
 
         getAllExpenses();
     }
 
-    public static void updateItem(long index) throws SQLException {
-        Dao<Expense, Long> expenseDao = DaoManager.createDao(connectionSource, Expense.class);
-
-        Expense expense = expenseDao.queryForId(index);
-
-        expense.setDate(getDate());
-        expense.setName(getName());
-        expense.setCategory(getCategory());
-        expense.setBranch(getBranch());
-        expense.setDetails(getDetails());
-        expense.setAmount(getAmount());
-
-        expenseDao.update(expense);
+    public static void updateItem(long index) throws Exception {
+//        Dao<Expense, Long> expenseDao = DaoManager.createDao(connectionSource, Expense.class);
+//
+//        Expense expense = expenseDao.queryForId(index);
+//
+//        expense.setDate(getDate());
+//        expense.setName(getName());
+//        expense.setCategory(getCategory());
+//        expense.setBranch(getBranch());
+//        expense.setDetails(getDetails());
+//        expense.setAmount(getAmount());
+//
+//        expenseDao.update(expense);
 
         getAllExpenses();
     }
 
-    public static void deleteItem(long index) throws SQLException {
-        Dao<Expense, Long> expenseDao = DaoManager.createDao(connectionSource, Expense.class);
-
-        expenseDao.deleteById(index);
+    public static void deleteItem(long index) throws Exception {
+//        Dao<Expense, Long> expenseDao = DaoManager.createDao(connectionSource, Expense.class);
+//
+//        expenseDao.deleteById(index);
 
         getAllExpenses();
     }

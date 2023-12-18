@@ -19,173 +19,176 @@
  * Root
 **************************************************/
 .rootPane {
-	-fx-background-color: -mfx-app-background-light;
-	-fx-background-radius: 10;
-	-fx-border-color: #ebebeb;
-	-fx-border-radius: 10;
+    -fx-background-color: -mfx-app-background-light;
+    -fx-background-radius: 10;
+    -fx-border-color: #ebebeb;
+    -fx-border-radius: 10;
 }
 
 /**************************************************
  * Window Header
 **************************************************/
 .rootPane .close-icon {
-	-mfx-color: -mfx-red;
-	-fx-opacity: 0.5;
+    -mfx-color: -mfx-red;
+    -fx-opacity: 0.5;
 }
 
 .rootPane .close-icon:hover {
-	-fx-opacity: 1.0;
+    -fx-opacity: 1.0;
 }
 
 .rootPane .maximize-icon {
-	-mfx-color: #ffbf37;
-	-fx-opacity: 0.5;
+    -mfx-color: #ffbf37;
+    -fx-opacity: 0.5;
 }
 
 .rootPane .maximize-icon:hover {
-	-fx-opacity: 1.0;
+    -fx-opacity: 1.0;
 }
 
 .rootPane .minimize-icon {
-	-mfx-color: -mfx-purple;
-	-fx-opacity: 0.5;
+    -mfx-color: -mfx-purple;
+    -fx-opacity: 0.5;
 }
 
 .rootPane .minimize-icon:hover {
-	-fx-opacity: 1.0;
+    -fx-opacity: 1.0;
 }
 
 .rootPane .minimize-icon:minimize {
-	-fx-opacity: 1.0;
+    -fx-opacity: 1.0;
 }
 
 /**************************************************
  * Sidebar
 **************************************************/
 .rootPane .sidebar {
-	-fx-background-color: -mfx-charcoal;
-	-fx-background-radius: 10;
-	-fx-border-radius: 10;
+    -fx-background-color: -mfx-charcoal;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
 }
 
 .rootPane .sidebar .header {
-	-fx-font-family: 'Visby Round CF Heavy';
-	-fx-font-size: 26;
-	-fx-text-fill: white;
+    -fx-font-family: 'Visby Round CF Heavy';
+    -fx-font-size: 26;
+    -fx-text-fill: white;
 }
 
 .rootPane .sidebar .header .mfx-font-icon {
-	-mfx-color: -mfx-black;
+    -mfx-color: -mfx-black;
 }
 
 .rootPane .sidebar .mfx-scroll-pane {
-	-fx-background-color: transparent;
+    -fx-background-color: transparent;
 
-	-track-color: rgba(255, 255, 255, 0.3);
-	-thumb-color: white;
-	-thumb-hover-color: white;
+    -track-color: rgba(255, 255, 255, 0.3);
+    -thumb-color: white;
+    -thumb-hover-color: white;
 }
 
 .rootPane .sidebar .menu-label {
-	-fx-font-family: 'Visby Round CF Bold';
-	-fx-font-size: 14;
-	-fx-text-fill: white;
+    -fx-font-family: 'Visby Round CF Bold';
+    -fx-font-size: 14;
+    -fx-text-fill: white;
 }
 
-                                      /*TREE VIEW NAV STYLING.*/
+/*TREE VIEW NAV STYLING.*/
 .rootPane .sidebar .navbar .tree-view {
     -fx-insets: 0;
     -fx-border-insets: 0;
     -fx-background-insets: 1;
-	-fx-background-color: -mfx-charcoal;
-	-fx-fill: #e3e7e9;
-	-fx-text-fill: #e3e7e9;
+    -fx-background-color: -mfx-charcoal;
+    -fx-fill: #e3e7e9;
+    -fx-text-fill: #e3e7e9;
 }
 
 .rootPane .sidebar .navbar .tree-view .tree-cell {
-	-fx-background-color: -mfx-charcoal;
-	-fx-background-radius: 0;
-	-fx-border-radius: 0;
-	-fx-pref-height: 40;
-	-fx-font-family: 'Visby Round CF Demi Bold';
-	-fx-font-size: 13;
-	-fx-fill: white;
-	-fx-text-fill: white;
+    -fx-background-color: -mfx-charcoal;
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+    -fx-pref-height: 40;
+    -fx-font-family: 'Visby Round CF Demi Bold';
+    -fx-font-size: 13;
+    -fx-fill: white;
+    -fx-text-fill: white;
 }
 
 .nav-tree-cell > .container > .title {
-	-fx-background-radius: 0;
-	-fx-border-radius: 0;
-	-fx-pref-height: 40;
-	-fx-font-family: 'Visby Round CF Demi Bold';
-	-fx-font-size: 13;
-	-fx-fill: white;
-	-fx-text-fill: white;
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+    -fx-pref-height: 40;
+    -fx-font-family: 'Visby Round CF Demi Bold';
+    -fx-font-size: 13;
+    -fx-fill: white;
+    -fx-text-fill: white;
 }
 
 .rootPane .sidebar .navbar .tree-view .tree-cell:selected {
-	-fx-background-radius: 30;
-	-fx-background-color: -mfx-selected-nav;
-	-fx-fill: -mfx-nav-white-text;
-	-fx-text-fill: -mfx-nav-white-text;
-	-fx-border-insets: 3 3.5 3 21.1;
-	-fx-background-insets: 0 3.5 0 21.1;
+    -fx-background-radius: 30;
+    -fx-background-color: -mfx-selected-nav;
+    -fx-fill: -mfx-nav-white-text;
+    -fx-text-fill: -mfx-nav-white-text;
+    -fx-border-insets: 3 3.5 3 21.1;
+    -fx-background-insets: 0 3.5 0 21.1;
 }
 
 .nav-tree-cell:selected .container .title {
-	-fx-text-fill: -mfx-nav-white-text;
+    -fx-text-fill: -mfx-nav-white-text;
 }
 
 .rootPane .sidebar .navbar .tree-view .tree-cell .container:hover {
-	-fx-background-radius: 30;
-	-fx-background-color: -mfx-charcoal-disabled;
-	-fx-fill: -mfx-nav-white-text;
-	-fx-text-fill: -mfx-nav-white-text;
+    -fx-background-radius: 30;
+    -fx-background-color: -mfx-charcoal-disabled;
+    -fx-fill: -mfx-nav-white-text;
+    -fx-text-fill: -mfx-nav-white-text;
 }
 
 .rootPane .sidebar .navbar .tree-view .tree-cell .container {
-	-fx-background-radius: 30;
-	-fx-fill: -mfx-charcoal;
-	-fx-padding: 4 4 4 4;
-	-fx-text-fill: -mfx-nav-white-text;
+    -fx-background-radius: 30;
+    -fx-fill: -mfx-charcoal;
+    -fx-padding: 4 4 4 4;
+    -fx-text-fill: -mfx-nav-white-text;
 }
 
- 												/*Style group*/
+/*Style group*/
 .rootPane .sidebar .navbar .tree-view .tree-cell .container:group:selected,
 .rootPane .sidebar .navbar .tree-view .tree-cell:group:selected {
-	-fx-background-radius: 30;
-	-fx-background-color: -mfx-charcoal;
-	-fx-fill: -mfx-nav-white-text;
-	-fx-text-fill: -mfx-nav-white-text;
-}
-												 /*Style expanded group.*/
-.rootPane .sidebar .navbar .tree-view .tree-cell:group:expanded {
-	-fx-background-radius: 30;
-	-fx-background-color: -mfx-charcoal;
-	-fx-fill: -mfx-nav-white-text;
-	-fx-text-fill: -mfx-nav-white-text;
+    -fx-background-radius: 30;
+    -fx-background-color: -mfx-charcoal;
+    -fx-fill: -mfx-nav-white-text;
+    -fx-text-fill: -mfx-nav-white-text;
 }
 
-													/*Style group sub item.*/
+/*Style expanded group.*/
+.rootPane .sidebar .navbar .tree-view .tree-cell:group:expanded {
+    -fx-background-radius: 30;
+    -fx-background-color: -mfx-charcoal;
+    -fx-fill: -mfx-nav-white-text;
+    -fx-text-fill: -mfx-nav-white-text;
+}
+
+/*Style group sub item.*/
 .rootPane .sidebar .navbar .tree-view .tree-cell .container:sub-tree-item {
-	-fx-background-radius: 30;
+    -fx-background-radius: 30;
     -fx-fill: -mfx-nav-white-text;
     -fx-text-fill: -mfx-nav-white-text;
     -fx-indent: 35;
 }
+
 .rootPane .sidebar .navbar .tree-view .tree-cell:selected:sub-tree-item {
-	-fx-background-radius: 30;
+    -fx-background-radius: 30;
     -fx-fill: -mfx-nav-white-text;
     -fx-text-fill: -mfx-nav-white-text;
-	-fx-border-insets: 3 3.5 3 34;
-	-fx-background-insets: 3 3.5 3 34;
+    -fx-border-insets: 3 3.5 3 34;
+    -fx-background-insets: 3 3.5 3 34;
 }
+
 .rootPane .sidebar .navbar .tree-view .tree-cell .container:hover:sub-tree-item {
-	-fx-background-radius: 30;
-	-fx-background-color: -mfx-charcoal-disabled;
-	-fx-fill: -mfx-nav-white-text;
-	-fx-text-fill: -mfx-nav-white-text;
-	-fx-indent: 35;
+    -fx-background-radius: 30;
+    -fx-background-color: -mfx-charcoal-disabled;
+    -fx-fill: -mfx-nav-white-text;
+    -fx-text-fill: -mfx-nav-white-text;
+    -fx-indent: 35;
 }
 
 .nav-tree-cell:group > .container .ikonli-font-icon {
@@ -208,10 +211,10 @@
 }
 
 .nav-tree-cell:expanded, .nav-tree-cell:sub-tree-item {
-    -fx-background-color: #404040 ;
+    -fx-background-color: #404040;
 }
 
-										/*Remove Horizontal scrollbar and other components.*/
+/*Remove Horizontal scrollbar and other components.*/
 .tree-view *.scroll-bar:horizontal,
 .tree-view *.scroll-bar:horizontal *.track,
 .tree-view *.scroll-bar:horizontal *.track-background,
@@ -233,11 +236,12 @@
     -fx-padding: 0;
 }
 
-											/*Style scrollbar track and thumb*/
+/*Style scrollbar track and thumb*/
 .tree-view *.scroll-bar:vertical {
-    -fx-unit-increment: 2 ;
-    -fx-block-increment: 5 ;
+    -fx-unit-increment: 2;
+    -fx-block-increment: 5;
 }
+
 .tree-view *.scroll-bar:vertical *.track,
 .tree-view *.scroll-bar:vertical *.track-background {
     -fx-background-radius: 2.0em;
@@ -245,11 +249,13 @@
     -fx-padding: 0.2em;
     -fx-background-insets: 4.0, 0.0, 0.0;
 }
+
 .tree-view *.scroll-bar:vertical *.thumb {
     -fx-background-color: derive(#20601cbe, 90.0%);
     -fx-background-insets: 3.0, 0.0, 0.0;
     -fx-background-radius: 2.0em;
 }
+
 .tree-view *.scroll-bar:vertical *.thumb:hover {
     -fx-background-color: derive(#20601cbe, 90.0%);
     -fx-background-insets: 2.5, 0.0, 0.0;
@@ -260,71 +266,71 @@
 /*   -fx-shape: "M 0 0 L 10 5 L 0 10 L 0 8 L 8 5 L 0 2 Z";*/
 /*}*/
 
-                                            /*NAV BUTTON STYLES*/
+/*NAV BUTTON STYLES*/
 .rootPane .sidebar .navbar .mfx-button .mfx-ripple-generator {
-	-mfx-paused: true;
+    -mfx-paused: true;
 }
 
 .rootPane .sidebar .navbar .tree-view .tree-cell .mfx-icon-wrapper .mfx-font-icon {
-	-mfx-color: white;
+    -mfx-color: white;
 }
 
 .rootPane .sidebar .navbar .mfx-button {
-	-fx-background-color: -mfx-charcoal;
-	-fx-background-radius: 0;
-	-fx-border-color: transparent;
-	-fx-border-radius: 0;
-	-fx-pref-height: 40;
+    -fx-background-color: -mfx-charcoal;
+    -fx-background-radius: 0;
+    -fx-border-color: transparent;
+    -fx-border-radius: 0;
+    -fx-pref-height: 40;
 
-	-fx-font-family: 'Visby Round CF Demi Bold';
-	-fx-font-size: 13;
-	-fx-fill: white;
-	-fx-text-fill: white;
+    -fx-font-family: 'Visby Round CF Demi Bold';
+    -fx-font-size: 13;
+    -fx-fill: white;
+    -fx-text-fill: white;
 }
 
 .rootPane .sidebar .navbar .mfx-button:focused .selection-rectangle {
-	-fx-stroke: transparent;
-	-fx-fill: #601cbe;
+    -fx-stroke: transparent;
+    -fx-fill: #601cbe;
 }
 
 .rootPane .sidebar .navbar .mfx-button:focused .mfx-icon-wrapper .mfx-font-icon {
-	-mfx-color: -mfx-charcoal;
+    -mfx-color: -mfx-charcoal;
 }
 
 .rootPane .sidebar .navbar .mfx-icon-wrapper .mfx-font-icon {
-	-mfx-color: -mfx-nav-white-text;
+    -mfx-color: -mfx-nav-white-text;
 }
 
 .rootPane .sidebar .navbar .mfx-button:hover {
-	-fx-background-color: -mfx-charcoal-disabled;
-	-fx-background-radius: 30;
-	-fx-fill: -mfx-charcoal;
+    -fx-background-color: -mfx-charcoal-disabled;
+    -fx-background-radius: 30;
+    -fx-fill: -mfx-charcoal;
 }
 
 .rootPane .sidebar .navbar .mfx-button:focused {
     -fx-background-color: -mfx-selected-nav;
-	-fx-background-radius: 30;
+    -fx-background-radius: 30;
     -fx-fill: -mfx-nav-white-text;
     -fx-text-fill: -mfx-nav-white-text;
 }
 
 .rootPane .sidebar .navbar .mfx-button:focused .selection-rectangle {
-	-fx-stroke: transparent;
-	-fx-fill: #601cbe;
+    -fx-stroke: transparent;
+    -fx-fill: #601cbe;
 }
 
 .rootPane .sidebar .navbar .mfx-button:focused .mfx-icon-wrapper .mfx-font-icon {
-	-mfx-color: -mfx-nav-white-text;
+    -mfx-color: -mfx-nav-white-text;
 }
 
-                                          /*APPBAR STYLES*/
+/*APPBAR STYLES*/
 .appBar {
-	-fx-background-color: -mfx-app-components-light;
-	-fx-background-radius: 10 10 10 10;
-	-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.12, -1.0, 1.5);
+    -fx-background-color: -mfx-app-components-light;
+    -fx-background-radius: 10 10 10 10;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.12, -1.0, 1.5);
 }
 
-                                          /*NOTIFICATION STYLES*/
+/*NOTIFICATION STYLES*/
 .notification-holder {
     -fx-background-color: transparent;
     -fx-fill: transparent;
@@ -355,91 +361,95 @@
 }
 
 .notification-icon .mfx-font-icon {
-	-mfx-color: -mfx-nav-white-text;
+    -mfx-color: -mfx-nav-white-text;
 }
 
 .notification-message {
-	-fx-font-family: 'Visby Round CF Demi Bold';
+    -fx-font-family: 'Visby Round CF Demi Bold';
     -fx-font-size: 1.0em;
     -fx-content-display: left;
     -fx-graphic-text-gap: 10;
     -fx-text-fill: rgba(0, 0, 0, 1);
 }
 
-											/*Error alert styles.*/
+/*Error alert styles.*/
 .error {
     -fx-background-color: #fcede9; /*Light red.*/
     -fx-border-color: #f5a089;
     -fx-border-size: 2;
 }
+
 .error .notification-icon {
     -fx-background-color: #cd5235; /*red*/
 }
 
-											/*Success alert styles.*/
+/*Success alert styles.*/
 .success {
     -fx-background-color: #e4f0e7; /*Light green.*/
     -fx-border-color: #89f5a4;
     -fx-border-size: 2;
 }
+
 .success .notification-icon {
     -fx-background-color: #35cc56; /*green.*/
 }
 
 .shadow {
-	-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 5, 0.12, -1.0, 2.0);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 5, 0.12, -1.0, 2.0);
 }
 
-                                                  /*POS PRODUCT CARD*/
+/*POS PRODUCT CARD*/
 .pos-product-card, .pos-product-card:hover {
-	-fx-background-color: rgba(255, 255, 255, 1);
-	-fx-background-radius: 10;
-	-fx-border-radius: 10;
-	-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0.12, -1.0, 2.0);
+    -fx-background-color: rgba(255, 255, 255, 1);
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0.12, -1.0, 2.0);
 }
+
 .pos-product-label {
     -fx-background-color: red;
     -fx-text-fill: white;
-	-fx-background-radius: 5;
-	-fx-padding: 2 10 2 10;
+    -fx-background-radius: 5;
+    -fx-padding: 2 10 2 10;
 }
 
 .rounded {
-	-fx-background-color: rgba(255, 255, 255, 1);
-	-fx-background-radius: 10;
-	-fx-border-radius: 10;
+    -fx-background-color: rgba(255, 255, 255, 1);
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
 }
 
 .rounded-border {
-	-fx-background-color: rgba(255, 255, 255, 1);
-	-fx-background-radius: 10;
-	-fx-border-radius: 10;
-	-fx-border-color: -spoty-primary-color;
+    -fx-background-color: rgba(255, 255, 255, 1);
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: -spoty-primary-color;
 }
 
 /*Styling MFX TreeView*/
 .mfx-tree-view {
-	-fx-background-color: -mfx-charcoal;
+    -fx-background-color: -mfx-charcoal;
 }
 
 .mfx-tree-cell {
-	-fx-background-color: -mfx-charcoal;
-	-fx-text-fill: #e3e7e9;
+    -fx-background-color: -mfx-charcoal;
+    -fx-text-fill: #e3e7e9;
 }
 
 .mfx-tree-cell:selected {
-	-fx-background-color: -mfx-selected-nav;
-	-fx-text-fill: -mfx-nav-white-text;
+    -fx-background-color: -mfx-selected-nav;
+    -fx-text-fill: -mfx-nav-white-text;
 }
 
 .mfx-tree-cell:hover {
-	-fx-background-color: -mfx-charcoal-disabled;
+    -fx-background-color: -mfx-charcoal-disabled;
 }
+
 /*Scrollbar*/
 .mfx-tree-view .scroll-bar:vertical {
-	-fx-background-color: transparent;
+    -fx-background-color: transparent;
 }
 
 .mfx-tree-view .scroll-bar:vertical .thumb {
-	-fx-background-color: derive(#20601cbe, 90.0%);
+    -fx-background-color: derive(#20601cbe, 90.0%);
 }

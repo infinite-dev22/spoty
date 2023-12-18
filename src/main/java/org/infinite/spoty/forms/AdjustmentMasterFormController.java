@@ -42,8 +42,8 @@ import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
-import org.infinite.spoty.database.models.AdjustmentDetail;
-import org.infinite.spoty.database.models.Branch;
+import org.infinite.spoty.data_source.dtos.Branch;
+import org.infinite.spoty.data_source.dtos.adjustments.AdjustmentDetail;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.AdjustmentDetailViewModel;
@@ -53,7 +53,6 @@ import org.infinite.spoty.views.BaseController;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import java.util.function.Function;
@@ -231,7 +230,7 @@ public class AdjustmentMasterFormController implements Initializable {
                             () -> {
                                 try {
                                     AdjustmentDetailViewModel.getAdjustmentDetail(obj.getData());
-                                } catch (SQLException e) {
+                                } catch (Exception e) {
                                     SpotyLogger.writeToFile(e, this.getClass());
                                 }
                             });
@@ -290,7 +289,7 @@ public class AdjustmentMasterFormController implements Initializable {
                         () -> {
                             try {
                                 AdjustmentMasterViewModel.updateItem(AdjustmentMasterViewModel.getId());
-                            } catch (SQLException e) {
+                            } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }
                         });
@@ -313,7 +312,7 @@ public class AdjustmentMasterFormController implements Initializable {
                     () -> {
                         try {
                             AdjustmentMasterViewModel.saveAdjustmentMaster();
-                        } catch (SQLException e) {
+                        } catch (Exception e) {
                             SpotyLogger.writeToFile(e, this.getClass());
                         }
                     });

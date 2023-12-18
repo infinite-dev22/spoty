@@ -28,7 +28,6 @@ import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.CustomerViewModel;
 
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
@@ -126,7 +125,7 @@ public class CustomerFormController implements Initializable {
                             SpotyThreader.spotyThreadPool(() -> {
                                 try {
                                     CustomerViewModel.updateItem(CustomerViewModel.getId());
-                                } catch (SQLException e) {
+                                } catch (Exception e) {
                                     SpotyLogger.writeToFile(e, this.getClass());
                                 }
                             });
@@ -145,7 +144,7 @@ public class CustomerFormController implements Initializable {
                         SpotyThreader.spotyThreadPool(() -> {
                             try {
                                 CustomerViewModel.saveCustomer();
-                            } catch (SQLException e) {
+                            } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }
                         });

@@ -34,7 +34,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import org.infinite.spoty.database.models.Product;
+import org.infinite.spoty.data_source.dtos.Product;
 import org.infinite.spoty.forms.ProductFormController;
 import org.infinite.spoty.printable.general.GeneralViewController;
 import org.infinite.spoty.utils.SpotyThreader;
@@ -43,7 +43,6 @@ import org.infinite.spoty.views.BaseController;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 
@@ -202,7 +201,7 @@ public class ProductController implements Initializable {
                             () -> {
                                 try {
                                     ProductViewModel.deleteProduct(obj.getData().getId());
-                                } catch (SQLException ex) {
+                                } catch (Exception ex) {
                                     throw new RuntimeException(ex);
                                 }
                             });
@@ -216,7 +215,7 @@ public class ProductController implements Initializable {
                             () -> {
                                 try {
                                     ProductViewModel.getProduct(obj.getData().getId());
-                                } catch (SQLException ex) {
+                                } catch (Exception ex) {
                                     throw new RuntimeException(ex);
                                 }
                             });

@@ -16,7 +16,7 @@
 @import 'MFXColors.css';
 
 .splashName {
-	-fx-font-family: 'Visby Round CF Demi Bold';
-	-fx-font-size: 38;
-	-fx-font-weight: bold;
+    -fx-font-family: 'Visby Round CF Demi Bold';
+    -fx-font-size: 38;
+    -fx-font-weight: bold;
 }

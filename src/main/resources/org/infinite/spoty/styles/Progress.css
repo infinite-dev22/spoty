@@ -15,9 +15,9 @@
 @import 'MFXColors.css';
 
 progressBar .bar1 {
-	-fx-fill: -common-gradient;
+    -fx-fill: -common-gradient;
 }
 
 progressBar .bar2 {
-	-fx-fill: -secondary-gradient;
+    -fx-fill: -secondary-gradient;
 }

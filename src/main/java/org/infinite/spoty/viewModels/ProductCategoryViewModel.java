@@ -14,26 +14,11 @@
 
 package org.infinite.spoty.viewModels;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.support.ConnectionSource;
-
-import java.sql.SQLException;
-
-import javafx.application.Platform;
-import javafx.beans.property.ListProperty;
-import javafx.beans.property.LongProperty;
-import javafx.beans.property.SimpleListProperty;
-import javafx.beans.property.SimpleLongProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
-import org.infinite.spoty.GlobalActions;
-import org.infinite.spoty.database.connection.SQLiteConnection;
-import org.infinite.spoty.database.models.ProductCategory;
-import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.data_source.dtos.ProductCategory;
+
 
 public class ProductCategoryViewModel {
     private static final LongProperty id = new SimpleLongProperty(0);
@@ -46,8 +31,6 @@ public class ProductCategoryViewModel {
             new SimpleListProperty<>(categoriesList);
     public static ObservableList<ProductCategory> categoriesComboBoxList =
             FXCollections.observableArrayList();
-    private static final SQLiteConnection connection = SQLiteConnection.getInstance();
-    private static final ConnectionSource connectionSource = connection.getConnection();
 
     public static long getId() {
         return id.get();
@@ -109,13 +92,13 @@ public class ProductCategoryViewModel {
         return categories;
     }
 
-    public static void saveProductCategory() throws SQLException {
-        Dao<ProductCategory, Long> productCategoryDao =
-                DaoManager.createDao(connectionSource, ProductCategory.class);
-
-        ProductCategory productCategory = new ProductCategory(getCode(), getName());
-
-        productCategoryDao.createIfNotExists(productCategory);
+    public static void saveProductCategory() throws Exception {
+//        Dao<ProductCategory, Long> productCategoryDao =
+//                DaoManager.createDao(connectionSource, ProductCategory.class);
+//
+//        ProductCategory productCategory = new ProductCategory(getCode(), getName());
+//
+//        productCategoryDao.createIfNotExists(productCategory);
 
         clearProductCategoryData();
         getItems();
@@ -127,53 +110,53 @@ public class ProductCategoryViewModel {
         setName("");
     }
 
-    public static void getItems() throws SQLException {
-        Dao<ProductCategory, Long> productCategoryDao =
-                DaoManager.createDao(connectionSource, ProductCategory.class);
-
-        Platform.runLater(
-                () -> {
-                    categoriesList.clear();
-
-                    try {
-                        categoriesList.addAll(productCategoryDao.queryForAll());
-                    } catch (SQLException e) {
-                        SpotyLogger.writeToFile(e, ProductCategoryViewModel.class);
-                    }
-                });
+    public static void getItems() throws Exception {
+//        Dao<ProductCategory, Long> productCategoryDao =
+//                DaoManager.createDao(connectionSource, ProductCategory.class);
+//
+//        Platform.runLater(
+//                () -> {
+//                    categoriesList.clear();
+//
+//                    try {
+//                        categoriesList.addAll(productCategoryDao.queryForAll());
+//                    } catch (Exception e) {
+//                        SpotyLogger.writeToFile(e, ProductCategoryViewModel.class);
+//                    }
+//                });
     }
 
-    public static void getItem(long index) throws SQLException {
-        Dao<ProductCategory, Long> productCategoryDao =
-                DaoManager.createDao(connectionSource, ProductCategory.class);
-        ProductCategory productCategory = productCategoryDao.queryForId(index);
-
-        setId(productCategory.getId());
-        setCode(productCategory.getCode());
-        setName(productCategory.getName());
+    public static void getItem(long index) throws Exception {
+//        Dao<ProductCategory, Long> productCategoryDao =
+//                DaoManager.createDao(connectionSource, ProductCategory.class);
+//        ProductCategory productCategory = productCategoryDao.queryForId(index);
+//
+//        setId(productCategory.getId());
+//        setCode(productCategory.getCode());
+//        setName(productCategory.getName());
 
         getItems();
     }
 
-    public static void updateItem(long index) throws SQLException {
-        Dao<ProductCategory, Long> productCategoryDao =
-                DaoManager.createDao(connectionSource, ProductCategory.class);
-
-        ProductCategory productCategory = productCategoryDao.queryForId(index);
-        productCategory.setCode(getCode());
-        productCategory.setName(getName());
-
-        productCategoryDao.update(productCategory);
+    public static void updateItem(long index) throws Exception {
+//        Dao<ProductCategory, Long> productCategoryDao =
+//                DaoManager.createDao(connectionSource, ProductCategory.class);
+//
+//        ProductCategory productCategory = productCategoryDao.queryForId(index);
+//        productCategory.setCode(getCode());
+//        productCategory.setName(getName());
+//
+//        productCategoryDao.update(productCategory);
 
         clearProductCategoryData();
         getItems();
     }
 
-    public static void deleteItem(long index) throws SQLException {
-        Dao<ProductCategory, Long> productCategoryDao =
-                DaoManager.createDao(connectionSource, ProductCategory.class);
-
-        productCategoryDao.deleteById(index);
+    public static void deleteItem(long index) throws Exception {
+//        Dao<ProductCategory, Long> productCategoryDao =
+//                DaoManager.createDao(connectionSource, ProductCategory.class);
+//
+//        productCategoryDao.deleteById(index);
 
         getItems();
     }

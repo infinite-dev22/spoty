@@ -14,20 +14,15 @@
 
 package org.infinite.spoty.viewModels;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.support.ConnectionSource;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.database.connection.SQLiteConnection;
-import org.infinite.spoty.database.models.AdjustmentMaster;
-import org.infinite.spoty.database.models.Branch;
+import org.infinite.spoty.data_source.dtos.Branch;
+import org.infinite.spoty.data_source.dtos.adjustments.AdjustmentMaster;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.jetbrains.annotations.Nullable;
 
-import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -45,8 +40,6 @@ public class AdjustmentMasterViewModel {
     private static final StringProperty note = new SimpleStringProperty("");
     private static final StringProperty status = new SimpleStringProperty("");
     private static final DoubleProperty totalAmount = new SimpleDoubleProperty();
-    private static final SQLiteConnection connection = SQLiteConnection.getInstance();
-    private static final ConnectionSource connectionSource = connection.getConnection();
 
     public static long getId() {
         return id.get();
@@ -148,11 +141,12 @@ public class AdjustmentMasterViewModel {
                 });
     }
 
-    public static void saveAdjustmentMaster() throws SQLException {
-        Dao<AdjustmentMaster, Long> adjustmentMasterDao =
-                DaoManager.createDao(connectionSource, AdjustmentMaster.class);
-
-        AdjustmentMaster adjustmentMaster = new AdjustmentMaster(getBranch(), getNote(), getDate());
+    public static void saveAdjustmentMaster() throws Exception {
+        var adjustmentMaster = AdjustmentMaster.builder()
+                .branch(getBranch())
+                .notes(getNote())
+                .date(getDate())
+                .build();
 
         if (!AdjustmentDetailViewModel.getAdjustmentDetailsList().isEmpty()) {
             AdjustmentDetailViewModel.getAdjustmentDetailsList()
@@ -161,7 +155,7 @@ public class AdjustmentMasterViewModel {
             adjustmentMaster.setAdjustmentDetails(AdjustmentDetailViewModel.getAdjustmentDetailsList());
         }
 
-        adjustmentMasterDao.create(adjustmentMaster);
+//        adjustmentMasterDao.create(adjustmentMaster);
 
         AdjustmentDetailViewModel.saveAdjustmentDetails();
 
@@ -170,58 +164,52 @@ public class AdjustmentMasterViewModel {
         getAllAdjustmentMasters();
     }
 
-    public static void getAllAdjustmentMasters() throws SQLException {
-        Dao<AdjustmentMaster, Long> adjustmentMasterDao =
-                DaoManager.createDao(connectionSource, AdjustmentMaster.class);
-
-        Platform.runLater(
-                () -> {
-                    adjustmentMasterList.clear();
-
-                    try {
-                        adjustmentMasterList.addAll(adjustmentMasterDao.queryForAll());
-                    } catch (SQLException e) {
-                        SpotyLogger.writeToFile(e, AdjustmentMasterViewModel.class);
-                    }
-                });
+    public static void getAllAdjustmentMasters() throws Exception {
+//        Platform.runLater(
+//                () -> {
+//                    adjustmentMasterList.clear();
+//
+//                    try {
+//                        adjustmentMasterList.addAll(adjustmentMasterDao.queryForAll());
+//                    } catch (Exception e) {
+//                        SpotyLogger.writeToFile(e, AdjustmentMasterViewModel.class);
+//                    }
+//                });
     }
 
-    public static void getItem(long index) throws SQLException {
-        Dao<AdjustmentMaster, Long> adjustmentMasterDao =
-                DaoManager.createDao(connectionSource, AdjustmentMaster.class);
+    public static void getItem(long index) throws Exception {
+//        AdjustmentMaster adjustmentMaster = adjustmentMasterDao.queryForId(index);
 
-        AdjustmentMaster adjustmentMaster = adjustmentMasterDao.queryForId(index);
-
-        Platform.runLater(
-                () -> {
-                    setId(adjustmentMaster.getId());
-                    setBranch(adjustmentMaster.getBranch());
-                    setNote(adjustmentMaster.getNotes());
-                    setDate(adjustmentMaster.getLocaleDate());
-
-                    AdjustmentDetailViewModel.adjustmentDetailsList.clear();
-                    AdjustmentDetailViewModel.adjustmentDetailsList.addAll(
-                            adjustmentMaster.getAdjustmentDetails());
-                });
+//        Platform.runLater(
+//                () -> {
+//                    setId(adjustmentMaster.getId());
+//                    setBranch(adjustmentMaster.getBranch());
+//                    setNote(adjustmentMaster.getNotes());
+//                    setDate(adjustmentMaster.getLocaleDate());
+//
+//                    AdjustmentDetailViewModel.adjustmentDetailsList.clear();
+//                    AdjustmentDetailViewModel.adjustmentDetailsList.addAll(
+//                            adjustmentMaster.getAdjustmentDetails());
+//                });
 
         getAllAdjustmentMasters();
     }
 
-    public static void updateItem(long index) throws SQLException {
-        Dao<AdjustmentMaster, Long> adjustmentMasterDao =
-                DaoManager.createDao(connectionSource, AdjustmentMaster.class);
+    public static void updateItem(long index) throws Exception {
+//        Dao<AdjustmentMaster, Long> adjustmentMasterDao =
+//                DaoManager.createDao(connectionSource, AdjustmentMaster.class);
+//
+//        AdjustmentMaster adjustmentMaster = adjustmentMasterDao.queryForId(index);
 
-        AdjustmentMaster adjustmentMaster = adjustmentMasterDao.queryForId(index);
-
-        adjustmentMaster.setBranch(getBranch());
-        adjustmentMaster.setNotes(getNote());
-        adjustmentMaster.setDate(getDate());
+//        adjustmentMaster.setBranch(getBranch());
+//        adjustmentMaster.setNotes(getNote());
+//        adjustmentMaster.setDate(getDate());
 
         AdjustmentDetailViewModel.deleteAdjustmentDetails(PENDING_DELETES);
 
-        adjustmentMaster.setAdjustmentDetails(AdjustmentDetailViewModel.getAdjustmentDetailsList());
-
-        adjustmentMasterDao.update(adjustmentMaster);
+//        adjustmentMaster.setAdjustmentDetails(AdjustmentDetailViewModel.getAdjustmentDetailsList());
+//
+//        adjustmentMasterDao.update(adjustmentMaster);
 
         AdjustmentDetailViewModel.updateAdjustmentDetails();
 
@@ -230,11 +218,11 @@ public class AdjustmentMasterViewModel {
         getAllAdjustmentMasters();
     }
 
-    public static void deleteItem(long index) throws SQLException {
-        Dao<AdjustmentMaster, Long> adjustmentMasterDao =
-                DaoManager.createDao(connectionSource, AdjustmentMaster.class);
-
-        adjustmentMasterDao.deleteById(index);
+    public static void deleteItem(long index) throws Exception {
+//        Dao<AdjustmentMaster, Long> adjustmentMasterDao =
+//                DaoManager.createDao(connectionSource, AdjustmentMaster.class);
+//
+//        adjustmentMasterDao.deleteById(index);
 
         getAllAdjustmentMasters();
     }

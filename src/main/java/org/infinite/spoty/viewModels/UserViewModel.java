@@ -14,24 +14,17 @@
 
 package org.infinite.spoty.viewModels;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.support.ConnectionSource;
-import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.database.connection.SQLiteConnection;
-import org.infinite.spoty.database.models.Branch;
-import org.infinite.spoty.database.models.Role;
-import org.infinite.spoty.database.models.User;
-import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.data_source.dtos.Branch;
+import org.infinite.spoty.data_source.dtos.Role;
+import org.infinite.spoty.data_source.dtos.UserProfile;
 
-import java.sql.SQLException;
 
 public class UserViewModel {
-    public static final ObservableList<User> usersList = FXCollections.observableArrayList();
-    public static final ListProperty<User> users = new SimpleListProperty<>(usersList);
+    public static final ObservableList<UserProfile> usersList = FXCollections.observableArrayList();
+    public static final ListProperty<UserProfile> userProfiles = new SimpleListProperty<>(usersList);
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final StringProperty firstName = new SimpleStringProperty("");
     private static final StringProperty lastName = new SimpleStringProperty("");
@@ -46,8 +39,6 @@ public class UserViewModel {
     private static final StringProperty country = new SimpleStringProperty("");
     private static final BooleanProperty active = new SimpleBooleanProperty(true);
     private static final BooleanProperty accessAllBranches = new SimpleBooleanProperty(false);
-    private static final SQLiteConnection connection = SQLiteConnection.getInstance();
-    private static final ConnectionSource connectionSource = connection.getConnection();
 
     public static long getId() {
         return id.get();
@@ -217,16 +208,16 @@ public class UserViewModel {
         return country;
     }
 
-    public static ObservableList<User> getUsers() {
-        return users.get();
+    public static ObservableList<UserProfile> getUserProfiles() {
+        return userProfiles.get();
     }
 
-    public static void setUsers(ObservableList<User> users) {
-        UserViewModel.users.set(users);
+    public static void setUserProfiles(ObservableList<UserProfile> userProfiles) {
+        UserViewModel.userProfiles.set(userProfiles);
     }
 
-    public static ListProperty<User> usersProperty() {
-        return users;
+    public static ListProperty<UserProfile> usersProperty() {
+        return userProfiles;
     }
 
     public static void resetProperties() {
@@ -245,87 +236,87 @@ public class UserViewModel {
         setActive(true);
     }
 
-    public static void saveUser() throws SQLException {
-        Dao<User, Long> userDao = DaoManager.createDao(connectionSource, User.class);
-
-        User user =
-                new User(
-                        getFirstName(),
-                        getLastName(),
-                        getUserName(),
-                        getRole(),
-                        isActive(),
-                        canAccessAllBranches());
-        user.setPhone(getPhone());
-        user.setEmail(getEmail());
-        user.setBranch(getBranch());
-
-        userDao.create(user);
-
-        resetProperties();
-        getAllUsers();
-    }
-
-    public static void getAllUsers() throws SQLException {
-        Dao<User, Long> userDao = DaoManager.createDao(connectionSource, User.class);
-
-        Platform.runLater(
-                () -> {
-                    usersList.clear();
-
-                    try {
-                        usersList.addAll(userDao.queryForAll());
-                    } catch (SQLException e) {
-                        SpotyLogger.writeToFile(e, UserViewModel.class);
-                    }
-                });
-    }
-
-    public static void getItem(long index) throws SQLException {
-        Dao<User, Long> userDao = DaoManager.createDao(connectionSource, User.class);
-
-        User user = userDao.queryForId(index);
-
-        Platform.runLater(
-                () -> {
-                    setId(user.getId());
-                    setFirstName(user.getFirstName());
-                    setLastName(user.getLastName());
-                    setUserName(user.getUserName());
-                    setRole(user.getRole());
-                    setActive(user.isActive());
-                    setPhone(user.getPhone());
-                    setEmail(user.getEmail());
-                    setBranch(user.getBranch());
-                    setAccessAllBranches(user.canAccessAllBranches());
-                });
-
-        getAllUsers();
-    }
-
-    public static void updateItem(long index) throws SQLException {
-        Dao<User, Long> userDao = DaoManager.createDao(connectionSource, User.class);
-
-        User user = userDao.queryForId(index);
-
-        user.setFirstName(getFirstName());
-        user.setLastName(getLastName());
-        user.setUserName(getUserName());
-        user.setRole(getRole());
-        user.setActive(isActive());
-        user.setAccessAllBranches(canAccessAllBranches());
-
-        userDao.update(user);
+    public static void saveUser() throws Exception {
+//        Dao<UserProfile, Long> userDao = DaoManager.createDao(connectionSource, UserProfile.class);
+//
+//        UserProfile user =
+//                new UserProfile(
+//                        getFirstName(),
+//                        getLastName(),
+//                        getUserName(),
+//                        getRole(),
+//                        isActive(),
+//                        canAccessAllBranches());
+//        user.setPhone(getPhone());
+//        user.setEmail(getEmail());
+//        user.setBranch(getBranch());
+//
+//        userDao.create(user);
 
         resetProperties();
-        getAllUsers();
+        getAllUserProfiles();
     }
 
-    public static void deleteItem(long index) throws SQLException {
-        Dao<User, Long> userDao = DaoManager.createDao(connectionSource, User.class);
+    public static void getAllUserProfiles() throws Exception {
+//        Dao<UserProfile, Long> userDao = DaoManager.createDao(connectionSource, UserProfile.class);
+//
+//        Platform.runLater(
+//                () -> {
+//                    usersList.clear();
+//
+//                    try {
+//                        usersList.addAll(userDao.queryForAll());
+//                    } catch (Exception e) {
+//                        SpotyLogger.writeToFile(e, UserViewModel.class);
+//                    }
+//                });
+    }
 
-        userDao.deleteById(index);
+    public static void getItem(long index) throws Exception {
+//        Dao<UserProfile, Long> userDao = DaoManager.createDao(connectionSource, UserProfile.class);
+//
+//        UserProfile user = userDao.queryForId(index);
+//
+//        Platform.runLater(
+//                () -> {
+//                    setId(user.getId());
+//                    setFirstName(user.getFirstName());
+//                    setLastName(user.getLastName());
+//                    setUserName(user.getUserName());
+//                    setRole(user.getRole());
+//                    setActive(user.isActive());
+//                    setPhone(user.getPhone());
+//                    setEmail(user.getEmail());
+//                    setBranch(user.getBranch());
+//                    setAccessAllBranches(user.canAccessAllBranches());
+//                });
 
-        getAllUsers();
+        getAllUserProfiles();
+    }
+
+    public static void updateItem(long index) throws Exception {
+//        Dao<UserProfile, Long> userDao = DaoManager.createDao(connectionSource, UserProfile.class);
+//
+//        UserProfile user = userDao.queryForId(index);
+//
+//        user.setFirstName(getFirstName());
+//        user.setLastName(getLastName());
+//        user.setUserName(getUserName());
+//        user.setRole(getRole());
+//        user.setActive(isActive());
+//        user.setAccessAllBranches(canAccessAllBranches());
+//
+//        userDao.update(user);
+
+        resetProperties();
+        getAllUserProfiles();
+    }
+
+    public static void deleteItem(long index) throws Exception {
+//        Dao<UserProfile, Long> userDao = DaoManager.createDao(connectionSource, UserProfile.class);
+//
+//        userDao.deleteById(index);
+
+        getAllUserProfiles();
     }
 }

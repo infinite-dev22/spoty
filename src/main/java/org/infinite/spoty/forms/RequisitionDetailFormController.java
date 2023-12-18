@@ -27,14 +27,13 @@ import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
-import org.infinite.spoty.database.models.Product;
+import org.infinite.spoty.data_source.dtos.Product;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.ProductViewModel;
 import org.infinite.spoty.viewModels.RequisitionDetailViewModel;
 
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.function.Function;
@@ -130,7 +129,7 @@ public class RequisitionDetailFormController implements Initializable {
                                 try {
                                     RequisitionDetailViewModel.updateRequisitionDetail(
                                             RequisitionDetailViewModel.getId());
-                                } catch (SQLException e) {
+                                } catch (Exception e) {
                                     SpotyLogger.writeToFile(e, this.getClass());
                                 }
                             });

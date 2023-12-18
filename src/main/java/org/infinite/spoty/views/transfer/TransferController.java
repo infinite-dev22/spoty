@@ -27,13 +27,12 @@ import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import org.infinite.spoty.components.navigation.Pages;
-import org.infinite.spoty.database.models.TransferMaster;
+import org.infinite.spoty.data_source.dtos.transfers.TransferMaster;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.TransferMasterViewModel;
 import org.infinite.spoty.views.BaseController;
 
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 
@@ -152,7 +151,7 @@ public class TransferController implements Initializable {
                             () -> {
                                 try {
                                     TransferMasterViewModel.deleteItem(obj.getData().getId());
-                                } catch (SQLException ex) {
+                                } catch (Exception ex) {
                                     throw new RuntimeException(ex);
                                 }
                             });
@@ -166,7 +165,7 @@ public class TransferController implements Initializable {
                             () -> {
                                 try {
                                     TransferMasterViewModel.getItem(obj.getData().getId());
-                                } catch (SQLException ex) {
+                                } catch (Exception ex) {
                                     throw new RuntimeException(ex);
                                 }
                             });

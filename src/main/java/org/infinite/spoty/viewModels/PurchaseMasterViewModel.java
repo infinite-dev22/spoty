@@ -14,21 +14,16 @@
 
 package org.infinite.spoty.viewModels;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.support.ConnectionSource;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.database.connection.SQLiteConnection;
-import org.infinite.spoty.database.models.Branch;
-import org.infinite.spoty.database.models.PurchaseMaster;
-import org.infinite.spoty.database.models.Supplier;
+import org.infinite.spoty.data_source.dtos.Branch;
+import org.infinite.spoty.data_source.dtos.Supplier;
+import org.infinite.spoty.data_source.dtos.purchases.PurchaseMaster;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.jetbrains.annotations.Nullable;
 
-import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -46,8 +41,6 @@ public class PurchaseMasterViewModel {
     private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>(null);
     private static final StringProperty status = new SimpleStringProperty("");
     private static final StringProperty note = new SimpleStringProperty("");
-    private static final SQLiteConnection connection = SQLiteConnection.getInstance();
-    private static final ConnectionSource connectionSource = connection.getConnection();
 
     public static long getId() {
         return id.get();
@@ -151,87 +144,87 @@ public class PurchaseMasterViewModel {
                 });
     }
 
-    public static void savePurchaseMaster() throws SQLException {
-        Dao<PurchaseMaster, Long> purchaseMasterDao =
-                DaoManager.createDao(connectionSource, PurchaseMaster.class);
-
-        PurchaseMaster purchaseMaster =
-                new PurchaseMaster(getSupplier(), getBranch(), getStatus(), getNote(), getDate());
-
-        if (!PurchaseDetailViewModel.purchaseDetailList.isEmpty()) {
-            PurchaseDetailViewModel.purchaseDetailList.forEach(
-                    purchaseDetail -> purchaseDetail.setPurchase(purchaseMaster));
-            purchaseMaster.setPurchaseDetails(PurchaseDetailViewModel.getPurchaseDetailList());
-        }
-
-        purchaseMasterDao.create(purchaseMaster);
+    public static void savePurchaseMaster() throws Exception {
+//        Dao<PurchaseMaster, Long> purchaseMasterDao =
+//                DaoManager.createDao(connectionSource, PurchaseMaster.class);
+//
+//        PurchaseMaster purchaseMaster =
+//                new PurchaseMaster(getSupplier(), getBranch(), getStatus(), getNote(), getDate());
+//
+//        if (!PurchaseDetailViewModel.purchaseDetailList.isEmpty()) {
+//            PurchaseDetailViewModel.purchaseDetailList.forEach(
+//                    purchaseDetail -> purchaseDetail.setPurchase(purchaseMaster));
+//            purchaseMaster.setPurchaseDetails(PurchaseDetailViewModel.getPurchaseDetailList());
+//        }
+//
+//        purchaseMasterDao.create(purchaseMaster);
         PurchaseDetailViewModel.savePurchaseDetails();
 
         resetProperties();
         getPurchaseMasters();
     }
 
-    public static void getPurchaseMasters() throws SQLException {
-        Dao<PurchaseMaster, Long> purchaseMasterDao =
-                DaoManager.createDao(connectionSource, PurchaseMaster.class);
-
-        Platform.runLater(
-                () -> {
-                    purchaseMasterList.clear();
-
-                    try {
-                        purchaseMasterList.addAll(purchaseMasterDao.queryForAll());
-                    } catch (SQLException e) {
-                        SpotyLogger.writeToFile(e, PurchaseMasterViewModel.class);
-                    }
-                });
+    public static void getPurchaseMasters() throws Exception {
+//        Dao<PurchaseMaster, Long> purchaseMasterDao =
+//                DaoManager.createDao(connectionSource, PurchaseMaster.class);
+//
+//        Platform.runLater(
+//                () -> {
+//                    purchaseMasterList.clear();
+//
+//                    try {
+//                        purchaseMasterList.addAll(purchaseMasterDao.queryForAll());
+//                    } catch (Exception e) {
+//                        SpotyLogger.writeToFile(e, PurchaseMasterViewModel.class);
+//                    }
+//                });
     }
 
-    public static void getItem(long index) throws SQLException {
-        Dao<PurchaseMaster, Long> purchaseMasterDao =
-                DaoManager.createDao(connectionSource, PurchaseMaster.class);
-
-        PurchaseMaster purchaseMaster = purchaseMasterDao.queryForId(index);
-
-        setId(purchaseMaster.getId());
-        setDate(purchaseMaster.getLocaleDate());
-        setSupplier(purchaseMaster.getSupplier());
-        setBranch(purchaseMaster.getBranch());
-        setStatus(purchaseMaster.getStatus());
-        setNote(purchaseMaster.getNotes());
-
-        PurchaseDetailViewModel.purchaseDetailList.clear();
-        PurchaseDetailViewModel.purchaseDetailList.addAll(purchaseMaster.getPurchaseDetails());
+    public static void getItem(long index) throws Exception {
+//        Dao<PurchaseMaster, Long> purchaseMasterDao =
+//                DaoManager.createDao(connectionSource, PurchaseMaster.class);
+//
+//        PurchaseMaster purchaseMaster = purchaseMasterDao.queryForId(index);
+//
+//        setId(purchaseMaster.getId());
+//        setDate(purchaseMaster.getLocaleDate());
+//        setSupplier(purchaseMaster.getSupplier());
+//        setBranch(purchaseMaster.getBranch());
+//        setStatus(purchaseMaster.getStatus());
+//        setNote(purchaseMaster.getNotes());
+//
+//        PurchaseDetailViewModel.purchaseDetailList.clear();
+//        PurchaseDetailViewModel.purchaseDetailList.addAll(purchaseMaster.getPurchaseDetails());
 
         getPurchaseMasters();
     }
 
-    public static void updateItem(long index) throws SQLException {
-        Dao<PurchaseMaster, Long> purchaseMasterDao =
-                DaoManager.createDao(connectionSource, PurchaseMaster.class);
-
-        PurchaseMaster purchaseMaster = purchaseMasterDao.queryForId(index);
-        purchaseMaster.setSupplier(getSupplier());
-        purchaseMaster.setBranch(getBranch());
-        purchaseMaster.setStatus(getStatus());
-        purchaseMaster.setNotes(getNote());
-        purchaseMaster.setDate(getDate());
-
-        PurchaseDetailViewModel.deletePurchaseDetails(PENDING_DELETES);
-        purchaseMaster.setPurchaseDetails(PurchaseDetailViewModel.getPurchaseDetailList());
-
-        purchaseMasterDao.update(purchaseMaster);
-        PurchaseDetailViewModel.updatePurchaseDetails();
+    public static void updateItem(long index) throws Exception {
+//        Dao<PurchaseMaster, Long> purchaseMasterDao =
+//                DaoManager.createDao(connectionSource, PurchaseMaster.class);
+//
+//        PurchaseMaster purchaseMaster = purchaseMasterDao.queryForId(index);
+//        purchaseMaster.setSupplier(getSupplier());
+//        purchaseMaster.setBranch(getBranch());
+//        purchaseMaster.setStatus(getStatus());
+//        purchaseMaster.setNotes(getNote());
+//        purchaseMaster.setDate(getDate());
+//
+//        PurchaseDetailViewModel.deletePurchaseDetails(PENDING_DELETES);
+//        purchaseMaster.setPurchaseDetails(PurchaseDetailViewModel.getPurchaseDetailList());
+//
+//        purchaseMasterDao.update(purchaseMaster);
+//        PurchaseDetailViewModel.updatePurchaseDetails();
 
         resetProperties();
         getPurchaseMasters();
     }
 
-    public static void deleteItem(long index) throws SQLException {
-        Dao<PurchaseMaster, Long> purchaseMasterDao =
-                DaoManager.createDao(connectionSource, PurchaseMaster.class);
-
-        purchaseMasterDao.deleteById(index);
+    public static void deleteItem(long index) throws Exception {
+//        Dao<PurchaseMaster, Long> purchaseMasterDao =
+//                DaoManager.createDao(connectionSource, PurchaseMaster.class);
+//
+//        purchaseMasterDao.deleteById(index);
         getPurchaseMasters();
     }
 

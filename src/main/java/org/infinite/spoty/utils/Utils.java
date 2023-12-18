@@ -20,9 +20,7 @@ import io.github.palexdev.materialfx.utils.ToggleButtonsUtil;
 import javafx.geometry.Pos;
 import javafx.scene.control.ToggleGroup;
 
-import java.io.Serializable;
-
-public class Utils implements Serializable {
+public class Utils {
     public Utils(ToggleGroup toggleGroup) {
         ToggleButtonsUtil.addAlwaysOneSelectedSupport(toggleGroup);
     }

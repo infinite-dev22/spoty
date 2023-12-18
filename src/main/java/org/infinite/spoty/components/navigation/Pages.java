@@ -342,7 +342,7 @@ public class Pages {
     private static void setSales(Stage stage) {
         saleLoader.setControllerFactory(e -> SalesController.getInstance());
         posLoader.setControllerFactory(e -> new PointOfSaleController());
-        salesTermLoader.setControllerFactory(e -> new SaleTermsController());
+        salesTermLoader.setControllerFactory(e -> SaleTermsController.getInstance(stage));
     }
 
     private static void setCustomer(Stage stage) {

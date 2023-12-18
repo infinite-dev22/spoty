@@ -14,18 +14,11 @@
 
 package org.infinite.spoty.viewModels;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.support.ConnectionSource;
-import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.database.connection.SQLiteConnection;
-import org.infinite.spoty.database.models.Customer;
-import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.data_source.dtos.Customer;
 
-import java.sql.SQLException;
 
 public class CustomerViewModel {
     public static final ObservableList<Customer> customersList = FXCollections.observableArrayList();
@@ -41,8 +34,6 @@ public class CustomerViewModel {
     private static final StringProperty address = new SimpleStringProperty("");
     private static final StringProperty taxNumber = new SimpleStringProperty("");
     private static final StringProperty country = new SimpleStringProperty("");
-    private static final SQLiteConnection connection = SQLiteConnection.getInstance();
-    private static final ConnectionSource connectionSource = connection.getConnection();
 
     public static long getId() {
         return id.get();
@@ -177,84 +168,84 @@ public class CustomerViewModel {
         setCountry("");
     }
 
-    public static void saveCustomer() throws SQLException {
-        Dao<Customer, Long> customerDao =
-                DaoManager.createDao(connectionSource, Customer.class);
-
-        Customer customer =
-                new Customer(
-                        getName(),
-                        getEmail(),
-                        "+" + getPhone(),
-                        getCity(),
-                        getAddress(),
-                        getTaxNumber(),
-                        getCountry());
-
-        customerDao.create(customer);
-
-        resetProperties();
-        getAllCustomers();
-    }
-
-    public static void getAllCustomers() throws SQLException {
-        Dao<Customer, Long> customerDao =
-                DaoManager.createDao(connectionSource, Customer.class);
-
-        Platform.runLater(
-                () -> {
-                    customersList.clear();
-
-                    try {
-                        customersList.addAll(customerDao.queryForAll());
-                    } catch (SQLException e) {
-                        SpotyLogger.writeToFile(e, CustomerViewModel.class);
-                    }
-                });
-    }
-
-    public static void getItem(long index) throws SQLException {
-        Dao<Customer, Long> customerDao =
-                DaoManager.createDao(connectionSource, Customer.class);
-
-        Customer customer = customerDao.queryForId(index);
-
-        setId(customer.getId());
-        setName(customer.getName());
-        setEmail(customer.getEmail());
-        setPhone(customer.getPhone());
-        setCity(customer.getCity());
-        setCountry(customer.getCountry());
-        setAddress(customer.getAddress());
-        setTaxNumber(customer.getTaxNumber());
-        getAllCustomers();
-    }
-
-    public static void updateItem(long index) throws SQLException {
-        Dao<Customer, Long> customerDao =
-                DaoManager.createDao(connectionSource, Customer.class);
-
-        Customer customer = customerDao.queryForId(index);
-
-        customer.setName(getName());
-        customer.setEmail(getEmail());
-        customer.setPhone(getPhone());
-        customer.setCity(getCity());
-        customer.setAddress(getAddress());
-        customer.setTaxNumber(getTaxNumber());
-        customer.setCountry(getCountry());
-
-        customerDao.update(customer);
+    public static void saveCustomer() throws Exception {
+//        Dao<Customer, Long> customerDao =
+//                DaoManager.createDao(connectionSource, Customer.class);
+//
+//        Customer customer =
+//                new Customer(
+//                        getName(),
+//                        getEmail(),
+//                        "+" + getPhone(),
+//                        getCity(),
+//                        getAddress(),
+//                        getTaxNumber(),
+//                        getCountry());
+//
+//        customerDao.create(customer);
 
         resetProperties();
         getAllCustomers();
     }
 
-    public static void deleteItem(long index) throws SQLException {
-        Dao<Customer, Long> customerDao =
-                DaoManager.createDao(connectionSource, Customer.class);
+    public static void getAllCustomers() throws Exception {
+//        Dao<Customer, Long> customerDao =
+//                DaoManager.createDao(connectionSource, Customer.class);
+//
+//        Platform.runLater(
+//                () -> {
+//                    customersList.clear();
+//
+//                    try {
+//                        customersList.addAll(customerDao.queryForAll());
+//                    } catch (Exception e) {
+//                        SpotyLogger.writeToFile(e, CustomerViewModel.class);
+//                    }
+//                });
+    }
 
-        customerDao.deleteById(index);
+    public static void getItem(long index) throws Exception {
+//        Dao<Customer, Long> customerDao =
+//                DaoManager.createDao(connectionSource, Customer.class);
+//
+//        Customer customer = customerDao.queryForId(index);
+//
+//        setId(customer.getId());
+//        setName(customer.getName());
+//        setEmail(customer.getEmail());
+//        setPhone(customer.getPhone());
+//        setCity(customer.getCity());
+//        setCountry(customer.getCountry());
+//        setAddress(customer.getAddress());
+//        setTaxNumber(customer.getTaxNumber());
+        getAllCustomers();
+    }
+
+    public static void updateItem(long index) throws Exception {
+//        Dao<Customer, Long> customerDao =
+//                DaoManager.createDao(connectionSource, Customer.class);
+//
+//        Customer customer = customerDao.queryForId(index);
+//
+//        customer.setName(getName());
+//        customer.setEmail(getEmail());
+//        customer.setPhone(getPhone());
+//        customer.setCity(getCity());
+//        customer.setAddress(getAddress());
+//        customer.setTaxNumber(getTaxNumber());
+//        customer.setCountry(getCountry());
+//
+//        customerDao.update(customer);
+
+        resetProperties();
+        getAllCustomers();
+    }
+
+    public static void deleteItem(long index) throws Exception {
+//        Dao<Customer, Long> customerDao =
+//                DaoManager.createDao(connectionSource, Customer.class);
+//
+//        customerDao.deleteById(index);
         getAllCustomers();
     }
 }

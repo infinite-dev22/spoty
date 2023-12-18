@@ -21,7 +21,7 @@ import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
 import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import io.github.palexdev.materialfx.enums.ScrimPriority;
 import io.github.palexdev.materialfx.filter.DoubleFilter;
-import io.github.palexdev.materialfx.filter.LongFilter;
+import io.github.palexdev.materialfx.filter.IntegerFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import io.github.palexdev.materialfx.utils.StringUtils;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
@@ -44,9 +44,9 @@ import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
-import org.infinite.spoty.database.models.Branch;
-import org.infinite.spoty.database.models.PurchaseDetail;
-import org.infinite.spoty.database.models.Supplier;
+import org.infinite.spoty.data_source.dtos.Branch;
+import org.infinite.spoty.data_source.dtos.Supplier;
+import org.infinite.spoty.data_source.dtos.purchases.PurchaseDetail;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.values.strings.Values;
@@ -58,7 +58,6 @@ import org.infinite.spoty.views.BaseController;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import java.util.function.Function;
@@ -216,7 +215,7 @@ public class PurchaseMasterFormController implements Initializable {
                 SpotyThreader.spotyThreadPool(() -> {
                     try {
                         PurchaseMasterViewModel.updateItem(PurchaseMasterViewModel.getId());
-                    } catch (SQLException e) {
+                    } catch (Exception e) {
                         SpotyLogger.writeToFile(e, this.getClass());
                     }
                 });
@@ -239,7 +238,7 @@ public class PurchaseMasterFormController implements Initializable {
             SpotyThreader.spotyThreadPool(() -> {
                 try {
                     PurchaseMasterViewModel.savePurchaseMaster();
-                } catch (SQLException e) {
+                } catch (Exception e) {
                     SpotyLogger.writeToFile(e, this.getClass());
                 }
             });
@@ -283,7 +282,7 @@ public class PurchaseMasterFormController implements Initializable {
                 new MFXTableColumn<>("Price", false, Comparator.comparing(PurchaseDetail::getPrice));
         MFXTableColumn<PurchaseDetail> totalPrice =
                 new MFXTableColumn<>(
-                        "Total Price", false, Comparator.comparing(PurchaseDetail::getTotalPrice));
+                        "Total Price", false, Comparator.comparing(PurchaseDetail::getTotal));
 
         // Set table column data.
         product.setRowCellFactory(
@@ -295,7 +294,7 @@ public class PurchaseMasterFormController implements Initializable {
                 purchaseDetail -> new MFXTableRowCell<>(PurchaseDetail::getDiscount));
         price.setRowCellFactory(purchaseDetail -> new MFXTableRowCell<>(PurchaseDetail::getPrice));
         totalPrice.setRowCellFactory(
-                purchaseDetail -> new MFXTableRowCell<>(PurchaseDetail::getTotalPrice));
+                purchaseDetail -> new MFXTableRowCell<>(PurchaseDetail::getTotal));
 
         // Set table column width.
         product.prefWidthProperty().bind(purchaseDetailTable.widthProperty().multiply(.25));
@@ -314,11 +313,11 @@ public class PurchaseMasterFormController implements Initializable {
                 .getFilters()
                 .addAll(
                         new StringFilter<>("Product", PurchaseDetail::getProductName),
-                        new LongFilter<>("Quantity", PurchaseDetail::getQuantity),
+                        new IntegerFilter<>("Quantity", PurchaseDetail::getQuantity),
                         new DoubleFilter<>("Tax", PurchaseDetail::getNetTax),
                         new DoubleFilter<>("Discount", PurchaseDetail::getDiscount),
                         new DoubleFilter<>("Price", PurchaseDetail::getPrice),
-                        new DoubleFilter<>("Total Price", PurchaseDetail::getTotalPrice));
+                        new DoubleFilter<>("Total Price", PurchaseDetail::getTotal));
 
         styleTable();
 
@@ -379,7 +378,7 @@ public class PurchaseMasterFormController implements Initializable {
                             PurchaseDetailViewModel.getItem(
                                     obj.getData().getId(),
                                     PurchaseDetailViewModel.purchaseDetailList.indexOf(obj.getData()));
-                        } catch (SQLException e) {
+                        } catch (Exception e) {
                             SpotyLogger.writeToFile(e, this.getClass());
                         }
                     });

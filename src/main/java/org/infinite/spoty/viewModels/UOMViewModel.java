@@ -14,18 +14,11 @@
 
 package org.infinite.spoty.viewModels;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.support.ConnectionSource;
-import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.database.connection.SQLiteConnection;
-import org.infinite.spoty.database.models.UnitOfMeasure;
-import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.data_source.dtos.UnitOfMeasure;
 
-import java.sql.SQLException;
 
 public class UOMViewModel {
     public static final ObservableList<UnitOfMeasure> uomList = FXCollections.observableArrayList();
@@ -39,8 +32,6 @@ public class UOMViewModel {
     private static final ObjectProperty<UnitOfMeasure> baseUnit = new SimpleObjectProperty<>();
     private static final StringProperty operator = new SimpleStringProperty("");
     private static final StringProperty operatorValue = new SimpleStringProperty("");
-    private static final SQLiteConnection connection = SQLiteConnection.getInstance();
-    private static final ConnectionSource connectionSource = connection.getConnection();
 
     public static long getId() {
         return id.get();
@@ -126,15 +117,15 @@ public class UOMViewModel {
         return unitsOfMeasure;
     }
 
-    public static void saveUOM() throws SQLException {
-        Dao<UnitOfMeasure, Long> unitOfMeasureDao =
-                DaoManager.createDao(connectionSource, UnitOfMeasure.class);
-
-        UnitOfMeasure unitOfMeasure =
-                new UnitOfMeasure(
-                        getName(), getShortName(), getBaseUnit(), getOperator(), getOperatorValue());
-
-        unitOfMeasureDao.create(unitOfMeasure);
+    public static void saveUOM() throws Exception {
+//        Dao<UnitOfMeasure, Long> unitOfMeasureDao =
+//                DaoManager.createDao(connectionSource, UnitOfMeasure.class);
+//
+//        UnitOfMeasure unitOfMeasure =
+//                new UnitOfMeasure(
+//                        getName(), getShortName(), getBaseUnit(), getOperator(), getOperatorValue());
+//
+//        unitOfMeasureDao.create(unitOfMeasure);
 
         resetUOMProperties();
         getItems();
@@ -149,60 +140,60 @@ public class UOMViewModel {
         setOperatorValue("");
     }
 
-    public static void getItems() throws SQLException {
-        Dao<UnitOfMeasure, Long> unitOfMeasureDao =
-                DaoManager.createDao(connectionSource, UnitOfMeasure.class);
-
-        Platform.runLater(
-                () -> {
-                    uomList.clear();
-
-                    try {
-                        uomList.addAll(unitOfMeasureDao.queryForAll());
-                    } catch (SQLException e) {
-                        SpotyLogger.writeToFile(e, UOMViewModel.class);
-                    }
-                });
+    public static void getItems() throws Exception {
+//        Dao<UnitOfMeasure, Long> unitOfMeasureDao =
+//                DaoManager.createDao(connectionSource, UnitOfMeasure.class);
+//
+//        Platform.runLater(
+//                () -> {
+//                    uomList.clear();
+//
+//                    try {
+//                        uomList.addAll(unitOfMeasureDao.queryForAll());
+//                    } catch (Exception e) {
+//                        SpotyLogger.writeToFile(e, UOMViewModel.class);
+//                    }
+//                });
     }
 
-    public static void getItem(long index) throws SQLException {
-        Dao<UnitOfMeasure, Long> unitOfMeasureDao =
-                DaoManager.createDao(connectionSource, UnitOfMeasure.class);
-
-        UnitOfMeasure uom = unitOfMeasureDao.queryForId(index);
-
-        setId(uom.getId());
-        setName(uom.getName());
-        setShortName(uom.getShortName());
-        setBaseUnit(uom.getBaseUnit());
-        setOperator(uom.getOperator());
-        setOperatorValue(
-                String.valueOf(uom.getOperatorValue() == 0 ? "" : uom.getOperatorValue()));
+    public static void getItem(long index) throws Exception {
+//        Dao<UnitOfMeasure, Long> unitOfMeasureDao =
+//                DaoManager.createDao(connectionSource, UnitOfMeasure.class);
+//
+//        UnitOfMeasure uom = unitOfMeasureDao.queryForId(index);
+//
+//        setId(uom.getId());
+//        setName(uom.getName());
+//        setShortName(uom.getShortName());
+//        setBaseUnit(uom.getBaseUnit());
+//        setOperator(uom.getOperator());
+//        setOperatorValue(
+//                String.valueOf(uom.getOperatorValue() == 0 ? "" : uom.getOperatorValue()));
     }
 
-    public static void updateItem(long index) throws SQLException {
-        Dao<UnitOfMeasure, Long> unitOfMeasureDao =
-                DaoManager.createDao(connectionSource, UnitOfMeasure.class);
-
-        UnitOfMeasure uom = unitOfMeasureDao.queryForId(index);
-
-        uom.setName(getName());
-        uom.setShortName(getShortName());
-        uom.setBaseUnit(getBaseUnit());
-        uom.setOperator(getOperator());
-        uom.setOperatorValue(getOperatorValue());
-
-        unitOfMeasureDao.update(uom);
+    public static void updateItem(long index) throws Exception {
+//        Dao<UnitOfMeasure, Long> unitOfMeasureDao =
+//                DaoManager.createDao(connectionSource, UnitOfMeasure.class);
+//
+//        UnitOfMeasure uom = unitOfMeasureDao.queryForId(index);
+//
+//        uom.setName(getName());
+//        uom.setShortName(getShortName());
+//        uom.setBaseUnit(getBaseUnit());
+//        uom.setOperator(getOperator());
+//        uom.setOperatorValue(getOperatorValue());
+//
+//        unitOfMeasureDao.update(uom);
 
         resetUOMProperties();
         getItems();
     }
 
-    public static void deleteItem(long index) throws SQLException {
-        Dao<UnitOfMeasure, Long> unitOfMeasureDao =
-                DaoManager.createDao(connectionSource, UnitOfMeasure.class);
-
-        unitOfMeasureDao.deleteById(index);
+    public static void deleteItem(long index) throws Exception {
+//        Dao<UnitOfMeasure, Long> unitOfMeasureDao =
+//                DaoManager.createDao(connectionSource, UnitOfMeasure.class);
+//
+//        unitOfMeasureDao.deleteById(index);
 
         getItems();
     }

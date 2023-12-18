@@ -28,7 +28,6 @@ import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.CurrencyViewModel;
 
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
@@ -99,7 +98,7 @@ public class CurrencyFormController implements Initializable {
                             SpotyThreader.spotyThreadPool(() -> {
                                 try {
                                     CurrencyViewModel.updateItem(CurrencyViewModel.getId());
-                                } catch (SQLException e) {
+                                } catch (Exception e) {
                                     SpotyLogger.writeToFile(e.getCause(), this.getClass());
                                 }
                             });
@@ -118,7 +117,7 @@ public class CurrencyFormController implements Initializable {
                         SpotyThreader.spotyThreadPool(() -> {
                             try {
                                 saveCurrency();
-                            } catch (SQLException e) {
+                            } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }
                         });

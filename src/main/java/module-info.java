@@ -4,18 +4,14 @@ module org.infinite.spoty {
     requires fr.brouillard.oss.cssfx;
     requires mfx.components;
     requires mfx.resources;
-    requires jakarta.persistence;
-    requires java.sql;
     requires java.logging;
     requires java.naming;
     requires org.kordamp.ikonli.javafx;
     requires org.jetbrains.annotations;
     requires java.prefs;
-    requires ormlite.jdbc;
-    requires org.xerial.sqlitejdbc;
     requires org.kordamp.ikonli.core;
     requires org.kordamp.ikonli.fontawesome5;
-//    requires org.slf4j;
+    requires lombok;
 
     opens org.infinite.spoty.views;
     opens org.infinite.spoty.views.components;
@@ -52,7 +48,7 @@ module org.infinite.spoty {
     opens org.infinite.spoty.views.settings.role_permission;
     opens org.infinite.spoty.forms;
     opens org.infinite.spoty.views.splash;
-    opens org.infinite.spoty.database.models;
+    opens org.infinite.spoty.data_source.dtos;
     opens org.infinite.spoty.components.navigation;
     opens org.infinite.spoty.components.notification;
     opens org.infinite.spoty;

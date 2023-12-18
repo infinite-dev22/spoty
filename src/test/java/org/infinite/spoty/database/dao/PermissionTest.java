@@ -14,12 +14,7 @@
 
 package org.infinite.spoty.database.dao;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.support.ConnectionSource;
-import java.sql.SQLException;
-import org.infinite.spoty.database.connection.SQLiteConnection;
-import org.infinite.spoty.database.models.Permission;
+import org.infinite.spoty.data_source.dtos.Permission;
 import org.junit.jupiter.api.Test;
 
 class PermissionTest {
@@ -30,7 +25,7 @@ class PermissionTest {
   public PermissionTest() {
     try {
       permissionDao = DaoManager.createDao(connectionSource, Permission.class);
-    } catch (SQLException e) {
+    } catch (Exception e) {
       throw new RuntimeException(e);
     }
   }

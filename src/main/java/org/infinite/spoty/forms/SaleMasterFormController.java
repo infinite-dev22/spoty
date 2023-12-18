@@ -21,7 +21,7 @@ import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
 import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import io.github.palexdev.materialfx.enums.ScrimPriority;
 import io.github.palexdev.materialfx.filter.DoubleFilter;
-import io.github.palexdev.materialfx.filter.LongFilter;
+import io.github.palexdev.materialfx.filter.IntegerFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import io.github.palexdev.materialfx.utils.StringUtils;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
@@ -44,9 +44,9 @@ import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
-import org.infinite.spoty.database.models.Branch;
-import org.infinite.spoty.database.models.Customer;
-import org.infinite.spoty.database.models.SaleDetail;
+import org.infinite.spoty.data_source.dtos.Branch;
+import org.infinite.spoty.data_source.dtos.Customer;
+import org.infinite.spoty.data_source.dtos.sales.SaleDetail;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.values.strings.Values;
@@ -58,7 +58,6 @@ import org.infinite.spoty.views.BaseController;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import java.util.function.Function;
@@ -218,7 +217,7 @@ public class SaleMasterFormController implements Initializable {
                         () -> {
                             try {
                                 SaleMasterViewModel.updateItem(SaleMasterViewModel.getId());
-                            } catch (SQLException e) {
+                            } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }
                         });
@@ -243,7 +242,7 @@ public class SaleMasterFormController implements Initializable {
                     () -> {
                         try {
                             SaleMasterViewModel.saveSaleMaster();
-                        } catch (SQLException e) {
+                        } catch (Exception e) {
                             SpotyLogger.writeToFile(e, this.getClass());
                         }
                     });
@@ -334,7 +333,7 @@ public class SaleMasterFormController implements Initializable {
                 .getFilters()
                 .addAll(
                         new StringFilter<>("Product", SaleDetail::getProductName),
-                        new LongFilter<>("Quantity", SaleDetail::getQuantity),
+                        new IntegerFilter<>("Quantity", SaleDetail::getQuantity),
                         new DoubleFilter<>("Discount", SaleDetail::getDiscount),
                         new DoubleFilter<>("Tax", SaleDetail::getNetTax),
                         new DoubleFilter<>("Price", SaleDetail::getPrice),
@@ -397,7 +396,7 @@ public class SaleMasterFormController implements Initializable {
                             () -> {
                                 try {
                                     SaleDetailViewModel.getSaleDetail(obj.getData());
-                                } catch (SQLException e) {
+                                } catch (Exception e) {
                                     SpotyLogger.writeToFile(e, this.getClass());
                                 }
                             });

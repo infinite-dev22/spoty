@@ -14,27 +14,25 @@
 
 package org.infinite.spoty.viewModels;
 
-import static org.infinite.spoty.values.SharedResources.*;
-
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.support.ConnectionSource;
-
-import java.sql.SQLException;
-import java.util.LinkedList;
-import java.util.Objects;
-
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.database.connection.SQLiteConnection;
-import org.infinite.spoty.database.models.*;
-import org.infinite.spoty.utils.SpotyLogger;
+import lombok.Getter;
+import org.infinite.spoty.data_source.dtos.Product;
+import org.infinite.spoty.data_source.dtos.UnitOfMeasure;
+import org.infinite.spoty.data_source.dtos.quotations.QuotationDetail;
+import org.infinite.spoty.data_source.dtos.quotations.QuotationMaster;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.LinkedList;
+import java.util.Objects;
+
+import static org.infinite.spoty.values.SharedResources.*;
 
 public class QuotationDetailViewModel {
     // TODO: Add more fields according to DB design and necessity.
+    @Getter
     public static final ObservableList<QuotationDetail> quotationDetailsList =
             FXCollections.observableArrayList();
     private static final ListProperty<QuotationDetail> quotationDetails =
@@ -46,8 +44,6 @@ public class QuotationDetailViewModel {
     private static final StringProperty quantity = new SimpleStringProperty();
     private static final StringProperty netTax = new SimpleStringProperty();
     private static final StringProperty discount = new SimpleStringProperty();
-    static SQLiteConnection connection = SQLiteConnection.getInstance();
-    static ConnectionSource connectionSource = connection.getConnection();
 
     public static long getId() {
         return id.get();
@@ -97,8 +93,8 @@ public class QuotationDetailViewModel {
         return quotation;
     }
 
-    public static long getQuantity() {
-        return Long.parseLong(quantity.get());
+    public static int getQuantity() {
+        return Integer.parseInt(quantity.get());
     }
 
     public static void setQuantity(String quantity) {
@@ -159,23 +155,23 @@ public class QuotationDetailViewModel {
     }
 
     public static void addQuotationDetails() {
-        QuotationDetail quotationDetail =
-                new QuotationDetail(getProduct(), getNetTax(), getDiscount(), getQuantity());
-
-        Platform.runLater(
-                () -> {
-                    quotationDetailsList.add(quotationDetail);
-                    resetProperties();
-                });
+//        QuotationDetail quotationDetail =
+//                new QuotationDetail(getProduct(), getNetTax(), getDiscount(), getQuantity());
+//
+//        Platform.runLater(
+//                () -> {
+//                    quotationDetailsList.add(quotationDetail);
+//                    resetProperties();
+//                });
     }
 
-    public static void saveQuotationDetails() throws SQLException {
-        Dao<QuotationDetail, Long> quotationDetailDao =
-                DaoManager.createDao(connectionSource, QuotationDetail.class);
-
-        quotationDetailDao.create(quotationDetailsList);
-
-        Platform.runLater(quotationDetailsList::clear);
+    public static void saveQuotationDetails() throws Exception {
+//        Dao<QuotationDetail, Long> quotationDetailDao =
+//                DaoManager.createDao(connectionSource, QuotationDetail.class);
+//
+//        quotationDetailDao.create(quotationDetailsList);
+//
+//        Platform.runLater(quotationDetailsList::clear);
     }
 
     public static void updateQuotationDetail(long index) {
@@ -196,20 +192,20 @@ public class QuotationDetailViewModel {
                 });
     }
 
-    public static void getAllQuotationDetails() throws SQLException {
-        Dao<QuotationDetail, Long> quotationDetailDao =
-                DaoManager.createDao(connectionSource, QuotationDetail.class);
-
-        Platform.runLater(
-                () -> {
-                    quotationDetailsList.clear();
-
-                    try {
-                        quotationDetailsList.addAll(quotationDetailDao.queryForAll());
-                    } catch (SQLException e) {
-                        SpotyLogger.writeToFile(e, QuotationDetailViewModel.class);
-                    }
-                });
+    public static void getAllQuotationDetails() throws Exception {
+//        Dao<QuotationDetail, Long> quotationDetailDao =
+//                DaoManager.createDao(connectionSource, QuotationDetail.class);
+//
+//        Platform.runLater(
+//                () -> {
+//                    quotationDetailsList.clear();
+//
+//                    try {
+//                        quotationDetailsList.addAll(quotationDetailDao.queryForAll());
+//                    } catch (Exception e) {
+//                        SpotyLogger.writeToFile(e, QuotationDetailViewModel.class);
+//                    }
+//                });
     }
 
     public static void getQuotationDetail(QuotationDetail quotationDetail) {
@@ -226,18 +222,18 @@ public class QuotationDetailViewModel {
                 });
     }
 
-    public static void updateQuotationDetails() throws SQLException {
-        Dao<QuotationDetail, Long> quotationDetailDao =
-                DaoManager.createDao(connectionSource, QuotationDetail.class);
-
-        quotationDetailsList.forEach(
-                quotationDetail -> {
-                    try {
-                        quotationDetailDao.update(quotationDetail);
-                    } catch (SQLException e) {
-                        SpotyLogger.writeToFile(e, QuotationDetailViewModel.class);
-                    }
-                });
+    public static void updateQuotationDetails() throws Exception {
+//        Dao<QuotationDetail, Long> quotationDetailDao =
+//                DaoManager.createDao(connectionSource, QuotationDetail.class);
+//
+//        quotationDetailsList.forEach(
+//                quotationDetail -> {
+//                    try {
+//                        quotationDetailDao.update(quotationDetail);
+//                    } catch (Exception e) {
+//                        SpotyLogger.writeToFile(e, QuotationDetailViewModel.class);
+//                    }
+//                });
 
         getAllQuotationDetails();
     }
@@ -248,20 +244,17 @@ public class QuotationDetailViewModel {
     }
 
     public static void deleteQuotationDetails(@NotNull LinkedList<Long> indexes) {
-        indexes.forEach(
-                index -> {
-                    try {
-                        Dao<QuotationDetail, Long> quotationDetailDao =
-                                DaoManager.createDao(connectionSource, QuotationDetail.class);
-
-                        quotationDetailDao.deleteById(index);
-                    } catch (SQLException e) {
-                        SpotyLogger.writeToFile(e, QuotationDetailViewModel.class);
-                    }
-                });
+//        indexes.forEach(
+//                index -> {
+//                    try {
+//                        Dao<QuotationDetail, Long> quotationDetailDao =
+//                                DaoManager.createDao(connectionSource, QuotationDetail.class);
+//
+//                        quotationDetailDao.deleteById(index);
+//                    } catch (Exception e) {
+//                        SpotyLogger.writeToFile(e, QuotationDetailViewModel.class);
+//                    }
+//                });
     }
 
-    public static ObservableList<QuotationDetail> getQuotationDetailsList() {
-        return quotationDetailsList;
-    }
 }

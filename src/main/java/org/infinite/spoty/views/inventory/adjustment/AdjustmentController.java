@@ -27,13 +27,12 @@ import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import org.infinite.spoty.components.navigation.Pages;
-import org.infinite.spoty.database.models.AdjustmentMaster;
+import org.infinite.spoty.data_source.dtos.adjustments.AdjustmentMaster;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.AdjustmentMasterViewModel;
 import org.infinite.spoty.views.BaseController;
 
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 
@@ -71,7 +70,7 @@ public class AdjustmentController implements Initializable {
                 new MFXTableColumn<>("Status", false, Comparator.comparing(AdjustmentMaster::getStatus));
         MFXTableColumn<AdjustmentMaster> adjustmentTotalAmount =
                 new MFXTableColumn<>(
-                        "Total Amount", false, Comparator.comparing(AdjustmentMaster::getTotalAmount));
+                        "Total Amount", false, Comparator.comparing(AdjustmentMaster::getTotal));
 
         adjustmentDate.setRowCellFactory(
                 adjustment -> new MFXTableRowCell<>(AdjustmentMaster::getLocaleDate));
@@ -98,7 +97,7 @@ public class AdjustmentController implements Initializable {
                         new StringFilter<>("Reference", AdjustmentMaster::getRef),
                         new StringFilter<>("Branch", AdjustmentMaster::getBranchName),
                         new StringFilter<>("Status", AdjustmentMaster::getStatus),
-                        new DoubleFilter<>("Total Amount", AdjustmentMaster::getTotalAmount));
+                        new DoubleFilter<>("Total Amount", AdjustmentMaster::getTotal));
         getAdjustmentMasterTable();
 
         if (AdjustmentMasterViewModel.getAdjustmentMasters().isEmpty()) {
@@ -150,7 +149,7 @@ public class AdjustmentController implements Initializable {
                             () -> {
                                 try {
                                     AdjustmentMasterViewModel.deleteItem(obj.getData().getId());
-                                } catch (SQLException ex) {
+                                } catch (Exception ex) {
                                     throw new RuntimeException(ex);
                                 }
                             });
@@ -164,7 +163,7 @@ public class AdjustmentController implements Initializable {
                             () -> {
                                 try {
                                     AdjustmentMasterViewModel.getItem(obj.getData().getId());
-                                } catch (SQLException ex) {
+                                } catch (Exception ex) {
                                     throw new RuntimeException(ex);
                                 }
                             });

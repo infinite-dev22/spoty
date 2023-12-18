@@ -20,7 +20,7 @@ import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
 import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import io.github.palexdev.materialfx.enums.ScrimPriority;
-import io.github.palexdev.materialfx.filter.LongFilter;
+import io.github.palexdev.materialfx.filter.IntegerFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import io.github.palexdev.materialfx.utils.StringUtils;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
@@ -42,8 +42,8 @@ import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
-import org.infinite.spoty.database.models.Branch;
-import org.infinite.spoty.database.models.StockInDetail;
+import org.infinite.spoty.data_source.dtos.Branch;
+import org.infinite.spoty.data_source.dtos.stock_ins.StockInDetail;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.BranchViewModel;
@@ -54,7 +54,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import java.util.function.Function;
@@ -165,7 +164,7 @@ public class StockInMasterFormController implements Initializable {
                 .getFilters()
                 .addAll(
                         new StringFilter<>("Name", StockInDetail::getProductName),
-                        new LongFilter<>("Quantity", StockInDetail::getQuantity),
+                        new IntegerFilter<>("Quantity", StockInDetail::getQuantity),
                         new StringFilter<>("Description", StockInDetail::getDescription));
 
         getStockInDetailTable();
@@ -226,7 +225,7 @@ public class StockInMasterFormController implements Initializable {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
                             StockInDetailViewModel.getItem(obj.getData());
-                        } catch (SQLException e) {
+                        } catch (Exception e) {
                             SpotyLogger.writeToFile(e, this.getClass());
                         }
                     });
@@ -286,7 +285,7 @@ public class StockInMasterFormController implements Initializable {
                         () -> {
                             try {
                                 StockInMasterViewModel.updateItem(StockInMasterViewModel.getId());
-                            } catch (SQLException e) {
+                            } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }
                         });
@@ -307,7 +306,7 @@ public class StockInMasterFormController implements Initializable {
                     () -> {
                         try {
                             StockInMasterViewModel.saveStockInMaster();
-                        } catch (SQLException e) {
+                        } catch (Exception e) {
                             SpotyLogger.writeToFile(e, this.getClass());
                         }
                     });

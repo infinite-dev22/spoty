@@ -16,41 +16,41 @@
 @import 'MFXColors.css';
 
 .card-title .header-label {
-	-fx-font-family: 'Visby Round CF Bold';
-	-fx-font-size: 14;
-	-fx-text-fill: -mfx-text-he;
+    -fx-font-family: 'Visby Round CF Bold';
+    -fx-font-size: 14;
+    -fx-text-fill: -mfx-text-he;
 }
 
 .card-title .header-label .text {
-	-fx-font-smoothing-type: lcd;
+    -fx-font-smoothing-type: lcd;
 }
 
 .card-sub-title .sub-header-label {
-	-fx-font-family: 'Visby Round CF Demi Bold';
-	-fx-text-fill: -mfx-text-he;
+    -fx-font-family: 'Visby Round CF Demi Bold';
+    -fx-text-fill: -mfx-text-he;
 }
 
 .card-sub-title .sub-header-label .text {
-	-fx-font-smoothing-type: lcd;
+    -fx-font-smoothing-type: lcd;
 }
 
 .grid-pane {
-	-fx-background-color: transparent;
+    -fx-background-color: transparent;
 }
 
 .card, .innerNavbar {
-	-fx-background-color: rgba(255, 255, 255, 1);
-	-fx-background-radius: 10;
-	-fx-border-radius: 10;
-	-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.12, -1.0, 1.5);
+    -fx-background-color: rgba(255, 255, 255, 1);
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.12, -1.0, 1.5);
 }
 
 .title {
-	-fx-font-size: 13;
-	-fx-font-weight: bold;
+    -fx-font-size: 13;
+    -fx-font-weight: bold;
 }
 
 .danger-validation-label {
     -fx-text-fill: -mfx-danger-red;
-	-fx-font-size: 13;
+    -fx-font-size: 13;
 }

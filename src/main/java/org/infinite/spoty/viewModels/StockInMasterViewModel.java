@@ -14,20 +14,16 @@
 
 package org.infinite.spoty.viewModels;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.support.ConnectionSource;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.database.connection.SQLiteConnection;
-import org.infinite.spoty.database.models.Branch;
-import org.infinite.spoty.database.models.StockInMaster;
+import lombok.Getter;
+import org.infinite.spoty.data_source.dtos.Branch;
+import org.infinite.spoty.data_source.dtos.stock_ins.StockInMaster;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.jetbrains.annotations.Nullable;
 
-import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -35,6 +31,7 @@ import java.util.Date;
 import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
 
 public class StockInMasterViewModel {
+    @Getter
     public static final ObservableList<StockInMaster> stockInMasterList =
             FXCollections.observableArrayList();
     private static final ListProperty<StockInMaster> stockIns =
@@ -45,8 +42,6 @@ public class StockInMasterViewModel {
     private static final StringProperty totalCost = new SimpleStringProperty("");
     private static final StringProperty status = new SimpleStringProperty("");
     private static final StringProperty note = new SimpleStringProperty("");
-    private static final SQLiteConnection connection = SQLiteConnection.getInstance();
-    private static final ConnectionSource connectionSource = connection.getConnection();
 
     public static long getId() {
         return id.get();
@@ -150,93 +145,89 @@ public class StockInMasterViewModel {
                 });
     }
 
-    public static void saveStockInMaster() throws SQLException {
-        Dao<StockInMaster, Long> stockInMasterDao =
-                DaoManager.createDao(connectionSource, StockInMaster.class);
-
-        StockInMaster stockInMaster = new StockInMaster(getDate(), getBranch(), getStatus(), getNote());
-
-        if (!StockInDetailViewModel.stockInDetailsList.isEmpty()) {
-            StockInDetailViewModel.stockInDetailsList.forEach(
-                    stockInDetail -> stockInDetail.setStockIn(stockInMaster));
-            stockInMaster.setStockInDetails(StockInDetailViewModel.getStockInDetailsList());
-        }
-
-        stockInMasterDao.create(stockInMaster);
+    public static void saveStockInMaster() throws Exception {
+//        Dao<StockInMaster, Long> stockInMasterDao =
+//                DaoManager.createDao(connectionSource, StockInMaster.class);
+//
+//        StockInMaster stockInMaster = new StockInMaster(getDate(), getBranch(), getStatus(), getNote());
+//
+//        if (!StockInDetailViewModel.stockInDetailsList.isEmpty()) {
+//            StockInDetailViewModel.stockInDetailsList.forEach(
+//                    stockInDetail -> stockInDetail.setStockIn(stockInMaster));
+//            stockInMaster.setStockInDetails(StockInDetailViewModel.getStockInDetailsList());
+//        }
+//
+//        stockInMasterDao.create(stockInMaster);
         StockInDetailViewModel.createStockInDetails();
 
         resetProperties();
         getStockInMasters();
     }
 
-    public static void getStockInMasters() throws SQLException {
-        Dao<StockInMaster, Long> stockInMasterDao =
-                DaoManager.createDao(connectionSource, StockInMaster.class);
-
-        Platform.runLater(
-                () -> {
-                    stockInMasterList.clear();
-
-                    try {
-                        stockInMasterList.addAll(stockInMasterDao.queryForAll());
-                    } catch (SQLException e) {
-                        SpotyLogger.writeToFile(e, StockInMasterViewModel.class);
-                    }
-                });
+    public static void getStockInMasters() throws Exception {
+//        Dao<StockInMaster, Long> stockInMasterDao =
+//                DaoManager.createDao(connectionSource, StockInMaster.class);
+//
+//        Platform.runLater(
+//                () -> {
+//                    stockInMasterList.clear();
+//
+//                    try {
+//                        stockInMasterList.addAll(stockInMasterDao.queryForAll());
+//                    } catch (Exception e) {
+//                        SpotyLogger.writeToFile(e, StockInMasterViewModel.class);
+//                    }
+//                });
     }
 
-    public static void getItem(long index) throws SQLException {
-        Dao<StockInMaster, Long> stockInMasterDao =
-                DaoManager.createDao(connectionSource, StockInMaster.class);
-
-        StockInMaster stockInMaster = stockInMasterDao.queryForId(index);
-
-        Platform.runLater(
-                () -> {
-                    setId(stockInMaster.getId());
-                    setDate(stockInMaster.getLocaleDate());
-                    setBranch(stockInMaster.getBranch());
-                    setTotalCost(String.valueOf(stockInMaster.getTotalAmount()));
-                    setStatus(stockInMaster.getStatus());
-                    setNote(stockInMaster.getNotes());
-
-                    StockInDetailViewModel.stockInDetailsList.clear();
-                    StockInDetailViewModel.stockInDetailsList.addAll(stockInMaster.getStockInDetails());
-                });
+    public static void getItem(long index) throws Exception {
+//        Dao<StockInMaster, Long> stockInMasterDao =
+//                DaoManager.createDao(connectionSource, StockInMaster.class);
+//
+//        StockInMaster stockInMaster = stockInMasterDao.queryForId(index);
+//
+//        Platform.runLater(
+//                () -> {
+//                    setId(stockInMaster.getId());
+//                    setDate(stockInMaster.getLocaleDate());
+//                    setBranch(stockInMaster.getBranch());
+//                    setTotalCost(String.valueOf(stockInMaster.getTotalAmount()));
+//                    setStatus(stockInMaster.getStatus());
+//                    setNote(stockInMaster.getNotes());
+//
+//                    StockInDetailViewModel.stockInDetailsList.clear();
+//                    StockInDetailViewModel.stockInDetailsList.addAll(stockInMaster.getStockInDetails());
+//                });
 
         getStockInMasters();
     }
 
-    public static void updateItem(long index) throws SQLException {
-        Dao<StockInMaster, Long> stockInMasterDao =
-                DaoManager.createDao(connectionSource, StockInMaster.class);
-
-        StockInMaster stockInMaster = stockInMasterDao.queryForId(index);
-        stockInMaster.setDate(getDate());
-        stockInMaster.setBranch(getBranch());
-        stockInMaster.setStatus(getStatus());
-        stockInMaster.setNotes(getNote());
-
-        StockInDetailViewModel.deleteStockInDetails(PENDING_DELETES);
-        stockInMaster.setStockInDetails(StockInDetailViewModel.getStockInDetailsList());
-
-        stockInMasterDao.update(stockInMaster);
+    public static void updateItem(long index) throws Exception {
+//        Dao<StockInMaster, Long> stockInMasterDao =
+//                DaoManager.createDao(connectionSource, StockInMaster.class);
+//
+//        StockInMaster stockInMaster = stockInMasterDao.queryForId(index);
+//        stockInMaster.setDate(getDate());
+//        stockInMaster.setBranch(getBranch());
+//        stockInMaster.setStatus(getStatus());
+//        stockInMaster.setNotes(getNote());
+//
+//        StockInDetailViewModel.deleteStockInDetails(PENDING_DELETES);
+//        stockInMaster.setStockInDetails(StockInDetailViewModel.getStockInDetailsList());
+//
+//        stockInMasterDao.update(stockInMaster);
         StockInDetailViewModel.updateStockInDetails();
 
         resetProperties();
         getStockInMasters();
     }
 
-    public static void deleteItem(long index) throws SQLException {
-        Dao<StockInMaster, Long> stockInMasterDao =
-                DaoManager.createDao(connectionSource, StockInMaster.class);
-
-        stockInMasterDao.deleteById(index);
+    public static void deleteItem(long index) throws Exception {
+//        Dao<StockInMaster, Long> stockInMasterDao =
+//                DaoManager.createDao(connectionSource, StockInMaster.class);
+//
+//        stockInMasterDao.deleteById(index);
 
         getStockInMasters();
-    }
-
-    public static ObservableList<StockInMaster> getStockInMasterList() {
-        return stockInMasterList;
     }
 }

@@ -14,18 +14,11 @@
 
 package org.infinite.spoty.viewModels;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.support.ConnectionSource;
-import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.database.connection.SQLiteConnection;
-import org.infinite.spoty.database.models.ExpenseCategory;
-import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.data_source.dtos.ExpenseCategory;
 
-import java.sql.SQLException;
 
 public class ExpenseCategoryViewModel {
     public static final ObservableList<ExpenseCategory> categoryList =
@@ -37,8 +30,6 @@ public class ExpenseCategoryViewModel {
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final StringProperty name = new SimpleStringProperty("");
     private static final StringProperty description = new SimpleStringProperty("");
-    private static final SQLiteConnection connection = SQLiteConnection.getInstance();
-    private static final ConnectionSource connectionSource = connection.getConnection();
 
     public static long getId() {
         return id.get();
@@ -94,69 +85,69 @@ public class ExpenseCategoryViewModel {
         setDescription("");
     }
 
-    public static void saveExpenseCategory() throws SQLException {
-        Dao<ExpenseCategory, Long> expenseCategoryDao =
-                DaoManager.createDao(connectionSource, ExpenseCategory.class);
-
-        ExpenseCategory expenseCategory = new ExpenseCategory(getName(), getDescription());
-
-        expenseCategoryDao.create(expenseCategory);
+    public static void saveExpenseCategory() throws Exception {
+//        Dao<ExpenseCategory, Long> expenseCategoryDao =
+//                DaoManager.createDao(connectionSource, ExpenseCategory.class);
+//
+//        ExpenseCategory expenseCategory = new ExpenseCategory(getName(), getDescription());
+//
+//        expenseCategoryDao.create(expenseCategory);
 
         resetProperties();
         getAllCategories();
     }
 
-    public static void getAllCategories() throws SQLException {
-        Dao<ExpenseCategory, Long> expenseCategoryDao =
-                DaoManager.createDao(connectionSource, ExpenseCategory.class);
-
-        Platform.runLater(
-                () -> {
-                    categoryList.clear();
-
-                    try {
-                        categoryList.addAll(expenseCategoryDao.queryForAll());
-                    } catch (SQLException e) {
-                        SpotyLogger.writeToFile(e, ExpenseCategoryViewModel.class);
-                    }
-                });
+    public static void getAllCategories() throws Exception {
+//        Dao<ExpenseCategory, Long> expenseCategoryDao =
+//                DaoManager.createDao(connectionSource, ExpenseCategory.class);
+//
+//        Platform.runLater(
+//                () -> {
+//                    categoryList.clear();
+//
+//                    try {
+//                        categoryList.addAll(expenseCategoryDao.queryForAll());
+//                    } catch (Exception e) {
+//                        SpotyLogger.writeToFile(e, ExpenseCategoryViewModel.class);
+//                    }
+//                });
     }
 
-    public static void getItem(long index) throws SQLException {
-        Dao<ExpenseCategory, Long> expenseCategoryDao =
-                DaoManager.createDao(connectionSource, ExpenseCategory.class);
-
-        ExpenseCategory expenseCategory = expenseCategoryDao.queryForId(index);
-        setId(expenseCategory.getId());
-        setName(expenseCategory.getName());
-        setDescription(expenseCategory.getDescription());
+    public static void getItem(long index) throws Exception {
+//        Dao<ExpenseCategory, Long> expenseCategoryDao =
+//                DaoManager.createDao(connectionSource, ExpenseCategory.class);
+//
+//        ExpenseCategory expenseCategory = expenseCategoryDao.queryForId(index);
+//        setId(expenseCategory.getId());
+//        setName(expenseCategory.getName());
+//        setDescription(expenseCategory.getDescription());
         getAllCategories();
     }
 
-    public static void updateItem(long index) throws SQLException {
-        SQLiteConnection connection = SQLiteConnection.getInstance();
-        ConnectionSource connectionSource = connection.getConnection();
-
-        Dao<ExpenseCategory, Long> expenseCategoryDao =
-                DaoManager.createDao(connectionSource, ExpenseCategory.class);
-
-        ExpenseCategory expenseCategory = expenseCategoryDao.queryForId(index);
-
-        expenseCategory.setName(getName());
-        expenseCategory.setDescription(getDescription());
-
-        expenseCategoryDao.update(expenseCategory);
+    public static void updateItem(long index) throws Exception {
+//        SQLiteConnection connection = SQLiteConnection.getInstance();
+//        ConnectionSource connectionSource = connection.getConnection();
+//
+//        Dao<ExpenseCategory, Long> expenseCategoryDao =
+//                DaoManager.createDao(connectionSource, ExpenseCategory.class);
+//
+//        ExpenseCategory expenseCategory = expenseCategoryDao.queryForId(index);
+//
+//        expenseCategory.setName(getName());
+//        expenseCategory.setDescription(getDescription());
+//
+//        expenseCategoryDao.update(expenseCategory);
         getAllCategories();
     }
 
-    public static void deleteItem(long index) throws SQLException {
-        SQLiteConnection connection = SQLiteConnection.getInstance();
-        ConnectionSource connectionSource = connection.getConnection();
-
-        Dao<ExpenseCategory, Long> expenseCategoryDao =
-                DaoManager.createDao(connectionSource, ExpenseCategory.class);
-
-        expenseCategoryDao.deleteById(index);
+    public static void deleteItem(long index) throws Exception {
+//        SQLiteConnection connection = SQLiteConnection.getInstance();
+//        ConnectionSource connectionSource = connection.getConnection();
+//
+//        Dao<ExpenseCategory, Long> expenseCategoryDao =
+//                DaoManager.createDao(connectionSource, ExpenseCategory.class);
+//
+//        expenseCategoryDao.deleteById(index);
 
         getAllCategories();
     }

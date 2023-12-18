@@ -14,20 +14,14 @@
 
 package org.infinite.spoty.viewModels;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.support.ConnectionSource;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.database.connection.SQLiteConnection;
-import org.infinite.spoty.database.models.Permission;
+import org.infinite.spoty.data_source.dtos.Permission;
 import org.infinite.spoty.forms.RoleSettingsFormController;
-import org.infinite.spoty.utils.SpotyLogger;
 import org.jetbrains.annotations.Nullable;
 
-import java.sql.SQLException;
 
 public class PermissionsViewModel {
     private static final ObjectProperty<Permission> dashboardAccess = new SimpleObjectProperty<>();
@@ -161,9 +155,6 @@ public class PermissionsViewModel {
             new SimpleObjectProperty<>();
     private static final ObservableList<Permission> permissionsList =
             FXCollections.observableArrayList();
-    private static Dao<Permission, Long> dao;
-    private static SQLiteConnection connection = SQLiteConnection.getInstance();
-    private static ConnectionSource connectionSource = connection.getConnection();
 
     public static Permission getDashboardAccess() {
         return dashboardAccess.get();
@@ -1000,21 +991,21 @@ public class PermissionsViewModel {
     }
 
     public static @Nullable Permission selectWhere(String itemIs) {
-        if (connection == null) {
-            connection = SQLiteConnection.getInstance();
-        }
-        if (connectionSource == null) {
-            connectionSource = connection.getConnection();
-        }
-
-        try {
-            if (dao == null) {
-                dao = DaoManager.createDao(connectionSource, Permission.class);
-            }
-            return dao.queryBuilder().where().eq("name", itemIs).queryForFirst();
-        } catch (SQLException e) {
-            SpotyLogger.writeToFile(e, PermissionsViewModel.class);
-        }
+//        if (connection == null) {
+//            connection = SQLiteConnection.getInstance();
+//        }
+//        if (connectionSource == null) {
+//            connectionSource = connection.getConnection();
+//        }
+//
+//        try {
+//            if (dao == null) {
+//                dao = DaoManager.createDao(connectionSource, Permission.class);
+//            }
+//            return dao.queryBuilder().where().eq("name", itemIs).queryForFirst();
+//        } catch (Exception e) {
+//            SpotyLogger.writeToFile(e, PermissionsViewModel.class);
+//        }
         return null;
     }
 

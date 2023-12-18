@@ -14,21 +14,17 @@
 
 package org.infinite.spoty.viewModels;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.support.ConnectionSource;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.database.connection.SQLiteConnection;
-import org.infinite.spoty.database.models.Branch;
-import org.infinite.spoty.database.models.RequisitionMaster;
-import org.infinite.spoty.database.models.Supplier;
+import lombok.Getter;
+import org.infinite.spoty.data_source.dtos.Branch;
+import org.infinite.spoty.data_source.dtos.Supplier;
+import org.infinite.spoty.data_source.dtos.requisitions.RequisitionMaster;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.jetbrains.annotations.Nullable;
 
-import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -36,6 +32,7 @@ import java.util.Date;
 import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
 
 public class RequisitionMasterViewModel {
+    @Getter
     public static final ObservableList<RequisitionMaster> requisitionMasterList =
             FXCollections.observableArrayList();
     private static final ListProperty<RequisitionMaster> requisitions =
@@ -51,8 +48,6 @@ public class RequisitionMasterViewModel {
     private static final StringProperty note = new SimpleStringProperty("");
     private static final StringProperty status = new SimpleStringProperty("");
     private static final StringProperty totalCost = new SimpleStringProperty("");
-    private static final SQLiteConnection connection = SQLiteConnection.getInstance();
-    private static final ConnectionSource connectionSource = connection.getConnection();
 
     public static long getId() {
         return id.get();
@@ -226,116 +221,111 @@ public class RequisitionMasterViewModel {
                 });
     }
 
-    public static void saveRequisitionMaster() throws SQLException {
-        Dao<RequisitionMaster, Long> requisitionMasterDao =
-                DaoManager.createDao(connectionSource, RequisitionMaster.class);
-
-        RequisitionMaster requisitionMaster =
-                new RequisitionMaster(
-                        getDate(),
-                        getSupplier(),
-                        getBranch(),
-                        getShipVia(),
-                        getShipMethod(),
-                        getShippingTerms(),
-                        getDeliveryDate(),
-                        getNote(),
-                        getStatus(),
-                        getTotalCost());
-
-        if (!RequisitionDetailViewModel.requisitionDetailList.isEmpty()) {
-            RequisitionDetailViewModel.requisitionDetailList.forEach(
-                    requisitionDetail -> requisitionDetail.setRequisition(requisitionMaster));
-
-            requisitionMaster.setRequisitionDetails(
-                    RequisitionDetailViewModel.getRequisitionDetailList());
-        }
-
-        requisitionMasterDao.create(requisitionMaster);
-        RequisitionDetailViewModel.saveRequisitionDetails();
-
-
-        resetProperties();
-        getRequisitionMasters();
-    }
-
-    public static void getRequisitionMasters() throws SQLException {
-        Dao<RequisitionMaster, Long> requisitionMasterDao =
-                DaoManager.createDao(connectionSource, RequisitionMaster.class);
-
-        Platform.runLater(
-                () -> {
-                    requisitionMasterList.clear();
-
-                    try {
-                        requisitionMasterList.addAll(requisitionMasterDao.queryForAll());
-                    } catch (SQLException e) {
-                        SpotyLogger.writeToFile(e, RequisitionMasterViewModel.class);
-                    }
-                });
-    }
-
-    public static void getItem(long index) throws SQLException {
-        Dao<RequisitionMaster, Long> requisitionMasterDao =
-                DaoManager.createDao(connectionSource, RequisitionMaster.class);
-
-        RequisitionMaster requisitionMaster = requisitionMasterDao.queryForId(index);
-
-        setId(requisitionMaster.getId());
-        setSupplier(requisitionMaster.getSupplier());
-        setBranch(requisitionMaster.getBranch());
-        setShipVia(requisitionMaster.getShipVia());
-        setShipMethod(requisitionMaster.getShipMethod());
-        setShippingTerms(requisitionMaster.getShippingTerms());
-        setNote(requisitionMaster.getNotes());
-        setStatus(requisitionMaster.getStatus());
-        setTotalCost(String.valueOf(requisitionMaster.getTotalCost()));
-        setDate(requisitionMaster.getLocaleDate());
-
-        RequisitionDetailViewModel.requisitionDetailList.clear();
-        RequisitionDetailViewModel.requisitionDetailList.addAll(
-                requisitionMaster.getRequisitionDetails());
-
-        getRequisitionMasters();
-    }
-
-    public static void updateItem(long index) throws SQLException {
-        Dao<RequisitionMaster, Long> requisitionMasterDao =
-                DaoManager.createDao(connectionSource, RequisitionMaster.class);
-
-        RequisitionMaster requisitionMaster = requisitionMasterDao.queryForId(index);
-        requisitionMaster.setDate(getDate());
-        requisitionMaster.setSupplier(getSupplier());
-        requisitionMaster.setBranch(getBranch());
-        requisitionMaster.setShipVia(getShipVia());
-        requisitionMaster.setShipMethod(getShipMethod());
-        requisitionMaster.setShippingTerms(getShippingTerms());
-        requisitionMaster.setDeliveryDate(getDeliveryDate());
-        requisitionMaster.setNotes(getNote());
-        requisitionMaster.setStatus(getStatus());
-        requisitionMaster.setTotalCost(getTotalCost());
-
-        RequisitionDetailViewModel.deleteRequisitionDetails(PENDING_DELETES);
-        requisitionMaster.setRequisitionDetails(
-                RequisitionDetailViewModel.getRequisitionDetailList());
-
-        requisitionMasterDao.update(requisitionMaster);
-        RequisitionDetailViewModel.updateRequisitionDetails();
+    public static void saveRequisitionMaster() throws Exception {
+//        Dao<RequisitionMaster, Long> requisitionMasterDao =
+//                DaoManager.createDao(connectionSource, RequisitionMaster.class);
+//
+//        RequisitionMaster requisitionMaster =
+//                new RequisitionMaster(
+//                        getDate(),
+//                        getSupplier(),
+//                        getBranch(),
+//                        getShipVia(),
+//                        getShipMethod(),
+//                        getShippingTerms(),
+//                        getDeliveryDate(),
+//                        getNote(),
+//                        getStatus(),
+//                        getTotalCost());
+//
+//        if (!RequisitionDetailViewModel.requisitionDetailList.isEmpty()) {
+//            RequisitionDetailViewModel.requisitionDetailList.forEach(
+//                    requisitionDetail -> requisitionDetail.setRequisition(requisitionMaster));
+//
+//            requisitionMaster.setRequisitionDetails(
+//                    RequisitionDetailViewModel.getRequisitionDetailList());
+//        }
+//
+//        requisitionMasterDao.create(requisitionMaster);
+//        RequisitionDetailViewModel.saveRequisitionDetails();
 
         resetProperties();
         getRequisitionMasters();
     }
 
-    public static void deleteItem(long index) throws SQLException {
-        Dao<RequisitionMaster, Long> requisitionMasterDao =
-                DaoManager.createDao(connectionSource, RequisitionMaster.class);
+    public static void getRequisitionMasters() throws Exception {
+//        Dao<RequisitionMaster, Long> requisitionMasterDao =
+//                DaoManager.createDao(connectionSource, RequisitionMaster.class);
+//
+//        Platform.runLater(
+//                () -> {
+//                    requisitionMasterList.clear();
+//
+//                    try {
+//                        requisitionMasterList.addAll(requisitionMasterDao.queryForAll());
+//                    } catch (Exception e) {
+//                        SpotyLogger.writeToFile(e, RequisitionMasterViewModel.class);
+//                    }
+//                });
+    }
 
-        requisitionMasterDao.deleteById(index);
+    public static void getItem(long index) throws Exception {
+//        Dao<RequisitionMaster, Long> requisitionMasterDao =
+//                DaoManager.createDao(connectionSource, RequisitionMaster.class);
+//
+//        RequisitionMaster requisitionMaster = requisitionMasterDao.queryForId(index);
+//
+//        setId(requisitionMaster.getId());
+//        setSupplier(requisitionMaster.getSupplier());
+//        setBranch(requisitionMaster.getBranch());
+//        setShipVia(requisitionMaster.getShipVia());
+//        setShipMethod(requisitionMaster.getShipMethod());
+//        setShippingTerms(requisitionMaster.getShippingTerms());
+//        setNote(requisitionMaster.getNotes());
+//        setStatus(requisitionMaster.getStatus());
+//        setTotalCost(String.valueOf(requisitionMaster.getTotalCost()));
+//        setDate(requisitionMaster.getLocaleDate());
+//
+//        RequisitionDetailViewModel.requisitionDetailList.clear();
+//        RequisitionDetailViewModel.requisitionDetailList.addAll(
+//                requisitionMaster.getRequisitionDetails());
 
         getRequisitionMasters();
     }
 
-    public static ObservableList<RequisitionMaster> getRequisitionMasterList() {
-        return requisitionMasterList;
+    public static void updateItem(long index) throws Exception {
+//        Dao<RequisitionMaster, Long> requisitionMasterDao =
+//                DaoManager.createDao(connectionSource, RequisitionMaster.class);
+//
+//        RequisitionMaster requisitionMaster = requisitionMasterDao.queryForId(index);
+//        requisitionMaster.setDate(getDate());
+//        requisitionMaster.setSupplier(getSupplier());
+//        requisitionMaster.setBranch(getBranch());
+//        requisitionMaster.setShipVia(getShipVia());
+//        requisitionMaster.setShipMethod(getShipMethod());
+//        requisitionMaster.setShippingTerms(getShippingTerms());
+//        requisitionMaster.setDeliveryDate(getDeliveryDate());
+//        requisitionMaster.setNotes(getNote());
+//        requisitionMaster.setStatus(getStatus());
+//        requisitionMaster.setTotalCost(getTotalCost());
+//
+//        RequisitionDetailViewModel.deleteRequisitionDetails(PENDING_DELETES);
+//        requisitionMaster.setRequisitionDetails(
+//                RequisitionDetailViewModel.getRequisitionDetailList());
+//
+//        requisitionMasterDao.update(requisitionMaster);
+//        RequisitionDetailViewModel.updateRequisitionDetails();
+
+        resetProperties();
+        getRequisitionMasters();
+    }
+
+    public static void deleteItem(long index) throws Exception {
+//        Dao<RequisitionMaster, Long> requisitionMasterDao =
+//                DaoManager.createDao(connectionSource, RequisitionMaster.class);
+//
+//        requisitionMasterDao.deleteById(index);
+
+        getRequisitionMasters();
     }
 }

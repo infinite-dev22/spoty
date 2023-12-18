@@ -14,22 +14,16 @@
 
 package org.infinite.spoty.viewModels;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.support.ConnectionSource;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.database.connection.SQLiteConnection;
-import org.infinite.spoty.database.models.Brand;
-import org.infinite.spoty.database.models.Product;
-import org.infinite.spoty.database.models.ProductCategory;
-import org.infinite.spoty.database.models.UnitOfMeasure;
-import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.data_source.dtos.Brand;
+import org.infinite.spoty.data_source.dtos.Product;
+import org.infinite.spoty.data_source.dtos.ProductCategory;
+import org.infinite.spoty.data_source.dtos.UnitOfMeasure;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.Objects;
 
@@ -55,8 +49,6 @@ public class ProductViewModel {
     private static final StringProperty stockAlert = new SimpleStringProperty();
     private static final StringProperty serial = new SimpleStringProperty("");
     private static final StringProperty description = new SimpleStringProperty("");
-    private static final SQLiteConnection connection = SQLiteConnection.getInstance();
-    private static final ConnectionSource connectionSource = connection.getConnection();
 
     public static @NotNull Long getId() {
         return id.get();
@@ -286,8 +278,8 @@ public class ProductViewModel {
         return products;
     }
 
-    public static void saveProduct() throws SQLException {
-        Dao<Product, Long> productDao = DaoManager.createDao(connectionSource, Product.class);
+    public static void saveProduct() throws Exception {
+//        Dao<Product, Long> productDao = DaoManager.createDao(connectionSource, Product.class);
 
         Product product = new Product();
 
@@ -306,10 +298,9 @@ public class ProductViewModel {
         product.setStockAlert(getStockAlert());
         product.setSerialNumber(getSerialNumber());
         product.setImage(getImage());
-        product.setCreatedBy(getName());
         product.setCreatedAt(new Date());
 
-        productDao.create(product);
+//        productDao.create(product);
 
         resetProperties();
 
@@ -341,95 +332,95 @@ public class ProductViewModel {
     }
 
     public static void getAllProducts() {
-        Platform.runLater(
-                () -> {
-                    productsList.clear();
-                    try {
-                        Dao<Product, Long> productDao = DaoManager.createDao(connectionSource, Product.class);
-
-                        productsList.addAll(productDao.queryForAll());
-                    } catch (SQLException e) {
-                        SpotyLogger.writeToFile(e, ProductViewModel.class);
-                    }
-                });
+//        Platform.runLater(
+//                () -> {
+//                    productsList.clear();
+//                    try {
+//                        Dao<Product, Long> productDao = DaoManager.createDao(connectionSource, Product.class);
+//
+//                        productsList.addAll(productDao.queryForAll());
+//                    } catch (Exception e) {
+//                        SpotyLogger.writeToFile(e, ProductViewModel.class);
+//                    }
+//                });
     }
 
-    public static void updateProduct(long index) throws SQLException {
-        Dao<Product, Long> productDao = DaoManager.createDao(connectionSource, Product.class);
-
-        Product product = productDao.queryForId(index);
-
-        product.setName(getName());
-        product.setBrand(getBrand());
-        product.setCategory(getCategory());
-        product.setUnit(getUnit());
-        product.setProductType(getProductType());
-        product.setBarcodeType(getBarcodeType());
-        product.setPrice(getPrice());
-        product.setCost(getCost());
-        product.setQuantity(getQuantity());
-        product.setDiscount(getDiscount());
-        product.setNetTax(getNetTax());
-        product.setTaxType(getTaxType());
-        product.setStockAlert(getStockAlert());
-        product.setSerialNumber(getSerialNumber());
-        product.setImage(getImage());
-        product.setUpdatedBy(getName());
-        product.setUpdatedAt(new Date());
-
-        productDao.update(product);
+    public static void updateProduct(long index) throws Exception {
+//        Dao<Product, Long> productDao = DaoManager.createDao(connectionSource, Product.class);
+//
+//        Product product = productDao.queryForId(index);
+//
+//        product.setName(getName());
+//        product.setBrand(getBrand());
+//        product.setCategory(getCategory());
+//        product.setUnit(getUnit());
+//        product.setProductType(getProductType());
+//        product.setBarcodeType(getBarcodeType());
+//        product.setPrice(getPrice());
+//        product.setCost(getCost());
+//        product.setQuantity(getQuantity());
+//        product.setDiscount(getDiscount());
+//        product.setNetTax(getNetTax());
+//        product.setTaxType(getTaxType());
+//        product.setStockAlert(getStockAlert());
+//        product.setSerialNumber(getSerialNumber());
+//        product.setImage(getImage());
+//        product.setUpdatedBy(getName());
+//        product.setUpdatedAt(new Date());
+//
+//        productDao.update(product);
 
         Platform.runLater(ProductViewModel::resetProperties);
 
         getAllProducts();
     }
 
-    public static void updateProductQuantity(long index) throws SQLException {
-        Dao<Product, Long> productDao = DaoManager.createDao(connectionSource, Product.class);
-
-        Product product = productDao.queryForId(index);
-
-        product.setQuantity(getQuantity());
-        product.setUpdatedBy(getName());
-        product.setUpdatedAt(new Date());
-
-        productDao.update(product);
+    public static void updateProductQuantity(long index) throws Exception {
+//        Dao<Product, Long> productDao = DaoManager.createDao(connectionSource, Product.class);
+//
+//        Product product = productDao.queryForId(index);
+//
+//        product.setQuantity(getQuantity());
+//        product.setUpdatedBy(getName());
+//        product.setUpdatedAt(new Date());
+//
+//        productDao.update(product);
 
         Platform.runLater(ProductViewModel::resetProperties);
 
         getAllProducts();
     }
 
-    public static void getProduct(long index) throws SQLException {
-        Dao<Product, Long> productDao = DaoManager.createDao(connectionSource, Product.class);
-
-        Product product = productDao.queryForId(index);
-
-        Platform.runLater(
-                () -> {
-                    setTempId((int) index);
-                    setId(product.getId());
-                    setName(product.getName());
-                    setBrand(product.getBrand());
-                    setCategory(product.getCategory());
-                    setUnit(product.getUnit());
-                    setProductType(product.getProductType());
-                    setBarcodeType(product.getBarcodeType());
-                    setPrice(product.getPrice());
-                    setCost(product.getCost());
-                    setQuantity(product.getQuantity());
-                    setDiscount(product.getDiscount());
-                    setNetTax(product.getNetTax());
-                    setTaxType(product.getTaxType());
-                    setStockAlert(product.getStockAlert());
-                    setSerial(product.getSerialNumber());
-                    setImage(product.getImage());
-                });
+    public static void getProduct(long index) throws Exception {
+//        Dao<Product, Long> productDao = DaoManager.createDao(connectionSource, Product.class);
+//
+//        Product product = productDao.queryForId(index);
+//
+//        Platform.runLater(
+//                () -> {
+//                    setTempId((int) index);
+//                    setId(product.getId());
+//                    setName(product.getName());
+//                    setBrand(product.getBrand());
+//                    setCategory(product.getCategory());
+//                    setUnit(product.getUnit());
+//                    setProductType(product.getProductType());
+//                    setBarcodeType(product.getBarcodeType());
+//                    setPrice(product.getPrice());
+//                    setCost(product.getCost());
+//                    setQuantity(product.getQuantity());
+//                    setDiscount(product.getDiscount());
+//                    setNetTax(product.getNetTax());
+//                    setTaxType(product.getTaxType());
+//                    setStockAlert(product.getStockAlert());
+//                    setSerial(product.getSerialNumber());
+//                    setImage(product.getImage());
+//                });
     }
 
-    public static void deleteProduct(long index) throws SQLException {
-        Dao<Product, Long> productDao = DaoManager.createDao(connectionSource, Product.class);
-
-        productDao.deleteById(index);
+    public static void deleteProduct(long index) throws Exception {
+//        Dao<Product, Long> productDao = DaoManager.createDao(connectionSource, Product.class);
+//
+//        productDao.deleteById(index);
     }
 }

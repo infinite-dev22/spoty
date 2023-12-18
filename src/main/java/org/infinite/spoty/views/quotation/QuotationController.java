@@ -27,13 +27,12 @@ import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import org.infinite.spoty.components.navigation.Pages;
-import org.infinite.spoty.database.models.QuotationMaster;
+import org.infinite.spoty.data_source.dtos.quotations.QuotationMaster;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.QuotationMasterViewModel;
 import org.infinite.spoty.views.BaseController;
 
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 
@@ -157,7 +156,7 @@ public class QuotationController implements Initializable {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
                             QuotationMasterViewModel.deleteItem(obj.getData().getId());
-                        } catch (SQLException ex) {
+                        } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
                     });
@@ -169,7 +168,7 @@ public class QuotationController implements Initializable {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
                             QuotationMasterViewModel.getItem(obj.getData().getId());
-                        } catch (SQLException ex) {
+                        } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
                     });

@@ -14,18 +14,11 @@
 
 package org.infinite.spoty.viewModels;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.support.ConnectionSource;
-import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.database.connection.SQLiteConnection;
-import org.infinite.spoty.database.models.Branch;
-import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.data_source.dtos.Branch;
 
-import java.sql.SQLException;
 
 public class BranchViewModel {
     private static final LongProperty id = new SimpleLongProperty(0);
@@ -36,8 +29,6 @@ public class BranchViewModel {
     private static final StringProperty town = new SimpleStringProperty("");
     private static final StringProperty city = new SimpleStringProperty("");
     private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>();
-    private static final SQLiteConnection connection = SQLiteConnection.getInstance();
-    private static final ConnectionSource connectionSource = connection.getConnection();
     public static ObservableList<Branch> branchesList = FXCollections.observableArrayList();
     private static final ListProperty<Branch> branches = new SimpleListProperty<>(branchesList);
     public static ObservableList<Branch> branchesComboBoxList = FXCollections.observableArrayList();
@@ -146,13 +137,13 @@ public class BranchViewModel {
         BranchViewModel.branch.set(branch);
     }
 
-    public static void saveBranch() throws SQLException {
-        Dao<Branch, Long> branchDao = DaoManager.createDao(connectionSource, Branch.class);
-
-        Branch branch =
-                new Branch(getName(), getCity(), getPhone(), getEmail(), getTown());
-
-        branchDao.create(branch);
+    public static void saveBranch() throws Exception {
+//        Dao<Branch, Long> branchDao = DaoManager.createDao(connectionSource, Branch.class);
+//
+//        Branch branch =
+//                new Branch(getName(), getCity(), getPhone(), getEmail(), getTown());
+//
+//        branchDao.create(branch);
 
         clearBranchData();
         getAllBranches();
@@ -167,57 +158,57 @@ public class BranchViewModel {
         setTown("");
     }
 
-    public static void getAllBranches() throws SQLException {
-        Dao<Branch, Long> branchDao = DaoManager.createDao(connectionSource, Branch.class);
+    public static void getAllBranches() throws Exception {
+//        Dao<Branch, Long> branchDao = DaoManager.createDao(connectionSource, Branch.class);
 
-        Platform.runLater(
-                () -> {
-                    branchesList.clear();
-
-                    try {
-                        branchesList.addAll(branchDao.queryForAll());
-                    } catch (SQLException e) {
-                        SpotyLogger.writeToFile(e, BranchViewModel.class);
-                    }
-                });
+//        Platform.runLater(
+//                () -> {
+//                    branchesList.clear();
+//
+//                    try {
+//                        branchesList.addAll(branchDao.queryForAll());
+//                    } catch (Exception e) {
+//                        SpotyLogger.writeToFile(e, BranchViewModel.class);
+//                    }
+//                });
     }
 
-    public static void getItem(long branchID) throws SQLException {
-        Dao<Branch, Long> branchDao = DaoManager.createDao(connectionSource, Branch.class);
-
-        Branch branch = branchDao.queryForId(branchID);
-        setBranch(branch);
-        setId(branch.getId());
-        setName(branch.getName());
-        setEmail(branch.getEmail());
-        setPhone(branch.getPhone());
-        setCity(branch.getCity());
-        setTown(branch.getTown());
+    public static void getItem(long branchID) throws Exception {
+//        Dao<Branch, Long> branchDao = DaoManager.createDao(connectionSource, Branch.class);
+//
+//        Branch branch = branchDao.queryForId(branchID);
+//        setBranch(branch);
+//        setId(branch.getId());
+//        setName(branch.getName());
+//        setEmail(branch.getEmail());
+//        setPhone(branch.getPhone());
+//        setCity(branch.getCity());
+//        setTown(branch.getTown());
 
         getAllBranches();
     }
 
-    public static void updateItem(long index) throws SQLException {
-        Dao<Branch, Long> branchDao = DaoManager.createDao(connectionSource, Branch.class);
-
-        Branch branch = branchDao.queryForId(index);
-
-        branch.setName(getName());
-        branch.setCity(getCity());
-        branch.setPhone(getPhone());
-        branch.setEmail(getEmail());
-        branch.setTown(getTown());
-
-        branchDao.update(branch);
+    public static void updateItem(long index) throws Exception {
+//        Dao<Branch, Long> branchDao = DaoManager.createDao(connectionSource, Branch.class);
+//
+//        Branch branch = branchDao.queryForId(index);
+//
+//        branch.setName(getName());
+//        branch.setCity(getCity());
+//        branch.setPhone(getPhone());
+//        branch.setEmail(getEmail());
+//        branch.setTown(getTown());
+//
+//        branchDao.update(branch);
 
         clearBranchData();
         getAllBranches();
     }
 
-    public static void deleteItem(long index) throws SQLException {
-        Dao<Branch, Long> branchDao = DaoManager.createDao(connectionSource, Branch.class);
-
-        branchDao.deleteById(index);
+    public static void deleteItem(long index) throws Exception {
+//        Dao<Branch, Long> branchDao = DaoManager.createDao(connectionSource, Branch.class);
+//
+//        branchDao.deleteById(index);
         getAllBranches();
     }
 }

@@ -27,8 +27,8 @@ import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
-import org.infinite.spoty.database.models.Branch;
-import org.infinite.spoty.database.models.ExpenseCategory;
+import org.infinite.spoty.data_source.dtos.Branch;
+import org.infinite.spoty.data_source.dtos.ExpenseCategory;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.BranchViewModel;
@@ -36,7 +36,6 @@ import org.infinite.spoty.viewModels.ExpenseCategoryViewModel;
 import org.infinite.spoty.viewModels.ExpenseViewModel;
 
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
@@ -152,7 +151,7 @@ public class ExpenseFormController implements Initializable {
                             SpotyThreader.spotyThreadPool(() -> {
                                 try {
                                     ExpenseViewModel.updateItem(ExpenseViewModel.getId());
-                                } catch (SQLException e) {
+                                } catch (Exception e) {
                                     SpotyLogger.writeToFile(e, this.getClass());
                                 }
                             });
@@ -174,7 +173,7 @@ public class ExpenseFormController implements Initializable {
                         SpotyThreader.spotyThreadPool(() -> {
                             try {
                                 ExpenseViewModel.saveExpense();
-                            } catch (SQLException e) {
+                            } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }
                         });

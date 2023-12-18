@@ -28,7 +28,6 @@ import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.BranchViewModel;
 
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
@@ -119,7 +118,7 @@ public class BranchFormController implements Initializable {
                             SpotyThreader.spotyThreadPool(() -> {
                                 try {
                                     BranchViewModel.updateItem(BranchViewModel.getId());
-                                } catch (SQLException e) {
+                                } catch (Exception e) {
                                     SpotyLogger.writeToFile(e, this.getClass());
                                 }
                             });
@@ -138,7 +137,7 @@ public class BranchFormController implements Initializable {
                         SpotyThreader.spotyThreadPool(() -> {
                             try {
                                 saveBranch();
-                            } catch (SQLException e) {
+                            } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }
                         });

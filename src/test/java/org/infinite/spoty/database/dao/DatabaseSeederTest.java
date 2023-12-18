@@ -14,12 +14,8 @@
 
 package org.infinite.spoty.database.dao;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.support.ConnectionSource;
 import java.util.Date;
-import org.infinite.spoty.database.connection.SQLiteConnection;
-import org.infinite.spoty.database.models.*;
+import org.infinite.spoty.data_source.dtos.*;
 import org.infinite.spoty.viewModels.BrandViewModel;
 import org.infinite.spoty.viewModels.ProductCategoryViewModel;
 import org.infinite.spoty.viewModels.UOMViewModel;

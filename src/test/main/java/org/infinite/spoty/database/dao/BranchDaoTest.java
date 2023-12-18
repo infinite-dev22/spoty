@@ -3,7 +3,7 @@ package org.infinite.spoty.database.dao;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Date;
-import org.infinite.spoty.database.models.Branch;
+import org.infinite.spoty.data_source.dtos.Branch;
 import org.junit.jupiter.api.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)

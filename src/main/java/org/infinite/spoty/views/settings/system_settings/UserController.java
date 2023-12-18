@@ -33,14 +33,13 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.infinite.spoty.database.models.User;
+import org.infinite.spoty.data_source.dtos.UserProfile;
 import org.infinite.spoty.forms.UserFormController;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.UserViewModel;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 
@@ -58,7 +57,7 @@ public class UserController implements Initializable {
     @FXML
     public BorderPane userContentPane;
     @FXML
-    public MFXTableView<User> userTable;
+    public MFXTableView<UserProfile> userTable;
     private MFXStageDialog dialog;
 
     private UserController(Stage stage) {
@@ -83,25 +82,25 @@ public class UserController implements Initializable {
     }
 
     private void setupTable() {
-        MFXTableColumn<User> firstName =
-                new MFXTableColumn<>("First Name", false, Comparator.comparing(User::getFirstName));
-        MFXTableColumn<User> lastName =
-                new MFXTableColumn<>("Last Name", false, Comparator.comparing(User::getLastName));
-        MFXTableColumn<User> userName =
-                new MFXTableColumn<>("User Name", false, Comparator.comparing(User::getUserName));
-        MFXTableColumn<User> userEmail =
-                new MFXTableColumn<>("Email", false, Comparator.comparing(User::getEmail));
-        MFXTableColumn<User> userPhone =
-                new MFXTableColumn<>("Phone", false, Comparator.comparing(User::getPhone));
-        MFXTableColumn<User> status =
-                new MFXTableColumn<>("Status", false, Comparator.comparing(User::isActive));
+        MFXTableColumn<UserProfile> firstName =
+                new MFXTableColumn<>("First Name", false, Comparator.comparing(UserProfile::getFirstName));
+        MFXTableColumn<UserProfile> lastName =
+                new MFXTableColumn<>("Last Name", false, Comparator.comparing(UserProfile::getLastName));
+        MFXTableColumn<UserProfile> userName =
+                new MFXTableColumn<>("Other Name", false, Comparator.comparing(UserProfile::getOtherName));
+        MFXTableColumn<UserProfile> userEmail =
+                new MFXTableColumn<>("Email", false, Comparator.comparing(UserProfile::getEmail));
+        MFXTableColumn<UserProfile> userPhone =
+                new MFXTableColumn<>("Phone", false, Comparator.comparing(UserProfile::getPhone));
+        MFXTableColumn<UserProfile> status =
+                new MFXTableColumn<>("Status", false, Comparator.comparing(UserProfile::isActive));
 
-        firstName.setRowCellFactory(user -> new MFXTableRowCell<>(User::getFirstName));
-        lastName.setRowCellFactory(user -> new MFXTableRowCell<>(User::getLastName));
-        userName.setRowCellFactory(user -> new MFXTableRowCell<>(User::getUserName));
-        userEmail.setRowCellFactory(user -> new MFXTableRowCell<>(User::getEmail));
-        userPhone.setRowCellFactory(user -> new MFXTableRowCell<>(User::getPhone));
-        status.setRowCellFactory(user -> new MFXTableRowCell<>(User::isActive));
+        firstName.setRowCellFactory(user -> new MFXTableRowCell<>(UserProfile::getFirstName));
+        lastName.setRowCellFactory(user -> new MFXTableRowCell<>(UserProfile::getLastName));
+        userName.setRowCellFactory(user -> new MFXTableRowCell<>(UserProfile::getOtherName));
+        userEmail.setRowCellFactory(user -> new MFXTableRowCell<>(UserProfile::getEmail));
+        userPhone.setRowCellFactory(user -> new MFXTableRowCell<>(UserProfile::getPhone));
+        status.setRowCellFactory(user -> new MFXTableRowCell<>(UserProfile::isActive));
 
         firstName.prefWidthProperty().bind(userTable.widthProperty().multiply(.167));
         lastName.prefWidthProperty().bind(userTable.widthProperty().multiply(.167));
@@ -114,18 +113,18 @@ public class UserController implements Initializable {
         userTable
                 .getFilters()
                 .addAll(
-                        new StringFilter<>("First Name", User::getFirstName),
-                        new StringFilter<>("Last Name", User::getLastName),
-                        new StringFilter<>("User Name", User::getUserName),
-                        new StringFilter<>("Email", User::getEmail),
-                        new StringFilter<>("Phone", User::getPhone),
-                        new BooleanFilter<>("Status", User::isActive));
+                        new StringFilter<>("First Name", UserProfile::getFirstName),
+                        new StringFilter<>("Last Name", UserProfile::getLastName),
+                        new StringFilter<>("Other Name", UserProfile::getOtherName),
+                        new StringFilter<>("Email", UserProfile::getEmail),
+                        new StringFilter<>("Phone", UserProfile::getPhone),
+                        new BooleanFilter<>("Status", UserProfile::isActive));
         styleUserTable();
 
-        if (UserViewModel.getUsers().isEmpty()) {
-            UserViewModel.getUsers()
+        if (UserViewModel.getUserProfiles().isEmpty()) {
+            UserViewModel.getUserProfiles()
                     .addListener(
-                            (ListChangeListener<User>) c -> userTable.setItems(UserViewModel.getUsers()));
+                            (ListChangeListener<UserProfile>) c -> userTable.setItems(UserViewModel.getUserProfiles()));
         } else {
             userTable.itemsProperty().bindBidirectional(UserViewModel.usersProperty());
         }
@@ -138,10 +137,10 @@ public class UserController implements Initializable {
 
         userTable.setTableRowFactory(
                 t -> {
-                    MFXTableRow<User> row = new MFXTableRow<>(userTable, t);
+                    MFXTableRow<UserProfile> row = new MFXTableRow<>(userTable, t);
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
-                                showContextMenu((MFXTableRow<User>) event.getSource())
+                                showContextMenu((MFXTableRow<UserProfile>) event.getSource())
                                         .show(userTable.getScene().getWindow(), event.getScreenX(), event.getScreenY());
                                 event.consume();
                             };
@@ -150,7 +149,7 @@ public class UserController implements Initializable {
                 });
     }
 
-    private MFXContextMenu showContextMenu(MFXTableRow<User> obj) {
+    private MFXContextMenu showContextMenu(MFXTableRow<UserProfile> obj) {
         MFXContextMenu contextMenu = new MFXContextMenu(userTable);
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
@@ -162,7 +161,7 @@ public class UserController implements Initializable {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
                             UserViewModel.deleteItem(obj.getData().getId());
-                        } catch (SQLException ex) {
+                        } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
                     });
@@ -174,7 +173,7 @@ public class UserController implements Initializable {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
                             UserViewModel.getItem(obj.getData().getId());
-                        } catch (SQLException ex) {
+                        } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
                     });

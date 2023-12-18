@@ -14,21 +14,17 @@
 
 package org.infinite.spoty.viewModels;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.support.ConnectionSource;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.database.connection.SQLiteConnection;
-import org.infinite.spoty.database.models.Branch;
-import org.infinite.spoty.database.models.Customer;
-import org.infinite.spoty.database.models.SaleMaster;
+import lombok.Getter;
+import org.infinite.spoty.data_source.dtos.Branch;
+import org.infinite.spoty.data_source.dtos.Customer;
+import org.infinite.spoty.data_source.dtos.sales.SaleMaster;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.jetbrains.annotations.Nullable;
 
-import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -39,6 +35,7 @@ import java.util.Objects;
 import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
 
 public class SaleMasterViewModel {
+    @Getter
     public static final ObservableList<SaleMaster> saleMasterList =
             FXCollections.observableArrayList();
     private static final ListProperty<SaleMaster> sales = new SimpleListProperty<>(saleMasterList);
@@ -52,8 +49,6 @@ public class SaleMasterViewModel {
     private static final DoubleProperty paid = new SimpleDoubleProperty();
     private static final StringProperty payStatus = new SimpleStringProperty("");
     private static final StringProperty note = new SimpleStringProperty("");
-    private static final SQLiteConnection connection = SQLiteConnection.getInstance();
-    private static final ConnectionSource connectionSource = connection.getConnection();
 
     public static long getId() {
         return id.get();
@@ -202,101 +197,97 @@ public class SaleMasterViewModel {
                 });
     }
 
-    public static void saveSaleMaster() throws SQLException {
-        Dao<SaleMaster, Long> saleMasterDao = DaoManager.createDao(connectionSource, SaleMaster.class);
-
-        SaleMaster saleMaster =
-                new SaleMaster(
-                        getCustomer(),
-                        getBranch(),
-                        getTotal(),
-                        getPaid(),
-                        getSaleStatus(),
-                        getPayStatus(),
-                        getNote(),
-                        getDate());
-
-        if (!SaleDetailViewModel.saleDetailList.isEmpty()) {
-            SaleDetailViewModel.saleDetailList.forEach(
-                    saleDetail -> saleDetail.setSaleMaster(saleMaster));
-
-            saleMaster.setSaleDetails(SaleDetailViewModel.getSaleDetailList());
-        }
-
-        saleMasterDao.create(saleMaster);
+    public static void saveSaleMaster() throws Exception {
+//        Dao<SaleMaster, Long> saleMasterDao = DaoManager.createDao(connectionSource, SaleMaster.class);
+//
+//        SaleMaster saleMaster =
+//                new SaleMaster(
+//                        getCustomer(),
+//                        getBranch(),
+//                        getTotal(),
+//                        getPaid(),
+//                        getSaleStatus(),
+//                        getPayStatus(),
+//                        getNote(),
+//                        getDate());
+//
+//        if (!SaleDetailViewModel.saleDetailList.isEmpty()) {
+//            SaleDetailViewModel.saleDetailList.forEach(
+//                    saleDetail -> saleDetail.setSaleMaster(saleMaster));
+//
+//            saleMaster.setSaleDetails(SaleDetailViewModel.getSaleDetailList());
+//        }
+//
+//        saleMasterDao.create(saleMaster);
         SaleDetailViewModel.saveSaleDetails();
 
         Platform.runLater(SaleMasterViewModel::resetProperties);
         getSaleMasters();
     }
 
-    public static void getSaleMasters() throws SQLException {
-        Dao<SaleMaster, Long> saleMasterDao = DaoManager.createDao(connectionSource, SaleMaster.class);
-
-        Platform.runLater(
-                () -> {
-                    saleMasterList.clear();
-
-                    try {
-                        saleMasterList.addAll(saleMasterDao.queryForAll());
-                    } catch (SQLException e) {
-                        SpotyLogger.writeToFile(e, SaleMasterViewModel.class);
-                    }
-                });
+    public static void getSaleMasters() throws Exception {
+//        Dao<SaleMaster, Long> saleMasterDao = DaoManager.createDao(connectionSource, SaleMaster.class);
+//
+//        Platform.runLater(
+//                () -> {
+//                    saleMasterList.clear();
+//
+//                    try {
+//                        saleMasterList.addAll(saleMasterDao.queryForAll());
+//                    } catch (Exception e) {
+//                        SpotyLogger.writeToFile(e, SaleMasterViewModel.class);
+//                    }
+//                });
     }
 
-    public static void getItem(long index) throws SQLException {
-        Dao<SaleMaster, Long> saleMasterDao = DaoManager.createDao(connectionSource, SaleMaster.class);
-
-        SaleMaster saleMaster = saleMasterDao.queryForId(index);
-
-        Platform.runLater(
-                () -> {
-                    setId(saleMaster.getId());
-                    setDate(saleMaster.getLocaleDate());
-                    setCustomer(saleMaster.getCustomer());
-                    setBranch(saleMaster.getBranch());
-                    setNote(saleMaster.getNotes());
-                    setSaleStatus(saleMaster.getSaleStatus());
-                    setPayStatus(saleMaster.getPaymentStatus());
-
-                    SaleDetailViewModel.saleDetailList.clear();
-                    SaleDetailViewModel.saleDetailList.addAll(saleMaster.getSaleDetails());
-                });
+    public static void getItem(long index) throws Exception {
+//        Dao<SaleMaster, Long> saleMasterDao = DaoManager.createDao(connectionSource, SaleMaster.class);
+//
+//        SaleMaster saleMaster = saleMasterDao.queryForId(index);
+//
+//        Platform.runLater(
+//                () -> {
+//                    setId(saleMaster.getId());
+//                    setDate(saleMaster.getLocaleDate());
+//                    setCustomer(saleMaster.getCustomer());
+//                    setBranch(saleMaster.getBranch());
+//                    setNote(saleMaster.getNotes());
+//                    setSaleStatus(saleMaster.getSaleStatus());
+//                    setPayStatus(saleMaster.getPaymentStatus());
+//
+//                    SaleDetailViewModel.saleDetailList.clear();
+//                    SaleDetailViewModel.saleDetailList.addAll(saleMaster.getSaleDetails());
+//                });
 
         getSaleMasters();
     }
 
-    public static void updateItem(long index) throws SQLException {
-        Dao<SaleMaster, Long> saleMasterDao = DaoManager.createDao(connectionSource, SaleMaster.class);
-
-        SaleMaster saleMaster = saleMasterDao.queryForId(index);
-        saleMaster.setCustomer(getCustomer());
-        saleMaster.setBranch(getBranch());
-        saleMaster.setSaleStatus(getSaleStatus());
-        saleMaster.setPaymentStatus(getPayStatus());
-        saleMaster.setNotes(getNote());
-        saleMaster.setDate(getDate());
-
-        SaleDetailViewModel.deleteSaleDetails(PENDING_DELETES);
-        saleMaster.setSaleDetails(SaleDetailViewModel.getSaleDetailList());
-
-        saleMasterDao.update(saleMaster);
+    public static void updateItem(long index) throws Exception {
+//        Dao<SaleMaster, Long> saleMasterDao = DaoManager.createDao(connectionSource, SaleMaster.class);
+//
+//        SaleMaster saleMaster = saleMasterDao.queryForId(index);
+//        saleMaster.setCustomer(getCustomer());
+//        saleMaster.setBranch(getBranch());
+//        saleMaster.setSaleStatus(getSaleStatus());
+//        saleMaster.setPaymentStatus(getPayStatus());
+//        saleMaster.setNotes(getNote());
+//        saleMaster.setDate(getDate());
+//
+//        SaleDetailViewModel.deleteSaleDetails(PENDING_DELETES);
+//        saleMaster.setSaleDetails(SaleDetailViewModel.getSaleDetailList());
+//
+//        saleMasterDao.update(saleMaster);
         SaleDetailViewModel.updateSaleDetails();
 
         Platform.runLater(SaleMasterViewModel::resetProperties);
         getSaleMasters();
     }
 
-    public static void deleteItem(long index) throws SQLException {
-        Dao<SaleMaster, Long> saleMasterDao = DaoManager.createDao(connectionSource, SaleMaster.class);
-
-        saleMasterDao.deleteById(index);
+    public static void deleteItem(long index) throws Exception {
+//        Dao<SaleMaster, Long> saleMasterDao = DaoManager.createDao(connectionSource, SaleMaster.class);
+//
+//        saleMasterDao.deleteById(index);
 
         getSaleMasters();
-    }
-
-    public static ObservableList<SaleMaster> getSaleMasterList() {
-        return saleMasterList;
     }
 }

@@ -25,15 +25,14 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.GridPane;
 import javafx.util.StringConverter;
-import org.infinite.spoty.database.models.Branch;
-import org.infinite.spoty.database.models.Currency;
+import org.infinite.spoty.data_source.dtos.Branch;
+import org.infinite.spoty.data_source.dtos.Currency;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.BranchViewModel;
 import org.infinite.spoty.viewModels.CurrencyViewModel;
 
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -120,7 +119,7 @@ public class SystemController implements Initializable {
 
         try {
             initGUI();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             SpotyLogger.writeToFile(e, this.getClass());
         }
         setSystemPreferences();
@@ -132,12 +131,12 @@ public class SystemController implements Initializable {
         }
     }
 
-    private void initGUI() throws SQLException {
+    private void initGUI() throws Exception {
         SpotyThreader.spotyThreadPool(() -> {
             try {
                 BranchViewModel.getItem(preferences.getInt("default_branch", 1));
                 CurrencyViewModel.getItem(preferences.getInt("default_currency", 1));
-            } catch (SQLException e) {
+            } catch (Exception e) {
                 SpotyLogger.writeToFile(e, this.getClass());
             }
         });
@@ -158,7 +157,7 @@ public class SystemController implements Initializable {
                 .valueProperty()
                 .addListener(
                         (observable, oldValue, newValue) -> {
-                            preferences.putInt("default_currency", newValue.getId());
+                            preferences.putLong("default_currency", newValue.getId());
                             try {
                                 preferences.flush();
                             } catch (BackingStoreException e) {
@@ -180,7 +179,7 @@ public class SystemController implements Initializable {
                 .valueProperty()
                 .addListener(
                         (observable, oldValue, newValue) -> {
-                            preferences.putInt("default_branch", newValue.getId());
+                            preferences.putLong("default_branch", newValue.getId());
                             try {
                                 preferences.flush();
                             } catch (BackingStoreException e) {

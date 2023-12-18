@@ -27,9 +27,11 @@
             <padding>
                 <Insets bottom="5.0" left="5.0" right="10.0" top="5.0"/>
             </padding>
-            <MFXTextField fx:id="customerReceiveSearchBar" floatMode="DISABLED" promptText="Search customer receives" prefWidth="300.0"
+            <MFXTextField fx:id="customerReceiveSearchBar" floatMode="DISABLED" promptText="Search customer receives"
+                          prefWidth="300.0"
                           AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0"/>
-            <HBox fx:id="customerReceiveActionsPane" alignment="CENTER_RIGHT" spacing="20.0" AnchorPane.bottomAnchor="0.0"
+            <HBox fx:id="customerReceiveActionsPane" alignment="CENTER_RIGHT" spacing="20.0"
+                  AnchorPane.bottomAnchor="0.0"
                   AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                 <MFXButton fx:id="customerReceiveImportBtn" buttonType="RAISED" depthLevel="LEVEL1" text="Import"/>
                 <MFXButton fx:id="customerReceiveCreateBtn" buttonType="RAISED" depthLevel="LEVEL1"

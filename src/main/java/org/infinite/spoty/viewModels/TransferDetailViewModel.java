@@ -14,27 +14,21 @@
 
 package org.infinite.spoty.viewModels;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.stmt.PreparedQuery;
-import com.j256.ormlite.support.ConnectionSource;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.database.connection.SQLiteConnection;
-import org.infinite.spoty.database.models.Product;
-import org.infinite.spoty.database.models.TransferDetail;
-import org.infinite.spoty.database.models.TransferMaster;
-import org.infinite.spoty.database.models.TransferTransaction;
+import org.infinite.spoty.data_source.dtos.Product;
+import org.infinite.spoty.data_source.dtos.transfers.TransferDetail;
+import org.infinite.spoty.data_source.dtos.transfers.TransferMaster;
+import org.infinite.spoty.data_source.dtos.transfers.TransferTransaction;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.SQLException;
-import java.util.Date;
 import java.util.LinkedList;
 
-import static org.infinite.spoty.values.SharedResources.*;
+import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
+import static org.infinite.spoty.values.SharedResources.setTempId;
 
 public class TransferDetailViewModel {
     public static final ObservableList<TransferDetail> transferDetailsList =
@@ -49,8 +43,6 @@ public class TransferDetailViewModel {
     private static final StringProperty description = new SimpleStringProperty("");
     private static final StringProperty price = new SimpleStringProperty("");
     private static final StringProperty total = new SimpleStringProperty("");
-    private static final SQLiteConnection connection = SQLiteConnection.getInstance();
-    private static final ConnectionSource connectionSource = connection.getConnection();
 
     public static long getId() {
         return id.get();
@@ -172,113 +164,113 @@ public class TransferDetailViewModel {
     }
 
     public static void addTransferDetails() {
-        TransferDetail transferDetail =
-                new TransferDetail(
-                        getProduct(), getQuantity(), getSerial(), getDescription(), getPrice(), getTotal());
-
-        Platform.runLater(
-                () -> {
-                    transferDetailsList.add(transferDetail);
-
-                    resetProperties();
-                });
+//        TransferDetail transferDetail =
+//                new TransferDetail(
+//                        getProduct(), getQuantity(), getSerial(), getDescription(), getPrice(), getTotal());
+//
+//        Platform.runLater(
+//                () -> {
+//                    transferDetailsList.add(transferDetail);
+//
+//                    resetProperties();
+//                });
     }
 
-    public static void saveTransferDetails() throws SQLException {
-        Dao<TransferDetail, Long> transferDetailDao =
-                DaoManager.createDao(connectionSource, TransferDetail.class);
-
-        transferDetailDao.create(transferDetailsList);
+    public static void saveTransferDetails() throws Exception {
+//        Dao<TransferDetail, Long> transferDetailDao =
+//                DaoManager.createDao(connectionSource, TransferDetail.class);
+//
+//        transferDetailDao.create(transferDetailsList);
 
         setProductQuantity();
 
         Platform.runLater(transferDetailsList::clear);
     }
 
-    public static void getAllTransferDetails() throws SQLException {
-        Dao<TransferDetail, Long> transferDetailDao =
-                DaoManager.createDao(connectionSource, TransferDetail.class);
-
-        Platform.runLater(
-                () -> {
-                    transferDetailsList.clear();
-                    try {
-                        transferDetailsList.addAll(transferDetailDao.queryForAll());
-                    } catch (SQLException e) {
-                        SpotyLogger.writeToFile(e, TransferDetailViewModel.class);
-                    }
-                });
+    public static void getAllTransferDetails() throws Exception {
+//        Dao<TransferDetail, Long> transferDetailDao =
+//                DaoManager.createDao(connectionSource, TransferDetail.class);
+//
+//        Platform.runLater(
+//                () -> {
+//                    transferDetailsList.clear();
+//                    try {
+//                        transferDetailsList.addAll(transferDetailDao.queryForAll());
+//                    } catch (Exception e) {
+//                        SpotyLogger.writeToFile(e, TransferDetailViewModel.class);
+//                    }
+//                });
     }
 
-    public static void updateTransferDetail(long index) throws SQLException {
-        Dao<TransferDetail, Long> transferDetailDao =
-                DaoManager.createDao(connectionSource, TransferDetail.class);
-
-        TransferDetail transferDetail = transferDetailDao.queryForId(index);
-        transferDetail.setProduct(getProduct());
-        transferDetail.setQuantity(getQuantity());
-        transferDetail.setSerialNo(getSerial());
-        transferDetail.setDescription(getDescription());
-        transferDetail.setPrice(getPrice());
-        transferDetail.setTotal(getTotal());
-
-        Platform.runLater(
-                () -> {
-                    transferDetailsList.remove(getTempId());
-                    transferDetailsList.add(getTempId(), transferDetail);
-
-                    resetProperties();
-                });
+    public static void updateTransferDetail(long index) throws Exception {
+//        Dao<TransferDetail, Long> transferDetailDao =
+//                DaoManager.createDao(connectionSource, TransferDetail.class);
+//
+//        TransferDetail transferDetail = transferDetailDao.queryForId(index);
+//        transferDetail.setProduct(getProduct());
+//        transferDetail.setQuantity(getQuantity());
+//        transferDetail.setSerialNo(getSerial());
+//        transferDetail.setDescription(getDescription());
+//        transferDetail.setPrice(getPrice());
+//        transferDetail.setTotal(getTotal());
+//
+//        Platform.runLater(
+//                () -> {
+//                    transferDetailsList.remove(getTempId());
+//                    transferDetailsList.add(getTempId(), transferDetail);
+//
+//                    resetProperties();
+//                });
     }
 
-    public static void getItem(long index, int tempIndex) throws SQLException {
-        Dao<TransferDetail, Long> transferDetailDao =
-                DaoManager.createDao(connectionSource, TransferDetail.class);
-
-        TransferDetail transferDetail = transferDetailDao.queryForId(index);
-
-        Platform.runLater(
-                () -> {
-                    setTempId(tempIndex);
-                    setId(transferDetail.getId());
-                    setProduct(transferDetail.getProduct());
-                    setQuantity(String.valueOf(transferDetail.getQuantity()));
-                    setSerial(transferDetail.getSerialNo());
-                    setDescription(transferDetail.getDescription());
-                    setPrice(String.valueOf(transferDetail.getPrice()));
-                    setTotal(String.valueOf(transferDetail.getTotal()));
-                });
+    public static void getItem(long index, int tempIndex) throws Exception {
+//        Dao<TransferDetail, Long> transferDetailDao =
+//                DaoManager.createDao(connectionSource, TransferDetail.class);
+//
+//        TransferDetail transferDetail = transferDetailDao.queryForId(index);
+//
+//        Platform.runLater(
+//                () -> {
+//                    setTempId(tempIndex);
+//                    setId(transferDetail.getId());
+//                    setProduct(transferDetail.getProduct());
+//                    setQuantity(String.valueOf(transferDetail.getQuantity()));
+//                    setSerial(transferDetail.getSerialNo());
+//                    setDescription(transferDetail.getDescription());
+//                    setPrice(String.valueOf(transferDetail.getPrice()));
+//                    setTotal(String.valueOf(transferDetail.getTotal()));
+//                });
     }
 
-    public static void updateItem(long index) throws SQLException {
-        Dao<TransferDetail, Long> transferDetailDao =
-                DaoManager.createDao(connectionSource, TransferDetail.class);
-
-        TransferDetail transferDetail = transferDetailDao.queryForId(index);
-        transferDetail.setProduct(getProduct());
-        transferDetail.setQuantity(getQuantity());
-        transferDetail.setSerialNo(getSerial());
-        transferDetail.setDescription(getDescription());
-        transferDetail.setPrice(getPrice());
-        transferDetail.setTotal(getTotal());
-
-        transferDetailDao.update(transferDetail);
+    public static void updateItem(long index) throws Exception {
+//        Dao<TransferDetail, Long> transferDetailDao =
+//                DaoManager.createDao(connectionSource, TransferDetail.class);
+//
+//        TransferDetail transferDetail = transferDetailDao.queryForId(index);
+//        transferDetail.setProduct(getProduct());
+//        transferDetail.setQuantity(getQuantity());
+//        transferDetail.setSerialNo(getSerial());
+//        transferDetail.setDescription(getDescription());
+//        transferDetail.setPrice(getPrice());
+//        transferDetail.setTotal(getTotal());
+//
+//        transferDetailDao.update(transferDetail);
 
         getAllTransferDetails();
     }
 
-    public static void updateTransferDetails() throws SQLException {
-        Dao<TransferDetail, Long> transferDetailDao =
-                DaoManager.createDao(connectionSource, TransferDetail.class);
-
-        transferDetailsList.forEach(
-                transferDetail -> {
-                    try {
-                        transferDetailDao.update(transferDetail);
-                    } catch (SQLException e) {
-                        SpotyLogger.writeToFile(e, TransferDetailViewModel.class);
-                    }
-                });
+    public static void updateTransferDetails() throws Exception {
+//        Dao<TransferDetail, Long> transferDetailDao =
+//                DaoManager.createDao(connectionSource, TransferDetail.class);
+//
+//        transferDetailsList.forEach(
+//                transferDetail -> {
+//                    try {
+//                        transferDetailDao.update(transferDetail);
+//                    } catch (Exception e) {
+//                        SpotyLogger.writeToFile(e, TransferDetailViewModel.class);
+//                    }
+//                });
 
         updateProductQuantity();
 
@@ -291,17 +283,17 @@ public class TransferDetailViewModel {
     }
 
     public static void deleteTransferDetails(@NotNull LinkedList<Long> indexes) {
-        indexes.forEach(
-                index -> {
-                    try {
-                        Dao<TransferDetail, Long> transferDetailDao =
-                                DaoManager.createDao(connectionSource, TransferDetail.class);
-
-                        transferDetailDao.deleteById(index);
-                    } catch (SQLException e) {
-                        SpotyLogger.writeToFile(e, TransferDetailViewModel.class);
-                    }
-                });
+//        indexes.forEach(
+//                index -> {
+//                    try {
+//                        Dao<TransferDetail, Long> transferDetailDao =
+//                                DaoManager.createDao(connectionSource, TransferDetail.class);
+//
+//                        transferDetailDao.deleteById(index);
+//                    } catch (Exception e) {
+//                        SpotyLogger.writeToFile(e, TransferDetailViewModel.class);
+//                    }
+//                });
     }
 
     private static void setProductQuantity() {
@@ -316,7 +308,7 @@ public class TransferDetailViewModel {
                             try {
                                 ProductViewModel.updateProductQuantity(transferDetails.getProduct().getId());
                                 createTransferTransaction(transferDetails);
-                            } catch (SQLException e) {
+                            } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, TransferDetailViewModel.class);
                             }
                         });
@@ -340,56 +332,57 @@ public class TransferDetailViewModel {
                                 ProductViewModel.updateProductQuantity(transferDetails.getProduct().getId());
 
                                 updateTransferTransaction(transferDetails);
-                            } catch (SQLException e) {
+                            } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, TransferDetailViewModel.class);
                             }
                         });
     }
 
     private static TransferTransaction getTransferTransaction(long transferIndex)
-            throws SQLException {
-        Dao<TransferTransaction, Long> transferTransactionDao =
-                DaoManager.createDao(connectionSource, TransferTransaction.class);
-
-        PreparedQuery<TransferTransaction> preparedQuery =
-                transferTransactionDao
-                        .queryBuilder()
-                        .where()
-                        .eq("stock_in_detail_id", transferIndex)
-                        .prepare();
-
-        return transferTransactionDao.queryForFirst(preparedQuery);
+            throws Exception {
+//        Dao<TransferTransaction, Long> transferTransactionDao =
+//                DaoManager.createDao(connectionSource, TransferTransaction.class);
+//
+//        PreparedQuery<TransferTransaction> preparedQuery =
+//                transferTransactionDao
+//                        .queryBuilder()
+//                        .where()
+//                        .eq("stock_in_detail_id", transferIndex)
+//                        .prepare();
+//
+//        return transferTransactionDao.queryForFirst(preparedQuery);
+        return new TransferTransaction();
     }
 
     private static void createTransferTransaction(@NotNull TransferDetail transferDetails)
-            throws SQLException {
-        Dao<TransferTransaction, Long> transferTransactionDao =
-                DaoManager.createDao(connectionSource, TransferTransaction.class);
-
-        TransferTransaction transferTransaction = new TransferTransaction();
-        transferTransaction.setFromBranch(transferDetails.getTransfer().getFromBranch());
-        transferTransaction.setToBranch(transferDetails.getTransfer().getToBranch());
-        transferTransaction.setTransferDetail(transferDetails);
-        transferTransaction.setProduct(transferDetails.getProduct());
-        transferTransaction.setTransferQuantity(transferDetails.getQuantity());
-        transferTransaction.setDate(new Date());
-
-        transferTransactionDao.create(transferTransaction);
+            throws Exception {
+//        Dao<TransferTransaction, Long> transferTransactionDao =
+//                DaoManager.createDao(connectionSource, TransferTransaction.class);
+//
+//        TransferTransaction transferTransaction = new TransferTransaction();
+//        transferTransaction.setFromBranch(transferDetails.getTransfer().getFromBranch());
+//        transferTransaction.setToBranch(transferDetails.getTransfer().getToBranch());
+//        transferTransaction.setTransferDetail(transferDetails);
+//        transferTransaction.setProduct(transferDetails.getProduct());
+//        transferTransaction.setTransferQuantity(transferDetails.getQuantity());
+//        transferTransaction.setDate(new Date());
+//
+//        transferTransactionDao.create(transferTransaction);
     }
 
     private static void updateTransferTransaction(@NotNull TransferDetail transferDetails)
-            throws SQLException {
-        Dao<TransferTransaction, Long> transferTransactionDao =
-                DaoManager.createDao(connectionSource, TransferTransaction.class);
-
-        TransferTransaction transferTransaction = getTransferTransaction(transferDetails.getId());
-        transferTransaction.setFromBranch(transferDetails.getTransfer().getFromBranch());
-        transferTransaction.setToBranch(transferDetails.getTransfer().getToBranch());
-        transferTransaction.setTransferDetail(transferDetails);
-        transferTransaction.setProduct(transferDetails.getProduct());
-        transferTransaction.setTransferQuantity(transferDetails.getQuantity());
-        transferTransaction.setDate(new Date());
-
-        transferTransactionDao.update(transferTransaction);
+            throws Exception {
+//        Dao<TransferTransaction, Long> transferTransactionDao =
+//                DaoManager.createDao(connectionSource, TransferTransaction.class);
+//
+//        TransferTransaction transferTransaction = getTransferTransaction(transferDetails.getId());
+//        transferTransaction.setFromBranch(transferDetails.getTransfer().getFromBranch());
+//        transferTransaction.setToBranch(transferDetails.getTransfer().getToBranch());
+//        transferTransaction.setTransferDetail(transferDetails);
+//        transferTransaction.setProduct(transferDetails.getProduct());
+//        transferTransaction.setTransferQuantity(transferDetails.getQuantity());
+//        transferTransaction.setDate(new Date());
+//
+//        transferTransactionDao.update(transferTransaction);
     }
 }

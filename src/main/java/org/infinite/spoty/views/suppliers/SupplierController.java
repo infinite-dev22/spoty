@@ -32,14 +32,13 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.infinite.spoty.database.models.Supplier;
+import org.infinite.spoty.data_source.dtos.Supplier;
 import org.infinite.spoty.forms.SupplierFormController;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.SupplierViewModel;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 
@@ -162,7 +161,7 @@ public class SupplierController implements Initializable {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
                             SupplierViewModel.deleteItem(obj.getData().getId());
-                        } catch (SQLException ex) {
+                        } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
                     });
@@ -174,7 +173,7 @@ public class SupplierController implements Initializable {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
                             SupplierViewModel.getItem(obj.getData().getId());
-                        } catch (SQLException ex) {
+                        } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
                     });

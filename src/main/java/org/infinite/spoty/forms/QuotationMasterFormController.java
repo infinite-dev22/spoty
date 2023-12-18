@@ -20,7 +20,7 @@ import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
 import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import io.github.palexdev.materialfx.enums.ScrimPriority;
 import io.github.palexdev.materialfx.filter.DoubleFilter;
-import io.github.palexdev.materialfx.filter.LongFilter;
+import io.github.palexdev.materialfx.filter.IntegerFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import io.github.palexdev.materialfx.utils.StringUtils;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
@@ -42,9 +42,9 @@ import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
-import org.infinite.spoty.database.models.Branch;
-import org.infinite.spoty.database.models.Customer;
-import org.infinite.spoty.database.models.QuotationDetail;
+import org.infinite.spoty.data_source.dtos.Branch;
+import org.infinite.spoty.data_source.dtos.Customer;
+import org.infinite.spoty.data_source.dtos.quotations.QuotationDetail;
 import org.infinite.spoty.startup.Dialogs;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.utils.SpotyThreader;
@@ -57,7 +57,6 @@ import org.infinite.spoty.views.BaseController;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import java.util.function.Function;
@@ -187,7 +186,7 @@ public class QuotationMasterFormController implements Initializable {
                 new MFXTableColumn<>("Price", false, Comparator.comparing(QuotationDetail::getPrice));
         MFXTableColumn<QuotationDetail> totalPrice =
                 new MFXTableColumn<>(
-                        "Total Price", false, Comparator.comparing(QuotationDetail::getTotalPrice));
+                        "Total Price", false, Comparator.comparing(QuotationDetail::getTotal));
 
         productName.setRowCellFactory(
                 product -> new MFXTableRowCell<>(QuotationDetail::getProductName));
@@ -197,7 +196,7 @@ public class QuotationMasterFormController implements Initializable {
                 product -> new MFXTableRowCell<>(QuotationDetail::getDiscount));
         productTax.setRowCellFactory(product -> new MFXTableRowCell<>(QuotationDetail::getNetTax));
         productPrice.setRowCellFactory(product -> new MFXTableRowCell<>(QuotationDetail::getPrice));
-        totalPrice.setRowCellFactory(product -> new MFXTableRowCell<>(QuotationDetail::getTotalPrice));
+        totalPrice.setRowCellFactory(product -> new MFXTableRowCell<>(QuotationDetail::getTotal));
 
         productName.prefWidthProperty().bind(quotationDetailTable.widthProperty().multiply(.25));
         productQuantity.prefWidthProperty().bind(quotationDetailTable.widthProperty().multiply(.25));
@@ -215,11 +214,11 @@ public class QuotationMasterFormController implements Initializable {
                 .getFilters()
                 .addAll(
                         new StringFilter<>("Product", QuotationDetail::getProductName),
-                        new LongFilter<>("Quantity", QuotationDetail::getQuantity),
+                        new IntegerFilter<>("Quantity", QuotationDetail::getQuantity),
                         new DoubleFilter<>("Discount", QuotationDetail::getDiscount),
                         new DoubleFilter<>("Tax", QuotationDetail::getNetTax),
                         new DoubleFilter<>("Price", QuotationDetail::getPrice),
-                        new DoubleFilter<>("Total Price", QuotationDetail::getTotalPrice));
+                        new DoubleFilter<>("Total Price", QuotationDetail::getTotal));
 
         getQuotationDetailTable();
 
@@ -327,7 +326,7 @@ public class QuotationMasterFormController implements Initializable {
                 SpotyThreader.spotyThreadPool(() -> {
                     try {
                         QuotationMasterViewModel.updateItem(QuotationMasterViewModel.getId());
-                    } catch (SQLException e) {
+                    } catch (Exception e) {
                         SpotyLogger.writeToFile(e, this.getClass());
                     }
                 });
@@ -350,7 +349,7 @@ public class QuotationMasterFormController implements Initializable {
             SpotyThreader.spotyThreadPool(() -> {
                 try {
                     QuotationMasterViewModel.saveQuotationMaster();
-                } catch (SQLException e) {
+                } catch (Exception e) {
                     SpotyLogger.writeToFile(e, this.getClass());
                 }
             });

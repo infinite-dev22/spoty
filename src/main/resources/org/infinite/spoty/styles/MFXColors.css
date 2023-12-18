@@ -13,37 +13,36 @@
  */
 
 * {
-	-mfx-blue: #2196f3;
-	-mfx-charcoal: #445055;
-	-mfx-charcoal-disabled: #013b3c3d;
-	-mfx-selected-nav: #607a8082;
-	-mfx-nav-white-text: #e5f0f2;
-	-mfx-green: #4caf50;
-	-mfx-onyx: #353935;
-	-mfx-orange: #ff9800;
-	-mfx-purple: #7a0ed9;
-	-mfx-red: #EF6E6B;
-	-mfx-yellow: #FFEA00;
-	-mfx-danger-red: #DC4C64;
+    -mfx-blue: #2196f3;
+    -mfx-charcoal: #445055;
+    -mfx-charcoal-disabled: #013b3c3d;
+    -mfx-selected-nav: #607a8082;
+    -mfx-nav-white-text: #e5f0f2;
+    -mfx-green: #4caf50;
+    -mfx-onyx: #353935;
+    -mfx-orange: #ff9800;
+    -mfx-purple: #7a0ed9;
+    -mfx-red: #EF6E6B;
+    -mfx-yellow: #FFEA00;
+    -mfx-danger-red: #DC4C64;
 
-	// new
-	-mfx-slate-gray: #6C6F7F;
-	-mfx-paynes-gray: #5C6672;
-	-mfx-charcoal-light: #455561;
-	-mfx-charcoal-dark: #313E50;
-	-mfx-delft-blue: #3A435E;
-	-mfx-azure-web: #EAFDF8;
-	-mfx-anti-flash-white: #E5E9EC;
-	-mfx-jet-dark-charcoal: #2F2D2E;
-	-mfx-app-components-light: white;
-	-mfx-app-background-light: white;
+    -mfx-slate-gray: #6C6F7F;
+    -mfx-paynes-gray: #5C6672;
+    -mfx-charcoal-light: #455561;
+    -mfx-charcoal-dark: #313E50;
+    -mfx-delft-blue: #3A435E;
+    -mfx-azure-web: #EAFDF8;
+    -mfx-anti-flash-white: #E5E9EC;
+    -mfx-jet-dark-charcoal: #2F2D2E;
+    -mfx-app-components-light: white;
+    -mfx-app-background-light: white;
 
-	-mfx-text-he: rgba(0, 0, 0, 0.87); /* High Emphasis */
-	-mfx-text-me: rgba(0, 0, 0, 0.60); /* Medium Emphasis*/
-	-mfx-text-disabled: rgba(0, 0, 0, 0.38); /* Disabled */
+    -mfx-text-he: rgba(0, 0, 0, 0.87); /* High Emphasis */
+    -mfx-text-me: rgba(0, 0, 0, 0.60); /* Medium Emphasis*/
+    -mfx-text-disabled: rgba(0, 0, 0, 0.38); /* Disabled */
 
-	-common-gradient: linear-gradient(to right bottom, #c4008b, #d00085, #dc007f, #e60b79, #ef1872, #f5276b, #fa3564, #fe415e, #ff5158, #ff5f52, #ff6c4e, #ff794b);
-	-secondary-gradient: linear-gradient(to right bottom, #1ec400, #00bd3a, #00b654, #00ae67, #00a574, #00a280, #009e8a, #009a91, #009b9d, #009ba8, #009bb2, #009abb);
+    -common-gradient: linear-gradient(to right bottom, #c4008b, #d00085, #dc007f, #e60b79, #ef1872, #f5276b, #fa3564, #fe415e, #ff5158, #ff5f52, #ff6c4e, #ff794b);
+    -secondary-gradient: linear-gradient(to right bottom, #1ec400, #00bd3a, #00b654, #00ae67, #00a574, #00a280, #009e8a, #009a91, #009b9d, #009ba8, #009bb2, #009abb);
 
-	-spoty-primary-color: -mfx-charcoal;
+    -spoty-primary-color: -mfx-charcoal;
 }

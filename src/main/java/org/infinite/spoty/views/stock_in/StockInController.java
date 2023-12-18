@@ -27,13 +27,12 @@ import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import org.infinite.spoty.components.navigation.Pages;
-import org.infinite.spoty.database.models.StockInMaster;
+import org.infinite.spoty.data_source.dtos.stock_ins.StockInMaster;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.StockInMasterViewModel;
 import org.infinite.spoty.views.BaseController;
 
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 
@@ -140,7 +139,7 @@ public class StockInController implements Initializable {
                             () -> {
                                 try {
                                     StockInMasterViewModel.deleteItem(obj.getData().getId());
-                                } catch (SQLException ex) {
+                                } catch (Exception ex) {
                                     throw new RuntimeException(ex);
                                 }
                             });
@@ -154,7 +153,7 @@ public class StockInController implements Initializable {
                             () -> {
                                 try {
                                     StockInMasterViewModel.getItem(obj.getData().getId());
-                                } catch (SQLException ex) {
+                                } catch (Exception ex) {
                                     throw new RuntimeException(ex);
                                 }
                             });

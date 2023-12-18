@@ -28,7 +28,6 @@ import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.ExpenseCategoryViewModel;
 
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
@@ -89,7 +88,7 @@ public class ExpenseCategoryFormController implements Initializable {
                             SpotyThreader.spotyThreadPool(() -> {
                                 try {
                                     ExpenseCategoryViewModel.updateItem(ExpenseCategoryViewModel.getId());
-                                } catch (SQLException e) {
+                                } catch (Exception e) {
                                     SpotyLogger.writeToFile(e, this.getClass());
                                 }
                             });
@@ -108,7 +107,7 @@ public class ExpenseCategoryFormController implements Initializable {
                         SpotyThreader.spotyThreadPool(() -> {
                             try {
                                 saveExpenseCategory();
-                            } catch (SQLException e) {
+                            } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }
                         });

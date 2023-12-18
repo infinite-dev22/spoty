@@ -34,7 +34,6 @@ import javafx.stage.StageStyle;
 import org.infinite.spoty.SpotyResourceLoader;
 import org.infinite.spoty.components.navigation.Pages;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
-import org.infinite.spoty.database.management.SQLiteTableCreator;
 import org.infinite.spoty.startup.Dialogs;
 import org.infinite.spoty.startup.SpotyPaths;
 import org.infinite.spoty.utils.SpotyLogger;
@@ -46,7 +45,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 import static org.infinite.spoty.SpotyResourceLoader.fxmlLoader;
@@ -61,11 +59,11 @@ public class SplashScreenController implements Initializable {
     public Label companyName;
 
     public static void checkFunctions() {
-        var tableCreate = tableCreate();
+        var sysPathCreator = sysPathCreater();
         var dataInit = dataInit();
 
         try {
-            tableCreate.join();
+            sysPathCreator.join();
             dataInit.join();
             startApp();
         } catch (InterruptedException e) {
@@ -74,15 +72,13 @@ public class SplashScreenController implements Initializable {
     }
 
     @NotNull
-    private static Thread tableCreate() {
+    private static Thread sysPathCreater() {
         return SpotyThreader.singleThreadCreator(
-                "data-storage-man",
+                "paths-creator",
                 () -> {
                     try {
                         SpotyPaths.createPaths();
-                        SQLiteTableCreator.getInstance().createTablesIfNotExist();
-                        SQLiteTableCreator.getInstance().seedDatabase();
-                    } catch (SQLException e) {
+                    } catch (Exception e) {
                         SpotyLogger.writeToFile(e, SplashScreenController.class);
                     }
                 });
@@ -168,7 +164,7 @@ public class SplashScreenController implements Initializable {
                         SupplierViewModel.getAllSuppliers();
                         TransferMasterViewModel.getTransferMasters();
                         UOMViewModel.getItems();
-                        UserViewModel.getAllUsers();
+                        UserViewModel.getAllUserProfiles();
                         RoleViewModel.getAllRoles();
                         // Initialize Permissions.
                         PermissionsViewModel.setAccessBrands();
@@ -274,7 +270,7 @@ public class SplashScreenController implements Initializable {
                         PermissionsViewModel.setCreateRequisition();
                         PermissionsViewModel.setEditRequisition();
                         PermissionsViewModel.setDeleteRequisition();
-                    } catch (SQLException e) {
+                    } catch (Exception e) {
                         SpotyLogger.writeToFile(e, SplashScreenController.class);
                     }
                 });

@@ -14,29 +14,24 @@
 
 package org.infinite.spoty.viewModels;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.stmt.PreparedQuery;
-import com.j256.ormlite.support.ConnectionSource;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.database.connection.SQLiteConnection;
-import org.infinite.spoty.database.models.Product;
-import org.infinite.spoty.database.models.SaleDetail;
-import org.infinite.spoty.database.models.SaleTransaction;
+import lombok.Getter;
+import org.infinite.spoty.data_source.dtos.Product;
+import org.infinite.spoty.data_source.dtos.sales.SaleDetail;
+import org.infinite.spoty.data_source.dtos.sales.SaleTransaction;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.SQLException;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.Objects;
 
 import static org.infinite.spoty.values.SharedResources.*;
 
 public class SaleDetailViewModel {
+    @Getter
     public static final ObservableList<SaleDetail> saleDetailList =
             FXCollections.observableArrayList();
     private static final ListProperty<SaleDetail> saleDetails =
@@ -52,8 +47,6 @@ public class SaleDetailViewModel {
     private static final StringProperty discountType = new SimpleStringProperty();
     private static final DoubleProperty price = new SimpleDoubleProperty();
     private static final StringProperty quantity = new SimpleStringProperty();
-    private static final SQLiteConnection connection = SQLiteConnection.getInstance();
-    private static final ConnectionSource connectionSource = connection.getConnection();
 
     public static long getId() {
         return id.get();
@@ -179,8 +172,8 @@ public class SaleDetailViewModel {
         return price;
     }
 
-    public static long getQuantity() {
-        return Long.parseLong(quantity.get());
+    public static int getQuantity() {
+        return Integer.parseInt(quantity.get());
     }
 
     public static void setQuantity(long quantity) {
@@ -218,29 +211,29 @@ public class SaleDetailViewModel {
     }
 
     public static void addSaleDetail() {
-        SaleDetail saleDetail =
-                new SaleDetail(
-                        getProduct(),
-                        getQuantity(),
-                        getSerial(),
-                        getNetTax(),
-                        getTaxType(),
-                        getDiscount(),
-                        getDiscountType(),
-                        getPrice(),
-                        getSubTotalPrice());
-
-        Platform.runLater(
-                () -> {
-                    saleDetailList.add(saleDetail);
-                    resetProperties();
-                });
+//        SaleDetail saleDetail =
+//                new SaleDetail(
+//                        getProduct(),
+//                        getQuantity(),
+//                        getSerial(),
+//                        getNetTax(),
+//                        getTaxType(),
+//                        getDiscount(),
+//                        getDiscountType(),
+//                        getPrice(),
+//                        getSubTotalPrice());
+//
+//        Platform.runLater(
+//                () -> {
+//                    saleDetailList.add(saleDetail);
+//                    resetProperties();
+//                });
     }
 
-    public static void saveSaleDetails() throws SQLException {
-        Dao<SaleDetail, Long> saleDetailDao = DaoManager.createDao(connectionSource, SaleDetail.class);
-
-        saleDetailDao.create(saleDetailList);
+    public static void saveSaleDetails() throws Exception {
+//        Dao<SaleDetail, Long> saleDetailDao = DaoManager.createDao(connectionSource, SaleDetail.class);
+//
+//        saleDetailDao.create(saleDetailList);
 
         setProductQuantity();
 
@@ -258,7 +251,7 @@ public class SaleDetailViewModel {
                     try {
                         ProductViewModel.updateProductQuantity(saleDetail.getProduct().getId());
                         createSaleTransaction(saleDetail);
-                    } catch (SQLException e) {
+                    } catch (Exception e) {
                         SpotyLogger.writeToFile(e, SaleDetailViewModel.class);
                     }
                 });
@@ -280,13 +273,13 @@ public class SaleDetailViewModel {
                         ProductViewModel.updateProductQuantity(saleDetail.getProduct().getId());
 
                         updateSaleTransaction(saleDetail);
-                    } catch (SQLException e) {
+                    } catch (Exception e) {
                         SpotyLogger.writeToFile(e, SaleDetailViewModel.class);
                     }
                 });
     }
 
-    public static void updateSaleDetail(long index) throws SQLException {
+    public static void updateSaleDetail(long index) throws Exception {
         SaleDetail saleDetail = getSaleDetails().get((int) index);
 
         saleDetail.setProduct(getProduct());
@@ -308,7 +301,7 @@ public class SaleDetailViewModel {
                 });
     }
 
-    public static void getSaleDetail(SaleDetail saleDetail) throws SQLException {
+    public static void getSaleDetail(SaleDetail saleDetail) throws Exception {
         Platform.runLater(
                 () -> {
                     setTempId(getSaleDetails().indexOf(saleDetail));
@@ -326,54 +319,54 @@ public class SaleDetailViewModel {
                 });
     }
 
-    public static void updateItem(long index) throws SQLException {
-        Dao<SaleDetail, Long> saleDetailDao = DaoManager.createDao(connectionSource, SaleDetail.class);
-
-        SaleDetail saleDetail = saleDetailDao.queryForId(index);
-
-        saleDetail.setProduct(getProduct());
-        saleDetail.setQuantity(getQuantity());
-        saleDetail.setSerialNumber(getSerial());
-        saleDetail.setNetTax(getNetTax());
-        saleDetail.setTaxType(getTaxType());
-        saleDetail.setDiscount(getDiscount());
-        saleDetail.setDiscountType(getDiscountType());
-
-        saleDetailDao.update(saleDetail);
+    public static void updateItem(long index) throws Exception {
+//        Dao<SaleDetail, Long> saleDetailDao = DaoManager.createDao(connectionSource, SaleDetail.class);
+//
+//        SaleDetail saleDetail = saleDetailDao.queryForId(index);
+//
+//        saleDetail.setProduct(getProduct());
+//        saleDetail.setQuantity(getQuantity());
+//        saleDetail.setSerialNumber(getSerial());
+//        saleDetail.setNetTax(getNetTax());
+//        saleDetail.setTaxType(getTaxType());
+//        saleDetail.setDiscount(getDiscount());
+//        saleDetail.setDiscountType(getDiscountType());
+//
+//        saleDetailDao.update(saleDetail);
 
         getAllSaleDetails();
     }
 
-    public static void updateSaleDetails() throws SQLException {
-        Dao<SaleDetail, Long> saleDetailDao = DaoManager.createDao(connectionSource, SaleDetail.class);
-
-        saleDetailList.forEach(
-                saleDetail -> {
-                    try {
-                        saleDetailDao.update(saleDetail);
-                    } catch (SQLException e) {
-                        SpotyLogger.writeToFile(e, SaleDetailViewModel.class);
-                    }
-                });
+    public static void updateSaleDetails() throws Exception {
+//        Dao<SaleDetail, Long> saleDetailDao = DaoManager.createDao(connectionSource, SaleDetail.class);
+//
+//        saleDetailList.forEach(
+//                saleDetail -> {
+//                    try {
+//                        saleDetailDao.update(saleDetail);
+//                    } catch (Exception e) {
+//                        SpotyLogger.writeToFile(e, SaleDetailViewModel.class);
+//                    }
+//                });
 
         updateProductQuantity();
 
         getAllSaleDetails();
     }
 
-    public static void getAllSaleDetails() throws SQLException {
-        Dao<SaleDetail, Long> saleDetailDao = DaoManager.createDao(connectionSource, SaleDetail.class);
-
-        Platform.runLater(
-                () -> {
-                    saleDetailList.clear();
-
-                    try {
-                        saleDetailList.addAll(saleDetailDao.queryForAll());
-                    } catch (SQLException e) {
-                        SpotyLogger.writeToFile(e, SaleDetailViewModel.class);
-                    }
-                });
+    public static void getAllSaleDetails() throws Exception {
+//        Dao<SaleDetail, Long> saleDetailDao = DaoManager.createDao(connectionSource, SaleDetail.class);
+//
+//        Platform.runLater(
+//                () -> {
+//                    saleDetailList.clear();
+//
+//                    try {
+//                        saleDetailList.addAll(saleDetailDao.queryForAll());
+//                    } catch (Exception e) {
+//                        SpotyLogger.writeToFile(e, SaleDetailViewModel.class);
+//                    }
+//                });
     }
 
     public static void removeSaleDetail(long index, int tempIndex) {
@@ -382,64 +375,61 @@ public class SaleDetailViewModel {
     }
 
     public static void deleteSaleDetails(@NotNull LinkedList<Long> indexes) {
-        indexes.forEach(
-                index -> {
-                    try {
-                        Dao<SaleDetail, Long> saleDetailDao =
-                                DaoManager.createDao(connectionSource, SaleDetail.class);
-
-                        saleDetailDao.deleteById(index);
-                    } catch (SQLException e) {
-                        SpotyLogger.writeToFile(e, SaleDetailViewModel.class);
-                    }
-                });
+//        indexes.forEach(
+//                index -> {
+//                    try {
+//                        Dao<SaleDetail, Long> saleDetailDao =
+//                                DaoManager.createDao(connectionSource, SaleDetail.class);
+//
+//                        saleDetailDao.deleteById(index);
+//                    } catch (Exception e) {
+//                        SpotyLogger.writeToFile(e, SaleDetailViewModel.class);
+//                    }
+//                });
     }
 
-    public static ObservableList<SaleDetail> getSaleDetailList() {
-        return saleDetailList;
-    }
-
-    private static SaleTransaction getSaleTransaction(long saleIndex) throws SQLException {
-        Dao<SaleTransaction, Long> saleTransactionDao =
-                DaoManager.createDao(connectionSource, SaleTransaction.class);
-
-        PreparedQuery<SaleTransaction> preparedQuery =
-                saleTransactionDao
-                        .queryBuilder()
-                        .where()
-                        .eq("sale_detail_id", saleIndex)
-                        .prepare();
-
-        return saleTransactionDao.queryForFirst(preparedQuery);
+    private static SaleTransaction getSaleTransaction(long saleIndex) throws Exception {
+//        Dao<SaleTransaction, Long> saleTransactionDao =
+//                DaoManager.createDao(connectionSource, SaleTransaction.class);
+//
+//        PreparedQuery<SaleTransaction> preparedQuery =
+//                saleTransactionDao
+//                        .queryBuilder()
+//                        .where()
+//                        .eq("sale_detail_id", saleIndex)
+//                        .prepare();
+//
+//        return saleTransactionDao.queryForFirst(preparedQuery);
+        return new SaleTransaction();
     }
 
     private static void createSaleTransaction(@NotNull SaleDetail saleDetail)
-            throws SQLException {
-        Dao<SaleTransaction, Long> saleTransactionDao =
-                DaoManager.createDao(connectionSource, SaleTransaction.class);
-
-        SaleTransaction saleTransaction = new SaleTransaction();
-        saleTransaction.setBranch(saleDetail.getSaleMaster().getBranch());
-        saleTransaction.setSaleDetail(saleDetail);
-        saleTransaction.setProduct(saleDetail.getProduct());
-        saleTransaction.setSaleQuantity(saleDetail.getQuantity());
-        saleTransaction.setDate(new Date());
-
-        saleTransactionDao.create(saleTransaction);
+            throws Exception {
+//        Dao<SaleTransaction, Long> saleTransactionDao =
+//                DaoManager.createDao(connectionSource, SaleTransaction.class);
+//
+//        SaleTransaction saleTransaction = new SaleTransaction();
+//        saleTransaction.setBranch(saleDetail.getSaleMaster().getBranch());
+//        saleTransaction.setSaleDetail(saleDetail);
+//        saleTransaction.setProduct(saleDetail.getProduct());
+//        saleTransaction.setSaleQuantity(saleDetail.getQuantity());
+//        saleTransaction.setDate(new Date());
+//
+//        saleTransactionDao.create(saleTransaction);
     }
 
     private static void updateSaleTransaction(@NotNull SaleDetail saleDetail)
-            throws SQLException {
-        Dao<SaleTransaction, Long> saleTransactionDao =
-                DaoManager.createDao(connectionSource, SaleTransaction.class);
-
-        SaleTransaction saleTransaction = getSaleTransaction(saleDetail.getId());
-        saleTransaction.setBranch(saleDetail.getSaleMaster().getBranch());
-        saleTransaction.setSaleDetail(saleDetail);
-        saleTransaction.setProduct(saleDetail.getProduct());
-        saleTransaction.setSaleQuantity(saleDetail.getQuantity());
-        saleTransaction.setDate(new Date());
-
-        saleTransactionDao.update(saleTransaction);
+            throws Exception {
+//        Dao<SaleTransaction, Long> saleTransactionDao =
+//                DaoManager.createDao(connectionSource, SaleTransaction.class);
+//
+//        SaleTransaction saleTransaction = getSaleTransaction(saleDetail.getId());
+//        saleTransaction.setBranch(saleDetail.getSaleMaster().getBranch());
+//        saleTransaction.setSaleDetail(saleDetail);
+//        saleTransaction.setProduct(saleDetail.getProduct());
+//        saleTransaction.setSaleQuantity(saleDetail.getQuantity());
+//        saleTransaction.setDate(new Date());
+//
+//        saleTransactionDao.update(saleTransaction);
     }
 }

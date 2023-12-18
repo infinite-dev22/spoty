@@ -14,20 +14,17 @@
 
 package org.infinite.spoty.viewModels;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.support.ConnectionSource;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.database.connection.SQLiteConnection;
-import org.infinite.spoty.database.models.Product;
-import org.infinite.spoty.database.models.SaleReturnDetail;
-import org.infinite.spoty.database.models.SaleReturnMaster;
+import lombok.Getter;
+import org.infinite.spoty.data_source.dtos.Product;
+import org.infinite.spoty.data_source.dtos.returns.sale_returns.SaleReturnDetail;
+import org.infinite.spoty.data_source.dtos.returns.sale_returns.SaleReturnMaster;
 
-import java.sql.SQLException;
 
 public class SaleReturnDetailViewModel {
+    @Getter
     public static final ObservableList<SaleReturnDetail> saleReturnDetailsList =
             FXCollections.observableArrayList();
     private static final LongProperty id = new SimpleLongProperty();
@@ -37,8 +34,6 @@ public class SaleReturnDetailViewModel {
     private static final StringProperty serial = new SimpleStringProperty("");
     private static final StringProperty description = new SimpleStringProperty("");
     private static final StringProperty location = new SimpleStringProperty("");
-    private static final SQLiteConnection connection = SQLiteConnection.getInstance();
-    private static final ConnectionSource connectionSource = connection.getConnection();
 
     public static long getId() {
         return id.get();
@@ -133,15 +128,11 @@ public class SaleReturnDetailViewModel {
         setLocation("");
     }
 
-    public static void getSaleReturnDetails() throws SQLException {
-        Dao<SaleReturnDetail, Long> saleReturnDetailDao =
-                DaoManager.createDao(connectionSource, SaleReturnDetail.class);
-
-        saleReturnDetailsList.clear();
-        saleReturnDetailsList.addAll(saleReturnDetailDao.queryForAll());
-    }
-
-    public static ObservableList<SaleReturnDetail> getSaleReturnDetailsList() {
-        return saleReturnDetailsList;
+    public static void getSaleReturnDetails() throws Exception {
+//        Dao<SaleReturnDetail, Long> saleReturnDetailDao =
+//                DaoManager.createDao(connectionSource, SaleReturnDetail.class);
+//
+//        saleReturnDetailsList.clear();
+//        saleReturnDetailsList.addAll(saleReturnDetailDao.queryForAll());
     }
 }

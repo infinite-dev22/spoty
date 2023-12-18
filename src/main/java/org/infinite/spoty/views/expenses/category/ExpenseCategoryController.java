@@ -32,14 +32,13 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.infinite.spoty.database.models.ExpenseCategory;
+import org.infinite.spoty.data_source.dtos.ExpenseCategory;
 import org.infinite.spoty.forms.ExpenseCategoryFormController;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.ExpenseCategoryViewModel;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 
@@ -95,6 +94,9 @@ public class ExpenseCategoryController implements Initializable {
         categoryName.prefWidthProperty().bind(categoryExpenseTable.widthProperty().multiply(.5));
         categoryDescription.prefWidthProperty().bind(categoryExpenseTable.widthProperty().multiply(.5));
 
+        categoryName.setColumnResizable(false);
+        categoryDescription.setColumnResizable(false);
+
         categoryExpenseTable.getTableColumns().addAll(categoryName, categoryDescription);
         categoryExpenseTable
                 .getFilters()
@@ -149,7 +151,7 @@ public class ExpenseCategoryController implements Initializable {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
                             ExpenseCategoryViewModel.deleteItem(obj.getData().getId());
-                        } catch (SQLException ex) {
+                        } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
                     });
@@ -161,7 +163,7 @@ public class ExpenseCategoryController implements Initializable {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
                             ExpenseCategoryViewModel.getItem(obj.getData().getId());
-                        } catch (SQLException ex) {
+                        } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
                     });

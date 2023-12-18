@@ -14,24 +14,19 @@
 
 package org.infinite.spoty.viewModels;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.support.ConnectionSource;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.database.connection.SQLiteConnection;
-import org.infinite.spoty.database.models.Product;
-import org.infinite.spoty.database.models.PurchaseDetail;
-import org.infinite.spoty.database.models.PurchaseMaster;
-import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.data_source.dtos.Product;
+import org.infinite.spoty.data_source.dtos.purchases.PurchaseDetail;
+import org.infinite.spoty.data_source.dtos.purchases.PurchaseMaster;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.SQLException;
 import java.util.LinkedList;
 
-import static org.infinite.spoty.values.SharedResources.*;
+import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
+import static org.infinite.spoty.values.SharedResources.setTempId;
 
 public class PurchaseDetailViewModel {
     public static final ObservableList<PurchaseDetail> purchaseDetailList =
@@ -50,8 +45,6 @@ public class PurchaseDetailViewModel {
     private static final StringProperty price = new SimpleStringProperty("");
     private static final StringProperty totalPrice = new SimpleStringProperty("");
     private static final StringProperty quantity = new SimpleStringProperty("");
-    private static final SQLiteConnection connection = SQLiteConnection.getInstance();
-    private static final ConnectionSource connectionSource = connection.getConnection();
 
     public static long getId() {
         return id.get();
@@ -214,23 +207,23 @@ public class PurchaseDetailViewModel {
     }
 
     public static void addPurchaseDetail() {
-        PurchaseDetail purchaseDetail =
-                new PurchaseDetail(
-                        getPurchase(),
-                        Double.parseDouble(getCost()),
-                        getProduct(),
-                        Long.parseLong(getQuantity()));
-
-        Platform.runLater(() -> purchaseDetailList.add(purchaseDetail));
+//        PurchaseDetail purchaseDetail =
+//                new PurchaseDetail(
+//                        getPurchase(),
+//                        Double.parseDouble(getCost()),
+//                        getProduct(),
+//                        Long.parseLong(getQuantity()));
+//
+//        Platform.runLater(() -> purchaseDetailList.add(purchaseDetail));
 
         resetProperties();
     }
 
-    public static void savePurchaseDetails() throws SQLException {
-        Dao<PurchaseDetail, Long> purchaseDetailDao =
-                DaoManager.createDao(connectionSource, PurchaseDetail.class);
-
-        purchaseDetailDao.create(purchaseDetailList);
+    public static void savePurchaseDetails() throws Exception {
+//        Dao<PurchaseDetail, Long> purchaseDetailDao =
+//                DaoManager.createDao(connectionSource, PurchaseDetail.class);
+//
+//        purchaseDetailDao.create(purchaseDetailList);
 
         purchaseDetailList.clear();
     }
@@ -250,94 +243,94 @@ public class PurchaseDetailViewModel {
         setQuantity("");
     }
 
-    public static void getAllPurchaseDetails() throws SQLException {
-        Dao<PurchaseDetail, Long> purchaseDetailDao =
-                DaoManager.createDao(connectionSource, PurchaseDetail.class);
-
-        purchaseDetailList.clear();
-        purchaseDetailList.addAll(purchaseDetailDao.queryForAll());
+    public static void getAllPurchaseDetails() throws Exception {
+//        Dao<PurchaseDetail, Long> purchaseDetailDao =
+//                DaoManager.createDao(connectionSource, PurchaseDetail.class);
+//
+//        purchaseDetailList.clear();
+//        purchaseDetailList.addAll(purchaseDetailDao.queryForAll());
     }
 
-    public static void updatePurchaseDetail(long index) throws SQLException {
-        Dao<PurchaseDetail, Long> purchaseDetailDao =
-                DaoManager.createDao(connectionSource, PurchaseDetail.class);
-
-        PurchaseDetail purchaseDetail = purchaseDetailDao.queryForId(index);
-        purchaseDetail.setPurchase(getPurchase());
-        purchaseDetail.setCost(Double.parseDouble(getCost()));
-        purchaseDetail.setNetTax(Double.parseDouble(getNetTax()));
-        purchaseDetail.setTaxType(purchaseDetail.getTaxType());
-        purchaseDetail.setDiscount(Double.parseDouble(getDiscount()));
-        purchaseDetail.setDiscountType(purchaseDetail.getDiscountType());
-        purchaseDetail.setProduct(getProduct());
-        purchaseDetail.setSerialNumber(getSerial());
-        purchaseDetail.setTotalPrice(Double.parseDouble(getTotalPrice()));
-        purchaseDetail.setQuantity(Long.parseLong(getQuantity()));
-
-        Platform.runLater(
-                () -> {
-                    purchaseDetailList.remove(getTempId());
-                    purchaseDetailList.add(getTempId(), purchaseDetail);
-                });
+    public static void updatePurchaseDetail(long index) throws Exception {
+//        Dao<PurchaseDetail, Long> purchaseDetailDao =
+//                DaoManager.createDao(connectionSource, PurchaseDetail.class);
+//
+//        PurchaseDetail purchaseDetail = purchaseDetailDao.queryForId(index);
+//        purchaseDetail.setPurchase(getPurchase());
+//        purchaseDetail.setCost(Double.parseDouble(getCost()));
+//        purchaseDetail.setNetTax(Double.parseDouble(getNetTax()));
+//        purchaseDetail.setTaxType(purchaseDetail.getTaxType());
+//        purchaseDetail.setDiscount(Double.parseDouble(getDiscount()));
+//        purchaseDetail.setDiscountType(purchaseDetail.getDiscountType());
+//        purchaseDetail.setProduct(getProduct());
+//        purchaseDetail.setSerialNumber(getSerial());
+//        purchaseDetail.setTotalPrice(Double.parseDouble(getTotalPrice()));
+//        purchaseDetail.setQuantity(Long.parseLong(getQuantity()));
+//
+//        Platform.runLater(
+//                () -> {
+//                    purchaseDetailList.remove(getTempId());
+//                    purchaseDetailList.add(getTempId(), purchaseDetail);
+//                });
 
         resetProperties();
     }
 
-    public static void getItem(long index, int tempIndex) throws SQLException {
-        Dao<PurchaseDetail, Long> purchaseDetailDao =
-                DaoManager.createDao(connectionSource, PurchaseDetail.class);
-
-        PurchaseDetail purchaseDetail = purchaseDetailDao.queryForId(index);
-
-        setTempId(tempIndex);
-        setId(purchaseDetail.getId());
-        setPurchase(purchaseDetail.getPurchase());
-        setCost(String.valueOf(purchaseDetail.getCost()));
-        setNetTax(String.valueOf(purchaseDetail.getNetTax()));
-        setTaxType(purchaseDetail.getTaxType());
-        setDiscount(String.valueOf(purchaseDetail.getDiscount()));
-        setDiscountType(purchaseDetail.getDiscountType());
-        setProduct(purchaseDetail.getProduct());
-        setSerial(purchaseDetail.getSerialNumber());
-        setTotalPrice(String.valueOf(purchaseDetail.getTotalPrice()));
-        setQuantity(String.valueOf(purchaseDetail.getQuantity()));
+    public static void getItem(long index, int tempIndex) throws Exception {
+//        Dao<PurchaseDetail, Long> purchaseDetailDao =
+//                DaoManager.createDao(connectionSource, PurchaseDetail.class);
+//
+//        PurchaseDetail purchaseDetail = purchaseDetailDao.queryForId(index);
+//
+//        setTempId(tempIndex);
+//        setId(purchaseDetail.getId());
+//        setPurchase(purchaseDetail.getPurchase());
+//        setCost(String.valueOf(purchaseDetail.getCost()));
+//        setNetTax(String.valueOf(purchaseDetail.getNetTax()));
+//        setTaxType(purchaseDetail.getTaxType());
+//        setDiscount(String.valueOf(purchaseDetail.getDiscount()));
+//        setDiscountType(purchaseDetail.getDiscountType());
+//        setProduct(purchaseDetail.getProduct());
+//        setSerial(purchaseDetail.getSerialNumber());
+//        setTotalPrice(String.valueOf(purchaseDetail.getTotalPrice()));
+//        setQuantity(String.valueOf(purchaseDetail.getQuantity()));
     }
 
-    public static void updateItem(long index) throws SQLException {
-        Dao<PurchaseDetail, Long> purchaseDetailDao =
-                DaoManager.createDao(connectionSource, PurchaseDetail.class);
-
-        PurchaseDetail purchaseDetail = purchaseDetailDao.queryForId(index);
-
-        setId(purchaseDetail.getId());
-        setPurchase(purchaseDetail.getPurchase());
-        setCost(String.valueOf(purchaseDetail.getCost()));
-        setNetTax(String.valueOf(purchaseDetail.getNetTax()));
-        setTaxType(purchaseDetail.getTaxType());
-        setDiscount(String.valueOf(purchaseDetail.getDiscount()));
-        setDiscountType(purchaseDetail.getDiscountType());
-        setProduct(purchaseDetail.getProduct());
-        setSerial(purchaseDetail.getSerialNumber());
-        setTotalPrice(String.valueOf(purchaseDetail.getTotalPrice()));
-        setQuantity(String.valueOf(purchaseDetail.getQuantity()));
-
-        purchaseDetailDao.update(purchaseDetail);
+    public static void updateItem(long index) throws Exception {
+//        Dao<PurchaseDetail, Long> purchaseDetailDao =
+//                DaoManager.createDao(connectionSource, PurchaseDetail.class);
+//
+//        PurchaseDetail purchaseDetail = purchaseDetailDao.queryForId(index);
+//
+//        setId(purchaseDetail.getId());
+//        setPurchase(purchaseDetail.getPurchase());
+//        setCost(String.valueOf(purchaseDetail.getCost()));
+//        setNetTax(String.valueOf(purchaseDetail.getNetTax()));
+//        setTaxType(purchaseDetail.getTaxType());
+//        setDiscount(String.valueOf(purchaseDetail.getDiscount()));
+//        setDiscountType(purchaseDetail.getDiscountType());
+//        setProduct(purchaseDetail.getProduct());
+//        setSerial(purchaseDetail.getSerialNumber());
+//        setTotalPrice(String.valueOf(purchaseDetail.getTotalPrice()));
+//        setQuantity(String.valueOf(purchaseDetail.getQuantity()));
+//
+//        purchaseDetailDao.update(purchaseDetail);
 
         getAllPurchaseDetails();
     }
 
-    public static void updatePurchaseDetails() throws SQLException {
-        Dao<PurchaseDetail, Long> purchaseDetailDao =
-                DaoManager.createDao(connectionSource, PurchaseDetail.class);
-
-        purchaseDetailList.forEach(
-                purchaseDetail -> {
-                    try {
-                        purchaseDetailDao.update(purchaseDetail);
-                    } catch (SQLException e) {
-                        SpotyLogger.writeToFile(e, PurchaseDetailViewModel.class);
-                    }
-                });
+    public static void updatePurchaseDetails() throws Exception {
+//        Dao<PurchaseDetail, Long> purchaseDetailDao =
+//                DaoManager.createDao(connectionSource, PurchaseDetail.class);
+//
+//        purchaseDetailList.forEach(
+//                purchaseDetail -> {
+//                    try {
+//                        purchaseDetailDao.update(purchaseDetail);
+//                    } catch (Exception e) {
+//                        SpotyLogger.writeToFile(e, PurchaseDetailViewModel.class);
+//                    }
+//                });
 
         getAllPurchaseDetails();
     }
@@ -348,20 +341,20 @@ public class PurchaseDetailViewModel {
     }
 
     public static void deletePurchaseDetails(@NotNull LinkedList<Long> indexes) {
-        indexes.forEach(
-                index -> {
-                    try {
-                        SQLiteConnection connection = SQLiteConnection.getInstance();
-                        ConnectionSource connectionSource = connection.getConnection();
-
-                        Dao<PurchaseDetail, Long> purchaseDetailDao =
-                                DaoManager.createDao(connectionSource, PurchaseDetail.class);
-
-                        purchaseDetailDao.deleteById(index);
-                    } catch (SQLException e) {
-                        SpotyLogger.writeToFile(e, PurchaseDetailViewModel.class);
-                    }
-                });
+//        indexes.forEach(
+//                index -> {
+//                    try {
+//                        SQLiteConnection connection = SQLiteConnection.getInstance();
+//                        ConnectionSource connectionSource = connection.getConnection();
+//
+//                        Dao<PurchaseDetail, Long> purchaseDetailDao =
+//                                DaoManager.createDao(connectionSource, PurchaseDetail.class);
+//
+//                        purchaseDetailDao.deleteById(index);
+//                    } catch (Exception e) {
+//                        SpotyLogger.writeToFile(e, PurchaseDetailViewModel.class);
+//                    }
+//                });
     }
 
     public static ObservableList<PurchaseDetail> getPurchaseDetailList() {

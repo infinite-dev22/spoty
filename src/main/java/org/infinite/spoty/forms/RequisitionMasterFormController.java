@@ -20,7 +20,7 @@ import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
 import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import io.github.palexdev.materialfx.enums.ScrimPriority;
-import io.github.palexdev.materialfx.filter.LongFilter;
+import io.github.palexdev.materialfx.filter.IntegerFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import io.github.palexdev.materialfx.utils.StringUtils;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
@@ -42,9 +42,9 @@ import org.infinite.spoty.components.notification.SimpleNotification;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
-import org.infinite.spoty.database.models.Branch;
-import org.infinite.spoty.database.models.RequisitionDetail;
-import org.infinite.spoty.database.models.Supplier;
+import org.infinite.spoty.data_source.dtos.Branch;
+import org.infinite.spoty.data_source.dtos.Supplier;
+import org.infinite.spoty.data_source.dtos.requisitions.RequisitionDetail;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.BranchViewModel;
@@ -55,7 +55,6 @@ import org.infinite.spoty.views.BaseController;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 import java.util.function.Function;
@@ -216,7 +215,7 @@ public class RequisitionMasterFormController implements Initializable {
                 .getFilters()
                 .addAll(
                         new StringFilter<>("Name", RequisitionDetail::getProductName),
-                        new LongFilter<>("Quantity", RequisitionDetail::getQuantity),
+                        new IntegerFilter<>("Quantity", RequisitionDetail::getQuantity),
                         new StringFilter<>("Description", RequisitionDetail::getDescription));
 
         getRequisitionDetailTable();
@@ -279,7 +278,7 @@ public class RequisitionMasterFormController implements Initializable {
                             RequisitionDetailViewModel.getItem(
                                     obj.getData().getId(),
                                     RequisitionDetailViewModel.requisitionDetailList.indexOf(obj.getData()));
-                        } catch (SQLException e) {
+                        } catch (Exception e) {
                             SpotyLogger.writeToFile(e, this.getClass());
                         }
                     });
@@ -340,7 +339,7 @@ public class RequisitionMasterFormController implements Initializable {
                 SpotyThreader.spotyThreadPool(() -> {
                     try {
                         RequisitionMasterViewModel.updateItem(RequisitionMasterViewModel.getId());
-                    } catch (SQLException e) {
+                    } catch (Exception e) {
                         SpotyLogger.writeToFile(e, this.getClass());
                     }
                 });
@@ -362,7 +361,7 @@ public class RequisitionMasterFormController implements Initializable {
             SpotyThreader.spotyThreadPool(() -> {
                 try {
                     RequisitionMasterViewModel.saveRequisitionMaster();
-                } catch (SQLException e) {
+                } catch (Exception e) {
                     SpotyLogger.writeToFile(e, this.getClass());
                 }
             });

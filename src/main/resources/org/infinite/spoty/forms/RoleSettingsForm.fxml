@@ -19,11 +19,11 @@
 <?import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton?>
 <?import io.github.palexdev.mfxcomponents.controls.checkbox.*?>
 <?import io.github.palexdev.mfxcore.controls.Label?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Separator?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import org.infinite.spoty.components.navigation.Spacer?>
-<?import org.infinite.spoty.components.title.Title?>
+<?import org.infinite.spoty.components.navigation.*?>
+<?import org.infinite.spoty.components.title.*?>
 <?import java.net.URL?>
 <BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:id="roleSettingsHolder" styleClass="card"
             xmlns="http://javafx.com/javafx/20.0.1"

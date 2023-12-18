@@ -32,14 +32,13 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.infinite.spoty.database.models.Customer;
+import org.infinite.spoty.data_source.dtos.Customer;
 import org.infinite.spoty.forms.CustomerFormController;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.CustomerViewModel;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 
@@ -161,7 +160,7 @@ public class CustomerController implements Initializable {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
                             CustomerViewModel.deleteItem(obj.getData().getId());
-                        } catch (SQLException ex) {
+                        } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
                     });
@@ -173,7 +172,7 @@ public class CustomerController implements Initializable {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
                             CustomerViewModel.getItem(obj.getData().getId());
-                        } catch (SQLException ex) {
+                        } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
                     });

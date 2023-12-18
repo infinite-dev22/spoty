@@ -28,7 +28,6 @@ import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.BrandViewModel;
 
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
@@ -86,7 +85,7 @@ public class BrandFormController implements Initializable {
                             SpotyThreader.spotyThreadPool(() -> {
                                 try {
                                     BrandViewModel.updateItem(BrandViewModel.getId());
-                                } catch (SQLException e) {
+                                } catch (Exception e) {
                                     SpotyLogger.writeToFile(e, this.getClass());
                                 }
                             });
@@ -105,7 +104,7 @@ public class BrandFormController implements Initializable {
                         SpotyThreader.spotyThreadPool(() -> {
                             try {
                                 saveBrand();
-                            } catch (SQLException e) {
+                            } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }
                         });

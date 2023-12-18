@@ -14,175 +14,177 @@
 
 package org.infinite.spoty;
 
-import static io.github.palexdev.materialfx.utils.StringUtils.containsAll;
-import static io.github.palexdev.materialfx.utils.StringUtils.containsAny;
-import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
-import static org.infinite.spoty.values.strings.Values.*;
-
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.validation.Constraint;
 import io.github.palexdev.materialfx.validation.MFXValidator;
 import io.github.palexdev.materialfx.validation.Severity;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import java.util.List;
 import javafx.beans.binding.Bindings;
 import javafx.scene.control.Label;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
+import static io.github.palexdev.materialfx.utils.StringUtils.containsAll;
+import static io.github.palexdev.materialfx.utils.StringUtils.containsAny;
+import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
+import static org.infinite.spoty.values.strings.Values.ALPHANUMERIC;
+import static org.infinite.spoty.values.strings.Values.SPECIALS;
+
 public class Validators {
-  static MFXValidator validator;
-  static List<Constraint> validate;
+    static MFXValidator validator;
+    static List<Constraint> validate;
 
-  public static void emailValidator(
-          @NotNull MFXTextField textField, Label errorDisplay, @NotNull MFXButton actionButton) {
-    // Email input validation.
-    Constraint alphaCharsConstraint =
-        Constraint.Builder.build()
-            .setSeverity(Severity.ERROR)
-            .setMessage("Invalid email")
-            .setCondition(
-                Bindings.createBooleanBinding(
-                    () -> containsAny(textField.getText(), "", ALPHANUMERIC),
-                    textField.textProperty()))
-            .get();
-    Constraint specialCharsConstraint =
-        Constraint.Builder.build()
-            .setSeverity(Severity.ERROR)
-            .setMessage("Invalid email")
-            .setCondition(
-                Bindings.createBooleanBinding(
-                    () -> containsAll(textField.getText(), "", SPECIALS), textField.textProperty()))
-            .get();
-    textField.getValidator().constraint(alphaCharsConstraint).constraint(specialCharsConstraint);
-    // Display error.
-    textField
-        .getValidator()
-        .validProperty()
-        .addListener(
-            (observable, oldValue, newValue) -> {
-              if (newValue) {
-                errorDisplay.setVisible(false);
-                textField.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-              }
-            });
-    textField
-        .delegateFocusedProperty()
-        .addListener(
-            (observable, oldValue, newValue) -> {
-              if (oldValue && !newValue) {
-                List<Constraint> constraints = textField.validate();
-                if (!constraints.isEmpty()) {
-                  textField.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                  errorDisplay.setText(constraints.get(0).getMessage());
-                  errorDisplay.setVisible(true);
-                }
-              }
-            });
+    public static void emailValidator(
+            @NotNull MFXTextField textField, Label errorDisplay, @NotNull MFXButton actionButton) {
+        // Email input validation.
+        Constraint alphaCharsConstraint =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Invalid email")
+                        .setCondition(
+                                Bindings.createBooleanBinding(
+                                        () -> containsAny(textField.getText(), "", ALPHANUMERIC),
+                                        textField.textProperty()))
+                        .get();
+        Constraint specialCharsConstraint =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Invalid email")
+                        .setCondition(
+                                Bindings.createBooleanBinding(
+                                        () -> containsAll(textField.getText(), "", SPECIALS), textField.textProperty()))
+                        .get();
+        textField.getValidator().constraint(alphaCharsConstraint).constraint(specialCharsConstraint);
+        // Display error.
+        textField
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                errorDisplay.setVisible(false);
+                                textField.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
+        textField
+                .delegateFocusedProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (oldValue && !newValue) {
+                                List<Constraint> constraints = textField.validate();
+                                if (!constraints.isEmpty()) {
+                                    textField.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                                    errorDisplay.setText(constraints.get(0).getMessage());
+                                    errorDisplay.setVisible(true);
+                                }
+                            }
+                        });
 
-    actionButton.setOnAction(
-        e -> {
-          validator = textField.getValidator();
-          validate = validator.validate();
-          if (!validate.isEmpty()) {
-            errorDisplay.setText(validate.get(0).getMessage());
-            errorDisplay.setVisible(true);
-          }
-        });
-  }
+        actionButton.setOnAction(
+                e -> {
+                    validator = textField.getValidator();
+                    validate = validator.validate();
+                    if (!validate.isEmpty()) {
+                        errorDisplay.setText(validate.get(0).getMessage());
+                        errorDisplay.setVisible(true);
+                    }
+                });
+    }
 
-  public static void lengthValidator(
-          @NotNull MFXTextField textField,
-          int length,
-          String message,
-          Label errorDisplay,
-          @NotNull MFXButton actionButton) {
-    // Phone input validation.
-    Constraint phoneLength =
-        Constraint.Builder.build()
-            .setSeverity(Severity.ERROR)
-            .setMessage(message)
-            .setCondition(textField.textProperty().length().lessThan(length))
-            .get();
-    textField.getValidator().constraint(phoneLength);
-    // Display error.
-    textField
-        .getValidator()
-        .validProperty()
-        .addListener(
-            (observable, oldValue, newValue) -> {
-              if (newValue) {
-                errorDisplay.setVisible(false);
-                textField.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-              }
-            });
-    textField
-        .delegateFocusedProperty()
-        .addListener(
-            (observable, oldValue, newValue) -> {
-              if (oldValue && !newValue) {
-                List<Constraint> constraints = textField.validate();
-                if (!constraints.isEmpty()) {
-                  textField.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                  errorDisplay.setText(constraints.get(0).getMessage());
-                  errorDisplay.setVisible(true);
-                }
-              }
-            });
+    public static void lengthValidator(
+            @NotNull MFXTextField textField,
+            int length,
+            String message,
+            Label errorDisplay,
+            @NotNull MFXButton actionButton) {
+        // Phone input validation.
+        Constraint phoneLength =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage(message)
+                        .setCondition(textField.textProperty().length().lessThan(length))
+                        .get();
+        textField.getValidator().constraint(phoneLength);
+        // Display error.
+        textField
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                errorDisplay.setVisible(false);
+                                textField.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
+        textField
+                .delegateFocusedProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (oldValue && !newValue) {
+                                List<Constraint> constraints = textField.validate();
+                                if (!constraints.isEmpty()) {
+                                    textField.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                                    errorDisplay.setText(constraints.get(0).getMessage());
+                                    errorDisplay.setVisible(true);
+                                }
+                            }
+                        });
 
-    actionButton.setOnAction(
-        e -> {
-          validator = textField.getValidator();
-          validate = validator.validate();
-          if (!validate.isEmpty()) {
-            errorDisplay.setText(validate.get(0).getMessage());
-            errorDisplay.setVisible(true);
-          }
-        });
-  }
+        actionButton.setOnAction(
+                e -> {
+                    validator = textField.getValidator();
+                    validate = validator.validate();
+                    if (!validate.isEmpty()) {
+                        errorDisplay.setText(validate.get(0).getMessage());
+                        errorDisplay.setVisible(true);
+                    }
+                });
+    }
 
-  public static void requiredValidator(
-          @NotNull MFXTextField textField, String message, Label errorDisplay, @NotNull MFXButton actionButton) {
-    // Name input validation.
-    Constraint lengthConstraint =
-        Constraint.Builder.build()
-            .setSeverity(Severity.ERROR)
-            .setMessage(message)
-            .setCondition(textField.textProperty().length().greaterThan(0))
-            .get();
-    textField.getValidator().constraint(lengthConstraint);
-    // Display error.
-    textField
-        .getValidator()
-        .validProperty()
-        .addListener(
-            (observable, oldValue, newValue) -> {
-              if (newValue) {
-                errorDisplay.setVisible(false);
-                textField.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-              }
-            });
-    textField
-        .delegateFocusedProperty()
-        .addListener(
-            (observable, oldValue, newValue) -> {
-              if (oldValue && !newValue) {
-                List<Constraint> constraints = textField.validate();
-                if (!constraints.isEmpty()) {
-                  textField.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                  errorDisplay.setText(constraints.get(0).getMessage());
-                  errorDisplay.setVisible(true);
-                }
-              }
-            });
+    public static void requiredValidator(
+            @NotNull MFXTextField textField, String message, Label errorDisplay, @NotNull MFXButton actionButton) {
+        // Name input validation.
+        Constraint lengthConstraint =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage(message)
+                        .setCondition(textField.textProperty().length().greaterThan(0))
+                        .get();
+        textField.getValidator().constraint(lengthConstraint);
+        // Display error.
+        textField
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                errorDisplay.setVisible(false);
+                                textField.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
+        textField
+                .delegateFocusedProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (oldValue && !newValue) {
+                                List<Constraint> constraints = textField.validate();
+                                if (!constraints.isEmpty()) {
+                                    textField.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                                    errorDisplay.setText(constraints.get(0).getMessage());
+                                    errorDisplay.setVisible(true);
+                                }
+                            }
+                        });
 
-    actionButton.setOnAction(
-        e -> {
-          validator = textField.getValidator();
-          validate = validator.validate();
-          if (!validate.isEmpty()) {
-            errorDisplay.setText(validate.get(0).getMessage());
-            errorDisplay.setVisible(true);
-          }
-        });
-  }
+        actionButton.setOnAction(
+                e -> {
+                    validator = textField.getValidator();
+                    validate = validator.validate();
+                    if (!validate.isEmpty()) {
+                        errorDisplay.setText(validate.get(0).getMessage());
+                        errorDisplay.setVisible(true);
+                    }
+                });
+    }
 }
