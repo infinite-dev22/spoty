@@ -4,257 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1a27fa9e-5f29-4084-9097-b156dd85e41b" name="Changes" comment="Adding more features and functionality(More screens too)&#10;Try adding MFXTreeView for animated navbar">
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/dtos/Attendance.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/dtos/Bank.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/dtos/Branch.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/dtos/Brand.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/dtos/Currency.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/dtos/Customer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/dtos/Designation.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/dtos/Expense.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/dtos/ExpenseCategory.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/dtos/Holiday.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/dtos/LeaveType.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/dtos/Organisation.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/dtos/Permission.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/dtos/Product.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/dtos/ProductCategory.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/dtos/Role.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/dtos/RolePermission.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/dtos/Salary.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/dtos/SalaryAdvance.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/dtos/SaleTermAndCondition.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/dtos/Service.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/dtos/ServiceInvoice.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/dtos/StockReport.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/dtos/Supplier.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/dtos/UnitOfMeasure.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/dtos/User.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/dtos/UserProfile.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/dtos/adjustments/AdjustmentDetail.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/dtos/adjustments/AdjustmentMaster.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/dtos/adjustments/AdjustmentTransaction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/dtos/purchases/PurchaseDetail.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/dtos/purchases/PurchaseMaster.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/dtos/quotations/QuotationDetail.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/dtos/quotations/QuotationMaster.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/dtos/requisitions/RequisitionDetail.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/dtos/requisitions/RequisitionMaster.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/dtos/returns/purchase_returns/PurchaseReturnDetail.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/dtos/returns/purchase_returns/PurchaseReturnMaster.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/dtos/returns/sale_returns/SaleReturnDetail.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/dtos/returns/sale_returns/SaleReturnMaster.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/dtos/sales/SaleDetail.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/dtos/sales/SaleMaster.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/dtos/sales/SaleTransaction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/dtos/stock_ins/StockInDetail.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/dtos/stock_ins/StockInMaster.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/dtos/stock_ins/StockInTransaction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/dtos/transfers/TransferDetail.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/dtos/transfers/TransferMaster.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/dtos/transfers/TransferTransaction.java" afterDir="false" />
+    <list default="true" id="1a27fa9e-5f29-4084-9097-b156dd85e41b" name="Changes" comment="Delete local database tests">
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/values/EndPoints.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/module-info.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/Validators.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/Validators.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/components/navigation/Pages.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/components/navigation/Pages.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data/SampleData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data/SampleData.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/connection/SQLiteConnection.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/management/SQLiteTableCreator.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/models/AdjustmentDetail.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/models/AdjustmentMaster.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/models/AdjustmentTransaction.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/models/Branch.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/models/Brand.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/models/Company.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/models/Currency.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/models/Customer.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/models/Expense.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/models/ExpenseCategory.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/models/Holiday.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/models/LeaveType.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/models/PaymentPurchase.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/models/PaymentPurchaseReturn.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/models/PaymentSale.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/models/PaymentSaleReturn.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/models/Permission.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/models/Product.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/models/ProductCategory.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/models/PurchaseDetail.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/models/PurchaseMaster.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/models/PurchaseReturnDetail.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/models/PurchaseReturnMaster.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/models/QuotationDetail.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/models/QuotationMaster.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/models/RequisitionDetail.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/models/RequisitionMaster.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/models/Role.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/models/RolePermission.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/models/SaleDetail.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/models/SaleMaster.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/models/SaleReturnDetail.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/models/SaleReturnMaster.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/models/SaleTransaction.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/models/StockInDetail.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/models/StockInMaster.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/models/StockInTransaction.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/models/Supplier.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/models/TransferDetail.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/models/TransferMaster.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/models/TransferTransaction.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/models/UnitOfMeasure.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/database/models/User.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/AdjustmentDetailFormController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/AdjustmentDetailFormController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/AdjustmentMasterFormController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/AdjustmentMasterFormController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/BranchFormController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/BranchFormController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/BrandFormController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/BrandFormController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/CurrencyFormController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/CurrencyFormController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/CustomerFormController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/CustomerFormController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/ExpenseCategoryFormController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/ExpenseCategoryFormController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/ExpenseFormController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/ExpenseFormController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/ProductCategoryFormController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/ProductCategoryFormController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/ProductFormController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/ProductFormController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/PurchaseDetailFormController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/PurchaseDetailFormController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/PurchaseMasterFormController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/PurchaseMasterFormController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/QuotationDetailFormController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/QuotationDetailFormController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/QuotationMasterFormController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/QuotationMasterFormController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/RequisitionDetailFormController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/RequisitionDetailFormController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/RequisitionMasterFormController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/RequisitionMasterFormController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/RoleSettingsFormController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/RoleSettingsFormController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/SaleDetailFormController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/SaleDetailFormController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/SaleMasterFormController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/SaleMasterFormController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/StockInDetailFormController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/StockInDetailFormController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/StockInMasterFormController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/StockInMasterFormController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/SupplierFormController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/SupplierFormController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/TransferDetailFormController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/TransferDetailFormController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/TransferMasterFormController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/TransferMasterFormController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/UOMFormController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/UOMFormController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/UserFormController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/forms/UserFormController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/models/QuickStats.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/models/QuickStats.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/utils/SpotyThreader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/utils/SpotyThreader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/utils/Utils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/utils/Utils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/AdjustmentDetailViewModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/AdjustmentDetailViewModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/AdjustmentMasterViewModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/AdjustmentMasterViewModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/BranchViewModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/BranchViewModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/BrandViewModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/BrandViewModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/CurrencyViewModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/CurrencyViewModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/CustomerViewModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/CustomerViewModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/ExpenseCategoryViewModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/ExpenseCategoryViewModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/ExpenseViewModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/ExpenseViewModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/PermissionsViewModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/PermissionsViewModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/PointOfSaleViewModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/PointOfSaleViewModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/ProductCategoryViewModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/ProductCategoryViewModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/ProductViewModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/ProductViewModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/PurchaseDetailViewModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/PurchaseDetailViewModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/PurchaseMasterViewModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/PurchaseMasterViewModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/PurchaseReturnDetailViewModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/PurchaseReturnDetailViewModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/PurchaseReturnMasterViewModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/PurchaseReturnMasterViewModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/QuotationDetailViewModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/QuotationDetailViewModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/QuotationMasterViewModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/QuotationMasterViewModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/RequisitionDetailViewModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/RequisitionDetailViewModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/RequisitionMasterViewModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/RequisitionMasterViewModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/RoleViewModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/RoleViewModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/SaleDetailViewModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/SaleDetailViewModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/SaleMasterViewModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/SaleMasterViewModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/SaleReturnDetailViewModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/SaleReturnDetailViewModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/SaleReturnMasterViewModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/SaleReturnMasterViewModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/StockInDetailViewModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/StockInDetailViewModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/StockInMasterViewModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/StockInMasterViewModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/SupplierViewModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/SupplierViewModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/TransferDetailViewModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/TransferDetailViewModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/TransferMasterViewModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/TransferMasterViewModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/UOMViewModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/UOMViewModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/UserViewModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/viewModels/UserViewModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/customers/CustomerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/customers/CustomerController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/expenses/category/ExpenseCategoryController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/expenses/category/ExpenseCategoryController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/expenses/expense/ExpenseController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/expenses/expense/ExpenseController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/inventory/adjustment/AdjustmentController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/inventory/adjustment/AdjustmentController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/inventory/brand/BrandController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/inventory/brand/BrandController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/inventory/category/ProductCategoryController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/inventory/category/ProductCategoryController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/inventory/products/ProductController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/inventory/products/ProductController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/inventory/unit_of_measure/UnitOfMeasureController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/inventory/unit_of_measure/UnitOfMeasureController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/purchases/PurchasesController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/purchases/PurchasesController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/quotation/QuotationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/quotation/QuotationController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/requisition/RequisitionController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/requisition/RequisitionController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/returns/purchases/PurchaseReturnController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/returns/purchases/PurchaseReturnController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/returns/sales/SaleReturnsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/returns/sales/SaleReturnsController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/sales/SaleTermsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/sales/SaleTermsController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/sales/SalesController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/sales/SalesController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/sales/pos/PointOfSaleController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/sales/pos/PointOfSaleController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/sales/pos/components/ProductCard.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/sales/pos/components/ProductCard.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/settings/role_permission/RolesController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/settings/role_permission/RolesController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/settings/system_settings/BranchController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/settings/system_settings/BranchController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/settings/system_settings/CurrencyController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/settings/system_settings/CurrencyController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/settings/system_settings/SystemController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/settings/system_settings/SystemController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/settings/system_settings/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/settings/system_settings/UserController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/splash/LaunchPreloader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/splash/LaunchPreloader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/splash/SplashScreenController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/splash/SplashScreenController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/stock_in/StockInController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/stock_in/StockInController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/stock_report/StockReportController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/stock_report/StockReportController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/suppliers/SupplierController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/suppliers/SupplierController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/transfer/TransferController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/views/transfer/TransferController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/components/title/Title.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/components/title/Title.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fonts/Fonts.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fonts/Fonts.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/forms/AdjustmentDetailForm.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/forms/AdjustmentDetailForm.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/forms/BranchForm.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/forms/BranchForm.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/forms/CurrencyForm.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/forms/CurrencyForm.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/forms/CustomerForm.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/forms/CustomerForm.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/forms/ExpenseForm.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/forms/ExpenseForm.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/forms/ProductForm.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/forms/ProductForm.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/forms/PurchaseDetailForm.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/forms/PurchaseDetailForm.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/forms/PurchaseMasterForm.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/forms/PurchaseMasterForm.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/forms/QuotationDetailForm.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/forms/QuotationDetailForm.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/forms/QuotationMasterForm.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/forms/QuotationMasterForm.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/forms/RequisitionDetailForm.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/forms/RequisitionDetailForm.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/forms/RequisitionMasterForm.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/forms/RequisitionMasterForm.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/forms/RoleSettingsForm.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/forms/RoleSettingsForm.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/forms/SaleDetailForm.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/forms/SaleDetailForm.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/forms/SaleMasterForm.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/forms/SaleMasterForm.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/forms/StockInDetailForm.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/forms/StockInDetailForm.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/forms/SupplierForm.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/forms/SupplierForm.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/forms/TransferDetailForm.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/forms/TransferDetailForm.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/forms/TransferMasterForm.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/forms/TransferMasterForm.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/forms/UOMForm.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/forms/UOMForm.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/forms/UserForm.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/forms/UserForm.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/Base.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/Base.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/BankReconciliation.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/BankReconciliation.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/CreditVoucher.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/CreditVoucher.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/CustomerReceive.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/CustomerReceive.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/PreDefinedAccounts.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/PreDefinedAccounts.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/report/BalanceSheet.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/report/BalanceSheet.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/report/BankReconciliationReport.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/report/BankReconciliationReport.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/report/ExpenditureStatement.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/report/ExpenditureStatement.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/report/FixedAssetSchedule.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/report/FixedAssetSchedule.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/report/GeneralLedger.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/report/GeneralLedger.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/report/IncomeStatement.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/report/IncomeStatement.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/report/ProfitLoss.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/report/ProfitLoss.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/report/ReceiptAndPayment.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/report/ReceiptAndPayment.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/report/SubLedger.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/report/SubLedger.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/report/TrialBalance.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/account/report/TrialBalance.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/inventory/unit_of_measure/UnitOfMeasure.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/inventory/unit_of_measure/UnitOfMeasure.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/report/ShippingCostReport.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/report/ShippingCostReport.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/sales/PointOfSale.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/sales/PointOfSale.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/sales/SaleTerms.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/sales/SaleTerms.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/settings/system_settings/System.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/settings/system_settings/System.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/splash/SplashScreen.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/splash/SplashScreen.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/stock_report/StockReport.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/fxml/stock_report/StockReport.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/printable/general/General.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/printable/general/General.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/printable/purchase/Purchase.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/printable/purchase/Purchase.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/printable/quotation/Quotation.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/printable/quotation/Quotation.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/printable/requisition/Requisition.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/printable/requisition/Requisition.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/printable/stockin/StockIn.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/printable/stockin/StockIn.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/printable/transfer/Transfer.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/printable/transfer/Transfer.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/styles/Buttons.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/styles/Buttons.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/styles/Common.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/styles/Common.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/styles/MFXColors.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/styles/MFXColors.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/styles/Progress.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/styles/Progress.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/styles/Splash.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/styles/Splash.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/styles/base.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/infinite/spoty/styles/base.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/infinite/spoty/database/dao/BranchDaoTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/infinite/spoty/database/dao/BranchDaoTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/infinite/spoty/database/dao/DatabaseSeederTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/infinite/spoty/database/dao/DatabaseSeederTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/infinite/spoty/database/dao/PermissionTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/infinite/spoty/database/dao/PermissionTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/main/java/org/infinite/spoty/database/dao/BranchDaoTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/main/java/org/infinite/spoty/database/dao/BranchDaoTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -540,7 +292,7 @@
       <workItem from="1702558963075" duration="31000" />
       <workItem from="1702664105034" duration="2951000" />
       <workItem from="1702866291934" duration="7565000" />
-      <workItem from="1702925926058" duration="8307000" />
+      <workItem from="1702925926058" duration="11647000" />
     </task>
     <task id="LOCAL-00001" summary="Fix errors in Tests">
       <option name="closed" value="true" />
@@ -590,7 +342,23 @@
       <option name="project" value="LOCAL" />
       <updated>1702827041848</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Remove local database.">
+      <option name="closed" value="true" />
+      <created>1702934894599</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1702934894599</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Delete local database tests">
+      <option name="closed" value="true" />
+      <created>1702935098702</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1702935098702</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -614,7 +382,9 @@
     <MESSAGE value="Fix jpackage issues" />
     <MESSAGE value="Adding more features and functionality(More screens too)" />
     <MESSAGE value="Adding more features and functionality(More screens too)&#10;Try adding MFXTreeView for animated navbar" />
-    <option name="LAST_COMMIT_MESSAGE" value="Adding more features and functionality(More screens too)&#10;Try adding MFXTreeView for animated navbar" />
+    <MESSAGE value="Remove local database." />
+    <MESSAGE value="Delete local database tests" />
+    <option name="LAST_COMMIT_MESSAGE" value="Delete local database tests" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
