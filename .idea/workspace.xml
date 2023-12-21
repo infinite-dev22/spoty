@@ -4,9 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1a27fa9e-5f29-4084-9097-b156dd85e41b" name="Changes" comment="Delete local database tests">
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/values/EndPoints.java" afterDir="false" />
+    <list default="true" id="1a27fa9e-5f29-4084-9097-b156dd85e41b" name="Changes" comment="change gradle from all to bin">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/values/EndPoints.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/infinite/spoty/values/EndPoints.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -30,29 +32,6 @@
               <path>
                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
                 <item name="spoty" type="f1a62948:ProjectNode" />
-              </path>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="spoty" type="f1a62948:ProjectNode" />
-                <item name="Tasks" type="e4a08cd1:TasksNode" />
-              </path>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="spoty" type="f1a62948:ProjectNode" />
-                <item name="Tasks" type="e4a08cd1:TasksNode" />
-                <item name="build" type="c8890929:TasksNode$1" />
-              </path>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="spoty" type="f1a62948:ProjectNode" />
-                <item name="Tasks" type="e4a08cd1:TasksNode" />
-                <item name="build setup" type="c8890929:TasksNode$1" />
-              </path>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="spoty" type="f1a62948:ProjectNode" />
-                <item name="Tasks" type="e4a08cd1:TasksNode" />
-                <item name="distribution" type="c8890929:TasksNode$1" />
               </path>
             </expand>
             <select />
@@ -88,34 +67,35 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Downloaded.Files.Path.Enabled": "false",
-    "Gradle.spoty [jpackage].executor": "Run",
-    "Gradle.spoty [run].executor": "Run",
-    "Repository.Attach.Annotations": "true",
-    "Repository.Attach.JavaDocs": "false",
-    "Repository.Attach.Sources": "false",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "aspect.path.notification.shown": "true",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/home/infinitedev/IdeaProjects/spoty/src/main/java/org/infinite/spoty/data_source/models",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Project",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.0",
-    "settings.editor.selected.configurable": "preferences.sourceCode.Java",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Downloaded.Files.Path.Enabled&quot;: &quot;false&quot;,
+    &quot;Gradle.spoty [jpackage].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.spoty [nativeCompile].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.spoty [run].executor&quot;: &quot;Run&quot;,
+    &quot;Repository.Attach.Annotations&quot;: &quot;true&quot;,
+    &quot;Repository.Attach.JavaDocs&quot;: &quot;false&quot;,
+    &quot;Repository.Attach.Sources&quot;: &quot;false&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;aspect.path.notification.shown&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/infinite_dev/IdeaProjects/spoty&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.sourceCode.Java&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/main/java/org/infinite/spoty/data_source/models" />
@@ -139,7 +119,7 @@
       <recent name="org.infinite.spoty.views.tax" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.spoty [run]">
+  <component name="RunManager" selected="Gradle.spoty [jpackage]">
     <configuration name="spoty [build]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -206,6 +186,28 @@
       <RunAsTest>false</RunAsTest>
       <method v="2" />
     </configuration>
+    <configuration name="spoty [nativeCompile]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="nativeCompile" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <method v="2" />
+    </configuration>
     <configuration name="spoty [run]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -230,18 +232,18 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.spoty [run]" />
         <item itemvalue="Gradle.spoty [jpackage]" />
+        <item itemvalue="Gradle.spoty [run]" />
+        <item itemvalue="Gradle.spoty [nativeCompile]" />
         <item itemvalue="Gradle.spoty [clean]" />
         <item itemvalue="Gradle.spoty [build]" />
-        <item itemvalue="Gradle.spoty [jpackage]" />
       </list>
     </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="jdk-21.0.1-openjdk-21.0.1-3183f394aec4-920bfa72" />
+        <option value="jdk-21.0.1-openjdk-21.0.1-249ae16d76d6-29f91840" />
       </set>
     </attachedChunks>
   </component>
@@ -293,6 +295,17 @@
       <workItem from="1702664105034" duration="2951000" />
       <workItem from="1702866291934" duration="7565000" />
       <workItem from="1702925926058" duration="11647000" />
+      <workItem from="1703029443601" duration="1092000" />
+      <workItem from="1703030599284" duration="6000" />
+      <workItem from="1703031837664" duration="315000" />
+      <workItem from="1703063771313" duration="386000" />
+      <workItem from="1703071853564" duration="711000" />
+      <workItem from="1703082389658" duration="18000" />
+      <workItem from="1703090266676" duration="770000" />
+      <workItem from="1703135906193" duration="172000" />
+      <workItem from="1703142828926" duration="5000" />
+      <workItem from="1703150194874" duration="125000" />
+      <workItem from="1703173605773" duration="3576000" />
     </task>
     <task id="LOCAL-00001" summary="Fix errors in Tests">
       <option name="closed" value="true" />
@@ -358,7 +371,15 @@
       <option name="project" value="LOCAL" />
       <updated>1702935098702</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="change gradle from all to bin">
+      <option name="closed" value="true" />
+      <created>1703029765018</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1703029765018</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -384,7 +405,8 @@
     <MESSAGE value="Adding more features and functionality(More screens too)&#10;Try adding MFXTreeView for animated navbar" />
     <MESSAGE value="Remove local database." />
     <MESSAGE value="Delete local database tests" />
-    <option name="LAST_COMMIT_MESSAGE" value="Delete local database tests" />
+    <MESSAGE value="change gradle from all to bin" />
+    <option name="LAST_COMMIT_MESSAGE" value="change gradle from all to bin" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
