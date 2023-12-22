@@ -17,7 +17,7 @@ package org.infinite.spoty.viewModels;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.data_source.dtos.UnitOfMeasure;
+import org.infinite.spoty.data_source.daos.UnitOfMeasure;
 
 
 public class UOMViewModel {

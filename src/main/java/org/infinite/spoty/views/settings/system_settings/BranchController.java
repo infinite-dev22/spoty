@@ -32,7 +32,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.infinite.spoty.data_source.dtos.Branch;
+import org.infinite.spoty.data_source.daos.Branch;
 import org.infinite.spoty.forms.BranchFormController;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.values.strings.Labels;

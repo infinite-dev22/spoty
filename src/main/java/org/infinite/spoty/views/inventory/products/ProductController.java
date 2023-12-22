@@ -34,7 +34,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import org.infinite.spoty.data_source.dtos.Product;
+import org.infinite.spoty.data_source.daos.Product;
 import org.infinite.spoty.forms.ProductFormController;
 import org.infinite.spoty.printable.general.GeneralViewController;
 import org.infinite.spoty.utils.SpotyThreader;

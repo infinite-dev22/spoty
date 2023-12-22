@@ -23,7 +23,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import org.infinite.spoty.SpotyResourceLoader;
-import org.infinite.spoty.data_source.dtos.Product;
+import org.infinite.spoty.data_source.daos.Product;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 

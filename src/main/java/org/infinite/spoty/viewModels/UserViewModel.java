@@ -17,9 +17,9 @@ package org.infinite.spoty.viewModels;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.data_source.dtos.Branch;
-import org.infinite.spoty.data_source.dtos.Role;
-import org.infinite.spoty.data_source.dtos.UserProfile;
+import org.infinite.spoty.data_source.daos.Branch;
+import org.infinite.spoty.data_source.daos.Role;
+import org.infinite.spoty.data_source.daos.UserProfile;
 
 
 public class UserViewModel {

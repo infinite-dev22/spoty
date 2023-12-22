@@ -50,7 +50,7 @@ module org.infinite.spoty {
     opens org.infinite.spoty.views.settings.role_permission;
     opens org.infinite.spoty.forms;
     opens org.infinite.spoty.views.splash;
-    opens org.infinite.spoty.data_source.dtos;
+    opens org.infinite.spoty.data_source.daos;
     opens org.infinite.spoty.components.navigation;
     opens org.infinite.spoty.components.notification;
     opens org.infinite.spoty;

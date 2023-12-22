@@ -18,9 +18,9 @@ import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.data_source.dtos.Product;
-import org.infinite.spoty.data_source.dtos.purchases.PurchaseDetail;
-import org.infinite.spoty.data_source.dtos.purchases.PurchaseMaster;
+import org.infinite.spoty.data_source.daos.Product;
+import org.infinite.spoty.data_source.daos.purchases.PurchaseDetail;
+import org.infinite.spoty.data_source.daos.purchases.PurchaseMaster;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;

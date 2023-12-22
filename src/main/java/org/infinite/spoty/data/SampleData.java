@@ -16,7 +16,7 @@ package org.infinite.spoty.data;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.data_source.dtos.Role;
+import org.infinite.spoty.data_source.daos.Role;
 import org.infinite.spoty.models.QuickStats;
 
 import java.util.ArrayList;

@@ -17,7 +17,7 @@ package org.infinite.spoty.viewModels;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.data_source.dtos.Product;
+import org.infinite.spoty.data_source.daos.Product;
 import org.jetbrains.annotations.NotNull;
 
 public class PointOfSaleViewModel {

@@ -17,8 +17,8 @@ package org.infinite.spoty.viewModels;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.data_source.dtos.Branch;
-import org.infinite.spoty.data_source.dtos.returns.purchase_returns.PurchaseReturnMaster;
+import org.infinite.spoty.data_source.daos.Branch;
+import org.infinite.spoty.data_source.daos.returns.purchase_returns.PurchaseReturnMaster;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.jetbrains.annotations.Nullable;
 

@@ -18,9 +18,9 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
-import org.infinite.spoty.data_source.dtos.Product;
-import org.infinite.spoty.data_source.dtos.returns.purchase_returns.PurchaseReturnDetail;
-import org.infinite.spoty.data_source.dtos.returns.purchase_returns.PurchaseReturnMaster;
+import org.infinite.spoty.data_source.daos.Product;
+import org.infinite.spoty.data_source.daos.returns.purchase_returns.PurchaseReturnDetail;
+import org.infinite.spoty.data_source.daos.returns.purchase_returns.PurchaseReturnMaster;
 
 
 public class PurchaseReturnDetailViewModel {
