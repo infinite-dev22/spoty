@@ -12,6 +12,8 @@ module org.infinite.spoty {
     requires org.kordamp.ikonli.core;
     requires org.kordamp.ikonli.fontawesome5;
     requires lombok;
+    requires java.net.http;
+    requires com.google.gson;
 
     opens org.infinite.spoty.views;
     opens org.infinite.spoty.views.components;
@@ -60,4 +62,5 @@ module org.infinite.spoty {
 
     exports org.infinite.spoty;
     exports org.infinite.spoty.utils;
+    opens org.infinite.spoty.data_source.models;
 }

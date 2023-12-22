@@ -106,7 +106,7 @@ public class EndPoints {
         public static final String designationById = expenseCategoriesUrl + "/single";
         public static final String searchExpenseCategories = expenseCategoriesUrl + "/search";
         public static final String addExpenseCategory = expenseCategoriesUrl + "/add";
-        public static final String updateExpenseCategories = expenseCategoriesUrl + "/update";
+        public static final String updateExpenseCategory = expenseCategoriesUrl + "/update";
         public static final String deleteExpenseCategory = expenseCategoriesUrl + "/single/delete";
     }
 
@@ -115,18 +115,18 @@ public class EndPoints {
         public static final String allOrganisations = organisationsUrl + "/all";
         public static final String designationById = organisationsUrl + "/single";
         public static final String searchOrganisations = organisationsUrl + "/search";
-        public static final String addOrganisationCategory = organisationsUrl + "/add";
-        public static final String updateOrganisations = organisationsUrl + "/update";
-        public static final String deleteOrganisationCategory = organisationsUrl + "/single/delete";
+        public static final String addOrganisation = organisationsUrl + "/add";
+        public static final String updateOrganisation = organisationsUrl + "/update";
+        public static final String deleteOrganisation = organisationsUrl + "/single/delete";
     }
 
     public static final class ProductCategories {
         public static final String productCategoryUrl = apiUrl + "/product_categories";
         public static final String allProductCategories = productCategoryUrl + "/all";
-        public static final String designationById = productCategoryUrl + "/single";
+        public static final String productCategoriesById = productCategoryUrl + "/single";
         public static final String searchProductCategories = productCategoryUrl + "/search";
         public static final String addProductCategory = productCategoryUrl + "/add";
-        public static final String updateProductCategories = productCategoryUrl + "/update";
+        public static final String updateProductCategory = productCategoryUrl + "/update";
         public static final String deleteProductCategory = productCategoryUrl + "/single/delete";
     }
 
