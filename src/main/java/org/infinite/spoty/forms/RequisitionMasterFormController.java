@@ -48,8 +48,8 @@ import org.infinite.spoty.data_source.daos.requisitions.RequisitionDetail;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.BranchViewModel;
-import org.infinite.spoty.viewModels.RequisitionDetailViewModel;
-import org.infinite.spoty.viewModels.RequisitionMasterViewModel;
+import org.infinite.spoty.viewModels.requisitions.RequisitionDetailViewModel;
+import org.infinite.spoty.viewModels.requisitions.RequisitionMasterViewModel;
 import org.infinite.spoty.viewModels.SupplierViewModel;
 import org.infinite.spoty.views.BaseController;
 

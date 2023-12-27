@@ -29,7 +29,7 @@ import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.data_source.daos.Product;
 import org.infinite.spoty.viewModels.ProductViewModel;
-import org.infinite.spoty.viewModels.QuotationDetailViewModel;
+import org.infinite.spoty.viewModels.quotations.QuotationDetailViewModel;
 
 import java.net.URL;
 import java.util.Objects;

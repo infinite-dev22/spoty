@@ -16,6 +16,7 @@ module org.infinite.spoty {
     requires com.google.gson;
 
     opens org.infinite.spoty.views;
+    opens org.infinite.spoty.views.login;
     opens org.infinite.spoty.views.components;
     opens org.infinite.spoty.views.dashboard;
     opens org.infinite.spoty.views.purchases;

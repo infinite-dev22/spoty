@@ -48,36 +48,40 @@ public class SpotyLogger {
 //    public static <T> void writeToFile(Throwable throwable, @NotNull Class<T> currentClass) {
 //        throwable.printStackTrace();
 //    }
+
+
+    // Doesn.t actually write errors to file
     public static <T> void writeToFile(Throwable throwable, @NotNull Class<T> currentClass) {
         Logger logger = Logger.getLogger(currentClass.getName());
 
         Path path;
+        throw new RuntimeException(throwable);
 
-        try {
-            if (System.getProperty("os.name").contains("Windows")) {
-                path = Paths.get(System.getProperty("user.home")
-                        + "\\AppData\\Local\\ZenmartERP\\sys-log-data\\logs\\stack\\spoty_log.log");
-            } else {
-                path = Paths.get(System.getProperty("user.home")
-                        + "/.config/ZenmartERP/sys-log-data/logs/stack/spoty_log.log");
-            }
-            if (Objects.isNull(fileHandler)) fileHandler =
-                    new FileHandler(
-                            path.toString(), 1000, 1, true);
-
-            fileHandler.setFormatter(formatter);
-
-            logger.addHandler(fileHandler);
-
-            logger.log(
-                    Level.ALL,
-                    throwable.getMessage()
-                            + "\n"
-                            + Arrays.toString(throwable.getStackTrace())
-                            + "\n\n");
-        } catch (IOException e) {
-            SpotyLogger.writeToFile(e, SpotyLogger.class);
-            throw new RuntimeException(e);
-        }
+//        try {
+//            if (System.getProperty("os.name").contains("Windows")) {
+//                path = Paths.get(System.getProperty("user.home")
+//                        + "\\AppData\\Local\\ZenmartERP\\sys-log-data\\logs\\stack\\spoty_log.log");
+//            } else {
+//                path = Paths.get(System.getProperty("user.home")
+//                        + "/.config/ZenmartERP/sys-log-data/logs/stack/spoty_log.log");
+//            }
+//            if (Objects.isNull(fileHandler)) fileHandler =
+//                    new FileHandler(
+//                            path.toString(), 1000, 1, true);
+//
+//            fileHandler.setFormatter(formatter);
+//
+//            logger.addHandler(fileHandler);
+//
+//            logger.log(
+//                    Level.ALL,
+//                    throwable.getMessage()
+//                            + "\n"
+//                            + Arrays.toString(throwable.getStackTrace())
+//                            + "\n\n");
+//        } catch (IOException e) {
+//            SpotyLogger.writeToFile(e, SpotyLogger.class);
+//            throw new RuntimeException(e);
+//        }
     }
 }

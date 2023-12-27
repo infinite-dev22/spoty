@@ -117,7 +117,7 @@ public class BranchFormController implements Initializable {
                         if (BranchViewModel.getId() > 0) {
                             SpotyThreader.spotyThreadPool(() -> {
                                 try {
-                                    BranchViewModel.updateItem(BranchViewModel.getId());
+                                    BranchViewModel.updateItem();
                                 } catch (Exception e) {
                                     SpotyLogger.writeToFile(e, this.getClass());
                                 }
@@ -134,13 +134,20 @@ public class BranchFormController implements Initializable {
                             closeDialog(event);
                             return;
                         }
-                        SpotyThreader.spotyThreadPool(() -> {
+
+//                        try {
+//                            saveBranch();
+//                        } catch (Exception e) {
+//                            SpotyLogger.writeToFile(e, this.getClass());
+//                        }
+
+//                        SpotyThreader.spotyThreadPool(() -> {
                             try {
                                 saveBranch();
                             } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }
-                        });
+//                        });
 
                         SimpleNotification notification =
                                 new SimpleNotification.NotificationBuilder("Branch saved successfully")

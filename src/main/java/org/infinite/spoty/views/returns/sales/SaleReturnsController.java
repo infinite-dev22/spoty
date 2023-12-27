@@ -29,7 +29,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import org.infinite.spoty.data_source.daos.returns.sale_returns.SaleReturnMaster;
-import org.infinite.spoty.viewModels.SaleReturnMasterViewModel;
+import org.infinite.spoty.viewModels.returns.sales.SaleReturnMasterViewModel;
 
 import java.net.URL;
 import java.util.Comparator;

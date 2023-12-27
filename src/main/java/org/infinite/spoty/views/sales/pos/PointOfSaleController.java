@@ -52,6 +52,8 @@ import org.infinite.spoty.data_source.daos.sales.SaleDetail;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.*;
+import org.infinite.spoty.viewModels.sales.SaleDetailViewModel;
+import org.infinite.spoty.viewModels.sales.SaleMasterViewModel;
 import org.infinite.spoty.views.sales.pos.components.ProductCard;
 import org.jetbrains.annotations.NotNull;
 

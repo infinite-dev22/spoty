@@ -47,8 +47,8 @@ import org.infinite.spoty.data_source.daos.transfers.TransferDetail;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.BranchViewModel;
-import org.infinite.spoty.viewModels.TransferDetailViewModel;
-import org.infinite.spoty.viewModels.TransferMasterViewModel;
+import org.infinite.spoty.viewModels.transfers.TransferDetailViewModel;
+import org.infinite.spoty.viewModels.transfers.TransferMasterViewModel;
 import org.infinite.spoty.views.BaseController;
 
 import java.io.IOException;

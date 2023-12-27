@@ -20,7 +20,6 @@ import io.github.palexdev.materialfx.theming.MaterialFXStylesheets;
 import io.github.palexdev.materialfx.theming.UserAgentBuilder;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
@@ -39,16 +38,11 @@ import org.infinite.spoty.startup.SpotyPaths;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.values.strings.Labels;
-import org.infinite.spoty.viewModels.*;
-import org.infinite.spoty.views.BaseController;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-
-import static org.infinite.spoty.SpotyResourceLoader.fxmlLoader;
-import static org.infinite.spoty.utils.SpotyThreader.singleThreadCreator;
 
 public class SplashScreenController implements Initializable {
     @FXML
@@ -60,11 +54,9 @@ public class SplashScreenController implements Initializable {
 
     public static void checkFunctions() {
         var sysPathCreator = sysPathCreater();
-        var dataInit = dataInit();
 
         try {
             sysPathCreator.join();
-            dataInit.join();
             startApp();
         } catch (InterruptedException e) {
             SpotyLogger.writeToFile(e, SplashScreenController.class);
@@ -83,6 +75,198 @@ public class SplashScreenController implements Initializable {
                     }
                 });
     }
+
+//    private static void startApp() {
+//        UserAgentBuilder.builder()
+//                .themes(JavaFXThemes.MODENA)
+//                .themes(MaterialFXStylesheets.forAssemble(true))
+//                .setDeploy(true)
+//                .setResolveAssets(true)
+//                .build()
+//                .setGlobal();
+//
+//        Platform.runLater(
+//                () -> {
+//                    Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
+//                    try {
+//                        // handle CSS dynamically.
+//                        CSSFX.start();
+//                        Stage primaryStage = new Stage();
+//                        // Load app views.
+//                        Pages.setControllers(primaryStage);
+//                        Pages.setPanes();
+//                        // Load dialog views.
+//                        Dialogs.setControllers();
+//                        Dialogs.setDialogContent();
+//                        // Set base view.
+//                        FXMLLoader loader = fxmlLoader("fxml/Base.fxml");
+//                        loader.setControllerFactory(c -> BaseController.getInstance(primaryStage));
+//                        // Base view parent.
+//                        Parent root = loader.load();
+//                        Scene scene = new Scene(root);
+//                        // Set application scene theme to MFX modern themes.
+////                        MFXThemeManager.addOn(scene, Themes.DEFAULT, Themes.LEGACY);
+//                        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(scene);
+//                        // Fixes black edges showing in main app scene.
+//                        scene.setFill(null);
+//                        primaryStage.setScene(scene);
+//                        primaryStage.initStyle(StageStyle.TRANSPARENT);
+//                        // Set initial window size.
+//                        primaryStage.setHeight(primScreenBounds.getHeight());
+//                        primaryStage.setWidth(primScreenBounds.getWidth());
+//                        // Set window position to center of screen.
+//                        // This isn't necessary, just felt like adding it here.
+//                        primaryStage.setX((primScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
+//                        primaryStage.setY((primScreenBounds.getHeight() - primaryStage.getHeight()) / 2);
+//                        // Set window title name, this name will only be seen when cursor hovers over app icon in
+//                        // taskbar. Not necessary too but added since other apps also do this.
+//                        primaryStage.setTitle(Labels.APP_NAME);
+//                        primaryStage.getIcons().add(new Image(SpotyResourceLoader.load("icon.png")));
+//                        primaryStage.show();
+//                        // Initialize app notification handler.
+//                        SimpleNotificationHolder.setNotificationOwner(primaryStage);
+//                    } catch (IOException e) {
+//                        SpotyLogger.writeToFile(e, SplashScreenController.class);
+//                    }
+//                });
+//    }
+
+//    @NotNull
+//    private static Thread dataInit() {
+//        return singleThreadCreator(
+//                "data-tracker",
+//                () -> {
+//                    try {
+//                        AdjustmentMasterViewModel.getAllAdjustmentMasters();
+//                        BranchViewModel.getAllBranches();
+//                        BrandViewModel.getItems();
+//                        CurrencyViewModel.getAllCurrencies();
+//                        CustomerViewModel.getAllCustomers();
+//                        ExpenseCategoryViewModel.getAllCategories();
+//                        ExpenseViewModel.getAllExpenses();
+//                        ProductCategoryViewModel.getItems();
+//                        ProductViewModel.getAllProducts();
+//                        PurchaseMasterViewModel.getPurchaseMasters();
+//                        PurchaseReturnMasterViewModel.getPurchaseReturnMasters();
+//                        QuotationMasterViewModel.getQuotationMasters();
+//                        RequisitionMasterViewModel.getRequisitionMasters();
+//                        SaleMasterViewModel.getSaleMasters();
+//                        SaleReturnMasterViewModel.getSaleReturnMasters();
+//                        StockInMasterViewModel.getStockInMasters();
+//                        SupplierViewModel.getAllSuppliers();
+//                        TransferMasterViewModel.getTransferMasters();
+//                        UOMViewModel.getItems();
+//                        UserViewModel.getAllUserProfiles();
+//                        RoleViewModel.getAllRoles();
+//                        // Initialize Permissions.
+//                        //PermissionsViewModel.setAccessBrands();
+//                        //PermissionsViewModel.setAccessBranchSettings();
+//                        //PermissionsViewModel.setAccessBranchSettings();
+//                        //PermissionsViewModel.setAccessBranchStockChartsReports();
+//                        //PermissionsViewModel.setAccessCurrencySettings();
+//                        //PermissionsViewModel.setAccessCustomersReports();
+//                        //PermissionsViewModel.setAccessCustomerRankingsReports();
+//                        //PermissionsViewModel.setViewPermissions();
+//                        //PermissionsViewModel.setAccessPaymentsPurchasesReports();
+//                        //PermissionsViewModel.setViewSystemSettings();
+//                        //PermissionsViewModel.setViewAdjustments();
+//                        //PermissionsViewModel.setViewPurchases();
+//                        //PermissionsViewModel.setViewBranch();
+//                        //PermissionsViewModel.setCreateBackup();
+//                        //PermissionsViewModel.setDeleteBranch();
+//                        //PermissionsViewModel.setAccessPurchasesReports();
+//                        //PermissionsViewModel.setViewUsers();
+//                        //PermissionsViewModel.setViewSales();
+//                        //PermissionsViewModel.setViewPOSSettings();
+//                        //PermissionsViewModel.setViewCurrency();
+//                        //PermissionsViewModel.setViewBackupSettings();
+//                        //PermissionsViewModel.setEditUsers();
+//                        //PermissionsViewModel.setEditSystemSettings();
+//                        //PermissionsViewModel.setEditSales();
+//                        //PermissionsViewModel.setEditPOSSettings();
+//                        //PermissionsViewModel.setEditCurrency();
+//                        //PermissionsViewModel.setEditBranch();
+//                        //PermissionsViewModel.setCreateProducts();
+//                        //PermissionsViewModel.setDeleteUsers();
+//                        //PermissionsViewModel.setDeleteSales();
+//                        //PermissionsViewModel.setDeleteCurrency();
+//                        //PermissionsViewModel.setCreateSales();
+//                        //PermissionsViewModel.setCreateCurrency();
+//                        //PermissionsViewModel.setCreateBranch();
+//                        //PermissionsViewModel.setViewTransfers();
+//                        //PermissionsViewModel.setEditPermissions();
+//                        //PermissionsViewModel.setViewSaleReturns();
+//                        //PermissionsViewModel.setDeletePermissions();
+//                        //PermissionsViewModel.setCreateUsers();
+//                        //PermissionsViewModel.setViewQuotations();
+//                        //PermissionsViewModel.setViewPurchaseReturns();
+//                        //PermissionsViewModel.setViewExpenses();
+//                        //PermissionsViewModel.setEditTransfers();
+//                        //PermissionsViewModel.setEditExpenses();
+//                        //PermissionsViewModel.setEditSaleReturns();
+//                        //PermissionsViewModel.setEditQuotations();
+//                        //PermissionsViewModel.setEditPurchaseReturns();
+//                        //PermissionsViewModel.setEditAdjustments();
+//                        //PermissionsViewModel.setDeleteTransfers();
+//                        //PermissionsViewModel.setDeleteExpenses();
+//                        //PermissionsViewModel.setCreatePermissions();
+//                        //PermissionsViewModel.setDeleteSaleReturns();
+//                        //PermissionsViewModel.setDeletePurchaseReturns();
+//                        //PermissionsViewModel.setCreateExpenses();
+//                        //PermissionsViewModel.setDeleteQuotations();
+//                        //PermissionsViewModel.setCreatePurchaseReturns();
+//                        //PermissionsViewModel.setEditPurchases();
+//                        //PermissionsViewModel.setDeletePurchases();
+//                        //PermissionsViewModel.setDeleteAdjustments();
+//                        //PermissionsViewModel.setCreateTransfers();
+//                        //PermissionsViewModel.setCreateSaleReturns();
+//                        //PermissionsViewModel.setCreateQuotations();
+//                        //PermissionsViewModel.setCreateAdjustments();
+//                        //PermissionsViewModel.setCreatePurchases();
+//                        //PermissionsViewModel.setPosAccess();
+//                        //PermissionsViewModel.setDashboardAccess();
+//                        //PermissionsViewModel.setAccessPaymentsSalesReports();
+//                        //PermissionsViewModel.setAccessProductCategories();
+//                        //PermissionsViewModel.setAccessUnitsOfMeasure();
+//                        //PermissionsViewModel.setAccessPurchasesReturnsPaymentsReports();
+//                        //PermissionsViewModel.setAccessSalesReports();
+//                        //PermissionsViewModel.setAccessSalesReturnsPaymentsReports();
+//                        //PermissionsViewModel.setCreateCustomers();
+//                        //PermissionsViewModel.setCreateSuppliers();
+//                        //PermissionsViewModel.setDeleteCustomers();
+//                        //PermissionsViewModel.setDeleteProducts();
+//                        //PermissionsViewModel.setDeleteSuppliers();
+//                        //PermissionsViewModel.setAccessProductQuantityReports();
+//                        //PermissionsViewModel.setEditCustomers();
+//                        //PermissionsViewModel.setEditProducts();
+//                        //PermissionsViewModel.setEditSuppliers();
+//                        //PermissionsViewModel.setAccessSuppliersReports();
+//                        //PermissionsViewModel.setImportCustomers();
+//                        //PermissionsViewModel.setImportProducts();
+//                        //PermissionsViewModel.setImportSuppliers();
+//                        //PermissionsViewModel.setViewCustomers();
+//                        //PermissionsViewModel.setViewProducts();
+//                        //PermissionsViewModel.setAccessProductSalesReports();
+//                        //PermissionsViewModel.setAccessProfitsAndLossesReports();
+//                        //PermissionsViewModel.setAccessProductPurchasesReports();
+//                        //PermissionsViewModel.setAccessProductsReports();
+//                        //PermissionsViewModel.setAccessStocksReports();
+//                        //PermissionsViewModel.setAccessTopSellingProductsReports();
+//                        //PermissionsViewModel.setAccessUsersReports();
+//                        //PermissionsViewModel.setViewSuppliers();
+//                        //PermissionsViewModel.setViewStockIn();
+//                        //PermissionsViewModel.setCreateStockIn();
+//                        //PermissionsViewModel.setEditStockIn();
+//                        //PermissionsViewModel.setDeleteStockIn();
+//                        //PermissionsViewModel.setViewRequisition();
+//                        //PermissionsViewModel.setCreateRequisition();
+//                        //PermissionsViewModel.setEditRequisition();
+//                        //PermissionsViewModel.setDeleteRequisition();
+//                    } catch (Exception e) {
+//                        SpotyLogger.writeToFile(e, SplashScreenController.class);
+//                    }
+//                });
+//    }
 
     private static void startApp() {
         UserAgentBuilder.builder()
@@ -106,171 +290,27 @@ public class SplashScreenController implements Initializable {
                         // Load dialog views.
                         Dialogs.setControllers();
                         Dialogs.setDialogContent();
-                        // Set base view.
-                        FXMLLoader loader = fxmlLoader("fxml/Base.fxml");
-                        loader.setControllerFactory(c -> BaseController.getInstance(primaryStage));
                         // Base view parent.
-                        Parent root = loader.load();
-                        Scene scene = new Scene(root);
+                        Parent root = Pages.getLoginPane();
+                        Scene scene = new Scene(root, 983, 634);
                         // Set application scene theme to MFX modern themes.
-//                        MFXThemeManager.addOn(scene, Themes.DEFAULT, Themes.LEGACY);
                         io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(scene);
                         // Fixes black edges showing in main app scene.
                         scene.setFill(null);
                         primaryStage.setScene(scene);
                         primaryStage.initStyle(StageStyle.TRANSPARENT);
-                        // Set initial window size.
-                        primaryStage.setHeight(primScreenBounds.getHeight());
-                        primaryStage.setWidth(primScreenBounds.getWidth());
-                        // Set window position to center of screen.
-                        // This isn't necessary, just felt like adding it here.
-                        primaryStage.setX((primScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
-                        primaryStage.setY((primScreenBounds.getHeight() - primaryStage.getHeight()) / 2);
                         // Set window title name, this name will only be seen when cursor hovers over app icon in
                         // taskbar. Not necessary too but added since other apps also do this.
                         primaryStage.setTitle(Labels.APP_NAME);
                         primaryStage.getIcons().add(new Image(SpotyResourceLoader.load("icon.png")));
                         primaryStage.show();
+                        // Set window position to center of screen.
+                        // This isn't necessary, just felt like adding it here.
+                        primaryStage.setX((primScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
+                        primaryStage.setY((primScreenBounds.getHeight() - primaryStage.getHeight()) / 2);
                         // Initialize app notification handler.
                         SimpleNotificationHolder.setNotificationOwner(primaryStage);
                     } catch (IOException e) {
-                        SpotyLogger.writeToFile(e, SplashScreenController.class);
-                    }
-                });
-    }
-
-    @NotNull
-    private static Thread dataInit() {
-        return singleThreadCreator(
-                "data-tracker",
-                () -> {
-                    try {
-                        AdjustmentMasterViewModel.getAllAdjustmentMasters();
-                        BranchViewModel.getAllBranches();
-                        BrandViewModel.getItems();
-                        CurrencyViewModel.getAllCurrencies();
-                        CustomerViewModel.getAllCustomers();
-                        ExpenseCategoryViewModel.getAllCategories();
-                        ExpenseViewModel.getAllExpenses();
-                        ProductCategoryViewModel.getItems();
-                        ProductViewModel.getAllProducts();
-                        PurchaseMasterViewModel.getPurchaseMasters();
-                        PurchaseReturnMasterViewModel.getPurchaseReturnMasters();
-                        QuotationMasterViewModel.getQuotationMasters();
-                        RequisitionMasterViewModel.getRequisitionMasters();
-                        SaleMasterViewModel.getSaleMasters();
-                        SaleReturnMasterViewModel.getSaleReturnMasters();
-                        StockInMasterViewModel.getStockInMasters();
-                        SupplierViewModel.getAllSuppliers();
-                        TransferMasterViewModel.getTransferMasters();
-                        UOMViewModel.getItems();
-                        UserViewModel.getAllUserProfiles();
-                        RoleViewModel.getAllRoles();
-                        // Initialize Permissions.
-                        PermissionsViewModel.setAccessBrands();
-                        PermissionsViewModel.setAccessBranchSettings();
-                        PermissionsViewModel.setAccessBranchSettings();
-                        PermissionsViewModel.setAccessBranchStockChartsReports();
-                        PermissionsViewModel.setAccessCurrencySettings();
-                        PermissionsViewModel.setAccessCustomersReports();
-                        PermissionsViewModel.setAccessCustomerRankingsReports();
-                        PermissionsViewModel.setViewPermissions();
-                        PermissionsViewModel.setAccessPaymentsPurchasesReports();
-                        PermissionsViewModel.setViewSystemSettings();
-                        PermissionsViewModel.setViewAdjustments();
-                        PermissionsViewModel.setViewPurchases();
-                        PermissionsViewModel.setViewBranch();
-                        PermissionsViewModel.setCreateBackup();
-                        PermissionsViewModel.setDeleteBranch();
-                        PermissionsViewModel.setAccessPurchasesReports();
-                        PermissionsViewModel.setViewUsers();
-                        PermissionsViewModel.setViewSales();
-                        PermissionsViewModel.setViewPOSSettings();
-                        PermissionsViewModel.setViewCurrency();
-                        PermissionsViewModel.setViewBackupSettings();
-                        PermissionsViewModel.setEditUsers();
-                        PermissionsViewModel.setEditSystemSettings();
-                        PermissionsViewModel.setEditSales();
-                        PermissionsViewModel.setEditPOSSettings();
-                        PermissionsViewModel.setEditCurrency();
-                        PermissionsViewModel.setEditBranch();
-                        PermissionsViewModel.setCreateProducts();
-                        PermissionsViewModel.setDeleteUsers();
-                        PermissionsViewModel.setDeleteSales();
-                        PermissionsViewModel.setDeleteCurrency();
-                        PermissionsViewModel.setCreateSales();
-                        PermissionsViewModel.setCreateCurrency();
-                        PermissionsViewModel.setCreateBranch();
-                        PermissionsViewModel.setViewTransfers();
-                        PermissionsViewModel.setEditPermissions();
-                        PermissionsViewModel.setViewSaleReturns();
-                        PermissionsViewModel.setDeletePermissions();
-                        PermissionsViewModel.setCreateUsers();
-                        PermissionsViewModel.setViewQuotations();
-                        PermissionsViewModel.setViewPurchaseReturns();
-                        PermissionsViewModel.setViewExpenses();
-                        PermissionsViewModel.setEditTransfers();
-                        PermissionsViewModel.setEditExpenses();
-                        PermissionsViewModel.setEditSaleReturns();
-                        PermissionsViewModel.setEditQuotations();
-                        PermissionsViewModel.setEditPurchaseReturns();
-                        PermissionsViewModel.setEditAdjustments();
-                        PermissionsViewModel.setDeleteTransfers();
-                        PermissionsViewModel.setDeleteExpenses();
-                        PermissionsViewModel.setCreatePermissions();
-                        PermissionsViewModel.setDeleteSaleReturns();
-                        PermissionsViewModel.setDeletePurchaseReturns();
-                        PermissionsViewModel.setCreateExpenses();
-                        PermissionsViewModel.setDeleteQuotations();
-                        PermissionsViewModel.setCreatePurchaseReturns();
-                        PermissionsViewModel.setEditPurchases();
-                        PermissionsViewModel.setDeletePurchases();
-                        PermissionsViewModel.setDeleteAdjustments();
-                        PermissionsViewModel.setCreateTransfers();
-                        PermissionsViewModel.setCreateSaleReturns();
-                        PermissionsViewModel.setCreateQuotations();
-                        PermissionsViewModel.setCreateAdjustments();
-                        PermissionsViewModel.setCreatePurchases();
-                        PermissionsViewModel.setPosAccess();
-                        PermissionsViewModel.setDashboardAccess();
-                        PermissionsViewModel.setAccessPaymentsSalesReports();
-                        PermissionsViewModel.setAccessProductCategories();
-                        PermissionsViewModel.setAccessUnitsOfMeasure();
-                        PermissionsViewModel.setAccessPurchasesReturnsPaymentsReports();
-                        PermissionsViewModel.setAccessSalesReports();
-                        PermissionsViewModel.setAccessSalesReturnsPaymentsReports();
-                        PermissionsViewModel.setCreateCustomers();
-                        PermissionsViewModel.setCreateSuppliers();
-                        PermissionsViewModel.setDeleteCustomers();
-                        PermissionsViewModel.setDeleteProducts();
-                        PermissionsViewModel.setDeleteSuppliers();
-                        PermissionsViewModel.setAccessProductQuantityReports();
-                        PermissionsViewModel.setEditCustomers();
-                        PermissionsViewModel.setEditProducts();
-                        PermissionsViewModel.setEditSuppliers();
-                        PermissionsViewModel.setAccessSuppliersReports();
-                        PermissionsViewModel.setImportCustomers();
-                        PermissionsViewModel.setImportProducts();
-                        PermissionsViewModel.setImportSuppliers();
-                        PermissionsViewModel.setViewCustomers();
-                        PermissionsViewModel.setViewProducts();
-                        PermissionsViewModel.setAccessProductSalesReports();
-                        PermissionsViewModel.setAccessProfitsAndLossesReports();
-                        PermissionsViewModel.setAccessProductPurchasesReports();
-                        PermissionsViewModel.setAccessProductsReports();
-                        PermissionsViewModel.setAccessStocksReports();
-                        PermissionsViewModel.setAccessTopSellingProductsReports();
-                        PermissionsViewModel.setAccessUsersReports();
-                        PermissionsViewModel.setViewSuppliers();
-                        PermissionsViewModel.setViewStockIn();
-                        PermissionsViewModel.setCreateStockIn();
-                        PermissionsViewModel.setEditStockIn();
-                        PermissionsViewModel.setDeleteStockIn();
-                        PermissionsViewModel.setViewRequisition();
-                        PermissionsViewModel.setCreateRequisition();
-                        PermissionsViewModel.setEditRequisition();
-                        PermissionsViewModel.setDeleteRequisition();
-                    } catch (Exception e) {
                         SpotyLogger.writeToFile(e, SplashScreenController.class);
                     }
                 });

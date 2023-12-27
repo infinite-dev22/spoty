@@ -134,7 +134,7 @@ public class SystemController implements Initializable {
     private void initGUI() throws Exception {
         SpotyThreader.spotyThreadPool(() -> {
             try {
-                BranchViewModel.getItem(preferences.getInt("default_branch", 1));
+                BranchViewModel.getItem(preferences.getLong("default_branch", 1));
                 CurrencyViewModel.getItem(preferences.getInt("default_currency", 1));
             } catch (Exception e) {
                 SpotyLogger.writeToFile(e, this.getClass());

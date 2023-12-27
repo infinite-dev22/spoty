@@ -32,7 +32,7 @@ import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.data_source.daos.Product;
 import org.infinite.spoty.values.SharedResources;
 import org.infinite.spoty.values.strings.Values;
-import org.infinite.spoty.viewModels.AdjustmentDetailViewModel;
+import org.infinite.spoty.viewModels.adjustments.AdjustmentDetailViewModel;
 import org.infinite.spoty.viewModels.ProductViewModel;
 
 import java.net.URL;
