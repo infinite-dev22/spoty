@@ -31,7 +31,7 @@ import org.infinite.spoty.data_source.daos.Product;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.ProductViewModel;
-import org.infinite.spoty.viewModels.PurchaseDetailViewModel;
+import org.infinite.spoty.viewModels.purchases.PurchaseDetailViewModel;
 
 import java.net.URL;
 import java.util.Objects;

@@ -47,8 +47,8 @@ import org.infinite.spoty.data_source.daos.stock_ins.StockInDetail;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.BranchViewModel;
-import org.infinite.spoty.viewModels.StockInDetailViewModel;
-import org.infinite.spoty.viewModels.StockInMasterViewModel;
+import org.infinite.spoty.viewModels.stock_ins.StockInDetailViewModel;
+import org.infinite.spoty.viewModels.stock_ins.StockInMasterViewModel;
 import org.infinite.spoty.views.BaseController;
 import org.jetbrains.annotations.NotNull;
 

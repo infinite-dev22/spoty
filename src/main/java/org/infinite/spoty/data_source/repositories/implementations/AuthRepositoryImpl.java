@@ -15,7 +15,7 @@ import java.net.http.HttpResponse;
 
 public class AuthRepositoryImpl implements AuthRepository {
     @Override
-    public HttpResponse<String> login(LoginModel loginModel) {
+    public HttpResponse<String> login(LoginModel loginModel) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.Auth.login))
                 .header("Accept", "application/json")
@@ -23,18 +23,11 @@ public class AuthRepositoryImpl implements AuthRepository {
                 .method("POST", HttpRequest.BodyPublishers.ofString(new Gson().toJson(loginModel)))
                 .build();
 
-        HttpResponse<String> response = null;
-        try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            SpotyLogger.writeToFile(e, ServicesRepositoryImpl.class);
-        }
-
-        return response;
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public HttpResponse<String> signup(SignUpModel signUpModel) {
+    public HttpResponse<String> signup(SignUpModel signUpModel) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.Auth.signup))
                 .header("Accept", "application/json")
@@ -42,13 +35,6 @@ public class AuthRepositoryImpl implements AuthRepository {
                 .method("POST", HttpRequest.BodyPublishers.ofString(new Gson().toJson(signUpModel)))
                 .build();
 
-        HttpResponse<String> response = null;
-        try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            SpotyLogger.writeToFile(e, ServicesRepositoryImpl.class);
-        }
-
-        return response;
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 }

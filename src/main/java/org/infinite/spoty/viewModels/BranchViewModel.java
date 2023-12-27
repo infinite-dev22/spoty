@@ -14,10 +14,20 @@
 
 package org.infinite.spoty.viewModels;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.infinite.spoty.data_source.daos.Branch;
+import org.infinite.spoty.data_source.models.FindModel;
+import org.infinite.spoty.data_source.models.SearchModel;
+import org.infinite.spoty.data_source.repositories.implementations.BranchesRepositoryImpl;
+import org.infinite.spoty.utils.SpotyLogger;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 
 
 public class BranchViewModel {
@@ -33,11 +43,11 @@ public class BranchViewModel {
     private static final ListProperty<Branch> branches = new SimpleListProperty<>(branchesList);
     public static ObservableList<Branch> branchesComboBoxList = FXCollections.observableArrayList();
 
-    public static long getId() {
+    public static Long getId() {
         return id.get();
     }
 
-    public static void setId(long id) {
+    public static void setId(Long id) {
         BranchViewModel.id.set(id);
     }
 
@@ -138,19 +148,25 @@ public class BranchViewModel {
     }
 
     public static void saveBranch() throws Exception {
-//        Dao<Branch, Long> branchDao = DaoManager.createDao(connectionSource, Branch.class);
-//
-//        Branch branch =
-//                new Branch(getName(), getCity(), getPhone(), getEmail(), getTown());
-//
-//        branchDao.create(branch);
+        var branchesRepository = new BranchesRepositoryImpl();
+
+        var branch =
+                Branch.builder()
+                        .name(getName())
+                        .city(getCity())
+                        .phone(getPhone())
+                        .email(getEmail())
+                        .town(getTown())
+                        .build();
+
+        branchesRepository.post(branch);
 
         clearBranchData();
         getAllBranches();
     }
 
     public static void clearBranchData() {
-        setId(0);
+        setId(0L);
         setName("");
         setCity("");
         setPhone("");
@@ -159,56 +175,87 @@ public class BranchViewModel {
     }
 
     public static void getAllBranches() throws Exception {
-//        Dao<Branch, Long> branchDao = DaoManager.createDao(connectionSource, Branch.class);
+        var branchesRepository = new BranchesRepositoryImpl();
+        Type listType = new TypeToken<ArrayList<Branch>>() {
+        }.getType();
 
-//        Platform.runLater(
-//                () -> {
-//                    branchesList.clear();
-//
-//                    try {
-//                        branchesList.addAll(branchDao.queryForAll());
-//                    } catch (Exception e) {
-//                        SpotyLogger.writeToFile(e, BranchViewModel.class);
-//                    }
-//                });
+
+        Platform.runLater(
+                () -> {
+                    branchesList.clear();
+
+                    try {
+                        ArrayList<Branch> branchList = new Gson().fromJson(branchesRepository.fetchAll().body(), listType);
+                        branchesList.addAll(branchList);
+                    } catch (Exception e) {
+                        SpotyLogger.writeToFile(e, BranchViewModel.class);
+                    }
+                });
     }
 
-    public static void getItem(long branchID) throws Exception {
-//        Dao<Branch, Long> branchDao = DaoManager.createDao(connectionSource, Branch.class);
-//
-//        Branch branch = branchDao.queryForId(branchID);
-//        setBranch(branch);
-//        setId(branch.getId());
-//        setName(branch.getName());
-//        setEmail(branch.getEmail());
-//        setPhone(branch.getPhone());
-//        setCity(branch.getCity());
-//        setTown(branch.getTown());
+    public static void getItem(Long branchID) throws Exception {
+        var branchesRepository = new BranchesRepositoryImpl();
+        var findModel = new FindModel();
+        findModel.setId(branchID);
+        var response = branchesRepository.fetch(findModel).body();
+        var branch = new Gson().fromJson(response, Branch.class);
+
+        setBranch(branch);
+        setId(branch.getId());
+        setName(branch.getName());
+        setEmail(branch.getEmail());
+        setPhone(branch.getPhone());
+        setCity(branch.getCity());
+        setTown(branch.getTown());
 
         getAllBranches();
     }
 
-    public static void updateItem(long index) throws Exception {
-//        Dao<Branch, Long> branchDao = DaoManager.createDao(connectionSource, Branch.class);
-//
-//        Branch branch = branchDao.queryForId(index);
-//
-//        branch.setName(getName());
-//        branch.setCity(getCity());
-//        branch.setPhone(getPhone());
-//        branch.setEmail(getEmail());
-//        branch.setTown(getTown());
-//
-//        branchDao.update(branch);
+    public static void searchItem(String search) throws Exception {
+        var branchesRepository = new BranchesRepositoryImpl();
+        var searchModel = new SearchModel();
+        searchModel.setSearch(search);
+
+        Type listType = new TypeToken<ArrayList<Branch>>() {
+        }.getType();
+
+        Platform.runLater(
+                () -> {
+                    branchesList.clear();
+
+                    try {
+                        ArrayList<Branch> branchList = new Gson().fromJson(branchesRepository.fetchAll().body(), listType);
+                        branchesList.addAll(branchList);
+                    } catch (Exception e) {
+                        SpotyLogger.writeToFile(e, BranchViewModel.class);
+                    }
+                });
+
+    }
+
+    public static void updateItem() throws Exception {
+        var branchesRepository = new BranchesRepositoryImpl();
+
+        Branch branch = Branch.builder()
+                .name(getName())
+                .city(getCity())
+                .phone(getPhone())
+                .email(getEmail())
+                .town(getTown())
+                .build();
+
+        branchesRepository.put(branch);
 
         clearBranchData();
         getAllBranches();
     }
 
-    public static void deleteItem(long index) throws Exception {
-//        Dao<Branch, Long> branchDao = DaoManager.createDao(connectionSource, Branch.class);
-//
-//        branchDao.deleteById(index);
+    public static void deleteItem(Long branchID) throws Exception {
+        var branchesRepository = new BranchesRepositoryImpl();
+        var findModel = new FindModel();
+
+        findModel.setId(branchID);
+        branchesRepository.delete(findModel);
         getAllBranches();
     }
 }

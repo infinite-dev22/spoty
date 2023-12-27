@@ -29,7 +29,7 @@ import javafx.scene.layout.HBox;
 import org.infinite.spoty.components.navigation.Pages;
 import org.infinite.spoty.data_source.daos.transfers.TransferMaster;
 import org.infinite.spoty.utils.SpotyThreader;
-import org.infinite.spoty.viewModels.TransferMasterViewModel;
+import org.infinite.spoty.viewModels.transfers.TransferMasterViewModel;
 import org.infinite.spoty.views.BaseController;
 
 import java.net.URL;

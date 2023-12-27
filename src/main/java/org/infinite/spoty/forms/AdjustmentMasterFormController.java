@@ -46,8 +46,8 @@ import org.infinite.spoty.data_source.daos.Branch;
 import org.infinite.spoty.data_source.daos.adjustments.AdjustmentDetail;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.utils.SpotyThreader;
-import org.infinite.spoty.viewModels.AdjustmentDetailViewModel;
-import org.infinite.spoty.viewModels.AdjustmentMasterViewModel;
+import org.infinite.spoty.viewModels.adjustments.AdjustmentDetailViewModel;
+import org.infinite.spoty.viewModels.adjustments.AdjustmentMasterViewModel;
 import org.infinite.spoty.viewModels.BranchViewModel;
 import org.infinite.spoty.views.BaseController;
 

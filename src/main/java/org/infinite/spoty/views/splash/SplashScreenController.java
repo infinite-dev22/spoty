@@ -40,7 +40,17 @@ import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.values.strings.Labels;
 import org.infinite.spoty.viewModels.*;
+import org.infinite.spoty.viewModels.adjustments.AdjustmentMasterViewModel;
+import org.infinite.spoty.viewModels.purchases.PurchaseMasterViewModel;
+import org.infinite.spoty.viewModels.quotations.QuotationMasterViewModel;
+import org.infinite.spoty.viewModels.requisitions.RequisitionMasterViewModel;
+import org.infinite.spoty.viewModels.returns.purchases.PurchaseReturnMasterViewModel;
+import org.infinite.spoty.viewModels.returns.sales.SaleReturnMasterViewModel;
+import org.infinite.spoty.viewModels.sales.SaleMasterViewModel;
+import org.infinite.spoty.viewModels.stock_ins.StockInMasterViewModel;
+import org.infinite.spoty.viewModels.transfers.TransferMasterViewModel;
 import org.infinite.spoty.views.BaseController;
+import org.infinite.spoty.views.login.LoginController;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -60,7 +70,7 @@ public class SplashScreenController implements Initializable {
 
     public static void checkFunctions() {
         var sysPathCreator = sysPathCreater();
-        var dataInit = dataInit();
+        var dataInit = dataInit();  // Make run after user login.
 
         try {
             sysPathCreator.join();
@@ -84,60 +94,60 @@ public class SplashScreenController implements Initializable {
                 });
     }
 
-    private static void startApp() {
-        UserAgentBuilder.builder()
-                .themes(JavaFXThemes.MODENA)
-                .themes(MaterialFXStylesheets.forAssemble(true))
-                .setDeploy(true)
-                .setResolveAssets(true)
-                .build()
-                .setGlobal();
-
-        Platform.runLater(
-                () -> {
-                    Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
-                    try {
-                        // handle CSS dynamically.
-                        CSSFX.start();
-                        Stage primaryStage = new Stage();
-                        // Load app views.
-                        Pages.setControllers(primaryStage);
-                        Pages.setPanes();
-                        // Load dialog views.
-                        Dialogs.setControllers();
-                        Dialogs.setDialogContent();
-                        // Set base view.
-                        FXMLLoader loader = fxmlLoader("fxml/Base.fxml");
-                        loader.setControllerFactory(c -> BaseController.getInstance(primaryStage));
-                        // Base view parent.
-                        Parent root = loader.load();
-                        Scene scene = new Scene(root);
-                        // Set application scene theme to MFX modern themes.
-//                        MFXThemeManager.addOn(scene, Themes.DEFAULT, Themes.LEGACY);
-                        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(scene);
-                        // Fixes black edges showing in main app scene.
-                        scene.setFill(null);
-                        primaryStage.setScene(scene);
-                        primaryStage.initStyle(StageStyle.TRANSPARENT);
-                        // Set initial window size.
-                        primaryStage.setHeight(primScreenBounds.getHeight());
-                        primaryStage.setWidth(primScreenBounds.getWidth());
-                        // Set window position to center of screen.
-                        // This isn't necessary, just felt like adding it here.
-                        primaryStage.setX((primScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
-                        primaryStage.setY((primScreenBounds.getHeight() - primaryStage.getHeight()) / 2);
-                        // Set window title name, this name will only be seen when cursor hovers over app icon in
-                        // taskbar. Not necessary too but added since other apps also do this.
-                        primaryStage.setTitle(Labels.APP_NAME);
-                        primaryStage.getIcons().add(new Image(SpotyResourceLoader.load("icon.png")));
-                        primaryStage.show();
-                        // Initialize app notification handler.
-                        SimpleNotificationHolder.setNotificationOwner(primaryStage);
-                    } catch (IOException e) {
-                        SpotyLogger.writeToFile(e, SplashScreenController.class);
-                    }
-                });
-    }
+//    private static void startApp() {
+//        UserAgentBuilder.builder()
+//                .themes(JavaFXThemes.MODENA)
+//                .themes(MaterialFXStylesheets.forAssemble(true))
+//                .setDeploy(true)
+//                .setResolveAssets(true)
+//                .build()
+//                .setGlobal();
+//
+//        Platform.runLater(
+//                () -> {
+//                    Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
+//                    try {
+//                        // handle CSS dynamically.
+//                        CSSFX.start();
+//                        Stage primaryStage = new Stage();
+//                        // Load app views.
+//                        Pages.setControllers(primaryStage);
+//                        Pages.setPanes();
+//                        // Load dialog views.
+//                        Dialogs.setControllers();
+//                        Dialogs.setDialogContent();
+//                        // Set base view.
+//                        FXMLLoader loader = fxmlLoader("fxml/Base.fxml");
+//                        loader.setControllerFactory(c -> BaseController.getInstance(primaryStage));
+//                        // Base view parent.
+//                        Parent root = loader.load();
+//                        Scene scene = new Scene(root);
+//                        // Set application scene theme to MFX modern themes.
+////                        MFXThemeManager.addOn(scene, Themes.DEFAULT, Themes.LEGACY);
+//                        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(scene);
+//                        // Fixes black edges showing in main app scene.
+//                        scene.setFill(null);
+//                        primaryStage.setScene(scene);
+//                        primaryStage.initStyle(StageStyle.TRANSPARENT);
+//                        // Set initial window size.
+//                        primaryStage.setHeight(primScreenBounds.getHeight());
+//                        primaryStage.setWidth(primScreenBounds.getWidth());
+//                        // Set window position to center of screen.
+//                        // This isn't necessary, just felt like adding it here.
+//                        primaryStage.setX((primScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
+//                        primaryStage.setY((primScreenBounds.getHeight() - primaryStage.getHeight()) / 2);
+//                        // Set window title name, this name will only be seen when cursor hovers over app icon in
+//                        // taskbar. Not necessary too but added since other apps also do this.
+//                        primaryStage.setTitle(Labels.APP_NAME);
+//                        primaryStage.getIcons().add(new Image(SpotyResourceLoader.load("icon.png")));
+//                        primaryStage.show();
+//                        // Initialize app notification handler.
+//                        SimpleNotificationHolder.setNotificationOwner(primaryStage);
+//                    } catch (IOException e) {
+//                        SpotyLogger.writeToFile(e, SplashScreenController.class);
+//                    }
+//                });
+//    }
 
     @NotNull
     private static Thread dataInit() {
@@ -271,6 +281,54 @@ public class SplashScreenController implements Initializable {
                         PermissionsViewModel.setEditRequisition();
                         PermissionsViewModel.setDeleteRequisition();
                     } catch (Exception e) {
+                        SpotyLogger.writeToFile(e, SplashScreenController.class);
+                    }
+                });
+    }
+
+    private static void startApp() {
+        UserAgentBuilder.builder()
+                .themes(JavaFXThemes.MODENA)
+                .themes(MaterialFXStylesheets.forAssemble(true))
+                .setDeploy(true)
+                .setResolveAssets(true)
+                .build()
+                .setGlobal();
+
+        Platform.runLater(
+                () -> {
+                    Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
+                    try {
+                        // handle CSS dynamically.
+                        CSSFX.start();
+                        Stage primaryStage = new Stage();
+                        // Load app views.
+                        Pages.setControllers(primaryStage);
+                        Pages.setPanes();
+                        // Load dialog views.
+                        Dialogs.setControllers();
+                        Dialogs.setDialogContent();
+                        // Base view parent.
+                        Parent root = Pages.getLoginPane();
+                        Scene scene = new Scene(root, 983, 634);
+                        // Set application scene theme to MFX modern themes.
+                        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(scene);
+                        // Fixes black edges showing in main app scene.
+                        scene.setFill(null);
+                        primaryStage.setScene(scene);
+                        primaryStage.initStyle(StageStyle.TRANSPARENT);
+                        // Set window title name, this name will only be seen when cursor hovers over app icon in
+                        // taskbar. Not necessary too but added since other apps also do this.
+                        primaryStage.setTitle(Labels.APP_NAME);
+                        primaryStage.getIcons().add(new Image(SpotyResourceLoader.load("icon.png")));
+                        primaryStage.show();
+                        // Set window position to center of screen.
+                        // This isn't necessary, just felt like adding it here.
+                        primaryStage.setX((primScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
+                        primaryStage.setY((primScreenBounds.getHeight() - primaryStage.getHeight()) / 2);
+                        // Initialize app notification handler.
+                        SimpleNotificationHolder.setNotificationOwner(primaryStage);
+                    } catch (IOException e) {
                         SpotyLogger.writeToFile(e, SplashScreenController.class);
                     }
                 });

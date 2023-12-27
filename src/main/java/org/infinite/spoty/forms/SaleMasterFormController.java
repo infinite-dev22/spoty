@@ -52,8 +52,8 @@ import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.values.strings.Values;
 import org.infinite.spoty.viewModels.BranchViewModel;
 import org.infinite.spoty.viewModels.CustomerViewModel;
-import org.infinite.spoty.viewModels.SaleDetailViewModel;
-import org.infinite.spoty.viewModels.SaleMasterViewModel;
+import org.infinite.spoty.viewModels.sales.SaleDetailViewModel;
+import org.infinite.spoty.viewModels.sales.SaleMasterViewModel;
 import org.infinite.spoty.views.BaseController;
 
 import java.io.IOException;

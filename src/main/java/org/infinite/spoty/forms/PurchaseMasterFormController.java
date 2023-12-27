@@ -51,8 +51,8 @@ import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.values.strings.Values;
 import org.infinite.spoty.viewModels.BranchViewModel;
-import org.infinite.spoty.viewModels.PurchaseDetailViewModel;
-import org.infinite.spoty.viewModels.PurchaseMasterViewModel;
+import org.infinite.spoty.viewModels.purchases.PurchaseDetailViewModel;
+import org.infinite.spoty.viewModels.purchases.PurchaseMasterViewModel;
 import org.infinite.spoty.viewModels.SupplierViewModel;
 import org.infinite.spoty.views.BaseController;
 

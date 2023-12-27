@@ -38,6 +38,7 @@ import org.infinite.spoty.views.inventory.brand.BrandController;
 import org.infinite.spoty.views.inventory.category.ProductCategoryController;
 import org.infinite.spoty.views.inventory.products.ProductController;
 import org.infinite.spoty.views.inventory.unit_of_measure.UnitOfMeasureController;
+import org.infinite.spoty.views.login.LoginController;
 import org.infinite.spoty.views.purchases.PurchasesController;
 import org.infinite.spoty.views.quotation.QuotationController;
 import org.infinite.spoty.views.report.*;
@@ -68,6 +69,8 @@ import java.io.IOException;
 import static org.infinite.spoty.SpotyResourceLoader.fxmlLoader;
 
 public class Pages {
+    //Login
+    private static final FXMLLoader loginLoader = fxmlLoader("fxml/login/Login.fxml");
     //Dashboard
     private static final FXMLLoader dashboardLoader = fxmlLoader("fxml/dashboard/Dashboard.fxml");
     // Sale
@@ -211,6 +214,8 @@ public class Pages {
     private static final FXMLLoader roleSettingsFormLoader =
             fxmlLoader("forms/RoleSettingsForm.fxml");
 
+    // Login
+    private static BorderPane loginPane;
     // Dashboard
     private static BorderPane dashboardPane;
     // Sale
@@ -334,6 +339,10 @@ public class Pages {
     private static BorderPane stockInMasterFormPane;
     private static BorderPane transferMasterFormPane;
     private static BorderPane roleSettingsFormPane;
+
+    private static void setLogin(Stage stage) {
+        loginLoader.setControllerFactory(e -> new LoginController(stage));
+    }
 
     private static void setDashboard() {
         dashboardLoader.setControllerFactory(e -> new DashboardController());
@@ -512,6 +521,8 @@ public class Pages {
     }
 
     public static void setPanes() throws IOException {
+        // Login
+        loginPane = loginLoader.load();
         // Dashboard
         dashboardPane = dashboardLoader.load();
         // Sales
@@ -644,6 +655,7 @@ public class Pages {
     }
 
     public static void setControllers(Stage stage) {
+        setLogin(stage);
         setDashboard();
         setSales(stage);
         setCustomer(stage);
@@ -667,6 +679,11 @@ public class Pages {
         setDataSynchronizer(stage);
         setRolePermission(stage);
         setSystemSettings(stage);
+    }
+
+    // Login
+    public static BorderPane getLoginPane() {
+        return loginPane;
     }
 
     // Dashboard

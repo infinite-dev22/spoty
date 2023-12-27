@@ -32,8 +32,17 @@
     -mfx-color: -mfx-red;
     -fx-opacity: 0.5;
 }
+.close-icon {
+    -mfx-color: -mfx-red;
+    -fx-opacity: 0.5;
+    /*-fx-cursor: hand;*/
+}
 
 .rootPane .close-icon:hover {
+    -fx-opacity: 1.0;
+}
+
+.close-icon:hover {
     -fx-opacity: 1.0;
 }
 
