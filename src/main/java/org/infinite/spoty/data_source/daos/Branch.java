@@ -30,8 +30,4 @@ public class Branch {
     private String phone;
     private String email;
     private String town;
-    private Date createdAt;
-    private User createdBy;
-    private Date updatedAt;
-    private User updatedBy;
 }

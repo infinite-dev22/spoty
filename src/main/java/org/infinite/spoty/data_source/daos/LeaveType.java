@@ -26,8 +26,4 @@ import java.util.Date;
 public class LeaveType {
     private Long id;
     private String name;
-    private Date createdAt;
-    private User createdBy;
-    private Date updatedAt;
-    private User updatedBy;
 }

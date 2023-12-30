@@ -14,10 +14,21 @@
 
 package org.infinite.spoty.viewModels;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.infinite.spoty.data_source.daos.ProductCategory;
+import org.infinite.spoty.data_source.models.FindModel;
+import org.infinite.spoty.data_source.models.SearchModel;
+import org.infinite.spoty.data_source.repositories.implementations.ProductCategoriesRepositoryImpl;
+import org.infinite.spoty.utils.SpotyLogger;
+
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 
 
 public class ProductCategoryViewModel {
@@ -92,14 +103,14 @@ public class ProductCategoryViewModel {
         return categories;
     }
 
-    public static void saveProductCategory() throws Exception {
-//        Dao<ProductCategory, Long> productCategoryDao =
-//                DaoManager.createDao(connectionSource, ProductCategory.class);
-//
-//        ProductCategory productCategory = new ProductCategory(getCode(), getName());
-//
-//        productCategoryDao.createIfNotExists(productCategory);
+    public static void saveProductCategory() throws IOException, InterruptedException {
+        var productCategoriesRepository = new ProductCategoriesRepositoryImpl();
+        var productCategory = ProductCategory.builder()
+                .code(getCode())
+                .name(getName())
+                .build();
 
+        productCategoriesRepository.post(productCategory);
         clearProductCategoryData();
         getItems();
     }
@@ -110,54 +121,77 @@ public class ProductCategoryViewModel {
         setName("");
     }
 
-    public static void getItems() throws Exception {
-//        Dao<ProductCategory, Long> productCategoryDao =
-//                DaoManager.createDao(connectionSource, ProductCategory.class);
-//
-//        Platform.runLater(
-//                () -> {
-//                    categoriesList.clear();
-//
-//                    try {
-//                        categoriesList.addAll(productCategoryDao.queryForAll());
-//                    } catch (Exception e) {
-//                        SpotyLogger.writeToFile(e, ProductCategoryViewModel.class);
-//                    }
-//                });
+    public static void getItems() {
+        var productCategoriesRepository = new ProductCategoriesRepositoryImpl();
+        Type listType = new TypeToken<ArrayList<ProductCategory>>() {
+        }.getType();
+
+        Platform.runLater(
+                () -> {
+                    categoriesList.clear();
+
+                    try {
+                        ArrayList<ProductCategory> categoryList = new Gson().fromJson(productCategoriesRepository.fetchAll().body(), listType);
+                        categoriesList.addAll(categoryList);
+                    } catch (IOException | InterruptedException e) {
+                        SpotyLogger.writeToFile(e, ProductCategoryViewModel.class);
+                    }
+                });
     }
 
-    public static void getItem(long index) throws Exception {
-//        Dao<ProductCategory, Long> productCategoryDao =
-//                DaoManager.createDao(connectionSource, ProductCategory.class);
-//        ProductCategory productCategory = productCategoryDao.queryForId(index);
-//
-//        setId(productCategory.getId());
-//        setCode(productCategory.getCode());
-//        setName(productCategory.getName());
+    public static void getItem(long productCategoryID) throws IOException, InterruptedException {
+        var productCategoriesRepository = new ProductCategoriesRepositoryImpl();
+        var findModel = new FindModel();
+        findModel.setId(productCategoryID);
+        var response = productCategoriesRepository.fetch(findModel).body();
+        var productCategory = new Gson().fromJson(response, ProductCategory.class);
 
+        setId(productCategory.getId());
+        setCode(productCategory.getCode());
+        setName(productCategory.getName());
         getItems();
     }
 
-    public static void updateItem(long index) throws Exception {
-//        Dao<ProductCategory, Long> productCategoryDao =
-//                DaoManager.createDao(connectionSource, ProductCategory.class);
-//
-//        ProductCategory productCategory = productCategoryDao.queryForId(index);
-//        productCategory.setCode(getCode());
-//        productCategory.setName(getName());
-//
-//        productCategoryDao.update(productCategory);
+    public static void searchItem(String search) {
+        var productCategoriesRepository = new ProductCategoriesRepositoryImpl();
+        var searchModel = new SearchModel();
+        searchModel.setSearch(search);
 
+        Type listType = new TypeToken<ArrayList<ProductCategory>>() {
+        }.getType();
+
+        Platform.runLater(
+                () -> {
+                    categoriesList.clear();
+
+                    try {
+                        ArrayList<ProductCategory> currencyList = new Gson().fromJson(productCategoriesRepository.search(searchModel).body(), listType);
+                        categoriesList.addAll(currencyList);
+                    } catch (IOException | InterruptedException e) {
+                        SpotyLogger.writeToFile(e, ProductCategoryViewModel.class);
+                    }
+                });
+    }
+
+    public static void updateItem() throws IOException, InterruptedException {
+        var productCategoriesRepository = new ProductCategoriesRepositoryImpl();
+        var productCategory = ProductCategory.builder()
+                .id(getId())
+                .code(getCode())
+                .name(getName())
+                .build();
+
+        productCategoriesRepository.put(productCategory);
         clearProductCategoryData();
         getItems();
     }
 
-    public static void deleteItem(long index) throws Exception {
-//        Dao<ProductCategory, Long> productCategoryDao =
-//                DaoManager.createDao(connectionSource, ProductCategory.class);
-//
-//        productCategoryDao.deleteById(index);
+    public static void deleteItem(Long productCategoryID) throws IOException, InterruptedException {
+        var productCategoriesRepository = new ProductCategoriesRepositoryImpl();
+        var findModel = new FindModel();
 
+        findModel.setId(productCategoryID);
+        productCategoriesRepository.delete(findModel);
         getItems();
     }
 }

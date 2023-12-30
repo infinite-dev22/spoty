@@ -16,8 +16,4 @@ public class Service {
     private String charge;
     private String vat;
     private String description;
-    private Date createdAt;
-    private User createdBy;
-    private Date updatedAt;
-    private User updatedBy;
 }

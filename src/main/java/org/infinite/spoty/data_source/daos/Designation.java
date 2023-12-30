@@ -14,8 +14,4 @@ public class Designation {
     private Branch branch;
     private String name;
     private String description;
-    private Date createdAt;
-    private User createdBy;
-    private Date updatedAt;
-    private User updatedBy;
 }

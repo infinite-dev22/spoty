@@ -14,10 +14,21 @@
 
 package org.infinite.spoty.viewModels;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.infinite.spoty.data_source.daos.ExpenseCategory;
+import org.infinite.spoty.data_source.models.FindModel;
+import org.infinite.spoty.data_source.models.SearchModel;
+import org.infinite.spoty.data_source.repositories.implementations.ExpenseCategoriesRepositoryImpl;
+import org.infinite.spoty.utils.SpotyLogger;
+
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 
 
 public class ExpenseCategoryViewModel {
@@ -85,70 +96,90 @@ public class ExpenseCategoryViewModel {
         setDescription("");
     }
 
-    public static void saveExpenseCategory() throws Exception {
-//        Dao<ExpenseCategory, Long> expenseCategoryDao =
-//                DaoManager.createDao(connectionSource, ExpenseCategory.class);
-//
-//        ExpenseCategory expenseCategory = new ExpenseCategory(getName(), getDescription());
-//
-//        expenseCategoryDao.create(expenseCategory);
+    public static void saveExpenseCategory() throws IOException, InterruptedException {
+        var expenseCategoriesRepository = new ExpenseCategoriesRepositoryImpl();
+        var expenseCategory = ExpenseCategory.builder()
+                .name(getName())
+                .description(getDescription())
+                .build();
 
+        expenseCategoriesRepository.post(expenseCategory);
         resetProperties();
         getAllCategories();
     }
 
-    public static void getAllCategories() throws Exception {
-//        Dao<ExpenseCategory, Long> expenseCategoryDao =
-//                DaoManager.createDao(connectionSource, ExpenseCategory.class);
-//
-//        Platform.runLater(
-//                () -> {
-//                    categoryList.clear();
-//
-//                    try {
-//                        categoryList.addAll(expenseCategoryDao.queryForAll());
-//                    } catch (Exception e) {
-//                        SpotyLogger.writeToFile(e, ExpenseCategoryViewModel.class);
-//                    }
-//                });
+    public static void getAllCategories() {
+        var expenseCategoriesRepository = new ExpenseCategoriesRepositoryImpl();
+        Type listType = new TypeToken<ArrayList<ExpenseCategory>>() {
+        }.getType();
+
+        Platform.runLater(
+                () -> {
+                    categoryList.clear();
+
+                    try {
+                        ArrayList<ExpenseCategory> categoryListList = new Gson().fromJson(expenseCategoriesRepository.fetchAll().body(), listType);
+                        categoryList.addAll(categoryListList);
+                    } catch (IOException | InterruptedException e) {
+                        SpotyLogger.writeToFile(e, ExpenseCategoryViewModel.class);
+                    }
+                });
     }
 
-    public static void getItem(long index) throws Exception {
-//        Dao<ExpenseCategory, Long> expenseCategoryDao =
-//                DaoManager.createDao(connectionSource, ExpenseCategory.class);
-//
-//        ExpenseCategory expenseCategory = expenseCategoryDao.queryForId(index);
-//        setId(expenseCategory.getId());
-//        setName(expenseCategory.getName());
-//        setDescription(expenseCategory.getDescription());
+    public static void getItem(Long categoryID) throws IOException, InterruptedException {
+        var expenseCategoriesRepository = new ExpenseCategoriesRepositoryImpl();
+        var findModel = new FindModel();
+        findModel.setId(categoryID);
+        var response = expenseCategoriesRepository.fetch(findModel).body();
+        var expenseCategory = new Gson().fromJson(response, ExpenseCategory.class);
+
+        setId(expenseCategory.getId());
+        setName(expenseCategory.getName());
+        setDescription(expenseCategory.getDescription());
         getAllCategories();
     }
 
-    public static void updateItem(long index) throws Exception {
-//        SQLiteConnection connection = SQLiteConnection.getInstance();
-//        ConnectionSource connectionSource = connection.getConnection();
-//
-//        Dao<ExpenseCategory, Long> expenseCategoryDao =
-//                DaoManager.createDao(connectionSource, ExpenseCategory.class);
-//
-//        ExpenseCategory expenseCategory = expenseCategoryDao.queryForId(index);
-//
-//        expenseCategory.setName(getName());
-//        expenseCategory.setDescription(getDescription());
-//
-//        expenseCategoryDao.update(expenseCategory);
+    public static void searchItem(String search) {
+        var expenseCategoriesRepository = new ExpenseCategoriesRepositoryImpl();
+        var searchModel = new SearchModel();
+        searchModel.setSearch(search);
+
+        Type listType = new TypeToken<ArrayList<ExpenseCategory>>() {
+        }.getType();
+
+        Platform.runLater(
+                () -> {
+                    categoryList.clear();
+
+                    try {
+                        ArrayList<ExpenseCategory> expenseCategoryList = new Gson().fromJson(
+                                expenseCategoriesRepository.search(searchModel).body(), listType);
+                        categoryList.addAll(expenseCategoryList);
+                    } catch (IOException | InterruptedException e) {
+                        SpotyLogger.writeToFile(e, ExpenseCategoryViewModel.class);
+                    }
+                });
+    }
+
+    public static void updateItem() throws Exception {
+        var expenseCategoriesRepository = new ExpenseCategoriesRepositoryImpl();
+        var expenseCategory = ExpenseCategory.builder()
+                .id(getId())
+                .name(getName())
+                .description(getDescription())
+                .build();
+
+        expenseCategoriesRepository.put(expenseCategory);
+        resetProperties();
         getAllCategories();
     }
 
-    public static void deleteItem(long index) throws Exception {
-//        SQLiteConnection connection = SQLiteConnection.getInstance();
-//        ConnectionSource connectionSource = connection.getConnection();
-//
-//        Dao<ExpenseCategory, Long> expenseCategoryDao =
-//                DaoManager.createDao(connectionSource, ExpenseCategory.class);
-//
-//        expenseCategoryDao.deleteById(index);
+    public static void deleteItem(Long expenseCategoryID) throws Exception {
+        var expenseCategoriesRepository = new ExpenseCategoriesRepositoryImpl();
+        var findModel = new FindModel();
 
+        findModel.setId(expenseCategoryID);
+        expenseCategoriesRepository.delete(findModel);
         getAllCategories();
     }
 }

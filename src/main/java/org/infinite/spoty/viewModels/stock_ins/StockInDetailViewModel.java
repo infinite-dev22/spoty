@@ -289,7 +289,7 @@ public class StockInDetailViewModel {
                             ProductViewModel.setQuantity(productDetailQuantity);
 
                             try {
-                                ProductViewModel.updateProductQuantity(stockInDetail.getProduct().getId());
+                                ProductViewModel.updateProduct();
                                 createStockInTransaction(stockInDetail);
                             } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, StockInDetailViewModel.class);
@@ -311,7 +311,7 @@ public class StockInDetailViewModel {
 
                                 ProductViewModel.setQuantity(productQuantity);
 
-                                ProductViewModel.updateProductQuantity(stockInDetail.getProduct().getId());
+                                ProductViewModel.updateProduct();
 
                                 updateStockInTransaction(stockInDetail);
                             } catch (Exception e) {

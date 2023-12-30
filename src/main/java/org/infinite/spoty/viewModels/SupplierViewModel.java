@@ -14,10 +14,21 @@
 
 package org.infinite.spoty.viewModels;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.infinite.spoty.data_source.daos.Supplier;
+import org.infinite.spoty.data_source.models.FindModel;
+import org.infinite.spoty.data_source.models.SearchModel;
+import org.infinite.spoty.data_source.repositories.implementations.SuppliersRepositoryImpl;
+import org.infinite.spoty.utils.SpotyLogger;
+
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 
 
 public class SupplierViewModel {
@@ -168,86 +179,105 @@ public class SupplierViewModel {
         setCountry("");
     }
 
-    public static void saveSupplier() throws Exception {
-//        Dao<Supplier, Long> supplierDao =
-//                DaoManager.createDao(connectionSource, Supplier.class);
-//
-//        Supplier supplier =
-//                new Supplier(
-//                        getName(),
-//                        getEmail(),
-//                        getPhone(),
-//                        getCity(),
-//                        getAddress(),
-//                        getTaxNumber(),
-//                        getCountry());
-//
-//        supplierDao.create(supplier);
+    public static void saveSupplier() throws IOException, InterruptedException {
+        var suppliersRepository = new SuppliersRepositoryImpl();
+        var supplier = Supplier.builder()
+                .name(getName())
+                .email(getEmail())
+                .phone(getPhone())
+                .city(getCity())
+                .address(getAddress())
+                .taxNumber(getTaxNumber())
+                .country(getCountry())
+                .build();
 
+        suppliersRepository.post(supplier);
         resetProperties();
         getAllSuppliers();
     }
 
-    public static void getAllSuppliers() throws Exception {
-//        Dao<Supplier, Long> supplierDao =
-//                DaoManager.createDao(connectionSource, Supplier.class);
-//
-//        Platform.runLater(
-//                () -> {
-//                    suppliersList.clear();
-//
-//                    try {
-//                        suppliersList.addAll(supplierDao.queryForAll());
-//                    } catch (Exception e) {
-//                        SpotyLogger.writeToFile(e, SupplierViewModel.class);
-//                    }
-//                });
+    public static void getAllSuppliers() {
+        var suppliersRepository = new SuppliersRepositoryImpl();
+        Type listType = new TypeToken<ArrayList<Supplier>>() {
+        }.getType();
+
+        Platform.runLater(
+                () -> {
+                    suppliersList.clear();
+
+                    try {
+                        ArrayList<Supplier> productList = new Gson().fromJson(suppliersRepository.fetchAll().body(), listType);
+                        suppliersList.addAll(productList);
+                    } catch (IOException | InterruptedException e) {
+                        SpotyLogger.writeToFile(e, SupplierViewModel.class);
+                    }
+                });
     }
 
-    public static void getItem(long index) throws Exception {
-//        Dao<Supplier, Long> supplierDao =
-//                DaoManager.createDao(connectionSource, Supplier.class);
-//
-//        Supplier supplier = supplierDao.queryForId(index);
-//
-//        setId(supplier.getId());
-//        setName(supplier.getName());
-//        setEmail(supplier.getEmail());
-//        setPhone(supplier.getPhone());
-//        setCity(supplier.getCity());
-//        setCountry(supplier.getCountry());
-//        setAddress(supplier.getAddress());
-//        setTaxNumber(supplier.getTaxNumber());
+    public static void getItem(Long supplierID) throws IOException, InterruptedException {
+        var suppliersRepository = new SuppliersRepositoryImpl();
+        var findModel = new FindModel();
+        findModel.setId(supplierID);
+        var response = suppliersRepository.fetch(findModel).body();
+        var supplier = new Gson().fromJson(response, Supplier.class);
 
+        setId(supplier.getId());
+        setName(supplier.getName());
+        setEmail(supplier.getEmail());
+        setPhone(supplier.getPhone());
+        setCity(supplier.getCity());
+        setCountry(supplier.getCountry());
+        setAddress(supplier.getAddress());
+        setTaxNumber(supplier.getTaxNumber());
         getAllSuppliers();
     }
 
-    public static void updateItem(long index) throws Exception {
-//        Dao<Supplier, Long> supplierDao =
-//                DaoManager.createDao(connectionSource, Supplier.class);
-//
-//        Supplier supplier = supplierDao.queryForId(index);
-//
-//        supplier.setName(getName());
-//        supplier.setEmail(getEmail());
-//        supplier.setPhone(getPhone());
-//        supplier.setTaxNumber(getTaxNumber());
-//        supplier.setAddress(getAddress());
-//        supplier.setCity(getCity());
-//        supplier.setCountry(getCountry());
-//
-//        supplierDao.update(supplier);
+    public static void searchItem(String search) {
+        var suppliersRepository = new SuppliersRepositoryImpl();
+        var searchModel = new SearchModel();
+        searchModel.setSearch(search);
 
+        Type listType = new TypeToken<ArrayList<Supplier>>() {
+        }.getType();
+
+        Platform.runLater(
+                () -> {
+                    suppliersList.clear();
+
+                    try {
+                        ArrayList<Supplier> currencyList = new Gson().fromJson(suppliersRepository.search(searchModel)
+                                .body(), listType);
+                        suppliersList.addAll(currencyList);
+                    } catch (IOException | InterruptedException e) {
+                        SpotyLogger.writeToFile(e, SupplierViewModel.class);
+                    }
+                });
+    }
+
+    public static void updateItem() throws IOException, InterruptedException {
+        var suppliersRepository = new SuppliersRepositoryImpl();
+        var supplier = Supplier.builder()
+                .id(getId())
+                .name(getName())
+                .email(getEmail())
+                .phone(getPhone())
+                .city(getCity())
+                .address(getAddress())
+                .taxNumber(getTaxNumber())
+                .country(getCountry())
+                .build();
+
+        suppliersRepository.put(supplier);
         resetProperties();
         getAllSuppliers();
     }
 
-    public static void deleteItem(long index) throws Exception {
-//        Dao<Supplier, Long> supplierDao =
-//                DaoManager.createDao(connectionSource, Supplier.class);
-//
-//        supplierDao.deleteById(index);
+    public static void deleteItem(Long supplierID) throws IOException, InterruptedException {
+        var suppliersRepository = new SuppliersRepositoryImpl();
+        var findModel = new FindModel();
 
+        findModel.setId(supplierID);
+        suppliersRepository.delete(findModel);
         getAllSuppliers();
     }
 }

@@ -31,10 +31,6 @@ public class AdjustmentDetail {
     private AdjustmentMaster adjustment;
     private Long quantity;
     private String adjustmentType;
-    private Date createdAt;
-    private User createdBy;
-    private Date updatedAt;
-    private User updatedBy;
 
     public String getProductName() {
         return product.getName();

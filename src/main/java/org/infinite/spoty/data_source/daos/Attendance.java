@@ -17,8 +17,4 @@ public class Attendance {
     private Date checkIn;
     private Date checkOut;
     private String totalDuration;
-    private Date createdAt;
-    private User createdBy;
-    private Date updatedAt;
-    private User updatedBy;
 }

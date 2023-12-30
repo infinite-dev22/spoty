@@ -84,7 +84,7 @@ public class BrandFormController implements Initializable {
                         if (BrandViewModel.getId() > 0) {
                             SpotyThreader.spotyThreadPool(() -> {
                                 try {
-                                    BrandViewModel.updateItem(BrandViewModel.getId());
+                                    BrandViewModel.updateItem();
                                 } catch (Exception e) {
                                     SpotyLogger.writeToFile(e, this.getClass());
                                 }

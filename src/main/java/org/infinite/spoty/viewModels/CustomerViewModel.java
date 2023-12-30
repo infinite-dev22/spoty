@@ -14,10 +14,21 @@
 
 package org.infinite.spoty.viewModels;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.infinite.spoty.data_source.daos.Customer;
+import org.infinite.spoty.data_source.models.FindModel;
+import org.infinite.spoty.data_source.models.SearchModel;
+import org.infinite.spoty.data_source.repositories.implementations.CustomersRepositoryImpl;
+import org.infinite.spoty.utils.SpotyLogger;
+
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 
 
 public class CustomerViewModel {
@@ -168,84 +179,105 @@ public class CustomerViewModel {
         setCountry("");
     }
 
-    public static void saveCustomer() throws Exception {
-//        Dao<Customer, Long> customerDao =
-//                DaoManager.createDao(connectionSource, Customer.class);
-//
-//        Customer customer =
-//                new Customer(
-//                        getName(),
-//                        getEmail(),
-//                        "+" + getPhone(),
-//                        getCity(),
-//                        getAddress(),
-//                        getTaxNumber(),
-//                        getCountry());
-//
-//        customerDao.create(customer);
+    public static void saveCustomer() throws IOException, InterruptedException {
+        var customersRepository = new CustomersRepositoryImpl();
+        var customer = Customer.builder()
+                .name(getName())
+                .email(getEmail())
+                .phone(getPhone())
+                .city(getCity())
+                .address(getAddress())
+                .taxNumber(getTaxNumber())
+                .country(getCountry())
+                .build();
 
+        customersRepository.post(customer);
         resetProperties();
         getAllCustomers();
     }
 
-    public static void getAllCustomers() throws Exception {
-//        Dao<Customer, Long> customerDao =
-//                DaoManager.createDao(connectionSource, Customer.class);
-//
-//        Platform.runLater(
-//                () -> {
-//                    customersList.clear();
-//
-//                    try {
-//                        customersList.addAll(customerDao.queryForAll());
-//                    } catch (Exception e) {
-//                        SpotyLogger.writeToFile(e, CustomerViewModel.class);
-//                    }
-//                });
+    public static void getAllCustomers() {
+        var customersRepository = new CustomersRepositoryImpl();
+        Type listType = new TypeToken<ArrayList<Customer>>() {
+        }.getType();
+
+        Platform.runLater(
+                () -> {
+                    customersList.clear();
+
+                    try {
+                        ArrayList<Customer> customerList = new Gson().fromJson(customersRepository.fetchAll().body(), listType);
+                        customersList.addAll(customerList);
+                    } catch (IOException | InterruptedException e) {
+                        SpotyLogger.writeToFile(e, CustomerViewModel.class);
+                    }
+                });
     }
 
-    public static void getItem(long index) throws Exception {
-//        Dao<Customer, Long> customerDao =
-//                DaoManager.createDao(connectionSource, Customer.class);
-//
-//        Customer customer = customerDao.queryForId(index);
-//
-//        setId(customer.getId());
-//        setName(customer.getName());
-//        setEmail(customer.getEmail());
-//        setPhone(customer.getPhone());
-//        setCity(customer.getCity());
-//        setCountry(customer.getCountry());
-//        setAddress(customer.getAddress());
-//        setTaxNumber(customer.getTaxNumber());
+    public static void getItem(Long customerID) throws IOException, InterruptedException {
+        var customersRepository = new CustomersRepositoryImpl();
+        var findModel = new FindModel();
+        findModel.setId(customerID);
+        var response = customersRepository.fetch(findModel).body();
+        var customer = new Gson().fromJson(response, Customer.class);
+
+        setId(customer.getId());
+        setName(customer.getName());
+        setEmail(customer.getEmail());
+        setPhone(customer.getPhone());
+        setCity(customer.getCity());
+        setCountry(customer.getCountry());
+        setAddress(customer.getAddress());
+        setTaxNumber(customer.getTaxNumber());
         getAllCustomers();
     }
 
-    public static void updateItem(long index) throws Exception {
-//        Dao<Customer, Long> customerDao =
-//                DaoManager.createDao(connectionSource, Customer.class);
-//
-//        Customer customer = customerDao.queryForId(index);
-//
-//        customer.setName(getName());
-//        customer.setEmail(getEmail());
-//        customer.setPhone(getPhone());
-//        customer.setCity(getCity());
-//        customer.setAddress(getAddress());
-//        customer.setTaxNumber(getTaxNumber());
-//        customer.setCountry(getCountry());
-//
-//        customerDao.update(customer);
+    public static void searchItem(String search) {
+        var customersRepository = new CustomersRepositoryImpl();
+        var searchModel = new SearchModel();
+        searchModel.setSearch(search);
 
+        Type listType = new TypeToken<ArrayList<Customer>>() {
+        }.getType();
+
+        Platform.runLater(
+                () -> {
+                    customersList.clear();
+
+                    try {
+                        ArrayList<Customer> customerList = new Gson().fromJson(customersRepository.search(searchModel).body(), listType);
+                        customersList.addAll(customerList);
+                    } catch (IOException | InterruptedException e) {
+                        SpotyLogger.writeToFile(e, CustomerViewModel.class);
+                    }
+                });
+
+    }
+
+    public static void updateItem() throws IOException, InterruptedException {
+        var customersRepository = new CustomersRepositoryImpl();
+        var customer = Customer.builder()
+                .id(getId())
+                .name(getName())
+                .email(getEmail())
+                .phone(getPhone())
+                .city(getCity())
+                .address(getAddress())
+                .taxNumber(getTaxNumber())
+                .country(getCountry())
+                .build();
+
+        customersRepository.put(customer);
         resetProperties();
         getAllCustomers();
     }
 
-    public static void deleteItem(long index) throws Exception {
-//        Dao<Customer, Long> customerDao =
-//                DaoManager.createDao(connectionSource, Customer.class);
-//
-//        customerDao.deleteById(index);
+    public static void deleteItem(Long customerID) throws Exception {
+        var customersRepository = new CustomersRepositoryImpl();
+        var findModel = new FindModel();
+
+        findModel.setId(customerID);
+        customersRepository.delete(findModel);
         getAllCustomers();
     }
 }

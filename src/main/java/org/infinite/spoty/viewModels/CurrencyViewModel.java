@@ -14,10 +14,21 @@
 
 package org.infinite.spoty.viewModels;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.infinite.spoty.data_source.daos.Currency;
+import org.infinite.spoty.data_source.models.FindModel;
+import org.infinite.spoty.data_source.models.SearchModel;
+import org.infinite.spoty.data_source.repositories.implementations.CurrenciesRepositoryImpl;
+import org.infinite.spoty.utils.SpotyLogger;
+
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 
 
 public class CurrencyViewModel {
@@ -99,13 +110,15 @@ public class CurrencyViewModel {
         CurrencyViewModel.currency.set(currency);
     }
 
-    public static void saveCurrency() throws Exception {
-//        Dao<Currency, Long> currencyDao =
-//                DaoManager.createDao(connectionSource, Currency.class);
-//
-//        Currency currency = new Currency(getCode(), getName(), getSymbol());
-//        currencyDao.create(currency);
+    public static void saveCurrency() throws IOException, InterruptedException {
+        var currenciesRepository = new CurrenciesRepositoryImpl();
+        var currency = Currency.builder()
+                .code(getCode())
+                .name(getName())
+                .symbol(getSymbol())
+                .build();
 
+        currenciesRepository.post(currency);
         clearCurrencyData();
         getAllCurrencies();
     }
@@ -117,61 +130,81 @@ public class CurrencyViewModel {
         setSymbol("");
     }
 
-    public static void getAllCurrencies() throws Exception {
-//        Dao<Currency, Long> currencyDao =
-//                DaoManager.createDao(connectionSource, Currency.class);
-//        Platform.runLater(
-//                () -> {
-//                    currenciesList.clear();
-//
-//                    try {
-//                        currenciesList.addAll(currencyDao.queryForAll());
-//                    } catch (Exception e) {
-//                        SpotyLogger.writeToFile(e, CurrencyViewModel.class);
-//                    }
-//                });
+    public static void getAllCurrencies() {
+        var currenciesRepository = new CurrenciesRepositoryImpl();
+        Type listType = new TypeToken<ArrayList<Currency>>() {
+        }.getType();
+
+        Platform.runLater(
+                () -> {
+                    currenciesList.clear();
+
+                    try {
+                        ArrayList<Currency> currencyList = new Gson().fromJson(currenciesRepository.fetchAll().body(), listType);
+                        currenciesList.addAll(currencyList);
+                    } catch (IOException | InterruptedException e) {
+                        SpotyLogger.writeToFile(e, CurrencyViewModel.class);
+                    }
+                });
     }
 
-    public static void getItem(long index) throws Exception {
-//        Dao<Currency, Long> currencyDao =
-//                DaoManager.createDao(connectionSource, Currency.class);
-//
-//        Currency currency = currencyDao.queryForId(index);
-//        setCurrency(currency);
-//        setId(currency.getId());
-//        setSymbol(currency.getSymbol());
-//        setCode(currency.getCode());
-//        setName(currency.getName());
+    public static void getItem(Long currencyID) throws IOException, InterruptedException {
+        var currenciesRepository = new CurrenciesRepositoryImpl();
+        var findModel = new FindModel();
+        findModel.setId(currencyID);
+        var response = currenciesRepository.fetch(findModel).body();
+        var currency = new Gson().fromJson(response, Currency.class);
+
+        setCurrency(currency);
+        setId(currency.getId());
+        setSymbol(currency.getSymbol());
+        setCode(currency.getCode());
+        setName(currency.getName());
         getAllCurrencies();
     }
 
-    public static void updateItem(long index) throws Exception {
-//        SQLiteConnection connection = SQLiteConnection.getInstance();
-//        ConnectionSource connectionSource = connection.getConnection();
-//
-//        Dao<Currency, Long> currencyDao =
-//                DaoManager.createDao(connectionSource, Currency.class);
-//
-//        Currency currency = currencyDao.queryForId(index);
-//
-//        currency.setCode(getCode());
-//        currency.setName(getName());
-//        currency.setSymbol(getSymbol());
-//
-//        currencyDao.update(currency);
+    public static void searchItem(String search) {
+        var currenciesRepository = new CurrenciesRepositoryImpl();
+        var searchModel = new SearchModel();
+        searchModel.setSearch(search);
 
+        Type listType = new TypeToken<ArrayList<Currency>>() {
+        }.getType();
+
+        Platform.runLater(
+                () -> {
+                    currenciesList.clear();
+
+                    try {
+                        ArrayList<Currency> currencyList = new Gson().fromJson(currenciesRepository.search(searchModel)
+                                .body(), listType);
+                        currenciesList.addAll(currencyList);
+                    } catch (IOException | InterruptedException e) {
+                        SpotyLogger.writeToFile(e, CurrencyViewModel.class);
+                    }
+                });
+    }
+
+    public static void updateItem() throws IOException, InterruptedException {
+        var currenciesRepository = new CurrenciesRepositoryImpl();
+        var currency = Currency.builder()
+                .id(getId())
+                .code(getCode())
+                .name(getName())
+                .symbol(getSymbol())
+                .build();
+
+        currenciesRepository.put(currency);
         clearCurrencyData();
         getAllCurrencies();
     }
 
-    public static void deleteItem(long index) throws Exception {
-//        SQLiteConnection connection = SQLiteConnection.getInstance();
-//        ConnectionSource connectionSource = connection.getConnection();
-//
-//        Dao<Currency, Long> currencyDao =
-//                DaoManager.createDao(connectionSource, Currency.class);
-//
-//        currencyDao.deleteById(index);
+    public static void deleteItem(Long currencyID) throws IOException, InterruptedException {
+        var currenciesRepository = new CurrenciesRepositoryImpl();
+        var findModel = new FindModel();
+
+        findModel.setId(currencyID);
+        currenciesRepository.delete(findModel);
         getAllCurrencies();
     }
 }

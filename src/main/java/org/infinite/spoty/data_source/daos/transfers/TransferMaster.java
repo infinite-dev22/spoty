@@ -42,10 +42,6 @@ public class TransferMaster {
     private Date approvalDate;
     private Date receiveDate;
     private String notes;
-    private Date createdAt;
-    private User createdBy;
-    private Date updatedAt;
-    private User updatedBy;
 
     public String getToBranchName() {
         return toBranch.getName();

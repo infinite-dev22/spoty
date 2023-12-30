@@ -131,7 +131,7 @@ public class SupplierFormController implements Initializable {
                         if (SupplierViewModel.getId() > 0) {
                             SpotyThreader.spotyThreadPool(() -> {
                                 try {
-                                    SupplierViewModel.updateItem(SupplierViewModel.getId());
+                                    SupplierViewModel.updateItem();
                                 } catch (Exception e) {
                                     SpotyLogger.writeToFile(e, this.getClass());
                                 }

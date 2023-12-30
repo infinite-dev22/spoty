@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 public class CurrenciesRepositoryImpl extends ProtectedGlobals implements SimpleRepository {
     @Override
-    public HttpResponse<String> fetchAll() {
+    public HttpResponse<String> fetchAll() throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.Currencies.allCurrencies))
                 .header("Authorization", authToken)
@@ -26,18 +26,11 @@ public class CurrenciesRepositoryImpl extends ProtectedGlobals implements Simple
                 .method("GET", HttpRequest.BodyPublishers.noBody())
                 .build();
 
-        HttpResponse<String> response = null;
-        try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            SpotyLogger.writeToFile(e, CurrenciesRepositoryImpl.class);
-        }
-
-        return response;
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public HttpResponse<String> fetch(FindModel findModel) {
+    public HttpResponse<String> fetch(FindModel findModel) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.Currencies.currencyById))
                 .header("Authorization", authToken)
@@ -46,18 +39,11 @@ public class CurrenciesRepositoryImpl extends ProtectedGlobals implements Simple
                 .method("GET", HttpRequest.BodyPublishers.ofString(new Gson().toJson(findModel)))
                 .build();
 
-        HttpResponse<String> response = null;
-        try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            SpotyLogger.writeToFile(e, CurrenciesRepositoryImpl.class);
-        }
-
-        return response;
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public HttpResponse<String> search(SearchModel searchModel) {
+    public HttpResponse<String> search(SearchModel searchModel) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.Currencies.searchCurrencies))
                 .header("Authorization", authToken)
@@ -66,18 +52,11 @@ public class CurrenciesRepositoryImpl extends ProtectedGlobals implements Simple
                 .method("GET", HttpRequest.BodyPublishers.ofString(new Gson().toJson(searchModel)))
                 .build();
 
-        HttpResponse<String> response = null;
-        try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            SpotyLogger.writeToFile(e, CurrenciesRepositoryImpl.class);
-        }
-
-        return response;
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public HttpResponse<String> post(Object object) {
+    public HttpResponse<String> post(Object object) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.Currencies.addCurrency))
                 .header("Authorization", authToken)
@@ -86,18 +65,11 @@ public class CurrenciesRepositoryImpl extends ProtectedGlobals implements Simple
                 .method("POST", HttpRequest.BodyPublishers.ofString(new Gson().toJson(object)))
                 .build();
 
-        HttpResponse<String> response = null;
-        try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            SpotyLogger.writeToFile(e, CurrenciesRepositoryImpl.class);
-        }
-
-        return response;
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public HttpResponse<String> put(Object object) {
+    public HttpResponse<String> put(Object object) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.Currencies.updateCurrency))
                 .header("Authorization", authToken)
@@ -106,18 +78,11 @@ public class CurrenciesRepositoryImpl extends ProtectedGlobals implements Simple
                 .method("PUT", HttpRequest.BodyPublishers.ofString(new Gson().toJson(object)))
                 .build();
 
-        HttpResponse<String> response = null;
-        try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            SpotyLogger.writeToFile(e, CurrenciesRepositoryImpl.class);
-        }
-
-        return response;
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public HttpResponse<String> delete(FindModel findModel) {
+    public HttpResponse<String> delete(FindModel findModel) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.Currencies.deleteCurrency))
                 .header("Authorization", authToken)
@@ -126,18 +91,11 @@ public class CurrenciesRepositoryImpl extends ProtectedGlobals implements Simple
                 .method("DELETE", HttpRequest.BodyPublishers.ofString(new Gson().toJson(findModel)))
                 .build();
 
-        HttpResponse<String> response = null;
-        try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            SpotyLogger.writeToFile(e, CurrenciesRepositoryImpl.class);
-        }
-
-        return response;
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public HttpResponse<String> deleteMultiple(ArrayList<FindModel> findModelList) {
+    public HttpResponse<String> deleteMultiple(ArrayList<FindModel> findModelList) throws IOException, InterruptedException {
 //        var request = HttpRequest.newBuilder()
 //                .uri(URI.create(EndPoints.Currencies.deleteCurrencies))
 //                .header("Authorization", authToken)
@@ -146,14 +104,7 @@ public class CurrenciesRepositoryImpl extends ProtectedGlobals implements Simple
 //                .method("DELETE", HttpRequest.BodyPublishers.ofString(new Gson().toJson(findModelList)))
 //                .build();
 //
-//        HttpResponse<String> response = null;
-//        try {
-//            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-//        } catch (IOException | InterruptedException e) {
-//            SpotyLogger.writeToFile(e, BranchImpl.class);
-//        }
-//
-//        return response;
+//        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
         return null;
     }
 }

@@ -44,10 +44,6 @@ public class SaleMaster {
     private String paymentStatus;
     private String saleStatus;
     private String notes;
-    private Date createdAt;
-    private User createdBy;
-    private Date updatedAt;
-    private User updatedBy;
 
     public String getBranchName() {
         return branch.getName();

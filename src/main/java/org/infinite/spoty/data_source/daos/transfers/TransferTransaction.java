@@ -34,8 +34,4 @@ public class TransferTransaction {
     private TransferDetail transferDetail;
     private Date date;
     private long transferQuantity;
-    private Date createdAt;
-    private User createdBy;
-    private Date updatedAt;
-    private User updatedBy;
 }

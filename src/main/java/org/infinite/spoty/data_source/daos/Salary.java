@@ -15,8 +15,4 @@ public class Salary {
     private String salaryMonth;
     private String employeeName;
     private Double salary;
-    private Date createdAt;
-    private User createdBy;
-    private Date updatedAt;
-    private User updatedBy;
 }

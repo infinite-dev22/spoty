@@ -42,10 +42,6 @@ public class Product {
     private long stockAlert;
     private String serialNumber;
     private String image;
-    private Date createdAt;
-    private User createdBy;
-    private Date updatedAt;
-    private User updatedBy;
 
     public String getBrandName() {
         return brand.getName();

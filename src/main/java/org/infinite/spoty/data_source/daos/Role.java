@@ -32,8 +32,4 @@ public class Role {
     private String description;
     private List<User> users;
     private List<Permission> permissions;
-    private Date createdAt;
-    private User createdBy;
-    private Date updatedAt;
-    private User updatedBy;
 }

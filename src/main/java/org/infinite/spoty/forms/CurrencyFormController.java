@@ -97,7 +97,7 @@ public class CurrencyFormController implements Initializable {
                         if (CurrencyViewModel.getId() > 0) {
                             SpotyThreader.spotyThreadPool(() -> {
                                 try {
-                                    CurrencyViewModel.updateItem(CurrencyViewModel.getId());
+                                    CurrencyViewModel.updateItem();
                                 } catch (Exception e) {
                                     SpotyLogger.writeToFile(e.getCause(), this.getClass());
                                 }

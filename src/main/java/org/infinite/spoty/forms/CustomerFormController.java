@@ -124,7 +124,7 @@ public class CustomerFormController implements Initializable {
                         if (CustomerViewModel.getId() > 0) {
                             SpotyThreader.spotyThreadPool(() -> {
                                 try {
-                                    CustomerViewModel.updateItem(CustomerViewModel.getId());
+                                    CustomerViewModel.updateItem();
                                 } catch (Exception e) {
                                     SpotyLogger.writeToFile(e, this.getClass());
                                 }

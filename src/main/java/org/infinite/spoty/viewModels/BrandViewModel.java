@@ -14,10 +14,21 @@
 
 package org.infinite.spoty.viewModels;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.infinite.spoty.data_source.daos.Brand;
+import org.infinite.spoty.data_source.models.FindModel;
+import org.infinite.spoty.data_source.models.SearchModel;
+import org.infinite.spoty.data_source.repositories.implementations.BrandsRepositoryImpl;
+import org.infinite.spoty.utils.SpotyLogger;
+
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 
 
 public class BrandViewModel {
@@ -76,12 +87,15 @@ public class BrandViewModel {
         return brands;
     }
 
-    public static void saveBrand() throws Exception {
-//        Dao<Brand, Long> brandDao = DaoManager.createDao(connectionSource, Brand.class);
-//
-//        Brand brand = new Brand(getName(), getDescription());
-//        brandDao.create(brand);
+    public static void saveBrand() throws IOException, InterruptedException {
+        var brandsRepository = new BrandsRepositoryImpl();
+        var brand = Brand.builder()
+                .name(getName())
+                .description(getDescription())
+                // .image(getImage)
+                .build();
 
+        brandsRepository.post(brand);
         clearBrandData();
         getItems();
     }
@@ -92,62 +106,79 @@ public class BrandViewModel {
         setDescription("");
     }
 
-    public static void getItems() throws Exception {
-//        SQLiteConnection connection = SQLiteConnection.getInstance();
-//        ConnectionSource connectionSource = connection.getConnection();
-//
-//        Dao<Brand, Long> brandDao = DaoManager.createDao(connectionSource, Brand.class);
+    public static void getItems() {
+        var brandsRepository = new BrandsRepositoryImpl();
+        Type listType = new TypeToken<ArrayList<Brand>>() {
+        }.getType();
 
-//        Platform.runLater(
-//                () -> {
-//                    brandsList.clear();
-//
-//                    try {
-//                        brandsList.addAll(brandDao.queryForAll());
-//                    } catch (Exception e) {
-//                        SpotyLogger.writeToFile(e, BrandViewModel.class);
-//                    }
-//                });
+        Platform.runLater(
+                () -> {
+                    brandsList.clear();
+
+                    try {
+                        ArrayList<Brand> brandList = new Gson().fromJson(brandsRepository.fetchAll().body(), listType);
+                        brandsList.addAll(brandList);
+                    } catch (IOException | InterruptedException e) {
+                        SpotyLogger.writeToFile(e, BrandViewModel.class);
+                    }
+                });
     }
 
-    public static void getItem(long brandID) throws Exception {
-//        SQLiteConnection connection = SQLiteConnection.getInstance();
-//        ConnectionSource connectionSource = connection.getConnection();
-//
-//        Dao<Brand, Long> brandDao = DaoManager.createDao(connectionSource, Brand.class);
-//
-//        Brand brand = brandDao.queryForId(brandID);
-//        setId(brand.getId());
-//        setName(brand.getName());
-//        setDescription(brand.getDescription());
+    public static void getItem(long brandID) throws IOException, InterruptedException {
+        var brandsRepository = new BrandsRepositoryImpl();
+        var findModel = new FindModel();
+        findModel.setId(brandID);
+        var response = brandsRepository.fetch(findModel).body();
+        var brand = new Gson().fromJson(response, Brand.class);
+
+        setId(brand.getId());
+        setName(brand.getName());
+        setDescription(brand.getDescription());
         getItems();
     }
 
-    public static void updateItem(long index) throws Exception {
-//        SQLiteConnection connection = SQLiteConnection.getInstance();
-//        ConnectionSource connectionSource = connection.getConnection();
-//
-//        Dao<Brand, Long> brandDao = DaoManager.createDao(connectionSource, Brand.class);
-//
-//        Brand brand = brandDao.queryForId(index);
-//
-//        brand.setName(getName());
-//        brand.setDescription(getDescription());
-//
-//        brandDao.update(brand);
+    public static void searchItem(String search) {
+        var brandsRepository = new BrandsRepositoryImpl();
+        var searchModel = new SearchModel();
+        searchModel.setSearch(search);
 
+        Type listType = new TypeToken<ArrayList<Brand>>() {
+        }.getType();
+
+        Platform.runLater(
+                () -> {
+                    brandsList.clear();
+
+                    try {
+                        ArrayList<Brand> brandList = new Gson().fromJson(brandsRepository.search(searchModel).body(), listType);
+                        brandsList.addAll(brandList);
+                    } catch (IOException | InterruptedException e) {
+                        SpotyLogger.writeToFile(e, BranchViewModel.class);
+                    }
+                });
+    }
+
+    public static void updateItem() throws IOException, InterruptedException {
+        var brandsRepository = new BrandsRepositoryImpl();
+
+        var brand = Brand.builder()
+                .id(getId())
+                .name(getName())
+                .description(getDescription())
+                // .image(getImage)
+                .build();
+
+        brandsRepository.put(brand);
         clearBrandData();
         getItems();
     }
 
-    public static void deleteItem(long index) throws Exception {
-//        SQLiteConnection connection = SQLiteConnection.getInstance();
-//        ConnectionSource connectionSource = connection.getConnection();
-//
-//        Dao<Brand, Long> brandDao = DaoManager.createDao(connectionSource, Brand.class);
-//
-//        brandDao.deleteById(index);
+    public static void deleteItem(Long brandID) throws IOException, InterruptedException {
+        var brandsRepository = new BrandsRepositoryImpl();
+        var findModel = new FindModel();
 
+        findModel.setId(brandID);
+        brandsRepository.delete(findModel);
         getItems();
     }
 }

@@ -31,10 +31,6 @@ public class RequisitionDetail {
     private RequisitionMaster requisition;
     private int quantity;
     private String description;
-    private Date createdAt;
-    private User createdBy;
-    private Date updatedAt;
-    private User updatedBy;
 
     public String getProductName() {
         return product.getName();

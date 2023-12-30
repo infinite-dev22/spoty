@@ -30,8 +30,4 @@ public class Permission {
     private String label;
     private String description;
     private List<Role> roles;
-    private Date createdAt;
-    private User createdBy;
-    private Date updatedAt;
-    private User updatedBy;
 }

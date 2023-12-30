@@ -217,7 +217,7 @@ public class ProductFormController implements Initializable {
                             SpotyThreader.spotyThreadPool(
                                     () -> {
                                         try {
-                                            ProductViewModel.updateProduct(ProductViewModel.getId());
+                                            ProductViewModel.updateProduct();
                                         } catch (Exception e) {
                                             SpotyLogger.writeToFile(e, this.getClass());
                                         }

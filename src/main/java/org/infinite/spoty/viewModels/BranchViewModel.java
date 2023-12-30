@@ -27,6 +27,7 @@ import org.infinite.spoty.data_source.models.SearchModel;
 import org.infinite.spoty.data_source.repositories.implementations.BranchesRepositoryImpl;
 import org.infinite.spoty.utils.SpotyLogger;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
@@ -177,11 +178,10 @@ public class BranchViewModel {
         setTown("");
     }
 
-    public static void getAllBranches() throws Exception {
+    public static void getAllBranches() {
         var branchesRepository = new BranchesRepositoryImpl();
         Type listType = new TypeToken<ArrayList<Branch>>() {
         }.getType();
-
 
         Platform.runLater(
                 () -> {
@@ -227,7 +227,7 @@ public class BranchViewModel {
                     branchesList.clear();
 
                     try {
-                        ArrayList<Branch> branchList = new Gson().fromJson(branchesRepository.fetchAll().body(), listType);
+                        ArrayList<Branch> branchList = new Gson().fromJson(branchesRepository.search(searchModel).body(), listType);
                         branchesList.addAll(branchList);
                     } catch (Exception e) {
                         SpotyLogger.writeToFile(e, BranchViewModel.class);
@@ -236,10 +236,11 @@ public class BranchViewModel {
 
     }
 
-    public static void updateItem() throws Exception {
+    public static void updateItem() throws IOException, InterruptedException {
         var branchesRepository = new BranchesRepositoryImpl();
 
-        Branch branch = Branch.builder()
+        var branch = Branch.builder()
+                .id(getId())
                 .name(getName())
                 .city(getCity())
                 .phone(getPhone())
@@ -248,12 +249,11 @@ public class BranchViewModel {
                 .build();
 
         branchesRepository.put(branch);
-
         clearBranchData();
         getAllBranches();
     }
 
-    public static void deleteItem(Long branchID) throws Exception {
+    public static void deleteItem(Long branchID) throws IOException, InterruptedException {
         var branchesRepository = new BranchesRepositoryImpl();
         var findModel = new FindModel();
 

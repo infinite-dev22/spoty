@@ -100,6 +100,16 @@ public class EndPoints {
         public static final String deleteDesignation = designationsUrl + "/single/delete";
     }
 
+    public static final class Expense {
+        public static final String expenseUrl = apiUrl + "/expenses";
+        public static final String allExpense = expenseUrl + "/all";
+        public static final String designationById = expenseUrl + "/single";
+        public static final String searchExpense = expenseUrl + "/search";
+        public static final String addExpense = expenseUrl + "/add";
+        public static final String updateExpense = expenseUrl + "/update";
+        public static final String deleteExpense = expenseUrl + "/single/delete";
+    }
+
     public static final class ExpenseCategories {
         public static final String expenseCategoriesUrl = apiUrl + "/expense_categories";
         public static final String allExpenseCategories = expenseCategoriesUrl + "/all";

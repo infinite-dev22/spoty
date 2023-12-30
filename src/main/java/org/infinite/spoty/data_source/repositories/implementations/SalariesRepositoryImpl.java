@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 public class SalariesRepositoryImpl extends ProtectedGlobals implements SimpleRepository {
     @Override
-    public HttpResponse<String> fetchAll() {
+    public HttpResponse<String> fetchAll() throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.Salaries.allSalaries))
                 .header("Authorization", authToken)
@@ -26,18 +26,11 @@ public class SalariesRepositoryImpl extends ProtectedGlobals implements SimpleRe
                 .method("GET", HttpRequest.BodyPublishers.noBody())
                 .build();
 
-        HttpResponse<String> response = null;
-        try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            SpotyLogger.writeToFile(e, SalariesRepositoryImpl.class);
-        }
-
-        return response;
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public HttpResponse<String> fetch(FindModel findModel) {
+    public HttpResponse<String> fetch(FindModel findModel) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.Salaries.salaryById))
                 .header("Authorization", authToken)
@@ -46,18 +39,11 @@ public class SalariesRepositoryImpl extends ProtectedGlobals implements SimpleRe
                 .method("GET", HttpRequest.BodyPublishers.ofString(new Gson().toJson(findModel)))
                 .build();
 
-        HttpResponse<String> response = null;
-        try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            SpotyLogger.writeToFile(e, SalariesRepositoryImpl.class);
-        }
-
-        return response;
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public HttpResponse<String> search(SearchModel searchModel) {
+    public HttpResponse<String> search(SearchModel searchModel) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.Salaries.searchSalaries))
                 .header("Authorization", authToken)
@@ -66,18 +52,11 @@ public class SalariesRepositoryImpl extends ProtectedGlobals implements SimpleRe
                 .method("GET", HttpRequest.BodyPublishers.ofString(new Gson().toJson(searchModel)))
                 .build();
 
-        HttpResponse<String> response = null;
-        try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            SpotyLogger.writeToFile(e, SalariesRepositoryImpl.class);
-        }
-
-        return response;
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public HttpResponse<String> post(Object object) {
+    public HttpResponse<String> post(Object object) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.Salaries.addSalary))
                 .header("Authorization", authToken)
@@ -86,18 +65,11 @@ public class SalariesRepositoryImpl extends ProtectedGlobals implements SimpleRe
                 .method("POST", HttpRequest.BodyPublishers.ofString(new Gson().toJson(object)))
                 .build();
 
-        HttpResponse<String> response = null;
-        try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            SpotyLogger.writeToFile(e, SalariesRepositoryImpl.class);
-        }
-
-        return response;
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public HttpResponse<String> put(Object object) {
+    public HttpResponse<String> put(Object object) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.Salaries.updateSalary))
                 .header("Authorization", authToken)
@@ -106,18 +78,11 @@ public class SalariesRepositoryImpl extends ProtectedGlobals implements SimpleRe
                 .method("PUT", HttpRequest.BodyPublishers.ofString(new Gson().toJson(object)))
                 .build();
 
-        HttpResponse<String> response = null;
-        try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            SpotyLogger.writeToFile(e, SalariesRepositoryImpl.class);
-        }
-
-        return response;
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public HttpResponse<String> delete(FindModel findModel) {
+    public HttpResponse<String> delete(FindModel findModel) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.Salaries.deleteSalary))
                 .header("Authorization", authToken)
@@ -126,18 +91,11 @@ public class SalariesRepositoryImpl extends ProtectedGlobals implements SimpleRe
                 .method("DELETE", HttpRequest.BodyPublishers.ofString(new Gson().toJson(findModel)))
                 .build();
 
-        HttpResponse<String> response = null;
-        try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            SpotyLogger.writeToFile(e, SalariesRepositoryImpl.class);
-        }
-
-        return response;
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public HttpResponse<String> deleteMultiple(ArrayList<FindModel> findModelList) {
+    public HttpResponse<String> deleteMultiple(ArrayList<FindModel> findModelList) throws IOException, InterruptedException {
 //        var request = HttpRequest.newBuilder()
 //                .uri(URI.create(EndPoints.Salaries.deleteSalaries))
 //                .header("Authorization", authToken)
@@ -146,14 +104,7 @@ public class SalariesRepositoryImpl extends ProtectedGlobals implements SimpleRe
 //                .method("DELETE", HttpRequest.BodyPublishers.ofString(new Gson().toJson(findModelList)))
 //                .build();
 //
-//        HttpResponse<String> response = null;
-//        try {
-//            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-//        } catch (IOException | InterruptedException e) {
-//            SpotyLogger.writeToFile(e, BranchImpl.class);
-//        }
-//
-//        return response;
+//        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
         return null;
     }
 }

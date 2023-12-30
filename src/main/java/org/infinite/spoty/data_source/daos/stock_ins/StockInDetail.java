@@ -33,10 +33,6 @@ public class StockInDetail {
     private String serialNo;
     private String description;
     private String location;
-    private Date createdAt;
-    private User createdBy;
-    private Date updatedAt;
-    private User updatedBy;
 
     public String getProductName() {
         return product.getName();

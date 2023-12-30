@@ -15,7 +15,7 @@ class BranchDaoTest {
         var branch1 = new Branch("Branch One",
                 "Kampala", "+1234567890",
                 "branchone@email.com", "Uganda", "617867838");
-        branch1.setCreatedAt(new Date());
+        branch1.setCreatedAt(Date.now());
         branch1.setCreatedBy("Test User One");
         BranchDao.saveBranch(branch1);
         assertEquals(branch1.getId(), 1);
@@ -23,7 +23,7 @@ class BranchDaoTest {
         var branch2 = new Branch("Branch Two",
                 "Akansas City", "+0987654321",
                 "branchtwo@email.com", "USA", "617863228");
-        branch2.setCreatedAt(new Date());
+        branch2.setCreatedAt(Date.now());
         branch2.setCreatedBy("Test User Two");
         BranchDao.saveBranch(branch2);
         Assertions.assertEquals(branch2.getName(), "Branch Two");
@@ -35,7 +35,7 @@ class BranchDaoTest {
         var branch = new Branch("Branch 1",
                 "Kampala", "+2567123456789",
                 "branch1@email.com", "Uganda", "76782");
-        branch.setUpdatedAt(new Date());
+        branch.setUpdatedAt(Date.now());
         branch.setUpdatedBy("Test User");
         BranchDao.updateBranch(branch, 1);
         assertEquals(branch.getPhone(), "+2567123456789");

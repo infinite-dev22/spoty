@@ -33,7 +33,7 @@ import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.BranchViewModel;
 import org.infinite.spoty.viewModels.ExpenseCategoryViewModel;
-import org.infinite.spoty.viewModels.ExpenseViewModel;
+import org.infinite.spoty.viewModels.ExpensesViewModel;
 
 import java.net.URL;
 import java.util.Objects;
@@ -79,12 +79,12 @@ public class ExpenseFormController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Form Bindings.
-        expenseFormName.textProperty().bindBidirectional(ExpenseViewModel.nameProperty());
-        expenseFormDate.textProperty().bindBidirectional(ExpenseViewModel.dateProperty());
-        expenseFormBranch.valueProperty().bindBidirectional(ExpenseViewModel.branchProperty());
-        expenseFormCategory.valueProperty().bindBidirectional(ExpenseViewModel.categoryProperty());
-        expenseFormAmount.textProperty().bindBidirectional(ExpenseViewModel.amountProperty());
-        expenseFormDetails.textProperty().bindBidirectional(ExpenseViewModel.detailsProperty());
+        expenseFormName.textProperty().bindBidirectional(ExpensesViewModel.nameProperty());
+        expenseFormDate.textProperty().bindBidirectional(ExpensesViewModel.dateProperty());
+        expenseFormBranch.valueProperty().bindBidirectional(ExpensesViewModel.branchProperty());
+        expenseFormCategory.valueProperty().bindBidirectional(ExpensesViewModel.categoryProperty());
+        expenseFormAmount.textProperty().bindBidirectional(ExpensesViewModel.amountProperty());
+        expenseFormDetails.textProperty().bindBidirectional(ExpensesViewModel.detailsProperty());
 
         // ComboBox Converters.
         StringConverter<Branch> branchConverter =
@@ -129,7 +129,7 @@ public class ExpenseFormController implements Initializable {
         expenseFormCancelBtn.setOnAction(
                 (event) -> {
                     closeDialog(event);
-                    ExpenseViewModel.resetProperties();
+                    ExpensesViewModel.resetProperties();
                     expenseFormBranch.clearSelection();
                     expenseFormCategory.clearSelection();
 
@@ -147,10 +147,10 @@ public class ExpenseFormController implements Initializable {
                             && !expenseFormBranchValidationLabel.isVisible()
                             && !expenseFormCategoryValidationLabel.isVisible()
                             && !expenseFormAmountValidationLabel.isVisible()) {
-                        if (ExpenseViewModel.getId() > 0) {
+                        if (ExpensesViewModel.getId() > 0) {
                             SpotyThreader.spotyThreadPool(() -> {
                                 try {
-                                    ExpenseViewModel.updateItem(ExpenseViewModel.getId());
+                                    ExpensesViewModel.updateItem();
                                 } catch (Exception e) {
                                     SpotyLogger.writeToFile(e, this.getClass());
                                 }
@@ -170,13 +170,13 @@ public class ExpenseFormController implements Initializable {
                             closeDialog(event);
                             return;
                         }
-                        SpotyThreader.spotyThreadPool(() -> {
+//                        SpotyThreader.spotyThreadPool(() -> {
                             try {
-                                ExpenseViewModel.saveExpense();
+                                ExpensesViewModel.saveExpense();
                             } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }
-                        });
+//                        });
 
                         SimpleNotification notification =
                                 new SimpleNotification.NotificationBuilder("Expense saved successfully")

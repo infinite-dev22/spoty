@@ -14,18 +14,29 @@
 
 package org.infinite.spoty.viewModels;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.infinite.spoty.data_source.daos.UnitOfMeasure;
+import org.infinite.spoty.data_source.models.FindModel;
+import org.infinite.spoty.data_source.models.SearchModel;
+import org.infinite.spoty.data_source.repositories.implementations.UnitsOfMeasureRepositoryImpl;
+import org.infinite.spoty.utils.SpotyLogger;
+
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 
 
 public class UOMViewModel {
-    public static final ObservableList<UnitOfMeasure> uomList = FXCollections.observableArrayList();
+    public static final ObservableList<UnitOfMeasure> uomsList = FXCollections.observableArrayList();
     public static final ObservableList<UnitOfMeasure> uomComboBoxList =
             FXCollections.observableArrayList();
     private static final ListProperty<UnitOfMeasure> unitsOfMeasure =
-            new SimpleListProperty<>(uomList);
+            new SimpleListProperty<>(uomsList);
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final StringProperty name = new SimpleStringProperty("");
     private static final StringProperty shortName = new SimpleStringProperty("");
@@ -117,16 +128,17 @@ public class UOMViewModel {
         return unitsOfMeasure;
     }
 
-    public static void saveUOM() throws Exception {
-//        Dao<UnitOfMeasure, Long> unitOfMeasureDao =
-//                DaoManager.createDao(connectionSource, UnitOfMeasure.class);
-//
-//        UnitOfMeasure unitOfMeasure =
-//                new UnitOfMeasure(
-//                        getName(), getShortName(), getBaseUnit(), getOperator(), getOperatorValue());
-//
-//        unitOfMeasureDao.create(unitOfMeasure);
+    public static void saveUOM() throws IOException, InterruptedException {
+        var uomRepository = new UnitsOfMeasureRepositoryImpl();
+        var uom = UnitOfMeasure.builder()
+                .name(getName())
+                .shortName(getShortName())
+                .baseUnit(getBaseUnit())
+                .operator(getOperator())
+                .operatorValue(getOperatorValue())
+                .build();
 
+        uomRepository.post(uom);
         resetUOMProperties();
         getItems();
     }
@@ -140,61 +152,85 @@ public class UOMViewModel {
         setOperatorValue("");
     }
 
-    public static void getItems() throws Exception {
-//        Dao<UnitOfMeasure, Long> unitOfMeasureDao =
-//                DaoManager.createDao(connectionSource, UnitOfMeasure.class);
-//
-//        Platform.runLater(
-//                () -> {
-//                    uomList.clear();
-//
-//                    try {
-//                        uomList.addAll(unitOfMeasureDao.queryForAll());
-//                    } catch (Exception e) {
-//                        SpotyLogger.writeToFile(e, UOMViewModel.class);
-//                    }
-//                });
+    public static void getItems() {
+        var uomRepository = new UnitsOfMeasureRepositoryImpl();
+        Type listType = new TypeToken<ArrayList<UnitOfMeasure>>() {
+        }.getType();
+
+        Platform.runLater(
+                () -> {
+                    uomsList.clear();
+
+                    try {
+                        ArrayList<UnitOfMeasure> uomList = new Gson().fromJson(uomRepository.fetchAll().body(), listType);
+                        uomsList.addAll(uomList);
+                    } catch (IOException | InterruptedException e) {
+                        SpotyLogger.writeToFile(e, UOMViewModel.class);
+                    }
+                });
     }
 
-    public static void getItem(long index) throws Exception {
-//        Dao<UnitOfMeasure, Long> unitOfMeasureDao =
-//                DaoManager.createDao(connectionSource, UnitOfMeasure.class);
-//
-//        UnitOfMeasure uom = unitOfMeasureDao.queryForId(index);
-//
-//        setId(uom.getId());
-//        setName(uom.getName());
-//        setShortName(uom.getShortName());
-//        setBaseUnit(uom.getBaseUnit());
-//        setOperator(uom.getOperator());
-//        setOperatorValue(
-//                String.valueOf(uom.getOperatorValue() == 0 ? "" : uom.getOperatorValue()));
+    public static void getItem(Long uomID) throws IOException, InterruptedException {
+        var uomRepository = new UnitsOfMeasureRepositoryImpl();
+        var findModel = new FindModel();
+        findModel.setId(uomID);
+        var response = uomRepository.fetch(findModel).body();
+        var uom = new Gson().fromJson(response, UnitOfMeasure.class);
+
+        setId(uom.getId());
+        setName(uom.getName());
+        setShortName(uom.getShortName());
+        setBaseUnit(uom.getBaseUnit());
+        setOperator(uom.getOperator());
+        setOperatorValue(
+                String.valueOf(uom.getOperatorValue() == 0 ? "" : uom.getOperatorValue()));
+        getItems();
     }
 
-    public static void updateItem(long index) throws Exception {
-//        Dao<UnitOfMeasure, Long> unitOfMeasureDao =
-//                DaoManager.createDao(connectionSource, UnitOfMeasure.class);
-//
-//        UnitOfMeasure uom = unitOfMeasureDao.queryForId(index);
-//
-//        uom.setName(getName());
-//        uom.setShortName(getShortName());
-//        uom.setBaseUnit(getBaseUnit());
-//        uom.setOperator(getOperator());
-//        uom.setOperatorValue(getOperatorValue());
-//
-//        unitOfMeasureDao.update(uom);
+    public static void searchItem(String search) {
+        var uomRepository = new UnitsOfMeasureRepositoryImpl();
+        var searchModel = new SearchModel();
+        searchModel.setSearch(search);
 
+        Type listType = new TypeToken<ArrayList<UnitOfMeasure>>() {
+        }.getType();
+
+        Platform.runLater(
+                () -> {
+                    uomsList.clear();
+
+                    try {
+                        ArrayList<UnitOfMeasure> uomList = new Gson().fromJson(uomRepository.search(searchModel)
+                                .body(), listType);
+                        uomsList.addAll(uomList);
+                    } catch (IOException | InterruptedException e) {
+                        SpotyLogger.writeToFile(e, UOMViewModel.class);
+                    }
+                });
+    }
+
+    public static void updateItem() throws IOException, InterruptedException {
+        var uomRepository = new UnitsOfMeasureRepositoryImpl();
+        var uom = UnitOfMeasure.builder()
+                .id(getId())
+                .name(getName())
+                .shortName(getShortName())
+                .baseUnit(getBaseUnit())
+                .operator(getOperator())
+                .operatorValue(getOperatorValue())
+                .build();
+
+        uomRepository.put(uom);
         resetUOMProperties();
         getItems();
     }
 
-    public static void deleteItem(long index) throws Exception {
-//        Dao<UnitOfMeasure, Long> unitOfMeasureDao =
-//                DaoManager.createDao(connectionSource, UnitOfMeasure.class);
-//
-//        unitOfMeasureDao.deleteById(index);
+    public static void deleteItem(Long uomID) throws IOException, InterruptedException {
+        var uomRepository = new UnitsOfMeasureRepositoryImpl();
+        var findModel = new FindModel();
 
+        findModel.setId(uomID);
+        uomRepository.delete(findModel);
         getItems();
     }
 }

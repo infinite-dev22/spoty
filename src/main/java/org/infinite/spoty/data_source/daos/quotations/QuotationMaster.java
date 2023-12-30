@@ -39,10 +39,6 @@ public class QuotationMaster {
     private double total;
     private String status;
     private String notes;
-    private Date createdAt;
-    private User createdBy;
-    private Date updatedAt;
-    private User updatedBy;
 
     public String getBranchName() {
         return branch.getName();

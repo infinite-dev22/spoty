@@ -34,8 +34,4 @@ public class User {
     private boolean active;
     private boolean locked;
     private boolean accessAllBranches;
-    private Date createdAt;
-    private User createdBy;
-    private Date updatedAt;
-    private User updatedBy;
 }

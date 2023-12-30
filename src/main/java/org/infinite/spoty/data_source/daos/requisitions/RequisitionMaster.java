@@ -42,10 +42,6 @@ public class RequisitionMaster {
     private String notes;
     private String status;
     private double totalCost;
-    private Date createdAt;
-    private User createdBy;
-    private Date updatedAt;
-    private User updatedBy;
 
     public String getBranchName() {
         return branch.getName();

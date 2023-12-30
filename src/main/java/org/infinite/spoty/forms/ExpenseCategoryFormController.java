@@ -87,7 +87,7 @@ public class ExpenseCategoryFormController implements Initializable {
                         if (ExpenseCategoryViewModel.getId() > 0) {
                             SpotyThreader.spotyThreadPool(() -> {
                                 try {
-                                    ExpenseCategoryViewModel.updateItem(ExpenseCategoryViewModel.getId());
+                                    ExpenseCategoryViewModel.updateItem();
                                 } catch (Exception e) {
                                     SpotyLogger.writeToFile(e, this.getClass());
                                 }

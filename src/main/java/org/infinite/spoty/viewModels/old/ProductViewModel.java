@@ -24,7 +24,6 @@ import org.infinite.spoty.data_source.daos.ProductCategory;
 import org.infinite.spoty.data_source.daos.UnitOfMeasure;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Date;
 import java.util.Objects;
 
 import static org.infinite.spoty.values.SharedResources.setTempId;
@@ -298,7 +297,6 @@ public class ProductViewModel {
         product.setStockAlert(getStockAlert());
         product.setSerialNumber(getSerialNumber());
         product.setImage(getImage());
-        product.setCreatedAt(new Date());
 
 //        productDao.create(product);
 
@@ -366,7 +364,7 @@ public class ProductViewModel {
 //        product.setSerialNumber(getSerialNumber());
 //        product.setImage(getImage());
 //        product.setUpdatedBy(getName());
-//        product.setUpdatedAt(new Date());
+//        product.setUpdatedAt(Date.now());
 //
 //        productDao.update(product);
 
@@ -382,7 +380,7 @@ public class ProductViewModel {
 //
 //        product.setQuantity(getQuantity());
 //        product.setUpdatedBy(getName());
-//        product.setUpdatedAt(new Date());
+//        product.setUpdatedAt(Date.now());
 //
 //        productDao.update(product);
 

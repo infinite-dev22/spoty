@@ -12,7 +12,7 @@ apply plugin: 'java'
 
 version '0.0.1-beta'
 project.description = 'Zenmart ERP - Fintech Software.'
-project.ext.buildDate = new Date()
+project.ext.buildDate = LocalDate.now()
 project.version = '1.0.0'
 
 repositories {

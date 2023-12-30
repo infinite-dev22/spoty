@@ -39,10 +39,6 @@ public class SaleDetail {
     private double total;
     private double subTotalPrice;  // To evaluate importance.
     private int quantity;
-    private Date createdAt;
-    private User createdBy;
-    private Date updatedAt;
-    private User updatedBy;
 
     public String getProductName() {
         return product.getName();

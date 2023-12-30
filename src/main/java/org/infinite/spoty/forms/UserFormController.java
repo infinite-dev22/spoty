@@ -198,7 +198,7 @@ public class UserFormController implements Initializable {
                         if (UserViewModel.getId() > 0) {
                             SpotyThreader.spotyThreadPool(() -> {
                                 try {
-                                    UserViewModel.updateItem(UserViewModel.getId());
+                                    UserViewModel.updateItem();
                                 } catch (Exception e) {
                                     SpotyLogger.writeToFile(e, this.getClass());
                                 }

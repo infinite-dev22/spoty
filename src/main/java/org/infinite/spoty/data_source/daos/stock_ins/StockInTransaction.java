@@ -33,8 +33,4 @@ public class StockInTransaction {
     private StockInDetail stockInDetail;
     private Date date;
     private long stockInQuantity;
-    private Date createdAt;
-    private User createdBy;
-    private Date updatedAt;
-    private User updatedBy;
 }

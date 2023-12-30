@@ -32,10 +32,6 @@ public class UserProfile {
     private String phone;
     private String email;
     private String avatar;
-    private Date createdAt;
-    private User createdBy;
-    private Date updatedAt;
-    private User updatedBy;
 
     public boolean isActive() {
         return user.isActive();

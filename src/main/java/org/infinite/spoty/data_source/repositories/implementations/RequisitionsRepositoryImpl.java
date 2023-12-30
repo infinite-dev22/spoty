@@ -5,7 +5,6 @@ import org.infinite.spoty.data_source.auth.ProtectedGlobals;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.models.SearchModel;
 import org.infinite.spoty.data_source.repositories.interfaces.MasterDetailRepository;
-import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.values.EndPoints;
 
 import java.io.IOException;
@@ -17,7 +16,7 @@ import java.util.ArrayList;
 
 public class RequisitionsRepositoryImpl extends ProtectedGlobals implements MasterDetailRepository {
     @Override
-    public HttpResponse<String> fetchAllMaster() {
+    public HttpResponse<String> fetchAllMaster() throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.Requisitions.allRequisitionMasters))
                 .header("Authorization", authToken)
@@ -26,18 +25,11 @@ public class RequisitionsRepositoryImpl extends ProtectedGlobals implements Mast
                 .method("GET", HttpRequest.BodyPublishers.noBody())
                 .build();
 
-        HttpResponse<String> response = null;
-        try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            SpotyLogger.writeToFile(e, RequisitionsRepositoryImpl.class);
-        }
-
-        return response;
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public HttpResponse<String> fetchMaster(FindModel findModel) {
+    public HttpResponse<String> fetchMaster(FindModel findModel) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.Requisitions.requisitionMasterById))
                 .header("Authorization", authToken)
@@ -46,18 +38,11 @@ public class RequisitionsRepositoryImpl extends ProtectedGlobals implements Mast
                 .method("GET", HttpRequest.BodyPublishers.ofString(new Gson().toJson(findModel)))
                 .build();
 
-        HttpResponse<String> response = null;
-        try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            SpotyLogger.writeToFile(e, RequisitionsRepositoryImpl.class);
-        }
-
-        return response;
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public HttpResponse<String> searchMaster(SearchModel searchModel) {
+    public HttpResponse<String> searchMaster(SearchModel searchModel) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.Requisitions.searchRequisitionMasters))
                 .header("Authorization", authToken)
@@ -66,18 +51,11 @@ public class RequisitionsRepositoryImpl extends ProtectedGlobals implements Mast
                 .method("GET", HttpRequest.BodyPublishers.ofString(new Gson().toJson(searchModel)))
                 .build();
 
-        HttpResponse<String> response = null;
-        try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            SpotyLogger.writeToFile(e, RequisitionsRepositoryImpl.class);
-        }
-
-        return response;
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public HttpResponse<String> postMaster(Object object) {
+    public HttpResponse<String> postMaster(Object object) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.Requisitions.addRequisitionMaster))
                 .header("Authorization", authToken)
@@ -86,18 +64,11 @@ public class RequisitionsRepositoryImpl extends ProtectedGlobals implements Mast
                 .method("POST", HttpRequest.BodyPublishers.ofString(new Gson().toJson(object)))
                 .build();
 
-        HttpResponse<String> response = null;
-        try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            SpotyLogger.writeToFile(e, RequisitionsRepositoryImpl.class);
-        }
-
-        return response;
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public HttpResponse<String> putMaster(Object object) {
+    public HttpResponse<String> putMaster(Object object) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.Requisitions.updateRequisitionMaster))
                 .header("Authorization", authToken)
@@ -106,18 +77,11 @@ public class RequisitionsRepositoryImpl extends ProtectedGlobals implements Mast
                 .method("PUT", HttpRequest.BodyPublishers.ofString(new Gson().toJson(object)))
                 .build();
 
-        HttpResponse<String> response = null;
-        try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            SpotyLogger.writeToFile(e, RequisitionsRepositoryImpl.class);
-        }
-
-        return response;
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public HttpResponse<String> deleteMaster(FindModel findModel) {
+    public HttpResponse<String> deleteMaster(FindModel findModel) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.Requisitions.deleteRequisitionMaster))
                 .header("Authorization", authToken)
@@ -126,18 +90,11 @@ public class RequisitionsRepositoryImpl extends ProtectedGlobals implements Mast
                 .method("DELETE", HttpRequest.BodyPublishers.ofString(new Gson().toJson(findModel)))
                 .build();
 
-        HttpResponse<String> response = null;
-        try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            SpotyLogger.writeToFile(e, RequisitionsRepositoryImpl.class);
-        }
-
-        return response;
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public HttpResponse<String> deleteMultipleMasters(ArrayList<FindModel> findModelList) {
+    public HttpResponse<String> deleteMultipleMasters(ArrayList<FindModel> findModelList) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.Requisitions.deleteRequisitionMasters))
                 .header("Authorization", authToken)
@@ -146,18 +103,11 @@ public class RequisitionsRepositoryImpl extends ProtectedGlobals implements Mast
                 .method("DELETE", HttpRequest.BodyPublishers.ofString(new Gson().toJson(findModelList)))
                 .build();
 
-        HttpResponse<String> response = null;
-        try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            SpotyLogger.writeToFile(e, RequisitionsRepositoryImpl.class);
-        }
-
-        return response;
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public HttpResponse<String> fetchAllDetail() {
+    public HttpResponse<String> fetchAllDetail() throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.Requisitions.allRequisitionDetails))
                 .header("Authorization", authToken)
@@ -166,18 +116,11 @@ public class RequisitionsRepositoryImpl extends ProtectedGlobals implements Mast
                 .method("GET", HttpRequest.BodyPublishers.noBody())
                 .build();
 
-        HttpResponse<String> response = null;
-        try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            SpotyLogger.writeToFile(e, RequisitionsRepositoryImpl.class);
-        }
-
-        return response;
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public HttpResponse<String> fetchDetail(FindModel findModel) {
+    public HttpResponse<String> fetchDetail(FindModel findModel) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.Requisitions.requisitionDetailById))
                 .header("Authorization", authToken)
@@ -186,18 +129,11 @@ public class RequisitionsRepositoryImpl extends ProtectedGlobals implements Mast
                 .method("GET", HttpRequest.BodyPublishers.ofString(new Gson().toJson(findModel)))
                 .build();
 
-        HttpResponse<String> response = null;
-        try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            SpotyLogger.writeToFile(e, RequisitionsRepositoryImpl.class);
-        }
-
-        return response;
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public HttpResponse<String> searchDetail(SearchModel searchModel) {
+    public HttpResponse<String> searchDetail(SearchModel searchModel) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.Requisitions.searchRequisitionDetails))
                 .header("Authorization", authToken)
@@ -206,18 +142,11 @@ public class RequisitionsRepositoryImpl extends ProtectedGlobals implements Mast
                 .method("GET", HttpRequest.BodyPublishers.ofString(new Gson().toJson(searchModel)))
                 .build();
 
-        HttpResponse<String> response = null;
-        try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            SpotyLogger.writeToFile(e, RequisitionsRepositoryImpl.class);
-        }
-
-        return response;
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public HttpResponse<String> postDetail(Object object) {
+    public HttpResponse<String> postDetail(Object object) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.Requisitions.addRequisitionDetail))
                 .header("Authorization", authToken)
@@ -226,18 +155,11 @@ public class RequisitionsRepositoryImpl extends ProtectedGlobals implements Mast
                 .method("POST", HttpRequest.BodyPublishers.ofString(new Gson().toJson(object)))
                 .build();
 
-        HttpResponse<String> response = null;
-        try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            SpotyLogger.writeToFile(e, RequisitionsRepositoryImpl.class);
-        }
-
-        return response;
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public HttpResponse<String> putDetail(Object object) {
+    public HttpResponse<String> putDetail(Object object) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.Requisitions.updateRequisitionDetail))
                 .header("Authorization", authToken)
@@ -246,18 +168,11 @@ public class RequisitionsRepositoryImpl extends ProtectedGlobals implements Mast
                 .method("PUT", HttpRequest.BodyPublishers.ofString(new Gson().toJson(object)))
                 .build();
 
-        HttpResponse<String> response = null;
-        try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            SpotyLogger.writeToFile(e, RequisitionsRepositoryImpl.class);
-        }
-
-        return response;
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public HttpResponse<String> deleteDetail(FindModel findModel) {
+    public HttpResponse<String> deleteDetail(FindModel findModel) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.Requisitions.deleteRequisitionDetail))
                 .header("Authorization", authToken)
@@ -266,18 +181,11 @@ public class RequisitionsRepositoryImpl extends ProtectedGlobals implements Mast
                 .method("DELETE", HttpRequest.BodyPublishers.ofString(new Gson().toJson(findModel)))
                 .build();
 
-        HttpResponse<String> response = null;
-        try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            SpotyLogger.writeToFile(e, RequisitionsRepositoryImpl.class);
-        }
-
-        return response;
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public HttpResponse<String> deleteMultipleDetails(ArrayList<FindModel> findModelList) {
+    public HttpResponse<String> deleteMultipleDetails(ArrayList<FindModel> findModelList) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.Requisitions.deleteRequisitionDetails))
                 .header("Authorization", authToken)
@@ -286,13 +194,6 @@ public class RequisitionsRepositoryImpl extends ProtectedGlobals implements Mast
                 .method("DELETE", HttpRequest.BodyPublishers.ofString(new Gson().toJson(findModelList)))
                 .build();
 
-        HttpResponse<String> response = null;
-        try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            SpotyLogger.writeToFile(e, RequisitionsRepositoryImpl.class);
-        }
-
-        return response;
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 }

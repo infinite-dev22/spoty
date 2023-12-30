@@ -14,6 +14,8 @@
 
 package org.infinite.spoty.viewModels;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -22,9 +24,15 @@ import org.infinite.spoty.data_source.daos.Brand;
 import org.infinite.spoty.data_source.daos.Product;
 import org.infinite.spoty.data_source.daos.ProductCategory;
 import org.infinite.spoty.data_source.daos.UnitOfMeasure;
+import org.infinite.spoty.data_source.models.FindModel;
+import org.infinite.spoty.data_source.models.SearchModel;
+import org.infinite.spoty.data_source.repositories.implementations.ProductsRepositoryImpl;
+import org.infinite.spoty.utils.SpotyLogger;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Date;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Objects;
 
 import static org.infinite.spoty.values.SharedResources.setTempId;
@@ -278,30 +286,27 @@ public class ProductViewModel {
         return products;
     }
 
-    public static void saveProduct() throws Exception {
-//        Dao<Product, Long> productDao = DaoManager.createDao(connectionSource, Product.class);
+    public static void saveProduct() throws IOException, InterruptedException {
+        var productsRepository = new ProductsRepositoryImpl();
+        var product = Product.builder()
+                .name(getName())
+                .brand(getBrand())
+                .category(getCategory())
+                .unit(getUnit())
+                .productType(getProductType())
+                .barcodeType(getBarcodeType())
+                .price(getPrice())
+                .cost(getCost())
+                .quantity(getQuantity())
+                .netTax(getNetTax())
+                .discount(getDiscount())
+                .taxType(getTaxType())
+                .stockAlert(getStockAlert())
+                .serialNumber(getSerialNumber())
+                .image(getImage())
+                .build();
 
-        Product product = new Product();
-
-        product.setName(getName());
-        product.setBrand(getBrand());
-        product.setCategory(getCategory());
-        product.setUnit(getUnit());
-        product.setProductType(getProductType());
-        product.setBarcodeType(getBarcodeType());
-        product.setPrice(getPrice());
-        product.setCost(getCost());
-        product.setQuantity(getQuantity());
-        product.setNetTax(getNetTax());
-        product.setDiscount(getDiscount());
-        product.setTaxType(getTaxType());
-        product.setStockAlert(getStockAlert());
-        product.setSerialNumber(getSerialNumber());
-        product.setImage(getImage());
-        product.setCreatedAt(new Date());
-
-//        productDao.create(product);
-
+        productsRepository.post(product);
         resetProperties();
 
         getAllProducts();
@@ -332,95 +337,118 @@ public class ProductViewModel {
     }
 
     public static void getAllProducts() {
-//        Platform.runLater(
-//                () -> {
-//                    productsList.clear();
-//                    try {
-//                        Dao<Product, Long> productDao = DaoManager.createDao(connectionSource, Product.class);
-//
-//                        productsList.addAll(productDao.queryForAll());
-//                    } catch (Exception e) {
-//                        SpotyLogger.writeToFile(e, ProductViewModel.class);
-//                    }
-//                });
+        var productsRepository = new ProductsRepositoryImpl();
+        Type listType = new TypeToken<ArrayList<Product>>() {
+        }.getType();
+
+        Platform.runLater(
+                () -> {
+                    productsList.clear();
+
+                    try {
+                        ArrayList<Product> productList = new Gson().fromJson(productsRepository.fetchAll().body(), listType);
+                        productsList.addAll(productList);
+                    } catch (IOException | InterruptedException e) {
+                        SpotyLogger.writeToFile(e, ProductViewModel.class);
+                    }
+                });
     }
 
-    public static void updateProduct(long index) throws Exception {
-//        Dao<Product, Long> productDao = DaoManager.createDao(connectionSource, Product.class);
-//
-//        Product product = productDao.queryForId(index);
-//
-//        product.setName(getName());
-//        product.setBrand(getBrand());
-//        product.setCategory(getCategory());
-//        product.setUnit(getUnit());
-//        product.setProductType(getProductType());
-//        product.setBarcodeType(getBarcodeType());
-//        product.setPrice(getPrice());
-//        product.setCost(getCost());
-//        product.setQuantity(getQuantity());
-//        product.setDiscount(getDiscount());
-//        product.setNetTax(getNetTax());
-//        product.setTaxType(getTaxType());
-//        product.setStockAlert(getStockAlert());
-//        product.setSerialNumber(getSerialNumber());
-//        product.setImage(getImage());
-//        product.setUpdatedBy(getName());
-//        product.setUpdatedAt(new Date());
-//
-//        productDao.update(product);
+    public static void getProduct(Long productID) throws IOException, InterruptedException {
+        var productsRepository = new ProductsRepositoryImpl();
+        var findModel = new FindModel();
+        findModel.setId(productID);
+        var response = productsRepository.fetch(findModel).body();
+        var product = new Gson().fromJson(response, Product.class);
 
-        Platform.runLater(ProductViewModel::resetProperties);
+        setId(product.getId());
+        setName(product.getName());
+        setBrand(product.getBrand());
+        setCategory(product.getCategory());
+        setUnit(product.getUnit());
+        setProductType(product.getProductType());
+        setBarcodeType(product.getBarcodeType());
+        setPrice(product.getPrice());
+        setCost(product.getCost());
+        setQuantity(product.getQuantity());
+        setDiscount(product.getDiscount());
+        setNetTax(product.getNetTax());
+        setTaxType(product.getTaxType());
+        setStockAlert(product.getStockAlert());
+        setSerial(product.getSerialNumber());
+        setImage(product.getImage());
+    }
 
+    public static void searchItem(String search) {
+        var productsRepository = new ProductsRepositoryImpl();
+        var searchModel = new SearchModel();
+        searchModel.setSearch(search);
+        Type listType = new TypeToken<ArrayList<Product>>() {
+        }.getType();
+
+        Platform.runLater(
+                () -> {
+                    productsList.clear();
+
+                    try {
+                        ArrayList<Product> productList = new Gson().fromJson(productsRepository.search(searchModel)
+                                .body(), listType);
+                        productsList.addAll(productList);
+                    } catch (IOException | InterruptedException e) {
+                        SpotyLogger.writeToFile(e, ProductViewModel.class);
+                    }
+                });
+    }
+
+    public static void updateProduct() throws IOException, InterruptedException {
+        var productsRepository = new ProductsRepositoryImpl();
+        var product = Product.builder()
+                .id(getId())
+                .name(getName())
+                .brand(getBrand())
+                .category(getCategory())
+                .unit(getUnit())
+                .productType(getProductType())
+                .barcodeType(getBarcodeType())
+                .price(getPrice())
+                .cost(getCost())
+                .quantity(getQuantity())
+                .netTax(getNetTax())
+                .discount(getDiscount())
+                .taxType(getTaxType())
+                .stockAlert(getStockAlert())
+                .serialNumber(getSerialNumber())
+                .image(getImage())
+                .build();
+
+        productsRepository.put(product);
+        resetProperties();
         getAllProducts();
     }
 
-    public static void updateProductQuantity(long index) throws Exception {
-//        Dao<Product, Long> productDao = DaoManager.createDao(connectionSource, Product.class);
+//    public static void updateProduct(long index) {
+//        var productsRepository = new ProductsRepositoryImpl();
+////        Dao<Product, Long> productDao = DaoManager.createDao(connectionSource, Product.class);
+////
+////        Product product = productDao.queryForId(index);
+////
+////        product.setQuantity(getQuantity());
+////        product.setUpdatedBy(getName());
+////        product.setUpdatedAt(Date.now());
+////
+////        productDao.update(product);
 //
-//        Product product = productDao.queryForId(index);
+//        Platform.runLater(ProductViewModel::resetProperties);
 //
-//        product.setQuantity(getQuantity());
-//        product.setUpdatedBy(getName());
-//        product.setUpdatedAt(new Date());
-//
-//        productDao.update(product);
+//        getAllProducts();
+//    }
 
-        Platform.runLater(ProductViewModel::resetProperties);
+    public static void deleteProduct(Long productID) throws IOException, InterruptedException {
+        var productsRepository = new ProductsRepositoryImpl();
+        var findModel = new FindModel();
 
+        findModel.setId(productID);
+        productsRepository.delete(findModel);
         getAllProducts();
-    }
-
-    public static void getProduct(long index) throws Exception {
-//        Dao<Product, Long> productDao = DaoManager.createDao(connectionSource, Product.class);
-//
-//        Product product = productDao.queryForId(index);
-//
-//        Platform.runLater(
-//                () -> {
-//                    setTempId((int) index);
-//                    setId(product.getId());
-//                    setName(product.getName());
-//                    setBrand(product.getBrand());
-//                    setCategory(product.getCategory());
-//                    setUnit(product.getUnit());
-//                    setProductType(product.getProductType());
-//                    setBarcodeType(product.getBarcodeType());
-//                    setPrice(product.getPrice());
-//                    setCost(product.getCost());
-//                    setQuantity(product.getQuantity());
-//                    setDiscount(product.getDiscount());
-//                    setNetTax(product.getNetTax());
-//                    setTaxType(product.getTaxType());
-//                    setStockAlert(product.getStockAlert());
-//                    setSerial(product.getSerialNumber());
-//                    setImage(product.getImage());
-//                });
-    }
-
-    public static void deleteProduct(long index) throws Exception {
-//        Dao<Product, Long> productDao = DaoManager.createDao(connectionSource, Product.class);
-//
-//        productDao.deleteById(index);
     }
 }

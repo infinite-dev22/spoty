@@ -17,8 +17,4 @@ public class SalaryAdvance {
     private Double releaseAmount;
     private String salaryMonth;
     private Date date;
-    private Date createdAt;
-    private User createdBy;
-    private Date updatedAt;
-    private User updatedBy;
 }

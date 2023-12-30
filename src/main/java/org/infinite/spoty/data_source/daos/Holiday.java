@@ -30,8 +30,4 @@ public class Holiday {
     private Date startDate;
     private Date endDate;
     private String description;
-    private Date createdAt;
-    private User createdBy;
-    private Date updatedAt;
-    private User updatedBy;
 }

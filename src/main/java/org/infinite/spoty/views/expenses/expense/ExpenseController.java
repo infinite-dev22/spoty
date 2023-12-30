@@ -36,7 +36,7 @@ import javafx.stage.Stage;
 import org.infinite.spoty.data_source.daos.Expense;
 import org.infinite.spoty.forms.ExpenseFormController;
 import org.infinite.spoty.utils.SpotyThreader;
-import org.infinite.spoty.viewModels.ExpenseViewModel;
+import org.infinite.spoty.viewModels.ExpensesViewModel;
 
 import java.io.IOException;
 import java.net.URL;
@@ -120,13 +120,13 @@ public class ExpenseController implements Initializable {
                         new StringFilter<>("Branch", Expense::getBranchName));
         styleExpenseTable();
 
-        if (ExpenseViewModel.getExpenses().isEmpty()) {
-            ExpenseViewModel.getExpenses()
+        if (ExpensesViewModel.getExpenses().isEmpty()) {
+            ExpensesViewModel.getExpenses()
                     .addListener(
                             (ListChangeListener<Expense>)
-                                    c -> expenseTable.setItems(ExpenseViewModel.getExpenses()));
+                                    c -> expenseTable.setItems(ExpensesViewModel.getExpenses()));
         } else {
-            expenseTable.itemsProperty().bindBidirectional(ExpenseViewModel.expensesProperty());
+            expenseTable.itemsProperty().bindBidirectional(ExpensesViewModel.expensesProperty());
         }
     }
 
@@ -163,7 +163,7 @@ public class ExpenseController implements Initializable {
                 e -> {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
-                            ExpenseViewModel.deleteItem(obj.getData().getId());
+                            ExpensesViewModel.deleteItem(obj.getData().getId());
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
@@ -175,7 +175,7 @@ public class ExpenseController implements Initializable {
                 e -> {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
-                            ExpenseViewModel.getItem(obj.getData().getId());
+                            ExpensesViewModel.getItem(obj.getData().getId());
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }

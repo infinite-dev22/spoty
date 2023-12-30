@@ -16,6 +16,8 @@ package org.infinite.spoty.data_source.daos;
 
 import lombok.*;
 
+import java.io.Serializable;
+import java.security.Timestamp;
 import java.text.DateFormat;
 import java.util.Date;
 
@@ -26,7 +28,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Expense {
+public class Expense implements Serializable {
     private Long id;
     private Date date;
     private String ref;
@@ -35,10 +37,6 @@ public class Expense {
     private Branch branch;
     private String details;
     private double amount;
-    private Date createdAt;
-    private User createdBy;
-    private Date updatedAt;
-    private User updatedBy;
 
     public String getBranchName() {
         return branch.getName();

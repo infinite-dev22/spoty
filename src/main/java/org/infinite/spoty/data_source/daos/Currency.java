@@ -28,8 +28,4 @@ public class Currency {
     private String code;
     private String name;
     private String symbol;
-    private Date createdAt;
-    private User createdBy;
-    private Date updatedAt;
-    private User updatedBy;
 }

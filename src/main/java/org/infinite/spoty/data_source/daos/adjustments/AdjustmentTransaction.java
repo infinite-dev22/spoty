@@ -34,8 +34,4 @@ public class AdjustmentTransaction {
     private Date date;
     private long adjustQuantity;
     private String adjustmentType;
-    private Date createdAt;
-    private User createdBy;
-    private Date updatedAt;
-    private User updatedBy;
 }

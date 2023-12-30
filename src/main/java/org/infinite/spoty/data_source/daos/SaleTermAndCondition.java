@@ -14,8 +14,4 @@ public class SaleTermAndCondition {
     private String name;
     private Branch branch;
     private boolean active;
-    private Date createdAt;
-    private User createdBy;
-    private Date updatedAt;
-    private User updatedBy;
 }

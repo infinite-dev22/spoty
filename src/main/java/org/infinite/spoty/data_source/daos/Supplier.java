@@ -33,8 +33,4 @@ public class Supplier {
     private String address;
     private String city;
     private String country;
-    private Date createdAt;
-    private User createdBy;
-    private Date updatedAt;
-    private User updatedBy;
 }

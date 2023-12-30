@@ -14,12 +14,23 @@
 
 package org.infinite.spoty.viewModels;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.infinite.spoty.data_source.daos.Branch;
 import org.infinite.spoty.data_source.daos.Role;
 import org.infinite.spoty.data_source.daos.UserProfile;
+import org.infinite.spoty.data_source.models.FindModel;
+import org.infinite.spoty.data_source.models.SearchModel;
+import org.infinite.spoty.data_source.repositories.implementations.UserProfilesRepositoryImpl;
+import org.infinite.spoty.utils.SpotyLogger;
+
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 
 
 public class UserViewModel {
@@ -28,7 +39,7 @@ public class UserViewModel {
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final StringProperty firstName = new SimpleStringProperty("");
     private static final StringProperty lastName = new SimpleStringProperty("");
-    private static final StringProperty userName = new SimpleStringProperty("");
+    private static final StringProperty otherName = new SimpleStringProperty("");
     private static final ObjectProperty<Role> role = new SimpleObjectProperty<>(null);
     private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>(null);
     private static final StringProperty email = new SimpleStringProperty("");
@@ -39,6 +50,7 @@ public class UserViewModel {
     private static final StringProperty country = new SimpleStringProperty("");
     private static final BooleanProperty active = new SimpleBooleanProperty(true);
     private static final BooleanProperty accessAllBranches = new SimpleBooleanProperty(false);
+    private static final StringProperty avatar = new SimpleStringProperty("");
 
     public static long getId() {
         return id.get();
@@ -100,16 +112,16 @@ public class UserViewModel {
         return accessAllBranches;
     }
 
-    public static String getUserName() {
-        return userName.get();
+    public static String getOtherName() {
+        return otherName.get();
     }
 
-    public static void setUserName(String userName) {
-        UserViewModel.userName.set(userName);
+    public static void setOtherName(String otherName) {
+        UserViewModel.otherName.set(otherName);
     }
 
     public static StringProperty userNameProperty() {
-        return userName;
+        return otherName;
     }
 
     public static Role getRole() {
@@ -220,103 +232,126 @@ public class UserViewModel {
         return userProfiles;
     }
 
+    public static String getAvatar() {
+        return avatar.get();
+    }
+
+    public static void setAvatar(String avatar) {
+        UserViewModel.avatar.set(avatar);
+    }
+
+    public static StringProperty avatarProperty() {
+        return avatar;
+    }
+
     public static void resetProperties() {
         setId(0);
         setFirstName("");
         setLastName("");
-        setUserName("");
-        setRole(null);
-        setEmail("");
+        setOtherName("");
         setEmail("");
         setPhone("");
         setCity("");
         setAddress("");
-        setTaxNumber("");
         setCountry("");
-        setActive(true);
     }
 
-    public static void saveUser() throws Exception {
-//        Dao<UserProfile, Long> userDao = DaoManager.createDao(connectionSource, UserProfile.class);
-//
-//        UserProfile user =
-//                new UserProfile(
-//                        getFirstName(),
-//                        getLastName(),
-//                        getUserName(),
-//                        getRole(),
-//                        isActive(),
-//                        canAccessAllBranches());
-//        user.setPhone(getPhone());
-//        user.setEmail(getEmail());
-//        user.setBranch(getBranch());
-//
-//        userDao.create(user);
+    public static void saveUser() throws IOException, InterruptedException {
+        var userProfilesRepository = new UserProfilesRepositoryImpl();
+        var userProfile = UserProfile.builder()
+                .firstName(getFirstName())
+                .lastName(getLastName())
+                .otherName(getOtherName())
+                .phone(getPhone())
+                .email(getEmail())
+                .avatar(getAvatar())
+                .build();
 
+        userProfilesRepository.post(userProfile);
         resetProperties();
         getAllUserProfiles();
     }
 
-    public static void getAllUserProfiles() throws Exception {
-//        Dao<UserProfile, Long> userDao = DaoManager.createDao(connectionSource, UserProfile.class);
-//
-//        Platform.runLater(
-//                () -> {
-//                    usersList.clear();
-//
-//                    try {
-//                        usersList.addAll(userDao.queryForAll());
-//                    } catch (Exception e) {
-//                        SpotyLogger.writeToFile(e, UserViewModel.class);
-//                    }
-//                });
+    public static void getAllUserProfiles() {
+        var userProfilesRepository = new UserProfilesRepositoryImpl();
+        Type listType = new TypeToken<ArrayList<UserProfile>>() {
+        }.getType();
+
+        Platform.runLater(
+                () -> {
+                    usersList.clear();
+
+                    try {
+                        ArrayList<UserProfile> userList = new Gson().fromJson(userProfilesRepository.fetchAll().body(), listType);
+                        usersList.addAll(userList);
+                    } catch (IOException | InterruptedException e) {
+                        SpotyLogger.writeToFile(e, UserViewModel.class);
+                    }
+                });
     }
 
-    public static void getItem(long index) throws Exception {
-//        Dao<UserProfile, Long> userDao = DaoManager.createDao(connectionSource, UserProfile.class);
-//
-//        UserProfile user = userDao.queryForId(index);
-//
-//        Platform.runLater(
-//                () -> {
-//                    setId(user.getId());
-//                    setFirstName(user.getFirstName());
-//                    setLastName(user.getLastName());
-//                    setUserName(user.getUserName());
-//                    setRole(user.getRole());
-//                    setActive(user.isActive());
-//                    setPhone(user.getPhone());
-//                    setEmail(user.getEmail());
-//                    setBranch(user.getBranch());
-//                    setAccessAllBranches(user.canAccessAllBranches());
-//                });
+    public static void getItem(long userProfileID) throws IOException, InterruptedException {
+        var userProfilesRepository = new UserProfilesRepositoryImpl();
+        var findModel = new FindModel();
+        findModel.setId(userProfileID);
+        var response = userProfilesRepository.fetch(findModel).body();
+        var userProfile = new Gson().fromJson(response, UserProfile.class);
 
+        setId(userProfile.getId());
+        setFirstName(userProfile.getFirstName());
+        setLastName(userProfile.getLastName());
+        setOtherName(userProfile.getOtherName());
+        setActive(userProfile.isActive());
+        setPhone(userProfile.getPhone());
+        setEmail(userProfile.getEmail());
         getAllUserProfiles();
     }
 
-    public static void updateItem(long index) throws Exception {
-//        Dao<UserProfile, Long> userDao = DaoManager.createDao(connectionSource, UserProfile.class);
-//
-//        UserProfile user = userDao.queryForId(index);
-//
-//        user.setFirstName(getFirstName());
-//        user.setLastName(getLastName());
-//        user.setUserName(getUserName());
-//        user.setRole(getRole());
-//        user.setActive(isActive());
-//        user.setAccessAllBranches(canAccessAllBranches());
-//
-//        userDao.update(user);
+    public static void searchItem(String search) {
+        var userProfilesRepository = new UserProfilesRepositoryImpl();
+        var searchModel = new SearchModel();
+        searchModel.setSearch(search);
 
+        Type listType = new TypeToken<ArrayList<UserProfile>>() {
+        }.getType();
+
+        Platform.runLater(
+                () -> {
+                    usersList.clear();
+
+                    try {
+                        ArrayList<UserProfile> userList = new Gson().fromJson(userProfilesRepository.search(searchModel)
+                                .body(), listType);
+                        usersList.addAll(userList);
+                    } catch (IOException | InterruptedException e) {
+                        SpotyLogger.writeToFile(e, UserViewModel.class);
+                    }
+                });
+    }
+
+    public static void updateItem() throws IOException, InterruptedException {
+        var userProfilesRepository = new UserProfilesRepositoryImpl();
+        var userProfile = UserProfile.builder()
+                .id(getId())
+                .firstName(getFirstName())
+                .lastName(getLastName())
+                .otherName(getOtherName())
+                .phone(getPhone())
+                .email(getEmail())
+                .avatar(getAvatar())
+                .build();
+
+        userProfilesRepository.put(userProfile);
         resetProperties();
         getAllUserProfiles();
     }
 
-    public static void deleteItem(long index) throws Exception {
-//        Dao<UserProfile, Long> userDao = DaoManager.createDao(connectionSource, UserProfile.class);
-//
-//        userDao.deleteById(index);
+    public static void deleteItem(Long userProfileID) throws IOException, InterruptedException {
+        var userProfilesRepository = new UserProfilesRepositoryImpl();
+        var findModel = new FindModel();
 
+        findModel.setId(userProfileID);
+        userProfilesRepository.delete(findModel);
         getAllUserProfiles();
     }
 }

@@ -30,10 +30,6 @@ public class UnitOfMeasure {
     private UnitOfMeasure baseUnit;
     private String operator;
     private double operatorValue;
-    private Date createdAt;
-    private User createdBy;
-    private Date updatedAt;
-    private User updatedBy;
 
     public String getBaseUnitName() {
         return baseUnit.getName();

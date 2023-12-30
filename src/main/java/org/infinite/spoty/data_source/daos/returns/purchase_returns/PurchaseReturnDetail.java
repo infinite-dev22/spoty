@@ -39,8 +39,4 @@ public class PurchaseReturnDetail {
     private int quantity;
     private double total;
     private String serialNumber;
-    private Date createdAt;
-    private User createdBy;
-    private Date updatedAt;
-    private User updatedBy;
 }

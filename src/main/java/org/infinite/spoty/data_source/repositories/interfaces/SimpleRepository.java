@@ -20,5 +20,5 @@ public interface SimpleRepository {
 
     HttpResponse<String> delete(FindModel findModel) throws IOException, InterruptedException;
 
-    HttpResponse<String> deleteMultiple(ArrayList<FindModel> findModelList);
+    HttpResponse<String> deleteMultiple(ArrayList<FindModel> findModelList) throws IOException, InterruptedException;
 }

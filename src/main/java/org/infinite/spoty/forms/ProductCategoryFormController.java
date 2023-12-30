@@ -91,7 +91,7 @@ public class ProductCategoryFormController implements Initializable {
                         if (ProductCategoryViewModel.getId() > 0) {
                             SpotyThreader.spotyThreadPool(() -> {
                                 try {
-                                    updateItem(ProductCategoryViewModel.getId());
+                                    updateItem();
                                 } catch (Exception e) {
                                     SpotyLogger.writeToFile(e, this.getClass());
                                 }

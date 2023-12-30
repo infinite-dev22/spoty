@@ -1,6 +1,7 @@
 package org.infinite.spoty.data_source.repositories.implementations;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.infinite.spoty.data_source.auth.ProtectedGlobals;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.models.SearchModel;
@@ -14,11 +15,11 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 
-public class UnitsOfMeasureRepositoryImpl extends ProtectedGlobals implements SimpleRepository {
+public class ExpensesRepositoryImpl extends ProtectedGlobals implements SimpleRepository {
     @Override
     public HttpResponse<String> fetchAll() throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
-                .uri(URI.create(EndPoints.UnitsOfMeasure.allUnitsOfMeasure))
+                .uri(URI.create(EndPoints.Expense.allExpense))
                 .header("Authorization", authToken)
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
@@ -31,7 +32,7 @@ public class UnitsOfMeasureRepositoryImpl extends ProtectedGlobals implements Si
     @Override
     public HttpResponse<String> fetch(FindModel findModel) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
-                .uri(URI.create(EndPoints.UnitsOfMeasure.unitOfMeasureById))
+                .uri(URI.create(EndPoints.Expense.designationById))
                 .header("Authorization", authToken)
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
@@ -44,7 +45,7 @@ public class UnitsOfMeasureRepositoryImpl extends ProtectedGlobals implements Si
     @Override
     public HttpResponse<String> search(SearchModel searchModel) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
-                .uri(URI.create(EndPoints.UnitsOfMeasure.searchUnitsOfMeasure))
+                .uri(URI.create(EndPoints.Expense.searchExpense))
                 .header("Authorization", authToken)
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
@@ -56,12 +57,14 @@ public class UnitsOfMeasureRepositoryImpl extends ProtectedGlobals implements Si
 
     @Override
     public HttpResponse<String> post(Object object) throws IOException, InterruptedException {
+        var gson = new GsonBuilder()
+                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX").create();
         var request = HttpRequest.newBuilder()
-                .uri(URI.create(EndPoints.UnitsOfMeasure.addUnitOfMeasure))
+                .uri(URI.create(EndPoints.Expense.addExpense))
                 .header("Authorization", authToken)
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
-                .method("POST", HttpRequest.BodyPublishers.ofString(new Gson().toJson(object)))
+                .method("POST", HttpRequest.BodyPublishers.ofString(gson.toJson(object)))
                 .build();
 
         return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
@@ -69,12 +72,14 @@ public class UnitsOfMeasureRepositoryImpl extends ProtectedGlobals implements Si
 
     @Override
     public HttpResponse<String> put(Object object) throws IOException, InterruptedException {
+        var gson = new GsonBuilder()
+                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX").create();
         var request = HttpRequest.newBuilder()
-                .uri(URI.create(EndPoints.UnitsOfMeasure.updateUnitOfMeasure))
+                .uri(URI.create(EndPoints.Expense.updateExpense))
                 .header("Authorization", authToken)
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
-                .method("PUT", HttpRequest.BodyPublishers.ofString(new Gson().toJson(object)))
+                .method("PUT", HttpRequest.BodyPublishers.ofString(gson.toJson(object)))
                 .build();
 
         return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
@@ -83,7 +88,7 @@ public class UnitsOfMeasureRepositoryImpl extends ProtectedGlobals implements Si
     @Override
     public HttpResponse<String> delete(FindModel findModel) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
-                .uri(URI.create(EndPoints.UnitsOfMeasure.deleteUnitOfMeasure))
+                .uri(URI.create(EndPoints.Expense.deleteExpense))
                 .header("Authorization", authToken)
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
@@ -96,7 +101,7 @@ public class UnitsOfMeasureRepositoryImpl extends ProtectedGlobals implements Si
     @Override
     public HttpResponse<String> deleteMultiple(ArrayList<FindModel> findModelList) throws IOException, InterruptedException {
 //        var request = HttpRequest.newBuilder()
-//                .uri(URI.create(EndPoints.UnitsOfMeasure.deleteUnitsOfMeasure))
+//                .uri(URI.create(EndPoints.Expense.deleteExpense))
 //                .header("Authorization", authToken)
 //                .header("Accept", "application/json")
 //                .header("Content-Type", "application/json")

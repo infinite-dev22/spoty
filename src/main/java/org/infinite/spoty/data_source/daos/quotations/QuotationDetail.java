@@ -39,10 +39,6 @@ public class QuotationDetail {
     private double total;
     private int quantity;
     private String serialNumber;
-    private Date createdAt;
-    private User createdBy;
-    private Date updatedAt;
-    private User updatedBy;
 
     public String getProductName() {
         return product.getName();

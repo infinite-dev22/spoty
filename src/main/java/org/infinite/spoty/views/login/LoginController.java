@@ -80,7 +80,7 @@ public class LoginController implements Initializable {
                         CurrencyViewModel.getAllCurrencies();
                         CustomerViewModel.getAllCustomers();
                         ExpenseCategoryViewModel.getAllCategories();
-                        ExpenseViewModel.getAllExpenses();
+                        ExpensesViewModel.getAllExpenses();
                         ProductCategoryViewModel.getItems();
                         ProductViewModel.getAllProducts();
                         PurchaseMasterViewModel.getPurchaseMasters();

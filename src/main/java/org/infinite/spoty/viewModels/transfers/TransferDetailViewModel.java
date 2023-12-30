@@ -307,7 +307,7 @@ public class TransferDetailViewModel {
                             ProductViewModel.setQuantity(productDetailQuantity);
 
                             try {
-                                ProductViewModel.updateProductQuantity(transferDetails.getProduct().getId());
+                                ProductViewModel.updateProduct();
                                 createTransferTransaction(transferDetails);
                             } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, TransferDetailViewModel.class);
@@ -330,7 +330,7 @@ public class TransferDetailViewModel {
 
                                 ProductViewModel.setQuantity(productQuantity);
 
-                                ProductViewModel.updateProductQuantity(transferDetails.getProduct().getId());
+                                ProductViewModel.updateProduct();
 
                                 updateTransferTransaction(transferDetails);
                             } catch (Exception e) {

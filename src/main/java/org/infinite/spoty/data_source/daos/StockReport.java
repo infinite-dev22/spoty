@@ -20,8 +20,4 @@ public class StockReport {
     private Double availableStock;
     private String saleStockValue;  // Value of current stock at sale price.(name = "purchase_stock_value")
     private String purchaseStockValue;  // Value of current stock at purchase price.
-    private Date createdAt;
-    private User createdBy;
-    private Date updatedAt;
-    private User updatedBy;
 }

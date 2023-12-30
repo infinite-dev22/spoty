@@ -34,10 +34,6 @@ public class TransferDetail {
     private String description;
     private double price;
     private double total;
-    private Date createdAt;
-    private User createdBy;
-    private Date updatedAt;
-    private User updatedBy;
 
     public String getProductName() {
         return product.getName();

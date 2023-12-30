@@ -250,7 +250,7 @@ public class SaleDetailViewModel {
                     ProductViewModel.setQuantity(productDetailQuantity);
 
                     try {
-                        ProductViewModel.updateProductQuantity(saleDetail.getProduct().getId());
+                        ProductViewModel.updateProduct();
                         createSaleTransaction(saleDetail);
                     } catch (Exception e) {
                         SpotyLogger.writeToFile(e, SaleDetailViewModel.class);
@@ -271,7 +271,7 @@ public class SaleDetailViewModel {
 
                         ProductViewModel.setQuantity(productQuantity);
 
-                        ProductViewModel.updateProductQuantity(saleDetail.getProduct().getId());
+                        ProductViewModel.updateProduct();
 
                         updateSaleTransaction(saleDetail);
                     } catch (Exception e) {

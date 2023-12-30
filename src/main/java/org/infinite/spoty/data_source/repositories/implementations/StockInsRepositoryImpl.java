@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 public class StockInsRepositoryImpl extends ProtectedGlobals implements MasterDetailRepository {
     @Override
-    public HttpResponse<String> fetchAllMaster() {
+    public HttpResponse<String> fetchAllMaster() throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.StockIns.allStockInMasters))
                 .header("Authorization", authToken)
@@ -26,18 +26,11 @@ public class StockInsRepositoryImpl extends ProtectedGlobals implements MasterDe
                 .method("GET", HttpRequest.BodyPublishers.noBody())
                 .build();
 
-        HttpResponse<String> response = null;
-        try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            SpotyLogger.writeToFile(e, StockInsRepositoryImpl.class);
-        }
-
-        return response;
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public HttpResponse<String> fetchMaster(FindModel findModel) {
+    public HttpResponse<String> fetchMaster(FindModel findModel) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.StockIns.stockInMasterById))
                 .header("Authorization", authToken)
@@ -46,18 +39,11 @@ public class StockInsRepositoryImpl extends ProtectedGlobals implements MasterDe
                 .method("GET", HttpRequest.BodyPublishers.ofString(new Gson().toJson(findModel)))
                 .build();
 
-        HttpResponse<String> response = null;
-        try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            SpotyLogger.writeToFile(e, StockInsRepositoryImpl.class);
-        }
-
-        return response;
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public HttpResponse<String> searchMaster(SearchModel searchModel) {
+    public HttpResponse<String> searchMaster(SearchModel searchModel) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.StockIns.searchStockInMasters))
                 .header("Authorization", authToken)
@@ -66,18 +52,11 @@ public class StockInsRepositoryImpl extends ProtectedGlobals implements MasterDe
                 .method("GET", HttpRequest.BodyPublishers.ofString(new Gson().toJson(searchModel)))
                 .build();
 
-        HttpResponse<String> response = null;
-        try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            SpotyLogger.writeToFile(e, StockInsRepositoryImpl.class);
-        }
-
-        return response;
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public HttpResponse<String> postMaster(Object object) {
+    public HttpResponse<String> postMaster(Object object) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.StockIns.addStockInMaster))
                 .header("Authorization", authToken)
@@ -86,18 +65,11 @@ public class StockInsRepositoryImpl extends ProtectedGlobals implements MasterDe
                 .method("POST", HttpRequest.BodyPublishers.ofString(new Gson().toJson(object)))
                 .build();
 
-        HttpResponse<String> response = null;
-        try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            SpotyLogger.writeToFile(e, StockInsRepositoryImpl.class);
-        }
-
-        return response;
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public HttpResponse<String> putMaster(Object object) {
+    public HttpResponse<String> putMaster(Object object) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.StockIns.updateStockInMaster))
                 .header("Authorization", authToken)
@@ -106,18 +78,11 @@ public class StockInsRepositoryImpl extends ProtectedGlobals implements MasterDe
                 .method("PUT", HttpRequest.BodyPublishers.ofString(new Gson().toJson(object)))
                 .build();
 
-        HttpResponse<String> response = null;
-        try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            SpotyLogger.writeToFile(e, StockInsRepositoryImpl.class);
-        }
-
-        return response;
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public HttpResponse<String> deleteMaster(FindModel findModel) {
+    public HttpResponse<String> deleteMaster(FindModel findModel) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.StockIns.deleteStockInMaster))
                 .header("Authorization", authToken)
@@ -126,18 +91,11 @@ public class StockInsRepositoryImpl extends ProtectedGlobals implements MasterDe
                 .method("DELETE", HttpRequest.BodyPublishers.ofString(new Gson().toJson(findModel)))
                 .build();
 
-        HttpResponse<String> response = null;
-        try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            SpotyLogger.writeToFile(e, StockInsRepositoryImpl.class);
-        }
-
-        return response;
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public HttpResponse<String> deleteMultipleMasters(ArrayList<FindModel> findModelList) {
+    public HttpResponse<String> deleteMultipleMasters(ArrayList<FindModel> findModelList) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.StockIns.deleteStockInMasters))
                 .header("Authorization", authToken)
@@ -146,18 +104,11 @@ public class StockInsRepositoryImpl extends ProtectedGlobals implements MasterDe
                 .method("DELETE", HttpRequest.BodyPublishers.ofString(new Gson().toJson(findModelList)))
                 .build();
 
-        HttpResponse<String> response = null;
-        try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            SpotyLogger.writeToFile(e, StockInsRepositoryImpl.class);
-        }
-
-        return response;
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public HttpResponse<String> fetchAllDetail() {
+    public HttpResponse<String> fetchAllDetail() throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.StockIns.allStockInDetails))
                 .header("Authorization", authToken)
@@ -166,18 +117,11 @@ public class StockInsRepositoryImpl extends ProtectedGlobals implements MasterDe
                 .method("GET", HttpRequest.BodyPublishers.noBody())
                 .build();
 
-        HttpResponse<String> response = null;
-        try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            SpotyLogger.writeToFile(e, StockInsRepositoryImpl.class);
-        }
-
-        return response;
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public HttpResponse<String> fetchDetail(FindModel findModel) {
+    public HttpResponse<String> fetchDetail(FindModel findModel) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.StockIns.stockInDetailById))
                 .header("Authorization", authToken)
@@ -186,18 +130,11 @@ public class StockInsRepositoryImpl extends ProtectedGlobals implements MasterDe
                 .method("GET", HttpRequest.BodyPublishers.ofString(new Gson().toJson(findModel)))
                 .build();
 
-        HttpResponse<String> response = null;
-        try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            SpotyLogger.writeToFile(e, StockInsRepositoryImpl.class);
-        }
-
-        return response;
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public HttpResponse<String> searchDetail(SearchModel searchModel) {
+    public HttpResponse<String> searchDetail(SearchModel searchModel) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.StockIns.searchStockInDetails))
                 .header("Authorization", authToken)
@@ -206,18 +143,11 @@ public class StockInsRepositoryImpl extends ProtectedGlobals implements MasterDe
                 .method("GET", HttpRequest.BodyPublishers.ofString(new Gson().toJson(searchModel)))
                 .build();
 
-        HttpResponse<String> response = null;
-        try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            SpotyLogger.writeToFile(e, StockInsRepositoryImpl.class);
-        }
-
-        return response;
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public HttpResponse<String> postDetail(Object object) {
+    public HttpResponse<String> postDetail(Object object) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.StockIns.addStockInDetail))
                 .header("Authorization", authToken)
@@ -226,18 +156,11 @@ public class StockInsRepositoryImpl extends ProtectedGlobals implements MasterDe
                 .method("POST", HttpRequest.BodyPublishers.ofString(new Gson().toJson(object)))
                 .build();
 
-        HttpResponse<String> response = null;
-        try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            SpotyLogger.writeToFile(e, StockInsRepositoryImpl.class);
-        }
-
-        return response;
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public HttpResponse<String> putDetail(Object object) {
+    public HttpResponse<String> putDetail(Object object) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.StockIns.updateStockInDetail))
                 .header("Authorization", authToken)
@@ -246,18 +169,11 @@ public class StockInsRepositoryImpl extends ProtectedGlobals implements MasterDe
                 .method("PUT", HttpRequest.BodyPublishers.ofString(new Gson().toJson(object)))
                 .build();
 
-        HttpResponse<String> response = null;
-        try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            SpotyLogger.writeToFile(e, StockInsRepositoryImpl.class);
-        }
-
-        return response;
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public HttpResponse<String> deleteDetail(FindModel findModel) {
+    public HttpResponse<String> deleteDetail(FindModel findModel) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.StockIns.deleteStockInDetail))
                 .header("Authorization", authToken)
@@ -266,18 +182,11 @@ public class StockInsRepositoryImpl extends ProtectedGlobals implements MasterDe
                 .method("DELETE", HttpRequest.BodyPublishers.ofString(new Gson().toJson(findModel)))
                 .build();
 
-        HttpResponse<String> response = null;
-        try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            SpotyLogger.writeToFile(e, StockInsRepositoryImpl.class);
-        }
-
-        return response;
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public HttpResponse<String> deleteMultipleDetails(ArrayList<FindModel> findModelList) {
+    public HttpResponse<String> deleteMultipleDetails(ArrayList<FindModel> findModelList) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.StockIns.deleteStockInDetails))
                 .header("Authorization", authToken)
@@ -286,13 +195,6 @@ public class StockInsRepositoryImpl extends ProtectedGlobals implements MasterDe
                 .method("DELETE", HttpRequest.BodyPublishers.ofString(new Gson().toJson(findModelList)))
                 .build();
 
-        HttpResponse<String> response = null;
-        try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            SpotyLogger.writeToFile(e, StockInsRepositoryImpl.class);
-        }
-
-        return response;
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 }

@@ -33,8 +33,4 @@ public class Customer {
     private String address;
     private String taxNumber;
     private String country;
-    private Date createdAt;
-    private User createdBy;
-    private Date updatedAt;
-    private User updatedBy;
 }

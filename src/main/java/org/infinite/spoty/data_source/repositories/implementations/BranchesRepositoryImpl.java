@@ -110,7 +110,7 @@ public class BranchesRepositoryImpl extends ProtectedGlobals implements SimpleRe
 //            SpotyLogger.writeToFile(e, BranchImpl.class);
 //        }
 //
-//        return response;
+//        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
         return null;
     }
 }

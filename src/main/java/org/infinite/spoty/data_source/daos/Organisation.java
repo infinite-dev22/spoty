@@ -30,8 +30,4 @@ public class Organisation {
     private String phone;
     private String email;
     private String country;
-    private Date createdAt;
-    private User createdBy;
-    private Date updatedAt;
-    private User updatedBy;
 }

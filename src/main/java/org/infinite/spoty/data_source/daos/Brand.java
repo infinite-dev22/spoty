@@ -27,9 +27,5 @@ public class Brand {
     private Long id;
     private String name;
     private String description;
-    private String image;
-    private Date createdAt;
-    private User createdBy;
-    private Date updatedAt;
-    private User updatedBy;
+    private byte[] image;
 }

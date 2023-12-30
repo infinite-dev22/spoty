@@ -164,7 +164,7 @@ public class UOMFormController implements Initializable {
                         if (UOMViewModel.getId() > 0) {
                             SpotyThreader.spotyThreadPool(() -> {
                                 try {
-                                    UOMViewModel.updateItem(UOMViewModel.getId());
+                                    UOMViewModel.updateItem();
                                 } catch (Exception e) {
                                     SpotyLogger.writeToFile(e, this.getClass());
                                 }

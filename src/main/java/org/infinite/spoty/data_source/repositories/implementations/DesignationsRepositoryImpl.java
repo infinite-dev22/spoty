@@ -5,7 +5,6 @@ import org.infinite.spoty.data_source.auth.ProtectedGlobals;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.models.SearchModel;
 import org.infinite.spoty.data_source.repositories.interfaces.SimpleRepository;
-import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.values.EndPoints;
 
 import java.io.IOException;
@@ -17,7 +16,7 @@ import java.util.ArrayList;
 
 public class DesignationsRepositoryImpl extends ProtectedGlobals implements SimpleRepository {
     @Override
-    public HttpResponse<String> fetchAll() {
+    public HttpResponse<String> fetchAll() throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.Designations.allDesignations))
                 .header("Authorization", authToken)
@@ -26,18 +25,11 @@ public class DesignationsRepositoryImpl extends ProtectedGlobals implements Simp
                 .method("GET", HttpRequest.BodyPublishers.noBody())
                 .build();
 
-        HttpResponse<String> response = null;
-        try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            SpotyLogger.writeToFile(e, DesignationsRepositoryImpl.class);
-        }
-
-        return response;
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public HttpResponse<String> fetch(FindModel findModel) {
+    public HttpResponse<String> fetch(FindModel findModel) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.Designations.designationById))
                 .header("Authorization", authToken)
@@ -46,18 +38,11 @@ public class DesignationsRepositoryImpl extends ProtectedGlobals implements Simp
                 .method("GET", HttpRequest.BodyPublishers.ofString(new Gson().toJson(findModel)))
                 .build();
 
-        HttpResponse<String> response = null;
-        try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            SpotyLogger.writeToFile(e, DesignationsRepositoryImpl.class);
-        }
-
-        return response;
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public HttpResponse<String> search(SearchModel searchModel) {
+    public HttpResponse<String> search(SearchModel searchModel) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.Designations.searchDesignations))
                 .header("Authorization", authToken)
@@ -66,18 +51,11 @@ public class DesignationsRepositoryImpl extends ProtectedGlobals implements Simp
                 .method("GET", HttpRequest.BodyPublishers.ofString(new Gson().toJson(searchModel)))
                 .build();
 
-        HttpResponse<String> response = null;
-        try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            SpotyLogger.writeToFile(e, DesignationsRepositoryImpl.class);
-        }
-
-        return response;
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public HttpResponse<String> post(Object object) {
+    public HttpResponse<String> post(Object object) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.Designations.addDesignation))
                 .header("Authorization", authToken)
@@ -86,18 +64,11 @@ public class DesignationsRepositoryImpl extends ProtectedGlobals implements Simp
                 .method("POST", HttpRequest.BodyPublishers.ofString(new Gson().toJson(object)))
                 .build();
 
-        HttpResponse<String> response = null;
-        try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            SpotyLogger.writeToFile(e, DesignationsRepositoryImpl.class);
-        }
-
-        return response;
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public HttpResponse<String> put(Object object) {
+    public HttpResponse<String> put(Object object) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.Designations.updateDesignation))
                 .header("Authorization", authToken)
@@ -106,18 +77,11 @@ public class DesignationsRepositoryImpl extends ProtectedGlobals implements Simp
                 .method("PUT", HttpRequest.BodyPublishers.ofString(new Gson().toJson(object)))
                 .build();
 
-        HttpResponse<String> response = null;
-        try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            SpotyLogger.writeToFile(e, DesignationsRepositoryImpl.class);
-        }
-
-        return response;
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public HttpResponse<String> delete(FindModel findModel) {
+    public HttpResponse<String> delete(FindModel findModel) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.Designations.deleteDesignation))
                 .header("Authorization", authToken)
@@ -126,18 +90,11 @@ public class DesignationsRepositoryImpl extends ProtectedGlobals implements Simp
                 .method("DELETE", HttpRequest.BodyPublishers.ofString(new Gson().toJson(findModel)))
                 .build();
 
-        HttpResponse<String> response = null;
-        try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            SpotyLogger.writeToFile(e, DesignationsRepositoryImpl.class);
-        }
-
-        return response;
+        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public HttpResponse<String> deleteMultiple(ArrayList<FindModel> findModelList) {
+    public HttpResponse<String> deleteMultiple(ArrayList<FindModel> findModelList) throws IOException, InterruptedException {
 //        var request = HttpRequest.newBuilder()
 //                .uri(URI.create(EndPoints.Designations.deleteDesignations))
 //                .header("Authorization", authToken)
@@ -146,14 +103,7 @@ public class DesignationsRepositoryImpl extends ProtectedGlobals implements Simp
 //                .method("DELETE", HttpRequest.BodyPublishers.ofString(new Gson().toJson(findModelList)))
 //                .build();
 //
-//        HttpResponse<String> response = null;
-//        try {
-//            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-//        } catch (IOException | InterruptedException e) {
-//            SpotyLogger.writeToFile(e, BranchImpl.class);
-//        }
-//
-//        return response;
+//        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
         return null;
     }
 }

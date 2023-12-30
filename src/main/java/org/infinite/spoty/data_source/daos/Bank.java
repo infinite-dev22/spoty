@@ -17,8 +17,4 @@ public class Bank {
     private String accountNumber;
     private String balance;
     private String logo;
-    private Date createdAt;
-    private User createdBy;
-    private Date updatedAt;
-    private User updatedBy;
 }

@@ -33,8 +33,4 @@ public class SaleTransaction {
     private SaleDetail saleDetail;
     private Date date;
     private long saleQuantity;
-    private Date createdAt;
-    private User createdBy;
-    private Date updatedAt;
-    private User updatedBy;
 }
