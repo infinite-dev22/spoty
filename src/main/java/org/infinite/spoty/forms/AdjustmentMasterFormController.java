@@ -288,7 +288,7 @@ public class AdjustmentMasterFormController implements Initializable {
                 SpotyThreader.spotyThreadPool(
                         () -> {
                             try {
-                                AdjustmentMasterViewModel.updateItem(AdjustmentMasterViewModel.getId());
+                                AdjustmentMasterViewModel.updateItem();
                             } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }

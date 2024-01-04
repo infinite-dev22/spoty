@@ -14,6 +14,8 @@
 
 package org.infinite.spoty.viewModels.adjustments;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -23,10 +25,16 @@ import org.infinite.spoty.data_source.daos.Product;
 import org.infinite.spoty.data_source.daos.adjustments.AdjustmentDetail;
 import org.infinite.spoty.data_source.daos.adjustments.AdjustmentMaster;
 import org.infinite.spoty.data_source.daos.adjustments.AdjustmentTransaction;
+import org.infinite.spoty.data_source.models.FindModel;
+import org.infinite.spoty.data_source.models.SearchModel;
+import org.infinite.spoty.data_source.repositories.implementations.AdjustmentRepositoryImpl;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.viewModels.ProductViewModel;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 
@@ -43,6 +51,7 @@ public class AdjustmentDetailViewModel {
     private static final ObjectProperty<AdjustmentMaster> adjustment = new SimpleObjectProperty<>();
     private static final StringProperty quantity = new SimpleStringProperty();
     private static final StringProperty adjustmentType = new SimpleStringProperty();
+    private static final AdjustmentRepositoryImpl adjustmentRepository = new AdjustmentRepositoryImpl();
 
     public static long getId() {
         return id.get();
@@ -139,11 +148,11 @@ public class AdjustmentDetailViewModel {
                 });
     }
 
-    public static void saveAdjustmentDetails() throws Exception {
+    public static void saveAdjustmentDetails() {
         // TODO: Save adjustment detail list.
         setProductQuantity();
 
-        Platform.runLater(adjustmentDetailsList::clear);
+        adjustmentDetailsList.clear();
     }
 
     private static void setProductQuantity() {
@@ -221,21 +230,25 @@ public class AdjustmentDetailViewModel {
                 });
     }
 
-    public static void getAllAdjustmentDetails() throws Exception {
-//        Platform.runLater(
-//                () -> {
-//                    adjustmentDetailsList.clear();
-//
-//                    try {
-//                         TODO: Fetch all adjustment details.
-//                         adjustmentDetailsList.addAll(adjustmentDetailDao.queryForAll());
-//                    } catch (Exception e) {
-//                        SpotyLogger.writeToFile(e, AdjustmentDetailViewModel.class);
-//                    }
-//                });
+    public static void getAllAdjustmentDetails() {
+        Type listType = new TypeToken<ArrayList<AdjustmentDetail>>() {
+        }.getType();
+
+        Platform.runLater(
+                () -> {
+                    adjustmentDetailsList.clear();
+
+                    try {
+                        ArrayList<AdjustmentDetail> adjustmentDetailList = new Gson().fromJson(
+                                adjustmentRepository.fetchAllDetail().body(), listType);
+                        adjustmentDetailsList.addAll(adjustmentDetailList);
+                    } catch (Exception e) {
+                        SpotyLogger.writeToFile(e, AdjustmentDetailViewModel.class);
+                    }
+                });
     }
 
-    public static void getAdjustmentDetail(AdjustmentDetail adjustmentDetail) throws Exception {
+    public static void getAdjustmentDetail(AdjustmentDetail adjustmentDetail) {
         Platform.runLater(
                 () -> {
                     setTempId(getAdjustmentDetails().indexOf(adjustmentDetail));
@@ -245,19 +258,39 @@ public class AdjustmentDetailViewModel {
                 });
     }
 
-    public static void updateAdjustmentDetails() throws Exception {
-//        adjustmentDetailsList.forEach(
-//                adjustmentDetail -> {
-//                    try {
-//                         TODO: Update adjustment details.
-//                         adjustmentDetailDao.update(adjustmentDetail);
-//                    } catch (Exception e) {
-//                        SpotyLogger.writeToFile(e, AdjustmentDetailViewModel.class);
-//                    }
-//                });
+    public static void searchItem(String search) throws Exception {
+        var searchModel = new SearchModel();
+        searchModel.setSearch(search);
 
+        Type listType = new TypeToken<ArrayList<AdjustmentDetail>>() {
+        }.getType();
+
+        Platform.runLater(
+                () -> {
+                    adjustmentDetailsList.clear();
+
+                    try {
+                        ArrayList<AdjustmentDetail> adjustmentDetailList = new Gson().fromJson(
+                                adjustmentRepository.searchDetail(searchModel).body(), listType);
+                        adjustmentDetailsList.addAll(adjustmentDetailList);
+                    } catch (Exception e) {
+                        SpotyLogger.writeToFile(e, AdjustmentDetailViewModel.class);
+                    }
+                });
+
+    }
+
+    public static void updateAdjustmentDetails() {
+        // TODO: Add save multiple on API.
+        adjustmentDetailsList.forEach(
+                adjustmentDetail -> {
+                    try {
+                        adjustmentRepository.putDetail(adjustmentDetail);
+                    } catch (Exception e) {
+                        SpotyLogger.writeToFile(e, AdjustmentDetailViewModel.class);
+                    }
+                });
         updateProductQuantity();
-
         getAllAdjustmentDetails();
     }
 
@@ -266,20 +299,13 @@ public class AdjustmentDetailViewModel {
         PENDING_DELETES.add(index);
     }
 
-    public static void deleteAdjustmentDetails(@NotNull LinkedList<Long> indexes) {
-//        indexes.forEach(
-//                index -> {
-//                    try {
-//                         TODO: Delete adjustment details.
-//                         adjustmentDetailDao.deleteById(index);
-//                    } catch (Exception e) {
-//                        SpotyLogger.writeToFile(e, AdjustmentDetailViewModel.class);
-//                    }
-//                });
+    public static void deleteAdjustmentDetails(@NotNull LinkedList<Long> indexes) throws IOException, InterruptedException {
+        ArrayList<FindModel> findModelList = new ArrayList<>();
+        indexes.forEach(index -> findModelList.add(new FindModel(index)));
+        adjustmentRepository.deleteMultipleDetails(findModelList);
     }
 
-    private static AdjustmentTransaction getAdjustmentTransaction(long adjustmentIndex)
-            throws Exception {
+    private static AdjustmentTransaction getAdjustmentTransaction(long adjustmentIndex) {
 //        PreparedQuery<AdjustmentTransaction> preparedQuery =
 //                adjustmentTransactionDao
 //                        .queryBuilder()
@@ -293,8 +319,7 @@ public class AdjustmentDetailViewModel {
         return new AdjustmentTransaction();
     }
 
-    private static void createAdjustmentTransaction(@NotNull AdjustmentDetail adjustmentDetail)
-            throws Exception {
+    private static void createAdjustmentTransaction(@NotNull AdjustmentDetail adjustmentDetail) {
 
         AdjustmentTransaction adjustmentTransaction = new AdjustmentTransaction();
         adjustmentTransaction.setBranch(adjustmentDetail.getAdjustment().getBranch());
@@ -308,8 +333,7 @@ public class AdjustmentDetailViewModel {
         // TODO: Create adjustment transaction.
     }
 
-    private static void updateAdjustmentTransaction(@NotNull AdjustmentDetail adjustmentDetail)
-            throws Exception {
+    private static void updateAdjustmentTransaction(@NotNull AdjustmentDetail adjustmentDetail) {
         AdjustmentTransaction adjustmentTransaction =
                 getAdjustmentTransaction(adjustmentDetail.getId());
         adjustmentTransaction.setBranch(adjustmentDetail.getAdjustment().getBranch());
