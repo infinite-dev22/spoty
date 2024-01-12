@@ -177,7 +177,7 @@ public class AdjustmentMasterViewModel {
         adjustmentMastersList.addAll(adjustmentMasterList);
     }
 
-    public static void getItem(Long index) throws IOException, InterruptedException {
+    public static void getAdjustmentMaster(Long index) throws IOException, InterruptedException {
         var findModel = new FindModel();
         findModel.setId(index);
         var response = adjustmentRepository.fetchMaster(findModel).body();
@@ -192,7 +192,7 @@ public class AdjustmentMasterViewModel {
         getAllAdjustmentMasters();
     }
 
-    public static void searchItem(String search) throws Exception {
+    public static void searchItem(String search) throws IOException, InterruptedException {
         var searchModel = new SearchModel();
         searchModel.setSearch(search);
 
@@ -231,7 +231,7 @@ public class AdjustmentMasterViewModel {
         }
         adjustmentRepository.putMaster(adjustmentMaster);
         AdjustmentDetailViewModel.updateAdjustmentDetails();
-        Platform.runLater(AdjustmentMasterViewModel::resetProperties);
+        resetProperties();
         getAllAdjustmentMasters();
     }
 

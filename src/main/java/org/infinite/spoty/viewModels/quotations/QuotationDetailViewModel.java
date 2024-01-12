@@ -14,6 +14,8 @@
 
 package org.infinite.spoty.viewModels.quotations;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -23,8 +25,16 @@ import org.infinite.spoty.data_source.daos.Product;
 import org.infinite.spoty.data_source.daos.UnitOfMeasure;
 import org.infinite.spoty.data_source.daos.quotations.QuotationDetail;
 import org.infinite.spoty.data_source.daos.quotations.QuotationMaster;
+import org.infinite.spoty.data_source.models.FindModel;
+import org.infinite.spoty.data_source.models.SearchModel;
+import org.infinite.spoty.data_source.repositories.implementations.QuotationsRepositoryImpl;
+import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.viewModels.adjustments.AdjustmentDetailViewModel;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Objects;
 
@@ -44,12 +54,13 @@ public class QuotationDetailViewModel {
     private static final StringProperty quantity = new SimpleStringProperty();
     private static final StringProperty netTax = new SimpleStringProperty();
     private static final StringProperty discount = new SimpleStringProperty();
+    private static final QuotationsRepositoryImpl quotationsRepository = new QuotationsRepositoryImpl();
 
-    public static long getId() {
+    public static Long getId() {
         return id.get();
     }
 
-    public static void setId(long id) {
+    public static void setId(Long id) {
         QuotationDetailViewModel.id.set(id);
     }
 
@@ -146,7 +157,7 @@ public class QuotationDetailViewModel {
     }
 
     public static void resetProperties() {
-        setId(0);
+        setId(0L);
         setTempId(-1);
         setProduct(null);
         setNetTax("");
@@ -155,27 +166,50 @@ public class QuotationDetailViewModel {
     }
 
     public static void addQuotationDetails() {
-//        QuotationDetail quotationDetail =
-//                new QuotationDetail(getProduct(), getNetTax(), getDiscount(), getQuantity());
-//
-//        Platform.runLater(
-//                () -> {
-//                    quotationDetailsList.add(quotationDetail);
-//                    resetProperties();
-//                });
+        var quotationDetail = QuotationDetail.builder()
+//                .price(getPrice())
+                .saleUnit(getSaleUnit())
+                .product(getProduct())
+                .quotation(getQuotation())
+                .netTax(getNetTax())
+                .taxType(getProduct().getTaxType())
+                .discount(getDiscount())
+//                .discountType(getDiscountType())
+//                .total(getTotalAmount())
+                .quantity(getQuantity())
+                .serialNumber(getProduct().getSerialNumber()) //TODO: Remove, not needed.
+                .build();
+
+        quotationDetailsList.add(quotationDetail);
+        resetProperties();
     }
 
-    public static void saveQuotationDetails() throws Exception {
-//        Dao<QuotationDetail, Long> quotationDetailDao =
-//                DaoManager.createDao(connectionSource, QuotationDetail.class);
-//
-//        quotationDetailDao.create(quotationDetailsList);
-//
-//        Platform.runLater(quotationDetailsList::clear);
+    public static void saveQuotationDetails() {
+        quotationDetailsList.forEach(quotationDetail -> {
+            try {
+                quotationsRepository.postDetail(quotationDetail);  // TODO: Add post multiple details.
+            } catch (IOException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        Platform.runLater(quotationDetailsList::clear);
     }
 
-    public static void updateQuotationDetail(long index) {
-        QuotationDetail quotationDetail = quotationDetailsList.get((int) index);
+    public static void searchItem(String search) throws IOException, InterruptedException {
+        var searchModel = new SearchModel();
+        searchModel.setSearch(search);
+
+        Type listType = new TypeToken<ArrayList<QuotationDetail>>() {
+        }.getType();
+        quotationDetailsList.clear();
+        ArrayList<QuotationDetail> adjustmentDetailList = new Gson().fromJson(
+                quotationsRepository.searchDetail(searchModel).body(), listType);
+        quotationDetailsList.addAll(adjustmentDetailList);
+    }
+
+    public static void updateQuotationDetail(Long index) {
+        QuotationDetail quotationDetail = quotationDetailsList.get(Math.toIntExact(index));
         quotationDetail.setProduct(getProduct());
         quotationDetail.setSaleUnit(getSaleUnit());
         quotationDetail.setNetTax(getNetTax());
@@ -183,29 +217,18 @@ public class QuotationDetailViewModel {
         quotationDetail.setQuantity(getQuantity());
         quotationDetail.setId(getId());
         quotationDetail.setQuotation(getQuotation());
-
-        Platform.runLater(
-                () -> {
-                    quotationDetailsList.remove(getTempId());
-                    quotationDetailsList.add(getTempId(), quotationDetail);
-                    resetProperties();
-                });
+        quotationDetailsList.remove(getTempId());
+        quotationDetailsList.add(getTempId(), quotationDetail);
+        resetProperties();
     }
 
-    public static void getAllQuotationDetails() throws Exception {
-//        Dao<QuotationDetail, Long> quotationDetailDao =
-//                DaoManager.createDao(connectionSource, QuotationDetail.class);
-//
-//        Platform.runLater(
-//                () -> {
-//                    quotationDetailsList.clear();
-//
-//                    try {
-//                        quotationDetailsList.addAll(quotationDetailDao.queryForAll());
-//                    } catch (Exception e) {
-//                        SpotyLogger.writeToFile(e, QuotationDetailViewModel.class);
-//                    }
-//                });
+    public static void getAllQuotationDetails() throws IOException, InterruptedException {
+        Type listType = new TypeToken<ArrayList<QuotationDetail>>() {
+        }.getType();
+        quotationDetailsList.clear();
+        ArrayList<QuotationDetail> quotationDetailList = new Gson().fromJson(
+                quotationsRepository.fetchAllDetail().body(), listType);
+        quotationDetailsList.addAll(quotationDetailList);
     }
 
     public static void getQuotationDetail(QuotationDetail quotationDetail) {
@@ -222,39 +245,27 @@ public class QuotationDetailViewModel {
                 });
     }
 
-    public static void updateQuotationDetails() throws Exception {
-//        Dao<QuotationDetail, Long> quotationDetailDao =
-//                DaoManager.createDao(connectionSource, QuotationDetail.class);
-//
-//        quotationDetailsList.forEach(
-//                quotationDetail -> {
-//                    try {
-//                        quotationDetailDao.update(quotationDetail);
-//                    } catch (Exception e) {
-//                        SpotyLogger.writeToFile(e, QuotationDetailViewModel.class);
-//                    }
-//                });
-
+    public static void updateQuotationDetails() throws IOException, InterruptedException {
+        // TODO: Add save multiple on API.
+        quotationDetailsList.forEach(
+                adjustmentDetail -> {
+                    try {
+                        quotationsRepository.putDetail(adjustmentDetail);
+                    } catch (Exception e) {
+                        SpotyLogger.writeToFile(e, AdjustmentDetailViewModel.class);
+                    }
+                });
         getAllQuotationDetails();
     }
 
-    public static void removeQuotationDetail(long index, int tempIndex) {
+    public static void removeQuotationDetail(Long index, int tempIndex) {
         Platform.runLater(() -> quotationDetailsList.remove(tempIndex));
         PENDING_DELETES.add(index);
     }
 
-    public static void deleteQuotationDetails(@NotNull LinkedList<Long> indexes) {
-//        indexes.forEach(
-//                index -> {
-//                    try {
-//                        Dao<QuotationDetail, Long> quotationDetailDao =
-//                                DaoManager.createDao(connectionSource, QuotationDetail.class);
-//
-//                        quotationDetailDao.deleteById(index);
-//                    } catch (Exception e) {
-//                        SpotyLogger.writeToFile(e, QuotationDetailViewModel.class);
-//                    }
-//                });
+    public static void deleteQuotationDetails(@NotNull LinkedList<Long> indexes) throws IOException, InterruptedException {
+        LinkedList<FindModel> findModelList = new LinkedList<>();
+        indexes.forEach(index -> findModelList.add(new FindModel(index)));
+        quotationsRepository.deleteMultipleDetails(findModelList);
     }
-
 }

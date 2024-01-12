@@ -51,7 +51,10 @@ import org.infinite.spoty.data_source.daos.ProductCategory;
 import org.infinite.spoty.data_source.daos.sales.SaleDetail;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.utils.SpotyThreader;
-import org.infinite.spoty.viewModels.*;
+import org.infinite.spoty.viewModels.BranchViewModel;
+import org.infinite.spoty.viewModels.CustomerViewModel;
+import org.infinite.spoty.viewModels.ProductCategoryViewModel;
+import org.infinite.spoty.viewModels.ProductViewModel;
 import org.infinite.spoty.viewModels.sales.SaleDetailViewModel;
 import org.infinite.spoty.viewModels.sales.SaleMasterViewModel;
 import org.infinite.spoty.views.sales.pos.components.ProductCard;
@@ -200,7 +203,7 @@ public class PointOfSaleController implements Initializable {
                                 SaleDetailViewModel.setSubTotalPrice(calculateSubTotal(productCard.getProduct()));
 
                                 SaleDetailViewModel.updateSaleDetail(
-                                        SaleDetailViewModel.getSaleDetails().indexOf(saleDetail));
+                                        (long) SaleDetailViewModel.getSaleDetails().indexOf(saleDetail));
 
                             } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
@@ -209,7 +212,7 @@ public class PointOfSaleController implements Initializable {
                     } else {
                         SaleDetailViewModel.setProduct(productCard.getProduct());
                         SaleDetailViewModel.setPrice(productCard.getProduct().getPrice());
-                        SaleDetailViewModel.setQuantity(1);
+                        SaleDetailViewModel.setQuantity(1L);
                         SaleDetailViewModel.setSubTotalPrice(calculateSubTotal(productCard.getProduct()));
                         SaleDetailViewModel.addSaleDetail();
                     }

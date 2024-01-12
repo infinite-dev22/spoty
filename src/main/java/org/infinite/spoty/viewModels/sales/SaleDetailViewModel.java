@@ -14,6 +14,8 @@
 
 package org.infinite.spoty.viewModels.sales;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -22,10 +24,16 @@ import lombok.Getter;
 import org.infinite.spoty.data_source.daos.Product;
 import org.infinite.spoty.data_source.daos.sales.SaleDetail;
 import org.infinite.spoty.data_source.daos.sales.SaleTransaction;
+import org.infinite.spoty.data_source.models.FindModel;
+import org.infinite.spoty.data_source.models.SearchModel;
+import org.infinite.spoty.data_source.repositories.implementations.SalesRepositoryImpl;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.viewModels.ProductViewModel;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Objects;
 
@@ -33,10 +41,10 @@ import static org.infinite.spoty.values.SharedResources.*;
 
 public class SaleDetailViewModel {
     @Getter
-    public static final ObservableList<SaleDetail> saleDetailList =
+    public static final ObservableList<SaleDetail> saleDetailsList =
             FXCollections.observableArrayList();
     private static final ListProperty<SaleDetail> saleDetails =
-            new SimpleListProperty<>(saleDetailList);
+            new SimpleListProperty<>(saleDetailsList);
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final StringProperty ref = new SimpleStringProperty();
     private static final ObjectProperty<Product> product = new SimpleObjectProperty<>();
@@ -48,12 +56,13 @@ public class SaleDetailViewModel {
     private static final StringProperty discountType = new SimpleStringProperty();
     private static final DoubleProperty price = new SimpleDoubleProperty();
     private static final StringProperty quantity = new SimpleStringProperty();
+    private static final SalesRepositoryImpl salesRepository = new SalesRepositoryImpl();
 
-    public static long getId() {
+    public static Long getId() {
         return id.get();
     }
 
-    public static void setId(long id) {
+    public static void setId(Long id) {
         SaleDetailViewModel.id.set(id);
     }
 
@@ -177,7 +186,7 @@ public class SaleDetailViewModel {
         return Integer.parseInt(quantity.get());
     }
 
-    public static void setQuantity(long quantity) {
+    public static void setQuantity(Long quantity) {
         SaleDetailViewModel.quantity.set((quantity < 1) ? "" : String.valueOf(quantity));
     }
 
@@ -198,51 +207,54 @@ public class SaleDetailViewModel {
     }
 
     public static void resetProperties() {
-        setId(0);
+        setId(0L);
         setTempId(-1);
         setProduct(null);
         setSerial("");
         setNetTax("");
         setTaxType("");
         setDiscount("");
-        setQuantity(0);
+        setQuantity(0L);
         setDiscountType("");
         setPrice(0);
         setSubTotalPrice(0);
     }
 
     public static void addSaleDetail() {
-//        SaleDetail saleDetail =
-//                new SaleDetail(
-//                        getProduct(),
-//                        getQuantity(),
-//                        getSerial(),
-//                        getNetTax(),
-//                        getTaxType(),
-//                        getDiscount(),
-//                        getDiscountType(),
-//                        getPrice(),
-//                        getSubTotalPrice());
-//
-//        Platform.runLater(
-//                () -> {
-//                    saleDetailList.add(saleDetail);
-//                    resetProperties();
-//                });
+        var saleDetail =
+                SaleDetail.builder()
+                        .product(getProduct())
+                        .quantity(getQuantity())
+                        .serialNumber(getSerial())
+                        .netTax(getNetTax())
+                        .taxType(getTaxType())
+                        .discount(getDiscount())
+                        .discountType(getDiscountType())
+                        .price(getPrice())
+                        .subTotalPrice(getSubTotalPrice())
+                        .build();
+
+        saleDetailsList.add(saleDetail);
+        resetProperties();
     }
 
-    public static void saveSaleDetails() throws Exception {
-//        Dao<SaleDetail, Long> saleDetailDao = DaoManager.createDao(connectionSource, SaleDetail.class);
-//
-//        saleDetailDao.create(saleDetailList);
+    public static void saveSaleDetails() {
+        saleDetailsList.forEach(saleDetail -> {
+            try {
+                salesRepository.postDetail(saleDetail);
+            } catch (IOException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        ;
 
         setProductQuantity();
 
-        Platform.runLater(saleDetailList::clear);
+        Platform.runLater(saleDetailsList::clear);
     }
 
     private static void setProductQuantity() {
-        saleDetailList.forEach(
+        saleDetailsList.forEach(
                 saleDetail -> {
                     long productDetailQuantity =
                             saleDetail.getProduct().getQuantity() - saleDetail.getQuantity();
@@ -259,13 +271,13 @@ public class SaleDetailViewModel {
     }
 
     private static void updateProductQuantity() {
-        saleDetailList.forEach(
+        saleDetailsList.forEach(
                 saleDetail -> {
                     try {
                         SaleTransaction saleTransaction = getSaleTransaction(saleDetail.getId());
 
-                        long adjustQuantity = saleTransaction.getSaleQuantity();
-                        long currentProductQuantity = saleDetail.getProduct().getQuantity();
+                        Long adjustQuantity = saleTransaction.getSaleQuantity();
+                        Long currentProductQuantity = saleDetail.getProduct().getQuantity();
                         long productQuantity =
                                 (currentProductQuantity + adjustQuantity) - saleDetail.getQuantity();
 
@@ -280,8 +292,8 @@ public class SaleDetailViewModel {
                 });
     }
 
-    public static void updateSaleDetail(long index) throws Exception {
-        SaleDetail saleDetail = getSaleDetails().get((int) index);
+    public static void updateSaleDetail(Long index) {
+        var saleDetail = getSaleDetails().get(Math.toIntExact(index));
 
         saleDetail.setProduct(getProduct());
         saleDetail.setQuantity(getQuantity());
@@ -302,7 +314,7 @@ public class SaleDetailViewModel {
                 });
     }
 
-    public static void getSaleDetail(SaleDetail saleDetail) throws Exception {
+    public static void getSaleDetail(SaleDetail saleDetail) {
         Platform.runLater(
                 () -> {
                     setTempId(getSaleDetails().indexOf(saleDetail));
@@ -313,83 +325,101 @@ public class SaleDetailViewModel {
                     setTaxType(saleDetail.getTaxType());
                     setDiscount(String.valueOf(saleDetail.getDiscount()));
                     setDiscountType(saleDetail.getDiscountType());
-                    setQuantity(saleDetail.getQuantity());
+                    setQuantity((long) saleDetail.getQuantity());
                     setProduct(saleDetail.getProduct());
                     setPrice(saleDetail.getPrice());
                     setSubTotalPrice(saleDetail.getSubTotalPrice());
                 });
     }
 
-    public static void updateItem(long index) throws Exception {
-//        Dao<SaleDetail, Long> saleDetailDao = DaoManager.createDao(connectionSource, SaleDetail.class);
-//
-//        SaleDetail saleDetail = saleDetailDao.queryForId(index);
-//
-//        saleDetail.setProduct(getProduct());
-//        saleDetail.setQuantity(getQuantity());
-//        saleDetail.setSerialNumber(getSerial());
-//        saleDetail.setNetTax(getNetTax());
-//        saleDetail.setTaxType(getTaxType());
-//        saleDetail.setDiscount(getDiscount());
-//        saleDetail.setDiscountType(getDiscountType());
-//
-//        saleDetailDao.update(saleDetail);
+    public static void updateItem() throws IOException, InterruptedException {
+        var saleDetail =
+                SaleDetail.builder()
+                        .id(getId())
+                        .product(getProduct())
+                        .quantity(getQuantity())
+                        .serialNumber(getSerial())
+                        .netTax(getNetTax())
+                        .taxType(getTaxType())
+                        .discount(getDiscount())
+                        .discountType(getDiscountType())
+                        .price(getPrice())
+                        .subTotalPrice(getSubTotalPrice())
+                        .build();
 
+        salesRepository.putDetail(saleDetail);
         getAllSaleDetails();
     }
 
-    public static void updateSaleDetails() throws Exception {
-//        Dao<SaleDetail, Long> saleDetailDao = DaoManager.createDao(connectionSource, SaleDetail.class);
-//
-//        saleDetailList.forEach(
-//                saleDetail -> {
-//                    try {
-//                        saleDetailDao.update(saleDetail);
-//                    } catch (Exception e) {
-//                        SpotyLogger.writeToFile(e, SaleDetailViewModel.class);
-//                    }
-//                });
+    public static void updateSaleDetails() throws IOException, InterruptedException {
+        var saleDetail =
+                SaleDetail.builder()
+                        .id(getId())
+                        .product(getProduct())
+                        .quantity(getQuantity())
+                        .serialNumber(getSerial())
+                        .netTax(getNetTax())
+                        .taxType(getTaxType())
+                        .discount(getDiscount())
+                        .discountType(getDiscountType())
+                        .price(getPrice())
+                        .subTotalPrice(getSubTotalPrice())
+                        .build();
 
+        salesRepository.putDetail(saleDetail);
         updateProductQuantity();
-
         getAllSaleDetails();
     }
 
-    public static void getAllSaleDetails() throws Exception {
-//        Dao<SaleDetail, Long> saleDetailDao = DaoManager.createDao(connectionSource, SaleDetail.class);
-//
-//        Platform.runLater(
-//                () -> {
-//                    saleDetailList.clear();
-//
-//                    try {
-//                        saleDetailList.addAll(saleDetailDao.queryForAll());
-//                    } catch (Exception e) {
-//                        SpotyLogger.writeToFile(e, SaleDetailViewModel.class);
-//                    }
-//                });
+    public static void getAllSaleDetails() {
+        Type listType = new TypeToken<ArrayList<SaleDetail>>() {
+        }.getType();
+
+        Platform.runLater(
+                () -> {
+                    saleDetailsList.clear();
+
+                    try {
+                        ArrayList<SaleDetail> saleDetailList = new Gson().fromJson(
+                                salesRepository.fetchAllDetail().body(), listType);
+                        saleDetailsList.addAll(saleDetailList);
+                    } catch (Exception e) {
+                        SpotyLogger.writeToFile(e, SaleDetailViewModel.class);
+                    }
+                });
     }
 
-    public static void removeSaleDetail(long index, int tempIndex) {
-        Platform.runLater(() -> saleDetailList.remove(tempIndex));
+    public static void searchItem(String search) {
+        var searchModel = SearchModel.builder().search(search).build();
+        Type listType = new TypeToken<ArrayList<SaleDetail>>() {
+        }.getType();
+
+        Platform.runLater(
+                () -> {
+                    saleDetailsList.clear();
+
+                    try {
+                        ArrayList<SaleDetail> saleDetailList = new Gson().fromJson(
+                                salesRepository.searchDetail(searchModel).body(), listType);
+                        saleDetailsList.addAll(saleDetailList);
+                    } catch (Exception e) {
+                        SpotyLogger.writeToFile(e, SaleDetailViewModel.class);
+                    }
+                });
+    }
+
+    public static void removeSaleDetail(Long index, int tempIndex) {
+        Platform.runLater(() -> saleDetailsList.remove(tempIndex));
         PENDING_DELETES.add(index);
     }
 
-    public static void deleteSaleDetails(@NotNull LinkedList<Long> indexes) {
-//        indexes.forEach(
-//                index -> {
-//                    try {
-//                        Dao<SaleDetail, Long> saleDetailDao =
-//                                DaoManager.createDao(connectionSource, SaleDetail.class);
-//
-//                        saleDetailDao.deleteById(index);
-//                    } catch (Exception e) {
-//                        SpotyLogger.writeToFile(e, SaleDetailViewModel.class);
-//                    }
-//                });
+    public static void deleteSaleDetails(@NotNull LinkedList<Long> indexes) throws IOException, InterruptedException {
+        LinkedList<FindModel> findModelList = new LinkedList<>();
+        indexes.forEach(index -> findModelList.add(new FindModel(index)));
+        salesRepository.deleteMultipleDetails(findModelList);
     }
 
-    private static SaleTransaction getSaleTransaction(long saleIndex) throws Exception {
+    private static SaleTransaction getSaleTransaction(Long saleIndex) {
 //        Dao<SaleTransaction, Long> saleTransactionDao =
 //                DaoManager.createDao(connectionSource, SaleTransaction.class);
 //
@@ -404,8 +434,7 @@ public class SaleDetailViewModel {
         return new SaleTransaction();
     }
 
-    private static void createSaleTransaction(@NotNull SaleDetail saleDetail)
-            throws Exception {
+    private static void createSaleTransaction(@NotNull SaleDetail saleDetail) {
 //        Dao<SaleTransaction, Long> saleTransactionDao =
 //                DaoManager.createDao(connectionSource, SaleTransaction.class);
 //
@@ -419,8 +448,7 @@ public class SaleDetailViewModel {
 //        saleTransactionDao.create(saleTransaction);
     }
 
-    private static void updateSaleTransaction(@NotNull SaleDetail saleDetail)
-            throws Exception {
+    private static void updateSaleTransaction(@NotNull SaleDetail saleDetail) {
 //        Dao<SaleTransaction, Long> saleTransactionDao =
 //                DaoManager.createDao(connectionSource, SaleTransaction.class);
 //

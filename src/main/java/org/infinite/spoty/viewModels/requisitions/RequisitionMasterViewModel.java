@@ -14,6 +14,8 @@
 
 package org.infinite.spoty.viewModels.requisitions;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -22,21 +24,27 @@ import lombok.Getter;
 import org.infinite.spoty.data_source.daos.Branch;
 import org.infinite.spoty.data_source.daos.Supplier;
 import org.infinite.spoty.data_source.daos.requisitions.RequisitionMaster;
+import org.infinite.spoty.data_source.models.FindModel;
+import org.infinite.spoty.data_source.models.SearchModel;
+import org.infinite.spoty.data_source.repositories.implementations.RequisitionsRepositoryImpl;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
 
 public class RequisitionMasterViewModel {
     @Getter
-    public static final ObservableList<RequisitionMaster> requisitionMasterList =
+    public static final ObservableList<RequisitionMaster> requisitionMastersList =
             FXCollections.observableArrayList();
     private static final ListProperty<RequisitionMaster> requisitions =
-            new SimpleListProperty<>(requisitionMasterList);
+            new SimpleListProperty<>(requisitionMastersList);
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final StringProperty date = new SimpleStringProperty("");
     private static final ObjectProperty<Supplier> supplier = new SimpleObjectProperty<>(null);
@@ -48,12 +56,13 @@ public class RequisitionMasterViewModel {
     private static final StringProperty note = new SimpleStringProperty("");
     private static final StringProperty status = new SimpleStringProperty("");
     private static final StringProperty totalCost = new SimpleStringProperty("");
+    private static final RequisitionsRepositoryImpl requisitionsRepository = new RequisitionsRepositoryImpl();
 
-    public static long getId() {
+    public static Long getId() {
         return id.get();
     }
 
-    public static void setId(long id) {
+    public static void setId(Long id) {
         RequisitionMasterViewModel.id.set(id);
     }
 
@@ -206,7 +215,7 @@ public class RequisitionMasterViewModel {
     public static void resetProperties() {
         Platform.runLater(
                 () -> {
-                    setId(0);
+                    setId(0L);
                     setDate("");
                     setSupplier(null);
                     setBranch(null);
@@ -221,111 +230,117 @@ public class RequisitionMasterViewModel {
                 });
     }
 
-    public static void saveRequisitionMaster() throws Exception {
-//        Dao<RequisitionMaster, Long> requisitionMasterDao =
-//                DaoManager.createDao(connectionSource, RequisitionMaster.class);
-//
-//        RequisitionMaster requisitionMaster =
-//                new RequisitionMaster(
-//                        getDate(),
-//                        getSupplier(),
-//                        getBranch(),
-//                        getShipVia(),
-//                        getShipMethod(),
-//                        getShippingTerms(),
-//                        getDeliveryDate(),
-//                        getNote(),
-//                        getStatus(),
-//                        getTotalCost());
-//
-//        if (!RequisitionDetailViewModel.requisitionDetailList.isEmpty()) {
-//            RequisitionDetailViewModel.requisitionDetailList.forEach(
-//                    requisitionDetail -> requisitionDetail.setRequisition(requisitionMaster));
-//
-//            requisitionMaster.setRequisitionDetails(
-//                    RequisitionDetailViewModel.getRequisitionDetailList());
-//        }
-//
-//        requisitionMasterDao.create(requisitionMaster);
-//        RequisitionDetailViewModel.saveRequisitionDetails();
+    public static void saveRequisitionMaster() throws IOException, InterruptedException {
+        var requisitionMaster = RequisitionMaster.builder()
+                .date(getDate())
+                .supplier(getSupplier())
+                .branch(getBranch())
+                .shipVia(getShipVia())
+                .shipMethod(getShipMethod())
+                .shippingTerms(getShippingTerms())
+                .deliveryDate(getDeliveryDate())
+                .notes(getNote())
+                .status(getStatus())
+                .totalCost(getTotalCost())
+                .build();
+
+        if (!RequisitionDetailViewModel.requisitionDetailsList.isEmpty()) {
+            RequisitionDetailViewModel.requisitionDetailsList.forEach(
+                    requisitionDetail -> requisitionDetail.setRequisition(requisitionMaster));
+
+            requisitionMaster.setRequisitionDetails(
+                    RequisitionDetailViewModel.getRequisitionDetailsList());
+        }
+
+        requisitionsRepository.postMaster(requisitionMaster);
+        RequisitionDetailViewModel.saveRequisitionDetails();
+        resetProperties();
+        getRequisitionMasters();
+    }
+
+    public static void getRequisitionMasters() throws IOException, InterruptedException {
+        Type listType = new TypeToken<ArrayList<RequisitionMaster>>() {
+        }.getType();
+        requisitionMastersList.clear();
+        ArrayList<RequisitionMaster> requisitionMasterList = new Gson().fromJson(
+                requisitionsRepository.fetchAllMaster().body(), listType);
+        requisitionMastersList.addAll(requisitionMasterList);
+    }
+
+    public static void getItem(Long index) throws IOException, InterruptedException {
+        var findModel = new FindModel();
+        findModel.setId(index);
+        var response = requisitionsRepository.fetchMaster(findModel).body();
+        var requisitionMaster = new Gson().fromJson(response, RequisitionMaster.class);
+
+        setId(requisitionMaster.getId());
+        setSupplier(requisitionMaster.getSupplier());
+        setBranch(requisitionMaster.getBranch());
+        setShipVia(requisitionMaster.getShipVia());
+        setShipMethod(requisitionMaster.getShipMethod());
+        setShippingTerms(requisitionMaster.getShippingTerms());
+        setNote(requisitionMaster.getNotes());
+        setStatus(requisitionMaster.getStatus());
+        setTotalCost(String.valueOf(requisitionMaster.getTotalCost()));
+        setDate(requisitionMaster.getLocaleDate());
+        RequisitionDetailViewModel.requisitionDetailsList.clear();
+        RequisitionDetailViewModel.requisitionDetailsList.addAll(
+                requisitionMaster.getRequisitionDetails());
+        getRequisitionMasters();
+    }
+
+    public static void searchItem(String search) throws Exception {
+        var searchModel = new SearchModel();
+        searchModel.setSearch(search);
+
+        Type listType = new TypeToken<ArrayList<RequisitionMaster>>() {
+        }.getType();
+
+        Platform.runLater(
+                () -> {
+                    requisitionMastersList.clear();
+
+                    try {
+                        ArrayList<RequisitionMaster> requisitionMasterList = new Gson().fromJson(
+                                requisitionsRepository.searchMaster(searchModel).body(), listType);
+                        requisitionMastersList.addAll(requisitionMasterList);
+                    } catch (Exception e) {
+                        SpotyLogger.writeToFile(e, RequisitionMasterViewModel.class);
+                    }
+                });
+    }
+
+    public static void updateItem(Long index) throws IOException, InterruptedException {
+        var requisitionMaster = RequisitionMaster.builder()
+                .id(index)
+                .date(getDate())
+                .supplier(getSupplier())
+                .branch(getBranch())
+                .shipVia(getShipVia())
+                .shipMethod(getShipMethod())
+                .shippingTerms(getShippingTerms())
+                .deliveryDate(getDeliveryDate())
+                .notes(getNote())
+                .status(getStatus())
+                .totalCost(getTotalCost())
+                .build();
+
+        RequisitionDetailViewModel.deleteRequisitionDetails(PENDING_DELETES);
+        requisitionMaster.setRequisitionDetails(
+                RequisitionDetailViewModel.getRequisitionDetailsList());
+
+        requisitionsRepository.putMaster(requisitionMaster);
+        RequisitionDetailViewModel.updateRequisitionDetails();
 
         resetProperties();
         getRequisitionMasters();
     }
 
-    public static void getRequisitionMasters() throws Exception {
-//        Dao<RequisitionMaster, Long> requisitionMasterDao =
-//                DaoManager.createDao(connectionSource, RequisitionMaster.class);
-//
-//        Platform.runLater(
-//                () -> {
-//                    requisitionMasterList.clear();
-//
-//                    try {
-//                        requisitionMasterList.addAll(requisitionMasterDao.queryForAll());
-//                    } catch (Exception e) {
-//                        SpotyLogger.writeToFile(e, RequisitionMasterViewModel.class);
-//                    }
-//                });
-    }
+    public static void deleteItem(Long index) throws IOException, InterruptedException {
+        var findModel = new FindModel();
 
-    public static void getItem(long index) throws Exception {
-//        Dao<RequisitionMaster, Long> requisitionMasterDao =
-//                DaoManager.createDao(connectionSource, RequisitionMaster.class);
-//
-//        RequisitionMaster requisitionMaster = requisitionMasterDao.queryForId(index);
-//
-//        setId(requisitionMaster.getId());
-//        setSupplier(requisitionMaster.getSupplier());
-//        setBranch(requisitionMaster.getBranch());
-//        setShipVia(requisitionMaster.getShipVia());
-//        setShipMethod(requisitionMaster.getShipMethod());
-//        setShippingTerms(requisitionMaster.getShippingTerms());
-//        setNote(requisitionMaster.getNotes());
-//        setStatus(requisitionMaster.getStatus());
-//        setTotalCost(String.valueOf(requisitionMaster.getTotalCost()));
-//        setDate(requisitionMaster.getLocaleDate());
-//
-//        RequisitionDetailViewModel.requisitionDetailList.clear();
-//        RequisitionDetailViewModel.requisitionDetailList.addAll(
-//                requisitionMaster.getRequisitionDetails());
-
-        getRequisitionMasters();
-    }
-
-    public static void updateItem(long index) throws Exception {
-//        Dao<RequisitionMaster, Long> requisitionMasterDao =
-//                DaoManager.createDao(connectionSource, RequisitionMaster.class);
-//
-//        RequisitionMaster requisitionMaster = requisitionMasterDao.queryForId(index);
-//        requisitionMaster.setDate(getDate());
-//        requisitionMaster.setSupplier(getSupplier());
-//        requisitionMaster.setBranch(getBranch());
-//        requisitionMaster.setShipVia(getShipVia());
-//        requisitionMaster.setShipMethod(getShipMethod());
-//        requisitionMaster.setShippingTerms(getShippingTerms());
-//        requisitionMaster.setDeliveryDate(getDeliveryDate());
-//        requisitionMaster.setNotes(getNote());
-//        requisitionMaster.setStatus(getStatus());
-//        requisitionMaster.setTotalCost(getTotalCost());
-//
-//        RequisitionDetailViewModel.deleteRequisitionDetails(PENDING_DELETES);
-//        requisitionMaster.setRequisitionDetails(
-//                RequisitionDetailViewModel.getRequisitionDetailList());
-//
-//        requisitionMasterDao.update(requisitionMaster);
-//        RequisitionDetailViewModel.updateRequisitionDetails();
-
-        resetProperties();
-        getRequisitionMasters();
-    }
-
-    public static void deleteItem(long index) throws Exception {
-//        Dao<RequisitionMaster, Long> requisitionMasterDao =
-//                DaoManager.createDao(connectionSource, RequisitionMaster.class);
-//
-//        requisitionMasterDao.deleteById(index);
-
+        findModel.setId(index);
+        requisitionsRepository.deleteMaster(findModel);
         getRequisitionMasters();
     }
 }

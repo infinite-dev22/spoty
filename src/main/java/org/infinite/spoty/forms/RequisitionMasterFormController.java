@@ -267,7 +267,7 @@ public class RequisitionMasterFormController implements Initializable {
                 event -> {
                     RequisitionDetailViewModel.removeRequisitionDetail(
                             obj.getData().getId(),
-                            RequisitionDetailViewModel.requisitionDetailList.indexOf(obj.getData()));
+                            RequisitionDetailViewModel.requisitionDetailsList.indexOf(obj.getData()));
                     event.consume();
                 });
         // Edit
@@ -277,7 +277,7 @@ public class RequisitionMasterFormController implements Initializable {
                         try {
                             RequisitionDetailViewModel.getItem(
                                     obj.getData().getId(),
-                                    RequisitionDetailViewModel.requisitionDetailList.indexOf(obj.getData()));
+                                    RequisitionDetailViewModel.requisitionDetailsList.indexOf(obj.getData()));
                         } catch (Exception e) {
                             SpotyLogger.writeToFile(e, this.getClass());
                         }
@@ -321,7 +321,7 @@ public class RequisitionMasterFormController implements Initializable {
         SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
 
         if (!requisitionDetailTable.isDisabled()
-                && RequisitionDetailViewModel.requisitionDetailList.isEmpty()) {
+                && RequisitionDetailViewModel.requisitionDetailsList.isEmpty()) {
             SimpleNotification notification =
                     new SimpleNotification.NotificationBuilder("Table can't be Empty")
                             .duration(NotificationDuration.SHORT)

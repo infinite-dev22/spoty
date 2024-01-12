@@ -14,6 +14,8 @@
 
 package org.infinite.spoty.viewModels.transfers;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -21,20 +23,26 @@ import javafx.collections.ObservableList;
 import lombok.Getter;
 import org.infinite.spoty.data_source.daos.Branch;
 import org.infinite.spoty.data_source.daos.transfers.TransferMaster;
+import org.infinite.spoty.data_source.models.FindModel;
+import org.infinite.spoty.data_source.models.SearchModel;
+import org.infinite.spoty.data_source.repositories.implementations.TransfersRepositoryImpl;
 import org.infinite.spoty.utils.SpotyLogger;
 
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
 
 public class TransferMasterViewModel {
     @Getter
-    public static final ObservableList<TransferMaster> transferMasterList =
+    public static final ObservableList<TransferMaster> transferMastersList =
             FXCollections.observableArrayList();
     private static final ListProperty<TransferMaster> transfers =
-            new SimpleListProperty<>(transferMasterList);
+            new SimpleListProperty<>(transferMastersList);
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final StringProperty date = new SimpleStringProperty("");
     private static final ObjectProperty<Branch> fromBranch = new SimpleObjectProperty<>(null);
@@ -42,12 +50,13 @@ public class TransferMasterViewModel {
     private static final StringProperty totalCost = new SimpleStringProperty("");
     private static final StringProperty status = new SimpleStringProperty("");
     private static final StringProperty note = new SimpleStringProperty("");
+    private static final TransfersRepositoryImpl transfersRepository = new TransfersRepositoryImpl();
 
-    public static long getId() {
+    public static Long getId() {
         return id.get();
     }
 
-    public static void setId(long id) {
+    public static void setId(Long id) {
         TransferMasterViewModel.id.set(id);
     }
 
@@ -147,7 +156,7 @@ public class TransferMasterViewModel {
     public static void resetProperties() {
         Platform.runLater(
                 () -> {
-                    setId(0);
+                    setId(0L);
                     setDate("");
                     setFromBranch(null);
                     setToBranch(null);
@@ -158,100 +167,95 @@ public class TransferMasterViewModel {
                 });
     }
 
-    public static void saveTransferMaster() throws Exception {
-//        Dao<TransferMaster, Long> transferMasterDao =
-//                DaoManager.createDao(connectionSource, TransferMaster.class);
-//
-//        TransferMaster transferMaster =
-//                new TransferMaster(
-//                        getDate(), getFromBranch(), getToBranch(), getTotalCost(), getStatus(), getNote());
-//
-//        if (!TransferDetailViewModel.transferDetailsList.isEmpty()) {
-//            TransferDetailViewModel.transferDetailsList.forEach(
-//                    transferDetail -> transferDetail.setTransfer(transferMaster));
-//
-//            transferMaster.setTransferDetails(TransferDetailViewModel.getTransferDetails());
-//        }
-//
-//        transferMasterDao.create(transferMaster);
+    public static void saveTransferMaster() throws IOException, InterruptedException {
+        var transferMaster = TransferMaster.builder()
+                .date(getDate())
+                .fromBranch(getFromBranch())
+                .toBranch(getToBranch())
+                .total(getTotalCost())
+                .status(getStatus())
+                .notes(getNote())
+                .build();
+        if (!TransferDetailViewModel.transferDetailsList.isEmpty()) {
+            TransferDetailViewModel.transferDetailsList.forEach(
+                    transferDetail -> transferDetail.setTransfer(transferMaster));
+            transferMaster.setTransferDetails(TransferDetailViewModel.getTransferDetails());
+        }
+        transfersRepository.postMaster(transferMaster);
         TransferDetailViewModel.saveTransferDetails();
+        TransferMasterViewModel.resetProperties();
+        getTransferMasters();
+    }
 
-        Platform.runLater(TransferMasterViewModel::resetProperties);
+    public static void getTransferMasters() throws IOException, InterruptedException {
+        Type listType = new TypeToken<ArrayList<TransferMaster>>() {
+        }.getType();
+        transferMastersList.clear();
+        ArrayList<TransferMaster> transferMasterList = new Gson().fromJson(
+                transfersRepository.fetchAllMaster().body(), listType);
+        transferMastersList.addAll(transferMasterList);
+    }
+
+    public static void getItem(Long index) throws IOException, InterruptedException {
+        var findModel = new FindModel();
+        findModel.setId(index);
+        var response = transfersRepository.fetchMaster(findModel).body();
+        var transferMaster = new Gson().fromJson(response, TransferMaster.class);
+
+        setId(transferMaster.getId());
+        setDate(transferMaster.getLocaleDate());
+        setFromBranch(transferMaster.getFromBranch());
+        setToBranch(transferMaster.getToBranch());
+        setTotalCost(String.valueOf(transferMaster.getTotal()));
+        setNote(transferMaster.getNotes());
+        setStatus(transferMaster.getStatus());
+
+        TransferDetailViewModel.transferDetailsList.clear();
+        TransferDetailViewModel.transferDetailsList.addAll(transferMaster.getTransferDetails());
 
         getTransferMasters();
     }
 
-    public static void getTransferMasters() throws Exception {
-//        SQLiteConnection connection = SQLiteConnection.getInstance();
-//        ConnectionSource connectionSource = connection.getConnection();
-//
-//        Dao<TransferMaster, Long> transferMasterDao =
-//                DaoManager.createDao(connectionSource, TransferMaster.class);
-//
-//        Platform.runLater(
-//                () -> {
-//                    transferMasterList.clear();
-//
-//                    try {
-//                        transferMasterList.addAll(transferMasterDao.queryForAll());
-//                    } catch (Exception e) {
-//                        SpotyLogger.writeToFile(e, TransferMasterViewModel.class);
-//                    }
-//                });
+    public static void searchItem(String search) throws IOException, InterruptedException {
+        var searchModel = new SearchModel();
+        searchModel.setSearch(search);
+
+        Type listType = new TypeToken<ArrayList<TransferMaster>>() {
+        }.getType();
+
+        transferMastersList.clear();
+        ArrayList<TransferMaster> transferMasterList = new Gson().fromJson(
+                transfersRepository.searchMaster(searchModel).body(), listType);
+        transferMastersList.addAll(transferMasterList);
     }
 
-    public static void getItem(long transferMasterID) throws Exception {
-//        Dao<TransferMaster, Long> transferMasterDao =
-//                DaoManager.createDao(connectionSource, TransferMaster.class);
-//
-//        TransferMaster transferMaster = transferMasterDao.queryForId(transferMasterID);
-//
-//        Platform.runLater(
-//                () -> {
-//                    setId(transferMaster.getId());
-//                    setDate(transferMaster.getLocaleDate());
-//                    setFromBranch(transferMaster.getFromBranch());
-//                    setToBranch(transferMaster.getToBranch());
-//                    setTotalCost(String.valueOf(transferMaster.getTotal()));
-//                    setNote(transferMaster.getNotes());
-//                    setStatus(transferMaster.getStatus());
-//
-//                    TransferDetailViewModel.transferDetailsList.clear();
-//                    TransferDetailViewModel.transferDetailsList.addAll(transferMaster.getTransferDetails());
-//                });
+    public static void updateItem() throws IOException, InterruptedException {
+        var transferMaster = TransferMaster.builder()
+                .id(getId())
+                .date(getDate())
+                .fromBranch(getFromBranch())
+                .toBranch(getToBranch())
+                .total(getTotalCost())
+                .status(getStatus())
+                .notes(getNote())
+                .build();
 
-        getTransferMasters();
-    }
+        TransferDetailViewModel.deleteTransferDetails(PENDING_DELETES);
+        transferMaster.setTransferDetails(TransferDetailViewModel.getTransferDetails());
 
-    public static void updateItem(long transferMasterID) throws Exception {
-//        Dao<TransferMaster, Long> transferMasterDao =
-//                DaoManager.createDao(connectionSource, TransferMaster.class);
-//
-//        TransferMaster transferMaster = transferMasterDao.queryForId(transferMasterID);
-//        transferMaster.setDate(getDate());
-//        transferMaster.setFromBranch(getFromBranch());
-//        transferMaster.setToBranch(getToBranch());
-//        transferMaster.setTotal(getTotalCost());
-//        transferMaster.setStatus(getStatus());
-//        transferMaster.setNotes(getNote());
-//
-//        TransferDetailViewModel.deleteTransferDetails(PENDING_DELETES);
-//        transferMaster.setTransferDetails(TransferDetailViewModel.getTransferDetails());
-//
-//        transferMasterDao.update(transferMaster);
+        transfersRepository.putMaster(transferMaster);
         TransferDetailViewModel.updateTransferDetails();
 
-        Platform.runLater(TransferMasterViewModel::resetProperties);
+        TransferMasterViewModel.resetProperties();
 
         getTransferMasters();
     }
 
-    public static void deleteItem(long transferMasterID) throws Exception {
-//        Dao<TransferMaster, Long> transferMasterDao =
-//                DaoManager.createDao(connectionSource, TransferMaster.class);
-//
-//        transferMasterDao.deleteById(transferMasterID);
+    public static void deleteItem(Long index) throws IOException, InterruptedException {
+        var findModel = new FindModel();
 
+        findModel.setId(index);
+        transfersRepository.deleteMaster(findModel);
         getTransferMasters();
     }
 }

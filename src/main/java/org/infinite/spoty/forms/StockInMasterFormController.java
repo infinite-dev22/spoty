@@ -284,7 +284,7 @@ public class StockInMasterFormController implements Initializable {
                 SpotyThreader.spotyThreadPool(
                         () -> {
                             try {
-                                StockInMasterViewModel.updateItem(StockInMasterViewModel.getId());
+                                StockInMasterViewModel.updateItem();
                             } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }

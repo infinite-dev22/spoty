@@ -201,7 +201,7 @@ public class PurchasesController implements Initializable {
                 e -> {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
-                            PurchaseMasterViewModel.getItem(obj.getData().getId());
+                            PurchaseMasterViewModel.getPurchaseMaster(obj.getData().getId());
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }

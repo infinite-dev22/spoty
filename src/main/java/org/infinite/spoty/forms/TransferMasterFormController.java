@@ -245,9 +245,7 @@ public class TransferMasterFormController implements Initializable {
                     SpotyThreader.spotyThreadPool(
                             () -> {
                                 try {
-                                    TransferDetailViewModel.getItem(
-                                            obj.getData().getId(),
-                                            TransferDetailViewModel.transferDetailsList.indexOf(obj.getData()));
+                                    TransferDetailViewModel.getItem(obj.getData());
                                 } catch (Exception e) {
                                     SpotyLogger.writeToFile(e, this.getClass());
                                 }
@@ -309,7 +307,7 @@ public class TransferMasterFormController implements Initializable {
                 SpotyThreader.spotyThreadPool(
                         () -> {
                             try {
-                                TransferMasterViewModel.updateItem(TransferMasterViewModel.getId());
+                                TransferMasterViewModel.updateItem();
                             } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }

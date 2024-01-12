@@ -13,6 +13,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class RequisitionsRepositoryImpl extends ProtectedGlobals implements MasterDetailRepository {
     @Override
@@ -185,7 +186,7 @@ public class RequisitionsRepositoryImpl extends ProtectedGlobals implements Mast
     }
 
     @Override
-    public HttpResponse<String> deleteMultipleDetails(ArrayList<FindModel> findModelList) throws IOException, InterruptedException {
+    public HttpResponse<String> deleteMultipleDetails(LinkedList<FindModel> findModelList) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(EndPoints.Requisitions.deleteRequisitionDetails))
                 .header("Authorization", authToken)

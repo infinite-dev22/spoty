@@ -125,8 +125,7 @@ public class StockInDetailFormController implements Initializable {
                             SpotyThreader.spotyThreadPool(
                                     () -> {
                                         try {
-                                            StockInDetailViewModel.updateStockInDetail(
-                                                    StockInDetailViewModel.getId());
+                                            StockInDetailViewModel.updateStockInDetail();
                                         } catch (Exception e) {
                                             SpotyLogger.writeToFile(e, this.getClass());
                                         }

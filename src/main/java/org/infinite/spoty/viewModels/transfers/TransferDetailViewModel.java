@@ -14,6 +14,8 @@
 
 package org.infinite.spoty.viewModels.transfers;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -22,14 +24,19 @@ import org.infinite.spoty.data_source.daos.Product;
 import org.infinite.spoty.data_source.daos.transfers.TransferDetail;
 import org.infinite.spoty.data_source.daos.transfers.TransferMaster;
 import org.infinite.spoty.data_source.daos.transfers.TransferTransaction;
+import org.infinite.spoty.data_source.models.FindModel;
+import org.infinite.spoty.data_source.repositories.implementations.TransfersRepositoryImpl;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.viewModels.ProductViewModel;
+import org.infinite.spoty.viewModels.adjustments.AdjustmentDetailViewModel;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
-import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
-import static org.infinite.spoty.values.SharedResources.setTempId;
+import static org.infinite.spoty.values.SharedResources.*;
 
 public class TransferDetailViewModel {
     public static final ObservableList<TransferDetail> transferDetailsList =
@@ -44,12 +51,13 @@ public class TransferDetailViewModel {
     private static final StringProperty description = new SimpleStringProperty("");
     private static final StringProperty price = new SimpleStringProperty("");
     private static final StringProperty total = new SimpleStringProperty("");
+    private static final TransfersRepositoryImpl transfersRepository = new TransfersRepositoryImpl();
 
-    public static long getId() {
+    public static Long getId() {
         return id.get();
     }
 
-    public static void setId(long id) {
+    public static void setId(Long id) {
         TransferDetailViewModel.id.set(id);
     }
 
@@ -81,8 +89,8 @@ public class TransferDetailViewModel {
         return transfer;
     }
 
-    public static long getQuantity() {
-        return Long.parseLong(!quantity.get().isEmpty() ? quantity.get() : "0");
+    public static Integer getQuantity() {
+        return Integer.parseInt(!quantity.get().isEmpty() ? quantity.get() : "0");
     }
 
     public static void setQuantity(String quantity) {
@@ -154,7 +162,7 @@ public class TransferDetailViewModel {
     }
 
     public static void resetProperties() {
-        setId(0);
+        setId(0L);
         setTempId(-1);
         setProduct(null);
         setQuantity("");
@@ -165,136 +173,102 @@ public class TransferDetailViewModel {
     }
 
     public static void addTransferDetails() {
-//        TransferDetail transferDetail =
-//                new TransferDetail(
-//                        getProduct(), getQuantity(), getSerial(), getDescription(), getPrice(), getTotal());
-//
-//        Platform.runLater(
-//                () -> {
-//                    transferDetailsList.add(transferDetail);
-//
-//                    resetProperties();
-//                });
+        var transferDetail = TransferDetail.builder()
+                .product(getProduct())
+                .quantity(getQuantity())
+                .serialNo(getSerial())
+                .description(getDescription())
+                .price(getPrice())
+                .total(getTotal())
+                .build();
+
+        transferDetailsList.add(transferDetail);
+        resetProperties();
     }
 
-    public static void saveTransferDetails() throws Exception {
-//        Dao<TransferDetail, Long> transferDetailDao =
-//                DaoManager.createDao(connectionSource, TransferDetail.class);
-//
-//        transferDetailDao.create(transferDetailsList);
-
+    public static void saveTransferDetails() {
+        transferDetailsList.forEach(transferDetail -> {
+            try {
+                transfersRepository.postDetail(transferDetail);
+            } catch (IOException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        });
         setProductQuantity();
-
-        Platform.runLater(transferDetailsList::clear);
+        transferDetailsList.clear();
     }
 
-    public static void getAllTransferDetails() throws Exception {
-//        Dao<TransferDetail, Long> transferDetailDao =
-//                DaoManager.createDao(connectionSource, TransferDetail.class);
-//
-//        Platform.runLater(
-//                () -> {
-//                    transferDetailsList.clear();
-//                    try {
-//                        transferDetailsList.addAll(transferDetailDao.queryForAll());
-//                    } catch (Exception e) {
-//                        SpotyLogger.writeToFile(e, TransferDetailViewModel.class);
-//                    }
-//                });
+    public static void getAllTransferDetails() throws IOException, InterruptedException {
+        Type listType = new TypeToken<ArrayList<TransferDetail>>() {
+        }.getType();
+        transferDetailsList.clear();
+
+        ArrayList<TransferDetail> transferDetailList = new Gson().fromJson(
+                transfersRepository.fetchAllDetail().body(), listType);
+        transferDetailsList.addAll(transferDetailList);
     }
 
-    public static void updateTransferDetail(long index) throws Exception {
-//        Dao<TransferDetail, Long> transferDetailDao =
-//                DaoManager.createDao(connectionSource, TransferDetail.class);
-//
-//        TransferDetail transferDetail = transferDetailDao.queryForId(index);
-//        transferDetail.setProduct(getProduct());
-//        transferDetail.setQuantity(getQuantity());
-//        transferDetail.setSerialNo(getSerial());
-//        transferDetail.setDescription(getDescription());
-//        transferDetail.setPrice(getPrice());
-//        transferDetail.setTotal(getTotal());
-//
-//        Platform.runLater(
-//                () -> {
-//                    transferDetailsList.remove(getTempId());
-//                    transferDetailsList.add(getTempId(), transferDetail);
-//
-//                    resetProperties();
-//                });
+    public static void updateTransferDetail() {
+        var transferDetail = TransferDetail.builder()
+                .id(getId())
+                .product(getProduct())
+                .quantity(getQuantity())
+                .serialNo(getSerial())
+                .description(getDescription())
+                .price(getPrice())
+                .total(getTotal())
+                .build();
+
+        transferDetailsList.remove(getTempId());
+        transferDetailsList.add(getTempId(), transferDetail);
+        resetProperties();
     }
 
-    public static void getItem(long index, int tempIndex) throws Exception {
-//        Dao<TransferDetail, Long> transferDetailDao =
-//                DaoManager.createDao(connectionSource, TransferDetail.class);
-//
-//        TransferDetail transferDetail = transferDetailDao.queryForId(index);
-//
-//        Platform.runLater(
-//                () -> {
-//                    setTempId(tempIndex);
-//                    setId(transferDetail.getId());
-//                    setProduct(transferDetail.getProduct());
-//                    setQuantity(String.valueOf(transferDetail.getQuantity()));
-//                    setSerial(transferDetail.getSerialNo());
-//                    setDescription(transferDetail.getDescription());
-//                    setPrice(String.valueOf(transferDetail.getPrice()));
-//                    setTotal(String.valueOf(transferDetail.getTotal()));
-//                });
+    public static void getItem(TransferDetail transferDetail) {
+        setId(transferDetail.getId());
+        setProduct(transferDetail.getProduct());
+        setQuantity(String.valueOf(transferDetail.getQuantity()));
+        setSerial(transferDetail.getSerialNo());
+        setDescription(transferDetail.getDescription());
+        setPrice(String.valueOf(transferDetail.getPrice()));
+        setTotal(String.valueOf(transferDetail.getTotal()));
     }
 
-    public static void updateItem(long index) throws Exception {
-//        Dao<TransferDetail, Long> transferDetailDao =
-//                DaoManager.createDao(connectionSource, TransferDetail.class);
-//
-//        TransferDetail transferDetail = transferDetailDao.queryForId(index);
-//        transferDetail.setProduct(getProduct());
-//        transferDetail.setQuantity(getQuantity());
-//        transferDetail.setSerialNo(getSerial());
-//        transferDetail.setDescription(getDescription());
-//        transferDetail.setPrice(getPrice());
-//        transferDetail.setTotal(getTotal());
-//
-//        transferDetailDao.update(transferDetail);
-
+    public static void updateItem(Long index) throws IOException, InterruptedException {
+        var transferDetail = transferDetailsList.get(Math.toIntExact(index));
+        transferDetail.setProduct(getProduct());
+        transferDetail.setQuantity(getQuantity());
+        transferDetail.setSerialNo(getSerial());
+        transferDetail.setDescription(getDescription());
+        transferDetail.setPrice(getPrice());
+        transferDetail.setTotal(getTotal());
+        transfersRepository.putDetail(transferDetail);
         getAllTransferDetails();
     }
 
-    public static void updateTransferDetails() throws Exception {
-//        Dao<TransferDetail, Long> transferDetailDao =
-//                DaoManager.createDao(connectionSource, TransferDetail.class);
-//
-//        transferDetailsList.forEach(
-//                transferDetail -> {
-//                    try {
-//                        transferDetailDao.update(transferDetail);
-//                    } catch (Exception e) {
-//                        SpotyLogger.writeToFile(e, TransferDetailViewModel.class);
-//                    }
-//                });
-
+    public static void updateTransferDetails() throws IOException, InterruptedException {
+        // TODO: Add save multiple on API.
+        transferDetailsList.forEach(
+                adjustmentDetail -> {
+                    try {
+                        transfersRepository.putDetail(adjustmentDetail);
+                    } catch (Exception e) {
+                        SpotyLogger.writeToFile(e, AdjustmentDetailViewModel.class);
+                    }
+                });
         updateProductQuantity();
-
         getAllTransferDetails();
     }
 
-    public static void removeTransferDetail(long index, int tempIndex) {
-        Platform.runLater(() -> transferDetailsList.remove(tempIndex));
+    public static void removeTransferDetail(Long index, int tempIndex) {
+        transferDetailsList.remove(tempIndex);
         PENDING_DELETES.add(index);
     }
 
-    public static void deleteTransferDetails(@NotNull LinkedList<Long> indexes) {
-//        indexes.forEach(
-//                index -> {
-//                    try {
-//                        Dao<TransferDetail, Long> transferDetailDao =
-//                                DaoManager.createDao(connectionSource, TransferDetail.class);
-//
-//                        transferDetailDao.deleteById(index);
-//                    } catch (Exception e) {
-//                        SpotyLogger.writeToFile(e, TransferDetailViewModel.class);
-//                    }
-//                });
+    public static void deleteTransferDetails(@NotNull LinkedList<Long> indexes) throws IOException, InterruptedException {
+        LinkedList<FindModel> findModelList = new LinkedList<>();
+        indexes.forEach(index -> findModelList.add(new FindModel(index)));
+        transfersRepository.deleteMultipleDetails(findModelList);
     }
 
     private static void setProductQuantity() {
@@ -323,8 +297,8 @@ public class TransferDetailViewModel {
                                 TransferTransaction saleTransaction =
                                         getTransferTransaction(transferDetails.getId());
 
-                                long adjustQuantity = saleTransaction.getTransferQuantity();
-                                long currentProductQuantity = transferDetails.getProduct().getQuantity();
+                                Long adjustQuantity = saleTransaction.getTransferQuantity();
+                                Long currentProductQuantity = transferDetails.getProduct().getQuantity();
                                 long productQuantity =
                                         (currentProductQuantity - adjustQuantity) + transferDetails.getQuantity();
 
@@ -339,8 +313,7 @@ public class TransferDetailViewModel {
                         });
     }
 
-    private static TransferTransaction getTransferTransaction(long transferIndex)
-            throws Exception {
+    private static TransferTransaction getTransferTransaction(Long transferIndex) {
 //        Dao<TransferTransaction, Long> transferTransactionDao =
 //                DaoManager.createDao(connectionSource, TransferTransaction.class);
 //
@@ -355,8 +328,7 @@ public class TransferDetailViewModel {
         return new TransferTransaction();
     }
 
-    private static void createTransferTransaction(@NotNull TransferDetail transferDetails)
-            throws Exception {
+    private static void createTransferTransaction(@NotNull TransferDetail transferDetails) {
 //        Dao<TransferTransaction, Long> transferTransactionDao =
 //                DaoManager.createDao(connectionSource, TransferTransaction.class);
 //
@@ -371,8 +343,7 @@ public class TransferDetailViewModel {
 //        transferTransactionDao.create(transferTransaction);
     }
 
-    private static void updateTransferTransaction(@NotNull TransferDetail transferDetails)
-            throws Exception {
+    private static void updateTransferTransaction(@NotNull TransferDetail transferDetails) {
 //        Dao<TransferTransaction, Long> transferTransactionDao =
 //                DaoManager.createDao(connectionSource, TransferTransaction.class);
 //

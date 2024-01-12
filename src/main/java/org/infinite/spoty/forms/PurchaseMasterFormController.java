@@ -197,7 +197,7 @@ public class PurchaseMasterFormController implements Initializable {
     public void saveBtnClicked() {
         SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
 
-        if (!purchaseDetailTable.isDisabled() && PurchaseDetailViewModel.purchaseDetailList.isEmpty()) {
+        if (!purchaseDetailTable.isDisabled() && PurchaseDetailViewModel.purchaseDetailsList.isEmpty()) {
             SimpleNotification notification =
                     new SimpleNotification.NotificationBuilder("Table can't be Empty")
                             .duration(NotificationDuration.SHORT)
@@ -214,7 +214,7 @@ public class PurchaseMasterFormController implements Initializable {
             if (PurchaseMasterViewModel.getId() > 0) {
                 SpotyThreader.spotyThreadPool(() -> {
                     try {
-                        PurchaseMasterViewModel.updateItem(PurchaseMasterViewModel.getId());
+                        PurchaseMasterViewModel.updateItem();
                     } catch (Exception e) {
                         SpotyLogger.writeToFile(e, this.getClass());
                     }
@@ -367,7 +367,7 @@ public class PurchaseMasterFormController implements Initializable {
                 event -> {
                     PurchaseDetailViewModel.removePurchaseDetail(
                             obj.getData().getId(),
-                            PurchaseDetailViewModel.purchaseDetailList.indexOf(obj.getData()));
+                            PurchaseDetailViewModel.purchaseDetailsList.indexOf(obj.getData()));
                     event.consume();
                 });
         // Edit
@@ -377,7 +377,7 @@ public class PurchaseMasterFormController implements Initializable {
                         try {
                             PurchaseDetailViewModel.getItem(
                                     obj.getData().getId(),
-                                    PurchaseDetailViewModel.purchaseDetailList.indexOf(obj.getData()));
+                                    PurchaseDetailViewModel.purchaseDetailsList.indexOf(obj.getData()));
                         } catch (Exception e) {
                             SpotyLogger.writeToFile(e, this.getClass());
                         }

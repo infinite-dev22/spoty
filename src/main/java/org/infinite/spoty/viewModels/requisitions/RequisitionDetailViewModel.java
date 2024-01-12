@@ -14,6 +14,8 @@
 
 package org.infinite.spoty.viewModels.requisitions;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -22,30 +24,37 @@ import lombok.Getter;
 import org.infinite.spoty.data_source.daos.Product;
 import org.infinite.spoty.data_source.daos.requisitions.RequisitionDetail;
 import org.infinite.spoty.data_source.daos.requisitions.RequisitionMaster;
+import org.infinite.spoty.data_source.models.FindModel;
+import org.infinite.spoty.data_source.models.SearchModel;
+import org.infinite.spoty.data_source.repositories.implementations.RequisitionsRepositoryImpl;
+import org.infinite.spoty.utils.SpotyLogger;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
-import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
-import static org.infinite.spoty.values.SharedResources.setTempId;
+import static org.infinite.spoty.values.SharedResources.*;
 
 public class RequisitionDetailViewModel {
     @Getter
-    public static final ObservableList<RequisitionDetail> requisitionDetailList =
+    public static final ObservableList<RequisitionDetail> requisitionDetailsList =
             FXCollections.observableArrayList();
     private static final ListProperty<RequisitionDetail> requisitionDetails =
-            new SimpleListProperty<>(requisitionDetailList);
+            new SimpleListProperty<>(requisitionDetailsList);
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final ObjectProperty<Product> product = new SimpleObjectProperty<>();
     private static final ObjectProperty<RequisitionMaster> requisition = new SimpleObjectProperty<>();
     private static final StringProperty quantity = new SimpleStringProperty();
     private static final StringProperty description = new SimpleStringProperty();
+    private static final RequisitionsRepositoryImpl requisitionsRepository = new RequisitionsRepositoryImpl();
 
-    public static long getId() {
+    public static Long getId() {
         return id.get();
     }
 
-    public static void setId(long id) {
+    public static void setId(Long id) {
         RequisitionDetailViewModel.id.set(id);
     }
 
@@ -114,7 +123,7 @@ public class RequisitionDetailViewModel {
     }
 
     public static void resetProperties() {
-        setId(0);
+        setId(0L);
         setTempId(-1);
         setProduct(null);
         setRequisition(null);
@@ -123,112 +132,114 @@ public class RequisitionDetailViewModel {
     }
 
     public static void addRequisitionDetails() {
-//        RequisitionDetail requisitionDetail =
-//                new RequisitionDetail(
-//                        getProduct(),
-//                        getRequisition(),
-//                        Long.parseLong(getQuantity()),
-//                        getDescription());
-//
-//        Platform.runLater(() -> requisitionDetailList.add(requisitionDetail));
+        var requisitionDetail = RequisitionDetail.builder()
+                .product(getProduct())
+                .requisition(getRequisition())
+                .quantity(Integer.parseInt(getQuantity()))
+                .description(getDescription())
+                .build();
+
+        Platform.runLater(() -> requisitionDetailsList.add(requisitionDetail));
 
         resetProperties();
     }
 
-    public static void saveRequisitionDetails() throws Exception {
-//        Dao<RequisitionDetail, Long> requisitionDetailDao =
-//                DaoManager.createDao(connectionSource, RequisitionDetail.class);
-//
-//        requisitionDetailDao.create(requisitionDetailList);
-
-        requisitionDetailList.clear();
+    public static void saveRequisitionDetails() {
+        requisitionDetailsList.forEach(requisitionDetail -> {  // TODO: Add postMultipleDetail().
+            try {
+                requisitionsRepository.postDetail(requisitionDetail);
+            } catch (IOException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        requisitionDetailsList.clear();
     }
 
-    public static void getAllRequisitionDetails() throws Exception {
-//        Dao<RequisitionDetail, Long> requisitionDetailDao =
-//                DaoManager.createDao(connectionSource, RequisitionDetail.class);
-//
-//        requisitionDetailList.clear();
-//        requisitionDetailList.addAll(requisitionDetailDao.queryForAll());
+    public static void getAllRequisitionDetails() {
+        Type listType = new TypeToken<ArrayList<RequisitionDetail>>() {
+        }.getType();
+
+        Platform.runLater(
+                () -> {
+                    requisitionDetailsList.clear();
+
+                    try {
+                        ArrayList<RequisitionDetail> requisitionDetailList = new Gson().fromJson(
+                                requisitionsRepository.fetchAllDetail().body(), listType);
+                        requisitionDetailsList.addAll(requisitionDetailList);
+                    } catch (IOException | InterruptedException e) {
+                        SpotyLogger.writeToFile(e, RequisitionDetailViewModel.class);
+                    }
+                });
     }
 
-    public static void updateRequisitionDetail(long index) throws Exception {
-//        Dao<RequisitionDetail, Long> requisitionDetailDao =
-//                DaoManager.createDao(connectionSource, RequisitionDetail.class);
-//
-//        RequisitionDetail requisitionDetail = requisitionDetailDao.queryForId(index);
-//        requisitionDetail.setProduct(getProduct());
-//        requisitionDetail.setQuantity(Long.parseLong(getQuantity()));
-//        requisitionDetail.setDescription(getDescription());
-//
-//        Platform.runLater(
-//                () -> {
-//                    requisitionDetailList.remove(getTempId());
-//                    requisitionDetailList.add(getTempId(), requisitionDetail);
-//                });
+    public static void searchItem(String search) throws Exception {
+        var searchModel = new SearchModel();
+        searchModel.setSearch(search);
 
+        Type listType = new TypeToken<ArrayList<RequisitionDetail>>() {
+        }.getType();
+
+        Platform.runLater(
+                () -> {
+                    requisitionDetailsList.clear();
+
+                    try {
+                        ArrayList<RequisitionDetail> requisitionDetailList = new Gson().fromJson(
+                                requisitionsRepository.searchDetail(searchModel).body(), listType);
+                        requisitionDetailsList.addAll(requisitionDetailList);
+                    } catch (Exception e) {
+                        SpotyLogger.writeToFile(e, RequisitionDetailViewModel.class);
+                    }
+                });
+    }
+
+    public static void updateRequisitionDetail(Long index) {
+        var requisitionDetail = RequisitionDetail.builder()
+                .id(index)
+                .product(getProduct())
+                .requisition(getRequisition())
+                .quantity(Integer.parseInt(getQuantity()))
+                .description(getDescription())
+                .build();
+
+        requisitionDetailsList.remove(getTempId());
+        requisitionDetailsList.add(getTempId(), requisitionDetail);
         resetProperties();
     }
 
-    public static void getItem(long index, int tempIndex) throws Exception {
-//        Dao<RequisitionDetail, Long> requisitionDetailDao =
-//                DaoManager.createDao(connectionSource, RequisitionDetail.class);
-//
-//        RequisitionDetail requisitionDetail = requisitionDetailDao.queryForId(index);
-//
-//        setTempId(tempIndex);
-//        setId(requisitionDetail.getId());
-//        setProduct(requisitionDetail.getProduct());
-//        setQuantity(String.valueOf(requisitionDetail.getQuantity()));
-//        setDescription(requisitionDetail.getDescription());
+    public static void getItem(Long index, int tempIndex) throws IOException, InterruptedException {
+        var findModel = FindModel.builder().id(index).build();
+        var requisitionDetail = new Gson().fromJson(requisitionsRepository.fetchDetail(findModel).body(), RequisitionDetail.class);
+
+        setTempId(tempIndex);
+        setId(requisitionDetail.getId());
+        setProduct(requisitionDetail.getProduct());
+        setQuantity(String.valueOf(requisitionDetail.getQuantity()));
+        setDescription(requisitionDetail.getDescription());
     }
 
-    public static void updateItem(long index) throws Exception {
-//        Dao<RequisitionDetail, Long> requisitionDetailDao =
-//                DaoManager.createDao(connectionSource, RequisitionDetail.class);
-//
-//        RequisitionDetail requisitionDetail = requisitionDetailDao.queryForId(index);
-//        requisitionDetail.setProduct(getProduct());
-//        requisitionDetail.setQuantity(Long.parseLong(getQuantity()));
-//        requisitionDetail.setDescription(getDescription());
-//
-//        requisitionDetailDao.update(requisitionDetail);
+    public static void updateRequisitionDetails() {
+        requisitionDetailsList.forEach(
+                requisitionDetail -> {
+                    try {
+                        requisitionsRepository.putDetail(requisitionDetail);
+                    } catch (IOException | InterruptedException e) {
+                        SpotyLogger.writeToFile(e, RequisitionDetailViewModel.class);
+                    }
+                });
 
         getAllRequisitionDetails();
     }
 
-    public static void updateRequisitionDetails() throws Exception {
-//        Dao<RequisitionDetail, Long> requisitionDetailDao =
-//                DaoManager.createDao(connectionSource, RequisitionDetail.class);
-//
-//        requisitionDetailList.forEach(
-//                requisitionDetail -> {
-//                    try {
-//                        requisitionDetailDao.update(requisitionDetail);
-//                    } catch (Exception e) {
-//                        SpotyLogger.writeToFile(e, RequisitionDetailViewModel.class);
-//                    }
-//                });
-
-        getAllRequisitionDetails();
-    }
-
-    public static void removeRequisitionDetail(long index, int tempIndex) {
-        Platform.runLater(() -> requisitionDetailList.remove(tempIndex));
+    public static void removeRequisitionDetail(Long index, int tempIndex) {
+        Platform.runLater(() -> requisitionDetailsList.remove(tempIndex));
         PENDING_DELETES.add(index);
     }
 
-    public static void deleteRequisitionDetails(@NotNull LinkedList<Long> indexes) {
-//        indexes.forEach(
-//                index -> {
-//                    try {
-//                        Dao<RequisitionDetail, Long> requisitionDetailDao =
-//                                DaoManager.createDao(connectionSource, RequisitionDetail.class);
-//
-//                        requisitionDetailDao.deleteById(index);
-//                    } catch (Exception e) {
-//                        SpotyLogger.writeToFile(e, RequisitionDetailViewModel.class);
-//                    }
-//                });
+    public static void deleteRequisitionDetails(@NotNull LinkedList<Long> indexes) throws IOException, InterruptedException {
+        LinkedList<FindModel> findModelList = new LinkedList<>();
+        indexes.forEach(index -> findModelList.add(new FindModel(index)));
+        requisitionsRepository.deleteMultipleDetails(findModelList);
     }
 }

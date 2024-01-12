@@ -123,7 +123,7 @@ public class TransferDetailFormController implements Initializable {
                         if (tempIdProperty().get() > -1) {
                             SpotyThreader.spotyThreadPool(() -> {
                                 try {
-                                    TransferDetailViewModel.updateTransferDetail(TransferDetailViewModel.getId());
+                                    TransferDetailViewModel.updateTransferDetail();
                                 } catch (Exception e) {
                                     SpotyLogger.writeToFile(e, this.getClass());
                                 }

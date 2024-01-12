@@ -167,7 +167,7 @@ public class QuotationController implements Initializable {
                 e -> {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
-                            QuotationMasterViewModel.getItem(obj.getData().getId());
+                            QuotationMasterViewModel.getQuotationMaster(obj.getData().getId());
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }

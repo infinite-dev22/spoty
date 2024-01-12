@@ -14,6 +14,8 @@
 
 package org.infinite.spoty.viewModels.quotations;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -22,33 +24,40 @@ import lombok.Getter;
 import org.infinite.spoty.data_source.daos.Branch;
 import org.infinite.spoty.data_source.daos.Customer;
 import org.infinite.spoty.data_source.daos.quotations.QuotationMaster;
+import org.infinite.spoty.data_source.models.FindModel;
+import org.infinite.spoty.data_source.models.SearchModel;
+import org.infinite.spoty.data_source.repositories.implementations.QuotationsRepositoryImpl;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
 
 public class QuotationMasterViewModel {
     @Getter
-    public static final ObservableList<QuotationMaster> quotationMasterList =
+    public static final ObservableList<QuotationMaster> quotationMastersList =
             FXCollections.observableArrayList();
     private static final ListProperty<QuotationMaster> quotations =
-            new SimpleListProperty<>(quotationMasterList);
+            new SimpleListProperty<>(quotationMastersList);
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final StringProperty date = new SimpleStringProperty("");
     private static final ObjectProperty<Customer> customer = new SimpleObjectProperty<>(null);
     private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>(null);
     private static final StringProperty status = new SimpleStringProperty("");
     private static final StringProperty note = new SimpleStringProperty("");
+    private static final QuotationsRepositoryImpl quotationRepository = new QuotationsRepositoryImpl();
 
-    public static long getId() {
+    public static Long getId() {
         return id.get();
     }
 
-    public static void setId(long id) {
+    public static void setId(Long id) {
         QuotationMasterViewModel.id.set(id);
     }
 
@@ -136,7 +145,7 @@ public class QuotationMasterViewModel {
     public static void resetProperties() {
         Platform.runLater(
                 () -> {
-                    setId(0);
+                    setId(0L);
                     setDate("");
                     setCustomer(null);
                     setBranch(null);
@@ -146,91 +155,95 @@ public class QuotationMasterViewModel {
                 });
     }
 
-    public static void saveQuotationMaster() throws Exception {
-//        Dao<QuotationMaster, Long> quotationMasterDao =
-//                DaoManager.createDao(connectionSource, QuotationMaster.class);
-//
-//        QuotationMaster quotationMaster =
-//                new QuotationMaster(getDate(), getCustomer(), getBranch(), getStatus(), getNote());
-//
-//        if (!QuotationDetailViewModel.quotationDetailsList.isEmpty()) {
-//            QuotationDetailViewModel.quotationDetailsList.forEach(
-//                    quotationDetail -> quotationDetail.setQuotation(quotationMaster));
-//            quotationMaster.setQuotationDetails(
-//                    QuotationDetailViewModel.getQuotationDetailsList());
-//        }
-//
-//        quotationMasterDao.create(quotationMaster);
+    public static void saveQuotationMaster() throws IOException, InterruptedException {
+        var quotationMaster = QuotationMaster.builder()
+                .date(getDate())
+                .customer(getCustomer())
+                .branch(getBranch())
+                .status(getStatus())
+                .notes(getNote())
+                .build();
+
+        if (!QuotationDetailViewModel.quotationDetailsList.isEmpty()) {
+            QuotationDetailViewModel.quotationDetailsList.forEach(
+                    quotationDetail -> quotationDetail.setQuotation(quotationMaster));
+            quotationMaster.setQuotationDetails(
+                    QuotationDetailViewModel.getQuotationDetailsList());
+        }
+
+        quotationRepository.postMaster(quotationMaster);
         QuotationDetailViewModel.saveQuotationDetails();
 
         resetProperties();
         getQuotationMasters();
     }
 
-    public static void getQuotationMasters() throws Exception {
-//        Dao<QuotationMaster, Long> quotationMasterDao =
-//                DaoManager.createDao(connectionSource, QuotationMaster.class);
-//
-//        Platform.runLater(
-//                () -> {
-//                    quotationMasterList.clear();
-//
-//                    try {
-//                        quotationMasterList.addAll(quotationMasterDao.queryForAll());
-//                    } catch (Exception e) {
-//                        SpotyLogger.writeToFile(e, QuotationMasterViewModel.class);
-//                    }
-//                });
+    public static void getQuotationMasters() throws IOException, InterruptedException {
+        Type listType = new TypeToken<ArrayList<QuotationMaster>>() {
+        }.getType();
+        quotationMastersList.clear();
+        ArrayList<QuotationMaster> quotationMasterList = new Gson().fromJson(
+                quotationRepository.fetchAllMaster().body(), listType);
+        quotationMastersList.addAll(quotationMasterList);
     }
 
-    public static void getItem(long index) throws Exception {
-//        Dao<QuotationMaster, Long> quotationMasterDao =
-//                DaoManager.createDao(connectionSource, QuotationMaster.class);
-//
-//        QuotationMaster quotationMaster = quotationMasterDao.queryForId(index);
-//
-//        setId(quotationMaster.getId());
-//        setDate(quotationMaster.getLocaleDate());
-//        setCustomer(quotationMaster.getCustomer());
-//        setBranch(quotationMaster.getBranch());
-//        setStatus(quotationMaster.getStatus());
-//        setNote(quotationMaster.getNotes());
-//
-//        QuotationDetailViewModel.quotationDetailsList.clear();
-//        QuotationDetailViewModel.quotationDetailsList.addAll(
-//                quotationMaster.getQuotationDetails());
+    public static void getQuotationMaster(Long index) throws IOException, InterruptedException {
+        var findModel = new FindModel();
+        findModel.setId(index);
+        var response = quotationRepository.fetchMaster(findModel).body();
+        var quotationMaster = new Gson().fromJson(response, QuotationMaster.class);
 
+        setId(quotationMaster.getId());
+        setBranch(quotationMaster.getBranch());
+        setNote(quotationMaster.getNotes());
+        setDate(quotationMaster.getLocaleDate());
+        QuotationDetailViewModel.quotationDetailsList.clear();
+        QuotationDetailViewModel.quotationDetailsList.addAll(quotationMaster.getQuotationDetails());
         getQuotationMasters();
     }
 
-    public static void updateItem(long index) throws Exception {
-//        Dao<QuotationMaster, Long> quotationMasterDao =
-//                DaoManager.createDao(connectionSource, QuotationMaster.class);
-//
-//        QuotationMaster quotationMaster = quotationMasterDao.queryForId(index);
-//
-//        quotationMaster.setDate(getDate());
-//        quotationMaster.setCustomer(getCustomer());
-//        quotationMaster.setBranch(getBranch());
-//        quotationMaster.setStatus(getStatus());
-//        quotationMaster.setNotes(getNote());
-//
-//        QuotationDetailViewModel.deleteQuotationDetails(PENDING_DELETES);
-//        quotationMaster.setQuotationDetails(QuotationDetailViewModel.getQuotationDetailsList());
-//
-//        quotationMasterDao.update(quotationMaster);
-//        QuotationDetailViewModel.updateQuotationDetails();
+    public static void searchItem(String search) throws IOException, InterruptedException {
+        var searchModel = new SearchModel();
+        searchModel.setSearch(search);
 
+        Type listType = new TypeToken<ArrayList<QuotationMaster>>() {
+        }.getType();
+        quotationMastersList.clear();
+
+        ArrayList<QuotationMaster> quotationMasterList = new Gson().fromJson(
+                quotationRepository.searchMaster(searchModel).body(), listType);
+        quotationMastersList.addAll(quotationMasterList);
+    }
+
+    public static void updateItem() throws IOException, InterruptedException {
+        var quotationMaster = QuotationMaster.builder()
+                .id(getId())
+                .date(getDate())
+                .customer(getCustomer())
+                .branch(getBranch())
+                .status(getStatus())
+                .notes(getNote())
+                .build();
+
+        QuotationDetailViewModel.deleteQuotationDetails(PENDING_DELETES);
+
+        if (!QuotationDetailViewModel.getQuotationDetailsList().isEmpty()) {
+            QuotationDetailViewModel.getQuotationDetailsList()
+                    .forEach(quotationDetail -> quotationDetail.setQuotation(quotationMaster));
+
+            quotationMaster.setQuotationDetails(QuotationDetailViewModel.getQuotationDetailsList());
+        }
+        quotationRepository.putMaster(quotationMaster);
+        QuotationDetailViewModel.updateQuotationDetails();
         resetProperties();
         getQuotationMasters();
     }
 
-    public static void deleteItem(long index) throws Exception {
-//        Dao<QuotationMaster, Long> quotationMasterDao =
-//                DaoManager.createDao(connectionSource, QuotationMaster.class);
-//
-//        quotationMasterDao.deleteById(index);
+    public static void deleteItem(Long index) throws IOException, InterruptedException {
+        var findModel = new FindModel();
 
+        findModel.setId(index);
+        quotationRepository.deleteMaster(findModel);
         getQuotationMasters();
     }
 

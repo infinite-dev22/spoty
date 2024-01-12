@@ -141,17 +141,20 @@ public class AdjustmentDetailViewModel {
                 .adjustmentType(getAdjustmentType())
                 .build();
 
-        Platform.runLater(
-                () -> {
-                    adjustmentDetailsList.add(adjustmentDetail);
-                    resetProperties();
-                });
+        adjustmentDetailsList.add(adjustmentDetail);
+        resetProperties();
     }
 
     public static void saveAdjustmentDetails() {
         // TODO: Save adjustment detail list.
+        adjustmentDetailsList.forEach(adjustmentDetail -> {
+            try {
+                adjustmentRepository.postDetail(adjustmentDetail);
+            } catch (IOException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        });
         setProductQuantity();
-
         adjustmentDetailsList.clear();
     }
 
@@ -216,18 +219,13 @@ public class AdjustmentDetailViewModel {
     }
 
     public static void updateAdjustmentDetail(long index) {
-        AdjustmentDetail adjustmentDetail = adjustmentDetailsList.get((int) index);
+        var adjustmentDetail = adjustmentDetailsList.get((int) index);
         adjustmentDetail.setProduct(getProduct());
         adjustmentDetail.setQuantity(getQuantity());
         adjustmentDetail.setAdjustmentType(getAdjustmentType());
-
-        Platform.runLater(
-                () -> {
-                    adjustmentDetailsList.remove(getTempId());
-                    adjustmentDetailsList.add(getTempId(), adjustmentDetail);
-
-                    resetProperties();
-                });
+        adjustmentDetailsList.remove(getTempId());
+        adjustmentDetailsList.add(getTempId(), adjustmentDetail);
+        resetProperties();
     }
 
     public static void getAllAdjustmentDetails() {
@@ -249,13 +247,10 @@ public class AdjustmentDetailViewModel {
     }
 
     public static void getAdjustmentDetail(AdjustmentDetail adjustmentDetail) {
-        Platform.runLater(
-                () -> {
-                    setTempId(getAdjustmentDetails().indexOf(adjustmentDetail));
-                    setProduct(adjustmentDetail.getProduct());
-                    setQuantity(String.valueOf(adjustmentDetail.getQuantity()));
-                    setAdjustmentType(adjustmentDetail.getAdjustmentType());
-                });
+        setTempId(getAdjustmentDetails().indexOf(adjustmentDetail));
+        setProduct(adjustmentDetail.getProduct());
+        setQuantity(String.valueOf(adjustmentDetail.getQuantity()));
+        setAdjustmentType(adjustmentDetail.getAdjustmentType());
     }
 
     public static void searchItem(String search) throws Exception {
@@ -277,7 +272,6 @@ public class AdjustmentDetailViewModel {
                         SpotyLogger.writeToFile(e, AdjustmentDetailViewModel.class);
                     }
                 });
-
     }
 
     public static void updateAdjustmentDetails() {
@@ -300,7 +294,7 @@ public class AdjustmentDetailViewModel {
     }
 
     public static void deleteAdjustmentDetails(@NotNull LinkedList<Long> indexes) throws IOException, InterruptedException {
-        ArrayList<FindModel> findModelList = new ArrayList<>();
+        LinkedList<FindModel> findModelList = new LinkedList<>();
         indexes.forEach(index -> findModelList.add(new FindModel(index)));
         adjustmentRepository.deleteMultipleDetails(findModelList);
     }

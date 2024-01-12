@@ -162,7 +162,7 @@ public class AdjustmentController implements Initializable {
                     SpotyThreader.spotyThreadPool(
                             () -> {
                                 try {
-                                    AdjustmentMasterViewModel.getItem(obj.getData().getId());
+                                    AdjustmentMasterViewModel.getAdjustmentMaster(obj.getData().getId());
                                 } catch (Exception ex) {
                                     throw new RuntimeException(ex);
                                 }

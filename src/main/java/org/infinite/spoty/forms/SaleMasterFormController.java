@@ -197,7 +197,7 @@ public class SaleMasterFormController implements Initializable {
     public void saveBtnClicked() {
         SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
 
-        if (!saleDetailTable.isDisabled() && SaleDetailViewModel.saleDetailList.isEmpty()) {
+        if (!saleDetailTable.isDisabled() && SaleDetailViewModel.saleDetailsList.isEmpty()) {
             SimpleNotification notification =
                     new SimpleNotification.NotificationBuilder("Table can't be Empty")
                             .duration(NotificationDuration.SHORT)
@@ -216,7 +216,7 @@ public class SaleMasterFormController implements Initializable {
                 SpotyThreader.spotyThreadPool(
                         () -> {
                             try {
-                                SaleMasterViewModel.updateItem(SaleMasterViewModel.getId());
+                                SaleMasterViewModel.updateItem();
                             } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }
@@ -385,7 +385,7 @@ public class SaleMasterFormController implements Initializable {
                 event -> {
                     SaleDetailViewModel.removeSaleDetail(
                             obj.getData().getId(),
-                            SaleDetailViewModel.saleDetailList.indexOf(obj.getData()));
+                            SaleDetailViewModel.saleDetailsList.indexOf(obj.getData()));
 
                     event.consume();
                 });

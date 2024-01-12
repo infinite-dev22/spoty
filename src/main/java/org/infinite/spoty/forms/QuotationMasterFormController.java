@@ -325,7 +325,7 @@ public class QuotationMasterFormController implements Initializable {
             if (QuotationMasterViewModel.getId() > 0) {
                 SpotyThreader.spotyThreadPool(() -> {
                     try {
-                        QuotationMasterViewModel.updateItem(QuotationMasterViewModel.getId());
+                        QuotationMasterViewModel.updateItem();
                     } catch (Exception e) {
                         SpotyLogger.writeToFile(e, this.getClass());
                     }

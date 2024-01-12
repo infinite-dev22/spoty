@@ -124,7 +124,7 @@ public class SaleDetailFormController implements Initializable {
                             SpotyThreader.spotyThreadPool(
                                     () -> {
                                         try {
-                                            SaleDetailViewModel.updateSaleDetail(getTempId());
+                                            SaleDetailViewModel.updateSaleDetail((long) getTempId());
                                         } catch (Exception e) {
                                             SpotyLogger.writeToFile(e, this.getClass());
                                         }

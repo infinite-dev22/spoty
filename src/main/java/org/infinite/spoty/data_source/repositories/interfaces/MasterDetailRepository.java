@@ -6,6 +6,7 @@ import org.infinite.spoty.data_source.models.SearchModel;
 import java.io.IOException;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 public interface MasterDetailRepository {
     // Master
@@ -36,5 +37,5 @@ public interface MasterDetailRepository {
 
     HttpResponse<String> deleteDetail(FindModel findModel) throws IOException, InterruptedException;
 
-    HttpResponse<String> deleteMultipleDetails(ArrayList<FindModel> findModelList) throws IOException, InterruptedException;
+    HttpResponse<String> deleteMultipleDetails(LinkedList<FindModel> findModelList) throws IOException, InterruptedException;
 }

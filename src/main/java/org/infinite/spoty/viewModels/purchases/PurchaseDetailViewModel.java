@@ -14,25 +14,35 @@
 
 package org.infinite.spoty.viewModels.purchases;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import lombok.Getter;
 import org.infinite.spoty.data_source.daos.Product;
 import org.infinite.spoty.data_source.daos.purchases.PurchaseDetail;
 import org.infinite.spoty.data_source.daos.purchases.PurchaseMaster;
+import org.infinite.spoty.data_source.models.FindModel;
+import org.infinite.spoty.data_source.models.SearchModel;
+import org.infinite.spoty.data_source.repositories.implementations.PurchasesRepositoryImpl;
+import org.infinite.spoty.utils.SpotyLogger;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
-import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
-import static org.infinite.spoty.values.SharedResources.setTempId;
+import static org.infinite.spoty.values.SharedResources.*;
 
 public class PurchaseDetailViewModel {
-    public static final ObservableList<PurchaseDetail> purchaseDetailList =
+    @Getter
+    public static final ObservableList<PurchaseDetail> purchaseDetailsList =
             FXCollections.observableArrayList();
     private static final ListProperty<PurchaseDetail> purchaseDetails =
-            new SimpleListProperty<>(purchaseDetailList);
+            new SimpleListProperty<>(purchaseDetailsList);
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final ObjectProperty<PurchaseMaster> purchase = new SimpleObjectProperty<>(null);
     private static final StringProperty cost = new SimpleStringProperty("");
@@ -45,12 +55,13 @@ public class PurchaseDetailViewModel {
     private static final StringProperty price = new SimpleStringProperty("");
     private static final StringProperty totalPrice = new SimpleStringProperty("");
     private static final StringProperty quantity = new SimpleStringProperty("");
+    private static final PurchasesRepositoryImpl purchasesRepository = new PurchasesRepositoryImpl();
 
-    public static long getId() {
+    public static Long getId() {
         return id.get();
     }
 
-    public static void setId(long id) {
+    public static void setId(Long id) {
         PurchaseDetailViewModel.id.set(id);
     }
 
@@ -70,8 +81,8 @@ public class PurchaseDetailViewModel {
         return purchase;
     }
 
-    public static String getQuantity() {
-        return quantity.get();
+    public static Integer getQuantity() {
+        return Integer.parseInt(quantity.get());
     }
 
     public static void setQuantity(String quantity) {
@@ -82,8 +93,8 @@ public class PurchaseDetailViewModel {
         return quantity;
     }
 
-    public static String getCost() {
-        return cost.get();
+    public static Double getCost() {
+        return Double.parseDouble(cost.get());
     }
 
     public static void setCost(String cost) {
@@ -94,8 +105,8 @@ public class PurchaseDetailViewModel {
         return cost;
     }
 
-    public static String getNetTax() {
-        return netTax.get();
+    public static Double getNetTax() {
+        return Double.parseDouble(netTax.get());
     }
 
     public static void setNetTax(String netTax) {
@@ -130,8 +141,8 @@ public class PurchaseDetailViewModel {
         return serial;
     }
 
-    public static String getDiscount() {
-        return discount.get();
+    public static Double getDiscount() {
+        return Double.parseDouble(discount.get());
     }
 
     public static void setDiscount(String discount) {
@@ -166,8 +177,8 @@ public class PurchaseDetailViewModel {
         return product;
     }
 
-    public static String getTotalPrice() {
-        return totalPrice.get();
+    public static Double getTotalPrice() {
+        return Double.parseDouble(totalPrice.get());
     }
 
     public static void setTotalPrice(String totalPrice) {
@@ -178,8 +189,8 @@ public class PurchaseDetailViewModel {
         return totalPrice;
     }
 
-    public static String getPrice() {
-        return price.get();
+    public static Double getPrice() {
+        return Double.parseDouble(price.get());
     }
 
     public static void setPrice(String price) {
@@ -207,29 +218,34 @@ public class PurchaseDetailViewModel {
     }
 
     public static void addPurchaseDetail() {
-//        PurchaseDetail purchaseDetail =
-//                new PurchaseDetail(
-//                        getPurchase(),
-//                        Double.parseDouble(getCost()),
-//                        getProduct(),
-//                        Long.parseLong(getQuantity()));
-//
-//        Platform.runLater(() -> purchaseDetailList.add(purchaseDetail));
+        var purchaseDetail = PurchaseDetail.builder()
+                .cost(getCost())
+                .purchase(getPurchase())
+                .netTax(getNetTax())
+                .taxType(getTaxType())
+                .discount(getDiscount())
+                .discountType(getDiscountType())
+                .product(getProduct())
+                .serialNumber(getSerial())
+                .price(getPrice())
+                .total(getTotalPrice())
+                .quantity(getQuantity())
+                .build();
 
-        resetProperties();
+        Platform.runLater(() -> {
+            purchaseDetailsList.add(purchaseDetail);
+            resetProperties();
+        });
     }
 
-    public static void savePurchaseDetails() throws Exception {
-//        Dao<PurchaseDetail, Long> purchaseDetailDao =
-//                DaoManager.createDao(connectionSource, PurchaseDetail.class);
-//
-//        purchaseDetailDao.create(purchaseDetailList);
-
-        purchaseDetailList.clear();
+    public static void savePurchaseDetails() throws IOException, InterruptedException {
+        // TODO: make postMultipleDetail()
+        purchasesRepository.postDetail(purchaseDetailsList);
+        purchaseDetailsList.clear();
     }
 
     public static void resetProperties() {
-        setId(0);
+        setId(0L);
         setTempId(-1);
         setPurchase(null);
         setProduct(null);
@@ -243,121 +259,187 @@ public class PurchaseDetailViewModel {
         setQuantity("");
     }
 
-    public static void getAllPurchaseDetails() throws Exception {
-//        Dao<PurchaseDetail, Long> purchaseDetailDao =
-//                DaoManager.createDao(connectionSource, PurchaseDetail.class);
-//
-//        purchaseDetailList.clear();
-//        purchaseDetailList.addAll(purchaseDetailDao.queryForAll());
+    public static void getAllPurchaseDetails() {
+        Type listType = new TypeToken<ArrayList<PurchaseDetail>>() {
+        }.getType();
+
+        Platform.runLater(
+                () -> {
+                    purchaseDetailsList.clear();
+
+                    try {
+                        ArrayList<PurchaseDetail> purchaseDetailList = new Gson().fromJson(
+                                purchasesRepository.fetchAllDetail().body(), listType);
+                        purchaseDetailsList.addAll(purchaseDetailList);
+                    } catch (Exception e) {
+                        SpotyLogger.writeToFile(e, PurchaseDetailViewModel.class);
+                    }
+                });
     }
 
-    public static void updatePurchaseDetail(long index) throws Exception {
-//        Dao<PurchaseDetail, Long> purchaseDetailDao =
-//                DaoManager.createDao(connectionSource, PurchaseDetail.class);
-//
-//        PurchaseDetail purchaseDetail = purchaseDetailDao.queryForId(index);
-//        purchaseDetail.setPurchase(getPurchase());
-//        purchaseDetail.setCost(Double.parseDouble(getCost()));
-//        purchaseDetail.setNetTax(Double.parseDouble(getNetTax()));
-//        purchaseDetail.setTaxType(purchaseDetail.getTaxType());
-//        purchaseDetail.setDiscount(Double.parseDouble(getDiscount()));
-//        purchaseDetail.setDiscountType(purchaseDetail.getDiscountType());
-//        purchaseDetail.setProduct(getProduct());
-//        purchaseDetail.setSerialNumber(getSerial());
-//        purchaseDetail.setTotalPrice(Double.parseDouble(getTotalPrice()));
-//        purchaseDetail.setQuantity(Long.parseLong(getQuantity()));
-//
-//        Platform.runLater(
-//                () -> {
-//                    purchaseDetailList.remove(getTempId());
-//                    purchaseDetailList.add(getTempId(), purchaseDetail);
-//                });
+    public static void updatePurchaseDetail(Long index) {
+        PurchaseDetail oldPurchaseDetail = purchaseDetailsList.get(Math.toIntExact(index));
 
-        resetProperties();
+        var newPurchaseDetail = PurchaseDetail.builder()
+                .id(oldPurchaseDetail.getId())
+                .cost(getCost())
+                .purchase(getPurchase())
+                .netTax(getNetTax())
+                .taxType(getTaxType())
+                .discount(getDiscount())
+                .discountType(getDiscountType())
+                .product(getProduct())
+                .serialNumber(getSerial())
+                .price(getPrice())
+                .total(getTotalPrice())
+                .quantity(getQuantity())
+                .build();
+
+        Platform.runLater(
+                () -> {
+                    purchaseDetailsList.remove(getTempId());
+                    purchaseDetailsList.add(getTempId(), newPurchaseDetail);
+
+                    resetProperties();
+                });
     }
 
-    public static void getItem(long index, int tempIndex) throws Exception {
-//        Dao<PurchaseDetail, Long> purchaseDetailDao =
-//                DaoManager.createDao(connectionSource, PurchaseDetail.class);
-//
-//        PurchaseDetail purchaseDetail = purchaseDetailDao.queryForId(index);
-//
-//        setTempId(tempIndex);
-//        setId(purchaseDetail.getId());
-//        setPurchase(purchaseDetail.getPurchase());
-//        setCost(String.valueOf(purchaseDetail.getCost()));
-//        setNetTax(String.valueOf(purchaseDetail.getNetTax()));
-//        setTaxType(purchaseDetail.getTaxType());
-//        setDiscount(String.valueOf(purchaseDetail.getDiscount()));
-//        setDiscountType(purchaseDetail.getDiscountType());
-//        setProduct(purchaseDetail.getProduct());
-//        setSerial(purchaseDetail.getSerialNumber());
-//        setTotalPrice(String.valueOf(purchaseDetail.getTotalPrice()));
-//        setQuantity(String.valueOf(purchaseDetail.getQuantity()));
+    public static void getItem(Long index, int tempIndex) throws IOException, InterruptedException {
+        var findModel = FindModel.builder()
+                .id(index)
+                .build();
+        var purchaseDetail = new Gson().fromJson(
+                purchasesRepository.fetchDetail(findModel).body(),
+                PurchaseDetail.class);
+
+        setTempId(tempIndex);
+        setId(purchaseDetail.getId());
+        setPurchase(purchaseDetail.getPurchase());
+        setCost(String.valueOf(purchaseDetail.getCost()));
+        setNetTax(String.valueOf(purchaseDetail.getNetTax()));
+        setTaxType(purchaseDetail.getTaxType());
+        setDiscount(String.valueOf(purchaseDetail.getDiscount()));
+        setDiscountType(purchaseDetail.getDiscountType());
+        setProduct(purchaseDetail.getProduct());
+        setSerial(purchaseDetail.getSerialNumber());
+        setTotalPrice(String.valueOf(purchaseDetail.getTotal()));
+        setQuantity(String.valueOf(purchaseDetail.getQuantity()));
     }
 
-    public static void updateItem(long index) throws Exception {
-//        Dao<PurchaseDetail, Long> purchaseDetailDao =
-//                DaoManager.createDao(connectionSource, PurchaseDetail.class);
-//
-//        PurchaseDetail purchaseDetail = purchaseDetailDao.queryForId(index);
-//
-//        setId(purchaseDetail.getId());
-//        setPurchase(purchaseDetail.getPurchase());
-//        setCost(String.valueOf(purchaseDetail.getCost()));
-//        setNetTax(String.valueOf(purchaseDetail.getNetTax()));
-//        setTaxType(purchaseDetail.getTaxType());
-//        setDiscount(String.valueOf(purchaseDetail.getDiscount()));
-//        setDiscountType(purchaseDetail.getDiscountType());
-//        setProduct(purchaseDetail.getProduct());
-//        setSerial(purchaseDetail.getSerialNumber());
-//        setTotalPrice(String.valueOf(purchaseDetail.getTotalPrice()));
-//        setQuantity(String.valueOf(purchaseDetail.getQuantity()));
-//
-//        purchaseDetailDao.update(purchaseDetail);
+    public static void updateItem(Long index) {
+        PurchaseDetail oldPurchaseDetail = purchaseDetailsList.get(Math.toIntExact(index));
 
+        var newPurchaseDetail = PurchaseDetail.builder()
+                .id(oldPurchaseDetail.getId())
+                .cost(getCost())
+                .purchase(getPurchase())
+                .netTax(getNetTax())
+                .taxType(getTaxType())
+                .discount(getDiscount())
+                .discountType(getDiscountType())
+                .product(getProduct())
+                .serialNumber(getSerial())
+                .price(getPrice())
+                .total(getTotalPrice())
+                .quantity(getQuantity())
+                .build();
+
+        Platform.runLater(
+                () -> {
+                    purchaseDetailsList.remove(getTempId());
+                    purchaseDetailsList.add(getTempId(), newPurchaseDetail);
+
+                    resetProperties();
+                });
+    }
+
+    public static void searchItem(String search) throws Exception {
+        var searchModel = new SearchModel();
+        searchModel.setSearch(search);
+
+        Type listType = new TypeToken<ArrayList<PurchaseDetail>>() {
+        }.getType();
+
+        Platform.runLater(
+                () -> {
+                    purchaseDetailsList.clear();
+
+                    try {
+                        ArrayList<PurchaseDetail> purchaseDetailList = new Gson().fromJson(
+                                purchasesRepository.searchDetail(searchModel).body(), listType);
+                        purchaseDetailsList.addAll(purchaseDetailList);
+                    } catch (Exception e) {
+                        SpotyLogger.writeToFile(e, PurchaseDetailViewModel.class);
+                    }
+                });
+
+    }
+
+    public static void updatePurchaseDetails() {
+        // TODO: Add save multiple on API.
+        purchaseDetailsList.forEach(
+                purchaseDetail -> {
+                    try {
+                        purchasesRepository.putDetail(purchaseDetail);
+                    } catch (Exception e) {
+                        SpotyLogger.writeToFile(e, PurchaseDetailViewModel.class);
+                    }
+                });
+        // updateProductQuantity();
+        getAllPurchaseDetails();
         getAllPurchaseDetails();
     }
 
-    public static void updatePurchaseDetails() throws Exception {
-//        Dao<PurchaseDetail, Long> purchaseDetailDao =
-//                DaoManager.createDao(connectionSource, PurchaseDetail.class);
-//
-//        purchaseDetailList.forEach(
-//                purchaseDetail -> {
-//                    try {
-//                        purchaseDetailDao.update(purchaseDetail);
-//                    } catch (Exception e) {
-//                        SpotyLogger.writeToFile(e, PurchaseDetailViewModel.class);
-//                    }
-//                });
-
-        getAllPurchaseDetails();
-    }
-
-    public static void removePurchaseDetail(long index, int tempIndex) {
-        Platform.runLater(() -> purchaseDetailList.remove(tempIndex));
+    public static void removePurchaseDetail(Long index, int tempIndex) {
+        Platform.runLater(() -> purchaseDetailsList.remove(tempIndex));
         PENDING_DELETES.add(index);
     }
 
-    public static void deletePurchaseDetails(@NotNull LinkedList<Long> indexes) {
-//        indexes.forEach(
-//                index -> {
-//                    try {
-//                        SQLiteConnection connection = SQLiteConnection.getInstance();
-//                        ConnectionSource connectionSource = connection.getConnection();
-//
-//                        Dao<PurchaseDetail, Long> purchaseDetailDao =
-//                                DaoManager.createDao(connectionSource, PurchaseDetail.class);
-//
-//                        purchaseDetailDao.deleteById(index);
-//                    } catch (Exception e) {
-//                        SpotyLogger.writeToFile(e, PurchaseDetailViewModel.class);
-//                    }
-//                });
+    public static void deletePurchaseDetails(@NotNull LinkedList<Long> indexes) throws IOException, InterruptedException {
+        LinkedList<FindModel> findModelList = new LinkedList<>();
+        indexes.forEach(index -> findModelList.add(new FindModel(index)));
+        purchasesRepository.deleteMultipleDetails(findModelList);
     }
 
-    public static ObservableList<PurchaseDetail> getPurchaseDetailList() {
-        return purchaseDetailList;
-    }
+//    private static PurchaseTransaction getPurchaseTransaction(long purchaseIndex) {
+////        PreparedQuery<PurchaseTransaction> preparedQuery =
+////                purchaseTransactionDao
+////                        .queryBuilder()
+////                        .where()
+////                        .eq("purchase_detail_id", purchaseIndex)
+////                        .prepare();
+//
+//        // TODO: Query for purchase transaction by purchase detail id.
+//
+////        return purchaseTransactionDao.queryForFirst(preparedQuery);
+//        return new PurchaseTransaction();
+//    }
+//
+//    private static void createPurchaseTransaction(@NotNull PurchaseDetail purchaseDetail) {
+//
+//        PurchaseTransaction purchaseTransaction = new PurchaseTransaction();
+//        purchaseTransaction.setBranch(purchaseDetail.getPurchase().getBranch());
+//        purchaseTransaction.setPurchaseDetail(purchaseDetail);
+//        purchaseTransaction.setProduct(purchaseDetail.getProduct());
+//        purchaseTransaction.setAdjustQuantity(purchaseDetail.getQuantity());
+//        purchaseTransaction.setPurchaseType(purchaseDetail.getPurchaseType());
+//        purchaseTransaction.setDate(new Date());
+//
+////        purchaseTransactionDao.create(purchaseTransaction);
+//        // TODO: Create purchase transaction.
+//    }
+//
+//    private static void updatePurchaseTransaction(@NotNull PurchaseDetail purchaseDetail) {
+//        PurchaseTransaction purchaseTransaction =
+//                getPurchaseTransaction(purchaseDetail.getId());
+//        purchaseTransaction.setBranch(purchaseDetail.getPurchase().getBranch());
+//        purchaseTransaction.setPurchaseDetail(purchaseDetail);
+//        purchaseTransaction.setProduct(purchaseDetail.getProduct());
+//        purchaseTransaction.setAdjustQuantity(purchaseDetail.getQuantity());
+//        purchaseTransaction.setPurchaseType(purchaseDetail.getPurchaseType());
+//        purchaseTransaction.setDate(new Date());
+//
+////        purchaseTransactionDao.update(purchaseTransaction);
+//        // TODO: Update purchase transaction.
+//    }
 }

@@ -14,6 +14,8 @@
 
 package org.infinite.spoty.viewModels.sales;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -22,12 +24,18 @@ import lombok.Getter;
 import org.infinite.spoty.data_source.daos.Branch;
 import org.infinite.spoty.data_source.daos.Customer;
 import org.infinite.spoty.data_source.daos.sales.SaleMaster;
+import org.infinite.spoty.data_source.models.FindModel;
+import org.infinite.spoty.data_source.models.SearchModel;
+import org.infinite.spoty.data_source.repositories.implementations.SalesRepositoryImpl;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
@@ -36,9 +44,9 @@ import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
 
 public class SaleMasterViewModel {
     @Getter
-    public static final ObservableList<SaleMaster> saleMasterList =
+    public static final ObservableList<SaleMaster> saleMastersList =
             FXCollections.observableArrayList();
-    private static final ListProperty<SaleMaster> sales = new SimpleListProperty<>(saleMasterList);
+    private static final ListProperty<SaleMaster> sales = new SimpleListProperty<>(saleMastersList);
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final StringProperty date = new SimpleStringProperty("");
     private static final StringProperty ref = new SimpleStringProperty("");
@@ -49,12 +57,13 @@ public class SaleMasterViewModel {
     private static final DoubleProperty paid = new SimpleDoubleProperty();
     private static final StringProperty payStatus = new SimpleStringProperty("");
     private static final StringProperty note = new SimpleStringProperty("");
+    private static final SalesRepositoryImpl salesRepository = new SalesRepositoryImpl();
 
-    public static long getId() {
+    public static Long getId() {
         return id.get();
     }
 
-    public static void setId(long id) {
+    public static void setId(Long id) {
         SaleMasterViewModel.id.set(id);
     }
 
@@ -184,7 +193,7 @@ public class SaleMasterViewModel {
     public static void resetProperties() {
         Platform.runLater(
                 () -> {
-                    setId(0);
+                    setId(0L);
                     setDate("");
                     setCustomer(null);
                     setBranch(null);
@@ -197,97 +206,105 @@ public class SaleMasterViewModel {
                 });
     }
 
-    public static void saveSaleMaster() throws Exception {
-//        Dao<SaleMaster, Long> saleMasterDao = DaoManager.createDao(connectionSource, SaleMaster.class);
-//
-//        SaleMaster saleMaster =
-//                new SaleMaster(
-//                        getCustomer(),
-//                        getBranch(),
-//                        getTotal(),
-//                        getPaid(),
-//                        getSaleStatus(),
-//                        getPayStatus(),
-//                        getNote(),
-//                        getDate());
-//
-//        if (!SaleDetailViewModel.saleDetailList.isEmpty()) {
-//            SaleDetailViewModel.saleDetailList.forEach(
-//                    saleDetail -> saleDetail.setSaleMaster(saleMaster));
-//
-//            saleMaster.setSaleDetails(SaleDetailViewModel.getSaleDetailList());
-//        }
-//
-//        saleMasterDao.create(saleMaster);
+    public static void saveSaleMaster() throws IOException, InterruptedException {
+        var saleMaster = SaleMaster.builder()
+                .customer(getCustomer())
+                .branch(getBranch())
+                .total(getTotal())
+                .amountPaid(getPaid())
+                .saleStatus(getSaleStatus())
+                .paymentStatus(getPayStatus())
+                .notes(getNote())
+                .date(getDate())
+                .build();
+
+        if (!SaleDetailViewModel.saleDetailsList.isEmpty()) {
+            SaleDetailViewModel.saleDetailsList.forEach(
+                    saleDetail -> saleDetail.setSale(saleMaster));
+
+            saleMaster.setSaleDetails(SaleDetailViewModel.saleDetailsList);
+        }
+
+        salesRepository.postMaster(saleMaster);
         SaleDetailViewModel.saveSaleDetails();
-
-        Platform.runLater(SaleMasterViewModel::resetProperties);
+        SaleMasterViewModel.resetProperties();
         getSaleMasters();
     }
 
-    public static void getSaleMasters() throws Exception {
-//        Dao<SaleMaster, Long> saleMasterDao = DaoManager.createDao(connectionSource, SaleMaster.class);
-//
-//        Platform.runLater(
-//                () -> {
-//                    saleMasterList.clear();
-//
-//                    try {
-//                        saleMasterList.addAll(saleMasterDao.queryForAll());
-//                    } catch (Exception e) {
-//                        SpotyLogger.writeToFile(e, SaleMasterViewModel.class);
-//                    }
-//                });
+    public static void getSaleMasters() throws IOException, InterruptedException {
+        Type listType = new TypeToken<ArrayList<SaleMaster>>() {
+        }.getType();
+        saleMastersList.clear();
+        ArrayList<SaleMaster> saleMasterList = new Gson().fromJson(
+                salesRepository.fetchAllMaster().body(), listType);
+        saleMastersList.addAll(saleMasterList);
     }
 
-    public static void getItem(long index) throws Exception {
-//        Dao<SaleMaster, Long> saleMasterDao = DaoManager.createDao(connectionSource, SaleMaster.class);
-//
-//        SaleMaster saleMaster = saleMasterDao.queryForId(index);
-//
-//        Platform.runLater(
-//                () -> {
-//                    setId(saleMaster.getId());
-//                    setDate(saleMaster.getLocaleDate());
-//                    setCustomer(saleMaster.getCustomer());
-//                    setBranch(saleMaster.getBranch());
-//                    setNote(saleMaster.getNotes());
-//                    setSaleStatus(saleMaster.getSaleStatus());
-//                    setPayStatus(saleMaster.getPaymentStatus());
-//
-//                    SaleDetailViewModel.saleDetailList.clear();
-//                    SaleDetailViewModel.saleDetailList.addAll(saleMaster.getSaleDetails());
-//                });
+    public static void getItem(Long index) throws IOException, InterruptedException {
+        var findModel = new FindModel();
+        findModel.setId(index);
+        var response = salesRepository.fetchMaster(findModel).body();
+        var saleMaster = new Gson().fromJson(response, SaleMaster.class);
 
+        setId(saleMaster.getId());
+        setDate(saleMaster.getLocaleDate());
+        setCustomer(saleMaster.getCustomer());
+        setBranch(saleMaster.getBranch());
+        setNote(saleMaster.getNotes());
+        setSaleStatus(saleMaster.getSaleStatus());
+        setPayStatus(saleMaster.getPaymentStatus());
+        SaleDetailViewModel.saleDetailsList.clear();
+        SaleDetailViewModel.saleDetailsList.addAll(saleMaster.getSaleDetails());
         getSaleMasters();
     }
 
-    public static void updateItem(long index) throws Exception {
-//        Dao<SaleMaster, Long> saleMasterDao = DaoManager.createDao(connectionSource, SaleMaster.class);
-//
-//        SaleMaster saleMaster = saleMasterDao.queryForId(index);
-//        saleMaster.setCustomer(getCustomer());
-//        saleMaster.setBranch(getBranch());
-//        saleMaster.setSaleStatus(getSaleStatus());
-//        saleMaster.setPaymentStatus(getPayStatus());
-//        saleMaster.setNotes(getNote());
-//        saleMaster.setDate(getDate());
-//
-//        SaleDetailViewModel.deleteSaleDetails(PENDING_DELETES);
-//        saleMaster.setSaleDetails(SaleDetailViewModel.getSaleDetailList());
-//
-//        saleMasterDao.update(saleMaster);
+    public static void searchItem(String search) throws Exception {
+        var searchModel = new SearchModel();
+        searchModel.setSearch(search);
+
+        Type listType = new TypeToken<ArrayList<SaleMaster>>() {
+        }.getType();
+
+        Platform.runLater(
+                () -> {
+                    saleMastersList.clear();
+
+                    try {
+                        ArrayList<SaleMaster> saleMasterList = new Gson().fromJson(
+                                salesRepository.searchMaster(searchModel).body(), listType);
+                        saleMastersList.addAll(saleMasterList);
+                    } catch (Exception e) {
+                        SpotyLogger.writeToFile(e, SaleMasterViewModel.class);
+                    }
+                });
+    }
+
+    public static void updateItem() throws IOException, InterruptedException {
+        var saleMaster = SaleMaster.builder()
+                .id(getId())
+                .customer(getCustomer())
+                .branch(getBranch())
+                .total(getTotal())
+                .amountPaid(getPaid())
+                .saleStatus(getSaleStatus())
+                .paymentStatus(getPayStatus())
+                .notes(getNote())
+                .date(getDate())
+                .build();
+
+        SaleDetailViewModel.deleteSaleDetails(PENDING_DELETES);
+        saleMaster.setSaleDetails(SaleDetailViewModel.getSaleDetailsList());
+        salesRepository.putMaster(saleMaster);
         SaleDetailViewModel.updateSaleDetails();
-
         Platform.runLater(SaleMasterViewModel::resetProperties);
         getSaleMasters();
     }
 
-    public static void deleteItem(long index) throws Exception {
-//        Dao<SaleMaster, Long> saleMasterDao = DaoManager.createDao(connectionSource, SaleMaster.class);
-//
-//        saleMasterDao.deleteById(index);
+    public static void deleteItem(Long index) throws IOException, InterruptedException {
+        var findModel = new FindModel();
 
+        findModel.setId(index);
+        salesRepository.deleteMaster(findModel);
         getSaleMasters();
     }
 }
