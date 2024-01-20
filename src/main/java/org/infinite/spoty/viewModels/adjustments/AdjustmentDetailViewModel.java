@@ -15,21 +15,23 @@
 package org.infinite.spoty.viewModels.adjustments;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
-import org.infinite.spoty.data_source.daos.Product;
-import org.infinite.spoty.data_source.daos.adjustments.AdjustmentDetail;
-import org.infinite.spoty.data_source.daos.adjustments.AdjustmentMaster;
-import org.infinite.spoty.data_source.daos.adjustments.AdjustmentTransaction;
+import org.infinite.spoty.data_source.dtos.Product;
+import org.infinite.spoty.data_source.dtos.adjustments.AdjustmentDetail;
+import org.infinite.spoty.data_source.dtos.adjustments.AdjustmentMaster;
+import org.infinite.spoty.data_source.dtos.adjustments.AdjustmentTransaction;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.models.SearchModel;
 import org.infinite.spoty.data_source.repositories.implementations.AdjustmentRepositoryImpl;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.viewModels.ProductViewModel;
+import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -41,6 +43,10 @@ import java.util.LinkedList;
 import static org.infinite.spoty.values.SharedResources.*;
 
 public class AdjustmentDetailViewModel {
+    private static final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(Date.class,
+                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+            .create();
     @Getter
     public static final ObservableList<AdjustmentDetail> adjustmentDetailsList =
             FXCollections.observableArrayList();
@@ -237,7 +243,7 @@ public class AdjustmentDetailViewModel {
                     adjustmentDetailsList.clear();
 
                     try {
-                        ArrayList<AdjustmentDetail> adjustmentDetailList = new Gson().fromJson(
+                        ArrayList<AdjustmentDetail> adjustmentDetailList = gson.fromJson(
                                 adjustmentRepository.fetchAllDetail().body(), listType);
                         adjustmentDetailsList.addAll(adjustmentDetailList);
                     } catch (Exception e) {
@@ -265,7 +271,7 @@ public class AdjustmentDetailViewModel {
                     adjustmentDetailsList.clear();
 
                     try {
-                        ArrayList<AdjustmentDetail> adjustmentDetailList = new Gson().fromJson(
+                        ArrayList<AdjustmentDetail> adjustmentDetailList = gson.fromJson(
                                 adjustmentRepository.searchDetail(searchModel).body(), listType);
                         adjustmentDetailsList.addAll(adjustmentDetailList);
                     } catch (Exception e) {

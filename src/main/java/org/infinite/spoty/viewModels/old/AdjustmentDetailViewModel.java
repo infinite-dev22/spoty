@@ -19,10 +19,10 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
-import org.infinite.spoty.data_source.daos.Product;
-import org.infinite.spoty.data_source.daos.adjustments.AdjustmentDetail;
-import org.infinite.spoty.data_source.daos.adjustments.AdjustmentMaster;
-import org.infinite.spoty.data_source.daos.adjustments.AdjustmentTransaction;
+import org.infinite.spoty.data_source.dtos.Product;
+import org.infinite.spoty.data_source.dtos.adjustments.AdjustmentDetail;
+import org.infinite.spoty.data_source.dtos.adjustments.AdjustmentMaster;
+import org.infinite.spoty.data_source.dtos.adjustments.AdjustmentTransaction;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.jetbrains.annotations.NotNull;
 

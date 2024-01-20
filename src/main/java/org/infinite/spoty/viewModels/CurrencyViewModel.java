@@ -15,23 +15,30 @@
 package org.infinite.spoty.viewModels;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.data_source.daos.Currency;
+import org.infinite.spoty.data_source.dtos.Currency;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.models.SearchModel;
 import org.infinite.spoty.data_source.repositories.implementations.CurrenciesRepositoryImpl;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Date;
 
 
 public class CurrencyViewModel {
+    private static final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(Date.class,
+                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+            .create();
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final StringProperty code = new SimpleStringProperty("");
     private static final StringProperty name = new SimpleStringProperty("");
@@ -140,7 +147,7 @@ public class CurrencyViewModel {
                     currenciesList.clear();
 
                     try {
-                        ArrayList<Currency> currencyList = new Gson().fromJson(currenciesRepository.fetchAll().body(), listType);
+                        ArrayList<Currency> currencyList = gson.fromJson(currenciesRepository.fetchAll().body(), listType);
                         currenciesList.addAll(currencyList);
                     } catch (IOException | InterruptedException e) {
                         SpotyLogger.writeToFile(e, CurrencyViewModel.class);
@@ -153,7 +160,7 @@ public class CurrencyViewModel {
         var findModel = new FindModel();
         findModel.setId(currencyID);
         var response = currenciesRepository.fetch(findModel).body();
-        var currency = new Gson().fromJson(response, Currency.class);
+        var currency = gson.fromJson(response, Currency.class);
 
         setCurrency(currency);
         setId(currency.getId());
@@ -176,7 +183,7 @@ public class CurrencyViewModel {
                     currenciesList.clear();
 
                     try {
-                        ArrayList<Currency> currencyList = new Gson().fromJson(currenciesRepository.search(searchModel)
+                        ArrayList<Currency> currencyList = gson.fromJson(currenciesRepository.search(searchModel)
                                 .body(), listType);
                         currenciesList.addAll(currencyList);
                     } catch (IOException | InterruptedException e) {

@@ -15,29 +15,36 @@
 package org.infinite.spoty.viewModels.requisitions;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
-import org.infinite.spoty.data_source.daos.Product;
-import org.infinite.spoty.data_source.daos.requisitions.RequisitionDetail;
-import org.infinite.spoty.data_source.daos.requisitions.RequisitionMaster;
+import org.infinite.spoty.data_source.dtos.Product;
+import org.infinite.spoty.data_source.dtos.requisitions.RequisitionDetail;
+import org.infinite.spoty.data_source.dtos.requisitions.RequisitionMaster;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.models.SearchModel;
 import org.infinite.spoty.data_source.repositories.implementations.RequisitionsRepositoryImpl;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 
 import static org.infinite.spoty.values.SharedResources.*;
 
 public class RequisitionDetailViewModel {
+    private static final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(Date.class,
+                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+            .create();
     @Getter
     public static final ObservableList<RequisitionDetail> requisitionDetailsList =
             FXCollections.observableArrayList();
@@ -164,7 +171,7 @@ public class RequisitionDetailViewModel {
                     requisitionDetailsList.clear();
 
                     try {
-                        ArrayList<RequisitionDetail> requisitionDetailList = new Gson().fromJson(
+                        ArrayList<RequisitionDetail> requisitionDetailList = gson.fromJson(
                                 requisitionsRepository.fetchAllDetail().body(), listType);
                         requisitionDetailsList.addAll(requisitionDetailList);
                     } catch (IOException | InterruptedException e) {
@@ -185,7 +192,7 @@ public class RequisitionDetailViewModel {
                     requisitionDetailsList.clear();
 
                     try {
-                        ArrayList<RequisitionDetail> requisitionDetailList = new Gson().fromJson(
+                        ArrayList<RequisitionDetail> requisitionDetailList = gson.fromJson(
                                 requisitionsRepository.searchDetail(searchModel).body(), listType);
                         requisitionDetailsList.addAll(requisitionDetailList);
                     } catch (Exception e) {
@@ -210,7 +217,7 @@ public class RequisitionDetailViewModel {
 
     public static void getItem(Long index, int tempIndex) throws IOException, InterruptedException {
         var findModel = FindModel.builder().id(index).build();
-        var requisitionDetail = new Gson().fromJson(requisitionsRepository.fetchDetail(findModel).body(), RequisitionDetail.class);
+        var requisitionDetail = gson.fromJson(requisitionsRepository.fetchDetail(findModel).body(), RequisitionDetail.class);
 
         setTempId(tempIndex);
         setId(requisitionDetail.getId());

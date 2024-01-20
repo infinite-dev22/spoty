@@ -14,16 +14,25 @@
 
 package org.infinite.spoty.viewModels.returns.purchases;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
-import org.infinite.spoty.data_source.daos.Product;
-import org.infinite.spoty.data_source.daos.returns.purchase_returns.PurchaseReturnDetail;
-import org.infinite.spoty.data_source.daos.returns.purchase_returns.PurchaseReturnMaster;
+import org.infinite.spoty.data_source.dtos.Product;
+import org.infinite.spoty.data_source.dtos.returns.purchase_returns.PurchaseReturnDetail;
+import org.infinite.spoty.data_source.dtos.returns.purchase_returns.PurchaseReturnMaster;
+import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
+
+import java.util.Date;
 
 
 public class PurchaseReturnDetailViewModel {
+    private static final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(Date.class,
+                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+            .create();
     @Getter
     public static final ObservableList<PurchaseReturnDetail> purchaseReturnDetailsList =
             FXCollections.observableArrayList();

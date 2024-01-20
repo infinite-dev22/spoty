@@ -22,7 +22,7 @@
 <?import java.net.URL?>
 <BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:id="uomContentPane" prefHeight="400.0"
             xmlns="http://javafx.com/javafx/19"
-            fx:controller="org.infinite.spoty.views.inventory.unit_of_measure.UnitOfMeasureController">
+            fx:controller="org.infinite.spoty.views.product.unit_of_measure.UnitOfMeasureController">
     <stylesheets>
         <URL value="@../../../styles/Common.css"/>
         <URL value="@../../../styles/TextFields.css"/>

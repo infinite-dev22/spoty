@@ -19,9 +19,9 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
-import org.infinite.spoty.data_source.daos.Product;
-import org.infinite.spoty.data_source.daos.sales.SaleDetail;
-import org.infinite.spoty.data_source.daos.sales.SaleTransaction;
+import org.infinite.spoty.data_source.dtos.Product;
+import org.infinite.spoty.data_source.dtos.sales.SaleDetail;
+import org.infinite.spoty.data_source.dtos.sales.SaleTransaction;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.jetbrains.annotations.NotNull;
 

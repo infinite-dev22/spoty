@@ -21,9 +21,9 @@ import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.data_source.daos.Branch;
-import org.infinite.spoty.data_source.daos.Expense;
-import org.infinite.spoty.data_source.daos.ExpenseCategory;
+import org.infinite.spoty.data_source.dtos.Branch;
+import org.infinite.spoty.data_source.dtos.Expense;
+import org.infinite.spoty.data_source.dtos.ExpenseCategory;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.models.SearchModel;
 import org.infinite.spoty.data_source.repositories.implementations.ExpensesRepositoryImpl;
@@ -39,6 +39,10 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class ExpensesViewModel {
+    private static final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(Date.class,
+                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+            .create();
     public static final ObservableList<Expense> expensesList = FXCollections.observableArrayList();
     private static final ListProperty<Expense> expenses = new SimpleListProperty<>(expensesList);
     private static final LongProperty id = new SimpleLongProperty(0);
@@ -217,7 +221,7 @@ public class ExpensesViewModel {
         var findModel = new FindModel();
         findModel.setId(expenseID);
         var response = expenseRepository.fetch(findModel).body();
-        var expense = new Gson().fromJson(response, Expense.class);
+        var expense = gson.fromJson(response, Expense.class);
 //
         setId(expense.getId());
         setDate(expense.getLocaleDate());
@@ -232,10 +236,6 @@ public class ExpensesViewModel {
     public static void searchItem(String search) {
         var expensesRepository = new ExpensesRepositoryImpl();
         var searchModel = new SearchModel();
-        final Gson gson = new GsonBuilder()
-                .registerTypeAdapter(Date.class,
-                        UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
-                .create();
         var listType = new TypeToken<ArrayList<Expense>>() {
         }.getType();
 

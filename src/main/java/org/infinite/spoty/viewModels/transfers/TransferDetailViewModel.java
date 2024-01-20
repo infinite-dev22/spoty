@@ -15,30 +15,36 @@
 package org.infinite.spoty.viewModels.transfers;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.data_source.daos.Product;
-import org.infinite.spoty.data_source.daos.transfers.TransferDetail;
-import org.infinite.spoty.data_source.daos.transfers.TransferMaster;
-import org.infinite.spoty.data_source.daos.transfers.TransferTransaction;
+import org.infinite.spoty.data_source.dtos.Product;
+import org.infinite.spoty.data_source.dtos.transfers.TransferDetail;
+import org.infinite.spoty.data_source.dtos.transfers.TransferMaster;
+import org.infinite.spoty.data_source.dtos.transfers.TransferTransaction;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.repositories.implementations.TransfersRepositoryImpl;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.viewModels.ProductViewModel;
+import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
 import org.infinite.spoty.viewModels.adjustments.AdjustmentDetailViewModel;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 
 import static org.infinite.spoty.values.SharedResources.*;
 
 public class TransferDetailViewModel {
+    private static final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(Date.class,
+                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+            .create();
     public static final ObservableList<TransferDetail> transferDetailsList =
             FXCollections.observableArrayList();
     private static final ListProperty<TransferDetail> transferDetails =
@@ -203,7 +209,7 @@ public class TransferDetailViewModel {
         }.getType();
         transferDetailsList.clear();
 
-        ArrayList<TransferDetail> transferDetailList = new Gson().fromJson(
+        ArrayList<TransferDetail> transferDetailList = gson.fromJson(
                 transfersRepository.fetchAllDetail().body(), listType);
         transferDetailsList.addAll(transferDetailList);
     }

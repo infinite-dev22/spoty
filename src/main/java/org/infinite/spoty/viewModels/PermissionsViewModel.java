@@ -14,16 +14,25 @@
 
 package org.infinite.spoty.viewModels;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.data_source.daos.Permission;
+import org.infinite.spoty.data_source.dtos.Permission;
 import org.infinite.spoty.forms.RoleSettingsFormController;
+import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Date;
 
 
 public class PermissionsViewModel {
+    private static final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(Date.class,
+                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+            .create();
     private static final ObjectProperty<Permission> dashboardAccess = new SimpleObjectProperty<>();
     private static final ObjectProperty<Permission> posAccess = new SimpleObjectProperty<>();
     private static final ObjectProperty<Permission> createPurchases = new SimpleObjectProperty<>();

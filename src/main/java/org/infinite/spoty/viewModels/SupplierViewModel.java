@@ -15,23 +15,30 @@
 package org.infinite.spoty.viewModels;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.data_source.daos.Supplier;
+import org.infinite.spoty.data_source.dtos.Supplier;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.models.SearchModel;
 import org.infinite.spoty.data_source.repositories.implementations.SuppliersRepositoryImpl;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Date;
 
 
 public class SupplierViewModel {
+    private static final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(Date.class,
+                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+            .create();
     public static final ObservableList<Supplier> suppliersList = FXCollections.observableArrayList();
     public static final ObservableList<Supplier> suppliersComboBoxList =
             FXCollections.observableArrayList();
@@ -206,7 +213,7 @@ public class SupplierViewModel {
                     suppliersList.clear();
 
                     try {
-                        ArrayList<Supplier> productList = new Gson().fromJson(suppliersRepository.fetchAll().body(), listType);
+                        ArrayList<Supplier> productList = gson.fromJson(suppliersRepository.fetchAll().body(), listType);
                         suppliersList.addAll(productList);
                     } catch (IOException | InterruptedException e) {
                         SpotyLogger.writeToFile(e, SupplierViewModel.class);
@@ -219,7 +226,7 @@ public class SupplierViewModel {
         var findModel = new FindModel();
         findModel.setId(supplierID);
         var response = suppliersRepository.fetch(findModel).body();
-        var supplier = new Gson().fromJson(response, Supplier.class);
+        var supplier = gson.fromJson(response, Supplier.class);
 
         setId(supplier.getId());
         setName(supplier.getName());
@@ -245,7 +252,7 @@ public class SupplierViewModel {
                     suppliersList.clear();
 
                     try {
-                        ArrayList<Supplier> currencyList = new Gson().fromJson(suppliersRepository.search(searchModel)
+                        ArrayList<Supplier> currencyList = gson.fromJson(suppliersRepository.search(searchModel)
                                 .body(), listType);
                         suppliersList.addAll(currencyList);
                     } catch (IOException | InterruptedException e) {

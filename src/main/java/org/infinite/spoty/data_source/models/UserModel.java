@@ -15,8 +15,8 @@
 package org.infinite.spoty.data_source.models;
 
 import lombok.*;
-import org.infinite.spoty.data_source.daos.Branch;
-import org.infinite.spoty.data_source.daos.Role;
+import org.infinite.spoty.data_source.dtos.Branch;
+import org.infinite.spoty.data_source.dtos.Role;
 
 import java.io.Serializable;
 import java.util.ArrayList;

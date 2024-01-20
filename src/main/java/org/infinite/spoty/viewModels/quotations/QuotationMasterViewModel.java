@@ -15,19 +15,21 @@
 package org.infinite.spoty.viewModels.quotations;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
-import org.infinite.spoty.data_source.daos.Branch;
-import org.infinite.spoty.data_source.daos.Customer;
-import org.infinite.spoty.data_source.daos.quotations.QuotationMaster;
+import org.infinite.spoty.data_source.dtos.Branch;
+import org.infinite.spoty.data_source.dtos.Customer;
+import org.infinite.spoty.data_source.dtos.quotations.QuotationMaster;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.models.SearchModel;
 import org.infinite.spoty.data_source.repositories.implementations.QuotationsRepositoryImpl;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -40,6 +42,10 @@ import java.util.Date;
 import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
 
 public class QuotationMasterViewModel {
+    private static final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(Date.class,
+                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+            .create();
     @Getter
     public static final ObservableList<QuotationMaster> quotationMastersList =
             FXCollections.observableArrayList();
@@ -182,7 +188,7 @@ public class QuotationMasterViewModel {
         Type listType = new TypeToken<ArrayList<QuotationMaster>>() {
         }.getType();
         quotationMastersList.clear();
-        ArrayList<QuotationMaster> quotationMasterList = new Gson().fromJson(
+        ArrayList<QuotationMaster> quotationMasterList = gson.fromJson(
                 quotationRepository.fetchAllMaster().body(), listType);
         quotationMastersList.addAll(quotationMasterList);
     }
@@ -191,7 +197,7 @@ public class QuotationMasterViewModel {
         var findModel = new FindModel();
         findModel.setId(index);
         var response = quotationRepository.fetchMaster(findModel).body();
-        var quotationMaster = new Gson().fromJson(response, QuotationMaster.class);
+        var quotationMaster = gson.fromJson(response, QuotationMaster.class);
 
         setId(quotationMaster.getId());
         setBranch(quotationMaster.getBranch());
@@ -210,7 +216,7 @@ public class QuotationMasterViewModel {
         }.getType();
         quotationMastersList.clear();
 
-        ArrayList<QuotationMaster> quotationMasterList = new Gson().fromJson(
+        ArrayList<QuotationMaster> quotationMasterList = gson.fromJson(
                 quotationRepository.searchMaster(searchModel).body(), listType);
         quotationMastersList.addAll(quotationMasterList);
     }

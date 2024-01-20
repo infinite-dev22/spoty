@@ -15,25 +15,32 @@
 package org.infinite.spoty.viewModels;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.data_source.daos.Branch;
-import org.infinite.spoty.data_source.daos.Role;
-import org.infinite.spoty.data_source.daos.UserProfile;
+import org.infinite.spoty.data_source.dtos.Branch;
+import org.infinite.spoty.data_source.dtos.Role;
+import org.infinite.spoty.data_source.dtos.UserProfile;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.models.SearchModel;
 import org.infinite.spoty.data_source.repositories.implementations.UserProfilesRepositoryImpl;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Date;
 
 
 public class UserViewModel {
+    private static final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(Date.class,
+                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+            .create();
     public static final ObservableList<UserProfile> usersList = FXCollections.observableArrayList();
     public static final ListProperty<UserProfile> userProfiles = new SimpleListProperty<>(usersList);
     private static final LongProperty id = new SimpleLongProperty(0);
@@ -282,7 +289,7 @@ public class UserViewModel {
                     usersList.clear();
 
                     try {
-                        ArrayList<UserProfile> userList = new Gson().fromJson(userProfilesRepository.fetchAll().body(), listType);
+                        ArrayList<UserProfile> userList = gson.fromJson(userProfilesRepository.fetchAll().body(), listType);
                         usersList.addAll(userList);
                     } catch (IOException | InterruptedException e) {
                         SpotyLogger.writeToFile(e, UserViewModel.class);
@@ -295,7 +302,7 @@ public class UserViewModel {
         var findModel = new FindModel();
         findModel.setId(userProfileID);
         var response = userProfilesRepository.fetch(findModel).body();
-        var userProfile = new Gson().fromJson(response, UserProfile.class);
+        var userProfile = gson.fromJson(response, UserProfile.class);
 
         setId(userProfile.getId());
         setFirstName(userProfile.getFirstName());
@@ -320,7 +327,7 @@ public class UserViewModel {
                     usersList.clear();
 
                     try {
-                        ArrayList<UserProfile> userList = new Gson().fromJson(userProfilesRepository.search(searchModel)
+                        ArrayList<UserProfile> userList = gson.fromJson(userProfilesRepository.search(searchModel)
                                 .body(), listType);
                         usersList.addAll(userList);
                     } catch (IOException | InterruptedException e) {

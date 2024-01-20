@@ -18,10 +18,14 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
-import org.infinite.spoty.data_source.daos.Role;
+import org.infinite.spoty.data_source.dtos.Role;
 
 
 public class RoleViewModel {
+//    private static final Gson gson = new GsonBuilder()
+//            .registerTypeAdapter(Date.class,
+//                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+//            .create();
     @Getter
     private static final ObservableList<Role> rolesList = FXCollections.observableArrayList();
     private static final ListProperty<Role> roles = new SimpleListProperty<>(rolesList);

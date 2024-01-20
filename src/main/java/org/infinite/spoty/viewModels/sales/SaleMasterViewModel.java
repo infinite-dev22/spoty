@@ -15,19 +15,21 @@
 package org.infinite.spoty.viewModels.sales;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
-import org.infinite.spoty.data_source.daos.Branch;
-import org.infinite.spoty.data_source.daos.Customer;
-import org.infinite.spoty.data_source.daos.sales.SaleMaster;
+import org.infinite.spoty.data_source.dtos.Branch;
+import org.infinite.spoty.data_source.dtos.Customer;
+import org.infinite.spoty.data_source.dtos.sales.SaleMaster;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.models.SearchModel;
 import org.infinite.spoty.data_source.repositories.implementations.SalesRepositoryImpl;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -43,6 +45,10 @@ import java.util.Objects;
 import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
 
 public class SaleMasterViewModel {
+    private static final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(Date.class,
+                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+            .create();
     @Getter
     public static final ObservableList<SaleMaster> saleMastersList =
             FXCollections.observableArrayList();
@@ -235,7 +241,7 @@ public class SaleMasterViewModel {
         Type listType = new TypeToken<ArrayList<SaleMaster>>() {
         }.getType();
         saleMastersList.clear();
-        ArrayList<SaleMaster> saleMasterList = new Gson().fromJson(
+        ArrayList<SaleMaster> saleMasterList = gson.fromJson(
                 salesRepository.fetchAllMaster().body(), listType);
         saleMastersList.addAll(saleMasterList);
     }
@@ -244,7 +250,7 @@ public class SaleMasterViewModel {
         var findModel = new FindModel();
         findModel.setId(index);
         var response = salesRepository.fetchMaster(findModel).body();
-        var saleMaster = new Gson().fromJson(response, SaleMaster.class);
+        var saleMaster = gson.fromJson(response, SaleMaster.class);
 
         setId(saleMaster.getId());
         setDate(saleMaster.getLocaleDate());
@@ -270,7 +276,7 @@ public class SaleMasterViewModel {
                     saleMastersList.clear();
 
                     try {
-                        ArrayList<SaleMaster> saleMasterList = new Gson().fromJson(
+                        ArrayList<SaleMaster> saleMasterList = gson.fromJson(
                                 salesRepository.searchMaster(searchModel).body(), listType);
                         saleMastersList.addAll(saleMasterList);
                     } catch (Exception e) {

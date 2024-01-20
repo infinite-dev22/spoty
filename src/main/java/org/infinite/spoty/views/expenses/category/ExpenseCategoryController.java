@@ -32,7 +32,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.infinite.spoty.data_source.daos.ExpenseCategory;
+import org.infinite.spoty.data_source.dtos.ExpenseCategory;
 import org.infinite.spoty.forms.ExpenseCategoryFormController;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.ExpenseCategoryViewModel;

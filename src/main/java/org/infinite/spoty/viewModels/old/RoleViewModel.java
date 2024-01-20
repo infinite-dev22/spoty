@@ -18,7 +18,7 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
-import org.infinite.spoty.data_source.daos.Role;
+import org.infinite.spoty.data_source.dtos.Role;
 
 
 public class RoleViewModel {

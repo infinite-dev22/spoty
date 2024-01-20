@@ -15,23 +15,30 @@
 package org.infinite.spoty.viewModels;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.data_source.daos.Brand;
+import org.infinite.spoty.data_source.dtos.Brand;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.models.SearchModel;
 import org.infinite.spoty.data_source.repositories.implementations.BrandsRepositoryImpl;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Date;
 
 
 public class BrandViewModel {
+    private static final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(Date.class,
+                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+            .create();
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final StringProperty name = new SimpleStringProperty("");
     private static final StringProperty description = new SimpleStringProperty("");
@@ -116,7 +123,7 @@ public class BrandViewModel {
                     brandsList.clear();
 
                     try {
-                        ArrayList<Brand> brandList = new Gson().fromJson(brandsRepository.fetchAll().body(), listType);
+                        ArrayList<Brand> brandList = gson.fromJson(brandsRepository.fetchAll().body(), listType);
                         brandsList.addAll(brandList);
                     } catch (IOException | InterruptedException e) {
                         SpotyLogger.writeToFile(e, BrandViewModel.class);
@@ -129,7 +136,7 @@ public class BrandViewModel {
         var findModel = new FindModel();
         findModel.setId(brandID);
         var response = brandsRepository.fetch(findModel).body();
-        var brand = new Gson().fromJson(response, Brand.class);
+        var brand = gson.fromJson(response, Brand.class);
 
         setId(brand.getId());
         setName(brand.getName());
@@ -150,7 +157,7 @@ public class BrandViewModel {
                     brandsList.clear();
 
                     try {
-                        ArrayList<Brand> brandList = new Gson().fromJson(brandsRepository.search(searchModel).body(), listType);
+                        ArrayList<Brand> brandList = gson.fromJson(brandsRepository.search(searchModel).body(), listType);
                         brandsList.addAll(brandList);
                     } catch (IOException | InterruptedException e) {
                         SpotyLogger.writeToFile(e, BranchViewModel.class);

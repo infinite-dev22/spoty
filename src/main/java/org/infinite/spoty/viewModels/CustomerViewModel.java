@@ -15,23 +15,30 @@
 package org.infinite.spoty.viewModels;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.data_source.daos.Customer;
+import org.infinite.spoty.data_source.dtos.Customer;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.models.SearchModel;
 import org.infinite.spoty.data_source.repositories.implementations.CustomersRepositoryImpl;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Date;
 
 
 public class CustomerViewModel {
+    private static final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(Date.class,
+                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+            .create();
     public static final ObservableList<Customer> customersList = FXCollections.observableArrayList();
     public static final ObservableList<Customer> customersComboBoxList =
             FXCollections.observableArrayList();
@@ -206,7 +213,7 @@ public class CustomerViewModel {
                     customersList.clear();
 
                     try {
-                        ArrayList<Customer> customerList = new Gson().fromJson(customersRepository.fetchAll().body(), listType);
+                        ArrayList<Customer> customerList = gson.fromJson(customersRepository.fetchAll().body(), listType);
                         customersList.addAll(customerList);
                     } catch (IOException | InterruptedException e) {
                         SpotyLogger.writeToFile(e, CustomerViewModel.class);
@@ -219,7 +226,7 @@ public class CustomerViewModel {
         var findModel = new FindModel();
         findModel.setId(customerID);
         var response = customersRepository.fetch(findModel).body();
-        var customer = new Gson().fromJson(response, Customer.class);
+        var customer = gson.fromJson(response, Customer.class);
 
         setId(customer.getId());
         setName(customer.getName());
@@ -245,7 +252,7 @@ public class CustomerViewModel {
                     customersList.clear();
 
                     try {
-                        ArrayList<Customer> customerList = new Gson().fromJson(customersRepository.search(searchModel).body(), listType);
+                        ArrayList<Customer> customerList = gson.fromJson(customersRepository.search(searchModel).body(), listType);
                         customersList.addAll(customerList);
                     } catch (IOException | InterruptedException e) {
                         SpotyLogger.writeToFile(e, CustomerViewModel.class);

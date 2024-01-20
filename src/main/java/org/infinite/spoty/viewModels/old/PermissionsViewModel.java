@@ -18,7 +18,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.data_source.daos.Permission;
+import org.infinite.spoty.data_source.dtos.Permission;
 import org.infinite.spoty.forms.RoleSettingsFormController;
 import org.jetbrains.annotations.Nullable;
 

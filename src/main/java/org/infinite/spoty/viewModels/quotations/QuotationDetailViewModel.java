@@ -15,32 +15,39 @@
 package org.infinite.spoty.viewModels.quotations;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
-import org.infinite.spoty.data_source.daos.Product;
-import org.infinite.spoty.data_source.daos.UnitOfMeasure;
-import org.infinite.spoty.data_source.daos.quotations.QuotationDetail;
-import org.infinite.spoty.data_source.daos.quotations.QuotationMaster;
+import org.infinite.spoty.data_source.dtos.Product;
+import org.infinite.spoty.data_source.dtos.UnitOfMeasure;
+import org.infinite.spoty.data_source.dtos.quotations.QuotationDetail;
+import org.infinite.spoty.data_source.dtos.quotations.QuotationMaster;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.models.SearchModel;
 import org.infinite.spoty.data_source.repositories.implementations.QuotationsRepositoryImpl;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
 import org.infinite.spoty.viewModels.adjustments.AdjustmentDetailViewModel;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.Objects;
 
 import static org.infinite.spoty.values.SharedResources.*;
 
 public class QuotationDetailViewModel {
+    private static final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(Date.class,
+                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+            .create();
     // TODO: Add more fields according to DB design and necessity.
     @Getter
     public static final ObservableList<QuotationDetail> quotationDetailsList =
@@ -203,7 +210,7 @@ public class QuotationDetailViewModel {
         Type listType = new TypeToken<ArrayList<QuotationDetail>>() {
         }.getType();
         quotationDetailsList.clear();
-        ArrayList<QuotationDetail> adjustmentDetailList = new Gson().fromJson(
+        ArrayList<QuotationDetail> adjustmentDetailList = gson.fromJson(
                 quotationsRepository.searchDetail(searchModel).body(), listType);
         quotationDetailsList.addAll(adjustmentDetailList);
     }
@@ -226,7 +233,7 @@ public class QuotationDetailViewModel {
         Type listType = new TypeToken<ArrayList<QuotationDetail>>() {
         }.getType();
         quotationDetailsList.clear();
-        ArrayList<QuotationDetail> quotationDetailList = new Gson().fromJson(
+        ArrayList<QuotationDetail> quotationDetailList = gson.fromJson(
                 quotationsRepository.fetchAllDetail().body(), listType);
         quotationDetailsList.addAll(quotationDetailList);
     }

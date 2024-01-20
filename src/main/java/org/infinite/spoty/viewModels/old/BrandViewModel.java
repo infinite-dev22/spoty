@@ -17,7 +17,7 @@ package org.infinite.spoty.viewModels.old;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.data_source.daos.Brand;
+import org.infinite.spoty.data_source.dtos.Brand;
 
 
 public class BrandViewModel {

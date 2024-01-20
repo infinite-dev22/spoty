@@ -15,24 +15,31 @@
 package org.infinite.spoty.viewModels;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.infinite.spoty.data_source.auth.ProtectedGlobals;
-import org.infinite.spoty.data_source.daos.Branch;
+import org.infinite.spoty.data_source.dtos.Branch;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.models.SearchModel;
 import org.infinite.spoty.data_source.repositories.implementations.BranchesRepositoryImpl;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Date;
 
 
 public class BranchViewModel {
+    private static final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(Date.class,
+                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+            .create();
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final StringProperty title = new SimpleStringProperty("");
     private static final StringProperty name = new SimpleStringProperty("");
@@ -188,7 +195,7 @@ public class BranchViewModel {
                     branchesList.clear();
 
                     try {
-                        ArrayList<Branch> branchList = new Gson().fromJson(branchesRepository.fetchAll().body(), listType);
+                        ArrayList<Branch> branchList = gson.fromJson(branchesRepository.fetchAll().body(), listType);
                         branchesList.addAll(branchList);
                     } catch (Exception e) {
                         SpotyLogger.writeToFile(e, BranchViewModel.class);
@@ -201,7 +208,7 @@ public class BranchViewModel {
         var findModel = new FindModel();
         findModel.setId(branchID);
         var response = branchesRepository.fetch(findModel).body();
-        var branch = new Gson().fromJson(response, Branch.class);
+        var branch = gson.fromJson(response, Branch.class);
 
         setBranch(branch);
         setId(branch.getId());
@@ -227,7 +234,7 @@ public class BranchViewModel {
                     branchesList.clear();
 
                     try {
-                        ArrayList<Branch> branchList = new Gson().fromJson(branchesRepository.search(searchModel).body(), listType);
+                        ArrayList<Branch> branchList = gson.fromJson(branchesRepository.search(searchModel).body(), listType);
                         branchesList.addAll(branchList);
                     } catch (Exception e) {
                         SpotyLogger.writeToFile(e, BranchViewModel.class);

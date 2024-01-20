@@ -18,10 +18,10 @@ import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.data_source.daos.Brand;
-import org.infinite.spoty.data_source.daos.Product;
-import org.infinite.spoty.data_source.daos.ProductCategory;
-import org.infinite.spoty.data_source.daos.UnitOfMeasure;
+import org.infinite.spoty.data_source.dtos.Brand;
+import org.infinite.spoty.data_source.dtos.Product;
+import org.infinite.spoty.data_source.dtos.ProductCategory;
+import org.infinite.spoty.data_source.dtos.UnitOfMeasure;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;

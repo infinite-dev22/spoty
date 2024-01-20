@@ -15,17 +15,19 @@
 package org.infinite.spoty.viewModels.adjustments;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.data_source.daos.Branch;
-import org.infinite.spoty.data_source.daos.adjustments.AdjustmentMaster;
+import org.infinite.spoty.data_source.dtos.Branch;
+import org.infinite.spoty.data_source.dtos.adjustments.AdjustmentMaster;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.models.SearchModel;
 import org.infinite.spoty.data_source.repositories.implementations.AdjustmentRepositoryImpl;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -38,6 +40,10 @@ import java.util.Date;
 import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
 
 public class AdjustmentMasterViewModel {
+    private static final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(Date.class,
+                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+            .create();
     public static final ObservableList<AdjustmentMaster> adjustmentMastersList =
             FXCollections.observableArrayList();
     private static final ListProperty<AdjustmentMaster> adjustmentMasters =
@@ -172,7 +178,7 @@ public class AdjustmentMasterViewModel {
         Type listType = new TypeToken<ArrayList<AdjustmentMaster>>() {
         }.getType();
         adjustmentMastersList.clear();
-        ArrayList<AdjustmentMaster> adjustmentMasterList = new Gson().fromJson(
+        ArrayList<AdjustmentMaster> adjustmentMasterList = gson.fromJson(
                 adjustmentRepository.fetchAllMaster().body(), listType);
         adjustmentMastersList.addAll(adjustmentMasterList);
     }
@@ -181,14 +187,17 @@ public class AdjustmentMasterViewModel {
         var findModel = new FindModel();
         findModel.setId(index);
         var response = adjustmentRepository.fetchMaster(findModel).body();
-        var adjustmentMaster = new Gson().fromJson(response, AdjustmentMaster.class);
+        var adjustmentMaster = gson.fromJson(response, AdjustmentMaster.class);
 
-        setId(adjustmentMaster.getId());
-        setBranch(adjustmentMaster.getBranch());
-        setNote(adjustmentMaster.getNotes());
-        setDate(adjustmentMaster.getLocaleDate());
-        AdjustmentDetailViewModel.adjustmentDetailsList.clear();
-        AdjustmentDetailViewModel.adjustmentDetailsList.addAll(adjustmentMaster.getAdjustmentDetails());
+        Platform.runLater(() -> {
+            setId(adjustmentMaster.getId());
+            setBranch(adjustmentMaster.getBranch());
+            setNote(adjustmentMaster.getNotes());
+            setDate(adjustmentMaster.getLocaleDate());
+            AdjustmentDetailViewModel.adjustmentDetailsList.clear();
+            AdjustmentDetailViewModel.adjustmentDetailsList.addAll(adjustmentMaster.getAdjustmentDetails());
+        });
+
         getAllAdjustmentMasters();
     }
 
@@ -204,7 +213,7 @@ public class AdjustmentMasterViewModel {
                     adjustmentMastersList.clear();
 
                     try {
-                        ArrayList<AdjustmentMaster> adjustmentMasterList = new Gson().fromJson(
+                        ArrayList<AdjustmentMaster> adjustmentMasterList = gson.fromJson(
                                 adjustmentRepository.searchMaster(searchModel).body(), listType);
                         adjustmentMastersList.addAll(adjustmentMasterList);
                     } catch (Exception e) {

@@ -18,10 +18,10 @@ import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.data_source.daos.Product;
-import org.infinite.spoty.data_source.daos.stock_ins.StockInDetail;
-import org.infinite.spoty.data_source.daos.stock_ins.StockInMaster;
-import org.infinite.spoty.data_source.daos.stock_ins.StockInTransaction;
+import org.infinite.spoty.data_source.dtos.Product;
+import org.infinite.spoty.data_source.dtos.stock_ins.StockInDetail;
+import org.infinite.spoty.data_source.dtos.stock_ins.StockInMaster;
+import org.infinite.spoty.data_source.dtos.stock_ins.StockInTransaction;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.jetbrains.annotations.NotNull;
 

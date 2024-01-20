@@ -15,16 +15,23 @@
 package org.infinite.spoty.viewModels;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import org.infinite.spoty.data_source.models.APIResponseModel;
 import org.infinite.spoty.data_source.models.LoginModel;
 import org.infinite.spoty.data_source.repositories.implementations.AuthRepositoryImpl;
+import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
 
 import java.io.IOException;
+import java.util.Date;
 
 
 public class LoginViewModel {
+    private static final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(Date.class,
+                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+            .create();
     private static final StringProperty username = new SimpleStringProperty("");
     private static final StringProperty password = new SimpleStringProperty("");
 
@@ -63,10 +70,6 @@ public class LoginViewModel {
 
         var response = authRepository.login(loginDetails);
 
-        if (response.statusCode() == 200) {
-            return new Gson().fromJson(response.body(), APIResponseModel.class);
-        } else {
-            return new Gson().fromJson(response.body(), APIResponseModel.class);
-        }
+        return gson.fromJson(response.body(), APIResponseModel.class);
     }
 }

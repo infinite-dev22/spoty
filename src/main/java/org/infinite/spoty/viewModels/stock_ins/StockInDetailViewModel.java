@@ -15,30 +15,37 @@
 package org.infinite.spoty.viewModels.stock_ins;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.data_source.daos.Product;
-import org.infinite.spoty.data_source.daos.stock_ins.StockInDetail;
-import org.infinite.spoty.data_source.daos.stock_ins.StockInMaster;
-import org.infinite.spoty.data_source.daos.stock_ins.StockInTransaction;
+import org.infinite.spoty.data_source.dtos.Product;
+import org.infinite.spoty.data_source.dtos.stock_ins.StockInDetail;
+import org.infinite.spoty.data_source.dtos.stock_ins.StockInMaster;
+import org.infinite.spoty.data_source.dtos.stock_ins.StockInTransaction;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.models.SearchModel;
 import org.infinite.spoty.data_source.repositories.implementations.StockInsRepositoryImpl;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.viewModels.ProductViewModel;
+import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 
 import static org.infinite.spoty.values.SharedResources.*;
 
 public class StockInDetailViewModel {
+    private static final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(Date.class,
+                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+            .create();
     public static final ObservableList<StockInDetail> stockInDetailsList =
             FXCollections.observableArrayList();
     private static final ListProperty<StockInDetail> stockInDetails =
@@ -187,7 +194,7 @@ public class StockInDetailViewModel {
                     stockInDetailsList.clear();
 
                     try {
-                        ArrayList<StockInDetail> stockInDetailList = new Gson().fromJson(
+                        ArrayList<StockInDetail> stockInDetailList = gson.fromJson(
                                 stockInsRepository.fetchAllDetail().body(), listType);
                         stockInDetailsList.addAll(stockInDetailList);
                     } catch (Exception e) {
@@ -205,7 +212,7 @@ public class StockInDetailViewModel {
 
         stockInDetailsList.clear();
 
-        ArrayList<StockInDetail> stockInDetailList = new Gson().fromJson(
+        ArrayList<StockInDetail> stockInDetailList = gson.fromJson(
                 stockInsRepository.searchDetail(searchModel).body(), listType);
         stockInDetailsList.addAll(stockInDetailList);
     }

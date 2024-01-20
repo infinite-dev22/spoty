@@ -15,19 +15,21 @@
 package org.infinite.spoty.viewModels.requisitions;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
-import org.infinite.spoty.data_source.daos.Branch;
-import org.infinite.spoty.data_source.daos.Supplier;
-import org.infinite.spoty.data_source.daos.requisitions.RequisitionMaster;
+import org.infinite.spoty.data_source.dtos.Branch;
+import org.infinite.spoty.data_source.dtos.Supplier;
+import org.infinite.spoty.data_source.dtos.requisitions.RequisitionMaster;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.models.SearchModel;
 import org.infinite.spoty.data_source.repositories.implementations.RequisitionsRepositoryImpl;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -40,6 +42,10 @@ import java.util.Date;
 import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
 
 public class RequisitionMasterViewModel {
+    private static final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(Date.class,
+                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+            .create();
     @Getter
     public static final ObservableList<RequisitionMaster> requisitionMastersList =
             FXCollections.observableArrayList();
@@ -262,7 +268,7 @@ public class RequisitionMasterViewModel {
         Type listType = new TypeToken<ArrayList<RequisitionMaster>>() {
         }.getType();
         requisitionMastersList.clear();
-        ArrayList<RequisitionMaster> requisitionMasterList = new Gson().fromJson(
+        ArrayList<RequisitionMaster> requisitionMasterList = gson.fromJson(
                 requisitionsRepository.fetchAllMaster().body(), listType);
         requisitionMastersList.addAll(requisitionMasterList);
     }
@@ -271,7 +277,7 @@ public class RequisitionMasterViewModel {
         var findModel = new FindModel();
         findModel.setId(index);
         var response = requisitionsRepository.fetchMaster(findModel).body();
-        var requisitionMaster = new Gson().fromJson(response, RequisitionMaster.class);
+        var requisitionMaster = gson.fromJson(response, RequisitionMaster.class);
 
         setId(requisitionMaster.getId());
         setSupplier(requisitionMaster.getSupplier());
@@ -301,7 +307,7 @@ public class RequisitionMasterViewModel {
                     requisitionMastersList.clear();
 
                     try {
-                        ArrayList<RequisitionMaster> requisitionMasterList = new Gson().fromJson(
+                        ArrayList<RequisitionMaster> requisitionMasterList = gson.fromJson(
                                 requisitionsRepository.searchMaster(searchModel).body(), listType);
                         requisitionMastersList.addAll(requisitionMasterList);
                     } catch (Exception e) {

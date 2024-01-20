@@ -1,6 +1,5 @@
 plugins {
     id 'java'
-    id 'org.javamodularity.moduleplugin' version '1.8.12'
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.1.0'
     id 'org.beryx.jlink' version '3.0.0'
@@ -10,7 +9,7 @@ plugins {
 
 apply plugin: 'java'
 
-version '0.0.1-beta'
+version '230.46.7-beta'
 project.description = 'Zenmart ERP - Fintech Software.'
 project.ext.buildDate = LocalDate.now()
 project.version = '1.0.0'
@@ -35,7 +34,6 @@ tasks.withType(JavaCompile) {
 }
 
 application {
-    mainModule = 'org.infinite.spoty'
     mainClass = 'org.infinite.spoty.Main'
 }
 

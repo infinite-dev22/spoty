@@ -18,9 +18,10 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
-import org.infinite.spoty.data_source.daos.Branch;
-import org.infinite.spoty.data_source.daos.returns.sale_returns.SaleReturnMaster;
+import org.infinite.spoty.data_source.dtos.Branch;
+import org.infinite.spoty.data_source.dtos.returns.sale_returns.SaleReturnMaster;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
 import org.jetbrains.annotations.Nullable;
 
 import java.text.ParseException;
@@ -28,6 +29,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class SaleReturnMasterViewModel {
+//    private static final Gson gson = new GsonBuilder()
+//            .registerTypeAdapter(Date.class,
+//                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+//            .create();
     @Getter
     public static final ObservableList<SaleReturnMaster> saleReturnMasterList =
             FXCollections.observableArrayList();

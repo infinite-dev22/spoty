@@ -15,23 +15,30 @@
 package org.infinite.spoty.viewModels;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.data_source.daos.ExpenseCategory;
+import org.infinite.spoty.data_source.dtos.ExpenseCategory;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.models.SearchModel;
 import org.infinite.spoty.data_source.repositories.implementations.ExpenseCategoriesRepositoryImpl;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Date;
 
 
 public class ExpenseCategoryViewModel {
+    private static final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(Date.class,
+                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+            .create();
     public static final ObservableList<ExpenseCategory> categoryList =
             FXCollections.observableArrayList();
     public static final ObservableList<ExpenseCategory> categoryComboBoxList =
@@ -118,7 +125,7 @@ public class ExpenseCategoryViewModel {
                     categoryList.clear();
 
                     try {
-                        ArrayList<ExpenseCategory> categoryListList = new Gson().fromJson(expenseCategoriesRepository.fetchAll().body(), listType);
+                        ArrayList<ExpenseCategory> categoryListList = gson.fromJson(expenseCategoriesRepository.fetchAll().body(), listType);
                         categoryList.addAll(categoryListList);
                     } catch (IOException | InterruptedException e) {
                         SpotyLogger.writeToFile(e, ExpenseCategoryViewModel.class);
@@ -131,7 +138,7 @@ public class ExpenseCategoryViewModel {
         var findModel = new FindModel();
         findModel.setId(categoryID);
         var response = expenseCategoriesRepository.fetch(findModel).body();
-        var expenseCategory = new Gson().fromJson(response, ExpenseCategory.class);
+        var expenseCategory = gson.fromJson(response, ExpenseCategory.class);
 
         setId(expenseCategory.getId());
         setName(expenseCategory.getName());
@@ -152,7 +159,7 @@ public class ExpenseCategoryViewModel {
                     categoryList.clear();
 
                     try {
-                        ArrayList<ExpenseCategory> expenseCategoryList = new Gson().fromJson(
+                        ArrayList<ExpenseCategory> expenseCategoryList = gson.fromJson(
                                 expenseCategoriesRepository.search(searchModel).body(), listType);
                         categoryList.addAll(expenseCategoryList);
                     } catch (IOException | InterruptedException e) {

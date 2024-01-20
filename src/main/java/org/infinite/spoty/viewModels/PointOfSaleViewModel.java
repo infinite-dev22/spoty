@@ -14,13 +14,22 @@
 
 package org.infinite.spoty.viewModels;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.data_source.daos.Product;
+import org.infinite.spoty.data_source.dtos.Product;
+import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Date;
+
 public class PointOfSaleViewModel {
+    private static final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(Date.class,
+                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+            .create();
     public static final LongProperty itemQuantity = new SimpleLongProperty(1);
     private static final ObjectProperty<Product> product = new SimpleObjectProperty<>();
     private static final ObjectProperty<Product> customer = new SimpleObjectProperty<>();

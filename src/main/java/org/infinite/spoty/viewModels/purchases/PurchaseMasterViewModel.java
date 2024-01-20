@@ -15,19 +15,21 @@
 package org.infinite.spoty.viewModels.purchases;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
-import org.infinite.spoty.data_source.daos.Branch;
-import org.infinite.spoty.data_source.daos.Supplier;
-import org.infinite.spoty.data_source.daos.purchases.PurchaseMaster;
+import org.infinite.spoty.data_source.dtos.Branch;
+import org.infinite.spoty.data_source.dtos.Supplier;
+import org.infinite.spoty.data_source.dtos.purchases.PurchaseMaster;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.models.SearchModel;
 import org.infinite.spoty.data_source.repositories.implementations.PurchasesRepositoryImpl;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -40,6 +42,10 @@ import java.util.Date;
 import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
 
 public class PurchaseMasterViewModel {
+    private static final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(Date.class,
+                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+            .create();
     @Getter
     public static final ObservableList<PurchaseMaster> purchaseMastersList =
             FXCollections.observableArrayList();
@@ -190,7 +196,7 @@ public class PurchaseMasterViewModel {
         Type listType = new TypeToken<ArrayList<PurchaseMaster>>() {
         }.getType();
         purchaseMastersList.clear();
-        ArrayList<PurchaseMaster> purchaseMasterList = new Gson().fromJson(
+        ArrayList<PurchaseMaster> purchaseMasterList = gson.fromJson(
                 purchasesRepository.fetchAllMaster().body(), listType);
         purchaseMastersList.addAll(purchaseMasterList);
     }
@@ -199,7 +205,7 @@ public class PurchaseMasterViewModel {
         var findModel = new FindModel();
         findModel.setId(index);
         var response = purchasesRepository.fetchMaster(findModel).body();
-        var purchaseMaster = new Gson().fromJson(response, PurchaseMaster.class);
+        var purchaseMaster = gson.fromJson(response, PurchaseMaster.class);
 
         setId(purchaseMaster.getId());
         setBranch(purchaseMaster.getBranch());
@@ -222,7 +228,7 @@ public class PurchaseMasterViewModel {
                     purchaseMastersList.clear();
 
                     try {
-                        ArrayList<PurchaseMaster> purchaseMasterList = new Gson().fromJson(
+                        ArrayList<PurchaseMaster> purchaseMasterList = gson.fromJson(
                                 purchasesRepository.searchMaster(searchModel).body(), listType);
                         purchaseMastersList.addAll(purchaseMasterList);
                     } catch (Exception e) {

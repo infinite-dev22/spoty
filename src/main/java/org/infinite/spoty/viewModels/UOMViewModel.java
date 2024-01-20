@@ -15,23 +15,30 @@
 package org.infinite.spoty.viewModels;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.data_source.daos.UnitOfMeasure;
+import org.infinite.spoty.data_source.dtos.UnitOfMeasure;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.models.SearchModel;
 import org.infinite.spoty.data_source.repositories.implementations.UnitsOfMeasureRepositoryImpl;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Date;
 
 
 public class UOMViewModel {
+    private static final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(Date.class,
+                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+            .create();
     public static final ObservableList<UnitOfMeasure> uomsList = FXCollections.observableArrayList();
     public static final ObservableList<UnitOfMeasure> uomComboBoxList =
             FXCollections.observableArrayList();
@@ -162,7 +169,7 @@ public class UOMViewModel {
                     uomsList.clear();
 
                     try {
-                        ArrayList<UnitOfMeasure> uomList = new Gson().fromJson(uomRepository.fetchAll().body(), listType);
+                        ArrayList<UnitOfMeasure> uomList = gson.fromJson(uomRepository.fetchAll().body(), listType);
                         uomsList.addAll(uomList);
                     } catch (IOException | InterruptedException e) {
                         SpotyLogger.writeToFile(e, UOMViewModel.class);
@@ -175,7 +182,7 @@ public class UOMViewModel {
         var findModel = new FindModel();
         findModel.setId(uomID);
         var response = uomRepository.fetch(findModel).body();
-        var uom = new Gson().fromJson(response, UnitOfMeasure.class);
+        var uom = gson.fromJson(response, UnitOfMeasure.class);
 
         setId(uom.getId());
         setName(uom.getName());
@@ -200,7 +207,7 @@ public class UOMViewModel {
                     uomsList.clear();
 
                     try {
-                        ArrayList<UnitOfMeasure> uomList = new Gson().fromJson(uomRepository.search(searchModel)
+                        ArrayList<UnitOfMeasure> uomList = gson.fromJson(uomRepository.search(searchModel)
                                 .body(), listType);
                         uomsList.addAll(uomList);
                     } catch (IOException | InterruptedException e) {

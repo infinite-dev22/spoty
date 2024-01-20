@@ -28,7 +28,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import org.infinite.spoty.components.navigation.Navigation;
 import org.infinite.spoty.components.navigation.Pages;
-import org.infinite.spoty.data_source.daos.Role;
+import org.infinite.spoty.data_source.dtos.Role;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.RoleViewModel;
 

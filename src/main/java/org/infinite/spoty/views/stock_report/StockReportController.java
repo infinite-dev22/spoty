@@ -12,7 +12,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-import org.infinite.spoty.data_source.daos.StockReport;
+import org.infinite.spoty.data_source.dtos.StockReport;
 import org.infinite.spoty.utils.SpotyThreader;
 
 import java.io.IOException;

@@ -15,31 +15,38 @@
 package org.infinite.spoty.viewModels.sales;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
-import org.infinite.spoty.data_source.daos.Product;
-import org.infinite.spoty.data_source.daos.sales.SaleDetail;
-import org.infinite.spoty.data_source.daos.sales.SaleTransaction;
+import org.infinite.spoty.data_source.dtos.Product;
+import org.infinite.spoty.data_source.dtos.sales.SaleDetail;
+import org.infinite.spoty.data_source.dtos.sales.SaleTransaction;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.models.SearchModel;
 import org.infinite.spoty.data_source.repositories.implementations.SalesRepositoryImpl;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.viewModels.ProductViewModel;
+import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.Objects;
 
 import static org.infinite.spoty.values.SharedResources.*;
 
 public class SaleDetailViewModel {
+    private static final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(Date.class,
+                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+            .create();
     @Getter
     public static final ObservableList<SaleDetail> saleDetailsList =
             FXCollections.observableArrayList();
@@ -380,7 +387,7 @@ public class SaleDetailViewModel {
                     saleDetailsList.clear();
 
                     try {
-                        ArrayList<SaleDetail> saleDetailList = new Gson().fromJson(
+                        ArrayList<SaleDetail> saleDetailList = gson.fromJson(
                                 salesRepository.fetchAllDetail().body(), listType);
                         saleDetailsList.addAll(saleDetailList);
                     } catch (Exception e) {
@@ -399,7 +406,7 @@ public class SaleDetailViewModel {
                     saleDetailsList.clear();
 
                     try {
-                        ArrayList<SaleDetail> saleDetailList = new Gson().fromJson(
+                        ArrayList<SaleDetail> saleDetailList = gson.fromJson(
                                 salesRepository.searchDetail(searchModel).body(), listType);
                         saleDetailsList.addAll(saleDetailList);
                     } catch (Exception e) {

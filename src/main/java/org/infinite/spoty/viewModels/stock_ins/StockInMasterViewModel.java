@@ -15,18 +15,20 @@
 package org.infinite.spoty.viewModels.stock_ins;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
-import org.infinite.spoty.data_source.daos.Branch;
-import org.infinite.spoty.data_source.daos.stock_ins.StockInMaster;
+import org.infinite.spoty.data_source.dtos.Branch;
+import org.infinite.spoty.data_source.dtos.stock_ins.StockInMaster;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.models.SearchModel;
 import org.infinite.spoty.data_source.repositories.implementations.StockInsRepositoryImpl;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -39,6 +41,10 @@ import java.util.Date;
 import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
 
 public class StockInMasterViewModel {
+    private static final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(Date.class,
+                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+            .create();
     @Getter
     public static final ObservableList<StockInMaster> stockInMastersList =
             FXCollections.observableArrayList();
@@ -178,7 +184,7 @@ public class StockInMasterViewModel {
         Type listType = new TypeToken<ArrayList<StockInMaster>>() {
         }.getType();
         stockInMastersList.clear();
-        ArrayList<StockInMaster> stockInMasterList = new Gson().fromJson(
+        ArrayList<StockInMaster> stockInMasterList = gson.fromJson(
                 stockInsRepository.fetchAllMaster().body(), listType);
         stockInMastersList.addAll(stockInMasterList);
     }
@@ -187,7 +193,7 @@ public class StockInMasterViewModel {
         var findModel = new FindModel();
         findModel.setId(index);
         var response = stockInsRepository.fetchMaster(findModel).body();
-        var stockInMaster = new Gson().fromJson(response, StockInMaster.class);
+        var stockInMaster = gson.fromJson(response, StockInMaster.class);
 
         setId(stockInMaster.getId());
         setDate(stockInMaster.getLocaleDate());
@@ -209,7 +215,7 @@ public class StockInMasterViewModel {
         }.getType();
 
         stockInMastersList.clear();
-        ArrayList<StockInMaster> stockInMasterList = new Gson().fromJson(
+        ArrayList<StockInMaster> stockInMasterList = gson.fromJson(
                 stockInsRepository.searchMaster(searchModel).body(), listType);
         stockInMastersList.addAll(stockInMasterList);
     }

@@ -15,23 +15,30 @@
 package org.infinite.spoty.viewModels;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.data_source.daos.ProductCategory;
+import org.infinite.spoty.data_source.dtos.ProductCategory;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.models.SearchModel;
 import org.infinite.spoty.data_source.repositories.implementations.ProductCategoriesRepositoryImpl;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Date;
 
 
 public class ProductCategoryViewModel {
+    private static final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(Date.class,
+                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+            .create();
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final StringProperty code = new SimpleStringProperty("");
     private static final StringProperty title = new SimpleStringProperty("");
@@ -131,7 +138,7 @@ public class ProductCategoryViewModel {
                     categoriesList.clear();
 
                     try {
-                        ArrayList<ProductCategory> categoryList = new Gson().fromJson(productCategoriesRepository.fetchAll().body(), listType);
+                        ArrayList<ProductCategory> categoryList = gson.fromJson(productCategoriesRepository.fetchAll().body(), listType);
                         categoriesList.addAll(categoryList);
                     } catch (IOException | InterruptedException e) {
                         SpotyLogger.writeToFile(e, ProductCategoryViewModel.class);
@@ -144,7 +151,7 @@ public class ProductCategoryViewModel {
         var findModel = new FindModel();
         findModel.setId(productCategoryID);
         var response = productCategoriesRepository.fetch(findModel).body();
-        var productCategory = new Gson().fromJson(response, ProductCategory.class);
+        var productCategory = gson.fromJson(response, ProductCategory.class);
 
         setId(productCategory.getId());
         setCode(productCategory.getCode());
@@ -165,7 +172,7 @@ public class ProductCategoryViewModel {
                     categoriesList.clear();
 
                     try {
-                        ArrayList<ProductCategory> currencyList = new Gson().fromJson(productCategoriesRepository.search(searchModel).body(), listType);
+                        ArrayList<ProductCategory> currencyList = gson.fromJson(productCategoriesRepository.search(searchModel).body(), listType);
                         categoriesList.addAll(currencyList);
                     } catch (IOException | InterruptedException e) {
                         SpotyLogger.writeToFile(e, ProductCategoryViewModel.class);

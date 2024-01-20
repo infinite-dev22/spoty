@@ -27,7 +27,7 @@ import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import org.infinite.spoty.components.navigation.Pages;
-import org.infinite.spoty.data_source.daos.sales.SaleMaster;
+import org.infinite.spoty.data_source.dtos.sales.SaleMaster;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.sales.SaleMasterViewModel;
 import org.infinite.spoty.views.BaseController;
