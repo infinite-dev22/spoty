@@ -166,7 +166,7 @@ public class BrandController implements Initializable {
     }
 
     private void brandFormDialogPane(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = fxmlLoader("forms/BrandForm.fxml");
+        FXMLLoader fxmlLoader = fxmlLoader("views/forms/BrandForm.fxml");
         fxmlLoader.setControllerFactory(c -> BrandFormController.getInstance());
 
         MFXGenericDialog dialogContent = fxmlLoader.load();

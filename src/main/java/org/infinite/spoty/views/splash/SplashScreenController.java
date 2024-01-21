@@ -99,7 +99,7 @@ public class SplashScreenController implements Initializable {
 //                        Dialogs.setControllers();
 //                        Dialogs.setDialogContent();
 //                        // Set base view.
-//                        FXMLLoader loader = fxmlLoader("fxml/Base.fxml");
+//                        FXMLLoader loader = fxmlLoader("views/Base.fxml");
 //                        loader.setControllerFactory(c -> BaseController.getInstance(primaryStage));
 //                        // Base view parent.
 //                        Parent root = loader.load();

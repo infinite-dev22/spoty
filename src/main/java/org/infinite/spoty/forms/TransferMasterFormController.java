@@ -265,7 +265,7 @@ public class TransferMasterFormController implements Initializable {
     }
 
     private void quotationProductDialogPane(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = fxmlLoader("forms/TransferDetailForm.fxml");
+        FXMLLoader fxmlLoader = fxmlLoader("views/forms/TransferDetailForm.fxml");
         fxmlLoader.setControllerFactory(c -> TransferDetailFormController.getInstance());
 
         MFXGenericDialog dialogContent = fxmlLoader.load();

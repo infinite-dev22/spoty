@@ -189,7 +189,7 @@ public class UnitOfMeasureController implements Initializable {
     }
 
     private void uomFormDialogPane(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = fxmlLoader("forms/UOMForm.fxml");
+        FXMLLoader fxmlLoader = fxmlLoader("views/forms/UOMForm.fxml");
         fxmlLoader.setControllerFactory(c -> UOMFormController.getInstance());
 
         MFXGenericDialog dialogContent = fxmlLoader.load();

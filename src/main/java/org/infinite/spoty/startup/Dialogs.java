@@ -24,8 +24,8 @@ import java.io.IOException;
 import static org.infinite.spoty.SpotyResourceLoader.fxmlLoader;
 
 public class Dialogs {
-    private static final FXMLLoader fxmlLoader = fxmlLoader("forms/QuotationDetailForm.fxml");
-    private static final FXMLLoader printableLoader = fxmlLoader("printable/general/General.fxml");
+    private static final FXMLLoader fxmlLoader = fxmlLoader("views/forms/QuotationDetailForm.fxml");
+    private static final FXMLLoader printableLoader = fxmlLoader("views/printable/general/General.fxml");
 
     private static MFXGenericDialog quotationDialogContent;
     private static MFXGenericDialog printableDialogContent;

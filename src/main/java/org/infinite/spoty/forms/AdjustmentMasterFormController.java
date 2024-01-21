@@ -249,7 +249,7 @@ public class AdjustmentMasterFormController implements Initializable {
     }
 
     private void quotationProductDialogPane(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = fxmlLoader("forms/AdjustmentDetailForm.fxml");
+        FXMLLoader fxmlLoader = fxmlLoader("views/forms/AdjustmentDetailForm.fxml");
         fxmlLoader.setControllerFactory(c -> AdjustmentDetailFormController.getInstance());
 
         MFXGenericDialog dialogContent = fxmlLoader.load();

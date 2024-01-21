@@ -182,7 +182,7 @@ public class StockReportController implements Initializable {
     }
 
     private void saleTermFormDialogPane(Stage stage) throws IOException {
-//        FXMLLoader fxmlLoader = fxmlLoader("forms/StockReportForm.fxml");
+//        FXMLLoader fxmlLoader = fxmlLoader("views/forms/StockReportForm.fxml");
 //        fxmlLoader.setControllerFactory(c -> StockReportFormController.getInstance());
 //
 //        MFXGenericDialog dialogContent = fxmlLoader.load();

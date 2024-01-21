@@ -173,7 +173,7 @@ public class PurchaseMasterFormController implements Initializable {
     }
 
     private void createPurchaseProductDialog(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = fxmlLoader("forms/PurchaseDetailForm.fxml");
+        FXMLLoader fxmlLoader = fxmlLoader("views/forms/PurchaseDetailForm.fxml");
         fxmlLoader.setControllerFactory(c -> PurchaseDetailFormController.getInstance());
 
         MFXGenericDialog dialogContent = fxmlLoader.load();

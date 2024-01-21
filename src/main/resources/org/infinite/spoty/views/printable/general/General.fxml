@@ -24,9 +24,9 @@
 <MFXGenericDialog xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/20.0.1"
                   fx:controller="org.infinite.spoty.printable.general.GeneralViewController">
     <stylesheets>
-        <URL value="@../../styles/base.css"/>
-        <URL value="@../../styles/Common.css"/>
-        <URL value="@../../styles/TextFields.css"/>
+        <URL value="@../../../styles/base.css"/>
+        <URL value="@../../../styles/Common.css"/>
+        <URL value="@../../../styles/TextFields.css"/>
     </stylesheets>
     <padding>
         <Insets left="10.0" right="10"/>

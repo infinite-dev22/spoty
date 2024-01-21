@@ -180,7 +180,7 @@ public class CurrencyController implements Initializable {
     }
 
     private void currencyFormDialogPane(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = fxmlLoader("forms/CurrencyForm.fxml");
+        FXMLLoader fxmlLoader = fxmlLoader("views/forms/CurrencyForm.fxml");
         fxmlLoader.setControllerFactory(c -> CurrencyFormController.getInstance());
 
         MFXGenericDialog dialogContent = fxmlLoader.load();

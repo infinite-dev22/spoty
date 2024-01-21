@@ -152,7 +152,7 @@ public class SaleTermsController implements Initializable {
     }
 
     private void saleTermFormDialogPane(Stage stage) throws IOException {
-//        FXMLLoader fxmlLoader = fxmlLoader("forms/SaleTermAndConditionForm.fxml");
+//        FXMLLoader fxmlLoader = fxmlLoader("views/forms/SaleTermAndConditionForm.fxml");
 //        fxmlLoader.setControllerFactory(c -> SaleTermAndConditionFormController.getInstance());
 //
 //        MFXGenericDialog dialogContent = fxmlLoader.load();

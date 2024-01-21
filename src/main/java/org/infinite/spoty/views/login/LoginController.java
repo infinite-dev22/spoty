@@ -136,7 +136,7 @@ public class LoginController implements Initializable {
                             Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
                             try {
                                 // Set base view.
-                                FXMLLoader loader = fxmlLoader("fxml/Base.fxml");
+                                FXMLLoader loader = fxmlLoader("views/Base.fxml");
                                 loader.setControllerFactory(c -> BaseController.getInstance(stage));
                                 // Base view parent.
                                 Parent root = loader.load();

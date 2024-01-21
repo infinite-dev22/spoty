@@ -187,7 +187,7 @@ public class CustomerController implements Initializable {
     }
 
     private void customerFormDialogPane(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = fxmlLoader("forms/CustomerForm.fxml");
+        FXMLLoader fxmlLoader = fxmlLoader("views/forms/CustomerForm.fxml");
         fxmlLoader.setControllerFactory(c -> CustomerFormController.getInstance());
 
         MFXGenericDialog dialogContent = fxmlLoader.load();

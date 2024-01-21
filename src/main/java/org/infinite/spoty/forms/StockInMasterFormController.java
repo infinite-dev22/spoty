@@ -244,7 +244,7 @@ public class StockInMasterFormController implements Initializable {
     }
 
     private void quotationProductDialogPane(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = fxmlLoader("forms/StockInDetailForm.fxml");
+        FXMLLoader fxmlLoader = fxmlLoader("views/forms/StockInDetailForm.fxml");
         fxmlLoader.setControllerFactory(c -> StockInDetailFormController.getInstance());
 
         MFXGenericDialog dialogContent = fxmlLoader.load();

@@ -173,7 +173,7 @@ public class SaleMasterFormController implements Initializable {
     }
 
     private void saleProductDialogPane(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = fxmlLoader("forms/SaleDetailForm.fxml");
+        FXMLLoader fxmlLoader = fxmlLoader("views/forms/SaleDetailForm.fxml");
         fxmlLoader.setControllerFactory(c -> SaleDetailFormController.getInstance());
 
         MFXGenericDialog dialogContent = fxmlLoader.load();

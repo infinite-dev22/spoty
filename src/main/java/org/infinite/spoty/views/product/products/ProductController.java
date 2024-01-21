@@ -81,7 +81,7 @@ public class ProductController implements Initializable {
 
     private void productViewDialogPane(Stage stage) throws IOException {
         double screenHeight = Screen.getPrimary().getBounds().getHeight();
-        final FXMLLoader printableLoader = fxmlLoader("printable/general/General.fxml");
+        final FXMLLoader printableLoader = fxmlLoader("views/printable/general/General.fxml");
         printableLoader.setControllerFactory(c -> GeneralViewController.getInstance());
         MFXGenericDialog genericDialog = printableLoader.load();
         genericDialog.setShowMinimize(false);
@@ -229,7 +229,7 @@ public class ProductController implements Initializable {
     }
 
     private void productFormDialogPane(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = fxmlLoader("forms/ProductForm.fxml");
+        FXMLLoader fxmlLoader = fxmlLoader("views/forms/ProductForm.fxml");
         fxmlLoader.setControllerFactory(c -> ProductFormController.getInstance());
 
         MFXGenericDialog dialogContent = fxmlLoader.load();

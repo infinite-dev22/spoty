@@ -27,8 +27,8 @@
             xmlns="http://javafx.com/javafx/19"
             fx:controller="org.infinite.spoty.forms.RequisitionMasterFormController">
     <stylesheets>
-        <URL value="@../styles/Common.css"/>
-        <URL value="@../styles/TextFields.css"/>
+        <URL value="@../../styles/Common.css"/>
+        <URL value="@../../styles/TextFields.css"/>
     </stylesheets>
     <center>
         <AnchorPane styleClass="card">

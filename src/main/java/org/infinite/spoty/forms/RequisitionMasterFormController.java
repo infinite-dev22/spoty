@@ -296,7 +296,7 @@ public class RequisitionMasterFormController implements Initializable {
     }
 
     private void quotationProductDialogPane(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = fxmlLoader("forms/RequisitionDetailForm.fxml");
+        FXMLLoader fxmlLoader = fxmlLoader("views/forms/RequisitionDetailForm.fxml");
         fxmlLoader.setControllerFactory(c -> RequisitionDetailFormController.getInstance());
 
         MFXGenericDialog dialogContent = fxmlLoader.load();

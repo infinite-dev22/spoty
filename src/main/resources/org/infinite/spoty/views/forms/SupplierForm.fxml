@@ -24,8 +24,8 @@
 <MFXGenericDialog xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/19"
                   fx:controller="org.infinite.spoty.forms.SupplierFormController">
     <stylesheets>
-        <URL value="@../styles/Common.css"/>
-        <URL value="@../styles/TextFields.css"/>
+        <URL value="@../../styles/Common.css"/>
+        <URL value="@../../styles/TextFields.css"/>
     </stylesheets>
     <center>
         <GridPane layoutY="10.0" hgap="20.0" vgap="10.0">

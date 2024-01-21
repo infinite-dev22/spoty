@@ -70,149 +70,149 @@ import static org.infinite.spoty.SpotyResourceLoader.fxmlLoader;
 
 public class Pages {
     //Login
-    private static final FXMLLoader loginLoader = fxmlLoader("fxml/login/Login.fxml");
+    private static final FXMLLoader loginLoader = fxmlLoader("views/login/Login.fxml");
     //Dashboard
-    private static final FXMLLoader dashboardLoader = fxmlLoader("fxml/dashboard/Dashboard.fxml");
+    private static final FXMLLoader dashboardLoader = fxmlLoader("views/dashboard/Dashboard.fxml");
     // Sale
-    private static final FXMLLoader saleLoader = fxmlLoader("fxml/sales/Sales.fxml");
-    private static final FXMLLoader posLoader = fxmlLoader("fxml/sales/PointOfSale.fxml");
-    private static final FXMLLoader salesTermLoader = fxmlLoader("fxml/sales/SaleTerms.fxml");
+    private static final FXMLLoader saleLoader = fxmlLoader("views/sales/Sales.fxml");
+    private static final FXMLLoader posLoader = fxmlLoader("views/sales/PointOfSale.fxml");
+    private static final FXMLLoader salesTermLoader = fxmlLoader("views/sales/SaleTerms.fxml");
     // Customer
     private static final FXMLLoader customerLoader =
-            fxmlLoader("fxml/customers/Customers.fxml");
+            fxmlLoader("views/customers/Customers.fxml");
     // Supplier
     private static final FXMLLoader supplierLoader =
-            fxmlLoader("fxml/suppliers/Suppliers.fxml");
+            fxmlLoader("views/suppliers/Suppliers.fxml");
     // Stock Report
-    private static final FXMLLoader stockReportLoader = fxmlLoader("fxml/stock_report/StockReport.fxml");
+    private static final FXMLLoader stockReportLoader = fxmlLoader("views/stock_report/StockReport.fxml");
     // Account
-    private static final FXMLLoader bankReconciliationLoader = fxmlLoader("fxml/account/BankReconciliation.fxml");
-    private static final FXMLLoader cashAdjustmentLoader = fxmlLoader("fxml/account/CashAdjustment.fxml");
-    private static final FXMLLoader cashPaymentLoader = fxmlLoader("fxml/account/CashPayment.fxml");
-    private static final FXMLLoader chartOfAccountLoader = fxmlLoader("fxml/account/ChartOfAccount.fxml");
-    private static final FXMLLoader contraVoucherLoader = fxmlLoader("fxml/account/ContraVoucher.fxml");
-    private static final FXMLLoader creditVoucherLoader = fxmlLoader("fxml/account/CreditVoucher.fxml");
-    private static final FXMLLoader customerReceiveLoader = fxmlLoader("fxml/account/CustomerReceive.fxml");
-    private static final FXMLLoader debitVoucherLoader = fxmlLoader("fxml/account/DebitVoucher.fxml");
-    private static final FXMLLoader financialYearLoader = fxmlLoader("fxml/account/FinancialYear.fxml");
-    private static final FXMLLoader journalVoucherLoader = fxmlLoader("fxml/account/JournalVoucher.fxml");
-    private static final FXMLLoader openingBalanceLoader = fxmlLoader("fxml/account/OpeningBalance.fxml");
-    private static final FXMLLoader paymentMethodsLoader = fxmlLoader("fxml/account/PaymentMethods.fxml");
-    private static final FXMLLoader preDefinedAccountsLoader = fxmlLoader("fxml/account/PreDefinedAccounts.fxml");
-    private static final FXMLLoader servicePaymentLoader = fxmlLoader("fxml/account/ServicePayment.fxml");
-    private static final FXMLLoader subAccountLoader = fxmlLoader("fxml/account/SubAccount.fxml");
-    private static final FXMLLoader supplierPaymentLoader = fxmlLoader("fxml/account/SupplierPayment.fxml");
-    private static final FXMLLoader voucherApprovalLoader = fxmlLoader("fxml/account/VoucherApproval.fxml");
+    private static final FXMLLoader bankReconciliationLoader = fxmlLoader("views/account/BankReconciliation.fxml");
+    private static final FXMLLoader cashAdjustmentLoader = fxmlLoader("views/account/CashAdjustment.fxml");
+    private static final FXMLLoader cashPaymentLoader = fxmlLoader("views/account/CashPayment.fxml");
+    private static final FXMLLoader chartOfAccountLoader = fxmlLoader("views/account/ChartOfAccount.fxml");
+    private static final FXMLLoader contraVoucherLoader = fxmlLoader("views/account/ContraVoucher.fxml");
+    private static final FXMLLoader creditVoucherLoader = fxmlLoader("views/account/CreditVoucher.fxml");
+    private static final FXMLLoader customerReceiveLoader = fxmlLoader("views/account/CustomerReceive.fxml");
+    private static final FXMLLoader debitVoucherLoader = fxmlLoader("views/account/DebitVoucher.fxml");
+    private static final FXMLLoader financialYearLoader = fxmlLoader("views/account/FinancialYear.fxml");
+    private static final FXMLLoader journalVoucherLoader = fxmlLoader("views/account/JournalVoucher.fxml");
+    private static final FXMLLoader openingBalanceLoader = fxmlLoader("views/account/OpeningBalance.fxml");
+    private static final FXMLLoader paymentMethodsLoader = fxmlLoader("views/account/PaymentMethods.fxml");
+    private static final FXMLLoader preDefinedAccountsLoader = fxmlLoader("views/account/PreDefinedAccounts.fxml");
+    private static final FXMLLoader servicePaymentLoader = fxmlLoader("views/account/ServicePayment.fxml");
+    private static final FXMLLoader subAccountLoader = fxmlLoader("views/account/SubAccount.fxml");
+    private static final FXMLLoader supplierPaymentLoader = fxmlLoader("views/account/SupplierPayment.fxml");
+    private static final FXMLLoader voucherApprovalLoader = fxmlLoader("views/account/VoucherApproval.fxml");
     // Account Report
-    private static final FXMLLoader balanceSheetLoader = fxmlLoader("fxml/account/report/BalanceSheet.fxml");
-    private static final FXMLLoader bankBookLoader = fxmlLoader("fxml/account/report/BankBook.fxml");
-    private static final FXMLLoader cashBookLoader = fxmlLoader("fxml/account/report/CashBook.fxml");
-    private static final FXMLLoader coaPrintLoader = fxmlLoader("fxml/account/report/CoaPrint.fxml");
-    private static final FXMLLoader dayBookLoader = fxmlLoader("fxml/account/report/DayBook.fxml");
-    private static final FXMLLoader expenditureStatementLoader = fxmlLoader("fxml/account/report/ExpenditureStatement.fxml");
-    private static final FXMLLoader fixedAssetScheduleLoader = fxmlLoader("fxml/account/report/FixedAssetSchedule.fxml");
-    private static final FXMLLoader generalLedgerLoader = fxmlLoader("fxml/account/report/GeneralLedger.fxml");
-    private static final FXMLLoader incomeStatementLoader = fxmlLoader("fxml/account/report/IncomeStatement.fxml");
-    private static final FXMLLoader profitLossLoader = fxmlLoader("fxml/account/report/ProfitLoss.fxml");
-    private static final FXMLLoader receiptAndPaymentLoader = fxmlLoader("fxml/account/report/ReceiptAndPayment.fxml");
-    private static final FXMLLoader subLedgerLoader = fxmlLoader("fxml/account/report/SubLedger.fxml");
-    private static final FXMLLoader trialBalanceLoader = fxmlLoader("fxml/account/report/TrialBalance.fxml");
-    private static final FXMLLoader bankReconciliationReportLoader = fxmlLoader("fxml/account/report/BankReconciliationReport.fxml");
+    private static final FXMLLoader balanceSheetLoader = fxmlLoader("views/account/report/BalanceSheet.fxml");
+    private static final FXMLLoader bankBookLoader = fxmlLoader("views/account/report/BankBook.fxml");
+    private static final FXMLLoader cashBookLoader = fxmlLoader("views/account/report/CashBook.fxml");
+    private static final FXMLLoader coaPrintLoader = fxmlLoader("views/account/report/CoaPrint.fxml");
+    private static final FXMLLoader dayBookLoader = fxmlLoader("views/account/report/DayBook.fxml");
+    private static final FXMLLoader expenditureStatementLoader = fxmlLoader("views/account/report/ExpenditureStatement.fxml");
+    private static final FXMLLoader fixedAssetScheduleLoader = fxmlLoader("views/account/report/FixedAssetSchedule.fxml");
+    private static final FXMLLoader generalLedgerLoader = fxmlLoader("views/account/report/GeneralLedger.fxml");
+    private static final FXMLLoader incomeStatementLoader = fxmlLoader("views/account/report/IncomeStatement.fxml");
+    private static final FXMLLoader profitLossLoader = fxmlLoader("views/account/report/ProfitLoss.fxml");
+    private static final FXMLLoader receiptAndPaymentLoader = fxmlLoader("views/account/report/ReceiptAndPayment.fxml");
+    private static final FXMLLoader subLedgerLoader = fxmlLoader("views/account/report/SubLedger.fxml");
+    private static final FXMLLoader trialBalanceLoader = fxmlLoader("views/account/report/TrialBalance.fxml");
+    private static final FXMLLoader bankReconciliationReportLoader = fxmlLoader("views/account/report/BankReconciliationReport.fxml");
     // Reports
-    private static final FXMLLoader closingLoader = fxmlLoader("fxml/report/Closing.fxml");
-    private static final FXMLLoader closingReportLoader = fxmlLoader("fxml/report/ClosingReport.fxml");
-    private static final FXMLLoader dailyCustomerReportLoader = fxmlLoader("fxml/report/DailyCustomerReport.fxml");
-    private static final FXMLLoader dailyReportLoader = fxmlLoader("fxml/report/DailyReport.fxml");
-    private static final FXMLLoader dueReportLoader = fxmlLoader("fxml/report/DueReport.fxml");
-    private static final FXMLLoader profitReportLoader = fxmlLoader("fxml/report/ProfitReport.fxml");
-    private static final FXMLLoader purchaseReportLoader = fxmlLoader("fxml/report/PurchaseReport.fxml");
-    private static final FXMLLoader salesReportLoader = fxmlLoader("fxml/report/SalesReport.fxml");
-    private static final FXMLLoader salesReturnLoader = fxmlLoader("fxml/report/SalesReturn.fxml");
-    private static final FXMLLoader shippingCostReportLoader = fxmlLoader("fxml/report/ShippingCostReport.fxml");
-    private static final FXMLLoader taxReportLoader = fxmlLoader("fxml/report/TaxReport.fxml");
-    private static final FXMLLoader userSalesReportLoader = fxmlLoader("fxml/report/UserSalesReport.fxml");
+    private static final FXMLLoader closingLoader = fxmlLoader("views/report/Closing.fxml");
+    private static final FXMLLoader closingReportLoader = fxmlLoader("views/report/ClosingReport.fxml");
+    private static final FXMLLoader dailyCustomerReportLoader = fxmlLoader("views/report/DailyCustomerReport.fxml");
+    private static final FXMLLoader dailyReportLoader = fxmlLoader("views/report/DailyReport.fxml");
+    private static final FXMLLoader dueReportLoader = fxmlLoader("views/report/DueReport.fxml");
+    private static final FXMLLoader profitReportLoader = fxmlLoader("views/report/ProfitReport.fxml");
+    private static final FXMLLoader purchaseReportLoader = fxmlLoader("views/report/PurchaseReport.fxml");
+    private static final FXMLLoader salesReportLoader = fxmlLoader("views/report/SalesReport.fxml");
+    private static final FXMLLoader salesReturnLoader = fxmlLoader("views/report/SalesReturn.fxml");
+    private static final FXMLLoader shippingCostReportLoader = fxmlLoader("views/report/ShippingCostReport.fxml");
+    private static final FXMLLoader taxReportLoader = fxmlLoader("views/report/TaxReport.fxml");
+    private static final FXMLLoader userSalesReportLoader = fxmlLoader("views/report/UserSalesReport.fxml");
     // HUMAN RESOURCE
     // Attendance
-    private static final FXMLLoader attendanceLoader = fxmlLoader("fxml/human_resource/attendance/Attendance.fxml");
-    private static final FXMLLoader attendanceReportLoader = fxmlLoader("fxml/human_resource/attendance/AttendanceReport.fxml");
-    private static final FXMLLoader checkInsLoader = fxmlLoader("fxml/human_resource/attendance/CheckIn.fxml");
+    private static final FXMLLoader attendanceLoader = fxmlLoader("views/human_resource/attendance/Attendance.fxml");
+    private static final FXMLLoader attendanceReportLoader = fxmlLoader("views/human_resource/attendance/AttendanceReport.fxml");
+    private static final FXMLLoader checkInsLoader = fxmlLoader("views/human_resource/attendance/CheckIn.fxml");
     // Human Resource Management
-    private static final FXMLLoader designationsLoader = fxmlLoader("fxml/human_resource/hrm/Designations.fxml");
-    private static final FXMLLoader employeesLoader = fxmlLoader("fxml/human_resource/hrm/Employees.fxml");
+    private static final FXMLLoader designationsLoader = fxmlLoader("views/human_resource/hrm/Designations.fxml");
+    private static final FXMLLoader employeesLoader = fxmlLoader("views/human_resource/hrm/Employees.fxml");
     // PayRoll
-    private static final FXMLLoader salariesLoader = fxmlLoader("fxml/human_resource/pay_roll/Salaries.fxml");
-    private static final FXMLLoader salaryAdvancesLoader = fxmlLoader("fxml/human_resource/pay_roll/SalaryAdvances.fxml");
-    private static final FXMLLoader salaryGenerateLoader = fxmlLoader("fxml/human_resource/pay_roll/SalaryGenerate.fxml");
+    private static final FXMLLoader salariesLoader = fxmlLoader("views/human_resource/pay_roll/Salaries.fxml");
+    private static final FXMLLoader salaryAdvancesLoader = fxmlLoader("views/human_resource/pay_roll/SalaryAdvances.fxml");
+    private static final FXMLLoader salaryGenerateLoader = fxmlLoader("views/human_resource/pay_roll/SalaryGenerate.fxml");
     // Bank
-    private static final FXMLLoader banksLoader = fxmlLoader("fxml/bank/Bank.fxml");
+    private static final FXMLLoader banksLoader = fxmlLoader("views/bank/Bank.fxml");
     // Service
-    private static final FXMLLoader servicesLoader = fxmlLoader("fxml/service/Services.fxml");
-    private static final FXMLLoader serviceInvoicesLoader = fxmlLoader("fxml/service/ServiceInvoices.fxml");
+    private static final FXMLLoader servicesLoader = fxmlLoader("views/service/Services.fxml");
+    private static final FXMLLoader serviceInvoicesLoader = fxmlLoader("views/service/ServiceInvoices.fxml");
     // Quotation
     private static final FXMLLoader quotationLoader =
-            fxmlLoader("fxml/quotation/Quotation.fxml");
+            fxmlLoader("views/quotation/Quotation.fxml");
     // Tax
     private static final FXMLLoader taxesLoader =
-            fxmlLoader("fxml/tax/Taxes.fxml");
+            fxmlLoader("views/tax/Taxes.fxml");
     private static final FXMLLoader taxSettingsLoader =
-            fxmlLoader("fxml/tax/TaxSettings.fxml");
+            fxmlLoader("views/tax/TaxSettings.fxml");
     // SETTINGS
     // Data Synchronizer
-    private static final FXMLLoader backUpLoader = fxmlLoader("fxml/settings/data_synchronizer/Backup.fxml");
-    private static final FXMLLoader exportLoader = fxmlLoader("fxml/settings/data_synchronizer/Export.fxml");
-    private static final FXMLLoader importLoader = fxmlLoader("fxml/settings/data_synchronizer/Import.fxml");
-    private static final FXMLLoader restoreLoader = fxmlLoader("fxml/settings/data_synchronizer/Restore.fxml");
+    private static final FXMLLoader backUpLoader = fxmlLoader("views/settings/data_synchronizer/Backup.fxml");
+    private static final FXMLLoader exportLoader = fxmlLoader("views/settings/data_synchronizer/Export.fxml");
+    private static final FXMLLoader importLoader = fxmlLoader("views/settings/data_synchronizer/Import.fxml");
+    private static final FXMLLoader restoreLoader = fxmlLoader("views/settings/data_synchronizer/Restore.fxml");
     // Role Permission
-    private static final FXMLLoader assignUserRoleLoader = fxmlLoader("fxml/settings/role_permission/AssignUserRole.fxml");
-    private static final FXMLLoader rolesLoader = fxmlLoader("fxml/settings/role_permission/Roles.fxml");
+    private static final FXMLLoader assignUserRoleLoader = fxmlLoader("views/settings/role_permission/AssignUserRole.fxml");
+    private static final FXMLLoader rolesLoader = fxmlLoader("views/settings/role_permission/Roles.fxml");
     // System Settings
-    private static final FXMLLoader appSettingsLoader = fxmlLoader("fxml/settings/system_settings/AppSettings.fxml");
-    private static final FXMLLoader branchesLoader = fxmlLoader("fxml/settings/system_settings/Branches.fxml");
-    private static final FXMLLoader companySettingsLoader = fxmlLoader("fxml/settings/system_settings/CompanyDetails.fxml");
-    private static final FXMLLoader currencyLoader = fxmlLoader("fxml/settings/system_settings/Currency.fxml");
-    private static final FXMLLoader languagesLoader = fxmlLoader("fxml/settings/system_settings/Languages.fxml");
-    private static final FXMLLoader mailSettingsLoader = fxmlLoader("fxml/settings/system_settings/MailSettings.fxml");
-    private static final FXMLLoader posSettingsLoader = fxmlLoader("fxml/settings/system_settings/POS.fxml");
-    private static final FXMLLoader printSettingsLoader = fxmlLoader("fxml/settings/system_settings/PrintSettings.fxml");
-    private static final FXMLLoader settingsLoader = fxmlLoader("fxml/settings/system_settings/Settings.fxml");
-    private static final FXMLLoader systemLoader = fxmlLoader("fxml/settings/system_settings/System.fxml");
-    private static final FXMLLoader usersLoader = fxmlLoader("fxml/settings/system_settings/Users.fxml");
+    private static final FXMLLoader appSettingsLoader = fxmlLoader("views/settings/system_settings/AppSettings.fxml");
+    private static final FXMLLoader branchesLoader = fxmlLoader("views/settings/system_settings/Branches.fxml");
+    private static final FXMLLoader companySettingsLoader = fxmlLoader("views/settings/system_settings/CompanyDetails.fxml");
+    private static final FXMLLoader currencyLoader = fxmlLoader("views/settings/system_settings/Currency.fxml");
+    private static final FXMLLoader languagesLoader = fxmlLoader("views/settings/system_settings/Languages.fxml");
+    private static final FXMLLoader mailSettingsLoader = fxmlLoader("views/settings/system_settings/MailSettings.fxml");
+    private static final FXMLLoader posSettingsLoader = fxmlLoader("views/settings/system_settings/POS.fxml");
+    private static final FXMLLoader printSettingsLoader = fxmlLoader("views/settings/system_settings/PrintSettings.fxml");
+    private static final FXMLLoader settingsLoader = fxmlLoader("views/settings/system_settings/Settings.fxml");
+    private static final FXMLLoader systemLoader = fxmlLoader("views/settings/system_settings/System.fxml");
+    private static final FXMLLoader usersLoader = fxmlLoader("views/settings/system_settings/Users.fxml");
 
-    private static final FXMLLoader saleMasterFormLoader = fxmlLoader("forms/SaleMasterForm.fxml");
+    private static final FXMLLoader saleMasterFormLoader = fxmlLoader("views/forms/SaleMasterForm.fxml");
     private static final FXMLLoader productCategoryLoader =
-            fxmlLoader("fxml/inventory/category/ProductCategory.fxml");
-    private static final FXMLLoader brandLoader = fxmlLoader("fxml/inventory/brand/Brand.fxml");
+            fxmlLoader("views/product/category/ProductCategory.fxml");
+    private static final FXMLLoader brandLoader = fxmlLoader("views/product/brand/Brand.fxml");
     private static final FXMLLoader unitLoader =
-            fxmlLoader("fxml/inventory/unit_of_measure/UnitOfMeasure.fxml");
+            fxmlLoader("views/product/unit_of_measure/UnitOfMeasure.fxml");
     private static final FXMLLoader productLoader =
-            fxmlLoader("fxml/inventory/products/Products.fxml");
+            fxmlLoader("views/product/products/Products.fxml");
     private static final FXMLLoader adjustmentLoader =
-            fxmlLoader("fxml/inventory/adjustment/Adjustment.fxml");
+            fxmlLoader("views/product/adjustment/Adjustment.fxml");
     private static final FXMLLoader requisitionLoader =
-            fxmlLoader("fxml/requisition/Requisition.fxml");
-    private static final FXMLLoader purchaseLoader = fxmlLoader("fxml/purchases/Purchases.fxml");
-    private static final FXMLLoader transferLoader = fxmlLoader("fxml/transfer/Transfer.fxml");
-    private static final FXMLLoader stockInLoader = fxmlLoader("fxml/stock_in/StockIn.fxml");
-    private static final FXMLLoader saleReturnLoader = fxmlLoader("fxml/returns/sales/Sales.fxml");
+            fxmlLoader("views/requisition/Requisition.fxml");
+    private static final FXMLLoader purchaseLoader = fxmlLoader("views/purchases/Purchases.fxml");
+    private static final FXMLLoader transferLoader = fxmlLoader("views/transfer/Transfer.fxml");
+    private static final FXMLLoader stockInLoader = fxmlLoader("views/stock_in/StockIn.fxml");
+    private static final FXMLLoader saleReturnLoader = fxmlLoader("views/returns/sales/Sales.fxml");
     private static final FXMLLoader purchaseReturnLoader =
-            fxmlLoader("fxml/returns/purchases/Purchases.fxml");
+            fxmlLoader("views/returns/purchases/Purchases.fxml");
     private static final FXMLLoader expenseCategoryLoader =
-            fxmlLoader("fxml/expenses/category/Category.fxml");
-    private static final FXMLLoader expenseLoader = fxmlLoader("fxml/expenses/expense/Expense.fxml");
+            fxmlLoader("views/expenses/category/Category.fxml");
+    private static final FXMLLoader expenseLoader = fxmlLoader("views/expenses/expense/Expense.fxml");
     private static final FXMLLoader quotationMasterFormLoader =
-            fxmlLoader("forms/QuotationMasterForm.fxml");
+            fxmlLoader("views/forms/QuotationMasterForm.fxml");
     private static final FXMLLoader purchaseMasterFormLoader =
-            fxmlLoader("forms/PurchaseMasterForm.fxml");
+            fxmlLoader("views/forms/PurchaseMasterForm.fxml");
     private static final FXMLLoader requisitionMasterFormLoader =
-            fxmlLoader("forms/RequisitionMasterForm.fxml");
+            fxmlLoader("views/forms/RequisitionMasterForm.fxml");
     private static final FXMLLoader stockInMasterFormLoader =
-            fxmlLoader("forms/StockInMasterForm.fxml");
+            fxmlLoader("views/forms/StockInMasterForm.fxml");
     private static final FXMLLoader transferMasterFormLoader =
-            fxmlLoader("forms/TransferMasterForm.fxml");
+            fxmlLoader("views/forms/TransferMasterForm.fxml");
     private static final FXMLLoader adjustmentMasterFormLoader =
-            fxmlLoader("forms/AdjustmentMasterForm.fxml");
+            fxmlLoader("views/forms/AdjustmentMasterForm.fxml");
     private static final FXMLLoader roleSettingsFormLoader =
-            fxmlLoader("forms/RoleSettingsForm.fxml");
+            fxmlLoader("views/forms/RoleSettingsForm.fxml");
 
     // Login
     private static BorderPane loginPane;

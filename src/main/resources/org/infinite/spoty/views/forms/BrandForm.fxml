@@ -23,10 +23,10 @@
 <?import javafx.scene.layout.VBox?>
 <?import java.net.URL?>
 <MFXGenericDialog xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/19"
-                  fx:controller="org.infinite.spoty.forms.ProductCategoryFormController">
+                  fx:controller="org.infinite.spoty.forms.BrandFormController">
     <stylesheets>
-        <URL value="@../styles/Common.css"/>
-        <URL value="@../styles/TextFields.css"/>
+        <URL value="@../../styles/Common.css"/>
+        <URL value="@../../styles/TextFields.css"/>
     </stylesheets>
     <center>
         <VBox layoutY="10.0" spacing="20.0">
@@ -35,20 +35,20 @@
             </padding>
             <VBox spacing="5.0">
                 <padding>
-                    <Insets bottom="5.0" top="2.5"/>
+                    <Insets bottom="5" top="2.5"/>
                 </padding>
-                <MFXTextField fx:id="dialogCategoryCode" floatMode="BORDER" floatingText="Category Code"
-                              prefWidth="400.0"/>
-                <Label id="validationLabel" fx:id="dialogCategoryCodeValidationLabel" maxWidth="1.7976931348623157E308"
+                <MFXTextField fx:id="brandFormName" floatMode="BORDER" floatingText="Brand Name" prefWidth="400.0"/>
+                <Label id="validationLabel" fx:id="brandFormNameValidationLabel" maxWidth="1.7976931348623157E308"
                        minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true"/>
             </VBox>
             <VBox spacing="5.0">
                 <padding>
-                    <Insets bottom="5.0" top="2.5"/>
+                    <Insets bottom="5" top="2.5"/>
                 </padding>
-                <MFXTextField fx:id="dialogCategoryName" floatMode="BORDER" floatingText="Category Name"
+                <MFXTextField fx:id="brandFormDescription" floatMode="BORDER" floatingText="Brand Description"
                               prefWidth="400.0"/>
-                <Label id="validationLabel" fx:id="dialogCategoryNameValidationLabel" maxWidth="1.7976931348623157E308"
+                <Label id="validationLabel" fx:id="brandFormDescriptionValidationLabel"
+                       maxWidth="1.7976931348623157E308"
                        minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true"/>
             </VBox>
         </VBox>
@@ -58,8 +58,8 @@
             <padding>
                 <Insets left="10.0" right="10.0" top="10.0"/>
             </padding>
-            <MFXButton styleClass="filled" fx:id="dialogSaveBtn" text="Save"/>
-            <MFXButton styleClass="outlined" fx:id="dialogCancelBtn" text="Cancel"/>
+            <MFXButton styleClass="filled" fx:id="brandFormSaveBtn" text="Save"/>
+            <MFXButton styleClass="outlined" fx:id="brandFormCancelBtn" text="Cancel"/>
         </HBox>
     </bottom>
 </MFXGenericDialog>

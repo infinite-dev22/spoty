@@ -177,7 +177,7 @@ public class ExpenseCategoryController implements Initializable {
     }
 
     private void expenseCategoryFormDialogPane(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = fxmlLoader("forms/ExpenseCategoryForm.fxml");
+        FXMLLoader fxmlLoader = fxmlLoader("views/forms/ExpenseCategoryForm.fxml");
         fxmlLoader.setControllerFactory(c -> ExpenseCategoryFormController.getInstance());
 
         MFXGenericDialog dialogContent = fxmlLoader.load();

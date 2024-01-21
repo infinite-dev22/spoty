@@ -187,7 +187,7 @@ public class UserController implements Initializable {
     }
 
     private void userFormDialogPane(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = fxmlLoader("forms/UserForm.fxml");
+        FXMLLoader fxmlLoader = fxmlLoader("views/forms/UserForm.fxml");
         fxmlLoader.setControllerFactory(c -> UserFormController.getInstance());
 
         MFXGenericDialog dialogContent = fxmlLoader.load();

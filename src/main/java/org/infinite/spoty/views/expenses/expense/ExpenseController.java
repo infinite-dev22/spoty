@@ -190,7 +190,7 @@ public class ExpenseController implements Initializable {
     }
 
     private void expenseFormDialogPane(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = fxmlLoader("forms/ExpenseForm.fxml");
+        FXMLLoader fxmlLoader = fxmlLoader("views/forms/ExpenseForm.fxml");
         fxmlLoader.setControllerFactory(c -> ExpenseFormController.getInstance());
 
         MFXGenericDialog dialogContent = fxmlLoader.load();

@@ -187,7 +187,7 @@ public class SupplierController implements Initializable {
     }
 
     private void supplierFormDialogPane(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = fxmlLoader("forms/SupplierForm.fxml");
+        FXMLLoader fxmlLoader = fxmlLoader("views/forms/SupplierForm.fxml");
         fxmlLoader.setControllerFactory(c -> SupplierFormController.getInstance());
 
         MFXGenericDialog dialogContent = fxmlLoader.load();
