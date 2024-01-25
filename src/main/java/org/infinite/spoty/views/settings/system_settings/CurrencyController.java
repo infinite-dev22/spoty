@@ -33,7 +33,7 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.infinite.spoty.data_source.dtos.Currency;
-import org.infinite.spoty.forms.CurrencyFormController;
+import org.infinite.spoty.views.forms.CurrencyFormController;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.CurrencyViewModel;
 

@@ -17,7 +17,7 @@ package org.infinite.spoty.components.navigation;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import org.infinite.spoty.forms.*;
+import org.infinite.spoty.views.forms.*;
 import org.infinite.spoty.views.account.*;
 import org.infinite.spoty.views.account.report.*;
 import org.infinite.spoty.views.bank.BankController;
@@ -444,7 +444,7 @@ public class Pages {
     }
 
     private static void setBank(Stage stage) {
-        banksLoader.setControllerFactory(e -> new BankController());
+        banksLoader.setControllerFactory(e -> BankController.getInstance(stage));
     }
 
     private static void setService(Stage stage) {

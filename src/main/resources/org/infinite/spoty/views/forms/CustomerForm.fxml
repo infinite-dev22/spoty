@@ -22,7 +22,7 @@
 <?import java.net.URL?>
 <?import io.github.palexdev.materialfx.controls.MFXTextField?>
 <MFXGenericDialog xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/19"
-                  fx:controller="org.infinite.spoty.forms.CustomerFormController">
+                  fx:controller="org.infinite.spoty.views.forms.CustomerFormController">
     <stylesheets>
         <URL value="@../../styles/Common.css"/>
         <URL value="@../../styles/TextFields.css"/>

@@ -25,7 +25,7 @@
 <?import io.github.palexdev.materialfx.controls.MFXDatePicker?>
 <BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:id="requisitionMasterFormContentPane" cache="true" cacheHint="SPEED"
             xmlns="http://javafx.com/javafx/19"
-            fx:controller="org.infinite.spoty.forms.RequisitionMasterFormController">
+            fx:controller="org.infinite.spoty.views.forms.RequisitionMasterFormController">
     <stylesheets>
         <URL value="@../../styles/Common.css"/>
         <URL value="@../../styles/TextFields.css"/>

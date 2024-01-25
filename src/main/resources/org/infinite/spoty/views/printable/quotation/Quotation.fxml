@@ -19,7 +19,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <VBox xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/20.0.1"
-      fx:controller="org.infinite.spoty.printable.quotation.ProductQuotationController">
+      fx:controller="org.infinite.spoty.views.printable.quotation.ProductQuotationController">
     <children>
         <HBox>
             <children>

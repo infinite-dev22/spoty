@@ -27,7 +27,7 @@
 <?import java.net.URL?>
 <BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:id="roleSettingsHolder" styleClass="card"
             xmlns="http://javafx.com/javafx/20.0.1"
-            fx:controller="org.infinite.spoty.forms.RoleSettingsFormController">
+            fx:controller="org.infinite.spoty.views.forms.RoleSettingsFormController">
     <stylesheets>
         <URL value="@../../styles/Common.css"/>
         <URL value="@../../styles/TextFields.css"/>

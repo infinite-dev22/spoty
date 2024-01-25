@@ -49,19 +49,31 @@ module org.infinite.spoty {
     opens org.infinite.spoty.views.settings.system_settings;
     opens org.infinite.spoty.views.settings.data_synchronizer;
     opens org.infinite.spoty.views.settings.role_permission;
-    opens org.infinite.spoty.forms;
+    opens org.infinite.spoty.views.forms;
     opens org.infinite.spoty.views.splash;
     opens org.infinite.spoty.data_source.dtos;
+    opens org.infinite.spoty.data_source.auth;
+    opens org.infinite.spoty.data_source.dtos.adjustments;
+    opens org.infinite.spoty.data_source.dtos.purchases;
+    opens org.infinite.spoty.data_source.dtos.quotations;
+    opens org.infinite.spoty.data_source.dtos.requisitions;
+    opens org.infinite.spoty.data_source.dtos.returns.purchase_returns;
+    opens org.infinite.spoty.data_source.dtos.returns.sale_returns;
+    opens org.infinite.spoty.data_source.dtos.sales;
+    opens org.infinite.spoty.data_source.dtos.stock_ins;
+    opens org.infinite.spoty.data_source.dtos.transfers;
+    opens org.infinite.spoty.data_source.models;
+    opens org.infinite.spoty.data_source.repositories.implementations;
+    opens org.infinite.spoty.data_source.repositories.interfaces;
     opens org.infinite.spoty.components.navigation;
     opens org.infinite.spoty.components.notification;
     opens org.infinite.spoty;
     opens org.infinite.spoty.components.notification.enums;
     opens org.infinite.spoty.components.title;
     opens org.infinite.spoty.views.sales.pos;
-    opens org.infinite.spoty.printable.general;
+    opens org.infinite.spoty.views.printable.general;
     opens org.infinite.spoty.utils;
 
     exports org.infinite.spoty;
     exports org.infinite.spoty.utils;
-    opens org.infinite.spoty.data_source.models;
 }

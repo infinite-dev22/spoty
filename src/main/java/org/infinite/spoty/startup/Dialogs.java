@@ -16,8 +16,8 @@ package org.infinite.spoty.startup;
 
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
 import javafx.fxml.FXMLLoader;
-import org.infinite.spoty.forms.QuotationDetailFormController;
-import org.infinite.spoty.printable.general.GeneralViewController;
+import org.infinite.spoty.views.forms.QuotationDetailFormController;
+import org.infinite.spoty.views.printable.general.GeneralViewController;
 
 import java.io.IOException;
 

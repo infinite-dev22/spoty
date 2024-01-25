@@ -24,7 +24,7 @@
 <?import io.github.palexdev.materialfx.controls.MFXTextField?>
 <?import io.github.palexdev.materialfx.controls.MFXFilterComboBox?>
 <MFXGenericDialog xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/20.0.1"
-                  fx:controller="org.infinite.spoty.forms.ProductFormController">
+                  fx:controller="org.infinite.spoty.views.forms.ProductFormController">
     <stylesheets>
         <URL value="@../../styles/base.css"/>
         <URL value="@../../styles/Common.css"/>

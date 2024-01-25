@@ -33,7 +33,7 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.infinite.spoty.data_source.dtos.Customer;
-import org.infinite.spoty.forms.CustomerFormController;
+import org.infinite.spoty.views.forms.CustomerFormController;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.CustomerViewModel;
 

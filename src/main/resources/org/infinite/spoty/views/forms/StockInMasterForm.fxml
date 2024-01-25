@@ -26,7 +26,7 @@
 <?import java.net.URL?>
 <BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:id="stockInMasterFormContentPane" cache="true" cacheHint="SPEED"
             xmlns="http://javafx.com/javafx/19"
-            fx:controller="org.infinite.spoty.forms.StockInMasterFormController">
+            fx:controller="org.infinite.spoty.views.forms.StockInMasterFormController">
     <stylesheets>
         <URL value="@../../styles/Common.css"/>
         <URL value="@../../styles/TextFields.css"/>

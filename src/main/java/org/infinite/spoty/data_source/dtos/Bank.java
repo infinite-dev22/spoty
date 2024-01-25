@@ -15,4 +15,8 @@ public class Bank {
     private String accountNumber;
     private String balance;
     private String logo;
+
+    public String getBranchName(){
+        return branch.getName();
+    }
 }

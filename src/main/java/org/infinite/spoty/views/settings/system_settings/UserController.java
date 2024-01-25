@@ -34,7 +34,7 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.infinite.spoty.data_source.dtos.UserProfile;
-import org.infinite.spoty.forms.UserFormController;
+import org.infinite.spoty.views.forms.UserFormController;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.UserViewModel;
 

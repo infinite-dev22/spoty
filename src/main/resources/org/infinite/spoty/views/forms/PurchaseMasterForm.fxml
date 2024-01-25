@@ -25,7 +25,7 @@
 <?import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton?>
 <BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:id="purchaseFormContentPane" cache="true" cacheHint="SPEED"
             xmlns="http://javafx.com/javafx/19"
-            fx:controller="org.infinite.spoty.forms.PurchaseMasterFormController">
+            fx:controller="org.infinite.spoty.views.forms.PurchaseMasterFormController">
     <stylesheets>
         <URL value="@../../styles/Common.css"/>
         <URL value="@../../styles/TextFields.css"/>

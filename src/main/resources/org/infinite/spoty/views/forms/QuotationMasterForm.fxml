@@ -25,7 +25,7 @@
 <?import io.github.palexdev.materialfx.controls.MFXTextField?>
 <BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:id="quotationFormContentPane" cache="true" cacheHint="SPEED"
             prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19"
-            fx:controller="org.infinite.spoty.forms.QuotationMasterFormController">
+            fx:controller="org.infinite.spoty.views.forms.QuotationMasterFormController">
     <stylesheets>
         <URL value="@../../styles/Common.css"/>
         <URL value="@../../styles/TextFields.css"/>
