@@ -17,6 +17,7 @@ package org.infinite.spoty.components.navigation;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import lombok.Getter;
 import org.infinite.spoty.views.forms.*;
 import org.infinite.spoty.views.account.*;
 import org.infinite.spoty.views.account.report.*;
@@ -48,8 +49,8 @@ import org.infinite.spoty.views.returns.sales.SaleReturnsController;
 import org.infinite.spoty.views.sales.SaleTermsController;
 import org.infinite.spoty.views.sales.SalesController;
 import org.infinite.spoty.views.sales.pos.PointOfSaleController;
-import org.infinite.spoty.views.service.ServiceInvoicesController;
-import org.infinite.spoty.views.service.ServicesController;
+import org.infinite.spoty.views.service.ServiceInvoiceController;
+import org.infinite.spoty.views.service.ServiceController;
 import org.infinite.spoty.views.settings.data_synchronizer.BackupController;
 import org.infinite.spoty.views.settings.data_synchronizer.ExportController;
 import org.infinite.spoty.views.settings.data_synchronizer.ImportController;
@@ -215,129 +216,331 @@ public class Pages {
             fxmlLoader("views/forms/RoleSettingsForm.fxml");
 
     // Login
+    @Getter
     private static BorderPane loginPane;
     // Dashboard
+    @Getter
     private static BorderPane dashboardPane;
+
+    @Getter
     // Sale
     private static BorderPane salePane;
+
+    @Getter
     private static BorderPane posPane;
+
+    @Getter
     private static BorderPane salesTermPane;
+
+    @Getter
     // Customer
     private static BorderPane customerPane;
+
+    @Getter
     // Supplier
     private static BorderPane supplierPane;
+
+    @Getter
     // Stock Report
     private static BorderPane stockReportPane;
+
+    @Getter
     // Account
     private static BorderPane bankReconciliationPane;
+
+    @Getter
     private static BorderPane cashAdjustmentPane;
+
+    @Getter
     private static BorderPane cashPaymentPane;
+
+    @Getter
     private static BorderPane chartOfAccountPane;
+
+    @Getter
     private static BorderPane contraVoucherPane;
+
+    @Getter
     private static BorderPane creditVoucherPane;
+
+    @Getter
     private static BorderPane customerReceivePane;
+
+    @Getter
     private static BorderPane debitVoucherPane;
+
+    @Getter
     private static BorderPane financialYearPane;
+
+    @Getter
     private static BorderPane journalVoucherPane;
+
+    @Getter
     private static BorderPane openingBalancePane;
+
+    @Getter
     private static BorderPane paymentMethodsPane;
+
+    @Getter
     private static BorderPane preDefinedAccountsPane;
+
+    @Getter
     private static BorderPane servicePaymentPane;
+
+    @Getter
     private static BorderPane subAccountPane;
+
+    @Getter
     private static BorderPane supplierPaymentPane;
+
+    @Getter
     private static BorderPane voucherApprovalPane;
+
+    @Getter
     // Account Report
     private static BorderPane balanceSheetPane;
+
+    @Getter
     private static BorderPane bankBookPane;
+
+    @Getter
     private static BorderPane cashBookPane;
+
+    @Getter
     private static BorderPane coaPrintPane;
+
+    @Getter
     private static BorderPane dayBookPane;
+
+    @Getter
     private static BorderPane expenditureStatementPane;
+
+    @Getter
     private static BorderPane fixedAssetSchedulePane;
+
+    @Getter
     private static BorderPane generalLedgerPane;
+
+    @Getter
     private static BorderPane incomeStatementPane;
+
+    @Getter
     private static BorderPane profitLossPane;
+
+    @Getter
     private static BorderPane receiptAndPaymentPane;
+
+    @Getter
     private static BorderPane subLedgerPane;
+
+    @Getter
     private static BorderPane trialBalancePane;
+
+    @Getter
     private static BorderPane bankReconciliationReportPane;
+
+    @Getter
     // Reports
     private static BorderPane closingPane;
+
+    @Getter
     private static BorderPane closingReportPane;
+
+    @Getter
     private static BorderPane dailyCustomerReportPane;
+
+    @Getter
     private static BorderPane dailyReportPane;
+
+    @Getter
     private static BorderPane dueReportPane;
+
+    @Getter
     private static BorderPane profitReportPane;
+
+    @Getter
     private static BorderPane purchaseReportPane;
+
+    @Getter
     private static BorderPane salesReportPane;
+
+    @Getter
     private static BorderPane salesReturnPane;
+
+    @Getter
     private static BorderPane shippingCostReportPane;
+
+    @Getter
     private static BorderPane taxReportPane;
+
+    @Getter
     private static BorderPane userSalesReportPane;
+
+    @Getter
     // HUMAN RESOURCE
     // Attendance
     private static BorderPane attendancePane;
+
+    @Getter
     private static BorderPane attendanceReportPane;
+
+    @Getter
     private static BorderPane checkInPane;
+
+    @Getter
     // Human Resource Management
     private static BorderPane designationsPane;
+
+    @Getter
     private static BorderPane employeesPane;
+
+    @Getter
     // PayRoll
     private static BorderPane salariesPane;
+
+    @Getter
     private static BorderPane salaryAdvancesPane;
+
+    @Getter
     private static BorderPane salaryGeneratePane;
+
+    @Getter
     // Bank
     private static BorderPane bankPane;
+
+    @Getter
     // Service
     private static BorderPane servicesPane;
+
+    @Getter
     private static BorderPane serviceInvoicesPane;
+
+    @Getter
     // Quotation
     private static BorderPane quotationPane;
+
+    @Getter
     // Quotation
     private static BorderPane taxesPane;
+
+    @Getter
     private static BorderPane taxSettingsPane;
+
+    @Getter
     // SETTINGS
     // Data Synchronizer
     private static BorderPane backUpPane;
+
+    @Getter
     private static BorderPane exportPane;
+
+    @Getter
     private static BorderPane importPane;
+
+    @Getter
     private static BorderPane restorePane;
+
+    @Getter
     // Role Permission
     private static BorderPane assignUserRolePane;
+
+    @Getter
     private static BorderPane rolesPane;
+
+    @Getter
     // System Settings
     private static BorderPane appSettingsPane;
+
+    @Getter
     private static BorderPane branchesPane;
+
+    @Getter
     private static BorderPane companySettingsPane;
+
+    @Getter
     private static BorderPane currencyPane;
+
+    @Getter
     private static BorderPane languagesPane;
+
+    @Getter
     private static BorderPane mailSettingsPane;
+
+    @Getter
     private static BorderPane printSettingsPane;
+
+    @Getter
     private static BorderPane systemPane;
+
+    @Getter
     private static BorderPane usersPane;
+
+    @Getter
 
 
     private static BorderPane productCategoryPane;
+
+    @Getter
     private static BorderPane brandPane;
+
+    @Getter
     private static BorderPane unitPane;
+
+    @Getter
     private static BorderPane productPane;
+
+    @Getter
     private static BorderPane adjustmentPane;
+
+    @Getter
     private static BorderPane requisitionPane;
+
+    @Getter
     private static BorderPane purchasePane;
+
+    @Getter
     private static BorderPane transferPane;
+
+    @Getter
     private static BorderPane stockInPane;
+
+    @Getter
     private static BorderPane saleReturnPane;
+
+    @Getter
     private static BorderPane purchaseReturnPane;
+
+    @Getter
     private static BorderPane expenseCategoryPane;
+
+    @Getter
     private static BorderPane expensePane;
+
+    @Getter
     private static BorderPane settingsPane;
+
+    @Getter
     private static BorderPane adjustmentMasterFormPane;
+
+    @Getter
     private static BorderPane quotationMasterFormPane;
+
+    @Getter
     private static BorderPane purchaseMasterFormPane;
+
+    @Getter
     private static BorderPane requisitionMasterFormPane;
+
+    @Getter
     private static BorderPane saleMasterFormPane;
+
+    @Getter
     private static BorderPane stockInMasterFormPane;
+
+    @Getter
     private static BorderPane transferMasterFormPane;
+
+    @Getter
     private static BorderPane roleSettingsFormPane;
 
     private static void setLogin(Stage stage) {
@@ -448,8 +651,8 @@ public class Pages {
     }
 
     private static void setService(Stage stage) {
-        servicesLoader.setControllerFactory(e -> new ServicesController());
-        serviceInvoicesLoader.setControllerFactory(e -> new ServiceInvoicesController());
+        servicesLoader.setControllerFactory(e -> ServiceController.getInstance(stage));
+        serviceInvoicesLoader.setControllerFactory(e -> ServiceInvoiceController.getInstance(stage));
     }
 
     private static void setQuotation(Stage stage) {
@@ -679,435 +882,5 @@ public class Pages {
         setDataSynchronizer(stage);
         setRolePermission(stage);
         setSystemSettings(stage);
-    }
-
-    // Login
-    public static BorderPane getLoginPane() {
-        return loginPane;
-    }
-
-    // Dashboard
-    public static BorderPane getDashboardPane() {
-        return dashboardPane;
-    }
-
-    // Sale
-    public static BorderPane getSalePane() {
-        return salePane;
-    }
-
-    public static BorderPane getPosPane() {
-        return posPane;
-    }
-
-    public static BorderPane getSalesTermPane() {
-        return salesTermPane;
-    }
-
-    // Customer
-    public static BorderPane getCustomerPane() {
-        return customerPane;
-    }
-
-    // Supplier
-    public static BorderPane getSupplierPane() {
-        return supplierPane;
-    }
-
-    // Supplier
-    public static BorderPane getStockReportPane() {
-        return stockReportPane;
-    }
-
-    // Account
-    public static BorderPane getBankReconciliationPane() {
-        return bankReconciliationPane;
-    }
-
-    public static BorderPane getCashAdjustmentPane() {
-        return cashAdjustmentPane;
-    }
-
-    public static BorderPane getCashPaymentPane() {
-        return cashPaymentPane;
-    }
-
-    public static BorderPane getChartOfAccountPane() {
-        return chartOfAccountPane;
-    }
-
-    public static BorderPane getContraVoucherPane() {
-        return contraVoucherPane;
-    }
-
-    public static BorderPane getCreditVoucherPane() {
-        return creditVoucherPane;
-    }
-
-    public static BorderPane getCustomerReceivePane() {
-        return customerReceivePane;
-    }
-
-    public static BorderPane getDebitVoucherPane() {
-        return debitVoucherPane;
-    }
-
-    public static BorderPane getFinancialYearPane() {
-        return financialYearPane;
-    }
-
-    public static BorderPane getJournalVoucherPane() {
-        return journalVoucherPane;
-    }
-
-    public static BorderPane getOpeningBalancePane() {
-        return openingBalancePane;
-    }
-
-    public static BorderPane getPaymentMethodsPane() {
-        return paymentMethodsPane;
-    }
-
-    public static BorderPane getPreDefinedAccountsPane() {
-        return preDefinedAccountsPane;
-    }
-
-    public static BorderPane getServicePaymentPane() {
-        return servicePaymentPane;
-    }
-
-    public static BorderPane getSubAccountPane() {
-        return subAccountPane;
-    }
-
-    public static BorderPane getSupplierPaymentPane() {
-        return supplierPaymentPane;
-    }
-
-    public static BorderPane getVoucherApprovalPane() {
-        return voucherApprovalPane;
-    }
-
-    // Account Report
-    public static BorderPane getBalanceSheetPane() {
-        return balanceSheetPane;
-    }
-
-    public static BorderPane getBankBookPane() {
-        return bankBookPane;
-    }
-
-    public static BorderPane getCashBookPane() {
-        return cashBookPane;
-    }
-
-    public static BorderPane getCoaPrintPane() {
-        return coaPrintPane;
-    }
-
-    public static BorderPane getDayBookPane() {
-        return dayBookPane;
-    }
-
-    public static BorderPane getExpenditureStatementPane() {
-        return expenditureStatementPane;
-    }
-
-    public static BorderPane getFixedAssetSchedulePane() {
-        return fixedAssetSchedulePane;
-    }
-
-    public static BorderPane getGeneralLedgerPane() {
-        return generalLedgerPane;
-    }
-
-    public static BorderPane getIncomeStatementPane() {
-        return incomeStatementPane;
-    }
-
-    public static BorderPane getProfitLossPane() {
-        return profitLossPane;
-    }
-
-    public static BorderPane getReceiptAndPaymentPane() {
-        return receiptAndPaymentPane;
-    }
-
-    public static BorderPane getBankReconciliationReportPane() {
-        return bankReconciliationReportPane;
-    }
-
-    public static BorderPane getSubLedgerPane() {
-        return subLedgerPane;
-    }
-
-    public static BorderPane getTrialBalancePane() {
-        return trialBalancePane;
-    }
-
-    // Reports
-    public static BorderPane getClosingPane() {
-        return closingPane;
-    }
-
-    public static BorderPane getClosingReportPane() {
-        return closingReportPane;
-    }
-
-    public static BorderPane getDailyCustomerReportPane() {
-        return dailyCustomerReportPane;
-    }
-
-    public static BorderPane getDailyReportPane() {
-        return dailyReportPane;
-    }
-
-    public static BorderPane getDueReportPane() {
-        return dueReportPane;
-    }
-
-    public static BorderPane getProfitReportPane() {
-        return profitReportPane;
-    }
-
-    public static BorderPane getPurchaseReportPane() {
-        return purchaseReportPane;
-    }
-
-    public static BorderPane getSalesReportPane() {
-        return salesReportPane;
-    }
-
-    public static BorderPane getSalesReturnPane() {
-        return salesReturnPane;
-    }
-
-    public static BorderPane getShippingCostReportPane() {
-        return shippingCostReportPane;
-    }
-
-    public static BorderPane getTaxReportPane() {
-        return taxReportPane;
-    }
-
-    public static BorderPane getUserSalesReportPane() {
-        return userSalesReportPane;
-    }
-
-    // HUMAN RESOURCE
-    // Attendance
-    public static BorderPane getAttendancePane() {
-        return attendancePane;
-    }
-
-    public static BorderPane getAttendanceReportPane() {
-        return attendanceReportPane;
-    }
-
-    public static BorderPane getCheckInPane() {
-        return checkInPane;
-    }
-
-    // Human Resource Management
-    public static BorderPane getDesignationsPane() {
-        return designationsPane;
-    }
-
-    public static BorderPane getEmployeesPane() {
-        return employeesPane;
-    }
-
-    // PayRoll
-    public static BorderPane getSalariesPane() {
-        return salariesPane;
-    }
-
-    public static BorderPane getSalaryAdvancesPane() {
-        return salaryAdvancesPane;
-    }
-
-    public static BorderPane getSalaryGeneratePane() {
-        return salaryGeneratePane;
-    }
-
-    // Bank
-    public static BorderPane getBankPane() {
-        return bankPane;
-    }
-
-    // Service
-    public static BorderPane getServicesPane() {
-        return servicesPane;
-    }
-
-    public static BorderPane getServiceInvoicesPane() {
-        return serviceInvoicesPane;
-    }
-
-    // Quotation
-    public static BorderPane getQuotationPane() {
-        return quotationPane;
-    }
-
-    // Tax
-    public static BorderPane getTaxesPane() {
-        return taxesPane;
-    }
-
-    public static BorderPane getTaxSettingsPane() {
-        return taxSettingsPane;
-    }
-
-    // SETTINGS
-    // Data Synchronizer
-    public static BorderPane getBackUpPane() {
-        return backUpPane;
-    }
-
-    public static BorderPane getExportPane() {
-        return exportPane;
-    }
-
-    public static BorderPane getImportPane() {
-        return importPane;
-    }
-
-    public static BorderPane getRestorePane() {
-        return restorePane;
-    }
-
-    // Role Permission
-    public static BorderPane getAssignUserRolePane() {
-        return assignUserRolePane;
-    }
-
-    public static BorderPane getRolesPane() {
-        return rolesPane;
-    }
-
-    // System Settings
-    public static BorderPane getAppSettingsPane() {
-        return appSettingsPane;
-    }
-
-    public static BorderPane getBranchesPane() {
-        return branchesPane;
-    }
-
-    public static BorderPane getCompanyDetailsPane() {
-        return companySettingsPane;
-    }
-
-    public static BorderPane getCurrencyPane() {
-        return currencyPane;
-    }
-
-    public static BorderPane getLanguagesPane() {
-        return languagesPane;
-    }
-
-    public static BorderPane getMailSettingsPane() {
-        return mailSettingsPane;
-    }
-
-    public static BorderPane getPrintSettingsPane() {
-        return printSettingsPane;
-    }
-
-    public static BorderPane getSystemPane() {
-        return systemPane;
-    }
-
-    public static BorderPane getUsersPane() {
-        return usersPane;
-    }
-
-
-    public static BorderPane getProductCategoryPane() {
-        return productCategoryPane;
-    }
-
-    public static BorderPane getBrandPane() {
-        return brandPane;
-    }
-
-    public static BorderPane getUnitPane() {
-        return unitPane;
-    }
-
-    public static BorderPane getProductPane() {
-        return productPane;
-    }
-
-    public static BorderPane getAdjustmentPane() {
-        return adjustmentPane;
-    }
-
-    public static BorderPane getRequisitionPane() {
-        return requisitionPane;
-    }
-
-    public static BorderPane getPurchasePane() {
-        return purchasePane;
-    }
-
-    public static BorderPane getTransferPane() {
-        return transferPane;
-    }
-
-    public static BorderPane getStockInPane() {
-        return stockInPane;
-    }
-
-    public static BorderPane getSaleReturnPane() {
-        return saleReturnPane;
-    }
-
-    public static BorderPane getPurchaseReturnPane() {
-        return purchaseReturnPane;
-    }
-
-    public static BorderPane getExpenseCategoryPane() {
-        return expenseCategoryPane;
-    }
-
-    public static BorderPane getExpensePane() {
-        return expensePane;
-    }
-
-    public static BorderPane getSettingsPane() {
-        return settingsPane;
-    }
-
-    public static BorderPane getAdjustmentMasterFormPane() {
-        return adjustmentMasterFormPane;
-    }
-
-    public static BorderPane getQuotationMasterFormPane() {
-        return quotationMasterFormPane;
-    }
-
-    public static BorderPane getPurchaseMasterFormPane() {
-        return purchaseMasterFormPane;
-    }
-
-    public static BorderPane getRequisitionMasterFormPane() {
-        return requisitionMasterFormPane;
-    }
-
-    public static BorderPane getSaleMasterFormPane() {
-        return saleMasterFormPane;
-    }
-
-    public static BorderPane getStockInMasterFormPane() {
-        return stockInMasterFormPane;
-    }
-
-    public static BorderPane getTransferMasterFormPane() {
-        return transferMasterFormPane;
-    }
-
-    public static BorderPane getRoleSettingsFormPane() {
-        return roleSettingsFormPane;
     }
 }

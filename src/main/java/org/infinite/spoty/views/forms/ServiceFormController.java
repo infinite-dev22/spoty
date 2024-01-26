@@ -25,7 +25,7 @@ import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.utils.SpotyThreader;
-import org.infinite.spoty.viewModels.BankViewModel;
+import org.infinite.spoty.viewModels.ServiceViewModel;
 
 import java.net.URL;
 import java.util.Objects;
@@ -33,89 +33,77 @@ import java.util.ResourceBundle;
 
 import static org.infinite.spoty.GlobalActions.closeDialog;
 import static org.infinite.spoty.Validators.requiredValidator;
-import static org.infinite.spoty.viewModels.BankViewModel.clearBankData;
-import static org.infinite.spoty.viewModels.BankViewModel.saveBank;
+import static org.infinite.spoty.viewModels.ServiceViewModel.clearServiceData;
+import static org.infinite.spoty.viewModels.ServiceViewModel.saveService;
 
-public class BankFormController implements Initializable {
-    private static BankFormController instance;
-    @FXML
-    public MFXTextField bankName;
-    @FXML
-    public Label bankNameValidationLabel;
-    @FXML
-    public MFXTextField accountName;
-    @FXML
-    public Label accountNameValidationLabel;
-    @FXML
-    public MFXTextField accountNumber;
-    @FXML
-    public Label accountNumberValidationLabel;
-    @FXML
-    public MFXTextField branch;
-    @FXML
-    public Label branchValidationLabel;
-    @FXML
-    public MFXButton logo;
+public class ServiceFormController implements Initializable {
+    private static ServiceFormController instance;
+    public MFXTextField serviceName;
+    public Label serviceNameValidationLabel;
+    public MFXTextField serviceCharge;
+    public Label serviceChargeValidationLabel;
+    public MFXTextField serviceVat;
+    public Label serviceVatValidationLabel;
+    public MFXTextField description;
+    public Label descriptionValidationLabel;
     @FXML
     public MFXButton bankSaveBtn;
     @FXML
     public MFXButton bankCancelBtn;
 
-    public static BankFormController getInstance() {
-        if (Objects.equals(instance, null)) instance = new BankFormController();
+    public static ServiceFormController getInstance() {
+        if (Objects.equals(instance, null)) instance = new ServiceFormController();
         return instance;
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Input bindings.
-        bankName.textProperty().bindBidirectional(BankViewModel.nameProperty());
-        accountName.textProperty().bindBidirectional(BankViewModel.emailProperty());
-        accountNumber.textProperty().bindBidirectional(BankViewModel.phoneProperty());
-        branch.textProperty().bindBidirectional(BankViewModel.townProperty());
+        serviceName.textProperty().bindBidirectional(ServiceViewModel.nameProperty());
+        serviceCharge.textProperty().bindBidirectional(ServiceViewModel.emailProperty());
+        serviceVat.textProperty().bindBidirectional(ServiceViewModel.phoneProperty());
+        description.textProperty().bindBidirectional(ServiceViewModel.townProperty());
         // Input listeners.
         requiredValidator(
-                bankName, "Name is required.", bankNameValidationLabel, bankSaveBtn);
+                serviceName, "Name is required.", serviceNameValidationLabel, bankSaveBtn);
         requiredValidator(
-                accountName, "Email is required.", accountNameValidationLabel, bankSaveBtn);
+                serviceCharge, "Charge is required.", serviceChargeValidationLabel, bankSaveBtn);
         requiredValidator(
-                accountNumber, "Phone is required.", accountNumberValidationLabel, bankSaveBtn);
-        requiredValidator(
-                branch, "Town is required.", branchValidationLabel, bankSaveBtn);
+                serviceVat, "Vat is required.", serviceVatValidationLabel, bankSaveBtn);
         dialogOnActions();
     }
 
     private void dialogOnActions() {
         bankCancelBtn.setOnAction(
                 (event) -> {
-                    clearBankData();
+                    clearServiceData();
 
                     closeDialog(event);
 
-                    bankNameValidationLabel.setVisible(false);
-                    accountNameValidationLabel.setVisible(false);
-                    accountNumberValidationLabel.setVisible(false);
-                    branchValidationLabel.setVisible(false);
+                    serviceNameValidationLabel.setVisible(false);
+                    serviceChargeValidationLabel.setVisible(false);
+                    serviceVatValidationLabel.setVisible(false);
+                    descriptionValidationLabel.setVisible(false);
                 });
         bankSaveBtn.setOnAction(
                 (event) -> {
                     SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
 
-                    if (!bankNameValidationLabel.isVisible()
-                            && !accountNameValidationLabel.isVisible()
-                            && !accountNumberValidationLabel.isVisible()
-                            && !branchValidationLabel.isVisible()) {
-                        if (BankViewModel.getId() > 0) {
+                    if (!serviceNameValidationLabel.isVisible()
+                            && !serviceChargeValidationLabel.isVisible()
+                            && !serviceVatValidationLabel.isVisible()
+                            && !descriptionValidationLabel.isVisible()) {
+                        if (ServiceViewModel.getId() > 0) {
                             SpotyThreader.spotyThreadPool(() -> {
                                 try {
-                                    BankViewModel.updateItem();
+                                    ServiceViewModel.updateItem();
                                 } catch (Exception e) {
                                     SpotyLogger.writeToFile(e, this.getClass());
                                 }
                             });
 
                             SimpleNotification notification =
-                                    new SimpleNotification.NotificationBuilder("Bank updated successfully")
+                                    new SimpleNotification.NotificationBuilder("Service updated successfully")
                                             .duration(NotificationDuration.SHORT)
                                             .icon("fas-circle-check")
                                             .type(NotificationVariants.SUCCESS)
@@ -127,21 +115,21 @@ public class BankFormController implements Initializable {
                         }
 
 //                        try {
-//                            saveBank();
+//                            saveService();
 //                        } catch (Exception e) {
 //                            SpotyLogger.writeToFile(e, this.getClass());
 //                        }
 
 //                        SpotyThreader.spotyThreadPool(() -> {
                         try {
-                            saveBank();
+                            saveService();
                         } catch (Exception e) {
                             SpotyLogger.writeToFile(e, this.getClass());
                         }
 //                        });
 
                         SimpleNotification notification =
-                                new SimpleNotification.NotificationBuilder("Bank saved successfully")
+                                new SimpleNotification.NotificationBuilder("Service saved successfully")
                                         .duration(NotificationDuration.SHORT)
                                         .icon("fas-circle-check")
                                         .type(NotificationVariants.SUCCESS)

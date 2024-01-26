@@ -14,6 +14,7 @@
 
 package org.infinite.spoty.views.forms;
 
+import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import javafx.fxml.FXML;
@@ -25,7 +26,7 @@ import org.infinite.spoty.components.notification.enums.NotificationDuration;
 import org.infinite.spoty.components.notification.enums.NotificationVariants;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.utils.SpotyThreader;
-import org.infinite.spoty.viewModels.BankViewModel;
+import org.infinite.spoty.viewModels.ServiceViewModel;
 
 import java.net.URL;
 import java.util.Objects;
@@ -33,89 +34,98 @@ import java.util.ResourceBundle;
 
 import static org.infinite.spoty.GlobalActions.closeDialog;
 import static org.infinite.spoty.Validators.requiredValidator;
-import static org.infinite.spoty.viewModels.BankViewModel.clearBankData;
-import static org.infinite.spoty.viewModels.BankViewModel.saveBank;
+import static org.infinite.spoty.viewModels.ServiceViewModel.clearServiceData;
+import static org.infinite.spoty.viewModels.ServiceViewModel.saveService;
 
-public class BankFormController implements Initializable {
-    private static BankFormController instance;
-    @FXML
-    public MFXTextField bankName;
-    @FXML
-    public Label bankNameValidationLabel;
-    @FXML
-    public MFXTextField accountName;
-    @FXML
-    public Label accountNameValidationLabel;
-    @FXML
-    public MFXTextField accountNumber;
-    @FXML
-    public Label accountNumberValidationLabel;
-    @FXML
-    public MFXTextField branch;
-    @FXML
-    public Label branchValidationLabel;
-    @FXML
-    public MFXButton logo;
+public class ServiceInvoiceFormController implements Initializable {
+    private static ServiceInvoiceFormController instance;
     @FXML
     public MFXButton bankSaveBtn;
     @FXML
     public MFXButton bankCancelBtn;
+    public MFXTextField serviceName;
+    public Label serviceNameValidationLabel;
+    public MFXTextField serviceQuantity;
+    public Label serviceQuantityValidationLabel;
+    public MFXTextField serviceCharge;
+    public Label serviceChargeValidationLabel;
+    public MFXTextField serviceDiscountCharge;
+    public Label serviceDiscountChargeValidationLabel;
+    public MFXTextField serviceVat;
+    public Label serviceVatValidationLabel;
+    public MFXTextField shippingCost;
+    public Label ShippingCostValidationLabel;
+    public MFXFilterComboBox<String> paymentType; // TODO: Create table for payment types
+    public MFXTextField paidAmount;
+    public Label paidAmountValidationLabel;
+    public Label paymentTypeValidationLabel;
 
-    public static BankFormController getInstance() {
-        if (Objects.equals(instance, null)) instance = new BankFormController();
+    public static ServiceInvoiceFormController getInstance() {
+        if (Objects.equals(instance, null)) instance = new ServiceInvoiceFormController();
         return instance;
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Input bindings.
-        bankName.textProperty().bindBidirectional(BankViewModel.nameProperty());
-        accountName.textProperty().bindBidirectional(BankViewModel.emailProperty());
-        accountNumber.textProperty().bindBidirectional(BankViewModel.phoneProperty());
-        branch.textProperty().bindBidirectional(BankViewModel.townProperty());
+        serviceName.textProperty().bindBidirectional(ServiceViewModel.nameProperty());
+        serviceCharge.textProperty().bindBidirectional(ServiceViewModel.emailProperty());
+        serviceVat.textProperty().bindBidirectional(ServiceViewModel.phoneProperty());
+        serviceQuantity.textProperty().bindBidirectional(ServiceViewModel.townProperty());
+        shippingCost.textProperty().bindBidirectional(ServiceViewModel.townProperty());
+        paymentType.textProperty().bindBidirectional(ServiceViewModel.townProperty());
+        paidAmount.textProperty().bindBidirectional(ServiceViewModel.townProperty());
         // Input listeners.
         requiredValidator(
-                bankName, "Name is required.", bankNameValidationLabel, bankSaveBtn);
+                serviceName, "Field is required.", serviceNameValidationLabel, bankSaveBtn);
         requiredValidator(
-                accountName, "Email is required.", accountNameValidationLabel, bankSaveBtn);
+                serviceCharge, "Field is required.", serviceChargeValidationLabel, bankSaveBtn);
         requiredValidator(
-                accountNumber, "Phone is required.", accountNumberValidationLabel, bankSaveBtn);
+                serviceVat, "Field is required.", serviceVatValidationLabel, bankSaveBtn);
         requiredValidator(
-                branch, "Town is required.", branchValidationLabel, bankSaveBtn);
+                serviceQuantity, "Field is required.", serviceQuantityValidationLabel, bankSaveBtn);
+        requiredValidator(
+                shippingCost, "Field is required.", ShippingCostValidationLabel, bankSaveBtn);
+        requiredValidator(
+                paymentType, "Field is required.", paymentTypeValidationLabel, bankSaveBtn);
         dialogOnActions();
     }
 
     private void dialogOnActions() {
         bankCancelBtn.setOnAction(
                 (event) -> {
-                    clearBankData();
+                    clearServiceData();
 
                     closeDialog(event);
 
-                    bankNameValidationLabel.setVisible(false);
-                    accountNameValidationLabel.setVisible(false);
-                    accountNumberValidationLabel.setVisible(false);
-                    branchValidationLabel.setVisible(false);
+                    serviceNameValidationLabel.setVisible(false);
+                    serviceChargeValidationLabel.setVisible(false);
+                    serviceVatValidationLabel.setVisible(false);
+                    serviceQuantityValidationLabel.setVisible(false);
+                    ShippingCostValidationLabel.setVisible(false);
+                    paymentTypeValidationLabel.setVisible(false);
                 });
         bankSaveBtn.setOnAction(
                 (event) -> {
                     SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
 
-                    if (!bankNameValidationLabel.isVisible()
-                            && !accountNameValidationLabel.isVisible()
-                            && !accountNumberValidationLabel.isVisible()
-                            && !branchValidationLabel.isVisible()) {
-                        if (BankViewModel.getId() > 0) {
+                    if (!serviceNameValidationLabel.isVisible()
+                            && !serviceChargeValidationLabel.isVisible()
+                            && !serviceVatValidationLabel.isVisible()
+                            && !serviceQuantityValidationLabel.isVisible()
+                            && !ShippingCostValidationLabel.isVisible()
+                            && !paymentTypeValidationLabel.isVisible()) {
+                        if (ServiceViewModel.getId() > 0) {
                             SpotyThreader.spotyThreadPool(() -> {
                                 try {
-                                    BankViewModel.updateItem();
+                                    ServiceViewModel.updateItem();
                                 } catch (Exception e) {
                                     SpotyLogger.writeToFile(e, this.getClass());
                                 }
                             });
 
                             SimpleNotification notification =
-                                    new SimpleNotification.NotificationBuilder("Bank updated successfully")
+                                    new SimpleNotification.NotificationBuilder("Service updated successfully")
                                             .duration(NotificationDuration.SHORT)
                                             .icon("fas-circle-check")
                                             .type(NotificationVariants.SUCCESS)
@@ -127,21 +137,21 @@ public class BankFormController implements Initializable {
                         }
 
 //                        try {
-//                            saveBank();
+//                            saveService();
 //                        } catch (Exception e) {
 //                            SpotyLogger.writeToFile(e, this.getClass());
 //                        }
 
 //                        SpotyThreader.spotyThreadPool(() -> {
                         try {
-                            saveBank();
+                            saveService();
                         } catch (Exception e) {
                             SpotyLogger.writeToFile(e, this.getClass());
                         }
 //                        });
 
                         SimpleNotification notification =
-                                new SimpleNotification.NotificationBuilder("Bank saved successfully")
+                                new SimpleNotification.NotificationBuilder("Service saved successfully")
                                         .duration(NotificationDuration.SHORT)
                                         .icon("fas-circle-check")
                                         .type(NotificationVariants.SUCCESS)

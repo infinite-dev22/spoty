@@ -143,7 +143,7 @@ public class Navigation {
         // System Settings
         map.put("APP_SETTINGS", NavTree.NavTreeItem.page("App Settings", Pages.getAppSettingsPane()));
         map.put("BRANCHES", NavTree.NavTreeItem.page("Branches", Pages.getBranchesPane()));
-        map.put("COMPANY", NavTree.NavTreeItem.page("Company Details", Pages.getCompanyDetailsPane()));
+        map.put("COMPANY", NavTree.NavTreeItem.page("Company Details", Pages.getCompanySettingsPane()));
         map.put("CURRENCIES", NavTree.NavTreeItem.page("Currencies", Pages.getCurrencyPane()));
         map.put("LANGUAGES", NavTree.NavTreeItem.page("Languages & Input", Pages.getLanguagesPane()));
         map.put("MAIL", NavTree.NavTreeItem.page("Mail", Pages.getMailSettingsPane()));
