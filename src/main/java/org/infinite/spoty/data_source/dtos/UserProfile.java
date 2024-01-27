@@ -16,6 +16,8 @@ package org.infinite.spoty.data_source.dtos;
 
 import lombok.*;
 
+import java.util.Objects;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -32,6 +34,8 @@ public class UserProfile {
     private String avatar;
 
     public boolean isActive() {
-        return user.isActive();
+        if (Objects.nonNull(user))
+            return user.isActive();
+        else return false;
     }
 }
