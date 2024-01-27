@@ -26,7 +26,7 @@ import java.util.Date;
 public class Holiday {
     private long id;
     private String title;
-    private Organisation organisation;
+    private Company company;
     private Date startDate;
     private Date endDate;
     private String description;

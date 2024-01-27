@@ -21,11 +21,20 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Organisation {
+public class Company {
     private Long id;
     private String name;
-    private String city;
+    private String website;
     private String phone;
     private String email;
-    private String country;
+    private String postalAddress;
+    private String physicalAddress;
+    private String tagLine;
+    private String logo;
+    private boolean logoOnReports;
+    private boolean logoOnEmails;
+    private boolean logoOnReceipts;
+    private String twitter;
+    private String facebook;
+    private String linkedin;
 }

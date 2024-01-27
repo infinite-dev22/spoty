@@ -26,6 +26,7 @@ public class SpotyPaths {
         // Create DB Location path on system.
         Path dbPath;
         Path logPath;
+        Path imagesPath;
 
         try {
             if (System.getProperty("os.name").contains("Windows")) {
@@ -33,15 +34,18 @@ public class SpotyPaths {
                         + "\\AppData\\Local\\ZenmartERP\\data\\datastores\\databases\\offline\\sync\\sqlite\\db");
                 logPath = Paths.get(System.getProperty("user.home")
                         + "\\AppData\\Local\\ZenmartERP\\sys-log-data\\logs\\stack");
+                imagesPath = Paths.get(System.getProperty("user.home") + "\\AppData\\Local\\ZenmartERP\\system\\caches\\images");
             } else {
                 dbPath = Paths.get(
                         System.getProperty("user.home") + "/.config/ZenmartERP/data/datastores/databases/offline/sync/sqlite/db");
                 logPath = Paths.get(
                         System.getProperty("user.home") + "/.config/ZenmartERP/sys-log-data/logs/stack");
+                imagesPath = Paths.get(System.getProperty("user.home") + "/.config/ZenmartERP/system/caches/images");
             }
 
             Files.createDirectories(dbPath);
             Files.createDirectories(logPath);
+            Files.createDirectories(imagesPath);
         } catch (IOException e) {
             SpotyLogger.writeToFile(e, SpotyPaths.class);
         }
