@@ -67,6 +67,7 @@ module org.infinite.spoty {
     opens org.infinite.spoty.data_source.repositories.interfaces;
     opens org.infinite.spoty.components.navigation;
     opens org.infinite.spoty.components.notification;
+    opens org.infinite.spoty.components.animations;
     opens org.infinite.spoty;
     opens org.infinite.spoty.components.notification.enums;
     opens org.infinite.spoty.components.title;

@@ -21,7 +21,7 @@ public class SpotyThreader {
     private static final ExecutorService executorService = Executors.newFixedThreadPool(5);
 
     public static void spotyThreadPool(Runnable runnable) {
-        executorService.submit(runnable);
+        executorService.execute(runnable);
     }
 
     public static void disposeSpotyThreadPool() {

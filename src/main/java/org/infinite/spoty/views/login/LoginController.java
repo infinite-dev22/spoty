@@ -18,8 +18,10 @@ import javafx.scene.image.ImageView;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.infinite.spoty.SpotyResourceLoader;
+import org.infinite.spoty.components.animations.ActivityIndicator;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.data_source.auth.ProtectedGlobals;
+import org.infinite.spoty.data_source.models.APIResponseModel;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.values.strings.Labels;
@@ -46,6 +48,7 @@ import static org.infinite.spoty.Validators.requiredValidator;
 import static org.infinite.spoty.utils.SpotyThreader.singleThreadCreator;
 
 public class LoginController implements Initializable {
+    private final Stage stage;
     @FXML
     public ImageView loginImage;
     @FXML
@@ -62,7 +65,8 @@ public class LoginController implements Initializable {
     public Label passwordFieldValidationLabel;
     @FXML
     public MFXFontIcon closeIcon;
-    private Stage stage;
+    @FXML
+    public ActivityIndicator activityIndicator;
 
     public LoginController(Stage primaryStage) {
         stage = primaryStage;
@@ -118,58 +122,83 @@ public class LoginController implements Initializable {
         requiredValidator(
                 passwordField, "No password provided.", passwordFieldValidationLabel, loginBtn);
 
-        loginBtn.setOnAction(actionEvent -> onLoginPressed());
+        loginBtn.setOnAction(actionEvent -> {
+            onLoginPressed();
+        });
     }
 
     public void onLoginPressed() {
-        try {
-            var loginResponse = LoginViewModel.login();
+        var loginTask = new LoginTask();
+
+        loginTask.setOnRunning(workerStateEvent -> {
+            loginBtn.setVisible(false);
+            loginBtn.setManaged(false);
+            activityIndicator.setVisible(true);
+            activityIndicator.setManaged(true);
+        });
+
+        loginTask.setOnSucceeded(workerStateEvent -> {
+            APIResponseModel loginResponse = loginTask.getValue();
             if (loginResponse.getStatus() == 200) {
+                var dataInit = dataInit();
                 ProtectedGlobals.authToken = loginResponse.getToken();
 
-                var dataInit = dataInit();
+                try {
+                    dataInit.join();
+                } catch (InterruptedException e) {
+                    SpotyLogger.writeToFile(e, LoginViewModel.class);
+                }
 
-                dataInit.join();
+                stage.hide();
 
-                Platform.runLater(
-                        () -> {
-                            Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
-                            try {
-                                // Set base view.
-                                FXMLLoader loader = fxmlLoader("views/Base.fxml");
-                                loader.setControllerFactory(c -> BaseController.getInstance(stage));
-                                // Base view parent.
-                                Parent root = loader.load();
-                                Scene scene = new Scene(root);
-                                // Set application scene theme to MFX modern themes.
-                                io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(scene);
-                                // Fixes black edges showing in main app scene.
-                                scene.setFill(null);
-                                stage.setScene(scene);
-                                // stage.initStyle(StageStyle.TRANSPARENT);
-                                // Set initial window size.
-                                stage.setHeight(primScreenBounds.getHeight());
-                                stage.setWidth(primScreenBounds.getWidth());
-                                // Set window title name, this name will only be seen when cursor hovers over app icon in
-                                // taskbar. Not necessary too but added since other apps also do this.
-                                stage.setTitle(Labels.APP_NAME);
-                                stage.getIcons().add(new Image(SpotyResourceLoader.load("icon.png")));
-                                stage.show();
-                                // Set window position to center of screen.
-                                // This isn't necessary, just felt like adding it here.
-                                stage.setX((primScreenBounds.getWidth() - stage.getWidth()) / 2);
-                                stage.setY((primScreenBounds.getHeight() - stage.getHeight()) / 2);
-                                // Initialize app notification handler.
-                                SimpleNotificationHolder.setNotificationOwner(stage);
-                            } catch (IOException e) {
-                                SpotyLogger.writeToFile(e, SplashScreenController.class);
-                            }
-                        });
+                Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
+                try {
+                    // Set base view.
+                    FXMLLoader loader = fxmlLoader("views/Base.fxml");
+                    loader.setControllerFactory(c -> BaseController.getInstance(stage));
+                    // Base view parent.
+                    Parent root = loader.load();
+                    Scene scene = new Scene(root);
+                    // Set application scene theme to MFX modern themes.
+                    io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(scene);
+                    // Fixes black edges showing in main app scene.
+                    scene.setFill(null);
+                    stage.setScene(scene);
+                    // stage.initStyle(StageStyle.TRANSPARENT);
+                    // Set initial window size.
+                    stage.setHeight(primScreenBounds.getHeight());
+                    stage.setWidth(primScreenBounds.getWidth());
+                    // Set window title name, this name will only be seen when cursor hovers over app icon in
+                    // taskbar. Not necessary too but added since other apps also do this.
+                    stage.setTitle(Labels.APP_NAME);
+                    stage.getIcons().add(new Image(SpotyResourceLoader.load("icon.png")));
+                    stage.show();
+                    // Set window position to center of screen.
+                    // This isn't necessary, just felt like adding it here.
+                    stage.setX((primScreenBounds.getWidth() - stage.getWidth()) / 2);
+                    stage.setY((primScreenBounds.getHeight() - stage.getHeight()) / 2);
+                    // Initialize app notification handler.
+                    SimpleNotificationHolder.setNotificationOwner(stage);
+                } catch (IOException e) {
+                    SpotyLogger.writeToFile(e, LoginViewModel.class);
+                }
+                stage.show();
             }
+        });
 
-        } catch (IOException | InterruptedException e) {
-            SpotyLogger.writeToFile(e, BranchViewModel.class);
-        }
+        loginTask.setOnFailed(workerStateEvent -> {
+            loginBtn.setVisible(true);
+            loginBtn.setManaged(true);
+            activityIndicator.setVisible(false);
+            activityIndicator.setManaged(false);
+            try {
+                throw loginTask.getException();
+            } catch (Throwable e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        SpotyThreader.spotyThreadPool(loginTask);
     }
 
     public void closeIconClicked() {
