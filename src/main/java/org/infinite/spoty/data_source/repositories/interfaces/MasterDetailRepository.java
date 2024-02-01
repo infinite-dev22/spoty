@@ -1,5 +1,6 @@
 package org.infinite.spoty.data_source.repositories.interfaces;
 
+import javafx.concurrent.Task;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.models.SearchModel;
 
@@ -10,32 +11,32 @@ import java.util.LinkedList;
 
 public interface MasterDetailRepository {
     // Master
-    HttpResponse<String> fetchAllMaster() throws IOException, InterruptedException;
+    Task<HttpResponse<String>> fetchAllMaster();
 
-    HttpResponse<String> fetchMaster(FindModel findModel) throws IOException, InterruptedException;
+    Task<HttpResponse<String>> fetchMaster(FindModel findModel);
 
-    HttpResponse<String> searchMaster(SearchModel searchModel) throws IOException, InterruptedException;
+    Task<HttpResponse<String>> searchMaster(SearchModel searchModel);
 
-    HttpResponse<String> postMaster(Object object) throws IOException, InterruptedException;
+    Task<HttpResponse<String>> postMaster(Object object);
 
-    HttpResponse<String> putMaster(Object object) throws IOException, InterruptedException;
+    Task<HttpResponse<String>> putMaster(Object object);
 
-    HttpResponse<String> deleteMaster(FindModel findModel) throws IOException, InterruptedException;
+    Task<HttpResponse<String>> deleteMaster(FindModel findModel);
 
-    HttpResponse<String> deleteMultipleMasters(ArrayList<FindModel> findModelList) throws IOException, InterruptedException;
+    Task<HttpResponse<String>> deleteMultipleMasters(ArrayList<FindModel> findModelList);
 
     // Detail
-    HttpResponse<String> fetchAllDetail() throws IOException, InterruptedException;
+    Task<HttpResponse<String>> fetchAllDetail();
 
-    HttpResponse<String> fetchDetail(FindModel findModel) throws IOException, InterruptedException;
+    Task<HttpResponse<String>> fetchDetail(FindModel findModel);
 
-    HttpResponse<String> searchDetail(SearchModel searchModel) throws IOException, InterruptedException;
+    Task<HttpResponse<String>> searchDetail(SearchModel searchModel);
 
-    HttpResponse<String> postDetail(Object object) throws IOException, InterruptedException;
+    Task<HttpResponse<String>> postDetail(Object object);
 
-    HttpResponse<String> putDetail(Object object) throws IOException, InterruptedException;
+    Task<HttpResponse<String>> putDetail(Object object);
 
-    HttpResponse<String> deleteDetail(FindModel findModel) throws IOException, InterruptedException;
+    Task<HttpResponse<String>> deleteDetail(FindModel findModel);
 
-    HttpResponse<String> deleteMultipleDetails(LinkedList<FindModel> findModelList) throws IOException, InterruptedException;
+    Task<HttpResponse<String>> deleteMultipleDetails(LinkedList<FindModel> findModelList);
 }

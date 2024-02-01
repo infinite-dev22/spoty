@@ -1,5 +1,6 @@
 package org.infinite.spoty.data_source.repositories.interfaces;
 
+import javafx.concurrent.Task;
 import javafx.scene.image.Image;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.models.SearchModel;
@@ -9,18 +10,18 @@ import java.net.http.HttpResponse;
 import java.util.ArrayList;
 
 public interface CompanyRepository {
-    HttpResponse<String> fetchAll() throws IOException, InterruptedException;
+    Task<HttpResponse<String>> fetchAll();
 
-    HttpResponse<String> fetch(FindModel findModel) throws IOException, InterruptedException;
+    Task<HttpResponse<String>> fetch(FindModel findModel);
     Image getCompanyLogo(String imageLink) throws IOException, InterruptedException;
 
-    HttpResponse<String> search(SearchModel searchModel) throws IOException, InterruptedException;
+    Task<HttpResponse<String>> search(SearchModel searchModel);
 
-    HttpResponse<String> post(Object object) throws IOException, InterruptedException;
+    Task<HttpResponse<String>> post(Object object);
 
-    HttpResponse<String> put(Object object) throws IOException, InterruptedException;
+    Task<HttpResponse<String>> put(Object object);
 
-    HttpResponse<String> delete(FindModel findModel) throws IOException, InterruptedException;
+    Task<HttpResponse<String>> delete(FindModel findModel);
 
-    HttpResponse<String> deleteMultiple(ArrayList<FindModel> findModelList) throws IOException, InterruptedException;
+    Task<HttpResponse<String>> deleteMultiple(ArrayList<FindModel> findModelList);
 }
