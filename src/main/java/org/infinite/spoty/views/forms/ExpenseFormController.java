@@ -150,7 +150,7 @@ public class ExpenseFormController implements Initializable {
                         if (ExpensesViewModel.getId() > 0) {
                             SpotyThreader.spotyThreadPool(() -> {
                                 try {
-                                    ExpensesViewModel.updateItem();
+                                    ExpensesViewModel.updateItem(this::onAction, this::onSuccess, this::onFailed);
                                 } catch (Exception e) {
                                     SpotyLogger.writeToFile(e, this.getClass());
                                 }
@@ -172,7 +172,7 @@ public class ExpenseFormController implements Initializable {
                         }
 //                        SpotyThreader.spotyThreadPool(() -> {
                             try {
-                                ExpensesViewModel.saveExpense();
+                                ExpensesViewModel.saveExpense(this::onAction, this::onSuccess, this::onFailed);
                             } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }
@@ -200,5 +200,17 @@ public class ExpenseFormController implements Initializable {
                                     .build();
                     notificationHolder.addNotification(notification);
                 });
+    }
+
+    private void onAction() {
+        System.out.println("Loading expenses...");
+    }
+
+    private void onSuccess() {
+        System.out.println("Loaded expenses...");
+    }
+
+    private void onFailed() {
+        System.out.println("failed loading expenses...");
     }
 }

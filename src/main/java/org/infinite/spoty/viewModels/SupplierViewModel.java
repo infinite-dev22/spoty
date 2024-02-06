@@ -17,7 +17,6 @@ package org.infinite.spoty.viewModels;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -25,23 +24,27 @@ import org.infinite.spoty.data_source.dtos.Supplier;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.models.SearchModel;
 import org.infinite.spoty.data_source.repositories.implementations.SuppliersRepositoryImpl;
+import org.infinite.spoty.utils.ParameterlessConsumer;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
+import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 
 public class SupplierViewModel {
+    public static final ObservableList<Supplier> suppliersList = FXCollections.observableArrayList();
+    public static final ObservableList<Supplier> suppliersComboBoxList =
+            FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
                     UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
             .create();
-    public static final ObservableList<Supplier> suppliersList = FXCollections.observableArrayList();
-    public static final ObservableList<Supplier> suppliersComboBoxList =
-            FXCollections.observableArrayList();
     private static final ListProperty<Supplier> suppliers = new SimpleListProperty<>(suppliersList);
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final StringProperty name = new SimpleStringProperty("");
@@ -52,6 +55,7 @@ public class SupplierViewModel {
     private static final StringProperty address = new SimpleStringProperty("");
     private static final StringProperty taxNumber = new SimpleStringProperty("");
     private static final StringProperty country = new SimpleStringProperty("");
+    private static final SuppliersRepositoryImpl suppliersRepository = new SuppliersRepositoryImpl();
 
     public static long getId() {
         return id.get();
@@ -186,8 +190,10 @@ public class SupplierViewModel {
         setCountry("");
     }
 
-    public static void saveSupplier() throws IOException, InterruptedException {
-        var suppliersRepository = new SuppliersRepositoryImpl();
+    public static void saveSupplier(
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var supplier = Supplier.builder()
                 .name(getName())
                 .email(getEmail())
@@ -198,71 +204,102 @@ public class SupplierViewModel {
                 .country(getCountry())
                 .build();
 
-        suppliersRepository.post(supplier);
-        resetProperties();
-        getAllSuppliers();
+        var task = suppliersRepository.post(supplier);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void getAllSuppliers() {
-        var suppliersRepository = new SuppliersRepositoryImpl();
-        Type listType = new TypeToken<ArrayList<Supplier>>() {
-        }.getType();
+    public static void getAllSuppliers(
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onFailed) {
+        var task = suppliersRepository.fetchAll();
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            try {
+                Type listType = new TypeToken<ArrayList<Supplier>>() {
+                }.getType();
+                ArrayList<Supplier> productList = gson.fromJson(task.get().body(), listType);
 
-        Platform.runLater(
-                () -> {
-                    suppliersList.clear();
-
-                    try {
-                        ArrayList<Supplier> productList = gson.fromJson(suppliersRepository.fetchAll().body(), listType);
-                        suppliersList.addAll(productList);
-                    } catch (IOException | InterruptedException e) {
-                        SpotyLogger.writeToFile(e, SupplierViewModel.class);
-                    }
-                });
+                suppliersList.clear();
+                suppliersList.addAll(productList);
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, SupplierViewModel.class);
+            }
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void getItem(Long supplierID) throws IOException, InterruptedException {
-        var suppliersRepository = new SuppliersRepositoryImpl();
-        var findModel = new FindModel();
-        findModel.setId(supplierID);
-        var response = suppliersRepository.fetch(findModel).body();
-        var supplier = gson.fromJson(response, Supplier.class);
+    public static void getItem(
+            Long index,
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onFailed) {
+        var findModel = FindModel.builder().id(index).build();
 
-        setId(supplier.getId());
-        setName(supplier.getName());
-        setEmail(supplier.getEmail());
-        setPhone(supplier.getPhone());
-        setCity(supplier.getCity());
-        setCountry(supplier.getCountry());
-        setAddress(supplier.getAddress());
-        setTaxNumber(supplier.getTaxNumber());
-        getAllSuppliers();
+        var task = suppliersRepository.fetch(findModel);
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            try {
+                var supplier = gson.fromJson(task.get().body(), Supplier.class);
+
+                setId(supplier.getId());
+                setName(supplier.getName());
+                setEmail(supplier.getEmail());
+                setPhone(supplier.getPhone());
+                setCity(supplier.getCity());
+                setCountry(supplier.getCountry());
+                setAddress(supplier.getAddress());
+                setTaxNumber(supplier.getTaxNumber());
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, BankViewModel.class);
+            }
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void searchItem(String search) {
-        var suppliersRepository = new SuppliersRepositoryImpl();
-        var searchModel = new SearchModel();
-        searchModel.setSearch(search);
+    public static void searchItem(
+            String search,
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onFailed) {
+        var searchModel = SearchModel.builder().search(search).build();
+        var task = suppliersRepository.search(searchModel);
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            try {
+                Type listType = new TypeToken<ArrayList<Supplier>>() {
+                }.getType();
+                ArrayList<Supplier> currencyList = gson.fromJson(task.get()
+                        .body(), listType);
 
-        Type listType = new TypeToken<ArrayList<Supplier>>() {
-        }.getType();
-
-        Platform.runLater(
-                () -> {
-                    suppliersList.clear();
-
-                    try {
-                        ArrayList<Supplier> currencyList = gson.fromJson(suppliersRepository.search(searchModel)
-                                .body(), listType);
-                        suppliersList.addAll(currencyList);
-                    } catch (IOException | InterruptedException e) {
-                        SpotyLogger.writeToFile(e, SupplierViewModel.class);
-                    }
-                });
+                suppliersList.clear();
+                suppliersList.addAll(currencyList);
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, SupplierViewModel.class);
+            }
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void updateItem() throws IOException, InterruptedException {
-        var suppliersRepository = new SuppliersRepositoryImpl();
+    public static void updateItem(
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var supplier = Supplier.builder()
                 .id(getId())
                 .name(getName())
@@ -274,17 +311,24 @@ public class SupplierViewModel {
                 .country(getCountry())
                 .build();
 
-        suppliersRepository.put(supplier);
-        resetProperties();
-        getAllSuppliers();
+        var task = suppliersRepository.put(supplier);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void deleteItem(Long supplierID) throws IOException, InterruptedException {
-        var suppliersRepository = new SuppliersRepositoryImpl();
-        var findModel = new FindModel();
+    public static void deleteItem(
+            Long index,
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
+        var findModel = FindModel.builder().id(index).build();
 
-        findModel.setId(supplierID);
-        suppliersRepository.delete(findModel);
-        getAllSuppliers();
+        var task = suppliersRepository.delete(findModel);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
     }
 }

@@ -33,9 +33,9 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.infinite.spoty.data_source.dtos.Brand;
-import org.infinite.spoty.views.forms.BrandFormController;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.BrandViewModel;
+import org.infinite.spoty.views.forms.BrandFormController;
 
 import java.io.IOException;
 import java.net.URL;
@@ -139,7 +139,7 @@ public class BrandController implements Initializable {
                 e -> {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
-                            BrandViewModel.deleteItem(obj.getData().getId());
+                            BrandViewModel.deleteItem(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
@@ -151,7 +151,7 @@ public class BrandController implements Initializable {
                 e -> {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
-                            BrandViewModel.getItem(obj.getData().getId());
+                            BrandViewModel.getItem(obj.getData().getId(), this::onAction, this::onFailed);
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
@@ -189,5 +189,17 @@ public class BrandController implements Initializable {
 
     public void brandCreateBtnClicked() {
         dialog.showAndWait();
+    }
+
+    private void onAction() {
+        System.out.println("Loading band...");
+    }
+
+    private void onSuccess() {
+        System.out.println("Loaded band...");
+    }
+
+    private void onFailed() {
+        System.out.println("failed loading band...");
     }
 }

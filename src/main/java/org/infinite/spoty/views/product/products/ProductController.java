@@ -35,11 +35,11 @@ import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.infinite.spoty.data_source.dtos.Product;
-import org.infinite.spoty.views.forms.ProductFormController;
-import org.infinite.spoty.views.printable.general.GeneralViewController;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.ProductViewModel;
 import org.infinite.spoty.views.BaseController;
+import org.infinite.spoty.views.forms.ProductFormController;
+import org.infinite.spoty.views.printable.general.GeneralViewController;
 
 import java.io.IOException;
 import java.net.URL;
@@ -200,7 +200,7 @@ public class ProductController implements Initializable {
                     SpotyThreader.spotyThreadPool(
                             () -> {
                                 try {
-                                    ProductViewModel.deleteProduct(obj.getData().getId());
+                                    ProductViewModel.deleteProduct(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
                                 } catch (Exception ex) {
                                     throw new RuntimeException(ex);
                                 }
@@ -214,7 +214,7 @@ public class ProductController implements Initializable {
                     SpotyThreader.spotyThreadPool(
                             () -> {
                                 try {
-                                    ProductViewModel.getProduct(obj.getData().getId());
+                                    ProductViewModel.getProduct(obj.getData().getId(), this::onAction, this::onFailed);
                                 } catch (Exception ex) {
                                     throw new RuntimeException(ex);
                                 }
@@ -256,5 +256,17 @@ public class ProductController implements Initializable {
 
     public void productViewShow() {
         viewDialog.showAndWait();
+    }
+
+    private void onAction() {
+        System.out.println("Loading product...");
+    }
+
+    private void onSuccess() {
+        System.out.println("Loaded product...");
+    }
+
+    private void onFailed() {
+        System.out.println("failed loading product...");
     }
 }

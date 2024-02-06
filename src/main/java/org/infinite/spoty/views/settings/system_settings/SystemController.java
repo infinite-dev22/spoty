@@ -134,8 +134,8 @@ public class SystemController implements Initializable {
     private void initGUI() throws Exception {
         SpotyThreader.spotyThreadPool(() -> {
             try {
-                BranchViewModel.getItem(preferences.getLong("default_branch", 1));
-                CurrencyViewModel.getItem(preferences.getLong("default_currency", 1));
+                BranchViewModel.getItem(preferences.getLong("default_branch", 1), this::onAction, this::onFailed);
+                CurrencyViewModel.getItem(preferences.getLong("default_currency", 1), this::onAction, this::onFailed);
             } catch (Exception e) {
                 SpotyLogger.writeToFile(e, this.getClass());
             }
@@ -241,5 +241,17 @@ public class SystemController implements Initializable {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }
                         });
+    }
+
+    private void onAction() {
+        System.out.println("Loading system settings...");
+    }
+
+    private void onSuccess() {
+        System.out.println("Loaded system settings...");
+    }
+
+    private void onFailed() {
+        System.out.println("failed loading system settings...");
     }
 }

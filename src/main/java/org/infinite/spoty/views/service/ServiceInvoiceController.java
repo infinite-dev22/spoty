@@ -134,7 +134,7 @@ public class ServiceInvoiceController implements Initializable {
                 e -> {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
-                            ServiceInvoiceViewModel.deleteItem(obj.getData().getId());
+                            ServiceInvoiceViewModel.deleteItem(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
@@ -146,7 +146,7 @@ public class ServiceInvoiceController implements Initializable {
                 e -> {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
-                            ServiceInvoiceViewModel.getItem(obj.getData().getId());
+                            ServiceInvoiceViewModel.getItem(obj.getData().getId(), this::onAction, this::onFailed);
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
@@ -185,5 +185,17 @@ public class ServiceInvoiceController implements Initializable {
 
     public void createBtnClicked() {
         dialog.showAndWait();
+    }
+
+    private void onAction() {
+        System.out.println("Loading service invoice...");
+    }
+
+    private void onSuccess() {
+        System.out.println("Loaded service invoice...");
+    }
+
+    private void onFailed() {
+        System.out.println("failed loading service invoice...");
     }
 }

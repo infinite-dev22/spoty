@@ -172,7 +172,7 @@ public class TransferDetailViewModel {
 //                () -> {
 //                    transferDetailsList.add(transferDetail);
 //
-//                    resetProperties();
+//
 //                });
     }
 
@@ -219,7 +219,7 @@ public class TransferDetailViewModel {
 //                    transferDetailsList.remove(getTempId());
 //                    transferDetailsList.add(getTempId(), transferDetail);
 //
-//                    resetProperties();
+//
 //                });
     }
 

@@ -28,8 +28,11 @@ import org.infinite.spoty.data_source.dtos.purchases.PurchaseMaster;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.models.SearchModel;
 import org.infinite.spoty.data_source.repositories.implementations.PurchasesRepositoryImpl;
+import org.infinite.spoty.utils.ParameterlessConsumer;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
+import org.infinite.spoty.viewModels.adjustments.AdjustmentMasterViewModel;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -38,17 +41,19 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
 
 public class PurchaseMasterViewModel {
+    @Getter
+    public static final ObservableList<PurchaseMaster> purchaseMastersList =
+            FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
                     UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
             .create();
-    @Getter
-    public static final ObservableList<PurchaseMaster> purchaseMastersList =
-            FXCollections.observableArrayList();
     private static final ListProperty<PurchaseMaster> purchases =
             new SimpleListProperty<>(purchaseMastersList);
     private static final LongProperty id = new SimpleLongProperty(0);
@@ -161,7 +166,7 @@ public class PurchaseMasterViewModel {
                 });
     }
 
-    public static void savePurchaseMaster() throws IOException, InterruptedException {
+    public static void savePurchaseMaster(ParameterlessConsumer onActivity, ParameterlessConsumer onSuccess, ParameterlessConsumer onFailed) throws IOException, InterruptedException {
         var purchaseMaster = PurchaseMaster.builder()
 //                .ref(getReference())
                 .date(getDate())
@@ -185,59 +190,103 @@ public class PurchaseMasterViewModel {
             purchaseMaster.setPurchaseDetails(PurchaseDetailViewModel.purchaseDetailsList);
         }
 
-        purchasesRepository.postMaster(purchaseMaster);
-        PurchaseDetailViewModel.savePurchaseDetails();
+        var task = purchasesRepository.postMaster(purchaseMaster);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> {
+            PurchaseDetailViewModel.savePurchaseDetails(onActivity, null, onFailed);
+            onSuccess.run();
+        });
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
+        Platform.runLater(AdjustmentMasterViewModel::resetProperties);
 
-        resetProperties();
-        getPurchaseMasters();
+        // resetProperties();
+        // getPurchaseMasters();
     }
 
-    public static void getPurchaseMasters() throws IOException, InterruptedException {
+    public static void getPurchaseMasters(ParameterlessConsumer onActivity, ParameterlessConsumer onFailed) {
         Type listType = new TypeToken<ArrayList<PurchaseMaster>>() {
         }.getType();
-        purchaseMastersList.clear();
-        ArrayList<PurchaseMaster> purchaseMasterList = gson.fromJson(
-                purchasesRepository.fetchAllMaster().body(), listType);
-        purchaseMastersList.addAll(purchaseMasterList);
+        var task = purchasesRepository.fetchAllMaster();
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> {
+            purchaseMastersList.clear();
+            ArrayList<PurchaseMaster> purchaseMasterList = new ArrayList<>();
+            try {
+                purchaseMasterList = gson.fromJson(
+                        task.get().body(), listType);
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, PurchaseMasterViewModel.class);
+            }
+            purchaseMastersList.addAll(purchaseMasterList);
+        });
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void getPurchaseMaster(Long index) throws IOException, InterruptedException {
+    public static void getPurchaseMaster(Long index, ParameterlessConsumer onActivity, ParameterlessConsumer onSuccess, ParameterlessConsumer onFailed) {
         var findModel = new FindModel();
         findModel.setId(index);
-        var response = purchasesRepository.fetchMaster(findModel).body();
-        var purchaseMaster = gson.fromJson(response, PurchaseMaster.class);
 
-        setId(purchaseMaster.getId());
-        setBranch(purchaseMaster.getBranch());
-        setNote(purchaseMaster.getNotes());
-        setDate(purchaseMaster.getLocaleDate());
-        PurchaseDetailViewModel.purchaseDetailsList.clear();
-        PurchaseDetailViewModel.purchaseDetailsList.addAll(purchaseMaster.getPurchaseDetails());
-        getPurchaseMasters();
+        var task = purchasesRepository.fetchMaster(findModel);
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onSuccess)) {
+            task.setOnSucceeded(workerStateEvent -> {
+                PurchaseMaster purchaseMaster = new PurchaseMaster();
+                try {
+                    purchaseMaster = gson.fromJson(task.get().body(), PurchaseMaster.class);
+                } catch (InterruptedException | ExecutionException e) {
+                    SpotyLogger.writeToFile(e, PurchaseMasterViewModel.class);
+                }
+
+                setId(purchaseMaster.getId());
+                setBranch(purchaseMaster.getBranch());
+                setNote(purchaseMaster.getNotes());
+                setDate(purchaseMaster.getLocaleDate());
+                PurchaseDetailViewModel.purchaseDetailsList.clear();
+                PurchaseDetailViewModel.purchaseDetailsList.addAll(purchaseMaster.getPurchaseDetails());
+
+                onSuccess.run();
+            });
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        SpotyThreader.spotyThreadPool(task);
+        // getPurchaseMasters();
     }
 
-    public static void searchItem(String search) throws Exception {
+    public static void searchItem(String search, @Nullable ParameterlessConsumer onActivity, @Nullable ParameterlessConsumer onFailed) throws Exception {
         var searchModel = new SearchModel();
         searchModel.setSearch(search);
 
-        Type listType = new TypeToken<ArrayList<PurchaseMaster>>() {
-        }.getType();
+        var task = purchasesRepository.searchMaster(searchModel);
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            Type listType = new TypeToken<ArrayList<PurchaseMaster>>() {
+            }.getType();
+            ArrayList<PurchaseMaster> purchaseMasterList = new ArrayList<>();
+            try {
+                purchaseMasterList = gson.fromJson(
+                        task.get().body(), listType);
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, PurchaseMasterViewModel.class);
+            }
 
-        Platform.runLater(
-                () -> {
-                    purchaseMastersList.clear();
-
-                    try {
-                        ArrayList<PurchaseMaster> purchaseMasterList = gson.fromJson(
-                                purchasesRepository.searchMaster(searchModel).body(), listType);
-                        purchaseMastersList.addAll(purchaseMasterList);
-                    } catch (Exception e) {
-                        SpotyLogger.writeToFile(e, PurchaseMasterViewModel.class);
-                    }
-                });
+            purchaseMastersList.clear();
+            purchaseMastersList.addAll(purchaseMasterList);
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void updateItem() throws IOException, InterruptedException {
+    public static void updateItem(ParameterlessConsumer onActivity, ParameterlessConsumer onSuccess, ParameterlessConsumer onFailed) throws IOException, InterruptedException {
         var purchaseMaster = PurchaseMaster.builder()
                 .id(getId())
 //                .ref(getReference())
@@ -256,7 +305,9 @@ public class PurchaseMasterViewModel {
                 .notes(getNotes())
                 .build();
 
-        PurchaseDetailViewModel.deletePurchaseDetails(PENDING_DELETES);
+        if (!PENDING_DELETES.isEmpty()) {
+            PurchaseDetailViewModel.deletePurchaseDetails(PENDING_DELETES, onActivity, null, onFailed);
+        }
 
         if (!PurchaseDetailViewModel.getPurchaseDetailsList().isEmpty()) {
             PurchaseDetailViewModel.getPurchaseDetailsList()
@@ -264,18 +315,28 @@ public class PurchaseMasterViewModel {
 
             purchaseMaster.setPurchaseDetails(PurchaseDetailViewModel.getPurchaseDetails());
         }
-        purchasesRepository.putMaster(purchaseMaster);
-        PurchaseDetailViewModel.updatePurchaseDetails();
-        Platform.runLater(PurchaseMasterViewModel::resetProperties);
-        resetProperties();
-        getPurchaseMasters();
+
+        var task = purchasesRepository.putMaster(purchaseMaster);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> PurchaseDetailViewModel.updatePurchaseDetails(onActivity, onSuccess, onFailed));
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
+        // getPurchaseMasters();
     }
 
-    public static void deleteItem(Long index) throws IOException, InterruptedException {
+    public static void deleteItem(
+            Long index,
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) throws IOException, InterruptedException {
         var findModel = new FindModel();
-
         findModel.setId(index);
-        purchasesRepository.deleteMaster(findModel);
-        getPurchaseMasters();
+
+        var task = purchasesRepository.deleteMaster(findModel);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
+        // getPurchaseMasters();
     }
 }

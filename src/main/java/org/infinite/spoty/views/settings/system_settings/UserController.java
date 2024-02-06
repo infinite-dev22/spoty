@@ -160,7 +160,7 @@ public class UserController implements Initializable {
                 e -> {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
-                            UserViewModel.deleteItem(obj.getData().getId());
+                            UserViewModel.deleteItem(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
@@ -172,7 +172,7 @@ public class UserController implements Initializable {
                 e -> {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
-                            UserViewModel.getItem(obj.getData().getId());
+                            UserViewModel.getItem(obj.getData().getId(), this::onAction, this::onFailed);
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
@@ -210,5 +210,17 @@ public class UserController implements Initializable {
 
     public void userCreateBtnClicked() {
         dialog.showAndWait();
+    }
+
+    private void onAction() {
+        System.out.println("Loading users...");
+    }
+
+    private void onSuccess() {
+        System.out.println("Loaded users...");
+    }
+
+    private void onFailed() {
+        System.out.println("failed loading users...");
     }
 }

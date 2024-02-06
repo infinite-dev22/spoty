@@ -28,28 +28,31 @@ import org.infinite.spoty.data_source.dtos.sales.SaleTransaction;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.models.SearchModel;
 import org.infinite.spoty.data_source.repositories.implementations.SalesRepositoryImpl;
+import org.infinite.spoty.utils.ParameterlessConsumer;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.ProductViewModel;
 import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 import static org.infinite.spoty.values.SharedResources.*;
 
 public class SaleDetailViewModel {
+    @Getter
+    public static final ObservableList<SaleDetail> saleDetailsList =
+            FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
                     UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
             .create();
-    @Getter
-    public static final ObservableList<SaleDetail> saleDetailsList =
-            FXCollections.observableArrayList();
     private static final ListProperty<SaleDetail> saleDetails =
             new SimpleListProperty<>(saleDetailsList);
     private static final LongProperty id = new SimpleLongProperty(0);
@@ -242,22 +245,28 @@ public class SaleDetailViewModel {
                         .build();
 
         saleDetailsList.add(saleDetail);
-        resetProperties();
     }
 
-    public static void saveSaleDetails() {
+    public static void saveSaleDetails(
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onSuccess,
+            @Nullable ParameterlessConsumer onFailed) {
         saleDetailsList.forEach(saleDetail -> {
-            try {
-                salesRepository.postDetail(saleDetail);
-            } catch (IOException | InterruptedException e) {
-                throw new RuntimeException(e);
+            var task = salesRepository.postDetail(saleDetail);
+            if (Objects.nonNull(onActivity)) {
+                task.setOnRunning(workerStateEvent -> onActivity.run());
             }
+            if (Objects.nonNull(onSuccess)) {
+                task.setOnFailed(workerStateEvent -> onSuccess.run());
+            }
+            if (Objects.nonNull(onFailed)) {
+                task.setOnFailed(workerStateEvent -> onFailed.run());
+            }
+            SpotyThreader.spotyThreadPool(task);
         });
-        ;
 
         setProductQuantity();
-
-        Platform.runLater(saleDetailsList::clear);
+        saleDetailsList.clear();
     }
 
     private static void setProductQuantity() {
@@ -269,7 +278,7 @@ public class SaleDetailViewModel {
                     ProductViewModel.setQuantity(productDetailQuantity);
 
                     try {
-                        ProductViewModel.updateProduct();
+                        ProductViewModel.updateProduct(null, null, null);
                         createSaleTransaction(saleDetail);
                     } catch (Exception e) {
                         SpotyLogger.writeToFile(e, SaleDetailViewModel.class);
@@ -290,7 +299,7 @@ public class SaleDetailViewModel {
 
                         ProductViewModel.setQuantity(productQuantity);
 
-                        ProductViewModel.updateProduct();
+                        ProductViewModel.updateProduct(null, null, null);
 
                         updateSaleTransaction(saleDetail);
                     } catch (Exception e) {
@@ -312,107 +321,139 @@ public class SaleDetailViewModel {
         saleDetail.setDiscount(getDiscount());
         saleDetail.setDiscountType(getDiscountType());
 
-        Platform.runLater(
-                () -> {
-                    getSaleDetails().remove(getTempId());
-                    getSaleDetails().add(getTempId(), saleDetail);
-
-                    resetProperties();
-                });
+        getSaleDetails().remove(getTempId());
+        getSaleDetails().add(getTempId(), saleDetail);
     }
 
     public static void getSaleDetail(SaleDetail saleDetail) {
-        Platform.runLater(
-                () -> {
-                    setTempId(getSaleDetails().indexOf(saleDetail));
-                    setId(saleDetail.getId());
-                    setProduct(saleDetail.getProduct());
-                    setSerial(saleDetail.getSerialNumber());
-                    setNetTax(String.valueOf(saleDetail.getNetTax()));
-                    setTaxType(saleDetail.getTaxType());
-                    setDiscount(String.valueOf(saleDetail.getDiscount()));
-                    setDiscountType(saleDetail.getDiscountType());
-                    setQuantity((long) saleDetail.getQuantity());
-                    setProduct(saleDetail.getProduct());
-                    setPrice(saleDetail.getPrice());
-                    setSubTotalPrice(saleDetail.getSubTotalPrice());
+        setTempId(getSaleDetails().indexOf(saleDetail));
+        setId(saleDetail.getId());
+        setProduct(saleDetail.getProduct());
+        setSerial(saleDetail.getSerialNumber());
+        setNetTax(String.valueOf(saleDetail.getNetTax()));
+        setTaxType(saleDetail.getTaxType());
+        setDiscount(String.valueOf(saleDetail.getDiscount()));
+        setDiscountType(saleDetail.getDiscountType());
+        setQuantity((long) saleDetail.getQuantity());
+        setProduct(saleDetail.getProduct());
+        setPrice(saleDetail.getPrice());
+        setSubTotalPrice(saleDetail.getSubTotalPrice());
+    }
+
+    public static void updateItem(
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onSuccess,
+            @Nullable ParameterlessConsumer onFailed) {
+        var saleDetail =
+                SaleDetail.builder()
+                        .id(getId())
+                        .product(getProduct())
+                        .quantity(getQuantity())
+                        .serialNumber(getSerial())
+                        .netTax(getNetTax())
+                        .taxType(getTaxType())
+                        .discount(getDiscount())
+                        .discountType(getDiscountType())
+                        .price(getPrice())
+                        .subTotalPrice(getSubTotalPrice())
+                        .build();
+
+        var task = salesRepository.putDetail(saleDetail);
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onSuccess)) {
+            task.setOnFailed(workerStateEvent -> onSuccess.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        SpotyThreader.spotyThreadPool(task);
+        // getAllSaleDetails();
+    }
+
+    public static void updateSaleDetails(
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onSuccess,
+            @Nullable ParameterlessConsumer onFailed) {
+        // TODO: Add endpoint to update multiple.
+        saleDetailsList.forEach(
+                saleDetail -> {
+                    var task = salesRepository.putDetail(saleDetail);
+                    if (Objects.nonNull(onActivity)) {
+                        task.setOnRunning(workerStateEvent -> onActivity.run());
+                    }
+                    if (Objects.nonNull(onSuccess)) {
+                        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+                    }
+                    if (Objects.nonNull(onFailed)) {
+                        task.setOnFailed(workerStateEvent -> onFailed.run());
+                    }
+                    SpotyThreader.spotyThreadPool(task);
                 });
-    }
-
-    public static void updateItem() throws IOException, InterruptedException {
-        var saleDetail =
-                SaleDetail.builder()
-                        .id(getId())
-                        .product(getProduct())
-                        .quantity(getQuantity())
-                        .serialNumber(getSerial())
-                        .netTax(getNetTax())
-                        .taxType(getTaxType())
-                        .discount(getDiscount())
-                        .discountType(getDiscountType())
-                        .price(getPrice())
-                        .subTotalPrice(getSubTotalPrice())
-                        .build();
-
-        salesRepository.putDetail(saleDetail);
-        getAllSaleDetails();
-    }
-
-    public static void updateSaleDetails() throws IOException, InterruptedException {
-        var saleDetail =
-                SaleDetail.builder()
-                        .id(getId())
-                        .product(getProduct())
-                        .quantity(getQuantity())
-                        .serialNumber(getSerial())
-                        .netTax(getNetTax())
-                        .taxType(getTaxType())
-                        .discount(getDiscount())
-                        .discountType(getDiscountType())
-                        .price(getPrice())
-                        .subTotalPrice(getSubTotalPrice())
-                        .build();
-
-        salesRepository.putDetail(saleDetail);
         updateProductQuantity();
-        getAllSaleDetails();
+        // getAllSaleDetails();
     }
 
-    public static void getAllSaleDetails() {
-        Type listType = new TypeToken<ArrayList<SaleDetail>>() {
-        }.getType();
+    public static void getAllSaleDetails(
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onSuccess,
+            @Nullable ParameterlessConsumer onFailed) {
 
-        Platform.runLater(
-                () -> {
-                    saleDetailsList.clear();
+        var task = salesRepository.fetchAllDetail();
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onSuccess)) {
+            task.setOnFailed(workerStateEvent -> {
+                Type listType = new TypeToken<ArrayList<SaleDetail>>() {
+                }.getType();
+                ArrayList<SaleDetail> saleDetailList = new ArrayList<>();
+                try {
+                    saleDetailList = gson.fromJson(
+                            task.get().body(), listType);
+                } catch (InterruptedException | ExecutionException e) {
+                    SpotyLogger.writeToFile(e, SaleDetailViewModel.class);
+                }
 
-                    try {
-                        ArrayList<SaleDetail> saleDetailList = gson.fromJson(
-                                salesRepository.fetchAllDetail().body(), listType);
-                        saleDetailsList.addAll(saleDetailList);
-                    } catch (Exception e) {
-                        SpotyLogger.writeToFile(e, SaleDetailViewModel.class);
-                    }
-                });
+                saleDetailsList.clear();
+                saleDetailsList.addAll(saleDetailList);
+            });
+            if (Objects.nonNull(onFailed)) {
+                task.setOnFailed(workerStateEvent -> onFailed.run());
+            }
+            SpotyThreader.spotyThreadPool(task);
+        }
     }
 
-    public static void searchItem(String search) {
+    public static void searchItem(
+            String search,
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onFailed) {
         var searchModel = SearchModel.builder().search(search).build();
-        Type listType = new TypeToken<ArrayList<SaleDetail>>() {
-        }.getType();
 
-        Platform.runLater(
-                () -> {
-                    saleDetailsList.clear();
+        var task = salesRepository.searchDetail(searchModel);
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            Type listType = new TypeToken<ArrayList<SaleDetail>>() {
+            }.getType();
+            ArrayList<SaleDetail> saleDetailList = new ArrayList<>();
+            try {
+                saleDetailList = gson.fromJson(
+                        task.get().body(), listType);
+            } catch (Exception e) {
+                SpotyLogger.writeToFile(e, SaleDetailViewModel.class);
+            }
 
-                    try {
-                        ArrayList<SaleDetail> saleDetailList = gson.fromJson(
-                                salesRepository.searchDetail(searchModel).body(), listType);
-                        saleDetailsList.addAll(saleDetailList);
-                    } catch (Exception e) {
-                        SpotyLogger.writeToFile(e, SaleDetailViewModel.class);
-                    }
-                });
+            saleDetailsList.clear();
+            saleDetailsList.addAll(saleDetailList);
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
     public static void removeSaleDetail(Long index, int tempIndex) {
@@ -420,10 +461,24 @@ public class SaleDetailViewModel {
         PENDING_DELETES.add(index);
     }
 
-    public static void deleteSaleDetails(@NotNull LinkedList<Long> indexes) throws IOException, InterruptedException {
+    public static void deleteSaleDetails(@NotNull LinkedList<Long> indexes,
+                                         @Nullable ParameterlessConsumer onActivity,
+                                         @Nullable ParameterlessConsumer onSuccess,
+                                         @Nullable ParameterlessConsumer onFailed) {
         LinkedList<FindModel> findModelList = new LinkedList<>();
         indexes.forEach(index -> findModelList.add(new FindModel(index)));
-        salesRepository.deleteMultipleDetails(findModelList);
+
+        var task = salesRepository.deleteMultipleDetails(findModelList);
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onSuccess)) {
+            task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        SpotyThreader.spotyThreadPool(task);
     }
 
     private static SaleTransaction getSaleTransaction(Long saleIndex) {

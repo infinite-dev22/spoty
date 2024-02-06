@@ -28,7 +28,9 @@ import org.infinite.spoty.data_source.dtos.sales.SaleMaster;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.models.SearchModel;
 import org.infinite.spoty.data_source.repositories.implementations.SalesRepositoryImpl;
+import org.infinite.spoty.utils.ParameterlessConsumer;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,17 +43,18 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
 
 public class SaleMasterViewModel {
+    @Getter
+    public static final ObservableList<SaleMaster> saleMastersList =
+            FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
                     UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
             .create();
-    @Getter
-    public static final ObservableList<SaleMaster> saleMastersList =
-            FXCollections.observableArrayList();
     private static final ListProperty<SaleMaster> sales = new SimpleListProperty<>(saleMastersList);
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final StringProperty date = new SimpleStringProperty("");
@@ -212,7 +215,10 @@ public class SaleMasterViewModel {
                 });
     }
 
-    public static void saveSaleMaster() throws IOException, InterruptedException {
+    public static void saveSaleMaster(
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var saleMaster = SaleMaster.builder()
                 .customer(getCustomer())
                 .branch(getBranch())
@@ -231,61 +237,111 @@ public class SaleMasterViewModel {
             saleMaster.setSaleDetails(SaleDetailViewModel.saleDetailsList);
         }
 
-        salesRepository.postMaster(saleMaster);
-        SaleDetailViewModel.saveSaleDetails();
-        SaleMasterViewModel.resetProperties();
-        getSaleMasters();
+        var task = salesRepository.postMaster(saleMaster);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> {
+            SaleDetailViewModel.saveSaleDetails(onActivity, null, onFailed);
+            onSuccess.run();
+        });
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void getSaleMasters() throws IOException, InterruptedException {
-        Type listType = new TypeToken<ArrayList<SaleMaster>>() {
-        }.getType();
-        saleMastersList.clear();
-        ArrayList<SaleMaster> saleMasterList = gson.fromJson(
-                salesRepository.fetchAllMaster().body(), listType);
-        saleMastersList.addAll(saleMasterList);
+    public static void getSaleMasters(
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onFailed) {
+        var task = salesRepository.fetchAllMaster();
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            Type listType = new TypeToken<ArrayList<SaleMaster>>() {
+            }.getType();
+            ArrayList<SaleMaster> saleMasterList = new ArrayList<>();
+            try {
+                saleMasterList = gson.fromJson(
+                        task.get().body(), listType);
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, SaleMasterViewModel.class);
+            }
+
+            saleMastersList.clear();
+            saleMastersList.addAll(saleMasterList);
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void getItem(Long index) throws IOException, InterruptedException {
-        var findModel = new FindModel();
-        findModel.setId(index);
-        var response = salesRepository.fetchMaster(findModel).body();
-        var saleMaster = gson.fromJson(response, SaleMaster.class);
+    public static void getItem(
+            Long index,
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onFailed) throws IOException, InterruptedException {
+        var findModel = FindModel.builder().id(index).build();
+        var task = salesRepository.fetchMaster(findModel);
 
-        setId(saleMaster.getId());
-        setDate(saleMaster.getLocaleDate());
-        setCustomer(saleMaster.getCustomer());
-        setBranch(saleMaster.getBranch());
-        setNote(saleMaster.getNotes());
-        setSaleStatus(saleMaster.getSaleStatus());
-        setPayStatus(saleMaster.getPaymentStatus());
-        SaleDetailViewModel.saleDetailsList.clear();
-        SaleDetailViewModel.saleDetailsList.addAll(saleMaster.getSaleDetails());
-        getSaleMasters();
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            SaleMaster saleMaster = new SaleMaster();
+            try {
+                saleMaster = gson.fromJson(task.get().body(), SaleMaster.class);
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, SaleMasterViewModel.class);
+            }
+
+            setId(saleMaster.getId());
+            setDate(saleMaster.getLocaleDate());
+            setCustomer(saleMaster.getCustomer());
+            setBranch(saleMaster.getBranch());
+            setNote(saleMaster.getNotes());
+            setSaleStatus(saleMaster.getSaleStatus());
+            setPayStatus(saleMaster.getPaymentStatus());
+            SaleDetailViewModel.saleDetailsList.clear();
+            SaleDetailViewModel.saleDetailsList.addAll(saleMaster.getSaleDetails());
+        });
+        SpotyThreader.spotyThreadPool(task);
+        // getSaleMasters();
     }
 
-    public static void searchItem(String search) throws Exception {
-        var searchModel = new SearchModel();
-        searchModel.setSearch(search);
+    public static void searchItem(
+            String search,
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onFailed) {
+        var searchModel = SearchModel.builder().search(search).build();
+        var task = salesRepository.searchMaster(searchModel);
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            Type listType = new TypeToken<ArrayList<SaleMaster>>() {
+            }.getType();
+            ArrayList<SaleMaster> saleMasterList = new ArrayList<>();
+            try {
+                saleMasterList = gson.fromJson(
+                        task.get().body(), listType);
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, SaleMasterViewModel.class);
+            }
 
-        Type listType = new TypeToken<ArrayList<SaleMaster>>() {
-        }.getType();
-
-        Platform.runLater(
-                () -> {
-                    saleMastersList.clear();
-
-                    try {
-                        ArrayList<SaleMaster> saleMasterList = gson.fromJson(
-                                salesRepository.searchMaster(searchModel).body(), listType);
-                        saleMastersList.addAll(saleMasterList);
-                    } catch (Exception e) {
-                        SpotyLogger.writeToFile(e, SaleMasterViewModel.class);
-                    }
-                });
+            saleMastersList.clear();
+            saleMastersList.addAll(saleMasterList);
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void updateItem() throws IOException, InterruptedException {
+    public static void updateItem(
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var saleMaster = SaleMaster.builder()
                 .id(getId())
                 .customer(getCustomer())
@@ -298,19 +354,37 @@ public class SaleMasterViewModel {
                 .date(getDate())
                 .build();
 
-        SaleDetailViewModel.deleteSaleDetails(PENDING_DELETES);
-        saleMaster.setSaleDetails(SaleDetailViewModel.getSaleDetailsList());
-        salesRepository.putMaster(saleMaster);
-        SaleDetailViewModel.updateSaleDetails();
-        Platform.runLater(SaleMasterViewModel::resetProperties);
-        getSaleMasters();
+        if (!PENDING_DELETES.isEmpty()) {
+            SaleDetailViewModel.deleteSaleDetails(PENDING_DELETES, onActivity, null, onFailed);
+        }
+
+        if (!SaleDetailViewModel.getSaleDetailsList().isEmpty()) {
+            SaleDetailViewModel.getSaleDetailsList()
+                    .forEach(saleDetail -> saleDetail.setSale(saleMaster));
+
+            saleMaster.setSaleDetails(SaleDetailViewModel.getSaleDetailsList());
+        }
+
+        var task = salesRepository.putMaster(saleMaster);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> SaleDetailViewModel.updateSaleDetails(onActivity, onSuccess, onFailed));
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
+        // getSaleMasters();
     }
 
-    public static void deleteItem(Long index) throws IOException, InterruptedException {
-        var findModel = new FindModel();
+    public static void deleteItem(
+            Long index,
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
+        var findModel = FindModel.builder().id(index).build();
 
-        findModel.setId(index);
-        salesRepository.deleteMaster(findModel);
-        getSaleMasters();
+        var task = salesRepository.deleteMaster(findModel);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
+        // getSaleMasters();
     }
 }

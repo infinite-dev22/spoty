@@ -20,8 +20,6 @@ import javafx.stage.Stage;
 import org.infinite.spoty.SpotyResourceLoader;
 import org.infinite.spoty.components.animations.ActivityIndicator;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
-import org.infinite.spoty.data_source.auth.ProtectedGlobals;
-import org.infinite.spoty.data_source.models.APIResponseModel;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.values.strings.Labels;
@@ -73,31 +71,31 @@ public class LoginController implements Initializable {
     }
 
     @NotNull
-    private static Thread dataInit() {
+    private Thread dataInit() {
         return singleThreadCreator(
                 "data-tracker",
                 () -> {
                     try {
-                        AdjustmentMasterViewModel.getAllAdjustmentMasters();
-                        BranchViewModel.getAllBranches();
-                        BrandViewModel.getItems();
-                        CurrencyViewModel.getAllCurrencies();
-                        CustomerViewModel.getAllCustomers();
-                        ExpenseCategoryViewModel.getAllCategories();
-                        ExpensesViewModel.getAllExpenses();
-                        ProductCategoryViewModel.getItems();
-                        ProductViewModel.getAllProducts();
-                        PurchaseMasterViewModel.getPurchaseMasters();
+                        AdjustmentMasterViewModel.getAllAdjustmentMasters(this::onActivity, this::onFailed);
+                        BranchViewModel.getAllBranches(this::onActivity, this::onFailed);
+                        BrandViewModel.getItems(this::onActivity, this::onFailed);
+                        CurrencyViewModel.getAllCurrencies(this::onActivity, this::onFailed);
+                        CustomerViewModel.getAllCustomers(this::onActivity, this::onFailed);
+                        ExpenseCategoryViewModel.getAllCategories(this::onActivity, this::onFailed);
+                        ExpensesViewModel.getAllExpenses(this::onActivity, this::onFailed);
+                        ProductCategoryViewModel.getItems(this::onActivity, this::onFailed);
+                        ProductViewModel.getAllProducts(this::onActivity, this::onFailed);
+                        PurchaseMasterViewModel.getPurchaseMasters(this::onActivity, this::onFailed);
                         PurchaseReturnMasterViewModel.getPurchaseReturnMasters();
-                        QuotationMasterViewModel.getQuotationMasters();
-                        RequisitionMasterViewModel.getRequisitionMasters();
-                        SaleMasterViewModel.getSaleMasters();
+                        QuotationMasterViewModel.getQuotationMasters(this::onActivity, this::onFailed);
+                        RequisitionMasterViewModel.getRequisitionMasters(this::onActivity, this::onFailed);
+                        SaleMasterViewModel.getSaleMasters(this::onActivity, this::onFailed);
                         SaleReturnMasterViewModel.getSaleReturnMasters();
-                        StockInMasterViewModel.getStockInMasters();
-                        SupplierViewModel.getAllSuppliers();
-                        TransferMasterViewModel.getTransferMasters();
-                        UOMViewModel.getItems();
-                        UserViewModel.getAllUserProfiles();
+                        StockInMasterViewModel.getStockInMasters(this::onActivity, this::onFailed);
+                        SupplierViewModel.getAllSuppliers(this::onActivity, this::onFailed);
+                        TransferMasterViewModel.getTransferMasters(this::onActivity, this::onFailed);
+                        UOMViewModel.getItems(this::onActivity, this::onFailed);
+                        UserViewModel.getAllUserProfiles(this::onActivity, this::onFailed);
                         RoleViewModel.getAllRoles();
                     } catch (Exception e) {
                         SpotyLogger.writeToFile(e, SplashScreenController.class);
@@ -128,77 +126,66 @@ public class LoginController implements Initializable {
     }
 
     public void onLoginPressed() {
-        var loginTask = new LoginTask();
+        LoginViewModel.login(this::onActivity, this::onSuccess, this::onFailed);
+    }
 
-        loginTask.setOnRunning(workerStateEvent -> {
-            loginBtn.setVisible(false);
-            loginBtn.setManaged(false);
-            activityIndicator.setVisible(true);
-            activityIndicator.setManaged(true);
-        });
+    private void onActivity() {
+        loginBtn.setVisible(false);
+        loginBtn.setManaged(false);
+        activityIndicator.setVisible(true);
+        activityIndicator.setManaged(true);
+    }
 
-        loginTask.setOnSucceeded(workerStateEvent -> {
-            APIResponseModel loginResponse = loginTask.getValue();
-            if (loginResponse.getStatus() == 200) {
-                var dataInit = dataInit();
-                ProtectedGlobals.authToken = loginResponse.getToken();
+    private void onSuccess() {
+        var dataInit = dataInit();
 
-                try {
-                    dataInit.join();
-                } catch (InterruptedException e) {
-                    SpotyLogger.writeToFile(e, LoginViewModel.class);
-                }
+        try {
+            dataInit.join();
+        } catch (InterruptedException e) {
+            SpotyLogger.writeToFile(e, LoginViewModel.class);
+        }
 
-                stage.hide();
+        stage.hide();
 
-                Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
-                try {
-                    // Set base view.
-                    FXMLLoader loader = fxmlLoader("views/Base.fxml");
-                    loader.setControllerFactory(c -> BaseController.getInstance(stage));
-                    // Base view parent.
-                    Parent root = loader.load();
-                    Scene scene = new Scene(root);
-                    // Set application scene theme to MFX modern themes.
-                    io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(scene);
-                    // Fixes black edges showing in main app scene.
-                    scene.setFill(null);
-                    stage.setScene(scene);
-                    // stage.initStyle(StageStyle.TRANSPARENT);
-                    // Set initial window size.
-                    stage.setHeight(primScreenBounds.getHeight());
-                    stage.setWidth(primScreenBounds.getWidth());
-                    // Set window title name, this name will only be seen when cursor hovers over app icon in
-                    // taskbar. Not necessary too but added since other apps also do this.
-                    stage.setTitle(Labels.APP_NAME);
-                    stage.getIcons().add(new Image(SpotyResourceLoader.load("icon.png")));
-                    stage.show();
-                    // Set window position to center of screen.
-                    // This isn't necessary, just felt like adding it here.
-                    stage.setX((primScreenBounds.getWidth() - stage.getWidth()) / 2);
-                    stage.setY((primScreenBounds.getHeight() - stage.getHeight()) / 2);
-                    // Initialize app notification handler.
-                    SimpleNotificationHolder.setNotificationOwner(stage);
-                } catch (IOException e) {
-                    SpotyLogger.writeToFile(e, LoginViewModel.class);
-                }
-                stage.show();
-            }
-        });
+        Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
+        try {
+            // Set base view.
+            FXMLLoader loader = fxmlLoader("views/Base.fxml");
+            loader.setControllerFactory(c -> BaseController.getInstance(stage));
+            // Base view parent.
+            Parent root = loader.load();
+            Scene scene = new Scene(root);
+            // Set application scene theme to MFX modern themes.
+            io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(scene);
+            // Fixes black edges showing in main app scene.
+            scene.setFill(null);
+            stage.setScene(scene);
+            // stage.initStyle(StageStyle.TRANSPARENT);
+            // Set initial window size.
+            stage.setHeight(primScreenBounds.getHeight());
+            stage.setWidth(primScreenBounds.getWidth());
+            // Set window title name, this name will only be seen when cursor hovers over app icon in
+            // taskbar. Not necessary too but added since other apps also do this.
+            stage.setTitle(Labels.APP_NAME);
+            stage.getIcons().add(new Image(SpotyResourceLoader.load("icon.png")));
+            stage.show();
+            // Set window position to center of screen.
+            // This isn't necessary, just felt like adding it here.
+            stage.setX((primScreenBounds.getWidth() - stage.getWidth()) / 2);
+            stage.setY((primScreenBounds.getHeight() - stage.getHeight()) / 2);
+            // Initialize app notification handler.
+            SimpleNotificationHolder.setNotificationOwner(stage);
+        } catch (IOException e) {
+            SpotyLogger.writeToFile(e, LoginViewModel.class);
+        }
+        stage.show();
+    }
 
-        loginTask.setOnFailed(workerStateEvent -> {
-            loginBtn.setVisible(true);
-            loginBtn.setManaged(true);
-            activityIndicator.setVisible(false);
-            activityIndicator.setManaged(false);
-            try {
-                throw loginTask.getException();
-            } catch (Throwable e) {
-                throw new RuntimeException(e);
-            }
-        });
-
-        SpotyThreader.spotyThreadPool(loginTask);
+    private void onFailed() {
+        loginBtn.setVisible(true);
+        loginBtn.setManaged(true);
+        activityIndicator.setVisible(false);
+        activityIndicator.setManaged(false);
     }
 
     public void closeIconClicked() {

@@ -91,7 +91,7 @@ public class ProductCategoryFormController implements Initializable {
                         if (ProductCategoryViewModel.getId() > 0) {
                             SpotyThreader.spotyThreadPool(() -> {
                                 try {
-                                    updateItem();
+                                    updateItem(this::onAction, this::onSuccess, this::onFailed);
                                 } catch (Exception e) {
                                     SpotyLogger.writeToFile(e, this.getClass());
                                 }
@@ -110,7 +110,7 @@ public class ProductCategoryFormController implements Initializable {
                         }
                         SpotyThreader.spotyThreadPool(() -> {
                             try {
-                                saveProductCategory();
+                                saveProductCategory(this::onAction, this::onSuccess, this::onFailed);
                             } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }
@@ -135,5 +135,17 @@ public class ProductCategoryFormController implements Initializable {
                                     .build();
                     notificationHolder.addNotification(notification);
                 });
+    }
+
+    private void onAction() {
+        System.out.println("Loading product category...");
+    }
+
+    private void onSuccess() {
+        System.out.println("Loaded product category...");
+    }
+
+    private void onFailed() {
+        System.out.println("failed loading product category...");
     }
 }

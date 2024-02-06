@@ -159,7 +159,7 @@ public class CustomerController implements Initializable {
                 e -> {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
-                            CustomerViewModel.deleteItem(obj.getData().getId());
+                            CustomerViewModel.deleteItem(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
@@ -171,7 +171,7 @@ public class CustomerController implements Initializable {
                 e -> {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
-                            CustomerViewModel.getItem(obj.getData().getId());
+                            CustomerViewModel.getItem(obj.getData().getId(), this::onAction, this::onFailed);
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
@@ -210,5 +210,17 @@ public class CustomerController implements Initializable {
 
     public void customerCreateBtnClicked() {
         dialog.showAndWait();
+    }
+
+    private void onAction() {
+        System.out.println("Loading customer...");
+    }
+
+    private void onSuccess() {
+        System.out.println("Loaded customer...");
+    }
+
+    private void onFailed() {
+        System.out.println("failed loading customer...");
     }
 }

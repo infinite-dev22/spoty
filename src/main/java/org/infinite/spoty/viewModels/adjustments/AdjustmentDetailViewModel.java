@@ -29,27 +29,31 @@ import org.infinite.spoty.data_source.dtos.adjustments.AdjustmentTransaction;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.models.SearchModel;
 import org.infinite.spoty.data_source.repositories.implementations.AdjustmentRepositoryImpl;
+import org.infinite.spoty.utils.ParameterlessConsumer;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.ProductViewModel;
 import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 import static org.infinite.spoty.values.SharedResources.*;
 
 public class AdjustmentDetailViewModel {
+    @Getter
+    public static final ObservableList<AdjustmentDetail> adjustmentDetailsList =
+            FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
                     UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
             .create();
-    @Getter
-    public static final ObservableList<AdjustmentDetail> adjustmentDetailsList =
-            FXCollections.observableArrayList();
     private static final ListProperty<AdjustmentDetail> adjustmentDetails =
             new SimpleListProperty<>(adjustmentDetailsList);
     private static final LongProperty id = new SimpleLongProperty();
@@ -148,20 +152,25 @@ public class AdjustmentDetailViewModel {
                 .build();
 
         adjustmentDetailsList.add(adjustmentDetail);
-        resetProperties();
     }
 
-    public static void saveAdjustmentDetails() {
-        // TODO: Save adjustment detail list.
+    public static void saveAdjustmentDetails(
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onSuccess,
+            @Nullable ParameterlessConsumer onFailed) {
         adjustmentDetailsList.forEach(adjustmentDetail -> {
-            try {
-                adjustmentRepository.postDetail(adjustmentDetail);
-            } catch (IOException | InterruptedException e) {
-                throw new RuntimeException(e);
+            var task = adjustmentRepository.postDetail(adjustmentDetail);
+            if (Objects.nonNull(onActivity)) {
+                task.setOnRunning(workerStateEvent -> onActivity.run());
             }
+            if (Objects.nonNull(onSuccess)) {
+                task.setOnFailed(workerStateEvent -> onSuccess.run());
+            }
+            if (Objects.nonNull(onFailed)) {
+                task.setOnFailed(workerStateEvent -> onFailed.run());
+            }
+            SpotyThreader.spotyThreadPool(task);
         });
-        setProductQuantity();
-        adjustmentDetailsList.clear();
     }
 
     private static void setProductQuantity() {
@@ -183,7 +192,7 @@ public class AdjustmentDetailViewModel {
 
                         ProductViewModel.setQuantity(productQuantity);
 
-                        ProductViewModel.updateProduct();
+                        ProductViewModel.updateProduct(null, null, null);
                     } catch (Exception e) {
                         SpotyLogger.writeToFile(e, AdjustmentDetailViewModel.class);
                     }
@@ -215,7 +224,7 @@ public class AdjustmentDetailViewModel {
                         }
 
                         ProductViewModel.setQuantity(productQuantity);
-                        ProductViewModel.updateProduct();
+                        ProductViewModel.updateProduct(null, null, null);
 
                         updateAdjustmentTransaction(adjustmentDetail);
                     } catch (Exception e) {
@@ -231,25 +240,28 @@ public class AdjustmentDetailViewModel {
         adjustmentDetail.setAdjustmentType(getAdjustmentType());
         adjustmentDetailsList.remove(getTempId());
         adjustmentDetailsList.add(getTempId(), adjustmentDetail);
-        resetProperties();
     }
 
-    public static void getAllAdjustmentDetails() {
-        Type listType = new TypeToken<ArrayList<AdjustmentDetail>>() {
-        }.getType();
+    public static void getAllAdjustmentDetails(@Nullable ParameterlessConsumer onActivity) {
+        var task = adjustmentRepository.fetchAllDetail();
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            Type listType = new TypeToken<ArrayList<AdjustmentDetail>>() {
+            }.getType();
+            ArrayList<AdjustmentDetail> adjustmentDetailList = new ArrayList<>();
+            try {
+                adjustmentDetailList = gson.fromJson(
+                        task.get().body(), listType);
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, AdjustmentDetailViewModel.class);
+            }
 
-        Platform.runLater(
-                () -> {
-                    adjustmentDetailsList.clear();
-
-                    try {
-                        ArrayList<AdjustmentDetail> adjustmentDetailList = gson.fromJson(
-                                adjustmentRepository.fetchAllDetail().body(), listType);
-                        adjustmentDetailsList.addAll(adjustmentDetailList);
-                    } catch (Exception e) {
-                        SpotyLogger.writeToFile(e, AdjustmentDetailViewModel.class);
-                    }
-                });
+            adjustmentDetailsList.clear();
+            adjustmentDetailsList.addAll(adjustmentDetailList);
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
     public static void getAdjustmentDetail(AdjustmentDetail adjustmentDetail) {
@@ -259,39 +271,57 @@ public class AdjustmentDetailViewModel {
         setAdjustmentType(adjustmentDetail.getAdjustmentType());
     }
 
-    public static void searchItem(String search) throws Exception {
-        var searchModel = new SearchModel();
-        searchModel.setSearch(search);
+    public static void searchItem(
+            String search,
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onFailed) {
+        var searchModel = SearchModel.builder().search(search).build();
 
-        Type listType = new TypeToken<ArrayList<AdjustmentDetail>>() {
-        }.getType();
+        var task = adjustmentRepository.searchDetail(searchModel);
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            Type listType = new TypeToken<ArrayList<AdjustmentDetail>>() {
+            }.getType();
+            ArrayList<AdjustmentDetail> adjustmentDetailList = new ArrayList<>();
+            try {
+                adjustmentDetailList = gson.fromJson(
+                        task.get().body(), listType);
+            } catch (Exception e) {
+                SpotyLogger.writeToFile(e, AdjustmentDetailViewModel.class);
+            }
 
-        Platform.runLater(
-                () -> {
-                    adjustmentDetailsList.clear();
-
-                    try {
-                        ArrayList<AdjustmentDetail> adjustmentDetailList = gson.fromJson(
-                                adjustmentRepository.searchDetail(searchModel).body(), listType);
-                        adjustmentDetailsList.addAll(adjustmentDetailList);
-                    } catch (Exception e) {
-                        SpotyLogger.writeToFile(e, AdjustmentDetailViewModel.class);
-                    }
-                });
+            adjustmentDetailsList.clear();
+            adjustmentDetailsList.addAll(adjustmentDetailList);
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void updateAdjustmentDetails() {
+    public static void updateAdjustmentDetails(
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onSuccess,
+            @Nullable ParameterlessConsumer onFailed) {
         // TODO: Add save multiple on API.
         adjustmentDetailsList.forEach(
                 adjustmentDetail -> {
-                    try {
-                        adjustmentRepository.putDetail(adjustmentDetail);
-                    } catch (Exception e) {
-                        SpotyLogger.writeToFile(e, AdjustmentDetailViewModel.class);
+                    var task = adjustmentRepository.putDetail(adjustmentDetail);
+                    if (Objects.nonNull(onActivity)) {
+                        task.setOnRunning(workerStateEvent -> onActivity.run());
                     }
+                    if (Objects.nonNull(onSuccess)) {
+                        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+                    }
+                    if (Objects.nonNull(onFailed)) {
+                        task.setOnFailed(workerStateEvent -> onFailed.run());
+                    }
+                    SpotyThreader.spotyThreadPool(task);
                 });
         updateProductQuantity();
-        getAllAdjustmentDetails();
+//        getAllAdjustmentDetails(null);
     }
 
     public static void removeAdjustmentDetail(long index, int tempIndex) {
@@ -299,10 +329,24 @@ public class AdjustmentDetailViewModel {
         PENDING_DELETES.add(index);
     }
 
-    public static void deleteAdjustmentDetails(@NotNull LinkedList<Long> indexes) throws IOException, InterruptedException {
+    public static void deleteAdjustmentDetails(@NotNull LinkedList<Long> indexes,
+                                               @Nullable ParameterlessConsumer onActivity,
+                                               @Nullable ParameterlessConsumer onSuccess,
+                                               @Nullable ParameterlessConsumer onFailed) {
         LinkedList<FindModel> findModelList = new LinkedList<>();
         indexes.forEach(index -> findModelList.add(new FindModel(index)));
-        adjustmentRepository.deleteMultipleDetails(findModelList);
+
+        var task = adjustmentRepository.deleteMultipleDetails(findModelList);
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onSuccess)) {
+            task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        SpotyThreader.spotyThreadPool(task);
     }
 
     private static AdjustmentTransaction getAdjustmentTransaction(long adjustmentIndex) {

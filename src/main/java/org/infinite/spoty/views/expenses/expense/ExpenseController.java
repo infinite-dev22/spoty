@@ -163,7 +163,7 @@ public class ExpenseController implements Initializable {
                 e -> {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
-                            ExpensesViewModel.deleteItem(obj.getData().getId());
+                            ExpensesViewModel.deleteItem(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
@@ -175,7 +175,7 @@ public class ExpenseController implements Initializable {
                 e -> {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
-                            ExpensesViewModel.getItem(obj.getData().getId());
+                            ExpensesViewModel.getItem(obj.getData().getId(), this::onAction, this::onFailed);
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
@@ -213,5 +213,17 @@ public class ExpenseController implements Initializable {
 
     public void expenseCreateBtnClicked() {
         dialog.showAndWait();
+    }
+
+    private void onAction() {
+        System.out.println("Loading expense...");
+    }
+
+    private void onSuccess() {
+        System.out.println("Loaded expense...");
+    }
+
+    private void onFailed() {
+        System.out.println("failed loading expense...");
     }
 }

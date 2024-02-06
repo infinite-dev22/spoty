@@ -277,7 +277,7 @@ public class RequisitionMasterFormController implements Initializable {
                         try {
                             RequisitionDetailViewModel.getItem(
                                     obj.getData().getId(),
-                                    RequisitionDetailViewModel.requisitionDetailsList.indexOf(obj.getData()));
+                                    RequisitionDetailViewModel.requisitionDetailsList.indexOf(obj.getData()), this::onAction, this::onSuccess, this::onFailed);
                         } catch (Exception e) {
                             SpotyLogger.writeToFile(e, this.getClass());
                         }
@@ -338,7 +338,7 @@ public class RequisitionMasterFormController implements Initializable {
             if (RequisitionMasterViewModel.getId() > 0) {
                 SpotyThreader.spotyThreadPool(() -> {
                     try {
-                        RequisitionMasterViewModel.updateItem(RequisitionMasterViewModel.getId());
+                        RequisitionMasterViewModel.updateItem(this::onAction, this::onSuccess, this::onFailed);
                     } catch (Exception e) {
                         SpotyLogger.writeToFile(e, this.getClass());
                     }
@@ -360,7 +360,7 @@ public class RequisitionMasterFormController implements Initializable {
             }
             SpotyThreader.spotyThreadPool(() -> {
                 try {
-                    RequisitionMasterViewModel.saveRequisitionMaster();
+                    RequisitionMasterViewModel.saveRequisitionMaster(this::onAction, this::onSuccess, this::onFailed);
                 } catch (Exception e) {
                     SpotyLogger.writeToFile(e, this.getClass());
                 }
@@ -397,5 +397,17 @@ public class RequisitionMasterFormController implements Initializable {
         requisitionMasterDateValidationLabel.setVisible(false);
         requisitionMasterBranch.clearSelection();
         requisitionMasterSupplier.clearSelection();
+    }
+
+    private void onAction() {
+        System.out.println("Loading requisition master...");
+    }
+
+    private void onSuccess() {
+        System.out.println("Loaded requisition master...");
+    }
+
+    private void onFailed() {
+        System.out.println("failed loading requisition master...");
     }
 }

@@ -17,7 +17,6 @@ package org.infinite.spoty.viewModels;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -25,23 +24,27 @@ import org.infinite.spoty.data_source.dtos.UnitOfMeasure;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.models.SearchModel;
 import org.infinite.spoty.data_source.repositories.implementations.UnitsOfMeasureRepositoryImpl;
+import org.infinite.spoty.utils.ParameterlessConsumer;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
+import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 
 public class UOMViewModel {
+    public static final ObservableList<UnitOfMeasure> uomsList = FXCollections.observableArrayList();
+    public static final ObservableList<UnitOfMeasure> uomComboBoxList =
+            FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
                     UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
             .create();
-    public static final ObservableList<UnitOfMeasure> uomsList = FXCollections.observableArrayList();
-    public static final ObservableList<UnitOfMeasure> uomComboBoxList =
-            FXCollections.observableArrayList();
     private static final ListProperty<UnitOfMeasure> unitsOfMeasure =
             new SimpleListProperty<>(uomsList);
     private static final LongProperty id = new SimpleLongProperty(0);
@@ -50,6 +53,7 @@ public class UOMViewModel {
     private static final ObjectProperty<UnitOfMeasure> baseUnit = new SimpleObjectProperty<>();
     private static final StringProperty operator = new SimpleStringProperty("");
     private static final StringProperty operatorValue = new SimpleStringProperty("");
+    private static final UnitsOfMeasureRepositoryImpl uomRepository = new UnitsOfMeasureRepositoryImpl();
 
     public static long getId() {
         return id.get();
@@ -135,8 +139,10 @@ public class UOMViewModel {
         return unitsOfMeasure;
     }
 
-    public static void saveUOM() throws IOException, InterruptedException {
-        var uomRepository = new UnitsOfMeasureRepositoryImpl();
+    public static void saveUOM(
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var uom = UnitOfMeasure.builder()
                 .name(getName())
                 .shortName(getShortName())
@@ -145,9 +151,11 @@ public class UOMViewModel {
                 .operatorValue(getOperatorValue())
                 .build();
 
-        uomRepository.post(uom);
-        resetUOMProperties();
-        getItems();
+        var task = uomRepository.post(uom);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
     }
 
     public static void resetUOMProperties() {
@@ -159,65 +167,94 @@ public class UOMViewModel {
         setOperatorValue("");
     }
 
-    public static void getItems() {
-        var uomRepository = new UnitsOfMeasureRepositoryImpl();
-        Type listType = new TypeToken<ArrayList<UnitOfMeasure>>() {
-        }.getType();
+    public static void getItems(
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onFailed) {
+        var task = uomRepository.fetchAll();
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            try {
+                Type listType = new TypeToken<ArrayList<UnitOfMeasure>>() {
+                }.getType();
+                ArrayList<UnitOfMeasure> uomList = gson.fromJson(task.get().body(), listType);
 
-        Platform.runLater(
-                () -> {
-                    uomsList.clear();
-
-                    try {
-                        ArrayList<UnitOfMeasure> uomList = gson.fromJson(uomRepository.fetchAll().body(), listType);
-                        uomsList.addAll(uomList);
-                    } catch (IOException | InterruptedException e) {
-                        SpotyLogger.writeToFile(e, UOMViewModel.class);
-                    }
-                });
+                uomsList.clear();
+                uomsList.addAll(uomList);
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, UOMViewModel.class);
+            }
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void getItem(Long uomID) throws IOException, InterruptedException {
-        var uomRepository = new UnitsOfMeasureRepositoryImpl();
-        var findModel = new FindModel();
-        findModel.setId(uomID);
-        var response = uomRepository.fetch(findModel).body();
-        var uom = gson.fromJson(response, UnitOfMeasure.class);
+    public static void getItem(
+            Long index,
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onFailed) {
+        var findModel = FindModel.builder().id(index).build();
 
-        setId(uom.getId());
-        setName(uom.getName());
-        setShortName(uom.getShortName());
-        setBaseUnit(uom.getBaseUnit());
-        setOperator(uom.getOperator());
-        setOperatorValue(
-                String.valueOf(uom.getOperatorValue() == 0 ? "" : uom.getOperatorValue()));
-        getItems();
+        var task = uomRepository.fetch(findModel);
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            try {
+                var uom = gson.fromJson(task.get().body(), UnitOfMeasure.class);
+
+                setId(uom.getId());
+                setName(uom.getName());
+                setShortName(uom.getShortName());
+                setBaseUnit(uom.getBaseUnit());
+                setOperator(uom.getOperator());
+                setOperatorValue(
+                        String.valueOf(uom.getOperatorValue() == 0 ? "" : uom.getOperatorValue()));
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, BankViewModel.class);
+            }
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void searchItem(String search) {
-        var uomRepository = new UnitsOfMeasureRepositoryImpl();
-        var searchModel = new SearchModel();
-        searchModel.setSearch(search);
+    public static void searchItem(
+            String search,
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onFailed) {
+        var searchModel = SearchModel.builder().search(search).build();
+        var task = uomRepository.search(searchModel);
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            try {
+                Type listType = new TypeToken<ArrayList<UnitOfMeasure>>() {
+                }.getType();
+                ArrayList<UnitOfMeasure> uomList = gson.fromJson(task.get()
+                        .body(), listType);
 
-        Type listType = new TypeToken<ArrayList<UnitOfMeasure>>() {
-        }.getType();
-
-        Platform.runLater(
-                () -> {
-                    uomsList.clear();
-
-                    try {
-                        ArrayList<UnitOfMeasure> uomList = gson.fromJson(uomRepository.search(searchModel)
-                                .body(), listType);
-                        uomsList.addAll(uomList);
-                    } catch (IOException | InterruptedException e) {
-                        SpotyLogger.writeToFile(e, UOMViewModel.class);
-                    }
-                });
+                uomsList.clear();
+                uomsList.addAll(uomList);
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, UOMViewModel.class);
+            }
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void updateItem() throws IOException, InterruptedException {
-        var uomRepository = new UnitsOfMeasureRepositoryImpl();
+    public static void updateItem(
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var uom = UnitOfMeasure.builder()
                 .id(getId())
                 .name(getName())
@@ -227,17 +264,24 @@ public class UOMViewModel {
                 .operatorValue(getOperatorValue())
                 .build();
 
-        uomRepository.put(uom);
-        resetUOMProperties();
-        getItems();
+        var task = uomRepository.put(uom);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void deleteItem(Long uomID) throws IOException, InterruptedException {
-        var uomRepository = new UnitsOfMeasureRepositoryImpl();
-        var findModel = new FindModel();
+    public static void deleteItem(
+            Long index,
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
+        var findModel = FindModel.builder().id(index).build();
 
-        findModel.setId(uomID);
-        uomRepository.delete(findModel);
-        getItems();
+        var task = uomRepository.delete(findModel);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
     }
 }

@@ -33,9 +33,9 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.infinite.spoty.data_source.dtos.ExpenseCategory;
-import org.infinite.spoty.views.forms.ExpenseCategoryFormController;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.ExpenseCategoryViewModel;
+import org.infinite.spoty.views.forms.ExpenseCategoryFormController;
 
 import java.io.IOException;
 import java.net.URL;
@@ -150,7 +150,7 @@ public class ExpenseCategoryController implements Initializable {
                 e -> {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
-                            ExpenseCategoryViewModel.deleteItem(obj.getData().getId());
+                            ExpenseCategoryViewModel.deleteItem(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
@@ -162,7 +162,7 @@ public class ExpenseCategoryController implements Initializable {
                 e -> {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
-                            ExpenseCategoryViewModel.getItem(obj.getData().getId());
+                            ExpenseCategoryViewModel.getItem(obj.getData().getId(), this::onAction, this::onFailed);
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
@@ -200,5 +200,17 @@ public class ExpenseCategoryController implements Initializable {
 
     public void categoryExpenseCreateBtnClicked() {
         dialog.showAndWait();
+    }
+
+    private void onAction() {
+        System.out.println("Loading expense category...");
+    }
+
+    private void onSuccess() {
+        System.out.println("Loaded expense category...");
+    }
+
+    private void onFailed() {
+        System.out.println("failed loading expense category...");
     }
 }

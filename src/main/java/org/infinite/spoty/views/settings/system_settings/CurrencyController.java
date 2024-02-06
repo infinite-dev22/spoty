@@ -148,7 +148,7 @@ public class CurrencyController implements Initializable {
                 e -> {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
-                            CurrencyViewModel.deleteItem(obj.getData().getId());
+                            CurrencyViewModel.deleteItem(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
@@ -160,7 +160,7 @@ public class CurrencyController implements Initializable {
                 e -> {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
-                            CurrencyViewModel.getItem(obj.getData().getId());
+                            CurrencyViewModel.getItem(obj.getData().getId(), this::onAction, this::onFailed);
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
@@ -199,5 +199,17 @@ public class CurrencyController implements Initializable {
                         .get();
 
         io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
+    }
+
+    private void onAction() {
+        System.out.println("Loading currency...");
+    }
+
+    private void onSuccess() {
+        System.out.println("Loaded currency...");
+    }
+
+    private void onFailed() {
+        System.out.println("failed loading currency...");
     }
 }

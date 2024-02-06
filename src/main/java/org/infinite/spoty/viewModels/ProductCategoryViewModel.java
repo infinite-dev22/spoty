@@ -17,7 +17,6 @@ package org.infinite.spoty.viewModels;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -25,16 +24,21 @@ import org.infinite.spoty.data_source.dtos.ProductCategory;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.models.SearchModel;
 import org.infinite.spoty.data_source.repositories.implementations.ProductCategoriesRepositoryImpl;
+import org.infinite.spoty.utils.ParameterlessConsumer;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
+import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 
 public class ProductCategoryViewModel {
+    public static final ProductCategoriesRepositoryImpl productCategoriesRepository = new ProductCategoriesRepositoryImpl();
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
                     UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
@@ -110,16 +114,20 @@ public class ProductCategoryViewModel {
         return categories;
     }
 
-    public static void saveProductCategory() throws IOException, InterruptedException {
-        var productCategoriesRepository = new ProductCategoriesRepositoryImpl();
+    public static void saveProductCategory(
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var productCategory = ProductCategory.builder()
                 .code(getCode())
                 .name(getName())
                 .build();
 
-        productCategoriesRepository.post(productCategory);
-        clearProductCategoryData();
-        getItems();
+        var task = productCategoriesRepository.post(productCategory);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
     }
 
     public static void clearProductCategoryData() {
@@ -128,77 +136,113 @@ public class ProductCategoryViewModel {
         setName("");
     }
 
-    public static void getItems() {
-        var productCategoriesRepository = new ProductCategoriesRepositoryImpl();
-        Type listType = new TypeToken<ArrayList<ProductCategory>>() {
-        }.getType();
+    public static void getItems(
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onFailed) {
+        var task = productCategoriesRepository.fetchAll();
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            try {
+                Type listType = new TypeToken<ArrayList<ProductCategory>>() {
+                }.getType();
+                ArrayList<ProductCategory> categoryList = gson.fromJson(task.get().body(), listType);
 
-        Platform.runLater(
-                () -> {
-                    categoriesList.clear();
-
-                    try {
-                        ArrayList<ProductCategory> categoryList = gson.fromJson(productCategoriesRepository.fetchAll().body(), listType);
-                        categoriesList.addAll(categoryList);
-                    } catch (IOException | InterruptedException e) {
-                        SpotyLogger.writeToFile(e, ProductCategoryViewModel.class);
-                    }
-                });
+                categoriesList.clear();
+                categoriesList.addAll(categoryList);
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, ProductCategoryViewModel.class);
+            }
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void getItem(long productCategoryID) throws IOException, InterruptedException {
-        var productCategoriesRepository = new ProductCategoriesRepositoryImpl();
-        var findModel = new FindModel();
-        findModel.setId(productCategoryID);
-        var response = productCategoriesRepository.fetch(findModel).body();
-        var productCategory = gson.fromJson(response, ProductCategory.class);
+    public static void getItem(
+            Long index,
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onFailed) {
+        var findModel = FindModel.builder().id(index).build();
 
-        setId(productCategory.getId());
-        setCode(productCategory.getCode());
-        setName(productCategory.getName());
-        getItems();
+        var task = productCategoriesRepository.fetch(findModel);
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            try {
+                var productCategory = gson.fromJson(task.get().body(), ProductCategory.class);
+
+                setId(productCategory.getId());
+                setCode(productCategory.getCode());
+                setName(productCategory.getName());
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, ProductCategoryViewModel.class);
+            }
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void searchItem(String search) {
-        var productCategoriesRepository = new ProductCategoriesRepositoryImpl();
-        var searchModel = new SearchModel();
-        searchModel.setSearch(search);
+    public static void searchItem(
+            String search,
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onFailed) {
+        var searchModel = SearchModel.builder().search(search).build();
+        var task = productCategoriesRepository.search(searchModel);
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            try {
+                Type listType = new TypeToken<ArrayList<ProductCategory>>() {
+                }.getType();
+                ArrayList<ProductCategory> currencyList = gson.fromJson(task.get().body(), listType);
 
-        Type listType = new TypeToken<ArrayList<ProductCategory>>() {
-        }.getType();
-
-        Platform.runLater(
-                () -> {
-                    categoriesList.clear();
-
-                    try {
-                        ArrayList<ProductCategory> currencyList = gson.fromJson(productCategoriesRepository.search(searchModel).body(), listType);
-                        categoriesList.addAll(currencyList);
-                    } catch (IOException | InterruptedException e) {
-                        SpotyLogger.writeToFile(e, ProductCategoryViewModel.class);
-                    }
-                });
+                categoriesList.clear();
+                categoriesList.addAll(currencyList);
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, ProductCategoryViewModel.class);
+            }
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void updateItem() throws IOException, InterruptedException {
-        var productCategoriesRepository = new ProductCategoriesRepositoryImpl();
+    public static void updateItem(
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var productCategory = ProductCategory.builder()
                 .id(getId())
                 .code(getCode())
                 .name(getName())
                 .build();
 
-        productCategoriesRepository.put(productCategory);
-        clearProductCategoryData();
-        getItems();
+        var task = productCategoriesRepository.put(productCategory);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void deleteItem(Long productCategoryID) throws IOException, InterruptedException {
-        var productCategoriesRepository = new ProductCategoriesRepositoryImpl();
-        var findModel = new FindModel();
+    public static void deleteItem(
+            Long index,
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
+        var findModel = FindModel.builder().id(index).build();
 
-        findModel.setId(productCategoryID);
-        productCategoriesRepository.delete(findModel);
-        getItems();
+        var task = productCategoriesRepository.delete(findModel);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
     }
 }

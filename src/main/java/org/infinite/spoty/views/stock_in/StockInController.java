@@ -138,7 +138,7 @@ public class StockInController implements Initializable {
                     SpotyThreader.spotyThreadPool(
                             () -> {
                                 try {
-                                    StockInMasterViewModel.deleteItem(obj.getData().getId());
+                                    StockInMasterViewModel.deleteItem(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
                                 } catch (Exception ex) {
                                     throw new RuntimeException(ex);
                                 }
@@ -152,7 +152,7 @@ public class StockInController implements Initializable {
                     SpotyThreader.spotyThreadPool(
                             () -> {
                                 try {
-                                    StockInMasterViewModel.getItem(obj.getData().getId());
+                                    StockInMasterViewModel.getItem(obj.getData().getId(), this::onAction, this::onFailed);
                                 } catch (Exception ex) {
                                     throw new RuntimeException(ex);
                                 }
@@ -171,5 +171,17 @@ public class StockInController implements Initializable {
     @FXML
     private void stockInCreateBtnClicked() {
         BaseController.navigation.navigate(Pages.getStockInMasterFormPane());
+    }
+
+    private void onAction() {
+        System.out.println("Loading stock ins...");
+    }
+
+    private void onSuccess() {
+        System.out.println("Loaded stock ins...");
+    }
+
+    private void onFailed() {
+        System.out.println("failed loading stock ins...");
     }
 }

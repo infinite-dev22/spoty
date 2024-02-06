@@ -252,8 +252,6 @@ public class UserViewModel {
 //        user.setBranch(getBranch());
 //
 //        userDao.create(user);
-
-        resetProperties();
         getAllUserProfiles();
     }
 
@@ -307,8 +305,6 @@ public class UserViewModel {
 //        user.setAccessAllBranches(canAccessAllBranches());
 //
 //        userDao.update(user);
-
-        resetProperties();
         getAllUserProfiles();
     }
 

@@ -131,8 +131,6 @@ public class RequisitionDetailViewModel {
 //                        getDescription());
 //
 //        Platform.runLater(() -> requisitionDetailList.add(requisitionDetail));
-
-        resetProperties();
     }
 
     public static void saveRequisitionDetails() throws Exception {
@@ -166,8 +164,6 @@ public class RequisitionDetailViewModel {
 //                    requisitionDetailList.remove(getTempId());
 //                    requisitionDetailList.add(getTempId(), requisitionDetail);
 //                });
-
-        resetProperties();
     }
 
     public static void getItem(long index, int tempIndex) throws Exception {

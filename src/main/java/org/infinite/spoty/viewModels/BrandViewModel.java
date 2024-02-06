@@ -17,7 +17,6 @@ package org.infinite.spoty.viewModels;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -25,13 +24,17 @@ import org.infinite.spoty.data_source.dtos.Brand;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.models.SearchModel;
 import org.infinite.spoty.data_source.repositories.implementations.BrandsRepositoryImpl;
+import org.infinite.spoty.utils.ParameterlessConsumer;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
+import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 
 public class BrandViewModel {
@@ -45,6 +48,7 @@ public class BrandViewModel {
     public static ObservableList<Brand> brandsList = FXCollections.observableArrayList();
     private static final ListProperty<Brand> brands = new SimpleListProperty<>(brandsList);
     public static ObservableList<Brand> brandsComboBoxList = FXCollections.observableArrayList();
+    public static BrandsRepositoryImpl brandsRepository = new BrandsRepositoryImpl();
 
     public static long getId() {
         return id.get();
@@ -94,17 +98,21 @@ public class BrandViewModel {
         return brands;
     }
 
-    public static void saveBrand() throws IOException, InterruptedException {
-        var brandsRepository = new BrandsRepositoryImpl();
+    public static void saveBrand(
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var brand = Brand.builder()
                 .name(getName())
                 .description(getDescription())
                 // .image(getImage)
                 .build();
 
-        brandsRepository.post(brand);
-        clearBrandData();
-        getItems();
+        var task = brandsRepository.post(brand);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
     }
 
     public static void clearBrandData() {
@@ -113,61 +121,87 @@ public class BrandViewModel {
         setDescription("");
     }
 
-    public static void getItems() {
-        var brandsRepository = new BrandsRepositoryImpl();
-        Type listType = new TypeToken<ArrayList<Brand>>() {
-        }.getType();
+    public static void getItems(
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onFailed) {
+        var task = brandsRepository.fetchAll();
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            try {
+                Type listType = new TypeToken<ArrayList<Brand>>() {
+                }.getType();
 
-        Platform.runLater(
-                () -> {
-                    brandsList.clear();
-
-                    try {
-                        ArrayList<Brand> brandList = gson.fromJson(brandsRepository.fetchAll().body(), listType);
-                        brandsList.addAll(brandList);
-                    } catch (IOException | InterruptedException e) {
-                        SpotyLogger.writeToFile(e, BrandViewModel.class);
-                    }
-                });
+                ArrayList<Brand> brandList = gson.fromJson(task.get().body(), listType);
+                brandsList.clear();
+                brandsList.addAll(brandList);
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, BrandViewModel.class);
+            }
+        });
     }
 
-    public static void getItem(long brandID) throws IOException, InterruptedException {
-        var brandsRepository = new BrandsRepositoryImpl();
-        var findModel = new FindModel();
-        findModel.setId(brandID);
-        var response = brandsRepository.fetch(findModel).body();
-        var brand = gson.fromJson(response, Brand.class);
+    public static void getItem(
+            Long index,
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onFailed) {
+        var findModel = FindModel.builder().id(index).build();
 
-        setId(brand.getId());
-        setName(brand.getName());
-        setDescription(brand.getDescription());
-        getItems();
+        var task = brandsRepository.fetch(findModel);
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            try {
+                var brand = gson.fromJson(task.get().body(), Brand.class);
+
+                setId(brand.getId());
+                setName(brand.getName());
+                setDescription(brand.getDescription());
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, BankViewModel.class);
+            }
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void searchItem(String search) {
-        var brandsRepository = new BrandsRepositoryImpl();
-        var searchModel = new SearchModel();
-        searchModel.setSearch(search);
-
-        Type listType = new TypeToken<ArrayList<Brand>>() {
-        }.getType();
-
-        Platform.runLater(
-                () -> {
-                    brandsList.clear();
-
-                    try {
-                        ArrayList<Brand> brandList = gson.fromJson(brandsRepository.search(searchModel).body(), listType);
-                        brandsList.addAll(brandList);
-                    } catch (IOException | InterruptedException e) {
-                        SpotyLogger.writeToFile(e, BranchViewModel.class);
-                    }
-                });
+    public static void searchItem(
+            String search,
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onFailed) {
+        var searchModel = SearchModel.builder().search(search).build();
+        var task = brandsRepository.search(searchModel);
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            try {
+                Type listType = new TypeToken<ArrayList<Brand>>() {
+                }.getType();
+                ArrayList<Brand> brandList = gson.fromJson(task.get().body(), listType);
+                brandsList.clear();
+                brandsList.addAll(brandList);
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, BranchViewModel.class);
+            }
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void updateItem() throws IOException, InterruptedException {
-        var brandsRepository = new BrandsRepositoryImpl();
-
+    public static void updateItem(
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var brand = Brand.builder()
                 .id(getId())
                 .name(getName())
@@ -175,17 +209,24 @@ public class BrandViewModel {
                 // .image(getImage)
                 .build();
 
-        brandsRepository.put(brand);
-        clearBrandData();
-        getItems();
+        var task = brandsRepository.put(brand);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void deleteItem(Long brandID) throws IOException, InterruptedException {
-        var brandsRepository = new BrandsRepositoryImpl();
-        var findModel = new FindModel();
+    public static void deleteItem(
+            Long index,
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
+        var findModel = FindModel.builder().id(index).build();
 
-        findModel.setId(brandID);
-        brandsRepository.delete(findModel);
-        getItems();
+        var task = brandsRepository.delete(findModel);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
     }
 }

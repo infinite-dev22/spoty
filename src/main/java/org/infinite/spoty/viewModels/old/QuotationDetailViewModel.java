@@ -161,7 +161,7 @@ public class QuotationDetailViewModel {
 //        Platform.runLater(
 //                () -> {
 //                    quotationDetailsList.add(quotationDetail);
-//                    resetProperties();
+//
 //                });
     }
 
@@ -188,7 +188,7 @@ public class QuotationDetailViewModel {
                 () -> {
                     quotationDetailsList.remove(getTempId());
                     quotationDetailsList.add(getTempId(), quotationDetail);
-                    resetProperties();
+
                 });
     }
 

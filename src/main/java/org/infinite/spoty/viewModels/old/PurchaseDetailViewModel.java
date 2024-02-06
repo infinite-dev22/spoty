@@ -215,8 +215,6 @@ public class PurchaseDetailViewModel {
 //                        Long.parseLong(getQuantity()));
 //
 //        Platform.runLater(() -> purchaseDetailList.add(purchaseDetail));
-
-        resetProperties();
     }
 
     public static void savePurchaseDetails() throws Exception {
@@ -272,8 +270,6 @@ public class PurchaseDetailViewModel {
 //                    purchaseDetailList.remove(getTempId());
 //                    purchaseDetailList.add(getTempId(), purchaseDetail);
 //                });
-
-        resetProperties();
     }
 
     public static void getItem(long index, int tempIndex) throws Exception {

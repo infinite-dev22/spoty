@@ -163,7 +163,7 @@ public class BranchController implements Initializable {
                 e -> {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
-                            BranchViewModel.deleteItem(obj.getData().getId());
+                            BranchViewModel.deleteItem(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
@@ -175,7 +175,7 @@ public class BranchController implements Initializable {
                 e -> {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
-                            BranchViewModel.getItem(obj.getData().getId());
+                            BranchViewModel.getItem(obj.getData().getId(), this::onAction, this::onFailed);
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
@@ -215,5 +215,17 @@ public class BranchController implements Initializable {
                         .get();
 
         io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
+    }
+
+    private void onAction() {
+        System.out.println("Loading branch...");
+    }
+
+    private void onSuccess() {
+        System.out.println("Loaded branch...");
+    }
+
+    private void onFailed() {
+        System.out.println("failed loading branch...");
     }
 }

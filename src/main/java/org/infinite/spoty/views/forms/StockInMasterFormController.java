@@ -284,7 +284,7 @@ public class StockInMasterFormController implements Initializable {
                 SpotyThreader.spotyThreadPool(
                         () -> {
                             try {
-                                StockInMasterViewModel.updateItem();
+                                StockInMasterViewModel.updateItem(this::onAction, this::onSuccess, this::onFailed);
                             } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }
@@ -305,7 +305,7 @@ public class StockInMasterFormController implements Initializable {
             SpotyThreader.spotyThreadPool(
                     () -> {
                         try {
-                            StockInMasterViewModel.saveStockInMaster();
+                            StockInMasterViewModel.saveStockInMaster(this::onAction, this::onSuccess, this::onFailed);
                         } catch (Exception e) {
                             SpotyLogger.writeToFile(e, this.getClass());
                         }
@@ -338,5 +338,17 @@ public class StockInMasterFormController implements Initializable {
         stockInMasterBranchValidationLabel.setVisible(false);
         stockInMasterDateValidationLabel.setVisible(false);
         stockInMasterBranch.clearSelection();
+    }
+
+    private void onAction() {
+        System.out.println("Loading stock in master...");
+    }
+
+    private void onSuccess() {
+        System.out.println("Loaded stock in master...");
+    }
+
+    private void onFailed() {
+        System.out.println("failed loading stock in master...");
     }
 }

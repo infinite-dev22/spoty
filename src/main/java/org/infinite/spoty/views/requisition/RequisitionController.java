@@ -175,7 +175,7 @@ public class RequisitionController implements Initializable {
                 e -> {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
-                            RequisitionMasterViewModel.deleteItem(obj.getData().getId());
+                            RequisitionMasterViewModel.deleteItem(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
@@ -187,7 +187,7 @@ public class RequisitionController implements Initializable {
                 e -> {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
-                            RequisitionMasterViewModel.getItem(obj.getData().getId());
+                            RequisitionMasterViewModel.getItem(obj.getData().getId(), this::onAction, this::onFailed);
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
@@ -203,5 +203,17 @@ public class RequisitionController implements Initializable {
 
     public void requisitionCreateBtnClicked() {
         BaseController.navigation.navigate(Pages.getRequisitionMasterFormPane());
+    }
+
+    private void onAction() {
+        System.out.println("Loading requisition...");
+    }
+
+    private void onSuccess() {
+        System.out.println("Loaded requisition...");
+    }
+
+    private void onFailed() {
+        System.out.println("failed loading requisition...");
     }
 }

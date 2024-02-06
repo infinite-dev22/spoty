@@ -17,7 +17,6 @@ package org.infinite.spoty.viewModels;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -25,29 +24,34 @@ import org.infinite.spoty.data_source.dtos.ExpenseCategory;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.models.SearchModel;
 import org.infinite.spoty.data_source.repositories.implementations.ExpenseCategoriesRepositoryImpl;
+import org.infinite.spoty.utils.ParameterlessConsumer;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
+import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 
 public class ExpenseCategoryViewModel {
-    private static final Gson gson = new GsonBuilder()
-            .registerTypeAdapter(Date.class,
-                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
-            .create();
     public static final ObservableList<ExpenseCategory> categoryList =
             FXCollections.observableArrayList();
     public static final ObservableList<ExpenseCategory> categoryComboBoxList =
             FXCollections.observableArrayList();
+    private static final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(Date.class,
+                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+            .create();
     private static final ListProperty<ExpenseCategory> categories =
             new SimpleListProperty<>(categoryList);
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final StringProperty name = new SimpleStringProperty("");
     private static final StringProperty description = new SimpleStringProperty("");
+    private static final ExpenseCategoriesRepositoryImpl expenseCategoriesRepository = new ExpenseCategoriesRepositoryImpl();
 
     public static long getId() {
         return id.get();
@@ -103,90 +107,130 @@ public class ExpenseCategoryViewModel {
         setDescription("");
     }
 
-    public static void saveExpenseCategory() throws IOException, InterruptedException {
-        var expenseCategoriesRepository = new ExpenseCategoriesRepositoryImpl();
+    public static void saveExpenseCategory(
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var expenseCategory = ExpenseCategory.builder()
                 .name(getName())
                 .description(getDescription())
                 .build();
 
-        expenseCategoriesRepository.post(expenseCategory);
-        resetProperties();
-        getAllCategories();
+        var task = expenseCategoriesRepository.post(expenseCategory);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void getAllCategories() {
-        var expenseCategoriesRepository = new ExpenseCategoriesRepositoryImpl();
-        Type listType = new TypeToken<ArrayList<ExpenseCategory>>() {
-        }.getType();
+    public static void getAllCategories(
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onFailed) {
+        var task = expenseCategoriesRepository.fetchAll();
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            try {
+                Type listType = new TypeToken<ArrayList<ExpenseCategory>>() {
+                }.getType();
+                ArrayList<ExpenseCategory> categoryListList = gson.fromJson(task.get().body(), listType);
 
-        Platform.runLater(
-                () -> {
-                    categoryList.clear();
-
-                    try {
-                        ArrayList<ExpenseCategory> categoryListList = gson.fromJson(expenseCategoriesRepository.fetchAll().body(), listType);
-                        categoryList.addAll(categoryListList);
-                    } catch (IOException | InterruptedException e) {
-                        SpotyLogger.writeToFile(e, ExpenseCategoryViewModel.class);
-                    }
-                });
+                categoryList.clear();
+                categoryList.addAll(categoryListList);
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, ExpenseCategoryViewModel.class);
+            }
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void getItem(Long categoryID) throws IOException, InterruptedException {
-        var expenseCategoriesRepository = new ExpenseCategoriesRepositoryImpl();
-        var findModel = new FindModel();
-        findModel.setId(categoryID);
-        var response = expenseCategoriesRepository.fetch(findModel).body();
-        var expenseCategory = gson.fromJson(response, ExpenseCategory.class);
+    public static void getItem(
+            Long index,
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onFailed) {
+        var findModel = FindModel.builder().id(index).build();
 
-        setId(expenseCategory.getId());
-        setName(expenseCategory.getName());
-        setDescription(expenseCategory.getDescription());
-        getAllCategories();
+        var task = expenseCategoriesRepository.fetch(findModel);
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            try {
+                var expenseCategory = gson.fromJson(task.get().body(), ExpenseCategory.class);
+
+                setId(expenseCategory.getId());
+                setName(expenseCategory.getName());
+                setDescription(expenseCategory.getDescription());
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, ExpenseCategoryViewModel.class);
+            }
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void searchItem(String search) {
-        var expenseCategoriesRepository = new ExpenseCategoriesRepositoryImpl();
-        var searchModel = new SearchModel();
-        searchModel.setSearch(search);
+    public static void searchItem(
+            String search,
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onFailed) {
+        var searchModel = SearchModel.builder().search(search).build();
+        var task = expenseCategoriesRepository.search(searchModel);
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            try {
+                Type listType = new TypeToken<ArrayList<ExpenseCategory>>() {
+                }.getType();
+                ArrayList<ExpenseCategory> expenseCategoryList = gson.fromJson(
+                        task.get().body(), listType);
 
-        Type listType = new TypeToken<ArrayList<ExpenseCategory>>() {
-        }.getType();
-
-        Platform.runLater(
-                () -> {
-                    categoryList.clear();
-
-                    try {
-                        ArrayList<ExpenseCategory> expenseCategoryList = gson.fromJson(
-                                expenseCategoriesRepository.search(searchModel).body(), listType);
-                        categoryList.addAll(expenseCategoryList);
-                    } catch (IOException | InterruptedException e) {
-                        SpotyLogger.writeToFile(e, ExpenseCategoryViewModel.class);
-                    }
-                });
+                categoryList.clear();
+                categoryList.addAll(expenseCategoryList);
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, ExpenseCategoryViewModel.class);
+            }
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void updateItem() throws Exception {
-        var expenseCategoriesRepository = new ExpenseCategoriesRepositoryImpl();
+    public static void updateItem(
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var expenseCategory = ExpenseCategory.builder()
                 .id(getId())
                 .name(getName())
                 .description(getDescription())
                 .build();
 
-        expenseCategoriesRepository.put(expenseCategory);
-        resetProperties();
-        getAllCategories();
+        var task = expenseCategoriesRepository.put(expenseCategory);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void deleteItem(Long expenseCategoryID) throws Exception {
-        var expenseCategoriesRepository = new ExpenseCategoriesRepositoryImpl();
-        var findModel = new FindModel();
+    public static void deleteItem(
+            Long index,
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
+        var findModel = FindModel.builder().id(index).build();
 
-        findModel.setId(expenseCategoryID);
-        expenseCategoriesRepository.delete(findModel);
-        getAllCategories();
+        var task = expenseCategoriesRepository.delete(findModel);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
     }
 }

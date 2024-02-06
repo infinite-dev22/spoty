@@ -26,26 +26,29 @@ import org.infinite.spoty.data_source.dtos.adjustments.AdjustmentMaster;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.models.SearchModel;
 import org.infinite.spoty.data_source.repositories.implementations.AdjustmentRepositoryImpl;
+import org.infinite.spoty.utils.ParameterlessConsumer;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
 
 public class AdjustmentMasterViewModel {
+    public static final ObservableList<AdjustmentMaster> adjustmentMastersList =
+            FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
                     UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
             .create();
-    public static final ObservableList<AdjustmentMaster> adjustmentMastersList =
-            FXCollections.observableArrayList();
     private static final ListProperty<AdjustmentMaster> adjustmentMasters =
             new SimpleListProperty<>(adjustmentMastersList);
     private static final LongProperty id = new SimpleLongProperty(0);
@@ -156,40 +159,80 @@ public class AdjustmentMasterViewModel {
                 });
     }
 
-    public static void saveAdjustmentMaster() throws IOException, InterruptedException {
+    public static void saveAdjustmentMaster(
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var adjustmentMaster = AdjustmentMaster.builder()
                 .branch(getBranch())
                 .notes(getNote())
                 .date(getDate())
                 .build();
+
         if (!AdjustmentDetailViewModel.getAdjustmentDetailsList().isEmpty()) {
             AdjustmentDetailViewModel.getAdjustmentDetailsList()
                     .forEach(adjustmentDetail -> adjustmentDetail.setAdjustment(adjustmentMaster));
 
             adjustmentMaster.setAdjustmentDetails(AdjustmentDetailViewModel.getAdjustmentDetailsList());
         }
-        adjustmentRepository.postMaster(adjustmentMaster);
-        AdjustmentDetailViewModel.saveAdjustmentDetails();
-        Platform.runLater(AdjustmentMasterViewModel::resetProperties);
-        getAllAdjustmentMasters();
+
+        var task = adjustmentRepository.postMaster(adjustmentMaster);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> {
+            AdjustmentDetailViewModel.saveAdjustmentDetails(onActivity, null, onFailed);
+            onSuccess.run();
+        });
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void getAllAdjustmentMasters() throws IOException, InterruptedException {
-        Type listType = new TypeToken<ArrayList<AdjustmentMaster>>() {
-        }.getType();
-        adjustmentMastersList.clear();
-        ArrayList<AdjustmentMaster> adjustmentMasterList = gson.fromJson(
-                adjustmentRepository.fetchAllMaster().body(), listType);
-        adjustmentMastersList.addAll(adjustmentMasterList);
+    public static void getAllAdjustmentMasters(
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onFailed) {
+        var task = adjustmentRepository.fetchAllMaster();
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            Type listType = new TypeToken<ArrayList<AdjustmentMaster>>() {
+            }.getType();
+            ArrayList<AdjustmentMaster> adjustmentMasterList = new ArrayList<>();
+            try {
+                adjustmentMasterList = gson.fromJson(
+                        task.get().body(), listType);
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, AdjustmentMasterViewModel.class);
+            }
+
+            adjustmentMastersList.clear();
+            adjustmentMastersList.addAll(adjustmentMasterList);
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void getAdjustmentMaster(Long index) throws IOException, InterruptedException {
-        var findModel = new FindModel();
-        findModel.setId(index);
-        var response = adjustmentRepository.fetchMaster(findModel).body();
-        var adjustmentMaster = gson.fromJson(response, AdjustmentMaster.class);
+    public static void getAdjustmentMaster(
+            Long index,
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onFailed) {
+        var findModel = FindModel.builder().id(index).build();
+        var task = adjustmentRepository.fetchMaster(findModel);
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            AdjustmentMaster adjustmentMaster = new AdjustmentMaster();
+            try {
+                adjustmentMaster = gson.fromJson(task.get().body(), AdjustmentMaster.class);
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, AdjustmentMasterViewModel.class);
+            }
 
-        Platform.runLater(() -> {
             setId(adjustmentMaster.getId());
             setBranch(adjustmentMaster.getBranch());
             setNote(adjustmentMaster.getNotes());
@@ -197,32 +240,42 @@ public class AdjustmentMasterViewModel {
             AdjustmentDetailViewModel.adjustmentDetailsList.clear();
             AdjustmentDetailViewModel.adjustmentDetailsList.addAll(adjustmentMaster.getAdjustmentDetails());
         });
-
-        getAllAdjustmentMasters();
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void searchItem(String search) throws IOException, InterruptedException {
-        var searchModel = new SearchModel();
-        searchModel.setSearch(search);
+    public static void searchItem(
+            String search,
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onFailed) {
+        var searchModel = SearchModel.builder().search(search).build();
+        var task = adjustmentRepository.searchMaster(searchModel);
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            Type listType = new TypeToken<ArrayList<AdjustmentMaster>>() {
+            }.getType();
+            ArrayList<AdjustmentMaster> adjustmentMasterList = new ArrayList<>();
+            try {
+                adjustmentMasterList = gson.fromJson(
+                        task.get().body(), listType);
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, AdjustmentMasterViewModel.class);
+            }
 
-        Type listType = new TypeToken<ArrayList<AdjustmentMaster>>() {
-        }.getType();
-
-        Platform.runLater(
-                () -> {
-                    adjustmentMastersList.clear();
-
-                    try {
-                        ArrayList<AdjustmentMaster> adjustmentMasterList = gson.fromJson(
-                                adjustmentRepository.searchMaster(searchModel).body(), listType);
-                        adjustmentMastersList.addAll(adjustmentMasterList);
-                    } catch (Exception e) {
-                        SpotyLogger.writeToFile(e, AdjustmentMasterViewModel.class);
-                    }
-                });
+            adjustmentMastersList.clear();
+            adjustmentMastersList.addAll(adjustmentMasterList);
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void updateItem() throws IOException, InterruptedException {
+    public static void updateItem(
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var adjustmentMaster = AdjustmentMaster.builder()
                 .id(getId())
                 .branch(getBranch())
@@ -230,7 +283,9 @@ public class AdjustmentMasterViewModel {
                 .date(getDate())
                 .build();
 
-        AdjustmentDetailViewModel.deleteAdjustmentDetails(PENDING_DELETES);
+        if (!PENDING_DELETES.isEmpty()) {
+            AdjustmentDetailViewModel.deleteAdjustmentDetails(PENDING_DELETES, onActivity, null, onFailed);
+        }
 
         if (!AdjustmentDetailViewModel.getAdjustmentDetailsList().isEmpty()) {
             AdjustmentDetailViewModel.getAdjustmentDetailsList()
@@ -238,17 +293,25 @@ public class AdjustmentMasterViewModel {
 
             adjustmentMaster.setAdjustmentDetails(AdjustmentDetailViewModel.getAdjustmentDetailsList());
         }
-        adjustmentRepository.putMaster(adjustmentMaster);
-        AdjustmentDetailViewModel.updateAdjustmentDetails();
-        resetProperties();
-        getAllAdjustmentMasters();
+
+        var task = adjustmentRepository.putMaster(adjustmentMaster);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> AdjustmentDetailViewModel.updateAdjustmentDetails(onActivity, onSuccess, onFailed));
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void deleteItem(Long index) throws IOException, InterruptedException {
-        var findModel = new FindModel();
+    public static void deleteItem(
+            Long index,
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
+        var findModel = FindModel.builder().id(index).build();
 
-        findModel.setId(index);
-        adjustmentRepository.deleteMaster(findModel);
-        getAllAdjustmentMasters();
+        var task = adjustmentRepository.deleteMaster(findModel);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
     }
 }

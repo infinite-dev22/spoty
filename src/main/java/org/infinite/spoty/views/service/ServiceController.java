@@ -138,7 +138,7 @@ public class ServiceController implements Initializable {
                 e -> {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
-                            ServiceViewModel.deleteItem(obj.getData().getId());
+                            ServiceViewModel.deleteItem(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
@@ -150,7 +150,7 @@ public class ServiceController implements Initializable {
                 e -> {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
-                            ServiceViewModel.getItem(obj.getData().getId());
+                            ServiceViewModel.getItem(obj.getData().getId(), this::onAction, this::onFailed);
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
@@ -189,5 +189,17 @@ public class ServiceController implements Initializable {
 
     public void createBtnClicked() {
         dialog.showAndWait();
+    }
+
+    private void onAction() {
+        System.out.println("Loading service...");
+    }
+
+    private void onSuccess() {
+        System.out.println("Loaded service...");
+    }
+
+    private void onFailed() {
+        System.out.println("failed loading service...");
     }
 }

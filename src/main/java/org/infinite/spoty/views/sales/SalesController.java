@@ -168,7 +168,7 @@ public class SalesController implements Initializable {
                     SpotyThreader.spotyThreadPool(
                             () -> {
                                 try {
-                                    SaleMasterViewModel.deleteItem(obj.getData().getId());
+                                    SaleMasterViewModel.deleteItem(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
                                 } catch (Exception ex) {
                                     throw new RuntimeException(ex);
                                 }
@@ -182,7 +182,7 @@ public class SalesController implements Initializable {
                     SpotyThreader.spotyThreadPool(
                             () -> {
                                 try {
-                                    SaleMasterViewModel.getItem(obj.getData().getId());
+                                    SaleMasterViewModel.getItem(obj.getData().getId(), this::onAction, this::onFailed);
                                 } catch (Exception ex) {
                                     throw new RuntimeException(ex);
                                 }
@@ -199,5 +199,17 @@ public class SalesController implements Initializable {
 
     public void saleCreateBtnClicked() {
         BaseController.navigation.navigate(Pages.getSaleMasterFormPane());
+    }
+
+    private void onAction() {
+        System.out.println("Loading sales...");
+    }
+
+    private void onSuccess() {
+        System.out.println("Loaded sales...");
+    }
+
+    private void onFailed() {
+        System.out.println("failed loading sales...");
     }
 }

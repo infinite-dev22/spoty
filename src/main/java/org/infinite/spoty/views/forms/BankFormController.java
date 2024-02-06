@@ -108,7 +108,7 @@ public class BankFormController implements Initializable {
                         if (BankViewModel.getId() > 0) {
                             SpotyThreader.spotyThreadPool(() -> {
                                 try {
-                                    BankViewModel.updateItem();
+                                    BankViewModel.updateItem(this::onAction, this::onSuccess, this::onFailed);
                                 } catch (Exception e) {
                                     SpotyLogger.writeToFile(e, this.getClass());
                                 }
@@ -134,7 +134,7 @@ public class BankFormController implements Initializable {
 
 //                        SpotyThreader.spotyThreadPool(() -> {
                         try {
-                            saveBank();
+                            saveBank(this::onAction, this::onSuccess, this::onFailed);
                         } catch (Exception e) {
                             SpotyLogger.writeToFile(e, this.getClass());
                         }
@@ -159,5 +159,17 @@ public class BankFormController implements Initializable {
                                     .build();
                     notificationHolder.addNotification(notification);
                 });
+    }
+
+    private void onAction() {
+        System.out.println("Loading bank...");
+    }
+
+    private void onSuccess() {
+        System.out.println("Loaded bank...");
+    }
+
+    private void onFailed() {
+        System.out.println("failed loading bank...");
     }
 }

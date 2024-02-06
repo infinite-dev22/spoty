@@ -97,7 +97,7 @@ public class CurrencyFormController implements Initializable {
                         if (CurrencyViewModel.getId() > 0) {
                             SpotyThreader.spotyThreadPool(() -> {
                                 try {
-                                    CurrencyViewModel.updateItem();
+                                    CurrencyViewModel.updateItem(this::onAction, this::onSuccess, this::onFailed);
                                 } catch (Exception e) {
                                     SpotyLogger.writeToFile(e.getCause(), this.getClass());
                                 }
@@ -116,7 +116,7 @@ public class CurrencyFormController implements Initializable {
                         }
                         SpotyThreader.spotyThreadPool(() -> {
                             try {
-                                saveCurrency();
+                                saveCurrency(this::onAction, this::onSuccess, this::onFailed);
                             } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }
@@ -141,5 +141,17 @@ public class CurrencyFormController implements Initializable {
                                     .build();
                     notificationHolder.addNotification(notification);
                 });
+    }
+
+    private void onAction() {
+        System.out.println("Loading currency...");
+    }
+
+    private void onSuccess() {
+        System.out.println("Loaded currency...");
+    }
+
+    private void onFailed() {
+        System.out.println("failed loading currency...");
     }
 }

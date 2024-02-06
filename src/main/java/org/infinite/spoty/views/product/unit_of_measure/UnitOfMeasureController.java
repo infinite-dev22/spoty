@@ -162,7 +162,7 @@ public class UnitOfMeasureController implements Initializable {
                 e -> {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
-                            UOMViewModel.deleteItem(obj.getData().getId());
+                            UOMViewModel.deleteItem(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
@@ -174,7 +174,7 @@ public class UnitOfMeasureController implements Initializable {
                 e -> {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
-                            UOMViewModel.getItem(obj.getData().getId());
+                            UOMViewModel.getItem(obj.getData().getId(), this::onAction, this::onFailed);
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
@@ -212,5 +212,17 @@ public class UnitOfMeasureController implements Initializable {
 
     public void uomCreateBtnClicked() {
         dialog.showAndWait();
+    }
+
+    private void onAction() {
+        System.out.println("Loading unit of measure...");
+    }
+
+    private void onSuccess() {
+        System.out.println("Loaded unit of measure...");
+    }
+
+    private void onFailed() {
+        System.out.println("failed loading unit of measure...");
     }
 }

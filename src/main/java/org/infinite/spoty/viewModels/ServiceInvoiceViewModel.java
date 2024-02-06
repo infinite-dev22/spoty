@@ -17,7 +17,6 @@ package org.infinite.spoty.viewModels;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -26,17 +25,20 @@ import org.infinite.spoty.data_source.dtos.ServiceInvoice;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.models.SearchModel;
 import org.infinite.spoty.data_source.repositories.implementations.ServiceInvoicesRepositoryImpl;
+import org.infinite.spoty.utils.ParameterlessConsumer;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
 import org.infinite.spoty.viewModels.quotations.QuotationMasterViewModel;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 
 public class ServiceInvoiceViewModel {
@@ -50,9 +52,9 @@ public class ServiceInvoiceViewModel {
     private static final StringProperty date = new SimpleStringProperty("");
     private static final StringProperty description = new SimpleStringProperty("");
     private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>();
+    private static final ObjectProperty<ServiceInvoice> serviceInvoice = new SimpleObjectProperty<>();
     public static ObservableList<Branch> branchesList = FXCollections.observableArrayList();
     private static final ListProperty<Branch> branches = new SimpleListProperty<>(branchesList);
-    private static final ObjectProperty<ServiceInvoice> serviceInvoice = new SimpleObjectProperty<>();
     public static ObservableList<ServiceInvoice> serviceInvoicesList = FXCollections.observableArrayList();
     private static final ListProperty<ServiceInvoice> serviceInvoices = new SimpleListProperty<>(serviceInvoicesList);
 
@@ -129,8 +131,10 @@ public class ServiceInvoiceViewModel {
         return serviceInvoices;
     }
 
-    public static void saveServiceInvoice() throws Exception {
-
+    public static void saveServiceInvoice(
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var serviceInvoice =
                 ServiceInvoice.builder()
                         .branch(getBranch())
@@ -138,10 +142,12 @@ public class ServiceInvoiceViewModel {
                         .date(getDate())
                         .description(getDescription())
                         .build();
-        serviceInvoicesRepository.post(serviceInvoice);
 
-        clearServiceInvoiceData();
-        getAllServiceInvoices();
+        var task = serviceInvoicesRepository.post(serviceInvoice);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
     }
 
     public static void clearServiceInvoiceData() {
@@ -151,61 +157,91 @@ public class ServiceInvoiceViewModel {
         setDescription("");
     }
 
-    public static void getAllServiceInvoices() {
-        Type listType = new TypeToken<ArrayList<ServiceInvoice>>() {
-        }.getType();
+    public static void getAllServiceInvoices(
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onFailed) {
+        var task = serviceInvoicesRepository.fetchAll();
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            try {
+                Type listType = new TypeToken<ArrayList<ServiceInvoice>>() {
+                }.getType();
+                ArrayList<ServiceInvoice> serviceInvoiceList = gson.fromJson(task.get().body(), listType);
 
-        Platform.runLater(
-                () -> {
-                    serviceInvoicesList.clear();
-
-                    try {
-                        ArrayList<ServiceInvoice> serviceInvoiceList = gson.fromJson(serviceInvoicesRepository.fetchAll().body(), listType);
-                        serviceInvoicesList.addAll(serviceInvoiceList);
-                    } catch (Exception e) {
-                        SpotyLogger.writeToFile(e, ServiceInvoiceViewModel.class);
-                    }
-                });
+                serviceInvoicesList.clear();
+                serviceInvoicesList.addAll(serviceInvoiceList);
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, BankViewModel.class);
+            }
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void getItem(Long index) throws Exception {
-        var findModel = new FindModel();
-        findModel.setId(index);
-        var response = serviceInvoicesRepository.fetch(findModel).body();
-        var serviceInvoice = gson.fromJson(response, ServiceInvoice.class);
+    public static void getItem(
+            Long index,
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onFailed) {
+        var findModel = FindModel.builder().id(index).build();
 
-        setBranch(serviceInvoice.getBranch());
-        setId(serviceInvoice.getId());
-        setCustomerName(serviceInvoice.getCustomerName());
-        setDate(serviceInvoice.getLocaleDate());
-        setDescription(serviceInvoice.getDescription());
+        var task = serviceInvoicesRepository.fetch(findModel);
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            try {
+                var serviceInvoice = gson.fromJson(task.get().body(), ServiceInvoice.class);
 
-        getAllServiceInvoices();
+                setBranch(serviceInvoice.getBranch());
+                setId(serviceInvoice.getId());
+                setCustomerName(serviceInvoice.getCustomerName());
+                setDate(serviceInvoice.getLocaleDate());
+                setDescription(serviceInvoice.getDescription());
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, ServiceInvoiceViewModel.class);
+            }
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void searchItem(String search) throws Exception {
-        var searchModel = new SearchModel();
-        searchModel.setSearch(search);
+    public static void searchItem(
+            String search,
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onFailed) {
+        var searchModel = SearchModel.builder().search(search).build();
+        var task = serviceInvoicesRepository.search(searchModel);
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            try {
+                Type listType = new TypeToken<ArrayList<ServiceInvoice>>() {
+                }.getType();
+                ArrayList<ServiceInvoice> serviceInvoiceList = gson.fromJson(task.get().body(), listType);
 
-        Type listType = new TypeToken<ArrayList<ServiceInvoice>>() {
-        }.getType();
-
-        Platform.runLater(
-                () -> {
-                    serviceInvoicesList.clear();
-
-                    try {
-                        ArrayList<ServiceInvoice> serviceInvoiceList = gson.fromJson(serviceInvoicesRepository.search(searchModel).body(), listType);
-                        serviceInvoicesList.addAll(serviceInvoiceList);
-                    } catch (Exception e) {
-                        SpotyLogger.writeToFile(e, ServiceInvoiceViewModel.class);
-                    }
-                });
-
+                serviceInvoicesList.clear();
+                serviceInvoicesList.addAll(serviceInvoiceList);
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, ServiceInvoiceViewModel.class);
+            }
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void updateItem() throws IOException, InterruptedException {
-
+    public static void updateItem(
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var serviceInvoice = ServiceInvoice.builder()
                 .id(getId())
                 .branch(getBranch())
@@ -214,16 +250,24 @@ public class ServiceInvoiceViewModel {
                 .description(getDescription())
                 .build();
 
-        serviceInvoicesRepository.put(serviceInvoice);
-        clearServiceInvoiceData();
-        getAllServiceInvoices();
+        var task = serviceInvoicesRepository.put(serviceInvoice);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void deleteItem(Long index) throws IOException, InterruptedException {
-        var findModel = new FindModel();
+    public static void deleteItem(
+            Long index,
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
+        var findModel = FindModel.builder().id(index).build();
 
-        findModel.setId(index);
-        serviceInvoicesRepository.delete(findModel);
-        getAllServiceInvoices();
+        var task = serviceInvoicesRepository.delete(findModel);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
     }
 }

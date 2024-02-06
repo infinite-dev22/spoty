@@ -134,7 +134,7 @@ public class AdjustmentDetailViewModel {
         Platform.runLater(
                 () -> {
                     adjustmentDetailsList.add(adjustmentDetail);
-                    resetProperties();
+
                 });
     }
 
@@ -216,7 +216,7 @@ public class AdjustmentDetailViewModel {
                     adjustmentDetailsList.remove(getTempId());
                     adjustmentDetailsList.add(getTempId(), adjustmentDetail);
 
-                    resetProperties();
+
                 });
     }
 

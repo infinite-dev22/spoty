@@ -307,7 +307,7 @@ public class TransferMasterFormController implements Initializable {
                 SpotyThreader.spotyThreadPool(
                         () -> {
                             try {
-                                TransferMasterViewModel.updateItem();
+                                TransferMasterViewModel.updateItem(this::onAction, this::onSuccess, this::onFailed);
                             } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }
@@ -330,7 +330,7 @@ public class TransferMasterFormController implements Initializable {
             SpotyThreader.spotyThreadPool(
                     () -> {
                         try {
-                            TransferMasterViewModel.saveTransferMaster();
+                            TransferMasterViewModel.saveTransferMaster(this::onAction, this::onSuccess, this::onFailed);
                         } catch (Exception e) {
                             SpotyLogger.writeToFile(e, this.getClass());
                         }
@@ -367,5 +367,17 @@ public class TransferMasterFormController implements Initializable {
         transferMasterDateValidationLabel.setVisible(false);
         transferMasterFromBranch.clearSelection();
         transferMasterToBranch.clearSelection();
+    }
+
+    private void onAction() {
+        System.out.println("Loading bank...");
+    }
+
+    private void onSuccess() {
+        System.out.println("Loaded bank...");
+    }
+
+    private void onFailed() {
+        System.out.println("failed loading bank...");
     }
 }

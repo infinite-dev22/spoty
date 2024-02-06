@@ -76,7 +76,7 @@ public class ExpenseCategoryFormController implements Initializable {
         categoryExpenseFormCancelBtn.setOnAction(
                 (event) -> {
                     closeDialog(event);
-                    resetProperties();
+
                     categoryExpenseFormNameValidationLabel.setVisible(false);
                 });
         categoryExpenseFormSaveBtn.setOnAction(
@@ -87,7 +87,7 @@ public class ExpenseCategoryFormController implements Initializable {
                         if (ExpenseCategoryViewModel.getId() > 0) {
                             SpotyThreader.spotyThreadPool(() -> {
                                 try {
-                                    ExpenseCategoryViewModel.updateItem();
+                                    ExpenseCategoryViewModel.updateItem(this::onAction, this::onSuccess, this::onFailed);
                                 } catch (Exception e) {
                                     SpotyLogger.writeToFile(e, this.getClass());
                                 }
@@ -106,7 +106,7 @@ public class ExpenseCategoryFormController implements Initializable {
                         }
                         SpotyThreader.spotyThreadPool(() -> {
                             try {
-                                saveExpenseCategory();
+                                saveExpenseCategory(this::onAction, this::onSuccess, this::onFailed);
                             } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }
@@ -130,5 +130,17 @@ public class ExpenseCategoryFormController implements Initializable {
                                     .build();
                     notificationHolder.addNotification(notification);
                 });
+    }
+
+    private void onAction() {
+        System.out.println("Loading expense category...");
+    }
+
+    private void onSuccess() {
+        System.out.println("Loaded expense category...");
+    }
+
+    private void onFailed() {
+        System.out.println("failed loading expense category...");
     }
 }

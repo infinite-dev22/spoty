@@ -145,7 +145,7 @@ public class ProductCategoryController implements Initializable {
                 e -> {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
-                            ProductCategoryViewModel.deleteItem(obj.getData().getId());
+                            ProductCategoryViewModel.deleteItem(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
@@ -157,7 +157,7 @@ public class ProductCategoryController implements Initializable {
                 e -> {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
-                            ProductCategoryViewModel.getItem(obj.getData().getId());
+                            ProductCategoryViewModel.getItem(obj.getData().getId(), this::onAction, this::onFailed);
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
@@ -195,5 +195,17 @@ public class ProductCategoryController implements Initializable {
 
     public void categoryCreateBtnClicked() {
         dialog.showAndWait();
+    }
+
+    private void onAction() {
+        System.out.println("Loading product category...");
+    }
+
+    private void onSuccess() {
+        System.out.println("Loaded product category...");
+    }
+
+    private void onFailed() {
+        System.out.println("failed loading product category...");
     }
 }

@@ -288,7 +288,7 @@ public class AdjustmentMasterFormController implements Initializable {
                 SpotyThreader.spotyThreadPool(
                         () -> {
                             try {
-                                AdjustmentMasterViewModel.updateItem();
+                                AdjustmentMasterViewModel.updateItem(this::onAction, this::onSuccess, this::onFailed);
                             } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }
@@ -311,7 +311,7 @@ public class AdjustmentMasterFormController implements Initializable {
             SpotyThreader.spotyThreadPool(
                     () -> {
                         try {
-                            AdjustmentMasterViewModel.saveAdjustmentMaster();
+                            AdjustmentMasterViewModel.saveAdjustmentMaster(this::onAction, this::onSuccess, this::onFailed);
                         } catch (Exception e) {
                             SpotyLogger.writeToFile(e, this.getClass());
                         }
@@ -349,5 +349,17 @@ public class AdjustmentMasterFormController implements Initializable {
 
         adjustmentBranchValidationLabel.setVisible(false);
         adjustmentDateValidationLabel.setVisible(false);
+    }
+
+    private void onAction() {
+        System.out.println("Loading adjustment master...");
+    }
+
+    private void onSuccess() {
+        System.out.println("Loaded adjustment master...");
+    }
+
+    private void onFailed() {
+        System.out.println("failed loading adjustment master...");
     }
 }

@@ -124,7 +124,7 @@ public class CustomerFormController implements Initializable {
                         if (CustomerViewModel.getId() > 0) {
                             SpotyThreader.spotyThreadPool(() -> {
                                 try {
-                                    CustomerViewModel.updateItem();
+                                    CustomerViewModel.updateItem(this::onAction, this::onSuccess, this::onFailed);
                                 } catch (Exception e) {
                                     SpotyLogger.writeToFile(e, this.getClass());
                                 }
@@ -143,7 +143,7 @@ public class CustomerFormController implements Initializable {
                         }
                         SpotyThreader.spotyThreadPool(() -> {
                             try {
-                                CustomerViewModel.saveCustomer();
+                                CustomerViewModel.saveCustomer(this::onAction, this::onSuccess, this::onFailed);
                             } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }
@@ -168,5 +168,17 @@ public class CustomerFormController implements Initializable {
                                     .build();
                     notificationHolder.addNotification(notification);
                 });
+    }
+
+    private void onAction() {
+        System.out.println("Loading customers...");
+    }
+
+    private void onSuccess() {
+        System.out.println("Loaded customers...");
+    }
+
+    private void onFailed() {
+        System.out.println("failed loading customers...");
     }
 }

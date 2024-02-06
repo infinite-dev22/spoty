@@ -150,7 +150,7 @@ public class TransferController implements Initializable {
                     SpotyThreader.spotyThreadPool(
                             () -> {
                                 try {
-                                    TransferMasterViewModel.deleteItem(obj.getData().getId());
+                                    TransferMasterViewModel.deleteItem(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
                                 } catch (Exception ex) {
                                     throw new RuntimeException(ex);
                                 }
@@ -164,7 +164,7 @@ public class TransferController implements Initializable {
                     SpotyThreader.spotyThreadPool(
                             () -> {
                                 try {
-                                    TransferMasterViewModel.getItem(obj.getData().getId());
+                                    TransferMasterViewModel.getItem(obj.getData().getId(), this::onAction, this::onFailed);
                                 } catch (Exception ex) {
                                     throw new RuntimeException(ex);
                                 }
@@ -183,5 +183,17 @@ public class TransferController implements Initializable {
     @FXML
     private void transferCreateBtnClicked() {
         BaseController.navigation.navigate(Pages.getTransferMasterFormPane());
+    }
+
+    private void onAction() {
+        System.out.println("Loading transfer...");
+    }
+
+    private void onSuccess() {
+        System.out.println("Loaded transfer...");
+    }
+
+    private void onFailed() {
+        System.out.println("failed loading transfer...");
     }
 }

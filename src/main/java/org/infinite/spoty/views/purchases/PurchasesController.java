@@ -189,7 +189,7 @@ public class PurchasesController implements Initializable {
                 e -> {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
-                            PurchaseMasterViewModel.deleteItem(obj.getData().getId());
+                            PurchaseMasterViewModel.deleteItem(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
@@ -201,7 +201,7 @@ public class PurchasesController implements Initializable {
                 e -> {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
-                            PurchaseMasterViewModel.getPurchaseMaster(obj.getData().getId());
+                            PurchaseMasterViewModel.getPurchaseMaster(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
@@ -217,5 +217,17 @@ public class PurchasesController implements Initializable {
 
     public void purchaseCreateBtnClicked() {
         BaseController.navigation.navigate(Pages.getPurchaseMasterFormPane());
+    }
+
+    private void onAction() {
+        System.out.println("Loading purchase...");
+    }
+
+    private void onSuccess() {
+        System.out.println("Loaded purchase...");
+    }
+
+    private void onFailed() {
+        System.out.println("failed loading purchase...");
     }
 }

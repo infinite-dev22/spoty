@@ -18,13 +18,16 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import org.infinite.spoty.data_source.auth.ProtectedGlobals;
 import org.infinite.spoty.data_source.models.APIResponseModel;
 import org.infinite.spoty.data_source.models.LoginModel;
 import org.infinite.spoty.data_source.repositories.implementations.AuthRepositoryImpl;
+import org.infinite.spoty.utils.ParameterlessConsumer;
+import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
 
-import java.io.IOException;
 import java.util.Date;
+import java.util.concurrent.ExecutionException;
 
 
 public class LoginViewModel {
@@ -34,6 +37,7 @@ public class LoginViewModel {
             .create();
     private static final StringProperty username = new SimpleStringProperty("");
     private static final StringProperty password = new SimpleStringProperty("");
+    private static final AuthRepositoryImpl authRepository = new AuthRepositoryImpl();
 
     public static String getPassword() {
         return password.get();
@@ -59,8 +63,10 @@ public class LoginViewModel {
         return username;
     }
 
-    public static APIResponseModel login() throws IOException, InterruptedException {
-        var authRepository = new AuthRepositoryImpl();
+    public static void login(
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
 
         var loginDetails =
                 LoginModel.builder()
@@ -68,8 +74,20 @@ public class LoginViewModel {
                         .password(getPassword())
                         .build();
 
-        var response = authRepository.login(loginDetails);
-
-        return gson.fromJson(response.body(), APIResponseModel.class);
+        var task = authRepository.login(loginDetails);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> {
+            try {
+                var response = gson.fromJson(task.get().body(), APIResponseModel.class);
+                if (response.getStatus() == 200) {
+                    ProtectedGlobals.authToken = response.getToken();
+                }
+                onSuccess.run();
+            } catch (InterruptedException | ExecutionException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
     }
 }

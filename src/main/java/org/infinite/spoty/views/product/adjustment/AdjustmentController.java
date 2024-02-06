@@ -148,7 +148,7 @@ public class AdjustmentController implements Initializable {
                     SpotyThreader.spotyThreadPool(
                             () -> {
                                 try {
-                                    AdjustmentMasterViewModel.deleteItem(obj.getData().getId());
+                                    AdjustmentMasterViewModel.deleteItem(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
                                 } catch (Exception ex) {
                                     throw new RuntimeException(ex);
                                 }
@@ -162,7 +162,7 @@ public class AdjustmentController implements Initializable {
                     SpotyThreader.spotyThreadPool(
                             () -> {
                                 try {
-                                    AdjustmentMasterViewModel.getAdjustmentMaster(obj.getData().getId());
+                                    AdjustmentMasterViewModel.getAdjustmentMaster(obj.getData().getId(), this::onAction, this::onFailed);
                                 } catch (Exception ex) {
                                     throw new RuntimeException(ex);
                                 }
@@ -179,5 +179,17 @@ public class AdjustmentController implements Initializable {
 
     public void adjustmentCreateBtnClicked() {
         BaseController.navigation.navigate(Pages.getAdjustmentMasterFormPane());
+    }
+
+    private void onAction() {
+        System.out.println("Loading adjustment...");
+    }
+
+    private void onSuccess() {
+        System.out.println("Loaded adjustment...");
+    }
+
+    private void onFailed() {
+        System.out.println("failed loading adjustment...");
     }
 }

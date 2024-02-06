@@ -92,8 +92,6 @@ public class ExpenseCategoryViewModel {
 //        ExpenseCategory expenseCategory = new ExpenseCategory(getName(), getDescription());
 //
 //        expenseCategoryDao.create(expenseCategory);
-
-        resetProperties();
         getAllCategories();
     }
 

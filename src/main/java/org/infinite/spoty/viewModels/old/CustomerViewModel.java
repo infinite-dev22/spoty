@@ -183,8 +183,6 @@ public class CustomerViewModel {
 //                        getCountry());
 //
 //        customerDao.create(customer);
-
-        resetProperties();
         getAllCustomers();
     }
 
@@ -236,8 +234,6 @@ public class CustomerViewModel {
 //        customer.setCountry(getCountry());
 //
 //        customerDao.update(customer);
-
-        resetProperties();
         getAllCustomers();
     }
 

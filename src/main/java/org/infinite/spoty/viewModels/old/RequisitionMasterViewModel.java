@@ -248,8 +248,6 @@ public class RequisitionMasterViewModel {
 //
 //        requisitionMasterDao.create(requisitionMaster);
 //        RequisitionDetailViewModel.saveRequisitionDetails();
-
-        resetProperties();
         getRequisitionMasters();
     }
 
@@ -315,8 +313,6 @@ public class RequisitionMasterViewModel {
 //
 //        requisitionMasterDao.update(requisitionMaster);
 //        RequisitionDetailViewModel.updateRequisitionDetails();
-
-        resetProperties();
         getRequisitionMasters();
     }
 

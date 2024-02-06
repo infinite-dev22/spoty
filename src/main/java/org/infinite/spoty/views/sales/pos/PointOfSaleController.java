@@ -349,7 +349,7 @@ public class PointOfSaleController implements Initializable {
         SpotyThreader.spotyThreadPool(
                 () -> {
                     try {
-                        SaleMasterViewModel.saveSaleMaster();
+                        SaleMasterViewModel.saveSaleMaster(this::onAction, this::onSuccess, this::onFailed);
                     } catch (Exception e) {
                         SpotyLogger.writeToFile(e, this.getClass());
                     }
@@ -362,5 +362,17 @@ public class PointOfSaleController implements Initializable {
                         .type(NotificationVariants.SUCCESS)
                         .build();
         notificationHolder.addNotification(notification);
+    }
+
+    private void onAction() {
+        System.out.println("Loading point of sale...");
+    }
+
+    private void onSuccess() {
+        System.out.println("Loaded point of sale...");
+    }
+
+    private void onFailed() {
+        System.out.println("failed loading point of sale...");
     }
 }

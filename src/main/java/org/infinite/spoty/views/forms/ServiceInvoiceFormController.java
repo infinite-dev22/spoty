@@ -118,7 +118,7 @@ public class ServiceInvoiceFormController implements Initializable {
                         if (ServiceViewModel.getId() > 0) {
                             SpotyThreader.spotyThreadPool(() -> {
                                 try {
-                                    ServiceViewModel.updateItem();
+                                    ServiceViewModel.updateItem(this::onAction, this::onSuccess, this::onFailed);
                                 } catch (Exception e) {
                                     SpotyLogger.writeToFile(e, this.getClass());
                                 }
@@ -144,7 +144,7 @@ public class ServiceInvoiceFormController implements Initializable {
 
 //                        SpotyThreader.spotyThreadPool(() -> {
                         try {
-                            saveService();
+                            saveService(this::onAction, this::onSuccess, this::onFailed);
                         } catch (Exception e) {
                             SpotyLogger.writeToFile(e, this.getClass());
                         }
@@ -169,5 +169,17 @@ public class ServiceInvoiceFormController implements Initializable {
                                     .build();
                     notificationHolder.addNotification(notification);
                 });
+    }
+
+    private void onAction() {
+        System.out.println("Loading service...");
+    }
+
+    private void onSuccess() {
+        System.out.println("Loaded service...");
+    }
+
+    private void onFailed() {
+        System.out.println("failed loading service...");
     }
 }

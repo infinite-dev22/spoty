@@ -117,7 +117,7 @@ public class BranchFormController implements Initializable {
                         if (BranchViewModel.getId() > 0) {
                             SpotyThreader.spotyThreadPool(() -> {
                                 try {
-                                    BranchViewModel.updateItem();
+                                    BranchViewModel.updateItem(this::onAction, this::onSuccess, this::onFailed);
                                 } catch (Exception e) {
                                     SpotyLogger.writeToFile(e, this.getClass());
                                 }
@@ -143,7 +143,7 @@ public class BranchFormController implements Initializable {
 
 //                        SpotyThreader.spotyThreadPool(() -> {
                             try {
-                                saveBranch();
+                                saveBranch(this::onAction, this::onSuccess, this::onFailed);
                             } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }
@@ -168,5 +168,17 @@ public class BranchFormController implements Initializable {
                                     .build();
                     notificationHolder.addNotification(notification);
                 });
+    }
+
+    private void onAction() {
+        System.out.println("Loading branch...");
+    }
+
+    private void onSuccess() {
+        System.out.println("Loaded branch...");
+    }
+
+    private void onFailed() {
+        System.out.println("failed loading branch...");
     }
 }

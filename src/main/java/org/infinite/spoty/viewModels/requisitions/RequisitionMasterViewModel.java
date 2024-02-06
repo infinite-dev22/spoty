@@ -28,27 +28,30 @@ import org.infinite.spoty.data_source.dtos.requisitions.RequisitionMaster;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.models.SearchModel;
 import org.infinite.spoty.data_source.repositories.implementations.RequisitionsRepositoryImpl;
+import org.infinite.spoty.utils.ParameterlessConsumer;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
 
 public class RequisitionMasterViewModel {
+    @Getter
+    public static final ObservableList<RequisitionMaster> requisitionMastersList =
+            FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
                     UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
             .create();
-    @Getter
-    public static final ObservableList<RequisitionMaster> requisitionMastersList =
-            FXCollections.observableArrayList();
     private static final ListProperty<RequisitionMaster> requisitions =
             new SimpleListProperty<>(requisitionMastersList);
     private static final LongProperty id = new SimpleLongProperty(0);
@@ -236,7 +239,10 @@ public class RequisitionMasterViewModel {
                 });
     }
 
-    public static void saveRequisitionMaster() throws IOException, InterruptedException {
+    public static void saveRequisitionMaster(
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var requisitionMaster = RequisitionMaster.builder()
                 .date(getDate())
                 .supplier(getSupplier())
@@ -258,67 +264,118 @@ public class RequisitionMasterViewModel {
                     RequisitionDetailViewModel.getRequisitionDetailsList());
         }
 
-        requisitionsRepository.postMaster(requisitionMaster);
-        RequisitionDetailViewModel.saveRequisitionDetails();
-        resetProperties();
-        getRequisitionMasters();
+        var task = requisitionsRepository.postMaster(requisitionMaster);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> {
+            RequisitionDetailViewModel.saveRequisitionDetails(onActivity, null, onFailed);
+            onSuccess.run();
+        });
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
+        // getRequisitionMasters();
     }
 
-    public static void getRequisitionMasters() throws IOException, InterruptedException {
-        Type listType = new TypeToken<ArrayList<RequisitionMaster>>() {
-        }.getType();
-        requisitionMastersList.clear();
-        ArrayList<RequisitionMaster> requisitionMasterList = gson.fromJson(
-                requisitionsRepository.fetchAllMaster().body(), listType);
-        requisitionMastersList.addAll(requisitionMasterList);
+    public static void getRequisitionMasters(
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onFailed) {
+        var task = requisitionsRepository.fetchAllMaster();
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            Type listType = new TypeToken<ArrayList<RequisitionMaster>>() {
+            }.getType();
+            ArrayList<RequisitionMaster> requisitionMasterList = new ArrayList<>();
+            try {
+                requisitionMasterList = gson.fromJson(
+                        task.get().body(), listType);
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, RequisitionMasterViewModel.class);
+            }
+
+            requisitionMastersList.clear();
+            requisitionMastersList.addAll(requisitionMasterList);
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void getItem(Long index) throws IOException, InterruptedException {
-        var findModel = new FindModel();
-        findModel.setId(index);
-        var response = requisitionsRepository.fetchMaster(findModel).body();
-        var requisitionMaster = gson.fromJson(response, RequisitionMaster.class);
+    public static void getItem(
+            Long index,
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onFailed) {
+        var findModel = FindModel.builder().id(index).build();
+        var task = requisitionsRepository.fetchMaster(findModel);
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            RequisitionMaster requisitionMaster = new RequisitionMaster();
+            try {
+                requisitionMaster = gson.fromJson(task.get().body(), RequisitionMaster.class);
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, RequisitionMasterViewModel.class);
+            }
 
-        setId(requisitionMaster.getId());
-        setSupplier(requisitionMaster.getSupplier());
-        setBranch(requisitionMaster.getBranch());
-        setShipVia(requisitionMaster.getShipVia());
-        setShipMethod(requisitionMaster.getShipMethod());
-        setShippingTerms(requisitionMaster.getShippingTerms());
-        setNote(requisitionMaster.getNotes());
-        setStatus(requisitionMaster.getStatus());
-        setTotalCost(String.valueOf(requisitionMaster.getTotalCost()));
-        setDate(requisitionMaster.getLocaleDate());
-        RequisitionDetailViewModel.requisitionDetailsList.clear();
-        RequisitionDetailViewModel.requisitionDetailsList.addAll(
-                requisitionMaster.getRequisitionDetails());
-        getRequisitionMasters();
+            setId(requisitionMaster.getId());
+            setSupplier(requisitionMaster.getSupplier());
+            setBranch(requisitionMaster.getBranch());
+            setShipVia(requisitionMaster.getShipVia());
+            setShipMethod(requisitionMaster.getShipMethod());
+            setShippingTerms(requisitionMaster.getShippingTerms());
+            setNote(requisitionMaster.getNotes());
+            setStatus(requisitionMaster.getStatus());
+            setTotalCost(String.valueOf(requisitionMaster.getTotalCost()));
+            setDate(requisitionMaster.getLocaleDate());
+            RequisitionDetailViewModel.requisitionDetailsList.clear();
+            RequisitionDetailViewModel.requisitionDetailsList.addAll(
+                    requisitionMaster.getRequisitionDetails());
+        });
+        SpotyThreader.spotyThreadPool(task);
+        // getRequisitionMasters();
     }
 
-    public static void searchItem(String search) throws Exception {
-        var searchModel = new SearchModel();
-        searchModel.setSearch(search);
+    public static void searchItem(
+            String search,
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onFailed) {
+        var searchModel = SearchModel.builder().search(search).build();
+        var task = requisitionsRepository.searchMaster(searchModel);
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            Type listType = new TypeToken<ArrayList<RequisitionMaster>>() {
+            }.getType();
+            ArrayList<RequisitionMaster> requisitionMasterList = new ArrayList<>();
 
-        Type listType = new TypeToken<ArrayList<RequisitionMaster>>() {
-        }.getType();
+            try {
+                requisitionMasterList = gson.fromJson(
+                        task.get().body(), listType);
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, RequisitionMasterViewModel.class);
+            }
 
-        Platform.runLater(
-                () -> {
-                    requisitionMastersList.clear();
-
-                    try {
-                        ArrayList<RequisitionMaster> requisitionMasterList = gson.fromJson(
-                                requisitionsRepository.searchMaster(searchModel).body(), listType);
-                        requisitionMastersList.addAll(requisitionMasterList);
-                    } catch (Exception e) {
-                        SpotyLogger.writeToFile(e, RequisitionMasterViewModel.class);
-                    }
-                });
+            requisitionMastersList.clear();
+            requisitionMastersList.addAll(requisitionMasterList);
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void updateItem(Long index) throws IOException, InterruptedException {
+    public static void updateItem(
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var requisitionMaster = RequisitionMaster.builder()
-                .id(index)
+                .id(getId())
                 .date(getDate())
                 .supplier(getSupplier())
                 .branch(getBranch())
@@ -331,22 +388,37 @@ public class RequisitionMasterViewModel {
                 .totalCost(getTotalCost())
                 .build();
 
-        RequisitionDetailViewModel.deleteRequisitionDetails(PENDING_DELETES);
-        requisitionMaster.setRequisitionDetails(
-                RequisitionDetailViewModel.getRequisitionDetailsList());
+        if (!PENDING_DELETES.isEmpty()) {
+            RequisitionDetailViewModel.deleteRequisitionDetails(PENDING_DELETES, onActivity, null, onFailed);
+        }
 
-        requisitionsRepository.putMaster(requisitionMaster);
-        RequisitionDetailViewModel.updateRequisitionDetails();
+        if (!RequisitionDetailViewModel.getRequisitionDetailsList().isEmpty()) {
+            RequisitionDetailViewModel.getRequisitionDetailsList()
+                    .forEach(requisitionDetail -> requisitionDetail.setRequisition(requisitionMaster));
 
-        resetProperties();
-        getRequisitionMasters();
+            requisitionMaster.setRequisitionDetails(
+                    RequisitionDetailViewModel.getRequisitionDetailsList());
+        }
+
+        var task = requisitionsRepository.putMaster(requisitionMaster);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> RequisitionDetailViewModel.updateRequisitionDetails(onActivity, onSuccess, onFailed));
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
+        // getRequisitionMasters();
     }
 
-    public static void deleteItem(Long index) throws IOException, InterruptedException {
-        var findModel = new FindModel();
+    public static void deleteItem(
+            Long index,
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
+        var findModel = FindModel.builder().id(index).build();
 
-        findModel.setId(index);
-        requisitionsRepository.deleteMaster(findModel);
-        getRequisitionMasters();
+        var task = requisitionsRepository.deleteMaster(findModel);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
     }
 }

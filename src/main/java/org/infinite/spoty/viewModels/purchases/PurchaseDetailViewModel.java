@@ -28,26 +28,31 @@ import org.infinite.spoty.data_source.dtos.purchases.PurchaseMaster;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.models.SearchModel;
 import org.infinite.spoty.data_source.repositories.implementations.PurchasesRepositoryImpl;
+import org.infinite.spoty.utils.ParameterlessConsumer;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 import static org.infinite.spoty.values.SharedResources.*;
 
 public class PurchaseDetailViewModel {
+    @Getter
+    public static final ObservableList<PurchaseDetail> purchaseDetailsList =
+            FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
                     UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
             .create();
-    @Getter
-    public static final ObservableList<PurchaseDetail> purchaseDetailsList =
-            FXCollections.observableArrayList();
     private static final ListProperty<PurchaseDetail> purchaseDetails =
             new SimpleListProperty<>(purchaseDetailsList);
     private static final LongProperty id = new SimpleLongProperty(0);
@@ -241,13 +246,25 @@ public class PurchaseDetailViewModel {
 
         Platform.runLater(() -> {
             purchaseDetailsList.add(purchaseDetail);
-            resetProperties();
+
         });
     }
 
-    public static void savePurchaseDetails() throws IOException, InterruptedException {
+    public static void savePurchaseDetails(@Nullable ParameterlessConsumer onActivity, @Nullable ParameterlessConsumer onSuccess, @Nullable ParameterlessConsumer onFailed) {
         // TODO: make postMultipleDetail()
-        purchasesRepository.postDetail(purchaseDetailsList);
+        purchaseDetailsList.forEach(purchaseDetails -> {
+            var task = purchasesRepository.postDetail(purchaseDetailsList);
+            if (Objects.nonNull(onActivity)) {
+                task.setOnRunning(workerStateEvent -> onActivity.run());
+            }
+            if (Objects.nonNull(onSuccess)) {
+                task.setOnFailed(workerStateEvent -> onSuccess.run());
+            }
+            if (Objects.nonNull(onFailed)) {
+                task.setOnFailed(workerStateEvent -> onFailed.run());
+            }
+            SpotyThreader.spotyThreadPool(task);
+        });
         purchaseDetailsList.clear();
     }
 
@@ -266,22 +283,25 @@ public class PurchaseDetailViewModel {
         setQuantity("");
     }
 
-    public static void getAllPurchaseDetails() {
+    public static void getAllPurchaseDetails(@Nullable ParameterlessConsumer onActivity) {
         Type listType = new TypeToken<ArrayList<PurchaseDetail>>() {
         }.getType();
 
-        Platform.runLater(
-                () -> {
-                    purchaseDetailsList.clear();
-
-                    try {
-                        ArrayList<PurchaseDetail> purchaseDetailList = gson.fromJson(
-                                purchasesRepository.fetchAllDetail().body(), listType);
-                        purchaseDetailsList.addAll(purchaseDetailList);
-                    } catch (Exception e) {
-                        SpotyLogger.writeToFile(e, PurchaseDetailViewModel.class);
-                    }
-                });
+        var task = purchasesRepository.fetchAllDetail();
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            ArrayList<PurchaseDetail> purchaseDetailList = new ArrayList<>();
+            try {
+                purchaseDetailList = gson.fromJson(
+                        task.get().body(), listType);
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, PurchaseDetailViewModel.class);
+            }
+            purchaseDetailsList.clear();
+            purchaseDetailsList.addAll(purchaseDetailList);
+        });
     }
 
     public static void updatePurchaseDetail(Long index) {
@@ -307,30 +327,46 @@ public class PurchaseDetailViewModel {
                     purchaseDetailsList.remove(getTempId());
                     purchaseDetailsList.add(getTempId(), newPurchaseDetail);
 
-                    resetProperties();
+
                 });
     }
 
-    public static void getItem(Long index, int tempIndex) throws IOException, InterruptedException {
+    public static void getItem(Long index, int tempIndex, @Nullable ParameterlessConsumer onActivity, @Nullable ParameterlessConsumer onFailed) {
         var findModel = FindModel.builder()
                 .id(index)
                 .build();
-        var purchaseDetail = gson.fromJson(
-                purchasesRepository.fetchDetail(findModel).body(),
-                PurchaseDetail.class);
 
-        setTempId(tempIndex);
-        setId(purchaseDetail.getId());
-        setPurchase(purchaseDetail.getPurchase());
-        setCost(String.valueOf(purchaseDetail.getCost()));
-        setNetTax(String.valueOf(purchaseDetail.getNetTax()));
-        setTaxType(purchaseDetail.getTaxType());
-        setDiscount(String.valueOf(purchaseDetail.getDiscount()));
-        setDiscountType(purchaseDetail.getDiscountType());
-        setProduct(purchaseDetail.getProduct());
-        setSerial(purchaseDetail.getSerialNumber());
-        setTotalPrice(String.valueOf(purchaseDetail.getTotal()));
-        setQuantity(String.valueOf(purchaseDetail.getQuantity()));
+        var task = purchasesRepository.fetchDetail(findModel);
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            PurchaseDetail purchaseDetail = new PurchaseDetail();
+            try {
+                purchaseDetail = gson.fromJson(
+                        task.get().body(),
+                        PurchaseDetail.class);
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, PurchaseDetailViewModel.class);
+            }
+
+            setTempId(tempIndex);
+            setId(purchaseDetail.getId());
+            setPurchase(purchaseDetail.getPurchase());
+            setCost(String.valueOf(purchaseDetail.getCost()));
+            setNetTax(String.valueOf(purchaseDetail.getNetTax()));
+            setTaxType(purchaseDetail.getTaxType());
+            setDiscount(String.valueOf(purchaseDetail.getDiscount()));
+            setDiscountType(purchaseDetail.getDiscountType());
+            setProduct(purchaseDetail.getProduct());
+            setSerial(purchaseDetail.getSerialNumber());
+            setTotalPrice(String.valueOf(purchaseDetail.getTotal()));
+            setQuantity(String.valueOf(purchaseDetail.getQuantity()));
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
     public static void updateItem(Long index) {
@@ -356,45 +392,63 @@ public class PurchaseDetailViewModel {
                     purchaseDetailsList.remove(getTempId());
                     purchaseDetailsList.add(getTempId(), newPurchaseDetail);
 
-                    resetProperties();
                 });
     }
 
-    public static void searchItem(String search) throws Exception {
+    public static void searchItem(String search, @Nullable ParameterlessConsumer onActivity, @Nullable ParameterlessConsumer onFailed) {
         var searchModel = new SearchModel();
         searchModel.setSearch(search);
 
-        Type listType = new TypeToken<ArrayList<PurchaseDetail>>() {
-        }.getType();
+        var task = purchasesRepository.searchDetail(searchModel);
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            Type listType = new TypeToken<ArrayList<PurchaseDetail>>() {
+            }.getType();
 
-        Platform.runLater(
-                () -> {
-                    purchaseDetailsList.clear();
+            Platform.runLater(
+                    () -> {
+                        purchaseDetailsList.clear();
 
-                    try {
-                        ArrayList<PurchaseDetail> purchaseDetailList = gson.fromJson(
-                                purchasesRepository.searchDetail(searchModel).body(), listType);
-                        purchaseDetailsList.addAll(purchaseDetailList);
-                    } catch (Exception e) {
-                        SpotyLogger.writeToFile(e, PurchaseDetailViewModel.class);
-                    }
-                });
-
+                        try {
+                            ArrayList<PurchaseDetail> purchaseDetailList = gson.fromJson(
+                                    task.get().body(), listType);
+                            purchaseDetailsList.addAll(purchaseDetailList);
+                        } catch (Exception e) {
+                            SpotyLogger.writeToFile(e, PurchaseDetailViewModel.class);
+                        }
+                    });
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void updatePurchaseDetails() {
+    public static void updatePurchaseDetails(@Nullable ParameterlessConsumer onActivity, @Nullable ParameterlessConsumer onSuccess, @Nullable ParameterlessConsumer onFailed) {
         // TODO: Add save multiple on API.
         purchaseDetailsList.forEach(
                 purchaseDetail -> {
                     try {
-                        purchasesRepository.putDetail(purchaseDetail);
+                        var task = purchasesRepository.putDetail(purchaseDetail);
+                        if (Objects.nonNull(onActivity)) {
+                            task.setOnRunning(workerStateEvent -> onActivity.run());
+                        }
+                        if (Objects.nonNull(onSuccess)) {
+                            task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+                        }
+                        if (Objects.nonNull(onFailed)) {
+                            task.setOnFailed(workerStateEvent -> onFailed.run());
+                        }
+                        SpotyThreader.spotyThreadPool(task);
                     } catch (Exception e) {
                         SpotyLogger.writeToFile(e, PurchaseDetailViewModel.class);
                     }
                 });
         // updateProductQuantity();
-        getAllPurchaseDetails();
-        getAllPurchaseDetails();
+        // getAllPurchaseDetails();
+        // getAllPurchaseDetails();
     }
 
     public static void removePurchaseDetail(Long index, int tempIndex) {
@@ -402,10 +456,21 @@ public class PurchaseDetailViewModel {
         PENDING_DELETES.add(index);
     }
 
-    public static void deletePurchaseDetails(@NotNull LinkedList<Long> indexes) throws IOException, InterruptedException {
+    public static void deletePurchaseDetails(@NotNull LinkedList<Long> indexes, @Nullable ParameterlessConsumer onActivity, @Nullable ParameterlessConsumer onSuccess, @Nullable ParameterlessConsumer onFailed) {
         LinkedList<FindModel> findModelList = new LinkedList<>();
         indexes.forEach(index -> findModelList.add(new FindModel(index)));
-        purchasesRepository.deleteMultipleDetails(findModelList);
+
+        var task = purchasesRepository.deleteMultipleDetails(findModelList);
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onSuccess)) {
+            task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        SpotyThreader.spotyThreadPool(task);
     }
 
 //    private static PurchaseTransaction getPurchaseTransaction(long purchaseIndex) {

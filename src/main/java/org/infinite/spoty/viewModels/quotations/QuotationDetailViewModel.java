@@ -29,10 +29,12 @@ import org.infinite.spoty.data_source.dtos.quotations.QuotationMaster;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.models.SearchModel;
 import org.infinite.spoty.data_source.repositories.implementations.QuotationsRepositoryImpl;
+import org.infinite.spoty.utils.ParameterlessConsumer;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
-import org.infinite.spoty.viewModels.adjustments.AdjustmentDetailViewModel;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -40,18 +42,19 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 import static org.infinite.spoty.values.SharedResources.*;
 
 public class QuotationDetailViewModel {
-    private static final Gson gson = new GsonBuilder()
-            .registerTypeAdapter(Date.class,
-                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
-            .create();
     // TODO: Add more fields according to DB design and necessity.
     @Getter
     public static final ObservableList<QuotationDetail> quotationDetailsList =
             FXCollections.observableArrayList();
+    private static final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(Date.class,
+                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+            .create();
     private static final ListProperty<QuotationDetail> quotationDetails =
             new SimpleListProperty<>(quotationDetailsList);
     private static final LongProperty id = new SimpleLongProperty(0);
@@ -188,31 +191,52 @@ public class QuotationDetailViewModel {
                 .build();
 
         quotationDetailsList.add(quotationDetail);
-        resetProperties();
     }
 
-    public static void saveQuotationDetails() {
+    public static void saveQuotationDetails(@Nullable ParameterlessConsumer onActivity, @Nullable ParameterlessConsumer onSuccess, @Nullable ParameterlessConsumer onFailed) {
         quotationDetailsList.forEach(quotationDetail -> {
-            try {
-                quotationsRepository.postDetail(quotationDetail);  // TODO: Add post multiple details.
-            } catch (IOException | InterruptedException e) {
-                throw new RuntimeException(e);
+            var task = quotationsRepository.postDetail(quotationDetail);  // TODO: Add post multiple details.
+            if (Objects.nonNull(onActivity)) {
+                task.setOnRunning(workerStateEvent -> onActivity.run());
             }
+            if (Objects.nonNull(onSuccess)) {
+                task.setOnFailed(workerStateEvent -> onSuccess.run());
+            }
+            if (Objects.nonNull(onFailed)) {
+                task.setOnFailed(workerStateEvent -> onFailed.run());
+            }
+            SpotyThreader.spotyThreadPool(task);
         });
 
-        Platform.runLater(quotationDetailsList::clear);
+        quotationDetailsList.clear();
     }
 
-    public static void searchItem(String search) throws IOException, InterruptedException {
+    public static void searchItem(String search, @Nullable ParameterlessConsumer onActivity, @Nullable ParameterlessConsumer onFailed) throws IOException, InterruptedException {
         var searchModel = new SearchModel();
         searchModel.setSearch(search);
 
-        Type listType = new TypeToken<ArrayList<QuotationDetail>>() {
-        }.getType();
-        quotationDetailsList.clear();
-        ArrayList<QuotationDetail> adjustmentDetailList = gson.fromJson(
-                quotationsRepository.searchDetail(searchModel).body(), listType);
-        quotationDetailsList.addAll(adjustmentDetailList);
+        var task = quotationsRepository.searchDetail(searchModel);
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            Type listType = new TypeToken<ArrayList<QuotationDetail>>() {
+            }.getType();
+            ArrayList<QuotationDetail> adjustmentDetailList = new ArrayList<>();
+            try {
+                adjustmentDetailList = gson.fromJson(
+                        task.get().body(), listType);
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, QuotationDetailViewModel.class);
+            }
+
+            quotationDetailsList.clear();
+            quotationDetailsList.addAll(adjustmentDetailList);
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
     public static void updateQuotationDetail(Long index) {
@@ -226,16 +250,28 @@ public class QuotationDetailViewModel {
         quotationDetail.setQuotation(getQuotation());
         quotationDetailsList.remove(getTempId());
         quotationDetailsList.add(getTempId(), quotationDetail);
-        resetProperties();
     }
 
-    public static void getAllQuotationDetails() throws IOException, InterruptedException {
+    public static void getAllQuotationDetails(@Nullable ParameterlessConsumer onActivity) {
         Type listType = new TypeToken<ArrayList<QuotationDetail>>() {
         }.getType();
-        quotationDetailsList.clear();
-        ArrayList<QuotationDetail> quotationDetailList = gson.fromJson(
-                quotationsRepository.fetchAllDetail().body(), listType);
-        quotationDetailsList.addAll(quotationDetailList);
+        var task = quotationsRepository.fetchAllDetail();
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            ArrayList<QuotationDetail> quotationDetailList = new ArrayList<>();
+            try {
+                quotationDetailList = gson.fromJson(
+                        task.get().body(), listType);
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, QuotationDetailViewModel.class);
+            }
+
+            quotationDetailsList.clear();
+            quotationDetailsList.addAll(quotationDetailList);
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
     public static void getQuotationDetail(QuotationDetail quotationDetail) {
@@ -252,17 +288,26 @@ public class QuotationDetailViewModel {
                 });
     }
 
-    public static void updateQuotationDetails() throws IOException, InterruptedException {
+    public static void updateQuotationDetails(
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onSuccess,
+            @Nullable ParameterlessConsumer onFailed) {
         // TODO: Add save multiple on API.
         quotationDetailsList.forEach(
                 adjustmentDetail -> {
-                    try {
-                        quotationsRepository.putDetail(adjustmentDetail);
-                    } catch (Exception e) {
-                        SpotyLogger.writeToFile(e, AdjustmentDetailViewModel.class);
+                    var task = quotationsRepository.putDetail(adjustmentDetail);
+                    if (Objects.nonNull(onActivity)) {
+                        task.setOnRunning(workerStateEvent -> onActivity.run());
                     }
+                    if (Objects.nonNull(onSuccess)) {
+                        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+                    }
+                    if (Objects.nonNull(onFailed)) {
+                        task.setOnFailed(workerStateEvent -> onFailed.run());
+                    }
+                    SpotyThreader.spotyThreadPool(task);
                 });
-        getAllQuotationDetails();
+//        getAllQuotationDetails();
     }
 
     public static void removeQuotationDetail(Long index, int tempIndex) {
@@ -270,9 +315,23 @@ public class QuotationDetailViewModel {
         PENDING_DELETES.add(index);
     }
 
-    public static void deleteQuotationDetails(@NotNull LinkedList<Long> indexes) throws IOException, InterruptedException {
+    public static void deleteQuotationDetails(@NotNull LinkedList<Long> indexes,
+                                              @Nullable ParameterlessConsumer onActivity,
+                                              @Nullable ParameterlessConsumer onSuccess,
+                                              @Nullable ParameterlessConsumer onFailed) {
         LinkedList<FindModel> findModelList = new LinkedList<>();
         indexes.forEach(index -> findModelList.add(new FindModel(index)));
-        quotationsRepository.deleteMultipleDetails(findModelList);
+
+        var task = quotationsRepository.deleteMultipleDetails(findModelList);
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onSuccess)) {
+            task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        SpotyThreader.spotyThreadPool(task);
     }
 }

@@ -28,26 +28,31 @@ import org.infinite.spoty.data_source.dtos.stock_ins.StockInTransaction;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.models.SearchModel;
 import org.infinite.spoty.data_source.repositories.implementations.StockInsRepositoryImpl;
+import org.infinite.spoty.utils.ParameterlessConsumer;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.ProductViewModel;
 import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
+import org.infinite.spoty.viewModels.adjustments.AdjustmentDetailViewModel;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 import static org.infinite.spoty.values.SharedResources.*;
 
 public class StockInDetailViewModel {
+    public static final ObservableList<StockInDetail> stockInDetailsList =
+            FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
                     UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
             .create();
-    public static final ObservableList<StockInDetail> stockInDetailsList =
-            FXCollections.observableArrayList();
     private static final ListProperty<StockInDetail> stockInDetails =
             new SimpleListProperty<>(stockInDetailsList);
     private static final LongProperty id = new SimpleLongProperty(0);
@@ -175,46 +180,83 @@ public class StockInDetailViewModel {
                 .build();
 
         stockInDetailsList.add(stockInDetail);
-        resetProperties();
     }
 
-    public static void createStockInDetails() throws IOException, InterruptedException {
-        stockInsRepository.postDetail(stockInDetailsList);
+    public static void createStockInDetails(
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onSuccess,
+            @Nullable ParameterlessConsumer onFailed) {
+        stockInDetailsList.forEach(stockInDetail -> {
+            var task = stockInsRepository.postDetail(stockInDetail);
+            if (Objects.nonNull(onActivity)) {
+                task.setOnRunning(workerStateEvent -> onActivity.run());
+            }
+            if (Objects.nonNull(onSuccess)) {
+                task.setOnFailed(workerStateEvent -> onSuccess.run());
+            }
+            if (Objects.nonNull(onFailed)) {
+                task.setOnFailed(workerStateEvent -> onFailed.run());
+            }
+            SpotyThreader.spotyThreadPool(task);
+        });
 
         setProductQuantity();
-        Platform.runLater(stockInDetailsList::clear);
-    }
-
-    public static void getAllStockInDetails() {
-        Type listType = new TypeToken<ArrayList<StockInDetail>>() {
-        }.getType();
-
-        Platform.runLater(
-                () -> {
-                    stockInDetailsList.clear();
-
-                    try {
-                        ArrayList<StockInDetail> stockInDetailList = gson.fromJson(
-                                stockInsRepository.fetchAllDetail().body(), listType);
-                        stockInDetailsList.addAll(stockInDetailList);
-                    } catch (Exception e) {
-                        SpotyLogger.writeToFile(e, StockInDetailViewModel.class);
-                    }
-                });
-    }
-
-    public static void searchItem(String search) throws IOException, InterruptedException {
-        var searchModel = new SearchModel();
-        searchModel.setSearch(search);
-
-        Type listType = new TypeToken<ArrayList<StockInDetail>>() {
-        }.getType();
-
         stockInDetailsList.clear();
+    }
 
-        ArrayList<StockInDetail> stockInDetailList = gson.fromJson(
-                stockInsRepository.searchDetail(searchModel).body(), listType);
-        stockInDetailsList.addAll(stockInDetailList);
+    public static void getAllStockInDetails(
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
+        Type listType = new TypeToken<ArrayList<StockInDetail>>() {
+        }.getType();
+
+        var task = stockInsRepository.fetchAllDetail();
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> {
+            try {
+                ArrayList<StockInDetail> stockInDetailList = gson.fromJson(
+                        task.get().body(), listType);
+                stockInDetailsList.clear();
+                stockInDetailsList.addAll(stockInDetailList);
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, StockInDetailViewModel.class);
+            }
+
+            onSuccess.run();
+        });
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
+    }
+
+    public static void searchItem(
+            String search,
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onFailed) {
+        var searchModel = SearchModel.builder().search(search).build();
+
+        var task = stockInsRepository.searchMaster(searchModel);
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            Type listType = new TypeToken<ArrayList<StockInDetail>>() {
+            }.getType();
+            try {
+                ArrayList<StockInDetail> stockInDetailList = gson.fromJson(
+                        task.get().body(), listType);
+
+                stockInDetailsList.clear();
+                stockInDetailsList.addAll(stockInDetailList);
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, AdjustmentDetailViewModel.class);
+            }
+
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
     public static void updateStockInDetail() {
@@ -229,7 +271,6 @@ public class StockInDetailViewModel {
 
         stockInDetailsList.remove(getTempId());
         stockInDetailsList.add(getTempId(), stockInDetail);
-        resetProperties();
     }
 
     public static void getItem(StockInDetail stockInDetail) {
@@ -242,19 +283,29 @@ public class StockInDetailViewModel {
         setLocation(stockInDetail.getLocation());
     }
 
-    public static void updateStockInDetails() {
+    public static void updateStockInDetails(
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onSuccess,
+            @Nullable ParameterlessConsumer onFailed) {
+        // TODO: Add save multiple on API.
         stockInDetailsList.forEach(
                 stockInDetail -> {
-                    try {
-                        stockInsRepository.putDetail(stockInDetail);
-                    } catch (Exception e) {
-                        SpotyLogger.writeToFile(e, StockInDetailViewModel.class);
+                    var task = stockInsRepository.putDetail(stockInDetail);
+                    if (Objects.nonNull(onActivity)) {
+                        task.setOnRunning(workerStateEvent -> onActivity.run());
                     }
+                    if (Objects.nonNull(onSuccess)) {
+                        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+                    }
+                    if (Objects.nonNull(onFailed)) {
+                        task.setOnFailed(workerStateEvent -> onFailed.run());
+                    }
+                    SpotyThreader.spotyThreadPool(task);
                 });
 
         updateProductQuantity();
 
-        getAllStockInDetails();
+        // getAllStockInDetails();
     }
 
     public static void removeStockInDetail(Long index, int tempIndex) {
@@ -262,10 +313,24 @@ public class StockInDetailViewModel {
         PENDING_DELETES.add(index);
     }
 
-    public static void deleteStockInDetails(@NotNull LinkedList<Long> indexes) throws IOException, InterruptedException {
+    public static void deleteStockInDetails(@NotNull LinkedList<Long> indexes,
+                                            @Nullable ParameterlessConsumer onActivity,
+                                            @Nullable ParameterlessConsumer onSuccess,
+                                            @Nullable ParameterlessConsumer onFailed) {
         LinkedList<FindModel> findModelList = new LinkedList<>();
         indexes.forEach(index -> findModelList.add(new FindModel(index)));
-        stockInsRepository.deleteMultipleDetails(findModelList);
+
+        var task = stockInsRepository.deleteMultipleDetails(findModelList);
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onSuccess)) {
+            task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        SpotyThreader.spotyThreadPool(task);
     }
 
     private static void setProductQuantity() {
@@ -278,7 +343,7 @@ public class StockInDetailViewModel {
                             ProductViewModel.setQuantity(productDetailQuantity);
 
                             try {
-                                ProductViewModel.updateProduct();
+                                ProductViewModel.updateProduct(null, null, null);
                                 createStockInTransaction(stockInDetail);
                             } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, StockInDetailViewModel.class);
@@ -300,7 +365,7 @@ public class StockInDetailViewModel {
 
                                 ProductViewModel.setQuantity(productQuantity);
 
-                                ProductViewModel.updateProduct();
+                                ProductViewModel.updateProduct(null, null, null);
 
                                 updateStockInTransaction(stockInDetail);
                             } catch (Exception e) {

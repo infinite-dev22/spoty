@@ -14,25 +14,22 @@
 
 package org.infinite.spoty.views;
 
+import io.github.palexdev.materialfx.controls.MFXButton;
+import io.github.palexdev.mfxresources.fonts.IconsProviders;
 import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.infinite.spoty.SpotyResourceLoader;
 import org.infinite.spoty.components.navigation.Navigation;
 import org.infinite.spoty.utils.SpotyThreader;
-import org.infinite.spoty.values.strings.Labels;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -44,8 +41,6 @@ public class BaseController implements Initializable {
     @FXML
     public MFXFontIcon closeIcon;
     @FXML
-    public MFXFontIcon maximizeIcon;
-    @FXML
     public MFXFontIcon minimizeIcon;
     @FXML
     public StackPane contentPane;
@@ -56,11 +51,13 @@ public class BaseController implements Initializable {
     @FXML
     public AnchorPane rootPane;
     @FXML
-    public VBox settingsHolder;
+    public ImageView userProfilePicture;
     @FXML
-    public Label appNameLabel;
+    public MFXButton notificationsBtn;
     @FXML
-    public ImageView appLogo;
+    public MFXButton feedbackBtn;
+    @FXML
+    public MFXButton helpBtn;
     private double xOffset;
     private double yOffset;
 
@@ -83,39 +80,46 @@ public class BaseController implements Initializable {
     }
 
     @FXML
-    void maximizeIconClicked() {
-        Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
-//        ((Stage) rootPane.getScene().getWindow())
-//                .setMaximized(!((Stage) rootPane.getScene().getWindow()).isMaximized());
-
-//      primaryStage.setFullScreen(!primaryStage.isFullScreen());
-        if (primaryStage.getHeight() == primScreenBounds.getHeight() && primaryStage.getWidth() == primScreenBounds.getWidth()) {
-            primaryStage.setHeight(primScreenBounds.getHeight() * .9);
-            primaryStage.setWidth(primScreenBounds.getWidth() * .8);
-            // Center window in screen.
-            primaryStage.setX((primScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
-            primaryStage.setY((primScreenBounds.getHeight() - primaryStage.getHeight()) / 2);
-        } else {
-            // Place window at matrix (0, 0) of screen.
-            primaryStage.setX(0);
-            primaryStage.setY(0);
-            // Set window to full screen.
-            primaryStage.setHeight(primScreenBounds.getHeight());
-            primaryStage.setWidth(primScreenBounds.getWidth());
-        }
-    }
-
-    @FXML
     void minimizeIconClicked() {
-//        ((Stage) rootPane.getScene().getWindow()).setIconified(true);
         primaryStage.setIconified(true);
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        appLogo.setImage(new Image(SpotyResourceLoader.load("icon.png"), 42, 42, true, true));
-        appNameLabel.setText(Labels.APP_NAME);
-        appNameLabel.setFont(new Font(48));
+        userProfilePicture.setImage(new Image(SpotyResourceLoader.load("icon.png"), 100, 100, true, true));
+
+        initializeLoader();
+        initAppBar();
+    }
+
+    public void initializeLoader() {
+        navigation = Navigation.getInstance(contentPane);
+        navBar.getChildren().add(navigation.createNavigation());
+    }
+
+    private void initAppBar() {
+        MFXFontIcon notificationIcon = new MFXFontIcon();
+        MFXFontIcon feedbackIcon = new MFXFontIcon();
+        MFXFontIcon helpIcon = new MFXFontIcon();
+        notificationIcon.setIconsProvider(IconsProviders.FONTAWESOME_REGULAR);
+        feedbackIcon.setIconsProvider(IconsProviders.FONTAWESOME_REGULAR);
+        helpIcon.setIconsProvider(IconsProviders.FONTAWESOME_REGULAR);
+        notificationIcon.setDescription("far-bell");
+        feedbackIcon.setDescription("far-comment");
+        helpIcon.setDescription("far-circle-question");
+
+        notificationsBtn.setText("");
+        feedbackBtn.setText("");
+        helpBtn.setText("");
+
+        notificationsBtn.setGraphic(notificationIcon);
+        feedbackBtn.setGraphic(feedbackIcon);
+        helpBtn.setGraphic(helpIcon);
+
+        notificationsBtn.setTooltip(new Tooltip("Notification"));
+        feedbackBtn.setTooltip(new Tooltip("Feedback"));
+        helpBtn.setTooltip(new Tooltip("Help"));
+
         windowHeader.setOnMousePressed(
                 event -> {
                     xOffset = primaryStage.getX() - event.getScreenX();
@@ -126,12 +130,5 @@ public class BaseController implements Initializable {
                     primaryStage.setX(event.getScreenX() + xOffset);
                     primaryStage.setY(event.getScreenY() + yOffset);
                 });
-
-        initializeLoader();
-    }
-
-    public void initializeLoader() {
-        navigation = Navigation.getInstance(contentPane);
-        navBar.getChildren().add(navigation.createNavigation());
     }
 }

@@ -217,7 +217,7 @@ public class ProductFormController implements Initializable {
                             SpotyThreader.spotyThreadPool(
                                     () -> {
                                         try {
-                                            ProductViewModel.updateProduct();
+                                            ProductViewModel.updateProduct(this::onAction, this::onSuccess, this::onFailed);
                                         } catch (Exception e) {
                                             SpotyLogger.writeToFile(e, this.getClass());
                                         }
@@ -244,7 +244,7 @@ public class ProductFormController implements Initializable {
                         SpotyThreader.spotyThreadPool(
                                 () -> {
                                     try {
-                                        ProductViewModel.saveProduct();
+                                        ProductViewModel.saveProduct(this::onAction, this::onSuccess, this::onFailed);
                                     } catch (Exception e) {
                                         SpotyLogger.writeToFile(e, this.getClass());
                                     }
@@ -276,5 +276,17 @@ public class ProductFormController implements Initializable {
                                     .build();
                     notificationHolder.addNotification(notification);
                 });
+    }
+
+    private void onAction() {
+        System.out.println("Loading products...");
+    }
+
+    private void onSuccess() {
+        System.out.println("Loaded products...");
+    }
+
+    private void onFailed() {
+        System.out.println("failed loading products...");
     }
 }

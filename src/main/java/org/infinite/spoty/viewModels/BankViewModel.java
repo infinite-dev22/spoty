@@ -17,7 +17,6 @@ package org.infinite.spoty.viewModels;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -26,13 +25,17 @@ import org.infinite.spoty.data_source.dtos.Branch;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.models.SearchModel;
 import org.infinite.spoty.data_source.repositories.implementations.BanksRepositoryImpl;
+import org.infinite.spoty.utils.ParameterlessConsumer;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
+import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 
 public class BankViewModel {
@@ -47,9 +50,9 @@ public class BankViewModel {
     private static final StringProperty balance = new SimpleStringProperty("");
     private static final StringProperty logo = new SimpleStringProperty("");
     private static final ObjectProperty<Bank> bank = new SimpleObjectProperty<>();
+    private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>();
     public static ObservableList<Bank> banksList = FXCollections.observableArrayList();
     private static final ListProperty<Bank> banks = new SimpleListProperty<>(banksList);
-    private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>();
     public static ObservableList<Branch> branchesList = FXCollections.observableArrayList();
     private static final ListProperty<Branch> branches = new SimpleListProperty<>(branchesList);
     public static ObservableList<Bank> banksComboBoxList = FXCollections.observableArrayList();
@@ -147,8 +150,10 @@ public class BankViewModel {
         BankViewModel.branch.set(branch);
     }
 
-    public static void saveBank() throws Exception {
-
+    public static void saveBank(
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var bank =
                 Bank.builder()
                         .bankName(getBankName())
@@ -158,10 +163,11 @@ public class BankViewModel {
                         .logo(getLogo())
                         .build();
 
-        banksRepository.post(bank);
-
-        clearBankData();
-        getAllBanks();
+        var task = banksRepository.post(bank);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
     }
 
     public static void clearBankData() {
@@ -173,63 +179,93 @@ public class BankViewModel {
         setBalance("");
     }
 
-    public static void getAllBanks() {
-        Type listType = new TypeToken<ArrayList<Bank>>() {
-        }.getType();
+    public static void getAllBanks(
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onFailed) {
+        var task = banksRepository.fetchAll();
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            try {
+                Type listType = new TypeToken<ArrayList<Bank>>() {
+                }.getType();
+                ArrayList<Bank> bankList = gson.fromJson(task.get().body(), listType);
 
-        Platform.runLater(
-                () -> {
-                    banksList.clear();
-
-                    try {
-                        ArrayList<Bank> bankList = gson.fromJson(banksRepository.fetchAll().body(), listType);
-                        banksList.addAll(bankList);
-                    } catch (Exception e) {
-                        SpotyLogger.writeToFile(e, BankViewModel.class);
-                    }
-                });
+                banksList.clear();
+                banksList.addAll(bankList);
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, BankViewModel.class);
+            }
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void getItem(Long index) throws Exception {
-        var findModel = new FindModel();
-        findModel.setId(index);
-        var response = banksRepository.fetch(findModel).body();
-        var bank = gson.fromJson(response, Bank.class);
+    public static void getItem(
+            Long index,
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onFailed) {
+        var findModel = FindModel.builder().id(index).build();
 
-        setBranch(bank.getBranch());
-        setId(bank.getId());
-        setBankName(bank.getBankName());
-        setAccountName(bank.getAccountName());
-        setAccountNumber(bank.getAccountNumber());
-        setLogo(bank.getLogo());
-        setBalance(bank.getBalance());
+        var task = banksRepository.fetch(findModel);
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            try {
+                var bank = gson.fromJson(task.get().body(), Bank.class);
 
-        getAllBanks();
+                setBranch(bank.getBranch());
+                setId(bank.getId());
+                setBankName(bank.getBankName());
+                setAccountName(bank.getAccountName());
+                setAccountNumber(bank.getAccountNumber());
+                setLogo(bank.getLogo());
+                setBalance(bank.getBalance());
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, BankViewModel.class);
+            }
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void searchItem(String search) throws Exception {
-        var searchModel = new SearchModel();
-        searchModel.setSearch(search);
+    public static void searchItem(
+            String search,
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onFailed) {
+        var searchModel = SearchModel.builder().search(search).build();
+        var task = banksRepository.search(searchModel);
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            try {
+                Type listType = new TypeToken<ArrayList<Bank>>() {
+                }.getType();
+                ArrayList<Bank> bankList = gson.fromJson(task.get().body(), listType);
 
-        Type listType = new TypeToken<ArrayList<Bank>>() {
-        }.getType();
-
-        Platform.runLater(
-                () -> {
-                    banksList.clear();
-
-                    try {
-                        ArrayList<Bank> bankList = gson.fromJson(banksRepository.search(searchModel).body(), listType);
-                        banksList.addAll(bankList);
-                    } catch (Exception e) {
-                        SpotyLogger.writeToFile(e, BankViewModel.class);
-                    }
-                });
-
+                banksList.clear();
+                banksList.addAll(bankList);
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, BankViewModel.class);
+            }
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void updateItem() throws IOException, InterruptedException {
-
+    public static void updateItem(
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var bank = Bank.builder()
                 .id(getId())
                 .bankName(getBankName())
@@ -239,16 +275,24 @@ public class BankViewModel {
                 .logo(getLogo())
                 .build();
 
-        banksRepository.put(bank);
-        clearBankData();
-        getAllBanks();
+        var task = banksRepository.put(bank);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void deleteItem(Long index) throws IOException, InterruptedException {
-        var findModel = new FindModel();
+    public static void deleteItem(
+            Long index,
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
+        var findModel = FindModel.builder().id(index).build();
 
-        findModel.setId(index);
-        banksRepository.delete(findModel);
-        getAllBanks();
+        var task = banksRepository.delete(findModel);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
     }
 }

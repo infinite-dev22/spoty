@@ -162,8 +162,6 @@ public class QuotationMasterViewModel {
 //
 //        quotationMasterDao.create(quotationMaster);
         QuotationDetailViewModel.saveQuotationDetails();
-
-        resetProperties();
         getQuotationMasters();
     }
 
@@ -220,8 +218,6 @@ public class QuotationMasterViewModel {
 //
 //        quotationMasterDao.update(quotationMaster);
 //        QuotationDetailViewModel.updateQuotationDetails();
-
-        resetProperties();
         getQuotationMasters();
     }
 

@@ -155,7 +155,7 @@ public class QuotationController implements Initializable {
                 e -> {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
-                            QuotationMasterViewModel.deleteItem(obj.getData().getId());
+                            QuotationMasterViewModel.deleteItem(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
@@ -167,7 +167,7 @@ public class QuotationController implements Initializable {
                 e -> {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
-                            QuotationMasterViewModel.getQuotationMaster(obj.getData().getId());
+                            QuotationMasterViewModel.getQuotationMaster(obj.getData().getId(), this::onAction, this::onFailed);
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
@@ -183,5 +183,17 @@ public class QuotationController implements Initializable {
 
     public void quotationCreateBtnClicked() {
         BaseController.navigation.navigate(Pages.getQuotationMasterFormPane());
+    }
+
+    private void onAction() {
+        System.out.println("Loading quotation...");
+    }
+
+    private void onSuccess() {
+        System.out.println("Loaded quotation...");
+    }
+
+    private void onFailed() {
+        System.out.println("failed loading quotation...");
     }
 }

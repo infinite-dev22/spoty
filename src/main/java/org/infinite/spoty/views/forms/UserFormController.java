@@ -198,7 +198,7 @@ public class UserFormController implements Initializable {
                         if (UserViewModel.getId() > 0) {
                             SpotyThreader.spotyThreadPool(() -> {
                                 try {
-                                    UserViewModel.updateItem();
+                                    UserViewModel.updateItem(this::onAction, this::onSuccess, this::onFailed);
                                 } catch (Exception e) {
                                     SpotyLogger.writeToFile(e, this.getClass());
                                 }
@@ -219,7 +219,7 @@ public class UserFormController implements Initializable {
                         }
                         SpotyThreader.spotyThreadPool(() -> {
                             try {
-                                UserViewModel.saveUser();
+                                UserViewModel.saveUser(this::onAction, this::onSuccess, this::onFailed);
                             } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }
@@ -246,5 +246,17 @@ public class UserFormController implements Initializable {
                                     .build();
                     notificationHolder.addNotification(notification);
                 });
+    }
+
+    private void onAction() {
+        System.out.println("Loading user...");
+    }
+
+    private void onSuccess() {
+        System.out.println("Loaded user...");
+    }
+
+    private void onFailed() {
+        System.out.println("failed loading user...");
     }
 }

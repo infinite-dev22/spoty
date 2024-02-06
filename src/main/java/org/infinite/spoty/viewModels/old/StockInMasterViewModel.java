@@ -159,8 +159,6 @@ public class StockInMasterViewModel {
 //
 //        stockInMasterDao.create(stockInMaster);
         StockInDetailViewModel.createStockInDetails();
-
-        resetProperties();
         getStockInMasters();
     }
 
@@ -217,8 +215,6 @@ public class StockInMasterViewModel {
 //
 //        stockInMasterDao.update(stockInMaster);
         StockInDetailViewModel.updateStockInDetails();
-
-        resetProperties();
         getStockInMasters();
     }
 

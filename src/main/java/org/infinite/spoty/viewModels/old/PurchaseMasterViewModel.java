@@ -159,8 +159,6 @@ public class PurchaseMasterViewModel {
 //
 //        purchaseMasterDao.create(purchaseMaster);
         PurchaseDetailViewModel.savePurchaseDetails();
-
-        resetProperties();
         getPurchaseMasters();
     }
 
@@ -215,8 +213,6 @@ public class PurchaseMasterViewModel {
 //
 //        purchaseMasterDao.update(purchaseMaster);
 //        PurchaseDetailViewModel.updatePurchaseDetails();
-
-        resetProperties();
         getPurchaseMasters();
     }
 

@@ -183,8 +183,6 @@ public class SupplierViewModel {
 //                        getCountry());
 //
 //        supplierDao.create(supplier);
-
-        resetProperties();
         getAllSuppliers();
     }
 
@@ -237,8 +235,6 @@ public class SupplierViewModel {
 //        supplier.setCountry(getCountry());
 //
 //        supplierDao.update(supplier);
-
-        resetProperties();
         getAllSuppliers();
     }
 

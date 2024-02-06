@@ -226,7 +226,7 @@ public class SaleDetailViewModel {
 //        Platform.runLater(
 //                () -> {
 //                    saleDetailList.add(saleDetail);
-//                    resetProperties();
+//
 //                });
     }
 
@@ -297,7 +297,7 @@ public class SaleDetailViewModel {
                     getSaleDetails().remove(getTempId());
                     getSaleDetails().add(getTempId(), saleDetail);
 
-                    resetProperties();
+
                 });
     }
 

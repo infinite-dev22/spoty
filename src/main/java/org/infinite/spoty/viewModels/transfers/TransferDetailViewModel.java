@@ -26,27 +26,30 @@ import org.infinite.spoty.data_source.dtos.transfers.TransferMaster;
 import org.infinite.spoty.data_source.dtos.transfers.TransferTransaction;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.repositories.implementations.TransfersRepositoryImpl;
+import org.infinite.spoty.utils.ParameterlessConsumer;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.ProductViewModel;
 import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
-import org.infinite.spoty.viewModels.adjustments.AdjustmentDetailViewModel;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 import static org.infinite.spoty.values.SharedResources.*;
 
 public class TransferDetailViewModel {
+    public static final ObservableList<TransferDetail> transferDetailsList =
+            FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
                     UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
             .create();
-    public static final ObservableList<TransferDetail> transferDetailsList =
-            FXCollections.observableArrayList();
     private static final ListProperty<TransferDetail> transferDetails =
             new SimpleListProperty<>(transferDetailsList);
     private static final LongProperty id = new SimpleLongProperty(0);
@@ -189,29 +192,50 @@ public class TransferDetailViewModel {
                 .build();
 
         transferDetailsList.add(transferDetail);
-        resetProperties();
     }
 
-    public static void saveTransferDetails() {
+    public static void saveTransferDetails(
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onSuccess,
+            @Nullable ParameterlessConsumer onFailed) {
         transferDetailsList.forEach(transferDetail -> {
-            try {
-                transfersRepository.postDetail(transferDetail);
-            } catch (IOException | InterruptedException e) {
-                throw new RuntimeException(e);
+            var task = transfersRepository.postDetail(transferDetail);
+            if (Objects.nonNull(onActivity)) {
+                task.setOnRunning(workerStateEvent -> onActivity.run());
             }
+            if (Objects.nonNull(onSuccess)) {
+                task.setOnFailed(workerStateEvent -> onSuccess.run());
+            }
+            if (Objects.nonNull(onFailed)) {
+                task.setOnFailed(workerStateEvent -> onFailed.run());
+            }
+            SpotyThreader.spotyThreadPool(task);
         });
+
         setProductQuantity();
         transferDetailsList.clear();
     }
 
-    public static void getAllTransferDetails() throws IOException, InterruptedException {
-        Type listType = new TypeToken<ArrayList<TransferDetail>>() {
-        }.getType();
-        transferDetailsList.clear();
+    public static void getAllTransferDetails(@Nullable ParameterlessConsumer onActivity) {
+        var task = transfersRepository.fetchAllDetail();
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            Type listType = new TypeToken<ArrayList<TransferDetail>>() {
+            }.getType();
 
-        ArrayList<TransferDetail> transferDetailList = gson.fromJson(
-                transfersRepository.fetchAllDetail().body(), listType);
-        transferDetailsList.addAll(transferDetailList);
+            try {
+                ArrayList<TransferDetail> transferDetailList = gson.fromJson(
+                        task.get().body(), listType);
+
+                transferDetailsList.clear();
+                transferDetailsList.addAll(transferDetailList);
+            } catch (InterruptedException | ExecutionException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
     public static void updateTransferDetail() {
@@ -227,7 +251,6 @@ public class TransferDetailViewModel {
 
         transferDetailsList.remove(getTempId());
         transferDetailsList.add(getTempId(), transferDetail);
-        resetProperties();
     }
 
     public static void getItem(TransferDetail transferDetail) {
@@ -240,7 +263,11 @@ public class TransferDetailViewModel {
         setTotal(String.valueOf(transferDetail.getTotal()));
     }
 
-    public static void updateItem(Long index) throws IOException, InterruptedException {
+    public static void updateItem(
+            Long index,
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onSuccess,
+            @Nullable ParameterlessConsumer onFailed) {
         var transferDetail = transferDetailsList.get(Math.toIntExact(index));
         transferDetail.setProduct(getProduct());
         transferDetail.setQuantity(getQuantity());
@@ -248,22 +275,39 @@ public class TransferDetailViewModel {
         transferDetail.setDescription(getDescription());
         transferDetail.setPrice(getPrice());
         transferDetail.setTotal(getTotal());
-        transfersRepository.putDetail(transferDetail);
-        getAllTransferDetails();
+        var task = transfersRepository.putDetail(transferDetail);
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onSuccess)) {
+            task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void updateTransferDetails() throws IOException, InterruptedException {
+    public static void updateTransferDetails(
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onSuccess,
+            @Nullable ParameterlessConsumer onFailed) {
         // TODO: Add save multiple on API.
         transferDetailsList.forEach(
-                adjustmentDetail -> {
-                    try {
-                        transfersRepository.putDetail(adjustmentDetail);
-                    } catch (Exception e) {
-                        SpotyLogger.writeToFile(e, AdjustmentDetailViewModel.class);
+                transferDetail -> {
+                    var task = transfersRepository.putDetail(transferDetail);
+                    if (Objects.nonNull(onActivity)) {
+                        task.setOnRunning(workerStateEvent -> onActivity.run());
                     }
+                    if (Objects.nonNull(onSuccess)) {
+                        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+                    }
+                    if (Objects.nonNull(onFailed)) {
+                        task.setOnFailed(workerStateEvent -> onFailed.run());
+                    }
+                    SpotyThreader.spotyThreadPool(task);
                 });
         updateProductQuantity();
-        getAllTransferDetails();
     }
 
     public static void removeTransferDetail(Long index, int tempIndex) {
@@ -271,10 +315,24 @@ public class TransferDetailViewModel {
         PENDING_DELETES.add(index);
     }
 
-    public static void deleteTransferDetails(@NotNull LinkedList<Long> indexes) throws IOException, InterruptedException {
+    public static void deleteTransferDetails(@NotNull LinkedList<Long> indexes,
+                                             @Nullable ParameterlessConsumer onActivity,
+                                             @Nullable ParameterlessConsumer onSuccess,
+                                             @Nullable ParameterlessConsumer onFailed) {
         LinkedList<FindModel> findModelList = new LinkedList<>();
         indexes.forEach(index -> findModelList.add(new FindModel(index)));
-        transfersRepository.deleteMultipleDetails(findModelList);
+
+        var task = transfersRepository.deleteMultipleDetails(findModelList);
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onSuccess)) {
+            task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        SpotyThreader.spotyThreadPool(task);
     }
 
     private static void setProductQuantity() {
@@ -287,7 +345,7 @@ public class TransferDetailViewModel {
                             ProductViewModel.setQuantity(productDetailQuantity);
 
                             try {
-                                ProductViewModel.updateProduct();
+                                ProductViewModel.updateProduct(null, null, null);
                                 createTransferTransaction(transferDetails);
                             } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, TransferDetailViewModel.class);
@@ -310,7 +368,7 @@ public class TransferDetailViewModel {
 
                                 ProductViewModel.setQuantity(productQuantity);
 
-                                ProductViewModel.updateProduct();
+                                ProductViewModel.updateProduct(null, null, null);
 
                                 updateTransferTransaction(transferDetails);
                             } catch (Exception e) {

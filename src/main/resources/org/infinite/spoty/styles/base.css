@@ -46,17 +46,8 @@
     -fx-opacity: 1.0;
 }
 
-.rootPane .maximize-icon {
-    -mfx-color: #ffbf37;
-    -fx-opacity: 0.5;
-}
-
-.rootPane .maximize-icon:hover {
-    -fx-opacity: 1.0;
-}
-
 .rootPane .minimize-icon {
-    -mfx-color: -mfx-purple;
+    -mfx-color: -mfx-orange;
     -fx-opacity: 0.5;
 }
 
@@ -336,7 +327,9 @@
 .appBar {
     -fx-background-color: -mfx-app-components-light;
     -fx-background-radius: 10 10 10 10;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.12, -1.0, 1.5);
+    -fx-border-color: -mfx-border-gray;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
 }
 
 /*NOTIFICATION STYLES*/
@@ -461,4 +454,18 @@
 
 .mfx-tree-view .scroll-bar:vertical .thumb {
     -fx-background-color: derive(#20601cbe, 90.0%);
+}
+
+/*CARDS*/
+.card-flat {
+    -fx-background-color: rgba(255, 255, 255, 1);
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: -mfx-border-gray;
+}
+.card-raised {
+    -fx-background-color: rgba(255, 255, 255, 1);
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.12, -1.0, 1.5);
 }

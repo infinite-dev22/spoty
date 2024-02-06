@@ -160,7 +160,7 @@ public class SupplierController implements Initializable {
                 e -> {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
-                            SupplierViewModel.deleteItem(obj.getData().getId());
+                            SupplierViewModel.deleteItem(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
@@ -172,7 +172,7 @@ public class SupplierController implements Initializable {
                 e -> {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
-                            SupplierViewModel.getItem(obj.getData().getId());
+                            SupplierViewModel.getItem(obj.getData().getId(), this::onAction, this::onFailed);
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
@@ -210,5 +210,17 @@ public class SupplierController implements Initializable {
 
     public void supplierCreateBtnClicked() {
         dialog.showAndWait();
+    }
+
+    private void onAction() {
+        System.out.println("Loading supplier...");
+    }
+
+    private void onSuccess() {
+        System.out.println("Loaded supplier...");
+    }
+
+    private void onFailed() {
+        System.out.println("failed loading supplier...");
     }
 }

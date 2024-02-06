@@ -171,8 +171,6 @@ public class ExpenseViewModel {
 //                        getDate(), getName(), getCategory(), getBranch(), getDetails(), getAmount());
 //
 //        expenseDao.create(expense);
-
-        resetProperties();
         getAllExpenses();
     }
 

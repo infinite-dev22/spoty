@@ -27,8 +27,12 @@ import org.infinite.spoty.data_source.dtos.transfers.TransferMaster;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.models.SearchModel;
 import org.infinite.spoty.data_source.repositories.implementations.TransfersRepositoryImpl;
+import org.infinite.spoty.utils.ParameterlessConsumer;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
+import org.infinite.spoty.viewModels.adjustments.AdjustmentDetailViewModel;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -36,17 +40,19 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
 
 public class TransferMasterViewModel {
+    @Getter
+    public static final ObservableList<TransferMaster> transferMastersList =
+            FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
                     UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
             .create();
-    @Getter
-    public static final ObservableList<TransferMaster> transferMastersList =
-            FXCollections.observableArrayList();
     private static final ListProperty<TransferMaster> transfers =
             new SimpleListProperty<>(transferMastersList);
     private static final LongProperty id = new SimpleLongProperty(0);
@@ -173,7 +179,10 @@ public class TransferMasterViewModel {
                 });
     }
 
-    public static void saveTransferMaster() throws IOException, InterruptedException {
+    public static void saveTransferMaster(
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var transferMaster = TransferMaster.builder()
                 .date(getDate())
                 .fromBranch(getFromBranch())
@@ -182,60 +191,116 @@ public class TransferMasterViewModel {
                 .status(getStatus())
                 .notes(getNote())
                 .build();
+
         if (!TransferDetailViewModel.transferDetailsList.isEmpty()) {
             TransferDetailViewModel.transferDetailsList.forEach(
                     transferDetail -> transferDetail.setTransfer(transferMaster));
             transferMaster.setTransferDetails(TransferDetailViewModel.getTransferDetails());
         }
-        transfersRepository.postMaster(transferMaster);
-        TransferDetailViewModel.saveTransferDetails();
-        TransferMasterViewModel.resetProperties();
-        getTransferMasters();
+
+        var task = transfersRepository.postMaster(transferMaster);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> {
+            TransferDetailViewModel.saveTransferDetails(onActivity, null, onFailed);
+            onSuccess.run();
+        });
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void getTransferMasters() throws IOException, InterruptedException {
-        Type listType = new TypeToken<ArrayList<TransferMaster>>() {
-        }.getType();
-        transferMastersList.clear();
-        ArrayList<TransferMaster> transferMasterList = gson.fromJson(
-                transfersRepository.fetchAllMaster().body(), listType);
-        transferMastersList.addAll(transferMasterList);
+    public static void getTransferMasters(
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onFailed) {
+        var task = transfersRepository.fetchAllMaster();
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            Type listType = new TypeToken<ArrayList<TransferMaster>>() {
+            }.getType();
+
+            try {
+                ArrayList<TransferMaster> transferMasterList = gson.fromJson(
+                        task.get().body(), listType);
+
+                transferMastersList.clear();
+                transferMastersList.addAll(transferMasterList);
+            } catch (InterruptedException | ExecutionException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void getItem(Long index) throws IOException, InterruptedException {
-        var findModel = new FindModel();
-        findModel.setId(index);
-        var response = transfersRepository.fetchMaster(findModel).body();
-        var transferMaster = gson.fromJson(response, TransferMaster.class);
+    public static void getItem(
+            Long index,
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onFailed) {
+        var findModel = FindModel.builder().id(index).build();
+        var task = transfersRepository.fetchMaster(findModel);
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            try {
+                TransferMaster transferMaster = gson.fromJson(task.get().body(), TransferMaster.class);
 
-        setId(transferMaster.getId());
-        setDate(transferMaster.getLocaleDate());
-        setFromBranch(transferMaster.getFromBranch());
-        setToBranch(transferMaster.getToBranch());
-        setTotalCost(String.valueOf(transferMaster.getTotal()));
-        setNote(transferMaster.getNotes());
-        setStatus(transferMaster.getStatus());
+                setId(transferMaster.getId());
+                setDate(transferMaster.getLocaleDate());
+                setFromBranch(transferMaster.getFromBranch());
+                setToBranch(transferMaster.getToBranch());
+                setTotalCost(String.valueOf(transferMaster.getTotal()));
+                setNote(transferMaster.getNotes());
+                setStatus(transferMaster.getStatus());
 
-        TransferDetailViewModel.transferDetailsList.clear();
-        TransferDetailViewModel.transferDetailsList.addAll(transferMaster.getTransferDetails());
-
-        getTransferMasters();
+                TransferDetailViewModel.transferDetailsList.clear();
+                TransferDetailViewModel.transferDetailsList.addAll(transferMaster.getTransferDetails());
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, TransferMasterViewModel.class);
+            }
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void searchItem(String search) throws IOException, InterruptedException {
-        var searchModel = new SearchModel();
-        searchModel.setSearch(search);
+    public static void searchItem(
+            String search,
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onFailed) {
+        var searchModel = SearchModel.builder().search(search).build();
+        var task = transfersRepository.searchMaster(searchModel);
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            Type listType = new TypeToken<ArrayList<TransferMaster>>() {
+            }.getType();
 
-        Type listType = new TypeToken<ArrayList<TransferMaster>>() {
-        }.getType();
+            try {
+                ArrayList<TransferMaster> transferMasterList = gson.fromJson(
+                        task.get().body(), listType);
 
-        transferMastersList.clear();
-        ArrayList<TransferMaster> transferMasterList = gson.fromJson(
-                transfersRepository.searchMaster(searchModel).body(), listType);
-        transferMastersList.addAll(transferMasterList);
+                transferMastersList.clear();
+                transferMastersList.addAll(transferMasterList);
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, TransferMasterViewModel.class);
+            }
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void updateItem() throws IOException, InterruptedException {
+    public static void updateItem(
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var transferMaster = TransferMaster.builder()
                 .id(getId())
                 .date(getDate())
@@ -246,22 +311,35 @@ public class TransferMasterViewModel {
                 .notes(getNote())
                 .build();
 
-        TransferDetailViewModel.deleteTransferDetails(PENDING_DELETES);
-        transferMaster.setTransferDetails(TransferDetailViewModel.getTransferDetails());
+        if (!PENDING_DELETES.isEmpty()) {
+            TransferDetailViewModel.deleteTransferDetails(PENDING_DELETES, onActivity, null, onFailed);
+        }
 
-        transfersRepository.putMaster(transferMaster);
-        TransferDetailViewModel.updateTransferDetails();
+        if (!TransferDetailViewModel.getTransferDetails().isEmpty()) {
+            TransferDetailViewModel.getTransferDetails()
+                    .forEach(adjustmentDetail -> adjustmentDetail.setTransfer(transferMaster));
 
-        TransferMasterViewModel.resetProperties();
+            transferMaster.setTransferDetails(TransferDetailViewModel.getTransferDetails());
+        }
 
-        getTransferMasters();
+        var task = transfersRepository.putMaster(transferMaster);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> TransferDetailViewModel.updateTransferDetails(onActivity, onSuccess, onFailed));
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void deleteItem(Long index) throws IOException, InterruptedException {
-        var findModel = new FindModel();
+    public static void deleteItem(
+            Long index,
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
+        var findModel = FindModel.builder().id(index).build();
 
-        findModel.setId(index);
-        transfersRepository.deleteMaster(findModel);
-        getTransferMasters();
+        var task = transfersRepository.deleteMaster(findModel);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
     }
 }

@@ -17,22 +17,24 @@ package org.infinite.spoty.viewModels;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.data_source.auth.ProtectedGlobals;
 import org.infinite.spoty.data_source.dtos.Branch;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.models.SearchModel;
 import org.infinite.spoty.data_source.repositories.implementations.BranchesRepositoryImpl;
+import org.infinite.spoty.utils.ParameterlessConsumer;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
+import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 
 public class BranchViewModel {
@@ -48,6 +50,7 @@ public class BranchViewModel {
     private static final StringProperty town = new SimpleStringProperty("");
     private static final StringProperty city = new SimpleStringProperty("");
     private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>();
+    private static final BranchesRepositoryImpl branchesRepository = new BranchesRepositoryImpl();
     public static ObservableList<Branch> branchesList = FXCollections.observableArrayList();
     private static final ListProperty<Branch> branches = new SimpleListProperty<>(branchesList);
     public static ObservableList<Branch> branchesComboBoxList = FXCollections.observableArrayList();
@@ -156,9 +159,10 @@ public class BranchViewModel {
         BranchViewModel.branch.set(branch);
     }
 
-    public static void saveBranch() throws Exception {
-        var branchesRepository = new BranchesRepositoryImpl();
-
+    public static void saveBranch(
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var branch =
                 Branch.builder()
                         .name(getName())
@@ -168,12 +172,11 @@ public class BranchViewModel {
                         .town(getTown())
                         .build();
 
-        var response = branchesRepository.post(branch);
-        System.out.println(response.body());
-        System.out.println("Token: " + ProtectedGlobals.authToken);
-
-        clearBranchData();
-        getAllBranches();
+        var task = branchesRepository.post(branch);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
     }
 
     public static void clearBranchData() {
@@ -185,67 +188,93 @@ public class BranchViewModel {
         setTown("");
     }
 
-    public static void getAllBranches() {
-        var branchesRepository = new BranchesRepositoryImpl();
-        Type listType = new TypeToken<ArrayList<Branch>>() {
-        }.getType();
+    public static void getAllBranches(
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onFailed) {
+        var task = branchesRepository.fetchAll();
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            try {
+                Type listType = new TypeToken<ArrayList<Branch>>() {
+                }.getType();
+                ArrayList<Branch> branchList = gson.fromJson(task.get().body(), listType);
 
-        Platform.runLater(
-                () -> {
-                    branchesList.clear();
-
-                    try {
-                        ArrayList<Branch> branchList = gson.fromJson(branchesRepository.fetchAll().body(), listType);
-                        branchesList.addAll(branchList);
-                    } catch (Exception e) {
-                        SpotyLogger.writeToFile(e, BranchViewModel.class);
-                    }
-                });
+                branchesList.clear();
+                branchesList.addAll(branchList);
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, BranchViewModel.class);
+            }
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void getItem(Long branchID) throws Exception {
-        var branchesRepository = new BranchesRepositoryImpl();
-        var findModel = new FindModel();
-        findModel.setId(branchID);
-        var response = branchesRepository.fetch(findModel).body();
-        var branch = gson.fromJson(response, Branch.class);
+    public static void getItem(
+            Long index,
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onFailed) {
+        var findModel = FindModel.builder().id(index).build();
 
-        setBranch(branch);
-        setId(branch.getId());
-        setName(branch.getName());
-        setEmail(branch.getEmail());
-        setPhone(branch.getPhone());
-        setCity(branch.getCity());
-        setTown(branch.getTown());
+        var task = branchesRepository.fetch(findModel);
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            try {
+                var branch = gson.fromJson(task.get().body(), Branch.class);
 
-        getAllBranches();
+                setBranch(branch);
+                setId(branch.getId());
+                setName(branch.getName());
+                setEmail(branch.getEmail());
+                setPhone(branch.getPhone());
+                setCity(branch.getCity());
+                setTown(branch.getTown());
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, BranchViewModel.class);
+            }
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void searchItem(String search) throws Exception {
-        var branchesRepository = new BranchesRepositoryImpl();
-        var searchModel = new SearchModel();
-        searchModel.setSearch(search);
+    public static void searchItem(
+            String search,
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onFailed) {
+        var searchModel = SearchModel.builder().search(search).build();
+        var task = branchesRepository.search(searchModel);
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            try {
+                Type listType = new TypeToken<ArrayList<Branch>>() {
+                }.getType();
+                ArrayList<Branch> branchList = gson.fromJson(task.get().body(), listType);
 
-        Type listType = new TypeToken<ArrayList<Branch>>() {
-        }.getType();
-
-        Platform.runLater(
-                () -> {
-                    branchesList.clear();
-
-                    try {
-                        ArrayList<Branch> branchList = gson.fromJson(branchesRepository.search(searchModel).body(), listType);
-                        branchesList.addAll(branchList);
-                    } catch (Exception e) {
-                        SpotyLogger.writeToFile(e, BranchViewModel.class);
-                    }
-                });
-
+                branchesList.clear();
+                branchesList.addAll(branchList);
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, BranchViewModel.class);
+            }
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void updateItem() throws IOException, InterruptedException {
-        var branchesRepository = new BranchesRepositoryImpl();
-
+    public static void updateItem(
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var branch = Branch.builder()
                 .id(getId())
                 .name(getName())
@@ -255,17 +284,24 @@ public class BranchViewModel {
                 .town(getTown())
                 .build();
 
-        branchesRepository.put(branch);
-        clearBranchData();
-        getAllBranches();
+        var task = branchesRepository.put(branch);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void deleteItem(Long branchID) throws IOException, InterruptedException {
-        var branchesRepository = new BranchesRepositoryImpl();
-        var findModel = new FindModel();
+    public static void deleteItem(
+            Long index,
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
+        var findModel = FindModel.builder().id(index).build();
 
-        findModel.setId(branchID);
-        branchesRepository.delete(findModel);
-        getAllBranches();
+        var task = branchesRepository.delete(findModel);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
     }
 }

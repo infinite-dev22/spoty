@@ -157,7 +157,7 @@ public class StockInDetailViewModel {
 //        Platform.runLater(
 //                () -> {
 //                    stockInDetailsList.add(stockInDetail);
-//                    resetProperties();
+//
 //                });
     }
 
@@ -203,7 +203,7 @@ public class StockInDetailViewModel {
 //                    stockInDetailsList.remove(getTempId());
 //                    stockInDetailsList.add(getTempId(), stockInDetail);
 //
-//                    resetProperties();
+//
 //                });
     }
 

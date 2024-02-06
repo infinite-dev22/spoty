@@ -28,26 +28,31 @@ import org.infinite.spoty.data_source.dtos.requisitions.RequisitionMaster;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.models.SearchModel;
 import org.infinite.spoty.data_source.repositories.implementations.RequisitionsRepositoryImpl;
+import org.infinite.spoty.utils.ParameterlessConsumer;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 import static org.infinite.spoty.values.SharedResources.*;
 
 public class RequisitionDetailViewModel {
+    @Getter
+    public static final ObservableList<RequisitionDetail> requisitionDetailsList =
+            FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
                     UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
             .create();
-    @Getter
-    public static final ObservableList<RequisitionDetail> requisitionDetailsList =
-            FXCollections.observableArrayList();
     private static final ListProperty<RequisitionDetail> requisitionDetails =
             new SimpleListProperty<>(requisitionDetailsList);
     private static final LongProperty id = new SimpleLongProperty(0);
@@ -146,59 +151,81 @@ public class RequisitionDetailViewModel {
                 .description(getDescription())
                 .build();
 
-        Platform.runLater(() -> requisitionDetailsList.add(requisitionDetail));
-
-        resetProperties();
+        requisitionDetailsList.add(requisitionDetail);
     }
 
-    public static void saveRequisitionDetails() {
+    public static void saveRequisitionDetails(
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onSuccess,
+            @Nullable ParameterlessConsumer onFailed) {
         requisitionDetailsList.forEach(requisitionDetail -> {  // TODO: Add postMultipleDetail().
-            try {
-                requisitionsRepository.postDetail(requisitionDetail);
-            } catch (IOException | InterruptedException e) {
-                throw new RuntimeException(e);
+            var task = requisitionsRepository.postDetail(requisitionDetail);
+            if (Objects.nonNull(onActivity)) {
+                task.setOnRunning(workerStateEvent -> onActivity.run());
             }
+            if (Objects.nonNull(onSuccess)) {
+                task.setOnFailed(workerStateEvent -> onSuccess.run());
+            }
+            if (Objects.nonNull(onFailed)) {
+                task.setOnFailed(workerStateEvent -> onFailed.run());
+            }
+            SpotyThreader.spotyThreadPool(task);
         });
         requisitionDetailsList.clear();
     }
 
-    public static void getAllRequisitionDetails() {
-        Type listType = new TypeToken<ArrayList<RequisitionDetail>>() {
-        }.getType();
+    public static void getAllRequisitionDetails(@Nullable ParameterlessConsumer onActivity) {
+        var task = requisitionsRepository.fetchAllDetail();
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            Type listType = new TypeToken<ArrayList<RequisitionDetail>>() {
+            }.getType();
+            ArrayList<RequisitionDetail> requisitionDetailList = new ArrayList<>();
+            try {
+                requisitionDetailList = gson.fromJson(
+                        task.get().body(), listType);
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, RequisitionDetailViewModel.class);
+            }
 
-        Platform.runLater(
-                () -> {
-                    requisitionDetailsList.clear();
-
-                    try {
-                        ArrayList<RequisitionDetail> requisitionDetailList = gson.fromJson(
-                                requisitionsRepository.fetchAllDetail().body(), listType);
-                        requisitionDetailsList.addAll(requisitionDetailList);
-                    } catch (IOException | InterruptedException e) {
-                        SpotyLogger.writeToFile(e, RequisitionDetailViewModel.class);
-                    }
-                });
+            requisitionDetailsList.clear();
+            requisitionDetailsList.addAll(requisitionDetailList);
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void searchItem(String search) throws Exception {
+    public static void searchItem(
+            String search,
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onFailed) {
         var searchModel = new SearchModel();
         searchModel.setSearch(search);
 
-        Type listType = new TypeToken<ArrayList<RequisitionDetail>>() {
-        }.getType();
+        var task = requisitionsRepository.searchDetail(searchModel);
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            Type listType = new TypeToken<ArrayList<RequisitionDetail>>() {
+            }.getType();
+            ArrayList<RequisitionDetail> requisitionDetailList = new ArrayList<>();
+            try {
+                requisitionDetailList = gson.fromJson(
+                        task.get().body(), listType);
+            } catch (InterruptedException | ExecutionException e) {
 
-        Platform.runLater(
-                () -> {
-                    requisitionDetailsList.clear();
+                SpotyLogger.writeToFile(e, RequisitionDetailViewModel.class);
+            }
 
-                    try {
-                        ArrayList<RequisitionDetail> requisitionDetailList = gson.fromJson(
-                                requisitionsRepository.searchDetail(searchModel).body(), listType);
-                        requisitionDetailsList.addAll(requisitionDetailList);
-                    } catch (Exception e) {
-                        SpotyLogger.writeToFile(e, RequisitionDetailViewModel.class);
-                    }
-                });
+            requisitionDetailsList.clear();
+            requisitionDetailsList.addAll(requisitionDetailList);
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
     public static void updateRequisitionDetail(Long index) {
@@ -212,31 +239,62 @@ public class RequisitionDetailViewModel {
 
         requisitionDetailsList.remove(getTempId());
         requisitionDetailsList.add(getTempId(), requisitionDetail);
-        resetProperties();
     }
 
-    public static void getItem(Long index, int tempIndex) throws IOException, InterruptedException {
+    public static void getItem(Long index, int tempIndex,
+                               @Nullable ParameterlessConsumer onActivity,
+                               @Nullable ParameterlessConsumer onSuccess,
+                               @Nullable ParameterlessConsumer onFailed) throws IOException, InterruptedException {
         var findModel = FindModel.builder().id(index).build();
-        var requisitionDetail = gson.fromJson(requisitionsRepository.fetchDetail(findModel).body(), RequisitionDetail.class);
+        var task = requisitionsRepository.fetchDetail(findModel);
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onSuccess)) {
+            task.setOnSucceeded(workerStateEvent -> {
+                RequisitionDetail requisitionDetail = new RequisitionDetail();
+                try {
+                    requisitionDetail = gson.fromJson(task.get().body(), RequisitionDetail.class);
+                } catch (InterruptedException | ExecutionException e) {
+                    SpotyLogger.writeToFile(e, RequisitionDetailViewModel.class);
+                }
 
-        setTempId(tempIndex);
-        setId(requisitionDetail.getId());
-        setProduct(requisitionDetail.getProduct());
-        setQuantity(String.valueOf(requisitionDetail.getQuantity()));
-        setDescription(requisitionDetail.getDescription());
+                setTempId(tempIndex);
+                setId(requisitionDetail.getId());
+                setProduct(requisitionDetail.getProduct());
+                setQuantity(String.valueOf(requisitionDetail.getQuantity()));
+                setDescription(requisitionDetail.getDescription());
+
+                onSuccess.run();
+            });
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void updateRequisitionDetails() {
+    public static void updateRequisitionDetails(
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onSuccess,
+            @Nullable ParameterlessConsumer onFailed) {
+        // TODO: Add save multiple on API.
         requisitionDetailsList.forEach(
                 requisitionDetail -> {
-                    try {
-                        requisitionsRepository.putDetail(requisitionDetail);
-                    } catch (IOException | InterruptedException e) {
-                        SpotyLogger.writeToFile(e, RequisitionDetailViewModel.class);
+                    var task = requisitionsRepository.putDetail(requisitionDetail);
+                    if (Objects.nonNull(onActivity)) {
+                        task.setOnRunning(workerStateEvent -> onActivity.run());
                     }
+                    if (Objects.nonNull(onSuccess)) {
+                        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+                    }
+                    if (Objects.nonNull(onFailed)) {
+                        task.setOnFailed(workerStateEvent -> onFailed.run());
+                    }
+                    SpotyThreader.spotyThreadPool(task);
                 });
 
-        getAllRequisitionDetails();
+        // getAllRequisitionDetails();
     }
 
     public static void removeRequisitionDetail(Long index, int tempIndex) {
@@ -244,9 +302,23 @@ public class RequisitionDetailViewModel {
         PENDING_DELETES.add(index);
     }
 
-    public static void deleteRequisitionDetails(@NotNull LinkedList<Long> indexes) throws IOException, InterruptedException {
+    public static void deleteRequisitionDetails(@NotNull LinkedList<Long> indexes,
+                                                @Nullable ParameterlessConsumer onActivity,
+                                                @Nullable ParameterlessConsumer onSuccess,
+                                                @Nullable ParameterlessConsumer onFailed) {
         LinkedList<FindModel> findModelList = new LinkedList<>();
         indexes.forEach(index -> findModelList.add(new FindModel(index)));
-        requisitionsRepository.deleteMultipleDetails(findModelList);
+
+        var task = requisitionsRepository.deleteMultipleDetails(findModelList);
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onSuccess)) {
+            task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        SpotyThreader.spotyThreadPool(task);
     }
 }

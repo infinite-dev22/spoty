@@ -27,27 +27,30 @@ import org.infinite.spoty.data_source.dtos.stock_ins.StockInMaster;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.models.SearchModel;
 import org.infinite.spoty.data_source.repositories.implementations.StockInsRepositoryImpl;
+import org.infinite.spoty.utils.ParameterlessConsumer;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 import static org.infinite.spoty.values.SharedResources.PENDING_DELETES;
 
 public class StockInMasterViewModel {
+    @Getter
+    public static final ObservableList<StockInMaster> stockInMastersList =
+            FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
                     UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
             .create();
-    @Getter
-    public static final ObservableList<StockInMaster> stockInMastersList =
-            FXCollections.observableArrayList();
     private static final ListProperty<StockInMaster> stockIns =
             new SimpleListProperty<>(stockInMastersList);
     private static final LongProperty id = new SimpleLongProperty(0);
@@ -160,7 +163,10 @@ public class StockInMasterViewModel {
                 });
     }
 
-    public static void saveStockInMaster() throws IOException, InterruptedException {
+    public static void saveStockInMaster(
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var stockInMaster = StockInMaster.builder()
                 .date(getDate())
                 .branch(getBranch())
@@ -174,53 +180,104 @@ public class StockInMasterViewModel {
             stockInMaster.setStockInDetails(StockInDetailViewModel.stockInDetailsList);
         }
 
-        stockInsRepository.postMaster(stockInMaster);
-        StockInDetailViewModel.createStockInDetails();
-        resetProperties();
-        getStockInMasters();
+        var task = stockInsRepository.postMaster(stockInMaster);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> {
+            StockInDetailViewModel.createStockInDetails(onActivity, null, onFailed);
+            onSuccess.run();
+        });
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void getStockInMasters() throws IOException, InterruptedException {
-        Type listType = new TypeToken<ArrayList<StockInMaster>>() {
-        }.getType();
-        stockInMastersList.clear();
-        ArrayList<StockInMaster> stockInMasterList = gson.fromJson(
-                stockInsRepository.fetchAllMaster().body(), listType);
-        stockInMastersList.addAll(stockInMasterList);
+    public static void getStockInMasters(
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onFailed) {
+        var task = stockInsRepository.fetchAllMaster();
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            Type listType = new TypeToken<ArrayList<StockInMaster>>() {
+            }.getType();
+
+            try {
+                ArrayList<StockInMaster> stockInMasterList = gson.fromJson(
+                        task.get().body(), listType);
+                stockInMastersList.clear();
+                stockInMastersList.addAll(stockInMasterList);
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, StockInDetailViewModel.class);
+            }
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void getItem(Long index) throws IOException, InterruptedException {
-        var findModel = new FindModel();
-        findModel.setId(index);
-        var response = stockInsRepository.fetchMaster(findModel).body();
-        var stockInMaster = gson.fromJson(response, StockInMaster.class);
+    public static void getItem(
+            Long index,
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onFailed) {
+        var findModel = FindModel.builder().id(index).build();
+        var task = stockInsRepository.fetchMaster(findModel);
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            try {
+                StockInMaster stockInMaster = gson.fromJson(task.get().body(), StockInMaster.class);
 
-        setId(stockInMaster.getId());
-        setDate(stockInMaster.getLocaleDate());
-        setBranch(stockInMaster.getBranch());
-        setStatus(stockInMaster.getStatus());
-        setNote(stockInMaster.getNotes());
+                setId(stockInMaster.getId());
+                setDate(stockInMaster.getLocaleDate());
+                setBranch(stockInMaster.getBranch());
+                setStatus(stockInMaster.getStatus());
+                setNote(stockInMaster.getNotes());
 
-        StockInDetailViewModel.stockInDetailsList.clear();
-        StockInDetailViewModel.stockInDetailsList.addAll(stockInMaster.getStockInDetails());
-
-        getStockInMasters();
+                StockInDetailViewModel.stockInDetailsList.clear();
+                StockInDetailViewModel.stockInDetailsList.addAll(stockInMaster.getStockInDetails());
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, StockInDetailViewModel.class);
+            }
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void searchItem(String search) throws IOException, InterruptedException {
-        var searchModel = new SearchModel();
-        searchModel.setSearch(search);
-
-        Type listType = new TypeToken<ArrayList<StockInMaster>>() {
-        }.getType();
-
-        stockInMastersList.clear();
-        ArrayList<StockInMaster> stockInMasterList = gson.fromJson(
-                stockInsRepository.searchMaster(searchModel).body(), listType);
-        stockInMastersList.addAll(stockInMasterList);
+    public static void searchItem(
+            String search,
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onFailed) {
+        var searchModel = SearchModel.builder().search(search).build();
+        var task = stockInsRepository.searchMaster(searchModel);
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            Type listType = new TypeToken<ArrayList<StockInMaster>>() {
+            }.getType();
+            try {
+                ArrayList<StockInMaster> stockInMasterList = gson.fromJson(
+                        task.get().body(), listType);
+                stockInMastersList.clear();
+                stockInMastersList.addAll(stockInMasterList);
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, StockInMasterViewModel.class);
+            }
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void updateItem() throws IOException, InterruptedException {
+    public static void updateItem(
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var stockInMaster = StockInMaster.builder()
                 .id(getId())
                 .date(getDate())
@@ -229,19 +286,37 @@ public class StockInMasterViewModel {
                 .notes(getNote())
                 .build();
 
-        StockInDetailViewModel.deleteStockInDetails(PENDING_DELETES);
-        stockInMaster.setStockInDetails(StockInDetailViewModel.stockInDetailsList);
-        stockInsRepository.putDetail(stockInMaster);
-        StockInDetailViewModel.updateStockInDetails();
-        resetProperties();
-        getStockInMasters();
+        if (!PENDING_DELETES.isEmpty()) {
+            StockInDetailViewModel.deleteStockInDetails(PENDING_DELETES, onActivity, null, onFailed);
+        }
+
+        if (!StockInDetailViewModel.stockInDetailsList.isEmpty()) {
+            StockInDetailViewModel.stockInDetailsList
+                    .forEach(stockInDetail -> stockInDetail.setStockIn(stockInMaster));
+
+            stockInMaster.setStockInDetails(StockInDetailViewModel.stockInDetailsList);
+        }
+
+        var task = stockInsRepository.putDetail(stockInMaster);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> StockInDetailViewModel.updateStockInDetails(onActivity, onSuccess, onFailed));
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
+        // getStockInMasters();
     }
 
-    public static void deleteItem(Long index) throws IOException, InterruptedException {
-        var findModel = new FindModel();
+    public static void deleteItem(
+            Long index,
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
+        var findModel = FindModel.builder().id(index).build();
 
-        findModel.setId(index);
-        stockInsRepository.deleteMaster(findModel);
-        getStockInMasters();
+        var task = stockInsRepository.deleteMaster(findModel);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
+        // getStockInMasters();
     }
 }

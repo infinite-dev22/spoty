@@ -325,7 +325,7 @@ public class QuotationMasterFormController implements Initializable {
             if (QuotationMasterViewModel.getId() > 0) {
                 SpotyThreader.spotyThreadPool(() -> {
                     try {
-                        QuotationMasterViewModel.updateItem();
+                        QuotationMasterViewModel.updateItem(this::onAction, this::onSuccess, this::onFailed);
                     } catch (Exception e) {
                         SpotyLogger.writeToFile(e, this.getClass());
                     }
@@ -348,7 +348,7 @@ public class QuotationMasterFormController implements Initializable {
             }
             SpotyThreader.spotyThreadPool(() -> {
                 try {
-                    QuotationMasterViewModel.saveQuotationMaster();
+                    QuotationMasterViewModel.saveQuotationMaster(this::onAction, this::onSuccess, this::onFailed);
                 } catch (Exception e) {
                     SpotyLogger.writeToFile(e, this.getClass());
                 }
@@ -398,5 +398,17 @@ public class QuotationMasterFormController implements Initializable {
         } catch (Exception e) {
             SpotyLogger.writeToFile(e, QuotationMasterFormController.class);
         }
+    }
+
+    private void onAction() {
+        System.out.println("Loading quotation master...");
+    }
+
+    private void onSuccess() {
+        System.out.println("Loaded quotation master...");
+    }
+
+    private void onFailed() {
+        System.out.println("failed loading quotation master...");
     }
 }

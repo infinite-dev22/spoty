@@ -300,8 +300,6 @@ public class ProductViewModel {
 
 //        productDao.create(product);
 
-        resetProperties();
-
         getAllProducts();
     }
 

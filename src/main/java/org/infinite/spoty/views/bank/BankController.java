@@ -146,7 +146,7 @@ public class BankController implements Initializable {
                 e -> {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
-                            BankViewModel.deleteItem(obj.getData().getId());
+                            BankViewModel.deleteItem(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
@@ -158,7 +158,7 @@ public class BankController implements Initializable {
                 e -> {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
-                            BankViewModel.getItem(obj.getData().getId());
+                            BankViewModel.getItem(obj.getData().getId(), this::onAction, this::onFailed);
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
@@ -197,5 +197,17 @@ public class BankController implements Initializable {
 
     public void createBtnClicked() {
         dialog.showAndWait();
+    }
+
+    private void onAction() {
+        System.out.println("Loading bank...");
+    }
+
+    private void onSuccess() {
+        System.out.println("Loaded bank...");
+    }
+
+    private void onFailed() {
+        System.out.println("failed loading bank...");
     }
 }

@@ -17,7 +17,6 @@ package org.infinite.spoty.viewModels;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -25,16 +24,21 @@ import org.infinite.spoty.data_source.dtos.Currency;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.models.SearchModel;
 import org.infinite.spoty.data_source.repositories.implementations.CurrenciesRepositoryImpl;
+import org.infinite.spoty.utils.ParameterlessConsumer;
 import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
+import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 
 public class CurrencyViewModel {
+    public static final CurrenciesRepositoryImpl currenciesRepository = new CurrenciesRepositoryImpl();
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
                     UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
@@ -117,17 +121,21 @@ public class CurrencyViewModel {
         CurrencyViewModel.currency.set(currency);
     }
 
-    public static void saveCurrency() throws IOException, InterruptedException {
-        var currenciesRepository = new CurrenciesRepositoryImpl();
+    public static void saveCurrency(
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var currency = Currency.builder()
                 .code(getCode())
                 .name(getName())
                 .symbol(getSymbol())
                 .build();
 
-        currenciesRepository.post(currency);
-        clearCurrencyData();
-        getAllCurrencies();
+        var task = currenciesRepository.post(currency);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
     }
 
     public static void clearCurrencyData() {
@@ -137,63 +145,91 @@ public class CurrencyViewModel {
         setSymbol("");
     }
 
-    public static void getAllCurrencies() {
-        var currenciesRepository = new CurrenciesRepositoryImpl();
-        Type listType = new TypeToken<ArrayList<Currency>>() {
-        }.getType();
-
-        Platform.runLater(
-                () -> {
-                    currenciesList.clear();
-
-                    try {
-                        ArrayList<Currency> currencyList = gson.fromJson(currenciesRepository.fetchAll().body(), listType);
-                        currenciesList.addAll(currencyList);
-                    } catch (IOException | InterruptedException e) {
-                        SpotyLogger.writeToFile(e, CurrencyViewModel.class);
-                    }
-                });
+    public static void getAllCurrencies(
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onFailed) {
+        var task = currenciesRepository.fetchAll();
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            try {
+                Type listType = new TypeToken<ArrayList<Currency>>() {
+                }.getType();
+                ArrayList<Currency> currencyList = gson.fromJson(task.get().body(), listType);
+                currenciesList.clear();
+                currenciesList.addAll(currencyList);
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, CurrencyViewModel.class);
+            }
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void getItem(Long currencyID) throws IOException, InterruptedException {
-        var currenciesRepository = new CurrenciesRepositoryImpl();
-        var findModel = new FindModel();
-        findModel.setId(currencyID);
-        var response = currenciesRepository.fetch(findModel).body();
-        var currency = gson.fromJson(response, Currency.class);
+    public static void getItem(
+            Long index,
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onFailed) {
+        var findModel = FindModel.builder().id(index).build();
 
-        setCurrency(currency);
-        setId(currency.getId());
-        setSymbol(currency.getSymbol());
-        setCode(currency.getCode());
-        setName(currency.getName());
-        getAllCurrencies();
+        var task = currenciesRepository.fetch(findModel);
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            try {
+                var currency = gson.fromJson(task.get().body(), Currency.class);
+
+                setCurrency(currency);
+                setId(currency.getId());
+                setSymbol(currency.getSymbol());
+                setCode(currency.getCode());
+                setName(currency.getName());
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, BankViewModel.class);
+            }
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void searchItem(String search) {
-        var currenciesRepository = new CurrenciesRepositoryImpl();
-        var searchModel = new SearchModel();
-        searchModel.setSearch(search);
+    public static void searchItem(
+            String search,
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onFailed) {
+        var searchModel = SearchModel.builder().search(search).build();
+        var task = currenciesRepository.search(searchModel);
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            try {
+                Type listType = new TypeToken<ArrayList<Currency>>() {
+                }.getType();
+                ArrayList<Currency> currencyList = gson.fromJson(task.get()
+                        .body(), listType);
 
-        Type listType = new TypeToken<ArrayList<Currency>>() {
-        }.getType();
-
-        Platform.runLater(
-                () -> {
-                    currenciesList.clear();
-
-                    try {
-                        ArrayList<Currency> currencyList = gson.fromJson(currenciesRepository.search(searchModel)
-                                .body(), listType);
-                        currenciesList.addAll(currencyList);
-                    } catch (IOException | InterruptedException e) {
-                        SpotyLogger.writeToFile(e, CurrencyViewModel.class);
-                    }
-                });
+                currenciesList.clear();
+                currenciesList.addAll(currencyList);
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, CurrencyViewModel.class);
+            }
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void updateItem() throws IOException, InterruptedException {
-        var currenciesRepository = new CurrenciesRepositoryImpl();
+    public static void updateItem(
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var currency = Currency.builder()
                 .id(getId())
                 .code(getCode())
@@ -201,17 +237,24 @@ public class CurrencyViewModel {
                 .symbol(getSymbol())
                 .build();
 
-        currenciesRepository.put(currency);
-        clearCurrencyData();
-        getAllCurrencies();
+        var task = currenciesRepository.put(currency);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void deleteItem(Long currencyID) throws IOException, InterruptedException {
-        var currenciesRepository = new CurrenciesRepositoryImpl();
-        var findModel = new FindModel();
+    public static void deleteItem(
+            Long index,
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
+        var findModel = FindModel.builder().id(index).build();
 
-        findModel.setId(currencyID);
-        currenciesRepository.delete(findModel);
-        getAllCurrencies();
+        var task = currenciesRepository.delete(findModel);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
     }
 }

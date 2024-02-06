@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Date;
 
-
+// TODO: Transfer to backend.
 public class PermissionsViewModel {
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,

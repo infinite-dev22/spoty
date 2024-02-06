@@ -131,7 +131,7 @@ public class SupplierFormController implements Initializable {
                         if (SupplierViewModel.getId() > 0) {
                             SpotyThreader.spotyThreadPool(() -> {
                                 try {
-                                    SupplierViewModel.updateItem();
+                                    SupplierViewModel.updateItem(this::onAction, this::onSuccess, this::onFailed);
                                 } catch (Exception e) {
                                     SpotyLogger.writeToFile(e, this.getClass());
                                 }
@@ -150,7 +150,7 @@ public class SupplierFormController implements Initializable {
                         }
                         SpotyThreader.spotyThreadPool(() -> {
                             try {
-                                SupplierViewModel.saveSupplier();
+                                SupplierViewModel.saveSupplier(this::onAction, this::onSuccess, this::onFailed);
                             } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }
@@ -175,5 +175,17 @@ public class SupplierFormController implements Initializable {
                                     .build();
                     notificationHolder.addNotification(notification);
                 });
+    }
+
+    private void onAction() {
+        System.out.println("Loading suppliers...");
+    }
+
+    private void onSuccess() {
+        System.out.println("Loaded suppliers...");
+    }
+
+    private void onFailed() {
+        System.out.println("failed loading suppliers...");
     }
 }

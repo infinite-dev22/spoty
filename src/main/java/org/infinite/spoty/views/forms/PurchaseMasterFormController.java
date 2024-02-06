@@ -214,7 +214,7 @@ public class PurchaseMasterFormController implements Initializable {
             if (PurchaseMasterViewModel.getId() > 0) {
                 SpotyThreader.spotyThreadPool(() -> {
                     try {
-                        PurchaseMasterViewModel.updateItem();
+                        PurchaseMasterViewModel.updateItem(this::onAction, this::onSuccess, this::onFailed);
                     } catch (Exception e) {
                         SpotyLogger.writeToFile(e, this.getClass());
                     }
@@ -237,7 +237,7 @@ public class PurchaseMasterFormController implements Initializable {
             }
             SpotyThreader.spotyThreadPool(() -> {
                 try {
-                    PurchaseMasterViewModel.savePurchaseMaster();
+                    PurchaseMasterViewModel.savePurchaseMaster(this::onAction, this::onSuccess, this::onFailed);
                 } catch (Exception e) {
                     SpotyLogger.writeToFile(e, this.getClass());
                 }
@@ -377,7 +377,7 @@ public class PurchaseMasterFormController implements Initializable {
                         try {
                             PurchaseDetailViewModel.getItem(
                                     obj.getData().getId(),
-                                    PurchaseDetailViewModel.purchaseDetailsList.indexOf(obj.getData()));
+                                    PurchaseDetailViewModel.purchaseDetailsList.indexOf(obj.getData()), this::onAction, this::onFailed);
                         } catch (Exception e) {
                             SpotyLogger.writeToFile(e, this.getClass());
                         }
@@ -407,5 +407,17 @@ public class PurchaseMasterFormController implements Initializable {
 
     public void addBtnClicked() {
         dialog.showAndWait();
+    }
+
+    private void onAction() {
+        System.out.println("Loading purchase master...");
+    }
+
+    private void onSuccess() {
+        System.out.println("Loaded purchase master...");
+    }
+
+    private void onFailed() {
+        System.out.println("failed loading purchase master...");
     }
 }

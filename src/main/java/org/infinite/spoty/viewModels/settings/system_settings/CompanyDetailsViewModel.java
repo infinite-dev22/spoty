@@ -7,10 +7,16 @@ import javafx.scene.image.Image;
 import org.infinite.spoty.data_source.dtos.Company;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.repositories.implementations.CompanyRepositoryImpl;
+import org.infinite.spoty.utils.ParameterlessConsumer;
+import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 public class CompanyDetailsViewModel {
     private static final Gson gson = new GsonBuilder()
@@ -214,7 +220,10 @@ public class CompanyDetailsViewModel {
         return linkedin;
     }
 
-    public static void saveCompany() throws Exception {
+    public static void saveCompany(
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
 
         var company =
                 Company.builder()
@@ -234,10 +243,16 @@ public class CompanyDetailsViewModel {
                         .linkedin(getLinkedin())
                         .build();
 
-        companyRepository.post(company);
+        var task = companyRepository.post(company);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> {
+            onSuccess.run();
+            getCompany(company.getId(), onActivity, null, onFailed);
+        });
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
 
         clearCompanyData();
-        getCompany(company.getId());
     }
 
     public static void clearCompanyData() {
@@ -258,35 +273,53 @@ public class CompanyDetailsViewModel {
         setLinkedin("");
     }
 
-    public static void getCompany(Long index) throws IOException, InterruptedException {
+    public static void getCompany(
+            Long index,
+            ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var findModel = new FindModel();
         findModel.setId(index);
-        var response = companyRepository.fetch(findModel).body();
-        var company = gson.fromJson(response, Company.class);
+        var task = companyRepository.fetch(findModel);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> {
+            try {
+                Company company = gson.fromJson(task.get().body(), Company.class);
+                setId(company.getId());
+                setName(company.getName());
+                setWebsite(company.getWebsite());
+                setPhone(company.getPhone());
+                setEmail(company.getEmail());
+                setPostalAddress(company.getPostalAddress());
+                setPhysicalAddress(company.getPhysicalAddress());
+                setTagLine(company.getTagLine());
+                setLogo(company.getLogo());
+                setLogoOnReports(company.isLogoOnReports());
+                setLogoOnEmails(company.isLogoOnEmails());
+                setLogoOnReceipts(company.isLogoOnReceipts());
+                setTwitter(company.getTwitter());
+                setFacebook(company.getFacebook());
+                setLinkedin(company.getLinkedin());
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, CompanyDetailsViewModel.class);
+            }
 
-        setId(company.getId());
-        setName(company.getName());
-        setWebsite(company.getWebsite());
-        setPhone(company.getPhone());
-        setEmail(company.getEmail());
-        setPostalAddress(company.getPostalAddress());
-        setPhysicalAddress(company.getPhysicalAddress());
-        setTagLine(company.getTagLine());
-        setLogo(company.getLogo());
-        setLogoOnReports(company.isLogoOnReports());
-        setLogoOnEmails(company.isLogoOnEmails());
-        setLogoOnReceipts(company.isLogoOnReceipts());
-        setTwitter(company.getTwitter());
-        setFacebook(company.getFacebook());
-        setLinkedin(company.getLinkedin());
+            if (Objects.nonNull(onSuccess)) {
+                onSuccess.run();
+            }
+        });
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
     }
 
     public static Image getOnlineImage() throws IOException {
         return companyRepository.getCompanyLogo(getLogo());
     }
 
-    public static void updateItem() throws IOException, InterruptedException {
-
+    public static void updateItem(
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var company = Company.builder()
                 .id(getId())
                 .name(getName())
@@ -305,15 +338,29 @@ public class CompanyDetailsViewModel {
                 .linkedin(getLinkedin())
                 .build();
 
-        companyRepository.put(company);
-        clearCompanyData();
-        getCompany(company.getId());
+        var task = companyRepository.put(company);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> {
+            clearCompanyData();
+            getCompany(company.getId(), onActivity, null, onFailed);
+
+            onSuccess.run();
+        });
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void deleteItem(Long index) throws IOException, InterruptedException {
-        var findModel = new FindModel();
+    public static void deleteItem(
+            Long index,
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
+        var findModel = FindModel.builder().id(index).build();
 
-        findModel.setId(index);
-        companyRepository.delete(findModel);
+        var task = companyRepository.delete(findModel);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+        task.setOnFailed(workerStateEvent -> onFailed.run());
+        SpotyThreader.spotyThreadPool(task);
     }
 }

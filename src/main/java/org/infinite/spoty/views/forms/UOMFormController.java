@@ -164,7 +164,7 @@ public class UOMFormController implements Initializable {
                         if (UOMViewModel.getId() > 0) {
                             SpotyThreader.spotyThreadPool(() -> {
                                 try {
-                                    UOMViewModel.updateItem();
+                                    UOMViewModel.updateItem(this::onAction, this::onSuccess, this::onFailed);
                                 } catch (Exception e) {
                                     SpotyLogger.writeToFile(e, this.getClass());
                                 }
@@ -185,7 +185,7 @@ public class UOMFormController implements Initializable {
                         }
                         SpotyThreader.spotyThreadPool(() -> {
                             try {
-                                UOMViewModel.saveUOM();
+                                UOMViewModel.saveUOM(this::onAction, this::onSuccess, this::onFailed);
                             } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }
@@ -212,5 +212,17 @@ public class UOMFormController implements Initializable {
                                     .build();
                     notificationHolder.addNotification(notification);
                 });
+    }
+
+    private void onAction() {
+        System.out.println("Loading unity of measure...");
+    }
+
+    private void onSuccess() {
+        System.out.println("Loaded unity of measure...");
+    }
+
+    private void onFailed() {
+        System.out.println("failed loading unity of measure...");
     }
 }

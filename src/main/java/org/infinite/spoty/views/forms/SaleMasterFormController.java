@@ -216,7 +216,7 @@ public class SaleMasterFormController implements Initializable {
                 SpotyThreader.spotyThreadPool(
                         () -> {
                             try {
-                                SaleMasterViewModel.updateItem();
+                                SaleMasterViewModel.updateItem(this::onAction, this::onSuccess, this::onFailed);
                             } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }
@@ -241,7 +241,7 @@ public class SaleMasterFormController implements Initializable {
             SpotyThreader.spotyThreadPool(
                     () -> {
                         try {
-                            SaleMasterViewModel.saveSaleMaster();
+                            SaleMasterViewModel.saveSaleMaster(this::onAction, this::onSuccess, this::onFailed);
                         } catch (Exception e) {
                             SpotyLogger.writeToFile(e, this.getClass());
                         }
@@ -408,5 +408,17 @@ public class SaleMasterFormController implements Initializable {
         contextMenu.addItems(edit, delete);
 
         return contextMenu;
+    }
+
+    private void onAction() {
+        System.out.println("Loading sales master...");
+    }
+
+    private void onSuccess() {
+        System.out.println("Loaded sales master...");
+    }
+
+    private void onFailed() {
+        System.out.println("failed loading sales master...");
     }
 }

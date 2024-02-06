@@ -84,7 +84,7 @@ public class BrandFormController implements Initializable {
                         if (BrandViewModel.getId() > 0) {
                             SpotyThreader.spotyThreadPool(() -> {
                                 try {
-                                    BrandViewModel.updateItem();
+                                    BrandViewModel.updateItem(this::onAction, this::onSuccess, this::onFailed);
                                 } catch (Exception e) {
                                     SpotyLogger.writeToFile(e, this.getClass());
                                 }
@@ -103,7 +103,7 @@ public class BrandFormController implements Initializable {
                         }
                         SpotyThreader.spotyThreadPool(() -> {
                             try {
-                                saveBrand();
+                                saveBrand(this::onAction, this::onSuccess, this::onFailed);
                             } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }
@@ -128,5 +128,17 @@ public class BrandFormController implements Initializable {
                                     .build();
                     notificationHolder.addNotification(notification);
                 });
+    }
+
+    private void onAction() {
+        System.out.println("Loading brand...");
+    }
+
+    private void onSuccess() {
+        System.out.println("Loaded brand...");
+    }
+
+    private void onFailed() {
+        System.out.println("failed loading brand...");
     }
 }
