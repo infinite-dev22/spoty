@@ -10,10 +10,10 @@ plugins {
 
 apply plugin: 'java'
 
-version '230.46.7-beta'
+version '230.46.14-development'
 project.description = 'Zenmart ERP - Fintech Software.'
 project.ext.buildDate = LocalDate.now()
-project.version = '1.0.0'
+project.version = '230.46.14'
 
 repositories {
     mavenLocal()
