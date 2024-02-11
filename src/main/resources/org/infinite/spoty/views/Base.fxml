@@ -69,8 +69,8 @@
             <padding>
                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
             </padding>
-            <MFXButton fx:id="feedbackBtn" styleClass="minimize-icon"/>
-            <MFXButton fx:id="helpBtn" styleClass="close-icon"/>
+            <MFXButton fx:id="feedbackBtn" styleClass="minimize-icon" text="Feedback"/>
+            <MFXButton fx:id="helpBtn" styleClass="close-icon" text="Help"/>
         </HBox>
         <styleClass>
             <String fx:value="appBar"/>

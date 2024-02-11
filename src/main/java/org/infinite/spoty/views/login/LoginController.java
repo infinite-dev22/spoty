@@ -19,6 +19,7 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.infinite.spoty.SpotyResourceLoader;
 import org.infinite.spoty.components.animations.ActivityIndicator;
+import org.infinite.spoty.components.navigation.Pages;
 import org.infinite.spoty.components.notification.SimpleNotificationHolder;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.utils.SpotyThreader;
@@ -76,6 +77,7 @@ public class LoginController implements Initializable {
                 "data-tracker",
                 () -> {
                     try {
+                        Pages.setPaneWithInitData();
                         AdjustmentMasterViewModel.getAllAdjustmentMasters(this::onActivity, this::onFailed);
                         BranchViewModel.getAllBranches(this::onActivity, this::onFailed);
                         BrandViewModel.getItems(this::onActivity, this::onFailed);

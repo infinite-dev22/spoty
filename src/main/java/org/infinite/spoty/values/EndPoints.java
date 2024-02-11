@@ -1,7 +1,7 @@
 package org.infinite.spoty.values;
 
 public class EndPoints {
-    public static final String appDNS = "http://localhost:8080";
+    public static final String appDNS = "http://52.53.197.153:8080";
     public static final String apiUrl = appDNS + "/api/v1";
 
     public static final class Adjustments {

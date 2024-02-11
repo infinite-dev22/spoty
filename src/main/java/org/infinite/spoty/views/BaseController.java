@@ -109,8 +109,6 @@ public class BaseController implements Initializable {
         helpIcon.setDescription("far-circle-question");
 
         notificationsBtn.setText("");
-        feedbackBtn.setText("");
-        helpBtn.setText("");
 
         notificationsBtn.setGraphic(notificationIcon);
         feedbackBtn.setGraphic(feedbackIcon);
