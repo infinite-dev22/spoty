@@ -18,7 +18,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import lombok.Getter;
-import org.infinite.spoty.views.forms.*;
 import org.infinite.spoty.views.account.*;
 import org.infinite.spoty.views.account.report.*;
 import org.infinite.spoty.views.bank.BankController;
@@ -26,6 +25,7 @@ import org.infinite.spoty.views.customers.CustomerController;
 import org.infinite.spoty.views.dashboard.DashboardController;
 import org.infinite.spoty.views.expenses.category.ExpenseCategoryController;
 import org.infinite.spoty.views.expenses.expense.ExpenseController;
+import org.infinite.spoty.views.forms.*;
 import org.infinite.spoty.views.human_resource.attendance.AttendanceController;
 import org.infinite.spoty.views.human_resource.attendance.AttendanceReportController;
 import org.infinite.spoty.views.human_resource.attendance.CheckInController;
@@ -34,12 +34,12 @@ import org.infinite.spoty.views.human_resource.hrm.EmployeesController;
 import org.infinite.spoty.views.human_resource.pay_roll.SalariesController;
 import org.infinite.spoty.views.human_resource.pay_roll.SalaryAdvancesController;
 import org.infinite.spoty.views.human_resource.pay_roll.SalaryGenerateController;
+import org.infinite.spoty.views.login.LoginController;
 import org.infinite.spoty.views.product.adjustment.AdjustmentController;
 import org.infinite.spoty.views.product.brand.BrandController;
 import org.infinite.spoty.views.product.category.ProductCategoryController;
 import org.infinite.spoty.views.product.products.ProductController;
 import org.infinite.spoty.views.product.unit_of_measure.UnitOfMeasureController;
-import org.infinite.spoty.views.login.LoginController;
 import org.infinite.spoty.views.purchases.PurchasesController;
 import org.infinite.spoty.views.quotation.QuotationController;
 import org.infinite.spoty.views.report.*;
@@ -49,8 +49,8 @@ import org.infinite.spoty.views.returns.sales.SaleReturnsController;
 import org.infinite.spoty.views.sales.SaleTermsController;
 import org.infinite.spoty.views.sales.SalesController;
 import org.infinite.spoty.views.sales.pos.PointOfSaleController;
-import org.infinite.spoty.views.service.ServiceInvoiceController;
 import org.infinite.spoty.views.service.ServiceController;
+import org.infinite.spoty.views.service.ServiceInvoiceController;
 import org.infinite.spoty.views.settings.data_synchronizer.BackupController;
 import org.infinite.spoty.views.settings.data_synchronizer.ExportController;
 import org.infinite.spoty.views.settings.data_synchronizer.ImportController;
@@ -825,7 +825,6 @@ public class Pages {
         languagesPane = languagesLoader.load();
         mailSettingsPane = mailSettingsLoader.load();
         printSettingsPane = printSettingsLoader.load();
-        systemPane = systemLoader.load();
         usersPane = usersLoader.load();
 
         productCategoryPane = productCategoryLoader.load();
@@ -855,6 +854,10 @@ public class Pages {
         saleMasterFormPane = saleMasterFormLoader.load();
         stockInMasterFormPane = stockInMasterFormLoader.load();
         transferMasterFormPane = transferMasterFormLoader.load();
+    }
+
+    public static void setPaneWithInitData() throws IOException {
+        systemPane = systemLoader.load();
     }
 
     public static void setControllers(Stage stage) {
