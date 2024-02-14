@@ -171,7 +171,6 @@ public class PurchaseMasterViewModel {
 //                .ref(getReference())
                 .date(getDate())
                 .supplier(getSupplier())
-                .branch(getBranch())
 //                .taxRate(getTaxRate())
 //                .netTax(getNetTax())
 //                .discount(getDiscount())
@@ -242,7 +241,6 @@ public class PurchaseMasterViewModel {
                 }
 
                 setId(purchaseMaster.getId());
-                setBranch(purchaseMaster.getBranch());
                 setNote(purchaseMaster.getNotes());
                 setDate(purchaseMaster.getLocaleDate());
                 PurchaseDetailViewModel.purchaseDetailsList.clear();
@@ -292,7 +290,6 @@ public class PurchaseMasterViewModel {
 //                .ref(getReference())
                 .date(getDate())
                 .supplier(getSupplier())
-                .branch(getBranch())
 //                .taxRate(getTaxRate())
 //                .netTax(getNetTax())
 //                .discount(getDiscount())

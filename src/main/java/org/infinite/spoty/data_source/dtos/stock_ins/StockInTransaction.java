@@ -18,6 +18,7 @@ import lombok.*;
 import org.infinite.spoty.data_source.dtos.Branch;
 import org.infinite.spoty.data_source.dtos.Product;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 @Getter
@@ -27,7 +28,7 @@ import java.util.Date;
 @Builder
 public class StockInTransaction {
     private Long id;
-    private Branch branch;
+    private ArrayList<Branch> branches;
     private Product product;
     private StockInDetail stockInDetail;
     private Date date;

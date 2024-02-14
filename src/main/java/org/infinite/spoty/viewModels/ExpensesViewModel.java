@@ -191,7 +191,6 @@ public class ExpensesViewModel {
                 .ref(getReference())
                 .name(getName())
                 .expenseCategory(getCategory())
-                .branch(getBranch())
                 .details(getDetails())
                 .build();
 
@@ -247,7 +246,6 @@ public class ExpensesViewModel {
                 setId(expense.getId());
                 setDate(expense.getLocaleDate());
                 setName(expense.getName());
-                setBranch(expense.getBranch());
                 setCategory(expense.getExpenseCategory());
                 setAmount(expense.getAmount());
                 setDetails(expense.getDetails());
@@ -295,7 +293,6 @@ public class ExpensesViewModel {
                 .ref(getReference())
                 .name(getName())
                 .expenseCategory(getCategory())
-                .branch(getBranch())
                 .details(getDetails())
                 .build();
 

@@ -81,8 +81,10 @@ public class LoginViewModel {
                 var response = gson.fromJson(task.get().body(), APIResponseModel.class);
                 if (response.getStatus() == 200) {
                     ProtectedGlobals.authToken = response.getToken();
+                    onSuccess.run();
+                } else {
+                    onFailed.run();
                 }
-                onSuccess.run();
             } catch (InterruptedException | ExecutionException e) {
                 throw new RuntimeException(e);
             }

@@ -19,6 +19,7 @@ import org.infinite.spoty.data_source.dtos.Branch;
 import org.infinite.spoty.data_source.dtos.Supplier;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -32,7 +33,7 @@ public class RequisitionMaster {
     private String ref;
     private Date date;
     private Supplier supplier;
-    private Branch branch;
+    private ArrayList<Branch> branches;
     private List<RequisitionDetail> requisitionDetails;
     private String shipVia;
     private String shipMethod;
@@ -41,10 +42,6 @@ public class RequisitionMaster {
     private String notes;
     private String status;
     private double totalCost;
-
-    public String getBranchName() {
-        return branch.getName();
-    }
 
     public String getSupplierName() {
         return supplier.getName();

@@ -164,7 +164,6 @@ public class AdjustmentMasterViewModel {
             ParameterlessConsumer onSuccess,
             ParameterlessConsumer onFailed) {
         var adjustmentMaster = AdjustmentMaster.builder()
-                .branch(getBranch())
                 .notes(getNote())
                 .date(getDate())
                 .build();
@@ -234,7 +233,6 @@ public class AdjustmentMasterViewModel {
             }
 
             setId(adjustmentMaster.getId());
-            setBranch(adjustmentMaster.getBranch());
             setNote(adjustmentMaster.getNotes());
             setDate(adjustmentMaster.getLocaleDate());
             AdjustmentDetailViewModel.adjustmentDetailsList.clear();
@@ -278,7 +276,6 @@ public class AdjustmentMasterViewModel {
             ParameterlessConsumer onFailed) {
         var adjustmentMaster = AdjustmentMaster.builder()
                 .id(getId())
-                .branch(getBranch())
                 .notes(getNote())
                 .date(getDate())
                 .build();

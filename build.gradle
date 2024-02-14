@@ -140,6 +140,7 @@ jlinkZip.doLast {
 }
 
 dependencies {
+//    implementation 'com.calendarfx:view:11.12.6'
     implementation 'net.datafaker:datafaker:2.0.2'
     implementation 'io.soabase.record-builder:record-builder-core:39'
     implementation 'io.github.mkpaz:atlantafx-parent:2.0.1'

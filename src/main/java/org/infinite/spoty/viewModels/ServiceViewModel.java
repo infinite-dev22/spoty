@@ -142,7 +142,6 @@ public class ServiceViewModel {
             ParameterlessConsumer onFailed) {
         var service =
                 Service.builder()
-                        .branch(getBranch())
                         .name(getName())
                         .charge(getCharge())
                         .vat(getVat())
@@ -206,7 +205,6 @@ public class ServiceViewModel {
             try {
                 var service = gson.fromJson(task.get().body(), Service.class);
 
-                setBranch(service.getBranch());
                 setId(service.getId());
                 setName(service.getName());
                 setCharge(service.getCharge());
@@ -252,7 +250,6 @@ public class ServiceViewModel {
             ParameterlessConsumer onFailed) {
         var service = Service.builder()
                 .id(getId())
-                .branch(getBranch())
                 .name(getName())
                 .charge(getCharge())
                 .vat(getVat())

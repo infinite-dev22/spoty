@@ -16,7 +16,7 @@ package org.infinite.spoty.data_source.dtos.transfers;
 
 import lombok.*;
 import org.infinite.spoty.data_source.dtos.Branch;
-import org.infinite.spoty.data_source.dtos.User;
+import org.infinite.spoty.data_source.dtos.hrm.employee.User;
 
 import java.text.DateFormat;
 import java.util.Date;

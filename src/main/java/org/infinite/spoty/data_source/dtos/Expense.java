@@ -18,6 +18,7 @@ import lombok.*;
 
 import java.io.Serializable;
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 // TODO: Remove User Property.
@@ -33,13 +34,9 @@ public class Expense implements Serializable {
     private String ref;
     private String name;
     private ExpenseCategory expenseCategory;
-    private Branch branch;
+    private ArrayList<Branch> branches;
     private String details;
     private double amount;
-
-    public String getBranchName() {
-        return branch.getName();
-    }
 
     public String getExpenseCategoryName() {
         return expenseCategory.getName();

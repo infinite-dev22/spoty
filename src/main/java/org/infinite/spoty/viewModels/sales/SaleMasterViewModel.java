@@ -221,7 +221,6 @@ public class SaleMasterViewModel {
             ParameterlessConsumer onFailed) {
         var saleMaster = SaleMaster.builder()
                 .customer(getCustomer())
-                .branch(getBranch())
                 .total(getTotal())
                 .amountPaid(getPaid())
                 .saleStatus(getSaleStatus())
@@ -298,7 +297,6 @@ public class SaleMasterViewModel {
             setId(saleMaster.getId());
             setDate(saleMaster.getLocaleDate());
             setCustomer(saleMaster.getCustomer());
-            setBranch(saleMaster.getBranch());
             setNote(saleMaster.getNotes());
             setSaleStatus(saleMaster.getSaleStatus());
             setPayStatus(saleMaster.getPaymentStatus());
@@ -345,7 +343,6 @@ public class SaleMasterViewModel {
         var saleMaster = SaleMaster.builder()
                 .id(getId())
                 .customer(getCustomer())
-                .branch(getBranch())
                 .total(getTotal())
                 .amountPaid(getPaid())
                 .saleStatus(getSaleStatus())

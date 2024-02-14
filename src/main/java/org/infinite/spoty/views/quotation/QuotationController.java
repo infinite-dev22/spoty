@@ -64,8 +64,6 @@ public class QuotationController implements Initializable {
         MFXTableColumn<QuotationMaster> quotationCustomer =
                 new MFXTableColumn<>(
                         "Customer", false, Comparator.comparing(QuotationMaster::getCustomerName));
-        MFXTableColumn<QuotationMaster> quotationBranch =
-                new MFXTableColumn<>("Branch", false, Comparator.comparing(QuotationMaster::getBranchName));
         MFXTableColumn<QuotationMaster> quotationStatus =
                 new MFXTableColumn<>("Status", false, Comparator.comparing(QuotationMaster::getStatus));
         MFXTableColumn<QuotationMaster> quotationDate =
@@ -76,8 +74,6 @@ public class QuotationController implements Initializable {
 
         quotationCustomer.setRowCellFactory(
                 quotation -> new MFXTableRowCell<>(QuotationMaster::getCustomerName));
-        quotationBranch.setRowCellFactory(
-                quotation -> new MFXTableRowCell<>(QuotationMaster::getBranchName));
         quotationStatus.setRowCellFactory(
                 quotation -> new MFXTableRowCell<>(QuotationMaster::getStatus));
         quotationDate.setRowCellFactory(
@@ -86,7 +82,6 @@ public class QuotationController implements Initializable {
                 quotation -> new MFXTableRowCell<>(QuotationMaster::getTotal));
 
         quotationCustomer.prefWidthProperty().bind(quotationsTable.widthProperty().multiply(.25));
-        quotationBranch.prefWidthProperty().bind(quotationsTable.widthProperty().multiply(.25));
         quotationStatus.prefWidthProperty().bind(quotationsTable.widthProperty().multiply(.25));
         quotationDate.prefWidthProperty().bind(quotationsTable.widthProperty().multiply(.25));
         quotationTotalAmount.prefWidthProperty().bind(quotationsTable.widthProperty().multiply(.25));
@@ -95,7 +90,6 @@ public class QuotationController implements Initializable {
                 .getTableColumns()
                 .addAll(
                         quotationCustomer,
-                        quotationBranch,
                         quotationStatus,
                         quotationDate,
                         quotationTotalAmount);
@@ -104,7 +98,6 @@ public class QuotationController implements Initializable {
                 .addAll(
                         new StringFilter<>("Reference", QuotationMaster::getRef),
                         new StringFilter<>("Customer", QuotationMaster::getCustomerName),
-                        new StringFilter<>("Branch", QuotationMaster::getBranchName),
                         new StringFilter<>("Status", QuotationMaster::getStatus),
                         new DoubleFilter<>("Grand Total", QuotationMaster::getTotal));
         getQuotationMasterTable();

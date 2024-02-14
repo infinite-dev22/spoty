@@ -2,6 +2,8 @@ package org.infinite.spoty.data_source.dtos;
 
 import lombok.*;
 
+import java.util.ArrayList;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -9,7 +11,7 @@ import lombok.*;
 @Builder
 public class Service {
     private Long id;
-    private Branch branch;
+    private ArrayList<Branch> branches;
     private String name;
     private String charge;
     private String vat;

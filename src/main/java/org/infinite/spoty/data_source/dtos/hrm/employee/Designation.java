@@ -1,6 +1,9 @@
-package org.infinite.spoty.data_source.dtos;
+package org.infinite.spoty.data_source.dtos.hrm.employee;
 
 import lombok.*;
+import org.infinite.spoty.data_source.dtos.Branch;
+
+import java.util.ArrayList;
 
 @Getter
 @Setter
@@ -9,7 +12,7 @@ import lombok.*;
 @Builder
 public class Designation {
     private Long id;
-    private Branch branch;
+    private ArrayList<Branch> branches;
     private String name;
     private String description;
 }

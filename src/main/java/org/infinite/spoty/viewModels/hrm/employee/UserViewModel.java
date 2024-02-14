@@ -12,7 +12,7 @@
  * Jonathan Mark Mwigo makes no warranties, express or implied, with respect to the computer system code. Jonathan Mark Mwigo shall not be liable for any damages, including, but not limited to, direct, indirect, incidental, special, consequential, or punitive damages, arising out of or in connection with the use of the computer system code.
  */
 
-package org.infinite.spoty.viewModels;
+package org.infinite.spoty.viewModels.hrm.employee;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -23,12 +23,14 @@ import javafx.collections.ObservableList;
 import org.infinite.spoty.data_source.dtos.Branch;
 import org.infinite.spoty.data_source.dtos.Role;
 import org.infinite.spoty.data_source.dtos.UserProfile;
+import org.infinite.spoty.data_source.dtos.hrm.employee.User;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.models.SearchModel;
 import org.infinite.spoty.data_source.repositories.implementations.UserProfilesRepositoryImpl;
 import org.infinite.spoty.utils.ParameterlessConsumer;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.utils.SpotyThreader;
+import org.infinite.spoty.viewModels.BankViewModel;
 import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,8 +42,10 @@ import java.util.concurrent.ExecutionException;
 
 
 public class UserViewModel {
-    public static final ObservableList<UserProfile> usersList = FXCollections.observableArrayList();
-    public static final ListProperty<UserProfile> userProfiles = new SimpleListProperty<>(usersList);
+    public static final ObservableList<UserProfile> userProfilesList = FXCollections.observableArrayList();
+    public static final ListProperty<UserProfile> userProfiles = new SimpleListProperty<>(userProfilesList);
+    public static final ObservableList<User> usersList = FXCollections.observableArrayList();
+    public static final ListProperty<User> users = new SimpleListProperty<>(usersList);
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
                     UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
@@ -239,8 +243,20 @@ public class UserViewModel {
         UserViewModel.userProfiles.set(userProfiles);
     }
 
-    public static ListProperty<UserProfile> usersProperty() {
+    public static ListProperty<UserProfile> userProfilesProperty() {
         return userProfiles;
+    }
+
+    public static ObservableList<User> getUsers() {
+        return users.get();
+    }
+
+    public static void setUsers(ObservableList<User> users) {
+        UserViewModel.users.set(users);
+    }
+
+    public static ListProperty<User> usersProperty() {
+        return users;
     }
 
     public static String getAvatar() {
@@ -303,8 +319,8 @@ public class UserViewModel {
                 }.getType();
                 ArrayList<UserProfile> userList = gson.fromJson(task.get().body(), listType);
 
-                usersList.clear();
-                usersList.addAll(userList);
+                userProfilesList.clear();
+                userProfilesList.addAll(userList);
             } catch (InterruptedException | ExecutionException e) {
                 SpotyLogger.writeToFile(e, UserViewModel.class);
             }
@@ -361,8 +377,8 @@ public class UserViewModel {
                 }.getType();
                 ArrayList<UserProfile> userList = gson.fromJson(task.get().body(), listType);
 
-                usersList.clear();
-                usersList.addAll(userList);
+                userProfilesList.clear();
+                userProfilesList.addAll(userList);
             } catch (InterruptedException | ExecutionException e) {
                 SpotyLogger.writeToFile(e, UserViewModel.class);
             }

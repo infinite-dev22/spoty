@@ -28,9 +28,10 @@ import org.infinite.spoty.views.expenses.expense.ExpenseController;
 import org.infinite.spoty.views.forms.*;
 import org.infinite.spoty.views.human_resource.attendance.AttendanceController;
 import org.infinite.spoty.views.human_resource.attendance.AttendanceReportController;
-import org.infinite.spoty.views.human_resource.attendance.CheckInController;
 import org.infinite.spoty.views.human_resource.hrm.DesignationsController;
 import org.infinite.spoty.views.human_resource.hrm.EmployeesController;
+import org.infinite.spoty.views.human_resource.hrm.EmploymentStatusController;
+import org.infinite.spoty.views.human_resource.leave.LeaveStatusController;
 import org.infinite.spoty.views.human_resource.pay_roll.SalariesController;
 import org.infinite.spoty.views.human_resource.pay_roll.SalaryAdvancesController;
 import org.infinite.spoty.views.human_resource.pay_roll.SalaryGenerateController;
@@ -136,10 +137,12 @@ public class Pages {
     // Attendance
     private static final FXMLLoader attendanceLoader = fxmlLoader("views/human_resource/attendance/Attendance.fxml");
     private static final FXMLLoader attendanceReportLoader = fxmlLoader("views/human_resource/attendance/AttendanceReport.fxml");
-    private static final FXMLLoader checkInsLoader = fxmlLoader("views/human_resource/attendance/CheckIn.fxml");
     // Human Resource Management
     private static final FXMLLoader designationsLoader = fxmlLoader("views/human_resource/hrm/Designations.fxml");
     private static final FXMLLoader employeesLoader = fxmlLoader("views/human_resource/hrm/Employees.fxml");
+    private static final FXMLLoader employmentStatusLoader = fxmlLoader("views/human_resource/hrm/EmploymentStatus.fxml");
+    // Leave
+    private static final FXMLLoader leaveLoader = fxmlLoader("views/human_resource/leave/LeaveStatus.fxml");
     // PayRoll
     private static final FXMLLoader salariesLoader = fxmlLoader("views/human_resource/pay_roll/Salaries.fxml");
     private static final FXMLLoader salaryAdvancesLoader = fxmlLoader("views/human_resource/pay_roll/SalaryAdvances.fxml");
@@ -177,7 +180,6 @@ public class Pages {
     private static final FXMLLoader printSettingsLoader = fxmlLoader("views/settings/system_settings/PrintSettings.fxml");
     private static final FXMLLoader settingsLoader = fxmlLoader("views/settings/system_settings/Settings.fxml");
     private static final FXMLLoader systemLoader = fxmlLoader("views/settings/system_settings/System.fxml");
-    private static final FXMLLoader usersLoader = fxmlLoader("views/settings/system_settings/Users.fxml");
 
     private static final FXMLLoader saleMasterFormLoader = fxmlLoader("views/forms/SaleMasterForm.fxml");
     private static final FXMLLoader productCategoryLoader =
@@ -385,14 +387,18 @@ public class Pages {
     private static BorderPane attendanceReportPane;
 
     @Getter
-    private static BorderPane checkInPane;
-
-    @Getter
     // Human Resource Management
     private static BorderPane designationsPane;
 
     @Getter
     private static BorderPane employeesPane;
+
+    @Getter
+    private static BorderPane employmentStatusPane;
+
+    @Getter
+    // Leave
+    private static BorderPane leaveStatusPane;
 
     @Getter
     // PayRoll
@@ -473,11 +479,6 @@ public class Pages {
     private static BorderPane systemPane;
 
     @Getter
-    private static BorderPane usersPane;
-
-    @Getter
-
-
     private static BorderPane productCategoryPane;
 
     @Getter
@@ -632,12 +633,16 @@ public class Pages {
     private static void setAttendance(Stage stage) {
         attendanceLoader.setControllerFactory(e -> new AttendanceController());
         attendanceReportLoader.setControllerFactory(e -> new AttendanceReportController());
-        checkInsLoader.setControllerFactory(e -> new CheckInController());
     }
 
     private static void setHRM(Stage stage) {
-        designationsLoader.setControllerFactory(e -> new DesignationsController());
-        employeesLoader.setControllerFactory(e -> new EmployeesController());
+        designationsLoader.setControllerFactory(e -> DesignationsController.getInstance(stage));
+        employeesLoader.setControllerFactory(e -> EmployeesController.getInstance(stage));
+        employmentStatusLoader.setControllerFactory(e -> EmploymentStatusController.getInstance(stage));
+    }
+
+    private static void setLeave(Stage stage) {
+        leaveLoader.setControllerFactory(e -> LeaveStatusController.getInstance(stage));
     }
 
     private static void setPayRoll(Stage stage) {
@@ -699,7 +704,6 @@ public class Pages {
         printSettingsLoader.setControllerFactory(c -> new PrintSettingsController());
         settingsLoader.setControllerFactory(c -> new SettingsController());
         systemLoader.setControllerFactory(c -> new SystemController());
-        usersLoader.setControllerFactory(c -> UserController.getInstance(stage));
     }
 
     private static void setExpenses(Stage stage) {
@@ -788,11 +792,14 @@ public class Pages {
         // Attendance
         attendancePane = attendanceLoader.load();
         attendanceReportPane = attendanceReportLoader.load();
-        checkInPane = checkInsLoader.load();
         // HUMAN RESOURCE
         // Human Resource Management
         designationsPane = designationsLoader.load();
         employeesPane = employeesLoader.load();
+        employmentStatusPane = employmentStatusLoader.load();
+        // HUMAN RESOURCE
+        // Leave
+        leaveStatusPane = leaveLoader.load();
         // HUMAN RESOURCE
         // PayRoll
         salariesPane = salariesLoader.load();
@@ -825,7 +832,6 @@ public class Pages {
         languagesPane = languagesLoader.load();
         mailSettingsPane = mailSettingsLoader.load();
         printSettingsPane = printSettingsLoader.load();
-        usersPane = usersLoader.load();
 
         productCategoryPane = productCategoryLoader.load();
         brandPane = brandLoader.load();
@@ -873,6 +879,7 @@ public class Pages {
         setReports(stage);
         setAttendance(stage);
         setHRM(stage);
+        setLeave(stage);
         setPayRoll(stage);
         setBank(stage);
         setService(stage);

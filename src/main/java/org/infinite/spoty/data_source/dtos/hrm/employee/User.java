@@ -12,11 +12,15 @@
  * Jonathan Mark Mwigo makes no warranties, express or implied, with respect to the computer system code. Jonathan Mark Mwigo shall not be liable for any damages, including, but not limited to, direct, indirect, incidental, special, consequential, or punitive damages, arising out of or in connection with the use of the computer system code.
  */
 
-package org.infinite.spoty.data_source.dtos;
+package org.infinite.spoty.data_source.dtos.hrm.employee;
 
 import lombok.*;
+import org.infinite.spoty.data_source.dtos.Branch;
+import org.infinite.spoty.data_source.dtos.Role;
+import org.infinite.spoty.data_source.dtos.UserProfile;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -26,11 +30,36 @@ import java.util.List;
 public class User {
     private Long id;
     private UserProfile userProfile;
-
+    private EmploymentStatus employmentStatus;
+    private Designation designation;
+    private Department department;
+    private String workShift;
+    private Date joiningDate;
+    private String salary;
+    private ArrayList<Role> roles;
     private String email;
-    private List<Role> roles;
-    private Branch branch;
+    private ArrayList<Branch> branches;
     private boolean active;
     private boolean locked;
     private boolean accessAllBranches;
+
+    public String getName() {
+        return userProfile.getFirstName() + " " + userProfile.getOtherName() + " " + userProfile.getLastName();
+    }
+
+    public String getEmploymentStatusName() {
+        return employmentStatus.getName();
+    }
+
+    public String getEmploymentStatusColor() {
+        return employmentStatus.getColor();
+    }
+
+    public String getDepartmentName() {
+        return department.getName();
+    }
+
+    public String getDesignationName() {
+        return designation.getName();
+    }
 }

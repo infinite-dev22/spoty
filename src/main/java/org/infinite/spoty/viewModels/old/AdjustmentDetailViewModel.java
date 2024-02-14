@@ -296,7 +296,6 @@ public class AdjustmentDetailViewModel {
             throws Exception {
 
         AdjustmentTransaction adjustmentTransaction = new AdjustmentTransaction();
-        adjustmentTransaction.setBranch(adjustmentDetail.getAdjustment().getBranch());
         adjustmentTransaction.setAdjustmentDetail(adjustmentDetail);
         adjustmentTransaction.setProduct(adjustmentDetail.getProduct());
         adjustmentTransaction.setAdjustQuantity(adjustmentDetail.getQuantity());
@@ -311,7 +310,6 @@ public class AdjustmentDetailViewModel {
             throws Exception {
         AdjustmentTransaction adjustmentTransaction =
                 getAdjustmentTransaction(adjustmentDetail.getId());
-        adjustmentTransaction.setBranch(adjustmentDetail.getAdjustment().getBranch());
         adjustmentTransaction.setAdjustmentDetail(adjustmentDetail);
         adjustmentTransaction.setProduct(adjustmentDetail.getProduct());
         adjustmentTransaction.setAdjustQuantity(adjustmentDetail.getQuantity());

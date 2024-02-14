@@ -19,6 +19,7 @@ import org.infinite.spoty.data_source.dtos.Branch;
 import org.infinite.spoty.data_source.dtos.Supplier;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -32,7 +33,7 @@ public class PurchaseReturnMaster {
     private String ref;
     private Date date;
     private Supplier supplier;
-    private Branch branch;
+    private ArrayList<Branch> branches;
     private List<PurchaseReturnDetail> purchaseReturnDetails;
     private double taxRate;
     private double netTax;
@@ -43,10 +44,6 @@ public class PurchaseReturnMaster {
     private String status;
     private String paymentStatus;
     private String notes;
-
-    public String getBranchName() {
-        return branch.getName();
-    }
 
     public String getSupplierName() {
         return supplier.getName();

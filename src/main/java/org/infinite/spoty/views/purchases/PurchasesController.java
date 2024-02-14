@@ -64,8 +64,6 @@ public class PurchasesController implements Initializable {
         MFXTableColumn<PurchaseMaster> purchaseMasterSupplier =
                 new MFXTableColumn<>(
                         "Supplier", false, Comparator.comparing(PurchaseMaster::getSupplierName));
-        MFXTableColumn<PurchaseMaster> purchaseMasterBranch =
-                new MFXTableColumn<>("Branch", false, Comparator.comparing(PurchaseMaster::getBranchName));
         MFXTableColumn<PurchaseMaster> purchaseMasterStatus =
                 new MFXTableColumn<>("Status", false, Comparator.comparing(PurchaseMaster::getStatus));
         MFXTableColumn<PurchaseMaster> purchaseMasterPaymentStatus =
@@ -82,8 +80,6 @@ public class PurchasesController implements Initializable {
 
         purchaseMasterSupplier.setRowCellFactory(
                 purchaseMaster -> new MFXTableRowCell<>(PurchaseMaster::getSupplierName));
-        purchaseMasterBranch.setRowCellFactory(
-                purchaseMaster -> new MFXTableRowCell<>(PurchaseMaster::getBranchName));
         purchaseMasterStatus.setRowCellFactory(
                 purchaseMaster -> new MFXTableRowCell<>(PurchaseMaster::getStatus));
         purchaseMasterPaymentStatus.setRowCellFactory(
@@ -98,9 +94,6 @@ public class PurchasesController implements Initializable {
                 purchaseMaster -> new MFXTableRowCell<>(PurchaseMaster::getDue));
 
         purchaseMasterSupplier
-                .prefWidthProperty()
-                .bind(purchaseMasterTable.widthProperty().multiply(.25));
-        purchaseMasterBranch
                 .prefWidthProperty()
                 .bind(purchaseMasterTable.widthProperty().multiply(.25));
         purchaseMasterStatus
@@ -124,7 +117,6 @@ public class PurchasesController implements Initializable {
                 .getTableColumns()
                 .addAll(
                         purchaseMasterSupplier,
-                        purchaseMasterBranch,
                         purchaseMasterStatus,
                         purchaseMasterPaymentStatus,
                         purchaseMasterDate,
@@ -136,7 +128,6 @@ public class PurchasesController implements Initializable {
                 .addAll(
                         new StringFilter<>("Reference", PurchaseMaster::getRef),
                         new StringFilter<>("Supplier", PurchaseMaster::getSupplierName),
-                        new StringFilter<>("Branch", PurchaseMaster::getBranchName),
                         new StringFilter<>("Status", PurchaseMaster::getStatus),
                         new StringFilter<>("Pay Status", PurchaseMaster::getPaymentStatus),
                         new DoubleFilter<>("Total", PurchaseMaster::getTotal),

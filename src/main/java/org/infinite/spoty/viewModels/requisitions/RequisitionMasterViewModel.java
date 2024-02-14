@@ -246,7 +246,6 @@ public class RequisitionMasterViewModel {
         var requisitionMaster = RequisitionMaster.builder()
                 .date(getDate())
                 .supplier(getSupplier())
-                .branch(getBranch())
                 .shipVia(getShipVia())
                 .shipMethod(getShipMethod())
                 .shippingTerms(getShippingTerms())
@@ -324,7 +323,6 @@ public class RequisitionMasterViewModel {
 
             setId(requisitionMaster.getId());
             setSupplier(requisitionMaster.getSupplier());
-            setBranch(requisitionMaster.getBranch());
             setShipVia(requisitionMaster.getShipVia());
             setShipMethod(requisitionMaster.getShipMethod());
             setShippingTerms(requisitionMaster.getShippingTerms());
@@ -378,7 +376,6 @@ public class RequisitionMasterViewModel {
                 .id(getId())
                 .date(getDate())
                 .supplier(getSupplier())
-                .branch(getBranch())
                 .shipVia(getShipVia())
                 .shipMethod(getShipMethod())
                 .shippingTerms(getShippingTerms())

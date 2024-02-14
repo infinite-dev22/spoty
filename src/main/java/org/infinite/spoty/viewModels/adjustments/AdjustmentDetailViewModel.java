@@ -366,7 +366,6 @@ public class AdjustmentDetailViewModel {
     private static void createAdjustmentTransaction(@NotNull AdjustmentDetail adjustmentDetail) {
 
         AdjustmentTransaction adjustmentTransaction = new AdjustmentTransaction();
-        adjustmentTransaction.setBranch(adjustmentDetail.getAdjustment().getBranch());
         adjustmentTransaction.setAdjustmentDetail(adjustmentDetail);
         adjustmentTransaction.setProduct(adjustmentDetail.getProduct());
         adjustmentTransaction.setAdjustQuantity(adjustmentDetail.getQuantity());
@@ -380,7 +379,6 @@ public class AdjustmentDetailViewModel {
     private static void updateAdjustmentTransaction(@NotNull AdjustmentDetail adjustmentDetail) {
         AdjustmentTransaction adjustmentTransaction =
                 getAdjustmentTransaction(adjustmentDetail.getId());
-        adjustmentTransaction.setBranch(adjustmentDetail.getAdjustment().getBranch());
         adjustmentTransaction.setAdjustmentDetail(adjustmentDetail);
         adjustmentTransaction.setProduct(adjustmentDetail.getProduct());
         adjustmentTransaction.setAdjustQuantity(adjustmentDetail.getQuantity());

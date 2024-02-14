@@ -2,6 +2,7 @@ package org.infinite.spoty.data_source.dtos;
 
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 @Getter
@@ -11,7 +12,7 @@ import java.util.Date;
 @Builder
 public class Attendance {
     private Long id;
-    private Branch branch;
+    private ArrayList<Branch> branches;
     private String employeeName;
     private Date date;
     private Date checkIn;

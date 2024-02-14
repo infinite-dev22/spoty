@@ -169,7 +169,6 @@ public class StockInMasterViewModel {
             ParameterlessConsumer onFailed) {
         var stockInMaster = StockInMaster.builder()
                 .date(getDate())
-                .branch(getBranch())
                 .status(getStatus())
                 .notes(getNote())
                 .build();
@@ -234,7 +233,6 @@ public class StockInMasterViewModel {
 
                 setId(stockInMaster.getId());
                 setDate(stockInMaster.getLocaleDate());
-                setBranch(stockInMaster.getBranch());
                 setStatus(stockInMaster.getStatus());
                 setNote(stockInMaster.getNotes());
 
@@ -281,7 +279,6 @@ public class StockInMasterViewModel {
         var stockInMaster = StockInMaster.builder()
                 .id(getId())
                 .date(getDate())
-                .branch(getBranch())
                 .status(getStatus())
                 .notes(getNote())
                 .build();

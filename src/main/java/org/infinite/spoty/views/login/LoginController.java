@@ -26,6 +26,7 @@ import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.values.strings.Labels;
 import org.infinite.spoty.viewModels.*;
 import org.infinite.spoty.viewModels.adjustments.AdjustmentMasterViewModel;
+import org.infinite.spoty.viewModels.hrm.employee.UserViewModel;
 import org.infinite.spoty.viewModels.purchases.PurchaseMasterViewModel;
 import org.infinite.spoty.viewModels.quotations.QuotationMasterViewModel;
 import org.infinite.spoty.viewModels.requisitions.RequisitionMasterViewModel;

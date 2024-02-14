@@ -15,6 +15,7 @@
 package org.infinite.spoty.data_source.dtos;
 
 import lombok.*;
+import org.infinite.spoty.data_source.dtos.hrm.employee.User;
 
 import java.util.List;
 

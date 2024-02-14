@@ -19,6 +19,7 @@ import org.infinite.spoty.data_source.dtos.Branch;
 import org.infinite.spoty.data_source.dtos.Customer;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -32,7 +33,7 @@ public class SaleMaster {
     private Date date;
     private String ref;
     private Customer customer;
-    private Branch branch;
+    private ArrayList<Branch> branches;
     private List<SaleDetail> saleDetails;
     private double taxRate;
     private double netTax;
@@ -43,10 +44,6 @@ public class SaleMaster {
     private String paymentStatus;
     private String saleStatus;
     private String notes;
-
-    public String getBranchName() {
-        return branch.getName();
-    }
 
     public String getCustomerName() {
         return customer.getName();

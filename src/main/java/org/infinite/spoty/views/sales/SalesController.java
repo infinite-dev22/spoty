@@ -65,8 +65,6 @@ public class SalesController implements Initializable {
     private void setupTable() {
         MFXTableColumn<SaleMaster> saleCustomer =
                 new MFXTableColumn<>("Customer", false, Comparator.comparing(SaleMaster::getCustomerName));
-        MFXTableColumn<SaleMaster> saleBranch =
-                new MFXTableColumn<>("Branch", false, Comparator.comparing(SaleMaster::getBranchName));
         MFXTableColumn<SaleMaster> saleStatus =
                 new MFXTableColumn<>("Sale Status", false, Comparator.comparing(SaleMaster::getSaleStatus));
         MFXTableColumn<SaleMaster> salePaymentStatus =
@@ -82,7 +80,6 @@ public class SalesController implements Initializable {
                 new MFXTableColumn<>("Amount Due", false, Comparator.comparing(SaleMaster::getAmountDue));
 
         saleCustomer.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleMaster::getCustomerName));
-        saleBranch.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleMaster::getBranchName));
         saleStatus.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleMaster::getSaleStatus));
         salePaymentStatus.setRowCellFactory(
                 sale -> new MFXTableRowCell<>(SaleMaster::getPaymentStatus));
@@ -92,7 +89,6 @@ public class SalesController implements Initializable {
         saleAmountDue.setRowCellFactory(sale -> new MFXTableRowCell<>(SaleMaster::getAmountDue));
 
         saleCustomer.prefWidthProperty().bind(saleMasterTable.widthProperty().multiply(.25));
-        saleBranch.prefWidthProperty().bind(saleMasterTable.widthProperty().multiply(.25));
         saleStatus.prefWidthProperty().bind(saleMasterTable.widthProperty().multiply(.25));
         salePaymentStatus.prefWidthProperty().bind(saleMasterTable.widthProperty().multiply(.25));
         saleDate.prefWidthProperty().bind(saleMasterTable.widthProperty().multiply(.25));
@@ -104,7 +100,6 @@ public class SalesController implements Initializable {
                 .getTableColumns()
                 .addAll(
                         saleCustomer,
-                        saleBranch,
                         saleStatus,
                         salePaymentStatus,
                         saleDate,
@@ -116,7 +111,6 @@ public class SalesController implements Initializable {
                 .addAll(
                         new StringFilter<>("Ref No.", SaleMaster::getRef),
                         new StringFilter<>("Customer", SaleMaster::getCustomerName),
-                        new StringFilter<>("Branch", SaleMaster::getBranchName),
                         new StringFilter<>("Sale Status", SaleMaster::getSaleStatus),
                         new StringFilter<>("Payment Status", SaleMaster::getPaymentStatus),
                         new DoubleFilter<>("Grand Total", SaleMaster::getTotal),

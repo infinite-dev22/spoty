@@ -2,6 +2,8 @@ package org.infinite.spoty.data_source.dtos;
 
 import lombok.*;
 
+import java.util.ArrayList;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -10,6 +12,6 @@ import lombok.*;
 public class SaleTermAndCondition {
     private Long id;
     private String name;
-    private Branch branch;
+    private ArrayList<Branch> branches;
     private boolean active;
 }

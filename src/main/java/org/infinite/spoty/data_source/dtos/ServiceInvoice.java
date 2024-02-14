@@ -3,6 +3,7 @@ package org.infinite.spoty.data_source.dtos;
 import lombok.*;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 @Getter
@@ -12,14 +13,10 @@ import java.util.Date;
 @Builder
 public class ServiceInvoice {
     private Long id;
-    private Branch branch;
+    private ArrayList<Branch> branches;
     private String customerName;
     private Date date;
     private String description;
-
-    public String getBranchName() {
-        return branch.getName();
-    }
 
     public String getLocaleDate() {
         return DateFormat.getDateInstance().format(date);

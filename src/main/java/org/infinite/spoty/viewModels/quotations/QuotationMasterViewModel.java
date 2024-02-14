@@ -172,7 +172,6 @@ public class QuotationMasterViewModel {
         var quotationMaster = QuotationMaster.builder()
                 .date(getDate())
                 .customer(getCustomer())
-                .branch(getBranch())
                 .status(getStatus())
                 .notes(getNote())
                 .build();
@@ -244,7 +243,6 @@ public class QuotationMasterViewModel {
             }
 
             setId(quotationMaster.getId());
-            setBranch(quotationMaster.getBranch());
             setNote(quotationMaster.getNotes());
             setDate(quotationMaster.getLocaleDate());
             QuotationDetailViewModel.quotationDetailsList.clear();
@@ -293,7 +291,6 @@ public class QuotationMasterViewModel {
                 .id(getId())
                 .date(getDate())
                 .customer(getCustomer())
-                .branch(getBranch())
                 .status(getStatus())
                 .notes(getNote())
                 .build();

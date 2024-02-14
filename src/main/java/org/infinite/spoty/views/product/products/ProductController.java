@@ -242,7 +242,7 @@ public class ProductController implements Initializable {
                         .toStageDialogBuilder()
                         .initOwner(stage)
                         .initModality(Modality.WINDOW_MODAL)
-                        .setOwnerNode(BaseController.getInstance(stage).contentPane)
+                        .setOwnerNode(productsContentPane)
                         .setScrimPriority(ScrimPriority.WINDOW)
                         .setScrimOwner(true)
                         .get();

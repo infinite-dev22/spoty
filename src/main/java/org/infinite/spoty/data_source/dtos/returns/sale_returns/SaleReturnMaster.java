@@ -18,6 +18,7 @@ import lombok.*;
 import org.infinite.spoty.data_source.dtos.Branch;
 import org.infinite.spoty.data_source.dtos.Customer;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -31,7 +32,7 @@ public class SaleReturnMaster {
     private Date date;
     private String ref;
     private Customer customer;
-    private Branch branch;
+    private ArrayList<Branch> branches;
     private List<SaleReturnDetail> saleReturnDetails;
     private double taxRate;
     private double netTax;
@@ -41,10 +42,6 @@ public class SaleReturnMaster {
     private String paymentStatus;
     private String status;
     private String notes;
-
-    public String getBranchName() {
-        return branch.getName();
-    }
 
     public String getCustomerName() {
         return customer.getName();

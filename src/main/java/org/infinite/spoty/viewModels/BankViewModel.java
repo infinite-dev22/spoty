@@ -221,7 +221,6 @@ public class BankViewModel {
             try {
                 var bank = gson.fromJson(task.get().body(), Bank.class);
 
-                setBranch(bank.getBranch());
                 setId(bank.getId());
                 setBankName(bank.getBankName());
                 setAccountName(bank.getAccountName());

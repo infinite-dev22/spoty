@@ -143,7 +143,6 @@ public class AdjustmentMasterViewModel {
 
     public static void saveAdjustmentMaster() throws Exception {
         var adjustmentMaster = AdjustmentMaster.builder()
-                .branch(getBranch())
                 .notes(getNote())
                 .date(getDate())
                 .build();

@@ -34,9 +34,9 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.infinite.spoty.data_source.dtos.Expense;
-import org.infinite.spoty.views.forms.ExpenseFormController;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.ExpensesViewModel;
+import org.infinite.spoty.views.forms.ExpenseFormController;
 
 import java.io.IOException;
 import java.net.URL;
@@ -91,33 +91,28 @@ public class ExpenseController implements Initializable {
         MFXTableColumn<Expense> expenseCategory =
                 new MFXTableColumn<>(
                         "Category", false, Comparator.comparing(Expense::getExpenseCategoryName));
-        MFXTableColumn<Expense> expenseBranch =
-                new MFXTableColumn<>("Branch", false, Comparator.comparing(Expense::getBranchName));
 
         expenseDate.setRowCellFactory(expense -> new MFXTableRowCell<>(Expense::getLocaleDate));
         expenseName.setRowCellFactory(expense -> new MFXTableRowCell<>(Expense::getName));
         expenseAmount.setRowCellFactory(expense -> new MFXTableRowCell<>(Expense::getAmount));
         expenseCategory.setRowCellFactory(
                 expense -> new MFXTableRowCell<>(Expense::getExpenseCategoryName));
-        expenseBranch.setRowCellFactory(expense -> new MFXTableRowCell<>(Expense::getBranchName));
 
         expenseDate.prefWidthProperty().bind(expenseTable.widthProperty().multiply(.25));
         expenseName.prefWidthProperty().bind(expenseTable.widthProperty().multiply(.25));
         expenseAmount.prefWidthProperty().bind(expenseTable.widthProperty().multiply(.25));
         expenseCategory.prefWidthProperty().bind(expenseTable.widthProperty().multiply(.25));
-        expenseBranch.prefWidthProperty().bind(expenseTable.widthProperty().multiply(.25));
 
         expenseTable
                 .getTableColumns()
-                .addAll(expenseName, expenseCategory, expenseBranch, expenseDate, expenseAmount);
+                .addAll(expenseName, expenseCategory, expenseDate, expenseAmount);
         expenseTable
                 .getFilters()
                 .addAll(
                         new StringFilter<>("Reference No.", Expense::getRef),
                         new StringFilter<>("Name", Expense::getName),
                         new DoubleFilter<>("Amount", Expense::getAmount),
-                        new StringFilter<>("Category", Expense::getExpenseCategoryName),
-                        new StringFilter<>("Branch", Expense::getBranchName));
+                        new StringFilter<>("Category", Expense::getExpenseCategoryName));
         styleExpenseTable();
 
         if (ExpensesViewModel.getExpenses().isEmpty()) {

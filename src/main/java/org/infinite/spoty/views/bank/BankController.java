@@ -74,33 +74,28 @@ public class BankController implements Initializable {
                 new MFXTableColumn<>("A/C Name", false, Comparator.comparing(Bank::getAccountName));
         MFXTableColumn<Bank> accountNumber =
                 new MFXTableColumn<>("A/C Number", false, Comparator.comparing(Bank::getAccountNumber));
-        MFXTableColumn<Bank> branch =
-                new MFXTableColumn<>("Branch", false, Comparator.comparing(Bank::getBranchName));
         MFXTableColumn<Bank> balance =
                 new MFXTableColumn<>("Balance", false, Comparator.comparing(Bank::getBalance));
 
         bankName.setRowCellFactory(customer -> new MFXTableRowCell<>(Bank::getBankName));
         accountName.setRowCellFactory(customer -> new MFXTableRowCell<>(Bank::getAccountName));
         accountNumber.setRowCellFactory(customer -> new MFXTableRowCell<>(Bank::getAccountNumber));
-        branch.setRowCellFactory(customer -> new MFXTableRowCell<>(Bank::getBranchName));
         balance.setRowCellFactory(customer -> new MFXTableRowCell<>(Bank::getBalance));
 
         bankName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
         accountName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.3));
-        accountNumber.prefWidthProperty().bind(masterTable.widthProperty().multiply(.2));
-        branch.prefWidthProperty().bind(masterTable.widthProperty().multiply(.2));
-        balance.prefWidthProperty().bind(masterTable.widthProperty().multiply(.2));
+        accountNumber.prefWidthProperty().bind(masterTable.widthProperty().multiply(.3));
+        balance.prefWidthProperty().bind(masterTable.widthProperty().multiply(.3));
 
         masterTable
                 .getTableColumns()
-                .addAll(bankName, accountName, accountNumber, branch, balance);
+                .addAll(bankName, accountName, accountNumber, balance);
         masterTable
                 .getFilters()
                 .addAll(
                         new StringFilter<>("Bank Name", Bank::getBankName),
                         new StringFilter<>("A/C Name", Bank::getAccountName),
                         new StringFilter<>("A/C Number", Bank::getAccountNumber),
-                        new StringFilter<>("Branch", Bank::getBranchName),
                         new StringFilter<>("Balance", Bank::getBalance));
         styleBankTable();
 

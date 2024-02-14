@@ -381,4 +381,26 @@ public class EndPoints {
         public static final String deleteService = servicesUrl + "/single/delete";
         public static final String deleteServices = servicesUrl + "/multiple/delete";
     }
+
+    public static final class EmploymentStatus {
+        public static final String employmentStatusesUrl = apiUrl + "/employmentStatuses";
+        public static final String allEmploymentStatuses = employmentStatusesUrl + "/all";
+        public static final String employmentStatusById = employmentStatusesUrl + "/single";
+        public static final String searchEmploymentStatuses = employmentStatusesUrl + "/search";
+        public static final String addEmploymentStatus = employmentStatusesUrl + "/add";
+        public static final String updateEmploymentStatus = employmentStatusesUrl + "/update";
+        public static final String deleteEmploymentStatus = employmentStatusesUrl + "/single/delete";
+        public static final String deleteEmploymentStatuses = employmentStatusesUrl + "/multiple/delete";
+    }
+
+    public static final class LeaveStatus {
+        public static final String leaveStatusesUrl = apiUrl + "/leaveStatuses";
+        public static final String allLeaveStatuses = leaveStatusesUrl + "/all";
+        public static final String leaveStatusById = leaveStatusesUrl + "/single";
+        public static final String searchLeaveStatuses = leaveStatusesUrl + "/search";
+        public static final String addLeaveStatus = leaveStatusesUrl + "/add";
+        public static final String updateLeaveStatus = leaveStatusesUrl + "/update";
+        public static final String deleteLeaveStatus = leaveStatusesUrl + "/single/delete";
+        public static final String deleteLeaveStatuses = leaveStatusesUrl + "/multiple/delete";
+    }
 }

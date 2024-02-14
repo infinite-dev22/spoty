@@ -61,8 +61,6 @@ public class StockInController implements Initializable {
     }
 
     private void setupTable() {
-        MFXTableColumn<StockInMaster> stockInBranch =
-                new MFXTableColumn<>("Branch", false, Comparator.comparing(StockInMaster::getBranchName));
         MFXTableColumn<StockInMaster> stockInStatus =
                 new MFXTableColumn<>("Status", false, Comparator.comparing(StockInMaster::getStatus));
         MFXTableColumn<StockInMaster> stockInDate =
@@ -70,24 +68,21 @@ public class StockInController implements Initializable {
         MFXTableColumn<StockInMaster> stockInTotalCost =
                 new MFXTableColumn<>("Total Amount", false, Comparator.comparing(StockInMaster::getTotal));
 
-        stockInBranch.setRowCellFactory(stockIn -> new MFXTableRowCell<>(StockInMaster::getBranchName));
         stockInStatus.setRowCellFactory(stockIn -> new MFXTableRowCell<>(StockInMaster::getStatus));
         stockInTotalCost.setRowCellFactory(stockIn -> new MFXTableRowCell<>(StockInMaster::getTotal));
         stockInDate.setRowCellFactory(stockIn -> new MFXTableRowCell<>(StockInMaster::getLocaleDate));
 
-        stockInBranch.prefWidthProperty().bind(stockInMasterTable.widthProperty().multiply(.25));
-        stockInStatus.prefWidthProperty().bind(stockInMasterTable.widthProperty().multiply(.25));
-        stockInTotalCost.prefWidthProperty().bind(stockInMasterTable.widthProperty().multiply(.25));
-        stockInDate.prefWidthProperty().bind(stockInMasterTable.widthProperty().multiply(.25));
+        stockInStatus.prefWidthProperty().bind(stockInMasterTable.widthProperty().multiply(.3));
+        stockInTotalCost.prefWidthProperty().bind(stockInMasterTable.widthProperty().multiply(.3));
+        stockInDate.prefWidthProperty().bind(stockInMasterTable.widthProperty().multiply(.3));
 
         stockInMasterTable
                 .getTableColumns()
-                .addAll(stockInBranch, stockInStatus, stockInDate, stockInTotalCost);
+                .addAll(stockInStatus, stockInDate, stockInTotalCost);
         stockInMasterTable
                 .getFilters()
                 .addAll(
                         new StringFilter<>("Reference", StockInMaster::getRef),
-                        new StringFilter<>("Branch", StockInMaster::getBranchName),
                         new StringFilter<>("Status", StockInMaster::getStatus),
                         new DoubleFilter<>("Total Amount", StockInMaster::getTotal));
         getStockInMasterTable();

@@ -59,9 +59,6 @@ public class SaleReturnsController implements Initializable {
         MFXTableColumn<SaleReturnMaster> saleReturnCustomer =
                 new MFXTableColumn<>(
                         "Customer", false, Comparator.comparing(SaleReturnMaster::getCustomerName));
-        MFXTableColumn<SaleReturnMaster> saleReturnBranch =
-                new MFXTableColumn<>(
-                        "Branch", false, Comparator.comparing(SaleReturnMaster::getBranchName));
         MFXTableColumn<SaleReturnMaster> saleReturnStatus =
                 new MFXTableColumn<>("Status", false, Comparator.comparing(SaleReturnMaster::getStatus));
         MFXTableColumn<SaleReturnMaster> saleReturnGrandTotal =
@@ -74,11 +71,9 @@ public class SaleReturnsController implements Initializable {
 
         saleReturnPaymentStatus.setTooltip(new Tooltip("PurchaseMaster Return Payment Status"));
         saleReturnStatus.setTooltip(new Tooltip("PurchaseMaster Return Status"));
-        saleReturnBranch.setTooltip(new Tooltip("Branch, store or warehouse"));
 
         saleReturnDate.prefWidthProperty().bind(saleReturnTable.widthProperty().multiply(.143));
         saleReturnCustomer.prefWidthProperty().bind(saleReturnTable.widthProperty().multiply(.143));
-        saleReturnBranch.prefWidthProperty().bind(saleReturnTable.widthProperty().multiply(.143));
         saleReturnStatus.prefWidthProperty().bind(saleReturnTable.widthProperty().multiply(.143));
         saleReturnGrandTotal.prefWidthProperty().bind(saleReturnTable.widthProperty().multiply(.143));
         saleReturnAmountPaid.prefWidthProperty().bind(saleReturnTable.widthProperty().multiply(.143));
@@ -90,8 +85,6 @@ public class SaleReturnsController implements Initializable {
                 saleReturn -> new MFXTableRowCell<>(SaleReturnMaster::getDate));
         saleReturnCustomer.setRowCellFactory(
                 saleReturn -> new MFXTableRowCell<>(SaleReturnMaster::getCustomerName));
-        saleReturnBranch.setRowCellFactory(
-                saleReturn -> new MFXTableRowCell<>(SaleReturnMaster::getBranchName));
         saleReturnStatus.setRowCellFactory(
                 saleReturn -> new MFXTableRowCell<>(SaleReturnMaster::getStatus));
         saleReturnGrandTotal.setRowCellFactory(
@@ -105,7 +98,6 @@ public class SaleReturnsController implements Initializable {
                 .getTableColumns()
                 .addAll(
                         saleReturnCustomer,
-                        saleReturnBranch,
                         saleReturnStatus,
                         saleReturnPaymentStatus,
                         saleReturnDate,
@@ -117,7 +109,6 @@ public class SaleReturnsController implements Initializable {
                 .addAll(
                         new StringFilter<>("Ref No.", SaleReturnMaster::getRef),
                         new StringFilter<>("Customer", SaleReturnMaster::getCustomerName),
-                        new StringFilter<>("Branch", SaleReturnMaster::getBranchName),
                         new StringFilter<>("Status", SaleReturnMaster::getStatus),
                         new DoubleFilter<>("Total", SaleReturnMaster::getTotal),
                         new DoubleFilter<>("Paid", SaleReturnMaster::getPaid),

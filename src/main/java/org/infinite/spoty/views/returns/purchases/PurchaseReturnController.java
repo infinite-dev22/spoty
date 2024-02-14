@@ -59,9 +59,6 @@ public class PurchaseReturnController implements Initializable {
         MFXTableColumn<PurchaseReturnMaster> purchaseReturnSupplier =
                 new MFXTableColumn<>(
                         "Supplier", false, Comparator.comparing(PurchaseReturnMaster::getSupplierName));
-        MFXTableColumn<PurchaseReturnMaster> purchaseReturnBranch =
-                new MFXTableColumn<>(
-                        "Branch", false, Comparator.comparing(PurchaseReturnMaster::getBranchName));
         MFXTableColumn<PurchaseReturnMaster> purchaseReturnStatus =
                 new MFXTableColumn<>(
                         "Status", false, Comparator.comparing(PurchaseReturnMaster::getStatus));
@@ -74,13 +71,9 @@ public class PurchaseReturnController implements Initializable {
                         "Pay Status", false, Comparator.comparing(PurchaseReturnMaster::getPaymentStatus));
         purchaseReturnPaymentStatus.setTooltip(new Tooltip("PurchaseMaster Return Payment Status"));
         purchaseReturnStatus.setTooltip(new Tooltip("PurchaseMaster Return Status"));
-        purchaseReturnBranch.setTooltip(new Tooltip("Branch, store or warehouse"));
 
         purchaseReturnDate.prefWidthProperty().bind(purchaseReturnTable.widthProperty().multiply(.13));
         purchaseReturnSupplier
-                .prefWidthProperty()
-                .bind(purchaseReturnTable.widthProperty().multiply(.25));
-        purchaseReturnBranch
                 .prefWidthProperty()
                 .bind(purchaseReturnTable.widthProperty().multiply(.25));
         purchaseReturnStatus
@@ -100,8 +93,6 @@ public class PurchaseReturnController implements Initializable {
                 purchaseReturn -> new MFXTableRowCell<>(PurchaseReturnMaster::getDate));
         purchaseReturnSupplier.setRowCellFactory(
                 purchaseReturn -> new MFXTableRowCell<>(PurchaseReturnMaster::getSupplierName));
-        purchaseReturnBranch.setRowCellFactory(
-                purchaseReturn -> new MFXTableRowCell<>(PurchaseReturnMaster::getBranchName));
         purchaseReturnStatus.setRowCellFactory(
                 purchaseReturn -> new MFXTableRowCell<>(PurchaseReturnMaster::getStatus));
         purchaseReturnGrandTotal.setRowCellFactory(
@@ -115,7 +106,6 @@ public class PurchaseReturnController implements Initializable {
                 .getTableColumns()
                 .addAll(
                         purchaseReturnSupplier,
-                        purchaseReturnBranch,
                         purchaseReturnStatus,
                         purchaseReturnPaymentStatus,
                         purchaseReturnDate,
@@ -126,7 +116,6 @@ public class PurchaseReturnController implements Initializable {
                 .addAll(
                         new StringFilter<>("Ref No.", PurchaseReturnMaster::getRef),
                         new StringFilter<>("Supplier", PurchaseReturnMaster::getSupplierName),
-                        new StringFilter<>("Branch", PurchaseReturnMaster::getBranchName),
                         new StringFilter<>("PurchaseMaster Ref", PurchaseReturnMaster::getRef),
                         new StringFilter<>("Status", PurchaseReturnMaster::getStatus),
                         new DoubleFilter<>("Total", PurchaseReturnMaster::getTotal),

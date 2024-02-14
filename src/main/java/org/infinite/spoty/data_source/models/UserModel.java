@@ -36,7 +36,7 @@ public class UserModel implements Serializable {
     private String phone;
     @Builder.Default
     private List<Role> roles = new ArrayList<>();
-    private Branch branch;
+    private ArrayList<Branch> branches;
     @Builder.Default
     private boolean active = true;
     @Builder.Default

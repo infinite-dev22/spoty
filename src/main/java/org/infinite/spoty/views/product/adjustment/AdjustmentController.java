@@ -63,9 +63,6 @@ public class AdjustmentController implements Initializable {
     private void setupTable() {
         MFXTableColumn<AdjustmentMaster> adjustmentDate =
                 new MFXTableColumn<>("Date", false, Comparator.comparing(AdjustmentMaster::getDate));
-        MFXTableColumn<AdjustmentMaster> adjustmentBranch =
-                new MFXTableColumn<>(
-                        "Branch", false, Comparator.comparing(AdjustmentMaster::getBranchName));
         MFXTableColumn<AdjustmentMaster> adjustmentStatus =
                 new MFXTableColumn<>("Status", false, Comparator.comparing(AdjustmentMaster::getStatus));
         MFXTableColumn<AdjustmentMaster> adjustmentTotalAmount =
@@ -74,15 +71,12 @@ public class AdjustmentController implements Initializable {
 
         adjustmentDate.setRowCellFactory(
                 adjustment -> new MFXTableRowCell<>(AdjustmentMaster::getLocaleDate));
-        adjustmentBranch.setRowCellFactory(
-                adjustment -> new MFXTableRowCell<>(AdjustmentMaster::getBranchName));
         adjustmentStatus.setRowCellFactory(
-                adjustment -> new MFXTableRowCell<>(AdjustmentMaster::getBranchName));
+                adjustment -> new MFXTableRowCell<>(AdjustmentMaster::getStatus));
         adjustmentTotalAmount.setRowCellFactory(
-                adjustment -> new MFXTableRowCell<>(AdjustmentMaster::getBranchName));
+                adjustment -> new MFXTableRowCell<>(AdjustmentMaster::getTotal));
 
         adjustmentDate.prefWidthProperty().bind(adjustmentMasterTable.widthProperty().multiply(.5));
-        adjustmentBranch.prefWidthProperty().bind(adjustmentMasterTable.widthProperty().multiply(.5));
         adjustmentStatus.prefWidthProperty().bind(adjustmentMasterTable.widthProperty().multiply(.5));
         adjustmentTotalAmount
                 .prefWidthProperty()
@@ -90,12 +84,11 @@ public class AdjustmentController implements Initializable {
 
         adjustmentMasterTable
                 .getTableColumns()
-                .addAll(adjustmentDate, adjustmentBranch, adjustmentStatus, adjustmentTotalAmount);
+                .addAll(adjustmentDate, adjustmentStatus, adjustmentTotalAmount);
         adjustmentMasterTable
                 .getFilters()
                 .addAll(
                         new StringFilter<>("Reference", AdjustmentMaster::getRef),
-                        new StringFilter<>("Branch", AdjustmentMaster::getBranchName),
                         new StringFilter<>("Status", AdjustmentMaster::getStatus),
                         new DoubleFilter<>("Total Amount", AdjustmentMaster::getTotal));
         getAdjustmentMasterTable();

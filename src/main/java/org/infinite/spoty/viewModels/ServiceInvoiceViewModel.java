@@ -137,7 +137,6 @@ public class ServiceInvoiceViewModel {
             ParameterlessConsumer onFailed) {
         var serviceInvoice =
                 ServiceInvoice.builder()
-                        .branch(getBranch())
                         .customerName(getCustomerName())
                         .date(getDate())
                         .description(getDescription())
@@ -199,7 +198,6 @@ public class ServiceInvoiceViewModel {
             try {
                 var serviceInvoice = gson.fromJson(task.get().body(), ServiceInvoice.class);
 
-                setBranch(serviceInvoice.getBranch());
                 setId(serviceInvoice.getId());
                 setCustomerName(serviceInvoice.getCustomerName());
                 setDate(serviceInvoice.getLocaleDate());
@@ -244,7 +242,6 @@ public class ServiceInvoiceViewModel {
             ParameterlessConsumer onFailed) {
         var serviceInvoice = ServiceInvoice.builder()
                 .id(getId())
-                .branch(getBranch())
                 .customerName(getCustomerName())
                 .date(getDate())
                 .description(getDescription())

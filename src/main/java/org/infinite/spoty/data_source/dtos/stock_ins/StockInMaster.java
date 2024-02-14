@@ -16,9 +16,10 @@ package org.infinite.spoty.data_source.dtos.stock_ins;
 
 import lombok.*;
 import org.infinite.spoty.data_source.dtos.Branch;
-import org.infinite.spoty.data_source.dtos.User;
+import org.infinite.spoty.data_source.dtos.hrm.employee.User;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -31,7 +32,7 @@ public class StockInMaster {
     private Long id;
     private String ref;
     private Date date;
-    private Branch branch;
+    private ArrayList<Branch> branches;
     private List<StockInDetail> stockInDetails;
     private String shipping;
     private Double total;
@@ -41,10 +42,6 @@ public class StockInMaster {
     private Date approvalDate;
     private Date recordDate;
     private String notes;
-
-    public String getBranchName() {
-        return branch.getName();
-    }
 
     public String getLocaleDate() {
         return DateFormat.getDateInstance().format(date);

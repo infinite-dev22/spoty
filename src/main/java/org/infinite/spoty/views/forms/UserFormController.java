@@ -34,7 +34,7 @@ import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.BranchViewModel;
 import org.infinite.spoty.viewModels.RoleViewModel;
-import org.infinite.spoty.viewModels.UserViewModel;
+import org.infinite.spoty.viewModels.hrm.employee.UserViewModel;
 
 import java.net.URL;
 import java.util.Objects;

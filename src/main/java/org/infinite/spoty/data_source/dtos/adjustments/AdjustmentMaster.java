@@ -18,6 +18,7 @@ import lombok.*;
 import org.infinite.spoty.data_source.dtos.Branch;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -30,15 +31,11 @@ public class AdjustmentMaster {
     private Long id;
     private Date date;
     private String ref;
-    private Branch branch;
+    private ArrayList<Branch> branches;
     private List<AdjustmentDetail> adjustmentDetails;
     private String notes;
     private String status;
     private Double Total;
-
-    public String getBranchName() {
-        return branch.getName();
-    }
 
     public String getLocaleDate() {
         return DateFormat.getDateInstance().format(date);

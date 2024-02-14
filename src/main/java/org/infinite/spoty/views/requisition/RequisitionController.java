@@ -64,9 +64,6 @@ public class RequisitionController implements Initializable {
         MFXTableColumn<RequisitionMaster> requisitionSupplier =
                 new MFXTableColumn<>(
                         "Supplier", false, Comparator.comparing(RequisitionMaster::getSupplierName));
-        MFXTableColumn<RequisitionMaster> requisitionBranch =
-                new MFXTableColumn<>(
-                        "Branch", false, Comparator.comparing(RequisitionMaster::getBranchName));
         MFXTableColumn<RequisitionMaster> requisitionStatus =
                 new MFXTableColumn<>("Status", false, Comparator.comparing(RequisitionMaster::getStatus));
         MFXTableColumn<RequisitionMaster> requisitionShippingMethod =
@@ -80,8 +77,6 @@ public class RequisitionController implements Initializable {
 
         requisitionSupplier.setRowCellFactory(
                 requisition -> new MFXTableRowCell<>(RequisitionMaster::getSupplierName));
-        requisitionBranch.setRowCellFactory(
-                requisition -> new MFXTableRowCell<>(RequisitionMaster::getBranchName));
         requisitionStatus.setRowCellFactory(
                 requisition -> new MFXTableRowCell<>(RequisitionMaster::getStatus));
         requisitionShippingMethod.setRowCellFactory(
@@ -92,9 +87,6 @@ public class RequisitionController implements Initializable {
                 requisition -> new MFXTableRowCell<>(RequisitionMaster::getTotalCost));
 
         requisitionSupplier
-                .prefWidthProperty()
-                .bind(requisitionMasterTable.widthProperty().multiply(.25));
-        requisitionBranch
                 .prefWidthProperty()
                 .bind(requisitionMasterTable.widthProperty().multiply(.25));
         requisitionStatus
@@ -112,7 +104,6 @@ public class RequisitionController implements Initializable {
                 .getTableColumns()
                 .addAll(
                         requisitionSupplier,
-                        requisitionBranch,
                         requisitionStatus,
                         requisitionShippingMethod,
                         requisitionDate,
@@ -122,7 +113,6 @@ public class RequisitionController implements Initializable {
                 .addAll(
                         new StringFilter<>("Reference", RequisitionMaster::getRef),
                         new StringFilter<>("Supplier", RequisitionMaster::getSupplierName),
-                        new StringFilter<>("Branch", RequisitionMaster::getBranchName),
                         new StringFilter<>("Status", RequisitionMaster::getStatus),
                         new StringFilter<>("Shipping Method", RequisitionMaster::getShipMethod),
                         new DoubleFilter<>("Total Amount", RequisitionMaster::getTotalCost));
