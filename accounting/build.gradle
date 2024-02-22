@@ -1,0 +1,54 @@
+plugins {
+    id 'java'
+    id 'org.javamodularity.moduleplugin' version "$modulePlugin"
+    id 'application'
+    id 'org.openjfx.javafxplugin' version "$jfxPlugin"
+    id 'org.beryx.jlink' version "$jlink"
+    id 'org.graalvm.buildtools.native' version "$nativeBuildTool"
+    id 'io.freefair.lombok' version "$lombokPlugin"
+}
+
+apply plugin: 'java'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    gradlePluginPortal()
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+dependencies {
+    implementation project(':reporting')
+    implementation project(':utils')
+    implementation 'io.soabase.record-builder:record-builder-core:39'
+    implementation "io.github.mkpaz:atlantafx-parent:$atlantafx"
+    implementation "io.github.mkpaz:atlantafx-styles:$atlantafx"
+    implementation "io.github.mkpaz:atlantafx-base:$atlantafx"
+    implementation "com.google.code.gson:gson:$gson"
+    compileOnly "org.projectlombok:lombok"
+    annotationProcessor "org.projectlombok:lombok"
+    implementation "org.projectlombok:lombok:$lombok"
+    implementation "org.jetbrains:annotations:$jbAnnotations"
+    implementation "io.github.palexdev:materialfx:$materialfx"
+    implementation "org.kordamp.ikonli:ikonli-javafx:$ikonLi"
+    implementation "org.kordamp.ikonli:ikonli-core:$ikonLi"
+    implementation "org.kordamp.ikonli:ikonli-fontawesome5-pack:$ikonLi"
+    implementation "fr.brouillard.oss:cssfx:$cssFX"
+    implementation "io.github.palexdev:virtualizedfx:$virtualizedFX" // update to version -> 21.1.0 breaks the system.
+    implementation "io.github.palexdev:mfxcomponents:$mfxComponents"
+
+    testImplementation("org.junit.jupiter:junit-jupiter-api:$junit")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit")
+}

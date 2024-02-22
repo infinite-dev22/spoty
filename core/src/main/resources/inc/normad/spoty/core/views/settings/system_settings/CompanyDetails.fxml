@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~ Copyright (c) 2023, Jonathan Mark Mwigo. All rights reserved.
+  ~
+  ~ The computer system code contained in this file is the property of Jonathan Mark Mwigo and is protected by copyright law. Any unauthorized use of this code is prohibited.
+  ~
+  ~ This copyright notice applies to all parts of the computer system code, including the source code, object code, and any other related materials.
+  ~
+  ~ The computer system code may not be modified, translated, or reverse-engineered without the express written permission of Jonathan Mark Mwigo.
+  ~
+  ~ Jonathan Mark Mwigo reserves the right to update, modify, or discontinue the computer system code at any time.
+  ~
+  ~ Jonathan Mark Mwigo makes no warranties, express or implied, with respect to the computer system code. Jonathan Mark Mwigo shall not be liable for any damages, including, but not limited to, direct, indirect, incidental, special, consequential, or punitive damages, arising out of or in connection with the use of the computer system code.
+  -->
+
+<?import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton?>
+<?import io.github.palexdev.mfxcore.controls.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.Separator?>
+<?import io.github.palexdev.materialfx.controls.MFXScrollPane?>
+<?import io.github.palexdev.materialfx.controls.MFXCheckbox?>
+<?import io.github.palexdev.materialfx.controls.MFXTextField?>
+<BorderPane fx:id="contentPane" prefHeight="400.0" prefWidth="600.0" stylesheets="@../../../styles/Common.css"
+            xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="inc.normad.spoty.core.views.settings.system_settings.CompanyDetailsController">
+    <padding>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+    </padding>
+    <center>
+        <AnchorPane styleClass="card" BorderPane.alignment="CENTER">
+            <BorderPane.margin>
+                <Insets top="20.0"/>
+            </BorderPane.margin>
+            <MFXScrollPane fx:id="scrollPane" hbarPolicy="NEVER" vbarPolicy="NEVER" AnchorPane.bottomAnchor="0.0"
+                           AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                <VBox fx:id="content" spacing="16.0">
+                    <AnchorPane prefHeight="250.0" VBox.vgrow="ALWAYS">
+                        <ImageView fx:id="heroImage" fitHeight="140.0" pickOnBounds="true" AnchorPane.leftAnchor="0.0"
+                                   AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                            <Image url="@../../../../../../../../../../../Downloads/perfect1.jpg"/>
+                        </ImageView>
+                        <HBox alignment="CENTER_LEFT" spacing="16.0" AnchorPane.bottomAnchor="0.0"
+                              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                            <ImageView fx:id="companyLogo" fitHeight="150.0" fitWidth="150.0" pickOnBounds="true"
+                                       preserveRatio="true"/>
+                            <VBox alignment="CENTER_LEFT" spacing="8.0">
+                                <Label fx:id="companyName" wrapText="true">
+                                    <font>
+                                        <Font name="System Bold" size="24.0"/>
+                                    </font>
+                                </Label>
+                                <HBox alignment="CENTER_LEFT" spacing="16.0">
+                                    <Label fx:id="companyWeblink" textFill="#908686" wrapText="true">
+                                        <font>
+                                            <Font name="System Italic" size="13.0"/>
+                                        </font>
+                                    </Label>
+                                    <HBox fx:id="linkIcon" alignment="CENTER">
+                                        <cursor>
+                                            <Cursor fx:constant="HAND"/>
+                                        </cursor>
+                                    </HBox>
+                                </HBox>
+                                <padding>
+                                    <Insets top="40.0"/>
+                                </padding>
+                            </VBox>
+                            <padding>
+                                <Insets left="16.0"/>
+                            </padding>
+                        </HBox>
+                    </AnchorPane>
+                    <VBox spacing="16.0">
+                        <padding>
+                            <Insets bottom="16.0" left="16.0" right="16.0" top="16.0"/>
+                        </padding>
+                        <HBox alignment="CENTER_LEFT" spacing="16.0">
+                            <VBox alignment="CENTER_LEFT" spacing="8.0">
+                                <Label text="Company profile" wrapText="true">
+                                    <font>
+                                        <Font name="System Bold" size="18.0"/>
+                                    </font>
+                                </Label>
+                                <Label layoutX="10.0" layoutY="10.0"
+                                       text="Update your company logo and details here." textFill="#908686"
+                                       wrapText="true"/>
+                            </VBox>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <HBox alignment="CENTER_RIGHT" spacing="16.0">
+                                <MFXButton fx:id="cancelBtn" styleClass="outlined" text="Cancel"/>
+                                <MFXButton fx:id="saveBtn" layoutX="10.0" layoutY="10.0" styleClass="filled"
+                                           text="Save Changes"/>
+                            </HBox>
+                        </HBox>
+                        <Separator prefWidth="200.0"/>
+                        <HBox spacing="8.0">
+                            <VBox prefWidth="450.0" spacing="8.0">
+                                <Label text="Public profile" wrapText="true">
+                                    <font>
+                                        <Font name="System Bold" size="14.0"/>
+                                    </font>
+                                </Label>
+                                <Label layoutX="10.0" layoutY="10.0" text="This will be displayed on your profile."
+                                       textFill="#908686" wrapText="true">
+                                    <font>
+                                        <Font name="System Italic" size="13.0"/>
+                                    </font>
+                                </Label>
+                            </VBox>
+                            <Region maxWidth="140.0" prefWidth="120.0"/>
+                            <VBox spacing="8.0">
+                                <MFXTextField fx:id="companyNameTxt" floatMode="BORDER" floatingText="Company name"
+                                              prefWidth="400.0"/>
+                                <MFXTextField fx:id="companyWebLinkTxt" floatMode="BORDER"
+                                              floatingText="Website link" layoutX="10.0" layoutY="10.0"
+                                              prefWidth="400.0"/>
+                                <MFXTextField fx:id="companyPhoneTxt" floatMode="BORDER" floatingText="Phone"
+                                              layoutX="10.0" layoutY="104.0" prefWidth="400.0"/>
+                                <MFXTextField fx:id="companyEmailTxt" floatMode="BORDER" floatingText="Email"
+                                              layoutX="10.0" layoutY="57.0" prefWidth="400.0"/>
+                                <MFXTextField fx:id="companyPostalAddressTxt" floatMode="BORDER"
+                                              floatingText="Postal Address (P.O.Box)" layoutX="10.0" layoutY="104.0"
+                                              prefWidth="400.0"/>
+                                <MFXTextField fx:id="companyAddressTxt" floatMode="BORDER"
+                                              floatingText="Physical address" layoutX="10.0" layoutY="104.0"
+                                              prefWidth="400.0"/>
+                            </VBox>
+                        </HBox>
+                        <Separator prefWidth="200.0"/>
+                        <HBox>
+                            <VBox prefWidth="450.0" spacing="8.0">
+                                <Label text="Tag line" wrapText="true">
+                                    <font>
+                                        <Font name="System Bold" size="14.0"/>
+                                    </font>
+                                </Label>
+                                <Label layoutX="10.0" layoutY="10.0" text="A quick snapshot of your company"
+                                       textFill="#908686" wrapText="true">
+                                    <font>
+                                        <Font name="System Italic" size="13.0"/>
+                                    </font>
+                                </Label>
+                            </VBox>
+                            <Region maxWidth="140.0" prefWidth="120.0" HBox.hgrow="SOMETIMES"/>
+                            <MFXTextField fx:id="CompanyTagLine" floatMode="DISABLED" maxHeight="-Infinity"
+                                          maxWidth="-Infinity" minHeight="100.0" prefHeight="100.0"
+                                          prefWidth="400.0"
+                                          promptText="Your company's tagline e.g. Just Do It, Think Different, Quality never goes out of style, etc."
+                                          textLimit="250"/>
+                        </HBox>
+                        <Separator prefWidth="200.0"/>
+                        <HBox spacing="8.0">
+                            <VBox prefWidth="450.0" spacing="8.0">
+                                <Label text="Company logo" wrapText="true">
+                                    <font>
+                                        <Font name="System Bold" size="14.0"/>
+                                    </font>
+                                </Label>
+                                <Label layoutX="10.0" layoutY="10.0" text="Update your company logo."
+                                       textFill="#908686" wrapText="true">
+                                    <font>
+                                        <Font name="System Italic" size="13.0"/>
+                                    </font>
+                                </Label>
+                            </VBox>
+                            <Region maxWidth="140.0" prefWidth="120.0"/>
+                            <HBox alignment="CENTER_LEFT" spacing="16.0">
+                                <ImageView fx:id="currentCompanyLogo" fitHeight="100.0" fitWidth="100.0"
+                                           pickOnBounds="true" preserveRatio="true"/>
+                                <VBox fx:id="companyLogoBtn" alignment="CENTER" prefWidth="400.0" spacing="8.0"
+                                      styleClass="card">
+                                    <cursor>
+                                        <Cursor fx:constant="HAND"/>
+                                    </cursor>
+                                    <padding>
+                                        <Insets bottom="16.0" left="16.0" right="16.0" top="16.0"/>
+                                    </padding>
+                                    <HBox fx:id="uploadIcon" alignment="CENTER"/>
+                                    <Label prefWidth="400.0"
+                                           text="Click to upload or Drag and drop png, jpg or gif. (max. size 800 x 400 px)"
+                                           textAlignment="CENTER" wrapText="true"/>
+                                </VBox>
+                            </HBox>
+                        </HBox>
+                        <Separator prefWidth="200.0"/>
+                        <HBox spacing="8.0">
+                            <VBox prefWidth="450.0" spacing="8.0">
+                                <Label text="Branding" wrapText="true">
+                                    <font>
+                                        <Font name="System Bold" size="14.0"/>
+                                    </font>
+                                </Label>
+                                <Label layoutX="10.0" layoutY="10.0"
+                                       text="Add your company's logo to documents, reports, emails, etc..."
+                                       textFill="#908686" wrapText="true">
+                                    <font>
+                                        <Font name="System Italic" size="13.0"/>
+                                    </font>
+                                </Label>
+                            </VBox>
+                            <Region maxWidth="140.0" prefWidth="120.0"/>
+                            <VBox maxWidth="200.0" minWidth="100.0" prefWidth="100.0" spacing="8.0"
+                                  HBox.hgrow="ALWAYS">
+                                <VBox spacing="8.0">
+                                    <MFXCheckbox fx:id="reportsCheck" text="Reports">
+                                        <font>
+                                            <Font name="System Bold" size="16.0"/>
+                                        </font>
+                                    </MFXCheckbox>
+                                    <HBox>
+                                        <Region maxWidth="100.0" minWidth="42.0"/>
+                                        <Label text="Add logo on reports." textFill="#908686">
+                                            <font>
+                                                <Font name="System Italic" size="13.0"/>
+                                            </font>
+                                        </Label>
+                                    </HBox>
+                                </VBox>
+                                <VBox spacing="8.0">
+                                    <MFXCheckbox fx:id="emailsCheck" text="Emails">
+                                        <font>
+                                            <Font name="System Bold Italic" size="16.0"/>
+                                        </font>
+                                    </MFXCheckbox>
+                                    <HBox>
+                                        <Region maxWidth="100.0" minWidth="42.0"/>
+                                        <Label text="Add logo to emails." textFill="#908686">
+                                            <font>
+                                                <Font name="System Italic" size="13.0"/>
+                                            </font>
+                                        </Label>
+                                    </HBox>
+                                </VBox>
+                            </VBox>
+                            <VBox layoutX="436.0" layoutY="10.0" prefWidth="200.0" spacing="8.0">
+                                <VBox layoutX="10.0" layoutY="10.0" spacing="8.0">
+                                    <MFXCheckbox fx:id="receiptsCheck" text="Receipts">
+                                        <font>
+                                            <Font name="System Bold" size="16.0"/>
+                                        </font>
+                                    </MFXCheckbox>
+                                    <HBox>
+                                        <Region maxWidth="100.0" minWidth="42.0"/>
+                                        <Label text="Add logo on receipts." textFill="#908686">
+                                            <font>
+                                                <Font name="System Italic" size="13.0"/>
+                                            </font>
+                                        </Label>
+                                    </HBox>
+                                </VBox>
+                            </VBox>
+                        </HBox>
+                        <Separator prefWidth="200.0"/>
+                        <HBox spacing="8.0">
+                            <VBox prefWidth="450.0" spacing="8.0">
+                                <Label text="Social profiles" wrapText="true">
+                                    <font>
+                                        <Font name="System Bold" size="14.0"/>
+                                    </font>
+                                </Label>
+                                <Label layoutX="10.0" layoutY="10.0" text="Add your company's social profiles."
+                                       textFill="#908686" wrapText="true">
+                                    <font>
+                                        <Font name="System Italic" size="13.0"/>
+                                    </font>
+                                </Label>
+                            </VBox>
+                            <Region maxWidth="140.0" prefWidth="120.0"/>
+                            <VBox spacing="16.0" HBox.hgrow="ALWAYS">
+                                <MFXTextField fx:id="companyTwitter" floatMode="BORDER" floatingText="Twitter(X)"
+                                              prefWidth="400.0"/>
+                                <MFXTextField fx:id="companyFacebook" floatMode="BORDER" floatingText="Facebook"
+                                              layoutX="10.0" layoutY="10.0" prefWidth="400.0"/>
+                                <MFXTextField fx:id="companyLinkedin" floatMode="BORDER" floatingText="LinkedIn"
+                                              layoutX="10.0" layoutY="69.0" prefWidth="400.0"/>
+                            </VBox>
+                        </HBox>
+                    </VBox>
+                </VBox>
+            </MFXScrollPane>
+        </AnchorPane>
+    </center>
+</BorderPane>
