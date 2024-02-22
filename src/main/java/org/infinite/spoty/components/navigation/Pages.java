@@ -26,15 +26,16 @@ import org.infinite.spoty.views.dashboard.DashboardController;
 import org.infinite.spoty.views.expenses.category.ExpenseCategoryController;
 import org.infinite.spoty.views.expenses.expense.ExpenseController;
 import org.infinite.spoty.views.forms.*;
-import org.infinite.spoty.views.human_resource.attendance.AttendanceController;
-import org.infinite.spoty.views.human_resource.attendance.AttendanceReportController;
 import org.infinite.spoty.views.human_resource.hrm.DesignationsController;
 import org.infinite.spoty.views.human_resource.hrm.EmployeesController;
 import org.infinite.spoty.views.human_resource.hrm.EmploymentStatusController;
+import org.infinite.spoty.views.human_resource.leave.LeaveRequestController;
 import org.infinite.spoty.views.human_resource.leave.LeaveStatusController;
+import org.infinite.spoty.views.human_resource.pay_roll.BeneficiaryBadgeController;
+import org.infinite.spoty.views.human_resource.pay_roll.BeneficiaryTypeController;
 import org.infinite.spoty.views.human_resource.pay_roll.SalariesController;
 import org.infinite.spoty.views.human_resource.pay_roll.SalaryAdvancesController;
-import org.infinite.spoty.views.human_resource.pay_roll.SalaryGenerateController;
+import org.infinite.spoty.views.human_resource.pay_roll.pay_slip.PaySlipsController;
 import org.infinite.spoty.views.login.LoginController;
 import org.infinite.spoty.views.product.adjustment.AdjustmentController;
 import org.infinite.spoty.views.product.brand.BrandController;
@@ -134,19 +135,19 @@ public class Pages {
     private static final FXMLLoader taxReportLoader = fxmlLoader("views/report/TaxReport.fxml");
     private static final FXMLLoader userSalesReportLoader = fxmlLoader("views/report/UserSalesReport.fxml");
     // HUMAN RESOURCE
-    // Attendance
-    private static final FXMLLoader attendanceLoader = fxmlLoader("views/human_resource/attendance/Attendance.fxml");
-    private static final FXMLLoader attendanceReportLoader = fxmlLoader("views/human_resource/attendance/AttendanceReport.fxml");
     // Human Resource Management
     private static final FXMLLoader designationsLoader = fxmlLoader("views/human_resource/hrm/Designations.fxml");
     private static final FXMLLoader employeesLoader = fxmlLoader("views/human_resource/hrm/Employees.fxml");
     private static final FXMLLoader employmentStatusLoader = fxmlLoader("views/human_resource/hrm/EmploymentStatus.fxml");
     // Leave
-    private static final FXMLLoader leaveLoader = fxmlLoader("views/human_resource/leave/LeaveStatus.fxml");
+    private static final FXMLLoader leaveStatusLoader = fxmlLoader("views/human_resource/leave/LeaveStatus.fxml");
+    private static final FXMLLoader leaveRequestLoader = fxmlLoader("views/human_resource/leave/LeaveRequest.fxml");
     // PayRoll
+    private static final FXMLLoader paySlipsLoader = fxmlLoader("views/human_resource/pay_roll/pay_slip/PaySlips.fxml");
     private static final FXMLLoader salariesLoader = fxmlLoader("views/human_resource/pay_roll/Salaries.fxml");
     private static final FXMLLoader salaryAdvancesLoader = fxmlLoader("views/human_resource/pay_roll/SalaryAdvances.fxml");
-    private static final FXMLLoader salaryGenerateLoader = fxmlLoader("views/human_resource/pay_roll/SalaryGenerate.fxml");
+    private static final FXMLLoader beneficiaryBadgeLoader = fxmlLoader("views/human_resource/pay_roll/BeneficiaryBadge.fxml");
+    private static final FXMLLoader beneficiaryTypeLoader = fxmlLoader("views/human_resource/pay_roll/BeneficiaryType.fxml");
     // Bank
     private static final FXMLLoader banksLoader = fxmlLoader("views/bank/Bank.fxml");
     // Service
@@ -378,14 +379,7 @@ public class Pages {
     @Getter
     private static BorderPane userSalesReportPane;
 
-    @Getter
     // HUMAN RESOURCE
-    // Attendance
-    private static BorderPane attendancePane;
-
-    @Getter
-    private static BorderPane attendanceReportPane;
-
     @Getter
     // Human Resource Management
     private static BorderPane designationsPane;
@@ -399,16 +393,24 @@ public class Pages {
     @Getter
     // Leave
     private static BorderPane leaveStatusPane;
+    @Getter
+    private static BorderPane leaveRequestPane;
 
     @Getter
     // PayRoll
+    private static BorderPane paySlipsPane;
+
+    @Getter
     private static BorderPane salariesPane;
 
     @Getter
     private static BorderPane salaryAdvancesPane;
 
     @Getter
-    private static BorderPane salaryGeneratePane;
+    private static BorderPane beneficiaryBadgePane;
+
+    @Getter
+    private static BorderPane beneficiaryTypePane;
 
     @Getter
     // Bank
@@ -630,11 +632,6 @@ public class Pages {
         userSalesReportLoader.setControllerFactory(e -> new UserSalesReportController());
     }
 
-    private static void setAttendance(Stage stage) {
-        attendanceLoader.setControllerFactory(e -> new AttendanceController());
-        attendanceReportLoader.setControllerFactory(e -> new AttendanceReportController());
-    }
-
     private static void setHRM(Stage stage) {
         designationsLoader.setControllerFactory(e -> DesignationsController.getInstance(stage));
         employeesLoader.setControllerFactory(e -> EmployeesController.getInstance(stage));
@@ -642,13 +639,16 @@ public class Pages {
     }
 
     private static void setLeave(Stage stage) {
-        leaveLoader.setControllerFactory(e -> LeaveStatusController.getInstance(stage));
+        leaveStatusLoader.setControllerFactory(e -> LeaveStatusController.getInstance(stage));
+        leaveRequestLoader.setControllerFactory(e -> LeaveRequestController.getInstance(stage));
     }
 
     private static void setPayRoll(Stage stage) {
+        paySlipsLoader.setControllerFactory(e -> new PaySlipsController());
         salariesLoader.setControllerFactory(e -> new SalariesController());
         salaryAdvancesLoader.setControllerFactory(e -> new SalaryAdvancesController());
-        salaryGenerateLoader.setControllerFactory(e -> new SalaryGenerateController());
+        beneficiaryBadgeLoader.setControllerFactory(e -> BeneficiaryBadgeController.getInstance(stage));
+        beneficiaryTypeLoader.setControllerFactory(e -> BeneficiaryTypeController.getInstance(stage));
     }
 
     private static void setBank(Stage stage) {
@@ -789,9 +789,6 @@ public class Pages {
         taxReportPane = taxReportLoader.load();
         userSalesReportPane = userSalesReportLoader.load();
         // HUMAN RESOURCE
-        // Attendance
-        attendancePane = attendanceLoader.load();
-        attendanceReportPane = attendanceReportLoader.load();
         // HUMAN RESOURCE
         // Human Resource Management
         designationsPane = designationsLoader.load();
@@ -799,12 +796,15 @@ public class Pages {
         employmentStatusPane = employmentStatusLoader.load();
         // HUMAN RESOURCE
         // Leave
-        leaveStatusPane = leaveLoader.load();
+        leaveStatusPane = leaveStatusLoader.load();
+        leaveRequestPane = leaveRequestLoader.load();
         // HUMAN RESOURCE
         // PayRoll
+        paySlipsPane = paySlipsLoader.load();
         salariesPane = salariesLoader.load();
         salaryAdvancesPane = salaryAdvancesLoader.load();
-        salaryGeneratePane = salaryGenerateLoader.load();
+        beneficiaryBadgePane = beneficiaryBadgeLoader.load();
+        beneficiaryTypePane = beneficiaryTypeLoader.load();
         // Bank
         bankPane = banksLoader.load();
         // Service
@@ -877,7 +877,6 @@ public class Pages {
         setAccounts(stage);
         setAccountReports(stage);
         setReports(stage);
-        setAttendance(stage);
         setHRM(stage);
         setLeave(stage);
         setPayRoll(stage);

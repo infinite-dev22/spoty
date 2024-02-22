@@ -1,44 +1,26 @@
-package org.infinite.spoty.data_source.dtos.hrm.leave;
+package org.infinite.spoty.data_source.dtos.hrm.pay_roll;
 
 import lombok.*;
 import org.infinite.spoty.data_source.dtos.hrm.employee.Designation;
 import org.infinite.spoty.data_source.dtos.hrm.employee.User;
-
-import java.text.DateFormat;
-import java.time.Duration;
-import java.util.Date;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class LeaveStatus {
+public class Salary {
     private Long id;
     private User employee;
     private Designation designation;
-    private String description;
-    private Date startDate;
-    private Date endDate;
-    private Duration duration;
-    private LeaveType leaveType;
-    private String attachment;
-    private char status;  // P - Pending, R - Rejected, A - Approved, E - Returned, V - Viewed
-
-    public String getLocaleStartDate() {
-        return DateFormat.getDateInstance().format(startDate);
-    }
-
-    public String getLocaleEndDate() {
-        return DateFormat.getDateInstance().format(endDate);
-    }
-
-    public String getLocaleDuration() {
-        return duration.toString();
-    }
+    private String period;
+    private PaySlipType paySlipType;
+    private char status;  // P - Pending, R - Rejected, A - Approved, E - Returned, V - Viewed, G - Generated, S - Sent
+    private String salary;
+    private String netSalary;
 
     public String getLeaveTypeName() {
-        return leaveType.getName();
+        return paySlipType.getName();
     }
 
     public String getEmployeeName() {

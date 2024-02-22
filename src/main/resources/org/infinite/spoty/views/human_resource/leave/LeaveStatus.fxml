@@ -27,7 +27,7 @@
             <padding>
                 <Insets bottom="5.0" left="5.0" right="10.0" top="5.0"/>
             </padding>
-            <MFXTextField fx:id="searchBar" floatMode="DISABLED" promptText="Search employment status" prefWidth="300.0"
+            <MFXTextField fx:id="searchBar" floatMode="DISABLED" promptText="Search leave statuses" prefWidth="300.0"
                           AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0"/>
             <HBox fx:id="actionsPane" alignment="CENTER_RIGHT" spacing="20.0" AnchorPane.bottomAnchor="0.0"
                   AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">

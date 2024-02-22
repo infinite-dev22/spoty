@@ -34,10 +34,9 @@ module org.infinite.spoty {
     opens org.infinite.spoty.views.account;
     opens org.infinite.spoty.views.account.report;
     opens org.infinite.spoty.views.report;
-    opens org.infinite.spoty.views.human_resource.attendance;
+    opens org.infinite.spoty.views.human_resource.pay_roll;
     opens org.infinite.spoty.views.human_resource.hrm;
     opens org.infinite.spoty.views.human_resource.leave;
-    opens org.infinite.spoty.views.human_resource.pay_roll;
     opens org.infinite.spoty.views.bank;
     opens org.infinite.spoty.views.service;
     opens org.infinite.spoty.views.quotation;
@@ -82,4 +81,5 @@ module org.infinite.spoty {
     exports org.infinite.spoty.data_source.dtos;
     exports org.infinite.spoty.data_source.dtos.hrm.employee;
     opens org.infinite.spoty.data_source.dtos.hrm.employee;
+    opens org.infinite.spoty.views.human_resource.pay_roll.pay_slip;
 }
