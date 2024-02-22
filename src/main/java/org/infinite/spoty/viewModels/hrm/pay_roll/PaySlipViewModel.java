@@ -12,7 +12,7 @@
  * Jonathan Mark Mwigo makes no warranties, express or implied, with respect to the computer system code. Jonathan Mark Mwigo shall not be liable for any damages, including, but not limited to, direct, indirect, incidental, special, consequential, or punitive damages, arising out of or in connection with the use of the computer system code.
  */
 
-package org.infinite.spoty.viewModels.hrm.leave;
+package org.infinite.spoty.viewModels.hrm.pay_roll;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -21,34 +21,32 @@ import io.github.palexdev.mfxcore.base.properties.CharProperty;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.data_source.dtos.hrm.employee.Designation;
 import org.infinite.spoty.data_source.dtos.hrm.employee.User;
-import org.infinite.spoty.data_source.dtos.hrm.leave.LeaveStatus;
-import org.infinite.spoty.data_source.dtos.hrm.leave.LeaveType;
+import org.infinite.spoty.data_source.dtos.hrm.pay_roll.PaySlip;
 import org.infinite.spoty.data_source.models.FindModel;
 import org.infinite.spoty.data_source.models.SearchModel;
-import org.infinite.spoty.data_source.repositories.implementations.LeaveStatusRepositoryImpl;
+import org.infinite.spoty.data_source.repositories.implementations.PaySlipRepositoryImpl;
 import org.infinite.spoty.utils.ParameterlessConsumer;
 import org.infinite.spoty.utils.SpotyLogger;
 import org.infinite.spoty.utils.SpotyThreader;
 import org.infinite.spoty.viewModels.BankViewModel;
 import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
 import org.infinite.spoty.viewModels.requisitions.RequisitionMasterViewModel;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 
-public class LeaveStatusViewModel {
-    public static final ObservableList<LeaveStatus> leaveStatusesList = FXCollections.observableArrayList();
-    public static final ListProperty<LeaveStatus> leaveStatuses = new SimpleListProperty<>(leaveStatusesList);
+public class PaySlipViewModel {
+    public static final ObservableList<PaySlip> paySlipsList = FXCollections.observableArrayList();
+    public static final ListProperty<PaySlip> paySlips = new SimpleListProperty<>(paySlipsList);
     public static final ObservableList<User> usersList = FXCollections.observableArrayList();
     public static final ListProperty<User> users = new SimpleListProperty<>(usersList);
     private static final Gson gson = new GsonBuilder()
@@ -56,63 +54,24 @@ public class LeaveStatusViewModel {
                     UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
             .create();
     private static final LongProperty id = new SimpleLongProperty(0);
-    private static final ObjectProperty<User> employee = new SimpleObjectProperty<>();
-    private static final ObjectProperty<Designation> designation = new SimpleObjectProperty<>();
-    private static final StringProperty description = new SimpleStringProperty("");
     private static final StringProperty startDate = new SimpleStringProperty("");
     private static final StringProperty endDate = new SimpleStringProperty("");
-    private static final StringProperty duration = new SimpleStringProperty("");
-    private static final ObjectProperty<LeaveType> leaveType = new SimpleObjectProperty<>();
-    private static final StringProperty attachment = new SimpleStringProperty("");
+    private static final IntegerProperty salariesQuantity = new SimpleIntegerProperty();
     private static final CharProperty status = new CharProperty();
-    private static final LeaveStatusRepositoryImpl leaveStatusRepository = new LeaveStatusRepositoryImpl();
+    private static final StringProperty createdOn = new SimpleStringProperty("");
+    private static final StringProperty message = new SimpleStringProperty("");
+    private static final PaySlipRepositoryImpl paySlipRepository = new PaySlipRepositoryImpl();
 
     public static long getId() {
         return id.get();
     }
 
     public static void setId(long id) {
-        LeaveStatusViewModel.id.set(id);
+        PaySlipViewModel.id.set(id);
     }
 
     public static LongProperty idProperty() {
         return id;
-    }
-
-    public static User getEmployee() {
-        return employee.get();
-    }
-
-    public static void setEmployee(User employee) {
-        LeaveStatusViewModel.employee.set(employee);
-    }
-
-    public static ObjectProperty<User> employeeProperty() {
-        return employee;
-    }
-
-    public static Designation getDesignation() {
-        return designation.get();
-    }
-
-    public static void setDesignation(Designation designation) {
-        LeaveStatusViewModel.designation.set(designation);
-    }
-
-    public static ObjectProperty<Designation> designationProperty() {
-        return designation;
-    }
-
-    public static String getDescription() {
-        return description.get();
-    }
-
-    public static void setDescription(String description) {
-        LeaveStatusViewModel.description.set(description);
-    }
-
-    public static StringProperty descriptionProperty() {
-        return description;
     }
 
     public static @Nullable Date getStartDate() {
@@ -125,7 +84,7 @@ public class LeaveStatusViewModel {
     }
 
     public static void setStartDate(String startDate) {
-        LeaveStatusViewModel.startDate.set(startDate);
+        PaySlipViewModel.startDate.set(startDate);
     }
 
     public static StringProperty startDateProperty() {
@@ -142,47 +101,23 @@ public class LeaveStatusViewModel {
     }
 
     public static void setEndDate(String endDate) {
-        LeaveStatusViewModel.endDate.set(endDate);
+        PaySlipViewModel.endDate.set(endDate);
     }
 
     public static StringProperty endDateProperty() {
         return endDate;
     }
 
-    public static @Nullable Duration getDuration() {
-        return Duration.parse(startDate.get());
+    public static @NotNull Integer getSalariesQuantity() {
+        return salariesQuantity.get();
     }
 
-    public static void setDuration(String duration) {
-        LeaveStatusViewModel.duration.set(duration);
+    public static void setSalariesQuantity(Integer salariesQuantity) {
+        PaySlipViewModel.salariesQuantity.set(salariesQuantity);
     }
 
-    public static StringProperty durationProperty() {
-        return duration;
-    }
-
-    public static LeaveType getLeaveType() {
-        return leaveType.get();
-    }
-
-    public static void setLeaveType(LeaveType leaveType) {
-        LeaveStatusViewModel.leaveType.set(leaveType);
-    }
-
-    public static ObjectProperty<LeaveType> leaveTypeProperty() {
-        return leaveType;
-    }
-
-    public static String getAttachment() {
-        return attachment.get();
-    }
-
-    public static void setAttachment(String attachment) {
-        LeaveStatusViewModel.attachment.set(attachment);
-    }
-
-    public static StringProperty attachmentProperty() {
-        return attachment;
+    public static IntegerProperty salariesQuantityProperty() {
+        return salariesQuantity;
     }
 
     public static char getStatus() {
@@ -190,65 +125,88 @@ public class LeaveStatusViewModel {
     }
 
     public static void setStatus(char status) {
-        LeaveStatusViewModel.status.set(status);
+        PaySlipViewModel.status.set(status);
     }
 
     public static CharProperty statusProperty() {
         return status;
     }
 
-    public static ObservableList<LeaveStatus> getLeaveStatuses() {
-        return leaveStatuses.get();
+    public static @Nullable Date getCreatedDate() {
+        try {
+            return new SimpleDateFormat("MMM dd, yyyy").parse(createdOn.get());
+        } catch (ParseException e) {
+            SpotyLogger.writeToFile(e, RequisitionMasterViewModel.class);
+        }
+        return null;
     }
 
-    public static void setLeaveStatuses(ObservableList<LeaveStatus> leaveStatuses) {
-        LeaveStatusViewModel.leaveStatuses.set(leaveStatuses);
+    public static void setCreatedDate(String createdOn) {
+        PaySlipViewModel.createdOn.set(createdOn);
     }
 
-    public static ListProperty<LeaveStatus> leaveStatusProperty() {
-        return leaveStatuses;
+    public static StringProperty createdDateProperty() {
+        return createdOn;
+    }
+
+    public static String getMessage() {
+        return message.get();
+    }
+
+    public static void setMessage(String message) {
+        PaySlipViewModel.message.set(message);
+    }
+
+    public static StringProperty messageProperty() {
+        return message;
+    }
+
+    public static ObservableList<PaySlip> getPaySlipes() {
+        return paySlips.get();
+    }
+
+    public static void setPaySlipes(ObservableList<PaySlip> paySlips) {
+        PaySlipViewModel.paySlips.set(paySlips);
+    }
+
+    public static ListProperty<PaySlip> paySlipProperty() {
+        return paySlips;
     }
 
     public static void resetProperties() {
         setId(0);
-        setEmployee(null);
-        setDesignation(null);
-        setDescription("");
         setStartDate("");
         setEndDate("");
-        setDuration("");
-        setLeaveType(null);
-        setAttachment("");
+        setSalariesQuantity(0);
         setStatus('P');
+        setCreatedDate("");
+        setMessage("");
     }
 
-    public static void saveLeaveStatus(
+    public static void savePaySlip(
             ParameterlessConsumer onActivity,
             ParameterlessConsumer onSuccess,
             ParameterlessConsumer onFailed) {
-        var leaveStatus = LeaveStatus.builder()
-                .employee(getEmployee())
-                .designation(getDesignation())
-                .description(getDescription())
+        var paySlip = PaySlip.builder()
                 .startDate(getStartDate())
                 .endDate(getEndDate())
-                .duration(getDuration())
-                .leaveType(getLeaveType())
-                .attachment(getAttachment())  // File to be uploaded.
+                .salariesQuantity(getSalariesQuantity())
                 .status(getStatus())
+                .createdOn(getCreatedDate())
+                .message(getMessage())
                 .build();
 
-        var task = leaveStatusRepository.post(leaveStatus);
+        var task = paySlipRepository.post(paySlip);
         task.setOnRunning(workerStateEvent -> onActivity.run());
         task.setOnSucceeded(workerStateEvent -> onSuccess.run());
         task.setOnFailed(workerStateEvent -> onFailed.run());
         SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void getAllLeaveStatuses(
+    public static void getAllPaySlipes(
             @Nullable ParameterlessConsumer onActivity,
             @Nullable ParameterlessConsumer onFailed) {
-        var task = leaveStatusRepository.fetchAll();
+        var task = paySlipRepository.fetchAll();
         if (Objects.nonNull(onActivity)) {
             task.setOnRunning(workerStateEvent -> onActivity.run());
         }
@@ -257,14 +215,14 @@ public class LeaveStatusViewModel {
         }
         task.setOnSucceeded(workerStateEvent -> {
             try {
-                Type listType = new TypeToken<ArrayList<LeaveStatus>>() {
+                Type listType = new TypeToken<ArrayList<PaySlip>>() {
                 }.getType();
-                ArrayList<LeaveStatus> userList = gson.fromJson(task.get().body(), listType);
+                ArrayList<PaySlip> userList = gson.fromJson(task.get().body(), listType);
 
-                leaveStatusesList.clear();
-                leaveStatusesList.addAll(userList);
+                paySlipsList.clear();
+                paySlipsList.addAll(userList);
             } catch (InterruptedException | ExecutionException e) {
-                SpotyLogger.writeToFile(e, LeaveStatusViewModel.class);
+                SpotyLogger.writeToFile(e, PaySlipViewModel.class);
             }
         });
         SpotyThreader.spotyThreadPool(task);
@@ -276,7 +234,7 @@ public class LeaveStatusViewModel {
             @Nullable ParameterlessConsumer onFailed) {
         var findModel = FindModel.builder().id(index).build();
 
-        var task = leaveStatusRepository.fetch(findModel);
+        var task = paySlipRepository.fetch(findModel);
         if (Objects.nonNull(onActivity)) {
             task.setOnRunning(workerStateEvent -> onActivity.run());
         }
@@ -285,19 +243,16 @@ public class LeaveStatusViewModel {
         }
         task.setOnSucceeded(workerStateEvent -> {
             try {
-                var leaveStatus = gson.fromJson(task.get().body(), LeaveStatus.class);
+                var paySlip = gson.fromJson(task.get().body(), PaySlip.class);
 
-                setId(leaveStatus.getId());
+                setId(paySlip.getId());
 
-                setEmployee(leaveStatus.getEmployee());
-                setDesignation(leaveStatus.getDesignation());
-                setDescription(leaveStatus.getDescription());
-                setStartDate(leaveStatus.getLocaleStartDate());
-                setEndDate(leaveStatus.getLocaleEndDate());
-                setDuration(leaveStatus.getLocaleDuration());
-                setLeaveType(leaveStatus.getLeaveType());
-                setAttachment(leaveStatus.getAttachment());
-                setStatus(leaveStatus.getStatus());
+                setStartDate(paySlip.getLocaleStartDate());
+                setEndDate(paySlip.getLocaleEndDate());
+                setSalariesQuantity(paySlip.getSalariesQuantity());
+                setStatus(paySlip.getStatus());
+                setCreatedDate(paySlip.getLocaleCreatedDate());
+                setMessage(paySlip.getMessage());
             } catch (InterruptedException | ExecutionException e) {
                 SpotyLogger.writeToFile(e, BankViewModel.class);
             }
@@ -310,7 +265,7 @@ public class LeaveStatusViewModel {
             @Nullable ParameterlessConsumer onActivity,
             @Nullable ParameterlessConsumer onFailed) {
         var searchModel = SearchModel.builder().search(search).build();
-        var task = leaveStatusRepository.search(searchModel);
+        var task = paySlipRepository.search(searchModel);
         if (Objects.nonNull(onActivity)) {
             task.setOnRunning(workerStateEvent -> onActivity.run());
         }
@@ -319,14 +274,14 @@ public class LeaveStatusViewModel {
         }
         task.setOnSucceeded(workerStateEvent -> {
             try {
-                Type listType = new TypeToken<ArrayList<LeaveStatus>>() {
+                Type listType = new TypeToken<ArrayList<PaySlip>>() {
                 }.getType();
-                ArrayList<LeaveStatus> userList = gson.fromJson(task.get().body(), listType);
+                ArrayList<PaySlip> userList = gson.fromJson(task.get().body(), listType);
 
-                leaveStatusesList.clear();
-                leaveStatusesList.addAll(userList);
+                paySlipsList.clear();
+                paySlipsList.addAll(userList);
             } catch (InterruptedException | ExecutionException e) {
-                SpotyLogger.writeToFile(e, LeaveStatusViewModel.class);
+                SpotyLogger.writeToFile(e, PaySlipViewModel.class);
             }
         });
         SpotyThreader.spotyThreadPool(task);
@@ -336,20 +291,17 @@ public class LeaveStatusViewModel {
             ParameterlessConsumer onActivity,
             ParameterlessConsumer onSuccess,
             ParameterlessConsumer onFailed) {
-        var leaveStatus = LeaveStatus.builder()
+        var paySlip = PaySlip.builder()
                 .id(getId())
-                .employee(getEmployee())
-                .designation(getDesignation())
-                .description(getDescription())
                 .startDate(getStartDate())
                 .endDate(getEndDate())
-                .duration(getDuration())
-                .leaveType(getLeaveType())
-                .attachment(getAttachment())  // File to be uploaded.
+                .salariesQuantity(getSalariesQuantity())
                 .status(getStatus())
+                .createdOn(getCreatedDate())
+                .message(getMessage())
                 .build();
 
-        var task = leaveStatusRepository.put(leaveStatus);
+        var task = paySlipRepository.put(paySlip);
         task.setOnRunning(workerStateEvent -> onActivity.run());
         task.setOnSucceeded(workerStateEvent -> onSuccess.run());
         task.setOnFailed(workerStateEvent -> onFailed.run());
@@ -363,7 +315,7 @@ public class LeaveStatusViewModel {
             ParameterlessConsumer onFailed) {
         var findModel = FindModel.builder().id(index).build();
 
-        var task = leaveStatusRepository.delete(findModel);
+        var task = paySlipRepository.delete(findModel);
         task.setOnRunning(workerStateEvent -> onActivity.run());
         task.setOnSucceeded(workerStateEvent -> onSuccess.run());
         task.setOnFailed(workerStateEvent -> onFailed.run());
