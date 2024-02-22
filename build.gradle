@@ -1,163 +1,24 @@
 plugins {
     id 'java'
-    id 'org.javamodularity.moduleplugin' version '1.8.12'
-    id 'application'
-    id 'org.openjfx.javafxplugin' version '0.1.0'
-    id 'org.beryx.jlink' version '3.0.0'
-    id 'org.graalvm.buildtools.native' version '0.9.28'
-    id 'io.freefair.lombok' version '8.4'
+    id 'org.openjfx.javafxplugin' version "$jfxPlugin"
 }
 
 apply plugin: 'java'
 
-version '230.46.14-development'
-project.description = 'Zenmart ERP - Fintech Software.'
-project.ext.buildDate = LocalDate.now()
-project.version = '230.46.14'
+group 'inc.normad.io'
+version "$spoty"
 
 repositories {
     mavenLocal()
     mavenCentral()
 }
 
-ext {
-    junitVersion = '5.10.0'
-}
+apply plugin: 'checkstyle'
+subprojects {
+    apply plugin: 'org.openjfx.javafxplugin'
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-    gradlePluginPortal()
-}
-
-tasks.withType(JavaCompile) {
-    options.encoding = 'UTF-8'
-}
-
-application {
-    mainModule = 'org.infinite.spoty'
-    mainClass = 'org.infinite.spoty.Main'
-}
-
-javafx {
-    version = '21.0.1'
-    modules = ['javafx.controls', 'javafx.fxml', 'javafx.media', 'javafx.graphics']
-}
-
-//graalvmNative {
-//    toolchainDetection = true
-//    binaries {
-//        main {
-//            javaLauncher = javaToolchains.launcherFor {
-//                languageVersion = JavaLanguageVersion.of(17)
-//                vendor = JvmVendorSpec.matching('Oracle Corporation')
-//            }
-//        }
-//    }
-//}
-
-test {
-    useJUnitPlatform()
-}
-
-run {
-    jvmArgs = [
-            '-XX:NewRatio=1',
-            '-Xms256m',
-            '-Xmx2G',
-            '-XX:ReservedCodeCacheSize=512m',
-            '-XX:+UseG1GC',
-            '-XX:SoftRefLRUPolicyMSPerMB=50',
-            '-XX:CICompilerCount=2',
-            '-XX:+HeapDumpOnOutOfMemoryError',
-            '-Dsun.io.useCanonCaches=false',
-            '-Djbr.catch.SIGABRT=true',
-            '-Djdk.attach.allowAttachSelf=true',
-    ]
-}
-
-jar {
-    manifest {
-        attributes(
-                'Main-Class': 'org.infinite.spoty.Main'
-        )
+    javafx {
+        version = "$jfx"
+        modules = ['javafx.controls', 'javafx.fxml', 'javafx.media', 'javafx.swing', 'javafx.web']
     }
-}
-
-jlink {
-    imageZip = project.file('${buildDir}/distributions/app-${javafx.platform.classifier}.zip')
-    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
-    launcher {
-        name = 'Zenmart ERP'
-        jvmArgs = [
-                '-XX:NewRatio=1',
-                '-Xms256m',
-                '-Xmx2G',
-                '-XX:ReservedCodeCacheSize=512m',
-                '-XX:+UseG1GC',
-                '-XX:SoftRefLRUPolicyMSPerMB=50',
-                '-XX:CICompilerCount=2',
-                '-XX:+HeapDumpOnOutOfMemoryError',
-                '-Dsun.io.useCanonCaches=false',
-                '-Djbr.catch.SIGABRT=true',
-                '-Djdk.attach.allowAttachSelf=true',
-                '-XX:ErrorFile=/home/infinite-dev/IdeaProjects/spoty/error%p.log',
-        ]
-    }
-
-    jpackage {
-        installerOptions = [
-                '--name', 'Zenmart-ERP',
-                '--description', project.description,
-                '--copyright', 'Copyright 2023 nomard io',
-                '--vendor', 'Nomard IO',
-                '--icon', 'src/main/resources/icon.png',
-                '--type', 'rpm',
-                // Windows Only
-//                '--win-dir-chooser',
-//                '--win-menu', '--win-shortcut',
-//                '--win-dir-chooser', '--win-menu',
-//                '--win-per-user-install', '--win-shortcut-prompt',
-        ]
-    }
-    addExtraDependencies('javafx')
-}
-
-tasks.register('doPackageAll') {
-    doLast {
-        if (Os.isFamily(Os.FAMILY_UNIX)) {
-            exec {
-                mkdir('$buildDir/distributions')
-                executable '$projectDir/scripts/JLinkPackage.sh'
-                args = ['$buildDir']
-            }
-        }
-    }
-}
-
-jlinkZip.doLast {
-    doPackageAll
-}
-
-dependencies {
-//    implementation 'com.calendarfx:view:11.12.6'
-    implementation 'net.datafaker:datafaker:2.0.2'
-    implementation 'io.soabase.record-builder:record-builder-core:39'
-    implementation 'io.github.mkpaz:atlantafx-parent:2.0.1'
-    implementation 'io.github.mkpaz:atlantafx-styles:2.0.1'
-    implementation 'io.github.mkpaz:atlantafx-base:2.0.1'
-    implementation 'com.google.code.gson:gson:2.10.1'
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
-    implementation 'org.projectlombok:lombok:1.18.30'
-    implementation 'org.jetbrains:annotations:24.0.1'
-    implementation 'io.github.palexdev:materialfx:11.17.0'
-    implementation 'org.kordamp.ikonli:ikonli-javafx:12.3.1'
-    implementation 'org.kordamp.ikonli:ikonli-core:12.3.1'
-    implementation 'org.kordamp.ikonli:ikonli-fontawesome5-pack:12.3.1'
-    implementation 'fr.brouillard.oss:cssfx:11.5.1'
-    implementation 'io.github.palexdev:virtualizedfx:11.9.6' // update to version -> 21.1.0 breaks the system.
-    implementation 'io.github.palexdev:mfxcomponents:11.24.1'
-    implementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
-    implementation 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
 }
