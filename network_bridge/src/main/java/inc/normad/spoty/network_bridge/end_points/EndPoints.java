@@ -1,4 +1,4 @@
-package inc.normad.spoty.network_bridge.end_points;
+package org.infinite.spoty.values;
 
 public class EndPoints {
     public static final String appDNS = "http://localhost:8080";
@@ -383,7 +383,7 @@ public class EndPoints {
     }
 
     public static final class EmploymentStatus {
-        public static final String employmentStatusesUrl = apiUrl + "/employmentStatuses";
+        public static final String employmentStatusesUrl = apiUrl + "/employment_statuses";
         public static final String allEmploymentStatuses = employmentStatusesUrl + "/all";
         public static final String employmentStatusById = employmentStatusesUrl + "/single";
         public static final String searchEmploymentStatuses = employmentStatusesUrl + "/search";
@@ -394,7 +394,7 @@ public class EndPoints {
     }
 
     public static final class LeaveStatus {
-        public static final String leaveStatusesUrl = apiUrl + "/leaveStatuses";
+        public static final String leaveStatusesUrl = apiUrl + "/leave_statuses";
         public static final String allLeaveStatuses = leaveStatusesUrl + "/all";
         public static final String leaveStatusById = leaveStatusesUrl + "/single";
         public static final String searchLeaveStatuses = leaveStatusesUrl + "/search";
@@ -404,36 +404,36 @@ public class EndPoints {
         public static final String deleteLeaveStatuses = leaveStatusesUrl + "/multiple/delete";
     }
 
-    public static final class BeneficiaryType {
-        public static final String beneficiaryTypesUrl = apiUrl + "/beneficiaryTypes";
-        public static final String allBeneficiaryTypes = beneficiaryTypesUrl + "/all";
-        public static final String beneficiaryTypeById = beneficiaryTypesUrl + "/single";
-        public static final String searchBeneficiaryTypes = beneficiaryTypesUrl + "/search";
-        public static final String addBeneficiaryType = beneficiaryTypesUrl + "/add";
-        public static final String updateBeneficiaryType = beneficiaryTypesUrl + "/update";
-        public static final String deleteBeneficiaryType = beneficiaryTypesUrl + "/single/delete";
-        public static final String deleteBeneficiaryTypes = beneficiaryTypesUrl + "/multiple/delete";
+    public static final class PaySlip {
+        public static final String paySlipUrl = apiUrl + "/pay_slip";
+        public static final String allPaySlips = paySlipUrl + "/all";
+        public static final String paySlipById = paySlipUrl + "/single";
+        public static final String searchPaySlips = paySlipUrl + "/search";
+        public static final String addPaySlip = paySlipUrl + "/add";
+        public static final String updatePaySlip = paySlipUrl + "/update";
+        public static final String deletePaySlip = paySlipUrl + "/single/delete";
+        public static final String deletePaySlips = paySlipUrl + "/multiple/delete";
     }
 
     public static final class BeneficiaryBadge {
-        public static final String beneficiaryBadgesUrl = apiUrl + "/beneficiaryBadges";
-        public static final String allBeneficiaryBadges = beneficiaryBadgesUrl + "/all";
-        public static final String beneficiaryBadgeById = beneficiaryBadgesUrl + "/single";
-        public static final String searchBeneficiaryBadges = beneficiaryBadgesUrl + "/search";
-        public static final String addBeneficiaryBadge = beneficiaryBadgesUrl + "/add";
-        public static final String updateBeneficiaryBadge = beneficiaryBadgesUrl + "/update";
-        public static final String deleteBeneficiaryBadge = beneficiaryBadgesUrl + "/single/delete";
-        public static final String deleteBeneficiaryBadges = beneficiaryBadgesUrl + "/multiple/delete";
+        public static final String beneficiaryBadgeUrl = apiUrl + "/beneficiary_badge";
+        public static final String allBeneficiaryBadges = beneficiaryBadgeUrl + "/all";
+        public static final String beneficiaryBadgeById = beneficiaryBadgeUrl + "/single";
+        public static final String searchBeneficiaryBadges = beneficiaryBadgeUrl + "/search";
+        public static final String addBeneficiaryBadge = beneficiaryBadgeUrl + "/add";
+        public static final String updateBeneficiaryBadge = beneficiaryBadgeUrl + "/update";
+        public static final String deleteBeneficiaryBadge = beneficiaryBadgeUrl + "/single/delete";
+        public static final String deleteBeneficiaryBadges = beneficiaryBadgeUrl + "/multiple/delete";
     }
 
-    public static final class PaySlip {
-        public static final String paySlipsUrl = apiUrl + "/paySlips";
-        public static final String allPaySlips = paySlipsUrl + "/all";
-        public static final String paySlipById = paySlipsUrl + "/single";
-        public static final String searchPaySlips = paySlipsUrl + "/search";
-        public static final String addPaySlip = paySlipsUrl + "/add";
-        public static final String updatePaySlip = paySlipsUrl + "/update";
-        public static final String deletePaySlip = paySlipsUrl + "/single/delete";
-        public static final String deletePaySlips = paySlipsUrl + "/multiple/delete";
+    public static final class BeneficiaryType {
+        public static final String beneficiaryTypeUrl = apiUrl + "/beneficiary_type";
+        public static final String allBeneficiaryTypes = beneficiaryTypeUrl + "/all";
+        public static final String beneficiaryTypeById = beneficiaryTypeUrl + "/single";
+        public static final String searchBeneficiaryTypes = beneficiaryTypeUrl + "/search";
+        public static final String addBeneficiaryType = beneficiaryTypeUrl + "/add";
+        public static final String updateBeneficiaryType = beneficiaryTypeUrl + "/update";
+        public static final String deleteBeneficiaryType = beneficiaryTypeUrl + "/single/delete";
+        public static final String deleteBeneficiaryTypes = beneficiaryTypeUrl + "/multiple/delete";
     }
 }

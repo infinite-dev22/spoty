@@ -76,21 +76,20 @@ public class Navigation {
         map.put("TAX_REPORT", NavTree.NavTreeItem.page("Tax Report", Pages.getTaxReportPane()));
         map.put("USER_SALES_REPORT", NavTree.NavTreeItem.page("User Sales Report", Pages.getUserSalesReportPane()));
         // HUMAN RESOURCE
-        // Attendance
-        map.put("ATTENDANCE", NavTree.NavTreeItem.page("Attendance", Pages.getAttendancePane()));
-        map.put("ATTENDANCE_REPORT", NavTree.NavTreeItem.page("Attendance Report", Pages.getAttendanceReportPane()));
         // Human Resource Management
         map.put("DESIGNATION", NavTree.NavTreeItem.page("Designation", Pages.getDesignationsPane()));
         map.put("EMPLOYEES", NavTree.NavTreeItem.page("Employees", Pages.getEmployeesPane()));
         map.put("EMPLOYMENT_STATUS", NavTree.NavTreeItem.page("Employment Statuses", Pages.getEmploymentStatusPane()));
         // Leave
         map.put("LEAVE_STATUS", NavTree.NavTreeItem.page("Leave Status", Pages.getLeaveStatusPane()));
-        map.put("LEAVE_REQUEST", NavTree.NavTreeItem.page("Leave Request", Pages.getEmployeesPane()));
+        map.put("LEAVE_REQUEST", NavTree.NavTreeItem.page("Leave Request", Pages.getLeaveRequestPane()));
         map.put("CALENDAR", NavTree.NavTreeItem.page("Calendar", Pages.getEmploymentStatusPane()));
         // PayRoll
-        map.put("SALARIES", NavTree.NavTreeItem.page("Salaries", Pages.getSalariesPane()));
+        map.put("PAY_SLIPS", NavTree.NavTreeItem.page("Pay Slips", Pages.getPaySlipsPane()));
+        map.put("SALARIES", NavTree.NavTreeItem.page("Salaries", Pages.getSalariesPane()));  // TODO: Get Salaries from payslips
         map.put("SALARY_ADVANCES", NavTree.NavTreeItem.page("Salary Advances", Pages.getSalaryAdvancesPane()));
-        map.put("SALARY_GENERATE", NavTree.NavTreeItem.page("Salary Generate", Pages.getSalaryGeneratePane()));
+        map.put("BENEFICIARY_BADGE", NavTree.NavTreeItem.page("Beneficiary Badge", Pages.getBeneficiaryBadgePane()));
+        map.put("BENEFICIARY_TYPE", NavTree.NavTreeItem.page("Beneficiary Type", Pages.getBeneficiaryTypePane()));
         // Service
         map.put("SERVICES", NavTree.NavTreeItem.page("Services", Pages.getServicesPane()));
         map.put("SERVICE_INVOICE", NavTree.NavTreeItem.page("Service Invoices", Pages.getServiceInvoicesPane()));
@@ -232,13 +231,6 @@ public class Navigation {
                         NAV_TREE.get("TAX_REPORT"),
                         NAV_TREE.get("USER_SALES_REPORT"));
 
-        var attendance = NavTree.NavTreeItem.group("Attendance");
-        attendance
-                .getChildren()
-                .setAll(
-                        NAV_TREE.get("ATTENDANCE"),
-                        NAV_TREE.get("ATTENDANCE_REPORT"));
-
         var humanResourceManagement = NavTree.NavTreeItem.group("HRM");
         humanResourceManagement
                 .getChildren()
@@ -259,15 +251,15 @@ public class Navigation {
         payRoll
                 .getChildren()
                 .setAll(
-                        NAV_TREE.get("SALARIES"),
+                        NAV_TREE.get("PAY_SLIPS"),
                         NAV_TREE.get("SALARY_ADVANCES"),
-                        NAV_TREE.get("SALARY_GENERATE"));
+                        NAV_TREE.get("BENEFICIARY_BADGE"),
+                        NAV_TREE.get("BENEFICIARY_TYPE"));
         var humanResource = NavTree.NavTreeItem.group("Human Resource", "fas-user-tie");
         humanResource
                 .getChildren()
                 .setAll(humanResourceManagement,
                         leave,
-                        attendance,
                         payRoll);
 
         var bank =

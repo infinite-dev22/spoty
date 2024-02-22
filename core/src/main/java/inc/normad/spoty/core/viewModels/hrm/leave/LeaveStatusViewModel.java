@@ -12,27 +12,28 @@
  * Jonathan Mark Mwigo makes no warranties, express or implied, with respect to the computer system code. Jonathan Mark Mwigo shall not be liable for any damages, including, but not limited to, direct, indirect, incidental, special, consequential, or punitive damages, arising out of or in connection with the use of the computer system code.
  */
 
-package inc.normad.spoty.core.viewModels.hrm.leave;
+package org.infinite.spoty.viewModels.hrm.leave;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import inc.normad.spoty.core.viewModels.BankViewModel;
-import inc.normad.spoty.core.viewModels.adapters.UnixEpochDateTypeAdapter;
-import inc.normad.spoty.core.viewModels.requisitions.RequisitionMasterViewModel;
-import inc.normad.spoty.network_bridge.dtos.hrm.employee.Designation;
-import inc.normad.spoty.network_bridge.dtos.hrm.employee.User;
-import inc.normad.spoty.network_bridge.dtos.hrm.leave.LeaveStatus;
-import inc.normad.spoty.network_bridge.dtos.hrm.leave.LeaveType;
-import inc.normad.spoty.network_bridge.models.FindModel;
-import inc.normad.spoty.network_bridge.models.SearchModel;
-import inc.normad.spoty.network_bridge.repositories.implementations.LeaveStatusRepositoryImpl;
-import inc.normad.spoty.utils.ParameterlessConsumer;
-import inc.normad.spoty.utils.SpotyLogger;
-import inc.normad.spoty.utils.SpotyThreader;
+import io.github.palexdev.mfxcore.base.properties.CharProperty;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.infinite.spoty.data_source.dtos.hrm.employee.Designation;
+import org.infinite.spoty.data_source.dtos.hrm.employee.User;
+import org.infinite.spoty.data_source.dtos.hrm.leave.LeaveStatus;
+import org.infinite.spoty.data_source.dtos.hrm.leave.LeaveType;
+import org.infinite.spoty.data_source.models.FindModel;
+import org.infinite.spoty.data_source.models.SearchModel;
+import org.infinite.spoty.data_source.repositories.implementations.LeaveStatusRepositoryImpl;
+import org.infinite.spoty.utils.ParameterlessConsumer;
+import org.infinite.spoty.utils.SpotyLogger;
+import org.infinite.spoty.utils.SpotyThreader;
+import org.infinite.spoty.viewModels.BankViewModel;
+import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
+import org.infinite.spoty.viewModels.requisitions.RequisitionMasterViewModel;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
@@ -63,6 +64,7 @@ public class LeaveStatusViewModel {
     private static final StringProperty duration = new SimpleStringProperty("");
     private static final ObjectProperty<LeaveType> leaveType = new SimpleObjectProperty<>();
     private static final StringProperty attachment = new SimpleStringProperty("");
+    private static final CharProperty status = new CharProperty();
     private static final LeaveStatusRepositoryImpl leaveStatusRepository = new LeaveStatusRepositoryImpl();
 
     public static long getId() {
@@ -183,6 +185,18 @@ public class LeaveStatusViewModel {
         return attachment;
     }
 
+    public static char getStatus() {
+        return status.get();
+    }
+
+    public static void setStatus(char status) {
+        LeaveStatusViewModel.status.set(status);
+    }
+
+    public static CharProperty statusProperty() {
+        return status;
+    }
+
     public static ObservableList<LeaveStatus> getLeaveStatuses() {
         return leaveStatuses.get();
     }
@@ -205,6 +219,7 @@ public class LeaveStatusViewModel {
         setDuration("");
         setLeaveType(null);
         setAttachment("");
+        setStatus('P');
     }
 
     public static void saveLeaveStatus(
@@ -220,6 +235,7 @@ public class LeaveStatusViewModel {
                 .duration(getDuration())
                 .leaveType(getLeaveType())
                 .attachment(getAttachment())  // File to be uploaded.
+                .status(getStatus())
                 .build();
 
         var task = leaveStatusRepository.post(leaveStatus);
@@ -281,6 +297,7 @@ public class LeaveStatusViewModel {
                 setDuration(leaveStatus.getLocaleDuration());
                 setLeaveType(leaveStatus.getLeaveType());
                 setAttachment(leaveStatus.getAttachment());
+                setStatus(leaveStatus.getStatus());
             } catch (InterruptedException | ExecutionException e) {
                 SpotyLogger.writeToFile(e, BankViewModel.class);
             }
@@ -329,6 +346,7 @@ public class LeaveStatusViewModel {
                 .duration(getDuration())
                 .leaveType(getLeaveType())
                 .attachment(getAttachment())  // File to be uploaded.
+                .status(getStatus())
                 .build();
 
         var task = leaveStatusRepository.put(leaveStatus);
