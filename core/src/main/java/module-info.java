@@ -33,10 +33,10 @@ module spoty.core {
     opens inc.normad.spoty.core.views.product.products;
     opens inc.normad.spoty.core.views.product.adjustment;
     opens inc.normad.spoty.core.views.report;
-    opens inc.normad.spoty.core.views.human_resource.attendance;
     opens inc.normad.spoty.core.views.human_resource.hrm;
     opens inc.normad.spoty.core.views.human_resource.leave;
     opens inc.normad.spoty.core.views.human_resource.pay_roll;
+    opens inc.normad.spoty.core.views.human_resource.pay_roll.pay_slip;
     opens inc.normad.spoty.core.views.bank;
     opens inc.normad.spoty.core.views.service;
     opens inc.normad.spoty.core.views.quotation;

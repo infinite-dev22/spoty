@@ -1,4 +1,4 @@
-package org.infinite.spoty.views.human_resource.pay_roll;
+package inc.normad.spoty.core.views.human_resource.pay_roll;
 
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
@@ -18,17 +18,17 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.infinite.spoty.data_source.dtos.hrm.pay_roll.BeneficiaryBadge;
-import org.infinite.spoty.utils.SpotyThreader;
-import org.infinite.spoty.viewModels.hrm.pay_roll.BeneficiaryBadgeViewModel;
-import org.infinite.spoty.views.forms.BeneficiaryBadgeFormController;
+import inc.normad.spoty.network_bridge.dtos.hrm.pay_roll.BeneficiaryBadge;
+import inc.normad.spoty.utils.SpotyThreader;
+import inc.normad.spoty.core.viewModels.hrm.pay_roll.BeneficiaryBadgeViewModel;
+import inc.normad.spoty.core.views.forms.BeneficiaryBadgeFormController;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 
-import static org.infinite.spoty.SpotyResourceLoader.fxmlLoader;
+import static inc.normad.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
 
 public class BeneficiaryBadgeController implements Initializable {
     private static BeneficiaryBadgeController instance;

@@ -12,64 +12,62 @@
  * Jonathan Mark Mwigo makes no warranties, express or implied, with respect to the computer system code. Jonathan Mark Mwigo shall not be liable for any damages, including, but not limited to, direct, indirect, incidental, special, consequential, or punitive damages, arising out of or in connection with the use of the computer system code.
  */
 
-package org.infinite.spoty.components.navigation;
+package inc.normad.spoty.core.components.navigation;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import lombok.Getter;
-import org.infinite.spoty.views.account.*;
-import org.infinite.spoty.views.account.report.*;
-import org.infinite.spoty.views.bank.BankController;
-import org.infinite.spoty.views.customers.CustomerController;
-import org.infinite.spoty.views.dashboard.DashboardController;
-import org.infinite.spoty.views.expenses.category.ExpenseCategoryController;
-import org.infinite.spoty.views.expenses.expense.ExpenseController;
-import org.infinite.spoty.views.forms.*;
-import org.infinite.spoty.views.human_resource.hrm.DesignationsController;
-import org.infinite.spoty.views.human_resource.hrm.EmployeesController;
-import org.infinite.spoty.views.human_resource.hrm.EmploymentStatusController;
-import org.infinite.spoty.views.human_resource.leave.LeaveRequestController;
-import org.infinite.spoty.views.human_resource.leave.LeaveStatusController;
-import org.infinite.spoty.views.human_resource.pay_roll.BeneficiaryBadgeController;
-import org.infinite.spoty.views.human_resource.pay_roll.BeneficiaryTypeController;
-import org.infinite.spoty.views.human_resource.pay_roll.SalariesController;
-import org.infinite.spoty.views.human_resource.pay_roll.SalaryAdvancesController;
-import org.infinite.spoty.views.human_resource.pay_roll.pay_slip.PaySlipsController;
-import org.infinite.spoty.views.login.LoginController;
-import org.infinite.spoty.views.product.adjustment.AdjustmentController;
-import org.infinite.spoty.views.product.brand.BrandController;
-import org.infinite.spoty.views.product.category.ProductCategoryController;
-import org.infinite.spoty.views.product.products.ProductController;
-import org.infinite.spoty.views.product.unit_of_measure.UnitOfMeasureController;
-import org.infinite.spoty.views.purchases.PurchasesController;
-import org.infinite.spoty.views.quotation.QuotationController;
-import org.infinite.spoty.views.report.*;
-import org.infinite.spoty.views.requisition.RequisitionController;
-import org.infinite.spoty.views.returns.purchases.PurchaseReturnController;
-import org.infinite.spoty.views.returns.sales.SaleReturnsController;
-import org.infinite.spoty.views.sales.SaleTermsController;
-import org.infinite.spoty.views.sales.SalesController;
-import org.infinite.spoty.views.sales.pos.PointOfSaleController;
-import org.infinite.spoty.views.service.ServiceController;
-import org.infinite.spoty.views.service.ServiceInvoiceController;
-import org.infinite.spoty.views.settings.data_synchronizer.BackupController;
-import org.infinite.spoty.views.settings.data_synchronizer.ExportController;
-import org.infinite.spoty.views.settings.data_synchronizer.ImportController;
-import org.infinite.spoty.views.settings.data_synchronizer.RestoreController;
-import org.infinite.spoty.views.settings.role_permission.AssignUserRoleController;
-import org.infinite.spoty.views.settings.role_permission.RolesController;
-import org.infinite.spoty.views.settings.system_settings.*;
-import org.infinite.spoty.views.stock_in.StockInController;
-import org.infinite.spoty.views.stock_report.StockReportController;
-import org.infinite.spoty.views.suppliers.SupplierController;
-import org.infinite.spoty.views.tax.TaxSettingsController;
-import org.infinite.spoty.views.tax.TaxesController;
-import org.infinite.spoty.views.transfer.TransferController;
+import inc.normad.spoty.core.views.bank.BankController;
+import inc.normad.spoty.core.views.customers.CustomerController;
+import inc.normad.spoty.core.views.dashboard.DashboardController;
+import inc.normad.spoty.core.views.expenses.category.ExpenseCategoryController;
+import inc.normad.spoty.core.views.expenses.expense.ExpenseController;
+import inc.normad.spoty.core.views.forms.*;
+import inc.normad.spoty.core.views.human_resource.hrm.DesignationsController;
+import inc.normad.spoty.core.views.human_resource.hrm.EmployeesController;
+import inc.normad.spoty.core.views.human_resource.hrm.EmploymentStatusController;
+import inc.normad.spoty.core.views.human_resource.leave.LeaveRequestController;
+import inc.normad.spoty.core.views.human_resource.leave.LeaveStatusController;
+import inc.normad.spoty.core.views.human_resource.pay_roll.BeneficiaryBadgeController;
+import inc.normad.spoty.core.views.human_resource.pay_roll.BeneficiaryTypeController;
+import inc.normad.spoty.core.views.human_resource.pay_roll.SalariesController;
+import inc.normad.spoty.core.views.human_resource.pay_roll.SalaryAdvancesController;
+import inc.normad.spoty.core.views.human_resource.pay_roll.pay_slip.PaySlipsController;
+import inc.normad.spoty.core.views.login.LoginController;
+import inc.normad.spoty.core.views.product.adjustment.AdjustmentController;
+import inc.normad.spoty.core.views.product.brand.BrandController;
+import inc.normad.spoty.core.views.product.category.ProductCategoryController;
+import inc.normad.spoty.core.views.product.products.ProductController;
+import inc.normad.spoty.core.views.product.unit_of_measure.UnitOfMeasureController;
+import inc.normad.spoty.core.views.purchases.PurchasesController;
+import inc.normad.spoty.core.views.quotation.QuotationController;
+import inc.normad.spoty.core.views.report.*;
+import inc.normad.spoty.core.views.requisition.RequisitionController;
+import inc.normad.spoty.core.views.returns.purchases.PurchaseReturnController;
+import inc.normad.spoty.core.views.returns.sales.SaleReturnsController;
+import inc.normad.spoty.core.views.sales.SaleTermsController;
+import inc.normad.spoty.core.views.sales.SalesController;
+import inc.normad.spoty.core.views.sales.pos.PointOfSaleController;
+import inc.normad.spoty.core.views.service.ServiceController;
+import inc.normad.spoty.core.views.service.ServiceInvoiceController;
+import inc.normad.spoty.core.views.settings.data_synchronizer.BackupController;
+import inc.normad.spoty.core.views.settings.data_synchronizer.ExportController;
+import inc.normad.spoty.core.views.settings.data_synchronizer.ImportController;
+import inc.normad.spoty.core.views.settings.data_synchronizer.RestoreController;
+import inc.normad.spoty.core.views.settings.role_permission.AssignUserRoleController;
+import inc.normad.spoty.core.views.settings.role_permission.RolesController;
+import inc.normad.spoty.core.views.settings.system_settings.*;
+import inc.normad.spoty.core.views.stock_in.StockInController;
+import inc.normad.spoty.core.views.report.StockReportController;
+import inc.normad.spoty.core.views.suppliers.SupplierController;
+import inc.normad.spoty.core.views.tax.TaxSettingsController;
+import inc.normad.spoty.core.views.tax.TaxesController;
+import inc.normad.spoty.core.views.transfer.TransferController;
 
 import java.io.IOException;
 
-import static org.infinite.spoty.SpotyResourceLoader.fxmlLoader;
+import static inc.normad.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
 
 public class Pages {
     //Login
@@ -86,42 +84,8 @@ public class Pages {
     // Supplier
     private static final FXMLLoader supplierLoader =
             fxmlLoader("views/suppliers/Suppliers.fxml");
-    // Stock Report
-    private static final FXMLLoader stockReportLoader = fxmlLoader("views/stock_report/StockReport.fxml");
-    // Account
-    private static final FXMLLoader bankReconciliationLoader = fxmlLoader("views/account/BankReconciliation.fxml");
-    private static final FXMLLoader cashAdjustmentLoader = fxmlLoader("views/account/CashAdjustment.fxml");
-    private static final FXMLLoader cashPaymentLoader = fxmlLoader("views/account/CashPayment.fxml");
-    private static final FXMLLoader chartOfAccountLoader = fxmlLoader("views/account/ChartOfAccount.fxml");
-    private static final FXMLLoader contraVoucherLoader = fxmlLoader("views/account/ContraVoucher.fxml");
-    private static final FXMLLoader creditVoucherLoader = fxmlLoader("views/account/CreditVoucher.fxml");
-    private static final FXMLLoader customerReceiveLoader = fxmlLoader("views/account/CustomerReceive.fxml");
-    private static final FXMLLoader debitVoucherLoader = fxmlLoader("views/account/DebitVoucher.fxml");
-    private static final FXMLLoader financialYearLoader = fxmlLoader("views/account/FinancialYear.fxml");
-    private static final FXMLLoader journalVoucherLoader = fxmlLoader("views/account/JournalVoucher.fxml");
-    private static final FXMLLoader openingBalanceLoader = fxmlLoader("views/account/OpeningBalance.fxml");
-    private static final FXMLLoader paymentMethodsLoader = fxmlLoader("views/account/PaymentMethods.fxml");
-    private static final FXMLLoader preDefinedAccountsLoader = fxmlLoader("views/account/PreDefinedAccounts.fxml");
-    private static final FXMLLoader servicePaymentLoader = fxmlLoader("views/account/ServicePayment.fxml");
-    private static final FXMLLoader subAccountLoader = fxmlLoader("views/account/SubAccount.fxml");
-    private static final FXMLLoader supplierPaymentLoader = fxmlLoader("views/account/SupplierPayment.fxml");
-    private static final FXMLLoader voucherApprovalLoader = fxmlLoader("views/account/VoucherApproval.fxml");
-    // Account Report
-    private static final FXMLLoader balanceSheetLoader = fxmlLoader("views/account/report/BalanceSheet.fxml");
-    private static final FXMLLoader bankBookLoader = fxmlLoader("views/account/report/BankBook.fxml");
-    private static final FXMLLoader cashBookLoader = fxmlLoader("views/account/report/CashBook.fxml");
-    private static final FXMLLoader coaPrintLoader = fxmlLoader("views/account/report/CoaPrint.fxml");
-    private static final FXMLLoader dayBookLoader = fxmlLoader("views/account/report/DayBook.fxml");
-    private static final FXMLLoader expenditureStatementLoader = fxmlLoader("views/account/report/ExpenditureStatement.fxml");
-    private static final FXMLLoader fixedAssetScheduleLoader = fxmlLoader("views/account/report/FixedAssetSchedule.fxml");
-    private static final FXMLLoader generalLedgerLoader = fxmlLoader("views/account/report/GeneralLedger.fxml");
-    private static final FXMLLoader incomeStatementLoader = fxmlLoader("views/account/report/IncomeStatement.fxml");
-    private static final FXMLLoader profitLossLoader = fxmlLoader("views/account/report/ProfitLoss.fxml");
-    private static final FXMLLoader receiptAndPaymentLoader = fxmlLoader("views/account/report/ReceiptAndPayment.fxml");
-    private static final FXMLLoader subLedgerLoader = fxmlLoader("views/account/report/SubLedger.fxml");
-    private static final FXMLLoader trialBalanceLoader = fxmlLoader("views/account/report/TrialBalance.fxml");
-    private static final FXMLLoader bankReconciliationReportLoader = fxmlLoader("views/account/report/BankReconciliationReport.fxml");
     // Reports
+    private static final FXMLLoader stockReportLoader = fxmlLoader("views/report/StockReport.fxml");
     private static final FXMLLoader closingLoader = fxmlLoader("views/report/Closing.fxml");
     private static final FXMLLoader closingReportLoader = fxmlLoader("views/report/ClosingReport.fxml");
     private static final FXMLLoader dailyCustomerReportLoader = fxmlLoader("views/report/DailyCustomerReport.fxml");
@@ -243,107 +207,11 @@ public class Pages {
     // Supplier
     private static BorderPane supplierPane;
 
+    // Reports
     @Getter
-    // Stock Report
     private static BorderPane stockReportPane;
 
     @Getter
-    // Account
-    private static BorderPane bankReconciliationPane;
-
-    @Getter
-    private static BorderPane cashAdjustmentPane;
-
-    @Getter
-    private static BorderPane cashPaymentPane;
-
-    @Getter
-    private static BorderPane chartOfAccountPane;
-
-    @Getter
-    private static BorderPane contraVoucherPane;
-
-    @Getter
-    private static BorderPane creditVoucherPane;
-
-    @Getter
-    private static BorderPane customerReceivePane;
-
-    @Getter
-    private static BorderPane debitVoucherPane;
-
-    @Getter
-    private static BorderPane financialYearPane;
-
-    @Getter
-    private static BorderPane journalVoucherPane;
-
-    @Getter
-    private static BorderPane openingBalancePane;
-
-    @Getter
-    private static BorderPane paymentMethodsPane;
-
-    @Getter
-    private static BorderPane preDefinedAccountsPane;
-
-    @Getter
-    private static BorderPane servicePaymentPane;
-
-    @Getter
-    private static BorderPane subAccountPane;
-
-    @Getter
-    private static BorderPane supplierPaymentPane;
-
-    @Getter
-    private static BorderPane voucherApprovalPane;
-
-    @Getter
-    // Account Report
-    private static BorderPane balanceSheetPane;
-
-    @Getter
-    private static BorderPane bankBookPane;
-
-    @Getter
-    private static BorderPane cashBookPane;
-
-    @Getter
-    private static BorderPane coaPrintPane;
-
-    @Getter
-    private static BorderPane dayBookPane;
-
-    @Getter
-    private static BorderPane expenditureStatementPane;
-
-    @Getter
-    private static BorderPane fixedAssetSchedulePane;
-
-    @Getter
-    private static BorderPane generalLedgerPane;
-
-    @Getter
-    private static BorderPane incomeStatementPane;
-
-    @Getter
-    private static BorderPane profitLossPane;
-
-    @Getter
-    private static BorderPane receiptAndPaymentPane;
-
-    @Getter
-    private static BorderPane subLedgerPane;
-
-    @Getter
-    private static BorderPane trialBalancePane;
-
-    @Getter
-    private static BorderPane bankReconciliationReportPane;
-
-    @Getter
-    // Reports
     private static BorderPane closingPane;
 
     @Getter
@@ -580,43 +448,6 @@ public class Pages {
         stockReportLoader.setControllerFactory(e -> new StockReportController());
     }
 
-    private static void setAccounts(Stage stage) {
-        bankReconciliationLoader.setControllerFactory(e -> new BankReconciliationController());
-        cashAdjustmentLoader.setControllerFactory(e -> new CashAdjustmentController());
-        cashPaymentLoader.setControllerFactory(e -> new CashPaymentController());
-        chartOfAccountLoader.setControllerFactory(e -> new ChartOfAccountController());
-        contraVoucherLoader.setControllerFactory(e -> new ContraVoucherController());
-        creditVoucherLoader.setControllerFactory(e -> new CreditVoucherController());
-        customerReceiveLoader.setControllerFactory(e -> new CustomerReceiveController());
-        debitVoucherLoader.setControllerFactory(e -> new DebitVoucherController());
-        financialYearLoader.setControllerFactory(e -> new FinancialYearController());
-        journalVoucherLoader.setControllerFactory(e -> new JournalVoucherController());
-        openingBalanceLoader.setControllerFactory(e -> new OpeningBalanceController());
-        paymentMethodsLoader.setControllerFactory(e -> new PaymentMethodsController());
-        preDefinedAccountsLoader.setControllerFactory(e -> new PreDefinedAccountsController());
-        servicePaymentLoader.setControllerFactory(e -> new ServicePaymentController());
-        subAccountLoader.setControllerFactory(e -> new SubAccountController());
-        supplierPaymentLoader.setControllerFactory(e -> new ServicePaymentController());
-        voucherApprovalLoader.setControllerFactory(e -> new VoucherApprovalController());
-    }
-
-    private static void setAccountReports(Stage stage) {
-        balanceSheetLoader.setControllerFactory(e -> new BalanceSheetController());
-        bankBookLoader.setControllerFactory(e -> new BankBookController());
-        cashBookLoader.setControllerFactory(e -> new CashBookController());
-        coaPrintLoader.setControllerFactory(e -> new CoaPrintController());
-        dayBookLoader.setControllerFactory(e -> new DayBookController());
-        expenditureStatementLoader.setControllerFactory(e -> new ExpenditureStatementController());
-        fixedAssetScheduleLoader.setControllerFactory(e -> new FixedAssetScheduleController());
-        generalLedgerLoader.setControllerFactory(e -> new GeneralLedgerController());
-        incomeStatementLoader.setControllerFactory(e -> new IncomeStatementController());
-        profitLossLoader.setControllerFactory(e -> new ProfitLossController());
-        receiptAndPaymentLoader.setControllerFactory(e -> new ReceiptAndPaymentController());
-        subLedgerLoader.setControllerFactory(e -> new SubLedgerController());
-        trialBalanceLoader.setControllerFactory(e -> new TrialBalanceController());
-        bankReconciliationReportLoader.setControllerFactory(e -> new BankReconciliationReportController());
-    }
-
     private static void setReports(Stage stage) {
         closingLoader.setControllerFactory(e -> new ClosingController());
         closingReportLoader.setControllerFactory(e -> new ClosingReportController());
@@ -740,42 +571,8 @@ public class Pages {
         customerPane = customerLoader.load();
         // Supplier
         supplierPane = supplierLoader.load();
-        // Stock Report
-        stockReportPane = stockReportLoader.load();
-        // Account
-        bankReconciliationPane = bankReconciliationLoader.load();
-        cashAdjustmentPane = cashAdjustmentLoader.load();
-        cashPaymentPane = cashPaymentLoader.load();
-        chartOfAccountPane = chartOfAccountLoader.load();
-        contraVoucherPane = contraVoucherLoader.load();
-        creditVoucherPane = creditVoucherLoader.load();
-        customerReceivePane = customerReceiveLoader.load();
-        debitVoucherPane = debitVoucherLoader.load();
-        financialYearPane = financialYearLoader.load();
-        journalVoucherPane = journalVoucherLoader.load();
-        openingBalancePane = openingBalanceLoader.load();
-        paymentMethodsPane = paymentMethodsLoader.load();
-        preDefinedAccountsPane = preDefinedAccountsLoader.load();
-        servicePaymentPane = servicePaymentLoader.load();
-        subAccountPane = subAccountLoader.load();
-        supplierPaymentPane = supplierPaymentLoader.load();
-        voucherApprovalPane = voucherApprovalLoader.load();
-        // Account Report
-        balanceSheetPane = balanceSheetLoader.load();
-        bankBookPane = bankBookLoader.load();
-        cashBookPane = cashBookLoader.load();
-        coaPrintPane = coaPrintLoader.load();
-        dayBookPane = dayBookLoader.load();
-        expenditureStatementPane = expenditureStatementLoader.load();
-        fixedAssetSchedulePane = fixedAssetScheduleLoader.load();
-        generalLedgerPane = generalLedgerLoader.load();
-        incomeStatementPane = incomeStatementLoader.load();
-        profitLossPane = profitLossLoader.load();
-        receiptAndPaymentPane = receiptAndPaymentLoader.load();
-        subLedgerPane = subLedgerLoader.load();
-        trialBalancePane = trialBalanceLoader.load();
-        bankReconciliationReportPane = bankReconciliationReportLoader.load();
         // Reports
+        stockReportPane = stockReportLoader.load();
         closingPane = closingLoader.load();
         closingReportPane = closingReportLoader.load();
         dailyCustomerReportPane = dailyCustomerReportLoader.load();
@@ -874,8 +671,6 @@ public class Pages {
         setSupplier(stage);
         setProduct(stage);
         setStockReport(stage);
-        setAccounts(stage);
-        setAccountReports(stage);
         setReports(stage);
         setHRM(stage);
         setLeave(stage);

@@ -12,7 +12,7 @@
  * Jonathan Mark Mwigo makes no warranties, express or implied, with respect to the computer system code. Jonathan Mark Mwigo shall not be liable for any damages, including, but not limited to, direct, indirect, incidental, special, consequential, or punitive damages, arising out of or in connection with the use of the computer system code.
  */
 
-package org.infinite.spoty.views.forms;
+package inc.normad.spoty.core.views.forms;
 
 import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
@@ -21,21 +21,21 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
-import org.infinite.spoty.components.notification.SimpleNotification;
-import org.infinite.spoty.components.notification.SimpleNotificationHolder;
-import org.infinite.spoty.components.notification.enums.NotificationDuration;
-import org.infinite.spoty.components.notification.enums.NotificationVariants;
-import org.infinite.spoty.data_source.dtos.hrm.pay_roll.BeneficiaryType;
-import org.infinite.spoty.utils.SpotyLogger;
-import org.infinite.spoty.utils.SpotyThreader;
-import org.infinite.spoty.viewModels.hrm.pay_roll.BeneficiaryBadgeViewModel;
+import inc.normad.spoty.core.components.notification.SimpleNotification;
+import inc.normad.spoty.core.components.notification.SimpleNotificationHolder;
+import inc.normad.spoty.core.components.notification.enums.NotificationDuration;
+import inc.normad.spoty.core.components.notification.enums.NotificationVariants;
+import inc.normad.spoty.network_bridge.dtos.hrm.pay_roll.BeneficiaryType;
+import inc.normad.spoty.utils.SpotyLogger;
+import inc.normad.spoty.utils.SpotyThreader;
+import inc.normad.spoty.core.viewModels.hrm.pay_roll.BeneficiaryBadgeViewModel;
 
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
-import static org.infinite.spoty.GlobalActions.closeDialog;
-import static org.infinite.spoty.Validators.requiredValidator;
+import static inc.normad.spoty.core.GlobalActions.closeDialog;
+import static inc.normad.spoty.core.Validators.requiredValidator;
 
 public class BeneficiaryBadgeFormController implements Initializable {
     private static BeneficiaryBadgeFormController instance;

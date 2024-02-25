@@ -1,12 +1,12 @@
-package org.infinite.spoty.data_source.repositories.implementations;
+package inc.normad.spoty.network_bridge.repositories.implementations;
 
 import com.google.gson.Gson;
+import inc.normad.spoty.network_bridge.auth.ProtectedGlobals;
+import inc.normad.spoty.network_bridge.models.FindModel;
+import inc.normad.spoty.network_bridge.models.SearchModel;
+import inc.normad.spoty.network_bridge.repositories.interfaces.SimpleRepository;
 import javafx.concurrent.Task;
-import org.infinite.spoty.data_source.auth.ProtectedGlobals;
-import org.infinite.spoty.data_source.models.FindModel;
-import org.infinite.spoty.data_source.models.SearchModel;
-import org.infinite.spoty.data_source.repositories.interfaces.SimpleRepository;
-import org.infinite.spoty.values.EndPoints;
+import inc.normad.spoty.network_bridge.end_points.EndPoints;
 
 import java.io.IOException;
 import java.net.URI;

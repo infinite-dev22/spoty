@@ -23,7 +23,7 @@
 <?import javafx.scene.layout.*?>
 <?import java.net.URL?>
 <MFXGenericDialog xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/19"
-                  fx:controller="org.infinite.spoty.views.forms.BeneficiaryBadgeFormController">
+                  fx:controller="inc.normad.spoty.core.views.forms.BeneficiaryBadgeFormController">
     <stylesheets>
         <URL value="@../../styles/Common.css"/>
         <URL value="@../../styles/TextFields.css"/>

@@ -1,4 +1,4 @@
-package org.infinite.spoty.values;
+package inc.normad.spoty.network_bridge.end_points;
 
 public class EndPoints {
     public static final String appDNS = "http://localhost:8080";
