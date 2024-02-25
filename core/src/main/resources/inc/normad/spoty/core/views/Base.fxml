@@ -20,9 +20,14 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <?import java.lang.String?>
+<?import java.net.URL?>
 <AnchorPane fx:id="rootPane" prefHeight="32767" prefWidth="32767" styleClass="rootPane"
-            stylesheets="@../styles/base.css" xmlns="http://javafx.com/javafx/21.0.1"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="inc.normad.spoty.core.views.BaseController">
+            xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="inc.normad.spoty.core.views.BaseController">
+    <stylesheets>
+        <URL value="@../styles/base.css"/>
+        <URL value="@../styles/Common.css"/>
+    </stylesheets>
     <VBox layoutX="6.0" layoutY="6.0" prefHeight="640.0" prefWidth="250.0" spacing="10.0" styleClass="sidebar"
           AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="2.0" AnchorPane.topAnchor="2.0">
         <padding>
@@ -46,34 +51,38 @@
         <StackPane fx:id="navBar" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
                    styleClass="navbar" VBox.vgrow="ALWAYS"/>
     </VBox>
-    <StackPane fx:id="contentPane" layoutX="226.0" layoutY="45.0" prefHeight="604.0" prefWidth="1053.0"
-               AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="259.0" AnchorPane.rightAnchor="5.0"
-               AnchorPane.topAnchor="55.0"/>
-    <HBox fx:id="windowHeader" layoutX="201.0" layoutY="7.0" prefHeight="45.0" prefWidth="1077.0" spacing="10.0"
-          AnchorPane.leftAnchor="259.0" AnchorPane.rightAnchor="2.0" AnchorPane.topAnchor="2.0">
-        <padding>
-            <Insets bottom="2.0" left="10.0" right="10.0" top="2.0"/>
-        </padding>
-        <HBox spacing="10.0" HBox.hgrow="ALWAYS" alignment="CENTER_LEFT">
+    <AnchorPane styleClass="card" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="259.0"
+                AnchorPane.rightAnchor="5.0"
+                AnchorPane.topAnchor="5.0">
+        <StackPane fx:id="contentPane" layoutX="226.0" layoutY="45.0" prefHeight="604.0" prefWidth="1053.0"
+                   AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0"
+                   AnchorPane.topAnchor="55.0"/>
+        <HBox fx:id="windowHeader" layoutX="201.0" layoutY="7.0" prefHeight="45.0" prefWidth="1077.0" spacing="10.0"
+              AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
             <padding>
-                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                <Insets bottom="2.0" left="10.0" right="10.0" top="2.0"/>
             </padding>
+            <HBox spacing="10.0" HBox.hgrow="ALWAYS" alignment="CENTER_LEFT">
+                <padding>
+                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                </padding>
+            </HBox>
+            <HBox spacing="10.0" HBox.hgrow="ALWAYS" alignment="CENTER">
+                <padding>
+                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                </padding>
+                <MFXButton fx:id="notificationsBtn" styleClass="minimize-icon"/>
+            </HBox>
+            <HBox spacing="10.0" HBox.hgrow="ALWAYS" alignment="CENTER_RIGHT">
+                <padding>
+                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                </padding>
+                <MFXButton fx:id="feedbackBtn" styleClass="minimize-icon" text="Feedback"/>
+                <MFXButton fx:id="helpBtn" styleClass="close-icon" text="Help"/>
+            </HBox>
+            <styleClass>
+                <String fx:value="appBar"/>
+            </styleClass>
         </HBox>
-        <HBox spacing="10.0" HBox.hgrow="ALWAYS" alignment="CENTER">
-            <padding>
-                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
-            </padding>
-            <MFXButton fx:id="notificationsBtn" styleClass="minimize-icon"/>
-        </HBox>
-        <HBox spacing="10.0" HBox.hgrow="ALWAYS" alignment="CENTER_RIGHT">
-            <padding>
-                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
-            </padding>
-            <MFXButton fx:id="feedbackBtn" styleClass="minimize-icon" text="Feedback"/>
-            <MFXButton fx:id="helpBtn" styleClass="close-icon" text="Help"/>
-        </HBox>
-        <styleClass>
-            <String fx:value="appBar"/>
-        </styleClass>
-    </HBox>
+    </AnchorPane>
 </AnchorPane>
