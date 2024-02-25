@@ -1,4 +1,4 @@
-package org.infinite.spoty.views.human_resource.pay_roll.pay_slip;
+package inc.normad.spoty.core.views.human_resource.pay_roll.pay_slip;
 
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXScrollPane;
@@ -10,13 +10,13 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import org.infinite.spoty.utils.SpotyLogger;
+import inc.normad.spoty.utils.SpotyLogger;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import static org.infinite.spoty.SpotyResourceLoader.fxmlLoader;
+import static inc.normad.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
 
 public class PaySlipsController implements Initializable {
 

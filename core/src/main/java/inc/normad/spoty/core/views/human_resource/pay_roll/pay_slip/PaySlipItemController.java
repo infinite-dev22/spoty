@@ -1,4 +1,4 @@
-package org.infinite.spoty.views.human_resource.pay_roll.pay_slip;
+package inc.normad.spoty.core.views.human_resource.pay_roll.pay_slip;
 
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXIconButton;
@@ -8,8 +8,8 @@ import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.HBox;
-import org.infinite.spoty.components.navigation.Pages;
-import org.infinite.spoty.views.BaseController;
+import inc.normad.spoty.core.components.navigation.Pages;
+import inc.normad.spoty.core.views.BaseController;
 
 import java.net.URL;
 import java.util.ResourceBundle;

@@ -146,9 +146,6 @@ public class Pages {
     }
 
     private static void setAccountReports(Stage stage) {
-        balanceSheetLoader.setControllerFactory(e -> new BalanceSheetController());
-        bankBookLoader.setControllerFactory(e -> new BankBookController());
-        cashBookLoader.setControllerFactory(e -> new CashBookController());
         coaPrintLoader.setControllerFactory(e -> new CoaPrintController());
         dayBookLoader.setControllerFactory(e -> new DayBookController());
         expenditureStatementLoader.setControllerFactory(e -> new ExpenditureStatementController());
@@ -159,7 +156,6 @@ public class Pages {
         receiptAndPaymentLoader.setControllerFactory(e -> new ReceiptAndPaymentController());
         subLedgerLoader.setControllerFactory(e -> new SubLedgerController());
         trialBalanceLoader.setControllerFactory(e -> new TrialBalanceController());
-        bankReconciliationReportLoader.setControllerFactory(e -> new BankReconciliationReportController());
     }
 
     private static void setReports(Stage stage) {
@@ -169,7 +165,6 @@ public class Pages {
         dailyReportLoader.setControllerFactory(e -> new DailyReportController());
         dueReportLoader.setControllerFactory(e -> new DueReportController());
         profitReportLoader.setControllerFactory(e -> new ProfitReportController());
-        purchaseReportLoader.setControllerFactory(e -> new PurchaseReportController());
         salesReportLoader.setControllerFactory(e -> new SalesReportController());
         salesReturnLoader.setControllerFactory(e -> new SalesReturnController());
         shippingCostReportLoader.setControllerFactory(e -> new ShippingCostReportController());

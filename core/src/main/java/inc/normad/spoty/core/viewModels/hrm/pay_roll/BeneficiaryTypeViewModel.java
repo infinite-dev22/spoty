@@ -12,7 +12,7 @@
  * Jonathan Mark Mwigo makes no warranties, express or implied, with respect to the computer system code. Jonathan Mark Mwigo shall not be liable for any damages, including, but not limited to, direct, indirect, incidental, special, consequential, or punitive damages, arising out of or in connection with the use of the computer system code.
  */
 
-package org.infinite.spoty.viewModels.hrm.pay_roll;
+package inc.normad.spoty.core.viewModels.hrm.pay_roll;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -20,16 +20,16 @@ import com.google.gson.reflect.TypeToken;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.infinite.spoty.data_source.dtos.Branch;
-import org.infinite.spoty.data_source.dtos.hrm.pay_roll.BeneficiaryType;
-import org.infinite.spoty.data_source.models.FindModel;
-import org.infinite.spoty.data_source.models.SearchModel;
-import org.infinite.spoty.data_source.repositories.implementations.BeneficiaryTypeRepositoryImpl;
-import org.infinite.spoty.utils.ParameterlessConsumer;
-import org.infinite.spoty.utils.SpotyLogger;
-import org.infinite.spoty.utils.SpotyThreader;
-import org.infinite.spoty.viewModels.BankViewModel;
-import org.infinite.spoty.viewModels.adapters.UnixEpochDateTypeAdapter;
+import inc.normad.spoty.network_bridge.dtos.Branch;
+import inc.normad.spoty.network_bridge.dtos.hrm.pay_roll.BeneficiaryType;
+import inc.normad.spoty.network_bridge.models.FindModel;
+import inc.normad.spoty.network_bridge.models.SearchModel;
+import inc.normad.spoty.network_bridge.repositories.implementations.BeneficiaryTypeRepositoryImpl;
+import inc.normad.spoty.utils.ParameterlessConsumer;
+import inc.normad.spoty.utils.SpotyLogger;
+import inc.normad.spoty.utils.SpotyThreader;
+import inc.normad.spoty.core.viewModels.BankViewModel;
+import inc.normad.spoty.core.viewModels.adapters.UnixEpochDateTypeAdapter;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
