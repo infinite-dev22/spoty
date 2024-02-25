@@ -1,5 +1,6 @@
 package inc.normad.spoty.reporting.general;
 
+import inc.normad.spoty.network_bridge.dtos.StockReport;
 import inc.normad.spoty.utils.SpotyThreader;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
@@ -13,7 +14,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-import inc.normad.spoty.network_bridge.dtos.StockReport;
 
 import java.io.IOException;
 import java.net.URL;

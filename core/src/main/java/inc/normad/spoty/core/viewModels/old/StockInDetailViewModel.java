@@ -14,15 +14,15 @@
 
 package inc.normad.spoty.core.viewModels.old;
 
-import javafx.application.Platform;
-import javafx.beans.property.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import inc.normad.spoty.network_bridge.dtos.Product;
 import inc.normad.spoty.network_bridge.dtos.stock_ins.StockInDetail;
 import inc.normad.spoty.network_bridge.dtos.stock_ins.StockInMaster;
 import inc.normad.spoty.network_bridge.dtos.stock_ins.StockInTransaction;
 import inc.normad.spoty.utils.SpotyLogger;
+import javafx.application.Platform;
+import javafx.beans.property.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;

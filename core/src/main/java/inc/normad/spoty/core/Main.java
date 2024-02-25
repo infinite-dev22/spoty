@@ -14,10 +14,10 @@
 
 package inc.normad.spoty.core;
 
-import javafx.application.Application;
-import javafx.stage.Stage;
 import inc.normad.spoty.core.views.splash.LaunchPreloader;
 import inc.normad.spoty.core.views.splash.SplashScreenController;
+import javafx.application.Application;
+import javafx.stage.Stage;
 
 public class Main extends Application {
     public static Stage primaryStage = null;

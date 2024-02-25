@@ -14,10 +14,10 @@
 
 package inc.normad.spoty.core.views.components;
 
+import inc.normad.spoty.core.models.QuickStats;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import inc.normad.spoty.core.models.QuickStats;
 
 import java.net.URL;
 import java.util.ResourceBundle;

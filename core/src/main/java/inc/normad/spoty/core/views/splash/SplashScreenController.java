@@ -15,6 +15,14 @@
 package inc.normad.spoty.core.views.splash;
 
 import fr.brouillard.oss.cssfx.CSSFX;
+import inc.normad.spoty.core.SpotyCoreResourceLoader;
+import inc.normad.spoty.core.components.navigation.Pages;
+import inc.normad.spoty.core.components.notification.SimpleNotificationHolder;
+import inc.normad.spoty.core.startup.Dialogs;
+import inc.normad.spoty.core.values.strings.Labels;
+import inc.normad.spoty.startup.SpotyPaths;
+import inc.normad.spoty.utils.SpotyLogger;
+import inc.normad.spoty.utils.SpotyThreader;
 import io.github.palexdev.materialfx.theming.JavaFXThemes;
 import io.github.palexdev.materialfx.theming.MaterialFXStylesheets;
 import io.github.palexdev.materialfx.theming.UserAgentBuilder;
@@ -30,14 +38,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import inc.normad.spoty.core.SpotyCoreResourceLoader;
-import inc.normad.spoty.core.components.navigation.Pages;
-import inc.normad.spoty.core.components.notification.SimpleNotificationHolder;
-import inc.normad.spoty.core.startup.Dialogs;
-import inc.normad.spoty.startup.SpotyPaths;
-import inc.normad.spoty.utils.SpotyLogger;
-import inc.normad.spoty.utils.SpotyThreader;
-import inc.normad.spoty.core.values.strings.Labels;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;

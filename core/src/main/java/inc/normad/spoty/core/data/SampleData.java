@@ -14,10 +14,10 @@
 
 package inc.normad.spoty.core.data;
 
+import inc.normad.spoty.core.models.QuickStats;
+import inc.normad.spoty.network_bridge.dtos.Role;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import inc.normad.spoty.network_bridge.dtos.Role;
-import inc.normad.spoty.core.models.QuickStats;
 
 import java.util.ArrayList;
 import java.util.List;

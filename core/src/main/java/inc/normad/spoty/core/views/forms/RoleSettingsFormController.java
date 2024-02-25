@@ -14,6 +14,16 @@
 
 package inc.normad.spoty.core.views.forms;
 
+import inc.normad.spoty.core.components.navigation.Navigation;
+import inc.normad.spoty.core.components.navigation.Pages;
+import inc.normad.spoty.core.components.notification.SimpleNotification;
+import inc.normad.spoty.core.components.notification.SimpleNotificationHolder;
+import inc.normad.spoty.core.components.notification.enums.NotificationDuration;
+import inc.normad.spoty.core.components.notification.enums.NotificationVariants;
+import inc.normad.spoty.core.viewModels.PermissionsViewModel;
+import inc.normad.spoty.core.viewModels.RoleViewModel;
+import inc.normad.spoty.utils.SpotyLogger;
+import inc.normad.spoty.utils.SpotyThreader;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.validation.Constraint;
 import io.github.palexdev.materialfx.validation.Severity;
@@ -23,16 +33,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
-import inc.normad.spoty.core.components.navigation.Navigation;
-import inc.normad.spoty.core.components.navigation.Pages;
-import inc.normad.spoty.core.components.notification.SimpleNotification;
-import inc.normad.spoty.core.components.notification.SimpleNotificationHolder;
-import inc.normad.spoty.core.components.notification.enums.NotificationDuration;
-import inc.normad.spoty.core.components.notification.enums.NotificationVariants;
-import inc.normad.spoty.utils.SpotyLogger;
-import inc.normad.spoty.utils.SpotyThreader;
-import inc.normad.spoty.core.viewModels.PermissionsViewModel;
-import inc.normad.spoty.core.viewModels.RoleViewModel;
 
 import java.net.URL;
 import java.util.List;

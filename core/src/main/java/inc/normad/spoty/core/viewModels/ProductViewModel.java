@@ -17,22 +17,24 @@ package inc.normad.spoty.core.viewModels;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import javafx.application.Platform;
-import javafx.beans.property.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import inc.normad.spoty.network_bridge.dtos.*;
+import inc.normad.spoty.core.viewModels.adapters.UnixEpochDateTypeAdapter;
+import inc.normad.spoty.network_bridge.dtos.Brand;
+import inc.normad.spoty.network_bridge.dtos.Product;
+import inc.normad.spoty.network_bridge.dtos.ProductCategory;
+import inc.normad.spoty.network_bridge.dtos.UnitOfMeasure;
 import inc.normad.spoty.network_bridge.models.FindModel;
 import inc.normad.spoty.network_bridge.models.SearchModel;
 import inc.normad.spoty.network_bridge.repositories.implementations.ProductsRepositoryImpl;
 import inc.normad.spoty.utils.ParameterlessConsumer;
 import inc.normad.spoty.utils.SpotyLogger;
 import inc.normad.spoty.utils.SpotyThreader;
-import inc.normad.spoty.core.viewModels.adapters.UnixEpochDateTypeAdapter;
+import javafx.application.Platform;
+import javafx.beans.property.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
@@ -364,7 +366,8 @@ public class ProductViewModel {
                 }.getType();
                 ArrayList<Product> productList = gson.fromJson(task.get().body(), listType);
 
-                productsList.clear();productsList.addAll(productList);
+                productsList.clear();
+                productsList.addAll(productList);
             } catch (InterruptedException | ExecutionException e) {
                 SpotyLogger.writeToFile(e, ProductViewModel.class);
             }

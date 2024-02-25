@@ -14,12 +14,12 @@
 
 package inc.normad.spoty.core.viewModels.old;
 
-import javafx.beans.property.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import inc.normad.spoty.network_bridge.dtos.Branch;
 import inc.normad.spoty.network_bridge.dtos.returns.purchase_returns.PurchaseReturnMaster;
 import inc.normad.spoty.utils.SpotyLogger;
+import javafx.beans.property.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import org.jetbrains.annotations.Nullable;
 
 import java.text.ParseException;

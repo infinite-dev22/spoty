@@ -14,10 +14,6 @@
 
 package inc.normad.spoty.core.components.navigation;
 
-import javafx.fxml.FXMLLoader;
-import javafx.scene.layout.BorderPane;
-import javafx.stage.Stage;
-import lombok.Getter;
 import inc.normad.spoty.core.views.bank.BankController;
 import inc.normad.spoty.core.views.customers.CustomerController;
 import inc.normad.spoty.core.views.dashboard.DashboardController;
@@ -62,6 +58,10 @@ import inc.normad.spoty.core.views.suppliers.SupplierController;
 import inc.normad.spoty.core.views.tax.TaxSettingsController;
 import inc.normad.spoty.core.views.tax.TaxesController;
 import inc.normad.spoty.core.views.transfer.TransferController;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
+import lombok.Getter;
 
 import java.io.IOException;
 

@@ -14,6 +14,15 @@
 
 package inc.normad.spoty.core.views.forms;
 
+import inc.normad.spoty.core.components.notification.SimpleNotification;
+import inc.normad.spoty.core.components.notification.SimpleNotificationHolder;
+import inc.normad.spoty.core.components.notification.enums.NotificationDuration;
+import inc.normad.spoty.core.components.notification.enums.NotificationVariants;
+import inc.normad.spoty.core.viewModels.hrm.leave.LeaveStatusViewModel;
+import inc.normad.spoty.network_bridge.dtos.hrm.employee.User;
+import inc.normad.spoty.network_bridge.dtos.hrm.leave.LeaveType;
+import inc.normad.spoty.utils.SpotyLogger;
+import inc.normad.spoty.utils.SpotyThreader;
 import io.github.palexdev.materialfx.controls.MFXDatePicker;
 import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
@@ -24,15 +33,6 @@ import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import inc.normad.spoty.core.components.notification.SimpleNotification;
-import inc.normad.spoty.core.components.notification.SimpleNotificationHolder;
-import inc.normad.spoty.core.components.notification.enums.NotificationDuration;
-import inc.normad.spoty.core.components.notification.enums.NotificationVariants;
-import inc.normad.spoty.network_bridge.dtos.hrm.employee.User;
-import inc.normad.spoty.network_bridge.dtos.hrm.leave.LeaveType;
-import inc.normad.spoty.utils.SpotyLogger;
-import inc.normad.spoty.utils.SpotyThreader;
-import inc.normad.spoty.core.viewModels.hrm.leave.LeaveStatusViewModel;
 
 import java.net.URL;
 import java.util.Objects;

@@ -14,6 +14,11 @@
 
 package inc.normad.spoty.core.views.stock_in;
 
+import inc.normad.spoty.core.components.navigation.Pages;
+import inc.normad.spoty.core.viewModels.stock_ins.StockInMasterViewModel;
+import inc.normad.spoty.core.views.BaseController;
+import inc.normad.spoty.network_bridge.dtos.stock_ins.StockInMaster;
+import inc.normad.spoty.utils.SpotyThreader;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.filter.DoubleFilter;
@@ -26,11 +31,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import inc.normad.spoty.core.components.navigation.Pages;
-import inc.normad.spoty.network_bridge.dtos.stock_ins.StockInMaster;
-import inc.normad.spoty.utils.SpotyThreader;
-import inc.normad.spoty.core.viewModels.stock_ins.StockInMasterViewModel;
-import inc.normad.spoty.core.views.BaseController;
 
 import java.net.URL;
 import java.util.Comparator;

@@ -14,14 +14,13 @@
 
 package inc.normad.spoty.core.viewModels.returns.sales;
 
+import inc.normad.spoty.network_bridge.dtos.Branch;
+import inc.normad.spoty.network_bridge.dtos.returns.sale_returns.SaleReturnMaster;
+import inc.normad.spoty.utils.SpotyLogger;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
-import inc.normad.spoty.network_bridge.dtos.Branch;
-import inc.normad.spoty.network_bridge.dtos.returns.sale_returns.SaleReturnMaster;
-import inc.normad.spoty.utils.SpotyLogger;
-import inc.normad.spoty.core.viewModels.adapters.UnixEpochDateTypeAdapter;
 import org.jetbrains.annotations.Nullable;
 
 import java.text.ParseException;
@@ -29,7 +28,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class SaleReturnMasterViewModel {
-//    private static final Gson gson = new GsonBuilder()
+    //    private static final Gson gson = new GsonBuilder()
 //            .registerTypeAdapter(Date.class,
 //                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
 //            .create();

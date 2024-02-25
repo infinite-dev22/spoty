@@ -14,6 +14,15 @@
 
 package inc.normad.spoty.core.views.forms;
 
+import inc.normad.spoty.core.components.notification.SimpleNotification;
+import inc.normad.spoty.core.components.notification.SimpleNotificationHolder;
+import inc.normad.spoty.core.components.notification.enums.NotificationDuration;
+import inc.normad.spoty.core.components.notification.enums.NotificationVariants;
+import inc.normad.spoty.core.values.SharedResources;
+import inc.normad.spoty.core.values.strings.Values;
+import inc.normad.spoty.core.viewModels.ProductViewModel;
+import inc.normad.spoty.core.viewModels.adjustments.AdjustmentDetailViewModel;
+import inc.normad.spoty.network_bridge.dtos.Product;
 import io.github.palexdev.materialfx.controls.MFXComboBox;
 import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
@@ -25,15 +34,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.util.StringConverter;
-import inc.normad.spoty.core.components.notification.SimpleNotification;
-import inc.normad.spoty.core.components.notification.SimpleNotificationHolder;
-import inc.normad.spoty.core.components.notification.enums.NotificationDuration;
-import inc.normad.spoty.core.components.notification.enums.NotificationVariants;
-import inc.normad.spoty.network_bridge.dtos.Product;
-import inc.normad.spoty.core.values.SharedResources;
-import inc.normad.spoty.core.values.strings.Values;
-import inc.normad.spoty.core.viewModels.adjustments.AdjustmentDetailViewModel;
-import inc.normad.spoty.core.viewModels.ProductViewModel;
 
 import java.net.URL;
 import java.util.Objects;

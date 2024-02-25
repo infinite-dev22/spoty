@@ -1,5 +1,9 @@
 package inc.normad.spoty.core.views.human_resource.hrm;
 
+import inc.normad.spoty.core.viewModels.hrm.employee.EmploymentStatusViewModel;
+import inc.normad.spoty.core.views.forms.EmploymentStatusFormController;
+import inc.normad.spoty.network_bridge.dtos.hrm.employee.EmploymentStatus;
+import inc.normad.spoty.utils.SpotyThreader;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
@@ -17,10 +21,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import inc.normad.spoty.network_bridge.dtos.hrm.employee.EmploymentStatus;
-import inc.normad.spoty.utils.SpotyThreader;
-import inc.normad.spoty.core.viewModels.hrm.employee.EmploymentStatusViewModel;
-import inc.normad.spoty.core.views.forms.EmploymentStatusFormController;
 
 import java.io.IOException;
 import java.net.URL;

@@ -14,13 +14,13 @@
 
 package inc.normad.spoty.core.viewModels.old;
 
+import inc.normad.spoty.network_bridge.dtos.Product;
+import inc.normad.spoty.network_bridge.dtos.returns.purchase_returns.PurchaseReturnDetail;
+import inc.normad.spoty.network_bridge.dtos.returns.purchase_returns.PurchaseReturnMaster;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
-import inc.normad.spoty.network_bridge.dtos.Product;
-import inc.normad.spoty.network_bridge.dtos.returns.purchase_returns.PurchaseReturnDetail;
-import inc.normad.spoty.network_bridge.dtos.returns.purchase_returns.PurchaseReturnMaster;
 
 
 public class PurchaseReturnDetailViewModel {

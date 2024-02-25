@@ -16,11 +16,11 @@ package inc.normad.spoty.core.viewModels;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import inc.normad.spoty.core.viewModels.adapters.UnixEpochDateTypeAdapter;
+import inc.normad.spoty.network_bridge.dtos.Product;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import inc.normad.spoty.network_bridge.dtos.Product;
-import inc.normad.spoty.core.viewModels.adapters.UnixEpochDateTypeAdapter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Date;

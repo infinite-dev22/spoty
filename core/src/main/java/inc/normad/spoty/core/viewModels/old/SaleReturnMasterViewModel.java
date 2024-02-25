@@ -14,13 +14,13 @@
 
 package inc.normad.spoty.core.viewModels.old;
 
+import inc.normad.spoty.network_bridge.dtos.Branch;
+import inc.normad.spoty.network_bridge.dtos.returns.sale_returns.SaleReturnMaster;
+import inc.normad.spoty.utils.SpotyLogger;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
-import inc.normad.spoty.network_bridge.dtos.Branch;
-import inc.normad.spoty.network_bridge.dtos.returns.sale_returns.SaleReturnMaster;
-import inc.normad.spoty.utils.SpotyLogger;
 import org.jetbrains.annotations.Nullable;
 
 import java.text.ParseException;

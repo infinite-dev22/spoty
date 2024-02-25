@@ -1,14 +1,14 @@
 package inc.normad.spoty.network_bridge.repositories.implementations;
 
 import com.google.gson.Gson;
-import javafx.concurrent.Task;
-import javafx.scene.image.Image;
 import inc.normad.spoty.network_bridge.auth.ProtectedGlobals;
+import inc.normad.spoty.network_bridge.end_points.EndPoints;
 import inc.normad.spoty.network_bridge.models.FindModel;
 import inc.normad.spoty.network_bridge.models.SearchModel;
 import inc.normad.spoty.network_bridge.repositories.interfaces.CompanyRepository;
 import inc.normad.spoty.utils.SpotyLogger;
-import inc.normad.spoty.network_bridge.end_points.EndPoints;
+import javafx.concurrent.Task;
+import javafx.scene.image.Image;
 
 import java.io.IOException;
 import java.io.InputStream;

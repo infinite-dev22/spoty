@@ -14,10 +14,10 @@
 
 package inc.normad.spoty.core.viewModels.old;
 
+import inc.normad.spoty.network_bridge.dtos.ProductCategory;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import inc.normad.spoty.network_bridge.dtos.ProductCategory;
 
 
 public class ProductCategoryViewModel {

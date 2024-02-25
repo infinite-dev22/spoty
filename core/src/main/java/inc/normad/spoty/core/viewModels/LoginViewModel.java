@@ -16,15 +16,15 @@ package inc.normad.spoty.core.viewModels;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import inc.normad.spoty.core.viewModels.adapters.UnixEpochDateTypeAdapter;
 import inc.normad.spoty.network_bridge.auth.ProtectedGlobals;
 import inc.normad.spoty.network_bridge.models.APIResponseModel;
 import inc.normad.spoty.network_bridge.models.LoginModel;
 import inc.normad.spoty.network_bridge.repositories.implementations.AuthRepositoryImpl;
 import inc.normad.spoty.utils.ParameterlessConsumer;
 import inc.normad.spoty.utils.SpotyThreader;
-import inc.normad.spoty.core.viewModels.adapters.UnixEpochDateTypeAdapter;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 
 import java.util.Date;
 import java.util.concurrent.ExecutionException;

@@ -14,6 +14,10 @@
 
 package inc.normad.spoty.core.views.product.brand;
 
+import inc.normad.spoty.core.viewModels.BrandViewModel;
+import inc.normad.spoty.core.views.forms.BrandFormController;
+import inc.normad.spoty.network_bridge.dtos.Brand;
+import inc.normad.spoty.utils.SpotyThreader;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
@@ -32,10 +36,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import inc.normad.spoty.network_bridge.dtos.Brand;
-import inc.normad.spoty.utils.SpotyThreader;
-import inc.normad.spoty.core.viewModels.BrandViewModel;
-import inc.normad.spoty.core.views.forms.BrandFormController;
 
 import java.io.IOException;
 import java.net.URL;

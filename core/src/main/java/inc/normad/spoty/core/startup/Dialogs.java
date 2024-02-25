@@ -14,10 +14,10 @@
 
 package inc.normad.spoty.core.startup;
 
-import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
-import javafx.fxml.FXMLLoader;
 import inc.normad.spoty.core.views.forms.QuotationDetailFormController;
 import inc.normad.spoty.core.views.printable.general.GeneralViewController;
+import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
+import javafx.fxml.FXMLLoader;
 
 import java.io.IOException;
 

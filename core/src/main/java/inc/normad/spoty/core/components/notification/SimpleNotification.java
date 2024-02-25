@@ -14,6 +14,8 @@
 
 package inc.normad.spoty.core.components.notification;
 
+import inc.normad.spoty.core.components.notification.enums.NotificationDuration;
+import inc.normad.spoty.core.components.notification.enums.NotificationVariants;
 import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -21,8 +23,6 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
-import inc.normad.spoty.core.components.notification.enums.NotificationDuration;
-import inc.normad.spoty.core.components.notification.enums.NotificationVariants;
 import org.jetbrains.annotations.NotNull;
 
 public class SimpleNotification extends StackPane {

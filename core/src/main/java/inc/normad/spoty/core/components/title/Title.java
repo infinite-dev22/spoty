@@ -14,12 +14,12 @@
 
 package inc.normad.spoty.core.components.title;
 
+import inc.normad.spoty.core.SpotyCoreResourceLoader;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
-import inc.normad.spoty.core.SpotyCoreResourceLoader;
 
 import java.io.IOException;
 

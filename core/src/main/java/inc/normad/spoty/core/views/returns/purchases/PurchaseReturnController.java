@@ -14,6 +14,8 @@
 
 package inc.normad.spoty.core.views.returns.purchases;
 
+import inc.normad.spoty.core.viewModels.returns.purchases.PurchaseReturnMasterViewModel;
+import inc.normad.spoty.network_bridge.dtos.returns.purchase_returns.PurchaseReturnMaster;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXTableColumn;
 import io.github.palexdev.materialfx.controls.MFXTableView;
@@ -28,8 +30,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import inc.normad.spoty.network_bridge.dtos.returns.purchase_returns.PurchaseReturnMaster;
-import inc.normad.spoty.core.viewModels.returns.purchases.PurchaseReturnMasterViewModel;
 
 import java.net.URL;
 import java.util.Comparator;

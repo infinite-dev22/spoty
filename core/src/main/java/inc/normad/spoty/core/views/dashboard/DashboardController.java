@@ -14,15 +14,15 @@
 
 package inc.normad.spoty.core.views.dashboard;
 
+import inc.normad.spoty.core.data.SampleData;
+import inc.normad.spoty.core.models.QuickStats;
+import inc.normad.spoty.core.views.components.SmallCardController;
+import inc.normad.spoty.utils.SpotyLogger;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import inc.normad.spoty.core.data.SampleData;
-import inc.normad.spoty.core.models.QuickStats;
-import inc.normad.spoty.utils.SpotyLogger;
-import inc.normad.spoty.core.views.components.SmallCardController;
 
 import java.io.IOException;
 import java.net.URL;

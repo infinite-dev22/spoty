@@ -14,6 +14,12 @@
 
 package inc.normad.spoty.core.views.settings.system_settings;
 
+import inc.normad.spoty.core.viewModels.BranchViewModel;
+import inc.normad.spoty.core.viewModels.CurrencyViewModel;
+import inc.normad.spoty.network_bridge.dtos.Branch;
+import inc.normad.spoty.network_bridge.dtos.Currency;
+import inc.normad.spoty.utils.SpotyLogger;
+import inc.normad.spoty.utils.SpotyThreader;
 import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.utils.StringUtils;
@@ -25,12 +31,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.GridPane;
 import javafx.util.StringConverter;
-import inc.normad.spoty.network_bridge.dtos.Branch;
-import inc.normad.spoty.network_bridge.dtos.Currency;
-import inc.normad.spoty.utils.SpotyLogger;
-import inc.normad.spoty.utils.SpotyThreader;
-import inc.normad.spoty.core.viewModels.BranchViewModel;
-import inc.normad.spoty.core.viewModels.CurrencyViewModel;
 
 import java.net.URL;
 import java.util.List;

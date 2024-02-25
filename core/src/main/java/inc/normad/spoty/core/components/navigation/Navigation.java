@@ -14,6 +14,7 @@
 
 package inc.normad.spoty.core.components.navigation;
 
+import inc.normad.spoty.utils.SpotyLogger;
 import javafx.animation.FadeTransition;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -22,7 +23,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
-import inc.normad.spoty.utils.SpotyLogger;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -213,7 +213,7 @@ public class Navigation {
 
         var purchase =
                 NavTree.NavTreeItem.mainPage("Purchases", "fas-cart-plus", Pages.getPurchasePane());
-        
+
         var reports = NavTree.NavTreeItem.group("Reports", "fas-clipboard-list");
         reports
                 .getChildren()

@@ -16,14 +16,14 @@ package inc.normad.spoty.core.viewModels.returns.purchases;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import inc.normad.spoty.core.viewModels.adapters.UnixEpochDateTypeAdapter;
+import inc.normad.spoty.network_bridge.dtos.Product;
+import inc.normad.spoty.network_bridge.dtos.returns.purchase_returns.PurchaseReturnDetail;
+import inc.normad.spoty.network_bridge.dtos.returns.purchase_returns.PurchaseReturnMaster;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
-import inc.normad.spoty.network_bridge.dtos.Product;
-import inc.normad.spoty.network_bridge.dtos.returns.purchase_returns.PurchaseReturnDetail;
-import inc.normad.spoty.network_bridge.dtos.returns.purchase_returns.PurchaseReturnMaster;
-import inc.normad.spoty.core.viewModels.adapters.UnixEpochDateTypeAdapter;
 
 import java.util.Date;
 

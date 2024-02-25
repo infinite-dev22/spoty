@@ -1,5 +1,6 @@
 package inc.normad.spoty.core.components.navigation.new_nav;
 
+import inc.normad.spoty.core.components.navigation.Navigation;
 import io.github.palexdev.materialfx.controls.MFXIconWrapper;
 import io.github.palexdev.materialfx.controls.MFXTreeItem;
 import io.github.palexdev.materialfx.controls.MFXTreeView;
@@ -20,7 +21,6 @@ import javafx.scene.control.Label;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import inc.normad.spoty.core.components.navigation.Navigation;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

@@ -33,9 +33,9 @@ import java.util.Objects;
 public class Navigation {
     static final int PAGE_TRANSITION_DURATION = 300;
     private static final Map<String, NavTree.NavTreeItem> NAV_TREE = createNavItems();
-    NavTree.NavTreeItem root = NavTree.NavTreeItem.root();
     private static StackPane viewWindow;
     private static Navigation instance;
+    NavTree.NavTreeItem root = NavTree.NavTreeItem.root();
     private final ReadOnlyObjectWrapper<NavTree.NavTreeItem> navTree =
             new ReadOnlyObjectWrapper<>(createTree());
 

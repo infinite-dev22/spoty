@@ -14,15 +14,15 @@
 
 package inc.normad.spoty.core.viewModels;
 
+import inc.normad.spoty.network_bridge.dtos.Role;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
-import inc.normad.spoty.network_bridge.dtos.Role;
 
 
 public class RoleViewModel {
-//    private static final Gson gson = new GsonBuilder()
+    //    private static final Gson gson = new GsonBuilder()
 //            .registerTypeAdapter(Date.class,
 //                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
 //            .create();

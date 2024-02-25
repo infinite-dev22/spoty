@@ -14,10 +14,10 @@
 
 package inc.normad.spoty.core;
 
+import inc.normad.spoty.utils.SpotyLogger;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.stage.Stage;
-import inc.normad.spoty.utils.SpotyLogger;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

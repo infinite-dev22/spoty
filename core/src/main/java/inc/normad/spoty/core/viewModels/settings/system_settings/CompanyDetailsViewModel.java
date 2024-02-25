@@ -2,15 +2,15 @@ package inc.normad.spoty.core.viewModels.settings.system_settings;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import javafx.beans.property.*;
-import javafx.scene.image.Image;
+import inc.normad.spoty.core.viewModels.adapters.UnixEpochDateTypeAdapter;
 import inc.normad.spoty.network_bridge.dtos.Company;
 import inc.normad.spoty.network_bridge.models.FindModel;
 import inc.normad.spoty.network_bridge.repositories.implementations.CompanyRepositoryImpl;
 import inc.normad.spoty.utils.ParameterlessConsumer;
 import inc.normad.spoty.utils.SpotyLogger;
 import inc.normad.spoty.utils.SpotyThreader;
-import inc.normad.spoty.core.viewModels.adapters.UnixEpochDateTypeAdapter;
+import javafx.beans.property.*;
+import javafx.scene.image.Image;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;

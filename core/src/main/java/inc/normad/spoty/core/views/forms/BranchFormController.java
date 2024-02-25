@@ -14,18 +14,18 @@
 
 package inc.normad.spoty.core.views.forms;
 
+import inc.normad.spoty.core.components.notification.SimpleNotification;
+import inc.normad.spoty.core.components.notification.SimpleNotificationHolder;
+import inc.normad.spoty.core.components.notification.enums.NotificationDuration;
+import inc.normad.spoty.core.components.notification.enums.NotificationVariants;
+import inc.normad.spoty.core.viewModels.BranchViewModel;
+import inc.normad.spoty.utils.SpotyLogger;
+import inc.normad.spoty.utils.SpotyThreader;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import inc.normad.spoty.core.components.notification.SimpleNotification;
-import inc.normad.spoty.core.components.notification.SimpleNotificationHolder;
-import inc.normad.spoty.core.components.notification.enums.NotificationDuration;
-import inc.normad.spoty.core.components.notification.enums.NotificationVariants;
-import inc.normad.spoty.utils.SpotyLogger;
-import inc.normad.spoty.utils.SpotyThreader;
-import inc.normad.spoty.core.viewModels.BranchViewModel;
 
 import java.net.URL;
 import java.util.Objects;
@@ -142,11 +142,11 @@ public class BranchFormController implements Initializable {
 //                        }
 
 //                        SpotyThreader.spotyThreadPool(() -> {
-                            try {
-                                saveBranch(this::onAction, this::onSuccess, this::onFailed);
-                            } catch (Exception e) {
-                                SpotyLogger.writeToFile(e, this.getClass());
-                            }
+                        try {
+                            saveBranch(this::onAction, this::onSuccess, this::onFailed);
+                        } catch (Exception e) {
+                            SpotyLogger.writeToFile(e, this.getClass());
+                        }
 //                        });
 
                         SimpleNotification notification =

@@ -14,16 +14,16 @@
 
 package inc.normad.spoty.core.viewModels.old;
 
-import javafx.application.Platform;
-import javafx.beans.property.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import lombok.Getter;
 import inc.normad.spoty.network_bridge.dtos.Product;
 import inc.normad.spoty.network_bridge.dtos.adjustments.AdjustmentDetail;
 import inc.normad.spoty.network_bridge.dtos.adjustments.AdjustmentMaster;
 import inc.normad.spoty.network_bridge.dtos.adjustments.AdjustmentTransaction;
 import inc.normad.spoty.utils.SpotyLogger;
+import javafx.application.Platform;
+import javafx.beans.property.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Date;

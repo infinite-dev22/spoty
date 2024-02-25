@@ -14,12 +14,12 @@
 
 package inc.normad.spoty.core.views.settings.system_settings;
 
+import inc.normad.spoty.utils.SpotyLogger;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.controls.MFXToggleButton;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.AnchorPane;
-import inc.normad.spoty.utils.SpotyLogger;
 
 import java.net.URL;
 import java.util.Objects;

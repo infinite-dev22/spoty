@@ -17,9 +17,9 @@ package inc.normad.spoty.core.viewModels.hrm.leave;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import javafx.beans.property.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import inc.normad.spoty.core.viewModels.BankViewModel;
+import inc.normad.spoty.core.viewModels.adapters.UnixEpochDateTypeAdapter;
+import inc.normad.spoty.core.viewModels.requisitions.RequisitionMasterViewModel;
 import inc.normad.spoty.network_bridge.dtos.hrm.employee.Designation;
 import inc.normad.spoty.network_bridge.dtos.hrm.employee.User;
 import inc.normad.spoty.network_bridge.dtos.hrm.leave.LeaveStatus;
@@ -30,9 +30,9 @@ import inc.normad.spoty.network_bridge.repositories.implementations.LeaveStatusR
 import inc.normad.spoty.utils.ParameterlessConsumer;
 import inc.normad.spoty.utils.SpotyLogger;
 import inc.normad.spoty.utils.SpotyThreader;
-import inc.normad.spoty.core.viewModels.BankViewModel;
-import inc.normad.spoty.core.viewModels.adapters.UnixEpochDateTypeAdapter;
-import inc.normad.spoty.core.viewModels.requisitions.RequisitionMasterViewModel;
+import javafx.beans.property.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;

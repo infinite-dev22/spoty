@@ -14,6 +14,8 @@
 
 package inc.normad.spoty.core.views.splash;
 
+import inc.normad.spoty.core.SpotyCoreResourceLoader;
+import inc.normad.spoty.core.values.strings.Labels;
 import io.github.palexdev.materialfx.theming.JavaFXThemes;
 import io.github.palexdev.materialfx.theming.MaterialFXStylesheets;
 import io.github.palexdev.materialfx.theming.UserAgentBuilder;
@@ -22,8 +24,6 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import inc.normad.spoty.core.SpotyCoreResourceLoader;
-import inc.normad.spoty.core.values.strings.Labels;
 
 import static inc.normad.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
 

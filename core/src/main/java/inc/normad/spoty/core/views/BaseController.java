@@ -15,6 +15,8 @@
 package inc.normad.spoty.core.views;
 
 import inc.normad.spoty.core.SpotyCoreResourceLoader;
+import inc.normad.spoty.core.components.navigation.Navigation;
+import inc.normad.spoty.utils.SpotyThreader;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.mfxresources.fonts.IconsProviders;
 import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
@@ -28,8 +30,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import inc.normad.spoty.core.components.navigation.Navigation;
-import inc.normad.spoty.utils.SpotyThreader;
 
 import java.net.URL;
 import java.util.ResourceBundle;

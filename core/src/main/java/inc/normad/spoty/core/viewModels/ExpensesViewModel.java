@@ -17,9 +17,7 @@ package inc.normad.spoty.core.viewModels;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import javafx.beans.property.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import inc.normad.spoty.core.viewModels.adapters.UnixEpochDateTypeAdapter;
 import inc.normad.spoty.network_bridge.dtos.Branch;
 import inc.normad.spoty.network_bridge.dtos.Expense;
 import inc.normad.spoty.network_bridge.dtos.ExpenseCategory;
@@ -29,7 +27,9 @@ import inc.normad.spoty.network_bridge.repositories.implementations.ExpensesRepo
 import inc.normad.spoty.utils.ParameterlessConsumer;
 import inc.normad.spoty.utils.SpotyLogger;
 import inc.normad.spoty.utils.SpotyThreader;
-import inc.normad.spoty.core.viewModels.adapters.UnixEpochDateTypeAdapter;
+import javafx.beans.property.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

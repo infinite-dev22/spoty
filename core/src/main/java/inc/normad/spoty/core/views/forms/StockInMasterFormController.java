@@ -14,6 +14,19 @@
 
 package inc.normad.spoty.core.views.forms;
 
+import inc.normad.spoty.core.components.navigation.Pages;
+import inc.normad.spoty.core.components.notification.SimpleNotification;
+import inc.normad.spoty.core.components.notification.SimpleNotificationHolder;
+import inc.normad.spoty.core.components.notification.enums.NotificationDuration;
+import inc.normad.spoty.core.components.notification.enums.NotificationVariants;
+import inc.normad.spoty.core.viewModels.BranchViewModel;
+import inc.normad.spoty.core.viewModels.stock_ins.StockInDetailViewModel;
+import inc.normad.spoty.core.viewModels.stock_ins.StockInMasterViewModel;
+import inc.normad.spoty.core.views.BaseController;
+import inc.normad.spoty.network_bridge.dtos.Branch;
+import inc.normad.spoty.network_bridge.dtos.stock_ins.StockInDetail;
+import inc.normad.spoty.utils.SpotyLogger;
+import inc.normad.spoty.utils.SpotyThreader;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
@@ -37,19 +50,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
-import inc.normad.spoty.core.components.navigation.Pages;
-import inc.normad.spoty.core.components.notification.SimpleNotification;
-import inc.normad.spoty.core.components.notification.SimpleNotificationHolder;
-import inc.normad.spoty.core.components.notification.enums.NotificationDuration;
-import inc.normad.spoty.core.components.notification.enums.NotificationVariants;
-import inc.normad.spoty.network_bridge.dtos.Branch;
-import inc.normad.spoty.network_bridge.dtos.stock_ins.StockInDetail;
-import inc.normad.spoty.utils.SpotyLogger;
-import inc.normad.spoty.utils.SpotyThreader;
-import inc.normad.spoty.core.viewModels.BranchViewModel;
-import inc.normad.spoty.core.viewModels.stock_ins.StockInDetailViewModel;
-import inc.normad.spoty.core.viewModels.stock_ins.StockInMasterViewModel;
-import inc.normad.spoty.core.views.BaseController;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;

@@ -14,6 +14,8 @@
 
 package inc.normad.spoty.core.views.sales.pos.components;
 
+import inc.normad.spoty.core.SpotyCoreResourceLoader;
+import inc.normad.spoty.network_bridge.dtos.Product;
 import io.github.palexdev.mfxcore.controls.Label;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -22,8 +24,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
-import inc.normad.spoty.core.SpotyCoreResourceLoader;
-import inc.normad.spoty.network_bridge.dtos.Product;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 

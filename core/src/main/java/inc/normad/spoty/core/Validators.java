@@ -25,11 +25,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+import static inc.normad.spoty.core.values.strings.Values.ALPHANUMERIC;
+import static inc.normad.spoty.core.values.strings.Values.SPECIALS;
 import static io.github.palexdev.materialfx.utils.StringUtils.containsAll;
 import static io.github.palexdev.materialfx.utils.StringUtils.containsAny;
 import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
-import static inc.normad.spoty.core.values.strings.Values.ALPHANUMERIC;
-import static inc.normad.spoty.core.values.strings.Values.SPECIALS;
 
 public class Validators {
     static MFXValidator validator;

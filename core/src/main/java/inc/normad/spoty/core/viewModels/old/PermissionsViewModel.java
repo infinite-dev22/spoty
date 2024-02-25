@@ -14,12 +14,12 @@
 
 package inc.normad.spoty.core.viewModels.old;
 
+import inc.normad.spoty.core.views.forms.RoleSettingsFormController;
+import inc.normad.spoty.network_bridge.dtos.Permission;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import inc.normad.spoty.network_bridge.dtos.Permission;
-import inc.normad.spoty.core.views.forms.RoleSettingsFormController;
 import org.jetbrains.annotations.Nullable;
 
 

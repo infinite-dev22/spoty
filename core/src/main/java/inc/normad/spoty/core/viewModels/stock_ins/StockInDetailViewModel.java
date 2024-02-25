@@ -17,10 +17,9 @@ package inc.normad.spoty.core.viewModels.stock_ins;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import javafx.application.Platform;
-import javafx.beans.property.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import inc.normad.spoty.core.viewModels.ProductViewModel;
+import inc.normad.spoty.core.viewModels.adapters.UnixEpochDateTypeAdapter;
+import inc.normad.spoty.core.viewModels.adjustments.AdjustmentDetailViewModel;
 import inc.normad.spoty.network_bridge.dtos.Product;
 import inc.normad.spoty.network_bridge.dtos.stock_ins.StockInDetail;
 import inc.normad.spoty.network_bridge.dtos.stock_ins.StockInMaster;
@@ -31,9 +30,10 @@ import inc.normad.spoty.network_bridge.repositories.implementations.StockInsRepo
 import inc.normad.spoty.utils.ParameterlessConsumer;
 import inc.normad.spoty.utils.SpotyLogger;
 import inc.normad.spoty.utils.SpotyThreader;
-import inc.normad.spoty.core.viewModels.ProductViewModel;
-import inc.normad.spoty.core.viewModels.adapters.UnixEpochDateTypeAdapter;
-import inc.normad.spoty.core.viewModels.adjustments.AdjustmentDetailViewModel;
+import javafx.application.Platform;
+import javafx.beans.property.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

@@ -14,6 +14,11 @@
 
 package inc.normad.spoty.core.views.product.products;
 
+import inc.normad.spoty.core.viewModels.ProductViewModel;
+import inc.normad.spoty.core.views.forms.ProductFormController;
+import inc.normad.spoty.core.views.printable.general.GeneralViewController;
+import inc.normad.spoty.network_bridge.dtos.Product;
+import inc.normad.spoty.utils.SpotyThreader;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
@@ -34,12 +39,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import inc.normad.spoty.network_bridge.dtos.Product;
-import inc.normad.spoty.utils.SpotyThreader;
-import inc.normad.spoty.core.viewModels.ProductViewModel;
-import inc.normad.spoty.core.views.BaseController;
-import inc.normad.spoty.core.views.forms.ProductFormController;
-import inc.normad.spoty.core.views.printable.general.GeneralViewController;
 
 import java.io.IOException;
 import java.net.URL;

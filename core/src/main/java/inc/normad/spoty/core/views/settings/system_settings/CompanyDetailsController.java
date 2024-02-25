@@ -1,5 +1,7 @@
 package inc.normad.spoty.core.views.settings.system_settings;
 
+import inc.normad.spoty.core.viewModels.settings.system_settings.CompanyDetailsViewModel;
+import inc.normad.spoty.utils.SpotyLogger;
 import io.github.palexdev.materialfx.controls.MFXCheckbox;
 import io.github.palexdev.materialfx.controls.MFXScrollPane;
 import io.github.palexdev.materialfx.controls.MFXTextField;
@@ -13,8 +15,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import inc.normad.spoty.utils.SpotyLogger;
-import inc.normad.spoty.core.viewModels.settings.system_settings.CompanyDetailsViewModel;
 
 import java.io.IOException;
 import java.net.URL;

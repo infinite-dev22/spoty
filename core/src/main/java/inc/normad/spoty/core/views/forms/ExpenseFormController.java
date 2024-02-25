@@ -14,6 +14,17 @@
 
 package inc.normad.spoty.core.views.forms;
 
+import inc.normad.spoty.core.components.notification.SimpleNotification;
+import inc.normad.spoty.core.components.notification.SimpleNotificationHolder;
+import inc.normad.spoty.core.components.notification.enums.NotificationDuration;
+import inc.normad.spoty.core.components.notification.enums.NotificationVariants;
+import inc.normad.spoty.core.viewModels.BranchViewModel;
+import inc.normad.spoty.core.viewModels.ExpenseCategoryViewModel;
+import inc.normad.spoty.core.viewModels.ExpensesViewModel;
+import inc.normad.spoty.network_bridge.dtos.Branch;
+import inc.normad.spoty.network_bridge.dtos.ExpenseCategory;
+import inc.normad.spoty.utils.SpotyLogger;
+import inc.normad.spoty.utils.SpotyThreader;
 import io.github.palexdev.materialfx.controls.MFXComboBox;
 import io.github.palexdev.materialfx.controls.MFXDatePicker;
 import io.github.palexdev.materialfx.controls.MFXTextField;
@@ -23,17 +34,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.util.StringConverter;
-import inc.normad.spoty.core.components.notification.SimpleNotification;
-import inc.normad.spoty.core.components.notification.SimpleNotificationHolder;
-import inc.normad.spoty.core.components.notification.enums.NotificationDuration;
-import inc.normad.spoty.core.components.notification.enums.NotificationVariants;
-import inc.normad.spoty.network_bridge.dtos.Branch;
-import inc.normad.spoty.network_bridge.dtos.ExpenseCategory;
-import inc.normad.spoty.utils.SpotyLogger;
-import inc.normad.spoty.utils.SpotyThreader;
-import inc.normad.spoty.core.viewModels.BranchViewModel;
-import inc.normad.spoty.core.viewModels.ExpenseCategoryViewModel;
-import inc.normad.spoty.core.viewModels.ExpensesViewModel;
 
 import java.net.URL;
 import java.util.Objects;
@@ -171,11 +171,11 @@ public class ExpenseFormController implements Initializable {
                             return;
                         }
 //                        SpotyThreader.spotyThreadPool(() -> {
-                            try {
-                                ExpensesViewModel.saveExpense(this::onAction, this::onSuccess, this::onFailed);
-                            } catch (Exception e) {
-                                SpotyLogger.writeToFile(e, this.getClass());
-                            }
+                        try {
+                            ExpensesViewModel.saveExpense(this::onAction, this::onSuccess, this::onFailed);
+                        } catch (Exception e) {
+                            SpotyLogger.writeToFile(e, this.getClass());
+                        }
 //                        });
 
                         SimpleNotification notification =

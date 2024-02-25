@@ -14,15 +14,15 @@
 
 package inc.normad.spoty.core.viewModels.old;
 
+import inc.normad.spoty.network_bridge.dtos.Product;
+import inc.normad.spoty.network_bridge.dtos.UnitOfMeasure;
+import inc.normad.spoty.network_bridge.dtos.quotations.QuotationDetail;
+import inc.normad.spoty.network_bridge.dtos.quotations.QuotationMaster;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
-import inc.normad.spoty.network_bridge.dtos.Product;
-import inc.normad.spoty.network_bridge.dtos.UnitOfMeasure;
-import inc.normad.spoty.network_bridge.dtos.quotations.QuotationDetail;
-import inc.normad.spoty.network_bridge.dtos.quotations.QuotationMaster;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;

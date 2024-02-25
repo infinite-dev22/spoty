@@ -14,6 +14,11 @@
 
 package inc.normad.spoty.core.views.settings.role_permission;
 
+import inc.normad.spoty.core.components.navigation.Navigation;
+import inc.normad.spoty.core.components.navigation.Pages;
+import inc.normad.spoty.core.viewModels.RoleViewModel;
+import inc.normad.spoty.network_bridge.dtos.Role;
+import inc.normad.spoty.utils.SpotyThreader;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.filter.StringFilter;
@@ -26,11 +31,6 @@ import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import inc.normad.spoty.core.components.navigation.Navigation;
-import inc.normad.spoty.core.components.navigation.Pages;
-import inc.normad.spoty.network_bridge.dtos.Role;
-import inc.normad.spoty.utils.SpotyThreader;
-import inc.normad.spoty.core.viewModels.RoleViewModel;
 
 import java.net.URL;
 import java.util.Comparator;
