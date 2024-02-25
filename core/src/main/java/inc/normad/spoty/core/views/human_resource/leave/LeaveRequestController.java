@@ -1,5 +1,9 @@
-package org.infinite.spoty.views.human_resource.leave;
+package inc.normad.spoty.core.views.human_resource.leave;
 
+import inc.normad.spoty.core.viewModels.hrm.leave.LeaveStatusViewModel;
+import inc.normad.spoty.core.views.forms.LeaveStatusFormController;
+import inc.normad.spoty.network_bridge.dtos.hrm.leave.LeaveStatus;
+import inc.normad.spoty.utils.SpotyThreader;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
@@ -18,17 +22,13 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.infinite.spoty.data_source.dtos.hrm.leave.LeaveStatus;
-import org.infinite.spoty.utils.SpotyThreader;
-import org.infinite.spoty.viewModels.hrm.leave.LeaveStatusViewModel;
-import org.infinite.spoty.views.forms.LeaveStatusFormController;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 
-import static org.infinite.spoty.SpotyResourceLoader.fxmlLoader;
+import static inc.normad.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
 
 public class LeaveRequestController implements Initializable {
     private static LeaveRequestController instance;
