@@ -1,5 +1,7 @@
 package inc.normad.spoty.core.components.animations;
 
+import javafx.animation.Interpolator;
+import javafx.animation.RotateTransition;
 import javafx.animation.ScaleTransition;
 import javafx.scene.Node;
 import javafx.util.Duration;
@@ -13,5 +15,22 @@ public class SpotyAnimations {
         transition.setAutoReverse(true);
         transition.setNode(node);
         transition.playFromStart();
+    }
+
+    public static void rotate(Node node, Duration duration, double angle) {
+        var transition = new RotateTransition(duration);
+        transition.setByAngle(angle);
+        transition.setNode(node);
+        transition.setCycleCount(500);
+        transition.playFromStart();
+    }
+
+    public static RotateTransition rotateTransition(Node node, Duration duration, double angle) {
+        var transition = new RotateTransition(duration);
+        transition.setByAngle(angle);
+        transition.setNode(node);
+        transition.setCycleCount(500);
+        transition.setInterpolator(Interpolator.LINEAR);
+        return transition;
     }
 }

@@ -20,19 +20,20 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.*?>
 <BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:id="contentPane" prefHeight="400.0" prefWidth="600.0"
-            stylesheets="@../../../styles/Common.css" xmlns="http://javafx.com/javafx/19"
+            xmlns="http://javafx.com/javafx/19"
             fx:controller="inc.normad.spoty.core.views.human_resource.hrm.EmploymentStatusController">
     <padding>
-        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+        <Insets topRightBottomLeft="5.0"/>
     </padding>
     <center>
         <AnchorPane BorderPane.alignment="CENTER">
-            <AnchorPane  styleClass="card-flat" BorderPane.alignment="CENTER" AnchorPane.leftAnchor="0.0"
-                         AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <AnchorPane styleClass="card-flat" BorderPane.alignment="CENTER" AnchorPane.leftAnchor="0.0"
+                        AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                 <padding>
-                    <Insets bottom="5.0" right="5.0" top="5.0"/>
+                    <Insets topRightBottomLeft="5.0"/>
                 </padding>
-                <MFXTextField fx:id="searchBar" floatMode="DISABLED" promptText="Search employee statuses" prefWidth="300.0"
+                <MFXTextField fx:id="searchBar" floatMode="DISABLED" promptText="Search employee statuses"
+                              prefWidth="300.0"
                               AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0"/>
                 <HBox fx:id="actionsPane" alignment="CENTER_RIGHT" spacing="20.0" AnchorPane.bottomAnchor="0.0"
                       AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">

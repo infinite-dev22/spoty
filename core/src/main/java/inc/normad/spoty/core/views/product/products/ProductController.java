@@ -36,6 +36,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -51,13 +52,17 @@ import static inc.normad.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
 public class ProductController implements Initializable {
     private static ProductController instance;
     @FXML
-    public MFXTableView<Product> productMasterTable;
+    public MFXTableView<Product> masterTable;
     @FXML
-    public BorderPane productsContentPane;
+    public BorderPane contentPane;
     @FXML
-    public MFXTextField productsSearchBar;
+    public MFXTextField searchBar;
     @FXML
-    public MFXButton productImportBtn;
+    public MFXButton importBtn;
+    @FXML
+    public HBox actionsPane;
+    @FXML
+    public MFXButton createBtn;
     private MFXStageDialog formDialog;
     private MFXStageDialog viewDialog;
 
@@ -94,7 +99,7 @@ public class ProductController implements Initializable {
                         .toStageDialogBuilder()
                         .initOwner(stage)
                         .initModality(Modality.WINDOW_MODAL)
-                        .setOwnerNode(productsContentPane)
+                        .setOwnerNode(contentPane)
                         .setScrimPriority(ScrimPriority.WINDOW)
                         .setScrimOwner(true)
                         .setCenterInOwnerNode(false)
@@ -129,17 +134,17 @@ public class ProductController implements Initializable {
         productPrice.setRowCellFactory(product -> new MFXTableRowCell<>(Product::getPrice));
         productType.setRowCellFactory(product -> new MFXTableRowCell<>(Product::getProductType));
 
-        productName.prefWidthProperty().bind(productMasterTable.widthProperty().multiply(.25));
-        productCategory.prefWidthProperty().bind(productMasterTable.widthProperty().multiply(.25));
-        productBrand.prefWidthProperty().bind(productMasterTable.widthProperty().multiply(.25));
-        productQuantity.prefWidthProperty().bind(productMasterTable.widthProperty().multiply(.25));
-        productPrice.prefWidthProperty().bind(productMasterTable.widthProperty().multiply(.25));
-        productType.prefWidthProperty().bind(productMasterTable.widthProperty().multiply(.25));
+        productName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        productCategory.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        productBrand.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        productQuantity.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        productPrice.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        productType.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
 
-        productMasterTable
+        masterTable
                 .getTableColumns()
                 .addAll(productName, productCategory, productBrand, productQuantity, productPrice, productType);
-        productMasterTable
+        masterTable
                 .getFilters()
                 .addAll(
                         new StringFilter<>("Name", Product::getName),
@@ -154,25 +159,25 @@ public class ProductController implements Initializable {
             ProductViewModel.getProducts()
                     .addListener(
                             (ListChangeListener<Product>)
-                                    c -> productMasterTable.setItems(ProductViewModel.getProducts()));
+                                    c -> masterTable.setItems(ProductViewModel.getProducts()));
         } else {
-            productMasterTable.itemsProperty().bindBidirectional(ProductViewModel.productsProperty());
+            masterTable.itemsProperty().bindBidirectional(ProductViewModel.productsProperty());
         }
     }
 
     private void getTable() {
-        productMasterTable.setPrefSize(1000, 1000);
-        productMasterTable.features().enableBounceEffect();
-        productMasterTable.features().enableSmoothScrolling(0.5);
+        masterTable.setPrefSize(1000, 1000);
+        masterTable.features().enableBounceEffect();
+        masterTable.features().enableSmoothScrolling(0.5);
 
-        productMasterTable.setTableRowFactory(
+        masterTable.setTableRowFactory(
                 t -> {
-                    MFXTableRow<Product> row = new MFXTableRow<>(productMasterTable, t);
+                    MFXTableRow<Product> row = new MFXTableRow<>(masterTable, t);
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
                                 showContextMenu((MFXTableRow<Product>) event.getSource())
                                         .show(
-                                                productMasterTable.getScene().getWindow(),
+                                                masterTable.getScene().getWindow(),
                                                 event.getScreenX(),
                                                 event.getScreenY());
                                 event.consume();
@@ -183,7 +188,7 @@ public class ProductController implements Initializable {
     }
 
     private MFXContextMenu showContextMenu(MFXTableRow<Product> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(productMasterTable);
+        MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
         MFXContextMenuItem view = new MFXContextMenuItem("View");
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
@@ -218,7 +223,7 @@ public class ProductController implements Initializable {
                                     throw new RuntimeException(ex);
                                 }
                             });
-                    productCreateBtnClicked();
+                    createBtnClicked();
                     event.consume();
                 });
 
@@ -241,7 +246,7 @@ public class ProductController implements Initializable {
                         .toStageDialogBuilder()
                         .initOwner(stage)
                         .initModality(Modality.WINDOW_MODAL)
-                        .setOwnerNode(productsContentPane)
+                        .setOwnerNode(contentPane)
                         .setScrimPriority(ScrimPriority.WINDOW)
                         .setScrimOwner(true)
                         .get();
@@ -249,7 +254,7 @@ public class ProductController implements Initializable {
         io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(formDialog.getScene());
     }
 
-    public void productCreateBtnClicked() {
+    public void createBtnClicked() {
         formDialog.showAndWait();
     }
 

@@ -29,7 +29,7 @@
         <MFXFontIcon layoutX="586.0" layoutY="21.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0"
                      AnchorPane.topAnchor="0.0"/>
         <padding>
-            <Insets bottom="5.0" left="5.0" right="10.0" top="5.0"/>
+            <Insets topRightBottomLeft="5.0"/>
         </padding>
     </AnchorPane>
     <PieChart fx:id="pieChart" layoutX="24.0" layoutY="18.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"

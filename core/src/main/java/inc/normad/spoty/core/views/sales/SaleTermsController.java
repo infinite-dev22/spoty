@@ -23,12 +23,12 @@ import java.util.ResourceBundle;
 
 public class SaleTermsController implements Initializable {
     private static SaleTermsController instance;
-    public BorderPane saleTermContentPane;
-    public MFXTextField saleTermSearchBar;
-    public HBox saleTermActionsPane;
-    public MFXButton saleTermImportBtn;
-    public MFXButton saleTermCreateBtn;
-    public MFXTableView<SaleTermAndCondition> saleTermTable;
+    public BorderPane contentPane;
+    public MFXTextField searchBar;
+    public HBox actionsPane;
+    public MFXButton importBtn;
+    public MFXButton createBtn;
+    public MFXTableView<SaleTermAndCondition> masterTable;
     private MFXStageDialog dialog;
 
     private SaleTermsController(Stage stage) {
@@ -52,7 +52,7 @@ public class SaleTermsController implements Initializable {
         Platform.runLater(this::setupTable);
     }
 
-    public void saleTermCreateBtnClicked(MouseEvent mouseEvent) {
+    public void createBtnClicked(MouseEvent mouseEvent) {
     }
 
     private void setupTable() {
@@ -66,14 +66,14 @@ public class SaleTermsController implements Initializable {
         status.setRowCellFactory(
                 category -> new MFXTableRowCell<>(SaleTermAndCondition::isActive));
 
-        name.prefWidthProperty().bind(saleTermTable.widthProperty().multiply(.5));
-        status.prefWidthProperty().bind(saleTermTable.widthProperty().multiply(.5));
+        name.prefWidthProperty().bind(masterTable.widthProperty().multiply(.5));
+        status.prefWidthProperty().bind(masterTable.widthProperty().multiply(.5));
 
         name.setColumnResizable(false);
         status.setColumnResizable(false);
 
-        saleTermTable.getTableColumns().addAll(name, status);
-        saleTermTable
+        masterTable.getTableColumns().addAll(name, status);
+        masterTable
                 .getFilters()
                 .addAll(
                         new StringFilter<>("Name", SaleTermAndCondition::getName),
@@ -84,27 +84,27 @@ public class SaleTermsController implements Initializable {
 //        if (SaleTermAndConditionViewModel.getCategories().isEmpty()) {
 //            SaleTermAndConditionViewModel.getCategories().addListener(
 //                    (ListChangeListener<SaleTermAndCondition>)
-//                            c -> saleTermTable.setItems(SaleTermAndConditionViewModel.getCategories()));
+//                            c -> masterTable.setItems(SaleTermAndConditionViewModel.getCategories()));
 //        } else {
-//            saleTermTable
+//            masterTable
 //                    .itemsProperty()
 //                    .bindBidirectional(SaleTermAndConditionViewModel.categoriesProperty());
 //        }
     }
 
     private void styleSaleTermAndConditionTable() {
-        saleTermTable.setPrefSize(1200, 1000);
-        saleTermTable.features().enableBounceEffect();
-        saleTermTable.features().enableSmoothScrolling(0.5);
+        masterTable.setPrefSize(1200, 1000);
+        masterTable.features().enableBounceEffect();
+        masterTable.features().enableSmoothScrolling(0.5);
 
-        saleTermTable.setTableRowFactory(
+        masterTable.setTableRowFactory(
                 t -> {
-                    MFXTableRow<SaleTermAndCondition> row = new MFXTableRow<>(saleTermTable, t);
+                    MFXTableRow<SaleTermAndCondition> row = new MFXTableRow<>(masterTable, t);
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
                                 showContextMenu((MFXTableRow<SaleTermAndCondition>) event.getSource())
                                         .show(
-                                                saleTermTable.getScene().getWindow(),
+                                                masterTable.getScene().getWindow(),
                                                 event.getScreenX(),
                                                 event.getScreenY());
                                 event.consume();
@@ -115,7 +115,7 @@ public class SaleTermsController implements Initializable {
     }
 
     private MFXContextMenu showContextMenu(MFXTableRow<SaleTermAndCondition> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(saleTermTable);
+        MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
 
@@ -165,7 +165,7 @@ public class SaleTermsController implements Initializable {
 //                        .toStageDialogBuilder()
 //                        .initOwner(stage)
 //                        .initModality(Modality.WINDOW_MODAL)
-//                        .setOwnerNode(saleTermContentPane)
+//                        .setOwnerNode(contentPane)
 //                        .setScrimPriority(ScrimPriority.WINDOW)
 //                        .setScrimOwner(true)
 //                        .get();

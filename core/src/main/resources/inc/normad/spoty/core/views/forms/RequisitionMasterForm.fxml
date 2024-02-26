@@ -26,14 +26,10 @@
 <BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:id="requisitionMasterFormContentPane" cache="true" cacheHint="SPEED"
             xmlns="http://javafx.com/javafx/19"
             fx:controller="inc.normad.spoty.core.views.forms.RequisitionMasterFormController">
-    <stylesheets>
-        <URL value="@../../styles/Common.css"/>
-        <URL value="@../../styles/TextFields.css"/>
-    </stylesheets>
     <center>
-        <AnchorPane styleClass="card">
+        <AnchorPane styleClass="card-flat">
             <padding>
-                <Insets bottom="5.0" left="5.0" right="10.0" top="5.0"/>
+                <Insets topRightBottomLeft="5.0"/>
             </padding>
             <Label fx:id="requisitionMasterFormTitle" text="Create" AnchorPane.leftAnchor="0.0"
                    AnchorPane.rightAnchor="0.0"

@@ -48,15 +48,17 @@ import static inc.normad.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
 public class ProductCategoryController implements Initializable {
     private static ProductCategoryController instance;
     @FXML
-    public MFXTableView<ProductCategory> categoryTable;
+    public MFXTableView<ProductCategory> masterTable;
     @FXML
-    public MFXTextField categorySearchBar;
+    public MFXTextField searchBar;
     @FXML
-    public HBox categoryActionsPane;
+    public HBox actionsPane;
     @FXML
-    public MFXButton categoryImportBtn;
+    public MFXButton importBtn;
     @FXML
-    public BorderPane productsCategoryPane;
+    public BorderPane categoryPane;
+    @FXML
+    public MFXButton createBtn;
     private MFXStageDialog dialog;
 
     private ProductCategoryController(Stage stage) {
@@ -89,11 +91,11 @@ public class ProductCategoryController implements Initializable {
         categoryCode.setRowCellFactory(category -> new MFXTableRowCell<>(ProductCategory::getCode));
         categoryName.setRowCellFactory(category -> new MFXTableRowCell<>(ProductCategory::getName));
 
-        categoryCode.prefWidthProperty().bind(categoryTable.widthProperty().multiply(.5));
-        categoryName.prefWidthProperty().bind(categoryTable.widthProperty().multiply(.5));
+        categoryCode.prefWidthProperty().bind(masterTable.widthProperty().multiply(.5));
+        categoryName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.5));
 
-        categoryTable.getTableColumns().addAll(categoryCode, categoryName);
-        categoryTable
+        masterTable.getTableColumns().addAll(categoryCode, categoryName);
+        masterTable
                 .getFilters()
                 .addAll(
                         new StringFilter<>("Code", ProductCategory::getCode),
@@ -104,27 +106,27 @@ public class ProductCategoryController implements Initializable {
             ProductCategoryViewModel.getCategories()
                     .addListener(
                             (ListChangeListener<ProductCategory>)
-                                    c -> categoryTable.setItems(ProductCategoryViewModel.getCategories()));
+                                    c -> masterTable.setItems(ProductCategoryViewModel.getCategories()));
         } else {
-            categoryTable
+            masterTable
                     .itemsProperty()
                     .bindBidirectional(ProductCategoryViewModel.categoriesProperty());
         }
     }
 
     private void getProductCategoryTable() {
-        categoryTable.setPrefSize(1000, 1000);
-        categoryTable.features().enableBounceEffect();
-        categoryTable.features().enableSmoothScrolling(0.5);
+        masterTable.setPrefSize(1000, 1000);
+        masterTable.features().enableBounceEffect();
+        masterTable.features().enableSmoothScrolling(0.5);
 
-        categoryTable.setTableRowFactory(
+        masterTable.setTableRowFactory(
                 t -> {
-                    MFXTableRow<ProductCategory> row = new MFXTableRow<>(categoryTable, t);
+                    MFXTableRow<ProductCategory> row = new MFXTableRow<>(masterTable, t);
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
                                 showContextMenu((MFXTableRow<ProductCategory>) event.getSource())
                                         .show(
-                                                categoryTable.getScene().getWindow(),
+                                                masterTable.getScene().getWindow(),
                                                 event.getScreenX(),
                                                 event.getScreenY());
                                 event.consume();
@@ -135,7 +137,7 @@ public class ProductCategoryController implements Initializable {
     }
 
     private MFXContextMenu showContextMenu(MFXTableRow<ProductCategory> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(categoryTable);
+        MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
 
@@ -185,7 +187,7 @@ public class ProductCategoryController implements Initializable {
                         .toStageDialogBuilder()
                         .initOwner(stage)
                         .initModality(Modality.WINDOW_MODAL)
-                        .setOwnerNode(productsCategoryPane)
+                        .setOwnerNode(categoryPane)
                         .setScrimPriority(ScrimPriority.WINDOW)
                         .setScrimOwner(true)
                         .get();
@@ -193,7 +195,7 @@ public class ProductCategoryController implements Initializable {
         io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
     }
 
-    public void categoryCreateBtnClicked() {
+    public void createBtnClicked() {
         dialog.showAndWait();
     }
 

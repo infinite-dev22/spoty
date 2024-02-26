@@ -82,7 +82,7 @@
             </BorderPane.margin>
             <HBox styleClass="card">
                 <padding>
-                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                    <Insets topRightBottomLeft="5.0"/>
                 </padding>
                 <MFXTextField fx:id="posProductSearch" floatMode="DISABLED" promptText="Search Product"
                               prefWidth="400.0"/>
@@ -94,7 +94,7 @@
                 <MFXScrollPane prefHeight="55.0" vbarPolicy="NEVER">
                     <HBox fx:id="posFilterPane" spacing="10.0">
                         <padding>
-                            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                            <Insets topRightBottomLeft="5.0"/>
                         </padding>
                     </HBox>
                 </MFXScrollPane>

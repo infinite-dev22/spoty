@@ -48,15 +48,17 @@ import static inc.normad.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
 public class CurrencyController implements Initializable {
     private static CurrencyController instance;
     @FXML
-    public MFXTextField currencySearchBar;
+    public MFXTextField searchBar;
     @FXML
-    public HBox currencyActionsPane;
+    public HBox actionsPane;
     @FXML
-    public MFXButton currencyImportBtn;
+    public MFXButton importBtn;
     @FXML
-    public MFXTableView<Currency> currencyTable;
+    public MFXTableView<Currency> masterTable;
     @FXML
-    public BorderPane currencyContentPane;
+    public BorderPane contentPane;
+    @FXML
+    public MFXButton createBtn;
     private MFXStageDialog dialog;
 
     private CurrencyController(Stage stage) {
@@ -92,12 +94,12 @@ public class CurrencyController implements Initializable {
         currencyCode.setRowCellFactory(currency -> new MFXTableRowCell<>(Currency::getCode));
         currencySymbol.setRowCellFactory(currency -> new MFXTableRowCell<>(Currency::getSymbol));
 
-        currencyName.prefWidthProperty().bind(currencyTable.widthProperty().multiply(.34));
-        currencyCode.prefWidthProperty().bind(currencyTable.widthProperty().multiply(.34));
-        currencySymbol.prefWidthProperty().bind(currencyTable.widthProperty().multiply(.34));
+        currencyName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.34));
+        currencyCode.prefWidthProperty().bind(masterTable.widthProperty().multiply(.34));
+        currencySymbol.prefWidthProperty().bind(masterTable.widthProperty().multiply(.34));
 
-        currencyTable.getTableColumns().addAll(currencyName, currencyCode, currencySymbol);
-        currencyTable
+        masterTable.getTableColumns().addAll(currencyName, currencyCode, currencySymbol);
+        masterTable
                 .getFilters()
                 .addAll(
                         new StringFilter<>("Name", Currency::getName),
@@ -110,25 +112,25 @@ public class CurrencyController implements Initializable {
             CurrencyViewModel.getCurrencies()
                     .addListener(
                             (ListChangeListener<Currency>)
-                                    c -> currencyTable.setItems(CurrencyViewModel.getCurrencies()));
+                                    c -> masterTable.setItems(CurrencyViewModel.getCurrencies()));
         } else {
-            currencyTable.itemsProperty().bindBidirectional(CurrencyViewModel.currencyProperty());
+            masterTable.itemsProperty().bindBidirectional(CurrencyViewModel.currencyProperty());
         }
     }
 
     private void getCurrencyTable() {
-        currencyTable.setPrefSize(1200, 1000);
-        currencyTable.features().enableBounceEffect();
-        currencyTable.features().enableSmoothScrolling(0.5);
+        masterTable.setPrefSize(1200, 1000);
+        masterTable.features().enableBounceEffect();
+        masterTable.features().enableSmoothScrolling(0.5);
 
-        currencyTable.setTableRowFactory(
+        masterTable.setTableRowFactory(
                 t -> {
-                    MFXTableRow<Currency> row = new MFXTableRow<>(currencyTable, t);
+                    MFXTableRow<Currency> row = new MFXTableRow<>(masterTable, t);
                     EventHandler<ContextMenuEvent> eventHandler =
                             event ->
                                     showContextMenu((MFXTableRow<Currency>) event.getSource())
                                             .show(
-                                                    currencyContentPane.getScene().getWindow(),
+                                                    contentPane.getScene().getWindow(),
                                                     event.getScreenX(),
                                                     event.getScreenY());
                     row.setOnContextMenuRequested(eventHandler);
@@ -137,7 +139,7 @@ public class CurrencyController implements Initializable {
     }
 
     private MFXContextMenu showContextMenu(MFXTableRow<Currency> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(currencyTable);
+        MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
 
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
@@ -165,7 +167,7 @@ public class CurrencyController implements Initializable {
                             throw new RuntimeException(ex);
                         }
                     });
-                    currencyCreateBtnClicked();
+                    createBtnClicked();
                     e.consume();
                 });
 
@@ -175,7 +177,7 @@ public class CurrencyController implements Initializable {
     }
 
     @FXML
-    private void currencyCreateBtnClicked() {
+    private void createBtnClicked() {
         dialog.showAndWait();
     }
 
@@ -193,7 +195,7 @@ public class CurrencyController implements Initializable {
                         .toStageDialogBuilder()
                         .initOwner(stage)
                         .initModality(Modality.WINDOW_MODAL)
-                        .setOwnerNode(currencyContentPane)
+                        .setOwnerNode(contentPane)
                         .setScrimPriority(ScrimPriority.WINDOW)
                         .setScrimOwner(true)
                         .get();

@@ -17,10 +17,9 @@ public class ImportController implements Initializable {
     public MFXTextField searchBar;
     public HBox actionsPane;
     public MFXButton importBtn;
-    public MFXButton createBtn;
     public MFXTableView masterTable;
 
-    public void createBtnClicked(MouseEvent mouseEvent) {
+    public void importBtnClicked(MouseEvent mouseEvent) {
     }
 
     @Override

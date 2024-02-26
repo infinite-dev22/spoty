@@ -1,5 +1,7 @@
 package inc.normad.spoty.core.views.bank;
 
+import atlantafx.base.util.Animations;
+import inc.normad.spoty.core.components.animations.SpotyAnimations;
 import inc.normad.spoty.core.viewModels.BankViewModel;
 import inc.normad.spoty.core.views.forms.BankFormController;
 import inc.normad.spoty.network_bridge.dtos.Bank;
@@ -11,8 +13,11 @@ import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
 import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import io.github.palexdev.materialfx.enums.ScrimPriority;
 import io.github.palexdev.materialfx.filter.StringFilter;
+import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -22,6 +27,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.IOException;
 import java.net.URL;
@@ -44,6 +50,8 @@ public class BankController implements Initializable {
     public MFXButton createBtn;
     @FXML
     public MFXTableView<Bank> masterTable;
+    @FXML
+    public HBox refresh;
     private MFXStageDialog dialog;
 
     private BankController(Stage stage) {
@@ -64,6 +72,7 @@ public class BankController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        setIconS();
         Platform.runLater(this::setupTable);
     }
 
@@ -204,5 +213,14 @@ public class BankController implements Initializable {
 
     private void onFailed() {
         System.out.println("failed loading bank...");
+    }
+
+    private void setIconS() {
+        var refreshIcon = new MFXFontIcon("fas-arrows-rotate", 24);
+        refresh.getChildren().addFirst(refreshIcon);
+
+        refreshIcon.setOnMouseClicked(mouseEvent -> {
+            SpotyAnimations.rotateTransition(refreshIcon, Duration.millis(1000), 360).playFromStart();
+        });
     }
 }

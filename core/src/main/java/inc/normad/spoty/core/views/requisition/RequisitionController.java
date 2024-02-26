@@ -40,15 +40,17 @@ import java.util.ResourceBundle;
 public class RequisitionController implements Initializable {
     private static RequisitionController instance;
     @FXML
-    public MFXTextField requisitionSearchBar;
+    public MFXTextField searchBar;
     @FXML
-    public HBox requisitionActionsPane;
+    public HBox actionsPane;
     @FXML
-    public MFXButton requisitionImportBtn;
+    public MFXButton importBtn;
     @FXML
-    public MFXTableView<RequisitionMaster> requisitionMasterTable;
+    public MFXTableView<RequisitionMaster> masterTable;
     @FXML
-    public BorderPane requisitionContentPane;
+    public BorderPane contentPane;
+    @FXML
+    public MFXButton createBtn;
 
     public static RequisitionController getInstance() {
         if (instance == null) instance = new RequisitionController();
@@ -88,19 +90,19 @@ public class RequisitionController implements Initializable {
 
         requisitionSupplier
                 .prefWidthProperty()
-                .bind(requisitionMasterTable.widthProperty().multiply(.25));
+                .bind(masterTable.widthProperty().multiply(.25));
         requisitionStatus
                 .prefWidthProperty()
-                .bind(requisitionMasterTable.widthProperty().multiply(.25));
+                .bind(masterTable.widthProperty().multiply(.25));
         requisitionShippingMethod
                 .prefWidthProperty()
-                .bind(requisitionMasterTable.widthProperty().multiply(.25));
-        requisitionDate.prefWidthProperty().bind(requisitionMasterTable.widthProperty().multiply(.25));
+                .bind(masterTable.widthProperty().multiply(.25));
+        requisitionDate.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
         requisitionTotalAmount
                 .prefWidthProperty()
-                .bind(requisitionMasterTable.widthProperty().multiply(.25));
+                .bind(masterTable.widthProperty().multiply(.25));
 
-        requisitionMasterTable
+        masterTable
                 .getTableColumns()
                 .addAll(
                         requisitionSupplier,
@@ -108,7 +110,7 @@ public class RequisitionController implements Initializable {
                         requisitionShippingMethod,
                         requisitionDate,
                         requisitionTotalAmount);
-        requisitionMasterTable
+        masterTable
                 .getFilters()
                 .addAll(
                         new StringFilter<>("Reference", RequisitionMaster::getRef),
@@ -123,28 +125,28 @@ public class RequisitionController implements Initializable {
                     .addListener(
                             (ListChangeListener<RequisitionMaster>)
                                     c ->
-                                            requisitionMasterTable.setItems(
+                                            masterTable.setItems(
                                                     RequisitionMasterViewModel.getRequisitions()));
         } else {
-            requisitionMasterTable
+            masterTable
                     .itemsProperty()
                     .bindBidirectional(RequisitionMasterViewModel.requisitionsProperty());
         }
     }
 
     private void getRequisitionMasterTable() {
-        requisitionMasterTable.setPrefSize(1000, 1000);
-        requisitionMasterTable.features().enableBounceEffect();
-        requisitionMasterTable.features().enableSmoothScrolling(0.5);
+        masterTable.setPrefSize(1000, 1000);
+        masterTable.features().enableBounceEffect();
+        masterTable.features().enableSmoothScrolling(0.5);
 
-        requisitionMasterTable.setTableRowFactory(
+        masterTable.setTableRowFactory(
                 t -> {
-                    MFXTableRow<RequisitionMaster> row = new MFXTableRow<>(requisitionMasterTable, t);
+                    MFXTableRow<RequisitionMaster> row = new MFXTableRow<>(masterTable, t);
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
                                 showContextMenu((MFXTableRow<RequisitionMaster>) event.getSource())
                                         .show(
-                                                requisitionMasterTable.getScene().getWindow(),
+                                                masterTable.getScene().getWindow(),
                                                 event.getScreenX(),
                                                 event.getScreenY());
                                 event.consume();
@@ -155,7 +157,7 @@ public class RequisitionController implements Initializable {
     }
 
     private MFXContextMenu showContextMenu(MFXTableRow<RequisitionMaster> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(requisitionMasterTable);
+        MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
 
@@ -182,7 +184,7 @@ public class RequisitionController implements Initializable {
                             throw new RuntimeException(ex);
                         }
                     });
-                    requisitionCreateBtnClicked();
+                    createBtnClicked();
                     e.consume();
                 });
 
@@ -191,7 +193,7 @@ public class RequisitionController implements Initializable {
         return contextMenu;
     }
 
-    public void requisitionCreateBtnClicked() {
+    public void createBtnClicked() {
         BaseController.navigation.navigate(Pages.getRequisitionMasterFormPane());
     }
 

@@ -41,15 +41,17 @@ import java.util.ResourceBundle;
 public class RolesController implements Initializable {
     private static RolesController instance;
     @FXML
-    public MFXButton roleImportBtn;
+    public MFXButton importBtn;
     @FXML
-    public HBox roleActionsPane;
+    public HBox actionsPane;
     @FXML
-    public MFXTextField roleSearchBar;
+    public MFXTextField searchBar;
     @FXML
-    public BorderPane roleContentPane;
+    public BorderPane contentPane;
     @FXML
-    private MFXTableView<Role> roleTable;
+    public MFXButton createBtn;
+    @FXML
+    private MFXTableView<Role> masterTable;
 
     public static RolesController getInstance() {
         if (Objects.equals(instance, null)) instance = new RolesController();
@@ -71,12 +73,12 @@ public class RolesController implements Initializable {
         roleMasterDescription.setRowCellFactory(
                 roleMaster -> new MFXTableRowCell<>(Role::getDescription));
 
-        roleMasterRole.prefWidthProperty().bind(roleTable.widthProperty().multiply(.5));
-        roleMasterDescription.prefWidthProperty().bind(roleTable.widthProperty().multiply(.5));
+        roleMasterRole.prefWidthProperty().bind(masterTable.widthProperty().multiply(.5));
+        roleMasterDescription.prefWidthProperty().bind(masterTable.widthProperty().multiply(.5));
 
-        roleTable.getTableColumns().addAll(roleMasterRole, roleMasterDescription);
+        masterTable.getTableColumns().addAll(roleMasterRole, roleMasterDescription);
 
-        roleTable
+        masterTable
                 .getFilters()
                 .addAll(
                         new StringFilter<>("Name", Role::getName),
@@ -87,26 +89,26 @@ public class RolesController implements Initializable {
         if (RoleViewModel.getRoles().isEmpty()) {
             RoleViewModel.getRoles()
                     .addListener(
-                            (ListChangeListener<Role>) c -> roleTable.setItems(RoleViewModel.getRoles()));
+                            (ListChangeListener<Role>) c -> masterTable.setItems(RoleViewModel.getRoles()));
         } else {
-            roleTable.itemsProperty().bindBidirectional(RoleViewModel.rolesProperty());
+            masterTable.itemsProperty().bindBidirectional(RoleViewModel.rolesProperty());
         }
     }
 
     private void getRoleTable() {
-        roleTable.setPrefSize(1200, 1000);
-        roleTable.features().enableBounceEffect();
-        roleTable.autosizeColumnsOnInitialization();
-        roleTable.features().enableSmoothScrolling(0.5);
+        masterTable.setPrefSize(1200, 1000);
+        masterTable.features().enableBounceEffect();
+        masterTable.autosizeColumnsOnInitialization();
+        masterTable.features().enableSmoothScrolling(0.5);
 
-        roleTable.setTableRowFactory(
+        masterTable.setTableRowFactory(
                 t -> {
-                    MFXTableRow<Role> row = new MFXTableRow<>(roleTable, t);
+                    MFXTableRow<Role> row = new MFXTableRow<>(masterTable, t);
                     EventHandler<ContextMenuEvent> eventHandler =
                             event ->
                                     showContextMenu((MFXTableRow<Role>) event.getSource())
                                             .show(
-                                                    roleContentPane.getScene().getWindow(),
+                                                    contentPane.getScene().getWindow(),
                                                     event.getScreenX(),
                                                     event.getScreenY());
                     row.setOnContextMenuRequested(eventHandler);
@@ -115,7 +117,7 @@ public class RolesController implements Initializable {
     }
 
     private MFXContextMenu showContextMenu(MFXTableRow<Role> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(roleTable);
+        MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
 
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
@@ -143,7 +145,7 @@ public class RolesController implements Initializable {
                             throw new RuntimeException(ex);
                         }
                     });
-                    roleCreateBtnClicked();
+                    createBtnClicked();
                     e.consume();
                 });
 
@@ -152,7 +154,7 @@ public class RolesController implements Initializable {
         return contextMenu;
     }
 
-    public void roleCreateBtnClicked() {
-        Navigation.navigate(Pages.getRoleSettingsFormPane(), (StackPane) roleContentPane.getParent());
+    public void createBtnClicked() {
+        Navigation.navigate(Pages.getRoleSettingsFormPane(), (StackPane) contentPane.getParent());
     }
 }

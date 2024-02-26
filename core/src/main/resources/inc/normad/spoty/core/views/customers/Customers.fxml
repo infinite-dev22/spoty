@@ -23,14 +23,14 @@
             xmlns="http://javafx.com/javafx/19"
             fx:controller="inc.normad.spoty.core.views.customers.CustomerController">
     <padding>
-        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+        <Insets topRightBottomLeft="5.0"/>
     </padding>
     <center>
         <AnchorPane BorderPane.alignment="CENTER">
             <AnchorPane  styleClass="card-flat" BorderPane.alignment="CENTER" AnchorPane.leftAnchor="0.0"
                         AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                 <padding>
-                    <Insets bottom="5.0" right="5.0" top="5.0"/>
+                    <Insets topRightBottomLeft="5.0"/>
                 </padding>
                 <MFXTextField fx:id="customerSearchBar" floatMode="DISABLED" promptText="Search customer"
                               prefWidth="300.0"

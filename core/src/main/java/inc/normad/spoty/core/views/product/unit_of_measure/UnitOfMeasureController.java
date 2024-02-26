@@ -49,15 +49,19 @@ import static inc.normad.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
 public class UnitOfMeasureController implements Initializable {
     private static UnitOfMeasureController instance;
     @FXML
-    public MFXTableView<UnitOfMeasure> uomTable;
+    public MFXTableView<UnitOfMeasure> masterTable;
     @FXML
-    public MFXTextField uomSearchBar;
+    public MFXTextField searchBar;
     @FXML
-    public HBox uomActionsPane;
+    public HBox actionsPane;
     @FXML
-    public MFXButton uomImportBtn;
+    public MFXButton importBtn;
     @FXML
     public BorderPane uomContentPane;
+    @FXML
+    public MFXButton createBtn;
+    @FXML
+    public BorderPane contentPane;
     private MFXStageDialog dialog;
 
     public UnitOfMeasureController(Stage stage) {
@@ -103,16 +107,16 @@ public class UnitOfMeasureController implements Initializable {
         uomOperationValue.setRowCellFactory(
                 brand -> new MFXTableRowCell<>(UnitOfMeasure::getOperatorValue));
 
-        uomName.prefWidthProperty().bind(uomTable.widthProperty().multiply(.25));
-        uomShortName.prefWidthProperty().bind(uomTable.widthProperty().multiply(.25));
-        uomBaseUnit.prefWidthProperty().bind(uomTable.widthProperty().multiply(.25));
-        uomOperator.prefWidthProperty().bind(uomTable.widthProperty().multiply(.2));
-        uomOperationValue.prefWidthProperty().bind(uomTable.widthProperty().multiply(.15));
+        uomName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        uomShortName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        uomBaseUnit.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        uomOperator.prefWidthProperty().bind(masterTable.widthProperty().multiply(.2));
+        uomOperationValue.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
 
-        uomTable
+        masterTable
                 .getTableColumns()
                 .addAll(uomName, uomShortName, uomBaseUnit, uomOperator, uomOperationValue);
-        uomTable
+        masterTable
                 .getFilters()
                 .addAll(
                         new StringFilter<>("Name", UnitOfMeasure::getName),
@@ -126,24 +130,24 @@ public class UnitOfMeasureController implements Initializable {
             UOMViewModel.getUnitsOfMeasure()
                     .addListener(
                             (ListChangeListener<UnitOfMeasure>)
-                                    c -> uomTable.setItems(UOMViewModel.getUnitsOfMeasure()));
+                                    c -> masterTable.setItems(UOMViewModel.getUnitsOfMeasure()));
         } else {
-            uomTable.itemsProperty().bindBidirectional(UOMViewModel.unitsOfMeasureProperty());
+            masterTable.itemsProperty().bindBidirectional(UOMViewModel.unitsOfMeasureProperty());
         }
     }
 
     private void getUnitOfMeasureTable() {
-        uomTable.setPrefSize(1000, 1000);
-        uomTable.features().enableBounceEffect();
-        uomTable.features().enableSmoothScrolling(0.5);
+        masterTable.setPrefSize(1000, 1000);
+        masterTable.features().enableBounceEffect();
+        masterTable.features().enableSmoothScrolling(0.5);
 
-        uomTable.setTableRowFactory(
+        masterTable.setTableRowFactory(
                 t -> {
-                    MFXTableRow<UnitOfMeasure> row = new MFXTableRow<>(uomTable, t);
+                    MFXTableRow<UnitOfMeasure> row = new MFXTableRow<>(masterTable, t);
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
                                 showContextMenu((MFXTableRow<UnitOfMeasure>) event.getSource())
-                                        .show(uomTable.getScene().getWindow(), event.getScreenX(), event.getScreenY());
+                                        .show(masterTable.getScene().getWindow(), event.getScreenX(), event.getScreenY());
                                 event.consume();
                             };
                     row.setOnContextMenuRequested(eventHandler);
@@ -152,7 +156,7 @@ public class UnitOfMeasureController implements Initializable {
     }
 
     private MFXContextMenu showContextMenu(MFXTableRow<UnitOfMeasure> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(uomTable);
+        MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
 
@@ -210,7 +214,7 @@ public class UnitOfMeasureController implements Initializable {
         io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
     }
 
-    public void uomCreateBtnClicked() {
+    public void createBtnClicked() {
         dialog.showAndWait();
     }
 

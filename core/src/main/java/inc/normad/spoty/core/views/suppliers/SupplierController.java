@@ -48,22 +48,24 @@ import static inc.normad.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
 public class SupplierController implements Initializable {
     private static SupplierController instance;
     @FXML
-    public MFXTextField supplierSearchBar;
+    public MFXTextField searchBar;
     @FXML
-    public HBox supplierActionsPane;
+    public HBox actionsPane;
     @FXML
-    public MFXButton supplierImportBtn;
+    public MFXButton importBtn;
     @FXML
-    public MFXTableView<Supplier> suppliersTable;
+    public MFXTableView<Supplier> masterTable;
     @FXML
-    public BorderPane suppliersContentPane;
+    public BorderPane contentPane;
+    @FXML
+    public MFXButton createBtn;
     private MFXStageDialog dialog;
 
     private SupplierController(Stage stage) {
         Platform.runLater(
                 () -> {
                     try {
-                        supplierFormDialogPane(stage);
+                        formDialogPane(stage);
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
@@ -98,16 +100,16 @@ public class SupplierController implements Initializable {
         supplierEmail.setRowCellFactory(supplier -> new MFXTableRowCell<>(Supplier::getEmail));
         supplierTax.setRowCellFactory(supplier -> new MFXTableRowCell<>(Supplier::getTaxNumber));
 
-        supplierCode.prefWidthProperty().bind(suppliersTable.widthProperty().multiply(.1));
-        supplierName.prefWidthProperty().bind(suppliersTable.widthProperty().multiply(.3));
-        supplierPhone.prefWidthProperty().bind(suppliersTable.widthProperty().multiply(.2));
-        supplierEmail.prefWidthProperty().bind(suppliersTable.widthProperty().multiply(.2));
-        supplierTax.prefWidthProperty().bind(suppliersTable.widthProperty().multiply(.2));
+        supplierCode.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
+        supplierName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.3));
+        supplierPhone.prefWidthProperty().bind(masterTable.widthProperty().multiply(.2));
+        supplierEmail.prefWidthProperty().bind(masterTable.widthProperty().multiply(.2));
+        supplierTax.prefWidthProperty().bind(masterTable.widthProperty().multiply(.2));
 
-        suppliersTable
+        masterTable
                 .getTableColumns()
                 .addAll(supplierCode, supplierName, supplierPhone, supplierEmail, supplierTax);
-        suppliersTable
+        masterTable
                 .getFilters()
                 .addAll(
                         new StringFilter<>("Code", Supplier::getCode),
@@ -121,25 +123,25 @@ public class SupplierController implements Initializable {
             SupplierViewModel.getSuppliers()
                     .addListener(
                             (ListChangeListener<Supplier>)
-                                    c -> suppliersTable.setItems(SupplierViewModel.getSuppliers()));
+                                    c -> masterTable.setItems(SupplierViewModel.getSuppliers()));
         } else {
-            suppliersTable.itemsProperty().bindBidirectional(SupplierViewModel.suppliersProperty());
+            masterTable.itemsProperty().bindBidirectional(SupplierViewModel.suppliersProperty());
         }
     }
 
     private void getTable() {
-        suppliersTable.setPrefSize(1000, 1000);
-        suppliersTable.features().enableBounceEffect();
-        suppliersTable.features().enableSmoothScrolling(0.5);
+        masterTable.setPrefSize(1000, 1000);
+        masterTable.features().enableBounceEffect();
+        masterTable.features().enableSmoothScrolling(0.5);
 
-        suppliersTable.setTableRowFactory(
+        masterTable.setTableRowFactory(
                 t -> {
-                    MFXTableRow<Supplier> row = new MFXTableRow<>(suppliersTable, t);
+                    MFXTableRow<Supplier> row = new MFXTableRow<>(masterTable, t);
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
                                 showContextMenu((MFXTableRow<Supplier>) event.getSource())
                                         .show(
-                                                suppliersTable.getScene().getWindow(),
+                                                masterTable.getScene().getWindow(),
                                                 event.getScreenX(),
                                                 event.getScreenY());
                                 event.consume();
@@ -150,7 +152,7 @@ public class SupplierController implements Initializable {
     }
 
     private MFXContextMenu showContextMenu(MFXTableRow<Supplier> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(suppliersTable);
+        MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
 
@@ -186,7 +188,7 @@ public class SupplierController implements Initializable {
         return contextMenu;
     }
 
-    private void supplierFormDialogPane(Stage stage) throws IOException {
+    private void formDialogPane(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = fxmlLoader("views/forms/SupplierForm.fxml");
         fxmlLoader.setControllerFactory(c -> SupplierFormController.getInstance());
 
@@ -200,7 +202,7 @@ public class SupplierController implements Initializable {
                         .toStageDialogBuilder()
                         .initOwner(stage)
                         .initModality(Modality.WINDOW_MODAL)
-                        .setOwnerNode(suppliersContentPane)
+                        .setOwnerNode(contentPane)
                         .setScrimPriority(ScrimPriority.WINDOW)
                         .setScrimOwner(true)
                         .get();
@@ -208,7 +210,7 @@ public class SupplierController implements Initializable {
         io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
     }
 
-    public void supplierCreateBtnClicked() {
+    public void createBtnClicked() {
         dialog.showAndWait();
     }
 

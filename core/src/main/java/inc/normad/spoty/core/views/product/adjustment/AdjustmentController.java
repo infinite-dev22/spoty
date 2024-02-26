@@ -40,15 +40,17 @@ import java.util.ResourceBundle;
 public class AdjustmentController implements Initializable {
     private static AdjustmentController instance;
     @FXML
-    public BorderPane adjustmentContentPane;
+    public BorderPane contentPane;
     @FXML
-    public MFXTextField adjustmentSearchBar;
+    public MFXTextField searchBar;
     @FXML
-    public HBox adjustmentActionsPane;
+    public HBox actionsPane;
     @FXML
-    public MFXButton adjustmentImportBtn;
+    public MFXButton importBtn;
     @FXML
-    private MFXTableView<AdjustmentMaster> adjustmentMasterTable;
+    public MFXButton createBtn;
+    @FXML
+    private MFXTableView<AdjustmentMaster> masterTable;
 
     public static AdjustmentController getInstance() {
         if (instance == null) instance = new AdjustmentController();
@@ -76,16 +78,16 @@ public class AdjustmentController implements Initializable {
         adjustmentTotalAmount.setRowCellFactory(
                 adjustment -> new MFXTableRowCell<>(AdjustmentMaster::getTotal));
 
-        adjustmentDate.prefWidthProperty().bind(adjustmentMasterTable.widthProperty().multiply(.5));
-        adjustmentStatus.prefWidthProperty().bind(adjustmentMasterTable.widthProperty().multiply(.5));
+        adjustmentDate.prefWidthProperty().bind(masterTable.widthProperty().multiply(.5));
+        adjustmentStatus.prefWidthProperty().bind(masterTable.widthProperty().multiply(.5));
         adjustmentTotalAmount
                 .prefWidthProperty()
-                .bind(adjustmentMasterTable.widthProperty().multiply(.5));
+                .bind(masterTable.widthProperty().multiply(.5));
 
-        adjustmentMasterTable
+        masterTable
                 .getTableColumns()
                 .addAll(adjustmentDate, adjustmentStatus, adjustmentTotalAmount);
-        adjustmentMasterTable
+        masterTable
                 .getFilters()
                 .addAll(
                         new StringFilter<>("Reference", AdjustmentMaster::getRef),
@@ -98,28 +100,28 @@ public class AdjustmentController implements Initializable {
                     .addListener(
                             (ListChangeListener<AdjustmentMaster>)
                                     c ->
-                                            adjustmentMasterTable.setItems(
+                                            masterTable.setItems(
                                                     AdjustmentMasterViewModel.getAdjustmentMasters()));
         } else {
-            adjustmentMasterTable
+            masterTable
                     .itemsProperty()
                     .bindBidirectional(AdjustmentMasterViewModel.adjustmentMastersProperty());
         }
     }
 
     private void getAdjustmentMasterTable() {
-        adjustmentMasterTable.setPrefSize(1000, 1000);
-        adjustmentMasterTable.features().enableBounceEffect();
-        adjustmentMasterTable.features().enableSmoothScrolling(0.5);
+        masterTable.setPrefSize(1000, 1000);
+        masterTable.features().enableBounceEffect();
+        masterTable.features().enableSmoothScrolling(0.5);
 
-        adjustmentMasterTable.setTableRowFactory(
+        masterTable.setTableRowFactory(
                 t -> {
-                    MFXTableRow<AdjustmentMaster> row = new MFXTableRow<>(adjustmentMasterTable, t);
+                    MFXTableRow<AdjustmentMaster> row = new MFXTableRow<>(masterTable, t);
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
                                 showContextMenu((MFXTableRow<AdjustmentMaster>) event.getSource())
                                         .show(
-                                                adjustmentMasterTable.getScene().getWindow(),
+                                                masterTable.getScene().getWindow(),
                                                 event.getScreenX(),
                                                 event.getScreenY());
                                 event.consume();
@@ -130,7 +132,7 @@ public class AdjustmentController implements Initializable {
     }
 
     private MFXContextMenu showContextMenu(MFXTableRow<AdjustmentMaster> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(adjustmentMasterTable);
+        MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
 
@@ -161,7 +163,7 @@ public class AdjustmentController implements Initializable {
                                 }
                             });
 
-                    adjustmentCreateBtnClicked();
+                    createBtnClicked();
                     e.consume();
                 });
 
@@ -170,7 +172,7 @@ public class AdjustmentController implements Initializable {
         return contextMenu;
     }
 
-    public void adjustmentCreateBtnClicked() {
+    public void createBtnClicked() {
         BaseController.navigation.navigate(Pages.getAdjustmentMasterFormPane());
     }
 

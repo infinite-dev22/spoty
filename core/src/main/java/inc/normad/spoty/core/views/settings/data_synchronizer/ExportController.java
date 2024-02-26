@@ -19,6 +19,7 @@ import io.github.palexdev.materialfx.controls.MFXTableView;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 
 import java.net.URL;
@@ -28,13 +29,13 @@ import java.util.ResourceBundle;
 public class ExportController implements Initializable {
     private static ExportController instance;
     @FXML
-    public MFXTextField exportSearchBar;
+    public MFXTextField searchBar;
     @FXML
-    public HBox exportActionsPane;
+    public HBox actionsPane;
     @FXML
     public MFXButton exportBtn;
     @FXML
-    public MFXTableView<?> exportTable;
+    public MFXTableView<?> masterTable;
 
     public static ExportController getInstance() {
         if (Objects.equals(instance, null)) instance = new ExportController();
@@ -43,5 +44,8 @@ public class ExportController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+    }
+
+    public void exportBtnClicked(MouseEvent mouseEvent) {
     }
 }

@@ -28,6 +28,7 @@ import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 
@@ -38,15 +39,17 @@ import java.util.ResourceBundle;
 @SuppressWarnings("unchecked")
 public class SaleReturnsController implements Initializable {
     @FXML
-    public BorderPane saleReturnContentPane;
+    public BorderPane contentPane;
     @FXML
-    public MFXTextField saleReturnSearchBar;
+    public MFXTextField searchBar;
     @FXML
-    public HBox saleReturnActionsPane;
+    public HBox actionsPane;
     @FXML
-    public MFXButton saleReturnImportBtn;
+    public MFXButton importBtn;
     @FXML
-    private MFXTableView<SaleReturnMaster> saleReturnTable;
+    public MFXButton createBtn;
+    @FXML
+    private MFXTableView<SaleReturnMaster> masterTable;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -72,14 +75,14 @@ public class SaleReturnsController implements Initializable {
         saleReturnPaymentStatus.setTooltip(new Tooltip("PurchaseMaster Return Payment Status"));
         saleReturnStatus.setTooltip(new Tooltip("PurchaseMaster Return Status"));
 
-        saleReturnDate.prefWidthProperty().bind(saleReturnTable.widthProperty().multiply(.143));
-        saleReturnCustomer.prefWidthProperty().bind(saleReturnTable.widthProperty().multiply(.143));
-        saleReturnStatus.prefWidthProperty().bind(saleReturnTable.widthProperty().multiply(.143));
-        saleReturnGrandTotal.prefWidthProperty().bind(saleReturnTable.widthProperty().multiply(.143));
-        saleReturnAmountPaid.prefWidthProperty().bind(saleReturnTable.widthProperty().multiply(.143));
+        saleReturnDate.prefWidthProperty().bind(masterTable.widthProperty().multiply(.143));
+        saleReturnCustomer.prefWidthProperty().bind(masterTable.widthProperty().multiply(.143));
+        saleReturnStatus.prefWidthProperty().bind(masterTable.widthProperty().multiply(.143));
+        saleReturnGrandTotal.prefWidthProperty().bind(masterTable.widthProperty().multiply(.143));
+        saleReturnAmountPaid.prefWidthProperty().bind(masterTable.widthProperty().multiply(.143));
         saleReturnPaymentStatus
                 .prefWidthProperty()
-                .bind(saleReturnTable.widthProperty().multiply(.143));
+                .bind(masterTable.widthProperty().multiply(.143));
 
         saleReturnDate.setRowCellFactory(
                 saleReturn -> new MFXTableRowCell<>(SaleReturnMaster::getDate));
@@ -94,7 +97,7 @@ public class SaleReturnsController implements Initializable {
         saleReturnPaymentStatus.setRowCellFactory(
                 saleReturn -> new MFXTableRowCell<>(SaleReturnMaster::getPaymentStatus));
 
-        saleReturnTable
+        masterTable
                 .getTableColumns()
                 .addAll(
                         saleReturnCustomer,
@@ -104,7 +107,7 @@ public class SaleReturnsController implements Initializable {
                         saleReturnGrandTotal,
                         saleReturnAmountPaid);
 
-        saleReturnTable
+        masterTable
                 .getFilters()
                 .addAll(
                         new StringFilter<>("Ref No.", SaleReturnMaster::getRef),
@@ -120,17 +123,20 @@ public class SaleReturnsController implements Initializable {
             SaleReturnMasterViewModel.getSaleReturns()
                     .addListener(
                             (ListChangeListener<SaleReturnMaster>)
-                                    c -> saleReturnTable.setItems(SaleReturnMasterViewModel.getSaleReturns()));
+                                    c -> masterTable.setItems(SaleReturnMasterViewModel.getSaleReturns()));
         } else {
-            saleReturnTable
+            masterTable
                     .itemsProperty()
                     .bindBidirectional(SaleReturnMasterViewModel.saleReturnsProperty());
         }
     }
 
     private void getSaleReturnMasterTable() {
-        saleReturnTable.setPrefSize(1200, 1000);
-        saleReturnTable.features().enableBounceEffect();
-        saleReturnTable.features().enableSmoothScrolling(0.5);
+        masterTable.setPrefSize(1200, 1000);
+        masterTable.features().enableBounceEffect();
+        masterTable.features().enableSmoothScrolling(0.5);
+    }
+
+    public void createBtnClicked(MouseEvent mouseEvent) {
     }
 }

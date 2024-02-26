@@ -46,7 +46,7 @@
                 <RowConstraints minHeight="10.0" valignment="TOP" vgrow="NEVER"/>
             </rowConstraints>
             <padding>
-                <Insets bottom="5.0" left="5.0" right="10.0" top="5.0"/>
+                <Insets topRightBottomLeft="5.0"/>
             </padding>
             <VBox spacing="2.0">
                 <padding>

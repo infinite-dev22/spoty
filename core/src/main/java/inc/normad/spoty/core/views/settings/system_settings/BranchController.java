@@ -49,15 +49,17 @@ import static inc.normad.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
 public class BranchController implements Initializable {
     private static BranchController instance;
     @FXML
-    public MFXTextField branchSearchBar;
+    public MFXTextField searchBar;
     @FXML
-    public HBox branchActionsPane;
+    public HBox actionsPane;
     @FXML
-    public MFXButton branchImportBtn;
+    public MFXButton importBtn;
     @FXML
-    public MFXTableView<Branch> branchTable;
+    public MFXTableView<Branch> masterTable;
     @FXML
-    public BorderPane branchContentPane;
+    public BorderPane contentPane;
+    @FXML
+    public MFXButton createBtn;
     private MFXStageDialog dialog;
 
     private BranchController(Stage stage) {
@@ -100,17 +102,17 @@ public class BranchController implements Initializable {
         branchTown.setRowCellFactory(branch -> new MFXTableRowCell<>(Branch::getTown));
         branchEmail.setRowCellFactory(branch -> new MFXTableRowCell<>(Branch::getEmail));
 
-        branchName.prefWidthProperty().bind(branchTable.widthProperty().multiply(.2));
-        branchPhone.prefWidthProperty().bind(branchTable.widthProperty().multiply(.18));
-        branchCity.prefWidthProperty().bind(branchTable.widthProperty().multiply(.18));
-        branchTown.prefWidthProperty().bind(branchTable.widthProperty().multiply(.2));
-        branchEmail.prefWidthProperty().bind(branchTable.widthProperty().multiply(.2));
+        branchName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.2));
+        branchPhone.prefWidthProperty().bind(masterTable.widthProperty().multiply(.18));
+        branchCity.prefWidthProperty().bind(masterTable.widthProperty().multiply(.18));
+        branchTown.prefWidthProperty().bind(masterTable.widthProperty().multiply(.2));
+        branchEmail.prefWidthProperty().bind(masterTable.widthProperty().multiply(.2));
 
-        branchTable
+        masterTable
                 .getTableColumns()
                 .addAll(branchName, branchPhone, branchCity, branchTown, branchEmail);
 
-        branchTable
+        masterTable
                 .getFilters()
                 .addAll(
                         new StringFilter<>("Name", Branch::getName),
@@ -125,25 +127,25 @@ public class BranchController implements Initializable {
             BranchViewModel.getBranches()
                     .addListener(
                             (ListChangeListener<Branch>)
-                                    c -> branchTable.setItems(BranchViewModel.getBranches()));
+                                    c -> masterTable.setItems(BranchViewModel.getBranches()));
         } else {
-            branchTable.itemsProperty().bindBidirectional(BranchViewModel.branchesProperty());
+            masterTable.itemsProperty().bindBidirectional(BranchViewModel.branchesProperty());
         }
     }
 
     private void getBranchTable() {
-        branchTable.setPrefSize(1200, 1000);
-        branchTable.features().enableBounceEffect();
-        branchTable.features().enableSmoothScrolling(0.5);
+        masterTable.setPrefSize(1200, 1000);
+        masterTable.features().enableBounceEffect();
+        masterTable.features().enableSmoothScrolling(0.5);
 
-        branchTable.setTableRowFactory(
+        masterTable.setTableRowFactory(
                 t -> {
-                    MFXTableRow<Branch> row = new MFXTableRow<>(branchTable, t);
+                    MFXTableRow<Branch> row = new MFXTableRow<>(masterTable, t);
                     EventHandler<ContextMenuEvent> eventHandler =
                             event ->
                                     showContextMenu((MFXTableRow<Branch>) event.getSource())
                                             .show(
-                                                    branchContentPane.getScene().getWindow(),
+                                                    contentPane.getScene().getWindow(),
                                                     event.getScreenX(),
                                                     event.getScreenY());
                     row.setOnContextMenuRequested(eventHandler);
@@ -152,7 +154,7 @@ public class BranchController implements Initializable {
     }
 
     private MFXContextMenu showContextMenu(MFXTableRow<Branch> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(branchTable);
+        MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
 
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
@@ -180,7 +182,7 @@ public class BranchController implements Initializable {
                             throw new RuntimeException(ex);
                         }
                     });
-                    branchCreateBtnClicked();
+                    createBtnClicked();
                     e.consume();
                 });
 
@@ -190,7 +192,7 @@ public class BranchController implements Initializable {
     }
 
     @FXML
-    private void branchCreateBtnClicked() {
+    private void createBtnClicked() {
         BranchViewModel.setTitle(Labels.CREATE);
         dialog.showAndWait();
     }
@@ -209,7 +211,7 @@ public class BranchController implements Initializable {
                         .toStageDialogBuilder()
                         .initOwner(stage)
                         .initModality(Modality.WINDOW_MODAL)
-                        .setOwnerNode(branchContentPane)
+                        .setOwnerNode(contentPane)
                         .setScrimPriority(ScrimPriority.WINDOW)
                         .setScrimOwner(true)
                         .get();

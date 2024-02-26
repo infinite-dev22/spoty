@@ -40,15 +40,17 @@ import java.util.ResourceBundle;
 public class PurchasesController implements Initializable {
     private static PurchasesController instance;
     @FXML
-    public MFXTextField purchaseSearchBar;
+    public MFXTextField searchBar;
     @FXML
-    public HBox purchaseActionsPane;
+    public HBox actionsPane;
     @FXML
-    public MFXButton purchaseImportBtn;
+    public MFXButton importBtn;
     @FXML
-    public BorderPane purchaseContentPane;
+    public BorderPane contentPane;
     @FXML
-    private MFXTableView<PurchaseMaster> purchaseMasterTable;
+    public MFXButton createBtn;
+    @FXML
+    private MFXTableView<PurchaseMaster> masterTable;
 
     public static PurchasesController getInstance() {
         if (instance == null) instance = new PurchasesController();
@@ -61,69 +63,69 @@ public class PurchasesController implements Initializable {
     }
 
     private void setupTable() {
-        MFXTableColumn<PurchaseMaster> purchaseMasterSupplier =
+        MFXTableColumn<PurchaseMaster> masterSupplier =
                 new MFXTableColumn<>(
                         "Supplier", false, Comparator.comparing(PurchaseMaster::getSupplierName));
-        MFXTableColumn<PurchaseMaster> purchaseMasterStatus =
+        MFXTableColumn<PurchaseMaster> masterStatus =
                 new MFXTableColumn<>("Status", false, Comparator.comparing(PurchaseMaster::getStatus));
-        MFXTableColumn<PurchaseMaster> purchaseMasterPaymentStatus =
+        MFXTableColumn<PurchaseMaster> masterPaymentStatus =
                 new MFXTableColumn<>(
                         "Pay Status", false, Comparator.comparing(PurchaseMaster::getPaymentStatus));
-        MFXTableColumn<PurchaseMaster> purchaseMasterDate =
+        MFXTableColumn<PurchaseMaster> masterDate =
                 new MFXTableColumn<>("Date", false, Comparator.comparing(PurchaseMaster::getDate));
-        MFXTableColumn<PurchaseMaster> purchaseMasterGrandTotal =
+        MFXTableColumn<PurchaseMaster> masterGrandTotal =
                 new MFXTableColumn<>("Total Amount", false, Comparator.comparing(PurchaseMaster::getTotal));
-        MFXTableColumn<PurchaseMaster> purchaseMasterAmountPaid =
+        MFXTableColumn<PurchaseMaster> masterAmountPaid =
                 new MFXTableColumn<>("Paid Amount", false, Comparator.comparing(PurchaseMaster::getPaid));
-        MFXTableColumn<PurchaseMaster> purchaseMasterAmountDue =
+        MFXTableColumn<PurchaseMaster> masterAmountDue =
                 new MFXTableColumn<>("Due Amount", false, Comparator.comparing(PurchaseMaster::getDue));
 
-        purchaseMasterSupplier.setRowCellFactory(
-                purchaseMaster -> new MFXTableRowCell<>(PurchaseMaster::getSupplierName));
-        purchaseMasterStatus.setRowCellFactory(
-                purchaseMaster -> new MFXTableRowCell<>(PurchaseMaster::getStatus));
-        purchaseMasterPaymentStatus.setRowCellFactory(
-                purchaseMaster -> new MFXTableRowCell<>(PurchaseMaster::getPaymentStatus));
-        purchaseMasterDate.setRowCellFactory(
-                purchaseMaster -> new MFXTableRowCell<>(PurchaseMaster::getLocaleDate));
-        purchaseMasterGrandTotal.setRowCellFactory(
-                purchaseMaster -> new MFXTableRowCell<>(PurchaseMaster::getTotal));
-        purchaseMasterAmountPaid.setRowCellFactory(
-                purchaseMaster -> new MFXTableRowCell<>(PurchaseMaster::getPaid));
-        purchaseMasterAmountDue.setRowCellFactory(
-                purchaseMaster -> new MFXTableRowCell<>(PurchaseMaster::getDue));
+        masterSupplier.setRowCellFactory(
+                master -> new MFXTableRowCell<>(PurchaseMaster::getSupplierName));
+        masterStatus.setRowCellFactory(
+                master -> new MFXTableRowCell<>(PurchaseMaster::getStatus));
+        masterPaymentStatus.setRowCellFactory(
+                master -> new MFXTableRowCell<>(PurchaseMaster::getPaymentStatus));
+        masterDate.setRowCellFactory(
+                master -> new MFXTableRowCell<>(PurchaseMaster::getLocaleDate));
+        masterGrandTotal.setRowCellFactory(
+                master -> new MFXTableRowCell<>(PurchaseMaster::getTotal));
+        masterAmountPaid.setRowCellFactory(
+                master -> new MFXTableRowCell<>(PurchaseMaster::getPaid));
+        masterAmountDue.setRowCellFactory(
+                master -> new MFXTableRowCell<>(PurchaseMaster::getDue));
 
-        purchaseMasterSupplier
+        masterSupplier
                 .prefWidthProperty()
-                .bind(purchaseMasterTable.widthProperty().multiply(.25));
-        purchaseMasterStatus
+                .bind(masterTable.widthProperty().multiply(.25));
+        masterStatus
                 .prefWidthProperty()
-                .bind(purchaseMasterTable.widthProperty().multiply(.25));
-        purchaseMasterPaymentStatus
+                .bind(masterTable.widthProperty().multiply(.25));
+        masterPaymentStatus
                 .prefWidthProperty()
-                .bind(purchaseMasterTable.widthProperty().multiply(.25));
-        purchaseMasterDate.prefWidthProperty().bind(purchaseMasterTable.widthProperty().multiply(.25));
-        purchaseMasterGrandTotal
+                .bind(masterTable.widthProperty().multiply(.25));
+        masterDate.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        masterGrandTotal
                 .prefWidthProperty()
-                .bind(purchaseMasterTable.widthProperty().multiply(.25));
-        purchaseMasterAmountPaid
+                .bind(masterTable.widthProperty().multiply(.25));
+        masterAmountPaid
                 .prefWidthProperty()
-                .bind(purchaseMasterTable.widthProperty().multiply(.25));
-        purchaseMasterAmountDue
+                .bind(masterTable.widthProperty().multiply(.25));
+        masterAmountDue
                 .prefWidthProperty()
-                .bind(purchaseMasterTable.widthProperty().multiply(.25));
+                .bind(masterTable.widthProperty().multiply(.25));
 
-        purchaseMasterTable
+        masterTable
                 .getTableColumns()
                 .addAll(
-                        purchaseMasterSupplier,
-                        purchaseMasterStatus,
-                        purchaseMasterPaymentStatus,
-                        purchaseMasterDate,
-                        purchaseMasterGrandTotal,
-                        purchaseMasterAmountPaid,
-                        purchaseMasterAmountDue);
-        purchaseMasterTable
+                        masterSupplier,
+                        masterStatus,
+                        masterPaymentStatus,
+                        masterDate,
+                        masterGrandTotal,
+                        masterAmountPaid,
+                        masterAmountDue);
+        masterTable
                 .getFilters()
                 .addAll(
                         new StringFilter<>("Reference", PurchaseMaster::getRef),
@@ -139,27 +141,27 @@ public class PurchasesController implements Initializable {
             PurchaseMasterViewModel.getPurchases()
                     .addListener(
                             (ListChangeListener<PurchaseMaster>)
-                                    c -> purchaseMasterTable.setItems(PurchaseMasterViewModel.getPurchases()));
+                                    c -> masterTable.setItems(PurchaseMasterViewModel.getPurchases()));
         } else {
-            purchaseMasterTable
+            masterTable
                     .itemsProperty()
                     .bindBidirectional(PurchaseMasterViewModel.purchasesProperty());
         }
     }
 
     private void getTable() {
-        purchaseMasterTable.setPrefSize(1200, 1000);
-        purchaseMasterTable.features().enableBounceEffect();
-        purchaseMasterTable.features().enableSmoothScrolling(0.5);
+        masterTable.setPrefSize(1200, 1000);
+        masterTable.features().enableBounceEffect();
+        masterTable.features().enableSmoothScrolling(0.5);
 
-        purchaseMasterTable.setTableRowFactory(
+        masterTable.setTableRowFactory(
                 t -> {
-                    MFXTableRow<PurchaseMaster> row = new MFXTableRow<>(purchaseMasterTable, t);
+                    MFXTableRow<PurchaseMaster> row = new MFXTableRow<>(masterTable, t);
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
                                 showContextMenu((MFXTableRow<PurchaseMaster>) event.getSource())
                                         .show(
-                                                purchaseMasterTable.getScene().getWindow(),
+                                                masterTable.getScene().getWindow(),
                                                 event.getScreenX(),
                                                 event.getScreenY());
                                 event.consume();
@@ -170,7 +172,7 @@ public class PurchasesController implements Initializable {
     }
 
     private MFXContextMenu showContextMenu(MFXTableRow<PurchaseMaster> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(purchaseMasterTable);
+        MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
 
@@ -197,7 +199,7 @@ public class PurchasesController implements Initializable {
                             throw new RuntimeException(ex);
                         }
                     });
-                    purchaseCreateBtnClicked();
+                    createBtnClicked();
                     e.consume();
                 });
 
@@ -206,7 +208,7 @@ public class PurchasesController implements Initializable {
         return contextMenu;
     }
 
-    public void purchaseCreateBtnClicked() {
+    public void createBtnClicked() {
         BaseController.navigation.navigate(Pages.getPurchaseMasterFormPane());
     }
 

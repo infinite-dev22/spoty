@@ -21,12 +21,12 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 
 public class StockReportController implements Initializable {
-    public MFXTextField stockReportSearchBar;
-    public HBox stockReportActionsPane;
-    public MFXButton stockReportImportBtn;
-    public MFXButton stockReportCreateBtn;
-    public MFXTableView<StockReport> stockReportTable;
-    public BorderPane stockReportContentPane;
+    public MFXTextField searchBar;
+    public HBox actionsPane;
+    public MFXButton importBtn;
+    public MFXButton createBtn;
+    public MFXTableView<StockReport> masterTable;
+    public BorderPane contentPane;
     private MFXStageDialog dialog;
 
     @Override
@@ -34,7 +34,7 @@ public class StockReportController implements Initializable {
         Platform.runLater(this::setupTable);
     }
 
-    public void stockReportCreateBtnClicked(MouseEvent mouseEvent) {
+    public void createBtnClicked(MouseEvent mouseEvent) {
     }
 
     private void setupTable() {
@@ -78,14 +78,14 @@ public class StockReportController implements Initializable {
         stockPurchaseValue.setRowCellFactory(
                 category -> new MFXTableRowCell<>(StockReport::getPurchaseStockValue));
 
-        productName.prefWidthProperty().bind(stockReportTable.widthProperty().multiply(.24));
-        salePrice.prefWidthProperty().bind(stockReportTable.widthProperty().multiply(.1));
-        purchasePrice.prefWidthProperty().bind(stockReportTable.widthProperty().multiply(.14));
-        purchasedQuantity.prefWidthProperty().bind(stockReportTable.widthProperty().multiply(.15));
-        soldQuantity.prefWidthProperty().bind(stockReportTable.widthProperty().multiply(.1));
-        availableStock.prefWidthProperty().bind(stockReportTable.widthProperty().multiply(.15));
-        stockSaleValue.prefWidthProperty().bind(stockReportTable.widthProperty().multiply(.15));
-        stockPurchaseValue.prefWidthProperty().bind(stockReportTable.widthProperty().multiply(.18));
+        productName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.24));
+        salePrice.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
+        purchasePrice.prefWidthProperty().bind(masterTable.widthProperty().multiply(.14));
+        purchasedQuantity.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        soldQuantity.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
+        availableStock.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        stockSaleValue.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        stockPurchaseValue.prefWidthProperty().bind(masterTable.widthProperty().multiply(.18));
 
         productName.setColumnResizable(false);
         salePrice.setColumnResizable(false);
@@ -96,7 +96,7 @@ public class StockReportController implements Initializable {
         stockSaleValue.setColumnResizable(false);
         stockPurchaseValue.setColumnResizable(false);
 
-        stockReportTable.getTableColumns().addAll(productName,
+        masterTable.getTableColumns().addAll(productName,
                 salePrice,
                 purchasePrice,
                 purchasedQuantity,
@@ -104,7 +104,7 @@ public class StockReportController implements Initializable {
                 availableStock,
                 stockSaleValue,
                 stockPurchaseValue);
-        stockReportTable
+        masterTable
                 .getFilters()
                 .addAll(
                         new StringFilter<>("Product Name", StockReport::getProductName));
@@ -114,27 +114,27 @@ public class StockReportController implements Initializable {
 //        if (StockReportViewModel.getCategories().isEmpty()) {
 //            StockReportViewModel.getCategories().addListener(
 //                    (ListChangeListener<StockReport>)
-//                            c -> stockReportTable.setItems(StockReportViewModel.getCategories()));
+//                            c -> masterTable.setItems(StockReportViewModel.getCategories()));
 //        } else {
-//            stockReportTable
+//            masterTable
 //                    .itemsProperty()
 //                    .bindBidirectional(StockReportViewModel.categoriesProperty());
 //        }
     }
 
     private void styleStockReportTable() {
-        stockReportTable.setPrefSize(1200, 1000);
-        stockReportTable.features().enableBounceEffect();
-        stockReportTable.features().enableSmoothScrolling(0.5);
+        masterTable.setPrefSize(1200, 1000);
+        masterTable.features().enableBounceEffect();
+        masterTable.features().enableSmoothScrolling(0.5);
 
-        stockReportTable.setTableRowFactory(
+        masterTable.setTableRowFactory(
                 t -> {
-                    MFXTableRow<StockReport> row = new MFXTableRow<>(stockReportTable, t);
+                    MFXTableRow<StockReport> row = new MFXTableRow<>(masterTable, t);
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
                                 showContextMenu((MFXTableRow<StockReport>) event.getSource())
                                         .show(
-                                                stockReportTable.getScene().getWindow(),
+                                                masterTable.getScene().getWindow(),
                                                 event.getScreenX(),
                                                 event.getScreenY());
                                 event.consume();
@@ -145,7 +145,7 @@ public class StockReportController implements Initializable {
     }
 
     private MFXContextMenu showContextMenu(MFXTableRow<StockReport> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(stockReportTable);
+        MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
 

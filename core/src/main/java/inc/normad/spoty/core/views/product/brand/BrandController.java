@@ -48,15 +48,17 @@ import static inc.normad.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
 public class BrandController implements Initializable {
     private static BrandController instance;
     @FXML
-    public MFXTableView<Brand> brandTable;
+    public MFXTableView<Brand> masterTable;
     @FXML
-    public MFXTextField brandSearchBar;
+    public MFXTextField searchBar;
     @FXML
-    public HBox brandActionsPane;
+    public HBox actionsPane;
     @FXML
-    public MFXButton brandImportBtn;
+    public MFXButton importBtn;
     @FXML
-    public BorderPane brandContentPane;
+    public BorderPane contentPane;
+    @FXML
+    public MFXButton createBtn;
     private MFXStageDialog dialog;
 
     private BrandController(Stage stage) {
@@ -89,11 +91,11 @@ public class BrandController implements Initializable {
         brandName.setRowCellFactory(brand -> new MFXTableRowCell<>(Brand::getName));
         brandDescription.setRowCellFactory(brand -> new MFXTableRowCell<>(Brand::getDescription));
 
-        brandName.prefWidthProperty().bind(brandTable.widthProperty().multiply(.5));
-        brandDescription.prefWidthProperty().bind(brandTable.widthProperty().multiply(.5));
+        brandName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.5));
+        brandDescription.prefWidthProperty().bind(masterTable.widthProperty().multiply(.5));
 
-        brandTable.getTableColumns().addAll(brandName, brandDescription);
-        brandTable
+        masterTable.getTableColumns().addAll(brandName, brandDescription);
+        masterTable
                 .getFilters()
                 .addAll(
                         new StringFilter<>("Name", Brand::getName),
@@ -102,25 +104,25 @@ public class BrandController implements Initializable {
 
         if (BrandViewModel.getBrands().isEmpty()) {
             BrandViewModel.getBrands().addListener(
-                    (ListChangeListener<Brand>) c -> brandTable.setItems(BrandViewModel.getBrands()));
+                    (ListChangeListener<Brand>) c -> masterTable.setItems(BrandViewModel.getBrands()));
         } else {
-            brandTable.itemsProperty().bindBidirectional(BrandViewModel.brandsProperty());
+            masterTable.itemsProperty().bindBidirectional(BrandViewModel.brandsProperty());
         }
     }
 
     private void getBrandTable() {
-        brandTable.setPrefSize(1000, 1000);
-        brandTable.features().enableBounceEffect();
-        brandTable.features().enableSmoothScrolling(0.5);
+        masterTable.setPrefSize(1000, 1000);
+        masterTable.features().enableBounceEffect();
+        masterTable.features().enableSmoothScrolling(0.5);
 
-        brandTable.setTableRowFactory(
+        masterTable.setTableRowFactory(
                 t -> {
-                    MFXTableRow<Brand> row = new MFXTableRow<>(brandTable, t);
+                    MFXTableRow<Brand> row = new MFXTableRow<>(masterTable, t);
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
                                 showContextMenu((MFXTableRow<Brand>) event.getSource())
                                         .show(
-                                                brandTable.getScene().getWindow(), event.getScreenX(), event.getScreenY());
+                                                masterTable.getScene().getWindow(), event.getScreenX(), event.getScreenY());
                                 event.consume();
                             };
                     row.setOnContextMenuRequested(eventHandler);
@@ -129,7 +131,7 @@ public class BrandController implements Initializable {
     }
 
     private MFXContextMenu showContextMenu(MFXTableRow<Brand> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(brandTable);
+        MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
 
@@ -179,7 +181,7 @@ public class BrandController implements Initializable {
                         .toStageDialogBuilder()
                         .initOwner(stage)
                         .initModality(Modality.WINDOW_MODAL)
-                        .setOwnerNode(brandContentPane)
+                        .setOwnerNode(contentPane)
                         .setScrimPriority(ScrimPriority.WINDOW)
                         .setScrimOwner(true)
                         .get();
@@ -187,7 +189,7 @@ public class BrandController implements Initializable {
         io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
     }
 
-    public void brandCreateBtnClicked() {
+    public void createBtnClicked() {
         dialog.showAndWait();
     }
 

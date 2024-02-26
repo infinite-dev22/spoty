@@ -20,34 +20,30 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.*?>
 <BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:id="contentPane" prefHeight="400.0" prefWidth="600.0"
-            stylesheets="@../../../styles/Common.css" xmlns="http://javafx.com/javafx/19"
+            xmlns="http://javafx.com/javafx/19"
             fx:controller="inc.normad.spoty.core.views.human_resource.hrm.EmployeesController">
-    <top>
-        <AnchorPane styleClass="card" BorderPane.alignment="CENTER">
-            <padding>
-                <Insets bottom="5.0" left="5.0" right="10.0" top="5.0"/>
-            </padding>
-            <MFXTextField fx:id="searchBar" floatMode="DISABLED" promptText="Search" prefWidth="300.0"
-                          AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0"/>
-            <HBox fx:id="actionsPane" alignment="CENTER_RIGHT" spacing="20.0" AnchorPane.bottomAnchor="0.0"
-                  AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                <MFXButton fx:id="importBtn" buttonType="RAISED" depthLevel="LEVEL1" text="Import"/>
-                <MFXButton fx:id="createBtn" buttonType="RAISED" depthLevel="LEVEL1"
-                           onMouseClicked="#createBtnClicked" text="Create"/>
-            </HBox>
-        </AnchorPane>
-    </top>
     <padding>
-        <Insets bottom="10.0" left="10.0" right="10.0" top="20.0"/>
+        <Insets topRightBottomLeft="5.0"/>
     </padding>
     <center>
         <AnchorPane BorderPane.alignment="CENTER">
-            <BorderPane.margin>
-                <Insets top="20.0"/>
-            </BorderPane.margin>
-            <MFXTableView fx:id="masterTable" styleClass="card" AnchorPane.bottomAnchor="0.0"
-                          AnchorPane.leftAnchor="0.0"
-                          AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+            <AnchorPane styleClass="card-flat" BorderPane.alignment="CENTER" AnchorPane.leftAnchor="0.0"
+                        AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                <padding>
+                    <Insets topRightBottomLeft="5.0"/>
+                </padding>
+                <MFXTextField fx:id="searchBar" floatMode="DISABLED" promptText="Search employees"
+                              prefWidth="300.0"
+                              AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+                <HBox fx:id="actionsPane" alignment="CENTER_RIGHT" spacing="20.0" AnchorPane.bottomAnchor="0.0"
+                      AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <MFXButton fx:id="importBtn" buttonType="RAISED" depthLevel="LEVEL1" text="Import"/>
+                    <MFXButton fx:id="createBtn" buttonType="RAISED" depthLevel="LEVEL1"
+                               onMouseClicked="#createBtnClicked" text="Create"/>
+                </HBox>
+            </AnchorPane>
+            <MFXTableView fx:id="masterTable" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                          AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0"/>
         </AnchorPane>
     </center>
 </BorderPane>

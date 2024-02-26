@@ -28,6 +28,7 @@ import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 
@@ -38,15 +39,17 @@ import java.util.ResourceBundle;
 @SuppressWarnings("unchecked")
 public class PurchaseReturnController implements Initializable {
     @FXML
-    public MFXTableView<PurchaseReturnMaster> purchaseReturnTable;
+    public MFXTableView<PurchaseReturnMaster> masterTable;
     @FXML
-    public BorderPane purchaseReturnContentPane;
+    public BorderPane contentPane;
     @FXML
-    public MFXTextField purchaseReturnSearchBar;
+    public MFXTextField searchBar;
     @FXML
-    public HBox purchaseReturnActionsPane;
+    public HBox actionsPane;
     @FXML
-    public MFXButton purchaseReturnImportBtn;
+    public MFXButton importBtn;
+    @FXML
+    public MFXButton createBtn;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -72,22 +75,22 @@ public class PurchaseReturnController implements Initializable {
         purchaseReturnPaymentStatus.setTooltip(new Tooltip("PurchaseMaster Return Payment Status"));
         purchaseReturnStatus.setTooltip(new Tooltip("PurchaseMaster Return Status"));
 
-        purchaseReturnDate.prefWidthProperty().bind(purchaseReturnTable.widthProperty().multiply(.13));
+        purchaseReturnDate.prefWidthProperty().bind(masterTable.widthProperty().multiply(.13));
         purchaseReturnSupplier
                 .prefWidthProperty()
-                .bind(purchaseReturnTable.widthProperty().multiply(.25));
+                .bind(masterTable.widthProperty().multiply(.25));
         purchaseReturnStatus
                 .prefWidthProperty()
-                .bind(purchaseReturnTable.widthProperty().multiply(.25));
+                .bind(masterTable.widthProperty().multiply(.25));
         purchaseReturnGrandTotal
                 .prefWidthProperty()
-                .bind(purchaseReturnTable.widthProperty().multiply(.25));
+                .bind(masterTable.widthProperty().multiply(.25));
         purchaseReturnAmountPaid
                 .prefWidthProperty()
-                .bind(purchaseReturnTable.widthProperty().multiply(.25));
+                .bind(masterTable.widthProperty().multiply(.25));
         purchaseReturnPaymentStatus
                 .prefWidthProperty()
-                .bind(purchaseReturnTable.widthProperty().multiply(.25));
+                .bind(masterTable.widthProperty().multiply(.25));
 
         purchaseReturnDate.setRowCellFactory(
                 purchaseReturn -> new MFXTableRowCell<>(PurchaseReturnMaster::getDate));
@@ -102,7 +105,7 @@ public class PurchaseReturnController implements Initializable {
         purchaseReturnPaymentStatus.setRowCellFactory(
                 purchaseReturn -> new MFXTableRowCell<>(PurchaseReturnMaster::getPaymentStatus));
 
-        purchaseReturnTable
+        masterTable
                 .getTableColumns()
                 .addAll(
                         purchaseReturnSupplier,
@@ -111,7 +114,7 @@ public class PurchaseReturnController implements Initializable {
                         purchaseReturnDate,
                         purchaseReturnGrandTotal,
                         purchaseReturnAmountPaid);
-        purchaseReturnTable
+        masterTable
                 .getFilters()
                 .addAll(
                         new StringFilter<>("Ref No.", PurchaseReturnMaster::getRef),
@@ -129,18 +132,21 @@ public class PurchaseReturnController implements Initializable {
                     .addListener(
                             (ListChangeListener<PurchaseReturnMaster>)
                                     c ->
-                                            purchaseReturnTable.setItems(
+                                            masterTable.setItems(
                                                     PurchaseReturnMasterViewModel.getPurchaseReturns()));
         } else {
-            purchaseReturnTable
+            masterTable
                     .itemsProperty()
                     .bindBidirectional(PurchaseReturnMasterViewModel.purchaseReturnsProperty());
         }
     }
 
     private void stylePurchaseReturnMasterTable() {
-        purchaseReturnTable.setPrefSize(1200, 1000);
-        purchaseReturnTable.features().enableBounceEffect();
-        purchaseReturnTable.features().enableSmoothScrolling(0.5);
+        masterTable.setPrefSize(1200, 1000);
+        masterTable.features().enableBounceEffect();
+        masterTable.features().enableSmoothScrolling(0.5);
+    }
+
+    public void createBtnClicked(MouseEvent mouseEvent) {
     }
 }

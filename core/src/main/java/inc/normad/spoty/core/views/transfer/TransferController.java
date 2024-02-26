@@ -40,15 +40,17 @@ import java.util.ResourceBundle;
 public class TransferController implements Initializable {
     private static TransferController instance;
     @FXML
-    public MFXTextField transferSearchBar;
+    public MFXTextField searchBar;
     @FXML
-    public HBox transferActionsPane;
+    public HBox actionsPane;
     @FXML
-    public MFXButton transferImportBtn;
+    public MFXButton importBtn;
     @FXML
-    public MFXTableView<TransferMaster> transferMasterTable;
+    public MFXTableView<TransferMaster> masterTable;
     @FXML
-    public BorderPane transferContentPane;
+    public BorderPane contentPane;
+    @FXML
+    public MFXButton createBtn;
 
     public static TransferController getInstance() {
         if (instance == null) instance = new TransferController();
@@ -67,7 +69,7 @@ public class TransferController implements Initializable {
         MFXTableColumn<TransferMaster> transferToBranch =
                 new MFXTableColumn<>(
                         "Branch(To)", false, Comparator.comparing(TransferMaster::getToBranchName));
-        MFXTableColumn<TransferMaster> transferStatus =
+        MFXTableColumn<TransferMaster> status =
                 new MFXTableColumn<>("Status", false, Comparator.comparing(TransferMaster::getStatus));
         MFXTableColumn<TransferMaster> transferDate =
                 new MFXTableColumn<>("Date", false, Comparator.comparing(TransferMaster::getDate));
@@ -78,23 +80,23 @@ public class TransferController implements Initializable {
                 transfer -> new MFXTableRowCell<>(TransferMaster::getFromBranchName));
         transferToBranch.setRowCellFactory(
                 transfer -> new MFXTableRowCell<>(TransferMaster::getToBranchName));
-        transferStatus.setRowCellFactory(transfer -> new MFXTableRowCell<>(TransferMaster::getStatus));
+        status.setRowCellFactory(transfer -> new MFXTableRowCell<>(TransferMaster::getStatus));
         transferDate.setRowCellFactory(
                 transfer -> new MFXTableRowCell<>(TransferMaster::getLocaleDate));
         transferTotalCost.setRowCellFactory(
                 transfer -> new MFXTableRowCell<>(TransferMaster::getTotal));
 
-        transferFromBranch.prefWidthProperty().bind(transferMasterTable.widthProperty().multiply(.25));
-        transferToBranch.prefWidthProperty().bind(transferMasterTable.widthProperty().multiply(.25));
-        transferStatus.prefWidthProperty().bind(transferMasterTable.widthProperty().multiply(.25));
-        transferTotalCost.prefWidthProperty().bind(transferMasterTable.widthProperty().multiply(.25));
-        transferDate.prefWidthProperty().bind(transferMasterTable.widthProperty().multiply(.25));
+        transferFromBranch.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        transferToBranch.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        status.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        transferTotalCost.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        transferDate.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
 
-        transferMasterTable
+        masterTable
                 .getTableColumns()
                 .addAll(
-                        transferFromBranch, transferToBranch, transferStatus, transferDate, transferTotalCost);
-        transferMasterTable
+                        transferFromBranch, transferToBranch, status, transferDate, transferTotalCost);
+        masterTable
                 .getFilters()
                 .addAll(
                         new StringFilter<>("Reference", TransferMaster::getRef),
@@ -108,27 +110,27 @@ public class TransferController implements Initializable {
             TransferMasterViewModel.getTransfers()
                     .addListener(
                             (ListChangeListener<TransferMaster>)
-                                    c -> transferMasterTable.setItems(TransferMasterViewModel.getTransfers()));
+                                    c -> masterTable.setItems(TransferMasterViewModel.getTransfers()));
         } else {
-            transferMasterTable
+            masterTable
                     .itemsProperty()
                     .bindBidirectional(TransferMasterViewModel.transfersProperty());
         }
     }
 
     private void getTransferMasterTable() {
-        transferMasterTable.setPrefSize(1000, 1000);
-        transferMasterTable.features().enableBounceEffect();
-        transferMasterTable.features().enableSmoothScrolling(0.5);
+        masterTable.setPrefSize(1000, 1000);
+        masterTable.features().enableBounceEffect();
+        masterTable.features().enableSmoothScrolling(0.5);
 
-        transferMasterTable.setTableRowFactory(
+        masterTable.setTableRowFactory(
                 t -> {
-                    MFXTableRow<TransferMaster> row = new MFXTableRow<>(transferMasterTable, t);
+                    MFXTableRow<TransferMaster> row = new MFXTableRow<>(masterTable, t);
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
                                 showContextMenu((MFXTableRow<TransferMaster>) event.getSource())
                                         .show(
-                                                transferMasterTable.getScene().getWindow(),
+                                                masterTable.getScene().getWindow(),
                                                 event.getScreenX(),
                                                 event.getScreenY());
                                 event.consume();
@@ -139,7 +141,7 @@ public class TransferController implements Initializable {
     }
 
     private MFXContextMenu showContextMenu(MFXTableRow<TransferMaster> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(transferMasterTable);
+        MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
 
@@ -170,7 +172,7 @@ public class TransferController implements Initializable {
                                 }
                             });
 
-                    transferCreateBtnClicked();
+                    createBtnClicked();
 
                     e.consume();
                 });
@@ -181,7 +183,7 @@ public class TransferController implements Initializable {
     }
 
     @FXML
-    private void transferCreateBtnClicked() {
+    private void createBtnClicked() {
         BaseController.navigation.navigate(Pages.getTransferMasterFormPane());
     }
 

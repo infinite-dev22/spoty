@@ -40,15 +40,17 @@ import java.util.ResourceBundle;
 public class StockInController implements Initializable {
     private static StockInController instance;
     @FXML
-    public MFXTextField stockInSearchBar;
+    public MFXTextField searchBar;
     @FXML
-    public HBox stockInActionsPane;
+    public HBox actionsPane;
     @FXML
-    public MFXButton stockInImportBtn;
+    public MFXButton importBtn;
     @FXML
-    public MFXTableView<StockInMaster> stockInMasterTable;
+    public MFXTableView<StockInMaster> masterTable;
     @FXML
-    public BorderPane stockInContentPane;
+    public BorderPane contentPane;
+    @FXML
+    public MFXButton createBtn;
 
     public static StockInController getInstance() {
         if (instance == null) instance = new StockInController();
@@ -61,25 +63,25 @@ public class StockInController implements Initializable {
     }
 
     private void setupTable() {
-        MFXTableColumn<StockInMaster> stockInStatus =
+        MFXTableColumn<StockInMaster> status =
                 new MFXTableColumn<>("Status", false, Comparator.comparing(StockInMaster::getStatus));
         MFXTableColumn<StockInMaster> stockInDate =
                 new MFXTableColumn<>("Date", false, Comparator.comparing(StockInMaster::getDate));
         MFXTableColumn<StockInMaster> stockInTotalCost =
                 new MFXTableColumn<>("Total Amount", false, Comparator.comparing(StockInMaster::getTotal));
 
-        stockInStatus.setRowCellFactory(stockIn -> new MFXTableRowCell<>(StockInMaster::getStatus));
+        status.setRowCellFactory(stockIn -> new MFXTableRowCell<>(StockInMaster::getStatus));
         stockInTotalCost.setRowCellFactory(stockIn -> new MFXTableRowCell<>(StockInMaster::getTotal));
         stockInDate.setRowCellFactory(stockIn -> new MFXTableRowCell<>(StockInMaster::getLocaleDate));
 
-        stockInStatus.prefWidthProperty().bind(stockInMasterTable.widthProperty().multiply(.3));
-        stockInTotalCost.prefWidthProperty().bind(stockInMasterTable.widthProperty().multiply(.3));
-        stockInDate.prefWidthProperty().bind(stockInMasterTable.widthProperty().multiply(.3));
+        status.prefWidthProperty().bind(masterTable.widthProperty().multiply(.3));
+        stockInTotalCost.prefWidthProperty().bind(masterTable.widthProperty().multiply(.3));
+        stockInDate.prefWidthProperty().bind(masterTable.widthProperty().multiply(.3));
 
-        stockInMasterTable
+        masterTable
                 .getTableColumns()
-                .addAll(stockInStatus, stockInDate, stockInTotalCost);
-        stockInMasterTable
+                .addAll(status, stockInDate, stockInTotalCost);
+        masterTable
                 .getFilters()
                 .addAll(
                         new StringFilter<>("Reference", StockInMaster::getRef),
@@ -91,27 +93,27 @@ public class StockInController implements Initializable {
             StockInMasterViewModel.getStockIns()
                     .addListener(
                             (ListChangeListener<StockInMaster>)
-                                    c -> stockInMasterTable.setItems(StockInMasterViewModel.getStockIns()));
+                                    c -> masterTable.setItems(StockInMasterViewModel.getStockIns()));
         } else {
-            stockInMasterTable
+            masterTable
                     .itemsProperty()
                     .bindBidirectional(StockInMasterViewModel.stockInsProperty());
         }
     }
 
     private void getStockInMasterTable() {
-        stockInMasterTable.setPrefSize(1000, 1000);
-        stockInMasterTable.features().enableBounceEffect();
-        stockInMasterTable.features().enableSmoothScrolling(0.5);
+        masterTable.setPrefSize(1000, 1000);
+        masterTable.features().enableBounceEffect();
+        masterTable.features().enableSmoothScrolling(0.5);
 
-        stockInMasterTable.setTableRowFactory(
+        masterTable.setTableRowFactory(
                 t -> {
-                    MFXTableRow<StockInMaster> row = new MFXTableRow<>(stockInMasterTable, t);
+                    MFXTableRow<StockInMaster> row = new MFXTableRow<>(masterTable, t);
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
                                 showContextMenu((MFXTableRow<StockInMaster>) event.getSource())
                                         .show(
-                                                stockInMasterTable.getScene().getWindow(),
+                                                masterTable.getScene().getWindow(),
                                                 event.getScreenX(),
                                                 event.getScreenY());
                                 event.consume();
@@ -122,7 +124,7 @@ public class StockInController implements Initializable {
     }
 
     private MFXContextMenu showContextMenu(MFXTableRow<StockInMaster> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(stockInMasterTable);
+        MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
 
@@ -153,7 +155,7 @@ public class StockInController implements Initializable {
                                 }
                             });
 
-                    stockInCreateBtnClicked();
+                    createBtnClicked();
 
                     e.consume();
                 });
@@ -164,7 +166,7 @@ public class StockInController implements Initializable {
     }
 
     @FXML
-    private void stockInCreateBtnClicked() {
+    private void createBtnClicked() {
         BaseController.navigation.navigate(Pages.getStockInMasterFormPane());
     }
 

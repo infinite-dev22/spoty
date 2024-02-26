@@ -40,15 +40,17 @@ import java.util.ResourceBundle;
 public class QuotationController implements Initializable {
     private static QuotationController instance;
     @FXML
-    public MFXTextField quotationSearchBar;
+    public MFXTextField searchBar;
     @FXML
-    public HBox quotationActionsPane;
+    public HBox actionsPane;
     @FXML
-    public MFXButton quotationImportBtn;
+    public MFXButton importBtn;
     @FXML
-    public BorderPane quotationContentPane;
+    public BorderPane contentPane;
     @FXML
-    private MFXTableView<QuotationMaster> quotationsTable;
+    public MFXButton createBtn;
+    @FXML
+    private MFXTableView<QuotationMaster> masterTable;
 
     public static QuotationController getInstance() {
         if (instance == null) instance = new QuotationController();
@@ -81,19 +83,19 @@ public class QuotationController implements Initializable {
         quotationTotalAmount.setRowCellFactory(
                 quotation -> new MFXTableRowCell<>(QuotationMaster::getTotal));
 
-        quotationCustomer.prefWidthProperty().bind(quotationsTable.widthProperty().multiply(.25));
-        quotationStatus.prefWidthProperty().bind(quotationsTable.widthProperty().multiply(.25));
-        quotationDate.prefWidthProperty().bind(quotationsTable.widthProperty().multiply(.25));
-        quotationTotalAmount.prefWidthProperty().bind(quotationsTable.widthProperty().multiply(.25));
+        quotationCustomer.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        quotationStatus.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        quotationDate.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        quotationTotalAmount.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
 
-        quotationsTable
+        masterTable
                 .getTableColumns()
                 .addAll(
                         quotationCustomer,
                         quotationStatus,
                         quotationDate,
                         quotationTotalAmount);
-        quotationsTable
+        masterTable
                 .getFilters()
                 .addAll(
                         new StringFilter<>("Reference", QuotationMaster::getRef),
@@ -106,27 +108,27 @@ public class QuotationController implements Initializable {
             QuotationMasterViewModel.getQuotations()
                     .addListener(
                             (ListChangeListener<QuotationMaster>)
-                                    c -> quotationsTable.setItems(QuotationMasterViewModel.getQuotations()));
+                                    c -> masterTable.setItems(QuotationMasterViewModel.getQuotations()));
         } else {
-            quotationsTable
+            masterTable
                     .itemsProperty()
                     .bindBidirectional(QuotationMasterViewModel.quotationsProperty());
         }
     }
 
     private void getQuotationMasterTable() {
-        quotationsTable.setPrefSize(1000, 1000);
-        quotationsTable.features().enableBounceEffect();
-        quotationsTable.features().enableSmoothScrolling(0.5);
+        masterTable.setPrefSize(1000, 1000);
+        masterTable.features().enableBounceEffect();
+        masterTable.features().enableSmoothScrolling(0.5);
 
-        quotationsTable.setTableRowFactory(
+        masterTable.setTableRowFactory(
                 t -> {
-                    MFXTableRow<QuotationMaster> row = new MFXTableRow<>(quotationsTable, t);
+                    MFXTableRow<QuotationMaster> row = new MFXTableRow<>(masterTable, t);
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
                                 showContextMenu((MFXTableRow<QuotationMaster>) event.getSource())
                                         .show(
-                                                quotationsTable.getScene().getWindow(),
+                                                masterTable.getScene().getWindow(),
                                                 event.getScreenX(),
                                                 event.getScreenY());
                                 event.consume();
@@ -137,7 +139,7 @@ public class QuotationController implements Initializable {
     }
 
     private MFXContextMenu showContextMenu(MFXTableRow<QuotationMaster> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(quotationsTable);
+        MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
         MFXContextMenuItem view = new MFXContextMenuItem("View");
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
@@ -165,7 +167,7 @@ public class QuotationController implements Initializable {
                             throw new RuntimeException(ex);
                         }
                     });
-                    quotationCreateBtnClicked();
+                    createBtnClicked();
                     e.consume();
                 });
 
@@ -174,7 +176,7 @@ public class QuotationController implements Initializable {
         return contextMenu;
     }
 
-    public void quotationCreateBtnClicked() {
+    public void createBtnClicked() {
         BaseController.navigation.navigate(Pages.getQuotationMasterFormPane());
     }
 

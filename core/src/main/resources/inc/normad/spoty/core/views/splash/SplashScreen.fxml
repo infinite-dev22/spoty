@@ -40,7 +40,7 @@
         </AnchorPane>
     </bottom>
     <padding>
-        <Insets bottom="5.0" left="5.0" right="10.0" top="5.0"/>
+        <Insets topRightBottomLeft="5.0"/>
     </padding>
     <stylesheets>
         <URL value="@../../styles/Splash.css"/>
