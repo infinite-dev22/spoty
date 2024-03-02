@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<!--
+  ~ Copyright (c) 2023, Jonathan Mark Mwigo. All rights reserved.
+  ~
+  ~ The computer system code contained in this file is the property of Jonathan Mark Mwigo and is protected by copyright law. Any unauthorized use of this code is prohibited.
+  ~
+  ~ This copyright notice applies to all parts of the computer system code, including the source code, object code, and any other related materials.
+  ~
+  ~ The computer system code may not be modified, translated, or reverse-engineered without the express written permission of Jonathan Mark Mwigo.
+  ~
+  ~ Jonathan Mark Mwigo reserves the right to update, modify, or discontinue the computer system code at any time.
+  ~
+  ~ Jonathan Mark Mwigo makes no warranties, express or implied, with respect to the computer system code. Jonathan Mark Mwigo shall not be liable for any damages, including, but not limited to, direct, indirect, incidental, special, consequential, or punitive damages, arising out of or in connection with the use of the computer system code.
+  -->
+
+<?import io.github.palexdev.mfxresources.fonts.MFXFontIcon?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.*?>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="88.0" prefWidth="229.0" styleClass="card-flat"
+            stylesheets="@../../styles/Common.css" xmlns="http://javafx.com/javafx/19"
+            fx:controller="inc.nomard.spoty.core.views.components.SmallCardController">
+    <Label fx:id="title" layoutX="14.0" layoutY="14.0" prefHeight="19.0" prefWidth="85.0" styleClass="card-title"
+           text="2050" AnchorPane.bottomAnchor="55.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="130.0"
+           AnchorPane.topAnchor="10.0"/>
+    <Label fx:id="subtitle" layoutX="14.0" layoutY="52.0" prefHeight="19.0" prefWidth="85.0" styleClass="card-sub-title"
+           text="Total Orders" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0"
+           AnchorPane.rightAnchor="130.0" AnchorPane.topAnchor="52.0"/>
+    <MFXFontIcon layoutX="139.0" layoutY="51.0" wrappingWidth="76.0" AnchorPane.bottomAnchor="36.0"
+                 AnchorPane.leftAnchor="143.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="36.0"/>
+</AnchorPane>

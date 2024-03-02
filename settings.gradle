@@ -1,6 +1,6 @@
 rootProject.name = 'spoty'
-include ':accounting'
 include ':core'
+include ':accounting'
 include ':network_bridge'
 include ':reporting'
 include ':utils'

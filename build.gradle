@@ -5,7 +5,7 @@ plugins {
 
 apply plugin: 'java'
 
-group 'inc.normad.io'
+group 'inc.nomard.io'
 version "$spoty"
 
 repositories {

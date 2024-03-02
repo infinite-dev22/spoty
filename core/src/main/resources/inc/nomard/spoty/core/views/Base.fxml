@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~ Copyright (c) 2023, Jonathan Mark Mwigo. All rights reserved.
+  ~
+  ~ The computer system code contained in this file is the property of Jonathan Mark Mwigo and is protected by copyright law. Any unauthorized use of this code is prohibited.
+  ~
+  ~ This copyright notice applies to all parts of the computer system code, including the source code, object code, and any other related materials.
+  ~
+  ~ The computer system code may not be modified, translated, or reverse-engineered without the express written permission of Jonathan Mark Mwigo.
+  ~
+  ~ Jonathan Mark Mwigo reserves the right to update, modify, or discontinue the computer system code at any time.
+  ~
+  ~ Jonathan Mark Mwigo makes no warranties, express or implied, with respect to the computer system code. Jonathan Mark Mwigo shall not be liable for any damages, including, but not limited to, direct, indirect, incidental, special, consequential, or punitive damages, arising out of or in connection with the use of the computer system code.
+  -->
+
+<?import io.github.palexdev.materialfx.controls.MFXButton?>
+<?import io.github.palexdev.mfxresources.fonts.MFXFontIcon?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import java.lang.String?>
+<?import java.net.URL?>
+<AnchorPane fx:id="rootPane" prefHeight="32767" prefWidth="32767" styleClass="rootPane"
+            xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="inc.nomard.spoty.core.views.BaseController">
+    <stylesheets>
+        <URL value="@../styles/base.css"/>
+        <URL value="@../styles/Common.css"/>
+        <URL value="@../styles/TextFields.css"/>
+    </stylesheets>
+    <VBox layoutX="6.0" layoutY="6.0" prefHeight="640.0" prefWidth="250.0" spacing="10.0" styleClass="sidebar"
+          AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="2.0" AnchorPane.topAnchor="2.0">
+        <padding>
+            <Insets bottom="5.0"/>
+        </padding>
+        <HBox spacing="10.0">
+            <padding>
+                <Insets bottom="5.0" left="10.0" right="10.0" top="10.0"/>
+            </padding>
+            <MFXFontIcon fx:id="closeIcon" description="fas-circle" onMouseClicked="#closeIconClicked" size="15.0"
+                         styleClass="close-icon"/>
+            <MFXFontIcon fx:id="minimizeIcon" description="fas-circle" onMouseClicked="#minimizeIconClicked" size="15.0"
+                         styleClass="minimize-icon"/>
+        </HBox>
+        <HBox>
+            <padding>
+                <Insets topRightBottomLeft="10.0"/>
+            </padding>
+            <ImageView fx:id="userProfilePicture"/>
+        </HBox>
+        <StackPane fx:id="navBar" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                   styleClass="navbar" VBox.vgrow="ALWAYS"/>
+    </VBox>
+    <AnchorPane styleClass="card" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="259.0"
+                AnchorPane.rightAnchor="5.0"
+                AnchorPane.topAnchor="5.0">
+        <HBox fx:id="windowHeader" layoutX="201.0" layoutY="7.0" prefHeight="45.0" prefWidth="1077.0" spacing="10.0"
+              AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
+            <padding>
+                <Insets bottom="2.0" left="10.0" right="10.0" top="2.0"/>
+            </padding>
+            <HBox spacing="10.0" HBox.hgrow="ALWAYS" alignment="CENTER_LEFT">
+                <padding>
+                    <Insets topRightBottomLeft="5.0"/>
+                </padding>
+            </HBox>
+            <HBox spacing="10.0" HBox.hgrow="ALWAYS" alignment="CENTER">
+                <padding>
+                    <Insets topRightBottomLeft="5.0"/>
+                </padding>
+                <MFXButton fx:id="notificationsBtn" styleClass="minimize-icon"/>
+            </HBox>
+            <HBox spacing="10.0" HBox.hgrow="ALWAYS" alignment="CENTER_RIGHT">
+                <padding>
+                    <Insets topRightBottomLeft="5.0"/>
+                </padding>
+                <MFXButton fx:id="feedbackBtn" styleClass="minimize-icon" text="Feedback"/>
+                <MFXButton fx:id="helpBtn" styleClass="close-icon" text="Help"/>
+            </HBox>
+            <styleClass>
+                <String fx:value="appBar"/>
+            </styleClass>
+        </HBox>
+        <StackPane fx:id="contentPane" layoutX="226.0" layoutY="45.0" prefHeight="604.0" prefWidth="1053.0"
+                   AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0"
+                   AnchorPane.topAnchor="55.0"/>
+    </AnchorPane>
+</AnchorPane>

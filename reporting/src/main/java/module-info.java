@@ -18,12 +18,12 @@ module spoty.reporting {
     requires spoty.utils;
     requires spoty.network_bridge;
 
-    opens inc.normad.spoty.reporting.accounting;
-    opens inc.normad.spoty.reporting.general;
-    opens inc.normad.spoty.reporting.navigation;
-    opens inc.normad.spoty.reporting;
+    opens inc.nomard.spoty.reporting.accounting;
+    opens inc.nomard.spoty.reporting.general;
+    opens inc.nomard.spoty.reporting.navigation;
+    opens inc.nomard.spoty.reporting;
 
-    exports inc.normad.spoty.reporting.accounting;
-    exports inc.normad.spoty.reporting.general;
-    exports inc.normad.spoty.reporting.navigation;
+    exports inc.nomard.spoty.reporting.accounting;
+    exports inc.nomard.spoty.reporting.general;
+    exports inc.nomard.spoty.reporting.navigation;
 }

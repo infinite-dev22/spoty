@@ -1,9 +1,9 @@
-package inc.normad.spoty.database.dao;
+package inc.nomard.spoty.database.dao;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Date;
-import inc.normad.spoty.network_bridge.dtos.Branch;
+import inc.nomard.spoty.network_bridge.dtos.Branch;
 import org.junit.jupiter.api.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)

@@ -16,8 +16,8 @@ module spoty.utils {
     requires com.google.gson;
     requires atlantafx.base;
 
-    opens inc.normad.spoty.utils;
+    opens inc.nomard.spoty.utils;
 
-    exports inc.normad.spoty.utils;
-    exports inc.normad.spoty.utils.navigation;
+    exports inc.nomard.spoty.utils;
+    exports inc.nomard.spoty.utils.navigation;
 }

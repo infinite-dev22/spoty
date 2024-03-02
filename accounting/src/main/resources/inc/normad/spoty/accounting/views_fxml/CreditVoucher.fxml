@@ -21,7 +21,7 @@
 <?import javafx.scene.layout.*?>
 <BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:id="creditVoucherContentPane" prefHeight="400.0" prefWidth="600.0"
             stylesheets="@../../styles/Common.css" xmlns="http://javafx.com/javafx/19"
-            fx:controller="inc.normad.spoty.core.views.account.CreditVoucherController">
+            fx:controller="inc.nomard.spoty.core.views.account.CreditVoucherController">
     <top>
         <AnchorPane styleClass="card" BorderPane.alignment="CENTER">
             <padding>
