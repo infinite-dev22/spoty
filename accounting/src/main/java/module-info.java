@@ -19,10 +19,10 @@ module spoty.accounting {
     requires spoty.utils;
 
 
-    opens inc.normad.spoty.accounting.navigation;
-    opens inc.normad.spoty.accounting.views;
-    opens inc.normad.spoty.accounting;
+    opens inc.nomard.spoty.accounting.navigation;
+    opens inc.nomard.spoty.accounting.views;
+    opens inc.nomard.spoty.accounting;
 
-    exports inc.normad.spoty.accounting.navigation;
-    exports inc.normad.spoty.accounting.views;
+    exports inc.nomard.spoty.accounting.navigation;
+    exports inc.nomard.spoty.accounting.views;
 }

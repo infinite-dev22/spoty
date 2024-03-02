@@ -21,11 +21,11 @@
 <?import javafx.scene.layout.*?>
 <BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:id="chartOfAccountContentPane" prefHeight="400.0" prefWidth="600.0"
             stylesheets="@../../styles/Common.css" xmlns="http://javafx.com/javafx/19"
-            fx:controller="inc.normad.spoty.core.views.account.ChartOfAccountController">
+            fx:controller="inc.nomard.spoty.core.views.account.ChartOfAccountController">
     <top>
         <AnchorPane styleClass="card" BorderPane.alignment="CENTER">
             <padding>
-                <Insets bottom="5.0" left="5.0" right="10.0" top="5.0"/>
+                <Insets topRightBottomLeft="5.0"/>
             </padding>
             <MFXTextField fx:id="chartOfAccountSearchBar" floatMode="DISABLED" promptText="Search chart of accounts"
                           prefWidth="300.0"

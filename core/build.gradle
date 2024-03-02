@@ -31,7 +31,7 @@ tasks.withType(JavaCompile).configureEach {
 
 application {
     mainModule = 'spoty.core'
-    mainClass = 'inc.normad.spoty.core.Main'
+    mainClass = 'inc.nomard.spoty.core.Main'
 }
 
 //graalvmNative {
@@ -69,7 +69,7 @@ run {
 jar {
     manifest {
         attributes(
-                'Main-Class': 'inc.normad.spoty.Main'
+                'Main-Class': 'inc.nomard.spoty.Main'
         )
     }
 }
