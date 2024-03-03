@@ -26,7 +26,7 @@
 <?import io.github.palexdev.materialfx.controls.MFXScrollPane?>
 <?import io.github.palexdev.materialfx.controls.MFXCheckbox?>
 <?import io.github.palexdev.materialfx.controls.MFXTextField?>
-<BorderPane fx:id="contentPane" prefHeight="400.0" prefWidth="600.0" stylesheets="@../../../styles/Common.css"
+<BorderPane fx:id="contentPane" prefHeight="400.0" prefWidth="600.0"
             xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="inc.nomard.spoty.core.views.settings.system_settings.CompanyDetailsController">
     <padding>

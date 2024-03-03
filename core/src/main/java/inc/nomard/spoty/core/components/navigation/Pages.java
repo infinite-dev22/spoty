@@ -14,10 +14,6 @@
 
 package inc.nomard.spoty.core.components.navigation;
 
-import javafx.fxml.FXMLLoader;
-import javafx.scene.layout.BorderPane;
-import javafx.stage.Stage;
-import lombok.Getter;
 import inc.nomard.spoty.core.views.bank.BankController;
 import inc.nomard.spoty.core.views.customers.CustomerController;
 import inc.nomard.spoty.core.views.dashboard.DashboardController;
@@ -59,11 +55,14 @@ import inc.nomard.spoty.core.views.settings.role_permission.AssignUserRoleContro
 import inc.nomard.spoty.core.views.settings.role_permission.RolesController;
 import inc.nomard.spoty.core.views.settings.system_settings.*;
 import inc.nomard.spoty.core.views.stock_in.StockInController;
-import inc.nomard.spoty.core.views.report.StockReportController;
 import inc.nomard.spoty.core.views.suppliers.SupplierController;
 import inc.nomard.spoty.core.views.tax.TaxSettingsController;
 import inc.nomard.spoty.core.views.tax.TaxesController;
 import inc.nomard.spoty.core.views.transfer.TransferController;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
+import lombok.Getter;
 
 import java.io.IOException;
 

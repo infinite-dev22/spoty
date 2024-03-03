@@ -318,10 +318,6 @@ public class Navigation {
                         NAV_TREE.get("BRANCHES"),
                         NAV_TREE.get("COMPANY"),
                         NAV_TREE.get("CURRENCIES"),
-                        NAV_TREE.get("LANGUAGES"),
-                        NAV_TREE.get("MAIL"),
-                        NAV_TREE.get("POS"),
-                        NAV_TREE.get("PRINT"),
                         NAV_TREE.get("SETTINGS"),
                         NAV_TREE.get("SYSTEM"));
         var settings = NavTree.NavTreeItem.group("Settings", "fas-gears");

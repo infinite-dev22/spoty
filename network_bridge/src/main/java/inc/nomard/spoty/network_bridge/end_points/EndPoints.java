@@ -436,4 +436,15 @@ public class EndPoints {
         public static final String deleteBeneficiaryType = beneficiaryTypeUrl + "/single/delete";
         public static final String deleteBeneficiaryTypes = beneficiaryTypeUrl + "/multiple/delete";
     }
+
+    public static final class Email {
+        public static final String emailUrl = apiUrl + "/email";
+        public static final String allEmails = emailUrl + "/all";
+        public static final String emailById = emailUrl + "/single";
+        public static final String searchEmails = emailUrl + "/search";
+        public static final String addEmail = emailUrl + "/add";
+        public static final String updateEmail = emailUrl + "/update";
+        public static final String deleteEmail = emailUrl + "/single/delete";
+        public static final String deleteEmails = emailUrl + "/multiple/delete";
+    }
 }

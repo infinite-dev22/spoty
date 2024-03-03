@@ -48,6 +48,7 @@ module spoty.core {
     opens inc.nomard.spoty.core.views.customers;
     opens inc.nomard.spoty.core.views.suppliers;
     opens inc.nomard.spoty.core.views.settings.system_settings;
+    opens inc.nomard.spoty.core.views.settings.system_settings.app_settings;
     opens inc.nomard.spoty.core.views.settings.data_synchronizer;
     opens inc.nomard.spoty.core.views.settings.role_permission;
     opens inc.nomard.spoty.core.views.forms;

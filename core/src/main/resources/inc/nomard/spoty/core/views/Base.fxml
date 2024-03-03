@@ -28,6 +28,7 @@
         <URL value="@../styles/base.css"/>
         <URL value="@../styles/Common.css"/>
         <URL value="@../styles/TextFields.css"/>
+        <URL value="@../styles/theming/Default.css"/>
     </stylesheets>
     <VBox layoutX="6.0" layoutY="6.0" prefHeight="640.0" prefWidth="250.0" spacing="10.0" styleClass="sidebar"
           AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="2.0" AnchorPane.topAnchor="2.0">

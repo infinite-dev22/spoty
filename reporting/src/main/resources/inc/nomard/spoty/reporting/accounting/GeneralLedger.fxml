@@ -20,7 +20,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.*?>
 <BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:id="contentPane" prefHeight="400.0" prefWidth="600.0"
-            stylesheets="@../../../styles/Common.css" xmlns="http://javafx.com/javafx/19"
+            xmlns="http://javafx.com/javafx/19"
             fx:controller="inc.nomard.spoty.core.views.account.report.GeneralLedgerController">
     <top>
         <AnchorPane styleClass="card" BorderPane.alignment="CENTER">
