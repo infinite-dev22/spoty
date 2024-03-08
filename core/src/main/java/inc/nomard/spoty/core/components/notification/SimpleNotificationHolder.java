@@ -21,9 +21,11 @@ import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -76,7 +78,10 @@ public class SimpleNotificationHolder {
         root.setPrefWrapLength(70);
         root.setVgap(10);
         root.getStyleClass().add("notification-holder");
-        root.getStylesheets().add(SpotyCoreResourceLoader.load("styles/base.css"));
+        root.getStylesheets().addAll(SpotyCoreResourceLoader.load("styles/base.css"),
+                SpotyCoreResourceLoader.load("styles/theming/Default.css"));
+
+        StackPane.setAlignment(root, Pos.TOP_RIGHT);
 
         Scene scene = new Scene(root);
         scene.setFill(Color.TRANSPARENT);
