@@ -17,7 +17,6 @@ package inc.nomard.spoty.core.views.settings.role_permission;
 import inc.nomard.spoty.core.components.animations.SpotyAnimations;
 import inc.nomard.spoty.core.components.navigation.Navigation;
 import inc.nomard.spoty.core.components.navigation.Pages;
-import inc.nomard.spoty.core.viewModels.BankViewModel;
 import inc.nomard.spoty.core.viewModels.RoleViewModel;
 import inc.nomard.spoty.network_bridge.dtos.Role;
 import inc.nomard.spoty.utils.SpotyThreader;

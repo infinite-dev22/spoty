@@ -214,6 +214,7 @@ public class EmploymentStatusController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        setIcons();
         Platform.runLater(this::setupTable);
     }
 }

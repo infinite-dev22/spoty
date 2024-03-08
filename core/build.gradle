@@ -12,7 +12,7 @@ apply plugin: 'java'
 
 project.description = 'Zenmart ERP - Fintech Software.'
 project.ext.buildDate = LocalDate.now()
-project.version = '230.46.16'
+project.version = '230.46.17'
 
 repositories {
     mavenLocal()

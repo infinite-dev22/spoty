@@ -119,7 +119,7 @@ public class EndPoints {
     }
 
     public static final class ExpenseCategories {
-        public static final String expenseCategoriesUrl = apiUrl + "/expense_categories";
+        public static final String expenseCategoriesUrl = apiUrl + "/expense/categories";
         public static final String allExpenseCategories = expenseCategoriesUrl + "/all";
         public static final String designationById = expenseCategoriesUrl + "/single";
         public static final String searchExpenseCategories = expenseCategoriesUrl + "/search";
@@ -141,7 +141,7 @@ public class EndPoints {
     }
 
     public static final class ProductCategories {
-        public static final String productCategoryUrl = apiUrl + "/product_categories";
+        public static final String productCategoryUrl = apiUrl + "/product/categories";
         public static final String allProductCategories = productCategoryUrl + "/all";
         public static final String productCategoriesById = productCategoryUrl + "/single";
         public static final String searchProductCategories = productCategoryUrl + "/search";
@@ -224,7 +224,7 @@ public class EndPoints {
     }
 
     public static final class SalaryAdvances {
-        public static final String salaryAdvancesUrl = apiUrl + "/salary_advances";
+        public static final String salaryAdvancesUrl = apiUrl + "/salary/advances";
         public static final String allSalaryAdvances = salaryAdvancesUrl + "/all";
         public static final String salaryAdvanceById = salaryAdvancesUrl + "/single";
         public static final String searchSalaryAdvances = salaryAdvancesUrl + "/search";
@@ -277,7 +277,7 @@ public class EndPoints {
     }
 
     public static final class ServiceInvoices {
-        public static final String serviceInvoicesUrl = apiUrl + "/service_invoices";
+        public static final String serviceInvoicesUrl = apiUrl + "/service/invoices";
         public static final String allServiceInvoices = serviceInvoicesUrl + "/all";
         public static final String serviceInvoiceById = serviceInvoicesUrl + "/single";
         public static final String searchServiceInvoices = serviceInvoicesUrl + "/search";
@@ -361,7 +361,7 @@ public class EndPoints {
     }
 
     public static final class UserProfiles {
-        public static final String userProfilesUrl = apiUrl + "/user_profiles";
+        public static final String userProfilesUrl = apiUrl + "/user/profiles";
         public static final String allUserProfiles = userProfilesUrl + "/all";
         public static final String userProfileById = userProfilesUrl + "/single";
         public static final String searchUserProfiles = userProfilesUrl + "/search";
@@ -383,7 +383,7 @@ public class EndPoints {
     }
 
     public static final class EmploymentStatus {
-        public static final String employmentStatusesUrl = apiUrl + "/employment_statuses";
+        public static final String employmentStatusesUrl = apiUrl + "/employment/statuses";
         public static final String allEmploymentStatuses = employmentStatusesUrl + "/all";
         public static final String employmentStatusById = employmentStatusesUrl + "/single";
         public static final String searchEmploymentStatuses = employmentStatusesUrl + "/search";
@@ -394,7 +394,7 @@ public class EndPoints {
     }
 
     public static final class LeaveStatus {
-        public static final String leaveStatusesUrl = apiUrl + "/leave_statuses";
+        public static final String leaveStatusesUrl = apiUrl + "/leave/statuses";
         public static final String allLeaveStatuses = leaveStatusesUrl + "/all";
         public static final String leaveStatusById = leaveStatusesUrl + "/single";
         public static final String searchLeaveStatuses = leaveStatusesUrl + "/search";
@@ -405,7 +405,7 @@ public class EndPoints {
     }
 
     public static final class PaySlip {
-        public static final String paySlipUrl = apiUrl + "/pay_slip";
+        public static final String paySlipUrl = apiUrl + "/payslip";
         public static final String allPaySlips = paySlipUrl + "/all";
         public static final String paySlipById = paySlipUrl + "/single";
         public static final String searchPaySlips = paySlipUrl + "/search";
@@ -416,7 +416,7 @@ public class EndPoints {
     }
 
     public static final class BeneficiaryBadge {
-        public static final String beneficiaryBadgeUrl = apiUrl + "/beneficiary_badge";
+        public static final String beneficiaryBadgeUrl = apiUrl + "/beneficiary/badge";
         public static final String allBeneficiaryBadges = beneficiaryBadgeUrl + "/all";
         public static final String beneficiaryBadgeById = beneficiaryBadgeUrl + "/single";
         public static final String searchBeneficiaryBadges = beneficiaryBadgeUrl + "/search";
@@ -427,7 +427,7 @@ public class EndPoints {
     }
 
     public static final class BeneficiaryType {
-        public static final String beneficiaryTypeUrl = apiUrl + "/beneficiary_type";
+        public static final String beneficiaryTypeUrl = apiUrl + "/beneficiary/type";
         public static final String allBeneficiaryTypes = beneficiaryTypeUrl + "/all";
         public static final String beneficiaryTypeById = beneficiaryTypeUrl + "/single";
         public static final String searchBeneficiaryTypes = beneficiaryTypeUrl + "/search";

@@ -130,7 +130,10 @@ public class BrandViewModel {
             task.setOnRunning(workerStateEvent -> onActivity.run());
         }
         if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> onFailed.run());
+            task.setOnFailed(workerStateEvent -> {
+                System.out.println(workerStateEvent);
+                onFailed.run();
+            });
         }
         task.setOnSucceeded(workerStateEvent -> {
             try {
@@ -148,6 +151,7 @@ public class BrandViewModel {
                 SpotyLogger.writeToFile(e, BrandViewModel.class);
             }
         });
+        SpotyThreader.spotyThreadPool(task);
     }
 
     public static void getItem(
