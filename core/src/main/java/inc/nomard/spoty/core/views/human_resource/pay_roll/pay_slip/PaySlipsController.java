@@ -49,6 +49,7 @@ public class PaySlipsController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        setIcons();
         scrollPane.setNodeOrientation(NodeOrientation.INHERIT);
         try {
             FXMLLoader paySlipItemLoader = fxmlLoader("views/human_resource/pay_roll/pay_slip/PaySlipItem.fxml");

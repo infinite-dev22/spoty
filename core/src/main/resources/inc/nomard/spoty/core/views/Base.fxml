@@ -26,7 +26,10 @@
             fx:controller="inc.nomard.spoty.core.views.BaseController">
     <stylesheets>
         <URL value="@../styles/base.css"/>
+        <URL value="@../styles/Buttons.css"/>
         <URL value="@../styles/Common.css"/>
+        <URL value="@../styles/Progress.css"/>
+        <URL value="@../styles/Splash.css"/>
         <URL value="@../styles/TextFields.css"/>
         <URL value="@../styles/theming/Default.css"/>
     </stylesheets>

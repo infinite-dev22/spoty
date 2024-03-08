@@ -62,6 +62,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URL;
@@ -73,7 +74,6 @@ import java.util.function.Predicate;
 
 public class PointOfSaleController implements Initializable {
     private final ToggleGroup toggleGroup = new ToggleGroup();
-    private final ToggleButton allToggleButton = createToggle("All Categories", toggleGroup);
     @FXML
     public MFXFilterComboBox<Customer> posCustomerComboBox;
     @FXML
@@ -158,7 +158,7 @@ public class PointOfSaleController implements Initializable {
 
     private void setProductsGridView() {
         GridPane productsGridView = new GridPane();
-        productsGridView.setHgap(20);
+        productsGridView.setHgap(30);
         productsGridView.setVgap(20);
         productsGridView.setPadding(new Insets(5));
 
@@ -169,7 +169,7 @@ public class PointOfSaleController implements Initializable {
             ProductCard productCard = new ProductCard(product);
             productCardOnAction(productCard);
 
-            if (column == 6) {
+            if (column == 4) {
                 column = 0;
                 ++row;
             }
@@ -225,7 +225,7 @@ public class PointOfSaleController implements Initializable {
 
     private double calculateSubTotal(Product product) {
         return (SaleDetailViewModel.getQuantity()
-                * ((product.getNetTax() > 0) ? product.getNetTax() : 1.0))
+                * ((product.getNetTax() > 0) ? (product.getNetTax() / 100) : 1.0))
                 * product.getPrice();
     }
 
@@ -239,15 +239,12 @@ public class PointOfSaleController implements Initializable {
         return totalPrice;
     }
 
-    private long calculateQuantity(SaleDetail saleDetail) {
+    @Contract(pure = true)
+    private long calculateQuantity(@NotNull SaleDetail saleDetail) {
         return saleDetail.getQuantity() + 1;
     }
 
     private void setCategoryFilters() {
-        posFilterPane.getChildren().addAll(allToggleButton);
-
-        toggleGroup.selectToggle(allToggleButton);
-
         ProductCategoryViewModel.getCategories()
                 .forEach(
                         productCategory -> {

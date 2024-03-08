@@ -265,9 +265,21 @@
 }
 
 /*POS PRODUCT CARD*/
+.pos-product-card {
+   -fx-background-color: rgba(255, 255, 255, 1);
+   -fx-border-color: -mfx-border-gray;
+}
 .pos-product-label {
-    -fx-background-color: red;
     -fx-text-fill: white;
+}
+.pos-product-card-name {
+    -fx-text-fill: black;
+}
+.pos-product-card-price {
+    -fx-text-fill: black;
+}
+.pos-product-card-quantity {
+    -fx-text-fill: gray;
 }
 
 .rounded {
@@ -351,4 +363,13 @@
 
 .tabbed-pane *.tab-header-background {
     -fx-background-color: -mfx-charcoal;
+}
+/* POS STYLES */
+.empty-cart-button {
+    -fx-background-color: red;
+    -fx-text-fill: white;
+}
+.check-out-button {
+    -fx-background-color: green;
+    -fx-text-fill: white;
 }
