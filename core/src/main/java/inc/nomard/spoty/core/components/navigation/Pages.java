@@ -138,11 +138,6 @@ public class Pages {
     private static final FXMLLoader branchesLoader = fxmlLoader("views/settings/system_settings/Branches.fxml");
     private static final FXMLLoader companySettingsLoader = fxmlLoader("views/settings/system_settings/CompanyDetails.fxml");
     private static final FXMLLoader currencyLoader = fxmlLoader("views/settings/system_settings/Currency.fxml");
-    private static final FXMLLoader languagesLoader = fxmlLoader("views/settings/system_settings/Languages.fxml");
-    private static final FXMLLoader mailSettingsLoader = fxmlLoader("views/settings/system_settings/MailSettings.fxml");
-    private static final FXMLLoader posSettingsLoader = fxmlLoader("views/settings/system_settings/POS.fxml");
-    private static final FXMLLoader printSettingsLoader = fxmlLoader("views/settings/system_settings/PrintSettings.fxml");
-    private static final FXMLLoader settingsLoader = fxmlLoader("views/settings/system_settings/Settings.fxml");
     private static final FXMLLoader systemLoader = fxmlLoader("views/settings/system_settings/System.fxml");
 
     private static final FXMLLoader saleMasterFormLoader = fxmlLoader("views/forms/SaleMasterForm.fxml");
@@ -336,15 +331,6 @@ public class Pages {
     private static BorderPane currencyPane;
 
     @Getter
-    private static BorderPane languagesPane;
-
-    @Getter
-    private static BorderPane mailSettingsPane;
-
-    @Getter
-    private static BorderPane printSettingsPane;
-
-    @Getter
     private static BorderPane systemPane;
 
     @Getter
@@ -385,9 +371,6 @@ public class Pages {
 
     @Getter
     private static BorderPane expensePane;
-
-    @Getter
-    private static BorderPane settingsPane;
 
     @Getter
     private static BorderPane adjustmentMasterFormPane;
@@ -528,11 +511,6 @@ public class Pages {
         branchesLoader.setControllerFactory(c -> BranchController.getInstance(stage));
         companySettingsLoader.setControllerFactory(c -> new CompanyDetailsController());
         currencyLoader.setControllerFactory(c -> CurrencyController.getInstance(stage));
-        languagesLoader.setControllerFactory(c -> new LanguagesController());
-        mailSettingsLoader.setControllerFactory(c -> new MailSettingsController());
-        posSettingsLoader.setControllerFactory(c -> POSController.getInstance());
-        printSettingsLoader.setControllerFactory(c -> new PrintSettingsController());
-        settingsLoader.setControllerFactory(c -> new SettingsController());
         systemLoader.setControllerFactory(c -> new SystemController());
     }
 
@@ -625,9 +603,6 @@ public class Pages {
         branchesPane = branchesLoader.load();
         companySettingsPane = companySettingsLoader.load();
         currencyPane = currencyLoader.load();
-        languagesPane = languagesLoader.load();
-        mailSettingsPane = mailSettingsLoader.load();
-        printSettingsPane = printSettingsLoader.load();
 
         productCategoryPane = productCategoryLoader.load();
         brandPane = brandLoader.load();
@@ -646,7 +621,6 @@ public class Pages {
         expenseCategoryPane = expenseCategoryLoader.load();
         expensePane = expenseLoader.load();
 
-        settingsPane = settingsLoader.load();
         roleSettingsFormPane = roleSettingsFormLoader.load();
 
         adjustmentMasterFormPane = adjustmentMasterFormLoader.load();

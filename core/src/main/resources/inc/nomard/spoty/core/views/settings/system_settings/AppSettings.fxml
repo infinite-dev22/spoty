@@ -14,6 +14,7 @@
   ~ Jonathan Mark Mwigo makes no warranties, express or implied, with respect to the computer system code. Jonathan Mark Mwigo shall not be liable for any damages, including, but not limited to, direct, indirect, incidental, special, consequential, or punitive damages, arising out of or in connection with the use of the computer system code.
   -->
 
+<?import inc.nomard.spoty.core.views.settings.system_settings.app_settings.Appearance?>
 <?import inc.nomard.spoty.core.views.settings.system_settings.app_settings.EmailPage?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -33,17 +34,12 @@
                                    AnchorPane.topAnchor="0.0" AnchorPane.rightAnchor="0.0"/>
                     </AnchorPane>
                 </Tab>
-                <Tab text="POS">
+                <Tab text="Appearance &amp; Language">
                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"
-                                styleClass="rounded"/>
-                </Tab>
-                <Tab text="Theming &amp; Looks">
-                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"
-                                styleClass="rounded"/>
-                </Tab>
-                <Tab text="Language &amp; Input">
-                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"
-                                styleClass="rounded"/>
+                                styleClass="rounded">
+                        <Appearance AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                                    AnchorPane.topAnchor="0.0" AnchorPane.rightAnchor="0.0"/>
+                    </AnchorPane>
                 </Tab>
                 <Tab text="Printers &amp; Printing">
                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"

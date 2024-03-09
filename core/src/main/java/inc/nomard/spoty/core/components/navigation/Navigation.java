@@ -117,11 +117,6 @@ public class Navigation {
         map.put("BRANCHES", NavTree.NavTreeItem.page("Branches", Pages.getBranchesPane()));
         map.put("COMPANY", NavTree.NavTreeItem.page("Company Details", Pages.getCompanySettingsPane()));
         map.put("CURRENCIES", NavTree.NavTreeItem.page("Currencies", Pages.getCurrencyPane()));
-        map.put("LANGUAGES", NavTree.NavTreeItem.page("Languages & Input", Pages.getLanguagesPane()));
-        map.put("MAIL", NavTree.NavTreeItem.page("Mail", Pages.getMailSettingsPane()));
-        map.put("POS", NavTree.NavTreeItem.page("POS", Pages.getPosPane()));
-        map.put("PRINT", NavTree.NavTreeItem.page("Print", Pages.getPrintSettingsPane()));
-        map.put("SETTINGS", NavTree.NavTreeItem.page("Settings", Pages.getSettingsPane()));
         map.put("SYSTEM", NavTree.NavTreeItem.page("System", Pages.getSystemPane()));
 
         return map;
@@ -318,7 +313,6 @@ public class Navigation {
                         NAV_TREE.get("BRANCHES"),
                         NAV_TREE.get("COMPANY"),
                         NAV_TREE.get("CURRENCIES"),
-                        NAV_TREE.get("SETTINGS"),
                         NAV_TREE.get("SYSTEM"));
         var settings = NavTree.NavTreeItem.group("Settings", "fas-gears");
         settings

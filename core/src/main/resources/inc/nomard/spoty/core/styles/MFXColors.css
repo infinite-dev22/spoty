@@ -25,6 +25,8 @@
     -mfx-red: #EF6E6B;
     -mfx-yellow: #FFEA00;
     -mfx-danger-red: #DC4C64;
+    -spoty-background-gray: #f3f7f8;
+    -spoty-accent-color: -mfx-blue;
 
     -mfx-slate-gray: #6C6F7F;
     -mfx-paynes-gray: #5C6672;
@@ -45,5 +47,6 @@
     -common-gradient: linear-gradient(to right bottom, #c4008b, #d00085, #dc007f, #e60b79, #ef1872, #f5276b, #fa3564, #fe415e, #ff5158, #ff5f52, #ff6c4e, #ff794b);
     -secondary-gradient: linear-gradient(to right bottom, #1ec400, #00bd3a, #00b654, #00ae67, #00a574, #00a280, #009e8a, #009a91, #009b9d, #009ba8, #009bb2, #009abb);
 
+    -spoty-primary-color: -mfx-charcoal;
     -spoty-primary-color: -mfx-charcoal;
 }

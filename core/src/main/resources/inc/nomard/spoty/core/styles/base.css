@@ -296,21 +296,32 @@
 .pos-product-card-quantity {
     -fx-font-size: 12;
 }*/
-
-.rounded {
+.rounded, .rounded-border {
     -fx-background-radius: 10;
     -fx-border-radius: 10;
 }
-
-.rounded-border {
-    -fx-background-radius: 10;
-    -fx-border-radius: 10;
+.rounded-accent-border {
+    -fx-background-radius: 500;
+    -fx-border-radius: 500;
+    -fx-background-insets: 0;
+    -fx-border-insets: 0;
+    -fx-opaque-insets: 0;
+    -fx-border-width: 2;
 }
 
 /*CARDS*/
 .card-flat {
     -fx-background-radius: 10;
     -fx-border-radius: 10;
+}
+.card-flat-no-border {
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+}
+.theme-item {
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-width: 2;
 }
 .card-raised {
     -fx-background-radius: 10;
@@ -351,4 +362,17 @@
 .tabbed-pane *.tab-header-background {
     -fx-background-radius: 10 10 0 0;
     -fx-border-radius: 10;
+}
+/* APPEARANCE STYLES */
+.header-title{
+     -fx-font-size: 18;
+     -fx-font-weight: bold;
+}
+.header-description{
+}
+.sub-header-title{
+     -fx-font-size: 16;
+     -fx-font-style: italic;
+}
+.sub-header-description{
 }
