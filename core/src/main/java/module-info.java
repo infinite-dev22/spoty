@@ -61,6 +61,7 @@ module spoty.core {
     opens inc.nomard.spoty.core.components.title;
     opens inc.nomard.spoty.core.views.sales.pos;
     opens inc.nomard.spoty.core.views.printable.general;
+    opens inc.nomard.spoty.core.views.previews;
 
     exports inc.nomard.spoty.core;
 }

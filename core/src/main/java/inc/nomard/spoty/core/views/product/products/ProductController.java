@@ -15,9 +15,9 @@
 package inc.nomard.spoty.core.views.product.products;
 
 import inc.nomard.spoty.core.components.animations.SpotyAnimations;
-import inc.nomard.spoty.core.viewModels.BankViewModel;
 import inc.nomard.spoty.core.viewModels.ProductViewModel;
 import inc.nomard.spoty.core.views.forms.ProductFormController;
+import inc.nomard.spoty.core.views.previews.ProductPreviewController;
 import inc.nomard.spoty.core.views.printable.general.GeneralViewController;
 import inc.nomard.spoty.network_bridge.dtos.Product;
 import inc.nomard.spoty.utils.SpotyThreader;
@@ -74,6 +74,8 @@ public class ProductController implements Initializable {
     private MFXStageDialog formDialog;
     private MFXStageDialog viewDialog;
     private RotateTransition transition;
+    private FXMLLoader formFxmlLoader;
+    private FXMLLoader viewFxmlLoader;
 
     public ProductController(Stage stage) {
         Platform.runLater(
@@ -94,9 +96,9 @@ public class ProductController implements Initializable {
 
     private void productViewDialogPane(Stage stage) throws IOException {
         double screenHeight = Screen.getPrimary().getBounds().getHeight();
-        final FXMLLoader printableLoader = fxmlLoader("views/printable/general/General.fxml");
-        printableLoader.setControllerFactory(c -> GeneralViewController.getInstance());
-        MFXGenericDialog genericDialog = printableLoader.load();
+        viewFxmlLoader = fxmlLoader("views/previews/ProductPreview.fxml");
+        viewFxmlLoader.setControllerFactory(c -> new ProductPreviewController());
+        MFXGenericDialog genericDialog = viewFxmlLoader.load();
         genericDialog.setShowMinimize(false);
         genericDialog.setShowAlwaysOnTop(false);
 
@@ -112,6 +114,7 @@ public class ProductController implements Initializable {
                         .setScrimPriority(ScrimPriority.WINDOW)
                         .setScrimOwner(true)
                         .setCenterInOwnerNode(false)
+                        .setOverlayClose(true)
                         .get();
 
         io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(viewDialog.getScene());
@@ -206,7 +209,12 @@ public class ProductController implements Initializable {
         // Actions
         // View
         view.setOnAction(event -> {
-            productViewShow();
+            try {
+                productViewShow(obj.getData());
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+            event.consume();
         });
         // Delete
         delete.setOnAction(
@@ -243,10 +251,10 @@ public class ProductController implements Initializable {
     }
 
     private void productFormDialogPane(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = fxmlLoader("views/forms/ProductForm.fxml");
-        fxmlLoader.setControllerFactory(c -> ProductFormController.getInstance());
+        formFxmlLoader = fxmlLoader("views/forms/ProductForm.fxml");
+        formFxmlLoader.setControllerFactory(c -> ProductFormController.getInstance());
 
-        MFXGenericDialog dialogContent = fxmlLoader.load();
+        MFXGenericDialog dialogContent = formFxmlLoader.load();
 
         dialogContent.setShowMinimize(false);
         dialogContent.setShowAlwaysOnTop(false);
@@ -268,7 +276,9 @@ public class ProductController implements Initializable {
         formDialog.showAndWait();
     }
 
-    public void productViewShow() {
+    public void productViewShow(Product product) {
+        ProductPreviewController controller = viewFxmlLoader.getController();
+        controller.init(product);
         viewDialog.showAndWait();
     }
 

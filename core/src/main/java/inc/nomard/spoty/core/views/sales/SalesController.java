@@ -18,10 +18,15 @@ import inc.nomard.spoty.core.components.animations.SpotyAnimations;
 import inc.nomard.spoty.core.components.navigation.Pages;
 import inc.nomard.spoty.core.viewModels.sales.SaleMasterViewModel;
 import inc.nomard.spoty.core.views.BaseController;
+import inc.nomard.spoty.core.views.previews.SalePreviewController;
 import inc.nomard.spoty.network_bridge.dtos.sales.SaleMaster;
 import inc.nomard.spoty.utils.SpotyThreader;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
+import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
+import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
+import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
+import io.github.palexdev.materialfx.enums.ScrimPriority;
 import io.github.palexdev.materialfx.filter.DoubleFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
@@ -31,15 +36,22 @@ import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.stage.Modality;
+import javafx.stage.Screen;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
+
+import static inc.nomard.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
 
 @SuppressWarnings("unchecked")
 public class SalesController implements Initializable {
@@ -59,10 +71,23 @@ public class SalesController implements Initializable {
     @FXML
     private MFXTableView<SaleMaster> masterTable;
     private RotateTransition transition;
+    private FXMLLoader viewFxmlLoader;
+    private MFXStageDialog viewDialog;
 
-    public static SalesController getInstance() {
-        if (instance == null) instance = new SalesController();
+    public static SalesController getInstance(Stage stage) {
+        if (instance == null) instance = new SalesController(stage);
         return instance;
+    }
+
+    public SalesController(Stage stage) {
+        Platform.runLater(() ->
+        {
+            try {
+                viewDialogPane(stage);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     @Override
@@ -163,6 +188,7 @@ public class SalesController implements Initializable {
         MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+        MFXContextMenuItem view = new MFXContextMenuItem("View");
 
         // Actions
         // Delete
@@ -194,8 +220,18 @@ public class SalesController implements Initializable {
                     createBtnClicked();
                     e.consume();
                 });
+        // View
+        view.setOnAction(
+                event -> {
+                    try {
+                        viewShow(obj.getData());
+                    } catch (Exception ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    event.consume();
+                });
 
-        contextMenu.addItems(edit, delete);
+        contextMenu.addItems(view, edit, delete);
 
         return contextMenu;
     }
@@ -224,5 +260,37 @@ public class SalesController implements Initializable {
         transition = SpotyAnimations.rotateTransition(refreshIcon, Duration.millis(1000), 360);
 
         refreshIcon.setOnMouseClicked(mouseEvent -> SaleMasterViewModel.getSaleMasters(this::onAction, this::onSuccess, this::onFailed));
+    }
+
+    private void viewDialogPane(Stage stage) throws IOException {
+        double screenHeight = Screen.getPrimary().getBounds().getHeight();
+        viewFxmlLoader = fxmlLoader("views/previews/SalePreview.fxml");
+        viewFxmlLoader.setControllerFactory(c -> new SalePreviewController());
+        MFXGenericDialog genericDialog = viewFxmlLoader.load();
+        genericDialog.setShowMinimize(false);
+        genericDialog.setShowAlwaysOnTop(false);
+
+        genericDialog.setPrefHeight(screenHeight * .98);
+        genericDialog.setPrefWidth(700);
+
+        viewDialog =
+                MFXGenericDialogBuilder.build(genericDialog)
+                        .toStageDialogBuilder()
+                        .initOwner(stage)
+                        .initModality(Modality.WINDOW_MODAL)
+                        .setOwnerNode(contentPane)
+                        .setScrimPriority(ScrimPriority.WINDOW)
+                        .setScrimOwner(true)
+                        .setCenterInOwnerNode(false)
+                        .setOverlayClose(true)
+                        .get();
+
+        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(viewDialog.getScene());
+    }
+
+    public void viewShow(SaleMaster saleMaster) {
+        SalePreviewController controller = viewFxmlLoader.getController();
+        controller.init(saleMaster);
+        viewDialog.showAndWait();
     }
 }

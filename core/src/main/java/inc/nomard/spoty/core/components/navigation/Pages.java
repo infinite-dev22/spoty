@@ -405,7 +405,7 @@ public class Pages {
     }
 
     private static void setSales(Stage stage) {
-        saleLoader.setControllerFactory(e -> SalesController.getInstance());
+        saleLoader.setControllerFactory(e -> SalesController.getInstance(stage));
         posLoader.setControllerFactory(e -> new PointOfSaleController());
         salesTermLoader.setControllerFactory(e -> SaleTermsController.getInstance(stage));
     }

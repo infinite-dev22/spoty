@@ -1,6 +1,6 @@
 package inc.nomard.spoty.network_bridge.end_points;
 
-public class EndPoints {
+public class    EndPoints {
     public static final String appDNS = "http://localhost:8080";
     public static final String apiUrl = appDNS + "/api/v1";
 
