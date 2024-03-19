@@ -12,16 +12,20 @@
  * Jonathan Mark Mwigo makes no warranties, express or implied, with respect to the computer system code. Jonathan Mark Mwigo shall not be liable for any damages, including, but not limited to, direct, indirect, incidental, special, consequential, or punitive damages, arising out of or in connection with the use of the computer system code.
  */
 
-package inc.nomard.spoty.core.views.printable.requisition;
+package inc.nomard.spoty.core.views.previews;
 
+import inc.nomard.spoty.network_bridge.dtos.adjustments.AdjustmentMaster;
+import inc.nomard.spoty.network_bridge.dtos.purchases.PurchaseMaster;
 import javafx.fxml.Initializable;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class ProductRequisitionController implements Initializable {
+public class PurchasePreviewController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
     }
+
+    public void init(PurchaseMaster purchaseMaster){}
 }

@@ -423,7 +423,7 @@ public class Pages {
         brandLoader.setControllerFactory(e -> BrandController.getInstance(stage));
         unitLoader.setControllerFactory(e -> UnitOfMeasureController.getInstance(stage));
         productLoader.setControllerFactory(e -> ProductController.getInstance(stage));
-        adjustmentLoader.setControllerFactory(e -> AdjustmentController.getInstance());
+        adjustmentLoader.setControllerFactory(e -> AdjustmentController.getInstance(stage));
     }
 
     private static void setStockReport(Stage stage) {
@@ -474,7 +474,7 @@ public class Pages {
     }
 
     private static void setQuotation(Stage stage) {
-        quotationLoader.setControllerFactory(e -> QuotationController.getInstance());
+        quotationLoader.setControllerFactory(e -> QuotationController.getInstance(stage));
     }
 
     private static void setTax(Stage stage) {
@@ -482,16 +482,16 @@ public class Pages {
         taxSettingsLoader.setControllerFactory(e -> new TaxSettingsController());
     }
 
-    private static void setSingleItems() {
-        requisitionLoader.setControllerFactory(e -> RequisitionController.getInstance());
-        purchaseLoader.setControllerFactory(e -> PurchasesController.getInstance());
-        transferLoader.setControllerFactory(e -> TransferController.getInstance());
-        stockInLoader.setControllerFactory(e -> StockInController.getInstance());
+    private static void setSingleItems(Stage stage) {
+        requisitionLoader.setControllerFactory(e -> RequisitionController.getInstance(stage));
+        purchaseLoader.setControllerFactory(e -> PurchasesController.getInstance(stage));
+        transferLoader.setControllerFactory(e -> TransferController.getInstance(stage));
+        stockInLoader.setControllerFactory(e -> StockInController.getInstance(stage));
     }
 
-    private static void setReturns() {
-        saleReturnLoader.setControllerFactory(e -> new SaleReturnsController());
-        purchaseReturnLoader.setControllerFactory(e -> new PurchaseReturnController());
+    private static void setReturns(Stage stage) {
+        saleReturnLoader.setControllerFactory(e -> SaleReturnsController.getInstance(stage));
+        purchaseReturnLoader.setControllerFactory(e -> PurchaseReturnController.getInstance(stage));
     }
 
     private static void setDataSynchronizer(Stage stage) {
@@ -652,8 +652,8 @@ public class Pages {
         setService(stage);
         setQuotation(stage);
         setTax(stage);
-        setSingleItems();
-        setReturns();
+        setSingleItems(stage);
+        setReturns(stage);
         setExpenses(stage);
         setMasterForms(stage);
         setDataSynchronizer(stage);

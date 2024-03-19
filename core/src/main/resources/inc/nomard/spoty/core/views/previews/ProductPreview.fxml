@@ -2,57 +2,58 @@
 
 <?import io.github.palexdev.materialfx.controls.MFXScrollPane?>
 <?import io.github.palexdev.materialfx.dialogs.MFXGenericDialog?>
-<?import io.github.palexdev.mfxcore.controls.Label?>
+<?import io.github.palexdev.mfxcore.controls.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.VBox?>
-
-<MFXGenericDialog fx:id="dialog" prefHeight="700.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="inc.nomard.spoty.core.views.previews.ProductPreviewController">
+<?import javafx.scene.layout.*?>
+<MFXGenericDialog fx:id="dialog" prefHeight="700.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21"
+                  xmlns:fx="http://javafx.com/fxml/1"
+                  fx:controller="inc.nomard.spoty.core.views.previews.ProductPreviewController">
     <padding>
-        <Insets left="10.0" right="10" />
+        <Insets left="10.0" right="10"/>
     </padding>
     <center>
         <MFXScrollPane fitToHeight="true" fitToWidth="true">
-            <VBox>
-                <ImageView fx:id="productImage" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+            <VBox maxHeight="900.0" maxWidth="1000.0" minHeight="600.0" minWidth="500.0" prefHeight="800.0"
+                  prefWidth="700.0">
+                <ImageView fx:id="productImage" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true"
+                           preserveRatio="true"/>
                 <HBox VBox.vgrow="ALWAYS">
                     <VBox spacing="10.0" HBox.hgrow="ALWAYS">
-                        <Label text="Product:" />
-                        <Label text="Category:" />
-                        <Label text="Brand:" />
-                        <Label text="Type:" />
-                        <Label text="Cost:" />
-                        <Label text="Price:" />
-                        <Label text="Unit:" />
-                        <Label text="Tax:" />
-                        <Label text="Stock Quantity:" />
-                        <Label text="Alert Quantity:" />
-                        <Label text="Description:" />
+                        <Label text="Product:"/>
+                        <Label text="Category:"/>
+                        <Label text="Brand:"/>
+                        <Label text="Type:"/>
+                        <Label text="Cost:"/>
+                        <Label text="Price:"/>
+                        <Label text="Unit:"/>
+                        <Label text="Tax:"/>
+                        <Label text="Stock Quantity:"/>
+                        <Label text="Alert Quantity:"/>
+                        <Label text="Description:"/>
                     </VBox>
-                    <Region HBox.hgrow="ALWAYS" />
+                    <Region HBox.hgrow="ALWAYS"/>
                     <VBox spacing="10.0" HBox.hgrow="ALWAYS">
                         <HBox.margin>
-                            <Insets />
+                            <Insets/>
                         </HBox.margin>
                         <padding>
-                            <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+                            <Insets bottom="8.0" left="8.0" right="8.0" top="8.0"/>
                         </padding>
-                        <Label fx:id="productName" />
-                        <Label fx:id="productCategory" />
-                        <Label fx:id="productBrand" />
-                        <Label fx:id="productType" />
-                        <Label fx:id="productCost" />
-                        <Label fx:id="productPrice" />
-                        <Label fx:id="productUnit" />
-                        <Label fx:id="productTax" />
-                        <Label fx:id="stockQuantity" />
-                        <Label fx:id="alertQuantity" />
-                        <Label fx:id="productDescription" wrapText="true" />
+                        <Label fx:id="productName"/>
+                        <Label fx:id="productCategory"/>
+                        <Label fx:id="productBrand"/>
+                        <Label fx:id="productType"/>
+                        <Label fx:id="productCost"/>
+                        <Label fx:id="productPrice"/>
+                        <Label fx:id="productUnit"/>
+                        <Label fx:id="productTax"/>
+                        <Label fx:id="stockQuantity"/>
+                        <Label fx:id="alertQuantity"/>
+                        <Label fx:id="productDescription" wrapText="true"/>
                     </VBox>
                 </HBox>
-                <ImageView fx:id="barCode" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+                <ImageView fx:id="barCode" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true"/>
             </VBox>
         </MFXScrollPane>
     </center>

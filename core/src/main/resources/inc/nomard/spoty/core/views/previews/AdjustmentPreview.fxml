@@ -14,29 +14,24 @@
   ~ Jonathan Mark Mwigo makes no warranties, express or implied, with respect to the computer system code. Jonathan Mark Mwigo shall not be liable for any damages, including, but not limited to, direct, indirect, incidental, special, consequential, or punitive damages, arising out of or in connection with the use of the computer system code.
   -->
 
+<?import inc.nomard.spoty.core.components.navigation.Spacer?>
 <?import io.github.palexdev.materialfx.controls.MFXScrollPane?>
 <?import io.github.palexdev.materialfx.dialogs.MFXGenericDialog?>
 <?import io.github.palexdev.mfxcore.controls.Text?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import java.net.URL?>
-<?import inc.nomard.spoty.core.components.navigation.Spacer?>
-<MFXGenericDialog xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/20.0.1"
-                  fx:controller="inc.nomard.spoty.core.views.printable.general.GeneralViewController">
-    <stylesheets>
-        <URL value="@../../../styles/base.css"/>
-        <URL value="@../../../styles/Common.css"/>
-        <URL value="@../../../styles/TextFields.css"/>
-    </stylesheets>
+<MFXGenericDialog xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+                  fx:controller="inc.nomard.spoty.core.views.previews.AdjustmentPreviewController">
     <padding>
         <Insets left="10.0" right="10"/>
     </padding>
     <center>
-        <MFXScrollPane>
-            <VBox maxHeight="900.0" maxWidth="1000.0" minHeight="600.0" minWidth="500.0" prefHeight="800.0" prefWidth="700.0">
+        <MFXScrollPane fitToHeight="true" fitToWidth="true">
+            <VBox maxHeight="900.0" maxWidth="1000.0" minHeight="600.0" minWidth="500.0" prefHeight="800.0"
+                  prefWidth="700.0">
                 <padding>
-                    <Insets bottom="20.0" top="20.0"/>
+                    <Insets bottom="20.0" left="10.0" right="10.0" top="20.0"/>
                 </padding>
                 <HBox>
                     <VBox alignment="BOTTOM_LEFT" prefHeight="80.0">
@@ -44,12 +39,12 @@
                     </VBox>
                     <Region HBox.hgrow="ALWAYS"/>
                     <VBox alignment="TOP_RIGHT" layoutX="10.0" layoutY="10.0" prefHeight="80.0">
-                        <Label fx:id="dateLabel" text="Date"/>
+                        <Label fx:id="saleDate" text="Date"/>
                     </VBox>
                 </HBox>
                 <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="10.0" prefHeight="50.0" spacing="20.0">
                     <Label text="Purchase ID"/>
-                    <Label fx:id="refLabel" layoutX="10.0" layoutY="10.0"/>
+                    <Label fx:id="saleRef" layoutX="10.0" layoutY="10.0" text="PQ19-102"/>
                 </HBox>
                 <VBox spacing="10.0">
                     <VBox.margin>
@@ -58,17 +53,17 @@
                     <HBox spacing="70.0">
                         <Label text="Purchaser's Name"/>
                         <Spacer/>
-                        <Label fx:id="nameLabel" layoutX="10.0" layoutY="10.0"/>
+                        <Label fx:id="customerName" layoutX="10.0" layoutY="10.0" text="Jonathan Mark"/>
                     </HBox>
                     <HBox layoutX="10.0" layoutY="10.0" spacing="70.0">
                         <Label text="Contact Number"/>
                         <Spacer/>
-                        <Label fx:id="numberLabel" layoutX="10.0" layoutY="10.0"/>
+                        <Label fx:id="customerNumber" layoutX="10.0" layoutY="10.0" text="(256) 752-92370"/>
                     </HBox>
                     <HBox layoutX="10.0" layoutY="10.0" spacing="140.0">
                         <Label text="Email"/>
                         <Spacer/>
-                        <Label fx:id="emailLabel" layoutX="10.0" layoutY="10.0"/>
+                        <Label fx:id="customerEmail" layoutX="10.0" layoutY="10.0" text="mwigojm@gmail.com"/>
                     </HBox>
                 </VBox>
                 <Separator/>
@@ -93,15 +88,15 @@
                         </VBox.margin>
                         <HBox alignment="CENTER_RIGHT" spacing="90.0">
                             <Label text="Total Cost:"/>
-                            <Label fx:id="totalCost" layoutX="10.0" layoutY="10.0"/>
+                            <Label fx:id="totalCost" layoutX="10.0" layoutY="10.0" text="\$36806000"/>
                         </HBox>
                         <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="10.0" spacing="38.0">
                             <Label text="Total Discount(3%):"/>
-                            <Label fx:id="totalDiscount" layoutX="10.0" layoutY="10.0"/>
+                            <Label fx:id="totalDiscount" layoutX="10.0" layoutY="10.0" text="\$1104180"/>
                         </HBox>
                         <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="110.0" spacing="97.0">
                             <Label text="Net Cost:"/>
-                            <Label fx:id="netCost" layoutX="10.0" layoutY="10.0"/>
+                            <Label fx:id="netCost" layoutX="10.0" layoutY="10.0" text="\$35701820"/>
                         </HBox>
                     </VBox>
                 </VBox>
@@ -117,11 +112,11 @@
                     <VBox spacing="10.0">
                         <HBox spacing="20.0">
                             <Label text="Authorizer Name:"/>
-                            <Label fx:id="signerNameLabel"/>
+                            <Label fx:id="userName" text="Jonathan Mark"/>
                         </HBox>
                         <HBox spacing="45.0">
                             <Label text="Authorizer ID:"/>
-                            <Label fx:id="signerIdLabel"/>
+                            <Label fx:id="userId" text="5467324"/>
                         </HBox>
                     </VBox>
                     <Region HBox.hgrow="ALWAYS"/>

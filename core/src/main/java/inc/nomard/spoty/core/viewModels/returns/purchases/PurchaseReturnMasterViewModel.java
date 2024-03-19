@@ -14,8 +14,12 @@
 
 package inc.nomard.spoty.core.viewModels.returns.purchases;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import inc.nomard.spoty.core.viewModels.adapters.UnixEpochDateTypeAdapter;
 import inc.nomard.spoty.network_bridge.dtos.Branch;
 import inc.nomard.spoty.network_bridge.dtos.returns.purchase_returns.PurchaseReturnMaster;
+import inc.nomard.spoty.network_bridge.models.FindModel;
 import inc.nomard.spoty.utils.ParameterlessConsumer;
 import inc.nomard.spoty.utils.SpotyLogger;
 import javafx.beans.property.*;
@@ -28,10 +32,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class PurchaseReturnMasterViewModel {
-    //    private static final Gson gson = new GsonBuilder()
-//            .registerTypeAdapter(Date.class,
-//                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
-//            .create();
+    private static final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(Date.class,
+                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+            .create();
     public static final ObservableList<PurchaseReturnMaster> purchaseReturnMasterList =
             FXCollections.observableArrayList();
     private static final ListProperty<PurchaseReturnMaster> purchaseReturns =
@@ -42,6 +46,7 @@ public class PurchaseReturnMasterViewModel {
     private static final StringProperty totalCost = new SimpleStringProperty("");
     private static final StringProperty status = new SimpleStringProperty("");
     private static final StringProperty note = new SimpleStringProperty("");
+//    private static PurchaseReturnsRepositoryImpl purchaseReturnsRepository = new PurchaseReturnsRepositoryImpl();
 
     public static long getId() {
         return id.get();
@@ -141,6 +146,37 @@ public class PurchaseReturnMasterViewModel {
         setTotalCost("");
     }
 
+    public static void savePurchaseReturnMaster(
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
+//        var PurchaseReturnsMaster = PurchaseReturnMaster.builder()
+//                .customer(getCustomer())
+//                .total(getTotal())
+//                .amountPaid(getPaid())
+//                .PurchaseReturnsStatus(getPurchaseReturnStatus())
+//                .paymentStatus(getPayStatus())
+//                .notes(getNote())
+//                .date(getDate())
+//                .build();
+//
+//        if (!PurchaseReturnDetailViewModel.PurchaseReturnsDetailsList.isEmpty()) {
+//            PurchaseReturnDetailViewModel.PurchaseReturnsDetailsList.forEach(
+//                    PurchaseReturnsDetail -> PurchaseReturnsDetail.setPurchaseReturn(PurchaseReturnsMaster));
+//
+//            PurchaseReturnsMaster.setPurchaseReturnDetails(PurchaseReturnDetailViewModel.PurchaseReturnsDetailsList);
+//        }
+//
+//        var task = PurchaseReturnsRepository.postMaster(PurchaseReturnsMaster);
+//        task.setOnRunning(workerStateEvent -> onActivity.run());
+//        task.setOnSucceeded(workerStateEvent -> {
+//            PurchaseReturnDetailViewModel.savePurchaseReturnDetails(onActivity, null, onFailed);
+//            onSuccess.run();
+//        });
+//        task.setOnFailed(workerStateEvent -> onFailed.run());
+//        SpotyThreader.spotyThreadPool(task);
+    }
+
     public static void getPurchaseReturnMasters(
             @Nullable ParameterlessConsumer onActivity,
             @Nullable ParameterlessConsumer onSuccess,
@@ -162,5 +198,124 @@ public class PurchaseReturnMasterViewModel {
 
     public static ObservableList<PurchaseReturnMaster> getPurchaseReturnMasterList() {
         return purchaseReturnMasterList;
+    }
+
+    public static void getItem(
+            Long index,
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onSuccess,
+            @Nullable ParameterlessConsumer onFailed) {
+//        var findModel = FindModel.builder().id(index).build();
+//        var task = PurchaseReturnsRepository.fetchMaster(findModel);
+//
+//        if (Objects.nonNull(onActivity)) {
+//            task.setOnRunning(workerStateEvent -> onActivity.run());
+//        }
+//        if (Objects.nonNull(onFailed)) {
+//            task.setOnFailed(workerStateEvent -> onFailed.run());
+//        }
+//        task.setOnSucceeded(workerStateEvent -> {
+//            PurchaseReturnMaster PurchaseReturnsMaster = new PurchaseReturnMaster();
+//            try {
+//                PurchaseReturnsMaster = gson.fromJson(task.get().body(), PurchaseReturnMaster.class);
+//            } catch (InterruptedException | ExecutionException e) {
+//                SpotyLogger.writeToFile(e, PurchaseReturnMasterViewModel.class);
+//            }
+//
+//            setId(PurchaseReturnsMaster.getId());
+//            setDate(PurchaseReturnsMaster.getLocaleDate());
+//            setCustomer(PurchaseReturnsMaster.getCustomer());
+//            setNote(PurchaseReturnsMaster.getNotes());
+//            setPurchaseReturnStatus(PurchaseReturnsMaster.getPurchaseReturnStatus());
+//            setPayStatus(PurchaseReturnsMaster.getPaymentStatus());
+//            PurchaseReturnDetailViewModel.PurchaseReturnsDetailsList.clear();
+//            PurchaseReturnDetailViewModel.PurchaseReturnsDetailsList.addAll(PurchaseReturnsMaster.getPurchaseReturnDetails());
+//
+//            if (Objects.nonNull(onSuccess)) {
+//                onSuccess.run();
+//            }
+//        });
+//        SpotyThreader.spotyThreadPool(task);
+    }
+
+    public static void searchItem(
+            String search,
+            @Nullable ParameterlessConsumer onActivity,
+            @Nullable ParameterlessConsumer onSuccess,
+            @Nullable ParameterlessConsumer onFailed) {
+//        var searchModel = SearchModel.builder().search(search).build();
+//        var task = PurchaseReturnsRepository.searchMaster(searchModel);
+//        if (Objects.nonNull(onActivity)) {
+//            task.setOnRunning(workerStateEvent -> onActivity.run());
+//        }
+//        if (Objects.nonNull(onFailed)) {
+//            task.setOnFailed(workerStateEvent -> onFailed.run());
+//        }
+//        task.setOnSucceeded(workerStateEvent -> {
+//            Type listType = new TypeToken<ArrayList<PurchaseReturnMaster>>() {
+//            }.getType();
+//            ArrayList<PurchaseReturnMaster> PurchaseReturnsMasterList = new ArrayList<>();
+//            try {
+//                PurchaseReturnsMasterList = gson.fromJson(
+//                        task.get().body(), listType);
+//            } catch (InterruptedException | ExecutionException e) {
+//                SpotyLogger.writeToFile(e, PurchaseReturnMasterViewModel.class);
+//            }
+//
+//            PurchaseReturnsMastersList.clear();
+//            PurchaseReturnsMastersList.addAll(PurchaseReturnsMasterList);
+//
+//            if (Objects.nonNull(onSuccess)) {
+//                onSuccess.run();
+//            }
+//        });
+//        SpotyThreader.spotyThreadPool(task);
+    }
+
+    public static void updateItem(
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
+//        var PurchaseReturnsMaster = PurchaseReturnMaster.builder()
+//                .id(getId())
+//                .customer(getCustomer())
+//                .total(getTotal())
+//                .amountPaid(getPaid())
+//                .PurchaseReturnsStatus(getPurchaseReturnStatus())
+//                .paymentStatus(getPayStatus())
+//                .notes(getNote())
+//                .date(getDate())
+//                .build();
+//
+//        if (!PENDING_DELETES.isEmpty()) {
+//            PurchaseReturnDetailViewModel.deletePurchaseReturnDetails(PENDING_DELETES, onActivity, null, onFailed);
+//        }
+//
+//        if (!PurchaseReturnDetailViewModel.getPurchaseReturnDetailsList().isEmpty()) {
+//            PurchaseReturnDetailViewModel.getPurchaseReturnDetailsList()
+//                    .forEach(PurchaseReturnsDetail -> PurchaseReturnsDetail.setPurchaseReturn(PurchaseReturnsMaster));
+//
+//            PurchaseReturnsMaster.setPurchaseReturnDetails(PurchaseReturnDetailViewModel.getPurchaseReturnDetailsList());
+//        }
+//
+//        var task = PurchaseReturnsRepository.putMaster(PurchaseReturnsMaster);
+//        task.setOnRunning(workerStateEvent -> onActivity.run());
+//        task.setOnSucceeded(workerStateEvent -> PurchaseReturnDetailViewModel.updatePurchaseReturnDetails(onActivity, onSuccess, onFailed));
+//        task.setOnFailed(workerStateEvent -> onFailed.run());
+//        SpotyThreader.spotyThreadPool(task);
+    }
+
+    public static void deleteItem(
+            Long index,
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
+        var findModel = FindModel.builder().id(index).build();
+
+//        var task = PurchaseReturnsRepository.deleteMaster(findModel);
+//        task.setOnRunning(workerStateEvent -> onActivity.run());
+//        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+//        task.setOnFailed(workerStateEvent -> onFailed.run());
+//        SpotyThreader.spotyThreadPool(task);
     }
 }

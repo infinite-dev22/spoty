@@ -14,6 +14,7 @@
   ~ Jonathan Mark Mwigo makes no warranties, express or implied, with respect to the computer system code. Jonathan Mark Mwigo shall not be liable for any damages, including, but not limited to, direct, indirect, incidental, special, consequential, or punitive damages, arising out of or in connection with the use of the computer system code.
   -->
 
+<?import inc.nomard.spoty.core.components.navigation.Spacer?>
 <?import io.github.palexdev.materialfx.controls.MFXScrollPane?>
 <?import io.github.palexdev.materialfx.dialogs.MFXGenericDialog?>
 <?import io.github.palexdev.mfxcore.controls.Text?>
@@ -27,7 +28,8 @@
     </padding>
     <center>
         <MFXScrollPane>
-            <VBox>
+            <VBox maxHeight="900.0" maxWidth="1000.0" minHeight="600.0" minWidth="500.0" prefHeight="800.0"
+                  prefWidth="700.0">
                 <padding>
                     <Insets bottom="20.0" left="10.0" right="10.0" top="20.0"/>
                 </padding>
@@ -50,14 +52,17 @@
                     </VBox.margin>
                     <HBox spacing="70.0">
                         <Label text="Purchaser's Name"/>
+                        <Spacer/>
                         <Label fx:id="customerName" layoutX="10.0" layoutY="10.0" text="Jonathan Mark"/>
                     </HBox>
                     <HBox layoutX="10.0" layoutY="10.0" spacing="70.0">
                         <Label text="Contact Number"/>
+                        <Spacer/>
                         <Label fx:id="customerNumber" layoutX="10.0" layoutY="10.0" text="(256) 752-92370"/>
                     </HBox>
                     <HBox layoutX="10.0" layoutY="10.0" spacing="140.0">
                         <Label text="Email"/>
+                        <Spacer/>
                         <Label fx:id="customerEmail" layoutX="10.0" layoutY="10.0" text="mwigojm@gmail.com"/>
                     </HBox>
                 </VBox>

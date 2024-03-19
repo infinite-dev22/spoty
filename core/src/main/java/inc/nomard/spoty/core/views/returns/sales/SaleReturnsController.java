@@ -15,14 +15,16 @@
 package inc.nomard.spoty.core.views.returns.sales;
 
 import inc.nomard.spoty.core.components.animations.SpotyAnimations;
-import inc.nomard.spoty.core.viewModels.BankViewModel;
 import inc.nomard.spoty.core.viewModels.returns.sales.SaleReturnMasterViewModel;
+import inc.nomard.spoty.core.views.previews.returns.SaleReturnsPreviewController;
 import inc.nomard.spoty.network_bridge.dtos.returns.sale_returns.SaleReturnMaster;
-import io.github.palexdev.materialfx.controls.MFXButton;
-import io.github.palexdev.materialfx.controls.MFXTableColumn;
-import io.github.palexdev.materialfx.controls.MFXTableView;
-import io.github.palexdev.materialfx.controls.MFXTextField;
+import inc.nomard.spoty.utils.SpotyThreader;
+import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
+import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
+import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
+import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
+import io.github.palexdev.materialfx.enums.ScrimPriority;
 import io.github.palexdev.materialfx.filter.DoubleFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
@@ -30,20 +32,29 @@ import javafx.animation.RotateTransition;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Tooltip;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.stage.Modality;
+import javafx.stage.Screen;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 
+import static inc.nomard.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
+
 @SuppressWarnings("unchecked")
 public class SaleReturnsController implements Initializable {
+    private static SaleReturnsController instance;
     @FXML
     public BorderPane contentPane;
     @FXML
@@ -59,6 +70,24 @@ public class SaleReturnsController implements Initializable {
     @FXML
     private MFXTableView<SaleReturnMaster> masterTable;
     private RotateTransition transition;
+    private FXMLLoader viewFxmlLoader;
+    private MFXStageDialog viewDialog;
+
+    public static SaleReturnsController getInstance(Stage stage) {
+        if (instance == null) instance = new SaleReturnsController(stage);
+        return instance;
+    }
+
+    private SaleReturnsController(Stage stage) {
+        Platform.runLater(() ->
+        {
+            try {
+                viewDialogPane(stage);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -82,8 +111,8 @@ public class SaleReturnsController implements Initializable {
                 new MFXTableColumn<>(
                         "Pay Status", false, Comparator.comparing(SaleReturnMaster::getPaymentStatus));
 
-        saleReturnPaymentStatus.setTooltip(new Tooltip("PurchaseMaster Return Payment Status"));
-        saleReturnStatus.setTooltip(new Tooltip("PurchaseMaster Return Status"));
+        saleReturnPaymentStatus.setTooltip(new Tooltip("SaleMaster Return Payment Status"));
+        saleReturnStatus.setTooltip(new Tooltip("SaleMaster Return Status"));
 
         saleReturnDate.prefWidthProperty().bind(masterTable.widthProperty().multiply(.143));
         saleReturnCustomer.prefWidthProperty().bind(masterTable.widthProperty().multiply(.143));
@@ -145,9 +174,25 @@ public class SaleReturnsController implements Initializable {
         masterTable.setPrefSize(1200, 1000);
         masterTable.features().enableBounceEffect();
         masterTable.features().enableSmoothScrolling(0.5);
+
+        masterTable.setTableRowFactory(
+                t -> {
+                    MFXTableRow<SaleReturnMaster> row = new MFXTableRow<>(masterTable, t);
+                    EventHandler<ContextMenuEvent> eventHandler =
+                            event -> {
+                                showContextMenu((MFXTableRow<SaleReturnMaster>) event.getSource())
+                                        .show(
+                                                masterTable.getScene().getWindow(),
+                                                event.getScreenX(),
+                                                event.getScreenY());
+                                event.consume();
+                            };
+                    row.setOnContextMenuRequested(eventHandler);
+                    return row;
+                });
     }
 
-    public void createBtnClicked(MouseEvent mouseEvent) {
+    public void createBtnClicked() {
     }
 
     private void onAction() {
@@ -170,5 +215,89 @@ public class SaleReturnsController implements Initializable {
         transition = SpotyAnimations.rotateTransition(refreshIcon, Duration.millis(1000), 360);
 
         refreshIcon.setOnMouseClicked(mouseEvent -> SaleReturnMasterViewModel.getSaleReturnMasters(this::onAction, this::onSuccess, this::onFailed));
+    }
+
+    private MFXContextMenu showContextMenu(MFXTableRow<SaleReturnMaster> obj) {
+        MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
+        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
+        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+        MFXContextMenuItem view = new MFXContextMenuItem("View");
+
+        // Actions
+        // Delete
+        delete.setOnAction(
+                e -> {
+                    SpotyThreader.spotyThreadPool(
+                            () -> {
+                                try {
+                                    SaleReturnMasterViewModel.deleteItem(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
+                                } catch (Exception ex) {
+                                    throw new RuntimeException(ex);
+                                }
+                            });
+
+                    e.consume();
+                });
+        // Edit
+        edit.setOnAction(
+                e -> {
+                    SpotyThreader.spotyThreadPool(
+                            () -> {
+                                try {
+                                    SaleReturnMasterViewModel.getItem(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
+                                } catch (Exception ex) {
+                                    throw new RuntimeException(ex);
+                                }
+                            });
+
+                    createBtnClicked();
+                    e.consume();
+                });
+        // View
+        view.setOnAction(
+                event -> {
+                    try {
+                        viewShow(obj.getData());
+                    } catch (Exception ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    event.consume();
+                });
+
+        contextMenu.addItems(view, edit, delete);
+
+        return contextMenu;
+    }
+
+    private void viewDialogPane(Stage stage) throws IOException {
+        double screenHeight = Screen.getPrimary().getBounds().getHeight();
+        viewFxmlLoader = fxmlLoader("views/previews/returns/SaleReturnsPreview.fxml");
+        viewFxmlLoader.setControllerFactory(c -> new SaleReturnsPreviewController());
+        MFXGenericDialog genericDialog = viewFxmlLoader.load();
+        genericDialog.setShowMinimize(false);
+        genericDialog.setShowAlwaysOnTop(false);
+
+        genericDialog.setPrefHeight(screenHeight * .98);
+        genericDialog.setPrefWidth(700);
+
+        viewDialog =
+                MFXGenericDialogBuilder.build(genericDialog)
+                        .toStageDialogBuilder()
+                        .initOwner(stage)
+                        .initModality(Modality.WINDOW_MODAL)
+                        .setOwnerNode(contentPane)
+                        .setScrimPriority(ScrimPriority.WINDOW)
+                        .setScrimOwner(true)
+                        .setCenterInOwnerNode(false)
+                        .setOverlayClose(true)
+                        .get();
+
+        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(viewDialog.getScene());
+    }
+
+    public void viewShow(SaleReturnMaster saleReturnsMaster) {
+        SaleReturnsPreviewController controller = viewFxmlLoader.getController();
+        controller.init(saleReturnsMaster);
+        viewDialog.showAndWait();
     }
 }
