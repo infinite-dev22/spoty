@@ -39,4 +39,12 @@ public class UserProfile {
             return user.isActive();
         else return false;
     }
+
+    public String getName() {
+        var name = "";
+        name = (Objects.nonNull(firstName) && !firstName.isBlank() && !firstName.isEmpty()) ? name.concat(firstName) : "";
+        name = (Objects.nonNull(otherName) && !otherName.isBlank() && !otherName.isEmpty()) ? name.concat(" ").concat(otherName) : "";
+        name = (Objects.nonNull(lastName) && !lastName.isBlank() && !lastName.isEmpty()) ? name.concat(" ").concat(lastName) : "";
+        return name;
+    }
 }

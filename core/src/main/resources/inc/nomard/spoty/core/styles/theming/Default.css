@@ -396,3 +396,7 @@
 .sub-header-description{
     -fx-text-fill: gray;
 }
+
+.table-cell-border {
+   -fx-border-color: -mfx-border-gray;
+}

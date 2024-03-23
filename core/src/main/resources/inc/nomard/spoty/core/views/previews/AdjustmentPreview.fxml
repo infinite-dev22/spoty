@@ -14,14 +14,14 @@
   ~ Jonathan Mark Mwigo makes no warranties, express or implied, with respect to the computer system code. Jonathan Mark Mwigo shall not be liable for any damages, including, but not limited to, direct, indirect, incidental, special, consequential, or punitive damages, arising out of or in connection with the use of the computer system code.
   -->
 
-<?import inc.nomard.spoty.core.components.navigation.Spacer?>
 <?import io.github.palexdev.materialfx.controls.MFXScrollPane?>
+<?import io.github.palexdev.materialfx.controls.MFXTableView?>
 <?import io.github.palexdev.materialfx.dialogs.MFXGenericDialog?>
-<?import io.github.palexdev.mfxcore.controls.Text?>
+<?import io.github.palexdev.mfxcore.controls.*?>
 <?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.layout.*?>
-<MFXGenericDialog xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+<MFXGenericDialog xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/21"
                   fx:controller="inc.nomard.spoty.core.views.previews.AdjustmentPreviewController">
     <padding>
         <Insets left="10.0" right="10"/>
@@ -33,96 +33,41 @@
                 <padding>
                     <Insets bottom="20.0" left="10.0" right="10.0" top="20.0"/>
                 </padding>
-                <HBox>
+                <HBox maxHeight="150.0" minHeight="50.0" prefHeight="100.0">
                     <VBox alignment="BOTTOM_LEFT" prefHeight="80.0">
-                        <Label text="Purchase Order"/>
+                        <Label styleClass="preview-header" text="Inventory Adjustment"/>
                     </VBox>
                     <Region HBox.hgrow="ALWAYS"/>
-                    <VBox alignment="TOP_RIGHT" layoutX="10.0" layoutY="10.0" prefHeight="80.0">
-                        <Label fx:id="saleDate" text="Date"/>
-                    </VBox>
+                    <HBox alignment="TOP_RIGHT" layoutX="10.0" layoutY="10.0" prefHeight="80.0">
+                        <Label styleClass="preview-header" text="Date: "/>
+                        <Label fx:id="adjustmentDate"/>
+                    </HBox>
                 </HBox>
                 <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="10.0" prefHeight="50.0" spacing="20.0">
-                    <Label text="Purchase ID"/>
-                    <Label fx:id="saleRef" layoutX="10.0" layoutY="10.0" text="PQ19-102"/>
+                    <Label styleClass="preview-header" text="Invoice ID"/>
+                    <Label fx:id="adjustmentRef" layoutX="10.0" layoutY="10.0"/>
                 </HBox>
-                <VBox spacing="10.0">
-                    <VBox.margin>
-                        <Insets bottom="30.0" top="10.0"/>
-                    </VBox.margin>
-                    <HBox spacing="70.0">
-                        <Label text="Purchaser's Name"/>
-                        <Spacer/>
-                        <Label fx:id="customerName" layoutX="10.0" layoutY="10.0" text="Jonathan Mark"/>
-                    </HBox>
-                    <HBox layoutX="10.0" layoutY="10.0" spacing="70.0">
-                        <Label text="Contact Number"/>
-                        <Spacer/>
-                        <Label fx:id="customerNumber" layoutX="10.0" layoutY="10.0" text="(256) 752-92370"/>
-                    </HBox>
-                    <HBox layoutX="10.0" layoutY="10.0" spacing="140.0">
-                        <Label text="Email"/>
-                        <Spacer/>
-                        <Label fx:id="customerEmail" layoutX="10.0" layoutY="10.0" text="mwigojm@gmail.com"/>
-                    </HBox>
-                </VBox>
+                <HBox layoutX="10.0" layoutY="10.0" prefHeight="50.0" spacing="20.0">
+                    <Label styleClass="preview-header" text="Note: "/>
+                    <Label fx:id="adjustmentNote" layoutX="10.0" layoutY="10.0" wrapText="true"/>
+                </HBox>
                 <Separator/>
                 <VBox>
                     <VBox.margin>
                         <Insets bottom="10.0" top="30.0"/>
                     </VBox.margin>
-                    <TableView fx:id="itemsTable" focusTraversable="false" prefHeight="200.0" prefWidth="200.0">
-                        <columns>
-                            <TableColumn fx:id="itemNumber" prefWidth="75.0" text="No."/>
-                            <TableColumn fx:id="itemName" prefWidth="75.0" text="Name"/>
-                            <TableColumn fx:id="itemQuantity" prefWidth="75.0" text="Qnty"/>
-                            <TableColumn fx:id="itemCost" prefWidth="75.0" text="Cost"/>
-                        </columns>
-                        <columnResizePolicy>
-                            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
-                        </columnResizePolicy>
-                    </TableView>
-                    <VBox alignment="CENTER_RIGHT">
-                        <VBox.margin>
-                            <Insets top="10.0"/>
-                        </VBox.margin>
-                        <HBox alignment="CENTER_RIGHT" spacing="90.0">
-                            <Label text="Total Cost:"/>
-                            <Label fx:id="totalCost" layoutX="10.0" layoutY="10.0" text="\$36806000"/>
-                        </HBox>
-                        <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="10.0" spacing="38.0">
-                            <Label text="Total Discount(3%):"/>
-                            <Label fx:id="totalDiscount" layoutX="10.0" layoutY="10.0" text="\$1104180"/>
-                        </HBox>
-                        <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="110.0" spacing="97.0">
-                            <Label text="Net Cost:"/>
-                            <Label fx:id="netCost" layoutX="10.0" layoutY="10.0" text="\$35701820"/>
-                        </HBox>
-                    </VBox>
+                    <MFXTableView fx:id="itemsTable" prefWidth="200.0"/>
                 </VBox>
-                <Text/>
                 <Separator/>
-                <HBox>
+                <HBox spacing="20.0">
                     <padding>
                         <Insets right="50.0"/>
                     </padding>
                     <VBox.margin>
                         <Insets bottom="30.0" top="30.0"/>
                     </VBox.margin>
-                    <VBox spacing="10.0">
-                        <HBox spacing="20.0">
-                            <Label text="Authorizer Name:"/>
-                            <Label fx:id="userName" text="Jonathan Mark"/>
-                        </HBox>
-                        <HBox spacing="45.0">
-                            <Label text="Authorizer ID:"/>
-                            <Label fx:id="userId" text="5467324"/>
-                        </HBox>
-                    </VBox>
-                    <Region HBox.hgrow="ALWAYS"/>
-                    <VBox layoutX="60.0" layoutY="10.0">
-                        <Label text="Signature:"/>
-                    </VBox>
+                    <Label text="Done By:"/>
+                    <Label fx:id="doneBy" text="Jonathan Mark"/>
                 </HBox>
             </VBox>
         </MFXScrollPane>

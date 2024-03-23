@@ -18,6 +18,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import inc.nomard.spoty.core.viewModels.adapters.UnixEpochDateTypeAdapter;
+import inc.nomard.spoty.core.viewModels.adjustments.AdjustmentMasterViewModel;
 import inc.nomard.spoty.network_bridge.dtos.Branch;
 import inc.nomard.spoty.network_bridge.dtos.Supplier;
 import inc.nomard.spoty.network_bridge.dtos.requisitions.RequisitionMaster;
@@ -58,13 +59,8 @@ public class RequisitionMasterViewModel {
     private static final StringProperty date = new SimpleStringProperty("");
     private static final ObjectProperty<Supplier> supplier = new SimpleObjectProperty<>(null);
     private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>(null);
-    private static final StringProperty shipVia = new SimpleStringProperty("");
-    private static final StringProperty shipMethod = new SimpleStringProperty("");
-    private static final StringProperty shippingTerms = new SimpleStringProperty("");
-    private static final StringProperty deliveryDate = new SimpleStringProperty("");
-    private static final StringProperty note = new SimpleStringProperty("");
     private static final StringProperty status = new SimpleStringProperty("");
-    private static final StringProperty totalCost = new SimpleStringProperty("");
+    private static final StringProperty note = new SimpleStringProperty("");
     private static final RequisitionsRepositoryImpl requisitionsRepository = new RequisitionsRepositoryImpl();
 
     public static Long getId() {
@@ -96,30 +92,6 @@ public class RequisitionMasterViewModel {
         return date;
     }
 
-    public static Branch getBranch() {
-        return branch.get();
-    }
-
-    public static void setBranch(Branch branch) {
-        RequisitionMasterViewModel.branch.set(branch);
-    }
-
-    public static ObjectProperty<Branch> branchProperty() {
-        return branch;
-    }
-
-    public static String getNote() {
-        return note.get();
-    }
-
-    public static void setNote(String note) {
-        RequisitionMasterViewModel.note.set(note);
-    }
-
-    public static StringProperty noteProperty() {
-        return note;
-    }
-
     public static Supplier getSupplier() {
         return supplier.get();
     }
@@ -132,57 +104,16 @@ public class RequisitionMasterViewModel {
         return supplier;
     }
 
-    public static String getShipVia() {
-        return shipVia.get();
+    public static Branch getBranch() {
+        return branch.get();
     }
 
-    public static void setShipVia(String shipVia) {
-        RequisitionMasterViewModel.shipVia.set(shipVia);
+    public static void setBranch(Branch branch) {
+        RequisitionMasterViewModel.branch.set(branch);
     }
 
-    public static StringProperty shipViaProperty() {
-        return shipVia;
-    }
-
-    public static String getShipMethod() {
-        return shipMethod.get();
-    }
-
-    public static void setShipMethod(String shipMethod) {
-        RequisitionMasterViewModel.shipMethod.set(shipMethod);
-    }
-
-    public static StringProperty shipMethodProperty() {
-        return shipMethod;
-    }
-
-    public static String getShippingTerms() {
-        return shippingTerms.get();
-    }
-
-    public static void setShippingTerms(String shippingTerms) {
-        RequisitionMasterViewModel.shippingTerms.set(shippingTerms);
-    }
-
-    public static StringProperty shippingTermsProperty() {
-        return shippingTerms;
-    }
-
-    public static @Nullable Date getDeliveryDate() {
-        try {
-            return new SimpleDateFormat("MMM dd, yyyy").parse(date.get());
-        } catch (ParseException e) {
-            SpotyLogger.writeToFile(e, RequisitionMasterViewModel.class);
-        }
-        return null;
-    }
-
-    public static void setDeliveryDate(String deliveryDate) {
-        RequisitionMasterViewModel.deliveryDate.set(deliveryDate);
-    }
-
-    public static StringProperty deliveryDateProperty() {
-        return deliveryDate;
+    public static ObjectProperty<Branch> branchProperty() {
+        return branch;
     }
 
     public static String getStatus() {
@@ -197,16 +128,16 @@ public class RequisitionMasterViewModel {
         return status;
     }
 
-    public static double getTotalCost() {
-        return Double.parseDouble(!totalCost.get().isEmpty() ? totalCost.get() : "0");
+    public static String getNotes() {
+        return note.get();
     }
 
-    public static void setTotalCost(String totalCost) {
-        RequisitionMasterViewModel.totalCost.set(totalCost);
+    public static void setNote(String note) {
+        RequisitionMasterViewModel.note.set(note);
     }
 
-    public static StringProperty totalCostProperty() {
-        return totalCost;
+    public static StringProperty noteProperty() {
+        return note;
     }
 
     public static ObservableList<RequisitionMaster> getRequisitions() {
@@ -228,13 +159,8 @@ public class RequisitionMasterViewModel {
                     setDate("");
                     setSupplier(null);
                     setBranch(null);
-                    setShipVia("");
-                    setShipMethod("");
-                    setShippingTerms("");
-                    setDeliveryDate("");
-                    setNote("");
                     setStatus("");
-                    setTotalCost("");
+                    setNote("");
                     PENDING_DELETES.clear();
                 });
     }
@@ -244,23 +170,25 @@ public class RequisitionMasterViewModel {
             ParameterlessConsumer onSuccess,
             ParameterlessConsumer onFailed) {
         var requisitionMaster = RequisitionMaster.builder()
+//                .ref(getReference())
                 .date(getDate())
                 .supplier(getSupplier())
-                .shipVia(getShipVia())
-                .shipMethod(getShipMethod())
-                .shippingTerms(getShippingTerms())
-                .deliveryDate(getDeliveryDate())
-                .notes(getNote())
+//                .taxRate(getTaxRate())
+//                .netTax(getNetTax())
+//                .discount(getDiscount())
+//                .shipping(getShipping())
+//                .paid(getAmountPaid())
+//                .total(getTotalAmount())
+//                .due(getDueAmount())
                 .status(getStatus())
-                .totalCost(getTotalCost())
+//                .paymentStatus(getPaymentStatus())
+                .notes(getNotes())
                 .build();
 
         if (!RequisitionDetailViewModel.requisitionDetailsList.isEmpty()) {
             RequisitionDetailViewModel.requisitionDetailsList.forEach(
                     requisitionDetail -> requisitionDetail.setRequisition(requisitionMaster));
-
-            requisitionMaster.setRequisitionDetails(
-                    RequisitionDetailViewModel.getRequisitionDetailsList());
+            requisitionMaster.setRequisitionDetails(RequisitionDetailViewModel.requisitionDetailsList);
         }
 
         var task = requisitionsRepository.postMaster(requisitionMaster);
@@ -271,6 +199,9 @@ public class RequisitionMasterViewModel {
         });
         task.setOnFailed(workerStateEvent -> onFailed.run());
         SpotyThreader.spotyThreadPool(task);
+        Platform.runLater(AdjustmentMasterViewModel::resetProperties);
+
+        // resetProperties();
         // getRequisitionMasters();
     }
 
@@ -278,6 +209,8 @@ public class RequisitionMasterViewModel {
             @Nullable ParameterlessConsumer onActivity,
             @Nullable ParameterlessConsumer onSuccess,
             @Nullable ParameterlessConsumer onFailed) {
+        Type listType = new TypeToken<ArrayList<RequisitionMaster>>() {
+        }.getType();
         var task = requisitionsRepository.fetchAllMaster();
         if (Objects.nonNull(onActivity)) {
             task.setOnRunning(workerStateEvent -> onActivity.run());
@@ -286,8 +219,7 @@ public class RequisitionMasterViewModel {
             task.setOnFailed(workerStateEvent -> onFailed.run());
         }
         task.setOnSucceeded(workerStateEvent -> {
-            Type listType = new TypeToken<ArrayList<RequisitionMaster>>() {
-            }.getType();
+            requisitionMastersList.clear();
             ArrayList<RequisitionMaster> requisitionMasterList = new ArrayList<>();
             try {
                 requisitionMasterList = gson.fromJson(
@@ -295,9 +227,8 @@ public class RequisitionMasterViewModel {
             } catch (InterruptedException | ExecutionException e) {
                 SpotyLogger.writeToFile(e, RequisitionMasterViewModel.class);
             }
-
-            requisitionMastersList.clear();
             requisitionMastersList.addAll(requisitionMasterList);
+
 
             if (Objects.nonNull(onSuccess)) {
                 onSuccess.run();
@@ -306,44 +237,39 @@ public class RequisitionMasterViewModel {
         SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void getItem(
+    public static void getRequisitionMaster(
             Long index,
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
-        var findModel = FindModel.builder().id(index).build();
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
+        var findModel = new FindModel();
+        findModel.setId(index);
+
         var task = requisitionsRepository.fetchMaster(findModel);
         if (Objects.nonNull(onActivity)) {
             task.setOnRunning(workerStateEvent -> onActivity.run());
         }
+        if (Objects.nonNull(onSuccess)) {
+            task.setOnSucceeded(workerStateEvent -> {
+                RequisitionMaster requisitionMaster = new RequisitionMaster();
+                try {
+                    requisitionMaster = gson.fromJson(task.get().body(), RequisitionMaster.class);
+                } catch (InterruptedException | ExecutionException e) {
+                    SpotyLogger.writeToFile(e, RequisitionMasterViewModel.class);
+                }
+
+                setId(requisitionMaster.getId());
+                setNote(requisitionMaster.getNotes());
+                setDate(requisitionMaster.getLocaleDate());
+                RequisitionDetailViewModel.requisitionDetailsList.clear();
+                RequisitionDetailViewModel.requisitionDetailsList.addAll(requisitionMaster.getRequisitionDetails());
+
+                onSuccess.run();
+            });
+        }
         if (Objects.nonNull(onFailed)) {
             task.setOnFailed(workerStateEvent -> onFailed.run());
         }
-        task.setOnSucceeded(workerStateEvent -> {
-            RequisitionMaster requisitionMaster = new RequisitionMaster();
-            try {
-                requisitionMaster = gson.fromJson(task.get().body(), RequisitionMaster.class);
-            } catch (InterruptedException | ExecutionException e) {
-                SpotyLogger.writeToFile(e, RequisitionMasterViewModel.class);
-            }
-
-            setId(requisitionMaster.getId());
-            setSupplier(requisitionMaster.getSupplier());
-            setShipVia(requisitionMaster.getShipVia());
-            setShipMethod(requisitionMaster.getShipMethod());
-            setShippingTerms(requisitionMaster.getShippingTerms());
-            setNote(requisitionMaster.getNotes());
-            setStatus(requisitionMaster.getStatus());
-            setTotalCost(String.valueOf(requisitionMaster.getTotalCost()));
-            setDate(requisitionMaster.getLocaleDate());
-            RequisitionDetailViewModel.requisitionDetailsList.clear();
-            RequisitionDetailViewModel.requisitionDetailsList.addAll(
-                    requisitionMaster.getRequisitionDetails());
-
-            if (Objects.nonNull(onSuccess)) {
-                onSuccess.run();
-            }
-        });
         SpotyThreader.spotyThreadPool(task);
         // getRequisitionMasters();
     }
@@ -352,8 +278,10 @@ public class RequisitionMasterViewModel {
             String search,
             @Nullable ParameterlessConsumer onActivity,
             @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
-        var searchModel = SearchModel.builder().search(search).build();
+            @Nullable ParameterlessConsumer onFailed) throws Exception {
+        var searchModel = new SearchModel();
+        searchModel.setSearch(search);
+
         var task = requisitionsRepository.searchMaster(searchModel);
         if (Objects.nonNull(onActivity)) {
             task.setOnRunning(workerStateEvent -> onActivity.run());
@@ -365,7 +293,6 @@ public class RequisitionMasterViewModel {
             Type listType = new TypeToken<ArrayList<RequisitionMaster>>() {
             }.getType();
             ArrayList<RequisitionMaster> requisitionMasterList = new ArrayList<>();
-
             try {
                 requisitionMasterList = gson.fromJson(
                         task.get().body(), listType);
@@ -389,15 +316,19 @@ public class RequisitionMasterViewModel {
             ParameterlessConsumer onFailed) {
         var requisitionMaster = RequisitionMaster.builder()
                 .id(getId())
+//                .ref(getReference())
                 .date(getDate())
                 .supplier(getSupplier())
-                .shipVia(getShipVia())
-                .shipMethod(getShipMethod())
-                .shippingTerms(getShippingTerms())
-                .deliveryDate(getDeliveryDate())
-                .notes(getNote())
+//                .taxRate(getTaxRate())
+//                .netTax(getNetTax())
+//                .discount(getDiscount())
+//                .shipping(getShipping())
+//                .paid(getAmountPaid())
+//                .total(getTotalAmount())
+//                .due(getDueAmount())
                 .status(getStatus())
-                .totalCost(getTotalCost())
+//                .paymentStatus(getPaymentStatus())
+                .notes(getNotes())
                 .build();
 
         if (!PENDING_DELETES.isEmpty()) {
@@ -406,10 +337,9 @@ public class RequisitionMasterViewModel {
 
         if (!RequisitionDetailViewModel.getRequisitionDetailsList().isEmpty()) {
             RequisitionDetailViewModel.getRequisitionDetailsList()
-                    .forEach(requisitionDetail -> requisitionDetail.setRequisition(requisitionMaster));
+                    .forEach(adjustmentDetail -> adjustmentDetail.setRequisition(requisitionMaster));
 
-            requisitionMaster.setRequisitionDetails(
-                    RequisitionDetailViewModel.getRequisitionDetailsList());
+            requisitionMaster.setRequisitionDetails(RequisitionDetailViewModel.getRequisitionDetails());
         }
 
         var task = requisitionsRepository.putMaster(requisitionMaster);
@@ -425,12 +355,14 @@ public class RequisitionMasterViewModel {
             ParameterlessConsumer onActivity,
             ParameterlessConsumer onSuccess,
             ParameterlessConsumer onFailed) {
-        var findModel = FindModel.builder().id(index).build();
+        var findModel = new FindModel();
+        findModel.setId(index);
 
         var task = requisitionsRepository.deleteMaster(findModel);
         task.setOnRunning(workerStateEvent -> onActivity.run());
         task.setOnSucceeded(workerStateEvent -> onSuccess.run());
         task.setOnFailed(workerStateEvent -> onFailed.run());
         SpotyThreader.spotyThreadPool(task);
+        // getRequisitionMasters();
     }
 }

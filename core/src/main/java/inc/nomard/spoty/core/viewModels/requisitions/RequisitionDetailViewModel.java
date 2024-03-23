@@ -35,7 +35,6 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
@@ -56,10 +55,17 @@ public class RequisitionDetailViewModel {
     private static final ListProperty<RequisitionDetail> requisitionDetails =
             new SimpleListProperty<>(requisitionDetailsList);
     private static final LongProperty id = new SimpleLongProperty(0);
-    private static final ObjectProperty<Product> product = new SimpleObjectProperty<>();
-    private static final ObjectProperty<RequisitionMaster> requisition = new SimpleObjectProperty<>();
-    private static final StringProperty quantity = new SimpleStringProperty();
-    private static final StringProperty description = new SimpleStringProperty();
+    private static final ObjectProperty<RequisitionMaster> requisition = new SimpleObjectProperty<>(null);
+    private static final StringProperty cost = new SimpleStringProperty("");
+    private static final StringProperty netTax = new SimpleStringProperty("");
+    private static final StringProperty taxType = new SimpleStringProperty("");
+    private static final StringProperty discount = new SimpleStringProperty("");
+    private static final StringProperty discountType = new SimpleStringProperty("");
+    private static final ObjectProperty<Product> product = new SimpleObjectProperty<>(null);
+    private static final StringProperty serial = new SimpleStringProperty("");
+    private static final StringProperty price = new SimpleStringProperty("");
+    private static final StringProperty totalPrice = new SimpleStringProperty("");
+    private static final StringProperty quantity = new SimpleStringProperty("");
     private static final RequisitionsRepositoryImpl requisitionsRepository = new RequisitionsRepositoryImpl();
 
     public static Long getId() {
@@ -74,18 +80,6 @@ public class RequisitionDetailViewModel {
         return id;
     }
 
-    public static Product getProduct() {
-        return product.get();
-    }
-
-    public static void setProduct(Product product) {
-        RequisitionDetailViewModel.product.set(product);
-    }
-
-    public static ObjectProperty<Product> productProperty() {
-        return product;
-    }
-
     public static RequisitionMaster getRequisition() {
         return requisition.get();
     }
@@ -98,8 +92,8 @@ public class RequisitionDetailViewModel {
         return requisition;
     }
 
-    public static String getQuantity() {
-        return quantity.get();
+    public static Integer getQuantity() {
+        return Integer.parseInt(quantity.get());
     }
 
     public static void setQuantity(String quantity) {
@@ -110,16 +104,116 @@ public class RequisitionDetailViewModel {
         return quantity;
     }
 
-    public static String getDescription() {
-        return description.get();
+    public static Double getCost() {
+        return Double.parseDouble(cost.get());
     }
 
-    public static void setDescription(String description) {
-        RequisitionDetailViewModel.description.set(description);
+    public static void setCost(String cost) {
+        RequisitionDetailViewModel.cost.set(cost);
     }
 
-    public static StringProperty descriptionProperty() {
-        return description;
+    public static StringProperty costProperty() {
+        return cost;
+    }
+
+    public static Double getNetTax() {
+        return Double.parseDouble(netTax.get());
+    }
+
+    public static void setNetTax(String netTax) {
+        RequisitionDetailViewModel.netTax.set(netTax);
+    }
+
+    public static StringProperty netTaxProperty() {
+        return netTax;
+    }
+
+    public static String getTaxType() {
+        return taxType.get();
+    }
+
+    public static void setTaxType(String taxType) {
+        RequisitionDetailViewModel.taxType.set(taxType);
+    }
+
+    public static StringProperty taxTypeProperty() {
+        return taxType;
+    }
+
+    public static String getSerial() {
+        return serial.get();
+    }
+
+    public static void setSerial(String serial) {
+        RequisitionDetailViewModel.serial.set(serial);
+    }
+
+    public static StringProperty serialProperty() {
+        return serial;
+    }
+
+    public static Double getDiscount() {
+        return Double.parseDouble(discount.get());
+    }
+
+    public static void setDiscount(String discount) {
+        RequisitionDetailViewModel.discount.set(discount);
+    }
+
+    public static StringProperty discountProperty() {
+        return discount;
+    }
+
+    public static String getDiscountType() {
+        return discountType.get();
+    }
+
+    public static void setDiscountType(String discountType) {
+        RequisitionDetailViewModel.discountType.set(discountType);
+    }
+
+    public static StringProperty discountTypeProperty() {
+        return discountType;
+    }
+
+    public static Product getProduct() {
+        return product.get();
+    }
+
+    public static void setProduct(Product product) {
+        RequisitionDetailViewModel.product.set(product);
+    }
+
+    public static ObjectProperty<Product> productProperty() {
+        return product;
+    }
+
+    public static Double getTotalPrice() {
+        return Double.parseDouble(totalPrice.get());
+    }
+
+    public static void setTotalPrice(String totalPrice) {
+        RequisitionDetailViewModel.totalPrice.set(totalPrice);
+    }
+
+    public static StringProperty totalPriceProperty() {
+        return totalPrice;
+    }
+
+    public static Double getPrice() {
+        return Double.parseDouble(price.get());
+    }
+
+    public static void setPrice(String price) {
+        RequisitionDetailViewModel.price.set(price);
+    }
+
+    public static StringProperty priceProperty() {
+        return price;
+    }
+
+    public static StringProperty totalProperty() {
+        return totalPrice;
     }
 
     public static ObservableList<RequisitionDetail> getRequisitionDetails() {
@@ -134,32 +228,34 @@ public class RequisitionDetailViewModel {
         return requisitionDetails;
     }
 
-    public static void resetProperties() {
-        setId(0L);
-        setTempId(-1);
-        setProduct(null);
-        setRequisition(null);
-        setDescription("");
-        setQuantity("");
-    }
-
-    public static void addRequisitionDetails() {
+    public static void addRequisitionDetail() {
         var requisitionDetail = RequisitionDetail.builder()
-                .product(getProduct())
+                .cost(getCost())
                 .requisition(getRequisition())
-                .quantity(Integer.parseInt(getQuantity()))
-                .description(getDescription())
+                .netTax(getNetTax())
+                .taxType(getTaxType())
+                .discount(getDiscount())
+                .discountType(getDiscountType())
+                .product(getProduct())
+                .serialNumber(getSerial())
+                .price(getPrice())
+                .total(getTotalPrice())
+                .quantity(getQuantity())
                 .build();
 
-        requisitionDetailsList.add(requisitionDetail);
+        Platform.runLater(() -> {
+            requisitionDetailsList.add(requisitionDetail);
+
+        });
     }
 
     public static void saveRequisitionDetails(
             @Nullable ParameterlessConsumer onActivity,
             @Nullable ParameterlessConsumer onSuccess,
             @Nullable ParameterlessConsumer onFailed) {
-        requisitionDetailsList.forEach(requisitionDetail -> {  // TODO: Add postMultipleDetail().
-            var task = requisitionsRepository.postDetail(requisitionDetail);
+        // TODO: make postMultipleDetail()
+        requisitionDetailsList.forEach(requisitionDetails -> {
+            var task = requisitionsRepository.postDetail(requisitionDetailsList);
             if (Objects.nonNull(onActivity)) {
                 task.setOnRunning(workerStateEvent -> onActivity.run());
             }
@@ -174,14 +270,30 @@ public class RequisitionDetailViewModel {
         requisitionDetailsList.clear();
     }
 
+    public static void resetProperties() {
+        setId(0L);
+        setTempId(-1);
+        setRequisition(null);
+        setProduct(null);
+        setCost("");
+        setNetTax("");
+        setTaxType(null);
+        setDiscount("");
+        setDiscountType(null);
+        setSerial(null);
+        setTotalPrice("");
+        setQuantity("");
+    }
+
     public static void getAllRequisitionDetails(@Nullable ParameterlessConsumer onActivity) {
+        Type listType = new TypeToken<ArrayList<RequisitionDetail>>() {
+        }.getType();
+
         var task = requisitionsRepository.fetchAllDetail();
         if (Objects.nonNull(onActivity)) {
             task.setOnRunning(workerStateEvent -> onActivity.run());
         }
         task.setOnSucceeded(workerStateEvent -> {
-            Type listType = new TypeToken<ArrayList<RequisitionDetail>>() {
-            }.getType();
             ArrayList<RequisitionDetail> requisitionDetailList = new ArrayList<>();
             try {
                 requisitionDetailList = gson.fromJson(
@@ -189,17 +301,103 @@ public class RequisitionDetailViewModel {
             } catch (InterruptedException | ExecutionException e) {
                 SpotyLogger.writeToFile(e, RequisitionDetailViewModel.class);
             }
-
             requisitionDetailsList.clear();
             requisitionDetailsList.addAll(requisitionDetailList);
+        });
+    }
+
+    public static void updateRequisitionDetail(Long index) {
+        RequisitionDetail oldRequisitionDetail = requisitionDetailsList.get(Math.toIntExact(index));
+
+        var newRequisitionDetail = RequisitionDetail.builder()
+                .id(oldRequisitionDetail.getId())
+                .cost(getCost())
+                .requisition(getRequisition())
+                .netTax(getNetTax())
+                .taxType(getTaxType())
+                .discount(getDiscount())
+                .discountType(getDiscountType())
+                .product(getProduct())
+                .serialNumber(getSerial())
+                .price(getPrice())
+                .total(getTotalPrice())
+                .quantity(getQuantity())
+                .build();
+
+        Platform.runLater(
+                () -> {
+                    requisitionDetailsList.remove(getTempId());
+                    requisitionDetailsList.add(getTempId(), newRequisitionDetail);
+
+
+                });
+    }
+
+    public static void getItem(Long index, int tempIndex, @Nullable ParameterlessConsumer onActivity, @Nullable ParameterlessConsumer onFailed) {
+        var findModel = FindModel.builder()
+                .id(index)
+                .build();
+
+        var task = requisitionsRepository.fetchDetail(findModel);
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> onFailed.run());
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            RequisitionDetail requisitionDetail = new RequisitionDetail();
+            try {
+                requisitionDetail = gson.fromJson(
+                        task.get().body(),
+                        RequisitionDetail.class);
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, RequisitionDetailViewModel.class);
+            }
+
+            setTempId(tempIndex);
+            setId(requisitionDetail.getId());
+            setRequisition(requisitionDetail.getRequisition());
+            setCost(String.valueOf(requisitionDetail.getCost()));
+            setNetTax(String.valueOf(requisitionDetail.getNetTax()));
+            setTaxType(requisitionDetail.getTaxType());
+            setDiscount(String.valueOf(requisitionDetail.getDiscount()));
+            setDiscountType(requisitionDetail.getDiscountType());
+            setProduct(requisitionDetail.getProduct());
+            setSerial(requisitionDetail.getSerialNumber());
+            setTotalPrice(String.valueOf(requisitionDetail.getTotal()));
+            setQuantity(String.valueOf(requisitionDetail.getQuantity()));
         });
         SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void searchItem(
-            String search,
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onFailed) {
+    public static void updateItem(Long index) {
+        RequisitionDetail oldRequisitionDetail = requisitionDetailsList.get(Math.toIntExact(index));
+
+        var newRequisitionDetail = RequisitionDetail.builder()
+                .id(oldRequisitionDetail.getId())
+                .cost(getCost())
+                .requisition(getRequisition())
+                .netTax(getNetTax())
+                .taxType(getTaxType())
+                .discount(getDiscount())
+                .discountType(getDiscountType())
+                .product(getProduct())
+                .serialNumber(getSerial())
+                .price(getPrice())
+                .total(getTotalPrice())
+                .quantity(getQuantity())
+                .build();
+
+        Platform.runLater(
+                () -> {
+                    requisitionDetailsList.remove(getTempId());
+                    requisitionDetailsList.add(getTempId(), newRequisitionDetail);
+
+                });
+    }
+
+    public static void searchItem(String search, @Nullable ParameterlessConsumer onActivity, @Nullable ParameterlessConsumer onFailed) {
         var searchModel = new SearchModel();
         searchModel.setSearch(search);
 
@@ -213,87 +411,45 @@ public class RequisitionDetailViewModel {
         task.setOnSucceeded(workerStateEvent -> {
             Type listType = new TypeToken<ArrayList<RequisitionDetail>>() {
             }.getType();
-            ArrayList<RequisitionDetail> requisitionDetailList = new ArrayList<>();
-            try {
-                requisitionDetailList = gson.fromJson(
-                        task.get().body(), listType);
-            } catch (InterruptedException | ExecutionException e) {
 
-                SpotyLogger.writeToFile(e, RequisitionDetailViewModel.class);
-            }
+            Platform.runLater(
+                    () -> {
+                        requisitionDetailsList.clear();
 
-            requisitionDetailsList.clear();
-            requisitionDetailsList.addAll(requisitionDetailList);
+                        try {
+                            ArrayList<RequisitionDetail> requisitionDetailList = gson.fromJson(
+                                    task.get().body(), listType);
+                            requisitionDetailsList.addAll(requisitionDetailList);
+                        } catch (Exception e) {
+                            SpotyLogger.writeToFile(e, RequisitionDetailViewModel.class);
+                        }
+                    });
         });
         SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void updateRequisitionDetail(Long index) {
-        var requisitionDetail = RequisitionDetail.builder()
-                .id(index)
-                .product(getProduct())
-                .requisition(getRequisition())
-                .quantity(Integer.parseInt(getQuantity()))
-                .description(getDescription())
-                .build();
-
-        requisitionDetailsList.remove(getTempId());
-        requisitionDetailsList.add(getTempId(), requisitionDetail);
-    }
-
-    public static void getItem(Long index, int tempIndex,
-                               @Nullable ParameterlessConsumer onActivity,
-                               @Nullable ParameterlessConsumer onSuccess,
-                               @Nullable ParameterlessConsumer onFailed) throws IOException, InterruptedException {
-        var findModel = FindModel.builder().id(index).build();
-        var task = requisitionsRepository.fetchDetail(findModel);
-        if (Objects.nonNull(onActivity)) {
-            task.setOnRunning(workerStateEvent -> onActivity.run());
-        }
-        if (Objects.nonNull(onSuccess)) {
-            task.setOnSucceeded(workerStateEvent -> {
-                RequisitionDetail requisitionDetail = new RequisitionDetail();
-                try {
-                    requisitionDetail = gson.fromJson(task.get().body(), RequisitionDetail.class);
-                } catch (InterruptedException | ExecutionException e) {
-                    SpotyLogger.writeToFile(e, RequisitionDetailViewModel.class);
-                }
-
-                setTempId(tempIndex);
-                setId(requisitionDetail.getId());
-                setProduct(requisitionDetail.getProduct());
-                setQuantity(String.valueOf(requisitionDetail.getQuantity()));
-                setDescription(requisitionDetail.getDescription());
-
-                onSuccess.run();
-            });
-        }
-        if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> onFailed.run());
-        }
-        SpotyThreader.spotyThreadPool(task);
-    }
-
-    public static void updateRequisitionDetails(
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+    public static void updateRequisitionDetails(@Nullable ParameterlessConsumer onActivity, @Nullable ParameterlessConsumer onSuccess, @Nullable ParameterlessConsumer onFailed) {
         // TODO: Add save multiple on API.
         requisitionDetailsList.forEach(
                 requisitionDetail -> {
-                    var task = requisitionsRepository.putDetail(requisitionDetail);
-                    if (Objects.nonNull(onActivity)) {
-                        task.setOnRunning(workerStateEvent -> onActivity.run());
+                    try {
+                        var task = requisitionsRepository.putDetail(requisitionDetail);
+                        if (Objects.nonNull(onActivity)) {
+                            task.setOnRunning(workerStateEvent -> onActivity.run());
+                        }
+                        if (Objects.nonNull(onSuccess)) {
+                            task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+                        }
+                        if (Objects.nonNull(onFailed)) {
+                            task.setOnFailed(workerStateEvent -> onFailed.run());
+                        }
+                        SpotyThreader.spotyThreadPool(task);
+                    } catch (Exception e) {
+                        SpotyLogger.writeToFile(e, RequisitionDetailViewModel.class);
                     }
-                    if (Objects.nonNull(onSuccess)) {
-                        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
-                    }
-                    if (Objects.nonNull(onFailed)) {
-                        task.setOnFailed(workerStateEvent -> onFailed.run());
-                    }
-                    SpotyThreader.spotyThreadPool(task);
                 });
-
+        // updateProductQuantity();
+        // getAllRequisitionDetails();
         // getAllRequisitionDetails();
     }
 
@@ -302,10 +458,7 @@ public class RequisitionDetailViewModel {
         PENDING_DELETES.add(index);
     }
 
-    public static void deleteRequisitionDetails(@NotNull LinkedList<Long> indexes,
-                                                @Nullable ParameterlessConsumer onActivity,
-                                                @Nullable ParameterlessConsumer onSuccess,
-                                                @Nullable ParameterlessConsumer onFailed) {
+    public static void deleteRequisitionDetails(@NotNull LinkedList<Long> indexes, @Nullable ParameterlessConsumer onActivity, @Nullable ParameterlessConsumer onSuccess, @Nullable ParameterlessConsumer onFailed) {
         LinkedList<FindModel> findModelList = new LinkedList<>();
         indexes.forEach(index -> findModelList.add(new FindModel(index)));
 
@@ -321,4 +474,46 @@ public class RequisitionDetailViewModel {
         }
         SpotyThreader.spotyThreadPool(task);
     }
+
+//    private static RequisitionTransaction getRequisitionTransaction(long requisitionIndex) {
+////        PreparedQuery<RequisitionTransaction> preparedQuery =
+////                requisitionTransactionDao
+////                        .queryBuilder()
+////                        .where()
+////                        .eq("requisition_detail_id", requisitionIndex)
+////                        .prepare();
+//
+//        // TODO: Query for requisition transaction by requisition detail id.
+//
+////        return requisitionTransactionDao.queryForFirst(preparedQuery);
+//        return new RequisitionTransaction();
+//    }
+//
+//    private static void createRequisitionTransaction(@NotNull RequisitionDetail requisitionDetail) {
+//
+//        RequisitionTransaction requisitionTransaction = new RequisitionTransaction();
+//        requisitionTransaction.setBranch(requisitionDetail.getRequisition().getBranch());
+//        requisitionTransaction.setRequisitionDetail(requisitionDetail);
+//        requisitionTransaction.setProduct(requisitionDetail.getProduct());
+//        requisitionTransaction.setAdjustQuantity(requisitionDetail.getQuantity());
+//        requisitionTransaction.setRequisitionType(requisitionDetail.getRequisitionType());
+//        requisitionTransaction.setDate(new Date());
+//
+////        requisitionTransactionDao.create(requisitionTransaction);
+//        // TODO: Create requisition transaction.
+//    }
+//
+//    private static void updateRequisitionTransaction(@NotNull RequisitionDetail requisitionDetail) {
+//        RequisitionTransaction requisitionTransaction =
+//                getRequisitionTransaction(requisitionDetail.getId());
+//        requisitionTransaction.setBranch(requisitionDetail.getRequisition().getBranch());
+//        requisitionTransaction.setRequisitionDetail(requisitionDetail);
+//        requisitionTransaction.setProduct(requisitionDetail.getProduct());
+//        requisitionTransaction.setAdjustQuantity(requisitionDetail.getQuantity());
+//        requisitionTransaction.setRequisitionType(requisitionDetail.getRequisitionType());
+//        requisitionTransaction.setDate(new Date());
+//
+////        requisitionTransactionDao.update(requisitionTransaction);
+//        // TODO: Update requisition transaction.
+//    }
 }

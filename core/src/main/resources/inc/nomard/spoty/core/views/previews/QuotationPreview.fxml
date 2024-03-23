@@ -17,153 +17,123 @@
 <?import inc.nomard.spoty.core.components.navigation.Spacer?>
 <?import io.github.palexdev.materialfx.controls.MFXScrollPane?>
 <?import io.github.palexdev.materialfx.dialogs.MFXGenericDialog?>
-<?import io.github.palexdev.mfxcore.controls.Text?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import io.github.palexdev.materialfx.controls.MFXTableView?>
 <MFXGenericDialog xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/20.0.1"
                   fx:controller="inc.nomard.spoty.core.views.previews.QuotationPreviewController">
     <padding>
         <Insets left="10.0" right="10"/>
     </padding>
     <center>
-        <MFXScrollPane>
+        <MFXScrollPane fitToHeight="true" fitToWidth="true">
             <VBox maxHeight="900.0" maxWidth="1000.0" minHeight="600.0" minWidth="500.0" prefHeight="800.0"
                   prefWidth="700.0">
-                <children>
-                    <HBox>
-                        <children>
-                            <VBox alignment="BOTTOM_LEFT" prefHeight="80.0">
-                                <children>
-                                    <Label text="Product Quotation"/>
-                                </children>
-                            </VBox>
-                            <Region HBox.hgrow="ALWAYS"/>
-                            <VBox alignment="TOP_RIGHT" layoutX="10.0" layoutY="10.0" prefHeight="80.0">
-                                <children>
-                                    <Label fx:id="quotationDate" text="Date"/>
-                                </children>
-                            </VBox>
-                        </children>
-                    </HBox>
-                    <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="10.0" prefHeight="50.0" spacing="20.0">
-                        <children>
-                            <Label text="Quotation ID"/>
-                            <Label fx:id="quotationRef" layoutX="10.0" layoutY="10.0" text="PQ19-102"/>
-                        </children>
-                    </HBox>
-                    <VBox spacing="10.0">
-                        <children>
-                            <HBox spacing="70.0">
-                                <children>
-                                    <Label text="Requester Name"/>
-                                    <Spacer/>
-                                    <Label fx:id="customerName" layoutX="10.0" layoutY="10.0" text="Jonathan Mark"/>
-                                </children>
-                            </HBox>
-                            <HBox layoutX="10.0" layoutY="10.0" spacing="70.0">
-                                <children>
-                                    <Label text="Contact Number"/>
-                                    <Spacer/>
-                                    <Label fx:id="customerNumber" layoutX="10.0" layoutY="10.0" text="(256) 752-92370"/>
-                                </children>
-                            </HBox>
-                            <HBox layoutX="10.0" layoutY="10.0" spacing="140.0">
-                                <children>
-                                    <Label text="Email"/>
-                                    <Spacer/>
-                                    <Label fx:id="customerEmail" layoutX="10.0" layoutY="10.0"
-                                           text="mwigojm@gmail.com"/>
-                                </children>
-                            </HBox>
-                        </children>
-                        <VBox.margin>
-                            <Insets bottom="30.0" top="10.0"/>
-                        </VBox.margin>
-                    </VBox>
-                    <Separator/>
-                    <VBox>
-                        <children>
-                            <TableView fx:id="itemsTable" focusTraversable="false" prefHeight="200.0" prefWidth="200.0">
-                                <columns>
-                                    <TableColumn fx:id="itemNumber" prefWidth="75.0" text="No."/>
-                                    <TableColumn fx:id="itemName" prefWidth="75.0" text="Name"/>
-                                    <TableColumn fx:id="itemQuantity" prefWidth="75.0" text="Qnty"/>
-                                    <TableColumn fx:id="itemCost" prefWidth="75.0" text="Cost"/>
-                                </columns>
-                                <columnResizePolicy>
-                                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
-                                </columnResizePolicy>
-                            </TableView>
-                            <VBox alignment="CENTER_RIGHT">
-                                <children>
-                                    <HBox alignment="CENTER_RIGHT" spacing="90.0">
-                                        <children>
-                                            <Label text="Total Cost:"/>
-                                            <Label fx:id="totalCost" layoutX="10.0" layoutY="10.0" text="\$36806000"/>
-                                        </children>
-                                    </HBox>
-                                    <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="10.0" spacing="38.0">
-                                        <children>
-                                            <Label text="Total Discount(3%):"/>
-                                            <Label fx:id="totalDiscount" layoutX="10.0" layoutY="10.0"
-                                                   text="\$1104180"/>
-                                        </children>
-                                    </HBox>
-                                    <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="110.0" spacing="97.0">
-                                        <children>
-                                            <Label text="Net Cost:"/>
-                                            <Label fx:id="netCost" layoutX="10.0" layoutY="10.0" text="\$35701820"/>
-                                        </children>
-                                    </HBox>
-                                </children>
-                                <VBox.margin>
-                                    <Insets top="10.0"/>
-                                </VBox.margin>
-                            </VBox>
-                        </children>
-                        <VBox.margin>
-                            <Insets bottom="10.0" top="30.0"/>
-                        </VBox.margin>
-                    </VBox>
-                    <Text/>
-                    <Separator/>
-                    <HBox>
-                        <children>
-                            <VBox spacing="10.0">
-                                <children>
-                                    <HBox spacing="20.0">
-                                        <children>
-                                            <Label text="Authorized Name:"/>
-                                            <Label fx:id="userName" text="Jonathan Mark"/>
-                                        </children>
-                                    </HBox>
-                                    <HBox spacing="45.0">
-                                        <children>
-                                            <Label text="Authorized ID:"/>
-                                            <Label fx:id="userId" text="5467324"/>
-                                        </children>
-                                    </HBox>
-                                </children>
-                            </VBox>
-                            <Region HBox.hgrow="ALWAYS"/>
-                            <VBox layoutX="60.0" layoutY="10.0">
-                                <children>
-                                    <Label text="Signature:"/>
-                                </children>
-                            </VBox>
-                        </children>
-                        <padding>
-                            <Insets right="50.0"/>
-                        </padding>
-                        <VBox.margin>
-                            <Insets bottom="30.0" top="30.0"/>
-                        </VBox.margin>
-                    </HBox>
-                </children>
                 <padding>
                     <Insets bottom="20.0" left="10.0" right="10.0" top="20.0"/>
                 </padding>
+                <HBox maxHeight="150.0" minHeight="50.0" prefHeight="100.0">
+                    <VBox alignment="BOTTOM_LEFT" prefHeight="80.0">
+                        <Label styleClass="preview-header" text="Quotation Invoice"/>
+                    </VBox>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <HBox alignment="TOP_RIGHT" layoutX="10.0" layoutY="10.0" prefHeight="80.0">
+                        <Label styleClass="preview-header" text="Date"/>
+                        <Label fx:id="quotationDate"/>
+                    </HBox>
+                </HBox>
+                <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="10.0" prefHeight="50.0" spacing="20.0">
+                    <Label styleClass="preview-header" text="Invoice ID"/>
+                    <Label fx:id="quotationRef" layoutX="10.0" layoutY="10.0"/>
+                </HBox>
+                <VBox spacing="10.0">
+                    <VBox.margin>
+                        <Insets bottom="30.0" top="10.0"/>
+                    </VBox.margin>
+                    <HBox spacing="70.0">
+                        <Label styleClass="preview-header" text="Customer's Name:"/>
+                        <Spacer/>
+                        <Label fx:id="customerName" layoutX="10.0" layoutY="10.0"/>
+                    </HBox>
+                    <HBox layoutX="10.0" layoutY="10.0" spacing="70.0">
+                        <Label styleClass="preview-header" text="Customer's Phone No:"/>
+                        <Spacer/>
+                        <Label fx:id="customerNumber" layoutX="10.0" layoutY="10.0"/>
+                    </HBox>
+                    <HBox layoutX="10.0" layoutY="10.0" spacing="140.0">
+                        <Label styleClass="preview-header" text="Customer's Email:"/>
+                        <Spacer/>
+                        <Label fx:id="customerEmail" layoutX="10.0" layoutY="10.0"/>
+                    </HBox>
+                </VBox>
+                <Separator/>
+                <VBox>
+                    <VBox.margin>
+                        <Insets bottom="10.0" top="30.0"/>
+                    </VBox.margin>
+                    <MFXTableView fx:id="itemsTable" prefWidth="200.0"/>
+                    <VBox alignment="CENTER_LEFT">
+                        <HBox alignment="CENTER_RIGHT">
+                            <VBox.margin>
+                                <Insets top="10.0" bottom="10.0"/>
+                            </VBox.margin>
+                            <VBox minWidth="100" prefWidth="150" maxWidth="200" alignment="CENTER_LEFT" spacing="8.0">
+                                <Label styleClass="preview-header" text="Sub Total:"/>
+                                <Label styleClass="preview-header" text="Discount(3%):"/>
+                                <Label styleClass="preview-header" text="Tax:"/>
+                                <Label styleClass="preview-header" text="Shipping:"/>
+                            </VBox>
+                            <VBox minWidth="100" prefWidth="150" maxWidth="200" alignment="CENTER_RIGHT" spacing="8.0">
+                                <Label fx:id="subTotal" layoutX="10.0" layoutY="10.0"/>
+                                <Label fx:id="discount" layoutX="10.0" layoutY="10.0"/>
+                                <Label fx:id="tax" layoutX="10.0" layoutY="10.0"/>
+                                <Label fx:id="shipping" layoutX="10.0" layoutY="10.0"/>
+                            </VBox>
+                        </HBox>
+                        <Separator/>
+                        <HBox alignment="CENTER_RIGHT">
+                            <VBox.margin>
+                                <Insets top="10.0" bottom="10.0"/>
+                            </VBox.margin>
+                            <VBox minWidth="100" prefWidth="150" maxWidth="200" alignment="CENTER_LEFT">
+                                <Label styleClass="preview-header" text="Net Price:"/>
+                            </VBox>
+                            <VBox minWidth="100" prefWidth="150" maxWidth="200" alignment="CENTER_RIGHT">
+                                <Label fx:id="netPrice" layoutX="10.0" layoutY="10.0"/>
+                            </VBox>
+                        </HBox>
+                    </VBox>
+                    <Separator/>
+                    <HBox alignment="CENTER_RIGHT">
+                        <VBox.margin>
+                            <Insets top="10.0"/>
+                        </VBox.margin>
+                        <VBox minWidth="100" prefWidth="150" maxWidth="200" alignment="CENTER_LEFT" spacing="8.0">
+                            <Label styleClass="preview-header" text="Paid Amount:"/>
+                            <Label styleClass="preview-header" text="Change:"/>
+                            <Label styleClass="preview-header" text="Balance:"/>
+                        </VBox>
+                        <VBox minWidth="100" prefWidth="150" maxWidth="200" alignment="CENTER_RIGHT" spacing="8.0">
+                            <Label fx:id="paidAmount" layoutX="10.0" layoutY="10.0"/>
+                            <Label fx:id="changeDue" layoutX="10.0" layoutY="10.0"/>
+                            <Label fx:id="balance" layoutX="10.0" layoutY="10.0"/>
+                        </VBox>
+                    </HBox>
+                </VBox>
+                <Separator/>
+                <HBox>
+                    <padding>
+                        <Insets right="50.0"/>
+                    </padding>
+                    <VBox.margin>
+                        <Insets bottom="30.0" top="30.0"/>
+                    </VBox.margin>
+                    <HBox spacing="20.0">
+                        <Label styleClass="preview-header" text="Done By:"/>
+                        <Label fx:id="doneBy"/>
+                    </HBox>
+                </HBox>
             </VBox>
         </MFXScrollPane>
     </center>

@@ -16,13 +16,10 @@ package inc.nomard.spoty.core.views.quotation;
 
 import inc.nomard.spoty.core.components.animations.SpotyAnimations;
 import inc.nomard.spoty.core.components.navigation.Pages;
-import inc.nomard.spoty.core.viewModels.BankViewModel;
 import inc.nomard.spoty.core.viewModels.quotations.QuotationMasterViewModel;
 import inc.nomard.spoty.core.views.BaseController;
 import inc.nomard.spoty.core.views.previews.QuotationPreviewController;
-import inc.nomard.spoty.core.views.previews.SalePreviewController;
 import inc.nomard.spoty.network_bridge.dtos.quotations.QuotationMaster;
-import inc.nomard.spoty.network_bridge.dtos.sales.SaleMaster;
 import inc.nomard.spoty.utils.SpotyThreader;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;

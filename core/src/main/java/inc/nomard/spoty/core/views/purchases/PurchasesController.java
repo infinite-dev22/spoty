@@ -18,7 +18,7 @@ import inc.nomard.spoty.core.components.animations.SpotyAnimations;
 import inc.nomard.spoty.core.components.navigation.Pages;
 import inc.nomard.spoty.core.viewModels.purchases.PurchaseMasterViewModel;
 import inc.nomard.spoty.core.views.BaseController;
-import inc.nomard.spoty.core.views.previews.PurchasePreviewController;
+import inc.nomard.spoty.core.views.previews.purchases.PurchasePreviewController;
 import inc.nomard.spoty.network_bridge.dtos.purchases.PurchaseMaster;
 import inc.nomard.spoty.utils.SpotyThreader;
 import io.github.palexdev.materialfx.controls.*;
@@ -110,9 +110,9 @@ public class PurchasesController implements Initializable {
         MFXTableColumn<PurchaseMaster> masterGrandTotal =
                 new MFXTableColumn<>("Total Amount", false, Comparator.comparing(PurchaseMaster::getTotal));
         MFXTableColumn<PurchaseMaster> masterAmountPaid =
-                new MFXTableColumn<>("Paid Amount", false, Comparator.comparing(PurchaseMaster::getPaid));
+                new MFXTableColumn<>("Paid Amount", false, Comparator.comparing(PurchaseMaster::getAmountPaid));
         MFXTableColumn<PurchaseMaster> masterAmountDue =
-                new MFXTableColumn<>("Due Amount", false, Comparator.comparing(PurchaseMaster::getDue));
+                new MFXTableColumn<>("Due Amount", false, Comparator.comparing(PurchaseMaster::getAmountDue));
 
         masterSupplier.setRowCellFactory(
                 master -> new MFXTableRowCell<>(PurchaseMaster::getSupplierName));
@@ -125,9 +125,9 @@ public class PurchasesController implements Initializable {
         masterGrandTotal.setRowCellFactory(
                 master -> new MFXTableRowCell<>(PurchaseMaster::getTotal));
         masterAmountPaid.setRowCellFactory(
-                master -> new MFXTableRowCell<>(PurchaseMaster::getPaid));
+                master -> new MFXTableRowCell<>(PurchaseMaster::getAmountPaid));
         masterAmountDue.setRowCellFactory(
-                master -> new MFXTableRowCell<>(PurchaseMaster::getDue));
+                master -> new MFXTableRowCell<>(PurchaseMaster::getAmountDue));
 
         masterSupplier
                 .prefWidthProperty()
@@ -167,8 +167,8 @@ public class PurchasesController implements Initializable {
                         new StringFilter<>("Status", PurchaseMaster::getStatus),
                         new StringFilter<>("Pay Status", PurchaseMaster::getPaymentStatus),
                         new DoubleFilter<>("Total", PurchaseMaster::getTotal),
-                        new DoubleFilter<>("Paid", PurchaseMaster::getPaid),
-                        new DoubleFilter<>("Due", PurchaseMaster::getDue));
+                        new DoubleFilter<>("Paid", PurchaseMaster::getAmountPaid),
+                        new DoubleFilter<>("Due", PurchaseMaster::getAmountDue));
         getTable();
 
         if (PurchaseMasterViewModel.getPurchases().isEmpty()) {
@@ -281,7 +281,7 @@ public class PurchasesController implements Initializable {
 
     private void viewDialogPane(Stage stage) throws IOException {
         double screenHeight = Screen.getPrimary().getBounds().getHeight();
-        viewFxmlLoader = fxmlLoader("views/previews/PurchasePreview.fxml");
+        viewFxmlLoader = fxmlLoader("views/previews/purchases/PurchasePreview.fxml");
         viewFxmlLoader.setControllerFactory(c -> new PurchasePreviewController());
         MFXGenericDialog genericDialog = viewFxmlLoader.load();
         genericDialog.setShowMinimize(false);
