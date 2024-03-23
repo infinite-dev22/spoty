@@ -29,6 +29,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 
 import java.net.URL;
@@ -51,13 +53,13 @@ public class BaseController implements Initializable {
     @FXML
     public AnchorPane rootPane;
     @FXML
-    public ImageView userProfilePicture;
-    @FXML
     public MFXButton notificationsBtn;
     @FXML
     public MFXButton feedbackBtn;
     @FXML
     public MFXButton helpBtn;
+    @FXML
+    public Circle imageHolder;
     private double xOffset;
     private double yOffset;
 
@@ -86,7 +88,14 @@ public class BaseController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        userProfilePicture.setImage(new Image(SpotyCoreResourceLoader.load("icon.png"), 100, 100, true, true));
+        var image = new Image(
+                SpotyCoreResourceLoader.load("images/user-place-holder.png"),
+                10000,
+                10000,
+                true,
+                true
+        );
+        imageHolder.setFill(new ImagePattern(image));
 
         initializeLoader();
         initAppBar();

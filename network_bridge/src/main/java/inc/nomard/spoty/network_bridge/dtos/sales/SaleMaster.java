@@ -38,9 +38,13 @@ public class SaleMaster {
     private double taxRate;
     private double netTax;
     private double discount;
+    private double subTotal;
     private double total;
     private double amountPaid;
     private double amountDue;
+    private double changeAmount;
+    private double balanceAmount;
+    private double shippingFee;
     private String paymentStatus;
     private String saleStatus;
     private String notes;

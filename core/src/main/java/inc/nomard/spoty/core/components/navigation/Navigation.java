@@ -51,11 +51,16 @@ public class Navigation {
 
     public static @NotNull Map<String, NavTree.NavTreeItem> createNavItems() {
         var map = new HashMap<String, NavTree.NavTreeItem>();
-        // Sale
-        map.put("SALE", NavTree.NavTreeItem.page("Sale", Pages.getSalePane()));
+        // People
+        map.put("SUPPLIERS", NavTree.NavTreeItem.page("Suppliers", Pages.getSupplierPane()));
+        map.put("CUSTOMERS", NavTree.NavTreeItem.page("Customers", Pages.getCustomerPane()));
+        // Sales
         map.put("POINT_OF_SALE", NavTree.NavTreeItem.page("Point Of Sale", Pages.getPosPane()));
+        map.put("ORDERS", NavTree.NavTreeItem.page("Orders", Pages.getSalePane()));
+        map.put("SALE_RETURN", NavTree.NavTreeItem.page("Sales Returns", Pages.getSaleReturnPane()));
         map.put("SALE_TERMS", NavTree.NavTreeItem.page("Sale Terms", Pages.getSalesTermPane()));
-        // Product
+        // Purchases
+        // Inventory
         map.put("CATEGORY", NavTree.NavTreeItem.page("Category", Pages.getProductCategoryPane()));
         map.put("BRAND", NavTree.NavTreeItem.page("Brand", Pages.getBrandPane()));
         map.put("UNIT", NavTree.NavTreeItem.page("Unit", Pages.getUnitPane()));
@@ -83,7 +88,7 @@ public class Navigation {
         // Leave
         map.put("LEAVE_STATUS", NavTree.NavTreeItem.page("Leave Status", Pages.getLeaveStatusPane()));
         map.put("LEAVE_REQUEST", NavTree.NavTreeItem.page("Leave Request", Pages.getLeaveRequestPane()));
-        map.put("CALENDAR", NavTree.NavTreeItem.page("Calendar", Pages.getEmploymentStatusPane()));
+        map.put("CALENDAR", NavTree.NavTreeItem.page("Calendar", Pages.getCalendarPane()));
         // PayRoll
         map.put("PAY_SLIPS", NavTree.NavTreeItem.page("Pay Slips", Pages.getPaySlipsPane()));
         map.put("SALARIES", NavTree.NavTreeItem.page("Salaries", Pages.getSalariesPane()));  // TODO: Get Salaries from payslips
@@ -96,9 +101,9 @@ public class Navigation {
         // Tax
         map.put("TAXES", NavTree.NavTreeItem.page("Taxes", Pages.getTaxesPane()));
         map.put("TAX_SETTINGS", NavTree.NavTreeItem.page("Tax Settings", Pages.getTaxSettingsPane()));
-        // Returns
-        map.put("SALE_RETURN", NavTree.NavTreeItem.page("Sales Returns", Pages.getSaleReturnPane()));
-        map.put("PURCHASE_RETURN", NavTree.NavTreeItem.page("Purchases Returns", Pages.getPurchaseReturnPane()));
+        // Purchases
+        map.put("PURCHASES", NavTree.NavTreeItem.page("Purchases", Pages.getPurchasePane()));
+        map.put("PURCHASE_RETURNS", NavTree.NavTreeItem.page("Purchases Returns", Pages.getPurchaseReturnPane()));
         // Expenses
         map.put(
                 "EXPENSE_CATEGORY", NavTree.NavTreeItem.page("Category", Pages.getExpenseCategoryPane()));
@@ -185,18 +190,20 @@ public class Navigation {
         sale
                 .getChildren()
                 .setAll(
-                        NAV_TREE.get("SALE"),
                         NAV_TREE.get("POINT_OF_SALE"),
+                        NAV_TREE.get("ORDERS"),
+                        NAV_TREE.get("SALE_RETURN"),
                         NAV_TREE.get("SALE_TERMS"));
 
-        var customers =
-                NavTree.NavTreeItem.mainPage("Customers", "fas-users", Pages.getCustomerPane());
+        var people = NavTree.NavTreeItem.group("People", "fas-users");
+        people
+                .getChildren()
+                .setAll(
+                        NAV_TREE.get("SUPPLIERS"),
+                        NAV_TREE.get("CUSTOMERS"));
 
-        var suppliers =
-                NavTree.NavTreeItem.mainPage("Suppliers", "fas-users-line", Pages.getSupplierPane());
-
-        var product = NavTree.NavTreeItem.group("Product", "fas-cubes");
-        product
+        var inventory = NavTree.NavTreeItem.group("Inventory", "fas-cubes");
+        inventory
                 .getChildren()
                 .setAll(
                         NAV_TREE.get("CATEGORY"),
@@ -205,8 +212,12 @@ public class Navigation {
                         NAV_TREE.get("PRODUCTS"),
                         NAV_TREE.get("ADJUSTMENTS"));
 
-        var purchase =
-                NavTree.NavTreeItem.mainPage("Purchases", "fas-cart-plus", Pages.getPurchasePane());
+        var purchase = NavTree.NavTreeItem.group("Purchase", "fas-cart-plus");
+        purchase
+                .getChildren()
+                .setAll(
+                        NAV_TREE.get("PURCHASES"),
+                        NAV_TREE.get("PURCHASE_RETURNS"));
 
         var reports = NavTree.NavTreeItem.group("Reports", "fas-clipboard-list");
         reports
@@ -276,9 +287,6 @@ public class Navigation {
                         NAV_TREE.get("TAXES"),
                         NAV_TREE.get("TAX_SETTINGS"));
 
-        var returns = NavTree.NavTreeItem.group("Return", "fas-retweet");
-        returns.getChildren().setAll(NAV_TREE.get("SALE_RETURN"), NAV_TREE.get("PURCHASE_RETURN"));
-
         var requisition =
                 NavTree.NavTreeItem.mainPage(
                         "Requisitions", "fas-hand-holding", Pages.getRequisitionPane());
@@ -326,22 +334,20 @@ public class Navigation {
         root.getChildren()
                 .addAll(
                         dashboard,
-                        sale,
-                        customers,
-                        suppliers,
-                        product,
-                        purchase,
-                        reports,
                         humanResource,
-                        bank,
-                        service,
-                        quotation,
-                        tax,
-                        returns,
+                        people,
+                        inventory,
                         requisition,
-                        transfer,
+                        purchase,
                         stockIn,
+                        quotation,
+                        sale,
+                        transfer,
+                        service,
+                        bank,
+                        tax,
                         expense,
+                        reports,
                         settings);
         return root;
     }

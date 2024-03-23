@@ -63,13 +63,13 @@ public class RequisitionController implements Initializable {
     @FXML
     public MFXButton importBtn;
     @FXML
-    public MFXTableView<RequisitionMaster> masterTable;
-    @FXML
     public BorderPane contentPane;
     @FXML
     public MFXButton createBtn;
     @FXML
     public HBox refresh;
+    @FXML
+    private MFXTableView<RequisitionMaster> masterTable;
     private RotateTransition transition;
     private FXMLLoader viewFxmlLoader;
     private MFXStageDialog viewDialog;
@@ -93,75 +93,89 @@ public class RequisitionController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         setIcons();
-        setupTable();
         Platform.runLater(this::setupTable);
     }
 
     private void setupTable() {
-        MFXTableColumn<RequisitionMaster> requisitionSupplier =
+        MFXTableColumn<RequisitionMaster> masterSupplier =
                 new MFXTableColumn<>(
                         "Supplier", false, Comparator.comparing(RequisitionMaster::getSupplierName));
-        MFXTableColumn<RequisitionMaster> requisitionStatus =
+        MFXTableColumn<RequisitionMaster> masterStatus =
                 new MFXTableColumn<>("Status", false, Comparator.comparing(RequisitionMaster::getStatus));
-        MFXTableColumn<RequisitionMaster> requisitionShippingMethod =
+        MFXTableColumn<RequisitionMaster> masterPaymentStatus =
                 new MFXTableColumn<>(
-                        "Shipping Method", false, Comparator.comparing(RequisitionMaster::getShipMethod));
-        MFXTableColumn<RequisitionMaster> requisitionDate =
+                        "Pay Status", false, Comparator.comparing(RequisitionMaster::getPaymentStatus));
+        MFXTableColumn<RequisitionMaster> masterDate =
                 new MFXTableColumn<>("Date", false, Comparator.comparing(RequisitionMaster::getDate));
-        MFXTableColumn<RequisitionMaster> requisitionTotalAmount =
-                new MFXTableColumn<>(
-                        "Total Amount", false, Comparator.comparing(RequisitionMaster::getTotalCost));
+        MFXTableColumn<RequisitionMaster> masterGrandTotal =
+                new MFXTableColumn<>("Total Amount", false, Comparator.comparing(RequisitionMaster::getTotal));
+        MFXTableColumn<RequisitionMaster> masterAmountPaid =
+                new MFXTableColumn<>("Paid Amount", false, Comparator.comparing(RequisitionMaster::getAmountPaid));
+        MFXTableColumn<RequisitionMaster> masterAmountDue =
+                new MFXTableColumn<>("Due Amount", false, Comparator.comparing(RequisitionMaster::getAmountDue));
 
-        requisitionSupplier.setRowCellFactory(
-                requisition -> new MFXTableRowCell<>(RequisitionMaster::getSupplierName));
-        requisitionStatus.setRowCellFactory(
-                requisition -> new MFXTableRowCell<>(RequisitionMaster::getStatus));
-        requisitionShippingMethod.setRowCellFactory(
-                requisition -> new MFXTableRowCell<>(RequisitionMaster::getShipMethod));
-        requisitionDate.setRowCellFactory(
-                requisition -> new MFXTableRowCell<>(RequisitionMaster::getLocaleDate));
-        requisitionTotalAmount.setRowCellFactory(
-                requisition -> new MFXTableRowCell<>(RequisitionMaster::getTotalCost));
+        masterSupplier.setRowCellFactory(
+                master -> new MFXTableRowCell<>(RequisitionMaster::getSupplierName));
+        masterStatus.setRowCellFactory(
+                master -> new MFXTableRowCell<>(RequisitionMaster::getStatus));
+        masterPaymentStatus.setRowCellFactory(
+                master -> new MFXTableRowCell<>(RequisitionMaster::getPaymentStatus));
+        masterDate.setRowCellFactory(
+                master -> new MFXTableRowCell<>(RequisitionMaster::getLocaleDate));
+        masterGrandTotal.setRowCellFactory(
+                master -> new MFXTableRowCell<>(RequisitionMaster::getTotal));
+        masterAmountPaid.setRowCellFactory(
+                master -> new MFXTableRowCell<>(RequisitionMaster::getAmountPaid));
+        masterAmountDue.setRowCellFactory(
+                master -> new MFXTableRowCell<>(RequisitionMaster::getAmountDue));
 
-        requisitionSupplier
+        masterSupplier
                 .prefWidthProperty()
                 .bind(masterTable.widthProperty().multiply(.25));
-        requisitionStatus
+        masterStatus
                 .prefWidthProperty()
                 .bind(masterTable.widthProperty().multiply(.25));
-        requisitionShippingMethod
+        masterPaymentStatus
                 .prefWidthProperty()
                 .bind(masterTable.widthProperty().multiply(.25));
-        requisitionDate.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
-        requisitionTotalAmount
+        masterDate.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        masterGrandTotal
+                .prefWidthProperty()
+                .bind(masterTable.widthProperty().multiply(.25));
+        masterAmountPaid
+                .prefWidthProperty()
+                .bind(masterTable.widthProperty().multiply(.25));
+        masterAmountDue
                 .prefWidthProperty()
                 .bind(masterTable.widthProperty().multiply(.25));
 
         masterTable
                 .getTableColumns()
                 .addAll(
-                        requisitionSupplier,
-                        requisitionStatus,
-                        requisitionShippingMethod,
-                        requisitionDate,
-                        requisitionTotalAmount);
+                        masterSupplier,
+                        masterStatus,
+                        masterPaymentStatus,
+                        masterDate,
+                        masterGrandTotal,
+                        masterAmountPaid,
+                        masterAmountDue);
         masterTable
                 .getFilters()
                 .addAll(
                         new StringFilter<>("Reference", RequisitionMaster::getRef),
                         new StringFilter<>("Supplier", RequisitionMaster::getSupplierName),
                         new StringFilter<>("Status", RequisitionMaster::getStatus),
-                        new StringFilter<>("Shipping Method", RequisitionMaster::getShipMethod),
-                        new DoubleFilter<>("Total Amount", RequisitionMaster::getTotalCost));
-        getRequisitionMasterTable();
+                        new StringFilter<>("Pay Status", RequisitionMaster::getPaymentStatus),
+                        new DoubleFilter<>("Total", RequisitionMaster::getTotal),
+                        new DoubleFilter<>("Paid", RequisitionMaster::getAmountPaid),
+                        new DoubleFilter<>("Due", RequisitionMaster::getAmountDue));
+        getTable();
 
         if (RequisitionMasterViewModel.getRequisitions().isEmpty()) {
             RequisitionMasterViewModel.getRequisitions()
                     .addListener(
                             (ListChangeListener<RequisitionMaster>)
-                                    c ->
-                                            masterTable.setItems(
-                                                    RequisitionMasterViewModel.getRequisitions()));
+                                    c -> masterTable.setItems(RequisitionMasterViewModel.getRequisitions()));
         } else {
             masterTable
                     .itemsProperty()
@@ -169,8 +183,8 @@ public class RequisitionController implements Initializable {
         }
     }
 
-    private void getRequisitionMasterTable() {
-        masterTable.setPrefSize(1000, 1000);
+    private void getTable() {
+        masterTable.setPrefSize(1200, 1000);
         masterTable.features().enableBounceEffect();
         masterTable.features().enableSmoothScrolling(0.5);
 
@@ -215,7 +229,7 @@ public class RequisitionController implements Initializable {
                 e -> {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
-                            RequisitionMasterViewModel.getItem(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
+                            RequisitionMasterViewModel.getRequisitionMaster(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }

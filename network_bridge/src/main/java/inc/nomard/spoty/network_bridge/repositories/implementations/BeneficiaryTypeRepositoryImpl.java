@@ -2,11 +2,11 @@ package inc.nomard.spoty.network_bridge.repositories.implementations;
 
 import com.google.gson.Gson;
 import inc.nomard.spoty.network_bridge.auth.ProtectedGlobals;
+import inc.nomard.spoty.network_bridge.end_points.EndPoints;
 import inc.nomard.spoty.network_bridge.models.FindModel;
 import inc.nomard.spoty.network_bridge.models.SearchModel;
 import inc.nomard.spoty.network_bridge.repositories.interfaces.SimpleRepository;
 import javafx.concurrent.Task;
-import inc.nomard.spoty.network_bridge.end_points.EndPoints;
 
 import java.io.IOException;
 import java.net.URI;

@@ -17,6 +17,7 @@ module spoty.core {
     requires atlantafx.base;
     requires spoty.network_bridge;
     requires spoty.utils;
+    requires com.calendarfx.view;
 
     opens inc.nomard.spoty.core.views;
     opens inc.nomard.spoty.core.views.login;
@@ -27,11 +28,11 @@ module spoty.core {
     opens inc.nomard.spoty.core.views.requisition;
     opens inc.nomard.spoty.core.views.stock_in;
     opens inc.nomard.spoty.core.views.transfer;
-    opens inc.nomard.spoty.core.views.product.category;
-    opens inc.nomard.spoty.core.views.product.brand;
-    opens inc.nomard.spoty.core.views.product.unit_of_measure;
-    opens inc.nomard.spoty.core.views.product.products;
-    opens inc.nomard.spoty.core.views.product.adjustment;
+    opens inc.nomard.spoty.core.views.inventory.category;
+    opens inc.nomard.spoty.core.views.inventory.brand;
+    opens inc.nomard.spoty.core.views.inventory.unit_of_measure;
+    opens inc.nomard.spoty.core.views.inventory.products;
+    opens inc.nomard.spoty.core.views.inventory.adjustment;
     opens inc.nomard.spoty.core.views.report;
     opens inc.nomard.spoty.core.views.human_resource.hrm;
     opens inc.nomard.spoty.core.views.human_resource.leave;
@@ -41,8 +42,6 @@ module spoty.core {
     opens inc.nomard.spoty.core.views.service;
     opens inc.nomard.spoty.core.views.quotation;
     opens inc.nomard.spoty.core.views.tax;
-    opens inc.nomard.spoty.core.views.returns.sales;
-    opens inc.nomard.spoty.core.views.returns.purchases;
     opens inc.nomard.spoty.core.views.expenses.expense;
     opens inc.nomard.spoty.core.views.expenses.category;
     opens inc.nomard.spoty.core.views.customers;
@@ -62,7 +61,9 @@ module spoty.core {
     opens inc.nomard.spoty.core.views.sales.pos;
     opens inc.nomard.spoty.core.views.printable.general;
     opens inc.nomard.spoty.core.views.previews;
-    opens inc.nomard.spoty.core.views.previews.returns;
+    opens inc.nomard.spoty.core.views.previews.purchases;
+    opens inc.nomard.spoty.core.views.previews.sales;
+    opens inc.nomard.spoty.core.views.previews.people;
 
     exports inc.nomard.spoty.core;
 }

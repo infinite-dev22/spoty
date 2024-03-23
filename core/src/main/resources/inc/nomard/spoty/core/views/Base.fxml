@@ -21,6 +21,7 @@
 <?import javafx.scene.layout.*?>
 <?import java.lang.String?>
 <?import java.net.URL?>
+<?import javafx.scene.shape.Circle?>
 <AnchorPane fx:id="rootPane" prefHeight="32767" prefWidth="32767" styleClass="rootPane"
             xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="inc.nomard.spoty.core.views.BaseController">
@@ -51,7 +52,7 @@
             <padding>
                 <Insets topRightBottomLeft="10.0"/>
             </padding>
-            <ImageView fx:id="userProfilePicture"/>
+            <Circle fx:id="imageHolder" fill="#4f5055" radius="50.0" stroke="#83868d" strokeType="INSIDE" />
         </HBox>
         <StackPane fx:id="navBar" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
                    styleClass="navbar" VBox.vgrow="ALWAYS"/>

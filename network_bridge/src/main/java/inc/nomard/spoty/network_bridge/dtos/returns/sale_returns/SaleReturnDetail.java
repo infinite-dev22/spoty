@@ -15,7 +15,7 @@
 package inc.nomard.spoty.network_bridge.dtos.returns.sale_returns;
 
 import inc.nomard.spoty.network_bridge.dtos.Product;
-import inc.nomard.spoty.network_bridge.dtos.UnitOfMeasure;
+import inc.nomard.spoty.network_bridge.dtos.sales.SaleMaster;
 import lombok.*;
 
 @Getter
@@ -25,15 +25,20 @@ import lombok.*;
 @Builder
 public class SaleReturnDetail {
     private Long id;
-    private SaleReturnMaster saleReturn;
+    private String ref;
+    private SaleMaster sale;
     private Product product;
+    private String serialNumber;
     private double price;
-    private UnitOfMeasure saleUnit;
     private double netTax;
     private String taxType;
     private double discount;
     private String discountType;
-    private String serialNumber;
-    private int quantity;
     private double total;
+    private double subTotalPrice;
+    private int quantity;
+
+    public String getProductName() {
+        return product.getName();
+    }
 }
