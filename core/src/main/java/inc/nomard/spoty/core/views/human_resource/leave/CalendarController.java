@@ -14,10 +14,11 @@
 
 package inc.nomard.spoty.core.views.human_resource.leave;
 
-import com.calendarfx.model.Calendar;
-import com.calendarfx.model.Calendar.Style;
-import com.calendarfx.model.CalendarSource;
-import com.calendarfx.view.CalendarView;
+//import com.calendarfx.model.Calendar;
+//import com.calendarfx.model.Calendar.Style;
+//import com.calendarfx.model.CalendarSource;
+//import com.calendarfx.view.CalendarView;
+
 import inc.nomard.spoty.core.views.previews.people.CustomerPreviewController;
 import inc.nomard.spoty.network_bridge.dtos.Customer;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
@@ -36,8 +37,6 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ResourceBundle;
 
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
@@ -70,46 +69,46 @@ public class CalendarController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        CalendarView calendarView = new CalendarView(); // (1)
-
-        Calendar birthdays = new Calendar("Birthdays"); // (2)
-        Calendar holidays = new Calendar("Holidays");
-
-        birthdays.setStyle(Style.STYLE1); // (3)
-        holidays.setStyle(Style.STYLE2);
-
-        CalendarSource myCalendarSource = new CalendarSource("My Calendars"); // (4)
-        myCalendarSource.getCalendars().addAll(birthdays, holidays);
-
-        calendarView.getCalendarSources().addAll(myCalendarSource); // (5)
-
-        calendarView.setRequestedTime(LocalTime.now());
-
-        Thread updateTimeThread = new Thread("Calendar: Update Time Thread") {
-            @Override
-            public void run() {
-                while (true) {
-                    Platform.runLater(() -> {
-                        calendarView.setToday(LocalDate.now());
-                        calendarView.setTime(LocalTime.now());
-                    });
-
-                    try {
-                        // update every 10 seconds
-                        sleep(10000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-
-                }
-            }
-        };
-
-        updateTimeThread.setPriority(Thread.MIN_PRIORITY);
-        updateTimeThread.setDaemon(true);
-        updateTimeThread.start();
-
-        contentPane.setCenter(calendarView);
+//        CalendarView calendarView = new CalendarView(); // (1)
+//
+//        Calendar birthdays = new Calendar("Birthdays"); // (2)
+//        Calendar holidays = new Calendar("Holidays");
+//
+//        birthdays.setStyle(Style.STYLE1); // (3)
+//        holidays.setStyle(Style.STYLE2);
+//
+//        CalendarSource myCalendarSource = new CalendarSource("My Calendars"); // (4)
+//        myCalendarSource.getCalendars().addAll(birthdays, holidays);
+//
+//        calendarView.getCalendarSources().addAll(myCalendarSource); // (5)
+//
+//        calendarView.setRequestedTime(LocalTime.now());
+//
+//        Thread updateTimeThread = new Thread("Calendar: Update Time Thread") {
+//            @Override
+//            public void run() {
+//                while (true) {
+//                    Platform.runLater(() -> {
+//                        calendarView.setToday(LocalDate.now());
+//                        calendarView.setTime(LocalTime.now());
+//                    });
+//
+//                    try {
+//                        // update every 10 seconds
+//                        sleep(10000);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//
+//                }
+//            }
+//        };
+//
+//        updateTimeThread.setPriority(Thread.MIN_PRIORITY);
+//        updateTimeThread.setDaemon(true);
+//        updateTimeThread.start();
+//
+//        contentPane.setCenter(calendarView);
     }
 
     private void viewDialogPane(Stage stage) throws IOException {

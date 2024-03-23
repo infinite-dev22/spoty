@@ -17,7 +17,7 @@ module spoty.core {
     requires atlantafx.base;
     requires spoty.network_bridge;
     requires spoty.utils;
-    requires com.calendarfx.view;
+//    requires com.calendarfx.view;
 
     opens inc.nomard.spoty.core.views;
     opens inc.nomard.spoty.core.views.login;
