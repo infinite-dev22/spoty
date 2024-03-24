@@ -15,6 +15,7 @@
   -->
 
 <?import io.github.palexdev.materialfx.controls.MFXButton?>
+<?import io.github.palexdev.materialfx.controls.MFXCircleToggleNode?>
 <?import io.github.palexdev.mfxcore.controls.Label?>
 <?import io.github.palexdev.mfxresources.fonts.MFXFontIcon?>
 <?import javafx.geometry.*?>
@@ -22,7 +23,7 @@
 <?import javafx.scene.shape.Circle?>
 <?import java.lang.String?>
 <?import java.net.*?>
-<?import io.github.palexdev.materialfx.controls.MFXCircleToggleNode?>
+<?import javafx.scene.Cursor?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="rootPane" prefHeight="32767" prefWidth="32767"
             styleClass="rootPane" xmlns="http://javafx.com/javafx/21.0.1"
             fx:controller="inc.nomard.spoty.core.views.BaseController">
@@ -84,17 +85,26 @@
                          styleClass="minimize-icon"/>
         </HBox>
         <StackPane>
-            <HBox spacing="10">
+            <VBox spacing="10">
                 <padding>
                     <Insets topRightBottomLeft="20.0"/>
                 </padding>
-                <Circle fx:id="imageHolder" fill="#4f5055" radius="30.0" stroke="#83868d" strokeType="INSIDE"/>
-                <VBox alignment="CENTER_LEFT" spacing="10">
-                    <Label fx:id="userNameLbl" styleClass="username-label"/>
-                    <Label fx:id="designationLbl" styleClass="designation-label"/>
-                </VBox>
-            </HBox>
-            <MFXCircleToggleNode fx:id="sidebarToggle" styleClass="nav-toggle" size="15.0" StackPane.alignment="CENTER_RIGHT" visible="false">
+                <HBox spacing="10">
+                    <Circle fx:id="imageHolder" fill="#4f5055" radius="30.0" stroke="#83868d" strokeType="INSIDE"/>
+                    <VBox alignment="CENTER_LEFT" spacing="10">
+                        <Label fx:id="userNameLbl" styleClass="username-label"/>
+                        <Label fx:id="designationLbl" styleClass="designation-label"/>
+                    </VBox>
+                </HBox>
+                <HBox fx:id="viewProfile" alignment="CENTER">
+                    <Label styleClass="view-profile-label" text="View profile" underline="true"/>
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                </HBox>
+            </VBox>
+            <MFXCircleToggleNode fx:id="sidebarToggle" styleClass="nav-toggle" size="15.0"
+                                 StackPane.alignment="CENTER_RIGHT" visible="false">
                 <StackPane.margin>
                     <Insets right="-45.0" top="40.0"/>
                 </StackPane.margin>

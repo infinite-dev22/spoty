@@ -70,9 +70,12 @@ public class BaseController implements Initializable {
     public Label userNameLbl;
     @FXML
     public MFXCircleToggleNode sidebarToggle;
+    @FXML
+    public HBox viewProfile;
     private double xOffset;
     private double yOffset;
     private Node arrowIcon;
+    private Node seeIcon;
     private static final PseudoClass GROUP = PseudoClass.getPseudoClass("group");
 
     private BaseController(Stage stage) {
@@ -112,6 +115,7 @@ public class BaseController implements Initializable {
         initializeLoader();
         initAppBar();
         initApp();
+        viewProfileAction();
     }
 
     public void initializeLoader() {
@@ -156,13 +160,18 @@ public class BaseController implements Initializable {
         arrowIcon = new FontIcon("fas-angle-left");
         arrowIcon.getStyleClass().add("nav-toggle-arrow");
         sidebarToggle.setGraphic(arrowIcon);
-//        if (sidebarToggle.isArmed()) {
-//        } else if (!sidebarToggle.isArmed()) {
-//
-//        }
         sidebarToggle.setText("");
+
+//        seeIcon = new FontIcon("fas-eye");
+//        viewProfile.getChildren().addFirst(seeIcon);
 
         designationLbl.setText("Super Administrator");
         userNameLbl.setText("John Doe");
+    }
+
+    private void viewProfileAction() {
+        viewProfile.setOnMouseClicked(mouseEvent -> {
+            System.out.println("View Profile Clicked");
+        });
     }
 }
