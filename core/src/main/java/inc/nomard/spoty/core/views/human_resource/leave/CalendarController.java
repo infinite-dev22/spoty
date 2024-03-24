@@ -19,51 +19,21 @@ package inc.nomard.spoty.core.views.human_resource.leave;
 //import com.calendarfx.model.CalendarSource;
 //import com.calendarfx.view.CalendarView;
 
-import inc.nomard.spoty.core.views.previews.people.CustomerPreviewController;
-import inc.nomard.spoty.network_bridge.dtos.Customer;
-import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
-import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
-import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
-import io.github.palexdev.materialfx.enums.ScrimPriority;
-import javafx.animation.RotateTransition;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.Modality;
-import javafx.stage.Screen;
-import javafx.stage.Stage;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
 
 @SuppressWarnings("unchecked")
 public class CalendarController implements Initializable {
     private static CalendarController instance;
     @FXML
     public BorderPane contentPane;
-    private MFXStageDialog dialog;
-    private RotateTransition transition;
-    private FXMLLoader viewFxmlLoader;
-    private MFXStageDialog viewDialog;
 
-    private CalendarController(Stage stage) {
-        Platform.runLater(
-                () -> {
-                    try {
-                        viewDialogPane(stage);
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                });
-    }
-
-    public static CalendarController getInstance(Stage stage) {
-        if (instance == null) instance = new CalendarController(stage);
+    public static CalendarController getInstance() {
+        if (instance == null) instance = new CalendarController();
         return instance;
     }
 
@@ -109,37 +79,5 @@ public class CalendarController implements Initializable {
 //        updateTimeThread.start();
 //
 //        contentPane.setCenter(calendarView);
-    }
-
-    private void viewDialogPane(Stage stage) throws IOException {
-        double screenHeight = Screen.getPrimary().getBounds().getHeight();
-        viewFxmlLoader = fxmlLoader("views/previews/people/CustomerPreview.fxml");
-        viewFxmlLoader.setControllerFactory(c -> new CustomerPreviewController());
-        MFXGenericDialog genericDialog = viewFxmlLoader.load();
-        genericDialog.setShowMinimize(false);
-        genericDialog.setShowAlwaysOnTop(false);
-
-        genericDialog.setPrefHeight(screenHeight * .98);
-        genericDialog.setPrefWidth(700);
-
-        viewDialog =
-                MFXGenericDialogBuilder.build(genericDialog)
-                        .toStageDialogBuilder()
-                        .initOwner(stage)
-                        .initModality(Modality.WINDOW_MODAL)
-                        .setOwnerNode(contentPane)
-                        .setScrimPriority(ScrimPriority.WINDOW)
-                        .setScrimOwner(true)
-                        .setCenterInOwnerNode(false)
-                        .setOverlayClose(true)
-                        .get();
-
-        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(viewDialog.getScene());
-    }
-
-    public void viewShow(Customer customer) {
-        CustomerPreviewController controller = viewFxmlLoader.getController();
-        controller.init(customer);
-        viewDialog.showAndWait();
     }
 }

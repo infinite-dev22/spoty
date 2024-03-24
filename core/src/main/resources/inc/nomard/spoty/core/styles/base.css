@@ -379,3 +379,7 @@
 . preview-header{
      -fx-font-weight: bold;
 }
+
+.card-color-decor{
+    -fx-background-radius: 10 0 0 10;
+}

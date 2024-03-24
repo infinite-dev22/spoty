@@ -266,6 +266,7 @@ public class CustomerController implements Initializable {
         MFXGenericDialog genericDialog = viewFxmlLoader.load();
         genericDialog.setShowMinimize(false);
         genericDialog.setShowAlwaysOnTop(false);
+        genericDialog.setHeaderText("Customer Details View");
 
         genericDialog.setPrefHeight(screenHeight * .98);
         genericDialog.setPrefWidth(700);

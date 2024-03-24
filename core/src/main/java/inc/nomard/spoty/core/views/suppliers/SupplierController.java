@@ -268,6 +268,7 @@ public class SupplierController implements Initializable {
         MFXGenericDialog genericDialog = viewFxmlLoader.load();
         genericDialog.setShowMinimize(false);
         genericDialog.setShowAlwaysOnTop(false);
+        genericDialog.setHeaderText("Supplier Details Preview");
 
         genericDialog.setPrefHeight(screenHeight * .98);
         genericDialog.setPrefWidth(700);

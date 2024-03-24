@@ -460,7 +460,7 @@ public class Pages {
     private static void setLeave(Stage stage) {
         leaveStatusLoader.setControllerFactory(e -> LeaveStatusController.getInstance(stage));
         leaveRequestLoader.setControllerFactory(e -> LeaveRequestController.getInstance(stage));
-        calendarLoader.setControllerFactory(e -> CalendarController.getInstance(stage));
+        calendarLoader.setControllerFactory(e -> CalendarController.getInstance());
     }
 
     private static void setPayRoll(Stage stage) {
