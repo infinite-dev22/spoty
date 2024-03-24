@@ -14,14 +14,11 @@
 /**************************************************
  * Window Header
 **************************************************/
-.rootPane .close-icon {
-    -mfx-color: -mfx-red;
-}
 .close-icon {
     -mfx-color: -mfx-red;
 }
 
-.rootPane .minimize-icon {
+.minimize-icon {
     -mfx-color: -mfx-orange;
 }
 
@@ -51,6 +48,14 @@
     -fx-text-fill: white;
 }
 
+.nav-toggle .circle {
+    -fx-background-color: -mfx-charcoal;
+}
+
+.nav-toggle .circle .nav-toggle-arrow {
+    -fx-background-color: -mfx-slate-gray;
+}
+
 /*TREE VIEW NAV STYLING.*/
 .rootPane .sidebar .navbar .tree-view {
     -fx-background-color: -mfx-charcoal;
@@ -69,7 +74,7 @@
     -fx-text-fill: white;
 }
 
-.rootPane .sidebar .navbar .tree-view .tree-cell:selected {
+.rootPane .sidebar .navbar .tree-view .tree-cell:selected .container {
     -fx-background-color: -mfx-selected-nav;
     -fx-fill: -mfx-nav-white-text;
     -fx-text-fill: -mfx-nav-white-text;
@@ -91,12 +96,12 @@
 }
 
 /*Style group*/
-.rootPane .sidebar .navbar .tree-view .tree-cell .container:group:selected,
+/*.rootPane .sidebar .navbar .tree-view .tree-cell .container:group:selected,
 .rootPane .sidebar .navbar .tree-view .tree-cell:group:selected {
     -fx-background-color: -mfx-charcoal;
     -fx-fill: -mfx-nav-white-text;
     -fx-text-fill: -mfx-nav-white-text;
-}
+}*/
 
 /*Style expanded group.*/
 .rootPane .sidebar .navbar .tree-view .tree-cell:group:expanded {
@@ -306,7 +311,7 @@
     -fx-text-fill: #e3e7e9;
 }
 
-.mfx-tree-cell:selected {
+.mfx-tree-cell:selected .container {
     -fx-background-color: -mfx-selected-nav;
     -fx-text-fill: -mfx-nav-white-text;
 }
@@ -413,3 +418,8 @@
 .orange-bg{
     -fx-background-color: orange;
 }
+
+.designation-label{
+    -fx-text-fill: -mfx-text-disabled;
+}
+.username-label{}

@@ -18,20 +18,24 @@ import inc.nomard.spoty.core.SpotyCoreResourceLoader;
 import inc.nomard.spoty.core.components.navigation.Navigation;
 import inc.nomard.spoty.utils.SpotyThreader;
 import io.github.palexdev.materialfx.controls.MFXButton;
+import io.github.palexdev.materialfx.controls.MFXCircleToggleNode;
+import io.github.palexdev.mfxcore.controls.Label;
 import io.github.palexdev.mfxresources.fonts.IconsProviders;
 import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
 import javafx.application.Platform;
+import javafx.css.PseudoClass;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -60,8 +64,16 @@ public class BaseController implements Initializable {
     public MFXButton helpBtn;
     @FXML
     public Circle imageHolder;
+    @FXML
+    public Label designationLbl;
+    @FXML
+    public Label userNameLbl;
+    @FXML
+    public MFXCircleToggleNode sidebarToggle;
     private double xOffset;
     private double yOffset;
+    private Node arrowIcon;
+    private static final PseudoClass GROUP = PseudoClass.getPseudoClass("group");
 
     private BaseController(Stage stage) {
         this.primaryStage = stage;
@@ -99,6 +111,7 @@ public class BaseController implements Initializable {
 
         initializeLoader();
         initAppBar();
+        initApp();
     }
 
     public void initializeLoader() {
@@ -137,5 +150,19 @@ public class BaseController implements Initializable {
                     primaryStage.setX(event.getScreenX() + xOffset);
                     primaryStage.setY(event.getScreenY() + yOffset);
                 });
+    }
+
+    private void initApp() {
+        arrowIcon = new FontIcon("fas-angle-left");
+        arrowIcon.getStyleClass().add("nav-toggle-arrow");
+        sidebarToggle.setGraphic(arrowIcon);
+//        if (sidebarToggle.isArmed()) {
+//        } else if (!sidebarToggle.isArmed()) {
+//
+//        }
+        sidebarToggle.setText("");
+
+        designationLbl.setText("Super Administrator");
+        userNameLbl.setText("John Doe");
     }
 }
