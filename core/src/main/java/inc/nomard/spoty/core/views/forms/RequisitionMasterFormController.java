@@ -19,6 +19,7 @@ import inc.nomard.spoty.core.components.notification.SimpleNotification;
 import inc.nomard.spoty.core.components.notification.SimpleNotificationHolder;
 import inc.nomard.spoty.core.components.notification.enums.NotificationDuration;
 import inc.nomard.spoty.core.components.notification.enums.NotificationVariants;
+import inc.nomard.spoty.core.values.strings.Values;
 import inc.nomard.spoty.core.viewModels.BranchViewModel;
 import inc.nomard.spoty.core.viewModels.SupplierViewModel;
 import inc.nomard.spoty.core.viewModels.requisitions.RequisitionDetailViewModel;
@@ -35,12 +36,14 @@ import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
 import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import io.github.palexdev.materialfx.enums.ScrimPriority;
+import io.github.palexdev.materialfx.filter.DoubleFilter;
 import io.github.palexdev.materialfx.filter.IntegerFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import io.github.palexdev.materialfx.utils.StringUtils;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -67,33 +70,29 @@ import static inc.nomard.spoty.core.Validators.requiredValidator;
 public class RequisitionMasterFormController implements Initializable {
     private static RequisitionMasterFormController instance;
     @FXML
-    public MFXFilterComboBox<Branch> requisitionMasterBranch;
+    public Label requisitionFormTitle;
     @FXML
-    public MFXDatePicker requisitionMasterDate;
+    public MFXDatePicker requisitionDate;
+    @FXML
+    public MFXFilterComboBox<Supplier> requisitionSupplier;
+    @FXML
+    public MFXFilterComboBox<Branch> requisitionBranch;
     @FXML
     public MFXTableView<RequisitionDetail> requisitionDetailTable;
     @FXML
-    public MFXTextField requisitionMasterNote;
+    public MFXTextField requisitionNote;
     @FXML
-    public BorderPane requisitionMasterFormContentPane;
+    public BorderPane requisitionFormContentPane;
     @FXML
-    public Label requisitionMasterFormTitle;
+    public MFXFilterComboBox<String> requisitionStatus;
     @FXML
-    public MFXButton requisitionMasterProductAddBtn;
+    public Label requisitionBranchValidationLabel;
     @FXML
-    public MFXFilterComboBox<Supplier> requisitionMasterSupplier;
+    public Label requisitionSupplierValidationLabel;
     @FXML
-    public MFXTextField requisitionMasterShipVia;
+    public Label requisitionDateValidationLabel;
     @FXML
-    public MFXTextField requisitionMasterShipMthd;
-    @FXML
-    public MFXTextField requisitionMasterShipTerms;
-    @FXML
-    public Label requisitionMasterBranchValidationLabel;
-    @FXML
-    public Label requisitionMasterSupplierValidationLabel;
-    @FXML
-    public Label requisitionMasterDateValidationLabel;
+    public Label requisitionStatusValidationLabel;
     @FXML
     public MFXButton requisitionMasterSaveBtn;
     private MFXStageDialog dialog;
@@ -102,7 +101,7 @@ public class RequisitionMasterFormController implements Initializable {
         Platform.runLater(
                 () -> {
                     try {
-                        quotationProductDialogPane(stage);
+                        createRequisitionProductDialog(stage);
                     } catch (IOException e) {
                         SpotyLogger.writeToFile(e, this.getClass());
                     }
@@ -116,28 +115,12 @@ public class RequisitionMasterFormController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Input binding.
-        requisitionMasterBranch
-                .valueProperty()
-                .bindBidirectional(RequisitionMasterViewModel.branchProperty());
-        requisitionMasterSupplier
-                .valueProperty()
-                .bindBidirectional(RequisitionMasterViewModel.supplierProperty());
-        requisitionMasterDate
-                .textProperty()
-                .bindBidirectional(RequisitionMasterViewModel.dateProperty());
-        requisitionMasterShipVia
-                .textProperty()
-                .bindBidirectional(RequisitionMasterViewModel.shipViaProperty());
-        requisitionMasterShipMthd
-                .textProperty()
-                .bindBidirectional(RequisitionMasterViewModel.shipMethodProperty());
-        requisitionMasterShipTerms
-                .textProperty()
-                .bindBidirectional(RequisitionMasterViewModel.shippingTermsProperty());
-        requisitionMasterNote
-                .textProperty()
-                .bindBidirectional(RequisitionMasterViewModel.noteProperty());
+        // Bi~Directional Binding.
+        requisitionDate.textProperty().bindBidirectional(RequisitionMasterViewModel.dateProperty());
+        requisitionSupplier.valueProperty().bindBidirectional(RequisitionMasterViewModel.supplierProperty());
+        requisitionBranch.valueProperty().bindBidirectional(RequisitionMasterViewModel.branchProperty());
+        requisitionStatus.textProperty().bindBidirectional(RequisitionMasterViewModel.statusProperty());
+        requisitionNote.textProperty().bindBidirectional(RequisitionMasterViewModel.noteProperty());
 
         // ComboBox Converters.
         StringConverter<Supplier> supplierConverter =
@@ -156,77 +139,194 @@ public class RequisitionMasterFormController implements Initializable {
                 searchStr ->
                         branch -> StringUtils.containsIgnoreCase(branchConverter.toString(branch), searchStr);
 
-        // ComboBox properties.
-        requisitionMasterBranch.setItems(BranchViewModel.getBranches());
-        requisitionMasterBranch.setConverter(branchConverter);
-        requisitionMasterBranch.setFilterFunction(branchFilterFunction);
+        // Set items to combo boxes and display custom text.
+        requisitionSupplier.setItems(SupplierViewModel.getSuppliers());
+        requisitionSupplier.setConverter(supplierConverter);
+        requisitionSupplier.setFilterFunction(supplierFilterFunction);
 
-        requisitionMasterSupplier.setItems(SupplierViewModel.getSuppliers());
-        requisitionMasterSupplier.setConverter(supplierConverter);
-        requisitionMasterSupplier.setFilterFunction(supplierFilterFunction);
+        requisitionBranch.setItems(BranchViewModel.getBranches());
+        requisitionBranch.setConverter(branchConverter);
+        requisitionBranch.setFilterFunction(branchFilterFunction);
+
+        requisitionStatus.setItems(FXCollections.observableArrayList(Values.PURCHASE_STATUSES));
 
         // input validators.
         requiredValidator(
-                requisitionMasterBranch,
+                requisitionBranch,
                 "Branch is required.",
-                requisitionMasterBranchValidationLabel,
+                requisitionBranchValidationLabel,
                 requisitionMasterSaveBtn);
         requiredValidator(
-                requisitionMasterSupplier,
+                requisitionSupplier,
                 "Supplier is required.",
-                requisitionMasterSupplierValidationLabel,
+                requisitionSupplierValidationLabel,
                 requisitionMasterSaveBtn);
         requiredValidator(
-                requisitionMasterDate,
-                "Date is required.",
-                requisitionMasterDateValidationLabel,
+                requisitionDate, "Date is required.", requisitionDateValidationLabel, requisitionMasterSaveBtn);
+        requiredValidator(
+                requisitionStatus,
+                "Status is required.",
+                requisitionStatusValidationLabel,
                 requisitionMasterSaveBtn);
 
-        requisitionMasterAddProductBtnClicked();
+        setupTable();
+    }
 
-        Platform.runLater(this::setupTable);
+    private void createRequisitionProductDialog(Stage stage) throws IOException {
+        FXMLLoader fxmlLoader = fxmlLoader("views/forms/RequisitionDetailForm.fxml");
+        fxmlLoader.setControllerFactory(c -> RequisitionDetailFormController.getInstance());
+
+        MFXGenericDialog dialogContent = fxmlLoader.load();
+
+        dialogContent.setShowMinimize(false);
+        dialogContent.setShowAlwaysOnTop(false);
+
+        dialog =
+                MFXGenericDialogBuilder.build(dialogContent)
+                        .toStageDialogBuilder()
+                        .initOwner(stage)
+                        .initModality(Modality.WINDOW_MODAL)
+                        .setOwnerNode(requisitionFormContentPane)
+                        .setScrimPriority(ScrimPriority.WINDOW)
+                        .setScrimOwner(true)
+                        .get();
+
+        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
+    }
+
+    public void saveBtnClicked() {
+        SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
+
+        if (!requisitionDetailTable.isDisabled() && RequisitionDetailViewModel.requisitionDetailsList.isEmpty()) {
+            SimpleNotification notification =
+                    new SimpleNotification.NotificationBuilder("Table can't be Empty")
+                            .duration(NotificationDuration.SHORT)
+                            .icon("fas-triangle-exclamation")
+                            .type(NotificationVariants.ERROR)
+                            .build();
+            notificationHolder.addNotification(notification);
+            return;
+        }
+        if (!requisitionBranchValidationLabel.isVisible()
+                && !requisitionSupplierValidationLabel.isVisible()
+                && !requisitionDateValidationLabel.isVisible()
+                && !requisitionStatusValidationLabel.isVisible()) {
+            if (RequisitionMasterViewModel.getId() > 0) {
+                SpotyThreader.spotyThreadPool(() -> {
+                    try {
+                        RequisitionMasterViewModel.updateItem(this::onAction, this::onSuccess, this::onFailed);
+                    } catch (Exception e) {
+                        SpotyLogger.writeToFile(e, this.getClass());
+                    }
+                });
+
+                SimpleNotification notification =
+                        new SimpleNotification.NotificationBuilder("Requisition updated successfully")
+                                .duration(NotificationDuration.MEDIUM)
+                                .icon("fas-circle-check")
+                                .type(NotificationVariants.SUCCESS)
+                                .build();
+                notificationHolder.addNotification(notification);
+
+                requisitionSupplier.clearSelection();
+                requisitionBranch.clearSelection();
+                requisitionStatus.clearSelection();
+
+                cancelBtnClicked();
+                return;
+            }
+            SpotyThreader.spotyThreadPool(() -> {
+                try {
+                    RequisitionMasterViewModel.saveRequisitionMaster(this::onAction, this::onSuccess, this::onFailed);
+                } catch (Exception e) {
+                    SpotyLogger.writeToFile(e, this.getClass());
+                }
+            });
+
+            SimpleNotification notification =
+                    new SimpleNotification.NotificationBuilder("Requisition saved successfully")
+                            .duration(NotificationDuration.MEDIUM)
+                            .icon("fas-circle-check")
+                            .type(NotificationVariants.SUCCESS)
+                            .build();
+            notificationHolder.addNotification(notification);
+
+            requisitionSupplier.clearSelection();
+            requisitionBranch.clearSelection();
+            requisitionStatus.clearSelection();
+
+            cancelBtnClicked();
+            return;
+        }
+        SimpleNotification notification =
+                new SimpleNotification.NotificationBuilder("Required fields missing")
+                        .duration(NotificationDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(NotificationVariants.ERROR)
+                        .build();
+        notificationHolder.addNotification(notification);
     }
 
     private void setupTable() {
-        MFXTableColumn<RequisitionDetail> productName =
+        // Set table column titles.
+        MFXTableColumn<RequisitionDetail> product =
                 new MFXTableColumn<>(
                         "Product", false, Comparator.comparing(RequisitionDetail::getProductName));
-        MFXTableColumn<RequisitionDetail> productQuantity =
+        MFXTableColumn<RequisitionDetail> quantity =
+                new MFXTableColumn<>("Quantity", false, Comparator.comparing(RequisitionDetail::getQuantity));
+        MFXTableColumn<RequisitionDetail> tax =
+                new MFXTableColumn<>("Tax", false, Comparator.comparing(RequisitionDetail::getNetTax));
+        MFXTableColumn<RequisitionDetail> discount =
+                new MFXTableColumn<>("Discount", false, Comparator.comparing(RequisitionDetail::getDiscount));
+        MFXTableColumn<RequisitionDetail> price =
+                new MFXTableColumn<>("Price", false, Comparator.comparing(RequisitionDetail::getPrice));
+        MFXTableColumn<RequisitionDetail> totalPrice =
                 new MFXTableColumn<>(
-                        "Quantity", false, Comparator.comparing(RequisitionDetail::getQuantity));
-        MFXTableColumn<RequisitionDetail> productDescription =
-                new MFXTableColumn<>(
-                        "Description", false, Comparator.comparing(RequisitionDetail::getDescription));
+                        "Total Price", false, Comparator.comparing(RequisitionDetail::getTotal));
 
-        productName.setRowCellFactory(
-                product -> new MFXTableRowCell<>(RequisitionDetail::getProductName));
-        productQuantity.setRowCellFactory(
-                product -> new MFXTableRowCell<>(RequisitionDetail::getQuantity));
-        productDescription.setRowCellFactory(
-                product -> new MFXTableRowCell<>(RequisitionDetail::getDescription));
+        // Set table column data.
+        product.setRowCellFactory(
+                requisitionDetail -> new MFXTableRowCell<>(RequisitionDetail::getProductName));
+        quantity.setRowCellFactory(
+                requisitionDetail -> new MFXTableRowCell<>(RequisitionDetail::getQuantity));
+        tax.setRowCellFactory(requisitionDetail -> new MFXTableRowCell<>(RequisitionDetail::getNetTax));
+        discount.setRowCellFactory(
+                requisitionDetail -> new MFXTableRowCell<>(RequisitionDetail::getDiscount));
+        price.setRowCellFactory(requisitionDetail -> new MFXTableRowCell<>(RequisitionDetail::getPrice));
+        totalPrice.setRowCellFactory(
+                requisitionDetail -> new MFXTableRowCell<>(RequisitionDetail::getTotal));
 
-        productName.prefWidthProperty().bind(requisitionDetailTable.widthProperty().multiply(.5));
-        productQuantity.prefWidthProperty().bind(requisitionDetailTable.widthProperty().multiply(.5));
-        productDescription.prefWidthProperty().bind(requisitionDetailTable.widthProperty().multiply(.5));
+        // Set table column width.
+        product.prefWidthProperty().bind(requisitionDetailTable.widthProperty().multiply(.25));
+        quantity.prefWidthProperty().bind(requisitionDetailTable.widthProperty().multiply(.25));
+        tax.prefWidthProperty().bind(requisitionDetailTable.widthProperty().multiply(.25));
+        discount.prefWidthProperty().bind(requisitionDetailTable.widthProperty().multiply(.25));
+        price.prefWidthProperty().bind(requisitionDetailTable.widthProperty().multiply(.25));
+        totalPrice.prefWidthProperty().bind(requisitionDetailTable.widthProperty().multiply(.25));
 
-        requisitionDetailTable.getTableColumns().addAll(productName, productQuantity, productDescription);
+        // Set table filter.
+        requisitionDetailTable
+                .getTableColumns()
+                .addAll(product, quantity, tax, discount, price, totalPrice);
 
         requisitionDetailTable
                 .getFilters()
                 .addAll(
-                        new StringFilter<>("Name", RequisitionDetail::getProductName),
+                        new StringFilter<>("Product", RequisitionDetail::getProductName),
                         new IntegerFilter<>("Quantity", RequisitionDetail::getQuantity),
-                        new StringFilter<>("Description", RequisitionDetail::getDescription));
+                        new DoubleFilter<>("Tax", RequisitionDetail::getNetTax),
+                        new DoubleFilter<>("Discount", RequisitionDetail::getDiscount),
+                        new DoubleFilter<>("Price", RequisitionDetail::getPrice),
+                        new DoubleFilter<>("Total Price", RequisitionDetail::getTotal));
 
-        getRequisitionDetailTable();
+        styleTable();
 
+        // Populate table.
         if (RequisitionDetailViewModel.getRequisitionDetails().isEmpty()) {
             RequisitionDetailViewModel.getRequisitionDetails()
                     .addListener(
                             (ListChangeListener<RequisitionDetail>)
-                                    c ->
-                                            requisitionDetailTable.setItems(
-                                                    RequisitionDetailViewModel.getRequisitionDetails()));
+                                    change -> requisitionDetailTable.setItems(RequisitionDetailViewModel.getRequisitionDetails()));
         } else {
             requisitionDetailTable
                     .itemsProperty()
@@ -234,7 +334,7 @@ public class RequisitionMasterFormController implements Initializable {
         }
     }
 
-    private void getRequisitionDetailTable() {
+    private void styleTable() {
         requisitionDetailTable.setPrefSize(1000, 1000);
         requisitionDetailTable.features().enableBounceEffect();
         requisitionDetailTable.features().enableSmoothScrolling(0.5);
@@ -277,7 +377,7 @@ public class RequisitionMasterFormController implements Initializable {
                         try {
                             RequisitionDetailViewModel.getItem(
                                     obj.getData().getId(),
-                                    RequisitionDetailViewModel.requisitionDetailsList.indexOf(obj.getData()), this::onAction, this::onSuccess, this::onFailed);
+                                    RequisitionDetailViewModel.requisitionDetailsList.indexOf(obj.getData()), this::onAction, this::onFailed);
                         } catch (Exception e) {
                             SpotyLogger.writeToFile(e, this.getClass());
                         }
@@ -291,112 +391,22 @@ public class RequisitionMasterFormController implements Initializable {
         return contextMenu;
     }
 
-    private void requisitionMasterAddProductBtnClicked() {
-        requisitionMasterProductAddBtn.setOnAction(e -> dialog.showAndWait());
-    }
-
-    private void quotationProductDialogPane(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = fxmlLoader("views/forms/RequisitionDetailForm.fxml");
-        fxmlLoader.setControllerFactory(c -> RequisitionDetailFormController.getInstance());
-
-        MFXGenericDialog dialogContent = fxmlLoader.load();
-
-        dialogContent.setShowMinimize(false);
-        dialogContent.setShowAlwaysOnTop(false);
-
-        dialog =
-                MFXGenericDialogBuilder.build(dialogContent)
-                        .toStageDialogBuilder()
-                        .initOwner(stage)
-                        .initModality(Modality.WINDOW_MODAL)
-                        .setOwnerNode(requisitionMasterFormContentPane)
-                        .setScrimPriority(ScrimPriority.WINDOW)
-                        .setScrimOwner(true)
-                        .get();
-
-        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
-    }
-
-    public void requisitionMasterSaveBtnClicked() {
-        SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
-
-        if (!requisitionDetailTable.isDisabled()
-                && RequisitionDetailViewModel.requisitionDetailsList.isEmpty()) {
-            SimpleNotification notification =
-                    new SimpleNotification.NotificationBuilder("Table can't be Empty")
-                            .duration(NotificationDuration.SHORT)
-                            .icon("fas-triangle-exclamation")
-                            .type(NotificationVariants.ERROR)
-                            .build();
-            notificationHolder.addNotification(notification);
-            return;
-        }
-
-        if (!requisitionMasterSupplierValidationLabel.isVisible()
-                && !requisitionMasterDateValidationLabel.isVisible()
-                && !requisitionMasterBranchValidationLabel.isVisible()) {
-            if (RequisitionMasterViewModel.getId() > 0) {
-                SpotyThreader.spotyThreadPool(() -> {
-                    try {
-                        RequisitionMasterViewModel.updateItem(this::onAction, this::onSuccess, this::onFailed);
-                    } catch (Exception e) {
-                        SpotyLogger.writeToFile(e, this.getClass());
-                    }
-                });
-
-                SimpleNotification notification =
-                        new SimpleNotification.NotificationBuilder("Requisition updated successfully")
-                                .duration(NotificationDuration.MEDIUM)
-                                .icon("fas-circle-check")
-                                .type(NotificationVariants.SUCCESS)
-                                .build();
-                notificationHolder.addNotification(notification);
-
-                requisitionMasterBranch.clearSelection();
-                requisitionMasterSupplier.clearSelection();
-
-                requisitionMasterCancelBtnClicked();
-                return;
-            }
-            SpotyThreader.spotyThreadPool(() -> {
-                try {
-                    RequisitionMasterViewModel.saveRequisitionMaster(this::onAction, this::onSuccess, this::onFailed);
-                } catch (Exception e) {
-                    SpotyLogger.writeToFile(e, this.getClass());
-                }
-            });
-
-            SimpleNotification notification =
-                    new SimpleNotification.NotificationBuilder("Requisition saved successfully")
-                            .duration(NotificationDuration.MEDIUM)
-                            .icon("fas-circle-check")
-                            .type(NotificationVariants.SUCCESS)
-                            .build();
-            notificationHolder.addNotification(notification);
-
-            requisitionMasterBranch.clearSelection();
-            requisitionMasterSupplier.clearSelection();
-
-            requisitionMasterCancelBtnClicked();
-            return;
-        }
-        SimpleNotification notification =
-                new SimpleNotification.NotificationBuilder("Required fields missing")
-                        .duration(NotificationDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(NotificationVariants.ERROR)
-                        .build();
-        notificationHolder.addNotification(notification);
-    }
-
-    public void requisitionMasterCancelBtnClicked() {
+    public void cancelBtnClicked() {
         BaseController.navigation.navigate(Pages.getRequisitionPane());
+
         RequisitionMasterViewModel.resetProperties();
-        requisitionMasterBranchValidationLabel.setVisible(false);
-        requisitionMasterSupplierValidationLabel.setVisible(false);
-        requisitionMasterDateValidationLabel.setVisible(false);
-        requisitionMasterBranch.clearSelection();
-        requisitionMasterSupplier.clearSelection();
+
+        requisitionBranchValidationLabel.setVisible(false);
+        requisitionSupplierValidationLabel.setVisible(false);
+        requisitionDateValidationLabel.setVisible(false);
+        requisitionStatusValidationLabel.setVisible(false);
+        requisitionSupplier.clearSelection();
+        requisitionBranch.clearSelection();
+        requisitionStatus.clearSelection();
+    }
+
+    public void addBtnClicked() {
+        dialog.showAndWait();
     }
 
     private void onAction() {

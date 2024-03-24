@@ -34,7 +34,7 @@ public class SaleDetail {
     private double discount;
     private String discountType;
     private double total;
-    private double subTotalPrice;  // To evaluate importance.
+    private double subTotalPrice;
     private int quantity;
 
     public String getProductName() {

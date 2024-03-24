@@ -35,7 +35,15 @@ public class QuotationMaster {
     private Customer customer;
     private ArrayList<Branch> branches;
     private List<QuotationDetail> quotationDetails;
-    private String shipping;
+    private double taxRate;
+    private double netTax;
+    private double discount;
+    private double subTotal;
+    private double amountPaid;
+    private double amountDue;
+    private double changeAmount;
+    private double balanceAmount;
+    private double shippingFee;
     private double total;
     private String status;
     private String notes;

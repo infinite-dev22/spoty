@@ -15,6 +15,7 @@
 package inc.nomard.spoty.network_bridge.dtos.adjustments;
 
 import inc.nomard.spoty.network_bridge.dtos.Branch;
+import inc.nomard.spoty.network_bridge.dtos.hrm.employee.User;
 import lombok.*;
 
 import java.text.DateFormat;
@@ -36,6 +37,7 @@ public class AdjustmentMaster {
     private String notes;
     private String status;
     private Double Total;
+    private User createdBy;
 
     public String getLocaleDate() {
         return DateFormat.getDateInstance().format(date);

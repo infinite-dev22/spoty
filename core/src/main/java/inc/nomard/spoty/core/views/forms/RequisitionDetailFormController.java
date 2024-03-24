@@ -50,15 +50,17 @@ public class RequisitionDetailFormController implements Initializable {
     @FXML
     public MFXFilterComboBox<Product> requisitionDetailPdct;
     @FXML
+    public MFXTextField requisitionDetailCost;
+    @FXML
     public MFXButton requisitionDetailSaveBtn;
     @FXML
     public MFXButton requisitionDetailCancelBtn;
     @FXML
-    public MFXTextField requisitionDetailDescription;
+    public Label requisitionDetailQntyValidationLabel;
     @FXML
     public Label requisitionDetailPdctValidationLabel;
     @FXML
-    public Label requisitionDetailQntyValidationLabel;
+    public Label requisitionDetailCostValidationLabel;
 
     public static RequisitionDetailFormController getInstance() {
         if (Objects.equals(instance, null)) instance = new RequisitionDetailFormController();
@@ -67,16 +69,10 @@ public class RequisitionDetailFormController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Form input binding.
-        requisitionDetailPdct
-                .valueProperty()
-                .bindBidirectional(RequisitionDetailViewModel.productProperty());
-        requisitionDetailQnty
-                .textProperty()
-                .bindBidirectional(RequisitionDetailViewModel.quantityProperty());
-        requisitionDetailDescription
-                .textProperty()
-                .bindBidirectional(RequisitionDetailViewModel.descriptionProperty());
+        // Input bindings.
+        requisitionDetailQnty.textProperty().bindBidirectional(RequisitionDetailViewModel.quantityProperty());
+        requisitionDetailPdct.valueProperty().bindBidirectional(RequisitionDetailViewModel.productProperty());
+        requisitionDetailCost.textProperty().bindBidirectional(RequisitionDetailViewModel.costProperty());
 
         // Combo box Converter.
         StringConverter<Product> productVariantConverter =
@@ -90,7 +86,7 @@ public class RequisitionDetailFormController implements Initializable {
                                 StringUtils.containsIgnoreCase(
                                         productVariantConverter.toString(productDetail), searchStr);
 
-        // Combo box properties.
+        // ComboBox properties.
         requisitionDetailPdct.setItems(ProductViewModel.getProducts());
         requisitionDetailPdct.setConverter(productVariantConverter);
         requisitionDetailPdct.setFilterFunction(productVariantFilterFunction);
@@ -106,6 +102,11 @@ public class RequisitionDetailFormController implements Initializable {
                 "Quantity is required.",
                 requisitionDetailQntyValidationLabel,
                 requisitionDetailSaveBtn);
+        requiredValidator(
+                requisitionDetailCost,
+                "Cost is required.",
+                requisitionDetailCostValidationLabel,
+                requisitionDetailSaveBtn);
         dialogOnActions();
     }
 
@@ -117,18 +118,19 @@ public class RequisitionDetailFormController implements Initializable {
                     requisitionDetailPdct.clearSelection();
                     requisitionDetailPdctValidationLabel.setVisible(false);
                     requisitionDetailQntyValidationLabel.setVisible(false);
+                    requisitionDetailCostValidationLabel.setVisible(false);
                 });
         requisitionDetailSaveBtn.setOnAction(
                 (event) -> {
                     SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
 
                     if (!requisitionDetailPdctValidationLabel.isVisible()
-                            && !requisitionDetailQntyValidationLabel.isVisible()) {
+                            && !requisitionDetailQntyValidationLabel.isVisible()
+                            && !requisitionDetailCostValidationLabel.isVisible()) {
                         if (tempIdProperty().get() > -1) {
                             SpotyThreader.spotyThreadPool(() -> {
                                 try {
-                                    RequisitionDetailViewModel.updateRequisitionDetail(
-                                            RequisitionDetailViewModel.getId());
+                                    RequisitionDetailViewModel.updateRequisitionDetail(RequisitionDetailViewModel.getId());
                                 } catch (Exception e) {
                                     SpotyLogger.writeToFile(e, this.getClass());
                                 }
@@ -147,7 +149,7 @@ public class RequisitionDetailFormController implements Initializable {
                             closeDialog(event);
                             return;
                         }
-                        RequisitionDetailViewModel.addRequisitionDetails();
+                        RequisitionDetailViewModel.addRequisitionDetail();
 
                         SimpleNotification notification =
                                 new SimpleNotification.NotificationBuilder("Product added successfully")
@@ -157,9 +159,8 @@ public class RequisitionDetailFormController implements Initializable {
                                         .build();
                         notificationHolder.addNotification(notification);
 
-                        requisitionDetailPdct.clearSelection();
-
                         closeDialog(event);
+                        requisitionDetailPdct.clearSelection();
                         return;
                     }
                     SimpleNotification notification =

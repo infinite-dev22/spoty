@@ -6,6 +6,7 @@ plugins {
     id 'org.beryx.jlink' version '3.0.0'
     id 'org.graalvm.buildtools.native' version '0.9.28'
     id 'io.freefair.lombok' version '8.4'
+    id "com.github.mrcjkb.module-finder" version "0.0.7"
 }
 
 apply plugin: 'java'
@@ -130,9 +131,11 @@ jlinkZip.doLast {
 }
 
 dependencies {
+    implementation project(':responsive_fx')
     implementation project(':network_bridge')
     implementation project(':utils')
-//    implementation 'com.calendarfx:view:11.12.6'
+    implementation 'eu.hansolo.fx:charts:21.0.7'
+    implementation 'com.calendarfx:calendar:11.12.6'
     implementation 'net.datafaker:datafaker:2.0.2'
     implementation 'io.soabase.record-builder:record-builder-core:39'
     implementation 'io.github.mkpaz:atlantafx-parent:2.0.1'

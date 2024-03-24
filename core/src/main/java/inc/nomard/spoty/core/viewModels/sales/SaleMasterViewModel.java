@@ -34,7 +34,6 @@ import javafx.collections.ObservableList;
 import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -265,6 +264,9 @@ public class SaleMasterViewModel {
                 saleMasterList = gson.fromJson(
                         task.get().body(), listType);
             } catch (InterruptedException | ExecutionException e) {
+                if (Objects.nonNull(onFailed)) {
+                    onFailed.run();
+                }
                 SpotyLogger.writeToFile(e, SaleMasterViewModel.class);
             }
 

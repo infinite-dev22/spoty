@@ -23,6 +23,7 @@ import inc.nomard.spoty.core.views.forms.*;
 import inc.nomard.spoty.core.views.human_resource.hrm.DesignationsController;
 import inc.nomard.spoty.core.views.human_resource.hrm.EmployeesController;
 import inc.nomard.spoty.core.views.human_resource.hrm.EmploymentStatusController;
+import inc.nomard.spoty.core.views.human_resource.leave.CalendarController;
 import inc.nomard.spoty.core.views.human_resource.leave.LeaveRequestController;
 import inc.nomard.spoty.core.views.human_resource.leave.LeaveStatusController;
 import inc.nomard.spoty.core.views.human_resource.pay_roll.BeneficiaryBadgeController;
@@ -30,20 +31,20 @@ import inc.nomard.spoty.core.views.human_resource.pay_roll.BeneficiaryTypeContro
 import inc.nomard.spoty.core.views.human_resource.pay_roll.SalariesController;
 import inc.nomard.spoty.core.views.human_resource.pay_roll.SalaryAdvancesController;
 import inc.nomard.spoty.core.views.human_resource.pay_roll.pay_slip.PaySlipsController;
+import inc.nomard.spoty.core.views.inventory.adjustment.AdjustmentController;
+import inc.nomard.spoty.core.views.inventory.brand.BrandController;
+import inc.nomard.spoty.core.views.inventory.category.ProductCategoryController;
+import inc.nomard.spoty.core.views.inventory.products.ProductController;
+import inc.nomard.spoty.core.views.inventory.unit_of_measure.UnitOfMeasureController;
 import inc.nomard.spoty.core.views.login.LoginController;
-import inc.nomard.spoty.core.views.product.adjustment.AdjustmentController;
-import inc.nomard.spoty.core.views.product.brand.BrandController;
-import inc.nomard.spoty.core.views.product.category.ProductCategoryController;
-import inc.nomard.spoty.core.views.product.products.ProductController;
-import inc.nomard.spoty.core.views.product.unit_of_measure.UnitOfMeasureController;
+import inc.nomard.spoty.core.views.purchases.PurchaseReturnController;
 import inc.nomard.spoty.core.views.purchases.PurchasesController;
 import inc.nomard.spoty.core.views.quotation.QuotationController;
 import inc.nomard.spoty.core.views.report.*;
 import inc.nomard.spoty.core.views.requisition.RequisitionController;
-import inc.nomard.spoty.core.views.returns.purchases.PurchaseReturnController;
-import inc.nomard.spoty.core.views.returns.sales.SaleReturnsController;
+import inc.nomard.spoty.core.views.sales.OrdersController;
+import inc.nomard.spoty.core.views.sales.SaleReturnsController;
 import inc.nomard.spoty.core.views.sales.SaleTermsController;
-import inc.nomard.spoty.core.views.sales.SalesController;
 import inc.nomard.spoty.core.views.sales.pos.PointOfSaleController;
 import inc.nomard.spoty.core.views.service.ServiceController;
 import inc.nomard.spoty.core.views.service.ServiceInvoiceController;
@@ -74,8 +75,9 @@ public class Pages {
     //Dashboard
     private static final FXMLLoader dashboardLoader = fxmlLoader("views/dashboard/Dashboard.fxml");
     // Sale
-    private static final FXMLLoader saleLoader = fxmlLoader("views/sales/Sales.fxml");
     private static final FXMLLoader posLoader = fxmlLoader("views/sales/PointOfSale.fxml");
+    private static final FXMLLoader saleLoader = fxmlLoader("views/sales/Orders.fxml");
+    private static final FXMLLoader saleReturnLoader = fxmlLoader("views/sales/SaleReturns.fxml");
     private static final FXMLLoader salesTermLoader = fxmlLoader("views/sales/SaleTerms.fxml");
     // Customer
     private static final FXMLLoader customerLoader =
@@ -83,6 +85,10 @@ public class Pages {
     // Supplier
     private static final FXMLLoader supplierLoader =
             fxmlLoader("views/suppliers/Suppliers.fxml");
+    // Purchases
+    private static final FXMLLoader purchaseLoader = fxmlLoader("views/purchases/Purchases.fxml");
+    private static final FXMLLoader purchaseReturnLoader =
+            fxmlLoader("views/purchases/PurchaseReturns.fxml");
     // Reports
     private static final FXMLLoader stockReportLoader = fxmlLoader("views/report/StockReport.fxml");
     private static final FXMLLoader closingLoader = fxmlLoader("views/report/Closing.fxml");
@@ -105,6 +111,7 @@ public class Pages {
     // Leave
     private static final FXMLLoader leaveStatusLoader = fxmlLoader("views/human_resource/leave/LeaveStatus.fxml");
     private static final FXMLLoader leaveRequestLoader = fxmlLoader("views/human_resource/leave/LeaveRequest.fxml");
+    private static final FXMLLoader calendarLoader = fxmlLoader("views/human_resource/leave/Calendar.fxml");
     // PayRoll
     private static final FXMLLoader paySlipsLoader = fxmlLoader("views/human_resource/pay_roll/pay_slip/PaySlips.fxml");
     private static final FXMLLoader salariesLoader = fxmlLoader("views/human_resource/pay_roll/Salaries.fxml");
@@ -142,22 +149,18 @@ public class Pages {
 
     private static final FXMLLoader saleMasterFormLoader = fxmlLoader("views/forms/SaleMasterForm.fxml");
     private static final FXMLLoader productCategoryLoader =
-            fxmlLoader("views/product/category/ProductCategory.fxml");
-    private static final FXMLLoader brandLoader = fxmlLoader("views/product/brand/Brand.fxml");
+            fxmlLoader("views/inventory/category/ProductCategory.fxml");
+    private static final FXMLLoader brandLoader = fxmlLoader("views/inventory/brand/Brand.fxml");
     private static final FXMLLoader unitLoader =
-            fxmlLoader("views/product/unit_of_measure/UnitOfMeasure.fxml");
+            fxmlLoader("views/inventory/unit_of_measure/UnitOfMeasure.fxml");
     private static final FXMLLoader productLoader =
-            fxmlLoader("views/product/products/Products.fxml");
+            fxmlLoader("views/inventory/products/Products.fxml");
     private static final FXMLLoader adjustmentLoader =
-            fxmlLoader("views/product/adjustment/Adjustment.fxml");
+            fxmlLoader("views/inventory/adjustment/Adjustment.fxml");
     private static final FXMLLoader requisitionLoader =
             fxmlLoader("views/requisition/Requisition.fxml");
-    private static final FXMLLoader purchaseLoader = fxmlLoader("views/purchases/Purchases.fxml");
     private static final FXMLLoader transferLoader = fxmlLoader("views/transfer/Transfer.fxml");
     private static final FXMLLoader stockInLoader = fxmlLoader("views/stock_in/StockIn.fxml");
-    private static final FXMLLoader saleReturnLoader = fxmlLoader("views/returns/sales/Sales.fxml");
-    private static final FXMLLoader purchaseReturnLoader =
-            fxmlLoader("views/returns/purchases/Purchases.fxml");
     private static final FXMLLoader expenseCategoryLoader =
             fxmlLoader("views/expenses/category/Category.fxml");
     private static final FXMLLoader expenseLoader = fxmlLoader("views/expenses/expense/Expense.fxml");
@@ -257,6 +260,9 @@ public class Pages {
     private static BorderPane leaveStatusPane;
     @Getter
     private static BorderPane leaveRequestPane;
+
+    @Getter
+    private static BorderPane calendarPane;
 
     @Getter
     // PayRoll
@@ -405,7 +411,7 @@ public class Pages {
     }
 
     private static void setSales(Stage stage) {
-        saleLoader.setControllerFactory(e -> SalesController.getInstance());
+        saleLoader.setControllerFactory(e -> OrdersController.getInstance(stage));
         posLoader.setControllerFactory(e -> new PointOfSaleController());
         salesTermLoader.setControllerFactory(e -> SaleTermsController.getInstance(stage));
     }
@@ -423,7 +429,7 @@ public class Pages {
         brandLoader.setControllerFactory(e -> BrandController.getInstance(stage));
         unitLoader.setControllerFactory(e -> UnitOfMeasureController.getInstance(stage));
         productLoader.setControllerFactory(e -> ProductController.getInstance(stage));
-        adjustmentLoader.setControllerFactory(e -> AdjustmentController.getInstance());
+        adjustmentLoader.setControllerFactory(e -> AdjustmentController.getInstance(stage));
     }
 
     private static void setStockReport(Stage stage) {
@@ -454,6 +460,7 @@ public class Pages {
     private static void setLeave(Stage stage) {
         leaveStatusLoader.setControllerFactory(e -> LeaveStatusController.getInstance(stage));
         leaveRequestLoader.setControllerFactory(e -> LeaveRequestController.getInstance(stage));
+        calendarLoader.setControllerFactory(e -> CalendarController.getInstance());
     }
 
     private static void setPayRoll(Stage stage) {
@@ -474,7 +481,7 @@ public class Pages {
     }
 
     private static void setQuotation(Stage stage) {
-        quotationLoader.setControllerFactory(e -> QuotationController.getInstance());
+        quotationLoader.setControllerFactory(e -> QuotationController.getInstance(stage));
     }
 
     private static void setTax(Stage stage) {
@@ -482,16 +489,16 @@ public class Pages {
         taxSettingsLoader.setControllerFactory(e -> new TaxSettingsController());
     }
 
-    private static void setSingleItems() {
-        requisitionLoader.setControllerFactory(e -> RequisitionController.getInstance());
-        purchaseLoader.setControllerFactory(e -> PurchasesController.getInstance());
-        transferLoader.setControllerFactory(e -> TransferController.getInstance());
-        stockInLoader.setControllerFactory(e -> StockInController.getInstance());
+    private static void setSingleItems(Stage stage) {
+        requisitionLoader.setControllerFactory(e -> RequisitionController.getInstance(stage));
+        purchaseLoader.setControllerFactory(e -> PurchasesController.getInstance(stage));
+        transferLoader.setControllerFactory(e -> TransferController.getInstance(stage));
+        stockInLoader.setControllerFactory(e -> StockInController.getInstance(stage));
     }
 
-    private static void setReturns() {
-        saleReturnLoader.setControllerFactory(e -> new SaleReturnsController());
-        purchaseReturnLoader.setControllerFactory(e -> new PurchaseReturnController());
+    private static void setReturns(Stage stage) {
+        saleReturnLoader.setControllerFactory(e -> SaleReturnsController.getInstance(stage));
+        purchaseReturnLoader.setControllerFactory(e -> PurchaseReturnController.getInstance(stage));
     }
 
     private static void setDataSynchronizer(Stage stage) {
@@ -541,8 +548,9 @@ public class Pages {
         // Dashboard
         dashboardPane = dashboardLoader.load();
         // Sales
-        salePane = saleLoader.load();
         posPane = posLoader.load();
+        salePane = saleLoader.load();
+        saleReturnPane = saleReturnLoader.load();
         salesTermPane = salesTermLoader.load();
         // Customer
         customerPane = customerLoader.load();
@@ -568,10 +576,14 @@ public class Pages {
         designationsPane = designationsLoader.load();
         employeesPane = employeesLoader.load();
         employmentStatusPane = employmentStatusLoader.load();
+        // Purchase
+        purchasePane = purchaseLoader.load();
+        purchaseReturnPane = purchaseReturnLoader.load();
         // HUMAN RESOURCE
         // Leave
         leaveStatusPane = leaveStatusLoader.load();
         leaveRequestPane = leaveRequestLoader.load();
+        calendarPane = calendarLoader.load();
         // HUMAN RESOURCE
         // PayRoll
         paySlipsPane = paySlipsLoader.load();
@@ -611,12 +623,8 @@ public class Pages {
         adjustmentPane = adjustmentLoader.load();
 
         requisitionPane = requisitionLoader.load();
-        purchasePane = purchaseLoader.load();
         transferPane = transferLoader.load();
         stockInPane = stockInLoader.load();
-
-        saleReturnPane = saleReturnLoader.load();
-        purchaseReturnPane = purchaseReturnLoader.load();
 
         expenseCategoryPane = expenseCategoryLoader.load();
         expensePane = expenseLoader.load();
@@ -652,8 +660,8 @@ public class Pages {
         setService(stage);
         setQuotation(stage);
         setTax(stage);
-        setSingleItems();
-        setReturns();
+        setSingleItems(stage);
+        setReturns(stage);
         setExpenses(stage);
         setMasterForms(stage);
         setDataSynchronizer(stage);

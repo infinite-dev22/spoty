@@ -329,6 +329,9 @@
     -fx-background-color: rgba(255, 255, 255, 1);
     -fx-border-color: -mfx-border-gray;
 }
+.card-raised {
+    -fx-background-color: rgba(255, 255, 255, 1);
+}
 .card-flat-no-border, .theme-item {
     -fx-background-color: -spoty-background-gray;
     -fx-border-color: transparent;
@@ -395,4 +398,18 @@
 }
 .sub-header-description{
     -fx-text-fill: gray;
+}
+
+.table-cell-border {
+   -fx-border-color: -mfx-border-gray;
+}
+
+.green-bg{
+    -fx-background-color: green;
+}
+.red-bg{
+    -fx-background-color: red;
+}
+.orange-bg{
+    -fx-background-color: orange;
 }

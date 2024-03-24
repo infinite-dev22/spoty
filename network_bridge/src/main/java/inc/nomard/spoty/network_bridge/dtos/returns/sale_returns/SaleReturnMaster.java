@@ -18,6 +18,7 @@ import inc.nomard.spoty.network_bridge.dtos.Branch;
 import inc.nomard.spoty.network_bridge.dtos.Customer;
 import lombok.*;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -28,7 +29,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class SaleReturnMaster {
-    private long id;
+    private Long id;
     private Date date;
     private String ref;
     private Customer customer;
@@ -37,13 +38,22 @@ public class SaleReturnMaster {
     private double taxRate;
     private double netTax;
     private double discount;
+    private double subTotal;
     private double total;
-    private double paid;
+    private double amountPaid;
+    private double amountDue;
+    private double changeAmount;
+    private double balanceAmount;
+    private double shippingFee;
     private String paymentStatus;
-    private String status;
+    private String saleStatus;
     private String notes;
 
     public String getCustomerName() {
         return customer.getName();
+    }
+
+    public String getLocaleDate() {
+        return DateFormat.getDateInstance().format(date);
     }
 }
