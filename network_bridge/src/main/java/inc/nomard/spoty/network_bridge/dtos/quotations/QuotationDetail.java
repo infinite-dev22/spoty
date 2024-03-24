@@ -34,6 +34,7 @@ public class QuotationDetail {
     private double discount;
     private String discountType;
     private double total;
+    private double subTotalPrice;
     private int quantity;
     private String serialNumber;
 

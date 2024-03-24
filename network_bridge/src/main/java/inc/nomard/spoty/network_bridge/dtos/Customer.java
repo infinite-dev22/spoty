@@ -31,4 +31,5 @@ public class Customer {
     private String address;
     private String taxNumber;
     private String country;
+    private String imageUrl;
 }

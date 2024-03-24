@@ -31,4 +31,5 @@ public class Supplier {
     private String address;
     private String city;
     private String country;
+    private String imageUrl;
 }

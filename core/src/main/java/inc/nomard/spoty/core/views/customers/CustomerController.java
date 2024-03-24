@@ -17,6 +17,7 @@ package inc.nomard.spoty.core.views.customers;
 import inc.nomard.spoty.core.components.animations.SpotyAnimations;
 import inc.nomard.spoty.core.viewModels.CustomerViewModel;
 import inc.nomard.spoty.core.views.forms.CustomerFormController;
+import inc.nomard.spoty.core.views.previews.people.CustomerPreviewController;
 import inc.nomard.spoty.network_bridge.dtos.Customer;
 import inc.nomard.spoty.utils.SpotyThreader;
 import io.github.palexdev.materialfx.controls.*;
@@ -39,6 +40,7 @@ import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -57,7 +59,7 @@ public class CustomerController implements Initializable {
     @FXML
     public MFXButton customerImportBtn;
     @FXML
-    public BorderPane customersContentPane;
+    public BorderPane contentPane;
     @FXML
     public MFXTableView<Customer> customersTable;
     @FXML
@@ -66,12 +68,15 @@ public class CustomerController implements Initializable {
     public HBox refresh;
     private MFXStageDialog dialog;
     private RotateTransition transition;
+    private FXMLLoader viewFxmlLoader;
+    private MFXStageDialog viewDialog;
 
     private CustomerController(Stage stage) {
         Platform.runLater(
                 () -> {
                     try {
                         customerFormDialogPane(stage);
+                        viewDialogPane(stage);
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
@@ -161,6 +166,7 @@ public class CustomerController implements Initializable {
         MFXContextMenu contextMenu = new MFXContextMenu(customersTable);
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
+        MFXContextMenuItem view = new MFXContextMenuItem("View");
 
         // Actions
         // Delete
@@ -188,8 +194,18 @@ public class CustomerController implements Initializable {
                     dialog.showAndWait();
                     e.consume();
                 });
+        // View
+        view.setOnAction(
+                event -> {
+                    try {
+                        viewShow(obj.getData());
+                    } catch (Exception ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    event.consume();
+                });
 
-        contextMenu.addItems(edit, delete);
+        contextMenu.addItems(view, edit, delete);
 
         if (contextMenu.isShowing()) contextMenu.hide();
         return contextMenu;
@@ -209,7 +225,7 @@ public class CustomerController implements Initializable {
                         .toStageDialogBuilder()
                         .initOwner(stage)
                         .initModality(Modality.WINDOW_MODAL)
-                        .setOwnerNode(customersContentPane)
+                        .setOwnerNode(contentPane)
                         .setScrimPriority(ScrimPriority.WINDOW)
                         .setScrimOwner(true)
                         .get();
@@ -241,5 +257,38 @@ public class CustomerController implements Initializable {
         transition = SpotyAnimations.rotateTransition(refreshIcon, Duration.millis(1000), 360);
 
         refreshIcon.setOnMouseClicked(mouseEvent -> CustomerViewModel.getAllCustomers(this::onAction, this::onSuccess, this::onFailed));
+    }
+
+    private void viewDialogPane(Stage stage) throws IOException {
+        double screenHeight = Screen.getPrimary().getBounds().getHeight();
+        viewFxmlLoader = fxmlLoader("views/previews/people/CustomerPreview.fxml");
+        viewFxmlLoader.setControllerFactory(c -> new CustomerPreviewController());
+        MFXGenericDialog genericDialog = viewFxmlLoader.load();
+        genericDialog.setShowMinimize(false);
+        genericDialog.setShowAlwaysOnTop(false);
+        genericDialog.setHeaderText("Customer Details View");
+
+        genericDialog.setPrefHeight(screenHeight * .98);
+        genericDialog.setPrefWidth(700);
+
+        viewDialog =
+                MFXGenericDialogBuilder.build(genericDialog)
+                        .toStageDialogBuilder()
+                        .initOwner(stage)
+                        .initModality(Modality.WINDOW_MODAL)
+                        .setOwnerNode(contentPane)
+                        .setScrimPriority(ScrimPriority.WINDOW)
+                        .setScrimOwner(true)
+                        .setCenterInOwnerNode(false)
+                        .setOverlayClose(true)
+                        .get();
+
+        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(viewDialog.getScene());
+    }
+
+    public void viewShow(Customer customer) {
+        CustomerPreviewController controller = viewFxmlLoader.getController();
+        controller.init(customer);
+        viewDialog.showAndWait();
     }
 }

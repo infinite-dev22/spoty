@@ -34,6 +34,7 @@ public class PurchaseDetail {
     private String discountType;
     private Product product;
     private String serialNumber;
+    private double subTotalPrice;
     private double price;
     private double total;
     private int quantity;

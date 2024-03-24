@@ -21,6 +21,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import java.net.URL?>
+<?import inc.nomard.spoty.core.components.navigation.Spacer?>
 <MFXGenericDialog xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/20.0.1"
                   fx:controller="inc.nomard.spoty.core.views.printable.general.GeneralViewController">
     <stylesheets>
@@ -33,7 +34,7 @@
     </padding>
     <center>
         <MFXScrollPane>
-            <VBox prefWidth="600">
+            <VBox maxHeight="900.0" maxWidth="1000.0" minHeight="600.0" minWidth="500.0" prefHeight="800.0" prefWidth="700.0">
                 <padding>
                     <Insets bottom="20.0" top="20.0"/>
                 </padding>
@@ -56,14 +57,17 @@
                     </VBox.margin>
                     <HBox spacing="70.0">
                         <Label text="Purchaser's Name"/>
+                        <Spacer/>
                         <Label fx:id="nameLabel" layoutX="10.0" layoutY="10.0"/>
                     </HBox>
                     <HBox layoutX="10.0" layoutY="10.0" spacing="70.0">
                         <Label text="Contact Number"/>
+                        <Spacer/>
                         <Label fx:id="numberLabel" layoutX="10.0" layoutY="10.0"/>
                     </HBox>
                     <HBox layoutX="10.0" layoutY="10.0" spacing="140.0">
                         <Label text="Email"/>
+                        <Spacer/>
                         <Label fx:id="emailLabel" layoutX="10.0" layoutY="10.0"/>
                     </HBox>
                 </VBox>

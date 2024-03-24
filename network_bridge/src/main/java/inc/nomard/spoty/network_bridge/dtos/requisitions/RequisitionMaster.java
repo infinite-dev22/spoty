@@ -16,6 +16,7 @@ package inc.nomard.spoty.network_bridge.dtos.requisitions;
 
 import inc.nomard.spoty.network_bridge.dtos.Branch;
 import inc.nomard.spoty.network_bridge.dtos.Supplier;
+import inc.nomard.spoty.network_bridge.dtos.hrm.employee.User;
 import lombok.*;
 
 import java.text.DateFormat;
@@ -35,13 +36,21 @@ public class RequisitionMaster {
     private Supplier supplier;
     private ArrayList<Branch> branches;
     private List<RequisitionDetail> requisitionDetails;
-    private String shipVia;
-    private String shipMethod;
-    private String shippingTerms;
-    private Date deliveryDate;
-    private String notes;
+    private double taxRate;
+    private double netTax;
+    private double discount;
+    private String shipping;
+    private double amountPaid;
+    private double total;
+    private double amountDue;
+    private double changeAmount;
+    private double balanceAmount;
+    private double shippingFee;
+    private double subTotal;
     private String status;
-    private double totalCost;
+    private String paymentStatus;
+    private String notes;
+    private User createdBy;
 
     public String getSupplierName() {
         return supplier.getName();
@@ -49,5 +58,9 @@ public class RequisitionMaster {
 
     public String getLocaleDate() {
         return DateFormat.getDateInstance().format(date);
+    }
+
+    public String doneBy() {
+        return createdBy.getUserProfile().getName();
     }
 }
