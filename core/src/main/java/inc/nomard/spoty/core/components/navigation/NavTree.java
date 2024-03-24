@@ -18,6 +18,7 @@ import io.github.palexdev.materialfx.controls.MFXIconWrapper;
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.css.PseudoClass;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
@@ -132,6 +133,7 @@ public class NavTree extends TreeView<Nav> {
             root = new HBox();
             root.setAlignment(Pos.CENTER_LEFT);
             root.getChildren().setAll(titleLabel, new Spacer(), tagLabel, arrowIcon);
+            root.setPadding(new Insets(0, 5, 0, 0));
             root.setCursor(Cursor.HAND);
             root.getStyleClass().add("container");
             root.setMaxWidth(SIDEBAR_WIDTH - 10);
@@ -177,11 +179,13 @@ public class NavTree extends TreeView<Nav> {
                 setText("");
                 setGraphic(null);
                 titleLabel.setText(null);
+                tagLabel.setText(null);
                 titleLabel.setGraphic(null);
             } else {
                 setGraphic(root);
                 titleLabel.setGraphic(nav.graphic());
                 titleLabel.setText(nav.title());
+                tagLabel.setText(nav.tag());
 
                 pseudoClassStateChanged(GROUP, nav.isGroup());
                 toggleVisibility(arrowIcon, nav.isGroup());
@@ -223,7 +227,7 @@ public class NavTree extends TreeView<Nav> {
          */
         public static @NotNull NavTreeItem group(String title, String icon) {
             MFXIconWrapper wrapper = new MFXIconWrapper(icon, 24, 32);
-            return new NavTreeItem(new Nav(title, wrapper, null, null));
+            return new NavTreeItem(new Nav(title, null, wrapper, null, null));
         }
 
         /**
@@ -233,7 +237,7 @@ public class NavTree extends TreeView<Nav> {
          * @return NavTreeItem
          */
         public static @NotNull NavTreeItem group(String title) {
-            return new NavTreeItem(new Nav(title, null, null, null));
+            return new NavTreeItem(new Nav(title, null, null, null, null));
         }
 
         /**
@@ -246,7 +250,7 @@ public class NavTree extends TreeView<Nav> {
          */
         public static @NotNull NavTreeItem mainPage(String title, String icon, BorderPane view) {
             MFXIconWrapper wrapper = new MFXIconWrapper(icon, 24, 32);
-            return new NavTreeItem(new Nav(title, wrapper, view, null));
+            return new NavTreeItem(new Nav(title, null, wrapper, view, null));
         }
 
         /**
@@ -258,7 +262,7 @@ public class NavTree extends TreeView<Nav> {
          */
         @Contract("_, _ -> new")
         public static @NotNull NavTreeItem page(String title, BorderPane view) {
-            return new NavTreeItem(new Nav(title, null, view, null));
+            return new NavTreeItem(new Nav(title, null, null, view, null));
         }
 
         /**
@@ -270,7 +274,7 @@ public class NavTree extends TreeView<Nav> {
          */
         @Contract("_, _, _ -> new")
         public static @NotNull NavTreeItem page(String title, BorderPane view, String... searchKeywords) {
-            return new NavTreeItem(new Nav(title, null, view, List.of(searchKeywords)));
+            return new NavTreeItem(new Nav(title, null, null, view, List.of(searchKeywords)));
         }
 
         public @Nullable BorderPane view() {

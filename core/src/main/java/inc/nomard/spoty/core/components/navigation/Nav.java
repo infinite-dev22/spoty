@@ -24,10 +24,10 @@ import java.util.List;
 import java.util.Objects;
 
 record Nav(
-        String title, @Nullable Node graphic, BorderPane view, @Nullable List<String> searchKeywords) {
+        String title, String tag, @Nullable Node graphic, BorderPane view, @Nullable List<String> searchKeywords) {
 
     // Treeview parent not.
-    public static final Nav ROOT = new Nav("ROOT", null, null, null);
+    public static final Nav ROOT = new Nav("ROOT", null, null, null, null);
 
     public Nav {
         Objects.requireNonNull(title, "title");

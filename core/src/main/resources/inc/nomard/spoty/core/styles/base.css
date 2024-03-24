@@ -26,31 +26,21 @@
 /**************************************************
  * Window Header
 **************************************************/
-.rootPane .close-icon {
-    -fx-opacity: 0.5;
-}
 .close-icon {
     -fx-opacity: 0.5;
-    /*-fx-cursor: hand;*/
-}
-
-.rootPane .close-icon:hover {
-    -fx-opacity: 1.0;
+    -fx-cursor: hand;
 }
 
 .close-icon:hover {
     -fx-opacity: 1.0;
 }
 
-.rootPane .minimize-icon {
+.minimize-icon {
     -fx-opacity: 0.5;
+    -fx-cursor: hand;
 }
 
-.rootPane .minimize-icon:hover {
-    -fx-opacity: 1.0;
-}
-
-.rootPane .minimize-icon:minimize {
+.minimize-icon:hover {
     -fx-opacity: 1.0;
 }
 
@@ -77,65 +67,33 @@
     -fx-insets: 0;
     -fx-border-insets: 0;
     -fx-background-insets: 1;
-}
-
-.rootPane .sidebar .navbar .tree-view .tree-cell {
-    -fx-background-radius: 0;
-    -fx-border-radius: 0;
-    -fx-pref-height: 40;
-    -fx-font-family: 'Visby Round CF Demi Bold';
-    -fx-font-size: 13;
-}
-
-.nav-tree-cell > .container > .title {
-    -fx-background-radius: 0;
-    -fx-border-radius: 0;
-    -fx-pref-height: 40;
-    -fx-font-family: 'Visby Round CF Demi Bold';
-    -fx-font-size: 13;
-}
-
-.rootPane .sidebar .navbar .tree-view .tree-cell:selected {
-    -fx-background-radius: 30;
-    -fx-border-insets: 3 3.5 3 21.1;
-    -fx-background-insets: 0 3.5 0 21.1;
-}
-
-.rootPane .sidebar .navbar .tree-view .tree-cell .container:hover {
-    -fx-background-radius: 30;
-}
-
-.rootPane .sidebar .navbar .tree-view .tree-cell .container {
-    -fx-background-radius: 30;
-    -fx-padding: 4 4 4 4;
-}
-
-/*Style group*/
-.rootPane .sidebar .navbar .tree-view .tree-cell .container:group:selected,
-.rootPane .sidebar .navbar .tree-view .tree-cell:group:selected {
-    -fx-background-radius: 30;
-}
-
-/*Style expanded group.*/
-.rootPane .sidebar .navbar .tree-view .tree-cell:group:expanded {
-    -fx-background-radius: 30;
-}
-
-/*Style group sub item.*/
-.rootPane .sidebar .navbar .tree-view .tree-cell .container:sub-tree-item {
-    -fx-background-radius: 30;
     -fx-indent: 35;
 }
+.rootPane .sidebar .navbar .tree-view .tree-cell {
+    -fx-pref-height: 40;
+    -fx-font-family: 'Visby Round CF Demi Bold';
+    -fx-font-size: 13;
+}
+.nav-tree-cell > .container > .title {
+    -fx-pref-height: 40;
+    -fx-font-family: 'Visby Round CF Demi Bold';
+    -fx-font-size: 13;
+}
+.rootPane .sidebar .navbar .tree-view .tree-cell:selected,
+.rootPane .sidebar .navbar .tree-view .tree-cell .container,
+.rootPane .sidebar .navbar .tree-view .tree-cell .container:group,
+.rootPane .sidebar .navbar .tree-view .tree-cell .container:sub-tree-item {
+    -fx-background-radius: 10;
+}
 
-.rootPane .sidebar .navbar .tree-view .tree-cell:selected:sub-tree-item {
-    -fx-background-radius: 30;
+.rootPane .sidebar .navbar .tree-view .tree-cell .container{
+    -fx-padding: 3 5 3 15;
+}
+
+.rootPane .sidebar .navbar .tree-view .tree-cell:sub-tree-item {
+    -fx-padding: 3 3 3 20;
     -fx-border-insets: 3 3.5 3 34;
     -fx-background-insets: 3 3.5 3 34;
-}
-
-.rootPane .sidebar .navbar .tree-view .tree-cell .container:hover:sub-tree-item {
-    -fx-background-radius: 30;
-    -fx-indent: 35;
 }
 
 .nav-tree-cell:group > .container > .arrow {
@@ -144,6 +102,17 @@
 
 .nav-tree-cell:group:expanded > .container > .arrow {
     -fx-icon-code: fas-angle-down;
+}
+
+.nav-toggle {
+}
+
+.nav-toggle .nav-toggle-arrow {
+    -fx-icon-code: fas-angle-left;
+}
+
+.nav-toggle:selected .nav-toggle-arrow {
+    -fx-icon-code: fas-angle-right;
 }
 
 /*Remove Horizontal scrollbar and other components.*/
@@ -191,38 +160,9 @@
     -fx-background-radius: 2.0em;
 }
 
-/*.tree-view .tree-disclosure-node .arrow {*/
-/*   -fx-shape: "M 0 0 L 10 5 L 0 10 L 0 8 L 8 5 L 0 2 Z";*/
-/*}*/
-
-/*NAV BUTTON STYLES*/
-.rootPane .sidebar .navbar .mfx-button .mfx-ripple-generator {
-    -mfx-paused: true;
-}
-
-.rootPane .sidebar .navbar .tree-view .tree-cell .mfx-icon-wrapper .mfx-font-icon {
-    -mfx-color: white;
-}
-
-.rootPane .sidebar .navbar .mfx-button {
-    -fx-background-radius: 0;
-    -fx-border-radius: 0;
-    -fx-pref-height: 40;
-    -fx-font-family: 'Visby Round CF Demi Bold';
-    -fx-font-size: 13;
-}
-
-.rootPane .sidebar .navbar .mfx-button:hover {
-    -fx-background-radius: 30;
-}
-
-.rootPane .sidebar .navbar .mfx-button:focused {
-    -fx-background-radius: 30;
-}
-
 /*APPBAR STYLES*/
 .appBar {
-    -fx-background-radius: 10 10 10 10;
+    -fx-background-radius: 10;
     -fx-border-radius: 10;
     -fx-background-radius: 10;
 }
@@ -382,4 +322,12 @@
 
 .card-color-decor{
     -fx-background-radius: 10 0 0 10;
+}
+
+.designation-label{
+     -fx-font-size: 13;
+}
+.username-label{
+     -fx-font-size: 16;
+     -fx-font-weight: bold;
 }
