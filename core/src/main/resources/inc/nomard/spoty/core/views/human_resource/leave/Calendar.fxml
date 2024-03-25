@@ -22,10 +22,4 @@
 <BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:id="contentPane" prefHeight="400.0" prefWidth="600.0"
             xmlns="http://javafx.com/javafx/19"
             fx:controller="inc.nomard.spoty.core.views.human_resource.leave.CalendarController">
-    <padding>
-        <Insets topRightBottomLeft="5.0"/>
-    </padding>
-    <center>
-
-    </center>
 </BorderPane>
