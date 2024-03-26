@@ -39,6 +39,8 @@ public class DashboardController implements Initializable {
 
     @FXML
     public HBox graphStatsContainer2;
+    @FXML
+    public HBox graphStatsContainer0;
 
     @FXML
     private HBox quickStatsContainer;
@@ -64,25 +66,17 @@ public class DashboardController implements Initializable {
         try {
             AnchorPane graphCardPane = fxmlLoader("components/cards/GraphCard.fxml").load();
 
-            //            GraphCardController graphCard = graphCardLoader.getController();
-            //            smallCard.setData(quickStat);
-
-            graphStatsContainer1.getChildren().add(graphCardPane);
+            graphStatsContainer0.getChildren().add(graphCardPane);
 
             AnchorPane barGraphCardPane = fxmlLoader("components/cards/BarGraphCard.fxml").load();
+            AnchorPane barGraphCardPane0 = fxmlLoader("components/cards/BarGraphCard.fxml").load();
 
-            //            GraphCardController graphCard = barGraphCardLoader.getController();
-            //            smallCard.setData(quickStat);
-
-            graphStatsContainer1.getChildren().add(barGraphCardPane);
+            graphStatsContainer1.getChildren().addAll(barGraphCardPane, barGraphCardPane0);
 
             AnchorPane graphCardPane1 = fxmlLoader("components/cards/PieChartCard.fxml").load();
-
-            graphStatsContainer2.getChildren().add(graphCardPane1);
-
             AnchorPane barGraphCardPane1 = fxmlLoader("components/cards/BarGraphCard.fxml").load();
 
-            graphStatsContainer2.getChildren().add(barGraphCardPane1);
+            graphStatsContainer2.getChildren().addAll(graphCardPane1, barGraphCardPane1);
         } catch (IOException e) {
             SpotyLogger.writeToFile(e, this.getClass());
         }

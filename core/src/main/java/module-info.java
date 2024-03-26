@@ -15,12 +15,10 @@ module spoty.core {
     requires java.net.http;
     requires com.google.gson;
     requires atlantafx.base;
-//    requires ical4j.core;
-    requires org.slf4j;
-//    requires org.mnode.ical4j.core;
-    requires com.calendarfx.view;
+    requires eu.hansolo.fx.charts;
     requires spoty.network_bridge;
     requires spoty.utils;
+    requires com.calendarfx.view;
 
     opens inc.nomard.spoty.core.views;
     opens inc.nomard.spoty.core.views.login;
