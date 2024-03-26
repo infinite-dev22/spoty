@@ -32,6 +32,8 @@ public class UserProfile {
     private String otherName;
     private String phone;
     private String email;
+    private String gender;
+    private String dob;
     private String avatar;
 
     public boolean isActive() {

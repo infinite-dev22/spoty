@@ -19,11 +19,11 @@
 <?import io.github.palexdev.mfxcore.controls.Label?>
 <?import io.github.palexdev.mfxresources.fonts.MFXFontIcon?>
 <?import javafx.geometry.*?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.Circle?>
 <?import java.lang.String?>
 <?import java.net.*?>
-<?import javafx.scene.Cursor?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="rootPane" prefHeight="32767" prefWidth="32767"
             styleClass="rootPane" xmlns="http://javafx.com/javafx/21.0.1"
             fx:controller="inc.nomard.spoty.core.views.BaseController">
@@ -90,7 +90,8 @@
                     <Insets topRightBottomLeft="20.0"/>
                 </padding>
                 <HBox spacing="10">
-                    <Circle fx:id="imageHolder" fill="#4f5055" radius="30.0" stroke="#83868d" strokeType="INSIDE"/>
+                    <Circle fx:id="imageHolder" cache="true" cacheHint="SPEED" fill="#4e4f5400" radius="30.0"
+                            stroke="#ffffff00" strokeType="INSIDE" strokeWidth="0.0"/>
                     <VBox alignment="CENTER_LEFT" spacing="10">
                         <Label fx:id="userNameLbl" styleClass="username-label"/>
                         <Label fx:id="designationLbl" styleClass="designation-label"/>
@@ -99,7 +100,7 @@
                 <HBox fx:id="viewProfile" alignment="CENTER" HBox.hgrow="NEVER">
                     <Label styleClass="view-profile-label" text="View profile" underline="true"/>
                     <cursor>
-                        <Cursor fx:constant="HAND" />
+                        <Cursor fx:constant="HAND"/>
                     </cursor>
                 </HBox>
             </VBox>

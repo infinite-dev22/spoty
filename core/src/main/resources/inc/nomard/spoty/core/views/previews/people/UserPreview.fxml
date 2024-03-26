@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import io.github.palexdev.materialfx.controls.MFXScrollPane?>
+<?import io.github.palexdev.materialfx.dialogs.MFXGenericDialog?>
+<?import io.github.palexdev.mfxcore.controls.Label?>
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+
+<MFXGenericDialog xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="inc.nomard.spoty.core.views.previews.people.UserPreviewController">
+    <stylesheets>
+        <URL value="@../../../styles/base.css" />
+        <URL value="@../../../styles/Common.css" />
+        <URL value="@../../../styles/TextFields.css" />
+        <URL value="@../../../styles/theming/Default.css" />
+    </stylesheets>
+    <padding>
+        <Insets left="10.0" right="10" />
+    </padding>
+    <center>
+        <MFXScrollPane fitToHeight="true" fitToWidth="true">
+            <HBox maxHeight="600.0" maxWidth="600.0" minHeight="300.0" minWidth="300.0" prefHeight="500.0" prefWidth="500.0" spacing="20.0">
+                <VBox alignment="CENTER" spacing="30.0" styleClass="card-raised" HBox.hgrow="ALWAYS">
+                    <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                    </padding>
+                    <Circle fx:id="imageHolder" cache="true" cacheHint="SPEED" fill="#4e4f5400" radius="100.0" stroke="#ffffff00" strokeType="INSIDE" strokeWidth="0.0" />
+                    <VBox spacing="20.0" VBox.vgrow="ALWAYS">
+                        <HBox>
+                            <Label text="Name:" />
+                            <Region HBox.hgrow="ALWAYS" />
+                            <Label fx:id="nameLbl" layoutX="10.0" layoutY="10.0" />
+                        </HBox>
+                        <HBox layoutX="10.0" layoutY="10.0">
+                            <Label text="Email:" />
+                            <Region HBox.hgrow="ALWAYS" />
+                            <Label fx:id="emailLbl" layoutX="10.0" layoutY="10.0" />
+                        </HBox>
+                        <HBox layoutX="10.0" layoutY="25.0">
+                            <Label text="Phone Number:" />
+                            <Region HBox.hgrow="ALWAYS" />
+                            <Label fx:id="phoneLbl" layoutX="10.0" layoutY="10.0" />
+                        </HBox>
+                        <HBox layoutX="10.0" layoutY="70.0">
+                            <Label text="Country:" />
+                            <Region HBox.hgrow="ALWAYS" />
+                            <Label fx:id="genderLbl" layoutX="10.0" layoutY="10.0" />
+                        </HBox>
+                        <HBox layoutX="10.0" layoutY="85.0">
+                            <Label text="City:" />
+                            <Region HBox.hgrow="ALWAYS" />
+                            <Label fx:id="dobLbl" layoutX="10.0" layoutY="10.0" />
+                        </HBox>
+                    </VBox>
+                </VBox>
+                <padding>
+                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                </padding>
+            </HBox>
+        </MFXScrollPane>
+    </center>
+</MFXGenericDialog>
