@@ -19,7 +19,7 @@
 <?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.*?>
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="400.0" prefWidth="480.0" styleClass="card-flat"
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" minHeight="351.0" prefHeight="551.0" maxHeight="751.0" styleClass="card-flat"
             stylesheets="@../../styles/Common.css" xmlns="http://javafx.com/javafx/19"
             fx:controller="inc.nomard.spoty.core.views.components.PieChartCardController">
     <AnchorPane prefHeight="29.0" prefWidth="586.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"

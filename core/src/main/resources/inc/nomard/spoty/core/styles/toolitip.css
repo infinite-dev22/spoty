@@ -4,5 +4,6 @@
 .charts-tooltip .label {
     -fx-text-fill: red;
     -fx-font-weight: bold;
-    -fx-font-family: 'Helvetica', Arial, sans-serif;
+     -fx-font-size: 18;
+    -fx-font-family: 'Roboto Regular', 'Open Sans Regular', 'Comfortaa Regular';
 }

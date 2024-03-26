@@ -96,7 +96,7 @@
                         <Label fx:id="designationLbl" styleClass="designation-label"/>
                     </VBox>
                 </HBox>
-                <HBox fx:id="viewProfile" alignment="CENTER">
+                <HBox fx:id="viewProfile" alignment="CENTER" HBox.hgrow="NEVER">
                     <Label styleClass="view-profile-label" text="View profile" underline="true"/>
                     <cursor>
                         <Cursor fx:constant="HAND" />

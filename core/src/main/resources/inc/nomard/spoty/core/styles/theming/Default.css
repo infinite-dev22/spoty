@@ -422,4 +422,9 @@
 .designation-label{
     -fx-text-fill: -mfx-text-disabled;
 }
+.view-all {
+    -fx-text-fill: -mfx-text-disabled;
+}
+.card-title{}
+.card-sub-title{}
 .username-label{}

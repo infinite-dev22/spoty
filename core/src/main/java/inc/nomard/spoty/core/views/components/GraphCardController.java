@@ -18,12 +18,15 @@ import eu.hansolo.fx.charts.*;
 import eu.hansolo.fx.charts.data.XYChartItem;
 import eu.hansolo.fx.charts.series.XYSeries;
 import eu.hansolo.fx.charts.series.XYSeriesBuilder;
+import inc.nomard.spoty.core.components.ViewAll;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
+import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.util.StringConverter;
 
 import java.net.URL;
@@ -35,56 +38,75 @@ import java.util.ResourceBundle;
 public class GraphCardController implements Initializable {
     private static final Random RND = new Random();
     private static final Double AXIS_WIDTH = 25d;
+    private final Color expenseColor = Color.web("#00AEF5");
+    private final Color incomeColor = Color.web("#4EE29B");
+    private final Color strokeSymbolColor = Color.web("#293C47");
     private Axis xAxisBottom, yAxisLeft;
     private XYChart lineChart;
+    @FXML
+    public Circle incomeColorIndicator;
+    @FXML
+    public Circle expenseColorIndicator;
+    @FXML
+    public ViewAll viewAll;
+    @FXML
+    public Label cardTitle;
     @FXML
     public AnchorPane lineChartHolder;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        cardTitle.setText("Financial Projections");
+
+        expenseColorIndicator.setFill(expenseColor);
+        incomeColorIndicator.setFill(incomeColor);
+
+        createLeftAxes();
+        createBottomAxes();
         buildLineChart();
         startCharting();
+        createActions();
     }
 
     private void buildLineChart() {
         XYPane lineChartPane = new XYPane(createSeries1(), createSeries2());
 
-        lineChart = new XYChart<>(lineChartPane, createLeftAxes(), createBottomAxes());
+        lineChart = new XYChart<>(lineChartPane, createGrids(), yAxisLeft, xAxisBottom);
         AnchorPane.setTopAnchor(lineChart, 0d);
         AnchorPane.setBottomAnchor(lineChart, 0d);
         AnchorPane.setLeftAnchor(lineChart, 0d);
         AnchorPane.setRightAnchor(lineChart, 0d);
     }
 
-    private Axis createBottomAxes() {
+    private void createBottomAxes() {
         xAxisBottom = AxisBuilder.create(Orientation.HORIZONTAL, Position.BOTTOM)
                 .type(AxisType.TEXT)
                 .prefHeight(AXIS_WIDTH)
                 .categories("", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
                 .minValue(1)
                 .maxValue(13)
-                .autoScale(true)
-                .axisColor(Color.web("#85949B"))
-                .tickLabelColor(Color.web("#85949B"))
-                .tickMarkColor(Color.web("#85949B"))
+                .axisColor(Color.TRANSPARENT)
+                .tickLabelFontSize(13)
+                .minorTickMarksVisible(false)
+                .mediumTickMarksVisible(false)
+                .majorTickMarksVisible(false)
                 .build();
         AnchorPane.setBottomAnchor(xAxisBottom, 0d);
         AnchorPane.setLeftAnchor(xAxisBottom, AXIS_WIDTH);
         AnchorPane.setRightAnchor(xAxisBottom, AXIS_WIDTH);
-
-        return xAxisBottom;
     }
 
-    private Axis createLeftAxes() {
+    private void createLeftAxes() {
         yAxisLeft = AxisBuilder.create(Orientation.VERTICAL, Position.LEFT)
                 .type(AxisType.LINEAR)
                 .prefWidth(AXIS_WIDTH)
                 .minValue(0)
-                .maxValue(1000)
-                .autoScale(true)
-                .axisColor(Color.web("#85949B"))
-                .tickLabelColor(Color.web("#85949B"))
-                .tickMarkColor(Color.web("#85949B"))
+                .maxValue(800)
+                .axisColor(Color.TRANSPARENT)
+                .tickLabelFontSize(13)
+                .minorTickMarksVisible(false)
+                .mediumTickMarksVisible(false)
+                .majorTickMarksVisible(false)
                 .numberFormatter(new StringConverter<Number>() {
                     private final DecimalFormat df = new DecimalFormat("$#####0 K");
 
@@ -120,34 +142,47 @@ public class GraphCardController implements Initializable {
         AnchorPane.setTopAnchor(yAxisLeft, 0d);
         AnchorPane.setBottomAnchor(yAxisLeft, AXIS_WIDTH);
         AnchorPane.setLeftAnchor(yAxisLeft, 0d);
-
-        return yAxisLeft;
     }
 
-//    private Grid createGrids() {
-//        return GridBuilder.create(xAxisBottom, yAxisLeft)
-//                .gridLinePaint(Color.web("#384C57"))
-//                .minorHGridLinesVisible(false)
-//                .mediumHGridLinesVisible(false)
-//                .minorVGridLinesVisible(false)
-//                .mediumVGridLinesVisible(false)
-//                .gridLineDashes(4, 4)
-//                .build();
-//    }
+    private Grid createGrids() {
+        return GridBuilder.create(xAxisBottom, yAxisLeft)
+                .gridLinePaint(Color.web("#384C57"))
+                .minorHGridLinesVisible(false)
+                .mediumHGridLinesVisible(false)
+                .minorVGridLinesVisible(false)
+                .mediumVGridLinesVisible(false)
+                .majorVGridLinesVisible(false)
+                .gridOpacity(.3)
+                .gridLineDashes(1, 1)
+                .build();
+    }
 
     private XYSeries createSeries1() {
-        XYChartItem p1 = new XYChartItem(1, RND.nextDouble() * 500 + 200, "Jan", "January");
-        XYChartItem p2 = new XYChartItem(2, RND.nextDouble() * 500 + 200, "Feb", "February");
-        XYChartItem p3 = new XYChartItem(3, RND.nextDouble() * 500 + 200, "Mar", "March");
-        XYChartItem p4 = new XYChartItem(4, RND.nextDouble() * 500 + 200, "Apr", "April");
-        XYChartItem p5 = new XYChartItem(5, RND.nextDouble() * 500 + 200, "May", "May");
-        XYChartItem p6 = new XYChartItem(6, RND.nextDouble() * 500 + 200, "Jun", "June");
-        XYChartItem p7 = new XYChartItem(7, RND.nextDouble() * 500 + 200, "Jul", "July");
-        XYChartItem p8 = new XYChartItem(8, RND.nextDouble() * 500 + 200, "Aug", "August");
-        XYChartItem p9 = new XYChartItem(9, RND.nextDouble() * 500 + 200, "Sep", "September");
-        XYChartItem p10 = new XYChartItem(10, RND.nextDouble() * 500 + 200, "Oct", "October");
-        XYChartItem p11 = new XYChartItem(11, RND.nextDouble() * 500 + 200, "Nov", "November");
-        XYChartItem p12 = new XYChartItem(12, RND.nextDouble() * 500 + 200, "Dec", "December");
+        var t1 = RND.nextDouble() * 500 + 200;
+        var t2 = RND.nextDouble() * 500 + 200;
+        var t3 = RND.nextDouble() * 500 + 200;
+        var t4 = RND.nextDouble() * 500 + 200;
+        var t5 = RND.nextDouble() * 500 + 200;
+        var t6 = RND.nextDouble() * 500 + 200;
+        var t7 = RND.nextDouble() * 500 + 200;
+        var t8 = RND.nextDouble() * 500 + 200;
+        var t9 = RND.nextDouble() * 500 + 200;
+        var t10 = RND.nextDouble() * 500 + 200;
+        var t11 = RND.nextDouble() * 500 + 200;
+        var t12 = RND.nextDouble() * 500 + 200;
+
+        XYChartItem p1 = new XYChartItem(1, t1, "Jan", t1 + "\tJanuary");
+        XYChartItem p2 = new XYChartItem(2, t2, "Feb", t2 + "\tFebruary");
+        XYChartItem p3 = new XYChartItem(3, t3, "Mar", t3 + "\tMarch");
+        XYChartItem p4 = new XYChartItem(4, t4, "Apr", t4 + "\tApril");
+        XYChartItem p5 = new XYChartItem(5, t5, "May", t5 + "\tMay");
+        XYChartItem p6 = new XYChartItem(6, t6, "Jun", t6 + "\tJune");
+        XYChartItem p7 = new XYChartItem(7, t7, "Jul", t7 + "\tJuly");
+        XYChartItem p8 = new XYChartItem(8, t8, "Aug", t8 + "\tAugust");
+        XYChartItem p9 = new XYChartItem(9, t9, "Sep", t9 + "\tSeptember");
+        XYChartItem p10 = new XYChartItem(10, t10, "Oct", t10 + "\tOctober");
+        XYChartItem p11 = new XYChartItem(11, t11, "Nov", t11 + "\tNovember");
+        XYChartItem p12 = new XYChartItem(12, t12, "Dec", t12 + "\tDecember");
 
 
         p1.setY(RND.nextDouble() * 500 + 200);
@@ -167,9 +202,9 @@ public class GraphCardController implements Initializable {
                 .items(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12)
                 .chartType(ChartType.SMOOTH_AREA)
 //                .fill(Color.web("#00AEF520"))
-                .stroke(Color.web("#00AEF5"))
-                .symbolFill(Color.web("#00AEF5"))
-                .symbolStroke(Color.web("#293C47"))
+                .stroke(expenseColor)
+                .symbolFill(expenseColor)
+                .symbolStroke(strokeSymbolColor)
                 .symbolSize(10)
                 .strokeWidth(3)
                 .symbolsVisible(true)
@@ -178,24 +213,37 @@ public class GraphCardController implements Initializable {
     }
 
     private XYSeries createSeries2() {
+        var t1 = RND.nextDouble() * 500 + 200;
+        var t2 = RND.nextDouble() * 500 + 200;
+        var t3 = RND.nextDouble() * 500 + 200;
+        var t4 = RND.nextDouble() * 500 + 200;
+        var t5 = RND.nextDouble() * 500 + 200;
+        var t6 = RND.nextDouble() * 500 + 200;
+        var t7 = RND.nextDouble() * 500 + 200;
+        var t8 = RND.nextDouble() * 500 + 200;
+        var t9 = RND.nextDouble() * 500 + 200;
+        var t10 = RND.nextDouble() * 500 + 200;
+        var t11 = RND.nextDouble() * 500 + 200;
+        var t12 = RND.nextDouble() * 500 + 200;
+
         XYSeries xySeries2 = XYSeriesBuilder.create()
-                .items(new XYChartItem(1, RND.nextDouble() * 500 + 200, "Jan", "January"),
-                        new XYChartItem(2, RND.nextDouble() * 500 + 200, "Feb", "February"),
-                        new XYChartItem(3, RND.nextDouble() * 500 + 200, "Mar", "March"),
-                        new XYChartItem(4, RND.nextDouble() * 500 + 200, "Apr", "April"),
-                        new XYChartItem(5, RND.nextDouble() * 500 + 200, "May", "May"),
-                        new XYChartItem(6, RND.nextDouble() * 500 + 200, "Jun", "June"),
-                        new XYChartItem(7, RND.nextDouble() * 500 + 200, "Jul", "July"),
-                        new XYChartItem(8, RND.nextDouble() * 500 + 200, "Aug", "August"),
-                        new XYChartItem(9, RND.nextDouble() * 500 + 200, "Sep", "September"),
-                        new XYChartItem(10, RND.nextDouble() * 500 + 200, "Oct", "October"),
-                        new XYChartItem(11, RND.nextDouble() * 500 + 200, "Nov", "November"),
-                        new XYChartItem(12, RND.nextDouble() * 500 + 200, "Dec", "December"))
+                .items(new XYChartItem(1, t1, "Jan", t1 + "\tJanuary"),
+                        new XYChartItem(2, t2, "Feb", t2 + "\tFebruary"),
+                        new XYChartItem(3, t3, "Mar", t3 + "\tMarch"),
+                        new XYChartItem(4, t4, "Apr", t4 + "\tApril"),
+                        new XYChartItem(5, t5, "May", t5 + "\tMay"),
+                        new XYChartItem(6, t6, "Jun", t6 + "\tJune"),
+                        new XYChartItem(7, t7, "Jul", t7 + "\tJuly"),
+                        new XYChartItem(8, t8, "Aug", t8 + "\tAugust"),
+                        new XYChartItem(9, t9, "Sep", t9 + "\tSeptember"),
+                        new XYChartItem(10, t10, "Oct", t10 + "\tOctober"),
+                        new XYChartItem(11, t11, "Nov", t11 + "\tNovember"),
+                        new XYChartItem(12, t12, "Dec", t12 + "\tDecember"))
                 .chartType(ChartType.SMOOTH_AREA)
 //                .fill(Color.web("#4EE29B20"))
-                .stroke(Color.web("#4EE29B"))
-                .symbolFill(Color.web("#4EE29B"))
-                .symbolStroke(Color.web("#293C47"))
+                .stroke(incomeColor)
+                .symbolFill(incomeColor)
+                .symbolStroke(strokeSymbolColor)
                 .symbolSize(10)
                 .strokeWidth(3)
                 .symbolsVisible(true)
@@ -206,5 +254,9 @@ public class GraphCardController implements Initializable {
     public void startCharting() {
         lineChartHolder.getChildren().add(lineChart);
         lineChartHolder.setPadding(new Insets(10));
+    }
+
+    private void createActions() {
+        viewAll.setOnMouseClicked(mouseEvent -> System.out.println("View All clicked"));
     }
 }

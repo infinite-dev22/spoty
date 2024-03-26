@@ -19,6 +19,7 @@ module spoty.core {
     requires spoty.network_bridge;
     requires spoty.utils;
     requires com.calendarfx.view;
+    requires inc.nomard.spoty.responsive_fx;
 
     opens inc.nomard.spoty.core.views;
     opens inc.nomard.spoty.core.views.login;
@@ -56,6 +57,7 @@ module spoty.core {
     opens inc.nomard.spoty.core.components.navigation;
     opens inc.nomard.spoty.core.components.notification;
     opens inc.nomard.spoty.core.components.animations;
+    opens inc.nomard.spoty.core.components;
     opens inc.nomard.spoty.core;
     opens inc.nomard.spoty.core.components.notification.enums;
     opens inc.nomard.spoty.core.components.title;
