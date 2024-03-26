@@ -28,22 +28,67 @@ public class SampleData {
 
         QuickStats quickStats = new QuickStats();
         quickStats.setTitle("2050");
-        quickStats.setSubtitle("Total Orders");
+        quickStats.setSubtitle("Total Sales");
         samples.add(quickStats);
 
         quickStats = new QuickStats();
         quickStats.setTitle("3250");
-        quickStats.setSubtitle("Total Expense");
+        quickStats.setSubtitle("Total Sale Returns");
+        samples.add(quickStats);
+
+        quickStats = new QuickStats();
+        quickStats.setTitle("3250");
+        quickStats.setSubtitle("Total Sale Due");
         samples.add(quickStats);
 
         quickStats = new QuickStats();
         quickStats.setTitle("87.5%");
-        quickStats.setSubtitle("Total Revenue");
+        quickStats.setSubtitle("Total Purchases");
         samples.add(quickStats);
 
         quickStats = new QuickStats();
         quickStats.setTitle("2550");
-        quickStats.setSubtitle("New Users");
+        quickStats.setSubtitle("Total Purchase Returns");
+        samples.add(quickStats);
+
+        quickStats = new QuickStats();
+        quickStats.setTitle("2550");
+        quickStats.setSubtitle("Total Purchase Due");
+        samples.add(quickStats);
+
+        quickStats = new QuickStats();
+        quickStats.setTitle("2550");
+        quickStats.setSubtitle("Expenses");
+        samples.add(quickStats);
+
+        quickStats = new QuickStats();
+        quickStats.setTitle("2550");
+        quickStats.setSubtitle("Income");
+        samples.add(quickStats);
+
+        quickStats = new QuickStats();
+        quickStats.setTitle("2550");
+        quickStats.setSubtitle("Net Profit");
+        samples.add(quickStats);
+
+        quickStats = new QuickStats();
+        quickStats.setTitle("2550");
+        quickStats.setSubtitle("Employees");
+        samples.add(quickStats);
+
+        quickStats = new QuickStats();
+        quickStats.setTitle("2550");
+        quickStats.setSubtitle("Customers");
+        samples.add(quickStats);
+
+        quickStats = new QuickStats();
+        quickStats.setTitle("2550");
+        quickStats.setSubtitle("Suppliers");
+        samples.add(quickStats);
+
+        quickStats = new QuickStats();
+        quickStats.setTitle("2550");
+        quickStats.setSubtitle("Goods/Products");
         samples.add(quickStats);
 
         return samples;

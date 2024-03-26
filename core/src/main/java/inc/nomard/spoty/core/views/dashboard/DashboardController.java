@@ -17,12 +17,19 @@ package inc.nomard.spoty.core.views.dashboard;
 import inc.nomard.spoty.core.data.SampleData;
 import inc.nomard.spoty.core.models.QuickStats;
 import inc.nomard.spoty.core.views.components.SmallCardController;
+import inc.nomard.spoty.responsive_fx.layouts.BootstrapColumn;
+import inc.nomard.spoty.responsive_fx.layouts.BootstrapPane;
+import inc.nomard.spoty.responsive_fx.layouts.BootstrapRow;
+import inc.nomard.spoty.responsive_fx.layouts.Breakpoint;
 import inc.nomard.spoty.utils.SpotyLogger;
+import io.github.palexdev.materialfx.controls.MFXScrollPane;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
 
 import java.io.IOException;
 import java.net.URL;
@@ -33,19 +40,31 @@ import java.util.ResourceBundle;
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
 
 public class DashboardController implements Initializable {
+    @FXML
+    public MFXScrollPane scrollPane;
 
     @FXML
-    public HBox graphStatsContainer1;
-
-    @FXML
-    public HBox graphStatsContainer2;
-
-    @FXML
-    private HBox quickStatsContainer;
+    private BootstrapPane quickStatsContainer;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        scrollPane.addEventFilter(ScrollEvent.SCROLL, event -> {
+            if (event.getDeltaX() != 0) {
+                event.consume();
+            }
+        });
+        scrollPane.widthProperty().addListener((obs, oV, nV) -> {
+            quickStatsContainer.setMaxWidth(nV.doubleValue() - 10);
+            quickStatsContainer.setPrefWidth(nV.doubleValue() - 10);
+            quickStatsContainer.setMinWidth(nV.doubleValue() - 10);
+        });
+
         List<QuickStats> quickStatsList = new ArrayList<>(SampleData.quickStatsSampleData());
+        var row1 = new BootstrapRow();
+        var row2 = new BootstrapRow();
+        var row3 = new BootstrapRow();
+        quickStatsContainer.setAlignment(Pos.CENTER_LEFT);
+        quickStatsContainer.setPadding(new Insets(10));
 
         for (QuickStats quickStat : quickStatsList) {
             try {
@@ -55,36 +74,58 @@ public class DashboardController implements Initializable {
                 SmallCardController smallCard = cardLoader.getController();
                 smallCard.setData(quickStat);
 
-                quickStatsContainer.getChildren().add(smallCardPane);
+                var column = new BootstrapColumn(smallCardPane);
+                column.setBreakpointColumnWidth(Breakpoint.LARGE, 3);
+                column.setBreakpointColumnWidth(Breakpoint.SMALL, 6);
+                column.setBreakpointColumnWidth(Breakpoint.XSMALL, 12);
+
+                row1.addColumn(column);
             } catch (IOException e) {
                 SpotyLogger.writeToFile(e, this.getClass());
             }
         }
 
         try {
-            AnchorPane graphCardPane = fxmlLoader("components/cards/GraphCard.fxml").load();
+            AnchorPane financialProjectionGraph = fxmlLoader("components/cards/GraphCard.fxml").load();
 
-            //            GraphCardController graphCard = graphCardLoader.getController();
-            //            smallCard.setData(quickStat);
-
-            graphStatsContainer1.getChildren().add(graphCardPane);
+            var column1 = new BootstrapColumn(financialProjectionGraph);
+            column1.setBreakpointColumnWidth(Breakpoint.LARGE, 12);
+            column1.setBreakpointColumnWidth(Breakpoint.SMALL, 12);
+            column1.setBreakpointColumnWidth(Breakpoint.XSMALL, 12);
+            row1.addColumn(column1);
 
             AnchorPane barGraphCardPane = fxmlLoader("components/cards/BarGraphCard.fxml").load();
+            AnchorPane barGraphCardPane0 = fxmlLoader("components/cards/BarGraphCard.fxml").load();
 
-            //            GraphCardController graphCard = barGraphCardLoader.getController();
-            //            smallCard.setData(quickStat);
-
-            graphStatsContainer1.getChildren().add(barGraphCardPane);
+            var column2 = new BootstrapColumn(barGraphCardPane);
+            column2.setBreakpointColumnWidth(Breakpoint.LARGE, 6);
+            column2.setBreakpointColumnWidth(Breakpoint.SMALL, 6);
+            column2.setBreakpointColumnWidth(Breakpoint.XSMALL, 12);
+            var column3 = new BootstrapColumn(barGraphCardPane0);
+            column3.setBreakpointColumnWidth(Breakpoint.LARGE, 6);
+            column3.setBreakpointColumnWidth(Breakpoint.SMALL, 6);
+            column3.setBreakpointColumnWidth(Breakpoint.XSMALL, 12);
+            row2.addColumn(column2);
+            row2.addColumn(column3);
 
             AnchorPane graphCardPane1 = fxmlLoader("components/cards/PieChartCard.fxml").load();
-
-            graphStatsContainer2.getChildren().add(graphCardPane1);
-
             AnchorPane barGraphCardPane1 = fxmlLoader("components/cards/BarGraphCard.fxml").load();
 
-            graphStatsContainer2.getChildren().add(barGraphCardPane1);
+            var column4 = new BootstrapColumn(graphCardPane1);
+            column4.setBreakpointColumnWidth(Breakpoint.LARGE, 6);
+            column4.setBreakpointColumnWidth(Breakpoint.SMALL, 6);
+            column4.setBreakpointColumnWidth(Breakpoint.XSMALL, 12);
+            var column5 = new BootstrapColumn(barGraphCardPane1);
+            column5.setBreakpointColumnWidth(Breakpoint.LARGE, 6);
+            column5.setBreakpointColumnWidth(Breakpoint.SMALL, 6);
+            column5.setBreakpointColumnWidth(Breakpoint.XSMALL, 12);
+            row2.addColumn(column4);
+            row2.addColumn(column5);
         } catch (IOException e) {
             SpotyLogger.writeToFile(e, this.getClass());
         }
+        quickStatsContainer.addRow(row1);
+        quickStatsContainer.addRow(row2);
+        quickStatsContainer.addRow(row3);
     }
 }

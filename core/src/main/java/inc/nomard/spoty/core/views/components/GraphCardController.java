@@ -14,52 +14,249 @@
 
 package inc.nomard.spoty.core.views.components;
 
+import eu.hansolo.fx.charts.*;
+import eu.hansolo.fx.charts.data.XYChartItem;
+import eu.hansolo.fx.charts.series.XYSeries;
+import eu.hansolo.fx.charts.series.XYSeriesBuilder;
+import inc.nomard.spoty.core.components.ViewAll;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.chart.LineChart;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.XYChart;
+import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
+import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.util.StringConverter;
 
 import java.net.URL;
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.util.Random;
 import java.util.ResourceBundle;
 
 public class GraphCardController implements Initializable {
-
+    private static final Random RND = new Random();
+    private static final Double AXIS_WIDTH = 25d;
+    private final Color expenseColor = Color.web("#00AEF5");
+    private final Color incomeColor = Color.web("#4EE29B");
+    private final Color strokeSymbolColor = Color.web("#293C47");
+    private Axis xAxisBottom, yAxisLeft;
+    private XYChart lineChart;
     @FXML
-    private LineChart<String, Number> lineChart;
-
+    public Circle incomeColorIndicator;
     @FXML
-    private NumberAxis xAxis;
-
+    public Circle expenseColorIndicator;
     @FXML
-    private NumberAxis yAxis;
+    public ViewAll viewAll;
+    @FXML
+    public Label cardTitle;
+    @FXML
+    public AnchorPane lineChartHolder;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        lineChartValues();
+        cardTitle.setText("Financial Projections");
+
+        expenseColorIndicator.setFill(expenseColor);
+        incomeColorIndicator.setFill(incomeColor);
+
+        createLeftAxes();
+        createBottomAxes();
+        buildLineChart();
+        startCharting();
+        createActions();
     }
 
-    private void lineChartValues() {
-        XYChart.Series<String, Number> series1 = new XYChart.Series<>();
+    private void buildLineChart() {
+        XYPane lineChartPane = new XYPane(createSeries1(), createSeries2());
 
-        series1.getData().add(new XYChart.Data<>("Nov", 3));
-        series1.getData().add(new XYChart.Data<>("Dec", 14));
-        series1.getData().add(new XYChart.Data<>("Jan", 15));
-        series1.getData().add(new XYChart.Data<>("Feb", 56));
-        series1.getData().add(new XYChart.Data<>("Mar", 45));
-        series1.getData().add(new XYChart.Data<>("Apr", 78));
-        series1.setName("Incomes");
+        lineChart = new XYChart<>(lineChartPane, createGrids(), yAxisLeft, xAxisBottom);
+        AnchorPane.setTopAnchor(lineChart, 0d);
+        AnchorPane.setBottomAnchor(lineChart, 0d);
+        AnchorPane.setLeftAnchor(lineChart, 0d);
+        AnchorPane.setRightAnchor(lineChart, 0d);
+    }
 
-        XYChart.Series<String, Number> series2 = new XYChart.Series<>();
+    private void createBottomAxes() {
+        xAxisBottom = AxisBuilder.create(Orientation.HORIZONTAL, Position.BOTTOM)
+                .type(AxisType.TEXT)
+                .prefHeight(AXIS_WIDTH)
+                .categories("", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+                .minValue(1)
+                .maxValue(13)
+                .axisColor(Color.TRANSPARENT)
+                .tickLabelFontSize(13)
+                .minorTickMarksVisible(false)
+                .mediumTickMarksVisible(false)
+                .majorTickMarksVisible(false)
+                .build();
+        AnchorPane.setBottomAnchor(xAxisBottom, 0d);
+        AnchorPane.setLeftAnchor(xAxisBottom, AXIS_WIDTH);
+        AnchorPane.setRightAnchor(xAxisBottom, AXIS_WIDTH);
+    }
 
-        series2.getData().add(new XYChart.Data<>("Nov", 10));
-        series2.getData().add(new XYChart.Data<>("Dec", 29));
-        series2.getData().add(new XYChart.Data<>("Jan", 21));
-        series2.getData().add(new XYChart.Data<>("Feb", 37));
-        series2.getData().add(new XYChart.Data<>("Mar", 39));
-        series2.getData().add(new XYChart.Data<>("Apr", 62));
-        series2.setName("Expenses");
+    private void createLeftAxes() {
+        yAxisLeft = AxisBuilder.create(Orientation.VERTICAL, Position.LEFT)
+                .type(AxisType.LINEAR)
+                .prefWidth(AXIS_WIDTH)
+                .minValue(0)
+                .maxValue(800)
+                .axisColor(Color.TRANSPARENT)
+                .tickLabelFontSize(13)
+                .minorTickMarksVisible(false)
+                .mediumTickMarksVisible(false)
+                .majorTickMarksVisible(false)
+                .numberFormatter(new StringConverter<Number>() {
+                    private final DecimalFormat df = new DecimalFormat("$#####0 K");
 
-        lineChart.getData().addAll(series1, series2);
+                    @Override
+                    public String toString(Number object) {
+                        if (object == null) {
+                            return "";
+                        }
+                        return df.format(object);
+                    }
+
+                    @Override
+                    public Number fromString(String string) {
+                        try {
+                            if (string == null) {
+                                return null;
+                            }
+                            string = string.trim();
+                            if (string.length() < 1) {
+                                return null;
+                            }
+                            return df.parse(string).doubleValue();
+                        } catch (ParseException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                    }
+                })
+                .build();
+
+        // test the new numberFormatter as well
+        yAxisLeft.setMinMax(RND.nextDouble() * 300, 1000 - RND.nextDouble() * 300);
+
+        AnchorPane.setTopAnchor(yAxisLeft, 0d);
+        AnchorPane.setBottomAnchor(yAxisLeft, AXIS_WIDTH);
+        AnchorPane.setLeftAnchor(yAxisLeft, 0d);
+    }
+
+    private Grid createGrids() {
+        return GridBuilder.create(xAxisBottom, yAxisLeft)
+                .gridLinePaint(Color.web("#384C57"))
+                .minorHGridLinesVisible(false)
+                .mediumHGridLinesVisible(false)
+                .minorVGridLinesVisible(false)
+                .mediumVGridLinesVisible(false)
+                .majorVGridLinesVisible(false)
+                .gridOpacity(.3)
+                .gridLineDashes(1, 1)
+                .build();
+    }
+
+    private XYSeries createSeries1() {
+        var t1 = RND.nextDouble() * 500 + 200;
+        var t2 = RND.nextDouble() * 500 + 200;
+        var t3 = RND.nextDouble() * 500 + 200;
+        var t4 = RND.nextDouble() * 500 + 200;
+        var t5 = RND.nextDouble() * 500 + 200;
+        var t6 = RND.nextDouble() * 500 + 200;
+        var t7 = RND.nextDouble() * 500 + 200;
+        var t8 = RND.nextDouble() * 500 + 200;
+        var t9 = RND.nextDouble() * 500 + 200;
+        var t10 = RND.nextDouble() * 500 + 200;
+        var t11 = RND.nextDouble() * 500 + 200;
+        var t12 = RND.nextDouble() * 500 + 200;
+
+        XYChartItem p1 = new XYChartItem(1, t1, "Jan", t1 + "\tJanuary");
+        XYChartItem p2 = new XYChartItem(2, t2, "Feb", t2 + "\tFebruary");
+        XYChartItem p3 = new XYChartItem(3, t3, "Mar", t3 + "\tMarch");
+        XYChartItem p4 = new XYChartItem(4, t4, "Apr", t4 + "\tApril");
+        XYChartItem p5 = new XYChartItem(5, t5, "May", t5 + "\tMay");
+        XYChartItem p6 = new XYChartItem(6, t6, "Jun", t6 + "\tJune");
+        XYChartItem p7 = new XYChartItem(7, t7, "Jul", t7 + "\tJuly");
+        XYChartItem p8 = new XYChartItem(8, t8, "Aug", t8 + "\tAugust");
+        XYChartItem p9 = new XYChartItem(9, t9, "Sep", t9 + "\tSeptember");
+        XYChartItem p10 = new XYChartItem(10, t10, "Oct", t10 + "\tOctober");
+        XYChartItem p11 = new XYChartItem(11, t11, "Nov", t11 + "\tNovember");
+        XYChartItem p12 = new XYChartItem(12, t12, "Dec", t12 + "\tDecember");
+
+
+        p1.setY(RND.nextDouble() * 500 + 200);
+        p2.setY(RND.nextDouble() * 500 + 200);
+        p3.setY(RND.nextDouble() * 500 + 200);
+        p4.setY(RND.nextDouble() * 500 + 200);
+        p5.setY(RND.nextDouble() * 500 + 200);
+        p6.setY(RND.nextDouble() * 500 + 200);
+        p7.setY(RND.nextDouble() * 500 + 200);
+        p8.setY(RND.nextDouble() * 500 + 200);
+        p9.setY(RND.nextDouble() * 500 + 200);
+        p10.setY(RND.nextDouble() * 500 + 200);
+        p11.setY(RND.nextDouble() * 500 + 200);
+        p12.setY(RND.nextDouble() * 500 + 200);
+
+        XYSeries xySeries1 = XYSeriesBuilder.create()
+                .items(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12)
+                .chartType(ChartType.SMOOTH_AREA)
+//                .fill(Color.web("#00AEF520"))
+                .stroke(expenseColor)
+                .symbolFill(expenseColor)
+                .symbolStroke(strokeSymbolColor)
+                .symbolSize(10)
+                .strokeWidth(3)
+                .symbolsVisible(true)
+                .build();
+        return xySeries1;
+    }
+
+    private XYSeries createSeries2() {
+        var t1 = RND.nextDouble() * 500 + 200;
+        var t2 = RND.nextDouble() * 500 + 200;
+        var t3 = RND.nextDouble() * 500 + 200;
+        var t4 = RND.nextDouble() * 500 + 200;
+        var t5 = RND.nextDouble() * 500 + 200;
+        var t6 = RND.nextDouble() * 500 + 200;
+        var t7 = RND.nextDouble() * 500 + 200;
+        var t8 = RND.nextDouble() * 500 + 200;
+        var t9 = RND.nextDouble() * 500 + 200;
+        var t10 = RND.nextDouble() * 500 + 200;
+        var t11 = RND.nextDouble() * 500 + 200;
+        var t12 = RND.nextDouble() * 500 + 200;
+
+        XYSeries xySeries2 = XYSeriesBuilder.create()
+                .items(new XYChartItem(1, t1, "Jan", t1 + "\tJanuary"),
+                        new XYChartItem(2, t2, "Feb", t2 + "\tFebruary"),
+                        new XYChartItem(3, t3, "Mar", t3 + "\tMarch"),
+                        new XYChartItem(4, t4, "Apr", t4 + "\tApril"),
+                        new XYChartItem(5, t5, "May", t5 + "\tMay"),
+                        new XYChartItem(6, t6, "Jun", t6 + "\tJune"),
+                        new XYChartItem(7, t7, "Jul", t7 + "\tJuly"),
+                        new XYChartItem(8, t8, "Aug", t8 + "\tAugust"),
+                        new XYChartItem(9, t9, "Sep", t9 + "\tSeptember"),
+                        new XYChartItem(10, t10, "Oct", t10 + "\tOctober"),
+                        new XYChartItem(11, t11, "Nov", t11 + "\tNovember"),
+                        new XYChartItem(12, t12, "Dec", t12 + "\tDecember"))
+                .chartType(ChartType.SMOOTH_AREA)
+//                .fill(Color.web("#4EE29B20"))
+                .stroke(incomeColor)
+                .symbolFill(incomeColor)
+                .symbolStroke(strokeSymbolColor)
+                .symbolSize(10)
+                .strokeWidth(3)
+                .symbolsVisible(true)
+                .build();
+        return xySeries2;
+    }
+
+    public void startCharting() {
+        lineChartHolder.getChildren().add(lineChart);
+        lineChartHolder.setPadding(new Insets(10));
+    }
+
+    private void createActions() {
+        viewAll.setOnMouseClicked(mouseEvent -> System.out.println("View All clicked"));
     }
 }
