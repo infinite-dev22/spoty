@@ -22,12 +22,14 @@ import javafx.fxml.Initializable;
 import javafx.scene.image.Image;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
+import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class UserPreviewController implements Initializable {
+    private static UserPreviewController instance;
     @FXML
     public Circle imageHolder;
     @FXML
@@ -40,8 +42,14 @@ public class UserPreviewController implements Initializable {
     public Label genderLbl;
     @FXML
     public Label dobLbl;
-    @FXML
-    public Label addressLbl;
+
+    public static UserPreviewController getInstance(Stage stage) {
+        if (instance == null) instance = new UserPreviewController(stage);
+        return instance;
+    }
+
+    public UserPreviewController(Stage stage) {
+    }
 
     public void init(UserProfile supplier) {
         if (Objects.nonNull(supplier.getAvatar()) && !supplier.getAvatar().isEmpty() && !supplier.getAvatar().isBlank()) {

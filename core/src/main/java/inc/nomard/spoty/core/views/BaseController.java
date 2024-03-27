@@ -16,19 +16,22 @@ package inc.nomard.spoty.core.views;
 
 import inc.nomard.spoty.core.SpotyCoreResourceLoader;
 import inc.nomard.spoty.core.components.navigation.Navigation;
+import inc.nomard.spoty.core.components.navigation.Pages;
 import inc.nomard.spoty.utils.SpotyThreader;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXCircleToggleNode;
+import io.github.palexdev.materialfx.controls.MFXContextMenu;
+import io.github.palexdev.materialfx.controls.MFXContextMenuItem;
 import io.github.palexdev.mfxcore.controls.Label;
 import io.github.palexdev.mfxresources.fonts.IconsProviders;
 import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
 import javafx.application.Platform;
-import javafx.css.PseudoClass;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
+import javafx.scene.Cursor;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -71,12 +74,11 @@ public class BaseController implements Initializable {
     @FXML
     public MFXCircleToggleNode sidebarToggle;
     @FXML
-    public HBox viewProfile;
+    public MFXFontIcon moreActions;
     private double xOffset;
     private double yOffset;
-    private Node arrowIcon;
-    private Node seeIcon;
-    private static final PseudoClass GROUP = PseudoClass.getPseudoClass("group");
+    MFXContextMenuItem viewProfile = new MFXContextMenuItem("View profile");
+    MFXContextMenuItem logOut = new MFXContextMenuItem("Log out");
 
     private BaseController(Stage stage) {
         this.primaryStage = stage;
@@ -115,7 +117,6 @@ public class BaseController implements Initializable {
         initializeLoader();
         initAppBar();
         initApp();
-        viewProfileAction();
     }
 
     public void initializeLoader() {
@@ -124,9 +125,9 @@ public class BaseController implements Initializable {
     }
 
     private void initAppBar() {
-        MFXFontIcon notificationIcon = new MFXFontIcon();
-        MFXFontIcon feedbackIcon = new MFXFontIcon();
-        MFXFontIcon helpIcon = new MFXFontIcon();
+        var notificationIcon = new MFXFontIcon();
+        var feedbackIcon = new MFXFontIcon();
+        var helpIcon = new MFXFontIcon();
         notificationIcon.setIconsProvider(IconsProviders.FONTAWESOME_REGULAR);
         feedbackIcon.setIconsProvider(IconsProviders.FONTAWESOME_REGULAR);
         helpIcon.setIconsProvider(IconsProviders.FONTAWESOME_REGULAR);
@@ -157,21 +158,24 @@ public class BaseController implements Initializable {
     }
 
     private void initApp() {
-        arrowIcon = new FontIcon("fas-angle-left");
+        var arrowIcon = new FontIcon("fas-angle-left");
         arrowIcon.getStyleClass().add("nav-toggle-arrow");
         sidebarToggle.setGraphic(arrowIcon);
         sidebarToggle.setText("");
 
-//        seeIcon = new FontIcon("fas-eye");
-//        viewProfile.getChildren().addFirst(seeIcon);
-
         designationLbl.setText("Super Administrator");
         userNameLbl.setText("John Doe");
+
+        viewProfile.setOnAction(actionEvent -> navigation.navigate(Pages.getUserProfilePane()));
     }
 
-    private void viewProfileAction() {
-        viewProfile.setOnMouseClicked(mouseEvent -> {
-            System.out.println("View Profile Clicked");
-        });
+    public void moreActionsClicked(MouseEvent event) {
+        var contextMenu = new MFXContextMenu(moreActions);
+        contextMenu.getItems().addAll(viewProfile, logOut);
+        moreActions.setCursor(Cursor.HAND);
+        contextMenu.show(
+                moreActions.getScene().getWindow(),
+                event.getScreenX(),
+                event.getScreenY());
     }
 }

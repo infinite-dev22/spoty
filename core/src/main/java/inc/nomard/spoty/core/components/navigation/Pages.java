@@ -37,6 +37,7 @@ import inc.nomard.spoty.core.views.inventory.category.ProductCategoryController;
 import inc.nomard.spoty.core.views.inventory.products.ProductController;
 import inc.nomard.spoty.core.views.inventory.unit_of_measure.UnitOfMeasureController;
 import inc.nomard.spoty.core.views.login.LoginController;
+import inc.nomard.spoty.core.views.previews.people.UserPreviewController;
 import inc.nomard.spoty.core.views.purchases.PurchaseReturnController;
 import inc.nomard.spoty.core.views.purchases.PurchasesController;
 import inc.nomard.spoty.core.views.quotation.QuotationController;
@@ -106,6 +107,7 @@ public class Pages {
     // HUMAN RESOURCE
     // Human Resource Management
     private static final FXMLLoader designationsLoader = fxmlLoader("views/human_resource/hrm/Designations.fxml");
+    private static final FXMLLoader userProfileLoader = fxmlLoader("views/previews/people/UserPreview.fxml");
     private static final FXMLLoader employeesLoader = fxmlLoader("views/human_resource/hrm/Employees.fxml");
     private static final FXMLLoader employmentStatusLoader = fxmlLoader("views/human_resource/hrm/EmploymentStatus.fxml");
     // Leave
@@ -251,6 +253,9 @@ public class Pages {
 
     @Getter
     private static BorderPane employeesPane;
+
+    @Getter
+    private static BorderPane userProfilePane;
 
     @Getter
     private static BorderPane employmentStatusPane;
@@ -454,6 +459,7 @@ public class Pages {
     private static void setHRM(Stage stage) {
         designationsLoader.setControllerFactory(e -> DesignationsController.getInstance(stage));
         employeesLoader.setControllerFactory(e -> EmployeesController.getInstance(stage));
+        userProfileLoader.setControllerFactory(e -> UserPreviewController.getInstance(stage));
         employmentStatusLoader.setControllerFactory(e -> EmploymentStatusController.getInstance(stage));
     }
 
@@ -575,6 +581,7 @@ public class Pages {
         // Human Resource Management
         designationsPane = designationsLoader.load();
         employeesPane = employeesLoader.load();
+        userProfilePane = userProfileLoader.load();
         employmentStatusPane = employmentStatusLoader.load();
         // Purchase
         purchasePane = purchaseLoader.load();
