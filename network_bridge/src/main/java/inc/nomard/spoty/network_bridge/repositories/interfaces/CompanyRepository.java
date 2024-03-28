@@ -14,8 +14,6 @@ public interface CompanyRepository {
 
     Task<HttpResponse<String>> fetch(FindModel findModel);
 
-    Image getCompanyLogo(String imageLink) throws IOException, InterruptedException;
-
     Task<HttpResponse<String>> search(SearchModel searchModel);
 
     Task<HttpResponse<String>> post(Object object);

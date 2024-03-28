@@ -14,6 +14,7 @@
   ~ Jonathan Mark Mwigo makes no warranties, express or implied, with respect to the computer system code. Jonathan Mark Mwigo shall not be liable for any damages, including, but not limited to, direct, indirect, incidental, special, consequential, or punitive damages, arising out of or in connection with the use of the computer system code.
   -->
 
+<?import inc.nomard.spoty.core.components.navigation.Spacer?>
 <?import io.github.palexdev.materialfx.controls.MFXButton?>
 <?import io.github.palexdev.materialfx.controls.MFXCircleToggleNode?>
 <?import io.github.palexdev.mfxcore.controls.Label?>
@@ -23,7 +24,6 @@
 <?import javafx.scene.shape.Circle?>
 <?import java.lang.String?>
 <?import java.net.*?>
-<?import javafx.scene.Cursor?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="rootPane" prefHeight="32767" prefWidth="32767"
             styleClass="rootPane" xmlns="http://javafx.com/javafx/21.0.1"
             fx:controller="inc.nomard.spoty.core.views.BaseController">
@@ -89,18 +89,16 @@
                 <padding>
                     <Insets topRightBottomLeft="20.0"/>
                 </padding>
-                <HBox spacing="10">
-                    <Circle fx:id="imageHolder" fill="#4f5055" radius="30.0" stroke="#83868d" strokeType="INSIDE"/>
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Circle fx:id="imageHolder" cache="true" cacheHint="SPEED" fill="#4e4f5400" radius="30.0"
+                            stroke="#ffffff00" strokeType="INSIDE" strokeWidth="0.0"/>
                     <VBox alignment="CENTER_LEFT" spacing="10">
-                        <Label fx:id="userNameLbl" styleClass="username-label"/>
+                        <Label fx:id="userNameLbl" styleClass="username-label" style="-fx-text-fill: white;"/>
                         <Label fx:id="designationLbl" styleClass="designation-label"/>
                     </VBox>
-                </HBox>
-                <HBox fx:id="viewProfile" alignment="CENTER" HBox.hgrow="NEVER">
-                    <Label styleClass="view-profile-label" text="View profile" underline="true"/>
-                    <cursor>
-                        <Cursor fx:constant="HAND" />
-                    </cursor>
+                    <Spacer/>
+                    <MFXFontIcon fx:id="moreActions" description="fas-ellipsis-vertical"
+                                 onMouseClicked="#moreActionsClicked" size="25.0" styleClass="side-bar-more-actions"/>
                 </HBox>
             </VBox>
             <MFXCircleToggleNode fx:id="sidebarToggle" styleClass="nav-toggle" size="15.0"

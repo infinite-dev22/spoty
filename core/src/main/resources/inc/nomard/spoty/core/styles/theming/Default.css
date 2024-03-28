@@ -420,10 +420,20 @@
 }
 
 .designation-label{
-    -fx-text-fill: -mfx-text-disabled;
+    -fx-text-fill: -spoty-translucent-white;
+}
+.username-label{
+    -fx-text-fill: white;
 }
 .view-all {
     -fx-text-fill: -mfx-text-disabled;
+}
+.side-bar-more-actions{
+    -mfx-color: white;
+}
+.sidebar .context-menu{
+    -fx-background-color: -mfx-charcoal;
+    -fx-fill: -mfx-charcoal;
 }
 .card-title{}
 .card-sub-title{}

@@ -9,6 +9,7 @@ import inc.nomard.spoty.network_bridge.repositories.interfaces.CompanyRepository
 import inc.nomard.spoty.utils.SpotyLogger;
 import javafx.concurrent.Task;
 import javafx.scene.image.Image;
+import javafx.scene.paint.ImagePattern;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -63,46 +64,6 @@ public class CompanyRepositoryImpl extends ProtectedGlobals implements CompanyRe
                 return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
             }
         };
-    }
-
-    @Override
-    public Image getCompanyLogo(String imageLink) throws IOException {
-        Image image = null;
-
-        if (System.getProperty("os.name").toLowerCase().contains("windows")) {
-            if (Files.exists(Paths.get(System.getProperty("user.home")
-                    + "\\AppData\\Local\\ZenmartERP\\system\\caches\\images\\company-logo.png"))) {
-
-                image = new Image(String.valueOf(Paths.get(System.getProperty("user.home")
-                        + "\\AppData\\Local\\ZenmartERP\\system\\caches\\images\\company-logo.png").toFile().toURI().toURL()));
-            } else {
-                try (InputStream in = URI.create(imageLink).toURL().openStream()) {
-                    Files.copy(in, Paths.get(System.getProperty("user.home")
-                            + "\\AppData\\Local\\ZenmartERP\\system\\caches\\images\\company-logo.png"));
-                    image = new Image(String.valueOf(Paths.get(System.getProperty("user.home")
-                            + "\\AppData\\Local\\ZenmartERP\\system\\caches\\images\\company-logo.png").toFile().toURI().toURL()));
-                } catch (IOException e) {
-                    SpotyLogger.writeToFile(e, CompanyRepositoryImpl.class);
-                }
-            }
-        } else {
-            if (Files.exists(Paths.get(
-                    System.getProperty("user.home") + "/.config/ZenmartERP/system/caches/images/company-logo.png"))) {
-
-                image = new Image(String.valueOf(Paths.get(
-                        System.getProperty("user.home") + "/.config/ZenmartERP/system/caches/images/company-logo.png").toFile().toURI().toURL()));
-            } else {
-                try (InputStream in = URI.create(imageLink).toURL().openStream()) {
-                    Files.copy(in, Paths.get(
-                            System.getProperty("user.home") + "/.config/ZenmartERP/system/caches/images/company-logo.png"));
-                    image = new Image(String.valueOf(Paths.get(
-                            System.getProperty("user.home") + "/.config/ZenmartERP/system/caches/images/company-logo.png").toFile().toURI().toURL()));
-                } catch (IOException e) {
-                    SpotyLogger.writeToFile(e, CompanyRepositoryImpl.class);
-                }
-            }
-        }
-        return image;
     }
 
     @Override

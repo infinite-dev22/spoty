@@ -1,7 +1,7 @@
 package inc.nomard.spoty.core.views.settings.system_settings;
 
+import inc.nomard.spoty.core.SpotyCoreResourceLoader;
 import inc.nomard.spoty.core.viewModels.settings.system_settings.CompanyDetailsViewModel;
-import inc.nomard.spoty.utils.SpotyLogger;
 import io.github.palexdev.materialfx.controls.MFXCheckbox;
 import io.github.palexdev.materialfx.controls.MFXScrollPane;
 import io.github.palexdev.materialfx.controls.MFXTextField;
@@ -10,14 +10,17 @@ import io.github.palexdev.mfxcore.controls.Label;
 import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Circle;
 
-import java.io.IOException;
 import java.net.URL;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class CompanyDetailsController implements Initializable {
@@ -28,7 +31,7 @@ public class CompanyDetailsController implements Initializable {
     @FXML
     public MFXButton saveBtn;
     @FXML
-    public ImageView companyLogo;
+    public Circle companyLogo;
     @FXML
     public Label companyName;
     @FXML
@@ -50,7 +53,7 @@ public class CompanyDetailsController implements Initializable {
     @FXML
     public MFXTextField CompanyTagLine;
     @FXML
-    public ImageView currentCompanyLogo;
+    public Circle currentCompanyLogo;
     @FXML
     public VBox companyLogoBtn;
     @FXML
@@ -142,11 +145,26 @@ public class CompanyDetailsController implements Initializable {
     }
 
     private void showData() {
-        try {
-            companyLogo.setImage(CompanyDetailsViewModel.getOnlineImage());
-            currentCompanyLogo.setImage(CompanyDetailsViewModel.getOnlineImage());
-        } catch (IOException e) {
-            SpotyLogger.writeToFile(e, CompanyDetailsController.class);
+        if (Objects.nonNull(CompanyDetailsViewModel.getLogo()) && !CompanyDetailsViewModel.getLogo().isEmpty() && !CompanyDetailsViewModel.getLogo().isBlank()) {
+            var image = new Image(
+                    CompanyDetailsViewModel.getLogo(),
+                    10000,
+                    10000,
+                    true,
+                    true
+            );
+            companyLogo.setFill(new ImagePattern(image));
+            currentCompanyLogo.setFill(new ImagePattern(image));
+        } else {
+            var image = new Image(
+                    SpotyCoreResourceLoader.load("images/user-place-holder.png"),
+                    10000,
+                    10000,
+                    true,
+                    true
+            );
+            companyLogo.setFill(new ImagePattern(image));
+            currentCompanyLogo.setFill(new ImagePattern(image));
         }
         if (CompanyDetailsViewModel.nameProperty().get().isEmpty()) {
             companyName.setText("Company Name");

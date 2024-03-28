@@ -312,10 +312,6 @@ public class CompanyDetailsViewModel {
         SpotyThreader.spotyThreadPool(task);
     }
 
-    public static Image getOnlineImage() throws IOException {
-        return companyRepository.getCompanyLogo(getLogo());
-    }
-
     public static void updateItem(
             ParameterlessConsumer onActivity,
             ParameterlessConsumer onSuccess,
