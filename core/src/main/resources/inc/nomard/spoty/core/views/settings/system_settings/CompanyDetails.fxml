@@ -26,6 +26,7 @@
 <?import io.github.palexdev.materialfx.controls.MFXScrollPane?>
 <?import io.github.palexdev.materialfx.controls.MFXCheckbox?>
 <?import io.github.palexdev.materialfx.controls.MFXTextField?>
+<?import javafx.scene.shape.Circle?>
 <BorderPane fx:id="contentPane" prefHeight="400.0" prefWidth="600.0"
             xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="inc.nomard.spoty.core.views.settings.system_settings.CompanyDetailsController">
@@ -47,8 +48,8 @@
                         </ImageView>
                         <HBox alignment="CENTER_LEFT" spacing="16.0" AnchorPane.bottomAnchor="0.0"
                               AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
-                            <ImageView fx:id="companyLogo" fitHeight="150.0" fitWidth="150.0" pickOnBounds="true"
-                                       preserveRatio="true"/>
+                            <Circle fx:id="companyLogo" cache="true" cacheHint="SPEED" fill="#4e4f5400" radius="150.0"
+                                    stroke="#ffffff00" strokeType="INSIDE" strokeWidth="0.0"/>
                             <VBox alignment="CENTER_LEFT" spacing="8.0">
                                 <Label fx:id="companyName" wrapText="true">
                                     <font>
@@ -171,8 +172,9 @@
                             </VBox>
                             <Region maxWidth="140.0" prefWidth="120.0"/>
                             <HBox alignment="CENTER_LEFT" spacing="16.0">
-                                <ImageView fx:id="currentCompanyLogo" fitHeight="100.0" fitWidth="100.0"
-                                           pickOnBounds="true" preserveRatio="true"/>
+                                <Circle fx:id="currentCompanyLogo" cache="true" cacheHint="SPEED" fill="#4e4f5400"
+                                        radius="100.0"
+                                        stroke="#ffffff00" strokeType="INSIDE" strokeWidth="0.0"/>
                                 <VBox fx:id="companyLogoBtn" alignment="CENTER" prefWidth="400.0" spacing="8.0"
                                       styleClass="card">
                                     <cursor>
