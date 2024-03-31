@@ -110,10 +110,8 @@ public class Navigation {
         map.put("EXPENSE", NavTree.NavTreeItem.page("Expenses", Pages.getExpensePane()));
         // SETTINGS
         // Data Synchronizer
-        map.put("BACK_UP", NavTree.NavTreeItem.page("Back up", Pages.getBackUpPane()));
         map.put("EXPORT", NavTree.NavTreeItem.page("Export", Pages.getExportPane()));
         map.put("IMPORT", NavTree.NavTreeItem.page("Import", Pages.getImportPane()));
-        map.put("RESTORE", NavTree.NavTreeItem.page("Restore", Pages.getRestorePane()));
         // Role Permission
         map.put("ASSIGN_USER_ROLE", NavTree.NavTreeItem.page("Users & roles", Pages.getAssignUserRolePane()));
         map.put("ROLES", NavTree.NavTreeItem.page("Roles", Pages.getRolesPane()));
@@ -122,7 +120,6 @@ public class Navigation {
         map.put("BRANCHES", NavTree.NavTreeItem.page("Branches", Pages.getBranchesPane()));
         map.put("COMPANY", NavTree.NavTreeItem.page("Company Details", Pages.getCompanySettingsPane()));
         map.put("CURRENCIES", NavTree.NavTreeItem.page("Currencies", Pages.getCurrencyPane()));
-        map.put("SYSTEM", NavTree.NavTreeItem.page("System", Pages.getSystemPane()));
 
         return map;
     }
@@ -303,10 +300,8 @@ public class Navigation {
         dataSynchronizer
                 .getChildren()
                 .setAll(
-                        NAV_TREE.get("BACK_UP"),
                         NAV_TREE.get("EXPORT"),
-                        NAV_TREE.get("IMPORT"),
-                        NAV_TREE.get("RESTORE"));
+                        NAV_TREE.get("IMPORT"));
         var rolePermission = NavTree.NavTreeItem.group("Role Permission");
         rolePermission
                 .getChildren()

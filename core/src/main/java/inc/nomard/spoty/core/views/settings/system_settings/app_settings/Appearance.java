@@ -1,10 +1,14 @@
 package inc.nomard.spoty.core.views.settings.system_settings.app_settings;
 
 import inc.nomard.spoty.core.SpotyCoreResourceLoader;
+import inc.nomard.spoty.utils.SpotyLogger;
 import io.github.palexdev.materialfx.controls.MFXComboBox;
+import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXToggleButton;
 import io.github.palexdev.materialfx.enums.FloatMode;
 import io.github.palexdev.mfxcore.controls.Label;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.css.PseudoClass;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
@@ -21,14 +25,124 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.*;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
+import java.util.stream.Collectors;
+
 public class Appearance extends VBox {
     private final String darkTheme = SpotyCoreResourceLoader.load("images/dark.png");
     private final String lightTheme = SpotyCoreResourceLoader.load("images/light.png");
     private final String systemTheme = SpotyCoreResourceLoader.load("images/dark_or_light.png");
     private final ImageView themeItemImageView = new ImageView();
+    MFXFilterComboBox<String> languageCombo = new MFXFilterComboBox<>();
+    private Preferences preferences;
 
     public Appearance() {
+        System.out.println("IS SYS PREFS NULL: " + Objects.equals(preferences, null));
+        initApplicationPreferences();
+        System.out.println("SYS PREFS: " + preferences.get(
+                "default_language",
+                "English"
+        ));
         init();
+    }
+
+    private void initApplicationPreferences() {
+        if (Objects.equals(preferences, null)) {
+            preferences = Preferences.userRoot().node(this.getClass().getName());
+        }
+    }
+
+    private void setApplicationPreferences() {
+//        defaultCurrency
+//                .valueProperty()
+//                .addListener(
+//                        (observable, oldValue, newValue) -> {
+//                            preferences.putLong("default_currency", newValue.getId());
+//                            try {
+//                                preferences.flush();
+//                            } catch (BackingStoreException e) {
+//                                SpotyLogger.writeToFile(e, this.getClass());
+//                            }
+//                        });
+        languageCombo
+                .valueProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            preferences.put("default_language", newValue);
+                            try {
+                                preferences.flush();
+                            } catch (BackingStoreException e) {
+                                SpotyLogger.writeToFile(e, this.getClass());
+                            }
+                        });
+//        defaultBranch
+//                .valueProperty()
+//                .addListener(
+//                        (observable, oldValue, newValue) -> {
+//                            preferences.putLong("default_branch", newValue.getId());
+//                            try {
+//                                preferences.flush();
+//                            } catch (BackingStoreException e) {
+//                                SpotyLogger.writeToFile(e, this.getClass());
+//                            }
+//                        });
+//        defaultEmail
+//                .textProperty()
+//                .addListener(
+//                        (observable, oldValue, newValue) -> {
+//                            preferences.put("branch_email", newValue);
+//                            try {
+//                                preferences.flush();
+//                            } catch (BackingStoreException e) {
+//                                SpotyLogger.writeToFile(e, this.getClass());
+//                            }
+//                        });
+//        companyName
+//                .textProperty()
+//                .addListener(
+//                        (observable, oldValue, newValue) -> {
+//                            preferences.put("company_name", newValue);
+//                            try {
+//                                preferences.flush();
+//                            } catch (BackingStoreException e) {
+//                                SpotyLogger.writeToFile(e, this.getClass());
+//                            }
+//                        });
+//        companyPhone
+//                .textProperty()
+//                .addListener(
+//                        (observable, oldValue, newValue) -> {
+//                            preferences.put("company_phone", newValue);
+//                            try {
+//                                preferences.flush();
+//                            } catch (BackingStoreException e) {
+//                                SpotyLogger.writeToFile(e, this.getClass());
+//                            }
+//                        });
+//        branchAddress
+//                .textProperty()
+//                .addListener(
+//                        (observable, oldValue, newValue) -> {
+//                            preferences.put("branch_address", newValue);
+//                            try {
+//                                preferences.flush();
+//                            } catch (BackingStoreException e) {
+//                                SpotyLogger.writeToFile(e, this.getClass());
+//                            }
+//                        });
+//        invoiceFooter
+//                .selectedProperty()
+//                .addListener(
+//                        (observable, oldValue, newValue) -> {
+//                            preferences.putBoolean("invoice_footer", newValue);
+//                            try {
+//                                preferences.flush();
+//                            } catch (BackingStoreException e) {
+//                                SpotyLogger.writeToFile(e, this.getClass());
+//                            }
+//                        });
     }
 
     private @NotNull VBox buildHeaderText() {
@@ -211,13 +325,24 @@ public class Appearance extends VBox {
     }
 
     private @NotNull HBox buildLanguageSettings() {
+        var languageSet = Arrays.stream(Locale.getISOLanguages())
+                .map(Locale::new)
+                .map(Locale::getDisplayLanguage)
+                .collect(Collectors.toCollection(TreeSet::new));
+        var languageList = new ArrayList<>(languageSet.stream().toList());
+        var localeList = FXCollections.observableArrayList(languageList);
+
         var hbox = new HBox();
         hbox.setSpacing(10);
         hbox.setPadding(new Insets(20, 0, 20, 0));
-        var languageCombo = new MFXComboBox<>();
         languageCombo.setFloatMode(FloatMode.BORDER);
         languageCombo.setFloatingText("Language");
         languageCombo.setPrefWidth(300);
+        languageCombo.setItems(localeList);
+        languageCombo.setValue(preferences.get(
+                "default_language",
+                "English"
+        ));
         var hbox1 = new HBox();
         hbox1.setAlignment(Pos.BOTTOM_LEFT);
         hbox1.getChildren().add(languageCombo);
@@ -231,6 +356,8 @@ public class Appearance extends VBox {
     }
 
     private void init() {
+        setApplicationPreferences();
+
         var separator1 = new Separator(Orientation.HORIZONTAL);
         separator1.setPrefWidth(200);
         var separator2 = new Separator(Orientation.HORIZONTAL);

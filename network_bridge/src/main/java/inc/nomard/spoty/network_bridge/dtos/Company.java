@@ -37,4 +37,5 @@ public class Company {
     private String twitter;
     private String facebook;
     private String linkedin;
+    private Currency defaultCurrency;
 }

@@ -342,3 +342,7 @@
      -fx-font-size: 13;
      -fx-font-weight: bold;
 }
+.hero-image{
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+}

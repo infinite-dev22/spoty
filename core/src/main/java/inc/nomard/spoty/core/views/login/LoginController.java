@@ -80,7 +80,6 @@ public class LoginController implements Initializable {
                 "data-tracker",
                 () -> {
                     try {
-                        Pages.setPaneWithInitData();
                         AdjustmentMasterViewModel.getAllAdjustmentMasters(this::onActivity, null, this::onFailed);
                         BranchViewModel.getAllBranches(this::onActivity, null, this::onFailed);
                         BrandViewModel.getAllBrands(this::onActivity, null, this::onFailed);

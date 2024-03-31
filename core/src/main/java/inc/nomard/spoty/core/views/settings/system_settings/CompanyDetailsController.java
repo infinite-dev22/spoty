@@ -1,27 +1,34 @@
 package inc.nomard.spoty.core.views.settings.system_settings;
 
 import inc.nomard.spoty.core.SpotyCoreResourceLoader;
+import inc.nomard.spoty.core.viewModels.CurrencyViewModel;
 import inc.nomard.spoty.core.viewModels.settings.system_settings.CompanyDetailsViewModel;
+import inc.nomard.spoty.network_bridge.dtos.Currency;
 import io.github.palexdev.materialfx.controls.MFXCheckbox;
+import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXScrollPane;
 import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.utils.StringUtils;
+import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import io.github.palexdev.mfxcore.controls.Label;
 import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
+import javafx.util.StringConverter;
 
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class CompanyDetailsController implements Initializable {
     @FXML
@@ -75,7 +82,9 @@ public class CompanyDetailsController implements Initializable {
     @FXML
     public VBox content;
     @FXML
-    public ImageView heroImage;
+    public HBox heroImage;
+    @FXML
+    public MFXFilterComboBox<Currency> defaultCurrencyPicker;
 
     private void setIcons() {
         var link = new MFXFontIcon("fas-link", Color.web("#00AEFF"));
@@ -87,7 +96,9 @@ public class CompanyDetailsController implements Initializable {
     private void componentSizing() {
         scrollPane.widthProperty().addListener((observableValue, ov, nv) -> {
             content.setPrefWidth(nv.doubleValue());
-            heroImage.setFitWidth(nv.doubleValue());
+            heroImage.setMinWidth(nv.doubleValue());
+            heroImage.setPrefWidth(nv.doubleValue());
+            heroImage.setMaxWidth(nv.doubleValue());
         });
     }
 
@@ -95,6 +106,7 @@ public class CompanyDetailsController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setIcons();
         componentSizing();
+        setupComboBoxes();
         prefillForms();
         showData();
     }
@@ -142,6 +154,25 @@ public class CompanyDetailsController implements Initializable {
         companyLinkedin
                 .textProperty()
                 .bindBidirectional(CompanyDetailsViewModel.linkedinProperty());
+
+        defaultCurrencyPicker.setValue(CompanyDetailsViewModel.getDefaultCurrency());
+    }
+
+    private void setupComboBoxes() {
+        // Combo box Converter.
+        StringConverter<Currency> currencyConverter =
+                FunctionalStringConverter.to(currency -> (currency == null) ? "" : currency.getName());
+
+        // Combo box Filter Function.
+        Function<String, Predicate<Currency>> currencyFilterFunction =
+                searchStr ->
+                        currency ->
+                                StringUtils.containsIgnoreCase(currencyConverter.toString(currency), searchStr);
+
+        // Combo box properties.
+        defaultCurrencyPicker.setItems(CurrencyViewModel.getCurrencies());
+        defaultCurrencyPicker.setConverter(currencyConverter);
+        defaultCurrencyPicker.setFilterFunction(currencyFilterFunction);
     }
 
     private void showData() {

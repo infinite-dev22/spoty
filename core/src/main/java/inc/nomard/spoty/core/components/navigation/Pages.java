@@ -49,13 +49,14 @@ import inc.nomard.spoty.core.views.sales.SaleTermsController;
 import inc.nomard.spoty.core.views.sales.pos.PointOfSaleController;
 import inc.nomard.spoty.core.views.service.ServiceController;
 import inc.nomard.spoty.core.views.service.ServiceInvoiceController;
-import inc.nomard.spoty.core.views.settings.data_synchronizer.BackupController;
 import inc.nomard.spoty.core.views.settings.data_synchronizer.ExportController;
 import inc.nomard.spoty.core.views.settings.data_synchronizer.ImportController;
-import inc.nomard.spoty.core.views.settings.data_synchronizer.RestoreController;
 import inc.nomard.spoty.core.views.settings.role_permission.AssignUserRoleController;
 import inc.nomard.spoty.core.views.settings.role_permission.RolesController;
-import inc.nomard.spoty.core.views.settings.system_settings.*;
+import inc.nomard.spoty.core.views.settings.system_settings.AppSettingsController;
+import inc.nomard.spoty.core.views.settings.system_settings.BranchController;
+import inc.nomard.spoty.core.views.settings.system_settings.CompanyDetailsController;
+import inc.nomard.spoty.core.views.settings.system_settings.CurrencyController;
 import inc.nomard.spoty.core.views.stock_in.StockInController;
 import inc.nomard.spoty.core.views.suppliers.SupplierController;
 import inc.nomard.spoty.core.views.tax.TaxSettingsController;
@@ -135,10 +136,8 @@ public class Pages {
             fxmlLoader("views/tax/TaxSettings.fxml");
     // SETTINGS
     // Data Synchronizer
-    private static final FXMLLoader backUpLoader = fxmlLoader("views/settings/data_synchronizer/Backup.fxml");
     private static final FXMLLoader exportLoader = fxmlLoader("views/settings/data_synchronizer/Export.fxml");
     private static final FXMLLoader importLoader = fxmlLoader("views/settings/data_synchronizer/Import.fxml");
-    private static final FXMLLoader restoreLoader = fxmlLoader("views/settings/data_synchronizer/Restore.fxml");
     // Role Permission
     private static final FXMLLoader assignUserRoleLoader = fxmlLoader("views/settings/role_permission/AssignUserRole.fxml");
     private static final FXMLLoader rolesLoader = fxmlLoader("views/settings/role_permission/Roles.fxml");
@@ -147,7 +146,6 @@ public class Pages {
     private static final FXMLLoader branchesLoader = fxmlLoader("views/settings/system_settings/Branches.fxml");
     private static final FXMLLoader companySettingsLoader = fxmlLoader("views/settings/system_settings/CompanyDetails.fxml");
     private static final FXMLLoader currencyLoader = fxmlLoader("views/settings/system_settings/Currency.fxml");
-    private static final FXMLLoader systemLoader = fxmlLoader("views/settings/system_settings/System.fxml");
 
     private static final FXMLLoader saleMasterFormLoader = fxmlLoader("views/forms/SaleMasterForm.fxml");
     private static final FXMLLoader productCategoryLoader =
@@ -307,19 +305,13 @@ public class Pages {
     @Getter
     private static BorderPane taxSettingsPane;
 
-    @Getter
     // SETTINGS
     // Data Synchronizer
-    private static BorderPane backUpPane;
-
     @Getter
     private static BorderPane exportPane;
 
     @Getter
     private static BorderPane importPane;
-
-    @Getter
-    private static BorderPane restorePane;
 
     @Getter
     // Role Permission
@@ -340,9 +332,6 @@ public class Pages {
 
     @Getter
     private static BorderPane currencyPane;
-
-    @Getter
-    private static BorderPane systemPane;
 
     @Getter
     private static BorderPane productCategoryPane;
@@ -508,10 +497,8 @@ public class Pages {
     }
 
     private static void setDataSynchronizer(Stage stage) {
-        backUpLoader.setControllerFactory(c -> new BackupController());
         exportLoader.setControllerFactory(c -> new ExportController());
         importLoader.setControllerFactory(c -> new ImportController());
-        restoreLoader.setControllerFactory(c -> new RestoreController());
     }
 
     private static void setRolePermission(Stage stage) {
@@ -524,7 +511,6 @@ public class Pages {
         branchesLoader.setControllerFactory(c -> BranchController.getInstance(stage));
         companySettingsLoader.setControllerFactory(c -> new CompanyDetailsController());
         currencyLoader.setControllerFactory(c -> CurrencyController.getInstance(stage));
-        systemLoader.setControllerFactory(c -> new SystemController());
     }
 
     private static void setExpenses(Stage stage) {
@@ -610,10 +596,8 @@ public class Pages {
         taxSettingsPane = taxSettingsLoader.load();
         // SETTINGS
         // Data Synchronizer
-        backUpPane = backUpLoader.load();
         exportPane = exportLoader.load();
         importPane = importLoader.load();
-        restorePane = restoreLoader.load();
         // Role Permission
         assignUserRolePane = assignUserRoleLoader.load();
         rolesPane = rolesLoader.load();
@@ -645,10 +629,6 @@ public class Pages {
         saleMasterFormPane = saleMasterFormLoader.load();
         stockInMasterFormPane = stockInMasterFormLoader.load();
         transferMasterFormPane = transferMasterFormLoader.load();
-    }
-
-    public static void setPaneWithInitData() throws IOException {
-        systemPane = systemLoader.load();
     }
 
     public static void setControllers(Stage stage) {

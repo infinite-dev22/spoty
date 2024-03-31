@@ -435,6 +435,9 @@
     -fx-background-color: -mfx-charcoal;
     -fx-fill: -mfx-charcoal;
 }
+.hero-image{
+    -fx-background-color: -mfx-charcoal;
+}
 .card-title{}
 .card-sub-title{}
 .username-label{}

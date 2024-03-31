@@ -4,16 +4,15 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import inc.nomard.spoty.core.viewModels.adapters.UnixEpochDateTypeAdapter;
 import inc.nomard.spoty.network_bridge.dtos.Company;
+import inc.nomard.spoty.network_bridge.dtos.Currency;
 import inc.nomard.spoty.network_bridge.models.FindModel;
 import inc.nomard.spoty.network_bridge.repositories.implementations.CompanyRepositoryImpl;
 import inc.nomard.spoty.utils.ParameterlessConsumer;
 import inc.nomard.spoty.utils.SpotyLogger;
 import inc.nomard.spoty.utils.SpotyThreader;
 import javafx.beans.property.*;
-import javafx.scene.image.Image;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
@@ -38,6 +37,7 @@ public class CompanyDetailsViewModel {
     private static final StringProperty twitter = new SimpleStringProperty("");
     private static final StringProperty facebook = new SimpleStringProperty("");
     private static final StringProperty linkedin = new SimpleStringProperty("");
+    private static final ObjectProperty<Currency> defaultCurrency = new SimpleObjectProperty<>(null);
     public static CompanyRepositoryImpl companyRepository = new CompanyRepositoryImpl();
 
     public static Long getId() {
@@ -220,6 +220,18 @@ public class CompanyDetailsViewModel {
         return linkedin;
     }
 
+    public static Currency getDefaultCurrency() {
+        return defaultCurrency.get();
+    }
+
+    public static void setDefaultCurrency(Currency defaultCurrency) {
+        CompanyDetailsViewModel.defaultCurrency.set(defaultCurrency);
+    }
+
+    public static ObjectProperty<Currency> defaultCurrencyProperty() {
+        return defaultCurrency;
+    }
+
     public static void saveCompany(
             ParameterlessConsumer onActivity,
             ParameterlessConsumer onSuccess,
@@ -241,6 +253,7 @@ public class CompanyDetailsViewModel {
                         .twitter(getTwitter())
                         .facebook(getFacebook())
                         .linkedin(getLinkedin())
+                        .defaultCurrency(getDefaultCurrency())
                         .build();
 
         var task = companyRepository.post(company);
@@ -271,6 +284,7 @@ public class CompanyDetailsViewModel {
         setTwitter("");
         setFacebook("");
         setLinkedin("");
+        setDefaultCurrency(null);
     }
 
     public static void getCompany(
@@ -300,6 +314,7 @@ public class CompanyDetailsViewModel {
                 setTwitter(company.getTwitter());
                 setFacebook(company.getFacebook());
                 setLinkedin(company.getLinkedin());
+                setDefaultCurrency(company.getDefaultCurrency());
             } catch (InterruptedException | ExecutionException e) {
                 SpotyLogger.writeToFile(e, CompanyDetailsViewModel.class);
             }
@@ -332,6 +347,7 @@ public class CompanyDetailsViewModel {
                 .twitter(getTwitter())
                 .facebook(getFacebook())
                 .linkedin(getLinkedin())
+                .defaultCurrency(getDefaultCurrency())
                 .build();
 
         var task = companyRepository.put(company);
