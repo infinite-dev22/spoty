@@ -2,7 +2,6 @@ package inc.nomard.spoty.core.views.login;
 
 import inc.nomard.spoty.core.SpotyCoreResourceLoader;
 import inc.nomard.spoty.core.components.animations.ActivityIndicator;
-import inc.nomard.spoty.core.components.navigation.Pages;
 import inc.nomard.spoty.core.components.notification.SimpleNotificationHolder;
 import inc.nomard.spoty.core.values.strings.Labels;
 import inc.nomard.spoty.core.viewModels.*;
@@ -98,8 +97,6 @@ public class LoginController implements Initializable {
                         RequisitionMasterViewModel.getRequisitionMasters(this::onActivity, null, this::onFailed);
                         SaleMasterViewModel.getSaleMasters(this::onActivity, null, this::onFailed);
                         SaleReturnMasterViewModel.getSaleReturnMasters(this::onActivity, null, this::onFailed);
-                        ServiceViewModel.getAllServices(this::onActivity, null, this::onFailed);
-                        ServiceInvoiceViewModel.getAllServiceInvoices(this::onActivity, null, this::onFailed);
                         StockInMasterViewModel.getStockInMasters(this::onActivity, null, this::onFailed);
                         SupplierViewModel.getAllSuppliers(this::onActivity, null, this::onFailed);
                         TransferMasterViewModel.getTransferMasters(this::onActivity, null, this::onFailed);

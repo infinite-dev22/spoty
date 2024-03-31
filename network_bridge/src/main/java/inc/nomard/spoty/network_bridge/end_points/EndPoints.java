@@ -276,17 +276,6 @@ public class EndPoints {
         public static final String deleteSaleTermsAndConditions = saleTermsAndConditionsUrl + "/multiple/delete";
     }
 
-    public static final class ServiceInvoices {
-        public static final String serviceInvoicesUrl = apiUrl + "/service/invoices";
-        public static final String allServiceInvoices = serviceInvoicesUrl + "/all";
-        public static final String serviceInvoiceById = serviceInvoicesUrl + "/single";
-        public static final String searchServiceInvoices = serviceInvoicesUrl + "/search";
-        public static final String addServiceInvoice = serviceInvoicesUrl + "/add";
-        public static final String updateServiceInvoice = serviceInvoicesUrl + "/update";
-        public static final String deleteServiceInvoice = serviceInvoicesUrl + "/single/delete";
-        public static final String deleteServiceInvoices = serviceInvoicesUrl + "/multiple/delete";
-    }
-
     public static final class StockIns {
         public static final String stockInsUrl = apiUrl + "/stock_ins";
         // Masters
@@ -370,18 +359,6 @@ public class EndPoints {
         public static final String deleteUserProfile = userProfilesUrl + "/single/delete";
         public static final String deleteUserProfiles = userProfilesUrl + "/multiple/delete";
     }
-
-    public static final class Services {
-        public static final String servicesUrl = apiUrl + "/services";
-        public static final String allServices = servicesUrl + "/all";
-        public static final String serviceById = servicesUrl + "/single";
-        public static final String searchServices = servicesUrl + "/search";
-        public static final String addService = servicesUrl + "/add";
-        public static final String updateService = servicesUrl + "/update";
-        public static final String deleteService = servicesUrl + "/single/delete";
-        public static final String deleteServices = servicesUrl + "/multiple/delete";
-    }
-
     public static final class EmploymentStatus {
         public static final String employmentStatusesUrl = apiUrl + "/employment/statuses";
         public static final String allEmploymentStatuses = employmentStatusesUrl + "/all";

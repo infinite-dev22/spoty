@@ -95,9 +95,6 @@ public class Navigation {
         map.put("SALARY_ADVANCES", NavTree.NavTreeItem.page("Salary Advances", Pages.getSalaryAdvancesPane()));
         map.put("BENEFICIARY_BADGE", NavTree.NavTreeItem.page("Beneficiary Badge", Pages.getBeneficiaryBadgePane()));
         map.put("BENEFICIARY_TYPE", NavTree.NavTreeItem.page("Beneficiary Type", Pages.getBeneficiaryTypePane()));
-        // Service
-        map.put("SERVICES", NavTree.NavTreeItem.page("Services", Pages.getServicesPane()));
-        map.put("SERVICE_INVOICE", NavTree.NavTreeItem.page("Service Invoices", Pages.getServiceInvoicesPane()));
         // Tax
         map.put("TAXES", NavTree.NavTreeItem.page("Taxes", Pages.getTaxesPane()));
         map.put("TAX_SETTINGS", NavTree.NavTreeItem.page("Tax Settings", Pages.getTaxSettingsPane()));
@@ -269,13 +266,6 @@ public class Navigation {
                 NavTree.NavTreeItem.mainPage(
                         "Banks", "fas-building-columns", Pages.getBankPane());
 
-        var service = NavTree.NavTreeItem.group("Service", "fas-handshake");
-        service
-                .getChildren()
-                .setAll(
-                        NAV_TREE.get("SERVICES"),
-                        NAV_TREE.get("SERVICE_INVOICE"));
-
         var quotation = NavTree.NavTreeItem.mainPage("Quotations", "fas-receipt", Pages.getQuotationPane());
 
         var tax = NavTree.NavTreeItem.group("Tax", "fas-money-bill-wheat");
@@ -338,7 +328,6 @@ public class Navigation {
                         quotation,
                         sale,
                         transfer,
-                        service,
                         bank,
                         tax,
                         expense,

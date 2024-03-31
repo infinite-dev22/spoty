@@ -47,8 +47,6 @@ import inc.nomard.spoty.core.views.sales.OrdersController;
 import inc.nomard.spoty.core.views.sales.SaleReturnsController;
 import inc.nomard.spoty.core.views.sales.SaleTermsController;
 import inc.nomard.spoty.core.views.sales.pos.PointOfSaleController;
-import inc.nomard.spoty.core.views.service.ServiceController;
-import inc.nomard.spoty.core.views.service.ServiceInvoiceController;
 import inc.nomard.spoty.core.views.settings.data_synchronizer.ExportController;
 import inc.nomard.spoty.core.views.settings.data_synchronizer.ImportController;
 import inc.nomard.spoty.core.views.settings.role_permission.AssignUserRoleController;
@@ -123,9 +121,6 @@ public class Pages {
     private static final FXMLLoader beneficiaryTypeLoader = fxmlLoader("views/human_resource/pay_roll/BeneficiaryType.fxml");
     // Bank
     private static final FXMLLoader banksLoader = fxmlLoader("views/bank/Bank.fxml");
-    // Service
-    private static final FXMLLoader servicesLoader = fxmlLoader("views/service/Services.fxml");
-    private static final FXMLLoader serviceInvoicesLoader = fxmlLoader("views/service/ServiceInvoices.fxml");
     // Quotation
     private static final FXMLLoader quotationLoader =
             fxmlLoader("views/quotation/Quotation.fxml");
@@ -286,13 +281,6 @@ public class Pages {
     @Getter
     // Bank
     private static BorderPane bankPane;
-
-    @Getter
-    // Service
-    private static BorderPane servicesPane;
-
-    @Getter
-    private static BorderPane serviceInvoicesPane;
 
     @Getter
     // Quotation
@@ -470,11 +458,6 @@ public class Pages {
         banksLoader.setControllerFactory(e -> BankController.getInstance(stage));
     }
 
-    private static void setService(Stage stage) {
-        servicesLoader.setControllerFactory(e -> ServiceController.getInstance(stage));
-        serviceInvoicesLoader.setControllerFactory(e -> ServiceInvoiceController.getInstance(stage));
-    }
-
     private static void setQuotation(Stage stage) {
         quotationLoader.setControllerFactory(e -> QuotationController.getInstance(stage));
     }
@@ -586,9 +569,6 @@ public class Pages {
         beneficiaryTypePane = beneficiaryTypeLoader.load();
         // Bank
         bankPane = banksLoader.load();
-        // Service
-        servicesPane = servicesLoader.load();
-        serviceInvoicesPane = serviceInvoicesLoader.load();
         // Quotation
         quotationPane = quotationLoader.load();
         // Tax
@@ -644,7 +624,6 @@ public class Pages {
         setLeave(stage);
         setPayRoll(stage);
         setBank(stage);
-        setService(stage);
         setQuotation(stage);
         setTax(stage);
         setSingleItems(stage);

@@ -41,7 +41,6 @@ module spoty.core {
     opens inc.nomard.spoty.core.views.human_resource.pay_roll;
     opens inc.nomard.spoty.core.views.human_resource.pay_roll.pay_slip;
     opens inc.nomard.spoty.core.views.bank;
-    opens inc.nomard.spoty.core.views.service;
     opens inc.nomard.spoty.core.views.quotation;
     opens inc.nomard.spoty.core.views.tax;
     opens inc.nomard.spoty.core.views.expenses.expense;
