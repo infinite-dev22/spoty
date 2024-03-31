@@ -95,7 +95,6 @@ public class BaseController implements Initializable {
         primaryStage.close();
         SpotyThreader.disposeSpotyThreadPool();
         Platform.exit();
-        System.exit(0);
     }
 
     @FXML

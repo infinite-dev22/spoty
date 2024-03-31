@@ -20,6 +20,7 @@ module spoty.core {
     requires spoty.utils;
     requires com.calendarfx.view;
     requires inc.nomard.spoty.responsive_fx;
+    requires spoty.seamless.updater;
 
     opens inc.nomard.spoty.core.views;
     opens inc.nomard.spoty.core.views.login;

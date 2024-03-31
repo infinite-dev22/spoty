@@ -16,14 +16,27 @@ package inc.nomard.spoty.core;
 
 import inc.nomard.spoty.core.views.splash.LaunchPreloader;
 import inc.nomard.spoty.core.views.splash.SplashScreenController;
+import inc.nomard.spoty.seamless_updater.SeamlessUpdater;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 public class Main extends Application {
+
+    private ScheduledExecutorService scheduler;
     public static Stage primaryStage = null;
 
     public static void main(String... args) {
         System.setProperty("javafx.preloader", LaunchPreloader.class.getCanonicalName());
+
+        if (SeamlessUpdater.checkForPendingUpdate()) {
+            SeamlessUpdater.launchInstallerAndExit();
+        }
+        SeamlessUpdater.checkForUpdates();
+
         Application.launch(Main.class, args);
     }
 
@@ -35,5 +48,15 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         Main.primaryStage = primaryStage;
+
+        // Schedule periodic checks
+        scheduler = Executors.newSingleThreadScheduledExecutor();
+        scheduler.scheduleAtFixedRate(SeamlessUpdater::checkForUpdates, 0, 3, TimeUnit.HOURS);
+    }
+
+    @Override
+    public void stop() throws Exception {
+        super.stop();
+        scheduler.shutdown(); // Shutdown the scheduler on application exit
     }
 }
