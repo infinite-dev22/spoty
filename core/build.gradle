@@ -18,12 +18,8 @@ project.version = '0.0.18'
 repositories {
     mavenLocal()
     mavenCentral()
-}
-
-repositories {
-    mavenLocal()
-    mavenCentral()
     gradlePluginPortal()
+    maven { url 'https://jitpack.io' }
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -135,6 +131,8 @@ dependencies {
     implementation project(':responsive_fx')
     implementation project(':network_bridge')
     implementation project(':utils')
+    implementation 'net.synedra:validatorfx:0.5.0'
+    implementation 'com.github.iAmGio:froxty:1.4.0'
     implementation('com.calendarfx:view:11.12.7')
     implementation 'eu.hansolo.fx:charts:21.0.7'
     implementation 'net.datafaker:datafaker:2.0.2'

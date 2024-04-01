@@ -14,13 +14,11 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import inc.nomard.spoty.core.components.notification.SimpleNotification;
-import inc.nomard.spoty.core.components.notification.SimpleNotificationHolder;
-import inc.nomard.spoty.core.components.notification.enums.NotificationDuration;
-import inc.nomard.spoty.core.components.notification.enums.NotificationVariants;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.MessageDuration;
+import inc.nomard.spoty.core.components.message.enums.MessageVariants;
 import inc.nomard.spoty.core.viewModels.CustomerViewModel;
 import inc.nomard.spoty.utils.SpotyLogger;
-import inc.nomard.spoty.utils.SpotyThreader;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import javafx.fxml.FXML;
@@ -37,9 +35,9 @@ import static inc.nomard.spoty.core.Validators.*;
 public class CustomerFormController implements Initializable {
     private static CustomerFormController instance;
     @FXML
-    public MFXButton customerFormSaveBtn;
+    public MFXButton saveBtn;
     @FXML
-    public MFXButton customerFormCancelBtn;
+    public MFXButton cancelBtn;
     @FXML
     public MFXTextField customerFormName;
     @FXML
@@ -93,18 +91,18 @@ public class CustomerFormController implements Initializable {
 
         // Name input validation.
         requiredValidator(
-                customerFormName, "Name field is required.", validationLabel1, customerFormSaveBtn);
+                customerFormName, "Name field is required.", validationLabel1, saveBtn);
 
         // Email input validation.
-        emailValidator(customerFormEmail, validationLabel2, customerFormSaveBtn);
+        emailValidator(customerFormEmail, validationLabel2, saveBtn);
 
         // Phone input validation.
-        lengthValidator(customerFormPhone, 11, "Invalid length", validationLabel3, customerFormSaveBtn);
+        lengthValidator(customerFormPhone, 11, "Invalid length", validationLabel3, saveBtn);
         dialogOnActions();
     }
 
     private void dialogOnActions() {
-        customerFormCancelBtn.setOnAction(
+        cancelBtn.setOnAction(
                 (event) -> {
                     closeDialog(event);
 
@@ -114,71 +112,96 @@ public class CustomerFormController implements Initializable {
 
                     CustomerViewModel.resetProperties();
                 });
-        customerFormSaveBtn.setOnAction(
+        saveBtn.setOnAction(
                 (event) -> {
-                    SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
-
                     if (!validationLabel1.isVisible()
                             && !validationLabel2.isVisible()
                             && !validationLabel3.isVisible()) {
                         if (CustomerViewModel.getId() > 0) {
-                            SpotyThreader.spotyThreadPool(() -> {
                                 try {
-                                    CustomerViewModel.updateItem(this::onAction, this::onSuccess, this::onFailed);
+                                    CustomerViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
+                                    closeDialog(event);
                                 } catch (Exception e) {
                                     SpotyLogger.writeToFile(e, this.getClass());
                                 }
-                            });
-
-                            SimpleNotification notification =
-                                    new SimpleNotification.NotificationBuilder("Customer updated successfully")
-                                            .duration(NotificationDuration.SHORT)
-                                            .icon("fas-circle-check")
-                                            .type(NotificationVariants.SUCCESS)
-                                            .build();
-                            notificationHolder.addNotification(notification);
-
-                            closeDialog(event);
                             return;
                         }
-                        SpotyThreader.spotyThreadPool(() -> {
                             try {
-                                CustomerViewModel.saveCustomer(this::onAction, this::onSuccess, this::onFailed);
+                                CustomerViewModel.saveCustomer(this::onAction, this::onAddSuccess, this::onFailed);
+                                closeDialog(event);
                             } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }
-                        });
-
-                        SimpleNotification notification =
-                                new SimpleNotification.NotificationBuilder("Customer saved successfully")
-                                        .duration(NotificationDuration.SHORT)
-                                        .icon("fas-circle-check")
-                                        .type(NotificationVariants.SUCCESS)
-                                        .build();
-                        notificationHolder.addNotification(notification);
-
-                        closeDialog(event);
                         return;
                     }
-                    SimpleNotification notification =
-                            new SimpleNotification.NotificationBuilder("Required fields missing")
-                                    .duration(NotificationDuration.SHORT)
-                                    .icon("fas-triangle-exclamation")
-                                    .type(NotificationVariants.ERROR)
-                                    .build();
-                    notificationHolder.addNotification(notification);
+                    onRequiredFieldsMissing();
                 });
     }
 
     private void onAction() {
-        System.out.println("Loading customers...");
+        cancelBtn.setDisable(true);
+        saveBtn.setDisable(true);
+//        cancelBtn.setManaged(true);
+//        saveBtn.setManaged(true);
     }
 
-    private void onSuccess() {
-        System.out.println("Loaded customers...");
+    private void onAddSuccess() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("Customer added successfully")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        CustomerViewModel.getAllCustomers(null, null, null);
+    }
+
+    private void onUpdatedSuccess() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("Customer updated successfully")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        CustomerViewModel.getAllCustomers(null, null, null);
     }
 
     private void onFailed() {
-        System.out.println("failed loading customers...");
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("An error occurred")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        CustomerViewModel.getAllCustomers(null, null, null);
+    }
+
+    private void onRequiredFieldsMissing() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("Required fields can't be null")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        CustomerViewModel.getAllCustomers(null, null, null);
     }
 }

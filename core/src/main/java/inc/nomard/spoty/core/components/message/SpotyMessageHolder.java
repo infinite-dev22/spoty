@@ -12,7 +12,7 @@
  * Jonathan Mark Mwigo makes no warranties, express or implied, with respect to the computer system code. Jonathan Mark Mwigo shall not be liable for any damages, including, but not limited to, direct, indirect, incidental, special, consequential, or punitive damages, arising out of or in connection with the use of the computer system code.
  */
 
-package inc.nomard.spoty.core.components.notification;
+package inc.nomard.spoty.core.components.message;
 
 import inc.nomard.spoty.core.SpotyCoreResourceLoader;
 import javafx.animation.KeyFrame;
@@ -20,12 +20,10 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.geometry.Orientation;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -34,38 +32,40 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public class SimpleNotificationHolder {
-    private static FlowPane root;
+public class SpotyMessageHolder {
+    private static AnchorPane root;
     private static Stage stage;
     private static Duration notificationAnimationTime;
     private static ObservableList<Pane> popups;
 
-    private static SimpleNotificationHolder instance;
+    private static SpotyMessageHolder instance;
 
-    private SimpleNotificationHolder() {
+    private SpotyMessageHolder() {
         initGraphics();
     }
 
     /**
-     * Sets the Notification's owner stage so that when the owner stage is closed Notifications will
+     * Sets the SpotyMessage's owner stage so that when the owner stage is closed SpotyMessages will
      * be shut down as well.<br>
      * This is only needed if <code>setPopupLocation</code> is called <u>without</u> a stage
      * reference.
      *
-     * @param windowOwner owner of the window.
+     * @param parentStage owner of the window.
      */
-    public static void setNotificationOwner(Stage windowOwner) {
+    public static void setMessageOwner(Stage parentStage) {
         stage = new Stage();
+        stage.initOwner(parentStage);
         stage.initStyle(StageStyle.TRANSPARENT);
-        stage.setX(windowOwner.getWidth() - SimpleNotification.getLayoutWidth());
-        stage.setY(windowOwner.getHeight() - (windowOwner.getHeight() - 5));
+        // Calculate position relative to the parent stage
+        stage.setX(parentStage.getWidth() - SpotyMessage.getLayoutWidth());
+        stage.setY(parentStage.getHeight() - (parentStage.getHeight() - 10));
+
         stage.setAlwaysOnTop(true);
-        stage.setHeight(138);
-        stage.initOwner(windowOwner);
     }
 
-    public static SimpleNotificationHolder getInstance() {
-        if (Objects.equals(instance, null)) instance = new SimpleNotificationHolder();
+    public static SpotyMessageHolder getInstance() {
+        if (Objects.equals(instance, null))
+            instance = new SpotyMessageHolder();
         return instance;
     }
 
@@ -73,17 +73,19 @@ public class SimpleNotificationHolder {
         notificationAnimationTime = Duration.millis(500);
         popups = FXCollections.observableArrayList();
 
-        root = new FlowPane(Orientation.HORIZONTAL);
+        root = new AnchorPane();
         root.setPickOnBounds(false);
-        root.setPrefWrapLength(70);
-        root.setVgap(10);
-        root.getStyleClass().add("notification-holder");
+        root.setMinHeight(100);
+        root.getStyleClass().add("message-holder");
         root.getStylesheets().addAll(SpotyCoreResourceLoader.load("styles/base.css"),
                 SpotyCoreResourceLoader.load("styles/theming/Default.css"));
 
-        StackPane.setAlignment(root, Pos.TOP_RIGHT);
+        // Example: Position 10 pixels from top and right edges of the scene
+        AnchorPane.setTopAnchor(root, 10.0);
+        AnchorPane.setRightAnchor(root, 10.0);
 
         Scene scene = new Scene(root);
+
         scene.setFill(Color.TRANSPARENT);
 
         stage.setScene(scene);
@@ -97,8 +99,8 @@ public class SimpleNotificationHolder {
         if (!stage.isShowing()) stage.show();
     }
 
-    public void addNotification(SimpleNotification notification) {
-        Pane POPUP = new Pane();
+    public void addMessage(SpotyMessage notification) {
+        VBox POPUP = new VBox();
         POPUP.getChildren().addAll(notification);
 
         root.getChildren().add(0, POPUP);
@@ -126,17 +128,17 @@ public class SimpleNotificationHolder {
                     tlOpacity.play();
                 });
         tlFadeIn.play();
-        removeNotification(notification, POPUP);
+        removeMessage(notification, POPUP);
     }
 
-    public void removeNotification(@NotNull SimpleNotification notification, Pane POPUP) {
+    public void removeMessage(@NotNull SpotyMessage notification, Pane POPUP) {
         // popup fade out - first opacity animation to 0, next height to 0
         final Timeline tlFadeOut = new Timeline();
         final KeyValue kvOpacity = new KeyValue(POPUP.opacityProperty(), 0.0);
         final KeyFrame kfOpacity = new KeyFrame(notificationAnimationTime.divide(2), kvOpacity);
 
         tlFadeOut.getKeyFrames().addAll(kfOpacity);
-        tlFadeOut.setDelay(notification.getNotificationDuration());
+        tlFadeOut.setDelay(notification.getMessageDuration());
         tlFadeOut.setOnFinished(
                 actionEvent -> {
                     // Remove content of POPUP because of animation height performance problems

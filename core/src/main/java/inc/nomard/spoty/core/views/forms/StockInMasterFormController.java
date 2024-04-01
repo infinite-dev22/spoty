@@ -15,10 +15,9 @@
 package inc.nomard.spoty.core.views.forms;
 
 import inc.nomard.spoty.core.components.navigation.Pages;
-import inc.nomard.spoty.core.components.notification.SimpleNotification;
-import inc.nomard.spoty.core.components.notification.SimpleNotificationHolder;
-import inc.nomard.spoty.core.components.notification.enums.NotificationDuration;
-import inc.nomard.spoty.core.components.notification.enums.NotificationVariants;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.MessageDuration;
+import inc.nomard.spoty.core.components.message.enums.MessageVariants;
 import inc.nomard.spoty.core.viewModels.BranchViewModel;
 import inc.nomard.spoty.core.viewModels.stock_ins.StockInDetailViewModel;
 import inc.nomard.spoty.core.viewModels.stock_ins.StockInMasterViewModel;
@@ -83,7 +82,8 @@ public class StockInMasterFormController implements Initializable {
     public Label stockInMasterDateValidationLabel;
     @FXML
     public Label stockInMasterBranchValidationLabel;
-    public MFXButton stockInMasterSaveBtn;
+    public MFXButton saveBtn,
+            cancelBtn;
     private MFXStageDialog dialog;
 
     private StockInMasterFormController(Stage stage) {
@@ -128,12 +128,12 @@ public class StockInMasterFormController implements Initializable {
                 stockInMasterBranch,
                 "Branch is required.",
                 stockInMasterBranchValidationLabel,
-                stockInMasterSaveBtn);
+                saveBtn);
         requiredValidator(
                 stockInMasterDate,
                 "Date is required.",
                 stockInMasterDateValidationLabel,
-                stockInMasterSaveBtn);
+                saveBtn);
 
         stockInMasterAddProductBtnClicked();
 
@@ -266,73 +266,39 @@ public class StockInMasterFormController implements Initializable {
     }
 
     public void stockInMasterSaveBtnClicked() {
-        SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
 
         if (!stockInDetailTable.isDisabled() && StockInDetailViewModel.stockInDetailsList.isEmpty()) {
-            SimpleNotification notification =
-                    new SimpleNotification.NotificationBuilder("Table can't be Empty")
-                            .duration(NotificationDuration.SHORT)
+            SpotyMessage notification =
+                    new SpotyMessage.MessageBuilder("Table can't be Empty")
+                            .duration(MessageDuration.SHORT)
                             .icon("fas-triangle-exclamation")
-                            .type(NotificationVariants.ERROR)
+                            .type(MessageVariants.ERROR)
                             .build();
-            notificationHolder.addNotification(notification);
+            notificationHolder.addMessage(notification);
             return;
         }
         if (!stockInMasterBranchValidationLabel.isVisible()
                 && !stockInMasterDateValidationLabel.isVisible()) {
             if (StockInMasterViewModel.getId() > 0) {
-                SpotyThreader.spotyThreadPool(
-                        () -> {
                             try {
-                                StockInMasterViewModel.updateItem(this::onAction, this::onSuccess, this::onFailed);
+                                StockInMasterViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
                             } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }
-                        });
-
-                SimpleNotification notification =
-                        new SimpleNotification.NotificationBuilder("Stock In updated successfully")
-                                .duration(NotificationDuration.MEDIUM)
-                                .icon("fas-circle-check")
-                                .type(NotificationVariants.SUCCESS)
-                                .build();
-                notificationHolder.addNotification(notification);
-
-                stockInMasterBranch.clearSelection();
-                stockInMasterCancelBtnClicked();
                 return;
             }
-            SpotyThreader.spotyThreadPool(
-                    () -> {
                         try {
-                            StockInMasterViewModel.saveStockInMaster(this::onAction, this::onSuccess, this::onFailed);
+                            StockInMasterViewModel.saveStockInMaster(this::onAction, this::onAddSuccess, this::onFailed);
                         } catch (Exception e) {
                             SpotyLogger.writeToFile(e, this.getClass());
                         }
-                    });
-
-            SimpleNotification notification =
-                    new SimpleNotification.NotificationBuilder("Stock In saved successfully")
-                            .duration(NotificationDuration.MEDIUM)
-                            .icon("fas-circle-check")
-                            .type(NotificationVariants.SUCCESS)
-                            .build();
-            notificationHolder.addNotification(notification);
-
-            stockInMasterBranch.clearSelection();
-            stockInMasterCancelBtnClicked();
             return;
         }
-        SimpleNotification notification =
-                new SimpleNotification.NotificationBuilder("Required fields missing")
-                        .duration(NotificationDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(NotificationVariants.ERROR)
-                        .build();
-        notificationHolder.addNotification(notification);
+        onRequiredFieldsMissing();
     }
 
-    public void stockInMasterCancelBtnClicked() {
+    public void cancelBtnClicked() {
         BaseController.navigation.navigate(Pages.getStockInPane());
         StockInMasterViewModel.resetProperties();
         stockInMasterBranchValidationLabel.setVisible(false);
@@ -341,14 +307,71 @@ public class StockInMasterFormController implements Initializable {
     }
 
     private void onAction() {
-        System.out.println("Loading stock in master...");
+        cancelBtn.setDisable(true);
+        saveBtn.setDisable(true);
+//        cancelBtn.setManaged(true);
+//        saveBtn.setManaged(true);
     }
 
-    private void onSuccess() {
-        System.out.println("Loaded stock in master...");
+    private void onAddSuccess() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("Stock in added successfully")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+        cancelBtnClicked();
+
+        StockInMasterViewModel.getAllStockInMasters(null, null, null);
+    }
+
+    private void onUpdatedSuccess() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("Stock in updated successfully")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+        cancelBtnClicked();
+
+        StockInMasterViewModel.getAllStockInMasters(null, null, null);
     }
 
     private void onFailed() {
-        System.out.println("failed loading stock in master...");
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("An error occurred")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        StockInMasterViewModel.getAllStockInMasters(null, null, null);
+    }
+
+    private void onRequiredFieldsMissing() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("Required fields can't be null")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        StockInMasterViewModel.getAllStockInMasters(null, null, null);
     }
 }

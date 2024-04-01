@@ -14,30 +14,25 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import inc.nomard.spoty.core.components.animations.SpotyAnimations;
 import inc.nomard.spoty.core.components.navigation.Navigation;
 import inc.nomard.spoty.core.components.navigation.Pages;
-import inc.nomard.spoty.core.components.notification.SimpleNotification;
-import inc.nomard.spoty.core.components.notification.SimpleNotificationHolder;
-import inc.nomard.spoty.core.components.notification.enums.NotificationDuration;
-import inc.nomard.spoty.core.components.notification.enums.NotificationVariants;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.MessageDuration;
+import inc.nomard.spoty.core.components.message.enums.MessageVariants;
 import inc.nomard.spoty.core.viewModels.PermissionsViewModel;
 import inc.nomard.spoty.core.viewModels.RoleViewModel;
 import inc.nomard.spoty.utils.SpotyLogger;
-import inc.nomard.spoty.utils.SpotyThreader;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.validation.Constraint;
 import io.github.palexdev.materialfx.validation.Severity;
+import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import io.github.palexdev.mfxcomponents.controls.checkbox.MFXCheckbox;
-import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
 import javafx.animation.RotateTransition;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
-import javafx.util.Duration;
 
 import java.net.URL;
 import java.util.List;
@@ -49,7 +44,11 @@ import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_
 public class RoleSettingsFormController implements Initializable {
     private static RoleSettingsFormController instance;
     @FXML
-    public MFXTextField roleDescriptionInputField;
+    public MFXTextField roleDescriptionInputField,
+            roleNameInputField;
+    @FXML
+    public MFXButton saveBtn,
+            cancelBtn;
     // <editor-fold desc="Lots of MFXCheckboxes here 👇️">
     @FXML
     private MFXCheckbox dashboardCheckbox, accessPOSCheckbox;
@@ -192,8 +191,6 @@ public class RoleSettingsFormController implements Initializable {
     private Label errorLabel;
     @FXML
     private BorderPane roleSettingsHolder;
-    @FXML
-    private MFXTextField roleNameInputField;
 
     private RotateTransition transition;
 
@@ -320,8 +317,6 @@ public class RoleSettingsFormController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        setIcons();
-
         bindProperties();
 
         getDashBoardSetting();
@@ -1761,79 +1756,45 @@ public class RoleSettingsFormController implements Initializable {
     }
 
     public void save() {
-        SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
 
         constraints = roleNameInputField.validate();
         if (!constraints.isEmpty()) {
-            errorLabel.setText(constraints.get(0).getMessage());
+            errorLabel.setText(constraints.getFirst().getMessage());
             errorLabel.setVisible(true);
         }
 
         if (PermissionsViewModel.getPermissionsList().isEmpty()) {
-            SimpleNotification notification =
-                    new SimpleNotification.NotificationBuilder("Role has no permissions")
-                            .duration(NotificationDuration.SHORT)
+            SpotyMessage notification =
+                    new SpotyMessage.MessageBuilder("Role has no permissions")
+                            .duration(MessageDuration.SHORT)
                             .icon("fas-triangle-exclamation")
-                            .type(NotificationVariants.ERROR)
+                            .type(MessageVariants.ERROR)
                             .build();
 
-            notificationHolder.addNotification(notification);
+            notificationHolder.addMessage(notification);
 
             return;
         }
 
         if (!errorLabel.isVisible()) {
             if (RoleViewModel.getId() > 0) {
-                SpotyThreader.spotyThreadPool(() -> {
-                    try {
-                        RoleViewModel.updateItem(RoleViewModel.getId(), this::onAction, this::onSuccess, this::onFailed);
-                    } catch (Exception e) {
-                        SpotyLogger.writeToFile(e, this.getClass());
-                    }
-                });
-
-                SimpleNotification notification =
-                        new SimpleNotification.NotificationBuilder("Role updated successfully")
-                                .duration(NotificationDuration.MEDIUM)
-                                .icon("fas-circle-check")
-                                .type(NotificationVariants.SUCCESS)
-                                .build();
-
-                notificationHolder.addNotification(notification);
-                close();
-
-                return;
-            }
-
-            SpotyThreader.spotyThreadPool(() -> {
                 try {
-                    RoleViewModel.saveRole(this::onAction, this::onSuccess, this::onFailed);
+                    RoleViewModel.updateItem(RoleViewModel.getId(), this::onAction, this::onUpdatedSuccess, this::onFailed);
                 } catch (Exception e) {
                     SpotyLogger.writeToFile(e, this.getClass());
                 }
-            });
+                return;
+            }
 
-            SimpleNotification notification =
-                    new SimpleNotification.NotificationBuilder("Role saved successfully")
-                            .duration(NotificationDuration.MEDIUM)
-                            .icon("fas-circle-check")
-                            .type(NotificationVariants.SUCCESS)
-                            .build();
-
-            notificationHolder.addNotification(notification);
-            close();
-
+            try {
+                RoleViewModel.saveRole(this::onAction, this::onAddSuccess, this::onFailed);
+            } catch (Exception e) {
+                SpotyLogger.writeToFile(e, this.getClass());
+            }
             return;
         }
-
-        SimpleNotification notification =
-                new SimpleNotification.NotificationBuilder("Required fields missing")
-                        .duration(NotificationDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(NotificationVariants.ERROR)
-                        .build();
-
-        notificationHolder.addNotification(notification);
+        onRequiredFieldsMissing();
     }
 
     public void close() {
@@ -1891,24 +1852,71 @@ public class RoleSettingsFormController implements Initializable {
     }
 
     private void onAction() {
-        transition.playFromStart();
-        transition.setOnFinished((ActionEvent event) -> transition.playFromStart());
+        cancelBtn.setDisable(true);
+        saveBtn.setDisable(true);
+//        cancelBtn.setManaged(true);
+//        saveBtn.setManaged(true);
     }
 
-    private void onSuccess() {
-        transition.setOnFinished(null);
+    private void onAddSuccess() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("Role added successfully")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+        close();
+
+        RoleViewModel.getAllRoles(null, null, null);
+    }
+
+    private void onUpdatedSuccess() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("Role updated successfully")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+        close();
+
+        RoleViewModel.getAllRoles(null, null, null);
     }
 
     private void onFailed() {
-        transition.setOnFinished(null);
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("An error occurred")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        RoleViewModel.getAllRoles(null, null, null);
     }
 
-    private void setIcons() {
-        var refreshIcon = new MFXFontIcon("fas-arrows-rotate", 24);
-//        refresh.getChildren().addFirst(refreshIcon);
+    private void onRequiredFieldsMissing() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("Required fields can't be null")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
 
-        transition = SpotyAnimations.rotateTransition(refreshIcon, Duration.millis(1000), 360);
-
-        refreshIcon.setOnMouseClicked(mouseEvent -> RoleViewModel.getAllRoles(this::onAction, this::onSuccess, this::onFailed));
+        RoleViewModel.getAllRoles(null, null, null);
     }
 }

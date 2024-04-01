@@ -12,25 +12,20 @@
  * Jonathan Mark Mwigo makes no warranties, express or implied, with respect to the computer system code. Jonathan Mark Mwigo shall not be liable for any damages, including, but not limited to, direct, indirect, incidental, special, consequential, or punitive damages, arising out of or in connection with the use of the computer system code.
  */
 
-package inc.nomard.spoty.core.components.notification.enums;
+package inc.nomard.spoty.core.components.message.enums;
 
-public enum NotificationVariants {
-    ERROR("error"),
-    SUCCESS("success"),
-    WARN("warn"),
-    INFO("info");
+public enum MessageDuration {
+    SHORT(3000),
+    MEDIUM(5000),
+    LONG(7000);
 
-    private final String styleClass;
+    private final int duration;
 
-    NotificationVariants(String styleClass) {
-        this.styleClass = styleClass;
+    MessageDuration(int duration) {
+        this.duration = duration;
     }
 
-    public String variantStyleClass() {
-        return this.styleClass;
-    }
-
-    public String getStyleClass() {
-        return styleClass;
+    public int getDuration() {
+        return duration;
     }
 }

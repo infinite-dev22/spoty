@@ -234,7 +234,7 @@ public class StockInController implements Initializable {
 
         transition = SpotyAnimations.rotateTransition(refreshIcon, Duration.millis(1000), 360);
 
-        refreshIcon.setOnMouseClicked(mouseEvent -> StockInMasterViewModel.getStockInMasters(this::onAction, this::onSuccess, this::onFailed));
+        refreshIcon.setOnMouseClicked(mouseEvent -> StockInMasterViewModel.getAllStockInMasters(this::onAction, this::onSuccess, this::onFailed));
     }
 
     private void viewDialogPane(Stage stage) throws IOException {

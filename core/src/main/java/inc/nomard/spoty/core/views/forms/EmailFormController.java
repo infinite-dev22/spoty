@@ -14,13 +14,12 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import inc.nomard.spoty.core.components.notification.SimpleNotification;
-import inc.nomard.spoty.core.components.notification.SimpleNotificationHolder;
-import inc.nomard.spoty.core.components.notification.enums.NotificationDuration;
-import inc.nomard.spoty.core.components.notification.enums.NotificationVariants;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.MessageDuration;
+import inc.nomard.spoty.core.components.message.enums.MessageVariants;
 import inc.nomard.spoty.core.viewModels.BankViewModel;
+import inc.nomard.spoty.core.viewModels.EmailViewModel;
 import inc.nomard.spoty.utils.SpotyLogger;
-import inc.nomard.spoty.utils.SpotyThreader;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import javafx.fxml.FXML;
@@ -57,9 +56,9 @@ public class EmailFormController implements Initializable {
     @FXML
     public MFXButton logo;
     @FXML
-    public MFXButton bankSaveBtn;
+    public MFXButton saveBtn;
     @FXML
-    public MFXButton bankCancelBtn;
+    public MFXButton cancelBtn;
 
     public static EmailFormController getInstance() {
         if (Objects.equals(instance, null)) instance = new EmailFormController();
@@ -75,18 +74,18 @@ public class EmailFormController implements Initializable {
         branch.textProperty().bindBidirectional(BankViewModel.townProperty());
         // Input listeners.
         requiredValidator(
-                bankName, "Name is required.", bankNameValidationLabel, bankSaveBtn);
+                bankName, "Name is required.", bankNameValidationLabel, saveBtn);
         requiredValidator(
-                accountName, "Email is required.", accountNameValidationLabel, bankSaveBtn);
+                accountName, "Email is required.", accountNameValidationLabel, saveBtn);
         requiredValidator(
-                accountNumber, "Phone is required.", accountNumberValidationLabel, bankSaveBtn);
+                accountNumber, "Phone is required.", accountNumberValidationLabel, saveBtn);
         requiredValidator(
-                branch, "Town is required.", branchValidationLabel, bankSaveBtn);
+                branch, "Town is required.", branchValidationLabel, saveBtn);
         dialogOnActions();
     }
 
     private void dialogOnActions() {
-        bankCancelBtn.setOnAction(
+        cancelBtn.setOnAction(
                 (event) -> {
                     clearBankData();
 
@@ -97,79 +96,98 @@ public class EmailFormController implements Initializable {
                     accountNumberValidationLabel.setVisible(false);
                     branchValidationLabel.setVisible(false);
                 });
-        bankSaveBtn.setOnAction(
+        saveBtn.setOnAction(
                 (event) -> {
-                    SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
-
                     if (!bankNameValidationLabel.isVisible()
                             && !accountNameValidationLabel.isVisible()
                             && !accountNumberValidationLabel.isVisible()
                             && !branchValidationLabel.isVisible()) {
                         if (BankViewModel.getId() > 0) {
-                            SpotyThreader.spotyThreadPool(() -> {
-                                try {
-                                    BankViewModel.updateItem(this::onAction, this::onSuccess, this::onFailed);
-                                } catch (Exception e) {
-                                    SpotyLogger.writeToFile(e, this.getClass());
-                                }
-                            });
-
-                            SimpleNotification notification =
-                                    new SimpleNotification.NotificationBuilder("Bank updated successfully")
-                                            .duration(NotificationDuration.SHORT)
-                                            .icon("fas-circle-check")
-                                            .type(NotificationVariants.SUCCESS)
-                                            .build();
-                            notificationHolder.addNotification(notification);
-
-                            closeDialog(event);
+                            try {
+                                BankViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
+                                closeDialog(event);
+                            } catch (Exception e) {
+                                SpotyLogger.writeToFile(e, this.getClass());
+                            }
                             return;
                         }
 
-//                        try {
-//                            saveBank();
-//                        } catch (Exception e) {
-//                            SpotyLogger.writeToFile(e, this.getClass());
-//                        }
-
-//                        SpotyThreader.spotyThreadPool(() -> {
                         try {
-                            saveBank(this::onAction, this::onSuccess, this::onFailed);
+                            saveBank(this::onAction, this::onAddSuccess, this::onFailed);
+                            closeDialog(event);
                         } catch (Exception e) {
                             SpotyLogger.writeToFile(e, this.getClass());
                         }
-//                        });
-
-                        SimpleNotification notification =
-                                new SimpleNotification.NotificationBuilder("Bank saved successfully")
-                                        .duration(NotificationDuration.SHORT)
-                                        .icon("fas-circle-check")
-                                        .type(NotificationVariants.SUCCESS)
-                                        .build();
-                        notificationHolder.addNotification(notification);
-
-                        closeDialog(event);
                         return;
                     }
-                    SimpleNotification notification =
-                            new SimpleNotification.NotificationBuilder("Required fields missing")
-                                    .duration(NotificationDuration.SHORT)
-                                    .icon("fas-triangle-exclamation")
-                                    .type(NotificationVariants.ERROR)
-                                    .build();
-                    notificationHolder.addNotification(notification);
+                    onRequiredFieldsMissing();
                 });
     }
 
     private void onAction() {
-        System.out.println("Loading bank...");
+        cancelBtn.setDisable(true);
+        saveBtn.setDisable(true);
+//        cancelBtn.setManaged(true);
+//        saveBtn.setManaged(true);
     }
 
-    private void onSuccess() {
-        System.out.println("Loaded bank...");
+    private void onAddSuccess() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("Email template added successfully")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        EmailViewModel.getAllEmails(null, null, null);
+    }
+
+    private void onUpdatedSuccess() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("Email template updated successfully")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        EmailViewModel.getAllEmails(null, null, null);
     }
 
     private void onFailed() {
-        System.out.println("failed loading bank...");
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("An error occurred")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        EmailViewModel.getAllEmails(null, null, null);
+    }
+
+    private void onRequiredFieldsMissing() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("Required fields can't be null")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        EmailViewModel.getAllEmails(null, null, null);
     }
 }

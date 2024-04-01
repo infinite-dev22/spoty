@@ -245,7 +245,7 @@ public class SaleMasterViewModel {
         SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void getSaleMasters(
+    public static void getAllSaleMasters(
             @Nullable ParameterlessConsumer onActivity,
             @Nullable ParameterlessConsumer onSuccess,
             @Nullable ParameterlessConsumer onFailed) {

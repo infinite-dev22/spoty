@@ -15,10 +15,9 @@
 package inc.nomard.spoty.core.views.forms;
 
 import inc.nomard.spoty.core.components.navigation.Pages;
-import inc.nomard.spoty.core.components.notification.SimpleNotification;
-import inc.nomard.spoty.core.components.notification.SimpleNotificationHolder;
-import inc.nomard.spoty.core.components.notification.enums.NotificationDuration;
-import inc.nomard.spoty.core.components.notification.enums.NotificationVariants;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.MessageDuration;
+import inc.nomard.spoty.core.components.message.enums.MessageVariants;
 import inc.nomard.spoty.core.startup.Dialogs;
 import inc.nomard.spoty.core.values.strings.Values;
 import inc.nomard.spoty.core.viewModels.BranchViewModel;
@@ -30,7 +29,6 @@ import inc.nomard.spoty.network_bridge.dtos.Branch;
 import inc.nomard.spoty.network_bridge.dtos.Customer;
 import inc.nomard.spoty.network_bridge.dtos.quotations.QuotationDetail;
 import inc.nomard.spoty.utils.SpotyLogger;
-import inc.nomard.spoty.utils.SpotyThreader;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
@@ -92,7 +90,8 @@ public class QuotationMasterFormController implements Initializable {
     @FXML
     public Label quotationStatusValidationLabel;
     @FXML
-    public MFXButton quotationMasterSaveBtn;
+    public MFXButton saveBtn,
+            cancelBtn;
     private MFXStageDialog dialog;
 
     private QuotationMasterFormController(Stage stage) {
@@ -155,19 +154,19 @@ public class QuotationMasterFormController implements Initializable {
                 quotationBranch,
                 "Branch is required.",
                 quotationBranchValidationLabel,
-                quotationMasterSaveBtn);
+                saveBtn);
         requiredValidator(
                 quotationCustomer,
                 "Customer is required.",
                 quotationCustomerValidationLabel,
-                quotationMasterSaveBtn);
+                saveBtn);
         requiredValidator(
-                quotationDate, "Date is required.", quotationDateValidationLabel, quotationMasterSaveBtn);
+                quotationDate, "Date is required.", quotationDateValidationLabel, saveBtn);
         requiredValidator(
                 quotationStatus,
                 "Status is required.",
                 quotationStatusValidationLabel,
-                quotationMasterSaveBtn);
+                saveBtn);
 
         Platform.runLater(this::setupTable);
     }
@@ -304,17 +303,17 @@ public class QuotationMasterFormController implements Initializable {
     }
 
     public void saveBtnClicked() {
-        SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
 
         if (!quotationDetailTable.isDisabled()
                 && QuotationDetailViewModel.quotationDetailsList.isEmpty()) {
-            SimpleNotification notification =
-                    new SimpleNotification.NotificationBuilder("Table can't be Empty")
-                            .duration(NotificationDuration.SHORT)
+            SpotyMessage notification =
+                    new SpotyMessage.MessageBuilder("Table can't be Empty")
+                            .duration(MessageDuration.SHORT)
                             .icon("fas-triangle-exclamation")
-                            .type(NotificationVariants.ERROR)
+                            .type(MessageVariants.ERROR)
                             .build();
-            notificationHolder.addNotification(notification);
+            notificationHolder.addMessage(notification);
             return;
         }
 
@@ -323,59 +322,21 @@ public class QuotationMasterFormController implements Initializable {
                 && !quotationDateValidationLabel.isVisible()
                 && !quotationStatusValidationLabel.isVisible()) {
             if (QuotationMasterViewModel.getId() > 0) {
-                SpotyThreader.spotyThreadPool(() -> {
-                    try {
-                        QuotationMasterViewModel.updateItem(this::onAction, this::onSuccess, this::onFailed);
-                    } catch (Exception e) {
-                        SpotyLogger.writeToFile(e, this.getClass());
-                    }
-                });
-
-                SimpleNotification notification =
-                        new SimpleNotification.NotificationBuilder("Quotation updated successfully")
-                                .duration(NotificationDuration.MEDIUM)
-                                .icon("fas-circle-check")
-                                .type(NotificationVariants.SUCCESS)
-                                .build();
-                notificationHolder.addNotification(notification);
-
-                quotationCustomer.clearSelection();
-                quotationBranch.clearSelection();
-                quotationStatus.clearSelection();
-
-                cancelBtnClicked();
-                return;
-            }
-            SpotyThreader.spotyThreadPool(() -> {
                 try {
-                    QuotationMasterViewModel.saveQuotationMaster(this::onAction, this::onSuccess, this::onFailed);
+                    QuotationMasterViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
                 } catch (Exception e) {
                     SpotyLogger.writeToFile(e, this.getClass());
                 }
-            });
-
-            SimpleNotification notification =
-                    new SimpleNotification.NotificationBuilder("Quotation saved successfully")
-                            .duration(NotificationDuration.MEDIUM)
-                            .icon("fas-circle-check")
-                            .type(NotificationVariants.SUCCESS)
-                            .build();
-            notificationHolder.addNotification(notification);
-
-            quotationCustomer.clearSelection();
-            quotationBranch.clearSelection();
-            quotationStatus.clearSelection();
-
-            cancelBtnClicked();
+                return;
+            }
+            try {
+                QuotationMasterViewModel.saveQuotationMaster(this::onAction, this::onAddSuccess, this::onFailed);
+            } catch (Exception e) {
+                SpotyLogger.writeToFile(e, this.getClass());
+            }
             return;
         }
-        SimpleNotification notification =
-                new SimpleNotification.NotificationBuilder("Required fields missing")
-                        .duration(NotificationDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(NotificationVariants.ERROR)
-                        .build();
-        notificationHolder.addNotification(notification);
+        onRequiredFieldsMissing();
     }
 
     public void cancelBtnClicked() {
@@ -401,14 +362,71 @@ public class QuotationMasterFormController implements Initializable {
     }
 
     private void onAction() {
-        System.out.println("Loading quotation master...");
+        cancelBtn.setDisable(true);
+        saveBtn.setDisable(true);
+//        cancelBtn.setManaged(true);
+//        saveBtn.setManaged(true);
     }
 
-    private void onSuccess() {
-        System.out.println("Loaded quotation master...");
+    private void onAddSuccess() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("Quotation added successfully")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+        cancelBtnClicked();
+
+        QuotationMasterViewModel.getAllQuotationMasters(null, null, null);
+    }
+
+    private void onUpdatedSuccess() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("Quotation updated successfully")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+        cancelBtnClicked();
+
+        QuotationMasterViewModel.getAllQuotationMasters(null, null, null);
     }
 
     private void onFailed() {
-        System.out.println("failed loading quotation master...");
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("An error occurred")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        QuotationMasterViewModel.getAllQuotationMasters(null, null, null);
+    }
+
+    private void onRequiredFieldsMissing() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("Required fields can't be null")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        QuotationMasterViewModel.getAllQuotationMasters(null, null, null);
     }
 }

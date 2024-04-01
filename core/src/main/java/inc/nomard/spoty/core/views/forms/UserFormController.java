@@ -14,17 +14,15 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import inc.nomard.spoty.core.components.notification.SimpleNotification;
-import inc.nomard.spoty.core.components.notification.SimpleNotificationHolder;
-import inc.nomard.spoty.core.components.notification.enums.NotificationDuration;
-import inc.nomard.spoty.core.components.notification.enums.NotificationVariants;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.MessageDuration;
+import inc.nomard.spoty.core.components.message.enums.MessageVariants;
 import inc.nomard.spoty.core.viewModels.BranchViewModel;
 import inc.nomard.spoty.core.viewModels.RoleViewModel;
 import inc.nomard.spoty.core.viewModels.hrm.employee.UserViewModel;
 import inc.nomard.spoty.network_bridge.dtos.Branch;
 import inc.nomard.spoty.network_bridge.dtos.Role;
 import inc.nomard.spoty.utils.SpotyLogger;
-import inc.nomard.spoty.utils.SpotyThreader;
 import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.controls.MFXToggleButton;
@@ -48,9 +46,9 @@ import static inc.nomard.spoty.core.Validators.*;
 public class UserFormController implements Initializable {
     public static UserFormController instance;
     @FXML
-    public MFXButton userFormSaveBtn;
+    public MFXButton saveBtn;
     @FXML
-    public MFXButton userFormCancelBtn;
+    public MFXButton cancelBtn;
     @FXML
     public MFXTextField userFormEmail;
     @FXML
@@ -145,31 +143,31 @@ public class UserFormController implements Initializable {
                 userFormFirstname,
                 "First name is required.",
                 userFormFirstNameValidationLabel,
-                userFormSaveBtn);
+                saveBtn);
         requiredValidator(
                 userFormLastname,
                 "Last name is required.",
                 userFormLastNameValidationLabel,
-                userFormSaveBtn);
+                saveBtn);
         requiredValidator(
                 userFormUsername,
                 "Username is required.",
                 userFormUserNameValidationLabel,
-                userFormSaveBtn);
+                saveBtn);
         requiredValidator(
-                userFormBranch, "Branch is required.", userFormBranchValidationLabel, userFormSaveBtn);
+                userFormBranch, "Branch is required.", userFormBranchValidationLabel, saveBtn);
         requiredValidator(
-                userFormRole, "User role is required.", userFormRoleValidationLabel, userFormSaveBtn);
+                userFormRole, "User role is required.", userFormRoleValidationLabel, saveBtn);
         // Email input validation.
-        emailValidator(userFormEmail, userFormEmailValidationLabel, userFormSaveBtn);
+        emailValidator(userFormEmail, userFormEmailValidationLabel, saveBtn);
         // Phone input validation.
         lengthValidator(
-                userFormPhone, 11, "Invalid Phone length", userFormPhoneValidationLabel, userFormSaveBtn);
+                userFormPhone, 11, "Invalid Phone length", userFormPhoneValidationLabel, saveBtn);
         dialogOnActions();
     }
 
     private void dialogOnActions() {
-        userFormCancelBtn.setOnAction(
+        cancelBtn.setOnAction(
                 (event) -> {
                     closeDialog(event);
                     UserViewModel.resetProperties();
@@ -185,9 +183,8 @@ public class UserFormController implements Initializable {
                     userFormEmailValidationLabel.setVisible(false);
                     userFormPhoneValidationLabel.setVisible(false);
                 });
-        userFormSaveBtn.setOnAction(
+        saveBtn.setOnAction(
                 (event) -> {
-                    SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
                     if (!userFormFirstNameValidationLabel.isVisible()
                             && !userFormLastNameValidationLabel.isVisible()
                             && !userFormUserNameValidationLabel.isVisible()
@@ -196,67 +193,90 @@ public class UserFormController implements Initializable {
                             && !userFormEmailValidationLabel.isVisible()
                             && !userFormPhoneValidationLabel.isVisible()) {
                         if (UserViewModel.getId() > 0) {
-                            SpotyThreader.spotyThreadPool(() -> {
                                 try {
-                                    UserViewModel.updateItem(this::onAction, this::onSuccess, this::onFailed);
+                                    UserViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
+                                    closeDialog(event);
                                 } catch (Exception e) {
                                     SpotyLogger.writeToFile(e, this.getClass());
                                 }
-                            });
-                            SimpleNotification notification =
-                                    new SimpleNotification.NotificationBuilder("User updated successfully")
-                                            .duration(NotificationDuration.SHORT)
-                                            .icon("fas-circle-check")
-                                            .type(NotificationVariants.SUCCESS)
-                                            .build();
-                            notificationHolder.addNotification(notification);
-
-                            userFormRole.clearSelection();
-                            userFormBranch.clearSelection();
-
-                            closeDialog(event);
                             return;
                         }
-                        SpotyThreader.spotyThreadPool(() -> {
                             try {
-                                UserViewModel.saveUser(this::onAction, this::onSuccess, this::onFailed);
+                                UserViewModel.saveUser(this::onAction, this::onAddSuccess, this::onFailed);
+                                closeDialog(event);
                             } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }
-                        });
-                        SimpleNotification notification =
-                                new SimpleNotification.NotificationBuilder("User saved successfully")
-                                        .duration(NotificationDuration.SHORT)
-                                        .icon("fas-circle-check")
-                                        .type(NotificationVariants.SUCCESS)
-                                        .build();
-                        notificationHolder.addNotification(notification);
-
-                        userFormRole.clearSelection();
-                        userFormBranch.clearSelection();
-
-                        closeDialog(event);
                         return;
                     }
-                    SimpleNotification notification =
-                            new SimpleNotification.NotificationBuilder("Required fields missing")
-                                    .duration(NotificationDuration.SHORT)
-                                    .icon("fas-triangle-exclamation")
-                                    .type(NotificationVariants.ERROR)
-                                    .build();
-                    notificationHolder.addNotification(notification);
+                    onRequiredFieldsMissing();
                 });
     }
 
     private void onAction() {
-        System.out.println("Loading user...");
+        cancelBtn.setDisable(true);
+        saveBtn.setDisable(true);
+//        cancelBtn.setManaged(true);
+//        saveBtn.setManaged(true);
     }
 
-    private void onSuccess() {
-        System.out.println("Loaded user...");
+    private void onAddSuccess() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("User added successfully")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        UserViewModel.getAllUserProfiles(null, null, null);
+    }
+
+    private void onUpdatedSuccess() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("User profile updated successfully")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        UserViewModel.getAllUserProfiles(null, null, null);
     }
 
     private void onFailed() {
-        System.out.println("failed loading user...");
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("An error occurred")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        UserViewModel.getAllUserProfiles(null, null, null);
+    }
+
+    private void onRequiredFieldsMissing() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("Required fields can't be null")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        UserViewModel.getAllUserProfiles(null, null, null);
     }
 }

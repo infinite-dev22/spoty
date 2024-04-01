@@ -14,10 +14,9 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import inc.nomard.spoty.core.components.notification.SimpleNotification;
-import inc.nomard.spoty.core.components.notification.SimpleNotificationHolder;
-import inc.nomard.spoty.core.components.notification.enums.NotificationDuration;
-import inc.nomard.spoty.core.components.notification.enums.NotificationVariants;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.MessageDuration;
+import inc.nomard.spoty.core.components.message.enums.MessageVariants;
 import inc.nomard.spoty.core.viewModels.hrm.employee.DesignationViewModel;
 import inc.nomard.spoty.utils.SpotyLogger;
 import inc.nomard.spoty.utils.SpotyThreader;
@@ -26,6 +25,7 @@ import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.scene.layout.StackPane;
 
 import java.net.URL;
 import java.util.Objects;
@@ -48,6 +48,7 @@ public class DesignationFormController implements Initializable {
     public MFXButton saveBtn;
     @FXML
     public MFXButton cancelBtn;
+    public StackPane contentPane;
 
     public static DesignationFormController getInstance() {
         if (Objects.equals(instance, null)) instance = new DesignationFormController();
@@ -77,67 +78,97 @@ public class DesignationFormController implements Initializable {
                 });
         saveBtn.setOnAction(
                 (event) -> {
-                    SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
-
                     if (!nameValidationLabel.isVisible()
                             && !descriptionValidationLabel.isVisible()) {
                         if (DesignationViewModel.getId() > 0) {
                             SpotyThreader.spotyThreadPool(() -> {
                                 try {
-                                    DesignationViewModel.updateItem(this::onAction, this::onSuccess, this::onFailed);
+                                    DesignationViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
                                 } catch (Exception e) {
                                     SpotyLogger.writeToFile(e, this.getClass());
                                 }
                             });
-
-                            SimpleNotification notification =
-                                    new SimpleNotification.NotificationBuilder("Designation updated successfully")
-                                            .duration(NotificationDuration.SHORT)
-                                            .icon("fas-circle-check")
-                                            .type(NotificationVariants.SUCCESS)
-                                            .build();
-                            notificationHolder.addNotification(notification);
 
                             closeDialog(event);
                             return;
                         }
 
                         try {
-                            DesignationViewModel.saveDesignation(this::onAction, this::onSuccess, this::onFailed);
+                            DesignationViewModel.saveDesignation(this::onAction, this::onAddSuccess, this::onFailed);
+                            closeDialog(event);
+                            return;
                         } catch (Exception e) {
                             SpotyLogger.writeToFile(e, this.getClass());
                         }
-
-                        SimpleNotification notification =
-                                new SimpleNotification.NotificationBuilder("Designation saved successfully")
-                                        .duration(NotificationDuration.SHORT)
-                                        .icon("fas-circle-check")
-                                        .type(NotificationVariants.SUCCESS)
-                                        .build();
-                        notificationHolder.addNotification(notification);
-
-                        closeDialog(event);
-                        return;
                     }
-                    SimpleNotification notification =
-                            new SimpleNotification.NotificationBuilder("Required fields missing")
-                                    .duration(NotificationDuration.SHORT)
-                                    .icon("fas-triangle-exclamation")
-                                    .type(NotificationVariants.ERROR)
-                                    .build();
-                    notificationHolder.addNotification(notification);
+                    onRequiredFieldsMissing();
                 });
     }
 
     private void onAction() {
-        System.out.println("Loading designation...");
+        cancelBtn.setDisable(true);
+        saveBtn.setDisable(true);
+//        cancelBtn.setManaged(true);
+//        saveBtn.setManaged(true);
     }
 
-    private void onSuccess() {
-        System.out.println("Loaded designation...");
+    private void onAddSuccess() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("Designation added successfully")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        DesignationViewModel.getAllDesignations(null, null, null);
+    }
+
+    private void onUpdatedSuccess() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("Designation updated successfully")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        DesignationViewModel.getAllDesignations(null, null, null);
     }
 
     private void onFailed() {
-        System.out.println("failed loading designation...");
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("An error occurred")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        DesignationViewModel.getAllDesignations(null, null, null);
+    }
+
+    private void onRequiredFieldsMissing() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("Required fields can't be null")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        DesignationViewModel.getAllDesignations(null, null, null);
     }
 }

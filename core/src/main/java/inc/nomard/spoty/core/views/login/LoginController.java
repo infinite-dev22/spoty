@@ -2,7 +2,7 @@ package inc.nomard.spoty.core.views.login;
 
 import inc.nomard.spoty.core.SpotyCoreResourceLoader;
 import inc.nomard.spoty.core.components.animations.ActivityIndicator;
-import inc.nomard.spoty.core.components.notification.SimpleNotificationHolder;
+import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
 import inc.nomard.spoty.core.values.strings.Labels;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.adjustments.AdjustmentMasterViewModel;
@@ -94,10 +94,10 @@ public class LoginController implements Initializable {
                         PurchaseMasterViewModel.getAllPurchaseMasters(this::onActivity, null, this::onFailed);
                         PurchaseReturnMasterViewModel.getPurchaseReturnMasters(this::onActivity, null, this::onFailed);
                         QuotationMasterViewModel.getAllQuotationMasters(this::onActivity, null, this::onFailed);
-                        RequisitionMasterViewModel.getRequisitionMasters(this::onActivity, null, this::onFailed);
-                        SaleMasterViewModel.getSaleMasters(this::onActivity, null, this::onFailed);
+                        RequisitionMasterViewModel.getAllRequisitionMasters(this::onActivity, null, this::onFailed);
+                        SaleMasterViewModel.getAllSaleMasters(this::onActivity, null, this::onFailed);
                         SaleReturnMasterViewModel.getSaleReturnMasters(this::onActivity, null, this::onFailed);
-                        StockInMasterViewModel.getStockInMasters(this::onActivity, null, this::onFailed);
+                        StockInMasterViewModel.getAllStockInMasters(this::onActivity, null, this::onFailed);
                         SupplierViewModel.getAllSuppliers(this::onActivity, null, this::onFailed);
                         TransferMasterViewModel.getTransferMasters(this::onActivity, null, this::onFailed);
                         UOMViewModel.getAllUOMs(this::onActivity, null, this::onFailed);
@@ -180,7 +180,7 @@ public class LoginController implements Initializable {
             stage.setX((primScreenBounds.getWidth() - stage.getWidth()) / 2);
             stage.setY((primScreenBounds.getHeight() - stage.getHeight()) / 2);
             // Initialize app notification handler.
-            SimpleNotificationHolder.setNotificationOwner(stage);
+            SpotyMessageHolder.setMessageOwner(stage);
         } catch (IOException e) {
             SpotyLogger.writeToFile(e, LoginViewModel.class);
         }

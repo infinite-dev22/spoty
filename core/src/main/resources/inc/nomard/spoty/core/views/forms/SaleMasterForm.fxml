@@ -113,8 +113,8 @@
             </GridPane>
             <HBox alignment="CENTER_RIGHT" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                   AnchorPane.rightAnchor="0.0">
-                <MFXButton styleClass="filled" fx:id="saleMasterSaveBtn" onMouseClicked="#saveBtnClicked" text="Save"/>
-                <MFXButton styleClass="outlined" onMouseClicked="#cancelBtnClicked" text="Cancel"/>
+                <MFXButton styleClass="filled" fx:id="saveBtn" onMouseClicked="#saveBtnClicked" text="Save"/>
+                <MFXButton fx:id="cancelBtn" styleClass="outlined" onMouseClicked="#cancelBtnClicked" text="Cancel"/>
             </HBox>
         </AnchorPane>
     </center>

@@ -14,10 +14,9 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import inc.nomard.spoty.core.components.notification.SimpleNotification;
-import inc.nomard.spoty.core.components.notification.SimpleNotificationHolder;
-import inc.nomard.spoty.core.components.notification.enums.NotificationDuration;
-import inc.nomard.spoty.core.components.notification.enums.NotificationVariants;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.MessageDuration;
+import inc.nomard.spoty.core.components.message.enums.MessageVariants;
 import inc.nomard.spoty.core.viewModels.ProductViewModel;
 import inc.nomard.spoty.core.viewModels.transfers.TransferDetailViewModel;
 import inc.nomard.spoty.network_bridge.dtos.Product;
@@ -116,7 +115,7 @@ public class TransferDetailFormController implements Initializable {
                 });
         transferDetailSaveBtn.setOnAction(
                 (event) -> {
-                    SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
+                    SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
 
                     if (!transferDetailPdctValidationLabel.isVisible()
                             && !transferDetailQntyValidationLabel.isVisible()) {
@@ -129,13 +128,13 @@ public class TransferDetailFormController implements Initializable {
                                 }
                             });
 
-                            SimpleNotification notification =
-                                    new SimpleNotification.NotificationBuilder("Product changed successfully")
-                                            .duration(NotificationDuration.SHORT)
+                            SpotyMessage notification =
+                                    new SpotyMessage.MessageBuilder("Product changed successfully")
+                                            .duration(MessageDuration.SHORT)
                                             .icon("fas-circle-check")
-                                            .type(NotificationVariants.SUCCESS)
+                                            .type(MessageVariants.SUCCESS)
                                             .build();
-                            notificationHolder.addNotification(notification);
+                            notificationHolder.addMessage(notification);
 
                             transferDetailPdct.clearSelection();
 
@@ -144,26 +143,26 @@ public class TransferDetailFormController implements Initializable {
                         }
                         TransferDetailViewModel.addTransferDetails();
 
-                        SimpleNotification notification =
-                                new SimpleNotification.NotificationBuilder("Product added successfully")
-                                        .duration(NotificationDuration.SHORT)
+                        SpotyMessage notification =
+                                new SpotyMessage.MessageBuilder("Product added successfully")
+                                        .duration(MessageDuration.SHORT)
                                         .icon("fas-circle-check")
-                                        .type(NotificationVariants.SUCCESS)
+                                        .type(MessageVariants.SUCCESS)
                                         .build();
-                        notificationHolder.addNotification(notification);
+                        notificationHolder.addMessage(notification);
 
                         transferDetailPdct.clearSelection();
 
                         closeDialog(event);
                         return;
                     }
-                    SimpleNotification notification =
-                            new SimpleNotification.NotificationBuilder("Required fields missing")
-                                    .duration(NotificationDuration.SHORT)
+                    SpotyMessage notification =
+                            new SpotyMessage.MessageBuilder("Required fields missing")
+                                    .duration(MessageDuration.SHORT)
                                     .icon("fas-triangle-exclamation")
-                                    .type(NotificationVariants.ERROR)
+                                    .type(MessageVariants.ERROR)
                                     .build();
-                    notificationHolder.addNotification(notification);
+                    notificationHolder.addMessage(notification);
                 });
     }
 }

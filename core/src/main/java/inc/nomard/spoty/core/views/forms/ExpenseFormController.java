@@ -14,17 +14,15 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import inc.nomard.spoty.core.components.notification.SimpleNotification;
-import inc.nomard.spoty.core.components.notification.SimpleNotificationHolder;
-import inc.nomard.spoty.core.components.notification.enums.NotificationDuration;
-import inc.nomard.spoty.core.components.notification.enums.NotificationVariants;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.MessageDuration;
+import inc.nomard.spoty.core.components.message.enums.MessageVariants;
 import inc.nomard.spoty.core.viewModels.BranchViewModel;
 import inc.nomard.spoty.core.viewModels.ExpenseCategoryViewModel;
 import inc.nomard.spoty.core.viewModels.ExpensesViewModel;
 import inc.nomard.spoty.network_bridge.dtos.Branch;
 import inc.nomard.spoty.network_bridge.dtos.ExpenseCategory;
 import inc.nomard.spoty.utils.SpotyLogger;
-import inc.nomard.spoty.utils.SpotyThreader;
 import io.github.palexdev.materialfx.controls.MFXComboBox;
 import io.github.palexdev.materialfx.controls.MFXDatePicker;
 import io.github.palexdev.materialfx.controls.MFXTextField;
@@ -49,9 +47,9 @@ public class ExpenseFormController implements Initializable {
     @FXML
     public MFXTextField expenseFormDetails;
     @FXML
-    public MFXButton expenseFormSaveBtn;
+    public MFXButton saveBtn;
     @FXML
-    public MFXButton expenseFormCancelBtn;
+    public MFXButton cancelBtn;
     @FXML
     public MFXDatePicker expenseFormDate;
     @FXML
@@ -103,30 +101,30 @@ public class ExpenseFormController implements Initializable {
 
         // Input listeners.
         requiredValidator(
-                expenseFormName, "Name is required.", expenseFormNameValidationLabel, expenseFormSaveBtn);
+                expenseFormName, "Name is required.", expenseFormNameValidationLabel, saveBtn);
         requiredValidator(
-                expenseFormDate, "Date is required.", expenseFormDateValidationLabel, expenseFormSaveBtn);
+                expenseFormDate, "Date is required.", expenseFormDateValidationLabel, saveBtn);
         requiredValidator(
                 expenseFormBranch,
                 "Branch is required.",
                 expenseFormBranchValidationLabel,
-                expenseFormSaveBtn);
+                saveBtn);
         requiredValidator(
                 expenseFormCategory,
                 "Category is required.",
                 expenseFormCategoryValidationLabel,
-                expenseFormSaveBtn);
+                saveBtn);
         requiredValidator(
                 expenseFormAmount,
                 "Amount can't be empty.",
                 expenseFormAmountValidationLabel,
-                expenseFormSaveBtn);
+                saveBtn);
 
         dialogOnActions();
     }
 
     private void dialogOnActions() {
-        expenseFormCancelBtn.setOnAction(
+        cancelBtn.setOnAction(
                 (event) -> {
                     closeDialog(event);
                     ExpensesViewModel.resetProperties();
@@ -139,78 +137,102 @@ public class ExpenseFormController implements Initializable {
                     expenseFormCategoryValidationLabel.setVisible(false);
                     expenseFormAmountValidationLabel.setVisible(false);
                 });
-        expenseFormSaveBtn.setOnAction(
+        saveBtn.setOnAction(
                 (event) -> {
-                    SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
                     if (!expenseFormNameValidationLabel.isVisible()
                             && !expenseFormDateValidationLabel.isVisible()
                             && !expenseFormBranchValidationLabel.isVisible()
                             && !expenseFormCategoryValidationLabel.isVisible()
                             && !expenseFormAmountValidationLabel.isVisible()) {
                         if (ExpensesViewModel.getId() > 0) {
-                            SpotyThreader.spotyThreadPool(() -> {
-                                try {
-                                    ExpensesViewModel.updateItem(this::onAction, this::onSuccess, this::onFailed);
-                                } catch (Exception e) {
-                                    SpotyLogger.writeToFile(e, this.getClass());
-                                }
-                            });
-
-                            SimpleNotification notification =
-                                    new SimpleNotification.NotificationBuilder("Expense updated successfully")
-                                            .duration(NotificationDuration.SHORT)
-                                            .icon("fas-circle-check")
-                                            .type(NotificationVariants.SUCCESS)
-                                            .build();
-                            notificationHolder.addNotification(notification);
-
-                            expenseFormBranch.clearSelection();
-                            expenseFormCategory.clearSelection();
-
-                            closeDialog(event);
+                            try {
+                                ExpensesViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
+                                closeDialog(event);
+                            } catch (Exception e) {
+                                SpotyLogger.writeToFile(e, this.getClass());
+                            }
                             return;
                         }
-//                        SpotyThreader.spotyThreadPool(() -> {
                         try {
-                            ExpensesViewModel.saveExpense(this::onAction, this::onSuccess, this::onFailed);
+                            ExpensesViewModel.saveExpense(this::onAction, this::onAddSuccess, this::onFailed);
+                            closeDialog(event);
                         } catch (Exception e) {
                             SpotyLogger.writeToFile(e, this.getClass());
                         }
-//                        });
-
-                        SimpleNotification notification =
-                                new SimpleNotification.NotificationBuilder("Expense saved successfully")
-                                        .duration(NotificationDuration.SHORT)
-                                        .icon("fas-circle-check")
-                                        .type(NotificationVariants.SUCCESS)
-                                        .build();
-                        notificationHolder.addNotification(notification);
-
-                        expenseFormBranch.clearSelection();
-                        expenseFormCategory.clearSelection();
-
-                        closeDialog(event);
                         return;
                     }
-                    SimpleNotification notification =
-                            new SimpleNotification.NotificationBuilder("Required fields missing")
-                                    .duration(NotificationDuration.SHORT)
-                                    .icon("fas-triangle-exclamation")
-                                    .type(NotificationVariants.ERROR)
-                                    .build();
-                    notificationHolder.addNotification(notification);
+                    onRequiredFieldsMissing();
                 });
     }
 
     private void onAction() {
-        System.out.println("Loading expenses...");
+        cancelBtn.setDisable(true);
+        saveBtn.setDisable(true);
+//        cancelBtn.setManaged(true);
+//        saveBtn.setManaged(true);
     }
 
-    private void onSuccess() {
-        System.out.println("Loaded expenses...");
+    private void onAddSuccess() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("Expense added successfully")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+        expenseFormBranch.clearSelection();
+        expenseFormCategory.clearSelection();
+
+        ExpensesViewModel.getAllExpenses(null, null, null);
+    }
+
+    private void onUpdatedSuccess() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("Expense updated successfully")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+        expenseFormBranch.clearSelection();
+        expenseFormCategory.clearSelection();
+
+        ExpensesViewModel.getAllExpenses(null, null, null);
     }
 
     private void onFailed() {
-        System.out.println("failed loading expenses...");
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("An error occurred")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        ExpensesViewModel.getAllExpenses(null, null, null);
+    }
+
+    private void onRequiredFieldsMissing() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("Required fields can't be null")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        ExpensesViewModel.getAllExpenses(null, null, null);
     }
 }

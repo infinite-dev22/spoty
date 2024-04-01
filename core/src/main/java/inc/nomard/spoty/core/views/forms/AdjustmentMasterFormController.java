@@ -15,10 +15,9 @@
 package inc.nomard.spoty.core.views.forms;
 
 import inc.nomard.spoty.core.components.navigation.Pages;
-import inc.nomard.spoty.core.components.notification.SimpleNotification;
-import inc.nomard.spoty.core.components.notification.SimpleNotificationHolder;
-import inc.nomard.spoty.core.components.notification.enums.NotificationDuration;
-import inc.nomard.spoty.core.components.notification.enums.NotificationVariants;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.MessageDuration;
+import inc.nomard.spoty.core.components.message.enums.MessageVariants;
 import inc.nomard.spoty.core.viewModels.BranchViewModel;
 import inc.nomard.spoty.core.viewModels.adjustments.AdjustmentDetailViewModel;
 import inc.nomard.spoty.core.viewModels.adjustments.AdjustmentMasterViewModel;
@@ -75,15 +74,9 @@ public class AdjustmentMasterFormController implements Initializable {
     @FXML
     public BorderPane adjustmentFormContentPane;
     @FXML
-    public Label adjustmentFormTitle;
+    public Label adjustmentFormTitle, adjustmentBranchValidationLabel, adjustmentDateValidationLabel;
     @FXML
-    public MFXButton adjustmentProductAddBtn;
-    @FXML
-    public Label adjustmentBranchValidationLabel;
-    @FXML
-    public Label adjustmentDateValidationLabel;
-    @FXML
-    public MFXButton adjustmentProductSaveBtn;
+    public MFXButton adjustmentProductAddBtn, saveBtn, cancelBtn;
     private MFXStageDialog dialog;
 
     private AdjustmentMasterFormController(Stage stage) {
@@ -128,12 +121,12 @@ public class AdjustmentMasterFormController implements Initializable {
                 adjustmentBranch,
                 "Branch is required.",
                 adjustmentBranchValidationLabel,
-                adjustmentProductSaveBtn);
+                saveBtn);
         requiredValidator(
                 adjustmentDate,
                 "Date is required.",
                 adjustmentDateValidationLabel,
-                adjustmentProductSaveBtn);
+                saveBtn);
 
         adjustmentAddProductBtnClicked();
         Platform.runLater(this::setupTable);
@@ -271,73 +264,35 @@ public class AdjustmentMasterFormController implements Initializable {
     }
 
     public void adjustmentSaveBtnClicked() {
-        SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
         if (AdjustmentDetailViewModel.adjustmentDetailsList.isEmpty()) {
-            SimpleNotification notification =
-                    new SimpleNotification.NotificationBuilder("Table can't be Empty")
-                            .duration(NotificationDuration.SHORT)
+            SpotyMessage notification =
+                    new SpotyMessage.MessageBuilder("Table can't be Empty")
+                            .duration(MessageDuration.SHORT)
                             .icon("fas-triangle-exclamation")
-                            .type(NotificationVariants.ERROR)
+                            .type(MessageVariants.ERROR)
                             .build();
-            notificationHolder.addNotification(notification);
+            notificationHolder.addMessage(notification);
             return;
         }
         if (!adjustmentBranchValidationLabel.isVisible()
                 && !adjustmentDateValidationLabel.isVisible()) {
             if (AdjustmentMasterViewModel.getId() > 0) {
-                SpotyThreader.spotyThreadPool(
-                        () -> {
-                            try {
-                                AdjustmentMasterViewModel.updateItem(this::onAction, this::onSuccess, this::onFailed);
-                            } catch (Exception e) {
-                                SpotyLogger.writeToFile(e, this.getClass());
-                            }
-                        });
-
-                SimpleNotification notification =
-                        new SimpleNotification.NotificationBuilder("Product adjustment updated successfully")
-                                .duration(NotificationDuration.MEDIUM)
-                                .icon("fas-circle-check")
-                                .type(NotificationVariants.SUCCESS)
-                                .build();
-                notificationHolder.addNotification(notification);
-
-                adjustmentCancelBtnClicked();
-
-                adjustmentBranch.clearSelection();
-
+                try {
+                    AdjustmentMasterViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
+                } catch (Exception e) {
+                    SpotyLogger.writeToFile(e, this.getClass());
+                }
                 return;
             }
-            SpotyThreader.spotyThreadPool(
-                    () -> {
-                        try {
-                            AdjustmentMasterViewModel.saveAdjustmentMaster(this::onAction, this::onSuccess, this::onFailed);
-                        } catch (Exception e) {
-                            SpotyLogger.writeToFile(e, this.getClass());
-                        }
-                    });
-
-            SimpleNotification notification =
-                    new SimpleNotification.NotificationBuilder("Product adjustment saved successfully")
-                            .duration(NotificationDuration.MEDIUM)
-                            .icon("fas-circle-check")
-                            .type(NotificationVariants.SUCCESS)
-                            .build();
-            notificationHolder.addNotification(notification);
-
-            adjustmentCancelBtnClicked();
-
-            adjustmentBranch.clearSelection();
-
+            try {
+                AdjustmentMasterViewModel.saveAdjustmentMaster(this::onAction, this::onAddSuccess, this::onFailed);
+            } catch (Exception e) {
+                SpotyLogger.writeToFile(e, this.getClass());
+            }
             return;
         }
-        SimpleNotification notification =
-                new SimpleNotification.NotificationBuilder("Required fields missing")
-                        .duration(NotificationDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(NotificationVariants.ERROR)
-                        .build();
-        notificationHolder.addNotification(notification);
+        onRequiredFieldsMissing();
     }
 
     public void adjustmentCancelBtnClicked() {
@@ -352,14 +307,72 @@ public class AdjustmentMasterFormController implements Initializable {
     }
 
     private void onAction() {
-        System.out.println("Loading adjustment master...");
+        cancelBtn.setDisable(true);
+        saveBtn.setDisable(true);
+//        cancelBtn.setManaged(true);
+//        saveBtn.setManaged(true);
     }
 
-    private void onSuccess() {
-        System.out.println("Loaded adjustment master...");
+    private void onAddSuccess() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("Adjustment added successfully")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        adjustmentCancelBtnClicked();
+        adjustmentBranch.clearSelection();
+
+        AdjustmentMasterViewModel.getAllAdjustmentMasters(null, null, null);
+    }
+
+    private void onUpdatedSuccess() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("Adjustment updated successfully")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        AdjustmentMasterViewModel.getAllAdjustmentMasters(null, null, null);
     }
 
     private void onFailed() {
-        System.out.println("failed loading adjustment master...");
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("An error occurred")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        AdjustmentMasterViewModel.getAllAdjustmentMasters(null, null, null);
+    }
+
+    private void onRequiredFieldsMissing() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("Required fields can't be null")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        AdjustmentMasterViewModel.getAllAdjustmentMasters(null, null, null);
     }
 }

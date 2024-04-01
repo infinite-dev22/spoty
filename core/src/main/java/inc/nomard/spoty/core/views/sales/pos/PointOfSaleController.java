@@ -15,10 +15,9 @@
 package inc.nomard.spoty.core.views.sales.pos;
 
 import inc.nomard.spoty.core.components.animations.SpotyAnimations;
-import inc.nomard.spoty.core.components.notification.SimpleNotification;
-import inc.nomard.spoty.core.components.notification.SimpleNotificationHolder;
-import inc.nomard.spoty.core.components.notification.enums.NotificationDuration;
-import inc.nomard.spoty.core.components.notification.enums.NotificationVariants;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.MessageDuration;
+import inc.nomard.spoty.core.components.message.enums.MessageVariants;
 import inc.nomard.spoty.core.viewModels.BranchViewModel;
 import inc.nomard.spoty.core.viewModels.CustomerViewModel;
 import inc.nomard.spoty.core.viewModels.ProductCategoryViewModel;
@@ -346,7 +345,7 @@ public class PointOfSaleController implements Initializable {
         SaleMasterViewModel.setPaid(calculateTotal(SaleDetailViewModel.getSaleDetails()));
         SaleMasterViewModel.setNote("Approved.");
 
-        SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
         SpotyThreader.spotyThreadPool(
                 () -> {
                     try {
@@ -356,13 +355,13 @@ public class PointOfSaleController implements Initializable {
                     }
                 });
 
-        SimpleNotification notification =
-                new SimpleNotification.NotificationBuilder("Sale saved successfully")
-                        .duration(NotificationDuration.MEDIUM)
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("Sale saved successfully")
+                        .duration(MessageDuration.MEDIUM)
                         .icon("fas-circle-check")
-                        .type(NotificationVariants.SUCCESS)
+                        .type(MessageVariants.SUCCESS)
                         .build();
-        notificationHolder.addNotification(notification);
+        notificationHolder.addMessage(notification);
     }
 
 

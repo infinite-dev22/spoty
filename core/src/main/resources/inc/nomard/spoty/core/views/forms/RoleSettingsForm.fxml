@@ -631,8 +631,8 @@
             <padding>
                 <Insets topRightBottomLeft="10"/>
             </padding>
-            <MFXButton styleClass="filled" onAction="#save" text="Save"/>
-            <MFXButton styleClass="outlined" onAction="#close" text="Cancel"/>
+            <MFXButton fx:id="saveBtn" styleClass="filled" onAction="#save" text="Save"/>
+            <MFXButton fx:id="cancelBtn" styleClass="outlined" onAction="#close" text="Cancel"/>
         </HBox>
     </bottom>
     <top>

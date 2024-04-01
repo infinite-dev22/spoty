@@ -14,6 +14,12 @@
 
 package inc.nomard.spoty.core.views.forms;
 
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.MessageDuration;
+import inc.nomard.spoty.core.components.message.enums.MessageVariants;
+import inc.nomard.spoty.core.viewModels.hrm.pay_roll.BeneficiaryBadgeViewModel;
+import inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll.BeneficiaryType;
+import inc.nomard.spoty.utils.SpotyLogger;
 import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
@@ -21,14 +27,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
-import inc.nomard.spoty.core.components.notification.SimpleNotification;
-import inc.nomard.spoty.core.components.notification.SimpleNotificationHolder;
-import inc.nomard.spoty.core.components.notification.enums.NotificationDuration;
-import inc.nomard.spoty.core.components.notification.enums.NotificationVariants;
-import inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll.BeneficiaryType;
-import inc.nomard.spoty.utils.SpotyLogger;
-import inc.nomard.spoty.utils.SpotyThreader;
-import inc.nomard.spoty.core.viewModels.hrm.pay_roll.BeneficiaryBadgeViewModel;
 
 import java.net.URL;
 import java.util.Objects;
@@ -40,25 +38,15 @@ import static inc.nomard.spoty.core.Validators.requiredValidator;
 public class BeneficiaryBadgeFormController implements Initializable {
     private static BeneficiaryBadgeFormController instance;
     @FXML
-    public MFXButton saveBtn;
-    @FXML
-    public MFXButton cancelBtn;
+    public MFXButton saveBtn, cancelBtn;
     @FXML
     public MFXFilterComboBox<BeneficiaryType> beneficiaryType;
     @FXML
-    public Label beneficiaryTypeValidationLabel;
+    public MFXTextField name, description;
     @FXML
-    public MFXTextField name;
-    @FXML
-    public Label nameValidationLabel;
-    @FXML
-    public MFXTextField description;
-    @FXML
-    public Label descriptionValidationLabel;
+    public Label descriptionValidationLabel, colorValidationLabel, nameValidationLabel, beneficiaryTypeValidationLabel;
     @FXML
     public ColorPicker color;
-    @FXML
-    public Label colorValidationLabel;
 
     public static BeneficiaryBadgeFormController getInstance() {
         if (Objects.equals(instance, null)) instance = new BeneficiaryBadgeFormController();
@@ -99,68 +87,95 @@ public class BeneficiaryBadgeFormController implements Initializable {
                 });
         saveBtn.setOnAction(
                 (event) -> {
-                    SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
-
                     if (!nameValidationLabel.isVisible()
                             && !descriptionValidationLabel.isVisible()
                             && !colorValidationLabel.isVisible()) {
                         if (BeneficiaryBadgeViewModel.getId() > 0) {
-                            SpotyThreader.spotyThreadPool(() -> {
-                                try {
-                                    BeneficiaryBadgeViewModel.updateItem(this::onAction, this::onSuccess, this::onFailed);
-                                } catch (Exception e) {
-                                    SpotyLogger.writeToFile(e, this.getClass());
-                                }
-                            });
-
-                            SimpleNotification notification =
-                                    new SimpleNotification.NotificationBuilder("Leave status updated successfully")
-                                            .duration(NotificationDuration.SHORT)
-                                            .icon("fas-circle-check")
-                                            .type(NotificationVariants.SUCCESS)
-                                            .build();
-                            notificationHolder.addNotification(notification);
-
-                            closeDialog(event);
+                            try {
+                                BeneficiaryBadgeViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
+                                closeDialog(event);
+                            } catch (Exception e) {
+                                SpotyLogger.writeToFile(e, this.getClass());
+                            }
                             return;
                         }
 
                         try {
-                            BeneficiaryBadgeViewModel.saveBeneficiaryBadge(this::onAction, this::onSuccess, this::onFailed);
+                            BeneficiaryBadgeViewModel.saveBeneficiaryBadge(this::onAction, this::onAddSuccess, this::onFailed);
+                            closeDialog(event);
                         } catch (Exception e) {
                             SpotyLogger.writeToFile(e, this.getClass());
                         }
-
-                        SimpleNotification notification =
-                                new SimpleNotification.NotificationBuilder("Leave status saved successfully")
-                                        .duration(NotificationDuration.SHORT)
-                                        .icon("fas-circle-check")
-                                        .type(NotificationVariants.SUCCESS)
-                                        .build();
-                        notificationHolder.addNotification(notification);
-
-                        closeDialog(event);
                         return;
                     }
-                    SimpleNotification notification =
-                            new SimpleNotification.NotificationBuilder("Required fields missing")
-                                    .duration(NotificationDuration.SHORT)
-                                    .icon("fas-triangle-exclamation")
-                                    .type(NotificationVariants.ERROR)
-                                    .build();
-                    notificationHolder.addNotification(notification);
+                    onRequiredFieldsMissing();
                 });
     }
 
     private void onAction() {
-        System.out.println("Loading employment status...");
+        cancelBtn.setDisable(true);
+        saveBtn.setDisable(true);
+//        cancelBtn.setManaged(true);
+//        saveBtn.setManaged(true);
     }
 
-    private void onSuccess() {
-        System.out.println("Loaded employment status...");
+    private void onAddSuccess() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("Beneficiary badge added successfully")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        BeneficiaryBadgeViewModel.getAllBeneficiaryBadges(null, null, null);
+    }
+
+    private void onUpdatedSuccess() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("Beneficiary badge updated successfully")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        BeneficiaryBadgeViewModel.getAllBeneficiaryBadges(null, null, null);
     }
 
     private void onFailed() {
-        System.out.println("failed loading employment status...");
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("An error occurred")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        BeneficiaryBadgeViewModel.getAllBeneficiaryBadges(null, null, null);
+    }
+
+    private void onRequiredFieldsMissing() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("Required fields can't be null")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        BeneficiaryBadgeViewModel.getAllBeneficiaryBadges(null, null, null);
     }
 }

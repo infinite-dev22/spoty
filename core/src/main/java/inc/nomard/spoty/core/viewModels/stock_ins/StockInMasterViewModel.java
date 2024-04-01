@@ -189,7 +189,7 @@ public class StockInMasterViewModel {
         SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void getStockInMasters(
+    public static void getAllStockInMasters(
             @Nullable ParameterlessConsumer onActivity,
             @Nullable ParameterlessConsumer onSuccess,
             @Nullable ParameterlessConsumer onFailed) {

@@ -205,7 +205,7 @@ public class RequisitionMasterViewModel {
         // getRequisitionMasters();
     }
 
-    public static void getRequisitionMasters(
+    public static void getAllRequisitionMasters(
             @Nullable ParameterlessConsumer onActivity,
             @Nullable ParameterlessConsumer onSuccess,
             @Nullable ParameterlessConsumer onFailed) {

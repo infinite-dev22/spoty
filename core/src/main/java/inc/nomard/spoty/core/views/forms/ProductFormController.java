@@ -15,20 +15,19 @@
 package inc.nomard.spoty.core.views.forms;
 
 import inc.nomard.spoty.core.SpotyCoreResourceLoader;
-import inc.nomard.spoty.core.components.notification.SimpleNotification;
-import inc.nomard.spoty.core.components.notification.SimpleNotificationHolder;
-import inc.nomard.spoty.core.components.notification.enums.NotificationDuration;
-import inc.nomard.spoty.core.components.notification.enums.NotificationVariants;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.MessageDuration;
+import inc.nomard.spoty.core.components.message.enums.MessageVariants;
 import inc.nomard.spoty.core.values.strings.Values;
 import inc.nomard.spoty.core.viewModels.BrandViewModel;
 import inc.nomard.spoty.core.viewModels.ProductCategoryViewModel;
 import inc.nomard.spoty.core.viewModels.ProductViewModel;
 import inc.nomard.spoty.core.viewModels.UOMViewModel;
+import inc.nomard.spoty.core.viewModels.hrm.employee.DesignationViewModel;
 import inc.nomard.spoty.network_bridge.dtos.Brand;
 import inc.nomard.spoty.network_bridge.dtos.ProductCategory;
 import inc.nomard.spoty.network_bridge.dtos.UnitOfMeasure;
 import inc.nomard.spoty.utils.SpotyLogger;
-import inc.nomard.spoty.utils.SpotyThreader;
 import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.utils.StringUtils;
@@ -78,7 +77,8 @@ public class ProductFormController implements Initializable {
     @FXML
     public ImageView productImageView;
     @FXML
-    public MFXButton productSaveBtn, productCancelBtn;
+    public MFXButton saveBtn,
+            cancelBtn;
     public Image productImage;
     @FXML
     public Label productBarcodeTypeValidationLabel,
@@ -184,7 +184,7 @@ public class ProductFormController implements Initializable {
     }
 
     private void dialogOnActions() {
-        productCancelBtn.setOnAction(
+        cancelBtn.setOnAction(
                 (event) -> {
                     ProductViewModel.resetProperties();
 
@@ -203,10 +203,8 @@ public class ProductFormController implements Initializable {
                     productPriceValidationLabel.setVisible(false);
                     productNameValidationLabel.setVisible(false);
                 });
-        productSaveBtn.setOnAction(
+        saveBtn.setOnAction(
                 (event) -> {
-                    SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
-
                     if (!productBarcodeTypeValidationLabel.isVisible()
                             && !productUOMValidationLabel.isVisible()
                             && !productCategoryValidationLabel.isVisible()
@@ -214,79 +212,95 @@ public class ProductFormController implements Initializable {
                             && !productPriceValidationLabel.isVisible()
                             && !productNameValidationLabel.isVisible()) {
                         if (ProductViewModel.getId() > 0) {
-                            SpotyThreader.spotyThreadPool(
-                                    () -> {
-                                        try {
-                                            ProductViewModel.updateProduct(this::onAction, this::onSuccess, this::onFailed);
-                                        } catch (Exception e) {
-                                            SpotyLogger.writeToFile(e, this.getClass());
-                                        }
-                                    });
-
-                            SimpleNotification notification =
-                                    new SimpleNotification.NotificationBuilder("Branch updated successfully")
-                                            .duration(NotificationDuration.SHORT)
-                                            .icon("fas-circle-check")
-                                            .type(NotificationVariants.SUCCESS)
-                                            .build();
-                            notificationHolder.addNotification(notification);
-
-                            closeDialog(event);
-
-                            productBrand.clearSelection();
-                            productCategory.clearSelection();
-                            productUOM.clearSelection();
-                            productBarcodeType.clearSelection();
-                            productType.clearSelection();
-
+                            try {
+                                ProductViewModel.updateProduct(this::onAction, this::onUpdatedSuccess, this::onFailed);
+                                closeDialog(event);
+                            } catch (Exception e) {
+                                SpotyLogger.writeToFile(e, this.getClass());
+                            }
                             return;
                         }
-                        SpotyThreader.spotyThreadPool(
-                                () -> {
-                                    try {
-                                        ProductViewModel.saveProduct(this::onAction, this::onSuccess, this::onFailed);
-                                    } catch (Exception e) {
-                                        SpotyLogger.writeToFile(e, this.getClass());
-                                    }
-                                });
-
-                        SimpleNotification notification =
-                                new SimpleNotification.NotificationBuilder("Branch saved successfully")
-                                        .duration(NotificationDuration.SHORT)
-                                        .icon("fas-circle-check")
-                                        .type(NotificationVariants.SUCCESS)
-                                        .build();
-                        notificationHolder.addNotification(notification);
-
-                        closeDialog(event);
-
-                        productBrand.clearSelection();
-                        productCategory.clearSelection();
-                        productUOM.clearSelection();
-                        productBarcodeType.clearSelection();
-                        productType.clearSelection();
-
+                        try {
+                            ProductViewModel.saveProduct(this::onAction, this::onAddSuccess, this::onFailed);
+                            closeDialog(event);
+                        } catch (Exception e) {
+                            SpotyLogger.writeToFile(e, this.getClass());
+                        }
+//                        productBrand.clearSelection();
+//                        productCategory.clearSelection();
+//                        productUOM.clearSelection();
+//                        productBarcodeType.clearSelection();
+//                        productType.clearSelection();
                         return;
                     }
-                    SimpleNotification notification =
-                            new SimpleNotification.NotificationBuilder("Required fields missing")
-                                    .duration(NotificationDuration.SHORT)
-                                    .icon("fas-triangle-exclamation")
-                                    .type(NotificationVariants.ERROR)
-                                    .build();
-                    notificationHolder.addNotification(notification);
+                    onRequiredFieldsMissing();
                 });
     }
 
     private void onAction() {
-        System.out.println("Loading products...");
+        cancelBtn.setDisable(true);
+        saveBtn.setDisable(true);
+//        cancelBtn.setManaged(true);
+//        saveBtn.setManaged(true);
     }
 
-    private void onSuccess() {
-        System.out.println("Loaded products...");
+    private void onAddSuccess() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("Designation added successfully")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        DesignationViewModel.getAllDesignations(null, null, null);
+    }
+
+    private void onUpdatedSuccess() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("Product updated successfully")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        ProductViewModel.getAllProducts(null, null, null);
     }
 
     private void onFailed() {
-        System.out.println("failed loading products...");
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("An error occurred")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        ProductViewModel.getAllProducts(null, null, null);
+    }
+
+    private void onRequiredFieldsMissing() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("Required fields can't be null")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        ProductViewModel.getAllProducts(null, null, null);
     }
 }

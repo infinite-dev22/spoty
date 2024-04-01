@@ -14,13 +14,11 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import inc.nomard.spoty.core.components.notification.SimpleNotification;
-import inc.nomard.spoty.core.components.notification.SimpleNotificationHolder;
-import inc.nomard.spoty.core.components.notification.enums.NotificationDuration;
-import inc.nomard.spoty.core.components.notification.enums.NotificationVariants;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.MessageDuration;
+import inc.nomard.spoty.core.components.message.enums.MessageVariants;
 import inc.nomard.spoty.core.viewModels.ProductCategoryViewModel;
 import inc.nomard.spoty.utils.SpotyLogger;
-import inc.nomard.spoty.utils.SpotyThreader;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import javafx.fxml.FXML;
@@ -42,9 +40,9 @@ public class ProductCategoryFormController implements Initializable {
     @FXML
     public MFXTextField dialogCategoryName;
     @FXML
-    public MFXButton dialogSaveBtn;
+    public MFXButton saveBtn;
     @FXML
-    public MFXButton dialogCancelBtn;
+    public MFXButton cancelBtn;
     @FXML
     public Label dialogCategoryCodeValidationLabel;
     @FXML
@@ -65,17 +63,17 @@ public class ProductCategoryFormController implements Initializable {
                 dialogCategoryCode,
                 "Name field is required.",
                 dialogCategoryCodeValidationLabel,
-                dialogSaveBtn);
+                saveBtn);
         requiredValidator(
                 dialogCategoryName,
                 "Name field is required.",
                 dialogCategoryNameValidationLabel,
-                dialogSaveBtn);
+                saveBtn);
         dialogOnActions();
     }
 
     private void dialogOnActions() {
-        dialogCancelBtn.setOnAction(
+        cancelBtn.setOnAction(
                 (event) -> {
                     closeDialog(event);
                     clearProductCategoryData();
@@ -83,69 +81,95 @@ public class ProductCategoryFormController implements Initializable {
                     dialogCategoryCodeValidationLabel.setVisible(false);
                     dialogCategoryNameValidationLabel.setVisible(false);
                 });
-        dialogSaveBtn.setOnAction(
+        saveBtn.setOnAction(
                 (event) -> {
-                    SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
                     if (!dialogCategoryCodeValidationLabel.isVisible()
                             && !dialogCategoryNameValidationLabel.isVisible()) {
                         if (ProductCategoryViewModel.getId() > 0) {
-                            SpotyThreader.spotyThreadPool(() -> {
-                                try {
-                                    updateItem(this::onAction, this::onSuccess, this::onFailed);
-                                } catch (Exception e) {
-                                    SpotyLogger.writeToFile(e, this.getClass());
-                                }
-                            });
-
-                            SimpleNotification notification =
-                                    new SimpleNotification.NotificationBuilder("Category updated successfully")
-                                            .duration(NotificationDuration.SHORT)
-                                            .icon("fas-circle-check")
-                                            .type(NotificationVariants.SUCCESS)
-                                            .build();
-                            notificationHolder.addNotification(notification);
-
-                            closeDialog(event);
-                            return;
-                        }
-                        SpotyThreader.spotyThreadPool(() -> {
                             try {
-                                saveProductCategory(this::onAction, this::onSuccess, this::onFailed);
+                                updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
+                                closeDialog(event);
                             } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }
-                        });
-
-                        SimpleNotification notification =
-                                new SimpleNotification.NotificationBuilder("Category added successfully")
-                                        .duration(NotificationDuration.SHORT)
-                                        .icon("fas-circle-check")
-                                        .type(NotificationVariants.SUCCESS)
-                                        .build();
-                        notificationHolder.addNotification(notification);
-
-                        closeDialog(event);
+                            return;
+                        }
+                        try {
+                            saveProductCategory(this::onAction, this::onAddSuccess, this::onFailed);
+                            closeDialog(event);
+                        } catch (Exception e) {
+                            SpotyLogger.writeToFile(e, this.getClass());
+                        }
                         return;
                     }
-                    SimpleNotification notification =
-                            new SimpleNotification.NotificationBuilder("Required fields missing")
-                                    .duration(NotificationDuration.SHORT)
-                                    .icon("fas-triangle-exclamation")
-                                    .type(NotificationVariants.ERROR)
-                                    .build();
-                    notificationHolder.addNotification(notification);
+                    onRequiredFieldsMissing();
                 });
     }
 
     private void onAction() {
-        System.out.println("Loading product category...");
+        cancelBtn.setDisable(true);
+        saveBtn.setDisable(true);
+//        cancelBtn.setManaged(true);
+//        saveBtn.setManaged(true);
     }
 
-    private void onSuccess() {
-        System.out.println("Loaded product category...");
+    private void onAddSuccess() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("Product category added successfully")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        ProductCategoryViewModel.getAllProductCategories(null, null, null);
+    }
+
+    private void onUpdatedSuccess() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("Product category updated successfully")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        ProductCategoryViewModel.getAllProductCategories(null, null, null);
     }
 
     private void onFailed() {
-        System.out.println("failed loading product category...");
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("An error occurred")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        ProductCategoryViewModel.getAllProductCategories(null, null, null);
+    }
+
+    private void onRequiredFieldsMissing() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("Required fields can't be null")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        ProductCategoryViewModel.getAllProductCategories(null, null, null);
     }
 }

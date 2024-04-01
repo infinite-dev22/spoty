@@ -224,28 +224,28 @@
     -fx-border-color: -mfx-border-gray;
 }
 
-/*NOTIFICATION STYLES*/
-.notification-holder {
+/*MESSAGE STYLES*/
+.message-holder {
     -fx-background-color: transparent;
     -fx-fill: transparent;
 }
 
-.notification {
+.message {
     -fx-background-color: transparent;
     -fx-fill: transparent;
 }
 
-.notification-layout {
+.message-layout {
     -fx-background-color: white;
     -foreground-color: black;
 }
 
-.notification-icon {
+.message-icon {
     -fx-background-color: rgba(0, 0, 0, 0.8);
     -foreground-color: black;
 }
 
-.notification-icon .mfx-font-icon {
+.message-icon .mfx-font-icon {
     -mfx-color: -mfx-nav-white-text;
 }
 
@@ -255,7 +255,7 @@
     -fx-border-color: #f5a089;
 }
 
-.error .notification-icon {
+.error .message-icon {
     -fx-background-color: #cd5235; /*red*/
 }
 
@@ -265,7 +265,7 @@
     -fx-border-color: #89f5a4;
 }
 
-.success .notification-icon {
+.success .message-icon {
     -fx-background-color: #35cc56; /*green.*/
 }
 

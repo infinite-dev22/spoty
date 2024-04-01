@@ -73,9 +73,9 @@
                           AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"/>
             <HBox alignment="CENTER_RIGHT" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                   AnchorPane.rightAnchor="0.0">
-                <MFXButton styleClass="filled" fx:id="stockInMasterSaveBtn"
+                <MFXButton styleClass="filled" fx:id="saveBtn"
                            onMouseClicked="#stockInMasterSaveBtnClicked" text="Save"/>
-                <MFXButton styleClass="outlined" onMouseClicked="#stockInMasterCancelBtnClicked" text="Cancel"/>
+                <MFXButton fx:id="cancelBtn" styleClass="outlined" onMouseClicked="#cancelBtnClicked" text="Cancel"/>
             </HBox>
         </AnchorPane>
     </center>

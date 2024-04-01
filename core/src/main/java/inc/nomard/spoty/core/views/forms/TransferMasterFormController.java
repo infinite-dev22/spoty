@@ -15,11 +15,11 @@
 package inc.nomard.spoty.core.views.forms;
 
 import inc.nomard.spoty.core.components.navigation.Pages;
-import inc.nomard.spoty.core.components.notification.SimpleNotification;
-import inc.nomard.spoty.core.components.notification.SimpleNotificationHolder;
-import inc.nomard.spoty.core.components.notification.enums.NotificationDuration;
-import inc.nomard.spoty.core.components.notification.enums.NotificationVariants;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.MessageDuration;
+import inc.nomard.spoty.core.components.message.enums.MessageVariants;
 import inc.nomard.spoty.core.viewModels.BranchViewModel;
+import inc.nomard.spoty.core.viewModels.hrm.employee.DesignationViewModel;
 import inc.nomard.spoty.core.viewModels.transfers.TransferDetailViewModel;
 import inc.nomard.spoty.core.viewModels.transfers.TransferMasterViewModel;
 import inc.nomard.spoty.core.views.BaseController;
@@ -87,7 +87,7 @@ public class TransferMasterFormController implements Initializable {
     @FXML
     public Label transferMasterFromBranchValidationLabel;
     @FXML
-    public MFXButton transferMasterSaveBtn;
+    public MFXButton saveBtn, cancelBtn;
     private MFXStageDialog dialog;
 
     private TransferMasterFormController(Stage stage) {
@@ -141,17 +141,17 @@ public class TransferMasterFormController implements Initializable {
                 transferMasterToBranch,
                 "Receiving branch is required.",
                 transferMasterToBranchValidationLabel,
-                transferMasterSaveBtn);
+                saveBtn);
         requiredValidator(
                 transferMasterFromBranch,
                 "Supplying branch is required.",
                 transferMasterFromBranchValidationLabel,
-                transferMasterSaveBtn);
+                saveBtn);
         requiredValidator(
                 transferMasterDate,
                 "Date is required.",
                 transferMasterDateValidationLabel,
-                transferMasterSaveBtn);
+                saveBtn);
 
         transferMasterAddProductBtnClicked();
 
@@ -287,76 +287,38 @@ public class TransferMasterFormController implements Initializable {
     }
 
     public void transferMasterSaveBtnClicked() {
-        SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
 
         if (!transferDetailTable.isDisabled()
                 && TransferDetailViewModel.transferDetailsList.isEmpty()) {
-            SimpleNotification notification =
-                    new SimpleNotification.NotificationBuilder("Table can't be Empty")
-                            .duration(NotificationDuration.SHORT)
+            SpotyMessage notification =
+                    new SpotyMessage.MessageBuilder("Table can't be Empty")
+                            .duration(MessageDuration.SHORT)
                             .icon("fas-triangle-exclamation")
-                            .type(NotificationVariants.ERROR)
+                            .type(MessageVariants.ERROR)
                             .build();
-            notificationHolder.addNotification(notification);
+            notificationHolder.addMessage(notification);
             return;
         }
         if (!transferMasterToBranchValidationLabel.isVisible()
                 && !transferMasterFromBranchValidationLabel.isVisible()
                 && !transferMasterDateValidationLabel.isVisible()) {
             if (TransferMasterViewModel.getId() > 0) {
-                SpotyThreader.spotyThreadPool(
-                        () -> {
-                            try {
-                                TransferMasterViewModel.updateItem(this::onAction, this::onSuccess, this::onFailed);
-                            } catch (Exception e) {
-                                SpotyLogger.writeToFile(e, this.getClass());
-                            }
-                        });
-
-                SimpleNotification notification =
-                        new SimpleNotification.NotificationBuilder("Transfer updated successfully")
-                                .duration(NotificationDuration.MEDIUM)
-                                .icon("fas-circle-check")
-                                .type(NotificationVariants.SUCCESS)
-                                .build();
-                notificationHolder.addNotification(notification);
-
-                transferMasterFromBranch.clearSelection();
-                transferMasterToBranch.clearSelection();
-
-                transferMasterCancelBtnClicked();
+                try {
+                    TransferMasterViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
+                } catch (Exception e) {
+                    SpotyLogger.writeToFile(e, this.getClass());
+                }
                 return;
             }
-            SpotyThreader.spotyThreadPool(
-                    () -> {
-                        try {
-                            TransferMasterViewModel.saveTransferMaster(this::onAction, this::onSuccess, this::onFailed);
-                        } catch (Exception e) {
-                            SpotyLogger.writeToFile(e, this.getClass());
-                        }
-                    });
-
-            SimpleNotification notification =
-                    new SimpleNotification.NotificationBuilder("Transfer saved successfully")
-                            .duration(NotificationDuration.MEDIUM)
-                            .icon("fas-circle-check")
-                            .type(NotificationVariants.SUCCESS)
-                            .build();
-            notificationHolder.addNotification(notification);
-
-            transferMasterFromBranch.clearSelection();
-            transferMasterToBranch.clearSelection();
-
-            transferMasterCancelBtnClicked();
+            try {
+                TransferMasterViewModel.saveTransferMaster(this::onAction, this::onAddSuccess, this::onFailed);
+            } catch (Exception e) {
+                SpotyLogger.writeToFile(e, this.getClass());
+            }
             return;
         }
-        SimpleNotification notification =
-                new SimpleNotification.NotificationBuilder("Required fields missing")
-                        .duration(NotificationDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(NotificationVariants.ERROR)
-                        .build();
-        notificationHolder.addNotification(notification);
+        onRequiredFieldsMissing();
     }
 
     public void transferMasterCancelBtnClicked() {
@@ -370,14 +332,71 @@ public class TransferMasterFormController implements Initializable {
     }
 
     private void onAction() {
-        System.out.println("Loading bank...");
+        cancelBtn.setDisable(true);
+        saveBtn.setDisable(true);
+//        cancelBtn.setManaged(true);
+//        saveBtn.setManaged(true);
     }
 
-    private void onSuccess() {
-        System.out.println("Loaded bank...");
+    private void onAddSuccess() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("Designation added successfully")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+        transferMasterCancelBtnClicked();
+
+        DesignationViewModel.getAllDesignations(null, null, null);
+    }
+
+    private void onUpdatedSuccess() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("Designation updated successfully")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+        transferMasterCancelBtnClicked();
+
+        DesignationViewModel.getAllDesignations(null, null, null);
     }
 
     private void onFailed() {
-        System.out.println("failed loading bank...");
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("An error occurred")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        DesignationViewModel.getAllDesignations(null, null, null);
+    }
+
+    private void onRequiredFieldsMissing() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("Required fields can't be null")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        DesignationViewModel.getAllDesignations(null, null, null);
     }
 }

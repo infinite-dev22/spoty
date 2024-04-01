@@ -21,6 +21,7 @@ module spoty.core {
     requires com.calendarfx.view;
     requires inc.nomard.spoty.responsive_fx;
     requires spoty.seamless.updater;
+    requires froxty;
 
     opens inc.nomard.spoty.core.views;
     opens inc.nomard.spoty.core.views.login;
@@ -55,11 +56,11 @@ module spoty.core {
     opens inc.nomard.spoty.core.views.forms;
     opens inc.nomard.spoty.core.views.splash;
     opens inc.nomard.spoty.core.components.navigation;
-    opens inc.nomard.spoty.core.components.notification;
+    opens inc.nomard.spoty.core.components.message;
     opens inc.nomard.spoty.core.components.animations;
     opens inc.nomard.spoty.core.components;
     opens inc.nomard.spoty.core;
-    opens inc.nomard.spoty.core.components.notification.enums;
+    opens inc.nomard.spoty.core.components.message.enums;
     opens inc.nomard.spoty.core.components.title;
     opens inc.nomard.spoty.core.views.sales.pos;
     opens inc.nomard.spoty.core.views.printable.general;

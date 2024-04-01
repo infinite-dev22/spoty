@@ -15,10 +15,9 @@
 package inc.nomard.spoty.core.views.forms;
 
 import inc.nomard.spoty.core.components.navigation.Pages;
-import inc.nomard.spoty.core.components.notification.SimpleNotification;
-import inc.nomard.spoty.core.components.notification.SimpleNotificationHolder;
-import inc.nomard.spoty.core.components.notification.enums.NotificationDuration;
-import inc.nomard.spoty.core.components.notification.enums.NotificationVariants;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.MessageDuration;
+import inc.nomard.spoty.core.components.message.enums.MessageVariants;
 import inc.nomard.spoty.core.values.strings.Values;
 import inc.nomard.spoty.core.viewModels.BranchViewModel;
 import inc.nomard.spoty.core.viewModels.CustomerViewModel;
@@ -98,7 +97,8 @@ public class SaleMasterFormController implements Initializable {
     @FXML
     public Label salePaymentStatusValidationLabel;
     @FXML
-    public MFXButton saleMasterSaveBtn;
+    public MFXButton saveBtn,
+            cancelBtn;
     private MFXStageDialog dialog;
 
     private SaleMasterFormController(Stage stage) {
@@ -157,17 +157,17 @@ public class SaleMasterFormController implements Initializable {
 
         // input validators.
         requiredValidator(
-                saleBranch, "Branch is required.", saleBranchValidationLabel, saleMasterSaveBtn);
+                saleBranch, "Branch is required.", saleBranchValidationLabel, saveBtn);
         requiredValidator(
-                saleCustomer, "Customer is required.", saleCustomerValidationLabel, saleMasterSaveBtn);
-        requiredValidator(saleDate, "Date is required.", saleDateValidationLabel, saleMasterSaveBtn);
+                saleCustomer, "Customer is required.", saleCustomerValidationLabel, saveBtn);
+        requiredValidator(saleDate, "Date is required.", saleDateValidationLabel, saveBtn);
         requiredValidator(
-                saleStatus, "Sale Status is required.", saleStatusValidationLabel, saleMasterSaveBtn);
+                saleStatus, "Sale Status is required.", saleStatusValidationLabel, saveBtn);
         requiredValidator(
                 salePaymentStatus,
                 "Payment status is required.",
                 salePaymentStatusValidationLabel,
-                saleMasterSaveBtn);
+                saveBtn);
 
         setupTable();
     }
@@ -195,16 +195,16 @@ public class SaleMasterFormController implements Initializable {
     }
 
     public void saveBtnClicked() {
-        SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
 
         if (!saleDetailTable.isDisabled() && SaleDetailViewModel.saleDetailsList.isEmpty()) {
-            SimpleNotification notification =
-                    new SimpleNotification.NotificationBuilder("Table can't be Empty")
-                            .duration(NotificationDuration.SHORT)
+            SpotyMessage notification =
+                    new SpotyMessage.MessageBuilder("Table can't be Empty")
+                            .duration(MessageDuration.SHORT)
                             .icon("fas-triangle-exclamation")
-                            .type(NotificationVariants.ERROR)
+                            .type(MessageVariants.ERROR)
                             .build();
-            notificationHolder.addNotification(notification);
+            notificationHolder.addMessage(notification);
             return;
         }
         if (!saleCustomerValidationLabel.isVisible()
@@ -213,63 +213,21 @@ public class SaleMasterFormController implements Initializable {
                 && !saleStatusValidationLabel.isVisible()
                 && !salePaymentStatusValidationLabel.isVisible()) {
             if (SaleMasterViewModel.getId() > 0) {
-                SpotyThreader.spotyThreadPool(
-                        () -> {
-                            try {
-                                SaleMasterViewModel.updateItem(this::onAction, this::onSuccess, this::onFailed);
-                            } catch (Exception e) {
-                                SpotyLogger.writeToFile(e, this.getClass());
-                            }
-                        });
-
-                SimpleNotification notification =
-                        new SimpleNotification.NotificationBuilder("Sale updated successfully")
-                                .duration(NotificationDuration.MEDIUM)
-                                .icon("fas-circle-check")
-                                .type(NotificationVariants.SUCCESS)
-                                .build();
-                notificationHolder.addNotification(notification);
-
-                saleCustomer.clearSelection();
-                saleBranch.clearSelection();
-                saleStatus.clearSelection();
-                salePaymentStatus.clearSelection();
-
-                cancelBtnClicked();
+                try {
+                    SaleMasterViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
+                } catch (Exception e) {
+                    SpotyLogger.writeToFile(e, this.getClass());
+                }
                 return;
             }
-            SpotyThreader.spotyThreadPool(
-                    () -> {
-                        try {
-                            SaleMasterViewModel.saveSaleMaster(this::onAction, this::onSuccess, this::onFailed);
-                        } catch (Exception e) {
-                            SpotyLogger.writeToFile(e, this.getClass());
-                        }
-                    });
-
-            SimpleNotification notification =
-                    new SimpleNotification.NotificationBuilder("Sale saved successfully")
-                            .duration(NotificationDuration.MEDIUM)
-                            .icon("fas-circle-check")
-                            .type(NotificationVariants.SUCCESS)
-                            .build();
-            notificationHolder.addNotification(notification);
-
-            saleCustomer.clearSelection();
-            saleBranch.clearSelection();
-            saleStatus.clearSelection();
-            salePaymentStatus.clearSelection();
-
-            cancelBtnClicked();
+            try {
+                SaleMasterViewModel.saveSaleMaster(this::onAction, this::onAddSuccess, this::onFailed);
+            } catch (Exception e) {
+                SpotyLogger.writeToFile(e, this.getClass());
+            }
             return;
         }
-        SimpleNotification notification =
-                new SimpleNotification.NotificationBuilder("Required fields missing")
-                        .duration(NotificationDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(NotificationVariants.ERROR)
-                        .build();
-        notificationHolder.addNotification(notification);
+        onRequiredFieldsMissing();
     }
 
     public void cancelBtnClicked() {
@@ -411,14 +369,71 @@ public class SaleMasterFormController implements Initializable {
     }
 
     private void onAction() {
-        System.out.println("Loading sales master...");
+        cancelBtn.setDisable(true);
+        saveBtn.setDisable(true);
+//        cancelBtn.setManaged(true);
+//        saveBtn.setManaged(true);
     }
 
-    private void onSuccess() {
-        System.out.println("Loaded sales master...");
+    private void onAddSuccess() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("Sale added successfully")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+        cancelBtnClicked();
+
+        SaleMasterViewModel.getAllSaleMasters(null, null, null);
+    }
+
+    private void onUpdatedSuccess() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("Sale updated successfully")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+        cancelBtnClicked();
+
+        SaleMasterViewModel.getAllSaleMasters(null, null, null);
     }
 
     private void onFailed() {
-        System.out.println("failed loading sales master...");
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("An error occurred")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        SaleMasterViewModel.getAllSaleMasters(null, null, null);
+    }
+
+    private void onRequiredFieldsMissing() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("Required fields can't be null")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        SaleMasterViewModel.getAllSaleMasters(null, null, null);
     }
 }

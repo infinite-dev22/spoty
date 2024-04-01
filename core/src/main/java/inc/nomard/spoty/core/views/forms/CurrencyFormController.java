@@ -14,13 +14,11 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import inc.nomard.spoty.core.components.notification.SimpleNotification;
-import inc.nomard.spoty.core.components.notification.SimpleNotificationHolder;
-import inc.nomard.spoty.core.components.notification.enums.NotificationDuration;
-import inc.nomard.spoty.core.components.notification.enums.NotificationVariants;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.MessageDuration;
+import inc.nomard.spoty.core.components.message.enums.MessageVariants;
 import inc.nomard.spoty.core.viewModels.CurrencyViewModel;
 import inc.nomard.spoty.utils.SpotyLogger;
-import inc.nomard.spoty.utils.SpotyThreader;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import javafx.fxml.FXML;
@@ -41,9 +39,9 @@ public class CurrencyFormController implements Initializable {
     @FXML
     public MFXTextField currencyFormName;
     @FXML
-    public MFXButton currencyFormSaveBtn;
+    public MFXButton saveBtn;
     @FXML
-    public MFXButton currencyFormCancelBtn;
+    public MFXButton cancelBtn;
     @FXML
     public MFXTextField currencyFormCode;
     @FXML
@@ -69,17 +67,17 @@ public class CurrencyFormController implements Initializable {
                 currencyFormName,
                 "Name is required.",
                 currencyFormNameValidationLabel,
-                currencyFormSaveBtn);
+                saveBtn);
         requiredValidator(
                 currencyFormCode,
                 "Code is required.",
                 currencyFormCodeValidationLabel,
-                currencyFormSaveBtn);
+                saveBtn);
         dialogOnActions();
     }
 
     private void dialogOnActions() {
-        currencyFormCancelBtn.setOnAction(
+        cancelBtn.setOnAction(
                 (event) -> {
                     clearCurrencyData();
 
@@ -88,70 +86,95 @@ public class CurrencyFormController implements Initializable {
                     currencyFormNameValidationLabel.setVisible(false);
                     currencyFormCodeValidationLabel.setVisible(false);
                 });
-        currencyFormSaveBtn.setOnAction(
+        saveBtn.setOnAction(
                 (event) -> {
-                    SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
-
                     if (!currencyFormNameValidationLabel.isVisible()
                             && !currencyFormCodeValidationLabel.isVisible()) {
                         if (CurrencyViewModel.getId() > 0) {
-                            SpotyThreader.spotyThreadPool(() -> {
-                                try {
-                                    CurrencyViewModel.updateItem(this::onAction, this::onSuccess, this::onFailed);
-                                } catch (Exception e) {
-                                    SpotyLogger.writeToFile(e.getCause(), this.getClass());
-                                }
-                            });
-
-                            SimpleNotification notification =
-                                    new SimpleNotification.NotificationBuilder("Currency updated successfully")
-                                            .duration(NotificationDuration.SHORT)
-                                            .icon("fas-circle-check")
-                                            .type(NotificationVariants.SUCCESS)
-                                            .build();
-                            notificationHolder.addNotification(notification);
-
-                            closeDialog(event);
+                            try {
+                                CurrencyViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
+                                closeDialog(event);
+                            } catch (Exception e) {
+                                SpotyLogger.writeToFile(e.getCause(), this.getClass());
+                            }
                             return;
                         }
-                        SpotyThreader.spotyThreadPool(() -> {
-                            try {
-                                saveCurrency(this::onAction, this::onSuccess, this::onFailed);
-                            } catch (Exception e) {
-                                SpotyLogger.writeToFile(e, this.getClass());
-                            }
-                        });
-
-                        SimpleNotification notification =
-                                new SimpleNotification.NotificationBuilder("Currency saved successfully")
-                                        .duration(NotificationDuration.SHORT)
-                                        .icon("fas-circle-check")
-                                        .type(NotificationVariants.SUCCESS)
-                                        .build();
-                        notificationHolder.addNotification(notification);
-
-                        closeDialog(event);
+                        try {
+                            saveCurrency(this::onAction, this::onAddSuccess, this::onFailed);
+                            closeDialog(event);
+                        } catch (Exception e) {
+                            SpotyLogger.writeToFile(e, this.getClass());
+                        }
                         return;
                     }
-                    SimpleNotification notification =
-                            new SimpleNotification.NotificationBuilder("Required fields missing")
-                                    .duration(NotificationDuration.SHORT)
-                                    .icon("fas-triangle-exclamation")
-                                    .type(NotificationVariants.ERROR)
-                                    .build();
-                    notificationHolder.addNotification(notification);
+                    onRequiredFieldsMissing();
                 });
     }
 
     private void onAction() {
-        System.out.println("Loading currency...");
+        cancelBtn.setDisable(true);
+        saveBtn.setDisable(true);
+//        cancelBtn.setManaged(true);
+//        saveBtn.setManaged(true);
     }
 
-    private void onSuccess() {
-        System.out.println("Loaded currency...");
+    private void onAddSuccess() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("Currency added successfully")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        CurrencyViewModel.getAllCurrencies(null, null, null);
+    }
+
+    private void onUpdatedSuccess() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("Currency updated successfully")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        CurrencyViewModel.getAllCurrencies(null, null, null);
     }
 
     private void onFailed() {
-        System.out.println("failed loading currency...");
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("An error occurred")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        CurrencyViewModel.getAllCurrencies(null, null, null);
+    }
+
+    private void onRequiredFieldsMissing() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("Required fields can't be null")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        CurrencyViewModel.getAllCurrencies(null, null, null);
     }
 }

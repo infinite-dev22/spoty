@@ -78,6 +78,7 @@ public class DesignationsController implements Initializable {
         MFXGenericDialog dialogContent = fxmlLoader.load();
 
         dialogContent.setShowMinimize(false);
+        dialogContent.setShowClose(false);
         dialogContent.setShowAlwaysOnTop(false);
 
         dialog =
@@ -87,6 +88,7 @@ public class DesignationsController implements Initializable {
                         .initModality(Modality.WINDOW_MODAL)
                         .setOwnerNode(contentPane)
                         .setScrimPriority(ScrimPriority.WINDOW)
+                        .setOverlayClose(true)
                         .setScrimOwner(true)
                         .get();
 

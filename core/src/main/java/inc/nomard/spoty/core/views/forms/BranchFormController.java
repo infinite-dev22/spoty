@@ -14,13 +14,11 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import inc.nomard.spoty.core.components.notification.SimpleNotification;
-import inc.nomard.spoty.core.components.notification.SimpleNotificationHolder;
-import inc.nomard.spoty.core.components.notification.enums.NotificationDuration;
-import inc.nomard.spoty.core.components.notification.enums.NotificationVariants;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.MessageDuration;
+import inc.nomard.spoty.core.components.message.enums.MessageVariants;
 import inc.nomard.spoty.core.viewModels.BranchViewModel;
 import inc.nomard.spoty.utils.SpotyLogger;
-import inc.nomard.spoty.utils.SpotyThreader;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import javafx.fxml.FXML;
@@ -39,31 +37,21 @@ import static inc.nomard.spoty.core.viewModels.BranchViewModel.saveBranch;
 public class BranchFormController implements Initializable {
     private static BranchFormController instance;
     @FXML
-    public MFXButton branchFormSaveBtn;
+    public MFXButton saveBtn,
+            cancelBtn;
     @FXML
-    public MFXButton branchFormCancelBtn;
+    public MFXTextField branchFormName,
+            branchFormEmail,
+            branchFormPhone,
+            branchFormTown,
+            branchFormCity,
+            branchFormZipCode;
     @FXML
-    public MFXTextField branchFormName;
-    @FXML
-    public MFXTextField branchFormEmail;
-    @FXML
-    public MFXTextField branchFormPhone;
-    @FXML
-    public MFXTextField branchFormTown;
-    @FXML
-    public MFXTextField branchFormCity;
-    @FXML
-    public MFXTextField branchFormZipCode;
-    @FXML
-    public Label branchFormEmailValidationLabel;
-    @FXML
-    public Label branchFormCityValidationLabel;
-    @FXML
-    public Label branchFormTownValidationLabel;
-    @FXML
-    public Label branchFormPhoneValidationLabel;
-    @FXML
-    public Label branchFormNameValidationLabel;
+    public Label branchFormEmailValidationLabel,
+            branchFormCityValidationLabel,
+            branchFormTownValidationLabel,
+            branchFormPhoneValidationLabel,
+            branchFormNameValidationLabel;
 
     public static BranchFormController getInstance() {
         if (Objects.equals(instance, null)) instance = new BranchFormController();
@@ -80,20 +68,20 @@ public class BranchFormController implements Initializable {
         branchFormCity.textProperty().bindBidirectional(BranchViewModel.cityProperty());
         // Input listeners.
         requiredValidator(
-                branchFormName, "Name is required.", branchFormNameValidationLabel, branchFormSaveBtn);
+                branchFormName, "Name is required.", branchFormNameValidationLabel, saveBtn);
         requiredValidator(
-                branchFormEmail, "Email is required.", branchFormEmailValidationLabel, branchFormSaveBtn);
+                branchFormEmail, "Email is required.", branchFormEmailValidationLabel, saveBtn);
         requiredValidator(
-                branchFormPhone, "Phone is required.", branchFormPhoneValidationLabel, branchFormSaveBtn);
+                branchFormPhone, "Phone is required.", branchFormPhoneValidationLabel, saveBtn);
         requiredValidator(
-                branchFormTown, "Town is required.", branchFormTownValidationLabel, branchFormSaveBtn);
+                branchFormTown, "Town is required.", branchFormTownValidationLabel, saveBtn);
         requiredValidator(
-                branchFormCity, "City is required", branchFormCityValidationLabel, branchFormSaveBtn);
+                branchFormCity, "City is required", branchFormCityValidationLabel, saveBtn);
         dialogOnActions();
     }
 
     private void dialogOnActions() {
-        branchFormCancelBtn.setOnAction(
+        cancelBtn.setOnAction(
                 (event) -> {
                     clearBranchData();
 
@@ -105,80 +93,99 @@ public class BranchFormController implements Initializable {
                     branchFormTownValidationLabel.setVisible(false);
                     branchFormCityValidationLabel.setVisible(false);
                 });
-        branchFormSaveBtn.setOnAction(
+        saveBtn.setOnAction(
                 (event) -> {
-                    SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
-
                     if (!branchFormNameValidationLabel.isVisible()
                             && !branchFormEmailValidationLabel.isVisible()
                             && !branchFormPhoneValidationLabel.isVisible()
                             && !branchFormTownValidationLabel.isVisible()
                             && !branchFormCityValidationLabel.isVisible()) {
                         if (BranchViewModel.getId() > 0) {
-                            SpotyThreader.spotyThreadPool(() -> {
-                                try {
-                                    BranchViewModel.updateItem(this::onAction, this::onSuccess, this::onFailed);
-                                } catch (Exception e) {
-                                    SpotyLogger.writeToFile(e, this.getClass());
-                                }
-                            });
-
-                            SimpleNotification notification =
-                                    new SimpleNotification.NotificationBuilder("Branch updated successfully")
-                                            .duration(NotificationDuration.SHORT)
-                                            .icon("fas-circle-check")
-                                            .type(NotificationVariants.SUCCESS)
-                                            .build();
-                            notificationHolder.addNotification(notification);
-
-                            closeDialog(event);
+                            try {
+                                BranchViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
+                                closeDialog(event);
+                            } catch (Exception e) {
+                                SpotyLogger.writeToFile(e, this.getClass());
+                            }
                             return;
                         }
 
-//                        try {
-//                            saveBranch();
-//                        } catch (Exception e) {
-//                            SpotyLogger.writeToFile(e, this.getClass());
-//                        }
-
-//                        SpotyThreader.spotyThreadPool(() -> {
                         try {
-                            saveBranch(this::onAction, this::onSuccess, this::onFailed);
+                            saveBranch(this::onAction, this::onAddSuccess, this::onFailed);
+                            closeDialog(event);
                         } catch (Exception e) {
                             SpotyLogger.writeToFile(e, this.getClass());
                         }
-//                        });
-
-                        SimpleNotification notification =
-                                new SimpleNotification.NotificationBuilder("Branch saved successfully")
-                                        .duration(NotificationDuration.SHORT)
-                                        .icon("fas-circle-check")
-                                        .type(NotificationVariants.SUCCESS)
-                                        .build();
-                        notificationHolder.addNotification(notification);
-
-                        closeDialog(event);
                         return;
                     }
-                    SimpleNotification notification =
-                            new SimpleNotification.NotificationBuilder("Required fields missing")
-                                    .duration(NotificationDuration.SHORT)
-                                    .icon("fas-triangle-exclamation")
-                                    .type(NotificationVariants.ERROR)
-                                    .build();
-                    notificationHolder.addNotification(notification);
+                    onRequiredFieldsMissing();
                 });
     }
 
     private void onAction() {
-        System.out.println("Loading branch...");
+        cancelBtn.setDisable(true);
+        saveBtn.setDisable(true);
+//        cancelBtn.setManaged(true);
+//        saveBtn.setManaged(true);
     }
 
-    private void onSuccess() {
-        System.out.println("Loaded branch...");
+    private void onAddSuccess() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("Branch added successfully")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        BranchViewModel.getAllBranches(null, null, null);
+    }
+
+    private void onUpdatedSuccess() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("Branch updated successfully")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        BranchViewModel.getAllBranches(null, null, null);
     }
 
     private void onFailed() {
-        System.out.println("failed loading branch...");
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("An error occurred")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        BranchViewModel.getAllBranches(null, null, null);
+    }
+
+    private void onRequiredFieldsMissing() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("Required fields can't be null")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        BranchViewModel.getAllBranches(null, null, null);
     }
 }

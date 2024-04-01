@@ -14,19 +14,17 @@
 
 package inc.nomard.spoty.core.views.forms;
 
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.MessageDuration;
+import inc.nomard.spoty.core.components.message.enums.MessageVariants;
+import inc.nomard.spoty.core.viewModels.hrm.pay_roll.BeneficiaryTypeViewModel;
+import inc.nomard.spoty.utils.SpotyLogger;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
-import inc.nomard.spoty.core.components.notification.SimpleNotification;
-import inc.nomard.spoty.core.components.notification.SimpleNotificationHolder;
-import inc.nomard.spoty.core.components.notification.enums.NotificationDuration;
-import inc.nomard.spoty.core.components.notification.enums.NotificationVariants;
-import inc.nomard.spoty.utils.SpotyLogger;
-import inc.nomard.spoty.utils.SpotyThreader;
-import inc.nomard.spoty.core.viewModels.hrm.pay_roll.BeneficiaryBadgeViewModel;
 
 import java.net.URL;
 import java.util.Objects;
@@ -38,23 +36,13 @@ import static inc.nomard.spoty.core.Validators.requiredValidator;
 public class BeneficiaryTypeFormController implements Initializable {
     private static BeneficiaryTypeFormController instance;
     @FXML
-    public MFXButton saveBtn;
+    public MFXButton saveBtn, cancelBtn;
     @FXML
-    public MFXButton cancelBtn;
+    public Label beneficiaryTypeValidationLabel, nameValidationLabel, colorValidationLabel, descriptionValidationLabel;
     @FXML
-    public Label beneficiaryTypeValidationLabel;
-    @FXML
-    public MFXTextField name;
-    @FXML
-    public Label nameValidationLabel;
-    @FXML
-    public MFXTextField description;
-    @FXML
-    public Label descriptionValidationLabel;
+    public MFXTextField name, description;
     @FXML
     public ColorPicker color;
-    @FXML
-    public Label colorValidationLabel;
 
     public static BeneficiaryTypeFormController getInstance() {
         if (Objects.equals(instance, null)) instance = new BeneficiaryTypeFormController();
@@ -64,9 +52,9 @@ public class BeneficiaryTypeFormController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Input bindings.
-        name.textProperty().bindBidirectional(BeneficiaryBadgeViewModel.nameProperty());
-        description.textProperty().bindBidirectional(BeneficiaryBadgeViewModel.descriptionProperty());
-//        color.textProperty().bindBidirectional(BeneficiaryBadgeViewModel.endDateProperty());
+        name.textProperty().bindBidirectional(BeneficiaryTypeViewModel.nameProperty());
+        description.textProperty().bindBidirectional(BeneficiaryTypeViewModel.descriptionProperty());
+//        color.textProperty().bindBidirectional(BeneficiaryTypeViewModel.endDateProperty());
         // Input listeners.
         requiredValidator(
                 name, "Name is required.", nameValidationLabel, saveBtn);
@@ -82,7 +70,7 @@ public class BeneficiaryTypeFormController implements Initializable {
     private void dialogOnActions() {
         cancelBtn.setOnAction(
                 (event) -> {
-                    BeneficiaryBadgeViewModel.resetProperties();
+                    BeneficiaryTypeViewModel.resetProperties();
 
                     closeDialog(event);
 
@@ -92,68 +80,95 @@ public class BeneficiaryTypeFormController implements Initializable {
                 });
         saveBtn.setOnAction(
                 (event) -> {
-                    SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
-
                     if (!nameValidationLabel.isVisible()
                             && !descriptionValidationLabel.isVisible()
                             && !colorValidationLabel.isVisible()) {
-                        if (BeneficiaryBadgeViewModel.getId() > 0) {
-                            SpotyThreader.spotyThreadPool(() -> {
-                                try {
-                                    BeneficiaryBadgeViewModel.updateItem(this::onAction, this::onSuccess, this::onFailed);
-                                } catch (Exception e) {
-                                    SpotyLogger.writeToFile(e, this.getClass());
-                                }
-                            });
-
-                            SimpleNotification notification =
-                                    new SimpleNotification.NotificationBuilder("Leave status updated successfully")
-                                            .duration(NotificationDuration.SHORT)
-                                            .icon("fas-circle-check")
-                                            .type(NotificationVariants.SUCCESS)
-                                            .build();
-                            notificationHolder.addNotification(notification);
-
-                            closeDialog(event);
+                        if (BeneficiaryTypeViewModel.getId() > 0) {
+                            try {
+                                BeneficiaryTypeViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
+                                closeDialog(event);
+                            } catch (Exception e) {
+                                SpotyLogger.writeToFile(e, this.getClass());
+                            }
                             return;
                         }
 
                         try {
-                            BeneficiaryBadgeViewModel.saveBeneficiaryBadge(this::onAction, this::onSuccess, this::onFailed);
+                            BeneficiaryTypeViewModel.saveBeneficiaryType(this::onAction, this::onAddSuccess, this::onFailed);
+                            closeDialog(event);
                         } catch (Exception e) {
                             SpotyLogger.writeToFile(e, this.getClass());
                         }
-
-                        SimpleNotification notification =
-                                new SimpleNotification.NotificationBuilder("Leave status saved successfully")
-                                        .duration(NotificationDuration.SHORT)
-                                        .icon("fas-circle-check")
-                                        .type(NotificationVariants.SUCCESS)
-                                        .build();
-                        notificationHolder.addNotification(notification);
-
-                        closeDialog(event);
                         return;
                     }
-                    SimpleNotification notification =
-                            new SimpleNotification.NotificationBuilder("Required fields missing")
-                                    .duration(NotificationDuration.SHORT)
-                                    .icon("fas-triangle-exclamation")
-                                    .type(NotificationVariants.ERROR)
-                                    .build();
-                    notificationHolder.addNotification(notification);
+                    onRequiredFieldsMissing();
                 });
     }
 
     private void onAction() {
-        System.out.println("Loading employment status...");
+        cancelBtn.setDisable(true);
+        saveBtn.setDisable(true);
+//        cancelBtn.setManaged(true);
+//        saveBtn.setManaged(true);
     }
 
-    private void onSuccess() {
-        System.out.println("Loaded employment status...");
+    private void onAddSuccess() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("BeneficiaryType added successfully")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        BeneficiaryTypeViewModel.getAllBeneficiaryTypes(null, null, null);
+    }
+
+    private void onUpdatedSuccess() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("BeneficiaryType updated successfully")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        BeneficiaryTypeViewModel.getAllBeneficiaryTypes(null, null, null);
     }
 
     private void onFailed() {
-        System.out.println("failed loading employment status...");
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("An error occurred")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        BeneficiaryTypeViewModel.getAllBeneficiaryTypes(null, null, null);
+    }
+
+    private void onRequiredFieldsMissing() {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder("Required fields can't be null")
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        cancelBtn.setDisable(false);
+        saveBtn.setDisable(false);
+
+        BeneficiaryTypeViewModel.getAllBeneficiaryTypes(null, null, null);
     }
 }

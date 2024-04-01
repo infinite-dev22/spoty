@@ -259,7 +259,7 @@ public class OrdersController implements Initializable {
 
         transition = SpotyAnimations.rotateTransition(refreshIcon, Duration.millis(1000), 360);
 
-        refreshIcon.setOnMouseClicked(mouseEvent -> SaleMasterViewModel.getSaleMasters(this::onAction, this::onSuccess, this::onFailed));
+        refreshIcon.setOnMouseClicked(mouseEvent -> SaleMasterViewModel.getAllSaleMasters(this::onAction, this::onSuccess, this::onFailed));
     }
 
     private void viewDialogPane(Stage stage) throws IOException {

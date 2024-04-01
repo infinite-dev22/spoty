@@ -58,8 +58,8 @@
             <padding>
                 <Insets left="10.0" right="10.0" top="10.0"/>
             </padding>
-            <MFXButton styleClass="filled" fx:id="dialogSaveBtn" text="Save"/>
-            <MFXButton styleClass="outlined" fx:id="dialogCancelBtn" text="Cancel"/>
+            <MFXButton styleClass="filled" fx:id="saveBtn" text="Save"/>
+            <MFXButton styleClass="outlined" fx:id="cancelBtn" text="Cancel"/>
         </HBox>
     </bottom>
 </MFXGenericDialog>

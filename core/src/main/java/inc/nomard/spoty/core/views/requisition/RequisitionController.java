@@ -276,7 +276,7 @@ public class RequisitionController implements Initializable {
 
         transition = SpotyAnimations.rotateTransition(refreshIcon, Duration.millis(1000), 360);
 
-        refreshIcon.setOnMouseClicked(mouseEvent -> RequisitionMasterViewModel.getRequisitionMasters(this::onAction, this::onSuccess, this::onFailed));
+        refreshIcon.setOnMouseClicked(mouseEvent -> RequisitionMasterViewModel.getAllRequisitionMasters(this::onAction, this::onSuccess, this::onFailed));
     }
 
     private void viewDialogPane(Stage stage) throws IOException {

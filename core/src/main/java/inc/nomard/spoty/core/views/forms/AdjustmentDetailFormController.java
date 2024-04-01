@@ -14,10 +14,10 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import inc.nomard.spoty.core.components.notification.SimpleNotification;
-import inc.nomard.spoty.core.components.notification.SimpleNotificationHolder;
-import inc.nomard.spoty.core.components.notification.enums.NotificationDuration;
-import inc.nomard.spoty.core.components.notification.enums.NotificationVariants;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
+import inc.nomard.spoty.core.components.message.enums.MessageDuration;
+import inc.nomard.spoty.core.components.message.enums.MessageVariants;
 import inc.nomard.spoty.core.values.SharedResources;
 import inc.nomard.spoty.core.values.strings.Values;
 import inc.nomard.spoty.core.viewModels.ProductViewModel;
@@ -136,7 +136,7 @@ public class AdjustmentDetailFormController implements Initializable {
                 });
         adjustmentProductsSaveBtn.setOnAction(
                 (event) -> {
-                    SimpleNotificationHolder notificationHolder = SimpleNotificationHolder.getInstance();
+                    SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
 
                     if (!adjustmentProductVariantValidationLabel.isVisible()
                             && !adjustmentProductsQntyValidationLabel.isVisible()
@@ -145,13 +145,13 @@ public class AdjustmentDetailFormController implements Initializable {
                             AdjustmentDetailViewModel.updateAdjustmentDetail(
                                     SharedResources.getTempId());
 
-                            SimpleNotification notification =
-                                    new SimpleNotification.NotificationBuilder("Entry updated successfully")
-                                            .duration(NotificationDuration.MEDIUM)
+                            SpotyMessage notification =
+                                    new SpotyMessage.MessageBuilder("Entry updated successfully")
+                                            .duration(MessageDuration.MEDIUM)
                                             .icon("fas-circle-check")
-                                            .type(NotificationVariants.SUCCESS)
+                                            .type(MessageVariants.SUCCESS)
                                             .build();
-                            notificationHolder.addNotification(notification);
+                            notificationHolder.addMessage(notification);
 
                             adjustmentProductVariant.clearSelection();
                             adjustmentType.clearSelection();
@@ -161,14 +161,14 @@ public class AdjustmentDetailFormController implements Initializable {
                         }
                         AdjustmentDetailViewModel.addAdjustmentDetails();
 
-                        SimpleNotification notification =
-                                new SimpleNotification.NotificationBuilder("Entry added successfully")
-                                        .duration(NotificationDuration.SHORT)
+                        SpotyMessage notification =
+                                new SpotyMessage.MessageBuilder("Entry added successfully")
+                                        .duration(MessageDuration.SHORT)
                                         .icon("fas-circle-check")
-                                        .type(NotificationVariants.SUCCESS)
+                                        .type(MessageVariants.SUCCESS)
                                         .build();
 
-                        notificationHolder.addNotification(notification);
+                        notificationHolder.addMessage(notification);
                         AdjustmentDetailViewModel.resetProperties();
 
                         adjustmentProductVariant.clearSelection();
@@ -177,13 +177,13 @@ public class AdjustmentDetailFormController implements Initializable {
                         closeDialog(event);
                         return;
                     }
-                    SimpleNotification notification =
-                            new SimpleNotification.NotificationBuilder("Required fields missing")
-                                    .duration(NotificationDuration.SHORT)
+                    SpotyMessage notification =
+                            new SpotyMessage.MessageBuilder("Required fields missing")
+                                    .duration(MessageDuration.SHORT)
                                     .icon("fas-triangle-exclamation")
-                                    .type(NotificationVariants.ERROR)
+                                    .type(MessageVariants.ERROR)
                                     .build();
-                    notificationHolder.addNotification(notification);
+                    notificationHolder.addMessage(notification);
                 });
     }
 }
