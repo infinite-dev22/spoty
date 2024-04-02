@@ -20,10 +20,12 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -33,7 +35,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 public class SpotyMessageHolder {
-    private static AnchorPane root;
+    private static FlowPane root;
     private static Stage stage;
     private static Duration notificationAnimationTime;
     private static ObservableList<Pane> popups;
@@ -58,8 +60,9 @@ public class SpotyMessageHolder {
         stage.initStyle(StageStyle.TRANSPARENT);
         // Calculate position relative to the parent stage
         stage.setX(parentStage.getWidth() - SpotyMessage.getLayoutWidth());
-        stage.setY(parentStage.getHeight() - (parentStage.getHeight() - 10));
-
+        stage.setY(parentStage.getHeight() - (parentStage.getHeight() - 5));
+        stage.initOwner(parentStage);
+        stage.setHeight(138);
         stage.setAlwaysOnTop(true);
     }
 
@@ -73,19 +76,17 @@ public class SpotyMessageHolder {
         notificationAnimationTime = Duration.millis(500);
         popups = FXCollections.observableArrayList();
 
-        root = new AnchorPane();
+        root = new FlowPane(Orientation.HORIZONTAL);
         root.setPickOnBounds(false);
-        root.setMinHeight(100);
+        root.setPrefWrapLength(70);
+        root.setVgap(10);
         root.getStyleClass().add("message-holder");
         root.getStylesheets().addAll(SpotyCoreResourceLoader.load("styles/base.css"),
                 SpotyCoreResourceLoader.load("styles/theming/Default.css"));
 
-        // Example: Position 10 pixels from top and right edges of the scene
-        AnchorPane.setTopAnchor(root, 10.0);
-        AnchorPane.setRightAnchor(root, 10.0);
+        StackPane.setAlignment(root, Pos.TOP_RIGHT);
 
         Scene scene = new Scene(root);
-
         scene.setFill(Color.TRANSPARENT);
 
         stage.setScene(scene);
@@ -100,7 +101,7 @@ public class SpotyMessageHolder {
     }
 
     public void addMessage(SpotyMessage notification) {
-        VBox POPUP = new VBox();
+        Pane POPUP = new Pane();
         POPUP.getChildren().addAll(notification);
 
         root.getChildren().add(0, POPUP);
