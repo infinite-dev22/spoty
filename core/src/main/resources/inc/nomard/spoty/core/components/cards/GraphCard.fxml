@@ -56,7 +56,6 @@
         </padding>
     </HBox>
     <AnchorPane fx:id="lineChartHolder" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                AnchorPane.rightAnchor="0.0"
-                AnchorPane.topAnchor="32.0">
+                AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="32.0">
     </AnchorPane>
 </AnchorPane>

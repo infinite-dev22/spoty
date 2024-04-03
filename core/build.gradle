@@ -18,11 +18,6 @@ project.version = '0.0.18'
 repositories {
     mavenLocal()
     mavenCentral()
-}
-
-repositories {
-    mavenLocal()
-    mavenCentral()
     gradlePluginPortal()
 }
 
@@ -135,7 +130,10 @@ dependencies {
     implementation project(':responsive_fx')
     implementation project(':network_bridge')
     implementation project(':utils')
-    implementation('com.calendarfx:view:11.12.7')
+    implementation ('com.dlsc.gemsfx:gemsfx:2.6.7') {
+        exclude group: 'one.jpro.jproutils'
+    }
+    implementation 'com.calendarfx:view:11.12.7'
     implementation 'eu.hansolo.fx:charts:21.0.7'
     implementation 'net.datafaker:datafaker:2.0.2'
     implementation 'io.soabase.record-builder:record-builder-core:39'

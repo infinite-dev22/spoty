@@ -438,6 +438,20 @@
 .hero-image{
     -fx-background-color: -mfx-charcoal;
 }
+.chart-plot-background {
+    -fx-background-color: transparent;
+}
+.chart-bar {/*
+     -fx-background-color: rgba(0,168,355,0.05);
+     -fx-border-color: rgba(0,168,355,0.3) rgba(0,168,355,0.3)
+         transparent rgba(0,168,355,0.3);*/
+     -fx-background-radius: 50;
+     -fx-border-radius: 50;
+     -fx-max-width: 50;
+    -fx-border-width: 50;
+    -fx-background-width: 50;
+     -fx-background-position: left center;
+ }
 .card-title{}
 .card-sub-title{}
 .username-label{}
