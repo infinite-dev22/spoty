@@ -131,9 +131,12 @@ dependencies {
     implementation project(':responsive_fx')
     implementation project(':network_bridge')
     implementation project(':utils')
+    implementation ('com.dlsc.gemsfx:gemsfx:2.6.7') {
+        exclude group: 'one.jpro.jproutils'
+    }
     implementation 'net.synedra:validatorfx:0.5.0'
     implementation 'com.github.iAmGio:froxty:1.4.0'
-    implementation('com.calendarfx:view:11.12.7')
+    implementation 'com.calendarfx:view:11.12.7'
     implementation 'eu.hansolo.fx:charts:21.0.7'
     implementation 'net.datafaker:datafaker:2.0.2'
     implementation 'io.soabase.record-builder:record-builder-core:39'
