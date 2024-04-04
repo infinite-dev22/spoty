@@ -22,6 +22,7 @@ module spoty.core {
     requires inc.nomard.spoty.responsive_fx;
     requires spoty.seamless.updater;
     requires froxty;
+    requires com.dlsc.gemsfx;
 
     opens inc.nomard.spoty.core.views;
     opens inc.nomard.spoty.core.views.login;

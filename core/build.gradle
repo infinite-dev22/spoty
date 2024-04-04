@@ -20,6 +20,9 @@ repositories {
     mavenCentral()
     gradlePluginPortal()
     maven { url 'https://jitpack.io' }
+    maven {
+        url "https://sandec.jfrog.io/artifactory/repo"
+    }
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -131,9 +134,8 @@ dependencies {
     implementation project(':responsive_fx')
     implementation project(':network_bridge')
     implementation project(':utils')
-    implementation ('com.dlsc.gemsfx:gemsfx:2.6.7') {
-        exclude group: 'one.jpro.jproutils'
-    }
+    implementation 'org.controlsfx:controlsfx:11.2.1'
+    implementation('com.dlsc.gemsfx:gemsfx:2.6.7')
     implementation 'net.synedra:validatorfx:0.5.0'
     implementation 'com.github.iAmGio:froxty:1.4.0'
     implementation 'com.calendarfx:view:11.12.7'
