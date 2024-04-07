@@ -25,6 +25,7 @@ import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.StackPane;
 
 import java.net.URL;
@@ -41,7 +42,7 @@ public class DesignationFormController implements Initializable {
     @FXML
     public Label nameValidationLabel;
     @FXML
-    public MFXTextField description;
+    public TextArea description;
     @FXML
     public Label descriptionValidationLabel;
     @FXML

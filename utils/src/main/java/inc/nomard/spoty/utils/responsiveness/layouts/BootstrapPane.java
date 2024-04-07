@@ -1,9 +1,8 @@
-package inc.nomard.spoty.responsive_fx.layouts;
+package inc.nomard.spoty.utils.responsiveness.layouts;
 
 import javafx.geometry.Pos;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.RowConstraints;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -452,6 +452,10 @@
     -fx-background-width: 50;
      -fx-background-position: left center;
  }
+.spoty-description-area {
+    -fx-background-color: white;
+    -fx-text-fill: purple;
+}
 .card-title{}
 .card-sub-title{}
 .username-label{}

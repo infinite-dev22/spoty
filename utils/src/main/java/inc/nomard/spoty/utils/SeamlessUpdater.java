@@ -1,4 +1,4 @@
-package inc.nomard.spoty.seamless_updater;
+package inc.nomard.spoty.utils;
 
 import java.io.BufferedInputStream;
 import java.io.FileOutputStream;

@@ -130,8 +130,6 @@ jlinkZip.doLast {
 }
 
 dependencies {
-    implementation project(':seamless_updater')
-    implementation project(':responsive_fx')
     implementation project(':network_bridge')
     implementation project(':utils')
     implementation 'org.controlsfx:controlsfx:11.2.1'

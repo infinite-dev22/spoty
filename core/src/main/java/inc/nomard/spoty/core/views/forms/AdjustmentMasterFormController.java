@@ -14,15 +14,14 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import inc.nomard.spoty.core.components.navigation.Pages;
-import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.SpotyMessage;
+import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
 import inc.nomard.spoty.core.components.message.enums.MessageDuration;
 import inc.nomard.spoty.core.components.message.enums.MessageVariants;
-import inc.nomard.spoty.core.viewModels.BranchViewModel;
+import inc.nomard.spoty.core.components.navigation.Pages;
 import inc.nomard.spoty.core.viewModels.adjustments.AdjustmentDetailViewModel;
 import inc.nomard.spoty.core.viewModels.adjustments.AdjustmentMasterViewModel;
 import inc.nomard.spoty.core.views.BaseController;
-import inc.nomard.spoty.network_bridge.dtos.Branch;
 import inc.nomard.spoty.network_bridge.dtos.adjustments.AdjustmentDetail;
 import inc.nomard.spoty.utils.SpotyLogger;
 import inc.nomard.spoty.utils.SpotyThreader;
@@ -34,8 +33,6 @@ import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import io.github.palexdev.materialfx.enums.ScrimPriority;
 import io.github.palexdev.materialfx.filter.LongFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
-import io.github.palexdev.materialfx.utils.StringUtils;
-import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
@@ -48,25 +45,17 @@ import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.StringConverter;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
-import java.util.function.Function;
-import java.util.function.Predicate;
 
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
-import static inc.nomard.spoty.core.Validators.requiredValidator;
 
 @SuppressWarnings("unchecked")
 public class AdjustmentMasterFormController implements Initializable {
     private static AdjustmentMasterFormController instance;
-    @FXML
-    public MFXFilterComboBox<Branch> adjustmentBranch;
-    @FXML
-    public MFXDatePicker adjustmentDate;
     @FXML
     public MFXTableView<AdjustmentDetail> adjustmentDetailTable;
     @FXML
@@ -98,36 +87,9 @@ public class AdjustmentMasterFormController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Input binding.
-        adjustmentBranch.valueProperty().bindBidirectional(AdjustmentMasterViewModel.branchProperty());
-        adjustmentDate.textProperty().bindBidirectional(AdjustmentMasterViewModel.dateProperty());
         adjustmentNote.textProperty().bindBidirectional(AdjustmentMasterViewModel.noteProperty());
 
-        // ComboBox Converters.
-        StringConverter<Branch> branchConverter =
-                FunctionalStringConverter.to(branch -> (branch == null) ? "" : branch.getName());
-
-        // ComboBox Filter Functions.
-        Function<String, Predicate<Branch>> branchFilterFunction =
-                searchStr ->
-                        branch -> StringUtils.containsIgnoreCase(branchConverter.toString(branch), searchStr);
-
         // combBox properties.
-        adjustmentBranch.setItems(BranchViewModel.getBranches());
-        adjustmentBranch.setConverter(branchConverter);
-        adjustmentBranch.setFilterFunction(branchFilterFunction);
-
-        // input validators.
-        requiredValidator(
-                adjustmentBranch,
-                "Branch is required.",
-                adjustmentBranchValidationLabel,
-                saveBtn);
-        requiredValidator(
-                adjustmentDate,
-                "Date is required.",
-                adjustmentDateValidationLabel,
-                saveBtn);
-
         adjustmentAddProductBtnClicked();
         Platform.runLater(this::setupTable);
     }
@@ -300,8 +262,6 @@ public class AdjustmentMasterFormController implements Initializable {
 
         AdjustmentMasterViewModel.resetProperties();
 
-        adjustmentBranch.clearSelection();
-
         adjustmentBranchValidationLabel.setVisible(false);
         adjustmentDateValidationLabel.setVisible(false);
     }
@@ -326,7 +286,6 @@ public class AdjustmentMasterFormController implements Initializable {
         saveBtn.setDisable(false);
 
         adjustmentCancelBtnClicked();
-        adjustmentBranch.clearSelection();
 
         AdjustmentMasterViewModel.getAllAdjustmentMasters(null, null, null);
     }
