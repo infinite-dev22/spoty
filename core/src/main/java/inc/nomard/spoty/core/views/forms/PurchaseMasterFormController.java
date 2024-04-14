@@ -14,17 +14,16 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import inc.nomard.spoty.core.components.navigation.Pages;
-import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.SpotyMessage;
+import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
 import inc.nomard.spoty.core.components.message.enums.MessageDuration;
 import inc.nomard.spoty.core.components.message.enums.MessageVariants;
+import inc.nomard.spoty.core.components.navigation.Pages;
 import inc.nomard.spoty.core.values.strings.Values;
-import inc.nomard.spoty.core.viewModels.BranchViewModel;
 import inc.nomard.spoty.core.viewModels.SupplierViewModel;
 import inc.nomard.spoty.core.viewModels.purchases.PurchaseDetailViewModel;
 import inc.nomard.spoty.core.viewModels.purchases.PurchaseMasterViewModel;
 import inc.nomard.spoty.core.views.BaseController;
-import inc.nomard.spoty.network_bridge.dtos.Branch;
 import inc.nomard.spoty.network_bridge.dtos.Supplier;
 import inc.nomard.spoty.network_bridge.dtos.purchases.PurchaseDetail;
 import inc.nomard.spoty.utils.SpotyLogger;
@@ -75,8 +74,6 @@ public class PurchaseMasterFormController implements Initializable {
     @FXML
     public MFXFilterComboBox<Supplier> purchaseSupplier;
     @FXML
-    public MFXFilterComboBox<Branch> purchaseBranch;
-    @FXML
     public MFXTableView<PurchaseDetail> purchaseDetailTable;
     @FXML
     public MFXTextField purchaseNote;
@@ -84,8 +81,6 @@ public class PurchaseMasterFormController implements Initializable {
     public BorderPane purchaseFormContentPane;
     @FXML
     public MFXFilterComboBox<String> purchaseStatus;
-    @FXML
-    public Label purchaseBranchValidationLabel;
     @FXML
     public Label purchaseSupplierValidationLabel;
     @FXML
@@ -118,7 +113,6 @@ public class PurchaseMasterFormController implements Initializable {
         // Bi~Directional Binding.
         purchaseDate.textProperty().bindBidirectional(PurchaseMasterViewModel.dateProperty());
         purchaseSupplier.valueProperty().bindBidirectional(PurchaseMasterViewModel.supplierProperty());
-        purchaseBranch.valueProperty().bindBidirectional(PurchaseMasterViewModel.branchProperty());
         purchaseStatus.textProperty().bindBidirectional(PurchaseMasterViewModel.statusProperty());
         purchaseNote.textProperty().bindBidirectional(PurchaseMasterViewModel.noteProperty());
 
@@ -126,36 +120,19 @@ public class PurchaseMasterFormController implements Initializable {
         StringConverter<Supplier> supplierConverter =
                 FunctionalStringConverter.to(supplier -> (supplier == null) ? "" : supplier.getName());
 
-        StringConverter<Branch> branchConverter =
-                FunctionalStringConverter.to(branch -> (branch == null) ? "" : branch.getName());
-
         // ComboBox Filter Functions.
         Function<String, Predicate<Supplier>> supplierFilterFunction =
                 searchStr ->
                         supplier ->
                                 StringUtils.containsIgnoreCase(supplierConverter.toString(supplier), searchStr);
 
-        Function<String, Predicate<Branch>> branchFilterFunction =
-                searchStr ->
-                        branch -> StringUtils.containsIgnoreCase(branchConverter.toString(branch), searchStr);
-
         // Set items to combo boxes and display custom text.
         purchaseSupplier.setItems(SupplierViewModel.getSuppliers());
         purchaseSupplier.setConverter(supplierConverter);
         purchaseSupplier.setFilterFunction(supplierFilterFunction);
 
-        purchaseBranch.setItems(BranchViewModel.getBranches());
-        purchaseBranch.setConverter(branchConverter);
-        purchaseBranch.setFilterFunction(branchFilterFunction);
-
         purchaseStatus.setItems(FXCollections.observableArrayList(Values.PURCHASE_STATUSES));
 
-        // input validators.
-        requiredValidator(
-                purchaseBranch,
-                "Branch is required.",
-                purchaseBranchValidationLabel,
-                saveBtn);
         requiredValidator(
                 purchaseSupplier,
                 "Supplier is required.",
@@ -207,8 +184,7 @@ public class PurchaseMasterFormController implements Initializable {
             notificationHolder.addMessage(notification);
             return;
         }
-        if (!purchaseBranchValidationLabel.isVisible()
-                && !purchaseSupplierValidationLabel.isVisible()
+        if (!purchaseSupplierValidationLabel.isVisible()
                 && !purchaseDateValidationLabel.isVisible()
                 && !purchaseStatusValidationLabel.isVisible()) {
             if (PurchaseMasterViewModel.getId() > 0) {
@@ -358,12 +334,10 @@ public class PurchaseMasterFormController implements Initializable {
 
         PurchaseMasterViewModel.resetProperties();
 
-        purchaseBranchValidationLabel.setVisible(false);
         purchaseSupplierValidationLabel.setVisible(false);
         purchaseDateValidationLabel.setVisible(false);
         purchaseStatusValidationLabel.setVisible(false);
         purchaseSupplier.clearSelection();
-        purchaseBranch.clearSelection();
         purchaseStatus.clearSelection();
     }
 

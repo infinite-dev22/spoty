@@ -27,6 +27,8 @@
     <stylesheets>
         <URL value="@../../styles/Common.css"/>
         <URL value="@../../styles/TextFields.css"/>
+        <URL value="@../../styles/base.css"/>
+        <URL value="@../../styles/theming/Default.css"/>
     </stylesheets>
     <center>
         <StackPane fx:id="contentPane">
@@ -46,7 +48,7 @@
                     <padding>
                         <Insets bottom="5" top="2.5"/>
                     </padding>
-                    <TextArea fx:id="description" wrapText="true" text="Description" prefWidth="400.0" styleClass="spoty-description-area"/>
+                    <TextArea fx:id="description" wrapText="true" promptText="Description" prefWidth="400.0" styleClass="spoty-description-area"/>
                     <Label id="validationLabel" fx:id="descriptionValidationLabel" maxWidth="1.7976931348623157E308"
                            minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true"/>
                 </VBox>

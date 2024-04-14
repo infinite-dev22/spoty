@@ -14,6 +14,8 @@
 
 package inc.nomard.spoty.core;
 
+import atlantafx.base.theme.PrimerDark;
+import atlantafx.base.theme.PrimerLight;
 import inc.nomard.spoty.core.views.splash.LaunchPreloader;
 import inc.nomard.spoty.core.views.splash.SplashScreenController;
 import inc.nomard.spoty.utils.SeamlessUpdater;
