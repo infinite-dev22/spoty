@@ -62,11 +62,9 @@ public class UnitOfMeasureController implements Initializable {
     @FXML
     public MFXButton importBtn;
     @FXML
-    public BorderPane uomContentPane;
+    public BorderPane contentPane;
     @FXML
     public MFXButton createBtn;
-    @FXML
-    public BorderPane contentPane;
     @FXML
     public HBox refresh;
     private MFXStageDialog dialog;
@@ -215,7 +213,7 @@ public class UnitOfMeasureController implements Initializable {
                         .toStageDialogBuilder()
                         .initOwner(stage)
                         .initModality(Modality.WINDOW_MODAL)
-                        .setOwnerNode(uomContentPane)
+                        .setOwnerNode(contentPane)
                         .setScrimPriority(ScrimPriority.WINDOW)
                         .setScrimOwner(true)
                         .get();

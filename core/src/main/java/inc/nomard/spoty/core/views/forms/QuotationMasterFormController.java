@@ -14,18 +14,17 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import inc.nomard.spoty.core.components.navigation.Pages;
-import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.SpotyMessage;
+import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
 import inc.nomard.spoty.core.components.message.enums.MessageDuration;
 import inc.nomard.spoty.core.components.message.enums.MessageVariants;
+import inc.nomard.spoty.core.components.navigation.Pages;
 import inc.nomard.spoty.core.startup.Dialogs;
 import inc.nomard.spoty.core.values.strings.Values;
-import inc.nomard.spoty.core.viewModels.BranchViewModel;
 import inc.nomard.spoty.core.viewModels.CustomerViewModel;
 import inc.nomard.spoty.core.viewModels.quotations.QuotationDetailViewModel;
 import inc.nomard.spoty.core.viewModels.quotations.QuotationMasterViewModel;
 import inc.nomard.spoty.core.views.BaseController;
-import inc.nomard.spoty.network_bridge.dtos.Branch;
 import inc.nomard.spoty.network_bridge.dtos.Customer;
 import inc.nomard.spoty.network_bridge.dtos.quotations.QuotationDetail;
 import inc.nomard.spoty.utils.SpotyLogger;
@@ -68,11 +67,7 @@ public class QuotationMasterFormController implements Initializable {
     @FXML
     public Label quotationFormTitle;
     @FXML
-    public MFXDatePicker quotationDate;
-    @FXML
     public MFXFilterComboBox<Customer> quotationCustomer;
-    @FXML
-    public MFXFilterComboBox<Branch> quotationBranch;
     @FXML
     public MFXTableView<QuotationDetail> quotationDetailTable;
     @FXML
@@ -82,11 +77,7 @@ public class QuotationMasterFormController implements Initializable {
     @FXML
     public MFXFilterComboBox<String> quotationStatus;
     @FXML
-    public Label quotationDateValidationLabel;
-    @FXML
     public Label quotationCustomerValidationLabel;
-    @FXML
-    public Label quotationBranchValidationLabel;
     @FXML
     public Label quotationStatusValidationLabel;
     @FXML
@@ -113,11 +104,9 @@ public class QuotationMasterFormController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Form input binding.
-        quotationDate.textProperty().bindBidirectional(QuotationMasterViewModel.dateProperty());
         quotationCustomer
                 .valueProperty()
                 .bindBidirectional(QuotationMasterViewModel.customerProperty());
-        quotationBranch.valueProperty().bindBidirectional(QuotationMasterViewModel.branchProperty());
         quotationStatus.textProperty().bindBidirectional(QuotationMasterViewModel.statusProperty());
         quotationNote.textProperty().bindBidirectional(QuotationMasterViewModel.noteProperty());
 
@@ -125,43 +114,25 @@ public class QuotationMasterFormController implements Initializable {
         StringConverter<Customer> customerConverter =
                 FunctionalStringConverter.to(customer -> (customer == null) ? "" : customer.getName());
 
-        StringConverter<Branch> branchConverter =
-                FunctionalStringConverter.to(branch -> (branch == null) ? "" : branch.getName());
-
         // ComboBox Filter Functions.
         Function<String, Predicate<Customer>> customerFilterFunction =
                 searchStr ->
                         customer ->
                                 StringUtils.containsIgnoreCase(customerConverter.toString(customer), searchStr);
 
-        Function<String, Predicate<Branch>> branchFilterFunction =
-                searchStr ->
-                        branch -> StringUtils.containsIgnoreCase(branchConverter.toString(branch), searchStr);
-
         // Combo box properties.
         quotationCustomer.setItems(CustomerViewModel.getCustomers());
         quotationCustomer.setConverter(customerConverter);
         quotationCustomer.setFilterFunction(customerFilterFunction);
 
-        quotationBranch.setItems(BranchViewModel.getBranches());
-        quotationBranch.setConverter(branchConverter);
-        quotationBranch.setFilterFunction(branchFilterFunction);
-
         quotationStatus.setItems(FXCollections.observableArrayList(Values.QUOTATION_TYPE));
 
         // input validators.
-        requiredValidator(
-                quotationBranch,
-                "Branch is required.",
-                quotationBranchValidationLabel,
-                saveBtn);
         requiredValidator(
                 quotationCustomer,
                 "Customer is required.",
                 quotationCustomerValidationLabel,
                 saveBtn);
-        requiredValidator(
-                quotationDate, "Date is required.", quotationDateValidationLabel, saveBtn);
         requiredValidator(
                 quotationStatus,
                 "Status is required.",
@@ -317,9 +288,7 @@ public class QuotationMasterFormController implements Initializable {
             return;
         }
 
-        if (!quotationBranchValidationLabel.isVisible()
-                && !quotationCustomerValidationLabel.isVisible()
-                && !quotationDateValidationLabel.isVisible()
+        if (!quotationCustomerValidationLabel.isVisible()
                 && !quotationStatusValidationLabel.isVisible()) {
             if (QuotationMasterViewModel.getId() > 0) {
                 try {
@@ -344,12 +313,9 @@ public class QuotationMasterFormController implements Initializable {
 
         QuotationMasterViewModel.resetProperties();
 
-        quotationBranchValidationLabel.setVisible(false);
         quotationCustomerValidationLabel.setVisible(false);
-        quotationDateValidationLabel.setVisible(false);
         quotationStatusValidationLabel.setVisible(false);
         quotationCustomer.clearSelection();
-        quotationBranch.clearSelection();
         quotationStatus.clearSelection();
     }
 

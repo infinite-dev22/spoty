@@ -41,7 +41,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
@@ -64,7 +63,7 @@ public class AdjustmentMasterFormController implements Initializable {
     @FXML
     public BorderPane adjustmentFormContentPane;
     @FXML
-    public Label adjustmentFormTitle, adjustmentBranchValidationLabel, adjustmentDateValidationLabel;
+    public Label adjustmentFormTitle, adjustmentDateValidationLabel;
     @FXML
     public MFXButton adjustmentProductAddBtn, saveBtn, cancelBtn;
     private MFXStageDialog dialog;
@@ -238,8 +237,7 @@ public class AdjustmentMasterFormController implements Initializable {
             notificationHolder.addMessage(notification);
             return;
         }
-        if (!adjustmentBranchValidationLabel.isVisible()
-                && !adjustmentDateValidationLabel.isVisible()) {
+        if (!adjustmentDateValidationLabel.isVisible()) {
             if (AdjustmentMasterViewModel.getId() > 0) {
                 try {
                     AdjustmentMasterViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
@@ -263,7 +261,6 @@ public class AdjustmentMasterFormController implements Initializable {
 
         AdjustmentMasterViewModel.resetProperties();
 
-        adjustmentBranchValidationLabel.setVisible(false);
         adjustmentDateValidationLabel.setVisible(false);
     }
 

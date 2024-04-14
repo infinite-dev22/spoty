@@ -14,17 +14,16 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import inc.nomard.spoty.core.components.navigation.Pages;
-import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.SpotyMessage;
+import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
 import inc.nomard.spoty.core.components.message.enums.MessageDuration;
 import inc.nomard.spoty.core.components.message.enums.MessageVariants;
+import inc.nomard.spoty.core.components.navigation.Pages;
 import inc.nomard.spoty.core.values.strings.Values;
-import inc.nomard.spoty.core.viewModels.BranchViewModel;
 import inc.nomard.spoty.core.viewModels.SupplierViewModel;
 import inc.nomard.spoty.core.viewModels.requisitions.RequisitionDetailViewModel;
 import inc.nomard.spoty.core.viewModels.requisitions.RequisitionMasterViewModel;
 import inc.nomard.spoty.core.views.BaseController;
-import inc.nomard.spoty.network_bridge.dtos.Branch;
 import inc.nomard.spoty.network_bridge.dtos.Supplier;
 import inc.nomard.spoty.network_bridge.dtos.requisitions.RequisitionDetail;
 import inc.nomard.spoty.utils.SpotyLogger;
@@ -71,11 +70,7 @@ public class RequisitionMasterFormController implements Initializable {
     @FXML
     public Label requisitionFormTitle;
     @FXML
-    public MFXDatePicker requisitionDate;
-    @FXML
     public MFXFilterComboBox<Supplier> requisitionSupplier;
-    @FXML
-    public MFXFilterComboBox<Branch> requisitionBranch;
     @FXML
     public MFXTableView<RequisitionDetail> requisitionDetailTable;
     @FXML
@@ -85,11 +80,7 @@ public class RequisitionMasterFormController implements Initializable {
     @FXML
     public MFXFilterComboBox<String> requisitionStatus;
     @FXML
-    public Label requisitionBranchValidationLabel;
-    @FXML
     public Label requisitionSupplierValidationLabel;
-    @FXML
-    public Label requisitionDateValidationLabel;
     @FXML
     public Label requisitionStatusValidationLabel;
     @FXML
@@ -116,9 +107,7 @@ public class RequisitionMasterFormController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Bi~Directional Binding.
-        requisitionDate.textProperty().bindBidirectional(RequisitionMasterViewModel.dateProperty());
         requisitionSupplier.valueProperty().bindBidirectional(RequisitionMasterViewModel.supplierProperty());
-        requisitionBranch.valueProperty().bindBidirectional(RequisitionMasterViewModel.branchProperty());
         requisitionStatus.textProperty().bindBidirectional(RequisitionMasterViewModel.statusProperty());
         requisitionNote.textProperty().bindBidirectional(RequisitionMasterViewModel.noteProperty());
 
@@ -126,43 +115,25 @@ public class RequisitionMasterFormController implements Initializable {
         StringConverter<Supplier> supplierConverter =
                 FunctionalStringConverter.to(supplier -> (supplier == null) ? "" : supplier.getName());
 
-        StringConverter<Branch> branchConverter =
-                FunctionalStringConverter.to(branch -> (branch == null) ? "" : branch.getName());
-
         // ComboBox Filter Functions.
         Function<String, Predicate<Supplier>> supplierFilterFunction =
                 searchStr ->
                         supplier ->
                                 StringUtils.containsIgnoreCase(supplierConverter.toString(supplier), searchStr);
 
-        Function<String, Predicate<Branch>> branchFilterFunction =
-                searchStr ->
-                        branch -> StringUtils.containsIgnoreCase(branchConverter.toString(branch), searchStr);
-
         // Set items to combo boxes and display custom text.
         requisitionSupplier.setItems(SupplierViewModel.getSuppliers());
         requisitionSupplier.setConverter(supplierConverter);
         requisitionSupplier.setFilterFunction(supplierFilterFunction);
 
-        requisitionBranch.setItems(BranchViewModel.getBranches());
-        requisitionBranch.setConverter(branchConverter);
-        requisitionBranch.setFilterFunction(branchFilterFunction);
-
         requisitionStatus.setItems(FXCollections.observableArrayList(Values.PURCHASE_STATUSES));
 
         // input validators.
-        requiredValidator(
-                requisitionBranch,
-                "Branch is required.",
-                requisitionBranchValidationLabel,
-                saveBtn);
         requiredValidator(
                 requisitionSupplier,
                 "Supplier is required.",
                 requisitionSupplierValidationLabel,
                 saveBtn);
-        requiredValidator(
-                requisitionDate, "Date is required.", requisitionDateValidationLabel, saveBtn);
         requiredValidator(
                 requisitionStatus,
                 "Status is required.",
@@ -207,9 +178,7 @@ public class RequisitionMasterFormController implements Initializable {
             notificationHolder.addMessage(notification);
             return;
         }
-        if (!requisitionBranchValidationLabel.isVisible()
-                && !requisitionSupplierValidationLabel.isVisible()
-                && !requisitionDateValidationLabel.isVisible()
+        if (!requisitionSupplierValidationLabel.isVisible()
                 && !requisitionStatusValidationLabel.isVisible()) {
             if (RequisitionMasterViewModel.getId() > 0) {
                 try {
@@ -358,12 +327,9 @@ public class RequisitionMasterFormController implements Initializable {
 
         RequisitionMasterViewModel.resetProperties();
 
-        requisitionBranchValidationLabel.setVisible(false);
         requisitionSupplierValidationLabel.setVisible(false);
-        requisitionDateValidationLabel.setVisible(false);
         requisitionStatusValidationLabel.setVisible(false);
         requisitionSupplier.clearSelection();
-        requisitionBranch.clearSelection();
         requisitionStatus.clearSelection();
     }
 

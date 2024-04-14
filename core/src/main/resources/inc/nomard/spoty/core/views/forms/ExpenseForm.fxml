@@ -75,7 +75,7 @@
                 <Label id="validationLabel" fx:id="expenseFormAmountValidationLabel" maxWidth="1.7976931348623157E308"
                        minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true"/>
             </VBox>
-            <MFXTextField fx:id="expenseFormDetails" floatMode="BORDER" floatingText="Details" prefWidth="400.0"/>
+            <TextArea fx:id="expenseFormDetails" promptText="Details" prefWidth="400.0"/>
         </VBox>
     </center>
     <bottom>

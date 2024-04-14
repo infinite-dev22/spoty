@@ -62,7 +62,7 @@
                 <padding>
                     <Insets bottom="5" top="2.5"/>
                 </padding>
-                <MFXTextField fx:id="description" floatMode="BORDER" floatingText="Reason" prefWidth="400.0"/>
+                <TextArea fx:id="description" wrapText="true" promptText="Reason" prefWidth="400.0" styleClass="spoty-description-area"/>
                 <Label id="validationLabel" fx:id="descriptionValidationLabel" maxWidth="1.7976931348623157E308"
                        minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true"/>
             </VBox>

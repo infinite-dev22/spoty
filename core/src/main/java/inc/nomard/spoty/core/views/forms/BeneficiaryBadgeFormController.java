@@ -27,6 +27,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 
 import java.net.URL;
 import java.util.Objects;
@@ -42,7 +43,8 @@ public class BeneficiaryBadgeFormController implements Initializable {
     @FXML
     public MFXFilterComboBox<BeneficiaryType> beneficiaryType;
     @FXML
-    public MFXTextField name, description;
+    public MFXTextField name;
+    public TextArea description;
     @FXML
     public Label descriptionValidationLabel, colorValidationLabel, nameValidationLabel, beneficiaryTypeValidationLabel;
     @FXML
@@ -66,8 +68,8 @@ public class BeneficiaryBadgeFormController implements Initializable {
         requiredValidator(
                 name, "Name is required.", nameValidationLabel, saveBtn);
         // Input listeners.
-        requiredValidator(
-                description, "Description is required.", descriptionValidationLabel, saveBtn);
+//        requiredValidator(
+//                description, "Description is required.", descriptionValidationLabel, saveBtn);
         // Input listeners.
 //        requiredValidator(
 //                color, "Color is required.", colorValidationLabel, saveBtn);

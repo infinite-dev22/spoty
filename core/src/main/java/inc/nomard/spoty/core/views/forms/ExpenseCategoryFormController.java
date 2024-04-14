@@ -24,6 +24,7 @@ import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 
 import java.net.URL;
 import java.util.Objects;
@@ -38,7 +39,7 @@ public class ExpenseCategoryFormController implements Initializable {
     @FXML
     public MFXTextField categoryExpenseFormName;
     @FXML
-    public MFXTextField categoryExpenseFormDescription;
+    public TextArea categoryExpenseFormDescription;
     @FXML
     public MFXButton saveBtn;
     @FXML
