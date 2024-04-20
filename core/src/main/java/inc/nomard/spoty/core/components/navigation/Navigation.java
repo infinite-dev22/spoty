@@ -86,8 +86,7 @@ public class Navigation {
         map.put("EMPLOYEES", NavTree.NavTreeItem.page("Employees", Pages.getEmployeesPane()));
         map.put("EMPLOYMENT_STATUS", NavTree.NavTreeItem.page("Employment Statuses", Pages.getEmploymentStatusPane()));
         // Leave
-        map.put("LEAVE_STATUS", NavTree.NavTreeItem.page("Leave Status", Pages.getLeaveStatusPane()));
-        map.put("LEAVE_REQUEST", NavTree.NavTreeItem.page("Leave Request", Pages.getLeaveRequestPane()));
+        map.put("LEAVE_REQUEST", NavTree.NavTreeItem.page("Leave Requests", Pages.getLeaveRequestPane()));
         map.put("CALENDAR", NavTree.NavTreeItem.page("Calendar", Pages.getCalendarPane()));
         // PayRoll
         map.put("PAY_SLIPS", NavTree.NavTreeItem.page("Pay Slips", Pages.getPaySlipsPane()));
@@ -243,7 +242,6 @@ public class Navigation {
         leave
                 .getChildren()
                 .setAll(
-                        NAV_TREE.get("LEAVE_STATUS"),
                         NAV_TREE.get("LEAVE_REQUEST"),
                         NAV_TREE.get("CALENDAR"));
 

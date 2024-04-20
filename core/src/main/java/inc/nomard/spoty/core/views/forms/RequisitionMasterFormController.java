@@ -39,6 +39,8 @@ import io.github.palexdev.materialfx.filter.IntegerFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import io.github.palexdev.materialfx.utils.StringUtils;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
+import io.github.palexdev.materialfx.validation.Constraint;
+import io.github.palexdev.materialfx.validation.Severity;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -57,32 +59,31 @@ import javafx.util.StringConverter;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Comparator;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
-import static inc.nomard.spoty.core.Validators.requiredValidator;
+import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
 
 @SuppressWarnings("unchecked")
 public class RequisitionMasterFormController implements Initializable {
     private static RequisitionMasterFormController instance;
     @FXML
-    public Label requisitionFormTitle;
+    public Label title,
+            supplierValidationLabel,
+            statusValidationLabel;
     @FXML
-    public MFXFilterComboBox<Supplier> requisitionSupplier;
+    public MFXFilterComboBox<Supplier> supplier;
     @FXML
-    public MFXTableView<RequisitionDetail> requisitionDetailTable;
+    public MFXTableView<RequisitionDetail> detailTable;
     @FXML
-    public MFXTextField requisitionNote;
+    public MFXTextField note;
     @FXML
-    public BorderPane requisitionFormContentPane;
+    public BorderPane contentPane;
     @FXML
-    public MFXFilterComboBox<String> requisitionStatus;
-    @FXML
-    public Label requisitionSupplierValidationLabel;
-    @FXML
-    public Label requisitionStatusValidationLabel;
+    public MFXFilterComboBox<String> status;
     @FXML
     public MFXButton saveBtn,
             cancelBtn;
@@ -107,9 +108,9 @@ public class RequisitionMasterFormController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Bi~Directional Binding.
-        requisitionSupplier.valueProperty().bindBidirectional(RequisitionMasterViewModel.supplierProperty());
-        requisitionStatus.textProperty().bindBidirectional(RequisitionMasterViewModel.statusProperty());
-        requisitionNote.textProperty().bindBidirectional(RequisitionMasterViewModel.noteProperty());
+        supplier.valueProperty().bindBidirectional(RequisitionMasterViewModel.supplierProperty());
+        status.textProperty().bindBidirectional(RequisitionMasterViewModel.statusProperty());
+        note.textProperty().bindBidirectional(RequisitionMasterViewModel.noteProperty());
 
         // ComboBox Converters.
         StringConverter<Supplier> supplierConverter =
@@ -122,23 +123,14 @@ public class RequisitionMasterFormController implements Initializable {
                                 StringUtils.containsIgnoreCase(supplierConverter.toString(supplier), searchStr);
 
         // Set items to combo boxes and display custom text.
-        requisitionSupplier.setItems(SupplierViewModel.getSuppliers());
-        requisitionSupplier.setConverter(supplierConverter);
-        requisitionSupplier.setFilterFunction(supplierFilterFunction);
+        supplier.setItems(SupplierViewModel.getSuppliers());
+        supplier.setConverter(supplierConverter);
+        supplier.setFilterFunction(supplierFilterFunction);
 
-        requisitionStatus.setItems(FXCollections.observableArrayList(Values.PURCHASE_STATUSES));
+        status.setItems(FXCollections.observableArrayList(Values.PURCHASE_STATUSES));
 
         // input validators.
-        requiredValidator(
-                requisitionSupplier,
-                "Supplier is required.",
-                requisitionSupplierValidationLabel,
-                saveBtn);
-        requiredValidator(
-                requisitionStatus,
-                "Status is required.",
-                requisitionStatusValidationLabel,
-                saveBtn);
+        requiredValidator();
 
         setupTable();
     }
@@ -157,7 +149,7 @@ public class RequisitionMasterFormController implements Initializable {
                         .toStageDialogBuilder()
                         .initOwner(stage)
                         .initModality(Modality.WINDOW_MODAL)
-                        .setOwnerNode(requisitionFormContentPane)
+                        .setOwnerNode(contentPane)
                         .setScrimPriority(ScrimPriority.WINDOW)
                         .setScrimOwner(true)
                         .get();
@@ -168,7 +160,7 @@ public class RequisitionMasterFormController implements Initializable {
     public void saveBtnClicked() {
         SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
 
-        if (!requisitionDetailTable.isDisabled() && RequisitionDetailViewModel.requisitionDetailsList.isEmpty()) {
+        if (!detailTable.isDisabled() && RequisitionDetailViewModel.requisitionDetailsList.isEmpty()) {
             SpotyMessage notification =
                     new SpotyMessage.MessageBuilder("Table can't be Empty")
                             .duration(MessageDuration.SHORT)
@@ -176,10 +168,23 @@ public class RequisitionMasterFormController implements Initializable {
                             .type(MessageVariants.ERROR)
                             .build();
             notificationHolder.addMessage(notification);
-            return;
         }
-        if (!requisitionSupplierValidationLabel.isVisible()
-                && !requisitionStatusValidationLabel.isVisible()) {
+        List<Constraint> supplierConstraints = supplier.validate();
+        List<Constraint> statusConstraints = status.validate();
+        if (!supplierConstraints.isEmpty()) {
+            supplierValidationLabel.setManaged(true);
+            supplierValidationLabel.setVisible(true);
+            supplierValidationLabel.setText(supplierConstraints.getFirst().getMessage());
+            supplier.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+        }
+        if (!statusConstraints.isEmpty()) {
+            statusValidationLabel.setManaged(true);
+            statusValidationLabel.setVisible(true);
+            statusValidationLabel.setText(statusConstraints.getFirst().getMessage());
+            status.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+        }
+        if (supplierConstraints.isEmpty()
+                && statusConstraints.isEmpty()) {
             if (RequisitionMasterViewModel.getId() > 0) {
                 try {
                     RequisitionMasterViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
@@ -193,9 +198,7 @@ public class RequisitionMasterFormController implements Initializable {
             } catch (Exception e) {
                 SpotyLogger.writeToFile(e, this.getClass());
             }
-            return;
         }
-        onRequiredFieldsMissing();
     }
 
     private void setupTable() {
@@ -228,19 +231,19 @@ public class RequisitionMasterFormController implements Initializable {
                 requisitionDetail -> new MFXTableRowCell<>(RequisitionDetail::getTotal));
 
         // Set table column width.
-        product.prefWidthProperty().bind(requisitionDetailTable.widthProperty().multiply(.25));
-        quantity.prefWidthProperty().bind(requisitionDetailTable.widthProperty().multiply(.25));
-        tax.prefWidthProperty().bind(requisitionDetailTable.widthProperty().multiply(.25));
-        discount.prefWidthProperty().bind(requisitionDetailTable.widthProperty().multiply(.25));
-        price.prefWidthProperty().bind(requisitionDetailTable.widthProperty().multiply(.25));
-        totalPrice.prefWidthProperty().bind(requisitionDetailTable.widthProperty().multiply(.25));
+        product.prefWidthProperty().bind(detailTable.widthProperty().multiply(.25));
+        quantity.prefWidthProperty().bind(detailTable.widthProperty().multiply(.25));
+        tax.prefWidthProperty().bind(detailTable.widthProperty().multiply(.25));
+        discount.prefWidthProperty().bind(detailTable.widthProperty().multiply(.25));
+        price.prefWidthProperty().bind(detailTable.widthProperty().multiply(.25));
+        totalPrice.prefWidthProperty().bind(detailTable.widthProperty().multiply(.25));
 
         // Set table filter.
-        requisitionDetailTable
+        detailTable
                 .getTableColumns()
                 .addAll(product, quantity, tax, discount, price, totalPrice);
 
-        requisitionDetailTable
+        detailTable
                 .getFilters()
                 .addAll(
                         new StringFilter<>("Product", RequisitionDetail::getProductName),
@@ -257,27 +260,27 @@ public class RequisitionMasterFormController implements Initializable {
             RequisitionDetailViewModel.getRequisitionDetails()
                     .addListener(
                             (ListChangeListener<RequisitionDetail>)
-                                    change -> requisitionDetailTable.setItems(RequisitionDetailViewModel.getRequisitionDetails()));
+                                    change -> detailTable.setItems(RequisitionDetailViewModel.getRequisitionDetails()));
         } else {
-            requisitionDetailTable
+            detailTable
                     .itemsProperty()
                     .bindBidirectional(RequisitionDetailViewModel.requisitionDetailsProperty());
         }
     }
 
     private void styleTable() {
-        requisitionDetailTable.setPrefSize(1000, 1000);
-        requisitionDetailTable.features().enableBounceEffect();
-        requisitionDetailTable.features().enableSmoothScrolling(0.5);
+        detailTable.setPrefSize(1000, 1000);
+        detailTable.features().enableBounceEffect();
+        detailTable.features().enableSmoothScrolling(0.5);
 
-        requisitionDetailTable.setTableRowFactory(
+        detailTable.setTableRowFactory(
                 t -> {
-                    MFXTableRow<RequisitionDetail> row = new MFXTableRow<>(requisitionDetailTable, t);
+                    MFXTableRow<RequisitionDetail> row = new MFXTableRow<>(detailTable, t);
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
                                 showContextMenu((MFXTableRow<RequisitionDetail>) event.getSource())
                                         .show(
-                                                requisitionDetailTable.getScene().getWindow(),
+                                                detailTable.getScene().getWindow(),
                                                 event.getScreenX(),
                                                 event.getScreenY());
                                 event.consume();
@@ -288,7 +291,7 @@ public class RequisitionMasterFormController implements Initializable {
     }
 
     private MFXContextMenu showContextMenu(MFXTableRow<RequisitionDetail> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(requisitionDetailTable);
+        MFXContextMenu contextMenu = new MFXContextMenu(detailTable);
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
 
@@ -324,13 +327,19 @@ public class RequisitionMasterFormController implements Initializable {
 
     public void cancelBtnClicked() {
         BaseController.navigation.navigate(Pages.getRequisitionPane());
-
         RequisitionMasterViewModel.resetProperties();
 
-        requisitionSupplierValidationLabel.setVisible(false);
-        requisitionStatusValidationLabel.setVisible(false);
-        requisitionSupplier.clearSelection();
-        requisitionStatus.clearSelection();
+        supplierValidationLabel.setVisible(false);
+        statusValidationLabel.setVisible(false);
+
+        supplierValidationLabel.setManaged(false);
+        statusValidationLabel.setManaged(false);
+
+        supplier.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+        status.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+
+        supplier.clearSelection();
+        status.clearSelection();
     }
 
     public void addBtnClicked() {
@@ -357,6 +366,8 @@ public class RequisitionMasterFormController implements Initializable {
         saveBtn.setDisable(false);
         cancelBtnClicked();
 
+        BaseController.navigation.navigate(Pages.getRequisitionPane());
+        RequisitionMasterViewModel.resetProperties();
         RequisitionMasterViewModel.getAllRequisitionMasters(null, null, null);
     }
 
@@ -388,21 +399,49 @@ public class RequisitionMasterFormController implements Initializable {
         cancelBtn.setDisable(false);
         saveBtn.setDisable(false);
 
+        BaseController.navigation.navigate(Pages.getRequisitionPane());
+        RequisitionMasterViewModel.resetProperties();
         RequisitionMasterViewModel.getAllRequisitionMasters(null, null, null);
     }
 
-    private void onRequiredFieldsMissing() {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder("Required fields can't be null")
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
-                        .build();
-        notificationHolder.addMessage(notification);
-        cancelBtn.setDisable(false);
-        saveBtn.setDisable(false);
-
-        RequisitionMasterViewModel.getAllRequisitionMasters(null, null, null);
+    public void requiredValidator() {
+        // Name input validation.
+        Constraint supplierConstraint =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Supplier is required")
+                        .setCondition(supplier.textProperty().length().greaterThan(0))
+                        .get();
+        supplier.getValidator().constraint(supplierConstraint);
+        Constraint statusConstraint =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Status is required")
+                        .setCondition(status.textProperty().length().greaterThan(0))
+                        .get();
+        status.getValidator().constraint(statusConstraint);
+        // Display error.
+        supplier
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                supplierValidationLabel.setManaged(false);
+                                supplierValidationLabel.setVisible(false);
+                                supplier.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
+        status
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                statusValidationLabel.setManaged(false);
+                                statusValidationLabel.setVisible(false);
+                                status.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
     }
 }

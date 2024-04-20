@@ -14,46 +14,52 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.SpotyMessage;
+import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
 import inc.nomard.spoty.core.components.message.enums.MessageDuration;
 import inc.nomard.spoty.core.components.message.enums.MessageVariants;
 import inc.nomard.spoty.core.viewModels.CustomerViewModel;
 import inc.nomard.spoty.utils.SpotyLogger;
 import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.validation.Constraint;
+import io.github.palexdev.materialfx.validation.Severity;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 
 import java.net.URL;
+import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
 import static inc.nomard.spoty.core.GlobalActions.closeDialog;
-import static inc.nomard.spoty.core.Validators.*;
+import static inc.nomard.spoty.core.Validators.emailValidator;
+import static inc.nomard.spoty.core.Validators.lengthValidator;
+import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
 
 public class CustomerFormController implements Initializable {
     private static CustomerFormController instance;
     @FXML
-    public MFXButton saveBtn;
+    public MFXButton saveBtn,
+            cancelBtn;
     @FXML
-    public MFXButton cancelBtn;
+    public MFXTextField customerFormName,
+            customerFormEmail,
+            customerFormPhone,
+            customerFormCity,
+            customerFormCountry,
+            customerFormTaxNumber,
+            customerFormAddress;
     @FXML
-    public MFXTextField customerFormName;
-    @FXML
-    public MFXTextField customerFormEmail;
-    @FXML
-    public MFXTextField customerFormPhone;
-    @FXML
-    public MFXTextField customerFormCity;
-    @FXML
-    public MFXTextField customerFormCountry;
-    @FXML
-    public MFXTextField customerFormTaxNumber;
-    @FXML
-    public MFXTextField customerFormAddress;
-    @FXML
-    public Label validationLabel1, validationLabel2, validationLabel3;
+    public Label customerFormNameValidationLabel,
+            customerFormEmailValidationLabel,
+            customerFormPhoneValidationLabel;
+    private List<Constraint> nameConstraints,
+            emailConstraints,
+            phoneConstraints;
+    private ActionEvent actionEvent = null;
 
     public static CustomerFormController getInstance() {
         if (Objects.equals(instance, null)) instance = new CustomerFormController();
@@ -90,14 +96,13 @@ public class CustomerFormController implements Initializable {
         customerFormAddress.textProperty().bindBidirectional(CustomerViewModel.addressProperty());
 
         // Name input validation.
-        requiredValidator(
-                customerFormName, "Name field is required.", validationLabel1, saveBtn);
+        requiredValidator();
 
         // Email input validation.
-        emailValidator(customerFormEmail, validationLabel2, saveBtn);
+        emailValidator(customerFormEmail, customerFormEmailValidationLabel, saveBtn);
 
         // Phone input validation.
-        lengthValidator(customerFormPhone, 11, "Invalid length", validationLabel3, saveBtn);
+        lengthValidator(customerFormPhone, 11, "Invalid length", customerFormPhoneValidationLabel, saveBtn);
         dialogOnActions();
     }
 
@@ -105,36 +110,62 @@ public class CustomerFormController implements Initializable {
         cancelBtn.setOnAction(
                 (event) -> {
                     closeDialog(event);
-
-                    validationLabel1.setVisible(false);
-                    validationLabel2.setVisible(false);
-                    validationLabel3.setVisible(false);
-
                     CustomerViewModel.resetProperties();
+                    customerFormNameValidationLabel.setVisible(false);
+                    customerFormEmailValidationLabel.setVisible(false);
+                    customerFormPhoneValidationLabel.setVisible(false);
+
+                    customerFormNameValidationLabel.setManaged(false);
+                    customerFormEmailValidationLabel.setManaged(false);
+                    customerFormPhoneValidationLabel.setManaged(false);
+
+                    customerFormName.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    customerFormEmail.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    customerFormPhone.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+
                 });
         saveBtn.setOnAction(
                 (event) -> {
-                    if (!validationLabel1.isVisible()
-                            && !validationLabel2.isVisible()
-                            && !validationLabel3.isVisible()) {
+                    nameConstraints = customerFormName.validate();
+                    emailConstraints = customerFormEmail.validate();
+                    phoneConstraints = customerFormPhone.validate();
+                    if (!nameConstraints.isEmpty()) {
+                        customerFormNameValidationLabel.setManaged(true);
+                        customerFormNameValidationLabel.setVisible(true);
+                        customerFormNameValidationLabel.setText(nameConstraints.getFirst().getMessage());
+                        customerFormName.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                    }
+                    if (!emailConstraints.isEmpty()) {
+                        customerFormEmailValidationLabel.setManaged(true);
+                        customerFormEmailValidationLabel.setVisible(true);
+                        customerFormEmailValidationLabel.setText(emailConstraints.getFirst().getMessage());
+                        customerFormEmail.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                    }
+                    if (!phoneConstraints.isEmpty()) {
+                        customerFormPhoneValidationLabel.setManaged(true);
+                        customerFormPhoneValidationLabel.setVisible(true);
+                        customerFormPhoneValidationLabel.setText(phoneConstraints.getFirst().getMessage());
+                        customerFormPhone.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                    }
+                    if (nameConstraints.isEmpty()
+                            && emailConstraints.isEmpty()
+                            && phoneConstraints.isEmpty()) {
                         if (CustomerViewModel.getId() > 0) {
-                                try {
-                                    CustomerViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
-                                    closeDialog(event);
-                                } catch (Exception e) {
-                                    SpotyLogger.writeToFile(e, this.getClass());
-                                }
-                            return;
-                        }
                             try {
-                                CustomerViewModel.saveCustomer(this::onAction, this::onAddSuccess, this::onFailed);
-                                closeDialog(event);
+                                CustomerViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
+                                actionEvent=event;
                             } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }
-                        return;
+                            return;
+                        }
+                        try {
+                            CustomerViewModel.saveCustomer(this::onAction, this::onAddSuccess, this::onFailed);
+                            actionEvent=event;
+                        } catch (Exception e) {
+                            SpotyLogger.writeToFile(e, this.getClass());
+                        }
                     }
-                    onRequiredFieldsMissing();
                 });
     }
 
@@ -157,6 +188,8 @@ public class CustomerFormController implements Initializable {
         cancelBtn.setDisable(false);
         saveBtn.setDisable(false);
 
+        closeDialog(actionEvent);
+        CustomerViewModel.resetProperties();
         CustomerViewModel.getAllCustomers(null, null, null);
     }
 
@@ -172,6 +205,8 @@ public class CustomerFormController implements Initializable {
         cancelBtn.setDisable(false);
         saveBtn.setDisable(false);
 
+        closeDialog(actionEvent);
+        CustomerViewModel.resetProperties();
         CustomerViewModel.getAllCustomers(null, null, null);
     }
 
@@ -190,18 +225,62 @@ public class CustomerFormController implements Initializable {
         CustomerViewModel.getAllCustomers(null, null, null);
     }
 
-    private void onRequiredFieldsMissing() {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder("Required fields can't be null")
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
-                        .build();
-        notificationHolder.addMessage(notification);
-        cancelBtn.setDisable(false);
-        saveBtn.setDisable(false);
-
-        CustomerViewModel.getAllCustomers(null, null, null);
+    public void requiredValidator() {
+        // Name input validation.
+        Constraint name =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Name is required")
+                        .setCondition(customerFormName.textProperty().length().greaterThan(0))
+                        .get();
+        customerFormName.getValidator().constraint(name);
+        Constraint email =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Email is required")
+                        .setCondition(customerFormEmail.textProperty().length().greaterThan(0))
+                        .get();
+        customerFormEmail.getValidator().constraint(email);
+        Constraint phone =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Phone is required")
+                        .setCondition(customerFormPhone.textProperty().length().greaterThan(0))
+                        .get();
+        customerFormPhone.getValidator().constraint(phone);
+        // Display error.
+        customerFormName
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                customerFormNameValidationLabel.setManaged(false);
+                                customerFormNameValidationLabel.setVisible(false);
+                                customerFormName.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
+        customerFormEmail
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                customerFormEmailValidationLabel.setManaged(false);
+                                customerFormEmailValidationLabel.setVisible(false);
+                                customerFormEmail.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
+        customerFormPhone
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                customerFormPhoneValidationLabel.setManaged(false);
+                                customerFormPhoneValidationLabel.setVisible(false);
+                                customerFormPhone.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
     }
 }

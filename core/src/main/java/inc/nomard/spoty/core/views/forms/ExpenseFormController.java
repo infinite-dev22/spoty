@@ -14,20 +14,22 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.SpotyMessage;
+import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
 import inc.nomard.spoty.core.components.message.enums.MessageDuration;
 import inc.nomard.spoty.core.components.message.enums.MessageVariants;
-import inc.nomard.spoty.core.viewModels.BranchViewModel;
 import inc.nomard.spoty.core.viewModels.ExpenseCategoryViewModel;
 import inc.nomard.spoty.core.viewModels.ExpensesViewModel;
-import inc.nomard.spoty.network_bridge.dtos.Branch;
 import inc.nomard.spoty.network_bridge.dtos.ExpenseCategory;
 import inc.nomard.spoty.utils.SpotyLogger;
 import io.github.palexdev.materialfx.controls.MFXComboBox;
 import io.github.palexdev.materialfx.controls.MFXDatePicker;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
+import io.github.palexdev.materialfx.validation.Constraint;
+import io.github.palexdev.materialfx.validation.Severity;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -35,40 +37,37 @@ import javafx.scene.control.TextArea;
 import javafx.util.StringConverter;
 
 import java.net.URL;
+import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
 import static inc.nomard.spoty.core.GlobalActions.closeDialog;
-import static inc.nomard.spoty.core.Validators.requiredValidator;
+import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
 
 public class ExpenseFormController implements Initializable {
     private static ExpenseFormController instance;
     @FXML
-    public MFXTextField expenseFormAmount;
+    public MFXTextField amount,
+            name;
     @FXML
-    public TextArea expenseFormDetails;
+    public TextArea description;
     @FXML
-    public MFXButton saveBtn;
+    public MFXButton saveBtn,
+            cancelBtn;
     @FXML
-    public MFXButton cancelBtn;
+    public MFXDatePicker date;
     @FXML
-    public MFXDatePicker expenseFormDate;
+    public MFXComboBox<ExpenseCategory> category;
     @FXML
-    public MFXComboBox<Branch> expenseFormBranch;
-    @FXML
-    public MFXComboBox<ExpenseCategory> expenseFormCategory;
-    @FXML
-    public MFXTextField expenseFormName;
-    @FXML
-    public Label expenseFormNameValidationLabel;
-    @FXML
-    public Label expenseFormDateValidationLabel;
-    @FXML
-    public Label expenseFormBranchValidationLabel;
-    @FXML
-    public Label expenseFormCategoryValidationLabel;
-    @FXML
-    public Label expenseFormAmountValidationLabel;
+    public Label nameValidationLabel,
+            dateValidationLabel,
+            categoryValidationLabel,
+            amountValidationLabel;
+    private List<Constraint> nameConstraints,
+            dateConstraints,
+            categoryConstraints,
+            amountConstraints;
+    private ActionEvent actionEvent = null;
 
     public static ExpenseFormController getInstance() {
         if (Objects.equals(instance, null)) instance = new ExpenseFormController();
@@ -78,48 +77,23 @@ public class ExpenseFormController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Form Bindings.
-        expenseFormName.textProperty().bindBidirectional(ExpensesViewModel.nameProperty());
-        expenseFormDate.textProperty().bindBidirectional(ExpensesViewModel.dateProperty());
-        expenseFormBranch.valueProperty().bindBidirectional(ExpensesViewModel.branchProperty());
-        expenseFormCategory.valueProperty().bindBidirectional(ExpensesViewModel.categoryProperty());
-        expenseFormAmount.textProperty().bindBidirectional(ExpensesViewModel.amountProperty());
-        expenseFormDetails.textProperty().bindBidirectional(ExpensesViewModel.detailsProperty());
+        name.textProperty().bindBidirectional(ExpensesViewModel.nameProperty());
+        date.textProperty().bindBidirectional(ExpensesViewModel.dateProperty());
+        category.valueProperty().bindBidirectional(ExpensesViewModel.categoryProperty());
+        amount.textProperty().bindBidirectional(ExpensesViewModel.amountProperty());
+        description.textProperty().bindBidirectional(ExpensesViewModel.detailsProperty());
 
         // ComboBox Converters.
-        StringConverter<Branch> branchConverter =
-                FunctionalStringConverter.to(branch -> (branch == null) ? "" : branch.getName());
-
         StringConverter<ExpenseCategory> expenseCategoryConverter =
                 FunctionalStringConverter.to(
                         expenseCategory -> (expenseCategory == null) ? "" : expenseCategory.getName());
 
         // Combo box properties.
-        expenseFormBranch.setItems(BranchViewModel.getBranches());
-        expenseFormBranch.setConverter(branchConverter);
-
-        expenseFormCategory.setItems(ExpenseCategoryViewModel.getCategories());
-        expenseFormCategory.setConverter(expenseCategoryConverter);
+        category.setItems(ExpenseCategoryViewModel.getCategories());
+        category.setConverter(expenseCategoryConverter);
 
         // Input listeners.
-        requiredValidator(
-                expenseFormName, "Name is required.", expenseFormNameValidationLabel, saveBtn);
-        requiredValidator(
-                expenseFormDate, "Date is required.", expenseFormDateValidationLabel, saveBtn);
-        requiredValidator(
-                expenseFormBranch,
-                "Branch is required.",
-                expenseFormBranchValidationLabel,
-                saveBtn);
-        requiredValidator(
-                expenseFormCategory,
-                "Category is required.",
-                expenseFormCategoryValidationLabel,
-                saveBtn);
-        requiredValidator(
-                expenseFormAmount,
-                "Amount can't be empty.",
-                expenseFormAmountValidationLabel,
-                saveBtn);
+        requiredValidator();
 
         dialogOnActions();
     }
@@ -129,26 +103,61 @@ public class ExpenseFormController implements Initializable {
                 (event) -> {
                     closeDialog(event);
                     ExpensesViewModel.resetProperties();
-                    expenseFormBranch.clearSelection();
-                    expenseFormCategory.clearSelection();
+                    category.clearSelection();
 
-                    expenseFormNameValidationLabel.setVisible(false);
-                    expenseFormDateValidationLabel.setVisible(false);
-                    expenseFormBranchValidationLabel.setVisible(false);
-                    expenseFormCategoryValidationLabel.setVisible(false);
-                    expenseFormAmountValidationLabel.setVisible(false);
+                    nameValidationLabel.setVisible(false);
+                    dateValidationLabel.setVisible(false);
+                    categoryValidationLabel.setVisible(false);
+                    amountValidationLabel.setVisible(false);
+
+                    nameValidationLabel.setManaged(false);
+                    dateValidationLabel.setManaged(false);
+                    categoryValidationLabel.setManaged(false);
+                    amountValidationLabel.setManaged(false);
+
+                    name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    date.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    category.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    amount.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                 });
         saveBtn.setOnAction(
                 (event) -> {
-                    if (!expenseFormNameValidationLabel.isVisible()
-                            && !expenseFormDateValidationLabel.isVisible()
-                            && !expenseFormBranchValidationLabel.isVisible()
-                            && !expenseFormCategoryValidationLabel.isVisible()
-                            && !expenseFormAmountValidationLabel.isVisible()) {
+                    nameConstraints = name.validate();
+                    dateConstraints = date.validate();
+                    categoryConstraints = category.validate();
+                    amountConstraints = amount.validate();
+                    if (!nameConstraints.isEmpty()) {
+                        nameValidationLabel.setManaged(true);
+                        nameValidationLabel.setVisible(true);
+                        nameValidationLabel.setText(nameConstraints.getFirst().getMessage());
+                        name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                    }
+                    if (!dateConstraints.isEmpty()) {
+                        dateValidationLabel.setManaged(true);
+                        dateValidationLabel.setVisible(true);
+                        dateValidationLabel.setText(dateConstraints.getFirst().getMessage());
+                        date.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                    }
+                    if (!categoryConstraints.isEmpty()) {
+                        categoryValidationLabel.setManaged(true);
+                        categoryValidationLabel.setVisible(true);
+                        categoryValidationLabel.setText(categoryConstraints.getFirst().getMessage());
+                        category.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                    }
+                    if (!amountConstraints.isEmpty()) {
+                        amountValidationLabel.setManaged(true);
+                        amountValidationLabel.setVisible(true);
+                        amountValidationLabel.setText(amountConstraints.getFirst().getMessage());
+                        amount.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                    }
+                    if (nameConstraints.isEmpty()
+                            && dateConstraints.isEmpty()
+                            && categoryConstraints.isEmpty()
+                            && amountConstraints.isEmpty()) {
                         if (ExpensesViewModel.getId() > 0) {
                             try {
                                 ExpensesViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
-                                closeDialog(event);
+                                actionEvent = event;
                             } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }
@@ -156,13 +165,11 @@ public class ExpenseFormController implements Initializable {
                         }
                         try {
                             ExpensesViewModel.saveExpense(this::onAction, this::onAddSuccess, this::onFailed);
-                            closeDialog(event);
+                            actionEvent = event;
                         } catch (Exception e) {
                             SpotyLogger.writeToFile(e, this.getClass());
                         }
-                        return;
                     }
-                    onRequiredFieldsMissing();
                 });
     }
 
@@ -184,9 +191,10 @@ public class ExpenseFormController implements Initializable {
         notificationHolder.addMessage(notification);
         cancelBtn.setDisable(false);
         saveBtn.setDisable(false);
-        expenseFormBranch.clearSelection();
-        expenseFormCategory.clearSelection();
+        category.clearSelection();
 
+        closeDialog(actionEvent);
+        ExpensesViewModel.resetProperties();
         ExpensesViewModel.getAllExpenses(null, null, null);
     }
 
@@ -201,9 +209,10 @@ public class ExpenseFormController implements Initializable {
         notificationHolder.addMessage(notification);
         cancelBtn.setDisable(false);
         saveBtn.setDisable(false);
-        expenseFormBranch.clearSelection();
-        expenseFormCategory.clearSelection();
+        category.clearSelection();
 
+        closeDialog(actionEvent);
+        ExpensesViewModel.resetProperties();
         ExpensesViewModel.getAllExpenses(null, null, null);
     }
 
@@ -222,18 +231,80 @@ public class ExpenseFormController implements Initializable {
         ExpensesViewModel.getAllExpenses(null, null, null);
     }
 
-    private void onRequiredFieldsMissing() {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder("Required fields can't be null")
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
-                        .build();
-        notificationHolder.addMessage(notification);
-        cancelBtn.setDisable(false);
-        saveBtn.setDisable(false);
-
-        ExpensesViewModel.getAllExpenses(null, null, null);
+    public void requiredValidator() {
+        // Name input validation.
+        Constraint nameConstraint =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Name is required")
+                        .setCondition(name.textProperty().length().greaterThan(0))
+                        .get();
+        name.getValidator().constraint(nameConstraint);
+        Constraint dateConstraint =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Date is required")
+                        .setCondition(date.textProperty().length().greaterThan(0))
+                        .get();
+        date.getValidator().constraint(dateConstraint);
+        Constraint categoryConstraint =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Category is required")
+                        .setCondition(category.textProperty().length().greaterThan(0))
+                        .get();
+        category.getValidator().constraint(categoryConstraint);
+        Constraint amountConstraint =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Amount is required")
+                        .setCondition(amount.textProperty().length().greaterThan(0))
+                        .get();
+        amount.getValidator().constraint(amountConstraint);
+        // Display error.
+        name
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                nameValidationLabel.setManaged(false);
+                                nameValidationLabel.setVisible(false);
+                                name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
+        date
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                dateValidationLabel.setManaged(false);
+                                dateValidationLabel.setVisible(false);
+                                date.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
+        category
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                categoryValidationLabel.setManaged(false);
+                                categoryValidationLabel.setVisible(false);
+                                category.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
+        amount
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                amountValidationLabel.setManaged(false);
+                                amountValidationLabel.setVisible(false);
+                                amount.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
     }
 }

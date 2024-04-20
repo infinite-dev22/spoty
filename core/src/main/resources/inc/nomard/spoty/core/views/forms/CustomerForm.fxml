@@ -44,34 +44,37 @@
             </padding>
             <VBox spacing="5.0">
                 <padding>
-                    <Insets bottom="5.0" top="2.5"/>
+                    <Insets bottom="2.5"/>
                 </padding>
                 <MFXTextField fx:id="customerFormName" textLimit="50" floatMode="BORDER" floatingText="Name"
                               prefWidth="300.0"/>
-                <Label id="validationLabel" fx:id="validationLabel1" maxWidth="1.7976931348623157E308"
-                       minHeight="-Infinity" visible="false" wrapText="true" styleClass="input-validation-error"/>
+                <Label id="validationLabel" fx:id="customerFormNameValidationLabel" maxWidth="1.7976931348623157E308"
+                       minHeight="-Infinity" visible="false" managed="false" wrapText="true"
+                       styleClass="input-validation-error"/>
             </VBox>
             <VBox spacing="5.0" GridPane.columnIndex="1">
                 <padding>
-                    <Insets bottom="5.0" top="2.5"/>
+                    <Insets bottom="2.5"/>
                 </padding>
                 <MFXTextField fx:id="customerFormEmail" textLimit="100" floatMode="BORDER" floatingText="Email"
                               prefWidth="300.0"/>
-                <Label id="validationLabel" fx:id="validationLabel2" maxWidth="1.7976931348623157E308"
-                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true"/>
+                <Label id="validationLabel" fx:id="customerFormEmailValidationLabel" maxWidth="1.7976931348623157E308"
+                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" managed="false"
+                       wrapText="true"/>
             </VBox>
             <VBox spacing="5.0" GridPane.rowIndex="1">
                 <padding>
-                    <Insets bottom="5.0" top="2.5"/>
+                    <Insets bottom="2.5" top="2.5"/>
                 </padding>
                 <MFXTextField fx:id="customerFormPhone" textLimit="12" floatMode="BORDER" floatingText="Phone"
                               prefWidth="300.0"/>
-                <Label id="validationLabel" fx:id="validationLabel3" maxWidth="1.7976931348623157E308"
-                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true"/>
+                <Label id="validationLabel" fx:id="customerFormPhoneValidationLabel" maxWidth="1.7976931348623157E308"
+                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" managed="false"
+                       wrapText="true"/>
             </VBox>
             <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                 <padding>
-                    <Insets bottom="5.0" top="2.5"/>
+                    <Insets bottom="2.5" top="2.5"/>
                 </padding>
                 <MFXTextField fx:id="customerFormCity" textLimit="25" floatMode="BORDER" floatingText="City"
                               prefWidth="300.0"
@@ -79,7 +82,7 @@
             </VBox>
             <VBox spacing="5.0" GridPane.rowIndex="2">
                 <padding>
-                    <Insets bottom="5.0" top="2.5"/>
+                    <Insets bottom="2.5" top="2.5"/>
                 </padding>
                 <MFXTextField fx:id="customerFormCountry" textLimit="25" floatMode="BORDER" floatingText="Country"
                               prefWidth="300.0"
@@ -87,7 +90,7 @@
             </VBox>
             <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                 <padding>
-                    <Insets bottom="5.0" top="2.5"/>
+                    <Insets bottom="2.5" top="2.5"/>
                 </padding>
                 <MFXTextField fx:id="customerFormAddress" textLimit="35" floatMode="BORDER" floatingText="Address"
                               prefWidth="300.0"
@@ -95,7 +98,7 @@
             </VBox>
             <VBox spacing="5.0" GridPane.rowIndex="3">
                 <padding>
-                    <Insets bottom="5.0" top="15.0"/>
+                    <Insets bottom="2.5" top="15.0"/>
                 </padding>
                 <MFXTextField fx:id="customerFormTaxNumber" textLimit="15" floatMode="BORDER" floatingText="Tax No."
                               prefWidth="300.0"

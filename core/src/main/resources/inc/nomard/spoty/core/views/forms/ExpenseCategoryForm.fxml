@@ -36,15 +36,15 @@
             </padding>
             <VBox spacing="5.0">
                 <padding>
-                    <Insets bottom="5.0" top="2.5"/>
+                    <Insets bottom="2.5"/>
                 </padding>
-                <MFXTextField fx:id="categoryExpenseFormName" floatMode="BORDER" floatingText="Name" prefWidth="400.0"/>
-                <Label id="validationLabel" fx:id="categoryExpenseFormNameValidationLabel"
+                <MFXTextField fx:id="name" floatMode="BORDER" floatingText="Name" prefWidth="400.0"/>
+                <Label id="validationLabel" fx:id="nameValidationLabel"
                        maxWidth="1.7976931348623157E308"
-                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true"/>
+                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" managed="false" wrapText="true"/>
             </VBox>
-            <TextArea fx:id="categoryExpenseFormDescription" promptText="Description"
-                          prefWidth="400.0"/>
+            <TextArea fx:id="description" promptText="Description"
+                      prefWidth="400.0"/>
         </VBox>
     </center>
     <bottom>

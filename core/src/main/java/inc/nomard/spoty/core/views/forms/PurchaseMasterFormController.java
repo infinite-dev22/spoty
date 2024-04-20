@@ -39,6 +39,8 @@ import io.github.palexdev.materialfx.filter.IntegerFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import io.github.palexdev.materialfx.utils.StringUtils;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
+import io.github.palexdev.materialfx.validation.Constraint;
+import io.github.palexdev.materialfx.validation.Severity;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -57,36 +59,34 @@ import javafx.util.StringConverter;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Comparator;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
-import static inc.nomard.spoty.core.Validators.requiredValidator;
+import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
 
 @SuppressWarnings("unchecked")
 public class PurchaseMasterFormController implements Initializable {
     private static PurchaseMasterFormController instance;
     @FXML
-    public Label purchaseFormTitle;
+    public Label purchaseFormTitle,
+            supplierValidationLabel,
+            dateValidationLabel,
+            statusValidationLabel;
     @FXML
-    public MFXDatePicker purchaseDate;
+    public MFXDatePicker date;
     @FXML
-    public MFXFilterComboBox<Supplier> purchaseSupplier;
+    public MFXFilterComboBox<Supplier> supplier;
     @FXML
-    public MFXTableView<PurchaseDetail> purchaseDetailTable;
+    public MFXTableView<PurchaseDetail> detailTable;
     @FXML
-    public MFXTextField purchaseNote;
+    public MFXTextField note;
     @FXML
     public BorderPane purchaseFormContentPane;
     @FXML
-    public MFXFilterComboBox<String> purchaseStatus;
-    @FXML
-    public Label purchaseSupplierValidationLabel;
-    @FXML
-    public Label purchaseDateValidationLabel;
-    @FXML
-    public Label purchaseStatusValidationLabel;
+    public MFXFilterComboBox<String> status;
     @FXML
     public MFXButton saveBtn,
             cancelBtn;
@@ -111,10 +111,10 @@ public class PurchaseMasterFormController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Bi~Directional Binding.
-        purchaseDate.textProperty().bindBidirectional(PurchaseMasterViewModel.dateProperty());
-        purchaseSupplier.valueProperty().bindBidirectional(PurchaseMasterViewModel.supplierProperty());
-        purchaseStatus.textProperty().bindBidirectional(PurchaseMasterViewModel.statusProperty());
-        purchaseNote.textProperty().bindBidirectional(PurchaseMasterViewModel.noteProperty());
+        date.textProperty().bindBidirectional(PurchaseMasterViewModel.dateProperty());
+        supplier.valueProperty().bindBidirectional(PurchaseMasterViewModel.supplierProperty());
+        status.textProperty().bindBidirectional(PurchaseMasterViewModel.statusProperty());
+        note.textProperty().bindBidirectional(PurchaseMasterViewModel.noteProperty());
 
         // ComboBox Converters.
         StringConverter<Supplier> supplierConverter =
@@ -127,24 +127,13 @@ public class PurchaseMasterFormController implements Initializable {
                                 StringUtils.containsIgnoreCase(supplierConverter.toString(supplier), searchStr);
 
         // Set items to combo boxes and display custom text.
-        purchaseSupplier.setItems(SupplierViewModel.getSuppliers());
-        purchaseSupplier.setConverter(supplierConverter);
-        purchaseSupplier.setFilterFunction(supplierFilterFunction);
+        supplier.setItems(SupplierViewModel.getSuppliers());
+        supplier.setConverter(supplierConverter);
+        supplier.setFilterFunction(supplierFilterFunction);
 
-        purchaseStatus.setItems(FXCollections.observableArrayList(Values.PURCHASE_STATUSES));
+        status.setItems(FXCollections.observableArrayList(Values.PURCHASE_STATUSES));
 
-        requiredValidator(
-                purchaseSupplier,
-                "Supplier is required.",
-                purchaseSupplierValidationLabel,
-                saveBtn);
-        requiredValidator(
-                purchaseDate, "Date is required.", purchaseDateValidationLabel, saveBtn);
-        requiredValidator(
-                purchaseStatus,
-                "Status is required.",
-                purchaseStatusValidationLabel,
-                saveBtn);
+        requiredValidator();
 
         setupTable();
     }
@@ -174,7 +163,7 @@ public class PurchaseMasterFormController implements Initializable {
     public void saveBtnClicked() {
         SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
 
-        if (!purchaseDetailTable.isDisabled() && PurchaseDetailViewModel.purchaseDetailsList.isEmpty()) {
+        if (!detailTable.isDisabled() && PurchaseDetailViewModel.purchaseDetailsList.isEmpty()) {
             SpotyMessage notification =
                     new SpotyMessage.MessageBuilder("Table can't be Empty")
                             .duration(MessageDuration.SHORT)
@@ -182,11 +171,32 @@ public class PurchaseMasterFormController implements Initializable {
                             .type(MessageVariants.ERROR)
                             .build();
             notificationHolder.addMessage(notification);
-            return;
         }
-        if (!purchaseSupplierValidationLabel.isVisible()
-                && !purchaseDateValidationLabel.isVisible()
-                && !purchaseStatusValidationLabel.isVisible()) {
+        List<Constraint> supplierConstraints = supplier.validate();
+        List<Constraint> dateConstraints = date.validate();
+        List<Constraint> statusConstraints = status.validate();
+        if (!supplierConstraints.isEmpty()) {
+            supplierValidationLabel.setManaged(true);
+            supplierValidationLabel.setVisible(true);
+            supplierValidationLabel.setText(supplierConstraints.getFirst().getMessage());
+            supplier.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+        }
+        if (!dateConstraints.isEmpty()) {
+            dateValidationLabel.setManaged(true);
+            dateValidationLabel.setVisible(true);
+            dateValidationLabel.setText(dateConstraints.getFirst().getMessage());
+            date.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+        }
+        if (!statusConstraints.isEmpty()) {
+            statusValidationLabel.setManaged(true);
+            statusValidationLabel.setVisible(true);
+            statusValidationLabel.setText(statusConstraints.getFirst().getMessage());
+            status.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+        }
+        if (supplierConstraints.isEmpty()
+                && dateConstraints.isEmpty()
+                && statusConstraints.isEmpty()
+                && !detailTable.isDisabled() && PurchaseDetailViewModel.purchaseDetailsList.isEmpty()) {
             if (PurchaseMasterViewModel.getId() > 0) {
                 try {
                     PurchaseMasterViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
@@ -200,9 +210,7 @@ public class PurchaseMasterFormController implements Initializable {
             } catch (Exception e) {
                 SpotyLogger.writeToFile(e, this.getClass());
             }
-            return;
         }
-        onRequiredFieldsMissing();
     }
 
     private void setupTable() {
@@ -235,19 +243,19 @@ public class PurchaseMasterFormController implements Initializable {
                 purchaseDetail -> new MFXTableRowCell<>(PurchaseDetail::getTotal));
 
         // Set table column width.
-        product.prefWidthProperty().bind(purchaseDetailTable.widthProperty().multiply(.25));
-        quantity.prefWidthProperty().bind(purchaseDetailTable.widthProperty().multiply(.25));
-        tax.prefWidthProperty().bind(purchaseDetailTable.widthProperty().multiply(.25));
-        discount.prefWidthProperty().bind(purchaseDetailTable.widthProperty().multiply(.25));
-        price.prefWidthProperty().bind(purchaseDetailTable.widthProperty().multiply(.25));
-        totalPrice.prefWidthProperty().bind(purchaseDetailTable.widthProperty().multiply(.25));
+        product.prefWidthProperty().bind(detailTable.widthProperty().multiply(.25));
+        quantity.prefWidthProperty().bind(detailTable.widthProperty().multiply(.25));
+        tax.prefWidthProperty().bind(detailTable.widthProperty().multiply(.25));
+        discount.prefWidthProperty().bind(detailTable.widthProperty().multiply(.25));
+        price.prefWidthProperty().bind(detailTable.widthProperty().multiply(.25));
+        totalPrice.prefWidthProperty().bind(detailTable.widthProperty().multiply(.25));
 
         // Set table filter.
-        purchaseDetailTable
+        detailTable
                 .getTableColumns()
                 .addAll(product, quantity, tax, discount, price, totalPrice);
 
-        purchaseDetailTable
+        detailTable
                 .getFilters()
                 .addAll(
                         new StringFilter<>("Product", PurchaseDetail::getProductName),
@@ -264,27 +272,27 @@ public class PurchaseMasterFormController implements Initializable {
             PurchaseDetailViewModel.getPurchaseDetails()
                     .addListener(
                             (ListChangeListener<PurchaseDetail>)
-                                    change -> purchaseDetailTable.setItems(PurchaseDetailViewModel.getPurchaseDetails()));
+                                    change -> detailTable.setItems(PurchaseDetailViewModel.getPurchaseDetails()));
         } else {
-            purchaseDetailTable
+            detailTable
                     .itemsProperty()
                     .bindBidirectional(PurchaseDetailViewModel.purchaseDetailsProperty());
         }
     }
 
     private void styleTable() {
-        purchaseDetailTable.setPrefSize(1000, 1000);
-        purchaseDetailTable.features().enableBounceEffect();
-        purchaseDetailTable.features().enableSmoothScrolling(0.5);
+        detailTable.setPrefSize(1000, 1000);
+        detailTable.features().enableBounceEffect();
+        detailTable.features().enableSmoothScrolling(0.5);
 
-        purchaseDetailTable.setTableRowFactory(
+        detailTable.setTableRowFactory(
                 t -> {
-                    MFXTableRow<PurchaseDetail> row = new MFXTableRow<>(purchaseDetailTable, t);
+                    MFXTableRow<PurchaseDetail> row = new MFXTableRow<>(detailTable, t);
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
                                 showContextMenu((MFXTableRow<PurchaseDetail>) event.getSource())
                                         .show(
-                                                purchaseDetailTable.getScene().getWindow(),
+                                                detailTable.getScene().getWindow(),
                                                 event.getScreenX(),
                                                 event.getScreenY());
                                 event.consume();
@@ -295,7 +303,7 @@ public class PurchaseMasterFormController implements Initializable {
     }
 
     private MFXContextMenu showContextMenu(MFXTableRow<PurchaseDetail> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(purchaseDetailTable);
+        MFXContextMenu contextMenu = new MFXContextMenu(detailTable);
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
 
@@ -334,11 +342,20 @@ public class PurchaseMasterFormController implements Initializable {
 
         PurchaseMasterViewModel.resetProperties();
 
-        purchaseSupplierValidationLabel.setVisible(false);
-        purchaseDateValidationLabel.setVisible(false);
-        purchaseStatusValidationLabel.setVisible(false);
-        purchaseSupplier.clearSelection();
-        purchaseStatus.clearSelection();
+        supplierValidationLabel.setVisible(false);
+        dateValidationLabel.setVisible(false);
+        statusValidationLabel.setVisible(false);
+
+        supplierValidationLabel.setManaged(false);
+        dateValidationLabel.setManaged(false);
+        statusValidationLabel.setManaged(false);
+
+        supplier.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+        date.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+        status.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+
+        supplier.clearSelection();
+        status.clearSelection();
     }
 
     public void addBtnClicked() {
@@ -399,18 +416,62 @@ public class PurchaseMasterFormController implements Initializable {
         PurchaseMasterViewModel.getAllPurchaseMasters(null, null, null);
     }
 
-    private void onRequiredFieldsMissing() {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder("Required fields can't be null")
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
-                        .build();
-        notificationHolder.addMessage(notification);
-        cancelBtn.setDisable(false);
-        saveBtn.setDisable(false);
-
-        PurchaseMasterViewModel.getAllPurchaseMasters(null, null, null);
+    public void requiredValidator() {
+        // Name input validation.
+        Constraint supplierConstraint =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Supplier is required")
+                        .setCondition(supplier.textProperty().length().greaterThan(0))
+                        .get();
+        supplier.getValidator().constraint(supplierConstraint);
+        Constraint statusConstraint =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Beneficiary Type is required")
+                        .setCondition(status.textProperty().length().greaterThan(0))
+                        .get();
+        status.getValidator().constraint(statusConstraint);
+        Constraint dateConstraint =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Date is required")
+                        .setCondition(date.textProperty().length().greaterThan(0))
+                        .get();
+        date.getValidator().constraint(dateConstraint);
+        // Display error.
+        supplier
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                supplierValidationLabel.setManaged(false);
+                                supplierValidationLabel.setVisible(false);
+                                supplier.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
+        status
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                statusValidationLabel.setManaged(false);
+                                statusValidationLabel.setVisible(false);
+                                status.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
+        date
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                dateValidationLabel.setManaged(false);
+                                dateValidationLabel.setVisible(false);
+                                date.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
     }
 }

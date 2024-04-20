@@ -32,25 +32,23 @@
     </stylesheets>
     <center>
         <StackPane fx:id="contentPane">
-            <VBox layoutY="10.0" spacing="8.0">
+            <VBox spacing="5.0">
                 <padding>
                     <Insets left="10.0" right="10.0" top="10.0" bottom="10.0"/>
                 </padding>
                 <VBox spacing="2.0">
                     <padding>
-                        <Insets bottom="5" top="2.5"/>
+                        <Insets bottom="2.5"/>
                     </padding>
                     <MFXTextField fx:id="name" floatMode="BORDER" floatingText="Name" prefWidth="400.0"/>
                     <Label id="validationLabel" fx:id="nameValidationLabel" maxWidth="1.7976931348623157E308"
-                           minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true"/>
+                           minHeight="-Infinity" styleClass="input-validation-error" visible="false" managed="false" wrapText="true"/>
                 </VBox>
                 <VBox spacing="2.0">
                     <padding>
-                        <Insets bottom="5" top="2.5"/>
+                        <Insets top="2.5"/>
                     </padding>
                     <TextArea fx:id="description" wrapText="true" promptText="Description" prefWidth="400.0" styleClass="spoty-description-area"/>
-                    <Label id="validationLabel" fx:id="descriptionValidationLabel" maxWidth="1.7976931348623157E308"
-                           minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true"/>
                 </VBox>
             </VBox>
         </StackPane>

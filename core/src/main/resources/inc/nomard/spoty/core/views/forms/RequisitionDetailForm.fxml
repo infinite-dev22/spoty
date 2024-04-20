@@ -35,33 +35,32 @@
             </padding>
             <VBox spacing="2.0">
                 <padding>
-                    <Insets bottom="5" top="2.5"/>
+                    <Insets bottom="2.5"/>
                 </padding>
-                <MFXFilterComboBox fx:id="requisitionDetailPdct" floatMode="BORDER" floatingText="Product"
+                <MFXFilterComboBox fx:id="product" floatMode="BORDER" floatingText="Product"
                                    prefWidth="400.0"/>
-                <Label id="validationLabel" fx:id="requisitionDetailPdctValidationLabel"
-                       maxWidth="1.7976931348623157E308"
-                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true"/>
+                <Label id="validationLabel" fx:id="productValidationLabel"
+                       maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="input-validation-error"
+                       visible="false" managed="false" wrapText="true"/>
             </VBox>
             <VBox spacing="2.0">
                 <padding>
-                    <Insets bottom="5" top="2.5"/>
+                    <Insets bottom="2.5" top="2.5"/>
                 </padding>
-                <MFXTextField fx:id="requisitionDetailQnty" floatMode="BORDER" floatingText="Quantity"
+                <MFXTextField fx:id="quantity" floatMode="BORDER" floatingText="Quantity"
                               prefWidth="400.0"/>
-                <Label id="validationLabel" fx:id="requisitionDetailQntyValidationLabel"
-                       maxWidth="1.7976931348623157E308"
-                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true"/>
+                <Label id="validationLabel" fx:id="quantityValidationLabel"
+                       maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="input-validation-error"
+                       visible="false" managed="false" wrapText="true"/>
             </VBox>
             <VBox spacing="2.0">
                 <padding>
-                    <Insets bottom="5" top="2.5"/>
+                    <Insets top="2.5"/>
                 </padding>
-                <MFXTextField fx:id="requisitionDetailCost" floatMode="BORDER" floatingText="Cost"
-                              prefWidth="400.0"/>
-                <Label id="validationLabel" fx:id="requisitionDetailCostValidationLabel"
-                       maxWidth="1.7976931348623157E308"
-                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true"/>
+                <MFXTextField fx:id="cost" floatMode="BORDER" floatingText="Cost" prefWidth="400.0"/>
+                <Label id="validationLabel" fx:id="costValidationLabel"
+                       maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="input-validation-error"
+                       visible="false" managed="false" wrapText="true"/>
             </VBox>
         </VBox>
     </center>

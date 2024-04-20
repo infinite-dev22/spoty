@@ -14,25 +14,30 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.SpotyMessage;
+import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
 import inc.nomard.spoty.core.components.message.enums.MessageDuration;
 import inc.nomard.spoty.core.components.message.enums.MessageVariants;
 import inc.nomard.spoty.core.viewModels.BranchViewModel;
 import inc.nomard.spoty.utils.SpotyLogger;
 import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.validation.Constraint;
+import io.github.palexdev.materialfx.validation.Severity;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 
 import java.net.URL;
+import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
 import static inc.nomard.spoty.core.GlobalActions.closeDialog;
-import static inc.nomard.spoty.core.Validators.requiredValidator;
 import static inc.nomard.spoty.core.viewModels.BranchViewModel.clearBranchData;
 import static inc.nomard.spoty.core.viewModels.BranchViewModel.saveBranch;
+import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
 
 public class BranchFormController implements Initializable {
     private static BranchFormController instance;
@@ -52,6 +57,10 @@ public class BranchFormController implements Initializable {
             branchFormTownValidationLabel,
             branchFormPhoneValidationLabel,
             branchFormNameValidationLabel;
+    private List<Constraint> nameConstraints,
+            townConstraints,
+            cityConstraints;
+    private ActionEvent actionEvent = null;
 
     public static BranchFormController getInstance() {
         if (Objects.equals(instance, null)) instance = new BranchFormController();
@@ -67,16 +76,7 @@ public class BranchFormController implements Initializable {
         branchFormTown.textProperty().bindBidirectional(BranchViewModel.townProperty());
         branchFormCity.textProperty().bindBidirectional(BranchViewModel.cityProperty());
         // Input listeners.
-        requiredValidator(
-                branchFormName, "Name is required.", branchFormNameValidationLabel, saveBtn);
-        requiredValidator(
-                branchFormEmail, "Email is required.", branchFormEmailValidationLabel, saveBtn);
-        requiredValidator(
-                branchFormPhone, "Phone is required.", branchFormPhoneValidationLabel, saveBtn);
-        requiredValidator(
-                branchFormTown, "Town is required.", branchFormTownValidationLabel, saveBtn);
-        requiredValidator(
-                branchFormCity, "City is required", branchFormCityValidationLabel, saveBtn);
+        requiredValidator();
         dialogOnActions();
     }
 
@@ -84,7 +84,6 @@ public class BranchFormController implements Initializable {
         cancelBtn.setOnAction(
                 (event) -> {
                     clearBranchData();
-
                     closeDialog(event);
 
                     branchFormNameValidationLabel.setVisible(false);
@@ -92,18 +91,47 @@ public class BranchFormController implements Initializable {
                     branchFormPhoneValidationLabel.setVisible(false);
                     branchFormTownValidationLabel.setVisible(false);
                     branchFormCityValidationLabel.setVisible(false);
+
+                    branchFormNameValidationLabel.setManaged(false);
+                    branchFormEmailValidationLabel.setManaged(false);
+                    branchFormPhoneValidationLabel.setManaged(false);
+                    branchFormTownValidationLabel.setManaged(false);
+                    branchFormCityValidationLabel.setManaged(false);
+
+                    branchFormName.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    branchFormTown.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    branchFormCity.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                 });
         saveBtn.setOnAction(
                 (event) -> {
-                    if (!branchFormNameValidationLabel.isVisible()
-                            && !branchFormEmailValidationLabel.isVisible()
-                            && !branchFormPhoneValidationLabel.isVisible()
-                            && !branchFormTownValidationLabel.isVisible()
-                            && !branchFormCityValidationLabel.isVisible()) {
+                    nameConstraints = branchFormName.validate();
+                    townConstraints = branchFormTown.validate();
+                    cityConstraints = branchFormCity.validate();
+                    if (!nameConstraints.isEmpty()) {
+                        branchFormNameValidationLabel.setManaged(true);
+                        branchFormNameValidationLabel.setVisible(true);
+                        branchFormNameValidationLabel.setText(nameConstraints.getFirst().getMessage());
+                        branchFormName.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                    }
+                    if (!townConstraints.isEmpty()) {
+                        branchFormTownValidationLabel.setManaged(true);
+                        branchFormTownValidationLabel.setVisible(true);
+                        branchFormTownValidationLabel.setText(townConstraints.getFirst().getMessage());
+                        branchFormTown.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                    }
+                    if (!cityConstraints.isEmpty()) {
+                        branchFormCityValidationLabel.setManaged(true);
+                        branchFormCityValidationLabel.setVisible(true);
+                        branchFormCityValidationLabel.setText(cityConstraints.getFirst().getMessage());
+                        branchFormCity.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                    }
+                    if (nameConstraints.isEmpty()
+                            && townConstraints.isEmpty()
+                            && cityConstraints.isEmpty()) {
                         if (BranchViewModel.getId() > 0) {
                             try {
                                 BranchViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
-                                closeDialog(event);
+                                actionEvent = event;
                             } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }
@@ -112,13 +140,11 @@ public class BranchFormController implements Initializable {
 
                         try {
                             saveBranch(this::onAction, this::onAddSuccess, this::onFailed);
-                            closeDialog(event);
+                            actionEvent = event;
                         } catch (Exception e) {
                             SpotyLogger.writeToFile(e, this.getClass());
                         }
-                        return;
                     }
-                    onRequiredFieldsMissing();
                 });
     }
 
@@ -141,6 +167,8 @@ public class BranchFormController implements Initializable {
         cancelBtn.setDisable(false);
         saveBtn.setDisable(false);
 
+        closeDialog(actionEvent);
+        clearBranchData();
         BranchViewModel.getAllBranches(null, null, null);
     }
 
@@ -156,6 +184,8 @@ public class BranchFormController implements Initializable {
         cancelBtn.setDisable(false);
         saveBtn.setDisable(false);
 
+        closeDialog(actionEvent);
+        clearBranchData();
         BranchViewModel.getAllBranches(null, null, null);
     }
 
@@ -174,18 +204,62 @@ public class BranchFormController implements Initializable {
         BranchViewModel.getAllBranches(null, null, null);
     }
 
-    private void onRequiredFieldsMissing() {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder("Required fields can't be null")
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
-                        .build();
-        notificationHolder.addMessage(notification);
-        cancelBtn.setDisable(false);
-        saveBtn.setDisable(false);
-
-        BranchViewModel.getAllBranches(null, null, null);
+    public void requiredValidator() {
+        // Name input validation.
+        Constraint branchFormNameConstraint =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Name is required")
+                        .setCondition(branchFormName.textProperty().length().greaterThan(0))
+                        .get();
+        branchFormName.getValidator().constraint(branchFormNameConstraint);
+        Constraint branchFormCityConstraint =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Beneficiary Type is required")
+                        .setCondition(branchFormCity.textProperty().length().greaterThan(0))
+                        .get();
+        branchFormCity.getValidator().constraint(branchFormCityConstraint);
+        Constraint branchFormTownConstraint =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Color is required")
+                        .setCondition(branchFormTown.textProperty().length().greaterThan(0))
+                        .get();
+        branchFormTown.getValidator().constraint(branchFormTownConstraint);
+        // Display error.
+        branchFormName
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                branchFormNameValidationLabel.setManaged(false);
+                                branchFormNameValidationLabel.setVisible(false);
+                                branchFormName.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
+        branchFormCity
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                branchFormCityValidationLabel.setManaged(false);
+                                branchFormCityValidationLabel.setVisible(false);
+                                branchFormCity.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
+        branchFormTown
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                branchFormTownValidationLabel.setManaged(false);
+                                branchFormTownValidationLabel.setVisible(false);
+                                branchFormTown.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
     }
 }

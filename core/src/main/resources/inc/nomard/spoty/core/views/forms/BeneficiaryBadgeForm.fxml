@@ -27,6 +27,8 @@
     <stylesheets>
         <URL value="@../../styles/Common.css"/>
         <URL value="@../../styles/TextFields.css"/>
+        <URL value="@../../styles/base.css"/>
+        <URL value="@../../styles/theming/Default.css"/>
     </stylesheets>
     <center>
         <VBox layoutY="10.0" spacing="8.0">
@@ -35,36 +37,44 @@
             </padding>
             <VBox spacing="2.0">
                 <padding>
-                    <Insets bottom="5" top="2.5"/>
+                    <Insets bottom="2.5" top="2.5"/>
                 </padding>
-                <MFXFilterComboBox fx:id="beneficiaryType" floatMode="BORDER" floatingText="Employee"
+                <MFXTextField fx:id="name" floatMode="BORDER" floatingText="Name" prefWidth="400.0"/>
+                <Label id="validationLabel" fx:id="nameValidationLabel" maxWidth="1.7976931348623157E308"
+                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" managed="false"
+                       wrapText="true"/>
+            </VBox>
+            <VBox spacing="2.0">
+                <padding>
+                    <Insets bottom="2.5"/>
+                </padding>
+                <MFXFilterComboBox fx:id="beneficiaryType" floatMode="BORDER" floatingText="Beneficiary Type"
                                    prefWidth="400.0"/>
                 <Label id="validationLabel" fx:id="beneficiaryTypeValidationLabel" maxWidth="1.7976931348623157E308"
-                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true"/>
+                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" managed="false"
+                       wrapText="true"/>
             </VBox>
             <VBox spacing="2.0">
                 <padding>
-                    <Insets bottom="5" top="2.5"/>
+                    <Insets bottom="2.5" top="2.5"/>
                 </padding>
-                <MFXTextField fx:id="name" floatMode="BORDER" floatingText="Reason" prefWidth="400.0"/>
-                <Label id="validationLabel" fx:id="nameValidationLabel" maxWidth="1.7976931348623157E308"
-                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true"/>
+                <MFXFilterComboBox fx:id="colorPicker" floatMode="BORDER" floatingText="Appearance Color"
+                                   prefWidth="400.0"
+                />
+                <Label id="validationLabel" fx:id="colorPickerValidationLabel"
+                       maxWidth="1.7976931348623157E308"
+                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" managed="false"
+                       wrapText="true"/>
             </VBox>
             <VBox spacing="2.0">
                 <padding>
-                    <Insets bottom="5" top="2.5"/>
+                    <Insets top="2.5"/>
                 </padding>
-                <ColorPicker fx:id="color" prefWidth="400.0"/>
-                <Label id="validationLabel" fx:id="colorValidationLabel" maxWidth="1.7976931348623157E308"
-                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true"/>
-            </VBox>
-            <VBox spacing="2.0">
-                <padding>
-                    <Insets bottom="5" top="2.5"/>
-                </padding>
-                <TextArea fx:id="description" wrapText="true" promptText="Reason" prefWidth="400.0" styleClass="spoty-description-area"/>
+                <TextArea fx:id="description" wrapText="true" promptText="Description" prefWidth="400.0"
+                          styleClass="spoty-description-area"/>
                 <Label id="validationLabel" fx:id="descriptionValidationLabel" maxWidth="1.7976931348623157E308"
-                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true"/>
+                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" managed="false"
+                       wrapText="true"/>
             </VBox>
         </VBox>
     </center>

@@ -14,27 +14,32 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.SpotyMessage;
+import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
 import inc.nomard.spoty.core.components.message.enums.MessageDuration;
 import inc.nomard.spoty.core.components.message.enums.MessageVariants;
 import inc.nomard.spoty.core.viewModels.hrm.pay_roll.BeneficiaryBadgeViewModel;
 import inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll.BeneficiaryType;
 import inc.nomard.spoty.utils.SpotyLogger;
+import io.github.palexdev.materialfx.controls.MFXComboBox;
 import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.validation.Constraint;
+import io.github.palexdev.materialfx.validation.Severity;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 
 import java.net.URL;
+import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
 import static inc.nomard.spoty.core.GlobalActions.closeDialog;
-import static inc.nomard.spoty.core.Validators.requiredValidator;
+import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
 
 public class BeneficiaryBadgeFormController implements Initializable {
     private static BeneficiaryBadgeFormController instance;
@@ -46,9 +51,16 @@ public class BeneficiaryBadgeFormController implements Initializable {
     public MFXTextField name;
     public TextArea description;
     @FXML
-    public Label descriptionValidationLabel, colorValidationLabel, nameValidationLabel, beneficiaryTypeValidationLabel;
+    public Label descriptionValidationLabel,
+            colorPickerValidationLabel,
+            nameValidationLabel,
+            beneficiaryTypeValidationLabel;
     @FXML
-    public ColorPicker color;
+    public MFXComboBox<String> colorPicker;
+    private List<Constraint> nameConstraints,
+            colorConstraints,
+            beneficiaryTypeConstraints;
+    private ActionEvent actionEvent = null;
 
     public static BeneficiaryBadgeFormController getInstance() {
         if (Objects.equals(instance, null)) instance = new BeneficiaryBadgeFormController();
@@ -61,18 +73,9 @@ public class BeneficiaryBadgeFormController implements Initializable {
         beneficiaryType.valueProperty().bindBidirectional(BeneficiaryBadgeViewModel.beneficiaryTypeProperty());
         name.textProperty().bindBidirectional(BeneficiaryBadgeViewModel.nameProperty());
         description.textProperty().bindBidirectional(BeneficiaryBadgeViewModel.descriptionProperty());
-//        color.textProperty().bindBidirectional(BeneficiaryBadgeViewModel.endDateProperty());
+        colorPicker.textProperty().bindBidirectional(BeneficiaryBadgeViewModel.colorProperty());
         // Input listeners.
-        requiredValidator(
-                beneficiaryType, "Beneficiary type is required.", beneficiaryTypeValidationLabel, saveBtn);
-        requiredValidator(
-                name, "Name is required.", nameValidationLabel, saveBtn);
-        // Input listeners.
-//        requiredValidator(
-//                description, "Description is required.", descriptionValidationLabel, saveBtn);
-        // Input listeners.
-//        requiredValidator(
-//                color, "Color is required.", colorValidationLabel, saveBtn);
+        requiredValidator();
         dialogOnActions();
     }
 
@@ -80,22 +83,50 @@ public class BeneficiaryBadgeFormController implements Initializable {
         cancelBtn.setOnAction(
                 (event) -> {
                     BeneficiaryBadgeViewModel.resetProperties();
-
                     closeDialog(event);
 
                     nameValidationLabel.setVisible(false);
                     descriptionValidationLabel.setVisible(false);
-                    colorValidationLabel.setVisible(false);
+                    colorPickerValidationLabel.setVisible(false);
+
+                    nameValidationLabel.setManaged(false);
+                    descriptionValidationLabel.setManaged(false);
+                    colorPickerValidationLabel.setManaged(false);
+
+                    name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    colorPicker.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    beneficiaryType.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                 });
         saveBtn.setOnAction(
                 (event) -> {
-                    if (!nameValidationLabel.isVisible()
-                            && !descriptionValidationLabel.isVisible()
-                            && !colorValidationLabel.isVisible()) {
+                    nameConstraints = name.validate();
+                    colorConstraints = colorPicker.validate();
+                    beneficiaryTypeConstraints = beneficiaryType.validate();
+                    if (!nameConstraints.isEmpty()) {
+                        nameValidationLabel.setManaged(true);
+                        nameValidationLabel.setVisible(true);
+                        nameValidationLabel.setText(nameConstraints.getFirst().getMessage());
+                        name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                    }
+                    if (!colorConstraints.isEmpty()) {
+                        colorPickerValidationLabel.setManaged(true);
+                        colorPickerValidationLabel.setVisible(true);
+                        colorPickerValidationLabel.setText(colorConstraints.getFirst().getMessage());
+                        colorPicker.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                    }
+                    if (!beneficiaryTypeConstraints.isEmpty()) {
+                        beneficiaryTypeValidationLabel.setManaged(true);
+                        beneficiaryTypeValidationLabel.setVisible(true);
+                        beneficiaryTypeValidationLabel.setText(beneficiaryTypeConstraints.getFirst().getMessage());
+                        beneficiaryType.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                    }
+                    if (nameConstraints.isEmpty()
+                            && colorConstraints.isEmpty()
+                            && beneficiaryTypeConstraints.isEmpty()) {
                         if (BeneficiaryBadgeViewModel.getId() > 0) {
                             try {
                                 BeneficiaryBadgeViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
-                                closeDialog(event);
+                                actionEvent = event;
                             } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }
@@ -104,13 +135,11 @@ public class BeneficiaryBadgeFormController implements Initializable {
 
                         try {
                             BeneficiaryBadgeViewModel.saveBeneficiaryBadge(this::onAction, this::onAddSuccess, this::onFailed);
-                            closeDialog(event);
+                            actionEvent = event;
                         } catch (Exception e) {
                             SpotyLogger.writeToFile(e, this.getClass());
                         }
-                        return;
                     }
-                    onRequiredFieldsMissing();
                 });
     }
 
@@ -133,6 +162,8 @@ public class BeneficiaryBadgeFormController implements Initializable {
         cancelBtn.setDisable(false);
         saveBtn.setDisable(false);
 
+        closeDialog(actionEvent);
+        BeneficiaryBadgeViewModel.resetProperties();
         BeneficiaryBadgeViewModel.getAllBeneficiaryBadges(null, null, null);
     }
 
@@ -148,6 +179,8 @@ public class BeneficiaryBadgeFormController implements Initializable {
         cancelBtn.setDisable(false);
         saveBtn.setDisable(false);
 
+        closeDialog(actionEvent);
+        BeneficiaryBadgeViewModel.resetProperties();
         BeneficiaryBadgeViewModel.getAllBeneficiaryBadges(null, null, null);
     }
 
@@ -166,18 +199,62 @@ public class BeneficiaryBadgeFormController implements Initializable {
         BeneficiaryBadgeViewModel.getAllBeneficiaryBadges(null, null, null);
     }
 
-    private void onRequiredFieldsMissing() {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder("Required fields can't be null")
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
-                        .build();
-        notificationHolder.addMessage(notification);
-        cancelBtn.setDisable(false);
-        saveBtn.setDisable(false);
-
-        BeneficiaryBadgeViewModel.getAllBeneficiaryBadges(null, null, null);
+    public void requiredValidator() {
+        // Name input validation.
+        Constraint nameConstraint =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Name is required")
+                        .setCondition(name.textProperty().length().greaterThan(0))
+                        .get();
+        name.getValidator().constraint(nameConstraint);
+        Constraint beneficiaryTypeConstraint =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Beneficiary Type is required")
+                        .setCondition(beneficiaryType.textProperty().length().greaterThan(0))
+                        .get();
+        beneficiaryType.getValidator().constraint(beneficiaryTypeConstraint);
+        Constraint colorPickerConstraint =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Color is required")
+                        .setCondition(colorPicker.textProperty().length().greaterThan(0))
+                        .get();
+        colorPicker.getValidator().constraint(colorPickerConstraint);
+        // Display error.
+        name
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                nameValidationLabel.setManaged(false);
+                                nameValidationLabel.setVisible(false);
+                                name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
+        beneficiaryType
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                beneficiaryTypeValidationLabel.setManaged(false);
+                                beneficiaryTypeValidationLabel.setVisible(false);
+                                beneficiaryType.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
+        colorPicker
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                colorPickerValidationLabel.setManaged(false);
+                                colorPickerValidationLabel.setVisible(false);
+                                colorPicker.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
     }
 }

@@ -14,40 +14,43 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.SpotyMessage;
+import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
 import inc.nomard.spoty.core.components.message.enums.MessageDuration;
 import inc.nomard.spoty.core.components.message.enums.MessageVariants;
 import inc.nomard.spoty.core.viewModels.BrandViewModel;
 import inc.nomard.spoty.utils.SpotyLogger;
 import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.validation.Constraint;
+import io.github.palexdev.materialfx.validation.Severity;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 
 import java.net.URL;
+import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
 import static inc.nomard.spoty.core.GlobalActions.closeDialog;
-import static inc.nomard.spoty.core.Validators.requiredValidator;
 import static inc.nomard.spoty.core.viewModels.BrandViewModel.clearBrandData;
 import static inc.nomard.spoty.core.viewModels.BrandViewModel.saveBrand;
+import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
 
 public class BrandFormController implements Initializable {
     private static BrandFormController instance;
     @FXML
-    public MFXTextField brandFormName;
+    public MFXTextField brandFormName,
+            brandFormDescription;
     @FXML
-    public MFXTextField brandFormDescription;
-    @FXML
-    public MFXButton saveBtn;
-    @FXML
-    public MFXButton cancelBtn;
+    public MFXButton saveBtn,
+            cancelBtn;
     @FXML
     public Label brandFormNameValidationLabel;
-    @FXML
-    public Label brandFormDescriptionValidationLabel;
+    private List<Constraint> nameConstraints;
+    private ActionEvent actionEvent = null;
 
     public static BrandFormController getInstance() {
         if (Objects.equals(instance, null)) instance = new BrandFormController();
@@ -60,8 +63,7 @@ public class BrandFormController implements Initializable {
         brandFormName.textProperty().bindBidirectional(BrandViewModel.nameProperty());
         brandFormDescription.textProperty().bindBidirectional(BrandViewModel.descriptionProperty());
         // Input listeners.
-        requiredValidator(
-                brandFormName, "Brand name is required.", brandFormNameValidationLabel, saveBtn);
+        requiredValidator();
         dialogOnActions();
     }
 
@@ -69,32 +71,38 @@ public class BrandFormController implements Initializable {
         cancelBtn.setOnAction(
                 (event) -> {
                     closeDialog(event);
-
                     clearBrandData();
 
                     brandFormNameValidationLabel.setVisible(false);
+                    brandFormNameValidationLabel.setManaged(false);
+                    brandFormName.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                 });
         saveBtn.setOnAction(
                 (event) -> {
-                    if (!brandFormNameValidationLabel.isVisible()) {
+                    nameConstraints = brandFormName.validate();
+                    if (!nameConstraints.isEmpty()) {
+                        brandFormNameValidationLabel.setManaged(true);
+                        brandFormNameValidationLabel.setVisible(true);
+                        brandFormNameValidationLabel.setText(nameConstraints.getFirst().getMessage());
+                        brandFormName.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                    }
+                    if (nameConstraints.isEmpty()) {
                         if (BrandViewModel.getId() > 0) {
-                                try {
-                                    BrandViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
-                                    closeDialog(event);
-                                } catch (Exception e) {
-                                    SpotyLogger.writeToFile(e, this.getClass());
-                                }
-                            return;
-                        }
                             try {
-                                saveBrand(this::onAction, this::onAddSuccess, this::onFailed);
-                                closeDialog(event);
+                                BrandViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
+                                actionEvent = event;
                             } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }
-                        return;
+                            return;
+                        }
+                        try {
+                            saveBrand(this::onAction, this::onAddSuccess, this::onFailed);
+                            actionEvent = event;
+                        } catch (Exception e) {
+                            SpotyLogger.writeToFile(e, this.getClass());
+                        }
                     }
-                    onRequiredFieldsMissing();
                 });
     }
 
@@ -117,6 +125,8 @@ public class BrandFormController implements Initializable {
         cancelBtn.setDisable(false);
         saveBtn.setDisable(false);
 
+        closeDialog(actionEvent);
+        clearBrandData();
         BrandViewModel.getAllBrands(null, null, null);
     }
 
@@ -132,6 +142,8 @@ public class BrandFormController implements Initializable {
         cancelBtn.setDisable(false);
         saveBtn.setDisable(false);
 
+        closeDialog(actionEvent);
+        clearBrandData();
         BrandViewModel.getAllBrands(null, null, null);
     }
 
@@ -150,18 +162,26 @@ public class BrandFormController implements Initializable {
         BrandViewModel.getAllBrands(null, null, null);
     }
 
-    private void onRequiredFieldsMissing() {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder("Required fields can't be null")
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
-                        .build();
-        notificationHolder.addMessage(notification);
-        cancelBtn.setDisable(false);
-        saveBtn.setDisable(false);
-
-        BrandViewModel.getAllBrands(null, null, null);
+    public void requiredValidator() {
+        // Name input validation.
+        Constraint nameConstraint =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Name is required")
+                        .setCondition(brandFormName.textProperty().length().greaterThan(0))
+                        .get();
+        brandFormName.getValidator().constraint(nameConstraint);
+        // Display error.
+        brandFormName
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                brandFormNameValidationLabel.setManaged(false);
+                                brandFormNameValidationLabel.setVisible(false);
+                                brandFormName.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
     }
 }

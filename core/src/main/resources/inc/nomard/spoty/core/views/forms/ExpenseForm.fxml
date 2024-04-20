@@ -36,46 +36,38 @@
             </padding>
             <VBox spacing="2.0">
                 <padding>
-                    <Insets bottom="5.0" top="2.5"/>
+                    <Insets bottom="2.5"/>
                 </padding>
-                <MFXTextField fx:id="expenseFormName" floatMode="BORDER" floatingText="Name" prefWidth="400.0"/>
-                <Label id="validationLabel" fx:id="expenseFormNameValidationLabel" maxWidth="1.7976931348623157E308"
-                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true"/>
+                <MFXTextField fx:id="name" floatMode="BORDER" floatingText="Name" prefWidth="400.0"/>
+                <Label id="validationLabel" fx:id="nameValidationLabel" maxWidth="1.7976931348623157E308"
+                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" managed="false" wrapText="true"/>
             </VBox>
             <VBox spacing="2.0">
                 <padding>
-                    <Insets bottom="5.0" top="2.5"/>
+                    <Insets bottom="2.5" top="2.5"/>
                 </padding>
-                <MFXDatePicker fx:id="expenseFormDate" floatMode="BORDER" floatingText="Date" prefWidth="400.0"/>
-                <Label id="validationLabel" fx:id="expenseFormDateValidationLabel" maxWidth="1.7976931348623157E308"
-                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true"/>
+                <MFXDatePicker fx:id="date" floatMode="BORDER" floatingText="Date" prefWidth="400.0"/>
+                <Label id="validationLabel" fx:id="dateValidationLabel" maxWidth="1.7976931348623157E308"
+                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" managed="false" wrapText="true"/>
             </VBox>
             <VBox spacing="2.0">
                 <padding>
-                    <Insets bottom="5.0" top="2.5"/>
+                    <Insets bottom="2.5" top="2.5"/>
                 </padding>
-                <MFXComboBox fx:id="expenseFormBranch" floatMode="BORDER" floatingText="Branch" prefWidth="400.0"/>
-                <Label id="validationLabel" fx:id="expenseFormBranchValidationLabel" maxWidth="1.7976931348623157E308"
-                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true"/>
-            </VBox>
-            <VBox spacing="2.0">
-                <padding>
-                    <Insets bottom="5.0" top="2.5"/>
-                </padding>
-                <MFXComboBox fx:id="expenseFormCategory" floatMode="BORDER" floatingText="Category" layoutX="21.0"
+                <MFXComboBox fx:id="category" floatMode="BORDER" floatingText="Category" layoutX="21.0"
                              layoutY="79.0" prefWidth="400.0"/>
-                <Label id="validationLabel" fx:id="expenseFormCategoryValidationLabel" maxWidth="1.7976931348623157E308"
-                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true"/>
+                <Label id="validationLabel" fx:id="categoryValidationLabel" maxWidth="1.7976931348623157E308"
+                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" managed="false" wrapText="true"/>
             </VBox>
             <VBox spacing="2.0">
                 <padding>
-                    <Insets bottom="5.0" top="2.5"/>
+                    <Insets bottom="2.5" top="2.5"/>
                 </padding>
-                <MFXTextField fx:id="expenseFormAmount" floatMode="BORDER" floatingText="Amount" prefWidth="400.0"/>
-                <Label id="validationLabel" fx:id="expenseFormAmountValidationLabel" maxWidth="1.7976931348623157E308"
-                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true"/>
+                <MFXTextField fx:id="amount" floatMode="BORDER" floatingText="Amount" prefWidth="400.0"/>
+                <Label id="validationLabel" fx:id="amountValidationLabel" maxWidth="1.7976931348623157E308"
+                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" managed="false" wrapText="true"/>
             </VBox>
-            <TextArea fx:id="expenseFormDetails" promptText="Details" prefWidth="400.0"/>
+            <TextArea fx:id="description" promptText="Description" prefWidth="400.0"/>
         </VBox>
     </center>
     <bottom>

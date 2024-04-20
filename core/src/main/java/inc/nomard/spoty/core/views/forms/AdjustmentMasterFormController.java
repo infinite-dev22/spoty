@@ -33,6 +33,7 @@ import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import io.github.palexdev.materialfx.enums.ScrimPriority;
 import io.github.palexdev.materialfx.filter.LongFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
+import io.github.palexdev.materialfx.validation.Constraint;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
@@ -49,6 +50,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Comparator;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
@@ -167,7 +169,6 @@ public class AdjustmentMasterFormController implements Initializable {
         MFXContextMenu contextMenu = new MFXContextMenu(adjustmentDetailTable);
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
-
         // Actions
         // Delete
         delete.setOnAction(
@@ -175,7 +176,6 @@ public class AdjustmentMasterFormController implements Initializable {
                     AdjustmentDetailViewModel.removeAdjustmentDetail(
                             obj.getData().getId(),
                             AdjustmentDetailViewModel.adjustmentDetailsList.indexOf(obj.getData()));
-
                     event.consume();
                 });
         // Edit
@@ -189,13 +189,10 @@ public class AdjustmentMasterFormController implements Initializable {
                                     SpotyLogger.writeToFile(e, this.getClass());
                                 }
                             });
-
                     dialog.showAndWait();
                     event.consume();
                 });
-
         contextMenu.addItems(edit, delete);
-
         return contextMenu;
     }
 
@@ -282,9 +279,7 @@ public class AdjustmentMasterFormController implements Initializable {
         notificationHolder.addMessage(notification);
         cancelBtn.setDisable(false);
         saveBtn.setDisable(false);
-
         adjustmentCancelBtnClicked();
-
         AdjustmentMasterViewModel.getAllAdjustmentMasters(null, null, null);
     }
 
@@ -299,7 +294,7 @@ public class AdjustmentMasterFormController implements Initializable {
         notificationHolder.addMessage(notification);
         cancelBtn.setDisable(false);
         saveBtn.setDisable(false);
-
+        adjustmentCancelBtnClicked();
         AdjustmentMasterViewModel.getAllAdjustmentMasters(null, null, null);
     }
 

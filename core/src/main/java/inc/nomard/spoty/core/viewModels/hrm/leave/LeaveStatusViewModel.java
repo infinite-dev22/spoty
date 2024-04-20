@@ -17,10 +17,11 @@ package inc.nomard.spoty.core.viewModels.hrm.leave;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import io.github.palexdev.mfxcore.base.properties.CharProperty;
-import javafx.beans.property.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import inc.nomard.spoty.core.viewModels.BankViewModel;
+import inc.nomard.spoty.core.viewModels.adapters.DurationTypeAdapter;
+import inc.nomard.spoty.core.viewModels.adapters.LocalTimeTypeAdapter;
+import inc.nomard.spoty.core.viewModels.adapters.UnixEpochDateTypeAdapter;
+import inc.nomard.spoty.core.viewModels.requisitions.RequisitionMasterViewModel;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.Designation;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.User;
 import inc.nomard.spoty.network_bridge.dtos.hrm.leave.LeaveStatus;
@@ -31,15 +32,17 @@ import inc.nomard.spoty.network_bridge.repositories.implementations.LeaveStatusR
 import inc.nomard.spoty.utils.ParameterlessConsumer;
 import inc.nomard.spoty.utils.SpotyLogger;
 import inc.nomard.spoty.utils.SpotyThreader;
-import inc.nomard.spoty.core.viewModels.BankViewModel;
-import inc.nomard.spoty.core.viewModels.adapters.UnixEpochDateTypeAdapter;
-import inc.nomard.spoty.core.viewModels.requisitions.RequisitionMasterViewModel;
+import io.github.palexdev.mfxcore.base.properties.CharProperty;
+import javafx.beans.property.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Objects;
@@ -54,13 +57,17 @@ public class LeaveStatusViewModel {
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
                     UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+            .registerTypeAdapter(LocalTime.class, new LocalTimeTypeAdapter())
+            .registerTypeAdapter(Duration.class, new DurationTypeAdapter())
             .create();
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final ObjectProperty<User> employee = new SimpleObjectProperty<>();
     private static final ObjectProperty<Designation> designation = new SimpleObjectProperty<>();
     private static final StringProperty description = new SimpleStringProperty("");
     private static final StringProperty startDate = new SimpleStringProperty("");
+    private static final ObjectProperty<LocalTime> startTime = new SimpleObjectProperty<>();
     private static final StringProperty endDate = new SimpleStringProperty("");
+    private static final ObjectProperty<LocalTime> endTime = new SimpleObjectProperty<>();
     private static final StringProperty duration = new SimpleStringProperty("");
     private static final ObjectProperty<LeaveType> leaveType = new SimpleObjectProperty<>();
     private static final StringProperty attachment = new SimpleStringProperty("");
@@ -132,6 +139,10 @@ public class LeaveStatusViewModel {
         return startDate;
     }
 
+    public static Property<LocalTime> startTimeProperty() {
+        return startTime;
+    }
+
     public static @Nullable Date getEndDate() {
         try {
             return new SimpleDateFormat("MMM dd, yyyy").parse(startDate.get());
@@ -147,6 +158,26 @@ public class LeaveStatusViewModel {
 
     public static StringProperty endDateProperty() {
         return endDate;
+    }
+
+    public static LocalTime getEndTime() {
+        return endTime.get();
+    }
+
+    public static void setEndTime(LocalTime time) {
+        endTime.set(time);
+    }
+
+    public static Property<LocalTime> endTimeProperty() {
+        return endTime;
+    }
+
+    public static LocalTime getStartTime() {
+        return startTime.get();
+    }
+
+    public static void setStartTime(LocalTime time) {
+        startTime.set(time);
     }
 
     public static @Nullable Duration getDuration() {
@@ -216,6 +247,8 @@ public class LeaveStatusViewModel {
         setDescription("");
         setStartDate("");
         setEndDate("");
+        setStartTime(null);
+        setEndTime(null);
         setDuration("");
         setLeaveType(null);
         setAttachment("");
@@ -232,6 +265,8 @@ public class LeaveStatusViewModel {
                 .description(getDescription())
                 .startDate(getStartDate())
                 .endDate(getEndDate())
+                .startTime(getStartTime())
+                .endTime(getEndTime())
                 .duration(getDuration())
                 .leaveType(getLeaveType())
                 .attachment(getAttachment())  // File to be uploaded.
@@ -300,6 +335,8 @@ public class LeaveStatusViewModel {
                 setDescription(leaveStatus.getDescription());
                 setStartDate(leaveStatus.getLocaleStartDate());
                 setEndDate(leaveStatus.getLocaleEndDate());
+                setStartTime(leaveStatus.getStartTime());
+                setEndTime(leaveStatus.getEndTime());
                 setDuration(leaveStatus.getLocaleDuration());
                 setLeaveType(leaveStatus.getLeaveType());
                 setAttachment(leaveStatus.getAttachment());
@@ -358,6 +395,8 @@ public class LeaveStatusViewModel {
                 .description(getDescription())
                 .startDate(getStartDate())
                 .endDate(getEndDate())
+                .startTime(getStartTime())
+                .endTime(getEndTime())
                 .duration(getDuration())
                 .leaveType(getLeaveType())
                 .attachment(getAttachment())  // File to be uploaded.

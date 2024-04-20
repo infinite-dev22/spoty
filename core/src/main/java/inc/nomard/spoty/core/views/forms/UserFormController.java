@@ -14,7 +14,8 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.SpotyMessage;
+import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
 import inc.nomard.spoty.core.components.message.enums.MessageDuration;
 import inc.nomard.spoty.core.components.message.enums.MessageVariants;
 import inc.nomard.spoty.core.viewModels.BranchViewModel;
@@ -28,37 +29,38 @@ import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.controls.MFXToggleButton;
 import io.github.palexdev.materialfx.utils.StringUtils;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
+import io.github.palexdev.materialfx.validation.Constraint;
+import io.github.palexdev.materialfx.validation.Severity;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.util.StringConverter;
 
 import java.net.URL;
+import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static inc.nomard.spoty.core.GlobalActions.closeDialog;
-import static inc.nomard.spoty.core.Validators.*;
+import static inc.nomard.spoty.core.Validators.emailValidator;
+import static inc.nomard.spoty.core.Validators.lengthValidator;
+import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
 
 public class UserFormController implements Initializable {
     public static UserFormController instance;
     @FXML
-    public MFXButton saveBtn;
+    public MFXButton saveBtn,
+            cancelBtn;
     @FXML
-    public MFXButton cancelBtn;
-    @FXML
-    public MFXTextField userFormEmail;
-    @FXML
-    public MFXTextField userFormPhone;
-    @FXML
-    public MFXTextField userFormFirstname;
-    @FXML
-    public MFXTextField userFormLastname;
-    @FXML
-    public MFXTextField userFormUsername;
+    public MFXTextField userFormEmail,
+            userFormPhone,
+            userFormFirstname,
+            userFormLastname,
+            userFormUsername;
     @FXML
     public MFXFilterComboBox<Role> userFormRole;
     @FXML
@@ -66,19 +68,19 @@ public class UserFormController implements Initializable {
     @FXML
     public MFXToggleButton userFormActive;
     @FXML
-    public Label userFormFirstNameValidationLabel;
-    @FXML
-    public Label userFormEmailValidationLabel;
-    @FXML
-    public Label userFormPhoneValidationLabel;
-    @FXML
-    public Label userFormLastNameValidationLabel;
-    @FXML
-    public Label userFormUserNameValidationLabel;
-    @FXML
-    public Label userFormBranchValidationLabel;
-    @FXML
-    public Label userFormRoleValidationLabel;
+    public Label userFormFirstNameValidationLabel,
+            userFormEmailValidationLabel,
+            userFormPhoneValidationLabel,
+            userFormLastNameValidationLabel,
+            userFormUserNameValidationLabel,
+            userFormBranchValidationLabel,
+            userFormRoleValidationLabel;
+    private List<Constraint> firstNameConstraints,
+            lastNameConstraints,
+            userNameConstraints,
+            userBranchConstraints,
+            userRoleConstraints;
+    private ActionEvent actionEvent = null;
 
     public static UserFormController getInstance() {
         if (Objects.equals(instance, null)) instance = new UserFormController();
@@ -138,26 +140,7 @@ public class UserFormController implements Initializable {
         userFormBranch.setFilterFunction(branchFilterFunction);
 
         // Input validations.
-        // Name input validation.
-        requiredValidator(
-                userFormFirstname,
-                "First name is required.",
-                userFormFirstNameValidationLabel,
-                saveBtn);
-        requiredValidator(
-                userFormLastname,
-                "Last name is required.",
-                userFormLastNameValidationLabel,
-                saveBtn);
-        requiredValidator(
-                userFormUsername,
-                "Username is required.",
-                userFormUserNameValidationLabel,
-                saveBtn);
-        requiredValidator(
-                userFormBranch, "Branch is required.", userFormBranchValidationLabel, saveBtn);
-        requiredValidator(
-                userFormRole, "User role is required.", userFormRoleValidationLabel, saveBtn);
+        requiredValidator();
         // Email input validation.
         emailValidator(userFormEmail, userFormEmailValidationLabel, saveBtn);
         // Phone input validation.
@@ -182,34 +165,88 @@ public class UserFormController implements Initializable {
                     userFormRoleValidationLabel.setVisible(false);
                     userFormEmailValidationLabel.setVisible(false);
                     userFormPhoneValidationLabel.setVisible(false);
+
+                    userFormFirstNameValidationLabel.setManaged(false);
+                    userFormLastNameValidationLabel.setManaged(false);
+                    userFormUserNameValidationLabel.setManaged(false);
+                    userFormBranchValidationLabel.setManaged(false);
+                    userFormRoleValidationLabel.setManaged(false);
+                    userFormEmailValidationLabel.setManaged(false);
+                    userFormPhoneValidationLabel.setManaged(false);
+
+                    userFormFirstname.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    userFormLastname.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    userFormUsername.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    userFormUsername.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    userFormBranch.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    userFormRole.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                 });
         saveBtn.setOnAction(
                 (event) -> {
-                    if (!userFormFirstNameValidationLabel.isVisible()
-                            && !userFormLastNameValidationLabel.isVisible()
-                            && !userFormUserNameValidationLabel.isVisible()
-                            && !userFormBranchValidationLabel.isVisible()
-                            && !userFormRoleValidationLabel.isVisible()
+                    firstNameConstraints = userFormFirstname.validate();
+                    lastNameConstraints = userFormLastname.validate();
+                    userNameConstraints = userFormUsername.validate();
+                    userBranchConstraints = userFormBranch.validate();
+                    userRoleConstraints = userFormRole.validate();
+                    if (!firstNameConstraints.isEmpty()) {
+                        userFormFirstNameValidationLabel.setManaged(true);
+                        userFormFirstNameValidationLabel.setVisible(true);
+                        userFormFirstNameValidationLabel.setText(firstNameConstraints.getFirst().getMessage());
+                        userFormFirstname.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                    }
+                    if (!lastNameConstraints.isEmpty()) {
+                        userFormLastNameValidationLabel.setManaged(true);
+                        userFormLastNameValidationLabel.setVisible(true);
+                        userFormLastNameValidationLabel.setText(lastNameConstraints.getFirst().getMessage());
+                        userFormLastname.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                    }
+                    if (!userNameConstraints.isEmpty()) {
+                        userFormUserNameValidationLabel.setManaged(true);
+                        userFormUserNameValidationLabel.setVisible(true);
+                        userFormUserNameValidationLabel.setText(userNameConstraints.getFirst().getMessage());
+                        userFormUsername.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                    }
+                    if (!userNameConstraints.isEmpty()) {
+                        userFormUserNameValidationLabel.setManaged(true);
+                        userFormUserNameValidationLabel.setVisible(true);
+                        userFormUserNameValidationLabel.setText(userNameConstraints.getFirst().getMessage());
+                        userFormUsername.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                    }
+                    if (!userBranchConstraints.isEmpty()) {
+                        userFormBranchValidationLabel.setManaged(true);
+                        userFormBranchValidationLabel.setVisible(true);
+                        userFormBranchValidationLabel.setText(userBranchConstraints.getFirst().getMessage());
+                        userFormBranch.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                    }
+                    if (!userRoleConstraints.isEmpty()) {
+                        userFormRoleValidationLabel.setManaged(true);
+                        userFormRoleValidationLabel.setVisible(true);
+                        userFormRoleValidationLabel.setText(userRoleConstraints.getFirst().getMessage());
+                        userFormRole.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                    }
+                    if (firstNameConstraints.isEmpty() &
+                            lastNameConstraints.isEmpty() &
+                            userNameConstraints.isEmpty() &
+                            userBranchConstraints.isEmpty() &
+                            userRoleConstraints.isEmpty()
                             && !userFormEmailValidationLabel.isVisible()
                             && !userFormPhoneValidationLabel.isVisible()) {
                         if (UserViewModel.getId() > 0) {
-                                try {
-                                    UserViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
-                                    closeDialog(event);
-                                } catch (Exception e) {
-                                    SpotyLogger.writeToFile(e, this.getClass());
-                                }
-                            return;
-                        }
                             try {
-                                UserViewModel.saveUser(this::onAction, this::onAddSuccess, this::onFailed);
-                                closeDialog(event);
+                                UserViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
+                                actionEvent = event;
                             } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }
-                        return;
+                            return;
+                        }
+                        try {
+                            UserViewModel.saveUser(this::onAction, this::onAddSuccess, this::onFailed);
+                            actionEvent = event;
+                        } catch (Exception e) {
+                            SpotyLogger.writeToFile(e, this.getClass());
+                        }
                     }
-                    onRequiredFieldsMissing();
                 });
     }
 
@@ -232,6 +269,8 @@ public class UserFormController implements Initializable {
         cancelBtn.setDisable(false);
         saveBtn.setDisable(false);
 
+        closeDialog(actionEvent);
+        UserViewModel.resetProperties();
         UserViewModel.getAllUserProfiles(null, null, null);
     }
 
@@ -247,6 +286,8 @@ public class UserFormController implements Initializable {
         cancelBtn.setDisable(false);
         saveBtn.setDisable(false);
 
+        closeDialog(actionEvent);
+        UserViewModel.resetProperties();
         UserViewModel.getAllUserProfiles(null, null, null);
     }
 
@@ -265,18 +306,98 @@ public class UserFormController implements Initializable {
         UserViewModel.getAllUserProfiles(null, null, null);
     }
 
-    private void onRequiredFieldsMissing() {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder("Required fields can't be null")
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
-                        .build();
-        notificationHolder.addMessage(notification);
-        cancelBtn.setDisable(false);
-        saveBtn.setDisable(false);
-
-        UserViewModel.getAllUserProfiles(null, null, null);
+    public void requiredValidator() {
+        // Name input validation.
+        Constraint firstName =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("First name is required")
+                        .setCondition(userFormFirstname.textProperty().length().greaterThan(0))
+                        .get();
+        userFormFirstname.getValidator().constraint(firstName);
+        Constraint lastName =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Last name is required")
+                        .setCondition(userFormLastname.textProperty().length().greaterThan(0))
+                        .get();
+        userFormLastname.getValidator().constraint(lastName);
+        Constraint userName =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Username is required")
+                        .setCondition(userFormUsername.textProperty().length().greaterThan(0))
+                        .get();
+        userFormUsername.getValidator().constraint(userName);
+        Constraint userBranch =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Branch is required")
+                        .setCondition(userFormBranch.textProperty().length().greaterThan(0))
+                        .get();
+        userFormBranch.getValidator().constraint(userBranch);
+        Constraint userRole =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Role is required")
+                        .setCondition(userFormRole.textProperty().length().greaterThan(0))
+                        .get();
+        userFormRole.getValidator().constraint(userRole);
+        // Display error.
+        userFormFirstname
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                userFormFirstNameValidationLabel.setManaged(false);
+                                userFormFirstNameValidationLabel.setVisible(false);
+                                userFormFirstname.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
+        userFormLastname
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                userFormLastNameValidationLabel.setManaged(false);
+                                userFormLastNameValidationLabel.setVisible(false);
+                                userFormLastname.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
+        userFormUsername
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                userFormUserNameValidationLabel.setManaged(false);
+                                userFormUserNameValidationLabel.setVisible(false);
+                                userFormUsername.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
+        userFormBranch
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                userFormBranchValidationLabel.setManaged(false);
+                                userFormBranchValidationLabel.setVisible(false);
+                                userFormBranch.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
+        userFormRole
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                userFormRoleValidationLabel.setManaged(false);
+                                userFormRoleValidationLabel.setVisible(false);
+                                userFormRole.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
     }
 }

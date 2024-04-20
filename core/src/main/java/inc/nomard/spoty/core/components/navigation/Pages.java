@@ -25,7 +25,6 @@ import inc.nomard.spoty.core.views.human_resource.hrm.EmployeesController;
 import inc.nomard.spoty.core.views.human_resource.hrm.EmploymentStatusController;
 import inc.nomard.spoty.core.views.human_resource.leave.CalendarController;
 import inc.nomard.spoty.core.views.human_resource.leave.LeaveRequestController;
-import inc.nomard.spoty.core.views.human_resource.leave.LeaveStatusController;
 import inc.nomard.spoty.core.views.human_resource.pay_roll.BeneficiaryBadgeController;
 import inc.nomard.spoty.core.views.human_resource.pay_roll.BeneficiaryTypeController;
 import inc.nomard.spoty.core.views.human_resource.pay_roll.SalariesController;
@@ -110,7 +109,6 @@ public class Pages {
     private static final FXMLLoader employeesLoader = fxmlLoader("views/human_resource/hrm/Employees.fxml");
     private static final FXMLLoader employmentStatusLoader = fxmlLoader("views/human_resource/hrm/EmploymentStatus.fxml");
     // Leave
-    private static final FXMLLoader leaveStatusLoader = fxmlLoader("views/human_resource/leave/LeaveStatus.fxml");
     private static final FXMLLoader leaveRequestLoader = fxmlLoader("views/human_resource/leave/LeaveRequest.fxml");
     private static final FXMLLoader calendarLoader = fxmlLoader("views/human_resource/leave/Calendar.fxml");
     // PayRoll
@@ -253,9 +251,7 @@ public class Pages {
     @Getter
     private static BorderPane employmentStatusPane;
 
-    @Getter
     // Leave
-    private static BorderPane leaveStatusPane;
     @Getter
     private static BorderPane leaveRequestPane;
 
@@ -441,7 +437,6 @@ public class Pages {
     }
 
     private static void setLeave(Stage stage) {
-        leaveStatusLoader.setControllerFactory(e -> LeaveStatusController.getInstance(stage));
         leaveRequestLoader.setControllerFactory(e -> LeaveRequestController.getInstance(stage));
         calendarLoader.setControllerFactory(e -> CalendarController.getInstance());
     }
@@ -557,7 +552,6 @@ public class Pages {
         purchaseReturnPane = purchaseReturnLoader.load();
         // HUMAN RESOURCE
         // Leave
-        leaveStatusPane = leaveStatusLoader.load();
         leaveRequestPane = leaveRequestLoader.load();
         calendarPane = calendarLoader.load();
         // HUMAN RESOURCE
