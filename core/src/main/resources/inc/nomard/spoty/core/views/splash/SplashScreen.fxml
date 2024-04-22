@@ -36,7 +36,7 @@
     <bottom>
         <AnchorPane BorderPane.alignment="CENTER">
             <Label fx:id="companyName" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                   AnchorPane.topAnchor="0.0"/>
+                   AnchorPane.topAnchor="0.0" styleClass="company-label"/>
         </AnchorPane>
     </bottom>
     <padding>
