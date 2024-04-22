@@ -14,7 +14,7 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.SpotyMessage;
 import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
 import inc.nomard.spoty.core.components.message.enums.MessageDuration;
 import inc.nomard.spoty.core.components.message.enums.MessageVariants;
@@ -26,8 +26,11 @@ import inc.nomard.spoty.network_bridge.dtos.Product;
 import io.github.palexdev.materialfx.controls.MFXComboBox;
 import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import io.github.palexdev.materialfx.utils.StringUtils;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
+import io.github.palexdev.materialfx.validation.Constraint;
+import io.github.palexdev.materialfx.validation.Severity;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -36,33 +39,34 @@ import javafx.scene.control.Label;
 import javafx.util.StringConverter;
 
 import java.net.URL;
+import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static inc.nomard.spoty.core.GlobalActions.closeDialog;
-import static inc.nomard.spoty.core.Validators.requiredValidator;
 import static inc.nomard.spoty.core.values.SharedResources.tempIdProperty;
+import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
 
 public class AdjustmentDetailFormController implements Initializable {
     private static AdjustmentDetailFormController instance;
     @FXML
-    public MFXTextField adjustmentProductsQnty;
+    public MFXTextField quantity;
     @FXML
-    public MFXFilterComboBox<Product> adjustmentProductVariant;
+    public MFXFilterComboBox<Product> product;
     @FXML
-    public MFXButton adjustmentProductsSaveBtn;
+    public MFXButton saveBtn,
+            cancelBtn;
     @FXML
-    public MFXButton adjustmentProductsCancelBtn;
+    public MFXComboBox<String> type;
     @FXML
-    public MFXComboBox<String> adjustmentType;
-    @FXML
-    public Label adjustmentProductVariantValidationLabel;
-    @FXML
-    public Label adjustmentProductsQntyValidationLabel;
-    @FXML
-    public Label adjustmentTypeValidationLabel;
+    public Label productValidationLabel,
+            quantityValidationLabel,
+            typeValidationLabel;
+    private List<Constraint> productConstraints,
+            quantityConstraints,
+            typeConstraints;
 
     public static AdjustmentDetailFormController getInstance() {
         if (Objects.equals(instance, null)) instance = new AdjustmentDetailFormController();
@@ -72,13 +76,13 @@ public class AdjustmentDetailFormController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Bind form input value to property value.
-        adjustmentProductVariant
+        product
                 .valueProperty()
                 .bindBidirectional(AdjustmentDetailViewModel.productProperty());
-        adjustmentProductsQnty
+        quantity
                 .textProperty()
                 .bindBidirectional(AdjustmentDetailViewModel.quantityProperty());
-        adjustmentType
+        type
                 .textProperty()
                 .bindBidirectional(AdjustmentDetailViewModel.adjustmentTypeProperty());
 
@@ -95,52 +99,73 @@ public class AdjustmentDetailFormController implements Initializable {
                                         productVariantConverter.toString(productDetail), searchStr);
 
         // AdjustmentType combo box properties.
-        adjustmentProductVariant.setItems(ProductViewModel.getProducts());
-        adjustmentProductVariant.setConverter(productVariantConverter);
-        adjustmentProductVariant.setFilterFunction(productVariantFilterFunction);
+        product.setItems(ProductViewModel.getProducts());
+        product.setConverter(productVariantConverter);
+        product.setFilterFunction(productVariantFilterFunction);
 
-        adjustmentType.setItems(FXCollections.observableArrayList(Values.ADJUSTMENT_TYPE));
+        type.setItems(FXCollections.observableArrayList(Values.ADJUSTMENT_TYPE));
 
         // Input validators.
-        requiredValidator(
-                adjustmentProductVariant,
-                "Product is required.",
-                adjustmentProductVariantValidationLabel,
-                adjustmentProductsSaveBtn);
-        requiredValidator(
-                adjustmentProductsQnty,
-                "Quantity is required.",
-                adjustmentProductsQntyValidationLabel,
-                adjustmentProductsSaveBtn);
-        requiredValidator(
-                adjustmentType,
-                "Type is required.",
-                adjustmentTypeValidationLabel,
-                adjustmentProductsSaveBtn);
+        requiredValidator();
 
         dialogOnActions();
     }
 
     private void dialogOnActions() {
-        adjustmentProductsCancelBtn.setOnAction(
+        cancelBtn.setOnAction(
                 (event) -> {
                     closeDialog(event);
 
                     AdjustmentDetailViewModel.resetProperties();
-                    adjustmentProductVariant.clearSelection();
-                    adjustmentType.clearSelection();
+                    product.clearSelection();
+                    type.clearSelection();
 
-                    adjustmentProductVariantValidationLabel.setVisible(false);
-                    adjustmentProductsQntyValidationLabel.setVisible(false);
-                    adjustmentTypeValidationLabel.setVisible(false);
+                    productValidationLabel.setVisible(false);
+                    quantityValidationLabel.setVisible(false);
+                    typeValidationLabel.setVisible(false);
+                    // Manage
+                    productValidationLabel.setManaged(false);
+                    quantityValidationLabel.setManaged(false);
+                    typeValidationLabel.setManaged(false);
+
+                    productValidationLabel.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    quantityValidationLabel.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    typeValidationLabel.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                 });
-        adjustmentProductsSaveBtn.setOnAction(
+        saveBtn.setOnAction(
                 (event) -> {
                     SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
 
-                    if (!adjustmentProductVariantValidationLabel.isVisible()
-                            && !adjustmentProductsQntyValidationLabel.isVisible()
-                            && !adjustmentTypeValidationLabel.isVisible()) {
+                    productConstraints = product.validate();
+                    quantityConstraints = quantity.validate();
+                    typeConstraints = type.validate();
+                    if (!productConstraints.isEmpty()) {
+                        productValidationLabel.setManaged(true);
+                        productValidationLabel.setVisible(true);
+                        productValidationLabel.setText(productConstraints.getFirst().getMessage());
+                        product.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) product.getScene().getWindow();
+                        dialog.sizeToScene();
+                    }
+                    if (!quantityConstraints.isEmpty()) {
+                        quantityValidationLabel.setManaged(true);
+                        quantityValidationLabel.setVisible(true);
+                        quantityValidationLabel.setText(quantityConstraints.getFirst().getMessage());
+                        quantity.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) quantity.getScene().getWindow();
+                        dialog.sizeToScene();
+                    }
+                    if (!typeConstraints.isEmpty()) {
+                        typeValidationLabel.setManaged(true);
+                        typeValidationLabel.setVisible(true);
+                        typeValidationLabel.setText(typeConstraints.getFirst().getMessage());
+                        type.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) type.getScene().getWindow();
+                        dialog.sizeToScene();
+                    }
+                    if (productConstraints.isEmpty()
+                            && quantityConstraints.isEmpty()
+                            && typeConstraints.isEmpty()) {
                         if (tempIdProperty().get() > -1) {
                             AdjustmentDetailViewModel.updateAdjustmentDetail(
                                     SharedResources.getTempId());
@@ -153,8 +178,8 @@ public class AdjustmentDetailFormController implements Initializable {
                                             .build();
                             notificationHolder.addMessage(notification);
 
-                            adjustmentProductVariant.clearSelection();
-                            adjustmentType.clearSelection();
+                            product.clearSelection();
+                            type.clearSelection();
 
                             closeDialog(event);
                             return;
@@ -171,19 +196,70 @@ public class AdjustmentDetailFormController implements Initializable {
                         notificationHolder.addMessage(notification);
                         AdjustmentDetailViewModel.resetProperties();
 
-                        adjustmentProductVariant.clearSelection();
-                        adjustmentType.clearSelection();
+                        product.clearSelection();
+                        type.clearSelection();
 
                         closeDialog(event);
-                        return;
                     }
-                    SpotyMessage notification =
-                            new SpotyMessage.MessageBuilder("Required fields missing")
-                                    .duration(MessageDuration.SHORT)
-                                    .icon("fas-triangle-exclamation")
-                                    .type(MessageVariants.ERROR)
-                                    .build();
-                    notificationHolder.addMessage(notification);
                 });
+    }
+
+    public void requiredValidator() {
+        // Name input validation.
+        Constraint adjustmentProductVariantConstraint =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Product is required")
+                        .setCondition(product.textProperty().length().greaterThan(0))
+                        .get();
+        product.getValidator().constraint(adjustmentProductVariantConstraint);
+        Constraint adjustmentTypeConstraint =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Adjustment Type is required")
+                        .setCondition(type.textProperty().length().greaterThan(0))
+                        .get();
+        type.getValidator().constraint(adjustmentTypeConstraint);
+        Constraint adjustmentProductsQntyConstraint =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Quantity is required")
+                        .setCondition(quantity.textProperty().length().greaterThan(0))
+                        .get();
+        quantity.getValidator().constraint(adjustmentProductsQntyConstraint);
+        // Display error.
+        product
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                productValidationLabel.setManaged(false);
+                                productValidationLabel.setVisible(false);
+                                product.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
+        type
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                typeValidationLabel.setManaged(false);
+                                typeValidationLabel.setVisible(false);
+                                type.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
+        quantity
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                quantityValidationLabel.setManaged(false);
+                                quantityValidationLabel.setVisible(false);
+                                quantity.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
     }
 }

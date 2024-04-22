@@ -14,15 +14,14 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import inc.nomard.spoty.core.components.navigation.Pages;
-import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.SpotyMessage;
+import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
 import inc.nomard.spoty.core.components.message.enums.MessageDuration;
 import inc.nomard.spoty.core.components.message.enums.MessageVariants;
-import inc.nomard.spoty.core.viewModels.BranchViewModel;
+import inc.nomard.spoty.core.components.navigation.Pages;
 import inc.nomard.spoty.core.viewModels.stock_ins.StockInDetailViewModel;
 import inc.nomard.spoty.core.viewModels.stock_ins.StockInMasterViewModel;
 import inc.nomard.spoty.core.views.BaseController;
-import inc.nomard.spoty.network_bridge.dtos.Branch;
 import inc.nomard.spoty.network_bridge.dtos.stock_ins.StockInDetail;
 import inc.nomard.spoty.utils.SpotyLogger;
 import inc.nomard.spoty.utils.SpotyThreader;
@@ -34,8 +33,6 @@ import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import io.github.palexdev.materialfx.enums.ScrimPriority;
 import io.github.palexdev.materialfx.filter.IntegerFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
-import io.github.palexdev.materialfx.utils.StringUtils;
-import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
@@ -48,41 +45,32 @@ import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.StringConverter;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.Comparator;
 import java.util.ResourceBundle;
-import java.util.function.Function;
-import java.util.function.Predicate;
 
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
 import static inc.nomard.spoty.core.Validators.requiredValidator;
+import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
 
 @SuppressWarnings("unchecked")
 public class StockInMasterFormController implements Initializable {
     private static StockInMasterFormController instance;
     @FXML
-    public MFXFilterComboBox<Branch> stockInMasterBranch;
-    @FXML
-    public MFXDatePicker stockInMasterDate;
+    public MFXDatePicker date;
     @FXML
     public MFXTableView<StockInDetail> stockInDetailTable;
     @FXML
-    public MFXTextField stockInMasterNote;
+    public MFXTextField note;
     @FXML
-    public BorderPane stockInMasterFormContentPane;
+    public BorderPane contentPane;
     @FXML
-    public Label stockInMasterFormTitle;
+    public Label title, dateValidationLabel;
     @FXML
-    public MFXButton stockInMasterProductAddBtn;
-    @FXML
-    public Label stockInMasterDateValidationLabel;
-    @FXML
-    public Label stockInMasterBranchValidationLabel;
-    public MFXButton saveBtn,
+    public MFXButton stockInMasterProductAddBtn, saveBtn,
             cancelBtn;
     private MFXStageDialog dialog;
 
@@ -105,34 +93,14 @@ public class StockInMasterFormController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Input binding.
-        stockInMasterBranch.valueProperty().bindBidirectional(StockInMasterViewModel.branchProperty());
-        stockInMasterDate.textProperty().bindBidirectional(StockInMasterViewModel.dateProperty());
-        stockInMasterNote.textProperty().bindBidirectional(StockInMasterViewModel.noteProperty());
-
-        // ComboBox Converters.
-        StringConverter<Branch> branchConverter =
-                FunctionalStringConverter.to(branch -> (branch == null) ? "" : branch.getName());
-
-        // ComboBox Filter Functions.
-        Function<String, Predicate<Branch>> branchFilterFunction =
-                searchStr ->
-                        branch -> StringUtils.containsIgnoreCase(branchConverter.toString(branch), searchStr);
-
-        // ComboBox properties.
-        stockInMasterBranch.setItems(BranchViewModel.getBranches());
-        stockInMasterBranch.setConverter(branchConverter);
-        stockInMasterBranch.setFilterFunction(branchFilterFunction);
+        date.textProperty().bindBidirectional(StockInMasterViewModel.dateProperty());
+        note.textProperty().bindBidirectional(StockInMasterViewModel.noteProperty());
 
         // input validators.
         requiredValidator(
-                stockInMasterBranch,
-                "Branch is required.",
-                stockInMasterBranchValidationLabel,
-                saveBtn);
-        requiredValidator(
-                stockInMasterDate,
+                date,
                 "Date is required.",
-                stockInMasterDateValidationLabel,
+                dateValidationLabel,
                 saveBtn);
 
         stockInMasterAddProductBtnClicked();
@@ -257,7 +225,7 @@ public class StockInMasterFormController implements Initializable {
                         .toStageDialogBuilder()
                         .initOwner(stage)
                         .initModality(Modality.WINDOW_MODAL)
-                        .setOwnerNode(stockInMasterFormContentPane)
+                        .setOwnerNode(contentPane)
                         .setScrimPriority(ScrimPriority.WINDOW)
                         .setScrimOwner(true)
                         .get();
@@ -278,32 +246,29 @@ public class StockInMasterFormController implements Initializable {
             notificationHolder.addMessage(notification);
             return;
         }
-        if (!stockInMasterBranchValidationLabel.isVisible()
-                && !stockInMasterDateValidationLabel.isVisible()) {
+        if (!dateValidationLabel.isVisible()) {
             if (StockInMasterViewModel.getId() > 0) {
-                            try {
-                                StockInMasterViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
-                            } catch (Exception e) {
-                                SpotyLogger.writeToFile(e, this.getClass());
-                            }
+                try {
+                    StockInMasterViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
+                } catch (Exception e) {
+                    SpotyLogger.writeToFile(e, this.getClass());
+                }
                 return;
             }
-                        try {
-                            StockInMasterViewModel.saveStockInMaster(this::onAction, this::onAddSuccess, this::onFailed);
-                        } catch (Exception e) {
-                            SpotyLogger.writeToFile(e, this.getClass());
-                        }
-            return;
+            try {
+                StockInMasterViewModel.saveStockInMaster(this::onAction, this::onAddSuccess, this::onFailed);
+            } catch (Exception e) {
+                SpotyLogger.writeToFile(e, this.getClass());
+            }
         }
-        onRequiredFieldsMissing();
     }
 
     public void cancelBtnClicked() {
         BaseController.navigation.navigate(Pages.getStockInPane());
         StockInMasterViewModel.resetProperties();
-        stockInMasterBranchValidationLabel.setVisible(false);
-        stockInMasterDateValidationLabel.setVisible(false);
-        stockInMasterBranch.clearSelection();
+        dateValidationLabel.setVisible(false);
+        dateValidationLabel.setManaged(false);
+        date.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
     }
 
     private void onAction() {
@@ -349,21 +314,6 @@ public class StockInMasterFormController implements Initializable {
         SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
         SpotyMessage notification =
                 new SpotyMessage.MessageBuilder("An error occurred")
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
-                        .build();
-        notificationHolder.addMessage(notification);
-        cancelBtn.setDisable(false);
-        saveBtn.setDisable(false);
-
-        StockInMasterViewModel.getAllStockInMasters(null, null, null);
-    }
-
-    private void onRequiredFieldsMissing() {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder("Required fields can't be null")
                         .duration(MessageDuration.SHORT)
                         .icon("fas-triangle-exclamation")
                         .type(MessageVariants.ERROR)

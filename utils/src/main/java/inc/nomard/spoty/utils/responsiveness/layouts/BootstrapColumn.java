@@ -1,6 +1,6 @@
-package inc.nomard.spoty.responsive_fx.layouts;
+package inc.nomard.spoty.utils.responsiveness.layouts;
 
-import inc.nomard.spoty.responsive_fx.math.MathUtils;
+import inc.nomard.spoty.utils.responsiveness.math.MathUtils;
 import javafx.scene.Node;
 
 public class BootstrapColumn {

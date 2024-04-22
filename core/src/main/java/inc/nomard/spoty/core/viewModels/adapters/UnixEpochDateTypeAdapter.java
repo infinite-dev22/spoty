@@ -3,6 +3,7 @@ package inc.nomard.spoty.core.viewModels.adapters;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
+import lombok.Getter;
 
 import java.io.IOException;
 import java.util.Date;
@@ -10,13 +11,10 @@ import java.util.Date;
 public class UnixEpochDateTypeAdapter
         extends TypeAdapter<Date> {
 
+    @Getter
     private static final TypeAdapter<Date> unixEpochDateTypeAdapter = new UnixEpochDateTypeAdapter();
 
     private UnixEpochDateTypeAdapter() {
-    }
-
-    public static TypeAdapter<Date> getUnixEpochDateTypeAdapter() {
-        return unixEpochDateTypeAdapter;
     }
 
     @Override

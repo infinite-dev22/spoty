@@ -14,10 +14,11 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import inc.nomard.spoty.core.components.navigation.Pages;
-import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.SpotyMessage;
+import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
 import inc.nomard.spoty.core.components.message.enums.MessageDuration;
 import inc.nomard.spoty.core.components.message.enums.MessageVariants;
+import inc.nomard.spoty.core.components.navigation.Pages;
 import inc.nomard.spoty.core.viewModels.BranchViewModel;
 import inc.nomard.spoty.core.viewModels.hrm.employee.DesignationViewModel;
 import inc.nomard.spoty.core.viewModels.transfers.TransferDetailViewModel;
@@ -37,6 +38,8 @@ import io.github.palexdev.materialfx.filter.IntegerFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import io.github.palexdev.materialfx.utils.StringUtils;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
+import io.github.palexdev.materialfx.validation.Constraint;
+import io.github.palexdev.materialfx.validation.Severity;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
@@ -54,40 +57,37 @@ import javafx.util.StringConverter;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Comparator;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
-import static inc.nomard.spoty.core.Validators.requiredValidator;
+import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
 
 @SuppressWarnings("unchecked")
 public class TransferMasterFormController implements Initializable {
     private static TransferMasterFormController instance;
     @FXML
-    public MFXFilterComboBox<Branch> transferMasterFromBranch;
+    public MFXFilterComboBox<Branch> fromBranch,
+            toBranch;
     @FXML
-    public MFXFilterComboBox<Branch> transferMasterToBranch;
+    public MFXDatePicker date;
     @FXML
-    public MFXDatePicker transferMasterDate;
+    public MFXTableView<TransferDetail> detailTable;
     @FXML
-    public MFXTableView<TransferDetail> transferDetailTable;
+    public MFXTextField note;
     @FXML
-    public MFXTextField transferMasterNote;
+    public BorderPane contentPane;
     @FXML
-    public BorderPane transferMasterFormContentPane;
+    public MFXButton addBtn,
+            saveBtn,
+            cancelBtn;
     @FXML
-    public Label transferMasterFormTitle;
-    @FXML
-    public MFXButton transferMasterProductAddBtn;
-    @FXML
-    public Label transferMasterDateValidationLabel;
-    @FXML
-    public Label transferMasterToBranchValidationLabel;
-    @FXML
-    public Label transferMasterFromBranchValidationLabel;
-    @FXML
-    public MFXButton saveBtn, cancelBtn;
+    public Label title,
+            dateValidationLabel,
+            toBranchValidationLabel,
+            fromBranchValidationLabel;
     private MFXStageDialog dialog;
 
     private TransferMasterFormController(Stage stage) {
@@ -109,14 +109,14 @@ public class TransferMasterFormController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Input binding.
-        transferMasterFromBranch
+        fromBranch
                 .valueProperty()
                 .bindBidirectional(TransferMasterViewModel.fromBranchProperty());
-        transferMasterToBranch
+        toBranch
                 .valueProperty()
                 .bindBidirectional(TransferMasterViewModel.toBranchProperty());
-        transferMasterDate.textProperty().bindBidirectional(TransferMasterViewModel.dateProperty());
-        transferMasterNote.textProperty().bindBidirectional(TransferMasterViewModel.noteProperty());
+        date.textProperty().bindBidirectional(TransferMasterViewModel.dateProperty());
+        note.textProperty().bindBidirectional(TransferMasterViewModel.noteProperty());
 
         // ComboBox Converters.
         StringConverter<Branch> branchConverter =
@@ -128,30 +128,16 @@ public class TransferMasterFormController implements Initializable {
                         branch -> StringUtils.containsIgnoreCase(branchConverter.toString(branch), searchStr);
 
         // ComboBox properties.
-        transferMasterFromBranch.setItems(BranchViewModel.getBranches());
-        transferMasterFromBranch.setConverter(branchConverter);
-        transferMasterFromBranch.setFilterFunction(branchFilterFunction);
+        fromBranch.setItems(BranchViewModel.getBranches());
+        fromBranch.setConverter(branchConverter);
+        fromBranch.setFilterFunction(branchFilterFunction);
 
-        transferMasterToBranch.setItems(BranchViewModel.getBranches());
-        transferMasterToBranch.setConverter(branchConverter);
-        transferMasterToBranch.setFilterFunction(branchFilterFunction);
+        toBranch.setItems(BranchViewModel.getBranches());
+        toBranch.setConverter(branchConverter);
+        toBranch.setFilterFunction(branchFilterFunction);
 
         // input validators.
-        requiredValidator(
-                transferMasterToBranch,
-                "Receiving branch is required.",
-                transferMasterToBranchValidationLabel,
-                saveBtn);
-        requiredValidator(
-                transferMasterFromBranch,
-                "Supplying branch is required.",
-                transferMasterFromBranchValidationLabel,
-                saveBtn);
-        requiredValidator(
-                transferMasterDate,
-                "Date is required.",
-                transferMasterDateValidationLabel,
-                saveBtn);
+        requiredValidator();
 
         transferMasterAddProductBtnClicked();
 
@@ -174,13 +160,13 @@ public class TransferMasterFormController implements Initializable {
         productDescription.setRowCellFactory(
                 product -> new MFXTableRowCell<>(TransferDetail::getDescription));
 
-        productName.prefWidthProperty().bind(transferDetailTable.widthProperty().multiply(.5));
-        productQuantity.prefWidthProperty().bind(transferDetailTable.widthProperty().multiply(.5));
-        productDescription.prefWidthProperty().bind(transferDetailTable.widthProperty().multiply(.5));
+        productName.prefWidthProperty().bind(detailTable.widthProperty().multiply(.5));
+        productQuantity.prefWidthProperty().bind(detailTable.widthProperty().multiply(.5));
+        productDescription.prefWidthProperty().bind(detailTable.widthProperty().multiply(.5));
 
-        transferDetailTable.getTableColumns().addAll(productName, productQuantity, productDescription);
+        detailTable.getTableColumns().addAll(productName, productQuantity, productDescription);
 
-        transferDetailTable
+        detailTable
                 .getFilters()
                 .addAll(
                         new StringFilter<>("Name", TransferDetail::getProductName),
@@ -193,27 +179,27 @@ public class TransferMasterFormController implements Initializable {
             TransferDetailViewModel.getTransferDetails()
                     .addListener(
                             (ListChangeListener<TransferDetail>)
-                                    change -> transferDetailTable.setItems(TransferDetailViewModel.getTransferDetails()));
+                                    change -> detailTable.setItems(TransferDetailViewModel.getTransferDetails()));
         } else {
-            transferDetailTable
+            detailTable
                     .itemsProperty()
                     .bindBidirectional(TransferDetailViewModel.transferDetailsProperty());
         }
     }
 
     private void getTransferDetailTable() {
-        transferDetailTable.setPrefSize(1000, 1000);
-        transferDetailTable.features().enableBounceEffect();
-        transferDetailTable.features().enableSmoothScrolling(0.5);
+        detailTable.setPrefSize(1000, 1000);
+        detailTable.features().enableBounceEffect();
+        detailTable.features().enableSmoothScrolling(0.5);
 
-        transferDetailTable.setTableRowFactory(
+        detailTable.setTableRowFactory(
                 transferDetail -> {
-                    MFXTableRow<TransferDetail> row = new MFXTableRow<>(transferDetailTable, transferDetail);
+                    MFXTableRow<TransferDetail> row = new MFXTableRow<>(detailTable, transferDetail);
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
                                 showContextMenu((MFXTableRow<TransferDetail>) event.getSource())
                                         .show(
-                                                transferDetailTable.getScene().getWindow(),
+                                                detailTable.getScene().getWindow(),
                                                 event.getScreenX(),
                                                 event.getScreenY());
                                 event.consume();
@@ -224,7 +210,7 @@ public class TransferMasterFormController implements Initializable {
     }
 
     private MFXContextMenu showContextMenu(MFXTableRow<TransferDetail> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(transferDetailTable);
+        MFXContextMenu contextMenu = new MFXContextMenu(detailTable);
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
 
@@ -261,7 +247,7 @@ public class TransferMasterFormController implements Initializable {
     }
 
     private void transferMasterAddProductBtnClicked() {
-        transferMasterProductAddBtn.setOnAction(e -> dialog.showAndWait());
+        addBtn.setOnAction(e -> dialog.showAndWait());
     }
 
     private void quotationProductDialogPane(Stage stage) throws IOException {
@@ -278,7 +264,7 @@ public class TransferMasterFormController implements Initializable {
                         .toStageDialogBuilder()
                         .initOwner(stage)
                         .initModality(Modality.WINDOW_MODAL)
-                        .setOwnerNode(transferMasterFormContentPane)
+                        .setOwnerNode(contentPane)
                         .setScrimPriority(ScrimPriority.WINDOW)
                         .setScrimOwner(true)
                         .get();
@@ -286,10 +272,10 @@ public class TransferMasterFormController implements Initializable {
         io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
     }
 
-    public void transferMasterSaveBtnClicked() {
+    public void saveBtnClicked() {
         SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
 
-        if (!transferDetailTable.isDisabled()
+        if (!detailTable.isDisabled()
                 && TransferDetailViewModel.transferDetailsList.isEmpty()) {
             SpotyMessage notification =
                     new SpotyMessage.MessageBuilder("Table can't be Empty")
@@ -298,11 +284,31 @@ public class TransferMasterFormController implements Initializable {
                             .type(MessageVariants.ERROR)
                             .build();
             notificationHolder.addMessage(notification);
-            return;
         }
-        if (!transferMasterToBranchValidationLabel.isVisible()
-                && !transferMasterFromBranchValidationLabel.isVisible()
-                && !transferMasterDateValidationLabel.isVisible()) {
+        List<Constraint> dateConstraints = date.validate();
+        List<Constraint> toBranchConstraints = toBranch.validate();
+        List<Constraint> fromBranchConstraints = fromBranch.validate();
+        if (!dateConstraints.isEmpty()) {
+            dateValidationLabel.setManaged(true);
+            dateValidationLabel.setVisible(true);
+            dateValidationLabel.setText(dateConstraints.getFirst().getMessage());
+            date.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+        }
+        if (!toBranchConstraints.isEmpty()) {
+            toBranchValidationLabel.setManaged(true);
+            toBranchValidationLabel.setVisible(true);
+            toBranchValidationLabel.setText(toBranchConstraints.getFirst().getMessage());
+            toBranch.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+        }
+        if (!fromBranchConstraints.isEmpty()) {
+            fromBranchValidationLabel.setManaged(true);
+            fromBranchValidationLabel.setVisible(true);
+            fromBranchValidationLabel.setText(fromBranchConstraints.getFirst().getMessage());
+            fromBranch.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+        }
+        if (dateConstraints.isEmpty()
+                && toBranchConstraints.isEmpty()
+                && fromBranchConstraints.isEmpty()) {
             if (TransferMasterViewModel.getId() > 0) {
                 try {
                     TransferMasterViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
@@ -316,19 +322,27 @@ public class TransferMasterFormController implements Initializable {
             } catch (Exception e) {
                 SpotyLogger.writeToFile(e, this.getClass());
             }
-            return;
         }
-        onRequiredFieldsMissing();
     }
 
-    public void transferMasterCancelBtnClicked() {
+    public void cancelBtnClicked() {
         BaseController.navigation.navigate(Pages.getTransferPane());
         TransferMasterViewModel.resetProperties();
-        transferMasterToBranchValidationLabel.setVisible(false);
-        transferMasterFromBranchValidationLabel.setVisible(false);
-        transferMasterDateValidationLabel.setVisible(false);
-        transferMasterFromBranch.clearSelection();
-        transferMasterToBranch.clearSelection();
+
+        toBranchValidationLabel.setVisible(false);
+        fromBranchValidationLabel.setVisible(false);
+        dateValidationLabel.setVisible(false);
+
+        toBranchValidationLabel.setManaged(false);
+        fromBranchValidationLabel.setManaged(false);
+        dateValidationLabel.setManaged(false);
+
+        date.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+        toBranch.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+        fromBranch.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+
+        fromBranch.clearSelection();
+        toBranch.clearSelection();
     }
 
     private void onAction() {
@@ -349,7 +363,7 @@ public class TransferMasterFormController implements Initializable {
         notificationHolder.addMessage(notification);
         cancelBtn.setDisable(false);
         saveBtn.setDisable(false);
-        transferMasterCancelBtnClicked();
+        cancelBtnClicked();
 
         DesignationViewModel.getAllDesignations(null, null, null);
     }
@@ -365,7 +379,7 @@ public class TransferMasterFormController implements Initializable {
         notificationHolder.addMessage(notification);
         cancelBtn.setDisable(false);
         saveBtn.setDisable(false);
-        transferMasterCancelBtnClicked();
+        cancelBtnClicked();
 
         DesignationViewModel.getAllDesignations(null, null, null);
     }
@@ -385,18 +399,62 @@ public class TransferMasterFormController implements Initializable {
         DesignationViewModel.getAllDesignations(null, null, null);
     }
 
-    private void onRequiredFieldsMissing() {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder("Required fields can't be null")
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
-                        .build();
-        notificationHolder.addMessage(notification);
-        cancelBtn.setDisable(false);
-        saveBtn.setDisable(false);
-
-        DesignationViewModel.getAllDesignations(null, null, null);
+    public void requiredValidator() {
+        // Name input validation.
+        Constraint dateConstraint =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Date is required")
+                        .setCondition(date.textProperty().length().greaterThan(0))
+                        .get();
+        date.getValidator().constraint(dateConstraint);
+        Constraint fromBranchConstraint =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("From Branch is required")
+                        .setCondition(fromBranch.textProperty().length().greaterThan(0))
+                        .get();
+        fromBranch.getValidator().constraint(fromBranchConstraint);
+        Constraint toBranchConstraint =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("To Branch is required")
+                        .setCondition(toBranch.textProperty().length().greaterThan(0))
+                        .get();
+        toBranch.getValidator().constraint(toBranchConstraint);
+        // Display error.
+        date
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                dateValidationLabel.setManaged(false);
+                                dateValidationLabel.setVisible(false);
+                                date.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
+        fromBranch
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                fromBranchValidationLabel.setManaged(false);
+                                fromBranchValidationLabel.setVisible(false);
+                                fromBranch.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
+        toBranch
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                toBranchValidationLabel.setManaged(false);
+                                toBranchValidationLabel.setVisible(false);
+                                toBranch.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
     }
 }

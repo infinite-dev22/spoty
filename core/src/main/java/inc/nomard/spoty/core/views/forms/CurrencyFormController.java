@@ -14,42 +14,48 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.SpotyMessage;
+import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
 import inc.nomard.spoty.core.components.message.enums.MessageDuration;
 import inc.nomard.spoty.core.components.message.enums.MessageVariants;
 import inc.nomard.spoty.core.viewModels.CurrencyViewModel;
 import inc.nomard.spoty.utils.SpotyLogger;
 import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.validation.Constraint;
+import io.github.palexdev.materialfx.validation.Severity;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 
 import java.net.URL;
+import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
 import static inc.nomard.spoty.core.GlobalActions.closeDialog;
-import static inc.nomard.spoty.core.Validators.requiredValidator;
 import static inc.nomard.spoty.core.viewModels.CurrencyViewModel.clearCurrencyData;
 import static inc.nomard.spoty.core.viewModels.CurrencyViewModel.saveCurrency;
+import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
 
 public class CurrencyFormController implements Initializable {
     private static CurrencyFormController instance;
     @FXML
-    public MFXTextField currencyFormName;
+    public MFXTextField name,
+            code,
+            symbol;
     @FXML
-    public MFXButton saveBtn;
+    public MFXButton saveBtn,
+            cancelBtn;
     @FXML
-    public MFXButton cancelBtn;
-    @FXML
-    public MFXTextField currencyFormCode;
-    @FXML
-    public MFXTextField currencyFormSymbol;
-    @FXML
-    public Label currencyFormCodeValidationLabel;
-    @FXML
-    public Label currencyFormNameValidationLabel;
+    public Label codeValidationLabel,
+            nameValidationLabel,
+            symbolValidationLabel;
+    private List<Constraint> currencyFormNameConstraints,
+            colorConstraints,
+            currencyFormCodeConstraints;
+    private ActionEvent actionEvent = null;
 
     public static CurrencyFormController getInstance() {
         if (Objects.equals(instance, null)) instance = new CurrencyFormController();
@@ -59,20 +65,11 @@ public class CurrencyFormController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Input bindings.
-        currencyFormCode.textProperty().bindBidirectional(CurrencyViewModel.codeProperty());
-        currencyFormName.textProperty().bindBidirectional(CurrencyViewModel.nameProperty());
-        currencyFormSymbol.textProperty().bindBidirectional(CurrencyViewModel.symbolProperty());
+        code.textProperty().bindBidirectional(CurrencyViewModel.codeProperty());
+        name.textProperty().bindBidirectional(CurrencyViewModel.nameProperty());
+        symbol.textProperty().bindBidirectional(CurrencyViewModel.symbolProperty());
         // Input listeners.
-        requiredValidator(
-                currencyFormName,
-                "Name is required.",
-                currencyFormNameValidationLabel,
-                saveBtn);
-        requiredValidator(
-                currencyFormCode,
-                "Code is required.",
-                currencyFormCodeValidationLabel,
-                saveBtn);
+        requiredValidator();
         dialogOnActions();
     }
 
@@ -80,20 +77,50 @@ public class CurrencyFormController implements Initializable {
         cancelBtn.setOnAction(
                 (event) -> {
                     clearCurrencyData();
-
                     closeDialog(event);
 
-                    currencyFormNameValidationLabel.setVisible(false);
-                    currencyFormCodeValidationLabel.setVisible(false);
+                    nameValidationLabel.setVisible(false);
+                    codeValidationLabel.setVisible(false);
+                    symbolValidationLabel.setVisible(false);
+
+                    nameValidationLabel.setManaged(false);
+                    codeValidationLabel.setManaged(false);
+                    symbolValidationLabel.setManaged(false);
+
+                    name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    code.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    symbol.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                 });
         saveBtn.setOnAction(
                 (event) -> {
-                    if (!currencyFormNameValidationLabel.isVisible()
-                            && !currencyFormCodeValidationLabel.isVisible()) {
+                    currencyFormNameConstraints = name.validate();
+                    colorConstraints = symbol.validate();
+                    currencyFormCodeConstraints = code.validate();
+                    if (!currencyFormNameConstraints.isEmpty()) {
+                        nameValidationLabel.setManaged(true);
+                        nameValidationLabel.setVisible(true);
+                        nameValidationLabel.setText(currencyFormNameConstraints.getFirst().getMessage());
+                        name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                    }
+                    if (!colorConstraints.isEmpty()) {
+                        symbolValidationLabel.setManaged(true);
+                        symbolValidationLabel.setVisible(true);
+                        symbolValidationLabel.setText(colorConstraints.getFirst().getMessage());
+                        symbol.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                    }
+                    if (!currencyFormCodeConstraints.isEmpty()) {
+                        codeValidationLabel.setManaged(true);
+                        codeValidationLabel.setVisible(true);
+                        codeValidationLabel.setText(currencyFormCodeConstraints.getFirst().getMessage());
+                        code.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                    }
+                    if (currencyFormNameConstraints.isEmpty()
+                            && colorConstraints.isEmpty()
+                            && currencyFormCodeConstraints.isEmpty()) {
                         if (CurrencyViewModel.getId() > 0) {
                             try {
                                 CurrencyViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
-                                closeDialog(event);
+                                actionEvent = event;
                             } catch (Exception e) {
                                 SpotyLogger.writeToFile(e.getCause(), this.getClass());
                             }
@@ -101,13 +128,11 @@ public class CurrencyFormController implements Initializable {
                         }
                         try {
                             saveCurrency(this::onAction, this::onAddSuccess, this::onFailed);
-                            closeDialog(event);
+                            actionEvent = event;
                         } catch (Exception e) {
                             SpotyLogger.writeToFile(e, this.getClass());
                         }
-                        return;
                     }
-                    onRequiredFieldsMissing();
                 });
     }
 
@@ -130,6 +155,8 @@ public class CurrencyFormController implements Initializable {
         cancelBtn.setDisable(false);
         saveBtn.setDisable(false);
 
+        closeDialog(actionEvent);
+        clearCurrencyData();
         CurrencyViewModel.getAllCurrencies(null, null, null);
     }
 
@@ -145,6 +172,8 @@ public class CurrencyFormController implements Initializable {
         cancelBtn.setDisable(false);
         saveBtn.setDisable(false);
 
+        closeDialog(actionEvent);
+        clearCurrencyData();
         CurrencyViewModel.getAllCurrencies(null, null, null);
     }
 
@@ -163,18 +192,62 @@ public class CurrencyFormController implements Initializable {
         CurrencyViewModel.getAllCurrencies(null, null, null);
     }
 
-    private void onRequiredFieldsMissing() {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder("Required fields can't be null")
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
-                        .build();
-        notificationHolder.addMessage(notification);
-        cancelBtn.setDisable(false);
-        saveBtn.setDisable(false);
-
-        CurrencyViewModel.getAllCurrencies(null, null, null);
+    public void requiredValidator() {
+        // Name input validation.
+        Constraint currencyFormNameConstraint =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Name is required")
+                        .setCondition(name.textProperty().length().greaterThan(0))
+                        .get();
+        name.getValidator().constraint(currencyFormNameConstraint);
+        Constraint currencyFormCodeConstraint =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Code is required")
+                        .setCondition(code.textProperty().length().greaterThan(0))
+                        .get();
+        code.getValidator().constraint(currencyFormCodeConstraint);
+        Constraint currencyFormSymbolConstraint =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Symbol is required")
+                        .setCondition(symbol.textProperty().length().greaterThan(0))
+                        .get();
+        symbol.getValidator().constraint(currencyFormSymbolConstraint);
+        // Display error.
+        name
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                nameValidationLabel.setManaged(false);
+                                nameValidationLabel.setVisible(false);
+                                name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
+        code
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                codeValidationLabel.setManaged(false);
+                                codeValidationLabel.setVisible(false);
+                                code.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
+        symbol
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                symbolValidationLabel.setManaged(false);
+                                symbolValidationLabel.setVisible(false);
+                                symbol.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
     }
 }

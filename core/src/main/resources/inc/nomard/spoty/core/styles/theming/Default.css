@@ -221,7 +221,7 @@
 /*APPBAR STYLES*/
 .appBar {
     -fx-background-color: -mfx-app-components-light;
-    -fx-border-color: -mfx-border-gray;
+    -fx-border-color: -border-disabled;
 }
 
 /*MESSAGE STYLES*/
@@ -272,7 +272,7 @@
 /*POS PRODUCT CARD*/
 .pos-product-card {
    -fx-background-color: rgba(255, 255, 255, 1);
-   -fx-border-color: -mfx-border-gray;
+   -fx-border-color: -border-disabled;
 }
 .pos-product-label {
     -fx-text-fill: white;
@@ -332,7 +332,7 @@
 /*CARDS*/
 .card-flat {
     -fx-background-color: rgba(255, 255, 255, 1);
-    -fx-border-color: -mfx-border-gray;
+    -fx-border-color: -border-disabled;
 }
 .card-raised {
     -fx-background-color: rgba(255, 255, 255, 1);
@@ -356,7 +356,7 @@
 .tabbed-pane .tab:selected
 {
     -fx-background-color: white;
-    -fx-border-color: -mfx-border-gray;
+    -fx-border-color: -border-disabled;
 }
 
 .tab:focused {
@@ -406,7 +406,7 @@
 }
 
 .table-cell-border {
-   -fx-border-color: -mfx-border-gray;
+   -fx-border-color: -border-disabled;
 }
 
 .green-bg{
@@ -420,7 +420,7 @@
 }
 
 .designation-label{
-    -fx-text-fill: -spoty-translucent-white;
+    -fx-text-fill: -translucent-white;
 }
 .username-label{
     -fx-text-fill: white;
@@ -442,16 +442,16 @@
     -fx-background-color: transparent;
 }
 .chart-bar {/*
-     -fx-background-color: rgba(0,168,355,0.05);
-     -fx-border-color: rgba(0,168,355,0.3) rgba(0,168,355,0.3)
-         transparent rgba(0,168,355,0.3);*/
-     -fx-background-radius: 50;
-     -fx-border-radius: 50;
-     -fx-max-width: 50;
+    -fx-background-color: rgba(0,168,355,0.05);
+    -fx-border-color: rgba(0,168,355,0.3) rgba(0,168,355,0.3)
+     transparent rgba(0,168,355,0.3);*/
+    -fx-background-radius: 50;
+    -fx-border-radius: 50;
+    -fx-max-width: 50;
     -fx-border-width: 50;
     -fx-background-width: 50;
-     -fx-background-position: left center;
- }
+    -fx-background-position: left center;
+}
 .card-title{}
 .card-sub-title{}
 .username-label{}

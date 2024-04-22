@@ -14,7 +14,8 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.SpotyMessage;
+import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
 import inc.nomard.spoty.core.components.message.enums.MessageDuration;
 import inc.nomard.spoty.core.components.message.enums.MessageVariants;
 import inc.nomard.spoty.core.viewModels.ProductViewModel;
@@ -24,8 +25,11 @@ import inc.nomard.spoty.utils.SpotyLogger;
 import inc.nomard.spoty.utils.SpotyThreader;
 import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import io.github.palexdev.materialfx.utils.StringUtils;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
+import io.github.palexdev.materialfx.validation.Constraint;
+import io.github.palexdev.materialfx.validation.Severity;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -33,33 +37,33 @@ import javafx.scene.control.Label;
 import javafx.util.StringConverter;
 
 import java.net.URL;
+import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static inc.nomard.spoty.core.GlobalActions.closeDialog;
-import static inc.nomard.spoty.core.Validators.requiredValidator;
 import static inc.nomard.spoty.core.values.SharedResources.tempIdProperty;
+import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
 
 public class PurchaseDetailFormController implements Initializable {
     private static PurchaseDetailFormController instance;
     @FXML
-    public MFXTextField purchaseDetailQnty;
+    public MFXTextField quantity,
+            cost;
     @FXML
-    public MFXFilterComboBox<Product> purchaseDetailPdct;
+    public MFXFilterComboBox<Product> product;
     @FXML
-    public MFXTextField purchaseDetailCost;
+    public MFXButton saveBtn,
+            cancelBtn;
     @FXML
-    public MFXButton purchaseDetailSaveBtn;
-    @FXML
-    public MFXButton purchaseDetailCancelBtn;
-    @FXML
-    public Label purchaseDetailQntyValidationLabel;
-    @FXML
-    public Label purchaseDetailPdctValidationLabel;
-    @FXML
-    public Label purchaseDetailCostValidationLabel;
+    public Label quantityValidationLabel,
+            productValidationLabel,
+            costValidationLabel;
+    private List<Constraint> productConstraints,
+            quantityConstraints,
+            costConstraints;
 
     public static PurchaseDetailFormController getInstance() {
         if (Objects.equals(instance, null)) instance = new PurchaseDetailFormController();
@@ -69,9 +73,9 @@ public class PurchaseDetailFormController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Input bindings.
-        purchaseDetailQnty.textProperty().bindBidirectional(PurchaseDetailViewModel.quantityProperty());
-        purchaseDetailPdct.valueProperty().bindBidirectional(PurchaseDetailViewModel.productProperty());
-        purchaseDetailCost.textProperty().bindBidirectional(PurchaseDetailViewModel.costProperty());
+        quantity.textProperty().bindBidirectional(PurchaseDetailViewModel.quantityProperty());
+        product.valueProperty().bindBidirectional(PurchaseDetailViewModel.productProperty());
+        cost.textProperty().bindBidirectional(PurchaseDetailViewModel.costProperty());
 
         // Combo box Converter.
         StringConverter<Product> productVariantConverter =
@@ -86,46 +90,67 @@ public class PurchaseDetailFormController implements Initializable {
                                         productVariantConverter.toString(productDetail), searchStr);
 
         // ComboBox properties.
-        purchaseDetailPdct.setItems(ProductViewModel.getProducts());
-        purchaseDetailPdct.setConverter(productVariantConverter);
-        purchaseDetailPdct.setFilterFunction(productVariantFilterFunction);
+        product.setItems(ProductViewModel.getProducts());
+        product.setConverter(productVariantConverter);
+        product.setFilterFunction(productVariantFilterFunction);
 
         // Input validators.
-        requiredValidator(
-                purchaseDetailPdct,
-                "Product is required.",
-                purchaseDetailPdctValidationLabel,
-                purchaseDetailSaveBtn);
-        requiredValidator(
-                purchaseDetailQnty,
-                "Quantity is required.",
-                purchaseDetailQntyValidationLabel,
-                purchaseDetailSaveBtn);
-        requiredValidator(
-                purchaseDetailCost,
-                "Cost is required.",
-                purchaseDetailCostValidationLabel,
-                purchaseDetailSaveBtn);
+        requiredValidator();
         dialogOnActions();
     }
 
     private void dialogOnActions() {
-        purchaseDetailCancelBtn.setOnAction(
+        cancelBtn.setOnAction(
                 (event) -> {
                     closeDialog(event);
                     PurchaseDetailViewModel.resetProperties();
-                    purchaseDetailPdct.clearSelection();
-                    purchaseDetailPdctValidationLabel.setVisible(false);
-                    purchaseDetailQntyValidationLabel.setVisible(false);
-                    purchaseDetailCostValidationLabel.setVisible(false);
+                    product.clearSelection();
+                    productValidationLabel.setVisible(false);
+                    quantityValidationLabel.setVisible(false);
+                    costValidationLabel.setVisible(false);
+
+                    productValidationLabel.setManaged(false);
+                    quantityValidationLabel.setManaged(false);
+                    costValidationLabel.setManaged(false);
+
+                    product.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    quantity.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    cost.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                 });
-        purchaseDetailSaveBtn.setOnAction(
+        saveBtn.setOnAction(
                 (event) -> {
                     SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
 
-                    if (!purchaseDetailPdctValidationLabel.isVisible()
-                            && !purchaseDetailQntyValidationLabel.isVisible()
-                            && !purchaseDetailCostValidationLabel.isVisible()) {
+                    productConstraints = product.validate();
+                    quantityConstraints = quantity.validate();
+                    costConstraints = cost.validate();
+                    if (!productConstraints.isEmpty()) {
+                        productValidationLabel.setManaged(true);
+                        productValidationLabel.setVisible(true);
+                        productValidationLabel.setText(productConstraints.getFirst().getMessage());
+                        product.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) product.getScene().getWindow();
+                        dialog.sizeToScene();
+                    }
+                    if (!quantityConstraints.isEmpty()) {
+                        quantityValidationLabel.setManaged(true);
+                        quantityValidationLabel.setVisible(true);
+                        quantityValidationLabel.setText(quantityConstraints.getFirst().getMessage());
+                        quantity.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) quantity.getScene().getWindow();
+                        dialog.sizeToScene();
+                    }
+                    if (!costConstraints.isEmpty()) {
+                        costValidationLabel.setManaged(true);
+                        costValidationLabel.setVisible(true);
+                        costValidationLabel.setText(costConstraints.getFirst().getMessage());
+                        cost.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) cost.getScene().getWindow();
+                        dialog.sizeToScene();
+                    }
+                    if (productConstraints.isEmpty()
+                            && quantityConstraints.isEmpty()
+                            && costConstraints.isEmpty()) {
                         if (tempIdProperty().get() > -1) {
                             SpotyThreader.spotyThreadPool(() -> {
                                 try {
@@ -143,8 +168,8 @@ public class PurchaseDetailFormController implements Initializable {
                                             .build();
                             notificationHolder.addMessage(notification);
 
-                            purchaseDetailPdct.clearSelection();
-
+                            product.clearSelection();
+                            PurchaseDetailViewModel.resetProperties();
                             closeDialog(event);
                             return;
                         }
@@ -158,17 +183,69 @@ public class PurchaseDetailFormController implements Initializable {
                                         .build();
                         notificationHolder.addMessage(notification);
 
+                        product.clearSelection();
+                        PurchaseDetailViewModel.resetProperties();
                         closeDialog(event);
-                        purchaseDetailPdct.clearSelection();
-                        return;
                     }
-                    SpotyMessage notification =
-                            new SpotyMessage.MessageBuilder("Required fields missing")
-                                    .duration(MessageDuration.SHORT)
-                                    .icon("fas-triangle-exclamation")
-                                    .type(MessageVariants.ERROR)
-                                    .build();
-                    notificationHolder.addMessage(notification);
                 });
+    }
+
+    public void requiredValidator() {
+        // Name input validation.
+        Constraint productConstraint =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Product is required")
+                        .setCondition(product.textProperty().length().greaterThan(0))
+                        .get();
+        product.getValidator().constraint(productConstraint);
+        Constraint costConstraint =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Cost is required")
+                        .setCondition(cost.textProperty().length().greaterThan(0))
+                        .get();
+        cost.getValidator().constraint(costConstraint);
+        Constraint quantityConstraint =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Quantity is required")
+                        .setCondition(quantity.textProperty().length().greaterThan(0))
+                        .get();
+        quantity.getValidator().constraint(quantityConstraint);
+        // Display error.
+        product
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                productValidationLabel.setManaged(false);
+                                productValidationLabel.setVisible(false);
+                                product.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
+        cost
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                costValidationLabel.setManaged(false);
+                                costValidationLabel.setVisible(false);
+                                cost.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
+        quantity
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                quantityValidationLabel.setManaged(false);
+                                quantityValidationLabel.setVisible(false);
+                                quantity.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
     }
 }

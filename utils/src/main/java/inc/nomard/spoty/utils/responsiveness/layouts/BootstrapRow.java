@@ -1,4 +1,4 @@
-package inc.nomard.spoty.responsive_fx.layouts;
+package inc.nomard.spoty.utils.responsiveness.layouts;
 
 import javafx.scene.layout.GridPane;
 

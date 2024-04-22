@@ -14,25 +14,31 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.SpotyMessage;
+import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
 import inc.nomard.spoty.core.components.message.enums.MessageDuration;
 import inc.nomard.spoty.core.components.message.enums.MessageVariants;
 import inc.nomard.spoty.core.viewModels.BranchViewModel;
 import inc.nomard.spoty.utils.SpotyLogger;
 import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
+import io.github.palexdev.materialfx.validation.Constraint;
+import io.github.palexdev.materialfx.validation.Severity;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 
 import java.net.URL;
+import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
 import static inc.nomard.spoty.core.GlobalActions.closeDialog;
-import static inc.nomard.spoty.core.Validators.requiredValidator;
 import static inc.nomard.spoty.core.viewModels.BranchViewModel.clearBranchData;
 import static inc.nomard.spoty.core.viewModels.BranchViewModel.saveBranch;
+import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
 
 public class BranchFormController implements Initializable {
     private static BranchFormController instance;
@@ -40,18 +46,22 @@ public class BranchFormController implements Initializable {
     public MFXButton saveBtn,
             cancelBtn;
     @FXML
-    public MFXTextField branchFormName,
-            branchFormEmail,
-            branchFormPhone,
-            branchFormTown,
-            branchFormCity,
-            branchFormZipCode;
+    public MFXTextField name,
+            email,
+            phone,
+            town,
+            city,
+            zipCode;
     @FXML
-    public Label branchFormEmailValidationLabel,
-            branchFormCityValidationLabel,
-            branchFormTownValidationLabel,
-            branchFormPhoneValidationLabel,
-            branchFormNameValidationLabel;
+    public Label emailValidationLabel,
+            cityValidationLabel,
+            townValidationLabel,
+            phoneValidationLabel,
+            nameValidationLabel;
+    private List<Constraint> nameConstraints,
+            townConstraints,
+            cityConstraints;
+    private ActionEvent actionEvent = null;
 
     public static BranchFormController getInstance() {
         if (Objects.equals(instance, null)) instance = new BranchFormController();
@@ -61,22 +71,13 @@ public class BranchFormController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Input bindings.
-        branchFormName.textProperty().bindBidirectional(BranchViewModel.nameProperty());
-        branchFormEmail.textProperty().bindBidirectional(BranchViewModel.emailProperty());
-        branchFormPhone.textProperty().bindBidirectional(BranchViewModel.phoneProperty());
-        branchFormTown.textProperty().bindBidirectional(BranchViewModel.townProperty());
-        branchFormCity.textProperty().bindBidirectional(BranchViewModel.cityProperty());
+        name.textProperty().bindBidirectional(BranchViewModel.nameProperty());
+        email.textProperty().bindBidirectional(BranchViewModel.emailProperty());
+        phone.textProperty().bindBidirectional(BranchViewModel.phoneProperty());
+        town.textProperty().bindBidirectional(BranchViewModel.townProperty());
+        city.textProperty().bindBidirectional(BranchViewModel.cityProperty());
         // Input listeners.
-        requiredValidator(
-                branchFormName, "Name is required.", branchFormNameValidationLabel, saveBtn);
-        requiredValidator(
-                branchFormEmail, "Email is required.", branchFormEmailValidationLabel, saveBtn);
-        requiredValidator(
-                branchFormPhone, "Phone is required.", branchFormPhoneValidationLabel, saveBtn);
-        requiredValidator(
-                branchFormTown, "Town is required.", branchFormTownValidationLabel, saveBtn);
-        requiredValidator(
-                branchFormCity, "City is required", branchFormCityValidationLabel, saveBtn);
+        requiredValidator();
         dialogOnActions();
     }
 
@@ -84,26 +85,60 @@ public class BranchFormController implements Initializable {
         cancelBtn.setOnAction(
                 (event) -> {
                     clearBranchData();
-
                     closeDialog(event);
 
-                    branchFormNameValidationLabel.setVisible(false);
-                    branchFormEmailValidationLabel.setVisible(false);
-                    branchFormPhoneValidationLabel.setVisible(false);
-                    branchFormTownValidationLabel.setVisible(false);
-                    branchFormCityValidationLabel.setVisible(false);
+                    nameValidationLabel.setVisible(false);
+                    emailValidationLabel.setVisible(false);
+                    phoneValidationLabel.setVisible(false);
+                    townValidationLabel.setVisible(false);
+                    cityValidationLabel.setVisible(false);
+
+                    nameValidationLabel.setManaged(false);
+                    emailValidationLabel.setManaged(false);
+                    phoneValidationLabel.setManaged(false);
+                    townValidationLabel.setManaged(false);
+                    cityValidationLabel.setManaged(false);
+
+                    name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    town.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    city.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                 });
         saveBtn.setOnAction(
                 (event) -> {
-                    if (!branchFormNameValidationLabel.isVisible()
-                            && !branchFormEmailValidationLabel.isVisible()
-                            && !branchFormPhoneValidationLabel.isVisible()
-                            && !branchFormTownValidationLabel.isVisible()
-                            && !branchFormCityValidationLabel.isVisible()) {
+                    nameConstraints = name.validate();
+                    townConstraints = town.validate();
+                    cityConstraints = city.validate();
+                    if (!nameConstraints.isEmpty()) {
+                        nameValidationLabel.setManaged(true);
+                        nameValidationLabel.setVisible(true);
+                        nameValidationLabel.setText(nameConstraints.getFirst().getMessage());
+                        name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) name.getScene().getWindow();
+                        dialog.sizeToScene();
+                    }
+                    if (!townConstraints.isEmpty()) {
+                        townValidationLabel.setManaged(true);
+                        townValidationLabel.setVisible(true);
+                        townValidationLabel.setText(townConstraints.getFirst().getMessage());
+                        town.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) town.getScene().getWindow();
+                        dialog.sizeToScene();
+                    }
+                    if (!cityConstraints.isEmpty()) {
+                        cityValidationLabel.setManaged(true);
+                        cityValidationLabel.setVisible(true);
+                        cityValidationLabel.setText(cityConstraints.getFirst().getMessage());
+                        city.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) city.getScene().getWindow();
+                        dialog.sizeToScene();
+                    }
+                    if (nameConstraints.isEmpty()
+                            && townConstraints.isEmpty()
+                            && cityConstraints.isEmpty()) {
                         if (BranchViewModel.getId() > 0) {
                             try {
                                 BranchViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
-                                closeDialog(event);
+                                actionEvent = event;
                             } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }
@@ -112,13 +147,11 @@ public class BranchFormController implements Initializable {
 
                         try {
                             saveBranch(this::onAction, this::onAddSuccess, this::onFailed);
-                            closeDialog(event);
+                            actionEvent = event;
                         } catch (Exception e) {
                             SpotyLogger.writeToFile(e, this.getClass());
                         }
-                        return;
                     }
-                    onRequiredFieldsMissing();
                 });
     }
 
@@ -141,6 +174,8 @@ public class BranchFormController implements Initializable {
         cancelBtn.setDisable(false);
         saveBtn.setDisable(false);
 
+        closeDialog(actionEvent);
+        clearBranchData();
         BranchViewModel.getAllBranches(null, null, null);
     }
 
@@ -156,6 +191,8 @@ public class BranchFormController implements Initializable {
         cancelBtn.setDisable(false);
         saveBtn.setDisable(false);
 
+        closeDialog(actionEvent);
+        clearBranchData();
         BranchViewModel.getAllBranches(null, null, null);
     }
 
@@ -174,18 +211,62 @@ public class BranchFormController implements Initializable {
         BranchViewModel.getAllBranches(null, null, null);
     }
 
-    private void onRequiredFieldsMissing() {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder("Required fields can't be null")
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
-                        .build();
-        notificationHolder.addMessage(notification);
-        cancelBtn.setDisable(false);
-        saveBtn.setDisable(false);
-
-        BranchViewModel.getAllBranches(null, null, null);
+    public void requiredValidator() {
+        // Name input validation.
+        Constraint branchFormNameConstraint =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Name is required")
+                        .setCondition(name.textProperty().length().greaterThan(0))
+                        .get();
+        name.getValidator().constraint(branchFormNameConstraint);
+        Constraint branchFormCityConstraint =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Beneficiary Type is required")
+                        .setCondition(city.textProperty().length().greaterThan(0))
+                        .get();
+        city.getValidator().constraint(branchFormCityConstraint);
+        Constraint branchFormTownConstraint =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Color is required")
+                        .setCondition(town.textProperty().length().greaterThan(0))
+                        .get();
+        town.getValidator().constraint(branchFormTownConstraint);
+        // Display error.
+        name
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                nameValidationLabel.setManaged(false);
+                                nameValidationLabel.setVisible(false);
+                                name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
+        city
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                cityValidationLabel.setManaged(false);
+                                cityValidationLabel.setVisible(false);
+                                city.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
+        town
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                townValidationLabel.setManaged(false);
+                                townValidationLabel.setVisible(false);
+                                town.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
     }
 }

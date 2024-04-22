@@ -15,7 +15,8 @@
 package inc.nomard.spoty.core.views.forms;
 
 import inc.nomard.spoty.core.SpotyCoreResourceLoader;
-import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.SpotyMessage;
+import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
 import inc.nomard.spoty.core.components.message.enums.MessageDuration;
 import inc.nomard.spoty.core.components.message.enums.MessageVariants;
 import inc.nomard.spoty.core.values.strings.Values;
@@ -23,71 +24,85 @@ import inc.nomard.spoty.core.viewModels.BrandViewModel;
 import inc.nomard.spoty.core.viewModels.ProductCategoryViewModel;
 import inc.nomard.spoty.core.viewModels.ProductViewModel;
 import inc.nomard.spoty.core.viewModels.UOMViewModel;
-import inc.nomard.spoty.core.viewModels.hrm.employee.DesignationViewModel;
 import inc.nomard.spoty.network_bridge.dtos.Brand;
 import inc.nomard.spoty.network_bridge.dtos.ProductCategory;
 import inc.nomard.spoty.network_bridge.dtos.UnitOfMeasure;
 import inc.nomard.spoty.utils.SpotyLogger;
 import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import io.github.palexdev.materialfx.utils.StringUtils;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
+import io.github.palexdev.materialfx.validation.Constraint;
+import io.github.palexdev.materialfx.validation.Severity;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import io.github.palexdev.mfxcore.controls.Label;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.CacheHint;
+import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
 import java.net.URL;
+import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static inc.nomard.spoty.core.GlobalActions.closeDialog;
+import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
 
 public class ProductFormController implements Initializable {
     private static ProductFormController instance;
     private final String placeholderImage =
             SpotyCoreResourceLoader.load("images/product-image-place-holder.png");
     @FXML
-    public MFXTextField productName,
-            productSerial,
-            productPrice,
-            productDiscount,
-            productDescription,
-            productTax,
-            productStockAlert;
+    public MFXTextField name,
+            serialNumber,
+            price,
+            discount,
+            tax,
+            stockAlert;
     @FXML
-    public MFXFilterComboBox<Brand> productBrand;
+    public TextArea description;
     @FXML
-    public MFXFilterComboBox<ProductCategory> productCategory;
+    public MFXFilterComboBox<Brand> brand;
     @FXML
-    public MFXFilterComboBox<UnitOfMeasure> productUOM;
+    public MFXFilterComboBox<ProductCategory> category;
     @FXML
-    public MFXFilterComboBox<String> productBarcodeType;
+    public MFXFilterComboBox<UnitOfMeasure> unitOfMeasure;
     @FXML
-    public MFXFilterComboBox<String> productType;
+    public MFXFilterComboBox<String> barcodeType;
     @FXML
-    public ImageView productImageView;
+    public MFXFilterComboBox<String> type;
+    @FXML
+    public Rectangle productImageView;
     @FXML
     public MFXButton saveBtn,
             cancelBtn;
     public Image productImage;
     @FXML
-    public Label productBarcodeTypeValidationLabel,
-            productUOMValidationLabel,
-            productCategoryValidationLabel,
-            productBrandValidationLabel,
-            productPriceValidationLabel,
-            productNameValidationLabel;
+    public Label barcodeTypeValidationLabel,
+            unitOfMeasureValidationLabel,
+            categoryValidationLabel,
+            brandValidationLabel,
+            priceValidationLabel,
+            nameValidationLabel;
     private FileChooser fileChooser;
+    private List<Constraint> nameConstraints,
+            priceConstraints,
+            brandConstraints,
+            categoryConstraints,
+            unitOfMeasureConstraints,
+            barcodeTypeConstraints;
+    private ActionEvent actionEvent = null;
 
     public static ProductFormController getInstance() {
         if (Objects.equals(instance, null)) instance = new ProductFormController();
@@ -100,6 +115,7 @@ public class ProductFormController implements Initializable {
         getComboBoxProperties();
         dialogOnActions();
         addImage();
+        requiredValidator();
         setProductImage(placeholderImage);
     }
 
@@ -108,9 +124,9 @@ public class ProductFormController implements Initializable {
             productImage = new Image(image, 200, 200, true, false);
         }
 
-        productImageView.setImage(productImage);
-        productImageView.setCache(true);
-        productImageView.setCacheHint(CacheHint.SPEED);
+        productImageView.setHeight(productImage.getHeight());
+        productImageView.setWidth(productImage.getWidth());
+        productImageView.setFill(new ImagePattern(productImage));
     }
 
     private void addImage() {
@@ -118,22 +134,27 @@ public class ProductFormController implements Initializable {
             fileChooser = new FileChooser();
         }
 
-        productImageView.setOnMouseClicked(event -> fileChooser.showOpenDialog(new Stage()));
+        productImageView.setOnMouseClicked(event -> {
+            var file = fileChooser.showOpenDialog(new Stage());
+//            Platform.runLater(() -> setProductImage(file.getPath()));
+            setProductImage(file.getPath());
+            System.out.println(file.getPath());
+        });
     }
 
     private void getFieldBindings() {
-        productName.textProperty().bindBidirectional(ProductViewModel.nameProperty());
-        productSerial.textProperty().bindBidirectional(ProductViewModel.serialProperty());
-        productPrice.textProperty().bindBidirectional(ProductViewModel.priceProperty());
-        productDiscount.textProperty().bindBidirectional(ProductViewModel.discountProperty());
-        productDescription.textProperty().bindBidirectional(ProductViewModel.descriptionProperty());
-        productTax.textProperty().bindBidirectional(ProductViewModel.netTaxProperty());
-        productStockAlert.textProperty().bindBidirectional(ProductViewModel.stockAlertProperty());
-        productBrand.valueProperty().bindBidirectional(ProductViewModel.brandProperty());
-        productCategory.valueProperty().bindBidirectional(ProductViewModel.categoryProperty());
-        productUOM.valueProperty().bindBidirectional(ProductViewModel.unitProperty());
-        productBarcodeType.valueProperty().bindBidirectional(ProductViewModel.barcodeTypeProperty());
-        productType.valueProperty().bindBidirectional(ProductViewModel.productTypeProperty());
+        name.textProperty().bindBidirectional(ProductViewModel.nameProperty());
+        serialNumber.textProperty().bindBidirectional(ProductViewModel.serialProperty());
+        price.textProperty().bindBidirectional(ProductViewModel.priceProperty());
+        discount.textProperty().bindBidirectional(ProductViewModel.discountProperty());
+        description.textProperty().bindBidirectional(ProductViewModel.descriptionProperty());
+        tax.textProperty().bindBidirectional(ProductViewModel.netTaxProperty());
+        stockAlert.textProperty().bindBidirectional(ProductViewModel.stockAlertProperty());
+        brand.valueProperty().bindBidirectional(ProductViewModel.brandProperty());
+        category.valueProperty().bindBidirectional(ProductViewModel.categoryProperty());
+        unitOfMeasure.valueProperty().bindBidirectional(ProductViewModel.unitProperty());
+        barcodeType.valueProperty().bindBidirectional(ProductViewModel.barcodeTypeProperty());
+        type.valueProperty().bindBidirectional(ProductViewModel.productTypeProperty());
     }
 
     private void getComboBoxProperties() {
@@ -166,21 +187,21 @@ public class ProductFormController implements Initializable {
                         brand -> StringUtils.containsIgnoreCase(brandConverter.toString(brand), searchStr);
 
         // ProductType combo box properties.
-        productUOM.setItems(UOMViewModel.getUnitsOfMeasure());
-        productUOM.setConverter(uomConverter);
-        productUOM.setFilterFunction(uomFilterFunction);
+        unitOfMeasure.setItems(UOMViewModel.getUnitsOfMeasure());
+        unitOfMeasure.setConverter(uomConverter);
+        unitOfMeasure.setFilterFunction(uomFilterFunction);
 
-        productCategory.setItems(ProductCategoryViewModel.getCategories());
-        productCategory.setConverter(productCategoryConverter);
-        productCategory.setFilterFunction(productCategoryFilterFunction);
+        category.setItems(ProductCategoryViewModel.getCategories());
+        category.setConverter(productCategoryConverter);
+        category.setFilterFunction(productCategoryFilterFunction);
 
-        productBrand.setItems(BrandViewModel.getBrands());
-        productBrand.setConverter(brandConverter);
-        productBrand.setFilterFunction(brandFilterFunction);
+        brand.setItems(BrandViewModel.getBrands());
+        brand.setConverter(brandConverter);
+        brand.setFilterFunction(brandFilterFunction);
 
-        productBarcodeType.setItems(FXCollections.observableArrayList(Values.BARCODE_TYPES));
+        barcodeType.setItems(FXCollections.observableArrayList(Values.BARCODE_TYPES));
 
-        productType.setItems(FXCollections.observableArrayList(Values.PRODUCT_TYPES));
+        type.setItems(FXCollections.observableArrayList(Values.PRODUCT_TYPES));
     }
 
     private void dialogOnActions() {
@@ -190,31 +211,99 @@ public class ProductFormController implements Initializable {
 
                     closeDialog(event);
 
-                    productBrand.clearSelection();
-                    productCategory.clearSelection();
-                    productUOM.clearSelection();
-                    productBarcodeType.clearSelection();
-                    productType.clearSelection();
+                    brand.clearSelection();
+                    category.clearSelection();
+                    unitOfMeasure.clearSelection();
+                    barcodeType.clearSelection();
+                    type.clearSelection();
 
-                    productBarcodeTypeValidationLabel.setVisible(false);
-                    productUOMValidationLabel.setVisible(false);
-                    productCategoryValidationLabel.setVisible(false);
-                    productBrandValidationLabel.setVisible(false);
-                    productPriceValidationLabel.setVisible(false);
-                    productNameValidationLabel.setVisible(false);
+                    barcodeTypeValidationLabel.setVisible(false);
+                    unitOfMeasureValidationLabel.setVisible(false);
+                    categoryValidationLabel.setVisible(false);
+                    brandValidationLabel.setVisible(false);
+                    priceValidationLabel.setVisible(false);
+                    nameValidationLabel.setVisible(false);
+
+                    barcodeTypeValidationLabel.setManaged(false);
+                    unitOfMeasureValidationLabel.setManaged(false);
+                    categoryValidationLabel.setManaged(false);
+                    brandValidationLabel.setManaged(false);
+                    priceValidationLabel.setManaged(false);
+                    nameValidationLabel.setManaged(false);
+
+                    name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    price.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    brand.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    category.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    unitOfMeasure.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    barcodeType.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                 });
         saveBtn.setOnAction(
                 (event) -> {
-                    if (!productBarcodeTypeValidationLabel.isVisible()
-                            && !productUOMValidationLabel.isVisible()
-                            && !productCategoryValidationLabel.isVisible()
-                            && !productBrandValidationLabel.isVisible()
-                            && !productPriceValidationLabel.isVisible()
-                            && !productNameValidationLabel.isVisible()) {
+                    nameConstraints = name.validate();
+                    priceConstraints = price.validate();
+                    brandConstraints = brand.validate();
+                    categoryConstraints = category.validate();
+                    unitOfMeasureConstraints = unitOfMeasure.validate();
+                    barcodeTypeConstraints = barcodeType.validate();
+                    if (!nameConstraints.isEmpty()) {
+                        nameValidationLabel.setManaged(true);
+                        nameValidationLabel.setVisible(true);
+                        nameValidationLabel.setText(nameConstraints.getFirst().getMessage());
+                        name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) name.getScene().getWindow();
+                        dialog.sizeToScene();
+                    }
+                    if (!priceConstraints.isEmpty()) {
+                        priceValidationLabel.setManaged(true);
+                        priceValidationLabel.setVisible(true);
+                        priceValidationLabel.setText(priceConstraints.getFirst().getMessage());
+                        price.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) price.getScene().getWindow();
+                        dialog.sizeToScene();
+                    }
+                    if (!brandConstraints.isEmpty()) {
+                        brandValidationLabel.setManaged(true);
+                        brandValidationLabel.setVisible(true);
+                        brandValidationLabel.setText(brandConstraints.getFirst().getMessage());
+                        brand.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) brand.getScene().getWindow();
+                        dialog.sizeToScene();
+                    }
+                    if (!categoryConstraints.isEmpty()) {
+                        categoryValidationLabel.setManaged(true);
+                        categoryValidationLabel.setVisible(true);
+                        categoryValidationLabel.setText(categoryConstraints.getFirst().getMessage());
+                        category.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) category.getScene().getWindow();
+                        dialog.sizeToScene();
+                    }
+                    if (!unitOfMeasureConstraints.isEmpty()) {
+                        unitOfMeasureValidationLabel.setManaged(true);
+                        unitOfMeasureValidationLabel.setVisible(true);
+                        unitOfMeasureValidationLabel.setText(unitOfMeasureConstraints.getFirst().getMessage());
+                        unitOfMeasure.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) unitOfMeasure.getScene().getWindow();
+                        dialog.sizeToScene();
+                    }
+                    if (!barcodeTypeConstraints.isEmpty()) {
+                        barcodeTypeValidationLabel.setManaged(true);
+                        barcodeTypeValidationLabel.setVisible(true);
+                        barcodeTypeValidationLabel.setText(barcodeTypeConstraints.getFirst().getMessage());
+                        barcodeType.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) barcodeType.getScene().getWindow();
+                        dialog.sizeToScene();
+                    }
+                    if (nameConstraints.isEmpty()
+                            && priceConstraints.isEmpty()
+                            && brandConstraints.isEmpty()
+                            && categoryConstraints.isEmpty()
+                            && unitOfMeasureConstraints.isEmpty()
+                            && barcodeTypeConstraints.isEmpty()) {
                         if (ProductViewModel.getId() > 0) {
                             try {
                                 ProductViewModel.updateProduct(this::onAction, this::onUpdatedSuccess, this::onFailed);
-                                closeDialog(event);
+                                actionEvent = event;
                             } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }
@@ -222,18 +311,11 @@ public class ProductFormController implements Initializable {
                         }
                         try {
                             ProductViewModel.saveProduct(this::onAction, this::onAddSuccess, this::onFailed);
-                            closeDialog(event);
+                            actionEvent = event;
                         } catch (Exception e) {
                             SpotyLogger.writeToFile(e, this.getClass());
                         }
-//                        productBrand.clearSelection();
-//                        productCategory.clearSelection();
-//                        productUOM.clearSelection();
-//                        productBarcodeType.clearSelection();
-//                        productType.clearSelection();
-                        return;
                     }
-                    onRequiredFieldsMissing();
                 });
     }
 
@@ -256,7 +338,9 @@ public class ProductFormController implements Initializable {
         cancelBtn.setDisable(false);
         saveBtn.setDisable(false);
 
-        DesignationViewModel.getAllDesignations(null, null, null);
+        closeDialog(actionEvent);
+        ProductViewModel.resetProperties();
+        ProductViewModel.getAllProducts(null, null, null);
     }
 
     private void onUpdatedSuccess() {
@@ -271,6 +355,8 @@ public class ProductFormController implements Initializable {
         cancelBtn.setDisable(false);
         saveBtn.setDisable(false);
 
+        closeDialog(actionEvent);
+        ProductViewModel.resetProperties();
         ProductViewModel.getAllProducts(null, null, null);
     }
 
@@ -289,18 +375,116 @@ public class ProductFormController implements Initializable {
         ProductViewModel.getAllProducts(null, null, null);
     }
 
-    private void onRequiredFieldsMissing() {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder("Required fields can't be null")
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
-                        .build();
-        notificationHolder.addMessage(notification);
-        cancelBtn.setDisable(false);
-        saveBtn.setDisable(false);
-
-        ProductViewModel.getAllProducts(null, null, null);
+    public void requiredValidator() {
+        // Name input validation.
+        Constraint nameConstraint =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Name is required")
+                        .setCondition(name.textProperty().length().greaterThan(0))
+                        .get();
+        name.getValidator().constraint(nameConstraint);
+        Constraint priceConstraint =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Price is required")
+                        .setCondition(price.textProperty().length().greaterThan(0))
+                        .get();
+        price.getValidator().constraint(priceConstraint);
+        Constraint brandConstraint =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Brand is required")
+                        .setCondition(brand.textProperty().length().greaterThan(0))
+                        .get();
+        brand.getValidator().constraint(brandConstraint);
+        Constraint categoryConstraint =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Category is required")
+                        .setCondition(category.textProperty().length().greaterThan(0))
+                        .get();
+        category.getValidator().constraint(categoryConstraint);
+        Constraint unitOfMeasureConstraint =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Unit of measure is required")
+                        .setCondition(unitOfMeasure.textProperty().length().greaterThan(0))
+                        .get();
+        unitOfMeasure.getValidator().constraint(unitOfMeasureConstraint);
+        Constraint barcodeTypeConstraint =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Barcode type is required")
+                        .setCondition(barcodeType.textProperty().length().greaterThan(0))
+                        .get();
+        barcodeType.getValidator().constraint(barcodeTypeConstraint);
+        // Display error.
+        name
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                nameValidationLabel.setManaged(false);
+                                nameValidationLabel.setVisible(false);
+                                name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
+        price
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                priceValidationLabel.setManaged(false);
+                                priceValidationLabel.setVisible(false);
+                                price.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
+        brand
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                brandValidationLabel.setManaged(false);
+                                brandValidationLabel.setVisible(false);
+                                brand.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
+        category
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                categoryValidationLabel.setManaged(false);
+                                categoryValidationLabel.setVisible(false);
+                                category.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
+        unitOfMeasure
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                unitOfMeasureValidationLabel.setManaged(false);
+                                unitOfMeasureValidationLabel.setVisible(false);
+                                unitOfMeasure.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
+        barcodeType
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                barcodeTypeValidationLabel.setManaged(false);
+                                barcodeTypeValidationLabel.setVisible(false);
+                                barcodeType.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
     }
 }

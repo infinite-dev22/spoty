@@ -15,24 +15,32 @@
 package inc.nomard.spoty.core.views.forms;
 
 import atlantafx.base.theme.Styles;
-import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.SpotyMessage;
+import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
 import inc.nomard.spoty.core.components.message.enums.MessageDuration;
 import inc.nomard.spoty.core.components.message.enums.MessageVariants;
 import inc.nomard.spoty.core.viewModels.hrm.employee.EmploymentStatusViewModel;
 import inc.nomard.spoty.utils.SpotyLogger;
+import io.github.palexdev.materialfx.controls.MFXComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
+import io.github.palexdev.materialfx.validation.Constraint;
+import io.github.palexdev.materialfx.validation.Severity;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 
 import java.net.URL;
+import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
 import static inc.nomard.spoty.core.GlobalActions.closeDialog;
-import static inc.nomard.spoty.core.Validators.requiredValidator;
+import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
 
 public class EmploymentStatusFormController implements Initializable {
     private static EmploymentStatusFormController instance;
@@ -41,15 +49,17 @@ public class EmploymentStatusFormController implements Initializable {
     @FXML
     public Label nameValidationLabel;
     @FXML
-    public ColorPicker colorPicker;
+    public MFXComboBox<String> colorPicker;
     @FXML
-    public MFXTextField description;
+    public TextArea description;
     @FXML
-    public Label descriptionValidationLabel;
+    public MFXButton saveBtn,
+            cancelBtn;
     @FXML
-    public MFXButton saveBtn;
-    @FXML
-    public MFXButton cancelBtn;
+    public Label colorPickerValidationLabel;
+    private List<Constraint> nameConstraints,
+            colorConstraints;
+    private ActionEvent actionEvent = null;
 
     public static EmploymentStatusFormController getInstance() {
         if (Objects.equals(instance, null)) instance = new EmploymentStatusFormController();
@@ -62,8 +72,7 @@ public class EmploymentStatusFormController implements Initializable {
         name.textProperty().bindBidirectional(EmploymentStatusViewModel.nameProperty());
         description.textProperty().bindBidirectional(EmploymentStatusViewModel.descriptionProperty());
         // Input listeners.
-        requiredValidator(
-                name, "Name is required.", nameValidationLabel, saveBtn);
+        requiredValidator();
         dialogOnActions();
         // Color Picker
         colorPicker.getStyleClass().add(ColorPicker.STYLE_CLASS_BUTTON);
@@ -74,35 +83,56 @@ public class EmploymentStatusFormController implements Initializable {
         cancelBtn.setOnAction(
                 (event) -> {
                     EmploymentStatusViewModel.clearEmploymentStatusData();
-
                     closeDialog(event);
 
                     nameValidationLabel.setVisible(false);
-                    descriptionValidationLabel.setVisible(false);
+                    colorPickerValidationLabel.setVisible(false);
+
+                    nameValidationLabel.setManaged(false);
+                    colorPickerValidationLabel.setManaged(false);
+
+                    name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    colorPicker.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                 });
         saveBtn.setOnAction(
                 (event) -> {
-                    if (!nameValidationLabel.isVisible()
-                            && !descriptionValidationLabel.isVisible()) {
+                    nameConstraints = name.validate();
+                    colorConstraints = colorPicker.validate();
+                    if (!nameConstraints.isEmpty()) {
+                        nameValidationLabel.setManaged(true);
+                        nameValidationLabel.setVisible(true);
+                        nameValidationLabel.setText(nameConstraints.getFirst().getMessage());
+                        name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) name.getScene().getWindow();
+                        dialog.sizeToScene();
+                    }
+                    if (!colorConstraints.isEmpty()) {
+                        colorPickerValidationLabel.setManaged(true);
+                        colorPickerValidationLabel.setVisible(true);
+                        colorPickerValidationLabel.setText(colorConstraints.getFirst().getMessage());
+                        colorPicker.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) colorPicker.getScene().getWindow();
+                        dialog.sizeToScene();
+                    }
+                    if (nameConstraints.isEmpty() &
+                            colorConstraints.isEmpty()) {
                         if (EmploymentStatusViewModel.getId() > 0) {
-                                try {
-                                    EmploymentStatusViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
-                                    closeDialog(event);
-                                } catch (Exception e) {
-                                    SpotyLogger.writeToFile(e, this.getClass());
-                                }
+                            try {
+                                EmploymentStatusViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
+                                actionEvent = event;
+                            } catch (Exception e) {
+                                SpotyLogger.writeToFile(e, this.getClass());
+                            }
                             return;
                         }
 
                         try {
                             EmploymentStatusViewModel.saveEmploymentStatus(this::onAction, this::onAddSuccess, this::onFailed);
-                            closeDialog(event);
+                            actionEvent = event;
                         } catch (Exception e) {
                             SpotyLogger.writeToFile(e, this.getClass());
                         }
-                        return;
                     }
-                    onRequiredFieldsMissing();
                 });
     }
 
@@ -125,6 +155,8 @@ public class EmploymentStatusFormController implements Initializable {
         cancelBtn.setDisable(false);
         saveBtn.setDisable(false);
 
+        closeDialog(actionEvent);
+        EmploymentStatusViewModel.clearEmploymentStatusData();
         EmploymentStatusViewModel.getAllEmploymentStatuses(null, null, null);
     }
 
@@ -140,6 +172,8 @@ public class EmploymentStatusFormController implements Initializable {
         cancelBtn.setDisable(false);
         saveBtn.setDisable(false);
 
+        closeDialog(actionEvent);
+        EmploymentStatusViewModel.clearEmploymentStatusData();
         EmploymentStatusViewModel.getAllEmploymentStatuses(null, null, null);
     }
 
@@ -158,18 +192,44 @@ public class EmploymentStatusFormController implements Initializable {
         EmploymentStatusViewModel.getAllEmploymentStatuses(null, null, null);
     }
 
-    private void onRequiredFieldsMissing() {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder("Required fields can't be null")
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
-                        .build();
-        notificationHolder.addMessage(notification);
-        cancelBtn.setDisable(false);
-        saveBtn.setDisable(false);
-
-        EmploymentStatusViewModel.getAllEmploymentStatuses(null, null, null);
+    public void requiredValidator() {
+        // Name input validation.
+        Constraint firstName =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Name is required")
+                        .setCondition(name.textProperty().length().greaterThan(0))
+                        .get();
+        name.getValidator().constraint(firstName);
+        Constraint lastName =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Color is required")
+                        .setCondition(colorPicker.textProperty().length().greaterThan(0))
+                        .get();
+        colorPicker.getValidator().constraint(lastName);
+        // Display error.
+        name
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                nameValidationLabel.setManaged(false);
+                                nameValidationLabel.setVisible(false);
+                                name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
+        colorPicker
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                colorPickerValidationLabel.setManaged(false);
+                                colorPickerValidationLabel.setVisible(false);
+                                colorPicker.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
     }
 }

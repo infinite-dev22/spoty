@@ -14,50 +14,53 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.SpotyMessage;
+import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
 import inc.nomard.spoty.core.components.message.enums.MessageDuration;
 import inc.nomard.spoty.core.components.message.enums.MessageVariants;
 import inc.nomard.spoty.core.viewModels.SupplierViewModel;
 import inc.nomard.spoty.utils.SpotyLogger;
 import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
+import io.github.palexdev.materialfx.validation.Constraint;
+import io.github.palexdev.materialfx.validation.Severity;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 
 import java.net.URL;
+import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
 import static inc.nomard.spoty.core.GlobalActions.closeDialog;
-import static inc.nomard.spoty.core.Validators.*;
+import static inc.nomard.spoty.core.Validators.emailValidator;
+import static inc.nomard.spoty.core.Validators.lengthValidator;
+import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
 
 public class SupplierFormController implements Initializable {
     private static SupplierFormController instance;
     @FXML
-    public MFXButton saveBtn;
+    public MFXButton saveBtn,
+            cancelBtn;
     @FXML
-    public MFXButton cancelBtn;
+    public MFXTextField name,
+            email,
+            phone,
+            city,
+            country,
+            taxNumber,
+            address;
     @FXML
-    public MFXTextField supplierFormName;
-    @FXML
-    public MFXTextField supplierFormEmail;
-    @FXML
-    public MFXTextField supplierFormPhone;
-    @FXML
-    public MFXTextField supplierFormCity;
-    @FXML
-    public MFXTextField supplierFormCountry;
-    @FXML
-    public MFXTextField supplierFormTaxNumber;
-    @FXML
-    public MFXTextField supplierFormAddress;
-    @FXML
-    public Label supplierFormNameValidationLabel;
-    @FXML
-    public Label supplierFormEmailValidationLabel;
-    @FXML
-    public Label supplierFormPhoneValidationLabel;
+    public Label nameValidationLabel,
+            emailValidationLabel,
+            phoneValidationLabel;
+    private List<Constraint> nameConstraints,
+            emailConstraints,
+            phoneConstraints;
+    private ActionEvent actionEvent = null;
 
     public static SupplierFormController getInstance() {
         if (Objects.equals(instance, null)) instance = new SupplierFormController();
@@ -67,46 +70,42 @@ public class SupplierFormController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Form input binding.
-        supplierFormName.textProperty().bindBidirectional(SupplierViewModel.nameProperty());
-        supplierFormEmail.textProperty().bindBidirectional(SupplierViewModel.emailProperty());
-        supplierFormPhone.textProperty().bindBidirectional(SupplierViewModel.phoneProperty());
-        supplierFormCity.textProperty().bindBidirectional(SupplierViewModel.cityProperty());
-        supplierFormCountry.textProperty().bindBidirectional(SupplierViewModel.countryProperty());
-        supplierFormTaxNumber.textProperty().bindBidirectional(SupplierViewModel.taxNumberProperty());
-        supplierFormAddress.textProperty().bindBidirectional(SupplierViewModel.addressProperty());
+        name.textProperty().bindBidirectional(SupplierViewModel.nameProperty());
+        email.textProperty().bindBidirectional(SupplierViewModel.emailProperty());
+        phone.textProperty().bindBidirectional(SupplierViewModel.phoneProperty());
+        city.textProperty().bindBidirectional(SupplierViewModel.cityProperty());
+        country.textProperty().bindBidirectional(SupplierViewModel.countryProperty());
+        taxNumber.textProperty().bindBidirectional(SupplierViewModel.taxNumberProperty());
+        address.textProperty().bindBidirectional(SupplierViewModel.addressProperty());
 
         // Input listeners.
-        supplierFormPhone
+        phone
                 .textProperty()
                 .addListener(
                         (observable, oldValue, newValue) -> {
                             if (!newValue.matches("\\d*"))
-                                supplierFormPhone.setText(newValue.replaceAll("\\D", ""));
+                                phone.setText(newValue.replaceAll("\\D", ""));
                         });
-        supplierFormPhone
+        phone
                 .focusedProperty()
                 .addListener(
                         (observable, oldValue, newValue) -> {
-                            if (newValue != oldValue) supplierFormPhone.setLeadingIcon(new Label("+"));
+                            if (newValue != oldValue) phone.setLeadingIcon(new Label("+"));
                         });
 
         // Input validations.
         // Name input validation.
-        requiredValidator(
-                supplierFormName,
-                "Name field is required.",
-                supplierFormNameValidationLabel,
-                saveBtn);
+        requiredValidator();
 
         // Email input validation.
-        emailValidator(supplierFormEmail, supplierFormEmailValidationLabel, saveBtn);
+        emailValidator(email, emailValidationLabel, saveBtn);
 
         // Phone input validation.
         lengthValidator(
-                supplierFormPhone,
+                phone,
                 11,
                 "Invalid length",
-                supplierFormPhoneValidationLabel,
+                phoneValidationLabel,
                 saveBtn);
         dialogOnActions();
     }
@@ -116,33 +115,66 @@ public class SupplierFormController implements Initializable {
                 (event) -> {
                     closeDialog(event);
                     SupplierViewModel.resetProperties();
-                    supplierFormNameValidationLabel.setVisible(false);
-                    supplierFormEmailValidationLabel.setVisible(false);
-                    supplierFormPhoneValidationLabel.setVisible(false);
+                    nameValidationLabel.setVisible(false);
+                    emailValidationLabel.setVisible(false);
+                    phoneValidationLabel.setVisible(false);
+
+                    nameValidationLabel.setManaged(false);
+                    emailValidationLabel.setManaged(false);
+                    phoneValidationLabel.setManaged(false);
+
+                    name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    email.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    phone.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                 });
         saveBtn.setOnAction(
                 (event) -> {
-                    if (!supplierFormNameValidationLabel.isVisible()
-                            && !supplierFormEmailValidationLabel.isVisible()
-                            && !supplierFormPhoneValidationLabel.isVisible()) {
+                    nameConstraints = name.validate();
+                    emailConstraints = email.validate();
+                    phoneConstraints = phone.validate();
+                    if (!nameConstraints.isEmpty()) {
+                        nameValidationLabel.setManaged(true);
+                        nameValidationLabel.setVisible(true);
+                        nameValidationLabel.setText(nameConstraints.getFirst().getMessage());
+                        name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) name.getScene().getWindow();
+                        dialog.sizeToScene();
+                    }
+                    if (!emailConstraints.isEmpty()) {
+                        emailValidationLabel.setManaged(true);
+                        emailValidationLabel.setVisible(true);
+                        emailValidationLabel.setText(emailConstraints.getFirst().getMessage());
+                        email.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) email.getScene().getWindow();
+                        dialog.sizeToScene();
+                    }
+                    if (!phoneConstraints.isEmpty()) {
+                        phoneValidationLabel.setManaged(true);
+                        phoneValidationLabel.setVisible(true);
+                        phoneValidationLabel.setText(phoneConstraints.getFirst().getMessage());
+                        phone.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) phone.getScene().getWindow();
+                        dialog.sizeToScene();
+                    }
+                    if (nameConstraints.isEmpty()
+                            && emailConstraints.isEmpty()
+                            && phoneConstraints.isEmpty()) {
                         if (SupplierViewModel.getId() > 0) {
-                                try {
-                                    SupplierViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
-                                    closeDialog(event);
-                                } catch (Exception e) {
-                                    SpotyLogger.writeToFile(e, this.getClass());
-                                }
-                            return;
-                        }
                             try {
-                                SupplierViewModel.saveSupplier(this::onAction, this::onAddSuccess, this::onFailed);
-                                closeDialog(event);
+                                SupplierViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
+                                actionEvent = event;
                             } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }
-                        return;
+                            return;
+                        }
+                        try {
+                            SupplierViewModel.saveSupplier(this::onAction, this::onAddSuccess, this::onFailed);
+                            actionEvent = event;
+                        } catch (Exception e) {
+                            SpotyLogger.writeToFile(e, this.getClass());
+                        }
                     }
-                    onRequiredFieldsMissing();
                 });
     }
 
@@ -165,6 +197,8 @@ public class SupplierFormController implements Initializable {
         cancelBtn.setDisable(false);
         saveBtn.setDisable(false);
 
+        closeDialog(actionEvent);
+        SupplierViewModel.resetProperties();
         SupplierViewModel.getAllSuppliers(null, null, null);
     }
 
@@ -180,6 +214,8 @@ public class SupplierFormController implements Initializable {
         cancelBtn.setDisable(false);
         saveBtn.setDisable(false);
 
+        closeDialog(actionEvent);
+        SupplierViewModel.resetProperties();
         SupplierViewModel.getAllSuppliers(null, null, null);
     }
 
@@ -198,18 +234,62 @@ public class SupplierFormController implements Initializable {
         SupplierViewModel.getAllSuppliers(null, null, null);
     }
 
-    private void onRequiredFieldsMissing() {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder("Required fields can't be null")
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
-                        .build();
-        notificationHolder.addMessage(notification);
-        cancelBtn.setDisable(false);
-        saveBtn.setDisable(false);
-
-        SupplierViewModel.getAllSuppliers(null, null, null);
+    public void requiredValidator() {
+        // Name input validation.
+        Constraint name =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Name is required")
+                        .setCondition(this.name.textProperty().length().greaterThan(0))
+                        .get();
+        this.name.getValidator().constraint(name);
+        Constraint email =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Email is required")
+                        .setCondition(this.email.textProperty().length().greaterThan(0))
+                        .get();
+        this.email.getValidator().constraint(email);
+        Constraint phone =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Phone is required")
+                        .setCondition(this.phone.textProperty().length().greaterThan(0))
+                        .get();
+        this.phone.getValidator().constraint(phone);
+        // Display error.
+        this.name
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                nameValidationLabel.setManaged(false);
+                                nameValidationLabel.setVisible(false);
+                                this.name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
+        this.email
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                emailValidationLabel.setManaged(false);
+                                emailValidationLabel.setVisible(false);
+                                this.email.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
+        this.phone
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                phoneValidationLabel.setManaged(false);
+                                phoneValidationLabel.setVisible(false);
+                                this.phone.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
     }
 }

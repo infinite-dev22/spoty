@@ -79,6 +79,7 @@ public class EmployeesController implements Initializable {
 
         dialogContent.setShowMinimize(false);
         dialogContent.setShowAlwaysOnTop(false);
+        dialogContent.setShowClose(false);
 
         dialog =
                 MFXGenericDialogBuilder.build(dialogContent)

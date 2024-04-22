@@ -1,4 +1,4 @@
-package inc.nomard.spoty.responsive_fx.layouts;
+package inc.nomard.spoty.utils.responsiveness.layouts;
 
 public enum Breakpoint {
     XSMALL(0),

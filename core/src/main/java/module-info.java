@@ -19,8 +19,6 @@ module spoty.core {
     requires spoty.network_bridge;
     requires spoty.utils;
     requires com.calendarfx.view;
-    requires inc.nomard.spoty.responsive_fx;
-    requires spoty.seamless.updater;
     requires froxty;
     requires com.dlsc.gemsfx;
 

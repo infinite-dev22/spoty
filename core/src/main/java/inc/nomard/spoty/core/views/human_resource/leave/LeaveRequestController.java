@@ -1,8 +1,7 @@
 package inc.nomard.spoty.core.views.human_resource.leave;
 
 import inc.nomard.spoty.core.components.animations.SpotyAnimations;
-import inc.nomard.spoty.core.viewModels.BankViewModel;
-import inc.nomard.spoty.core.views.forms.LeaveStatusFormController;
+import inc.nomard.spoty.core.views.forms.LeaveRequestFormController;
 import inc.nomard.spoty.network_bridge.dtos.hrm.leave.LeaveStatus;
 import inc.nomard.spoty.utils.SpotyThreader;
 import io.github.palexdev.materialfx.controls.*;
@@ -72,8 +71,8 @@ public class LeaveRequestController implements Initializable {
     }
 
     private void formDialogPane(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = fxmlLoader("views/forms/LeaveStatusForm.fxml");
-        fxmlLoader.setControllerFactory(c -> LeaveStatusFormController.getInstance());
+        FXMLLoader fxmlLoader = fxmlLoader("views/forms/LeaveRequestForm.fxml");
+        fxmlLoader.setControllerFactory(c -> LeaveRequestFormController.getInstance());
 
         MFXGenericDialog dialogContent = fxmlLoader.load();
 

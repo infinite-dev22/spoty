@@ -6,6 +6,7 @@ import lombok.*;
 
 import java.text.DateFormat;
 import java.time.Duration;
+import java.time.LocalTime;
 import java.util.Date;
 
 @Getter
@@ -20,6 +21,8 @@ public class LeaveStatus {
     private String description;
     private Date startDate;
     private Date endDate;
+    private LocalTime startTime;
+    private LocalTime endTime;
     private Duration duration;
     private LeaveType leaveType;
     private String attachment;

@@ -1,4 +1,4 @@
-package inc.nomard.spoty.responsive_fx.math;
+package inc.nomard.spoty.utils.responsiveness.math;
 
 public class MathUtils {
 

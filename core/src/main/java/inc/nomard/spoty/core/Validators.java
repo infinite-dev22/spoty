@@ -63,6 +63,7 @@ public class Validators {
                 .addListener(
                         (observable, oldValue, newValue) -> {
                             if (newValue) {
+                                errorDisplay.setManaged(false);
                                 errorDisplay.setVisible(false);
                                 textField.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                             }
@@ -75,7 +76,8 @@ public class Validators {
                                 List<Constraint> constraints = textField.validate();
                                 if (!constraints.isEmpty()) {
                                     textField.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                                    errorDisplay.setText(constraints.get(0).getMessage());
+                                    errorDisplay.setText(constraints.getFirst().getMessage());
+                                    errorDisplay.setManaged(true);
                                     errorDisplay.setVisible(true);
                                 }
                             }
@@ -86,8 +88,10 @@ public class Validators {
                     validator = textField.getValidator();
                     validate = validator.validate();
                     if (!validate.isEmpty()) {
-                        errorDisplay.setText(validate.get(0).getMessage());
+                        errorDisplay.setManaged(true);
                         errorDisplay.setVisible(true);
+                        textField.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        errorDisplay.setText(validate.getFirst().getMessage());
                     }
                 });
     }
@@ -113,6 +117,7 @@ public class Validators {
                 .addListener(
                         (observable, oldValue, newValue) -> {
                             if (newValue) {
+                                errorDisplay.setManaged(false);
                                 errorDisplay.setVisible(false);
                                 textField.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                             }
@@ -125,7 +130,8 @@ public class Validators {
                                 List<Constraint> constraints = textField.validate();
                                 if (!constraints.isEmpty()) {
                                     textField.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                                    errorDisplay.setText(constraints.get(0).getMessage());
+                                    errorDisplay.setText(constraints.getFirst().getMessage());
+                                    errorDisplay.setManaged(true);
                                     errorDisplay.setVisible(true);
                                 }
                             }
@@ -136,8 +142,10 @@ public class Validators {
                     validator = textField.getValidator();
                     validate = validator.validate();
                     if (!validate.isEmpty()) {
-                        errorDisplay.setText(validate.get(0).getMessage());
+                        errorDisplay.setManaged(true);
                         errorDisplay.setVisible(true);
+                        textField.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        errorDisplay.setText(validate.getFirst().getMessage());
                     }
                 });
     }
@@ -159,31 +167,20 @@ public class Validators {
                 .addListener(
                         (observable, oldValue, newValue) -> {
                             if (newValue) {
+                                errorDisplay.setManaged(false);
                                 errorDisplay.setVisible(false);
                                 textField.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                            }
-                        });
-        textField
-                .delegateFocusedProperty()
-                .addListener(
-                        (observable, oldValue, newValue) -> {
-                            if (oldValue && !newValue) {
-                                List<Constraint> constraints = textField.validate();
-                                if (!constraints.isEmpty()) {
-                                    textField.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                                    errorDisplay.setText(constraints.get(0).getMessage());
-                                    errorDisplay.setVisible(true);
-                                }
                             }
                         });
 
         actionButton.setOnAction(
                 e -> {
-                    validator = textField.getValidator();
-                    validate = validator.validate();
+                    validate = textField.validate();
                     if (!validate.isEmpty()) {
-                        errorDisplay.setText(validate.get(0).getMessage());
+                        errorDisplay.setManaged(true);
                         errorDisplay.setVisible(true);
+                        textField.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        errorDisplay.setText(validate.getFirst().getMessage());
                     }
                 });
     }

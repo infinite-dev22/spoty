@@ -14,7 +14,8 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.SpotyMessage;
+import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
 import inc.nomard.spoty.core.components.message.enums.MessageDuration;
 import inc.nomard.spoty.core.components.message.enums.MessageVariants;
 import inc.nomard.spoty.core.viewModels.UOMViewModel;
@@ -22,9 +23,13 @@ import inc.nomard.spoty.network_bridge.dtos.UnitOfMeasure;
 import inc.nomard.spoty.utils.SpotyLogger;
 import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import io.github.palexdev.materialfx.utils.StringUtils;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
+import io.github.palexdev.materialfx.validation.Constraint;
+import io.github.palexdev.materialfx.validation.Severity;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -32,13 +37,14 @@ import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 
 import java.net.URL;
+import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static inc.nomard.spoty.core.GlobalActions.closeDialog;
-import static inc.nomard.spoty.core.Validators.requiredValidator;
+import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
 
 public class UOMFormController implements Initializable {
     /**
@@ -48,31 +54,27 @@ public class UOMFormController implements Initializable {
      */
     private static UOMFormController instance;
     @FXML
-    public MFXTextField uomFormName;
+    public MFXTextField name,
+            shortName,
+            operator,
+            operatorValue;
     @FXML
-    public MFXTextField uomFormShortName;
+    public MFXButton saveBtn,
+            cancelBtn;
     @FXML
-    public MFXButton saveBtn;
-    @FXML
-    public MFXButton cancelBtn;
-    @FXML
-    public MFXFilterComboBox<UnitOfMeasure> uomFormBaseUnit;
-    @FXML
-    public MFXTextField uomFormOperator;
-    @FXML
-    public MFXTextField uomFormOperatorValue;
+    public MFXFilterComboBox<UnitOfMeasure> baseUnit;
     @FXML
     public VBox formsHolder;
     @FXML
-    public Label uomFormNameValidationLabel;
-    @FXML
-    public Label uomFormShortNameValidationLabel;
-    @FXML
-    public Label uomFormOperatorValidationLabel;
-    @FXML
-    public Label uomFormOperatorValueValidationLabel;
+    public Label nameValidationLabel,
+            operatorValidationLabel,
+            operatorValueValidationLabel;
     @FXML
     public VBox inputsHolder;
+    private List<Constraint> nameConstraints,
+            operatorConstraints,
+            operatorValueConstraints;
+    private ActionEvent actionEvent = null;
 
     public static UOMFormController getInstance() {
         if (Objects.equals(instance, null)) instance = new UOMFormController();
@@ -82,25 +84,27 @@ public class UOMFormController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Form input binding.
-        uomFormName.textProperty().bindBidirectional(UOMViewModel.nameProperty());
-        uomFormShortName.textProperty().bindBidirectional(UOMViewModel.shortNameProperty());
-        uomFormBaseUnit.valueProperty().bindBidirectional(UOMViewModel.baseUnitProperty());
-        uomFormOperator.textProperty().bindBidirectional(UOMViewModel.operatorProperty());
-        uomFormOperatorValue.textProperty().bindBidirectional(UOMViewModel.operatorValueProperty());
+        name.textProperty().bindBidirectional(UOMViewModel.nameProperty());
+        shortName.textProperty().bindBidirectional(UOMViewModel.shortNameProperty());
+        baseUnit.valueProperty().bindBidirectional(UOMViewModel.baseUnitProperty());
+        operator.textProperty().bindBidirectional(UOMViewModel.operatorProperty());
+        operatorValue.textProperty().bindBidirectional(UOMViewModel.operatorValueProperty());
 
         // Input listeners.
-        uomFormBaseUnit
+        baseUnit
                 .valueProperty()
                 .addListener(
                         observable -> {
-                            if (uomFormBaseUnit.getSelectedItem() != null) {
+                            if (baseUnit.getSelectedItem() != null) {
                                 formsHolder.setVisible(true);
                                 formsHolder.setManaged(true);
+                                MFXStageDialog dialog = (MFXStageDialog) baseUnit.getScene().getWindow();
+                                dialog.sizeToScene();
                             } else {
                                 formsHolder.setManaged(false);
                                 formsHolder.setVisible(false);
-                                uomFormOperatorValidationLabel.setVisible(false);
-                                uomFormOperatorValueValidationLabel.setVisible(false);
+                                operatorValidationLabel.setVisible(false);
+                                operatorValueValidationLabel.setVisible(false);
                             }
                         });
 
@@ -116,24 +120,12 @@ public class UOMFormController implements Initializable {
                                 StringUtils.containsIgnoreCase(uomConverter.toString(unitOfMeasure), searchStr);
 
         // ComboBox properties.
-        uomFormBaseUnit.setItems(UOMViewModel.getUnitsOfMeasure());
-        uomFormBaseUnit.setConverter(uomConverter);
-        uomFormBaseUnit.setFilterFunction(uomFilterFunction);
+        baseUnit.setItems(UOMViewModel.getUnitsOfMeasure());
+        baseUnit.setConverter(uomConverter);
+        baseUnit.setFilterFunction(uomFilterFunction);
 
         // Input validators.
-        requiredValidator(uomFormName, "Name is required.", uomFormNameValidationLabel, saveBtn);
-        requiredValidator(
-                uomFormShortName,
-                "Short name field is required.",
-                uomFormShortNameValidationLabel,
-                saveBtn);
-        requiredValidator(
-                uomFormOperator, "Operator is required.", uomFormOperatorValidationLabel, saveBtn);
-        requiredValidator(
-                uomFormOperatorValue,
-                "Operator value is required.",
-                uomFormOperatorValueValidationLabel,
-                saveBtn);
+        requiredValidator();
 
         setUomFormDialogOnActions();
     }
@@ -143,24 +135,59 @@ public class UOMFormController implements Initializable {
                 (event) -> {
                     closeDialog(event);
                     UOMViewModel.resetUOMProperties();
-                    uomFormBaseUnit.clearSelection();
-                    uomFormNameValidationLabel.setVisible(false);
-                    uomFormShortNameValidationLabel.setVisible(false);
-                    uomFormOperatorValidationLabel.setVisible(false);
-                    uomFormOperatorValueValidationLabel.setVisible(false);
+                    baseUnit.clearSelection();
+                    nameValidationLabel.setVisible(false);
+                    operatorValidationLabel.setVisible(false);
+                    operatorValueValidationLabel.setVisible(false);
                     formsHolder.setVisible(false);
+
+                    nameValidationLabel.setManaged(false);
+                    operatorValidationLabel.setManaged(false);
+                    operatorValueValidationLabel.setManaged(false);
                     formsHolder.setManaged(false);
+
+                    name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    operator.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    operatorValue.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                 });
         saveBtn.setOnAction(
                 (event) -> {
-                    if (!uomFormNameValidationLabel.isVisible()
-                            && !uomFormShortNameValidationLabel.isVisible()
-                            && !uomFormOperatorValidationLabel.isVisible()
-                            && !uomFormOperatorValueValidationLabel.isVisible()) {
+                    nameConstraints = name.validate();
+                    operatorConstraints = operator.validate();
+                    operatorValueConstraints = operatorValue.validate();
+                    if (!nameConstraints.isEmpty()) {
+                        nameValidationLabel.setManaged(true);
+                        nameValidationLabel.setVisible(true);
+                        nameValidationLabel.setText(nameConstraints.getFirst().getMessage());
+                        name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) name.getScene().getWindow();
+                        dialog.sizeToScene();
+                    }
+                    if (Objects.nonNull(baseUnit.getSelectedItem())) {
+                        if (!operatorConstraints.isEmpty()) {
+                            operatorValidationLabel.setManaged(true);
+                            operatorValidationLabel.setVisible(true);
+                            operatorValidationLabel.setText(operatorConstraints.getFirst().getMessage());
+                            operator.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                            MFXStageDialog dialog = (MFXStageDialog) operator.getScene().getWindow();
+                            dialog.sizeToScene();
+                        }
+                        if (!operatorValueConstraints.isEmpty()) {
+                            operatorValueValidationLabel.setManaged(true);
+                            operatorValueValidationLabel.setVisible(true);
+                            operatorValueValidationLabel.setText(operatorValueConstraints.getFirst().getMessage());
+                            operatorValue.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                            MFXStageDialog dialog = (MFXStageDialog) operator.getScene().getWindow();
+                            dialog.sizeToScene();
+                        }
+                    }
+                    if (nameConstraints.isEmpty()
+                            && operatorConstraints.isEmpty()
+                            && operatorValueConstraints.isEmpty()) {
                         if (UOMViewModel.getId() > 0) {
                             try {
                                 UOMViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
-                                closeDialog(event);
+                                actionEvent = event;
                             } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }
@@ -168,13 +195,11 @@ public class UOMFormController implements Initializable {
                         }
                         try {
                             UOMViewModel.saveUOM(this::onAction, this::onAddSuccess, this::onFailed);
-                            closeDialog(event);
+                            actionEvent = event;
                         } catch (Exception e) {
                             SpotyLogger.writeToFile(e, this.getClass());
                         }
-                        return;
                     }
-                    onRequiredFieldsMissing();
                 });
     }
 
@@ -197,6 +222,8 @@ public class UOMFormController implements Initializable {
         cancelBtn.setDisable(false);
         saveBtn.setDisable(false);
 
+        closeDialog(actionEvent);
+        UOMViewModel.resetUOMProperties();
         UOMViewModel.getAllUOMs(null, null, null);
     }
 
@@ -212,6 +239,8 @@ public class UOMFormController implements Initializable {
         cancelBtn.setDisable(false);
         saveBtn.setDisable(false);
 
+        closeDialog(actionEvent);
+        UOMViewModel.resetUOMProperties();
         UOMViewModel.getAllUOMs(null, null, null);
     }
 
@@ -230,18 +259,62 @@ public class UOMFormController implements Initializable {
         UOMViewModel.getAllUOMs(null, null, null);
     }
 
-    private void onRequiredFieldsMissing() {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder("Required fields can't be null")
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
-                        .build();
-        notificationHolder.addMessage(notification);
-        cancelBtn.setDisable(false);
-        saveBtn.setDisable(false);
-
-        UOMViewModel.getAllUOMs(null, null, null);
+    public void requiredValidator() {
+        // Name input validation.
+        Constraint nameConstraint =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Name is required")
+                        .setCondition(name.textProperty().length().greaterThan(0))
+                        .get();
+        name.getValidator().constraint(nameConstraint);
+        Constraint operatorValueConstraint =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Operator is required")
+                        .setCondition(operatorValue.textProperty().length().greaterThan(0))
+                        .get();
+        operatorValue.getValidator().constraint(operatorValueConstraint);
+        Constraint operatorConstraint =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Operator Value is required")
+                        .setCondition(operator.textProperty().length().greaterThan(0))
+                        .get();
+        operator.getValidator().constraint(operatorConstraint);
+        // Display error.
+        name
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                nameValidationLabel.setManaged(false);
+                                nameValidationLabel.setVisible(false);
+                                name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
+        operatorValue
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                operatorValueValidationLabel.setManaged(false);
+                                operatorValueValidationLabel.setVisible(false);
+                                operatorValue.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
+        operator
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                operatorValidationLabel.setManaged(false);
+                                operatorValidationLabel.setVisible(false);
+                                operator.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
     }
 }

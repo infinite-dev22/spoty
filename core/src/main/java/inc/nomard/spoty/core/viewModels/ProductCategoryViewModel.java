@@ -44,7 +44,7 @@ public class ProductCategoryViewModel {
                     UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
             .create();
     private static final LongProperty id = new SimpleLongProperty(0);
-    private static final StringProperty code = new SimpleStringProperty("");
+    private static final StringProperty description = new SimpleStringProperty("");
     private static final StringProperty title = new SimpleStringProperty("");
     private static final StringProperty name = new SimpleStringProperty("");
     public static ObservableList<ProductCategory> categoriesList =
@@ -78,16 +78,16 @@ public class ProductCategoryViewModel {
         return title;
     }
 
-    public static String getCode() {
-        return code.get();
+    public static String getDescription() {
+        return description.get();
     }
 
-    public static void setCode(String code) {
-        ProductCategoryViewModel.code.set(code);
+    public static void setDescription(String description) {
+        ProductCategoryViewModel.description.set(description);
     }
 
-    public static StringProperty codeProperty() {
-        return code;
+    public static StringProperty descriptionProperty() {
+        return description;
     }
 
     public static String getName() {
@@ -119,7 +119,7 @@ public class ProductCategoryViewModel {
             ParameterlessConsumer onSuccess,
             ParameterlessConsumer onFailed) {
         var productCategory = ProductCategory.builder()
-                .code(getCode())
+                .code(getDescription())
                 .name(getName())
                 .build();
 
@@ -132,7 +132,7 @@ public class ProductCategoryViewModel {
 
     public static void clearProductCategoryData() {
         setId(0);
-        setCode("");
+        setDescription("");
         setName("");
     }
 
@@ -185,7 +185,7 @@ public class ProductCategoryViewModel {
                 var productCategory = gson.fromJson(task.get().body(), ProductCategory.class);
 
                 setId(productCategory.getId());
-                setCode(productCategory.getCode());
+                setDescription(productCategory.getCode());
                 setName(productCategory.getName());
 
                 if (Objects.nonNull(onSuccess)) {
@@ -236,7 +236,7 @@ public class ProductCategoryViewModel {
             ParameterlessConsumer onFailed) {
         var productCategory = ProductCategory.builder()
                 .id(getId())
-                .code(getCode())
+                .code(getDescription())
                 .name(getName())
                 .build();
 
