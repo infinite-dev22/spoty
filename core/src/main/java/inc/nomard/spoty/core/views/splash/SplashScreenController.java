@@ -126,7 +126,7 @@ public class SplashScreenController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        companyName.setText(Labels.COMPANY_NAME);
+        companyName.setText("Powered by " + Labels.COMPANY_NAME);
         applicationName.setText(Labels.APP_NAME);
     }
 }

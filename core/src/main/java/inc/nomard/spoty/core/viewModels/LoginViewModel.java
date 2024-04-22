@@ -66,7 +66,8 @@ public class LoginViewModel {
     public static void login(
             ParameterlessConsumer onActivity,
             ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onFailed,
+            ParameterlessConsumer onBadCredentials) {
 
         var loginDetails =
                 LoginModel.builder()
@@ -82,6 +83,8 @@ public class LoginViewModel {
                 if (response.getStatus() == 200) {
                     ProtectedGlobals.authToken = response.getToken();
                     onSuccess.run();
+                } else if (response.getMessage().toLowerCase().contains("bad credentials")) {
+                    onBadCredentials.run();
                 } else {
                     onFailed.run();
                 }

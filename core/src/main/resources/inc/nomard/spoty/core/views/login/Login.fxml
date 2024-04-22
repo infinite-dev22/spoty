@@ -1,52 +1,140 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import inc.nomard.spoty.core.components.animations.ActivityIndicator?>
 <?import io.github.palexdev.materialfx.controls.MFXPasswordField?>
 <?import io.github.palexdev.materialfx.controls.MFXTextField?>
 <?import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton?>
 <?import io.github.palexdev.mfxresources.fonts.MFXFontIcon?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
+<?import javafx.geometry.Point3D?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.Cursor?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
-<?import inc.nomard.spoty.core.components.animations.ActivityIndicator?>
-<?import java.net.URL?>
-<BorderPane prefHeight="634.0" prefWidth="983.0" styleClass="card" xmlns="http://javafx.com/javafx/21.0.1"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="inc.nomard.spoty.core.views.login.LoginController">
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.shape.Rectangle?>
+<?import java.net.*?>
+<BorderPane maxHeight="500.0" maxWidth="983.0" minHeight="500.0" prefHeight="500.0" prefWidth="983.0" styleClass="card"
+            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="inc.nomard.spoty.core.views.login.LoginController">
     <stylesheets>
         <URL value="@../../styles/Common.css"/>
         <URL value="@../../styles/base.css"/>
         <URL value="@../../styles/TextFields.css"/>
-        <URL value="@../../styles/base.css"/>
+        <URL value="@../../styles/theming/Default.css"/>
+        <URL value="@../../styles/toolitip.css"/>
     </stylesheets>
     <center>
-        <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
-            <ImageView fx:id="loginImage" fitHeight="614.0" fitWidth="613.0" layoutX="9.0" layoutY="11.0"
-                       pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="10.0"
-                       AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="360.0" AnchorPane.topAnchor="10.0"/>
-            <VBox alignment="CENTER" layoutX="713.0" layoutY="14.0" prefHeight="614.0" prefWidth="338.0" spacing="20.0"
-                  AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="635.0" AnchorPane.rightAnchor="10.0"
-                  AnchorPane.topAnchor="10.0">
-                <VBox alignment="CENTER" spacing="20.0">
+        <Pane fx:id="contentPane" maxHeight="500.0" maxWidth="983.0" minHeight="500.0" prefHeight="500.0"
+              prefWidth="983.0" styleClass="card">
+            <AnchorPane fx:id="actualContentPane" cache="true" cacheHint="SPEED" maxHeight="500.0" maxWidth="983.0"
+                        minHeight="500.0" prefHeight="500.0" prefWidth="983.0">
+                <Rectangle arcHeight="50.0" arcWidth="50.0" height="400.0" layoutX="35.0" layoutY="-186.0"
+                           rotate="-59.0" stroke="TRANSPARENT" strokeLineCap="ROUND" strokeLineJoin="ROUND"
+                           strokeType="INSIDE" strokeWidth="0.0" styleClass="card" width="306.0">
+                    <fill>
+                        <LinearGradient>
+                            <stops>
+                                <Stop>
+                                    <color>
+                                        <Color red="0.125490203499794" blue="0.2235294133424759"/>
+                                    </color>
+                                </Stop>
+                                <Stop offset="1.0">
+                                    <color>
+                                        <Color red="0.33725491166114807" blue="0.6000000238418579"/>
+                                    </color>
+                                </Stop>
+                            </stops>
+                        </LinearGradient>
+                    </fill>
+                </Rectangle>
+                <Rectangle arcHeight="50.0" arcWidth="50.0" height="400.0" layoutX="234.0" layoutY="249.0"
+                           rotate="121.0" stroke="TRANSPARENT" strokeLineCap="ROUND" strokeLineJoin="ROUND"
+                           strokeType="INSIDE" strokeWidth="0.0" styleClass="card" width="370.0" y="30.0">
+                    <fill>
+                        <LinearGradient>
+                            <stops>
+                                <Stop>
+                                    <color>
+                                        <Color red="0.33725491166114807" blue="0.6000000238418579"/>
+                                    </color>
+                                </Stop>
+                                <Stop offset="1.0">
+                                    <color>
+                                        <Color red="1.0" blue="0.9019607901573181"/>
+                                    </color>
+                                </Stop>
+                            </stops>
+                        </LinearGradient>
+                    </fill>
+                </Rectangle>
+                <Rectangle arcHeight="50.0" arcWidth="50.0" height="400.0" layoutX="-161.0" layoutY="118.0"
+                           rotate="59.0" stroke="TRANSPARENT" strokeLineCap="ROUND" strokeLineJoin="ROUND"
+                           strokeType="INSIDE" strokeWidth="0.0" styleClass="card" width="339.0">
+                    <fill>
+                        <LinearGradient>
+                            <stops>
+                                <Stop>
+                                    <color>
+                                        <Color red="0.125490203499794" blue="0.2235294133424759"/>
+                                    </color>
+                                </Stop>
+                                <Stop offset="1.0">
+                                    <color>
+                                        <Color red="1.0" blue="0.9019607901573181"/>
+                                    </color>
+                                </Stop>
+                            </stops>
+                        </LinearGradient>
+                    </fill>
+                    <rotationAxis>
+                        <Point3D z="-37.0"/>
+                    </rotationAxis>
+                </Rectangle>
+                <Rectangle arcHeight="50.0" arcWidth="50.0" height="400.0" layoutX="454.0" layoutY="-42.0"
+                           rotate="-59.0" stroke="TRANSPARENT" strokeLineCap="ROUND" strokeLineJoin="ROUND"
+                           strokeType="INSIDE" strokeWidth="0.0" styleClass="card" width="306.0">
+                    <fill>
+                        <LinearGradient>
+                            <stops>
+                                <Stop>
+                                    <color>
+                                        <Color red="0.125490203499794" blue="0.2235294133424759"/>
+                                    </color>
+                                </Stop>
+                                <Stop offset="1.0">
+                                    <color>
+                                        <Color red="1.0" blue="0.9019607901573181"/>
+                                    </color>
+                                </Stop>
+                            </stops>
+                        </LinearGradient>
+                    </fill>
+                </Rectangle>
+                <VBox alignment="CENTER" prefWidth="390.0" spacing="20.0" style="-fx-background-color: white;"
+                      AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="599.0" AnchorPane.rightAnchor="0.0"
+                      AnchorPane.topAnchor="0.0" styleClass="card">
                     <padding>
                         <Insets bottom="16.0" left="16.0" right="16.0" top="16.0"/>
                     </padding>
-                    <Label text="Login"/>
+                    <Region VBox.vgrow="ALWAYS"/>
+                    <Label styleClass="login-title" text="Login"/>
                     <VBox spacing="2.0">
                         <padding>
-                            <Insets bottom="5" top="2.5"/>
+                            <Insets top="2.5"/>
                         </padding>
-                        <MFXTextField fx:id="usernameField" floatMode="BORDER" prefWidth="350.0"/>
-                        <Label id="validationLabel" fx:id="usernameFieldValidationLabel"
+                        <MFXTextField fx:id="email" floatMode="BORDER" floatingText="Email" prefWidth="350.0"/>
+                        <Label id="validationLabel" fx:id="emailValidationLabel" managed="false"
                                maxWidth="1.7976931348623157E308" minHeight="-Infinity"
                                styleClass="input-validation-error" visible="false" wrapText="true"/>
                     </VBox>
                     <VBox spacing="2.0">
                         <padding>
-                            <Insets bottom="5" top="2.5"/>
+                            <Insets bottom="2.5"/>
                         </padding>
-                        <MFXPasswordField fx:id="passwordField" floatMode="BORDER" prefWidth="350.0"/>
-                        <Label id="validationLabel" fx:id="passwordFieldValidationLabel"
+                        <MFXPasswordField fx:id="password" floatMode="BORDER" floatingText="Password"
+                                          prefWidth="350.0"/>
+                        <Label id="validationLabel" fx:id="passwordValidationLabel" managed="false"
                                maxWidth="1.7976931348623157E308" minHeight="-Infinity"
                                styleClass="input-validation-error" visible="false" wrapText="true"/>
                     </VBox>
@@ -61,10 +149,16 @@
                         <MFXButton fx:id="loginBtn" prefWidth="352.0" styleClass="filled" text="Login"/>
                         <ActivityIndicator fx:id="activityIndicator" visible="false" managed="false"/>
                     </HBox>
+                    <VBox alignment="BOTTOM_CENTER" spacing="5.0" VBox.vgrow="ALWAYS">
+                        <Label fx:id="appNameLbl" alignment="CENTER" contentDisplay="CENTER" styleClass="app-label"
+                               VBox.vgrow="ALWAYS"/>
+                        <Label fx:id="poweredByLbl" alignment="CENTER" contentDisplay="CENTER"
+                               styleClass="company-label" VBox.vgrow="ALWAYS"/>
+                    </VBox>
                 </VBox>
-            </VBox>
-            <MFXFontIcon fx:id="closeIcon" description="fas-circle" layoutX="957.0" layoutY="25.0"
-                         onMouseClicked="#closeIconClicked" size="15.0" styleClass="close-icon"/>
-        </AnchorPane>
+                <MFXFontIcon fx:id="closeIcon" description="fas-circle" onMouseClicked="#closeIconClicked" size="15.0"
+                             styleClass="close-icon" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0"/>
+            </AnchorPane>
+        </Pane>
     </center>
 </BorderPane>
