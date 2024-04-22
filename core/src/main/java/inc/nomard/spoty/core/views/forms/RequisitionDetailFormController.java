@@ -25,6 +25,7 @@ import inc.nomard.spoty.utils.SpotyLogger;
 import inc.nomard.spoty.utils.SpotyThreader;
 import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import io.github.palexdev.materialfx.utils.StringUtils;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.materialfx.validation.Constraint;
@@ -54,8 +55,8 @@ public class RequisitionDetailFormController implements Initializable {
     @FXML
     public MFXFilterComboBox<Product> product;
     @FXML
-    public MFXButton requisitionDetailSaveBtn,
-            requisitionDetailCancelBtn;
+    public MFXButton saveBtn,
+            cancelBtn;
     @FXML
     public Label quantityValidationLabel,
             productValidationLabel,
@@ -99,7 +100,7 @@ public class RequisitionDetailFormController implements Initializable {
     }
 
     private void dialogOnActions() {
-        requisitionDetailCancelBtn.setOnAction(
+        cancelBtn.setOnAction(
                 (event) -> {
                     closeDialog(event);
                     RequisitionDetailViewModel.resetProperties();
@@ -116,7 +117,7 @@ public class RequisitionDetailFormController implements Initializable {
                     quantity.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                     cost.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                 });
-        requisitionDetailSaveBtn.setOnAction(
+        saveBtn.setOnAction(
                 (event) -> {
                     SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
 
@@ -128,18 +129,24 @@ public class RequisitionDetailFormController implements Initializable {
                         productValidationLabel.setVisible(true);
                         productValidationLabel.setText(productConstraints.getFirst().getMessage());
                         product.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) product.getScene().getWindow();
+                        dialog.sizeToScene();
                     }
                     if (!quantityConstraints.isEmpty()) {
                         quantityValidationLabel.setManaged(true);
                         quantityValidationLabel.setVisible(true);
                         quantityValidationLabel.setText(quantityConstraints.getFirst().getMessage());
                         quantity.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) quantity.getScene().getWindow();
+                        dialog.sizeToScene();
                     }
                     if (!costConstraints.isEmpty()) {
                         costValidationLabel.setManaged(true);
                         costValidationLabel.setVisible(true);
                         costValidationLabel.setText(costConstraints.getFirst().getMessage());
                         cost.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) cost.getScene().getWindow();
+                        dialog.sizeToScene();
                     }
                     if (productConstraints.isEmpty()
                             && quantityConstraints.isEmpty()

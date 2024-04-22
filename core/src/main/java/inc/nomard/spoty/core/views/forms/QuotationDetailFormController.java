@@ -23,6 +23,7 @@ import inc.nomard.spoty.core.viewModels.quotations.QuotationDetailViewModel;
 import inc.nomard.spoty.network_bridge.dtos.Product;
 import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import io.github.palexdev.materialfx.utils.StringUtils;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.materialfx.validation.Constraint;
@@ -131,12 +132,16 @@ public class QuotationDetailFormController implements Initializable {
                         productValidationLabel.setVisible(true);
                         productValidationLabel.setText(productConstraints.getFirst().getMessage());
                         product.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) product.getScene().getWindow();
+                        dialog.sizeToScene();
                     }
                     if (!quantityConstraints.isEmpty()) {
                         quantityValidationLabel.setManaged(true);
                         quantityValidationLabel.setVisible(true);
                         quantityValidationLabel.setText(quantityConstraints.getFirst().getMessage());
                         quantity.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) quantity.getScene().getWindow();
+                        dialog.sizeToScene();
                     }
                     if (productConstraints.isEmpty()
                             && quantityConstraints.isEmpty()) {

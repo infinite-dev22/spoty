@@ -30,6 +30,7 @@ import inc.nomard.spoty.network_bridge.dtos.UnitOfMeasure;
 import inc.nomard.spoty.utils.SpotyLogger;
 import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import io.github.palexdev.materialfx.utils.StringUtils;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.materialfx.validation.Constraint;
@@ -250,36 +251,48 @@ public class ProductFormController implements Initializable {
                         nameValidationLabel.setVisible(true);
                         nameValidationLabel.setText(nameConstraints.getFirst().getMessage());
                         name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) name.getScene().getWindow();
+                        dialog.sizeToScene();
                     }
                     if (!priceConstraints.isEmpty()) {
                         priceValidationLabel.setManaged(true);
                         priceValidationLabel.setVisible(true);
                         priceValidationLabel.setText(priceConstraints.getFirst().getMessage());
                         price.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) price.getScene().getWindow();
+                        dialog.sizeToScene();
                     }
                     if (!brandConstraints.isEmpty()) {
                         brandValidationLabel.setManaged(true);
                         brandValidationLabel.setVisible(true);
                         brandValidationLabel.setText(brandConstraints.getFirst().getMessage());
                         brand.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) brand.getScene().getWindow();
+                        dialog.sizeToScene();
                     }
                     if (!categoryConstraints.isEmpty()) {
                         categoryValidationLabel.setManaged(true);
                         categoryValidationLabel.setVisible(true);
                         categoryValidationLabel.setText(categoryConstraints.getFirst().getMessage());
                         category.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) category.getScene().getWindow();
+                        dialog.sizeToScene();
                     }
                     if (!unitOfMeasureConstraints.isEmpty()) {
                         unitOfMeasureValidationLabel.setManaged(true);
                         unitOfMeasureValidationLabel.setVisible(true);
                         unitOfMeasureValidationLabel.setText(unitOfMeasureConstraints.getFirst().getMessage());
                         unitOfMeasure.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) unitOfMeasure.getScene().getWindow();
+                        dialog.sizeToScene();
                     }
                     if (!barcodeTypeConstraints.isEmpty()) {
                         barcodeTypeValidationLabel.setManaged(true);
                         barcodeTypeValidationLabel.setVisible(true);
                         barcodeTypeValidationLabel.setText(barcodeTypeConstraints.getFirst().getMessage());
                         barcodeType.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) barcodeType.getScene().getWindow();
+                        dialog.sizeToScene();
                     }
                     if (nameConstraints.isEmpty()
                             && priceConstraints.isEmpty()
@@ -291,7 +304,6 @@ public class ProductFormController implements Initializable {
                             try {
                                 ProductViewModel.updateProduct(this::onAction, this::onUpdatedSuccess, this::onFailed);
                                 actionEvent = event;
-                                ;
                             } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }
@@ -300,7 +312,6 @@ public class ProductFormController implements Initializable {
                         try {
                             ProductViewModel.saveProduct(this::onAction, this::onAddSuccess, this::onFailed);
                             actionEvent = event;
-                            ;
                         } catch (Exception e) {
                             SpotyLogger.writeToFile(e, this.getClass());
                         }

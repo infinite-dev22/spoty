@@ -21,6 +21,7 @@ import inc.nomard.spoty.core.components.message.enums.MessageVariants;
 import inc.nomard.spoty.core.viewModels.BankViewModel;
 import inc.nomard.spoty.utils.SpotyLogger;
 import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import io.github.palexdev.materialfx.validation.Constraint;
 import io.github.palexdev.materialfx.validation.Severity;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
@@ -110,24 +111,32 @@ public class BankFormController implements Initializable {
                         bankNameValidationLabel.setVisible(true);
                         bankNameValidationLabel.setText(bankNameConstraints.getFirst().getMessage());
                         bankName.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) bankName.getScene().getWindow();
+                        dialog.sizeToScene();
                     }
                     if (!accountNameConstraints.isEmpty()) {
                         accountNameValidationLabel.setManaged(true);
                         accountNameValidationLabel.setVisible(true);
                         accountNameValidationLabel.setText(accountNameConstraints.getFirst().getMessage());
                         accountName.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) accountName.getScene().getWindow();
+                        dialog.sizeToScene();
                     }
                     if (!accountNumberConstraints.isEmpty()) {
                         accountNumberValidationLabel.setManaged(true);
                         accountNumberValidationLabel.setVisible(true);
                         accountNumberValidationLabel.setText(accountNumberConstraints.getFirst().getMessage());
                         accountNumber.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) accountNumber.getScene().getWindow();
+                        dialog.sizeToScene();
                     }
                     if (!branchConstraints.isEmpty()) {
                         branchValidationLabel.setManaged(true);
                         branchValidationLabel.setVisible(true);
                         branchValidationLabel.setText(branchConstraints.getFirst().getMessage());
                         branch.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) branch.getScene().getWindow();
+                        dialog.sizeToScene();
                     }
                     if (bankNameConstraints.isEmpty()
                             && accountNameConstraints.isEmpty()

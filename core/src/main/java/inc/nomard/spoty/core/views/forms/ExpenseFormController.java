@@ -25,6 +25,7 @@ import inc.nomard.spoty.utils.SpotyLogger;
 import io.github.palexdev.materialfx.controls.MFXComboBox;
 import io.github.palexdev.materialfx.controls.MFXDatePicker;
 import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.materialfx.validation.Constraint;
 import io.github.palexdev.materialfx.validation.Severity;
@@ -131,24 +132,32 @@ public class ExpenseFormController implements Initializable {
                         nameValidationLabel.setVisible(true);
                         nameValidationLabel.setText(nameConstraints.getFirst().getMessage());
                         name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) name.getScene().getWindow();
+                        dialog.sizeToScene();
                     }
                     if (!dateConstraints.isEmpty()) {
                         dateValidationLabel.setManaged(true);
                         dateValidationLabel.setVisible(true);
                         dateValidationLabel.setText(dateConstraints.getFirst().getMessage());
                         date.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) date.getScene().getWindow();
+                        dialog.sizeToScene();
                     }
                     if (!categoryConstraints.isEmpty()) {
                         categoryValidationLabel.setManaged(true);
                         categoryValidationLabel.setVisible(true);
                         categoryValidationLabel.setText(categoryConstraints.getFirst().getMessage());
                         category.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) category.getScene().getWindow();
+                        dialog.sizeToScene();
                     }
                     if (!amountConstraints.isEmpty()) {
                         amountValidationLabel.setManaged(true);
                         amountValidationLabel.setVisible(true);
                         amountValidationLabel.setText(amountConstraints.getFirst().getMessage());
                         amount.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) amount.getScene().getWindow();
+                        dialog.sizeToScene();
                     }
                     if (nameConstraints.isEmpty()
                             && dateConstraints.isEmpty()

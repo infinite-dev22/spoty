@@ -25,6 +25,7 @@ import inc.nomard.spoty.network_bridge.dtos.hrm.leave.LeaveType;
 import inc.nomard.spoty.utils.SpotyLogger;
 import io.github.palexdev.materialfx.controls.MFXDatePicker;
 import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
+import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import io.github.palexdev.materialfx.validation.Constraint;
 import io.github.palexdev.materialfx.validation.Severity;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
@@ -145,24 +146,32 @@ public class LeaveRequestFormController implements Initializable {
                         employeeValidationLabel.setVisible(true);
                         employeeValidationLabel.setText(employeeConstraints.getFirst().getMessage());
                         employee.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) employee.getScene().getWindow();
+                        dialog.sizeToScene();
                     }
                     if (!leaveTypeConstraints.isEmpty()) {
                         leaveTypeValidationLabel.setManaged(true);
                         leaveTypeValidationLabel.setVisible(true);
                         leaveTypeValidationLabel.setText(leaveTypeConstraints.getFirst().getMessage());
                         leaveType.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) leaveType.getScene().getWindow();
+                        dialog.sizeToScene();
                     }
                     if (!fromDateConstraints.isEmpty()) {
                         fromDateValidationLabel.setManaged(true);
                         fromDateValidationLabel.setVisible(true);
                         fromDateValidationLabel.setText(fromDateConstraints.getFirst().getMessage());
                         fromDate.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) fromDate.getScene().getWindow();
+                        dialog.sizeToScene();
                     }
                     if (!toDateConstraints.isEmpty()) {
                         toDateValidationLabel.setManaged(true);
                         toDateValidationLabel.setVisible(true);
                         toDateValidationLabel.setText(toDateConstraints.getFirst().getMessage());
                         toDate.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) toDate.getScene().getWindow();
+                        dialog.sizeToScene();
                     }
                     if (employeeConstraints.isEmpty()
                             && leaveTypeConstraints.isEmpty()

@@ -106,9 +106,9 @@ public class BeneficiaryTypeController implements Initializable {
         description.setRowCellFactory(
                 employee -> new MFXTableRowCell<>(BeneficiaryType::getDescription));
 
-        name.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
-        appearance.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
-        description.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
+        name.prefWidthProperty().bind(masterTable.widthProperty().multiply(.333));
+        appearance.prefWidthProperty().bind(masterTable.widthProperty().multiply(.333));
+        description.prefWidthProperty().bind(masterTable.widthProperty().multiply(.333));
 
         masterTable
                 .getTableColumns()

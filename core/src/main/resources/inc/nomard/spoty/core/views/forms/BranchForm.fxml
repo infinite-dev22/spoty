@@ -36,8 +36,8 @@
                 <padding>
                     <Insets bottom="2.5"/>
                 </padding>
-                <MFXTextField fx:id="branchFormName" floatMode="BORDER" floatingText="Name" prefWidth="400.0"/>
-                <Label id="validationLabel" fx:id="branchFormNameValidationLabel" maxWidth="1.7976931348623157E308"
+                <MFXTextField fx:id="name" floatMode="BORDER" floatingText="Name" prefWidth="400.0"/>
+                <Label id="validationLabel" fx:id="nameValidationLabel" maxWidth="1.7976931348623157E308"
                        minHeight="-Infinity" styleClass="input-validation-error" visible="false" managed="false"
                        wrapText="true"/>
             </VBox>
@@ -45,8 +45,8 @@
                 <padding>
                     <Insets bottom="2.5" top="2.5"/>
                 </padding>
-                <MFXTextField fx:id="branchFormPhone" floatMode="BORDER" floatingText="Phone" prefWidth="400.0"/>
-                <Label id="validationLabel" fx:id="branchFormPhoneValidationLabel" maxWidth="1.7976931348623157E308"
+                <MFXTextField fx:id="phone" floatMode="BORDER" floatingText="Phone" prefWidth="400.0"/>
+                <Label id="validationLabel" fx:id="phoneValidationLabel" maxWidth="1.7976931348623157E308"
                        minHeight="-Infinity" styleClass="input-validation-error" visible="false" managed="false"
                        wrapText="true"/>
             </VBox>
@@ -54,8 +54,8 @@
                 <padding>
                     <Insets bottom="2.5" top="2.5"/>
                 </padding>
-                <MFXTextField fx:id="branchFormTown" floatMode="BORDER" floatingText="Town" prefWidth="400.0"/>
-                <Label id="validationLabel" fx:id="branchFormTownValidationLabel" maxWidth="1.7976931348623157E308"
+                <MFXTextField fx:id="town" floatMode="BORDER" floatingText="Town" prefWidth="400.0"/>
+                <Label id="validationLabel" fx:id="townValidationLabel" maxWidth="1.7976931348623157E308"
                        minHeight="-Infinity" styleClass="input-validation-error" visible="false" managed="false"
                        wrapText="true"/>
             </VBox>
@@ -63,8 +63,8 @@
                 <padding>
                     <Insets bottom="2.5" top="2.5"/>
                 </padding>
-                <MFXTextField fx:id="branchFormCity" floatMode="BORDER" floatingText="City" prefWidth="400.0"/>
-                <Label id="validationLabel" fx:id="branchFormCityValidationLabel" maxWidth="1.7976931348623157E308"
+                <MFXTextField fx:id="city" floatMode="BORDER" floatingText="City" prefWidth="400.0"/>
+                <Label id="validationLabel" fx:id="cityValidationLabel" maxWidth="1.7976931348623157E308"
                        minHeight="-Infinity" styleClass="input-validation-error" visible="false" managed="false"
                        wrapText="true"/>
             </VBox>
@@ -72,12 +72,12 @@
                 <padding>
                     <Insets bottom="2.5" top="2.5"/>
                 </padding>
-                <MFXTextField fx:id="branchFormEmail" floatMode="BORDER" floatingText="Email" prefWidth="400.0"/>
-                <Label id="validationLabel" fx:id="branchFormEmailValidationLabel" maxWidth="1.7976931348623157E308"
+                <MFXTextField fx:id="email" floatMode="BORDER" floatingText="Email" prefWidth="400.0"/>
+                <Label id="validationLabel" fx:id="emailValidationLabel" maxWidth="1.7976931348623157E308"
                        minHeight="-Infinity" styleClass="input-validation-error" visible="false" managed="false"
                        wrapText="true"/>
             </VBox>
-            <MFXTextField fx:id="branchFormZipCode" floatMode="BORDER" floatingText="Zip Code" prefWidth="400.0"/>
+            <MFXTextField fx:id="zipCode" floatMode="BORDER" floatingText="Zip Code" prefWidth="400.0"/>
         </VBox>
     </center>
     <bottom>

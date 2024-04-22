@@ -22,6 +22,7 @@ import inc.nomard.spoty.core.viewModels.hrm.employee.DesignationViewModel;
 import inc.nomard.spoty.utils.SpotyLogger;
 import inc.nomard.spoty.utils.SpotyThreader;
 import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import io.github.palexdev.materialfx.validation.Constraint;
 import io.github.palexdev.materialfx.validation.Severity;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
@@ -90,6 +91,8 @@ public class DesignationFormController implements Initializable {
                         nameValidationLabel.setVisible(true);
                         nameValidationLabel.setText(constraints.getFirst().getMessage());
                         name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) name.getScene().getWindow();
+                        dialog.sizeToScene();
                     }
                     if (constraints.isEmpty()) {
                         if (DesignationViewModel.getId() > 0) {

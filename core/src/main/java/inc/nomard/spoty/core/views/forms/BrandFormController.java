@@ -21,6 +21,7 @@ import inc.nomard.spoty.core.components.message.enums.MessageVariants;
 import inc.nomard.spoty.core.viewModels.BrandViewModel;
 import inc.nomard.spoty.utils.SpotyLogger;
 import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import io.github.palexdev.materialfx.validation.Constraint;
 import io.github.palexdev.materialfx.validation.Severity;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
@@ -42,13 +43,13 @@ import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_
 public class BrandFormController implements Initializable {
     private static BrandFormController instance;
     @FXML
-    public MFXTextField brandFormName,
+    public MFXTextField name,
             brandFormDescription;
     @FXML
     public MFXButton saveBtn,
             cancelBtn;
     @FXML
-    public Label brandFormNameValidationLabel;
+    public Label nameValidationLabel;
     private List<Constraint> nameConstraints;
     private ActionEvent actionEvent = null;
 
@@ -60,7 +61,7 @@ public class BrandFormController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Input bindings.
-        brandFormName.textProperty().bindBidirectional(BrandViewModel.nameProperty());
+        name.textProperty().bindBidirectional(BrandViewModel.nameProperty());
         brandFormDescription.textProperty().bindBidirectional(BrandViewModel.descriptionProperty());
         // Input listeners.
         requiredValidator();
@@ -73,18 +74,20 @@ public class BrandFormController implements Initializable {
                     closeDialog(event);
                     clearBrandData();
 
-                    brandFormNameValidationLabel.setVisible(false);
-                    brandFormNameValidationLabel.setManaged(false);
-                    brandFormName.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    nameValidationLabel.setVisible(false);
+                    nameValidationLabel.setManaged(false);
+                    name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                 });
         saveBtn.setOnAction(
                 (event) -> {
-                    nameConstraints = brandFormName.validate();
+                    nameConstraints = name.validate();
                     if (!nameConstraints.isEmpty()) {
-                        brandFormNameValidationLabel.setManaged(true);
-                        brandFormNameValidationLabel.setVisible(true);
-                        brandFormNameValidationLabel.setText(nameConstraints.getFirst().getMessage());
-                        brandFormName.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        nameValidationLabel.setManaged(true);
+                        nameValidationLabel.setVisible(true);
+                        nameValidationLabel.setText(nameConstraints.getFirst().getMessage());
+                        name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) name.getScene().getWindow();
+                        dialog.sizeToScene();
                     }
                     if (nameConstraints.isEmpty()) {
                         if (BrandViewModel.getId() > 0) {
@@ -168,19 +171,19 @@ public class BrandFormController implements Initializable {
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
                         .setMessage("Name is required")
-                        .setCondition(brandFormName.textProperty().length().greaterThan(0))
+                        .setCondition(name.textProperty().length().greaterThan(0))
                         .get();
-        brandFormName.getValidator().constraint(nameConstraint);
+        name.getValidator().constraint(nameConstraint);
         // Display error.
-        brandFormName
+        name
                 .getValidator()
                 .validProperty()
                 .addListener(
                         (observable, oldValue, newValue) -> {
                             if (newValue) {
-                                brandFormNameValidationLabel.setManaged(false);
-                                brandFormNameValidationLabel.setVisible(false);
-                                brandFormName.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                                nameValidationLabel.setManaged(false);
+                                nameValidationLabel.setVisible(false);
+                                name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                             }
                         });
     }

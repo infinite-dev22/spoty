@@ -36,29 +36,32 @@
                 <padding>
                     <Insets bottom="2.5"/>
                 </padding>
-                <MFXTextField fx:id="currencyFormCode" floatMode="BORDER" floatingText="Currency Code"
+                <MFXTextField fx:id="code" floatMode="BORDER" floatingText="Currency Code"
                               prefWidth="400.0"/>
-                <Label id="validationLabel" fx:id="currencyFormCodeValidationLabel" maxWidth="1.7976931348623157E308"
-                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" managed="false" wrapText="true"/>
+                <Label id="validationLabel" fx:id="codeValidationLabel" maxWidth="1.7976931348623157E308"
+                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" managed="false"
+                       wrapText="true"/>
             </VBox>
             <VBox spacing="2.0">
                 <padding>
                     <Insets bottom="2.5" top="2.5"/>
                 </padding>
-                <MFXTextField fx:id="currencyFormName" floatMode="BORDER" floatingText="Currency Name"
+                <MFXTextField fx:id="name" floatMode="BORDER" floatingText="Currency Name"
                               prefWidth="400.0"/>
-                <Label id="validationLabel" fx:id="currencyFormNameValidationLabel" maxWidth="1.7976931348623157E308"
-                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" managed="false" wrapText="true"/>
+                <Label id="validationLabel" fx:id="nameValidationLabel" maxWidth="1.7976931348623157E308"
+                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" managed="false"
+                       wrapText="true"/>
             </VBox>
             <VBox spacing="2.0">
                 <padding>
                     <Insets top="2.5"/>
                 </padding>
-                <MFXTextField fx:id="currencyFormSymbol" floatMode="BORDER" floatingText="Currency Symbol"
+                <MFXTextField fx:id="symbol" floatMode="BORDER" floatingText="Currency Symbol"
                               layoutX="21.0"
                               layoutY="80.0" prefWidth="400.0"/>
-                <Label id="validationLabel" fx:id="currencyFormSymbolValidationLabel" maxWidth="1.7976931348623157E308"
-                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" managed="false" wrapText="true"/>
+                <Label id="validationLabel" fx:id="symbolValidationLabel" maxWidth="1.7976931348623157E308"
+                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" managed="false"
+                       wrapText="true"/>
             </VBox>
         </VBox>
     </center>

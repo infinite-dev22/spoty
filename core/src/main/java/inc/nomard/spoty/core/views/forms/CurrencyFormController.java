@@ -42,16 +42,16 @@ import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_
 public class CurrencyFormController implements Initializable {
     private static CurrencyFormController instance;
     @FXML
-    public MFXTextField currencyFormName,
-            currencyFormCode,
-            currencyFormSymbol;
+    public MFXTextField name,
+            code,
+            symbol;
     @FXML
     public MFXButton saveBtn,
             cancelBtn;
     @FXML
-    public Label currencyFormCodeValidationLabel,
-            currencyFormNameValidationLabel,
-            currencyFormSymbolValidationLabel;
+    public Label codeValidationLabel,
+            nameValidationLabel,
+            symbolValidationLabel;
     private List<Constraint> currencyFormNameConstraints,
             colorConstraints,
             currencyFormCodeConstraints;
@@ -65,9 +65,9 @@ public class CurrencyFormController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Input bindings.
-        currencyFormCode.textProperty().bindBidirectional(CurrencyViewModel.codeProperty());
-        currencyFormName.textProperty().bindBidirectional(CurrencyViewModel.nameProperty());
-        currencyFormSymbol.textProperty().bindBidirectional(CurrencyViewModel.symbolProperty());
+        code.textProperty().bindBidirectional(CurrencyViewModel.codeProperty());
+        name.textProperty().bindBidirectional(CurrencyViewModel.nameProperty());
+        symbol.textProperty().bindBidirectional(CurrencyViewModel.symbolProperty());
         // Input listeners.
         requiredValidator();
         dialogOnActions();
@@ -79,40 +79,40 @@ public class CurrencyFormController implements Initializable {
                     clearCurrencyData();
                     closeDialog(event);
 
-                    currencyFormNameValidationLabel.setVisible(false);
-                    currencyFormCodeValidationLabel.setVisible(false);
-                    currencyFormSymbolValidationLabel.setVisible(false);
+                    nameValidationLabel.setVisible(false);
+                    codeValidationLabel.setVisible(false);
+                    symbolValidationLabel.setVisible(false);
 
-                    currencyFormNameValidationLabel.setManaged(false);
-                    currencyFormCodeValidationLabel.setManaged(false);
-                    currencyFormSymbolValidationLabel.setManaged(false);
+                    nameValidationLabel.setManaged(false);
+                    codeValidationLabel.setManaged(false);
+                    symbolValidationLabel.setManaged(false);
 
-                    currencyFormName.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                    currencyFormCode.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                    currencyFormSymbol.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    code.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    symbol.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                 });
         saveBtn.setOnAction(
                 (event) -> {
-                    currencyFormNameConstraints = currencyFormName.validate();
-                    colorConstraints = currencyFormSymbol.validate();
-                    currencyFormCodeConstraints = currencyFormCode.validate();
+                    currencyFormNameConstraints = name.validate();
+                    colorConstraints = symbol.validate();
+                    currencyFormCodeConstraints = code.validate();
                     if (!currencyFormNameConstraints.isEmpty()) {
-                        currencyFormNameValidationLabel.setManaged(true);
-                        currencyFormNameValidationLabel.setVisible(true);
-                        currencyFormNameValidationLabel.setText(currencyFormNameConstraints.getFirst().getMessage());
-                        currencyFormName.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        nameValidationLabel.setManaged(true);
+                        nameValidationLabel.setVisible(true);
+                        nameValidationLabel.setText(currencyFormNameConstraints.getFirst().getMessage());
+                        name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
                     }
                     if (!colorConstraints.isEmpty()) {
-                        currencyFormSymbolValidationLabel.setManaged(true);
-                        currencyFormSymbolValidationLabel.setVisible(true);
-                        currencyFormSymbolValidationLabel.setText(colorConstraints.getFirst().getMessage());
-                        currencyFormSymbol.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        symbolValidationLabel.setManaged(true);
+                        symbolValidationLabel.setVisible(true);
+                        symbolValidationLabel.setText(colorConstraints.getFirst().getMessage());
+                        symbol.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
                     }
                     if (!currencyFormCodeConstraints.isEmpty()) {
-                        currencyFormCodeValidationLabel.setManaged(true);
-                        currencyFormCodeValidationLabel.setVisible(true);
-                        currencyFormCodeValidationLabel.setText(currencyFormCodeConstraints.getFirst().getMessage());
-                        currencyFormCode.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        codeValidationLabel.setManaged(true);
+                        codeValidationLabel.setVisible(true);
+                        codeValidationLabel.setText(currencyFormCodeConstraints.getFirst().getMessage());
+                        code.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
                     }
                     if (currencyFormNameConstraints.isEmpty()
                             && colorConstraints.isEmpty()
@@ -198,55 +198,55 @@ public class CurrencyFormController implements Initializable {
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
                         .setMessage("Name is required")
-                        .setCondition(currencyFormName.textProperty().length().greaterThan(0))
+                        .setCondition(name.textProperty().length().greaterThan(0))
                         .get();
-        currencyFormName.getValidator().constraint(currencyFormNameConstraint);
+        name.getValidator().constraint(currencyFormNameConstraint);
         Constraint currencyFormCodeConstraint =
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
                         .setMessage("Code is required")
-                        .setCondition(currencyFormCode.textProperty().length().greaterThan(0))
+                        .setCondition(code.textProperty().length().greaterThan(0))
                         .get();
-        currencyFormCode.getValidator().constraint(currencyFormCodeConstraint);
+        code.getValidator().constraint(currencyFormCodeConstraint);
         Constraint currencyFormSymbolConstraint =
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
                         .setMessage("Symbol is required")
-                        .setCondition(currencyFormSymbol.textProperty().length().greaterThan(0))
+                        .setCondition(symbol.textProperty().length().greaterThan(0))
                         .get();
-        currencyFormSymbol.getValidator().constraint(currencyFormSymbolConstraint);
+        symbol.getValidator().constraint(currencyFormSymbolConstraint);
         // Display error.
-        currencyFormName
+        name
                 .getValidator()
                 .validProperty()
                 .addListener(
                         (observable, oldValue, newValue) -> {
                             if (newValue) {
-                                currencyFormNameValidationLabel.setManaged(false);
-                                currencyFormNameValidationLabel.setVisible(false);
-                                currencyFormName.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                                nameValidationLabel.setManaged(false);
+                                nameValidationLabel.setVisible(false);
+                                name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                             }
                         });
-        currencyFormCode
+        code
                 .getValidator()
                 .validProperty()
                 .addListener(
                         (observable, oldValue, newValue) -> {
                             if (newValue) {
-                                currencyFormCodeValidationLabel.setManaged(false);
-                                currencyFormCodeValidationLabel.setVisible(false);
-                                currencyFormCode.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                                codeValidationLabel.setManaged(false);
+                                codeValidationLabel.setVisible(false);
+                                code.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                             }
                         });
-        currencyFormSymbol
+        symbol
                 .getValidator()
                 .validProperty()
                 .addListener(
                         (observable, oldValue, newValue) -> {
                             if (newValue) {
-                                currencyFormSymbolValidationLabel.setManaged(false);
-                                currencyFormSymbolValidationLabel.setVisible(false);
-                                currencyFormSymbol.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                                symbolValidationLabel.setManaged(false);
+                                symbolValidationLabel.setVisible(false);
+                                symbol.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                             }
                         });
     }

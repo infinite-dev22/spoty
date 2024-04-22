@@ -24,6 +24,7 @@ import inc.nomard.spoty.utils.SpotyLogger;
 import io.github.palexdev.materialfx.controls.MFXComboBox;
 import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import io.github.palexdev.materialfx.validation.Constraint;
 import io.github.palexdev.materialfx.validation.Severity;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
@@ -107,18 +108,24 @@ public class BeneficiaryBadgeFormController implements Initializable {
                         nameValidationLabel.setVisible(true);
                         nameValidationLabel.setText(nameConstraints.getFirst().getMessage());
                         name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) name.getScene().getWindow();
+                        dialog.sizeToScene();
                     }
                     if (!colorConstraints.isEmpty()) {
                         colorPickerValidationLabel.setManaged(true);
                         colorPickerValidationLabel.setVisible(true);
                         colorPickerValidationLabel.setText(colorConstraints.getFirst().getMessage());
                         colorPicker.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) colorPicker.getScene().getWindow();
+                        dialog.sizeToScene();
                     }
                     if (!beneficiaryTypeConstraints.isEmpty()) {
                         beneficiaryTypeValidationLabel.setManaged(true);
                         beneficiaryTypeValidationLabel.setVisible(true);
                         beneficiaryTypeValidationLabel.setText(beneficiaryTypeConstraints.getFirst().getMessage());
                         beneficiaryType.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) beneficiaryType.getScene().getWindow();
+                        dialog.sizeToScene();
                     }
                     if (nameConstraints.isEmpty()
                             && colorConstraints.isEmpty()

@@ -46,9 +46,9 @@
                 <padding>
                     <Insets bottom="2.5"/>
                 </padding>
-                <MFXTextField fx:id="customerFormName" textLimit="50" floatMode="BORDER" floatingText="Name"
+                <MFXTextField fx:id="name" textLimit="50" floatMode="BORDER" floatingText="Name"
                               prefWidth="300.0"/>
-                <Label id="validationLabel" fx:id="customerFormNameValidationLabel" maxWidth="1.7976931348623157E308"
+                <Label id="validationLabel" fx:id="nameValidationLabel" maxWidth="1.7976931348623157E308"
                        minHeight="-Infinity" visible="false" managed="false" wrapText="true"
                        styleClass="input-validation-error"/>
             </VBox>
@@ -56,9 +56,9 @@
                 <padding>
                     <Insets bottom="2.5"/>
                 </padding>
-                <MFXTextField fx:id="customerFormEmail" textLimit="100" floatMode="BORDER" floatingText="Email"
+                <MFXTextField fx:id="email" textLimit="100" floatMode="BORDER" floatingText="Email"
                               prefWidth="300.0"/>
-                <Label id="validationLabel" fx:id="customerFormEmailValidationLabel" maxWidth="1.7976931348623157E308"
+                <Label id="validationLabel" fx:id="emailValidationLabel" maxWidth="1.7976931348623157E308"
                        minHeight="-Infinity" styleClass="input-validation-error" visible="false" managed="false"
                        wrapText="true"/>
             </VBox>
@@ -66,9 +66,9 @@
                 <padding>
                     <Insets bottom="2.5" top="2.5"/>
                 </padding>
-                <MFXTextField fx:id="customerFormPhone" textLimit="12" floatMode="BORDER" floatingText="Phone"
+                <MFXTextField fx:id="phone" textLimit="12" floatMode="BORDER" floatingText="Phone"
                               prefWidth="300.0"/>
-                <Label id="validationLabel" fx:id="customerFormPhoneValidationLabel" maxWidth="1.7976931348623157E308"
+                <Label id="validationLabel" fx:id="phoneValidationLabel" maxWidth="1.7976931348623157E308"
                        minHeight="-Infinity" styleClass="input-validation-error" visible="false" managed="false"
                        wrapText="true"/>
             </VBox>
@@ -76,7 +76,7 @@
                 <padding>
                     <Insets bottom="2.5" top="2.5"/>
                 </padding>
-                <MFXTextField fx:id="customerFormCity" textLimit="25" floatMode="BORDER" floatingText="City"
+                <MFXTextField fx:id="city" textLimit="25" floatMode="BORDER" floatingText="City"
                               prefWidth="300.0"
                 />
             </VBox>
@@ -84,7 +84,7 @@
                 <padding>
                     <Insets bottom="2.5" top="2.5"/>
                 </padding>
-                <MFXTextField fx:id="customerFormCountry" textLimit="25" floatMode="BORDER" floatingText="Country"
+                <MFXTextField fx:id="country" textLimit="25" floatMode="BORDER" floatingText="Country"
                               prefWidth="300.0"
                 />
             </VBox>
@@ -92,7 +92,7 @@
                 <padding>
                     <Insets bottom="2.5" top="2.5"/>
                 </padding>
-                <MFXTextField fx:id="customerFormAddress" textLimit="35" floatMode="BORDER" floatingText="Address"
+                <MFXTextField fx:id="address" textLimit="35" floatMode="BORDER" floatingText="Address"
                               prefWidth="300.0"
                 />
             </VBox>
@@ -100,7 +100,7 @@
                 <padding>
                     <Insets bottom="2.5" top="15.0"/>
                 </padding>
-                <MFXTextField fx:id="customerFormTaxNumber" textLimit="15" floatMode="BORDER" floatingText="Tax No."
+                <MFXTextField fx:id="taxNumber" textLimit="15" floatMode="BORDER" floatingText="Tax No."
                               prefWidth="300.0"
                 />
             </VBox>

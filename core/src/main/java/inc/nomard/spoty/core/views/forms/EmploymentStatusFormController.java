@@ -23,6 +23,7 @@ import inc.nomard.spoty.core.viewModels.hrm.employee.EmploymentStatusViewModel;
 import inc.nomard.spoty.utils.SpotyLogger;
 import io.github.palexdev.materialfx.controls.MFXComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import io.github.palexdev.materialfx.validation.Constraint;
 import io.github.palexdev.materialfx.validation.Severity;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
@@ -52,13 +53,12 @@ public class EmploymentStatusFormController implements Initializable {
     @FXML
     public TextArea description;
     @FXML
-    public MFXButton saveBtn;
-    @FXML
-    public MFXButton cancelBtn;
+    public MFXButton saveBtn,
+            cancelBtn;
     @FXML
     public Label colorPickerValidationLabel;
-    private List<Constraint> nameConstraints;
-    private List<Constraint> colorConstraints;
+    private List<Constraint> nameConstraints,
+            colorConstraints;
     private ActionEvent actionEvent = null;
 
     public static EmploymentStatusFormController getInstance() {
@@ -103,12 +103,16 @@ public class EmploymentStatusFormController implements Initializable {
                         nameValidationLabel.setVisible(true);
                         nameValidationLabel.setText(nameConstraints.getFirst().getMessage());
                         name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) name.getScene().getWindow();
+                        dialog.sizeToScene();
                     }
                     if (!colorConstraints.isEmpty()) {
                         colorPickerValidationLabel.setManaged(true);
                         colorPickerValidationLabel.setVisible(true);
                         colorPickerValidationLabel.setText(colorConstraints.getFirst().getMessage());
                         colorPicker.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) colorPicker.getScene().getWindow();
+                        dialog.sizeToScene();
                     }
                     if (nameConstraints.isEmpty() &
                             colorConstraints.isEmpty()) {

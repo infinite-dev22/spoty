@@ -21,6 +21,7 @@ import inc.nomard.spoty.core.components.message.enums.MessageVariants;
 import inc.nomard.spoty.core.viewModels.BranchViewModel;
 import inc.nomard.spoty.utils.SpotyLogger;
 import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import io.github.palexdev.materialfx.validation.Constraint;
 import io.github.palexdev.materialfx.validation.Severity;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
@@ -45,18 +46,18 @@ public class BranchFormController implements Initializable {
     public MFXButton saveBtn,
             cancelBtn;
     @FXML
-    public MFXTextField branchFormName,
-            branchFormEmail,
-            branchFormPhone,
-            branchFormTown,
-            branchFormCity,
-            branchFormZipCode;
+    public MFXTextField name,
+            email,
+            phone,
+            town,
+            city,
+            zipCode;
     @FXML
-    public Label branchFormEmailValidationLabel,
-            branchFormCityValidationLabel,
-            branchFormTownValidationLabel,
-            branchFormPhoneValidationLabel,
-            branchFormNameValidationLabel;
+    public Label emailValidationLabel,
+            cityValidationLabel,
+            townValidationLabel,
+            phoneValidationLabel,
+            nameValidationLabel;
     private List<Constraint> nameConstraints,
             townConstraints,
             cityConstraints;
@@ -70,11 +71,11 @@ public class BranchFormController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Input bindings.
-        branchFormName.textProperty().bindBidirectional(BranchViewModel.nameProperty());
-        branchFormEmail.textProperty().bindBidirectional(BranchViewModel.emailProperty());
-        branchFormPhone.textProperty().bindBidirectional(BranchViewModel.phoneProperty());
-        branchFormTown.textProperty().bindBidirectional(BranchViewModel.townProperty());
-        branchFormCity.textProperty().bindBidirectional(BranchViewModel.cityProperty());
+        name.textProperty().bindBidirectional(BranchViewModel.nameProperty());
+        email.textProperty().bindBidirectional(BranchViewModel.emailProperty());
+        phone.textProperty().bindBidirectional(BranchViewModel.phoneProperty());
+        town.textProperty().bindBidirectional(BranchViewModel.townProperty());
+        city.textProperty().bindBidirectional(BranchViewModel.cityProperty());
         // Input listeners.
         requiredValidator();
         dialogOnActions();
@@ -86,44 +87,50 @@ public class BranchFormController implements Initializable {
                     clearBranchData();
                     closeDialog(event);
 
-                    branchFormNameValidationLabel.setVisible(false);
-                    branchFormEmailValidationLabel.setVisible(false);
-                    branchFormPhoneValidationLabel.setVisible(false);
-                    branchFormTownValidationLabel.setVisible(false);
-                    branchFormCityValidationLabel.setVisible(false);
+                    nameValidationLabel.setVisible(false);
+                    emailValidationLabel.setVisible(false);
+                    phoneValidationLabel.setVisible(false);
+                    townValidationLabel.setVisible(false);
+                    cityValidationLabel.setVisible(false);
 
-                    branchFormNameValidationLabel.setManaged(false);
-                    branchFormEmailValidationLabel.setManaged(false);
-                    branchFormPhoneValidationLabel.setManaged(false);
-                    branchFormTownValidationLabel.setManaged(false);
-                    branchFormCityValidationLabel.setManaged(false);
+                    nameValidationLabel.setManaged(false);
+                    emailValidationLabel.setManaged(false);
+                    phoneValidationLabel.setManaged(false);
+                    townValidationLabel.setManaged(false);
+                    cityValidationLabel.setManaged(false);
 
-                    branchFormName.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                    branchFormTown.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                    branchFormCity.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    town.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    city.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                 });
         saveBtn.setOnAction(
                 (event) -> {
-                    nameConstraints = branchFormName.validate();
-                    townConstraints = branchFormTown.validate();
-                    cityConstraints = branchFormCity.validate();
+                    nameConstraints = name.validate();
+                    townConstraints = town.validate();
+                    cityConstraints = city.validate();
                     if (!nameConstraints.isEmpty()) {
-                        branchFormNameValidationLabel.setManaged(true);
-                        branchFormNameValidationLabel.setVisible(true);
-                        branchFormNameValidationLabel.setText(nameConstraints.getFirst().getMessage());
-                        branchFormName.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        nameValidationLabel.setManaged(true);
+                        nameValidationLabel.setVisible(true);
+                        nameValidationLabel.setText(nameConstraints.getFirst().getMessage());
+                        name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) name.getScene().getWindow();
+                        dialog.sizeToScene();
                     }
                     if (!townConstraints.isEmpty()) {
-                        branchFormTownValidationLabel.setManaged(true);
-                        branchFormTownValidationLabel.setVisible(true);
-                        branchFormTownValidationLabel.setText(townConstraints.getFirst().getMessage());
-                        branchFormTown.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        townValidationLabel.setManaged(true);
+                        townValidationLabel.setVisible(true);
+                        townValidationLabel.setText(townConstraints.getFirst().getMessage());
+                        town.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) town.getScene().getWindow();
+                        dialog.sizeToScene();
                     }
                     if (!cityConstraints.isEmpty()) {
-                        branchFormCityValidationLabel.setManaged(true);
-                        branchFormCityValidationLabel.setVisible(true);
-                        branchFormCityValidationLabel.setText(cityConstraints.getFirst().getMessage());
-                        branchFormCity.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        cityValidationLabel.setManaged(true);
+                        cityValidationLabel.setVisible(true);
+                        cityValidationLabel.setText(cityConstraints.getFirst().getMessage());
+                        city.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) city.getScene().getWindow();
+                        dialog.sizeToScene();
                     }
                     if (nameConstraints.isEmpty()
                             && townConstraints.isEmpty()
@@ -210,55 +217,55 @@ public class BranchFormController implements Initializable {
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
                         .setMessage("Name is required")
-                        .setCondition(branchFormName.textProperty().length().greaterThan(0))
+                        .setCondition(name.textProperty().length().greaterThan(0))
                         .get();
-        branchFormName.getValidator().constraint(branchFormNameConstraint);
+        name.getValidator().constraint(branchFormNameConstraint);
         Constraint branchFormCityConstraint =
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
                         .setMessage("Beneficiary Type is required")
-                        .setCondition(branchFormCity.textProperty().length().greaterThan(0))
+                        .setCondition(city.textProperty().length().greaterThan(0))
                         .get();
-        branchFormCity.getValidator().constraint(branchFormCityConstraint);
+        city.getValidator().constraint(branchFormCityConstraint);
         Constraint branchFormTownConstraint =
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
                         .setMessage("Color is required")
-                        .setCondition(branchFormTown.textProperty().length().greaterThan(0))
+                        .setCondition(town.textProperty().length().greaterThan(0))
                         .get();
-        branchFormTown.getValidator().constraint(branchFormTownConstraint);
+        town.getValidator().constraint(branchFormTownConstraint);
         // Display error.
-        branchFormName
+        name
                 .getValidator()
                 .validProperty()
                 .addListener(
                         (observable, oldValue, newValue) -> {
                             if (newValue) {
-                                branchFormNameValidationLabel.setManaged(false);
-                                branchFormNameValidationLabel.setVisible(false);
-                                branchFormName.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                                nameValidationLabel.setManaged(false);
+                                nameValidationLabel.setVisible(false);
+                                name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                             }
                         });
-        branchFormCity
+        city
                 .getValidator()
                 .validProperty()
                 .addListener(
                         (observable, oldValue, newValue) -> {
                             if (newValue) {
-                                branchFormCityValidationLabel.setManaged(false);
-                                branchFormCityValidationLabel.setVisible(false);
-                                branchFormCity.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                                cityValidationLabel.setManaged(false);
+                                cityValidationLabel.setVisible(false);
+                                city.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                             }
                         });
-        branchFormTown
+        town
                 .getValidator()
                 .validProperty()
                 .addListener(
                         (observable, oldValue, newValue) -> {
                             if (newValue) {
-                                branchFormTownValidationLabel.setManaged(false);
-                                branchFormTownValidationLabel.setVisible(false);
-                                branchFormTown.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                                townValidationLabel.setManaged(false);
+                                townValidationLabel.setVisible(false);
+                                town.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                             }
                         });
     }

@@ -21,6 +21,7 @@ import inc.nomard.spoty.core.components.message.enums.MessageVariants;
 import inc.nomard.spoty.core.viewModels.CustomerViewModel;
 import inc.nomard.spoty.utils.SpotyLogger;
 import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import io.github.palexdev.materialfx.validation.Constraint;
 import io.github.palexdev.materialfx.validation.Severity;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
@@ -45,17 +46,17 @@ public class CustomerFormController implements Initializable {
     public MFXButton saveBtn,
             cancelBtn;
     @FXML
-    public MFXTextField customerFormName,
-            customerFormEmail,
-            customerFormPhone,
-            customerFormCity,
-            customerFormCountry,
-            customerFormTaxNumber,
-            customerFormAddress;
+    public MFXTextField name,
+            email,
+            phone,
+            city,
+            country,
+            taxNumber,
+            address;
     @FXML
-    public Label customerFormNameValidationLabel,
-            customerFormEmailValidationLabel,
-            customerFormPhoneValidationLabel;
+    public Label nameValidationLabel,
+            emailValidationLabel,
+            phoneValidationLabel;
     private List<Constraint> nameConstraints,
             emailConstraints,
             phoneConstraints;
@@ -71,38 +72,38 @@ public class CustomerFormController implements Initializable {
         // Form input listeners.
         // These don't work, not sure why.
         // TODO: Get a better way for input filtering.
-        customerFormPhone
+        phone
                 .textProperty()
                 .addListener(
                         (observable, oldValue, newValue) -> {
                             if (!newValue.matches("\\d*"))
-                                customerFormPhone.setText(newValue.replaceAll("\\D", ""));
+                                phone.setText(newValue.replaceAll("\\D", ""));
                         });
-        customerFormPhone
+        phone
                 .focusedProperty()
                 .addListener(
                         (observable, oldValue, newValue) -> {
-                            if (newValue != oldValue) customerFormPhone.setLeadingIcon(new Label("+"));
+                            if (newValue != oldValue) phone.setLeadingIcon(new Label("+"));
                             System.out.println("newValue oldValue");
                         });
 
         // Form input binding.
-        customerFormName.textProperty().bindBidirectional(CustomerViewModel.nameProperty());
-        customerFormEmail.textProperty().bindBidirectional(CustomerViewModel.emailProperty());
-        customerFormPhone.textProperty().bindBidirectional(CustomerViewModel.phoneProperty());
-        customerFormCity.textProperty().bindBidirectional(CustomerViewModel.cityProperty());
-        customerFormCountry.textProperty().bindBidirectional(CustomerViewModel.countryProperty());
-        customerFormTaxNumber.textProperty().bindBidirectional(CustomerViewModel.taxNumberProperty());
-        customerFormAddress.textProperty().bindBidirectional(CustomerViewModel.addressProperty());
+        name.textProperty().bindBidirectional(CustomerViewModel.nameProperty());
+        email.textProperty().bindBidirectional(CustomerViewModel.emailProperty());
+        phone.textProperty().bindBidirectional(CustomerViewModel.phoneProperty());
+        city.textProperty().bindBidirectional(CustomerViewModel.cityProperty());
+        country.textProperty().bindBidirectional(CustomerViewModel.countryProperty());
+        taxNumber.textProperty().bindBidirectional(CustomerViewModel.taxNumberProperty());
+        address.textProperty().bindBidirectional(CustomerViewModel.addressProperty());
 
         // Name input validation.
         requiredValidator();
 
         // Email input validation.
-        emailValidator(customerFormEmail, customerFormEmailValidationLabel, saveBtn);
+        emailValidator(email, emailValidationLabel, saveBtn);
 
         // Phone input validation.
-        lengthValidator(customerFormPhone, 11, "Invalid length", customerFormPhoneValidationLabel, saveBtn);
+        lengthValidator(phone, 11, "Invalid length", phoneValidationLabel, saveBtn);
         dialogOnActions();
     }
 
@@ -111,41 +112,47 @@ public class CustomerFormController implements Initializable {
                 (event) -> {
                     closeDialog(event);
                     CustomerViewModel.resetProperties();
-                    customerFormNameValidationLabel.setVisible(false);
-                    customerFormEmailValidationLabel.setVisible(false);
-                    customerFormPhoneValidationLabel.setVisible(false);
+                    nameValidationLabel.setVisible(false);
+                    emailValidationLabel.setVisible(false);
+                    phoneValidationLabel.setVisible(false);
 
-                    customerFormNameValidationLabel.setManaged(false);
-                    customerFormEmailValidationLabel.setManaged(false);
-                    customerFormPhoneValidationLabel.setManaged(false);
+                    nameValidationLabel.setManaged(false);
+                    emailValidationLabel.setManaged(false);
+                    phoneValidationLabel.setManaged(false);
 
-                    customerFormName.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                    customerFormEmail.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                    customerFormPhone.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    email.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    phone.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
 
                 });
         saveBtn.setOnAction(
                 (event) -> {
-                    nameConstraints = customerFormName.validate();
-                    emailConstraints = customerFormEmail.validate();
-                    phoneConstraints = customerFormPhone.validate();
+                    nameConstraints = name.validate();
+                    emailConstraints = email.validate();
+                    phoneConstraints = phone.validate();
                     if (!nameConstraints.isEmpty()) {
-                        customerFormNameValidationLabel.setManaged(true);
-                        customerFormNameValidationLabel.setVisible(true);
-                        customerFormNameValidationLabel.setText(nameConstraints.getFirst().getMessage());
-                        customerFormName.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        nameValidationLabel.setManaged(true);
+                        nameValidationLabel.setVisible(true);
+                        nameValidationLabel.setText(nameConstraints.getFirst().getMessage());
+                        name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) name.getScene().getWindow();
+                        dialog.sizeToScene();
                     }
                     if (!emailConstraints.isEmpty()) {
-                        customerFormEmailValidationLabel.setManaged(true);
-                        customerFormEmailValidationLabel.setVisible(true);
-                        customerFormEmailValidationLabel.setText(emailConstraints.getFirst().getMessage());
-                        customerFormEmail.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        emailValidationLabel.setManaged(true);
+                        emailValidationLabel.setVisible(true);
+                        emailValidationLabel.setText(emailConstraints.getFirst().getMessage());
+                        email.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) email.getScene().getWindow();
+                        dialog.sizeToScene();
                     }
                     if (!phoneConstraints.isEmpty()) {
-                        customerFormPhoneValidationLabel.setManaged(true);
-                        customerFormPhoneValidationLabel.setVisible(true);
-                        customerFormPhoneValidationLabel.setText(phoneConstraints.getFirst().getMessage());
-                        customerFormPhone.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        phoneValidationLabel.setManaged(true);
+                        phoneValidationLabel.setVisible(true);
+                        phoneValidationLabel.setText(phoneConstraints.getFirst().getMessage());
+                        phone.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) phone.getScene().getWindow();
+                        dialog.sizeToScene();
                     }
                     if (nameConstraints.isEmpty()
                             && emailConstraints.isEmpty()
@@ -153,7 +160,7 @@ public class CustomerFormController implements Initializable {
                         if (CustomerViewModel.getId() > 0) {
                             try {
                                 CustomerViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
-                                actionEvent=event;
+                                actionEvent = event;
                             } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }
@@ -161,7 +168,7 @@ public class CustomerFormController implements Initializable {
                         }
                         try {
                             CustomerViewModel.saveCustomer(this::onAction, this::onAddSuccess, this::onFailed);
-                            actionEvent=event;
+                            actionEvent = event;
                         } catch (Exception e) {
                             SpotyLogger.writeToFile(e, this.getClass());
                         }
@@ -231,55 +238,55 @@ public class CustomerFormController implements Initializable {
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
                         .setMessage("Name is required")
-                        .setCondition(customerFormName.textProperty().length().greaterThan(0))
+                        .setCondition(this.name.textProperty().length().greaterThan(0))
                         .get();
-        customerFormName.getValidator().constraint(name);
+        this.name.getValidator().constraint(name);
         Constraint email =
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
                         .setMessage("Email is required")
-                        .setCondition(customerFormEmail.textProperty().length().greaterThan(0))
+                        .setCondition(this.email.textProperty().length().greaterThan(0))
                         .get();
-        customerFormEmail.getValidator().constraint(email);
+        this.email.getValidator().constraint(email);
         Constraint phone =
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
                         .setMessage("Phone is required")
-                        .setCondition(customerFormPhone.textProperty().length().greaterThan(0))
+                        .setCondition(this.phone.textProperty().length().greaterThan(0))
                         .get();
-        customerFormPhone.getValidator().constraint(phone);
+        this.phone.getValidator().constraint(phone);
         // Display error.
-        customerFormName
+        this.name
                 .getValidator()
                 .validProperty()
                 .addListener(
                         (observable, oldValue, newValue) -> {
                             if (newValue) {
-                                customerFormNameValidationLabel.setManaged(false);
-                                customerFormNameValidationLabel.setVisible(false);
-                                customerFormName.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                                nameValidationLabel.setManaged(false);
+                                nameValidationLabel.setVisible(false);
+                                this.name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                             }
                         });
-        customerFormEmail
+        this.email
                 .getValidator()
                 .validProperty()
                 .addListener(
                         (observable, oldValue, newValue) -> {
                             if (newValue) {
-                                customerFormEmailValidationLabel.setManaged(false);
-                                customerFormEmailValidationLabel.setVisible(false);
-                                customerFormEmail.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                                emailValidationLabel.setManaged(false);
+                                emailValidationLabel.setVisible(false);
+                                this.email.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                             }
                         });
-        customerFormPhone
+        this.phone
                 .getValidator()
                 .validProperty()
                 .addListener(
                         (observable, oldValue, newValue) -> {
                             if (newValue) {
-                                customerFormPhoneValidationLabel.setManaged(false);
-                                customerFormPhoneValidationLabel.setVisible(false);
-                                customerFormPhone.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                                phoneValidationLabel.setManaged(false);
+                                phoneValidationLabel.setVisible(false);
+                                this.phone.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                             }
                         });
     }

@@ -37,8 +37,8 @@
                 <padding>
                     <Insets top="2.5"/>
                 </padding>
-                <MFXTextField fx:id="brandFormName" floatMode="BORDER" floatingText="Brand Name" prefWidth="400.0"/>
-                <Label id="validationLabel" fx:id="brandFormNameValidationLabel" maxWidth="1.7976931348623157E308"
+                <MFXTextField fx:id="name" floatMode="BORDER" floatingText="Brand Name" prefWidth="400.0"/>
+                <Label id="validationLabel" fx:id="nameValidationLabel" maxWidth="1.7976931348623157E308"
                        minHeight="-Infinity" styleClass="input-validation-error" visible="false" managed="false" wrapText="true"/>
             </VBox>
             <VBox spacing="5.0">

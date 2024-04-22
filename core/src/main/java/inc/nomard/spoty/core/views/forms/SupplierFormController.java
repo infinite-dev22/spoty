@@ -21,6 +21,7 @@ import inc.nomard.spoty.core.components.message.enums.MessageVariants;
 import inc.nomard.spoty.core.viewModels.SupplierViewModel;
 import inc.nomard.spoty.utils.SpotyLogger;
 import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import io.github.palexdev.materialfx.validation.Constraint;
 import io.github.palexdev.materialfx.validation.Severity;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
@@ -136,18 +137,24 @@ public class SupplierFormController implements Initializable {
                         nameValidationLabel.setVisible(true);
                         nameValidationLabel.setText(nameConstraints.getFirst().getMessage());
                         name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) name.getScene().getWindow();
+                        dialog.sizeToScene();
                     }
                     if (!emailConstraints.isEmpty()) {
                         emailValidationLabel.setManaged(true);
                         emailValidationLabel.setVisible(true);
                         emailValidationLabel.setText(emailConstraints.getFirst().getMessage());
                         email.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) email.getScene().getWindow();
+                        dialog.sizeToScene();
                     }
                     if (!phoneConstraints.isEmpty()) {
                         phoneValidationLabel.setManaged(true);
                         phoneValidationLabel.setVisible(true);
                         phoneValidationLabel.setText(phoneConstraints.getFirst().getMessage());
                         phone.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) phone.getScene().getWindow();
+                        dialog.sizeToScene();
                     }
                     if (nameConstraints.isEmpty()
                             && emailConstraints.isEmpty()
@@ -155,7 +162,7 @@ public class SupplierFormController implements Initializable {
                         if (SupplierViewModel.getId() > 0) {
                             try {
                                 SupplierViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
-                                actionEvent=event;
+                                actionEvent = event;
                             } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }
@@ -163,7 +170,7 @@ public class SupplierFormController implements Initializable {
                         }
                         try {
                             SupplierViewModel.saveSupplier(this::onAction, this::onAddSuccess, this::onFailed);
-                            actionEvent=event;
+                            actionEvent = event;
                         } catch (Exception e) {
                             SpotyLogger.writeToFile(e, this.getClass());
                         }
