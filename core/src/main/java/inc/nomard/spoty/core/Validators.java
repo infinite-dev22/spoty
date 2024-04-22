@@ -77,6 +77,7 @@ public class Validators {
                                 if (!constraints.isEmpty()) {
                                     textField.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
                                     errorDisplay.setText(constraints.getFirst().getMessage());
+                                    errorDisplay.setManaged(true);
                                     errorDisplay.setVisible(true);
                                 }
                             }
@@ -130,6 +131,7 @@ public class Validators {
                                 if (!constraints.isEmpty()) {
                                     textField.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
                                     errorDisplay.setText(constraints.getFirst().getMessage());
+                                    errorDisplay.setManaged(true);
                                     errorDisplay.setVisible(true);
                                 }
                             }

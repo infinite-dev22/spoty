@@ -45,17 +45,17 @@ public class SupplierFormController implements Initializable {
     public MFXButton saveBtn,
             cancelBtn;
     @FXML
-    public MFXTextField supplierFormName,
-            supplierFormEmail,
-            supplierFormPhone,
-            supplierFormCity,
-            supplierFormCountry,
-            supplierFormTaxNumber,
-            supplierFormAddress;
+    public MFXTextField name,
+            email,
+            phone,
+            city,
+            country,
+            taxNumber,
+            address;
     @FXML
-    public Label supplierFormNameValidationLabel,
-            supplierFormEmailValidationLabel,
-            supplierFormPhoneValidationLabel;
+    public Label nameValidationLabel,
+            emailValidationLabel,
+            phoneValidationLabel;
     private List<Constraint> nameConstraints,
             emailConstraints,
             phoneConstraints;
@@ -69,27 +69,27 @@ public class SupplierFormController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Form input binding.
-        supplierFormName.textProperty().bindBidirectional(SupplierViewModel.nameProperty());
-        supplierFormEmail.textProperty().bindBidirectional(SupplierViewModel.emailProperty());
-        supplierFormPhone.textProperty().bindBidirectional(SupplierViewModel.phoneProperty());
-        supplierFormCity.textProperty().bindBidirectional(SupplierViewModel.cityProperty());
-        supplierFormCountry.textProperty().bindBidirectional(SupplierViewModel.countryProperty());
-        supplierFormTaxNumber.textProperty().bindBidirectional(SupplierViewModel.taxNumberProperty());
-        supplierFormAddress.textProperty().bindBidirectional(SupplierViewModel.addressProperty());
+        name.textProperty().bindBidirectional(SupplierViewModel.nameProperty());
+        email.textProperty().bindBidirectional(SupplierViewModel.emailProperty());
+        phone.textProperty().bindBidirectional(SupplierViewModel.phoneProperty());
+        city.textProperty().bindBidirectional(SupplierViewModel.cityProperty());
+        country.textProperty().bindBidirectional(SupplierViewModel.countryProperty());
+        taxNumber.textProperty().bindBidirectional(SupplierViewModel.taxNumberProperty());
+        address.textProperty().bindBidirectional(SupplierViewModel.addressProperty());
 
         // Input listeners.
-        supplierFormPhone
+        phone
                 .textProperty()
                 .addListener(
                         (observable, oldValue, newValue) -> {
                             if (!newValue.matches("\\d*"))
-                                supplierFormPhone.setText(newValue.replaceAll("\\D", ""));
+                                phone.setText(newValue.replaceAll("\\D", ""));
                         });
-        supplierFormPhone
+        phone
                 .focusedProperty()
                 .addListener(
                         (observable, oldValue, newValue) -> {
-                            if (newValue != oldValue) supplierFormPhone.setLeadingIcon(new Label("+"));
+                            if (newValue != oldValue) phone.setLeadingIcon(new Label("+"));
                         });
 
         // Input validations.
@@ -97,14 +97,14 @@ public class SupplierFormController implements Initializable {
         requiredValidator();
 
         // Email input validation.
-        emailValidator(supplierFormEmail, supplierFormEmailValidationLabel, saveBtn);
+        emailValidator(email, emailValidationLabel, saveBtn);
 
         // Phone input validation.
         lengthValidator(
-                supplierFormPhone,
+                phone,
                 11,
                 "Invalid length",
-                supplierFormPhoneValidationLabel,
+                phoneValidationLabel,
                 saveBtn);
         dialogOnActions();
     }
@@ -114,40 +114,40 @@ public class SupplierFormController implements Initializable {
                 (event) -> {
                     closeDialog(event);
                     SupplierViewModel.resetProperties();
-                    supplierFormNameValidationLabel.setVisible(false);
-                    supplierFormEmailValidationLabel.setVisible(false);
-                    supplierFormPhoneValidationLabel.setVisible(false);
+                    nameValidationLabel.setVisible(false);
+                    emailValidationLabel.setVisible(false);
+                    phoneValidationLabel.setVisible(false);
 
-                    supplierFormNameValidationLabel.setManaged(false);
-                    supplierFormEmailValidationLabel.setManaged(false);
-                    supplierFormPhoneValidationLabel.setManaged(false);
+                    nameValidationLabel.setManaged(false);
+                    emailValidationLabel.setManaged(false);
+                    phoneValidationLabel.setManaged(false);
 
-                    supplierFormName.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                    supplierFormEmail.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                    supplierFormPhone.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    email.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    phone.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                 });
         saveBtn.setOnAction(
                 (event) -> {
-                    nameConstraints = supplierFormName.validate();
-                    emailConstraints = supplierFormEmail.validate();
-                    phoneConstraints = supplierFormPhone.validate();
+                    nameConstraints = name.validate();
+                    emailConstraints = email.validate();
+                    phoneConstraints = phone.validate();
                     if (!nameConstraints.isEmpty()) {
-                        supplierFormNameValidationLabel.setManaged(true);
-                        supplierFormNameValidationLabel.setVisible(true);
-                        supplierFormNameValidationLabel.setText(nameConstraints.getFirst().getMessage());
-                        supplierFormName.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        nameValidationLabel.setManaged(true);
+                        nameValidationLabel.setVisible(true);
+                        nameValidationLabel.setText(nameConstraints.getFirst().getMessage());
+                        name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
                     }
                     if (!emailConstraints.isEmpty()) {
-                        supplierFormEmailValidationLabel.setManaged(true);
-                        supplierFormEmailValidationLabel.setVisible(true);
-                        supplierFormEmailValidationLabel.setText(emailConstraints.getFirst().getMessage());
-                        supplierFormEmail.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        emailValidationLabel.setManaged(true);
+                        emailValidationLabel.setVisible(true);
+                        emailValidationLabel.setText(emailConstraints.getFirst().getMessage());
+                        email.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
                     }
                     if (!phoneConstraints.isEmpty()) {
-                        supplierFormPhoneValidationLabel.setManaged(true);
-                        supplierFormPhoneValidationLabel.setVisible(true);
-                        supplierFormPhoneValidationLabel.setText(phoneConstraints.getFirst().getMessage());
-                        supplierFormPhone.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        phoneValidationLabel.setManaged(true);
+                        phoneValidationLabel.setVisible(true);
+                        phoneValidationLabel.setText(phoneConstraints.getFirst().getMessage());
+                        phone.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
                     }
                     if (nameConstraints.isEmpty()
                             && emailConstraints.isEmpty()
@@ -233,55 +233,55 @@ public class SupplierFormController implements Initializable {
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
                         .setMessage("Name is required")
-                        .setCondition(supplierFormName.textProperty().length().greaterThan(0))
+                        .setCondition(this.name.textProperty().length().greaterThan(0))
                         .get();
-        supplierFormName.getValidator().constraint(name);
+        this.name.getValidator().constraint(name);
         Constraint email =
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
                         .setMessage("Email is required")
-                        .setCondition(supplierFormEmail.textProperty().length().greaterThan(0))
+                        .setCondition(this.email.textProperty().length().greaterThan(0))
                         .get();
-        supplierFormEmail.getValidator().constraint(email);
+        this.email.getValidator().constraint(email);
         Constraint phone =
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
                         .setMessage("Phone is required")
-                        .setCondition(supplierFormPhone.textProperty().length().greaterThan(0))
+                        .setCondition(this.phone.textProperty().length().greaterThan(0))
                         .get();
-        supplierFormPhone.getValidator().constraint(phone);
+        this.phone.getValidator().constraint(phone);
         // Display error.
-        supplierFormName
+        this.name
                 .getValidator()
                 .validProperty()
                 .addListener(
                         (observable, oldValue, newValue) -> {
                             if (newValue) {
-                                supplierFormNameValidationLabel.setManaged(false);
-                                supplierFormNameValidationLabel.setVisible(false);
-                                supplierFormName.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                                nameValidationLabel.setManaged(false);
+                                nameValidationLabel.setVisible(false);
+                                this.name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                             }
                         });
-        supplierFormEmail
+        this.email
                 .getValidator()
                 .validProperty()
                 .addListener(
                         (observable, oldValue, newValue) -> {
                             if (newValue) {
-                                supplierFormEmailValidationLabel.setManaged(false);
-                                supplierFormEmailValidationLabel.setVisible(false);
-                                supplierFormEmail.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                                emailValidationLabel.setManaged(false);
+                                emailValidationLabel.setVisible(false);
+                                this.email.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                             }
                         });
-        supplierFormPhone
+        this.phone
                 .getValidator()
                 .validProperty()
                 .addListener(
                         (observable, oldValue, newValue) -> {
                             if (newValue) {
-                                supplierFormPhoneValidationLabel.setManaged(false);
-                                supplierFormPhoneValidationLabel.setVisible(false);
-                                supplierFormPhone.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                                phoneValidationLabel.setManaged(false);
+                                phoneValidationLabel.setVisible(false);
+                                this.phone.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                             }
                         });
     }

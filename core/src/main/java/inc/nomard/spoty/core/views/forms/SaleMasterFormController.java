@@ -14,10 +14,11 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import inc.nomard.spoty.core.components.navigation.Pages;
-import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.SpotyMessage;
+import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
 import inc.nomard.spoty.core.components.message.enums.MessageDuration;
 import inc.nomard.spoty.core.components.message.enums.MessageVariants;
+import inc.nomard.spoty.core.components.navigation.Pages;
 import inc.nomard.spoty.core.values.strings.Values;
 import inc.nomard.spoty.core.viewModels.BranchViewModel;
 import inc.nomard.spoty.core.viewModels.CustomerViewModel;
@@ -40,6 +41,7 @@ import io.github.palexdev.materialfx.filter.IntegerFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import io.github.palexdev.materialfx.utils.StringUtils;
 import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
+import io.github.palexdev.materialfx.validation.Constraint;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -58,6 +60,7 @@ import javafx.util.StringConverter;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Comparator;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -69,37 +72,34 @@ import static inc.nomard.spoty.core.Validators.requiredValidator;
 public class SaleMasterFormController implements Initializable {
     private static SaleMasterFormController instance;
     @FXML
-    public Label saleFormTitle;
+    public Label title,
+            branchValidationLabel,
+            customerValidationLabel,
+            dateValidationLabel,
+            saleStatusValidationLabel,
+            paymentStatusValidationLabel;
     @FXML
-    public MFXDatePicker saleDate;
+    public MFXDatePicker date;
     @FXML
-    public MFXFilterComboBox<Customer> saleCustomer;
+    public MFXFilterComboBox<Customer> customer;
     @FXML
-    public MFXFilterComboBox<Branch> saleBranch;
+    public MFXFilterComboBox<Branch> branch;
     @FXML
-    public MFXTableView<SaleDetail> saleDetailTable;
+    public MFXTableView<SaleDetail> detailTable;
     @FXML
-    public MFXTextField saleNote;
+    public MFXTextField note;
     @FXML
-    public BorderPane saleFormContentPane;
+    public BorderPane contentPane;
     @FXML
-    public MFXFilterComboBox<String> saleStatus;
-    @FXML
-    public MFXFilterComboBox<String> salePaymentStatus;
-    @FXML
-    public Label saleBranchValidationLabel;
-    @FXML
-    public Label saleCustomerValidationLabel;
-    @FXML
-    public Label saleDateValidationLabel;
-    @FXML
-    public Label saleStatusValidationLabel;
-    @FXML
-    public Label salePaymentStatusValidationLabel;
+    public MFXFilterComboBox<String> saleStatus,
+            paymentStatus;
     @FXML
     public MFXButton saveBtn,
             cancelBtn;
     private MFXStageDialog dialog;
+    private List<Constraint> nameConstraints,
+            colorConstraints,
+            beneficiaryTypeConstraints;
 
     private SaleMasterFormController(Stage stage) {
         Platform.runLater(
@@ -120,11 +120,11 @@ public class SaleMasterFormController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Bi~Directional Binding.
-        saleDate.textProperty().bindBidirectional(SaleMasterViewModel.dateProperty());
-        saleCustomer.valueProperty().bindBidirectional(SaleMasterViewModel.customerProperty());
-        saleBranch.valueProperty().bindBidirectional(SaleMasterViewModel.branchProperty());
+        date.textProperty().bindBidirectional(SaleMasterViewModel.dateProperty());
+        customer.valueProperty().bindBidirectional(SaleMasterViewModel.customerProperty());
+        branch.valueProperty().bindBidirectional(SaleMasterViewModel.branchProperty());
         saleStatus.textProperty().bindBidirectional(SaleMasterViewModel.saleStatusProperty());
-        salePaymentStatus.textProperty().bindBidirectional(SaleMasterViewModel.payStatusProperty());
+        paymentStatus.textProperty().bindBidirectional(SaleMasterViewModel.payStatusProperty());
 
         // ComboBox Converters.
         StringConverter<Customer> customerConverter =
@@ -144,29 +144,29 @@ public class SaleMasterFormController implements Initializable {
                         branch -> StringUtils.containsIgnoreCase(branchConverter.toString(branch), searchStr);
 
         // Set items to combo boxes and display custom text.
-        saleCustomer.setItems(CustomerViewModel.getCustomers());
-        saleCustomer.setConverter(customerConverter);
-        saleCustomer.setFilterFunction(customerFilterFunction);
+        customer.setItems(CustomerViewModel.getCustomers());
+        customer.setConverter(customerConverter);
+        customer.setFilterFunction(customerFilterFunction);
 
-        saleBranch.setItems(BranchViewModel.getBranches());
-        saleBranch.setConverter(branchConverter);
-        saleBranch.setFilterFunction(branchFilterFunction);
+        branch.setItems(BranchViewModel.getBranches());
+        branch.setConverter(branchConverter);
+        branch.setFilterFunction(branchFilterFunction);
 
         saleStatus.setItems(FXCollections.observableArrayList(Values.SALE_STATUSES));
-        salePaymentStatus.setItems(FXCollections.observableArrayList(Values.PAYMENT_STATUSES));
+        paymentStatus.setItems(FXCollections.observableArrayList(Values.PAYMENT_STATUSES));
 
         // input validators.
         requiredValidator(
-                saleBranch, "Branch is required.", saleBranchValidationLabel, saveBtn);
+                branch, "Branch is required.", branchValidationLabel, saveBtn);
         requiredValidator(
-                saleCustomer, "Customer is required.", saleCustomerValidationLabel, saveBtn);
-        requiredValidator(saleDate, "Date is required.", saleDateValidationLabel, saveBtn);
+                customer, "Customer is required.", customerValidationLabel, saveBtn);
+        requiredValidator(date, "Date is required.", dateValidationLabel, saveBtn);
         requiredValidator(
                 saleStatus, "Sale Status is required.", saleStatusValidationLabel, saveBtn);
         requiredValidator(
-                salePaymentStatus,
+                paymentStatus,
                 "Payment status is required.",
-                salePaymentStatusValidationLabel,
+                paymentStatusValidationLabel,
                 saveBtn);
 
         setupTable();
@@ -186,7 +186,7 @@ public class SaleMasterFormController implements Initializable {
                         .toStageDialogBuilder()
                         .initOwner(stage)
                         .initModality(Modality.WINDOW_MODAL)
-                        .setOwnerNode(saleFormContentPane)
+                        .setOwnerNode(contentPane)
                         .setScrimPriority(ScrimPriority.WINDOW)
                         .setScrimOwner(true)
                         .get();
@@ -197,7 +197,7 @@ public class SaleMasterFormController implements Initializable {
     public void saveBtnClicked() {
         SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
 
-        if (!saleDetailTable.isDisabled() && SaleDetailViewModel.saleDetailsList.isEmpty()) {
+        if (!detailTable.isDisabled() && SaleDetailViewModel.saleDetailsList.isEmpty()) {
             SpotyMessage notification =
                     new SpotyMessage.MessageBuilder("Table can't be Empty")
                             .duration(MessageDuration.SHORT)
@@ -207,11 +207,11 @@ public class SaleMasterFormController implements Initializable {
             notificationHolder.addMessage(notification);
             return;
         }
-        if (!saleCustomerValidationLabel.isVisible()
-                && !saleDateValidationLabel.isVisible()
-                && !saleBranchValidationLabel.isVisible()
+        if (!customerValidationLabel.isVisible()
+                && !dateValidationLabel.isVisible()
+                && !branchValidationLabel.isVisible()
                 && !saleStatusValidationLabel.isVisible()
-                && !salePaymentStatusValidationLabel.isVisible()) {
+                && !paymentStatusValidationLabel.isVisible()) {
             if (SaleMasterViewModel.getId() > 0) {
                 try {
                     SaleMasterViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
@@ -234,16 +234,22 @@ public class SaleMasterFormController implements Initializable {
         BaseController.navigation.navigate(Pages.getSalePane());
         SaleMasterViewModel.resetProperties();
 
-        saleCustomer.clearSelection();
-        saleBranch.clearSelection();
+        customer.clearSelection();
+        branch.clearSelection();
         saleStatus.clearSelection();
-        salePaymentStatus.clearSelection();
+        paymentStatus.clearSelection();
 
-        saleBranchValidationLabel.setVisible(false);
-        saleCustomerValidationLabel.setVisible(false);
-        saleDateValidationLabel.setVisible(false);
+        branchValidationLabel.setVisible(false);
+        customerValidationLabel.setVisible(false);
+        dateValidationLabel.setVisible(false);
         saleStatusValidationLabel.setVisible(false);
-        salePaymentStatusValidationLabel.setVisible(false);
+        paymentStatusValidationLabel.setVisible(false);
+
+        branchValidationLabel.setManaged(false);
+        customerValidationLabel.setManaged(false);
+        dateValidationLabel.setManaged(false);
+        saleStatusValidationLabel.setManaged(false);
+        paymentStatusValidationLabel.setManaged(false);
     }
 
     public void addBtnClicked() {
@@ -276,18 +282,18 @@ public class SaleMasterFormController implements Initializable {
                 purchaseDetail -> new MFXTableRowCell<>(SaleDetail::getSubTotalPrice));
 
         // Set table column width.
-        product.prefWidthProperty().bind(saleDetailTable.widthProperty().multiply(.25));
-        quantity.prefWidthProperty().bind(saleDetailTable.widthProperty().multiply(.25));
-        discount.prefWidthProperty().bind(saleDetailTable.widthProperty().multiply(.25));
-        tax.prefWidthProperty().bind(saleDetailTable.widthProperty().multiply(.25));
-        price.prefWidthProperty().bind(saleDetailTable.widthProperty().multiply(.25));
-        totalPrice.prefWidthProperty().bind(saleDetailTable.widthProperty().multiply(.25));
+        product.prefWidthProperty().bind(detailTable.widthProperty().multiply(.25));
+        quantity.prefWidthProperty().bind(detailTable.widthProperty().multiply(.25));
+        discount.prefWidthProperty().bind(detailTable.widthProperty().multiply(.25));
+        tax.prefWidthProperty().bind(detailTable.widthProperty().multiply(.25));
+        price.prefWidthProperty().bind(detailTable.widthProperty().multiply(.25));
+        totalPrice.prefWidthProperty().bind(detailTable.widthProperty().multiply(.25));
 
         // Set table filter.
-        saleDetailTable
+        detailTable
                 .getTableColumns()
                 .addAll(product, quantity, discount, tax, price, totalPrice);
-        saleDetailTable
+        detailTable
                 .getFilters()
                 .addAll(
                         new StringFilter<>("Product", SaleDetail::getProductName),
@@ -304,25 +310,25 @@ public class SaleMasterFormController implements Initializable {
             SaleDetailViewModel.getSaleDetails()
                     .addListener(
                             (ListChangeListener<SaleDetail>)
-                                    change -> saleDetailTable.setItems(SaleDetailViewModel.getSaleDetails()));
+                                    change -> detailTable.setItems(SaleDetailViewModel.getSaleDetails()));
         } else {
-            saleDetailTable.itemsProperty().bindBidirectional(SaleDetailViewModel.saleDetailsProperty());
+            detailTable.itemsProperty().bindBidirectional(SaleDetailViewModel.saleDetailsProperty());
         }
     }
 
     private void styleTable() {
-        saleDetailTable.setPrefSize(1000, 1000);
-        saleDetailTable.features().enableBounceEffect();
-        saleDetailTable.features().enableSmoothScrolling(0.5);
+        detailTable.setPrefSize(1000, 1000);
+        detailTable.features().enableBounceEffect();
+        detailTable.features().enableSmoothScrolling(0.5);
 
-        saleDetailTable.setTableRowFactory(
+        detailTable.setTableRowFactory(
                 saleDetail -> {
-                    MFXTableRow<SaleDetail> row = new MFXTableRow<>(saleDetailTable, saleDetail);
+                    MFXTableRow<SaleDetail> row = new MFXTableRow<>(detailTable, saleDetail);
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
                                 showContextMenu((MFXTableRow<SaleDetail>) event.getSource())
                                         .show(
-                                                saleDetailTable.getScene().getWindow(),
+                                                detailTable.getScene().getWindow(),
                                                 event.getScreenX(),
                                                 event.getScreenY());
                                 event.consume();
@@ -333,7 +339,7 @@ public class SaleMasterFormController implements Initializable {
     }
 
     private MFXContextMenu showContextMenu(MFXTableRow<SaleDetail> obj) {
-        MFXContextMenu contextMenu = new MFXContextMenu(saleDetailTable);
+        MFXContextMenu contextMenu = new MFXContextMenu(detailTable);
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
 

@@ -22,7 +22,7 @@
 <?import io.github.palexdev.materialfx.controls.MFXTableView?>
 <?import io.github.palexdev.materialfx.controls.MFXTextField?>
 <?import io.github.palexdev.materialfx.controls.MFXDatePicker?>
-<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:id="saleFormContentPane" cache="true" cacheHint="SPEED"
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:id="contentPane" cache="true" cacheHint="SPEED"
             xmlns="http://javafx.com/javafx/19"
             fx:controller="inc.nomard.spoty.core.views.forms.SaleMasterFormController">
     <center>
@@ -30,7 +30,7 @@
             <padding>
                 <Insets topRightBottomLeft="5.0"/>
             </padding>
-            <Label fx:id="saleFormTitle" text="Create" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+            <Label fx:id="title" text="Create" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0"/>
             <Separator prefWidth="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
                        AnchorPane.topAnchor="20.0"/>
             <GridPane hgap="20.0" layoutX="10.0" layoutY="50.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
@@ -45,34 +45,34 @@
                 </rowConstraints>
                 <VBox spacing="5.0" GridPane.columnIndex="0">
                     <padding>
-                        <Insets right="10.0" top="5.0"/>
+                        <Insets bottom="2.5"/>
                     </padding>
-                    <MFXFilterComboBox fx:id="saleBranch" floatMode="BORDER" floatingText="Branch" layoutX="10.0"
+                    <MFXFilterComboBox fx:id="branch" floatMode="BORDER" floatingText="Branch" layoutX="10.0"
                                        layoutY="12.0" prefWidth="400"/>
-                    <Label id="validationLabel" fx:id="saleBranchValidationLabel" maxWidth="1.7976931348623157E308"
+                    <Label id="validationLabel" fx:id="branchValidationLabel" maxWidth="1.7976931348623157E308"
                            minHeight="-Infinity" visible="false" wrapText="true" styleClass="input-validation-error"/>
                 </VBox>
                 <VBox spacing="5.0" GridPane.columnIndex="1">
                     <padding>
-                        <Insets right="10.0" top="5.0"/>
+                        <Insets bottom="2.5"/>
                     </padding>
-                    <MFXFilterComboBox fx:id="saleCustomer" floatMode="BORDER" floatingText="Customer"
+                    <MFXFilterComboBox fx:id="customer" floatMode="BORDER" floatingText="Customer"
                                        prefWidth="400.0"/>
-                    <Label id="validationLabel" fx:id="saleCustomerValidationLabel" maxWidth="1.7976931348623157E308"
+                    <Label id="validationLabel" fx:id="customerValidationLabel" maxWidth="1.7976931348623157E308"
                            minHeight="-Infinity" visible="false" wrapText="true" styleClass="input-validation-error"/>
                 </VBox>
                 <VBox spacing="5.0" GridPane.columnIndex="2">
                     <padding>
-                        <Insets right="10.0" top="5.0"/>
+                        <Insets bottom="2.5" top="2.5"/>
                     </padding>
-                    <MFXDatePicker fx:id="saleDate" floatMode="BORDER" floatingText="Date" prefWidth="400.0"/>
-                    <Label id="validationLabel" fx:id="saleDateValidationLabel" maxWidth="1.7976931348623157E308"
+                    <MFXDatePicker fx:id="date" floatMode="BORDER" floatingText="Date" prefWidth="400.0"/>
+                    <Label id="validationLabel" fx:id="dateValidationLabel" maxWidth="1.7976931348623157E308"
                            minHeight="-Infinity" visible="false" wrapText="true" styleClass="input-validation-error"/>
                 </VBox>
             </GridPane>
             <MFXButton layoutX="500.0" layoutY="110.0" onMouseClicked="#addBtnClicked" text="Add"
                        AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="90.0"/>
-            <MFXTableView fx:id="saleDetailTable" AnchorPane.bottomAnchor="120.0" AnchorPane.leftAnchor="0.0"
+            <MFXTableView fx:id="detailTable" AnchorPane.bottomAnchor="120.0" AnchorPane.leftAnchor="0.0"
                           AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="140.0"/>
             <GridPane hgap="20.0" layoutX="20.0" layoutY="60.0" AnchorPane.bottomAnchor="50.0"
                       AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
@@ -86,7 +86,7 @@
                 </rowConstraints>
                 <VBox spacing="5.0" GridPane.columnIndex="0">
                     <padding>
-                        <Insets right="10.0" top="5.0"/>
+                        <Insets bottom="2.5" top="2.5"/>
                     </padding>
                     <MFXFilterComboBox fx:id="saleStatus" floatMode="BORDER" floatingText="Status" layoutX="10.0"
                                        layoutY="12.0" prefWidth="400.0"/>
@@ -95,19 +95,19 @@
                 </VBox>
                 <VBox spacing="5.0" GridPane.columnIndex="1">
                     <padding>
-                        <Insets right="10.0" top="5.0"/>
+                        <Insets bottom="2.5" top="2.5"/>
                     </padding>
-                    <MFXFilterComboBox fx:id="salePaymentStatus" floatMode="BORDER" floatingText="Payment Status"
+                    <MFXFilterComboBox fx:id="paymentStatus" floatMode="BORDER" floatingText="Payment Status"
                                        layoutX="295.0" layoutY="12.0" prefWidth="400.0"/>
-                    <Label id="validationLabel" fx:id="salePaymentStatusValidationLabel"
+                    <Label id="validationLabel" fx:id="paymentStatusValidationLabel"
                            maxWidth="1.7976931348623157E308" minHeight="-Infinity" visible="false" wrapText="true"
                            styleClass="input-validation-error"/>
                 </VBox>
                 <VBox spacing="5.0" GridPane.columnIndex="2">
                     <padding>
-                        <Insets right="10.0" top="5.0"/>
+                        <Insets top="2.5"/>
                     </padding>
-                    <MFXTextField fx:id="saleNote" floatMode="BORDER" floatingText="Note" prefWidth="400.0"/>
+                    <MFXTextField fx:id="note" floatMode="BORDER" floatingText="Note" prefWidth="400.0"/>
                 </VBox>
             </GridPane>
             <HBox alignment="CENTER_RIGHT" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"

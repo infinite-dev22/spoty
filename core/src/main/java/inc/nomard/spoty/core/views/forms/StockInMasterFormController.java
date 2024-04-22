@@ -54,20 +54,21 @@ import java.util.ResourceBundle;
 
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
 import static inc.nomard.spoty.core.Validators.requiredValidator;
+import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
 
 @SuppressWarnings("unchecked")
 public class StockInMasterFormController implements Initializable {
     private static StockInMasterFormController instance;
     @FXML
-    public MFXDatePicker stockInMasterDate;
+    public MFXDatePicker date;
     @FXML
     public MFXTableView<StockInDetail> stockInDetailTable;
     @FXML
-    public MFXTextField stockInMasterNote;
+    public MFXTextField note;
     @FXML
-    public BorderPane stockInMasterFormContentPane;
+    public BorderPane contentPane;
     @FXML
-    public Label stockInMasterFormTitle, stockInMasterDateValidationLabel;
+    public Label title, dateValidationLabel;
     @FXML
     public MFXButton stockInMasterProductAddBtn, saveBtn,
             cancelBtn;
@@ -92,14 +93,14 @@ public class StockInMasterFormController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Input binding.
-        stockInMasterDate.textProperty().bindBidirectional(StockInMasterViewModel.dateProperty());
-        stockInMasterNote.textProperty().bindBidirectional(StockInMasterViewModel.noteProperty());
+        date.textProperty().bindBidirectional(StockInMasterViewModel.dateProperty());
+        note.textProperty().bindBidirectional(StockInMasterViewModel.noteProperty());
 
         // input validators.
         requiredValidator(
-                stockInMasterDate,
+                date,
                 "Date is required.",
-                stockInMasterDateValidationLabel,
+                dateValidationLabel,
                 saveBtn);
 
         stockInMasterAddProductBtnClicked();
@@ -224,7 +225,7 @@ public class StockInMasterFormController implements Initializable {
                         .toStageDialogBuilder()
                         .initOwner(stage)
                         .initModality(Modality.WINDOW_MODAL)
-                        .setOwnerNode(stockInMasterFormContentPane)
+                        .setOwnerNode(contentPane)
                         .setScrimPriority(ScrimPriority.WINDOW)
                         .setScrimOwner(true)
                         .get();
@@ -245,7 +246,7 @@ public class StockInMasterFormController implements Initializable {
             notificationHolder.addMessage(notification);
             return;
         }
-        if (!stockInMasterDateValidationLabel.isVisible()) {
+        if (!dateValidationLabel.isVisible()) {
             if (StockInMasterViewModel.getId() > 0) {
                 try {
                     StockInMasterViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
@@ -259,15 +260,15 @@ public class StockInMasterFormController implements Initializable {
             } catch (Exception e) {
                 SpotyLogger.writeToFile(e, this.getClass());
             }
-            return;
         }
-        onRequiredFieldsMissing();
     }
 
     public void cancelBtnClicked() {
         BaseController.navigation.navigate(Pages.getStockInPane());
         StockInMasterViewModel.resetProperties();
-        stockInMasterDateValidationLabel.setVisible(false);
+        dateValidationLabel.setVisible(false);
+        dateValidationLabel.setManaged(false);
+        date.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
     }
 
     private void onAction() {
@@ -313,21 +314,6 @@ public class StockInMasterFormController implements Initializable {
         SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
         SpotyMessage notification =
                 new SpotyMessage.MessageBuilder("An error occurred")
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
-                        .build();
-        notificationHolder.addMessage(notification);
-        cancelBtn.setDisable(false);
-        saveBtn.setDisable(false);
-
-        StockInMasterViewModel.getAllStockInMasters(null, null, null);
-    }
-
-    private void onRequiredFieldsMissing() {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder("Required fields can't be null")
                         .duration(MessageDuration.SHORT)
                         .icon("fas-triangle-exclamation")
                         .type(MessageVariants.ERROR)
