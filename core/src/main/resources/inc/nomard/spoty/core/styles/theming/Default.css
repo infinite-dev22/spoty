@@ -452,6 +452,14 @@
     -fx-background-width: 50;
     -fx-background-position: left center;
 }
+.default-color0.chart-bar {
+    -fx-bar-fill: #4EE29B;
+    -fx-border-color: darkgreen;
+}
+.default-color0.chart-bar:hover {
+    -fx-bar-fill: darkgreen;
+    -fx-border-color: #4EE29B;
+}
 .card-title{}
 .card-sub-title{}
 .username-label{}

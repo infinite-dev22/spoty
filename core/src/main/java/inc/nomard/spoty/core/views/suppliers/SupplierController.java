@@ -131,7 +131,7 @@ public class SupplierController implements Initializable {
                         new StringFilter<>("Phone", Supplier::getPhone),
                         new StringFilter<>("Email", Supplier::getEmail),
                         new StringFilter<>("Tax No.", Supplier::getTaxNumber));
-        getTable();
+        styleTable();
 
         if (SupplierViewModel.getSuppliers().isEmpty()) {
             SupplierViewModel.getSuppliers()
@@ -143,7 +143,7 @@ public class SupplierController implements Initializable {
         }
     }
 
-    private void getTable() {
+    private void styleTable() {
         masterTable.setPrefSize(1000, 1000);
         masterTable.features().enableBounceEffect();
         masterTable.features().enableSmoothScrolling(0.5);

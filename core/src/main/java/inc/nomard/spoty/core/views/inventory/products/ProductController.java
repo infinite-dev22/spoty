@@ -165,7 +165,7 @@ public class ProductController implements Initializable {
                         new LongFilter<>("Quantity", Product::getQuantity),
                         new DoubleFilter<>("Price", Product::getPrice),
                         new StringFilter<>("Product Type", Product::getProductType));
-        getTable();
+        styleTable();
 
         if (ProductViewModel.getProducts().isEmpty()) {
             ProductViewModel.getProducts()
@@ -177,7 +177,7 @@ public class ProductController implements Initializable {
         }
     }
 
-    private void getTable() {
+    private void styleTable() {
         masterTable.setPrefSize(1000, 1000);
         masterTable.features().enableBounceEffect();
         masterTable.features().enableSmoothScrolling(0.5);

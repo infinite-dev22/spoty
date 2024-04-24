@@ -146,14 +146,14 @@ public class GraphCardController implements Initializable {
 
     private Grid createGrids() {
         return GridBuilder.create(xAxisBottom, yAxisLeft)
-                .gridLinePaint(Color.web("#384C57"))
+                .gridLinePaint(Color.web("#c4c4c4"))
                 .minorHGridLinesVisible(false)
                 .mediumHGridLinesVisible(false)
                 .minorVGridLinesVisible(false)
                 .mediumVGridLinesVisible(false)
                 .majorVGridLinesVisible(false)
-                .gridOpacity(.3)
-                .gridLineDashes(1, 1)
+                .gridOpacity(.0)
+                .gridLineDashes(6, 6)
                 .build();
     }
 

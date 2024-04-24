@@ -17,11 +17,11 @@ package inc.nomard.spoty.core.views.dashboard;
 import inc.nomard.spoty.core.data.SampleData;
 import inc.nomard.spoty.core.models.QuickStats;
 import inc.nomard.spoty.core.views.components.SmallCardController;
+import inc.nomard.spoty.utils.SpotyLogger;
 import inc.nomard.spoty.utils.responsiveness.layouts.BootstrapColumn;
 import inc.nomard.spoty.utils.responsiveness.layouts.BootstrapPane;
 import inc.nomard.spoty.utils.responsiveness.layouts.BootstrapRow;
 import inc.nomard.spoty.utils.responsiveness.layouts.Breakpoint;
-import inc.nomard.spoty.utils.SpotyLogger;
 import io.github.palexdev.materialfx.controls.MFXScrollPane;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -94,33 +94,41 @@ public class DashboardController implements Initializable {
             column1.setBreakpointColumnWidth(Breakpoint.XSMALL, 12);
             row1.addColumn(column1);
 
-            AnchorPane barGraphCardPane = fxmlLoader("components/cards/BarGraphCard.fxml").load();
-            AnchorPane barGraphCardPane0 = fxmlLoader("components/cards/BarGraphCard.fxml").load();
+            AnchorPane totalRevenueCardPane = fxmlLoader("components/cards/TotalRevenueCard.fxml").load();
+            AnchorPane topProductsCardPane = fxmlLoader("components/cards/TopProductsCard.fxml").load();
 
-            var column2 = new BootstrapColumn(barGraphCardPane);
+            var column2 = new BootstrapColumn(totalRevenueCardPane);
             column2.setBreakpointColumnWidth(Breakpoint.LARGE, 6);
             column2.setBreakpointColumnWidth(Breakpoint.SMALL, 6);
             column2.setBreakpointColumnWidth(Breakpoint.XSMALL, 12);
-            var column3 = new BootstrapColumn(barGraphCardPane0);
+            var column3 = new BootstrapColumn(topProductsCardPane);
             column3.setBreakpointColumnWidth(Breakpoint.LARGE, 6);
             column3.setBreakpointColumnWidth(Breakpoint.SMALL, 6);
             column3.setBreakpointColumnWidth(Breakpoint.XSMALL, 12);
             row2.addColumn(column2);
             row2.addColumn(column3);
 
-            AnchorPane graphCardPane1 = fxmlLoader("components/cards/PieChartCard.fxml").load();
-            AnchorPane barGraphCardPane1 = fxmlLoader("components/cards/BarGraphCard.fxml").load();
+            AnchorPane topCustomersCardPane = fxmlLoader("components/cards/TopCustomersCard.fxml").load();
+            AnchorPane topSuppliersCardPane = fxmlLoader("components/cards/TopSuppliersCard.fxml").load();
 
-            var column4 = new BootstrapColumn(graphCardPane1);
+            var column4 = new BootstrapColumn(topCustomersCardPane);
             column4.setBreakpointColumnWidth(Breakpoint.LARGE, 6);
             column4.setBreakpointColumnWidth(Breakpoint.SMALL, 6);
             column4.setBreakpointColumnWidth(Breakpoint.XSMALL, 12);
-            var column5 = new BootstrapColumn(barGraphCardPane1);
+            var column5 = new BootstrapColumn(topSuppliersCardPane);
             column5.setBreakpointColumnWidth(Breakpoint.LARGE, 6);
             column5.setBreakpointColumnWidth(Breakpoint.SMALL, 6);
             column5.setBreakpointColumnWidth(Breakpoint.XSMALL, 12);
             row2.addColumn(column4);
             row2.addColumn(column5);
+
+            AnchorPane ordersCardPane = fxmlLoader("components/cards/OrdersCard.fxml").load();
+
+            var column6 = new BootstrapColumn(ordersCardPane);
+            column6.setBreakpointColumnWidth(Breakpoint.LARGE, 6);
+            column6.setBreakpointColumnWidth(Breakpoint.SMALL, 6);
+            column6.setBreakpointColumnWidth(Breakpoint.XSMALL, 12);
+            row2.addColumn(column6);
         } catch (IOException e) {
             SpotyLogger.writeToFile(e, this.getClass());
         }
