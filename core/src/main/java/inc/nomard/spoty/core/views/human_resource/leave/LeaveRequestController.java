@@ -1,10 +1,17 @@
 package inc.nomard.spoty.core.views.human_resource.leave;
 
 import inc.nomard.spoty.core.components.animations.SpotyAnimations;
+import inc.nomard.spoty.core.viewModels.hrm.leave.LeaveStatusViewModel;
 import inc.nomard.spoty.core.views.forms.LeaveRequestFormController;
 import inc.nomard.spoty.network_bridge.dtos.hrm.leave.LeaveStatus;
 import inc.nomard.spoty.utils.SpotyThreader;
-import io.github.palexdev.materialfx.controls.*;
+import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+import io.github.palexdev.materialfx.controls.MFXContextMenu;
+import io.github.palexdev.materialfx.controls.MFXContextMenuItem;
+import io.github.palexdev.materialfx.controls.MFXTableColumn;
+import io.github.palexdev.materialfx.controls.MFXTableRow;
+import io.github.palexdev.materialfx.controls.MFXTableView;
+import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
@@ -25,7 +32,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import inc.nomard.spoty.core.viewModels.hrm.leave.LeaveStatusViewModel;
 import javafx.util.Duration;
 
 import java.io.IOException;
@@ -43,8 +49,6 @@ public class LeaveRequestController implements Initializable {
     public MFXTextField searchBar;
     @FXML
     public HBox actionsPane;
-    @FXML
-    public MFXButton importBtn;
     @FXML
     public MFXButton createBtn;
     @FXML

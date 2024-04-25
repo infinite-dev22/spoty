@@ -29,13 +29,13 @@ import java.util.Date;
 
 
 public class SaleReturnDetailViewModel {
+    @Getter
+    public static final ObservableList<SaleReturnDetail> saleReturnDetailsList =
+            FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
                     UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
             .create();
-    @Getter
-    public static final ObservableList<SaleReturnDetail> saleReturnDetailsList =
-            FXCollections.observableArrayList();
     private static final LongProperty id = new SimpleLongProperty();
     private static final ObjectProperty<Product> product = new SimpleObjectProperty<>();
     private static final ObjectProperty<SaleReturnMaster> SaleReturn = new SimpleObjectProperty<>();

@@ -43,12 +43,12 @@ public class UserPreviewController implements Initializable {
     @FXML
     public Label dobLbl;
 
+    public UserPreviewController(Stage stage) {
+    }
+
     public static UserPreviewController getInstance(Stage stage) {
         if (instance == null) instance = new UserPreviewController(stage);
         return instance;
-    }
-
-    public UserPreviewController(Stage stage) {
     }
 
     public void init(UserProfile supplier) {

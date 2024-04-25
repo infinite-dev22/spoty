@@ -18,50 +18,52 @@ import inc.nomard.spoty.core.components.message.SpotyMessage;
 import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
 import inc.nomard.spoty.core.components.message.enums.MessageDuration;
 import inc.nomard.spoty.core.components.message.enums.MessageVariants;
-import inc.nomard.spoty.core.components.navigation.Navigation;
-import inc.nomard.spoty.core.components.navigation.Pages;
 import inc.nomard.spoty.core.viewModels.PermissionsViewModel;
 import inc.nomard.spoty.core.viewModels.RoleViewModel;
 import inc.nomard.spoty.utils.SpotyLogger;
+import inc.nomard.spoty.utils.SpotyThreader;
 import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import io.github.palexdev.materialfx.validation.Constraint;
 import io.github.palexdev.materialfx.validation.Severity;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import io.github.palexdev.mfxcomponents.controls.checkbox.MFXCheckbox;
-import javafx.animation.RotateTransition;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.control.TextArea;
 
 import java.net.URL;
 import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
+import static inc.nomard.spoty.core.GlobalActions.closeDialog;
 import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
 
-public class RoleSettingsFormController implements Initializable {
-    private static RoleSettingsFormController instance;
+public class RoleFormController implements Initializable {
+    private static RoleFormController instance;
     @FXML
-    public MFXTextField roleDescriptionInputField,
-            roleNameInputField;
+    public MFXTextField name;
+    @FXML
+    public TextArea roleDescriptionInputField;
     @FXML
     public MFXButton saveBtn,
             cancelBtn;
     // <editor-fold desc="Lots of MFXCheckboxes here 👇️">
     @FXML
-    private MFXCheckbox dashboardCheckbox, accessPOSCheckbox;
-    // Users
-    @FXML
-    private MFXCheckbox viewUsersCheckbox, editUsersCheckbox, createUserCheckbox, deleteUserCheckbox;
-    // User Permissions
-    @FXML
-    private MFXCheckbox viewRoleCheckbox, editRoleCheckbox, createRoleCheckbox, deleteRoleCheckbox;
-    // Products
-    @FXML
-    private MFXCheckbox viewProductsCheckbox,
+    private MFXCheckbox dashboardCheckbox,
+            accessPOSCheckbox,
+            viewUsersCheckbox,
+            editUsersCheckbox,
+            createUserCheckbox,
+            deleteUserCheckbox,
+            viewRoleCheckbox,
+            editRoleCheckbox,
+            createRoleCheckbox,
+            deleteRoleCheckbox,
+            viewProductsCheckbox,
             editProductsCheckbox,
             createProductCheckbox,
             deleteProductCheckbox,
@@ -69,81 +71,58 @@ public class RoleSettingsFormController implements Initializable {
             productCategoriesCheckbox,
             productUnitsCheckbox,
             productImportsCheckbox,
-            productBrandsCheckbox;
-    // Adjustments
-    @FXML
-    private MFXCheckbox viewAdjustmentsCheckbox,
+            productBrandsCheckbox,
+            viewAdjustmentsCheckbox,
             editAdjustmentsCheckbox,
             createAdjustmentCheckbox,
-            deleteAdjustmentCheckbox;
-    // Transfers
-    @FXML
-    private MFXCheckbox viewTransfersCheckbox,
+            deleteAdjustmentCheckbox,
+            viewTransfersCheckbox,
             editTransfersCheckbox,
             createTransferCheckbox,
-            deleteTransferCheckbox;
-    // Expenses
-    @FXML
-    private MFXCheckbox viewExpensesCheckbox,
+            deleteTransferCheckbox,
+            viewExpensesCheckbox,
             editExpensesCheckbox,
             createExpenseCheckbox,
-            deleteExpenseCheckbox;
-    // Sales
-    @FXML
-    private MFXCheckbox viewSalesCheckbox, editSalesCheckbox, createSaleCheckbox, deleteSaleCheckbox;
-    // Purchases
-    @FXML
-    private MFXCheckbox viewPurchasesCheckbox,
+            deleteExpenseCheckbox,
+            viewSalesCheckbox,
+            editSalesCheckbox,
+            createSaleCheckbox,
+            deleteSaleCheckbox,
+            viewPurchasesCheckbox,
             editPurchasesCheckbox,
             createPurchaseCheckbox,
-            deletePurchaseCheckbox;
-    // Requisitions
-    @FXML
-    private MFXCheckbox viewRequisitionCheckbox,
+            deletePurchaseCheckbox,
+            viewRequisitionCheckbox,
             editRequisitionCheckbox,
             createRequisitionCheckbox,
-            deleteRequisitionCheckbox;
-    // StockIns
-    @FXML
-    private MFXCheckbox viewStockInCheckbox,
+            deleteRequisitionCheckbox,
+            viewStockInCheckbox,
             editStockInCheckbox,
             createStockInCheckbox,
-            deleteStockInCheckbox;
-    // Quotations
-    @FXML
-    private MFXCheckbox viewQuotationsCheckbox,
+            deleteStockInCheckbox,
+            viewQuotationsCheckbox,
             editQuotationsCheckbox,
             createQuotationCheckbox,
-            deleteQuotationCheckbox;
-    // Sale Returns
-    @FXML
-    private MFXCheckbox viewSaleReturnsCheckbox,
+            deleteQuotationCheckbox,
+            viewSaleReturnsCheckbox,
             editSaleReturnsCheckbox,
             createSaleReturnCheckbox,
-            deleteSaleReturnCheckbox;
-    // Purchase Returns
-    @FXML
-    private MFXCheckbox viewPurchaseReturnsCheckbox,
+            deleteSaleReturnCheckbox,
+            viewPurchaseReturnsCheckbox,
             editPurchaseReturnsCheckbox,
             createPurchaseReturnCheckbox,
-            deletePurchaseReturnCheckbox;
-    // Customers
-    @FXML
-    private MFXCheckbox viewCustomersCheckbox,
+            deletePurchaseReturnCheckbox,
+            viewCustomersCheckbox,
             editCustomersCheckbox,
             createCustomerCheckbox,
             deleteCustomerCheckbox,
-            importCustomersCheckbox;
-    // Suppliers
-    @FXML
-    private MFXCheckbox viewSuppliersCheckbox,
+            importCustomersCheckbox,
+            viewSuppliersCheckbox,
             editSuppliersCheckbox,
             createSupplierCheckbox,
             deleteSupplierCheckbox,
-            importSuppliersCheckbox;
-    // Reports
-    @FXML
-    private MFXCheckbox paymentSalesCheckbox,
+            importSuppliersCheckbox,
+            paymentSalesCheckbox,
             paymentPurchasesCheckbox,
             saleReturnPaymentsCheckbox,
             purchaseReturnPaymentsCheckbox,
@@ -160,17 +139,13 @@ public class RoleSettingsFormController implements Initializable {
             stockReportCheckbox,
             productReportCheckbox,
             productSalesReportCheckbox,
-            productPurchasesReportCheckbox;
-    // Settings
-    @FXML
-    private MFXCheckbox accessSystemSettingCheckbox,
+            productPurchasesReportCheckbox,
+            accessSystemSettingCheckbox,
             AccessPOSSettingsCheckbox,
             accessCurrencyCheckbox,
             accessBranchCheckbox,
-            accessBackupCheckbox;
-    // Select All.
-    @FXML
-    private MFXCheckbox selectAllRequisitionsCheckbox,
+            accessBackupCheckbox,
+            selectAllRequisitionsCheckbox,
             selectAllPurchasesCheckbox,
             selectAllTransfersCheckbox,
             selectAllStockInsCheckbox,
@@ -190,17 +165,14 @@ public class RoleSettingsFormController implements Initializable {
     private List<Constraint> constraints;
     @FXML
     private Label errorLabel;
-    @FXML
-    private BorderPane roleSettingsHolder;
+    private ActionEvent actionEvent = null;
 
-    private RotateTransition transition;
-
-    public RoleSettingsFormController() {
+    public RoleFormController() {
     }
     // </editor-fold>
 
-    public static RoleSettingsFormController getInstance() {
-        if (Objects.equals(instance, null)) instance = new RoleSettingsFormController();
+    public static RoleFormController getInstance() {
+        if (Objects.equals(instance, null)) instance = new RoleFormController();
         return instance;
     }
 
@@ -319,7 +291,6 @@ public class RoleSettingsFormController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         bindProperties();
-
         getDashBoardSetting();
         getPOSSettings();
         getRequisitionSetting();
@@ -339,13 +310,67 @@ public class RoleSettingsFormController implements Initializable {
         getCustomerSetting();
         getProductsSetting();
         getReportSetting();
-
-        validationConstraints();
         validationWrapper();
+        dialogOnActions();
+        requiredValidator();
+    }
+
+    private void dialogOnActions() {
+        cancelBtn.setOnAction(
+                (event) -> {
+                    RoleViewModel.resetRoleProperties();
+                    closeDialog(event);
+
+                    errorLabel.setVisible(false);
+                    errorLabel.setManaged(false);
+                    name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                });
+        saveBtn.setOnAction(
+                (event) -> {
+                    constraints = name.validate();
+                    if (!constraints.isEmpty()) {
+                        errorLabel.setManaged(true);
+                        errorLabel.setVisible(true);
+                        errorLabel.setText(constraints.getFirst().getMessage());
+                        name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) name.getScene().getWindow();
+                        dialog.sizeToScene();
+                        return;
+                    }
+                    if (PermissionsViewModel.getPermissionsList().isEmpty()) {
+                        SpotyMessage notification =
+                                new SpotyMessage.MessageBuilder("Role has no permissions")
+                                        .duration(MessageDuration.SHORT)
+                                        .icon("fas-triangle-exclamation")
+                                        .type(MessageVariants.ERROR)
+                                        .build();
+                        SpotyMessageHolder.getInstance().addMessage(notification);
+                        return;
+                    }
+                    if (constraints.isEmpty()) {
+                        if (RoleViewModel.getId() > 0) {
+                            SpotyThreader.spotyThreadPool(() -> {
+                                try {
+                                    RoleViewModel.updateItem(RoleViewModel.getId(), this::onAction, this::onUpdatedSuccess, this::onFailed);
+                                } catch (Exception e) {
+                                    SpotyLogger.writeToFile(e, this.getClass());
+                                }
+                            });
+                            actionEvent = event;
+                            return;
+                        }
+                        try {
+                            RoleViewModel.saveRole(this::onAction, this::onAddSuccess, this::onFailed);
+                            actionEvent = event;
+                        } catch (Exception e) {
+                            SpotyLogger.writeToFile(e, this.getClass());
+                        }
+                    }
+                });
     }
 
     private void bindProperties() {
-        roleNameInputField.textProperty().bindBidirectional(RoleViewModel.nameProperty());
+        name.textProperty().bindBidirectional(RoleViewModel.nameProperty());
         roleDescriptionInputField.textProperty().bindBidirectional(RoleViewModel.descriptionProperty());
     }
 
@@ -1756,100 +1781,32 @@ public class RoleSettingsFormController implements Initializable {
                         });
     }
 
-    public void save() {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-
-        constraints = roleNameInputField.validate();
-        if (!constraints.isEmpty()) {
-            errorLabel.setText(constraints.getFirst().getMessage());
-            errorLabel.setVisible(true);
-        }
-
-        if (PermissionsViewModel.getPermissionsList().isEmpty()) {
-            SpotyMessage notification =
-                    new SpotyMessage.MessageBuilder("Role has no permissions")
-                            .duration(MessageDuration.SHORT)
-                            .icon("fas-triangle-exclamation")
-                            .type(MessageVariants.ERROR)
-                            .build();
-
-            notificationHolder.addMessage(notification);
-
-            return;
-        }
-
-        if (!errorLabel.isVisible()) {
-            if (RoleViewModel.getId() > 0) {
-                try {
-                    RoleViewModel.updateItem(RoleViewModel.getId(), this::onAction, this::onUpdatedSuccess, this::onFailed);
-                } catch (Exception e) {
-                    SpotyLogger.writeToFile(e, this.getClass());
-                }
-                return;
-            }
-
-            try {
-                RoleViewModel.saveRole(this::onAction, this::onAddSuccess, this::onFailed);
-            } catch (Exception e) {
-                SpotyLogger.writeToFile(e, this.getClass());
-            }
-            return;
-        }
-        onRequiredFieldsMissing();
-    }
-
-    public void close() {
-        if (!Objects.equals(constraints, null) && !constraints.isEmpty()) {
-            constraints.clear();
-            errorLabel.setVisible(false);
-        }
-        Navigation.navigate(Pages.getRolesPane(), (StackPane) roleSettingsHolder.getParent());
-        RoleViewModel.resetRoleProperties();
-    }
-
     protected void validationWrapper() {
         errorLabel.getStyleClass().add("input-validation-error");
 
-        roleNameInputField
+        name
                 .getValidator()
                 .validProperty()
                 .addListener(
                         (observable, oldValue, newValue) -> {
                             if (newValue) {
                                 errorLabel.setVisible(false);
-                                roleNameInputField.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                                name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                             }
                         });
-        roleNameInputField
+        name
                 .delegateFocusedProperty()
                 .addListener(
                         (observable, oldValue, newValue) -> {
                             if (oldValue && !newValue) {
-                                constraints = roleNameInputField.validate();
+                                constraints = name.validate();
                                 if (!constraints.isEmpty()) {
-                                    roleNameInputField.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                                    name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
                                     errorLabel.setText(constraints.getFirst().getMessage());
                                     errorLabel.setVisible(true);
                                 }
                             }
                         });
-    }
-
-    private void validationConstraints() {
-        Constraint emptyConstraint =
-                Constraint.Builder.build()
-                        .setSeverity(Severity.ERROR)
-                        .setMessage("Field required")
-                        .setCondition(roleNameInputField.textProperty().length().greaterThan(0))
-                        .get();
-        Constraint lengthConstraint =
-                Constraint.Builder.build()
-                        .setSeverity(Severity.ERROR)
-                        .setMessage("Role name must be at least 4 Characters long")
-                        .setCondition(roleNameInputField.textProperty().length().greaterThan(3))
-                        .get();
-
-        roleNameInputField.getValidator().constraint(emptyConstraint).constraint(lengthConstraint);
     }
 
     private void onAction() {
@@ -1870,8 +1827,9 @@ public class RoleSettingsFormController implements Initializable {
         notificationHolder.addMessage(notification);
         cancelBtn.setDisable(false);
         saveBtn.setDisable(false);
-        close();
 
+        closeDialog(actionEvent);
+        RoleViewModel.resetRoleProperties();
         RoleViewModel.getAllRoles(null, null, null);
     }
 
@@ -1886,8 +1844,9 @@ public class RoleSettingsFormController implements Initializable {
         notificationHolder.addMessage(notification);
         cancelBtn.setDisable(false);
         saveBtn.setDisable(false);
-        close();
 
+        closeDialog(actionEvent);
+        RoleViewModel.resetRoleProperties();
         RoleViewModel.getAllRoles(null, null, null);
     }
 
@@ -1906,18 +1865,32 @@ public class RoleSettingsFormController implements Initializable {
         RoleViewModel.getAllRoles(null, null, null);
     }
 
-    private void onRequiredFieldsMissing() {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder("Required fields can't be null")
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
-                        .build();
-        notificationHolder.addMessage(notification);
-        cancelBtn.setDisable(false);
-        saveBtn.setDisable(false);
-
-        RoleViewModel.getAllRoles(null, null, null);
+    public void requiredValidator() {
+        // Name input validation.
+        Constraint requiredConstraint =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Name is required")
+                        .setCondition(name.textProperty().length().greaterThan(0))
+                        .get();
+        Constraint lengthConstraint =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Role name must be at least 4 Characters long")
+                        .setCondition(name.textProperty().length().greaterThan(3))
+                        .get();
+        name.getValidator().constraint(requiredConstraint).constraint(lengthConstraint);
+        // Display error.
+        name
+                .getValidator()
+                .validProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                errorLabel.setManaged(false);
+                                errorLabel.setVisible(false);
+                                name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                            }
+                        });
     }
 }

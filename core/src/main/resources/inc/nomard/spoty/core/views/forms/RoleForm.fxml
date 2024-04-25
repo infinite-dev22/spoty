@@ -14,31 +14,30 @@
   ~ Jonathan Mark Mwigo makes no warranties, express or implied, with respect to the computer system code. Jonathan Mark Mwigo shall not be liable for any damages, including, but not limited to, direct, indirect, incidental, special, consequential, or punitive damages, arising out of or in connection with the use of the computer system code.
   -->
 
+<?import inc.nomard.spoty.core.components.title.*?>
+<?import inc.nomard.spoty.utils.navigation.*?>
 <?import io.github.palexdev.materialfx.controls.MFXScrollPane?>
 <?import io.github.palexdev.materialfx.controls.MFXTextField?>
+<?import io.github.palexdev.materialfx.dialogs.MFXGenericDialog?>
 <?import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton?>
 <?import io.github.palexdev.mfxcomponents.controls.checkbox.*?>
 <?import io.github.palexdev.mfxcore.controls.Label?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import inc.nomard.spoty.core.components.navigation.*?>
-<?import inc.nomard.spoty.core.components.title.*?>
 <?import java.net.URL?>
-<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:id="roleSettingsHolder" xmlns="http://javafx.com/javafx/20.0.1"
-            fx:controller="inc.nomard.spoty.core.views.forms.RoleSettingsFormController">
+<MFXGenericDialog xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+                  fx:controller="inc.nomard.spoty.core.views.forms.RoleFormController">
     <center>
-        <MFXScrollPane BorderPane.alignment="CENTER">
+        <MFXScrollPane>
             <GridPane hgap="20.0" vgap="40.0">
                 <columnConstraints>
-                    <ColumnConstraints percentWidth="50" hgrow="ALWAYS" minWidth="10.0"/>
-                    <ColumnConstraints percentWidth="50" hgrow="ALWAYS" minWidth="10.0"/>
+                    <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" percentWidth="50"/>
+                    <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" percentWidth="50"/>
                 </columnConstraints>
                 <rowConstraints>
+                    <RowConstraints vgrow="SOMETIMES"/>
                     <RowConstraints minHeight="10.0" prefHeight="90.0" vgrow="SOMETIMES"/>
-                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
-                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
-                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
                     <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
                     <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
                     <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
@@ -52,17 +51,28 @@
                 <padding>
                     <Insets left="5.0" right="5.0" top="20.0"/>
                 </padding>
-                <VBox spacing="5.0" prefHeight="200.0" prefWidth="100.0" styleClass="card-flat">
+                <VBox spacing="20" GridPane.columnSpan="2147483647">
+                    <padding>
+                        <Insets topRightBottomLeft="10"/>
+                    </padding>
+                    <VBox spacing="2.0" styleClass="spoty-role-form-header" BorderPane.alignment="CENTER">
+                        <MFXTextField fx:id="name" floatMode="BORDER" floatingText="Role name" prefWidth="1000"/>
+                        <Label id="validationLabel" fx:id="errorLabel" managed="false" maxWidth="1.7976931348623157E308"
+                               minHeight="-Infinity" styleClass="input-validation-error" visible="false"
+                               wrapText="true"/>
+                    </VBox>
+                    <TextArea fx:id="roleDescriptionInputField" prefHeight="70.0" prefWidth="1000"
+                              promptText="Role description"/>
+                </VBox>
+                <VBox prefHeight="200.0" prefWidth="100.0" spacing="5.0" styleClass="card-flat" GridPane.rowIndex="1">
                     <padding>
                         <Insets topRightBottomLeft="5.0"/>
                     </padding>
-                    <Title text="DASHBOARD">
-                    </Title>
+                    <Title text="DASHBOARD"/>
                     <Separator/>
                     <MFXCheckbox fx:id="dashboardCheckbox" text="Access Dashboard"/>
                 </VBox>
-                <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card-flat" GridPane.columnIndex="1"
-                      GridPane.rowIndex="8">
+                <VBox spacing="5.0" styleClass="card-flat" GridPane.columnIndex="1" GridPane.rowIndex="9">
                     <padding>
                         <Insets topRightBottomLeft="5.0"/>
                     </padding>
@@ -94,8 +104,7 @@
                         <MFXCheckbox fx:id="accessBackupCheckbox" text="Access Backup Settings" GridPane.rowIndex="2"/>
                     </GridPane>
                 </VBox>
-                <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card-flat" GridPane.columnIndex="1"
-                      GridPane.rowIndex="7">
+                <VBox spacing="5.0" styleClass="card-flat" GridPane.columnIndex="1" GridPane.rowIndex="8">
                     <padding>
                         <Insets topRightBottomLeft="5.0"/>
                     </padding>
@@ -125,8 +134,7 @@
                         <MFXCheckbox fx:id="importCustomersCheckbox" text="Import Customers" GridPane.rowIndex="2"/>
                     </GridPane>
                 </VBox>
-                <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card-flat" GridPane.columnIndex="1"
-                      GridPane.rowIndex="6">
+                <VBox spacing="5.0" styleClass="card-flat" GridPane.columnIndex="1" GridPane.rowIndex="7">
                     <padding>
                         <Insets topRightBottomLeft="5.0"/>
                     </padding>
@@ -154,8 +162,7 @@
                                      GridPane.rowIndex="1"/>
                     </GridPane>
                 </VBox>
-                <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card-flat" GridPane.columnIndex="1"
-                      GridPane.rowIndex="5">
+                <VBox spacing="5.0" styleClass="card-flat" GridPane.columnIndex="1" GridPane.rowIndex="6">
                     <padding>
                         <Insets topRightBottomLeft="5.0"/>
                     </padding>
@@ -184,8 +191,7 @@
                                      GridPane.columnIndex="1" GridPane.rowIndex="1"/>
                     </GridPane>
                 </VBox>
-                <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card-flat" GridPane.columnIndex="1"
-                      GridPane.rowIndex="4">
+                <VBox spacing="5.0" styleClass="card-flat" GridPane.columnIndex="1" GridPane.rowIndex="5">
                     <padding>
                         <Insets topRightBottomLeft="5.0"/>
                     </padding>
@@ -213,8 +219,7 @@
                                      GridPane.rowIndex="1"/>
                     </GridPane>
                 </VBox>
-                <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card-flat" GridPane.columnIndex="1"
-                      GridPane.rowIndex="3">
+                <VBox spacing="5.0" styleClass="card-flat" GridPane.columnIndex="1" GridPane.rowIndex="4">
                     <padding>
                         <Insets topRightBottomLeft="5.0"/>
                     </padding>
@@ -243,8 +248,7 @@
                                      GridPane.columnIndex="1" GridPane.rowIndex="1"/>
                     </GridPane>
                 </VBox>
-                <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card-flat" GridPane.columnIndex="1"
-                      GridPane.rowIndex="2">
+                <VBox spacing="5.0" styleClass="card-flat" GridPane.columnIndex="1" GridPane.rowIndex="3">
                     <padding>
                         <Insets topRightBottomLeft="5.0"/>
                     </padding>
@@ -272,8 +276,7 @@
                                      GridPane.rowIndex="1"/>
                     </GridPane>
                 </VBox>
-                <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card-flat" GridPane.columnIndex="1"
-                      GridPane.rowIndex="1">
+                <VBox spacing="5.0" styleClass="card-flat" GridPane.columnIndex="1" GridPane.rowIndex="2">
                     <padding>
                         <Insets topRightBottomLeft="5.0"/>
                     </padding>
@@ -301,8 +304,7 @@
                                      GridPane.rowIndex="1"/>
                     </GridPane>
                 </VBox>
-                <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card-flat" GridPane.columnSpan="2"
-                      GridPane.rowIndex="10">
+                <VBox spacing="5.0" styleClass="card-flat" GridPane.columnSpan="2" GridPane.rowIndex="10">
                     <padding>
                         <Insets topRightBottomLeft="5.0"/>
                     </padding>
@@ -336,18 +338,15 @@
                         <MFXCheckbox fx:id="paymentPurchasesCheckbox" text="Access Payment Purchases Reports"
                                      GridPane.rowIndex="1"/>
                         <MFXCheckbox fx:id="branchStockChartCheckbox" text="Access Branch Stock Chart Reports"
-                                     GridPane.columnIndex="1"
-                                     GridPane.rowIndex="1"/>
+                                     GridPane.columnIndex="1" GridPane.rowIndex="1"/>
                         <MFXCheckbox fx:id="saleReturnPaymentsCheckbox" text="Access Sales Returns Payments Reports"
                                      GridPane.rowIndex="2"/>
                         <MFXCheckbox fx:id="topSellingProductsCheckbox" text="Access Top Selling Products Reports"
-                                     GridPane.columnIndex="1"
-                                     GridPane.rowIndex="2"/>
+                                     GridPane.columnIndex="1" GridPane.rowIndex="2"/>
                         <MFXCheckbox fx:id="purchaseReturnPaymentsCheckbox"
                                      text="Access Purchases Returns Payments Reports" GridPane.rowIndex="3"/>
                         <MFXCheckbox fx:id="customerRankingCheckbox" text="Access Customer Ranking Reports"
-                                     GridPane.columnIndex="1"
-                                     GridPane.rowIndex="3"/>
+                                     GridPane.columnIndex="1" GridPane.rowIndex="3"/>
                         <MFXCheckbox fx:id="saleReportCheckbox" text="Access Sales Reports" GridPane.rowIndex="4"/>
                         <MFXCheckbox fx:id="usersReportCheckbox" text="Access Users Reports" GridPane.columnIndex="1"
                                      GridPane.rowIndex="4"/>
@@ -358,21 +357,18 @@
                         <MFXCheckbox fx:id="customerReportCheckbox" text="Access Customers Reports"
                                      GridPane.rowIndex="6"/>
                         <MFXCheckbox fx:id="productReportCheckbox" text="Access Products Reports"
-                                     GridPane.columnIndex="1"
-                                     GridPane.rowIndex="6"/>
+                                     GridPane.columnIndex="1" GridPane.rowIndex="6"/>
                         <MFXCheckbox fx:id="supplierReportCheckbox" text="Access Suppliers Reports"
                                      GridPane.rowIndex="7"/>
                         <MFXCheckbox fx:id="productSalesReportCheckbox" text="Access Products Sales Reports"
-                                     GridPane.columnIndex="1"
-                                     GridPane.rowIndex="7"/>
+                                     GridPane.columnIndex="1" GridPane.rowIndex="7"/>
                         <MFXCheckbox fx:id="profitAndLossCheckbox" text="Access Profits &amp; Losses Reports"
                                      GridPane.rowIndex="8"/>
                         <MFXCheckbox fx:id="productPurchasesReportCheckbox" text="Access Products Purchases Reports"
-                                     GridPane.columnIndex="1"
-                                     GridPane.rowIndex="8"/>
+                                     GridPane.columnIndex="1" GridPane.rowIndex="8"/>
                     </GridPane>
                 </VBox>
-                <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card-flat" GridPane.rowIndex="8">
+                <VBox spacing="5.0" styleClass="card-flat" GridPane.rowIndex="9">
                     <padding>
                         <Insets topRightBottomLeft="5.0"/>
                     </padding>
@@ -404,15 +400,13 @@
                         <MFXCheckbox fx:id="productBarcodesCheckbox" text="Edit Barcodes" GridPane.rowIndex="2"/>
                         <MFXCheckbox fx:id="productImportsCheckbox" text="Import Products" GridPane.columnIndex="1"
                                      GridPane.rowIndex="2"/>
-                        <MFXCheckbox fx:id="productBrandsCheckbox" text="Access Brands"
-                                     GridPane.rowIndex="3"/>
+                        <MFXCheckbox fx:id="productBrandsCheckbox" text="Access Brands" GridPane.rowIndex="3"/>
                         <MFXCheckbox fx:id="productCategoriesCheckbox" text="Access Product Categories"
                                      GridPane.columnIndex="1" GridPane.rowIndex="3"/>
-                        <MFXCheckbox fx:id="productUnitsCheckbox" text="Access Units Of Measure"
-                                     GridPane.rowIndex="4"/>
+                        <MFXCheckbox fx:id="productUnitsCheckbox" text="Access Units Of Measure" GridPane.rowIndex="4"/>
                     </GridPane>
                 </VBox>
-                <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card-flat" GridPane.rowIndex="7">
+                <VBox spacing="5.0" styleClass="card-flat" GridPane.rowIndex="8">
                     <padding>
                         <Insets topRightBottomLeft="5.0"/>
                     </padding>
@@ -442,7 +436,7 @@
                         <MFXCheckbox fx:id="importSuppliersCheckbox" text="Import Suppliers" GridPane.rowIndex="2"/>
                     </GridPane>
                 </VBox>
-                <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card-flat" GridPane.rowIndex="6">
+                <VBox spacing="5.0" styleClass="card-flat" GridPane.rowIndex="7">
                     <padding>
                         <Insets topRightBottomLeft="5.0"/>
                     </padding>
@@ -470,7 +464,7 @@
                                      GridPane.rowIndex="1"/>
                     </GridPane>
                 </VBox>
-                <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card-flat" GridPane.rowIndex="5">
+                <VBox spacing="5.0" styleClass="card-flat" GridPane.rowIndex="6">
                     <padding>
                         <Insets topRightBottomLeft="5.0"/>
                     </padding>
@@ -500,7 +494,7 @@
                                      GridPane.columnIndex="1" GridPane.rowIndex="1"/>
                     </GridPane>
                 </VBox>
-                <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card-flat" GridPane.rowIndex="4">
+                <VBox spacing="5.0" styleClass="card-flat" GridPane.rowIndex="5">
                     <padding>
                         <Insets topRightBottomLeft="5.0"/>
                     </padding>
@@ -529,7 +523,7 @@
                                      GridPane.rowIndex="1"/>
                     </GridPane>
                 </VBox>
-                <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card-flat" GridPane.rowIndex="3">
+                <VBox spacing="5.0" styleClass="card-flat" GridPane.rowIndex="4">
                     <padding>
                         <Insets topRightBottomLeft="5.0"/>
                     </padding>
@@ -557,7 +551,7 @@
                                      GridPane.rowIndex="1"/>
                     </GridPane>
                 </VBox>
-                <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card-flat" GridPane.rowIndex="2">
+                <VBox spacing="5.0" styleClass="card-flat" GridPane.rowIndex="3">
                     <padding>
                         <Insets topRightBottomLeft="5.0"/>
                     </padding>
@@ -585,7 +579,7 @@
                                      GridPane.rowIndex="1"/>
                     </GridPane>
                 </VBox>
-                <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" styleClass="card-flat" GridPane.rowIndex="1">
+                <VBox spacing="5.0" styleClass="card-flat" GridPane.rowIndex="2">
                     <padding>
                         <Insets topRightBottomLeft="5.0"/>
                     </padding>
@@ -613,13 +607,12 @@
                                      GridPane.rowIndex="1"/>
                     </GridPane>
                 </VBox>
-                <VBox spacing="5.0" layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="100.0" styleClass="card-flat"
-                      GridPane.columnIndex="1">
+                <VBox prefHeight="200.0" prefWidth="100.0" spacing="5.0" styleClass="card-flat" GridPane.columnIndex="1"
+                      GridPane.rowIndex="1">
                     <padding>
                         <Insets topRightBottomLeft="5.0"/>
                     </padding>
-                    <Title text="POINT OF SALE">
-                    </Title>
+                    <Title text="POINT OF SALE"/>
                     <Separator/>
                     <MFXCheckbox fx:id="accessPOSCheckbox" text="Access Point Of Sale"/>
                 </VBox>
@@ -631,25 +624,14 @@
             <padding>
                 <Insets topRightBottomLeft="10"/>
             </padding>
-            <MFXButton fx:id="saveBtn" styleClass="filled" onAction="#save" text="Save"/>
-            <MFXButton fx:id="cancelBtn" styleClass="outlined" onAction="#close" text="Cancel"/>
+            <MFXButton fx:id="saveBtn" styleClass="filled" text="Save"/>
+            <MFXButton fx:id="cancelBtn" styleClass="outlined" text="Cancel"/>
         </HBox>
     </bottom>
-    <top>
-        <HBox spacing="20">
-            <padding>
-                <Insets topRightBottomLeft="10"/>
-            </padding>
-            <VBox BorderPane.alignment="CENTER" spacing="5.0" styleClass="spoty-role-form-header">
-                <MFXTextField fx:id="roleNameInputField" floatMode="BORDER" floatingText="Role name" prefWidth="400"/>
-                <Label fx:id="errorLabel" visible="false"/>
-            </VBox>
-            <MFXTextField fx:id="roleDescriptionInputField" floatMode="BORDER" floatingText="Role description"
-                          prefWidth="400"/>
-        </HBox>
-    </top>
     <stylesheets>
         <URL value="@../../styles/Common.css"/>
         <URL value="@../../styles/TextFields.css"/>
+        <URL value="@../../styles/base.css"/>
+        <URL value="@../../styles/theming/Default.css"/>
     </stylesheets>
-</BorderPane>
+</MFXGenericDialog>

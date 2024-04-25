@@ -63,21 +63,12 @@ public class AdjustmentController implements Initializable {
     @FXML
     public HBox actionsPane;
     @FXML
-    public MFXButton importBtn;
-    @FXML
-    public MFXButton createBtn;
-    @FXML
     public HBox refresh;
     @FXML
     private MFXTableView<AdjustmentMaster> masterTable;
     private RotateTransition transition;
     private FXMLLoader viewFxmlLoader;
     private MFXStageDialog viewDialog;
-
-    public static AdjustmentController getInstance(Stage stage) {
-        if (instance == null) instance = new AdjustmentController(stage);
-        return instance;
-    }
 
     public AdjustmentController(Stage stage) {
         Platform.runLater(() ->
@@ -88,6 +79,11 @@ public class AdjustmentController implements Initializable {
                 throw new RuntimeException(e);
             }
         });
+    }
+
+    public static AdjustmentController getInstance(Stage stage) {
+        if (instance == null) instance = new AdjustmentController(stage);
+        return instance;
     }
 
     @Override

@@ -63,8 +63,6 @@ public class ProductController implements Initializable {
     @FXML
     public MFXTextField searchBar;
     @FXML
-    public MFXButton importBtn;
-    @FXML
     public HBox actionsPane;
     @FXML
     public MFXButton createBtn;

@@ -14,6 +14,7 @@
 
 package inc.nomard.spoty.core.components.navigation;
 
+import inc.nomard.spoty.utils.navigation.Spacer;
 import io.github.palexdev.materialfx.controls.MFXIconWrapper;
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.beans.value.ChangeListener;

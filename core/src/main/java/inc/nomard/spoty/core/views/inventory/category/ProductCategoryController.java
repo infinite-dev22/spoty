@@ -59,11 +59,7 @@ public class ProductCategoryController implements Initializable {
     @FXML
     public HBox actionsPane;
     @FXML
-    public MFXButton importBtn;
-    @FXML
     public BorderPane categoryPane;
-    @FXML
-    public MFXButton createBtn;
     @FXML
     public HBox refresh;
     private MFXStageDialog dialog;

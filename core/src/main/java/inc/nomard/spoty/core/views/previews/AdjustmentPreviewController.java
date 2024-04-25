@@ -35,6 +35,9 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 
 public class AdjustmentPreviewController implements Initializable {
+    static final ObservableList<AdjustmentDetail> adjustmentDetailsList = FXCollections.observableArrayList();
+    private static final ListProperty<AdjustmentDetail> adjustmentDetails =
+            new SimpleListProperty<>(adjustmentDetailsList);
     @FXML
     public Label adjustmentDate;
     @FXML
@@ -45,9 +48,6 @@ public class AdjustmentPreviewController implements Initializable {
     public Label doneBy;
     @FXML
     public Label adjustmentNote;
-    static final ObservableList<AdjustmentDetail> adjustmentDetailsList = FXCollections.observableArrayList();
-    private static final ListProperty<AdjustmentDetail> adjustmentDetails =
-            new SimpleListProperty<>(adjustmentDetailsList);
 
     public static ObservableList<AdjustmentDetail> getAdjustmentDetails() {
         return adjustmentDetails.get();

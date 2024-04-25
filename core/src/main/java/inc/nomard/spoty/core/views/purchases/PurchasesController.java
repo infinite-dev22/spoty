@@ -61,8 +61,6 @@ public class PurchasesController implements Initializable {
     @FXML
     public HBox actionsPane;
     @FXML
-    public MFXButton importBtn;
-    @FXML
     public BorderPane contentPane;
     @FXML
     public MFXButton createBtn;
@@ -74,11 +72,6 @@ public class PurchasesController implements Initializable {
     private FXMLLoader viewFxmlLoader;
     private MFXStageDialog viewDialog;
 
-    public static PurchasesController getInstance(Stage stage) {
-        if (instance == null) instance = new PurchasesController(stage);
-        return instance;
-    }
-
     public PurchasesController(Stage stage) {
         Platform.runLater(() ->
         {
@@ -88,6 +81,11 @@ public class PurchasesController implements Initializable {
                 throw new RuntimeException(e);
             }
         });
+    }
+
+    public static PurchasesController getInstance(Stage stage) {
+        if (instance == null) instance = new PurchasesController(stage);
+        return instance;
     }
 
     @Override

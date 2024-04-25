@@ -46,7 +46,7 @@ public class ProductCard extends VBox {
     private Label productPriceLbl;
     private Label productQuantityLbl;
     @Getter
-    private Product product;
+    private final Product product;
 
     public ProductCard(Product product) {
         this.product = product;

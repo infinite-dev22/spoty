@@ -23,7 +23,8 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 
 import static inc.nomard.spoty.core.GlobalActions.closeDialog;
-import static inc.nomard.spoty.core.viewModels.TaxViewModel.*;
+import static inc.nomard.spoty.core.viewModels.TaxViewModel.resetProperties;
+import static inc.nomard.spoty.core.viewModels.TaxViewModel.saveTax;
 import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
 
 public class TaxFormController implements Initializable {

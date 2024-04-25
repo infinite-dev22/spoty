@@ -1,6 +1,5 @@
 package inc.nomard.spoty.core.views.previews;
 
-import inc.nomard.spoty.core.viewModels.ProductViewModel;
 import inc.nomard.spoty.network_bridge.dtos.Product;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
 import javafx.fxml.FXML;

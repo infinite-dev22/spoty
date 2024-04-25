@@ -32,12 +32,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class PurchaseReturnMasterViewModel {
+    public static final ObservableList<PurchaseReturnMaster> purchaseReturnMasterList =
+            FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
                     UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
             .create();
-    public static final ObservableList<PurchaseReturnMaster> purchaseReturnMasterList =
-            FXCollections.observableArrayList();
     private static final ListProperty<PurchaseReturnMaster> purchaseReturns =
             new SimpleListProperty<>(purchaseReturnMasterList);
     private static final LongProperty id = new SimpleLongProperty(0);

@@ -61,8 +61,6 @@ public class TransferController implements Initializable {
     @FXML
     public HBox actionsPane;
     @FXML
-    public MFXButton importBtn;
-    @FXML
     public MFXTableView<TransferMaster> masterTable;
     @FXML
     public BorderPane contentPane;
@@ -74,11 +72,6 @@ public class TransferController implements Initializable {
     private FXMLLoader viewFxmlLoader;
     private MFXStageDialog viewDialog;
 
-    public static TransferController getInstance(Stage stage) {
-        if (instance == null) instance = new TransferController(stage);
-        return instance;
-    }
-
     public TransferController(Stage stage) {
         Platform.runLater(() ->
         {
@@ -88,6 +81,11 @@ public class TransferController implements Initializable {
                 throw new RuntimeException(e);
             }
         });
+    }
+
+    public static TransferController getInstance(Stage stage) {
+        if (instance == null) instance = new TransferController(stage);
+        return instance;
     }
 
     @Override

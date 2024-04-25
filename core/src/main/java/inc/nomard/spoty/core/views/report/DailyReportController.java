@@ -1,6 +1,6 @@
 package inc.nomard.spoty.core.views.report;
 
-import io.github.palexdev.materialfx.controls.MFXButton;
+import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXTableView;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import javafx.fxml.Initializable;

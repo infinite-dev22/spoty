@@ -13,6 +13,7 @@ public class SalaryAdvanceFormController implements Initializable {
         if (Objects.equals(instance, null)) instance = new SalaryAdvanceFormController();
         return instance;
     }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 

@@ -35,6 +35,9 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 
 public class PurchasePreviewController implements Initializable {
+    static final ObservableList<PurchaseDetail> purchaseDetailsList = FXCollections.observableArrayList();
+    private static final ListProperty<PurchaseDetail> purchaseDetails =
+            new SimpleListProperty<>(purchaseDetailsList);
     @FXML
     public Label purchaseDate;
     @FXML
@@ -67,9 +70,6 @@ public class PurchasePreviewController implements Initializable {
     public Label purchaseNote;
     @FXML
     public Label doneBy;
-    static final ObservableList<PurchaseDetail> purchaseDetailsList = FXCollections.observableArrayList();
-    private static final ListProperty<PurchaseDetail> purchaseDetails =
-            new SimpleListProperty<>(purchaseDetailsList);
 
     public static ObservableList<PurchaseDetail> getPurchaseDetails() {
         return purchaseDetails.get();

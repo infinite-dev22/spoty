@@ -60,8 +60,6 @@ public class UnitOfMeasureController implements Initializable {
     @FXML
     public HBox actionsPane;
     @FXML
-    public MFXButton importBtn;
-    @FXML
     public BorderPane contentPane;
     @FXML
     public MFXButton createBtn;

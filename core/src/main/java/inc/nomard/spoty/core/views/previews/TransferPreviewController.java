@@ -20,6 +20,9 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 
 public class TransferPreviewController implements Initializable {
+    static final ObservableList<TransferDetail> transferDetailsList = FXCollections.observableArrayList();
+    private static final ListProperty<TransferDetail> transferDetails =
+            new SimpleListProperty<>(transferDetailsList);
     private static TransferPreviewController instance;
     public Label transferDate;
     public Label transferRef;
@@ -28,9 +31,6 @@ public class TransferPreviewController implements Initializable {
     public MFXTableView<TransferDetail> itemsTable;
     public Label doneBy;
     public Label transferNote;
-    static final ObservableList<TransferDetail> transferDetailsList = FXCollections.observableArrayList();
-    private static final ListProperty<TransferDetail> transferDetails =
-            new SimpleListProperty<>(transferDetailsList);
 
     public static ObservableList<TransferDetail> getTransferDetails() {
         return transferDetails.get();
