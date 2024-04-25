@@ -1,13 +1,9 @@
 module spoty.network_bridge {
-    requires java.logging;
-    requires java.naming;
-    requires java.prefs;
     requires lombok;
     requires java.net.http;
     requires com.google.gson;
     requires spoty.utils;
     requires javafx.graphics;
-    requires javafx.fxml;
 
 
     opens inc.nomard.spoty.network_bridge.auth;

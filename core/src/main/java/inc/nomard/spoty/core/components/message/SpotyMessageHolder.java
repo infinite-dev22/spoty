@@ -30,7 +30,6 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -132,7 +131,7 @@ public class SpotyMessageHolder {
         removeMessage(notification, POPUP);
     }
 
-    public void removeMessage(@NotNull SpotyMessage notification, Pane POPUP) {
+    public void removeMessage(SpotyMessage notification, Pane POPUP) {
         // popup fade out - first opacity animation to 0, next height to 0
         final Timeline tlFadeOut = new Timeline();
         final KeyValue kvOpacity = new KeyValue(POPUP.opacityProperty(), 0.0);

@@ -25,7 +25,6 @@ import inc.nomard.spoty.utils.SpotyLogger;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.jetbrains.annotations.Nullable;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -60,7 +59,7 @@ public class PurchaseReturnMasterViewModel {
         return id;
     }
 
-    public static @Nullable Date getDate() {
+    public static Date getDate() {
         try {
             return new SimpleDateFormat("MMM dd, yyyy").parse(date.get());
         } catch (ParseException e) {
@@ -178,9 +177,9 @@ public class PurchaseReturnMasterViewModel {
     }
 
     public static void getPurchaseReturnMasters(
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
 //        Dao<PurchaseReturnMaster, Long> purchaseReturnMasterDao =
 //                DaoManager.createDao(connectionSource, PurchaseReturnMaster.class);
 //
@@ -202,9 +201,9 @@ public class PurchaseReturnMasterViewModel {
 
     public static void getItem(
             Long index,
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
 //        var findModel = FindModel.builder().id(index).build();
 //        var task = PurchaseReturnsRepository.fetchMaster(findModel);
 //
@@ -240,9 +239,9 @@ public class PurchaseReturnMasterViewModel {
 
     public static void searchItem(
             String search,
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
 //        var searchModel = SearchModel.builder().search(search).build();
 //        var task = PurchaseReturnsRepository.searchMaster(searchModel);
 //        if (Objects.nonNull(onActivity)) {

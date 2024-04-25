@@ -5,9 +5,7 @@ module spoty.core {
     requires mfx.components;
     requires mfx.resources;
     requires java.logging;
-    requires java.naming;
     requires org.kordamp.ikonli.javafx;
-    requires org.jetbrains.annotations;
     requires java.prefs;
     requires org.kordamp.ikonli.core;
     requires org.kordamp.ikonli.fontawesome5;
@@ -19,7 +17,7 @@ module spoty.core {
     requires spoty.network_bridge;
     requires spoty.utils;
     requires com.calendarfx.view;
-    requires froxty;
+//    requires froxty;
     requires com.dlsc.gemsfx;
 
     opens inc.nomard.spoty.core.views;

@@ -22,7 +22,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.prefs.BackingStoreException;
@@ -37,12 +36,7 @@ public class Appearance extends VBox {
     private Preferences preferences;
 
     public Appearance() {
-        System.out.println("IS SYS PREFS NULL: " + Objects.equals(preferences, null));
         initApplicationPreferences();
-        System.out.println("SYS PREFS: " + preferences.get(
-                "default_language",
-                "English"
-        ));
         init();
     }
 
@@ -143,7 +137,7 @@ public class Appearance extends VBox {
 //                        });
     }
 
-    private @NotNull VBox buildHeaderText() {
+    private VBox buildHeaderText() {
         var vbox = new VBox();
         vbox.setSpacing(10);
         vbox.setPadding(new Insets(20, 0, 20, 0));
@@ -157,7 +151,7 @@ public class Appearance extends VBox {
         return vbox;
     }
 
-    private @NotNull VBox buildSubHeaderText(String title, String description) {
+    private VBox buildSubHeaderText(String title, String description) {
         var vbox = new VBox();
         vbox.setSpacing(10);
         vbox.setMinWidth(300);
@@ -173,7 +167,7 @@ public class Appearance extends VBox {
         return vbox;
     }
 
-    private @NotNull ToggleButton buildThemeItem(ToggleGroup toggleGroup, String imageUrl, String label) {
+    private ToggleButton buildThemeItem(ToggleGroup toggleGroup, String imageUrl, String label) {
         final PseudoClass SELECTED = PseudoClass.getPseudoClass("selected");
 
         var vbox = new VBox();
@@ -209,7 +203,7 @@ public class Appearance extends VBox {
         return themeItemImageView;
     }
 
-    private @NotNull HBox buildThemeSettings() {
+    private HBox buildThemeSettings() {
         var hbox = new HBox();
         hbox.setSpacing(20);
         hbox.setPadding(new Insets(20, 0, 20, 0));
@@ -233,7 +227,7 @@ public class Appearance extends VBox {
         return hbox;
     }
 
-    private @NotNull HBox buildAccentSettings() {
+    private HBox buildAccentSettings() {
         var hbox = new HBox();
         hbox.setSpacing(20);
         hbox.setPadding(new Insets(20, 0, 20, 0));
@@ -267,7 +261,7 @@ public class Appearance extends VBox {
         return hbox;
     }
 
-    private @NotNull HBox buildFontSettings() {
+    private HBox buildFontSettings() {
         var hbox = new HBox();
         hbox.setSpacing(10);
         hbox.setPadding(new Insets(20, 0, 20, 0));
@@ -287,7 +281,7 @@ public class Appearance extends VBox {
         return hbox;
     }
 
-    private @NotNull ToggleButton buildAccentItem(ToggleGroup toggleGroup, String color) {
+    private ToggleButton buildAccentItem(ToggleGroup toggleGroup, String color) {
         final PseudoClass SELECTED = PseudoClass.getPseudoClass("selected");
 
         var circle = new Circle(175, 100, 15);
@@ -305,7 +299,7 @@ public class Appearance extends VBox {
         return toggle;
     }
 
-    private @NotNull HBox buildSidebarSettings() {
+    private HBox buildSidebarSettings() {
         var hbox = new HBox();
         hbox.setSpacing(10);
         hbox.setPadding(new Insets(20, 0, 20, 0));
@@ -322,7 +316,7 @@ public class Appearance extends VBox {
         return hbox;
     }
 
-    private @NotNull HBox buildLanguageSettings() {
+    private HBox buildLanguageSettings() {
         var languageSet = Arrays.stream(Locale.getISOLanguages())
                 .map(Locale::new)
                 .map(Locale::getDisplayLanguage)

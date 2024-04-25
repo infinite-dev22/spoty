@@ -21,7 +21,6 @@ import inc.nomard.spoty.network_bridge.dtos.Product;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Date;
 
@@ -41,7 +40,7 @@ public class PointOfSaleViewModel {
     private static final DoubleProperty discount = new SimpleDoubleProperty();
     private static final ObservableList<Product> posCartList = FXCollections.observableArrayList();
 
-    public static @NotNull Long getItemQuantity() {
+    public static Long getItemQuantity() {
         return itemQuantity.get();
     }
 

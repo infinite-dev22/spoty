@@ -16,15 +16,13 @@ package inc.nomard.spoty.core.components.navigation;
 
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
 record Nav(
-        String title, String tag, @Nullable Node graphic, BorderPane view, @Nullable List<String> searchKeywords) {
+        String title, String tag, Node graphic, BorderPane view, List<String> searchKeywords) {
 
     // Treeview parent not.
     public static final Nav ROOT = new Nav("ROOT", null, null, null, null);
@@ -53,7 +51,7 @@ record Nav(
                 && searchKeywords.stream().anyMatch(keyword -> contains(keyword, filter)));
     }
 
-    private boolean contains(@NotNull String text, @NotNull String filter) {
+    private boolean contains(String text, String filter) {
         return text.toLowerCase().contains(filter.toLowerCase());
     }
 }

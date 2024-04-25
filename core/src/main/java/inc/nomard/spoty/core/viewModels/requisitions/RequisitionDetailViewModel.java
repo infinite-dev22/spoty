@@ -32,8 +32,6 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -250,9 +248,9 @@ public class RequisitionDetailViewModel {
     }
 
     public static void saveRequisitionDetails(
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         // TODO: make postMultipleDetail()
         requisitionDetailsList.forEach(requisitionDetails -> {
             var task = requisitionsRepository.postDetail(requisitionDetailsList);
@@ -285,7 +283,7 @@ public class RequisitionDetailViewModel {
         setQuantity("");
     }
 
-    public static void getAllRequisitionDetails(@Nullable ParameterlessConsumer onActivity) {
+    public static void getAllRequisitionDetails(ParameterlessConsumer onActivity) {
         Type listType = new TypeToken<ArrayList<RequisitionDetail>>() {
         }.getType();
 
@@ -333,7 +331,7 @@ public class RequisitionDetailViewModel {
                 });
     }
 
-    public static void getItem(Long index, int tempIndex, @Nullable ParameterlessConsumer onActivity, @Nullable ParameterlessConsumer onFailed) {
+    public static void getItem(Long index, int tempIndex, ParameterlessConsumer onActivity, ParameterlessConsumer onFailed) {
         var findModel = FindModel.builder()
                 .id(index)
                 .build();
@@ -397,7 +395,7 @@ public class RequisitionDetailViewModel {
                 });
     }
 
-    public static void searchItem(String search, @Nullable ParameterlessConsumer onActivity, @Nullable ParameterlessConsumer onFailed) {
+    public static void searchItem(String search, ParameterlessConsumer onActivity, ParameterlessConsumer onFailed) {
         var searchModel = new SearchModel();
         searchModel.setSearch(search);
 
@@ -428,7 +426,7 @@ public class RequisitionDetailViewModel {
         SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void updateRequisitionDetails(@Nullable ParameterlessConsumer onActivity, @Nullable ParameterlessConsumer onSuccess, @Nullable ParameterlessConsumer onFailed) {
+    public static void updateRequisitionDetails(ParameterlessConsumer onActivity, ParameterlessConsumer onSuccess, ParameterlessConsumer onFailed) {
         // TODO: Add save multiple on API.
         requisitionDetailsList.forEach(
                 requisitionDetail -> {
@@ -458,7 +456,7 @@ public class RequisitionDetailViewModel {
         PENDING_DELETES.add(index);
     }
 
-    public static void deleteRequisitionDetails(@NotNull LinkedList<Long> indexes, @Nullable ParameterlessConsumer onActivity, @Nullable ParameterlessConsumer onSuccess, @Nullable ParameterlessConsumer onFailed) {
+    public static void deleteRequisitionDetails(LinkedList<Long> indexes, ParameterlessConsumer onActivity, ParameterlessConsumer onSuccess, ParameterlessConsumer onFailed) {
         LinkedList<FindModel> findModelList = new LinkedList<>();
         indexes.forEach(index -> findModelList.add(new FindModel(index)));
 
@@ -489,7 +487,7 @@ public class RequisitionDetailViewModel {
 //        return new RequisitionTransaction();
 //    }
 //
-//    private static void createRequisitionTransaction(@NotNull RequisitionDetail requisitionDetail) {
+//    private static void createRequisitionTransaction(RequisitionDetail requisitionDetail) {
 //
 //        RequisitionTransaction requisitionTransaction = new RequisitionTransaction();
 //        requisitionTransaction.setBranch(requisitionDetail.getRequisition().getBranch());
@@ -503,7 +501,7 @@ public class RequisitionDetailViewModel {
 //        // TODO: Create requisition transaction.
 //    }
 //
-//    private static void updateRequisitionTransaction(@NotNull RequisitionDetail requisitionDetail) {
+//    private static void updateRequisitionTransaction(RequisitionDetail requisitionDetail) {
 //        RequisitionTransaction requisitionTransaction =
 //                getRequisitionTransaction(requisitionDetail.getId());
 //        requisitionTransaction.setBranch(requisitionDetail.getRequisition().getBranch());

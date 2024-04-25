@@ -29,7 +29,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.util.Duration;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.Comparator;
@@ -44,7 +43,7 @@ public class EmailPage extends BorderPane {
         init();
     }
 
-    private @NotNull HBox buildRefreshWidget() {
+    private HBox buildRefreshWidget() {
         var refresh = new HBox();
         refresh.setAlignment(Pos.CENTER);
         refresh.setPadding(new Insets(0.0, 10.0, 0.0, 10.0));
@@ -58,7 +57,7 @@ public class EmailPage extends BorderPane {
         return refresh;
     }
 
-    private @NotNull MFXTextField buildSearchField() {
+    private MFXTextField buildSearchField() {
         var searchField = new MFXTextField();
         searchField.setFloatMode(FloatMode.DISABLED);
         searchField.setPromptText("Search");
@@ -71,7 +70,7 @@ public class EmailPage extends BorderPane {
         return searchField;
     }
 
-    private @NotNull HBox buildActions() {
+    private HBox buildActions() {
         var actions = new HBox();
         actions.setAlignment(Pos.CENTER_RIGHT);
         actions.setSpacing(20.0);
@@ -90,7 +89,7 @@ public class EmailPage extends BorderPane {
         return actions;
     }
 
-    private @NotNull AnchorPane buildActionsPane() {
+    private AnchorPane buildActionsPane() {
         var anchorPane = new AnchorPane();
         anchorPane.setPadding(new Insets(5.0));
         anchorPane.getStyleClass().add("card-flat");
@@ -124,7 +123,7 @@ public class EmailPage extends BorderPane {
         this.setCenter(anchorPane);
     }
 
-    private @NotNull MFXTableView<Email> buildEmailsTable() {
+    private MFXTableView<Email> buildEmailsTable() {
         var dataTable = new MFXTableView<Email>();
 
         AnchorPane.setTopAnchor(dataTable, 50.0);
@@ -170,7 +169,7 @@ public class EmailPage extends BorderPane {
         return dataTable;
     }
 
-    private void styleEmailTable(@NotNull MFXTableView<Email> dataTable) {
+    private void styleEmailTable(MFXTableView<Email> dataTable) {
         dataTable.setPrefSize(1000, 1000);
         dataTable.features().enableBounceEffect();
         dataTable.features().enableSmoothScrolling(0.5);
@@ -192,7 +191,7 @@ public class EmailPage extends BorderPane {
                 });
     }
 
-    private @NotNull MFXContextMenu showContextMenu(MFXTableView<Email> dataTable, MFXTableRow<Email> obj) {
+    private MFXContextMenu showContextMenu(MFXTableView<Email> dataTable, MFXTableRow<Email> obj) {
         MFXContextMenu contextMenu = new MFXContextMenu(dataTable);
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
@@ -269,7 +268,7 @@ public class EmailPage extends BorderPane {
         transition.setOnFinished(null);
     }
 
-    private void setIcons(@NotNull HBox refresh) {
+    private void setIcons(HBox refresh) {
         var refreshIcon = new MFXFontIcon("fas-arrows-rotate", 24);
         refresh.getChildren().addFirst(refreshIcon);
 

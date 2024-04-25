@@ -28,7 +28,6 @@ import inc.nomard.spoty.utils.SpotyThreader;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -212,9 +211,9 @@ public class SupplierViewModel {
     }
 
     public static void getAllSuppliers(
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var task = suppliersRepository.fetchAll();
         if (Objects.nonNull(onActivity)) {
             task.setOnRunning(workerStateEvent -> onActivity.run());
@@ -243,9 +242,9 @@ public class SupplierViewModel {
 
     public static void getItem(
             Long index,
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var findModel = FindModel.builder().id(index).build();
 
         var task = suppliersRepository.fetch(findModel);
@@ -280,9 +279,9 @@ public class SupplierViewModel {
 
     public static void searchItem(
             String search,
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var searchModel = SearchModel.builder().search(search).build();
         var task = suppliersRepository.search(searchModel);
         if (Objects.nonNull(onActivity)) {

@@ -33,8 +33,6 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -193,7 +191,7 @@ public class QuotationDetailViewModel {
         quotationDetailsList.add(quotationDetail);
     }
 
-    public static void saveQuotationDetails(@Nullable ParameterlessConsumer onActivity, @Nullable ParameterlessConsumer onSuccess, @Nullable ParameterlessConsumer onFailed) {
+    public static void saveQuotationDetails(ParameterlessConsumer onActivity, ParameterlessConsumer onSuccess, ParameterlessConsumer onFailed) {
         quotationDetailsList.forEach(quotationDetail -> {
             var task = quotationsRepository.postDetail(quotationDetail);  // TODO: Add post multiple details.
             if (Objects.nonNull(onActivity)) {
@@ -211,7 +209,7 @@ public class QuotationDetailViewModel {
         quotationDetailsList.clear();
     }
 
-    public static void searchItem(String search, @Nullable ParameterlessConsumer onActivity, @Nullable ParameterlessConsumer onFailed) throws IOException, InterruptedException {
+    public static void searchItem(String search, ParameterlessConsumer onActivity, ParameterlessConsumer onFailed) throws IOException, InterruptedException {
         var searchModel = new SearchModel();
         searchModel.setSearch(search);
 
@@ -252,7 +250,7 @@ public class QuotationDetailViewModel {
         quotationDetailsList.add(getTempId(), quotationDetail);
     }
 
-    public static void getAllQuotationDetails(@Nullable ParameterlessConsumer onActivity) {
+    public static void getAllQuotationDetails(ParameterlessConsumer onActivity) {
         Type listType = new TypeToken<ArrayList<QuotationDetail>>() {
         }.getType();
         var task = quotationsRepository.fetchAllDetail();
@@ -289,9 +287,9 @@ public class QuotationDetailViewModel {
     }
 
     public static void updateQuotationDetails(
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         // TODO: Add save multiple on API.
         quotationDetailsList.forEach(
                 adjustmentDetail -> {
@@ -315,10 +313,10 @@ public class QuotationDetailViewModel {
         PENDING_DELETES.add(index);
     }
 
-    public static void deleteQuotationDetails(@NotNull LinkedList<Long> indexes,
-                                              @Nullable ParameterlessConsumer onActivity,
-                                              @Nullable ParameterlessConsumer onSuccess,
-                                              @Nullable ParameterlessConsumer onFailed) {
+    public static void deleteQuotationDetails(LinkedList<Long> indexes,
+                                              ParameterlessConsumer onActivity,
+                                              ParameterlessConsumer onSuccess,
+                                              ParameterlessConsumer onFailed) {
         LinkedList<FindModel> findModelList = new LinkedList<>();
         indexes.forEach(index -> findModelList.add(new FindModel(index)));
 

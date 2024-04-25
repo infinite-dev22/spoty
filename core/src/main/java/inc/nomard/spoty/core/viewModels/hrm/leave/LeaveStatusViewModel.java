@@ -36,7 +36,6 @@ import io.github.palexdev.mfxcore.base.properties.CharProperty;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
 import java.text.ParseException;
@@ -122,7 +121,7 @@ public class LeaveStatusViewModel {
         return description;
     }
 
-    public static @Nullable Date getStartDate() {
+    public static Date getStartDate() {
         try {
             return new SimpleDateFormat("MMM dd, yyyy").parse(startDate.get());
         } catch (ParseException e) {
@@ -143,7 +142,7 @@ public class LeaveStatusViewModel {
         return startTime;
     }
 
-    public static @Nullable Date getEndDate() {
+    public static Date getEndDate() {
         try {
             return new SimpleDateFormat("MMM dd, yyyy").parse(startDate.get());
         } catch (ParseException e) {
@@ -180,7 +179,7 @@ public class LeaveStatusViewModel {
         startTime.set(time);
     }
 
-    public static @Nullable Duration getDuration() {
+    public static Duration getDuration() {
         return Duration.parse(startDate.get());
     }
 
@@ -281,9 +280,9 @@ public class LeaveStatusViewModel {
     }
 
     public static void getAllLeaveStatuses(
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var task = leaveStatusRepository.fetchAll();
         if (Objects.nonNull(onActivity)) {
             task.setOnRunning(workerStateEvent -> onActivity.run());
@@ -312,9 +311,9 @@ public class LeaveStatusViewModel {
 
     public static void getItem(
             Long index,
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var findModel = FindModel.builder().id(index).build();
 
         var task = leaveStatusRepository.fetch(findModel);
@@ -354,9 +353,9 @@ public class LeaveStatusViewModel {
 
     public static void searchItem(
             String search,
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var searchModel = SearchModel.builder().search(search).build();
         var task = leaveStatusRepository.search(searchModel);
         if (Objects.nonNull(onActivity)) {

@@ -7,7 +7,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.util.Duration;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -43,7 +42,7 @@ public class ActivityIndicator extends HBox {
         SpotyAnimations.pulsate(circle3, Duration.millis(500), .4, Timeline.INDEFINITE);
     }
 
-    public ActivityIndicator(@Nullable Color color) {
+    public ActivityIndicator(Color color) {
         var circle1 = new Circle(175, 100, 10);
         var circle2 = new Circle(175, 100, 15);
         var circle3 = new Circle(175, 100, 10);
@@ -105,7 +104,7 @@ public class ActivityIndicator extends HBox {
         SpotyAnimations.pulsate(circle3, Duration.millis(500), .4, Timeline.INDEFINITE);
     }
 
-    public ActivityIndicator(@Nullable Color color, double radius) {
+    public ActivityIndicator(Color color, double radius) {
         var circle1 = new Circle(175, 100, radius);
         var circle2 = new Circle(175, 100, radius + 5);
         var circle3 = new Circle(175, 100, radius);

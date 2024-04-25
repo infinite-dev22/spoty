@@ -31,7 +31,6 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
 import java.text.ParseException;
@@ -207,9 +206,9 @@ public class TransferMasterViewModel {
     }
 
     public static void getTransferMasters(
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var task = transfersRepository.fetchAllMaster();
         if (Objects.nonNull(onActivity)) {
             task.setOnRunning(workerStateEvent -> onActivity.run());
@@ -240,9 +239,9 @@ public class TransferMasterViewModel {
 
     public static void getItem(
             Long index,
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var findModel = FindModel.builder().id(index).build();
         var task = transfersRepository.fetchMaster(findModel);
         if (Objects.nonNull(onActivity)) {
@@ -278,9 +277,9 @@ public class TransferMasterViewModel {
 
     public static void searchItem(
             String search,
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var searchModel = SearchModel.builder().search(search).build();
         var task = transfersRepository.searchMaster(searchModel);
         if (Objects.nonNull(onActivity)) {

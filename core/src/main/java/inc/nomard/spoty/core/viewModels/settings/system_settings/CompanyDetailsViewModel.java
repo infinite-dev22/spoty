@@ -11,7 +11,6 @@ import inc.nomard.spoty.utils.ParameterlessConsumer;
 import inc.nomard.spoty.utils.SpotyLogger;
 import inc.nomard.spoty.utils.SpotyThreader;
 import javafx.beans.property.*;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Date;
 import java.util.Objects;
@@ -290,7 +289,7 @@ public class CompanyDetailsViewModel {
     public static void getCompany(
             Long index,
             ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onSuccess,
             ParameterlessConsumer onFailed) {
         var findModel = new FindModel();
         findModel.setId(index);

@@ -23,7 +23,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -49,7 +48,7 @@ public class Navigation {
         return instance;
     }
 
-    public static @NotNull Map<String, NavTree.NavTreeItem> createNavItems() {
+    public static Map<String, NavTree.NavTreeItem> createNavItems() {
         var map = new HashMap<String, NavTree.NavTreeItem>();
         // People
         map.put("SUPPLIERS", NavTree.NavTreeItem.page("Suppliers", Pages.getSupplierPane()));
@@ -164,7 +163,7 @@ public class Navigation {
         return new NavTree(this);
     }
 
-    private NavTree.@NotNull NavTreeItem createTree() {
+    private NavTree.NavTreeItem createTree() {
         var dashboard =
                 NavTree.NavTreeItem.mainPage("Dashboard", "fas-chart-simple", Pages.getDashboardPane());
 

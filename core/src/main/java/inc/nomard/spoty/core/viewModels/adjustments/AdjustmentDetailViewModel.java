@@ -34,8 +34,6 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -155,9 +153,9 @@ public class AdjustmentDetailViewModel {
     }
 
     public static void saveAdjustmentDetails(
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         adjustmentDetailsList.forEach(adjustmentDetail -> {
             var task = adjustmentRepository.postDetail(adjustmentDetail);
             if (Objects.nonNull(onActivity)) {
@@ -243,9 +241,9 @@ public class AdjustmentDetailViewModel {
     }
 
     public static void getAllAdjustmentDetails(
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var task = adjustmentRepository.fetchAllDetail();
         if (Objects.nonNull(onActivity)) {
             task.setOnRunning(workerStateEvent -> onActivity.run());
@@ -283,9 +281,9 @@ public class AdjustmentDetailViewModel {
 
     public static void searchItem(
             String search,
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var searchModel = SearchModel.builder().search(search).build();
 
         var task = adjustmentRepository.searchDetail(searchModel);
@@ -317,9 +315,9 @@ public class AdjustmentDetailViewModel {
     }
 
     public static void updateAdjustmentDetails(
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         // TODO: Add save multiple on API.
         adjustmentDetailsList.forEach(
                 adjustmentDetail -> {
@@ -344,10 +342,10 @@ public class AdjustmentDetailViewModel {
         PENDING_DELETES.add(index);
     }
 
-    public static void deleteAdjustmentDetails(@NotNull LinkedList<Long> indexes,
-                                               @Nullable ParameterlessConsumer onActivity,
-                                               @Nullable ParameterlessConsumer onSuccess,
-                                               @Nullable ParameterlessConsumer onFailed) {
+    public static void deleteAdjustmentDetails(LinkedList<Long> indexes,
+                                               ParameterlessConsumer onActivity,
+                                               ParameterlessConsumer onSuccess,
+                                               ParameterlessConsumer onFailed) {
         LinkedList<FindModel> findModelList = new LinkedList<>();
         indexes.forEach(index -> findModelList.add(new FindModel(index)));
 
@@ -378,7 +376,7 @@ public class AdjustmentDetailViewModel {
         return new AdjustmentTransaction();
     }
 
-    private static void createAdjustmentTransaction(@NotNull AdjustmentDetail adjustmentDetail) {
+    private static void createAdjustmentTransaction(AdjustmentDetail adjustmentDetail) {
 
         AdjustmentTransaction adjustmentTransaction = new AdjustmentTransaction();
         adjustmentTransaction.setAdjustmentDetail(adjustmentDetail);
@@ -391,7 +389,7 @@ public class AdjustmentDetailViewModel {
         // TODO: Create adjustment transaction.
     }
 
-    private static void updateAdjustmentTransaction(@NotNull AdjustmentDetail adjustmentDetail) {
+    private static void updateAdjustmentTransaction(AdjustmentDetail adjustmentDetail) {
         AdjustmentTransaction adjustmentTransaction =
                 getAdjustmentTransaction(adjustmentDetail.getId());
         adjustmentTransaction.setAdjustmentDetail(adjustmentDetail);

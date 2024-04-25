@@ -33,7 +33,6 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
 import java.text.ParseException;
@@ -75,7 +74,7 @@ public class PurchaseMasterViewModel {
         return id;
     }
 
-    public static @Nullable Date getDate() {
+    public static Date getDate() {
         try {
             return new SimpleDateFormat("MMM dd, yyyy").parse(date.get());
         } catch (ParseException e) {
@@ -206,9 +205,9 @@ public class PurchaseMasterViewModel {
     }
 
     public static void getAllPurchaseMasters(
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         Type listType = new TypeToken<ArrayList<PurchaseMaster>>() {
         }.getType();
         var task = purchasesRepository.fetchAllMaster();
@@ -276,9 +275,9 @@ public class PurchaseMasterViewModel {
 
     public static void searchItem(
             String search,
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) throws Exception {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) throws Exception {
         var searchModel = new SearchModel();
         searchModel.setSearch(search);
 

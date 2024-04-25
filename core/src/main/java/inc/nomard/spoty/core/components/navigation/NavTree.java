@@ -30,9 +30,6 @@ import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.List;
@@ -53,7 +50,7 @@ public class NavTree extends TreeView<Nav> {
      *
      * @param navigation navigation
      */
-    public NavTree(@NotNull Navigation navigation) {
+    public NavTree(Navigation navigation) {
         super();
 
         getSelectionModel()
@@ -103,7 +100,7 @@ public class NavTree extends TreeView<Nav> {
      * @param icon dropdown icon.
      * @param on   show icon(boolean).
      */
-    public static void toggleVisibility(@NotNull Node icon, boolean on) {
+    public static void toggleVisibility(Node icon, boolean on) {
         icon.setVisible(on);
         icon.setManaged(on);
     }
@@ -214,8 +211,7 @@ public class NavTree extends TreeView<Nav> {
          *
          * @return NavTreeItem
          */
-        @Contract(" -> new")
-        public static @NotNull NavTreeItem root() {
+        public static NavTreeItem root() {
             return new NavTreeItem(Nav.ROOT);
         }
 
@@ -226,7 +222,7 @@ public class NavTree extends TreeView<Nav> {
          * @param icon  display icon on treeview item.
          * @return NavTreeItem
          */
-        public static @NotNull NavTreeItem group(String title, String icon) {
+        public static NavTreeItem group(String title, String icon) {
             MFXIconWrapper wrapper = new MFXIconWrapper(icon, 24, 32);
             return new NavTreeItem(new Nav(title, null, wrapper, null, null));
         }
@@ -237,7 +233,7 @@ public class NavTree extends TreeView<Nav> {
          * @param title display name on treeview item.
          * @return NavTreeItem
          */
-        public static @NotNull NavTreeItem group(String title) {
+        public static NavTreeItem group(String title) {
             return new NavTreeItem(new Nav(title, null, null, null, null));
         }
 
@@ -249,7 +245,7 @@ public class NavTree extends TreeView<Nav> {
          * @param view  node to display on treeview item clicked.
          * @return NavTreeItem
          */
-        public static @NotNull NavTreeItem mainPage(String title, String icon, BorderPane view) {
+        public static NavTreeItem mainPage(String title, String icon, BorderPane view) {
             MFXIconWrapper wrapper = new MFXIconWrapper(icon, 24, 32);
             return new NavTreeItem(new Nav(title, null, wrapper, view, null));
         }
@@ -261,8 +257,7 @@ public class NavTree extends TreeView<Nav> {
          * @param view  node to display on treeview item clicked.
          * @return NavTreeItem
          */
-        @Contract("_, _ -> new")
-        public static @NotNull NavTreeItem page(String title, BorderPane view) {
+        public static NavTreeItem page(String title, BorderPane view) {
             return new NavTreeItem(new Nav(title, null, null, view, null));
         }
 
@@ -273,12 +268,11 @@ public class NavTree extends TreeView<Nav> {
          * @param view  node to display on treeview item clicked.
          * @return NavTreeItem
          */
-        @Contract("_, _, _ -> new")
-        public static @NotNull NavTreeItem page(String title, BorderPane view, String... searchKeywords) {
+        public static NavTreeItem page(String title, BorderPane view, String... searchKeywords) {
             return new NavTreeItem(new Nav(title, null, null, view, List.of(searchKeywords)));
         }
 
-        public @Nullable BorderPane view() {
+        public BorderPane view() {
             return nav.view();
         }
 

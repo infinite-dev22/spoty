@@ -14,8 +14,6 @@
 
 package inc.nomard.spoty.utils;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.nio.file.Path;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
@@ -40,13 +38,13 @@ public class SpotyLogger {
      * @param throwable    exception to be written to log file.
      * @param currentClass class in which the exception is handled.
      */
-//    public static <T> void writeToFile(Throwable throwable, @NotNull Class<T> currentClass) {
+//    public static <T> void writeToFile(Throwable throwable, Class<T> currentClass) {
 //        throwable.printStackTrace();
 //    }
 
 
     // Doesn.t actually write errors to file
-    public static <T> void writeToFile(Throwable throwable, @NotNull Class<T> currentClass) {
+    public static <T> void writeToFile(Throwable throwable, Class<T> currentClass) {
         Logger logger = Logger.getLogger(currentClass.getName());
 
         Path path;

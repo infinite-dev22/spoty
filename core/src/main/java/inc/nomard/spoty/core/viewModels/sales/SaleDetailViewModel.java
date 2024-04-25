@@ -33,8 +33,6 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -248,9 +246,9 @@ public class SaleDetailViewModel {
     }
 
     public static void saveSaleDetails(
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         saleDetailsList.forEach(saleDetail -> {
             var task = salesRepository.postDetail(saleDetail);
             if (Objects.nonNull(onActivity)) {
@@ -341,9 +339,9 @@ public class SaleDetailViewModel {
     }
 
     public static void updateItem(
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var saleDetail =
                 SaleDetail.builder()
                         .id(getId())
@@ -373,9 +371,9 @@ public class SaleDetailViewModel {
     }
 
     public static void updateSaleDetails(
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         // TODO: Add endpoint to update multiple.
         saleDetailsList.forEach(
                 saleDetail -> {
@@ -396,9 +394,9 @@ public class SaleDetailViewModel {
     }
 
     public static void getAllSaleDetails(
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
 
         var task = salesRepository.fetchAllDetail();
         if (Objects.nonNull(onActivity)) {
@@ -428,8 +426,8 @@ public class SaleDetailViewModel {
 
     public static void searchItem(
             String search,
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onFailed) {
         var searchModel = SearchModel.builder().search(search).build();
 
         var task = salesRepository.searchDetail(searchModel);
@@ -461,10 +459,10 @@ public class SaleDetailViewModel {
         PENDING_DELETES.add(index);
     }
 
-    public static void deleteSaleDetails(@NotNull LinkedList<Long> indexes,
-                                         @Nullable ParameterlessConsumer onActivity,
-                                         @Nullable ParameterlessConsumer onSuccess,
-                                         @Nullable ParameterlessConsumer onFailed) {
+    public static void deleteSaleDetails(LinkedList<Long> indexes,
+                                         ParameterlessConsumer onActivity,
+                                         ParameterlessConsumer onSuccess,
+                                         ParameterlessConsumer onFailed) {
         LinkedList<FindModel> findModelList = new LinkedList<>();
         indexes.forEach(index -> findModelList.add(new FindModel(index)));
 
@@ -496,7 +494,7 @@ public class SaleDetailViewModel {
         return new SaleTransaction();
     }
 
-    private static void createSaleTransaction(@NotNull SaleDetail saleDetail) {
+    private static void createSaleTransaction(SaleDetail saleDetail) {
 //        Dao<SaleTransaction, Long> saleTransactionDao =
 //                DaoManager.createDao(connectionSource, SaleTransaction.class);
 //
@@ -510,7 +508,7 @@ public class SaleDetailViewModel {
 //        saleTransactionDao.create(saleTransaction);
     }
 
-    private static void updateSaleTransaction(@NotNull SaleDetail saleDetail) {
+    private static void updateSaleTransaction(SaleDetail saleDetail) {
 //        Dao<SaleTransaction, Long> saleTransactionDao =
 //                DaoManager.createDao(connectionSource, SaleTransaction.class);
 //

@@ -28,7 +28,6 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.net.URL;
@@ -161,7 +160,7 @@ public class TaxesController implements Initializable {
         return contextMenu;
     }
 
-    private @NotNull MFXContextMenuItem getDeleteContextMenuItem(MFXTableRow<Tax> obj) {
+    private MFXContextMenuItem getDeleteContextMenuItem(MFXTableRow<Tax> obj) {
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
 
         // Actions

@@ -32,8 +32,6 @@ import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -69,7 +67,7 @@ public class ProductViewModel {
     private static final StringProperty description = new SimpleStringProperty("");
     private static final ProductsRepositoryImpl productsRepository = new ProductsRepositoryImpl();
 
-    public static @NotNull Long getId() {
+    public static Long getId() {
         return id.get();
     }
 
@@ -350,9 +348,9 @@ public class ProductViewModel {
     }
 
     public static void getAllProducts(
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var task = productsRepository.fetchAll();
         if (Objects.nonNull(onActivity)) {
             task.setOnRunning(workerStateEvent -> onActivity.run());
@@ -381,9 +379,9 @@ public class ProductViewModel {
 
     public static void getProduct(
             Long index,
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var findModel = FindModel.builder().id(index).build();
 
         var task = productsRepository.fetch(findModel);
@@ -426,9 +424,9 @@ public class ProductViewModel {
 
     public static void searchItem(
             String search,
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var searchModel = SearchModel.builder().search(search).build();
         var task = productsRepository.search(searchModel);
         if (Objects.nonNull(onActivity)) {
@@ -458,9 +456,9 @@ public class ProductViewModel {
     }
 
     public static void updateProduct(
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var product = Product.builder()
                 .id(getId())
                 .name(getName())

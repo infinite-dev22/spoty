@@ -31,7 +31,6 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
 import java.text.ParseException;
@@ -73,7 +72,7 @@ public class StockInMasterViewModel {
         return id;
     }
 
-    public static @Nullable Date getDate() {
+    public static Date getDate() {
         try {
             return new SimpleDateFormat("MMM dd, yyyy").parse(date.get());
         } catch (ParseException e) {
@@ -190,9 +189,9 @@ public class StockInMasterViewModel {
     }
 
     public static void getAllStockInMasters(
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var task = stockInsRepository.fetchAllMaster();
         if (Objects.nonNull(onActivity)) {
             task.setOnRunning(workerStateEvent -> onActivity.run());
@@ -222,9 +221,9 @@ public class StockInMasterViewModel {
 
     public static void getItem(
             Long index,
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var findModel = FindModel.builder().id(index).build();
         var task = stockInsRepository.fetchMaster(findModel);
         if (Objects.nonNull(onActivity)) {
@@ -257,9 +256,9 @@ public class StockInMasterViewModel {
 
     public static void searchItem(
             String search,
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var searchModel = SearchModel.builder().search(search).build();
         var task = stockInsRepository.searchMaster(searchModel);
         if (Objects.nonNull(onActivity)) {

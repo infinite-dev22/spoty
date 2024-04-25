@@ -62,8 +62,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 
 import java.net.URL;
 import java.util.Objects;
@@ -181,7 +179,7 @@ public class PointOfSaleController implements Initializable {
         posProductHolder.setContent(productsGridView);
     }
 
-    private void productCardOnAction(@NotNull ProductCard productCard) {
+    private void productCardOnAction(ProductCard productCard) {
         productCard.setOnMouseClicked(
                 event -> {
                     if (SaleDetailViewModel.getSaleDetails().stream()
@@ -239,8 +237,7 @@ public class PointOfSaleController implements Initializable {
         return totalPrice;
     }
 
-    @Contract(pure = true)
-    private long calculateQuantity(@NotNull SaleDetail saleDetail) {
+    private long calculateQuantity(SaleDetail saleDetail) {
         return saleDetail.getQuantity() + 1;
     }
 
@@ -269,7 +266,7 @@ public class PointOfSaleController implements Initializable {
                                 });
     }
 
-    private @NotNull ToggleButton createToggle(String text, ToggleGroup toggleGroup) {
+    private ToggleButton createToggle(String text, ToggleGroup toggleGroup) {
         MFXRectangleToggleNode toggleNode = new MFXRectangleToggleNode(text);
         toggleNode.setAlignment(Pos.CENTER_LEFT);
         toggleNode.setMaxWidth(Double.MAX_VALUE);

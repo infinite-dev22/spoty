@@ -32,8 +32,6 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -250,9 +248,9 @@ public class PurchaseDetailViewModel {
     }
 
     public static void savePurchaseDetails(
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         // TODO: make postMultipleDetail()
         purchaseDetailsList.forEach(purchaseDetails -> {
             var task = purchasesRepository.postDetail(purchaseDetailsList);
@@ -285,7 +283,7 @@ public class PurchaseDetailViewModel {
         setQuantity("");
     }
 
-    public static void getAllPurchaseDetails(@Nullable ParameterlessConsumer onActivity) {
+    public static void getAllPurchaseDetails(ParameterlessConsumer onActivity) {
         Type listType = new TypeToken<ArrayList<PurchaseDetail>>() {
         }.getType();
 
@@ -333,7 +331,7 @@ public class PurchaseDetailViewModel {
                 });
     }
 
-    public static void getItem(Long index, int tempIndex, @Nullable ParameterlessConsumer onActivity, @Nullable ParameterlessConsumer onFailed) {
+    public static void getItem(Long index, int tempIndex, ParameterlessConsumer onActivity, ParameterlessConsumer onFailed) {
         var findModel = FindModel.builder()
                 .id(index)
                 .build();
@@ -397,7 +395,7 @@ public class PurchaseDetailViewModel {
                 });
     }
 
-    public static void searchItem(String search, @Nullable ParameterlessConsumer onActivity, @Nullable ParameterlessConsumer onFailed) {
+    public static void searchItem(String search, ParameterlessConsumer onActivity, ParameterlessConsumer onFailed) {
         var searchModel = new SearchModel();
         searchModel.setSearch(search);
 
@@ -428,7 +426,7 @@ public class PurchaseDetailViewModel {
         SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void updatePurchaseDetails(@Nullable ParameterlessConsumer onActivity, @Nullable ParameterlessConsumer onSuccess, @Nullable ParameterlessConsumer onFailed) {
+    public static void updatePurchaseDetails(ParameterlessConsumer onActivity, ParameterlessConsumer onSuccess, ParameterlessConsumer onFailed) {
         // TODO: Add save multiple on API.
         purchaseDetailsList.forEach(
                 purchaseDetail -> {
@@ -458,7 +456,7 @@ public class PurchaseDetailViewModel {
         PENDING_DELETES.add(index);
     }
 
-    public static void deletePurchaseDetails(@NotNull LinkedList<Long> indexes, @Nullable ParameterlessConsumer onActivity, @Nullable ParameterlessConsumer onSuccess, @Nullable ParameterlessConsumer onFailed) {
+    public static void deletePurchaseDetails(LinkedList<Long> indexes, ParameterlessConsumer onActivity, ParameterlessConsumer onSuccess, ParameterlessConsumer onFailed) {
         LinkedList<FindModel> findModelList = new LinkedList<>();
         indexes.forEach(index -> findModelList.add(new FindModel(index)));
 
@@ -489,7 +487,7 @@ public class PurchaseDetailViewModel {
 //        return new PurchaseTransaction();
 //    }
 //
-//    private static void createPurchaseTransaction(@NotNull PurchaseDetail purchaseDetail) {
+//    private static void createPurchaseTransaction(PurchaseDetail purchaseDetail) {
 //
 //        PurchaseTransaction purchaseTransaction = new PurchaseTransaction();
 //        purchaseTransaction.setBranch(purchaseDetail.getPurchase().getBranch());
@@ -503,7 +501,7 @@ public class PurchaseDetailViewModel {
 //        // TODO: Create purchase transaction.
 //    }
 //
-//    private static void updatePurchaseTransaction(@NotNull PurchaseDetail purchaseDetail) {
+//    private static void updatePurchaseTransaction(PurchaseDetail purchaseDetail) {
 //        PurchaseTransaction purchaseTransaction =
 //                getPurchaseTransaction(purchaseDetail.getId());
 //        purchaseTransaction.setBranch(purchaseDetail.getPurchase().getBranch());

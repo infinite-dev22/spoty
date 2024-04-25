@@ -17,8 +17,6 @@ import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -43,7 +41,7 @@ public class SalaryAdvanceViewModel {
     private static final DoubleProperty netSalary = new SimpleDoubleProperty(0);
     private static final SalaryAdvancesRepositoryImpl salaryAdvancesRepository = new SalaryAdvancesRepositoryImpl();
 
-    public static @NotNull Long getId() {
+    public static Long getId() {
         return id.get();
     }
 
@@ -55,7 +53,7 @@ public class SalaryAdvanceViewModel {
         return id;
     }
 
-    public static @NotNull User getEmployee() {
+    public static User getEmployee() {
         return employee.get();
     }
 
@@ -67,7 +65,7 @@ public class SalaryAdvanceViewModel {
         return employee;
     }
 
-    public static @NotNull PaySlip getPaySlip() {
+    public static PaySlip getPaySlip() {
         return paySlip.get();
     }
 
@@ -160,9 +158,9 @@ public class SalaryAdvanceViewModel {
     }
 
     public static void getAllSalaryAdvances(
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var task = salaryAdvancesRepository.fetchAll();
         if (Objects.nonNull(onActivity)) {
             task.setOnRunning(workerStateEvent -> onActivity.run());
@@ -191,9 +189,9 @@ public class SalaryAdvanceViewModel {
 
     public static void getSalaryAdvance(
             Long index,
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var findModel = FindModel.builder().id(index).build();
 
         var task = salaryAdvancesRepository.fetch(findModel);
@@ -226,9 +224,9 @@ public class SalaryAdvanceViewModel {
 
     public static void searchItem(
             String search,
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var searchModel = SearchModel.builder().search(search).build();
         var task = salaryAdvancesRepository.search(searchModel);
         if (Objects.nonNull(onActivity)) {
@@ -258,9 +256,9 @@ public class SalaryAdvanceViewModel {
     }
 
     public static void updateSalaryAdvance(
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var salaryAdvance = SalaryAdvance.builder()
                 .id(getId())
                 .employee(getEmployee())

@@ -31,8 +31,6 @@ import inc.nomard.spoty.utils.SpotyThreader;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -195,9 +193,9 @@ public class TransferDetailViewModel {
     }
 
     public static void saveTransferDetails(
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         transferDetailsList.forEach(transferDetail -> {
             var task = transfersRepository.postDetail(transferDetail);
             if (Objects.nonNull(onActivity)) {
@@ -216,7 +214,7 @@ public class TransferDetailViewModel {
         transferDetailsList.clear();
     }
 
-    public static void getAllTransferDetails(@Nullable ParameterlessConsumer onActivity) {
+    public static void getAllTransferDetails(ParameterlessConsumer onActivity) {
         var task = transfersRepository.fetchAllDetail();
         if (Objects.nonNull(onActivity)) {
             task.setOnRunning(workerStateEvent -> onActivity.run());
@@ -265,9 +263,9 @@ public class TransferDetailViewModel {
 
     public static void updateItem(
             Long index,
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var transferDetail = transferDetailsList.get(Math.toIntExact(index));
         transferDetail.setProduct(getProduct());
         transferDetail.setQuantity(getQuantity());
@@ -289,9 +287,9 @@ public class TransferDetailViewModel {
     }
 
     public static void updateTransferDetails(
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         // TODO: Add save multiple on API.
         transferDetailsList.forEach(
                 transferDetail -> {
@@ -315,10 +313,10 @@ public class TransferDetailViewModel {
         PENDING_DELETES.add(index);
     }
 
-    public static void deleteTransferDetails(@NotNull LinkedList<Long> indexes,
-                                             @Nullable ParameterlessConsumer onActivity,
-                                             @Nullable ParameterlessConsumer onSuccess,
-                                             @Nullable ParameterlessConsumer onFailed) {
+    public static void deleteTransferDetails(LinkedList<Long> indexes,
+                                             ParameterlessConsumer onActivity,
+                                             ParameterlessConsumer onSuccess,
+                                             ParameterlessConsumer onFailed) {
         LinkedList<FindModel> findModelList = new LinkedList<>();
         indexes.forEach(index -> findModelList.add(new FindModel(index)));
 
@@ -392,7 +390,7 @@ public class TransferDetailViewModel {
         return new TransferTransaction();
     }
 
-    private static void createTransferTransaction(@NotNull TransferDetail transferDetails) {
+    private static void createTransferTransaction(TransferDetail transferDetails) {
 //        Dao<TransferTransaction, Long> transferTransactionDao =
 //                DaoManager.createDao(connectionSource, TransferTransaction.class);
 //
@@ -407,7 +405,7 @@ public class TransferDetailViewModel {
 //        transferTransactionDao.create(transferTransaction);
     }
 
-    private static void updateTransferTransaction(@NotNull TransferDetail transferDetails) {
+    private static void updateTransferTransaction(TransferDetail transferDetails) {
 //        Dao<TransferTransaction, Long> transferTransactionDao =
 //                DaoManager.createDao(connectionSource, TransferTransaction.class);
 //

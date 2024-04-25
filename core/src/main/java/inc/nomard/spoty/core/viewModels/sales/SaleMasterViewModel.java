@@ -32,7 +32,6 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
 import java.text.DateFormat;
@@ -79,7 +78,7 @@ public class SaleMasterViewModel {
         return id;
     }
 
-    public static @Nullable Date getDate() {
+    public static Date getDate() {
         try {
             DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.DEFAULT, Locale.getDefault());
 
@@ -246,9 +245,9 @@ public class SaleMasterViewModel {
     }
 
     public static void getAllSaleMasters(
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var task = salesRepository.fetchAllMaster();
         if (Objects.nonNull(onActivity)) {
             task.setOnRunning(workerStateEvent -> onActivity.run());
@@ -282,9 +281,9 @@ public class SaleMasterViewModel {
 
     public static void getItem(
             Long index,
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var findModel = FindModel.builder().id(index).build();
         var task = salesRepository.fetchMaster(findModel);
 
@@ -320,9 +319,9 @@ public class SaleMasterViewModel {
 
     public static void searchItem(
             String search,
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var searchModel = SearchModel.builder().search(search).build();
         var task = salesRepository.searchMaster(searchModel);
         if (Objects.nonNull(onActivity)) {

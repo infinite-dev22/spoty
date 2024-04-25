@@ -21,7 +21,6 @@ import io.github.palexdev.materialfx.validation.Severity;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import javafx.beans.binding.Bindings;
 import javafx.scene.control.Label;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -36,7 +35,7 @@ public class Validators {
     static List<Constraint> validate;
 
     public static void emailValidator(
-            @NotNull MFXTextField textField, Label errorDisplay, @NotNull MFXButton actionButton) {
+            MFXTextField textField, Label errorDisplay, MFXButton actionButton) {
         // Email input validation.
         Constraint alphaCharsConstraint =
                 Constraint.Builder.build()
@@ -97,11 +96,11 @@ public class Validators {
     }
 
     public static void lengthValidator(
-            @NotNull MFXTextField textField,
+            MFXTextField textField,
             int length,
             String message,
             Label errorDisplay,
-            @NotNull MFXButton actionButton) {
+            MFXButton actionButton) {
         // Phone input validation.
         Constraint phoneLength =
                 Constraint.Builder.build()
@@ -151,7 +150,7 @@ public class Validators {
     }
 
     public static void requiredValidator(
-            @NotNull MFXTextField textField, String message, Label errorDisplay, @NotNull MFXButton actionButton) {
+            MFXTextField textField, String message, Label errorDisplay, MFXButton actionButton) {
         // Name input validation.
         Constraint lengthConstraint =
                 Constraint.Builder.build()

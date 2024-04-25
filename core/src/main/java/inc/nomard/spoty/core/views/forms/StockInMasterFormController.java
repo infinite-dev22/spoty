@@ -45,7 +45,6 @@ import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.net.URL;
@@ -171,7 +170,7 @@ public class StockInMasterFormController implements Initializable {
                 });
     }
 
-    private @NotNull MFXContextMenu showContextMenu(MFXTableRow<StockInDetail> obj) {
+    private MFXContextMenu showContextMenu(MFXTableRow<StockInDetail> obj) {
         MFXContextMenu contextMenu = new MFXContextMenu(stockInDetailTable);
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");

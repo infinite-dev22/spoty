@@ -20,7 +20,6 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
-import org.jetbrains.annotations.Nullable;
 
 
 public class RoleViewModel {
@@ -72,9 +71,9 @@ public class RoleViewModel {
     }
 
     public static void saveRole(
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
 //        Dao<Role, Long> roleDao = DaoManager.createDao(connectionSource, Role.class);
 //        Dao<RolePermission, Long> rolePermissionDao =
 //                DaoManager.createDao(connectionSource, RolePermission.class);
@@ -119,9 +118,9 @@ public class RoleViewModel {
     }
 
     public static void getAllRoles(
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
 //        Dao<Role, Long> roleDao = DaoManager.createDao(connectionSource, Role.class);
 //
 //        Platform.runLater(
@@ -138,9 +137,9 @@ public class RoleViewModel {
 
     public static void getItem(
             long index,
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
 //        Dao<Role, Long> roleDao = DaoManager.createDao(connectionSource, Role.class);
 //
 //        Role role = roleDao.queryForId(index);
@@ -152,9 +151,9 @@ public class RoleViewModel {
 
     public static void updateItem(
             long index,
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
 //        Dao<Role, Long> roleDao = DaoManager.createDao(connectionSource, Role.class);
 //
 //        Role role = roleDao.queryForId(index);
@@ -169,9 +168,9 @@ public class RoleViewModel {
 
     public static void deleteItem(
             long index,
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
 //        Dao<Role, Long> roleDao = DaoManager.createDao(connectionSource, Role.class);
 //
 //        roleDao.deleteById(index);

@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 public class Main extends Application {
 
     public static Stage primaryStage = null;
-    private ScheduledExecutorService scheduler;
+    private static ScheduledExecutorService scheduler;
 
     public static void main(String... args) {
         System.setProperty("javafx.preloader", LaunchPreloader.class.getCanonicalName());
@@ -35,7 +35,10 @@ public class Main extends Application {
         if (SeamlessUpdater.checkForPendingUpdate()) {
             SeamlessUpdater.launchInstallerAndExit();
         }
-        SeamlessUpdater.checkForUpdates();
+
+        // Schedule periodic checks
+        scheduler = Executors.newSingleThreadScheduledExecutor();
+        scheduler.scheduleAtFixedRate(SeamlessUpdater::checkForUpdates, 0, 3, TimeUnit.HOURS);
 
         Application.launch(Main.class, args);
     }
@@ -48,10 +51,6 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         Main.primaryStage = primaryStage;
-
-        // Schedule periodic checks
-        scheduler = Executors.newSingleThreadScheduledExecutor();
-        scheduler.scheduleAtFixedRate(SeamlessUpdater::checkForUpdates, 0, 3, TimeUnit.HOURS);
     }
 
     @Override

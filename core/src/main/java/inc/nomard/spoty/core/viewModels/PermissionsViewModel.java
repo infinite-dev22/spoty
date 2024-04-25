@@ -23,7 +23,6 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Date;
 
@@ -999,7 +998,7 @@ public class PermissionsViewModel {
         PermissionsViewModel.deleteRequisition.set(selectWhere("delete_requisitions"));
     }
 
-    public static @Nullable Permission selectWhere(String itemIs) {
+    public static Permission selectWhere(String itemIs) {
 //        if (connection == null) {
 //            connection = SQLiteConnection.getInstance();
 //        }

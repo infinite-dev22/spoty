@@ -25,7 +25,6 @@ import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 import lombok.Getter;
 import lombok.Setter;
-import org.jetbrains.annotations.NotNull;
 
 @Setter
 @Getter
@@ -36,7 +35,7 @@ public class SpotyMessage extends StackPane {
     private static int layoutWidth;
     private Duration messageDuration;
 
-    public SpotyMessage(@NotNull MessageBuilder messageBuilder) {
+    public SpotyMessage(MessageBuilder messageBuilder) {
         this.messageDuration = messageBuilder.messageDuration;
         layoutHeight = messageBuilder.height;
         layoutWidth = messageBuilder.width;

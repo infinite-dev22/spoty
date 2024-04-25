@@ -34,8 +34,6 @@ import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -183,9 +181,9 @@ public class StockInDetailViewModel {
     }
 
     public static void createStockInDetails(
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         stockInDetailsList.forEach(stockInDetail -> {
             var task = stockInsRepository.postDetail(stockInDetail);
             if (Objects.nonNull(onActivity)) {
@@ -231,8 +229,8 @@ public class StockInDetailViewModel {
 
     public static void searchItem(
             String search,
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onFailed) {
         var searchModel = SearchModel.builder().search(search).build();
 
         var task = stockInsRepository.searchMaster(searchModel);
@@ -284,9 +282,9 @@ public class StockInDetailViewModel {
     }
 
     public static void updateStockInDetails(
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         // TODO: Add save multiple on API.
         stockInDetailsList.forEach(
                 stockInDetail -> {
@@ -313,10 +311,10 @@ public class StockInDetailViewModel {
         PENDING_DELETES.add(index);
     }
 
-    public static void deleteStockInDetails(@NotNull LinkedList<Long> indexes,
-                                            @Nullable ParameterlessConsumer onActivity,
-                                            @Nullable ParameterlessConsumer onSuccess,
-                                            @Nullable ParameterlessConsumer onFailed) {
+    public static void deleteStockInDetails(LinkedList<Long> indexes,
+                                            ParameterlessConsumer onActivity,
+                                            ParameterlessConsumer onSuccess,
+                                            ParameterlessConsumer onFailed) {
         LinkedList<FindModel> findModelList = new LinkedList<>();
         indexes.forEach(index -> findModelList.add(new FindModel(index)));
 
@@ -389,7 +387,7 @@ public class StockInDetailViewModel {
         return new StockInTransaction();
     }
 
-    private static void createStockInTransaction(@NotNull StockInDetail stockInDetail) {
+    private static void createStockInTransaction(StockInDetail stockInDetail) {
 //        Dao<StockInTransaction, Long> stockInTransactionDao =
 //                DaoManager.createDao(connectionSource, StockInTransaction.class);
 //
@@ -403,7 +401,7 @@ public class StockInDetailViewModel {
 //        stockInTransactionDao.create(stockInTransaction);
     }
 
-    private static void updateStockInTransaction(@NotNull StockInDetail stockInDetail) {
+    private static void updateStockInTransaction(StockInDetail stockInDetail) {
 //        Dao<StockInTransaction, Long> stockInTransactionDao =
 //                DaoManager.createDao(connectionSource, StockInTransaction.class);
 //

@@ -47,7 +47,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.net.URL;
@@ -89,7 +88,6 @@ public class LoginController implements Initializable {
         stage = primaryStage;
     }
 
-    @NotNull
     private Thread dataInit() {
         return singleThreadCreator(
                 "data-tracker",

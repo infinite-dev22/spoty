@@ -38,7 +38,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.net.URL;
@@ -63,7 +62,6 @@ public class SplashScreenController implements Initializable {
         }
     }
 
-    @NotNull
     private static Thread sysPathCreater() {
         return SpotyThreader.singleThreadCreator(
                 "paths-creator",

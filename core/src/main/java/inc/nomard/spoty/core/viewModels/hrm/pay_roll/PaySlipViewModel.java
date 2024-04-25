@@ -32,8 +32,6 @@ import io.github.palexdev.mfxcore.base.properties.CharProperty;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
 import java.text.ParseException;
@@ -74,7 +72,7 @@ public class PaySlipViewModel {
         return id;
     }
 
-    public static @Nullable Date getStartDate() {
+    public static Date getStartDate() {
         try {
             return new SimpleDateFormat("MMM dd, yyyy").parse(startDate.get());
         } catch (ParseException e) {
@@ -91,7 +89,7 @@ public class PaySlipViewModel {
         return startDate;
     }
 
-    public static @Nullable Date getEndDate() {
+    public static Date getEndDate() {
         try {
             return new SimpleDateFormat("MMM dd, yyyy").parse(startDate.get());
         } catch (ParseException e) {
@@ -108,7 +106,7 @@ public class PaySlipViewModel {
         return endDate;
     }
 
-    public static @NotNull Integer getSalariesQuantity() {
+    public static Integer getSalariesQuantity() {
         return salariesQuantity.get();
     }
 
@@ -132,7 +130,7 @@ public class PaySlipViewModel {
         return status;
     }
 
-    public static @Nullable Date getCreatedDate() {
+    public static Date getCreatedDate() {
         try {
             return new SimpleDateFormat("MMM dd, yyyy").parse(createdOn.get());
         } catch (ParseException e) {
@@ -204,9 +202,9 @@ public class PaySlipViewModel {
     }
 
     public static void getAllPaySlips(
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var task = paySlipRepository.fetchAll();
         if (Objects.nonNull(onActivity)) {
             task.setOnRunning(workerStateEvent -> onActivity.run());
@@ -235,9 +233,9 @@ public class PaySlipViewModel {
 
     public static void getItem(
             Long index,
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var findModel = FindModel.builder().id(index).build();
 
         var task = paySlipRepository.fetch(findModel);
@@ -272,9 +270,9 @@ public class PaySlipViewModel {
 
     public static void searchItem(
             String search,
-            @Nullable ParameterlessConsumer onActivity,
-            @Nullable ParameterlessConsumer onSuccess,
-            @Nullable ParameterlessConsumer onFailed) {
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
         var searchModel = SearchModel.builder().search(search).build();
         var task = paySlipRepository.search(searchModel);
         if (Objects.nonNull(onActivity)) {
