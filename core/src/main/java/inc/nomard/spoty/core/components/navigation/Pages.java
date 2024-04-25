@@ -444,7 +444,7 @@ public class Pages {
     private static void setPayRoll(Stage stage) {
         paySlipsLoader.setControllerFactory(e -> new PaySlipsController());
         salariesLoader.setControllerFactory(e -> new SalariesController());
-        salaryAdvancesLoader.setControllerFactory(e -> new SalaryAdvancesController());
+        salaryAdvancesLoader.setControllerFactory(e -> SalaryAdvancesController.getInstance(stage));
         beneficiaryBadgeLoader.setControllerFactory(e -> BeneficiaryBadgeController.getInstance(stage));
         beneficiaryTypeLoader.setControllerFactory(e -> BeneficiaryTypeController.getInstance(stage));
     }
@@ -458,7 +458,7 @@ public class Pages {
     }
 
     private static void setTax(Stage stage) {
-        taxesLoader.setControllerFactory(e -> new TaxesController());
+        taxesLoader.setControllerFactory(e -> TaxesController.getInstance(stage));
         taxSettingsLoader.setControllerFactory(e -> new TaxSettingsController());
     }
 

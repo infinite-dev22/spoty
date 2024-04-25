@@ -8,7 +8,6 @@ import io.github.palexdev.materialfx.controls.MFXToggleButton;
 import io.github.palexdev.materialfx.enums.FloatMode;
 import io.github.palexdev.mfxcore.controls.Label;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.css.PseudoClass;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
@@ -34,7 +33,6 @@ public class Appearance extends VBox {
     private final String darkTheme = SpotyCoreResourceLoader.load("images/dark.png");
     private final String lightTheme = SpotyCoreResourceLoader.load("images/light.png");
     private final String systemTheme = SpotyCoreResourceLoader.load("images/dark_or_light.png");
-    private final ImageView themeItemImageView = new ImageView();
     MFXFilterComboBox<String> languageCombo = new MFXFilterComboBox<>();
     private Preferences preferences;
 
@@ -205,7 +203,7 @@ public class Appearance extends VBox {
 
     private ImageView getThemeImage(String image) {
         var themeItemImage = new Image(image, 150, 200, true, false);
-        themeItemImageView.setImage(themeItemImage);
+        var themeItemImageView = new ImageView(themeItemImage);
         themeItemImageView.setCache(true);
         themeItemImageView.setCacheHint(CacheHint.SPEED);
         return themeItemImageView;

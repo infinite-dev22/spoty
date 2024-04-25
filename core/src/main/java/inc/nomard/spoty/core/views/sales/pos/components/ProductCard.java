@@ -25,10 +25,20 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import lombok.Getter;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 
 public class ProductCard extends VBox {
-
+    private static final Random RND = new Random();
+    private final ArrayList<String> images = new ArrayList<>(List.of(
+            SpotyCoreResourceLoader.load("images/dark.png"),
+            SpotyCoreResourceLoader.load("images/dark_or_light.png"),
+            SpotyCoreResourceLoader.load("light.png"),
+            SpotyCoreResourceLoader.load("product-image-place-holder.png"),
+            SpotyCoreResourceLoader.load("user-place-holder.png"),
+            SpotyCoreResourceLoader.load("images/no-image-available-icon.png")));
     private final String imageSrc = SpotyCoreResourceLoader.load("images/no-image-available-icon.png");
     private final ImageView productImageView = new ImageView();
     private Image productImage;
@@ -69,7 +79,7 @@ public class ProductCard extends VBox {
         setAlignment(Pos.CENTER);
         setSpacing(10);
         getChildren()
-                .addAll(getProductImage(imageSrc), productNameLbl, productPriceLbl, productQuantityLbl, space);
+                .addAll(getProductImage(images.get(RND.nextInt())), productNameLbl, productPriceLbl, productQuantityLbl, space);
     }
 
     private ImageView getProductImage(String image) {

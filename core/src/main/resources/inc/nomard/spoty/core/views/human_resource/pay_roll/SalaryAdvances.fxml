@@ -41,12 +41,6 @@
                 <MFXTextField fx:id="searchBar" floatMode="DISABLED" promptText="Search salary advances"
                               prefWidth="300.0"
                               AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="50.0" AnchorPane.topAnchor="0.0"/>
-                <HBox fx:id="actionsPane" alignment="CENTER_RIGHT" spacing="20.0" AnchorPane.bottomAnchor="0.0"
-                      AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                    <MFXButton fx:id="importBtn" buttonType="RAISED" depthLevel="LEVEL1" text="Import"/>
-                    <MFXButton fx:id="createBtn" buttonType="RAISED" depthLevel="LEVEL1"
-                               onMouseClicked="#createBtnClicked" text="Create"/>
-                </HBox>
             </AnchorPane>
             <MFXTableView fx:id="masterTable" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                           AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0"/>
