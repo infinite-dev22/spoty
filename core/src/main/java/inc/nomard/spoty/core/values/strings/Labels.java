@@ -21,4 +21,8 @@ public class Labels {
     public static final String EDIT = "Edit";
     public static final String DELETE = "Delete";
     public static final String VIEW = "View";
+    public static final String RECENT_ORDERS = "Recent Orders";
+    public static final String TOP_CUSTOMERS = "Top Customers";
+    public static final String TOP_SUPPLIERS = "Top Suppliers";
+    public static final String TOP_PRODUCTS = "Top Products";
 }

@@ -606,3 +606,7 @@
     -fx-font-family: 'Varela Round';
     -fx-font-size: 10;
 }
+.default-color0.chart-bar {
+    -fx-border-width: 2px;
+    -fx-pref-width: 20;
+}
