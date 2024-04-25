@@ -69,4 +69,5 @@ module spoty.core {
     opens inc.nomard.spoty.core.views.previews.people;
 
     exports inc.nomard.spoty.core;
+    opens inc.nomard.spoty.core.views.previews.hrm.pay_roll;
 }

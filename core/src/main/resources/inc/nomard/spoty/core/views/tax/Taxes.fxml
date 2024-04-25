@@ -43,7 +43,6 @@
                               AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="50.0" AnchorPane.topAnchor="0.0"/>
                 <HBox fx:id="actionsPane" alignment="CENTER_RIGHT" spacing="20.0" AnchorPane.bottomAnchor="0.0"
                       AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                    <MFXButton fx:id="importBtn" buttonType="RAISED" depthLevel="LEVEL1" text="Import"/>
                     <MFXButton fx:id="createBtn" buttonType="RAISED" depthLevel="LEVEL1"
                                onMouseClicked="#createBtnClicked" text="Create"/>
                 </HBox>

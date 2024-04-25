@@ -30,113 +30,132 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Rectangle?>
 
-<MFXGenericDialog xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="inc.nomard.spoty.core.views.forms.ProductFormController">
+<MFXGenericDialog xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+                  fx:controller="inc.nomard.spoty.core.views.forms.ProductFormController">
     <stylesheets>
-        <URL value="@../../styles/base.css" />
-        <URL value="@../../styles/Common.css" />
-        <URL value="@../../styles/TextFields.css" />
+        <URL value="@../../styles/base.css"/>
+        <URL value="@../../styles/Common.css"/>
+        <URL value="@../../styles/TextFields.css"/>
     </stylesheets>
     <center>
         <GridPane hgap="30.0" layoutY="10.0" vgap="20.0">
             <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="300" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="300" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="220" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="300"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="300"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="220"/>
             </columnConstraints>
             <rowConstraints>
-                <RowConstraints minHeight="10.0" vgrow="NEVER" />
-                <RowConstraints minHeight="10.0" vgrow="NEVER" />
-                <RowConstraints minHeight="10.0" vgrow="NEVER" />
-                <RowConstraints minHeight="10.0" vgrow="NEVER" />
-                <RowConstraints minHeight="10.0" vgrow="NEVER" />
-                <RowConstraints minHeight="10.0" valignment="TOP" vgrow="NEVER" />
+                <RowConstraints minHeight="10.0" vgrow="NEVER"/>
+                <RowConstraints minHeight="10.0" vgrow="NEVER"/>
+                <RowConstraints minHeight="10.0" vgrow="NEVER"/>
+                <RowConstraints minHeight="10.0" vgrow="NEVER"/>
+                <RowConstraints minHeight="10.0" vgrow="NEVER"/>
+                <RowConstraints minHeight="10.0" valignment="TOP" vgrow="NEVER"/>
             </rowConstraints>
             <padding>
-                <Insets topRightBottomLeft="5.0" />
+                <Insets topRightBottomLeft="5.0"/>
             </padding>
             <VBox spacing="2.0">
                 <padding>
-                    <Insets bottom="2.5" />
+                    <Insets bottom="2.5"/>
                 </padding>
-                <MFXTextField fx:id="name" floatMode="BORDER" floatingText="Name" prefWidth="400.0" />
-                <Label id="validationLabel" fx:id="nameValidationLabel" managed="false" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true" />
+                <MFXTextField fx:id="name" floatMode="BORDER" floatingText="Name" prefWidth="400.0"/>
+                <Label id="validationLabel" fx:id="nameValidationLabel" managed="false"
+                       maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="input-validation-error"
+                       visible="false" wrapText="true"/>
             </VBox>
             <VBox spacing="2.0" GridPane.columnIndex="1">
                 <padding>
-                    <Insets bottom="5" top="2.5" />
+                    <Insets bottom="2.5" top="2.5"/>
                 </padding>
-                <MFXTextField fx:id="price" floatMode="BORDER" floatingText="Price" prefWidth="400.0" />
-                <Label id="validationLabel" fx:id="priceValidationLabel" managed="false" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true" />
+                <MFXTextField fx:id="price" floatMode="BORDER" floatingText="Price" prefWidth="400.0"/>
+                <Label id="validationLabel" fx:id="priceValidationLabel" managed="false"
+                       maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="input-validation-error"
+                       visible="false" wrapText="true"/>
             </VBox>
             <VBox spacing="2.0" GridPane.rowIndex="1">
                 <padding>
-                    <Insets bottom="5" top="2.5" />
+                    <Insets bottom="2.5" top="2.5"/>
                 </padding>
-                <MFXFilterComboBox fx:id="brand" floatMode="BORDER" floatingText="Brand" prefWidth="400.0" />
-                <Label id="validationLabel" fx:id="brandValidationLabel" managed="false" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true" />
+                <MFXFilterComboBox fx:id="brand" floatMode="BORDER" floatingText="Brand" prefWidth="400.0"/>
+                <Label id="validationLabel" fx:id="brandValidationLabel" managed="false"
+                       maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="input-validation-error"
+                       visible="false" wrapText="true"/>
             </VBox>
             <VBox spacing="2.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                 <padding>
-                    <Insets bottom="5" top="2.5" />
+                    <Insets bottom="2.5" top="2.5"/>
                 </padding>
-                <MFXFilterComboBox fx:id="category" floatMode="BORDER" floatingText="Category" prefWidth="400.0" />
-                <Label id="validationLabel" fx:id="categoryValidationLabel" managed="false" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true" />
+                <MFXFilterComboBox fx:id="category" floatMode="BORDER" floatingText="Category" prefWidth="400.0"/>
+                <Label id="validationLabel" fx:id="categoryValidationLabel" managed="false"
+                       maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="input-validation-error"
+                       visible="false" wrapText="true"/>
             </VBox>
             <VBox spacing="2.0" GridPane.rowIndex="2">
                 <padding>
-                    <Insets bottom="5" top="2.5" />
+                    <Insets bottom="2.5" top="2.5"/>
                 </padding>
-                <MFXFilterComboBox fx:id="unitOfMeasure" floatMode="BORDER" floatingText="Unit Of Measure" prefWidth="400.0" />
-                <Label id="validationLabel" fx:id="unitOfMeasureValidationLabel" managed="false" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true" />
+                <MFXFilterComboBox fx:id="unitOfMeasure" floatMode="BORDER" floatingText="Unit Of Measure"
+                                   prefWidth="400.0"/>
+                <Label id="validationLabel" fx:id="unitOfMeasureValidationLabel" managed="false"
+                       maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="input-validation-error"
+                       visible="false" wrapText="true"/>
             </VBox>
             <VBox spacing="2.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                 <padding>
-                    <Insets bottom="5" top="2.5" />
+                    <Insets bottom="2.5" top="2.5"/>
                 </padding>
-                <MFXFilterComboBox fx:id="barcodeType" floatMode="BORDER" floatingText="Barcode Type" prefWidth="400.0" />
-                <Label id="validationLabel" fx:id="barcodeTypeValidationLabel" managed="false" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true" />
+                <MFXFilterComboBox fx:id="barcodeType" floatMode="BORDER" floatingText="Barcode Type"
+                                   prefWidth="400.0"/>
+                <Label id="validationLabel" fx:id="barcodeTypeValidationLabel" managed="false"
+                       maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="input-validation-error"
+                       visible="false" wrapText="true"/>
             </VBox>
             <VBox spacing="2.0" GridPane.rowIndex="3">
                 <padding>
-                    <Insets bottom="5" top="2.5" />
+                    <Insets bottom="2.5" top="2.5"/>
                 </padding>
-                <MFXTextField fx:id="discount" floatMode="BORDER" floatingText="Discount" prefWidth="400.0" />
+                <MFXTextField fx:id="discount" floatMode="BORDER" floatingText="Discount" prefWidth="400.0"/>
             </VBox>
             <VBox spacing="2.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                 <padding>
-                    <Insets bottom="5" top="2.5" />
+                    <Insets bottom="2.5" top="2.5"/>
                 </padding>
-                <MFXTextField fx:id="tax" floatMode="BORDER" floatingText="Tax" layoutX="20.0" layoutY="197.0" prefWidth="400.0" />
+                <MFXTextField fx:id="tax" floatMode="BORDER" floatingText="Tax" layoutX="20.0" layoutY="197.0"
+                              prefWidth="400.0"/>
             </VBox>
             <VBox spacing="2.0" GridPane.rowIndex="4">
                 <padding>
-                    <Insets bottom="5" top="2.5" />
+                    <Insets bottom="2.5" top="2.5"/>
                 </padding>
-                <MFXTextField fx:id="serialNumber" floatMode="BORDER" floatingText="Serial/Batch" prefWidth="400.0" />
+                <MFXTextField fx:id="serialNumber" floatMode="BORDER" floatingText="Serial/Batch" prefWidth="400.0"/>
             </VBox>
             <VBox spacing="2.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
                 <padding>
-                    <Insets bottom="5" top="2.5" />
+                    <Insets bottom="2.5" top="2.5"/>
                 </padding>
-                <MFXFilterComboBox fx:id="type" floatMode="BORDER" floatingText="Type" layoutX="20.0" layoutY="77.0" prefWidth="400.0" />
+                <MFXFilterComboBox fx:id="type" floatMode="BORDER" floatingText="Type" layoutX="20.0" layoutY="77.0"
+                                   prefWidth="400.0"/>
             </VBox>
             <VBox spacing="2.0" GridPane.rowIndex="5">
                 <padding>
-                    <Insets bottom="5" top="2.5" />
+                    <Insets bottom="2.5" top="2.5"/>
                 </padding>
-                <TextArea fx:id="description" prefHeight="100.0" prefWidth="400.0" promptText="Description" />
+                <TextArea fx:id="description" prefHeight="100.0" prefWidth="400.0" promptText="Description"/>
             </VBox>
             <VBox spacing="2.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
                 <padding>
-                    <Insets bottom="5" top="2.5" />
+                    <Insets bottom="2.5" top="2.5"/>
                 </padding>
-                <MFXTextField fx:id="stockAlert" floatMode="BORDER" floatingText="Stock Alert" prefWidth="400.0" />
+                <MFXTextField fx:id="stockAlert" floatMode="BORDER" floatingText="Stock Alert" prefWidth="400.0"/>
             </VBox>
             <AnchorPane styleClass="rounded-border" GridPane.columnIndex="2" GridPane.rowIndex="0" GridPane.rowSpan="2">
                 <padding>
-                    <Insets topRightBottomLeft="5" />
+                    <Insets topRightBottomLeft="5"/>
                 </padding>
-                <Rectangle fx:id="productImageView" cache="true" cacheHint="SPEED" pickOnBounds="true" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" />
+                <Rectangle fx:id="productImageView" cache="true" cacheHint="SPEED" pickOnBounds="true"
+                           AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"
+                           AnchorPane.topAnchor="0"/>
             </AnchorPane>
         </GridPane>
     </center>

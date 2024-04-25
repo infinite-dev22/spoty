@@ -359,6 +359,7 @@ public class EndPoints {
         public static final String deleteUserProfile = userProfilesUrl + "/single/delete";
         public static final String deleteUserProfiles = userProfilesUrl + "/multiple/delete";
     }
+
     public static final class EmploymentStatus {
         public static final String employmentStatusesUrl = apiUrl + "/employment/statuses";
         public static final String allEmploymentStatuses = employmentStatusesUrl + "/all";
@@ -423,5 +424,16 @@ public class EndPoints {
         public static final String updateEmail = emailUrl + "/update";
         public static final String deleteEmail = emailUrl + "/single/delete";
         public static final String deleteEmails = emailUrl + "/multiple/delete";
+    }
+
+    public static final class Tax {
+        public static final String taxUrl = apiUrl + "/tax";
+        public static final String allTaxes = taxUrl + "/all";
+        public static final String taxById = taxUrl + "/single";
+        public static final String searchTaxes = taxUrl + "/search";
+        public static final String addTax = taxUrl + "/add";
+        public static final String updateTax = taxUrl + "/update";
+        public static final String deleteTax = taxUrl + "/single/delete";
+        public static final String deleteTaxes = taxUrl + "/multiple/delete";
     }
 }

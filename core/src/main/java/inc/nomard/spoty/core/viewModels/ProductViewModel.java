@@ -346,7 +346,6 @@ public class ProductViewModel {
                     setTaxType("");
                     setStockAlert(0);
                     setSerial("");
-                    setTempId(-1);
                 });
     }
 
