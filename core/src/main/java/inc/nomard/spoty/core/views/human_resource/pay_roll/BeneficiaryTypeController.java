@@ -1,7 +1,6 @@
 package inc.nomard.spoty.core.views.human_resource.pay_roll;
 
 import inc.nomard.spoty.core.components.animations.SpotyAnimations;
-import inc.nomard.spoty.core.viewModels.BankViewModel;
 import inc.nomard.spoty.core.viewModels.hrm.pay_roll.BeneficiaryTypeViewModel;
 import inc.nomard.spoty.core.views.forms.BeneficiaryTypeFormController;
 import inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll.BeneficiaryType;
@@ -44,8 +43,6 @@ public class BeneficiaryTypeController implements Initializable {
     public MFXTextField searchBar;
     @FXML
     public HBox actionsPane;
-    @FXML
-    public MFXButton importBtn;
     @FXML
     public MFXButton createBtn;
     @FXML

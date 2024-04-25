@@ -172,7 +172,7 @@ public class HanSoloLineChart extends AnchorPane {
         timer = new AnimationTimer() {
             @Override
             public void handle(final long now) {
-                if (now > lastTimerCalled + 2_000_000_000l) {
+                if (now > lastTimerCalled + 2_000_000_000L) {
                     p1.setY(RND.nextDouble() * 300 + 200);
                     p2.setY(RND.nextDouble() * 300 + 200);
                     p3.setY(RND.nextDouble() * 300 + 200);

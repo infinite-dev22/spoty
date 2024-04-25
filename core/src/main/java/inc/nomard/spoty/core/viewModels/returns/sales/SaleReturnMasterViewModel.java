@@ -33,13 +33,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class SaleReturnMasterViewModel {
-        private static final Gson gson = new GsonBuilder()
-            .registerTypeAdapter(Date.class,
-                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
-            .create();
     @Getter
     public static final ObservableList<SaleReturnMaster> saleReturnMasterList =
             FXCollections.observableArrayList();
+    private static final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(Date.class,
+                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+            .create();
     private static final ListProperty<SaleReturnMaster> saleReturns = new SimpleListProperty<>(saleReturnMasterList);
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final StringProperty date = new SimpleStringProperty("");

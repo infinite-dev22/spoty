@@ -61,8 +61,6 @@ public class RequisitionController implements Initializable {
     @FXML
     public HBox actionsPane;
     @FXML
-    public MFXButton importBtn;
-    @FXML
     public BorderPane contentPane;
     @FXML
     public MFXButton createBtn;
@@ -74,11 +72,6 @@ public class RequisitionController implements Initializable {
     private FXMLLoader viewFxmlLoader;
     private MFXStageDialog viewDialog;
 
-    public static RequisitionController getInstance(Stage stage) {
-        if (instance == null) instance = new RequisitionController(stage);
-        return instance;
-    }
-
     public RequisitionController(Stage stage) {
         Platform.runLater(() ->
         {
@@ -88,6 +81,11 @@ public class RequisitionController implements Initializable {
                 throw new RuntimeException(e);
             }
         });
+    }
+
+    public static RequisitionController getInstance(Stage stage) {
+        if (instance == null) instance = new RequisitionController(stage);
+        return instance;
     }
 
     @Override

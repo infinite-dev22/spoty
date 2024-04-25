@@ -59,11 +59,7 @@ public class BrandController implements Initializable {
     @FXML
     public HBox actionsPane;
     @FXML
-    public MFXButton importBtn;
-    @FXML
     public BorderPane contentPane;
-    @FXML
-    public MFXButton createBtn;
     @FXML
     public HBox refresh;
     private MFXStageDialog dialog;

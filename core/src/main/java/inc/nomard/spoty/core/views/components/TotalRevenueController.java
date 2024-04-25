@@ -23,7 +23,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Tooltip;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 
 import java.net.URL;
@@ -96,7 +95,7 @@ public class TotalRevenueController implements Initializable {
             for (final XYChart.Series<String, Number> series : barChart.getData()) {
                 for (final XYChart.Data<String, Number> data : series.getData()) {
                     Tooltip tooltip = new Tooltip();
-                    tooltip.setText(data.getXValue().toString() +" "+
+                    tooltip.setText(data.getXValue() + " " +
                             data.getYValue().toString());
                     Tooltip.install(data.getNode(), tooltip);
                 }
@@ -141,7 +140,7 @@ public class TotalRevenueController implements Initializable {
             for (final XYChart.Series<String, Number> series : barChart.getData()) {
                 for (final XYChart.Data<String, Number> data : series.getData()) {
                     Tooltip tooltip = new Tooltip();
-                    tooltip.setText(data.getXValue().toString() +" "+
+                    tooltip.setText(data.getXValue() + " " +
                             data.getYValue().toString());
                     Tooltip.install(data.getNode(), tooltip);
                 }
@@ -176,7 +175,7 @@ public class TotalRevenueController implements Initializable {
             for (final XYChart.Series<String, Number> series : barChart.getData()) {
                 for (final XYChart.Data<String, Number> data : series.getData()) {
                     Tooltip tooltip = new Tooltip();
-                    tooltip.setText(data.getXValue().toString() +" "+
+                    tooltip.setText(data.getXValue() + " " +
                             data.getYValue().toString());
                     Tooltip.install(data.getNode(), tooltip);
                 }
@@ -221,7 +220,7 @@ public class TotalRevenueController implements Initializable {
             for (final XYChart.Series<String, Number> series : barChart.getData()) {
                 for (final XYChart.Data<String, Number> data : series.getData()) {
                     Tooltip tooltip = new Tooltip();
-                    tooltip.setText(data.getXValue().toString() +" "+
+                    tooltip.setText(data.getXValue() + " " +
                             data.getYValue().toString());
                     Tooltip.install(data.getNode(), tooltip);
                 }

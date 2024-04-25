@@ -17,9 +17,8 @@ package inc.nomard.spoty.core.viewModels.hrm.pay_roll;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import javafx.beans.property.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import inc.nomard.spoty.core.viewModels.BankViewModel;
+import inc.nomard.spoty.core.viewModels.adapters.UnixEpochDateTypeAdapter;
 import inc.nomard.spoty.network_bridge.dtos.Branch;
 import inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll.BeneficiaryBadge;
 import inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll.BeneficiaryType;
@@ -29,8 +28,9 @@ import inc.nomard.spoty.network_bridge.repositories.implementations.BeneficiaryB
 import inc.nomard.spoty.utils.ParameterlessConsumer;
 import inc.nomard.spoty.utils.SpotyLogger;
 import inc.nomard.spoty.utils.SpotyThreader;
-import inc.nomard.spoty.core.viewModels.BankViewModel;
-import inc.nomard.spoty.core.viewModels.adapters.UnixEpochDateTypeAdapter;
+import javafx.beans.property.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
@@ -71,7 +71,7 @@ public class BeneficiaryBadgeViewModel {
     }
 
     public static String getName() {
-            return name.get();
+        return name.get();
     }
 
     public static void setName(String name) {
@@ -83,7 +83,7 @@ public class BeneficiaryBadgeViewModel {
     }
 
     public static String getColor() {
-            return color.get();
+        return color.get();
     }
 
     public static void setColor(String color) {
@@ -95,7 +95,7 @@ public class BeneficiaryBadgeViewModel {
     }
 
     public static String getDescription() {
-            return description.get();
+        return description.get();
     }
 
     public static void setDescription(String createdOn) {

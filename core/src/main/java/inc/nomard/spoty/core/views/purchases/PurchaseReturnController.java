@@ -64,25 +64,12 @@ public class PurchaseReturnController implements Initializable {
     @FXML
     public HBox actionsPane;
     @FXML
-    public MFXButton importBtn;
-    @FXML
     public MFXButton createBtn;
     @FXML
     public HBox refresh;
     private RotateTransition transition;
     private FXMLLoader viewFxmlLoader;
     private MFXStageDialog viewDialog;
-
-    public static PurchaseReturnController getInstance(Stage stage) {
-        if (instance == null) instance = new PurchaseReturnController(stage);
-        return instance;
-    }
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        setIcons();
-        Platform.runLater(this::setupTable);
-    }
 
     private PurchaseReturnController(Stage stage) {
         Platform.runLater(() ->
@@ -93,6 +80,17 @@ public class PurchaseReturnController implements Initializable {
                 throw new RuntimeException(e);
             }
         });
+    }
+
+    public static PurchaseReturnController getInstance(Stage stage) {
+        if (instance == null) instance = new PurchaseReturnController(stage);
+        return instance;
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        setIcons();
+        Platform.runLater(this::setupTable);
     }
 
     private void setupTable() {

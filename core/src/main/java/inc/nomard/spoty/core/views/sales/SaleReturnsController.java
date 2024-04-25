@@ -19,7 +19,13 @@ import inc.nomard.spoty.core.viewModels.returns.sales.SaleReturnMasterViewModel;
 import inc.nomard.spoty.core.views.previews.sales.SaleReturnsPreviewController;
 import inc.nomard.spoty.network_bridge.dtos.returns.sale_returns.SaleReturnMaster;
 import inc.nomard.spoty.utils.SpotyThreader;
-import io.github.palexdev.materialfx.controls.*;
+import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+import io.github.palexdev.materialfx.controls.MFXContextMenu;
+import io.github.palexdev.materialfx.controls.MFXContextMenuItem;
+import io.github.palexdev.materialfx.controls.MFXTableColumn;
+import io.github.palexdev.materialfx.controls.MFXTableRow;
+import io.github.palexdev.materialfx.controls.MFXTableView;
+import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
@@ -62,8 +68,6 @@ public class SaleReturnsController implements Initializable {
     @FXML
     public HBox actionsPane;
     @FXML
-    public MFXButton importBtn;
-    @FXML
     public MFXButton createBtn;
     @FXML
     public HBox refresh;
@@ -72,11 +76,6 @@ public class SaleReturnsController implements Initializable {
     private RotateTransition transition;
     private FXMLLoader viewFxmlLoader;
     private MFXStageDialog viewDialog;
-
-    public static SaleReturnsController getInstance(Stage stage) {
-        if (instance == null) instance = new SaleReturnsController(stage);
-        return instance;
-    }
 
     private SaleReturnsController(Stage stage) {
         Platform.runLater(() ->
@@ -87,6 +86,11 @@ public class SaleReturnsController implements Initializable {
                 throw new RuntimeException(e);
             }
         });
+    }
+
+    public static SaleReturnsController getInstance(Stage stage) {
+        if (instance == null) instance = new SaleReturnsController(stage);
+        return instance;
     }
 
     @Override

@@ -14,8 +14,6 @@
 
 package inc.nomard.spoty.core;
 
-import atlantafx.base.theme.PrimerDark;
-import atlantafx.base.theme.PrimerLight;
 import inc.nomard.spoty.core.views.splash.LaunchPreloader;
 import inc.nomard.spoty.core.views.splash.SplashScreenController;
 import inc.nomard.spoty.utils.SeamlessUpdater;
@@ -28,8 +26,8 @@ import java.util.concurrent.TimeUnit;
 
 public class Main extends Application {
 
-    private ScheduledExecutorService scheduler;
     public static Stage primaryStage = null;
+    private ScheduledExecutorService scheduler;
 
     public static void main(String... args) {
         System.setProperty("javafx.preloader", LaunchPreloader.class.getCanonicalName());

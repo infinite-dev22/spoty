@@ -12,13 +12,12 @@
  * Jonathan Mark Mwigo makes no warranties, express or implied, with respect to the computer system code. Jonathan Mark Mwigo shall not be liable for any damages, including, but not limited to, direct, indirect, incidental, special, consequential, or punitive damages, arising out of or in connection with the use of the computer system code.
  */
 
-package inc.nomard.spoty.core.views.settings.system_settings;
+package inc.nomard.spoty.core.views.settings;
 
 import inc.nomard.spoty.core.components.animations.SpotyAnimations;
-import inc.nomard.spoty.core.viewModels.BankViewModel;
-import inc.nomard.spoty.core.viewModels.CurrencyViewModel;
-import inc.nomard.spoty.core.views.forms.CurrencyFormController;
-import inc.nomard.spoty.network_bridge.dtos.Currency;
+import inc.nomard.spoty.core.viewModels.RoleViewModel;
+import inc.nomard.spoty.core.views.forms.RoleFormController;
+import inc.nomard.spoty.network_bridge.dtos.Role;
 import inc.nomard.spoty.utils.SpotyThreader;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
@@ -46,43 +45,42 @@ import javafx.util.Duration;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Comparator;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
 
 @SuppressWarnings("unchecked")
-public class CurrencyController implements Initializable {
-    private static CurrencyController instance;
-    @FXML
-    public MFXTextField searchBar;
+public class RolesController implements Initializable {
+    private static RolesController instance;
     @FXML
     public HBox actionsPane;
     @FXML
-    public MFXButton importBtn;
-    @FXML
-    public MFXTableView<Currency> masterTable;
+    public MFXTextField searchBar;
     @FXML
     public BorderPane contentPane;
     @FXML
     public MFXButton createBtn;
     @FXML
     public HBox refresh;
+    @FXML
+    private MFXTableView<Role> masterTable;
     private MFXStageDialog dialog;
     private RotateTransition transition;
 
-    private CurrencyController(Stage stage) {
+    private RolesController(Stage stage) {
         Platform.runLater(
                 () -> {
                     try {
-                        currencyFormDialogPane(stage);
+                        customerFormDialogPane(stage);
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
                 });
     }
 
-    public static CurrencyController getInstance(Stage stage) {
-        if (instance == null) instance = new CurrencyController(stage);
+    public static RolesController getInstance(Stage stage) {
+        if (Objects.equals(instance, null)) instance = new RolesController(stage);
         return instance;
     }
 
@@ -93,52 +91,49 @@ public class CurrencyController implements Initializable {
     }
 
     private void setupTable() {
-        MFXTableColumn<Currency> currencyName =
-                new MFXTableColumn<>("Name", false, Comparator.comparing(Currency::getName));
-        MFXTableColumn<Currency> currencyCode =
-                new MFXTableColumn<>("Code", false, Comparator.comparing(Currency::getCode));
-        MFXTableColumn<Currency> currencySymbol =
-                new MFXTableColumn<>("Symbol", false, Comparator.comparing(Currency::getSymbol));
+        MFXTableColumn<Role> roleMasterRole =
+                new MFXTableColumn<>("Name", true, Comparator.comparing(Role::getName));
+        MFXTableColumn<Role> roleMasterDescription =
+                new MFXTableColumn<>("Description", true, Comparator.comparing(Role::getDescription));
 
-        currencyName.setRowCellFactory(currency -> new MFXTableRowCell<>(Currency::getName));
-        currencyCode.setRowCellFactory(currency -> new MFXTableRowCell<>(Currency::getCode));
-        currencySymbol.setRowCellFactory(currency -> new MFXTableRowCell<>(Currency::getSymbol));
+        roleMasterRole.setRowCellFactory(roleMaster -> new MFXTableRowCell<>(Role::getName));
+        roleMasterDescription.setRowCellFactory(
+                roleMaster -> new MFXTableRowCell<>(Role::getDescription));
 
-        currencyName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.34));
-        currencyCode.prefWidthProperty().bind(masterTable.widthProperty().multiply(.34));
-        currencySymbol.prefWidthProperty().bind(masterTable.widthProperty().multiply(.34));
+        roleMasterRole.prefWidthProperty().bind(masterTable.widthProperty().multiply(.5));
+        roleMasterDescription.prefWidthProperty().bind(masterTable.widthProperty().multiply(.5));
 
-        masterTable.getTableColumns().addAll(currencyName, currencyCode, currencySymbol);
+        masterTable.getTableColumns().addAll(roleMasterRole, roleMasterDescription);
+
         masterTable
                 .getFilters()
                 .addAll(
-                        new StringFilter<>("Name", Currency::getName),
-                        new StringFilter<>("Code", Currency::getCode),
-                        new StringFilter<>("Symbol", Currency::getSymbol));
+                        new StringFilter<>("Name", Role::getName),
+                        new StringFilter<>("Description", Role::getDescription));
 
-        getCurrencyTable();
+        getRoleTable();
 
-        if (CurrencyViewModel.getCurrencies().isEmpty()) {
-            CurrencyViewModel.getCurrencies()
+        if (RoleViewModel.getRoles().isEmpty()) {
+            RoleViewModel.getRoles()
                     .addListener(
-                            (ListChangeListener<Currency>)
-                                    c -> masterTable.setItems(CurrencyViewModel.getCurrencies()));
+                            (ListChangeListener<Role>) c -> masterTable.setItems(RoleViewModel.getRoles()));
         } else {
-            masterTable.itemsProperty().bindBidirectional(CurrencyViewModel.currencyProperty());
+            masterTable.itemsProperty().bindBidirectional(RoleViewModel.rolesProperty());
         }
     }
 
-    private void getCurrencyTable() {
+    private void getRoleTable() {
         masterTable.setPrefSize(1200, 1000);
         masterTable.features().enableBounceEffect();
+        masterTable.autosizeColumnsOnInitialization();
         masterTable.features().enableSmoothScrolling(0.5);
 
         masterTable.setTableRowFactory(
                 t -> {
-                    MFXTableRow<Currency> row = new MFXTableRow<>(masterTable, t);
+                    MFXTableRow<Role> row = new MFXTableRow<>(masterTable, t);
                     EventHandler<ContextMenuEvent> eventHandler =
                             event ->
-                                    showContextMenu((MFXTableRow<Currency>) event.getSource())
+                                    showContextMenu((MFXTableRow<Role>) event.getSource())
                                             .show(
                                                     contentPane.getScene().getWindow(),
                                                     event.getScreenX(),
@@ -148,7 +143,7 @@ public class CurrencyController implements Initializable {
                 });
     }
 
-    private MFXContextMenu showContextMenu(MFXTableRow<Currency> obj) {
+    private MFXContextMenu showContextMenu(MFXTableRow<Role> obj) {
         MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
 
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
@@ -160,7 +155,7 @@ public class CurrencyController implements Initializable {
                 e -> {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
-                            CurrencyViewModel.deleteItem(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
+                            RoleViewModel.deleteItem(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
@@ -172,7 +167,7 @@ public class CurrencyController implements Initializable {
                 e -> {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
-                            CurrencyViewModel.getItem(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
+                            RoleViewModel.getItem(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
@@ -186,14 +181,9 @@ public class CurrencyController implements Initializable {
         return contextMenu;
     }
 
-    @FXML
-    private void createBtnClicked() {
-        dialog.showAndWait();
-    }
-
-    private void currencyFormDialogPane(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = fxmlLoader("views/forms/CurrencyForm.fxml");
-        fxmlLoader.setControllerFactory(c -> CurrencyFormController.getInstance());
+    private void customerFormDialogPane(Stage stage) throws IOException {
+        FXMLLoader fxmlLoader = fxmlLoader("views/forms/RoleForm.fxml");
+        fxmlLoader.setControllerFactory(c -> RoleFormController.getInstance());
 
         MFXGenericDialog dialogContent = fxmlLoader.load();
 
@@ -211,6 +201,10 @@ public class CurrencyController implements Initializable {
                         .get();
 
         io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
+    }
+
+    public void createBtnClicked() {
+        dialog.showAndWait();
     }
 
     private void onAction() {
@@ -232,6 +226,6 @@ public class CurrencyController implements Initializable {
 
         transition = SpotyAnimations.rotateTransition(refreshIcon, Duration.millis(1000), 360);
 
-        refreshIcon.setOnMouseClicked(mouseEvent -> CurrencyViewModel.getAllCurrencies(this::onAction, this::onSuccess, this::onFailed));
+        refreshIcon.setOnMouseClicked(mouseEvent -> RoleViewModel.getAllRoles(this::onAction, this::onSuccess, this::onFailed));
     }
 }

@@ -115,7 +115,7 @@
                     </padding>
                     <HBox fx:id="uploadIcon" alignment="CENTER"/>
                     <Label fx:id="fileLabel" text="Click to upload or Drag and drop pdf. (max. size 1MB)"
-                           wrapText="true"/>
+                           textAlignment="CENTER" wrapText="true"/>
                 </VBox>
             </HBox>
         </VBox>

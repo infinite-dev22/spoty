@@ -1,7 +1,10 @@
 package inc.nomard.spoty.core.views.human_resource.pay_roll;
 
 import inc.nomard.spoty.core.components.animations.SpotyAnimations;
-import inc.nomard.spoty.core.viewModels.BankViewModel;
+import inc.nomard.spoty.core.viewModels.hrm.pay_roll.BeneficiaryBadgeViewModel;
+import inc.nomard.spoty.core.views.forms.BeneficiaryBadgeFormController;
+import inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll.BeneficiaryBadge;
+import inc.nomard.spoty.utils.SpotyThreader;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
@@ -23,10 +26,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll.BeneficiaryBadge;
-import inc.nomard.spoty.utils.SpotyThreader;
-import inc.nomard.spoty.core.viewModels.hrm.pay_roll.BeneficiaryBadgeViewModel;
-import inc.nomard.spoty.core.views.forms.BeneficiaryBadgeFormController;
 import javafx.util.Duration;
 
 import java.io.IOException;
@@ -44,8 +43,6 @@ public class BeneficiaryBadgeController implements Initializable {
     public MFXTextField searchBar;
     @FXML
     public HBox actionsPane;
-    @FXML
-    public MFXButton importBtn;
     @FXML
     public MFXButton createBtn;
     @FXML

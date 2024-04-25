@@ -21,7 +21,13 @@ import inc.nomard.spoty.core.views.BaseController;
 import inc.nomard.spoty.core.views.previews.sales.SalePreviewController;
 import inc.nomard.spoty.network_bridge.dtos.sales.SaleMaster;
 import inc.nomard.spoty.utils.SpotyThreader;
-import io.github.palexdev.materialfx.controls.*;
+import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+import io.github.palexdev.materialfx.controls.MFXContextMenu;
+import io.github.palexdev.materialfx.controls.MFXContextMenuItem;
+import io.github.palexdev.materialfx.controls.MFXTableColumn;
+import io.github.palexdev.materialfx.controls.MFXTableRow;
+import io.github.palexdev.materialfx.controls.MFXTableView;
+import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
@@ -61,8 +67,6 @@ public class OrdersController implements Initializable {
     @FXML
     public HBox actionsPane;
     @FXML
-    public MFXButton importBtn;
-    @FXML
     public MFXButton createBtn;
     @FXML
     public BorderPane contentPane;
@@ -74,11 +78,6 @@ public class OrdersController implements Initializable {
     private FXMLLoader viewFxmlLoader;
     private MFXStageDialog viewDialog;
 
-    public static OrdersController getInstance(Stage stage) {
-        if (instance == null) instance = new OrdersController(stage);
-        return instance;
-    }
-
     public OrdersController(Stage stage) {
         Platform.runLater(() ->
         {
@@ -88,6 +87,11 @@ public class OrdersController implements Initializable {
                 throw new RuntimeException(e);
             }
         });
+    }
+
+    public static OrdersController getInstance(Stage stage) {
+        if (instance == null) instance = new OrdersController(stage);
+        return instance;
     }
 
     @Override

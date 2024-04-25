@@ -14,59 +14,40 @@
 
 package inc.nomard.spoty.core.components.navigation;
 
-import inc.nomard.spoty.core.views.bank.BankController;
-import inc.nomard.spoty.core.views.customers.CustomerController;
-import inc.nomard.spoty.core.views.dashboard.DashboardController;
-import inc.nomard.spoty.core.views.expenses.category.ExpenseCategoryController;
-import inc.nomard.spoty.core.views.expenses.expense.ExpenseController;
+import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
+import inc.nomard.spoty.core.views.bank.*;
+import inc.nomard.spoty.core.views.customers.*;
+import inc.nomard.spoty.core.views.dashboard.*;
+import inc.nomard.spoty.core.views.expenses.category.*;
+import inc.nomard.spoty.core.views.expenses.expense.*;
 import inc.nomard.spoty.core.views.forms.*;
-import inc.nomard.spoty.core.views.human_resource.hrm.DesignationsController;
-import inc.nomard.spoty.core.views.human_resource.hrm.EmployeesController;
-import inc.nomard.spoty.core.views.human_resource.hrm.EmploymentStatusController;
-import inc.nomard.spoty.core.views.human_resource.leave.CalendarController;
-import inc.nomard.spoty.core.views.human_resource.leave.LeaveRequestController;
-import inc.nomard.spoty.core.views.human_resource.pay_roll.BeneficiaryBadgeController;
-import inc.nomard.spoty.core.views.human_resource.pay_roll.BeneficiaryTypeController;
-import inc.nomard.spoty.core.views.human_resource.pay_roll.SalariesController;
-import inc.nomard.spoty.core.views.human_resource.pay_roll.SalaryAdvancesController;
-import inc.nomard.spoty.core.views.human_resource.pay_roll.pay_slip.PaySlipsController;
-import inc.nomard.spoty.core.views.inventory.adjustment.AdjustmentController;
-import inc.nomard.spoty.core.views.inventory.brand.BrandController;
-import inc.nomard.spoty.core.views.inventory.category.ProductCategoryController;
-import inc.nomard.spoty.core.views.inventory.products.ProductController;
-import inc.nomard.spoty.core.views.inventory.unit_of_measure.UnitOfMeasureController;
-import inc.nomard.spoty.core.views.login.LoginController;
-import inc.nomard.spoty.core.views.previews.people.UserPreviewController;
-import inc.nomard.spoty.core.views.purchases.PurchaseReturnController;
-import inc.nomard.spoty.core.views.purchases.PurchasesController;
-import inc.nomard.spoty.core.views.quotation.QuotationController;
+import inc.nomard.spoty.core.views.human_resource.hrm.*;
+import inc.nomard.spoty.core.views.human_resource.leave.*;
+import inc.nomard.spoty.core.views.human_resource.pay_roll.*;
+import inc.nomard.spoty.core.views.human_resource.pay_roll.pay_slip.*;
+import inc.nomard.spoty.core.views.inventory.adjustment.*;
+import inc.nomard.spoty.core.views.inventory.brand.*;
+import inc.nomard.spoty.core.views.inventory.category.*;
+import inc.nomard.spoty.core.views.inventory.products.*;
+import inc.nomard.spoty.core.views.inventory.unit_of_measure.*;
+import inc.nomard.spoty.core.views.login.*;
+import inc.nomard.spoty.core.views.previews.people.*;
+import inc.nomard.spoty.core.views.purchases.*;
+import inc.nomard.spoty.core.views.quotation.*;
 import inc.nomard.spoty.core.views.report.*;
-import inc.nomard.spoty.core.views.requisition.RequisitionController;
-import inc.nomard.spoty.core.views.sales.OrdersController;
-import inc.nomard.spoty.core.views.sales.SaleReturnsController;
-import inc.nomard.spoty.core.views.sales.SaleTermsController;
-import inc.nomard.spoty.core.views.sales.pos.PointOfSaleController;
-import inc.nomard.spoty.core.views.settings.data_synchronizer.ExportController;
-import inc.nomard.spoty.core.views.settings.data_synchronizer.ImportController;
-import inc.nomard.spoty.core.views.settings.role_permission.AssignUserRoleController;
-import inc.nomard.spoty.core.views.settings.role_permission.RolesController;
-import inc.nomard.spoty.core.views.settings.system_settings.AppSettingsController;
-import inc.nomard.spoty.core.views.settings.system_settings.BranchController;
-import inc.nomard.spoty.core.views.settings.system_settings.CompanyDetailsController;
-import inc.nomard.spoty.core.views.settings.system_settings.CurrencyController;
-import inc.nomard.spoty.core.views.stock_in.StockInController;
-import inc.nomard.spoty.core.views.suppliers.SupplierController;
-import inc.nomard.spoty.core.views.tax.TaxSettingsController;
-import inc.nomard.spoty.core.views.tax.TaxesController;
-import inc.nomard.spoty.core.views.transfer.TransferController;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.layout.BorderPane;
-import javafx.stage.Stage;
-import lombok.Getter;
-
-import java.io.IOException;
-
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
+import inc.nomard.spoty.core.views.requisition.*;
+import inc.nomard.spoty.core.views.sales.*;
+import inc.nomard.spoty.core.views.sales.pos.*;
+import inc.nomard.spoty.core.views.settings.*;
+import inc.nomard.spoty.core.views.stock_in.*;
+import inc.nomard.spoty.core.views.suppliers.*;
+import inc.nomard.spoty.core.views.tax.*;
+import inc.nomard.spoty.core.views.transfer.*;
+import java.io.*;
+import javafx.fxml.*;
+import javafx.scene.layout.*;
+import javafx.stage.*;
+import lombok.*;
 
 public class Pages {
     //Login
@@ -114,7 +95,6 @@ public class Pages {
     // PayRoll
     private static final FXMLLoader paySlipsLoader = fxmlLoader("views/human_resource/pay_roll/pay_slip/PaySlips.fxml");
     private static final FXMLLoader salariesLoader = fxmlLoader("views/human_resource/pay_roll/Salaries.fxml");
-    private static final FXMLLoader salaryAdvancesLoader = fxmlLoader("views/human_resource/pay_roll/SalaryAdvances.fxml");
     private static final FXMLLoader beneficiaryBadgeLoader = fxmlLoader("views/human_resource/pay_roll/BeneficiaryBadge.fxml");
     private static final FXMLLoader beneficiaryTypeLoader = fxmlLoader("views/human_resource/pay_roll/BeneficiaryType.fxml");
     // Bank
@@ -125,20 +105,12 @@ public class Pages {
     // Tax
     private static final FXMLLoader taxesLoader =
             fxmlLoader("views/tax/Taxes.fxml");
-    private static final FXMLLoader taxSettingsLoader =
-            fxmlLoader("views/tax/TaxSettings.fxml");
     // SETTINGS
-    // Data Synchronizer
-    private static final FXMLLoader exportLoader = fxmlLoader("views/settings/data_synchronizer/Export.fxml");
-    private static final FXMLLoader importLoader = fxmlLoader("views/settings/data_synchronizer/Import.fxml");
-    // Role Permission
-    private static final FXMLLoader assignUserRoleLoader = fxmlLoader("views/settings/role_permission/AssignUserRole.fxml");
-    private static final FXMLLoader rolesLoader = fxmlLoader("views/settings/role_permission/Roles.fxml");
-    // System Settings
-    private static final FXMLLoader appSettingsLoader = fxmlLoader("views/settings/system_settings/AppSettings.fxml");
-    private static final FXMLLoader branchesLoader = fxmlLoader("views/settings/system_settings/Branches.fxml");
-    private static final FXMLLoader companySettingsLoader = fxmlLoader("views/settings/system_settings/CompanyDetails.fxml");
-    private static final FXMLLoader currencyLoader = fxmlLoader("views/settings/system_settings/Currency.fxml");
+    private static final FXMLLoader rolesLoader = fxmlLoader("views/settings/Roles.fxml");
+    private static final FXMLLoader appSettingsLoader = fxmlLoader("views/settings/AppSettings.fxml");
+    private static final FXMLLoader branchesLoader = fxmlLoader("views/settings/Branches.fxml");
+    private static final FXMLLoader companySettingsLoader = fxmlLoader("views/settings/CompanyDetails.fxml");
+    private static final FXMLLoader currencyLoader = fxmlLoader("views/settings/Currency.fxml");
 
     private static final FXMLLoader saleMasterFormLoader = fxmlLoader("views/forms/SaleMasterForm.fxml");
     private static final FXMLLoader productCategoryLoader =
@@ -169,8 +141,6 @@ public class Pages {
             fxmlLoader("views/forms/TransferMasterForm.fxml");
     private static final FXMLLoader adjustmentMasterFormLoader =
             fxmlLoader("views/forms/AdjustmentMasterForm.fxml");
-    private static final FXMLLoader roleSettingsFormLoader =
-            fxmlLoader("views/forms/RoleSettingsForm.fxml");
 
     // Login
     @Getter
@@ -266,9 +236,6 @@ public class Pages {
     private static BorderPane salariesPane;
 
     @Getter
-    private static BorderPane salaryAdvancesPane;
-
-    @Getter
     private static BorderPane beneficiaryBadgePane;
 
     @Getter
@@ -286,26 +253,12 @@ public class Pages {
     // Quotation
     private static BorderPane taxesPane;
 
-    @Getter
-    private static BorderPane taxSettingsPane;
-
     // SETTINGS
-    // Data Synchronizer
-    @Getter
-    private static BorderPane exportPane;
-
-    @Getter
-    private static BorderPane importPane;
-
-    @Getter
-    // Role Permission
-    private static BorderPane assignUserRolePane;
 
     @Getter
     private static BorderPane rolesPane;
 
     @Getter
-    // System Settings
     private static BorderPane appSettingsPane;
 
     @Getter
@@ -377,9 +330,6 @@ public class Pages {
     @Getter
     private static BorderPane transferMasterFormPane;
 
-    @Getter
-    private static BorderPane roleSettingsFormPane;
-
     private static void setLogin(Stage stage) {
         loginLoader.setControllerFactory(e -> new LoginController(stage));
     }
@@ -410,11 +360,8 @@ public class Pages {
         adjustmentLoader.setControllerFactory(e -> AdjustmentController.getInstance(stage));
     }
 
-    private static void setStockReport(Stage stage) {
-        stockReportLoader.setControllerFactory(e -> new StockReportController());
-    }
-
     private static void setReports(Stage stage) {
+        stockReportLoader.setControllerFactory(e -> new StockReportController());
         closingLoader.setControllerFactory(e -> new ClosingController());
         closingReportLoader.setControllerFactory(e -> new ClosingReportController());
         dailyCustomerReportLoader.setControllerFactory(e -> new DailyCustomerReportController());
@@ -443,8 +390,7 @@ public class Pages {
 
     private static void setPayRoll(Stage stage) {
         paySlipsLoader.setControllerFactory(e -> new PaySlipsController());
-        salariesLoader.setControllerFactory(e -> new SalariesController());
-        salaryAdvancesLoader.setControllerFactory(e -> SalaryAdvancesController.getInstance(stage));
+        salariesLoader.setControllerFactory(e -> SalariesController.getInstance(stage));
         beneficiaryBadgeLoader.setControllerFactory(e -> BeneficiaryBadgeController.getInstance(stage));
         beneficiaryTypeLoader.setControllerFactory(e -> BeneficiaryTypeController.getInstance(stage));
     }
@@ -459,7 +405,6 @@ public class Pages {
 
     private static void setTax(Stage stage) {
         taxesLoader.setControllerFactory(e -> TaxesController.getInstance(stage));
-        taxSettingsLoader.setControllerFactory(e -> new TaxSettingsController());
     }
 
     private static void setSingleItems(Stage stage) {
@@ -474,21 +419,12 @@ public class Pages {
         purchaseReturnLoader.setControllerFactory(e -> PurchaseReturnController.getInstance(stage));
     }
 
-    private static void setDataSynchronizer(Stage stage) {
-        exportLoader.setControllerFactory(c -> new ExportController());
-        importLoader.setControllerFactory(c -> new ImportController());
-    }
-
-    private static void setRolePermission(Stage stage) {
-        assignUserRoleLoader.setControllerFactory(c -> new AssignUserRoleController());
-        rolesLoader.setControllerFactory(c -> new RolesController());
-    }
-
     private static void setSystemSettings(Stage stage) {
         appSettingsLoader.setControllerFactory(c -> new AppSettingsController());
         branchesLoader.setControllerFactory(c -> BranchController.getInstance(stage));
-        companySettingsLoader.setControllerFactory(c -> new CompanyDetailsController());
+        companySettingsLoader.setControllerFactory(c -> CompanyDetailsController.getInstance());
         currencyLoader.setControllerFactory(c -> CurrencyController.getInstance(stage));
+        rolesLoader.setControllerFactory(c -> RolesController.getInstance(stage));
     }
 
     private static void setExpenses(Stage stage) {
@@ -558,7 +494,6 @@ public class Pages {
         // PayRoll
         paySlipsPane = paySlipsLoader.load();
         salariesPane = salariesLoader.load();
-        salaryAdvancesPane = salaryAdvancesLoader.load();
         beneficiaryBadgePane = beneficiaryBadgeLoader.load();
         beneficiaryTypePane = beneficiaryTypeLoader.load();
         // Bank
@@ -567,15 +502,8 @@ public class Pages {
         quotationPane = quotationLoader.load();
         // Tax
         taxesPane = taxesLoader.load();
-        taxSettingsPane = taxSettingsLoader.load();
         // SETTINGS
-        // Data Synchronizer
-        exportPane = exportLoader.load();
-        importPane = importLoader.load();
-        // Role Permission
-        assignUserRolePane = assignUserRoleLoader.load();
         rolesPane = rolesLoader.load();
-        // System Settings
         appSettingsPane = appSettingsLoader.load();
         branchesPane = branchesLoader.load();
         companySettingsPane = companySettingsLoader.load();
@@ -594,8 +522,6 @@ public class Pages {
         expenseCategoryPane = expenseCategoryLoader.load();
         expensePane = expenseLoader.load();
 
-        roleSettingsFormPane = roleSettingsFormLoader.load();
-
         adjustmentMasterFormPane = adjustmentMasterFormLoader.load();
         quotationMasterFormPane = quotationMasterFormLoader.load();
         purchaseMasterFormPane = purchaseMasterFormLoader.load();
@@ -612,7 +538,6 @@ public class Pages {
         setCustomer(stage);
         setSupplier(stage);
         setProduct(stage);
-        setStockReport(stage);
         setReports(stage);
         setHRM(stage);
         setLeave(stage);
@@ -624,8 +549,6 @@ public class Pages {
         setReturns(stage);
         setExpenses(stage);
         setMasterForms(stage);
-        setDataSynchronizer(stage);
-        setRolePermission(stage);
         setSystemSettings(stage);
     }
 }

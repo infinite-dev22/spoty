@@ -1,96 +1,80 @@
-package inc.nomard.spoty.core.views.settings.system_settings;
+package inc.nomard.spoty.core.views.settings;
 
-import inc.nomard.spoty.core.SpotyCoreResourceLoader;
-import inc.nomard.spoty.core.viewModels.CurrencyViewModel;
-import inc.nomard.spoty.core.viewModels.settings.system_settings.CompanyDetailsViewModel;
+import inc.nomard.spoty.core.*;
+import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.core.viewModels.settings.system_settings.*;
 import inc.nomard.spoty.network_bridge.dtos.Currency;
-import io.github.palexdev.materialfx.controls.MFXCheckbox;
-import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
-import io.github.palexdev.materialfx.controls.MFXScrollPane;
-import io.github.palexdev.materialfx.controls.MFXTextField;
-import io.github.palexdev.materialfx.utils.StringUtils;
-import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
+import io.github.palexdev.materialfx.controls.*;
+import io.github.palexdev.materialfx.utils.*;
+import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+import io.github.palexdev.mfxcore.controls.*;
 import io.github.palexdev.mfxcore.controls.Label;
-import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.image.Image;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.ImagePattern;
-import javafx.scene.shape.Circle;
-import javafx.util.StringConverter;
-
-import java.net.URL;
-import java.util.Objects;
-import java.util.ResourceBundle;
-import java.util.function.Function;
-import java.util.function.Predicate;
+import io.github.palexdev.mfxresources.fonts.*;
+import java.net.*;
+import java.util.*;
+import java.util.function.*;
+import javafx.fxml.*;
+import javafx.scene.control.*;
+import javafx.scene.image.*;
+import javafx.scene.input.*;
+import javafx.scene.layout.*;
+import javafx.scene.paint.*;
+import javafx.scene.shape.*;
+import javafx.stage.*;
+import javafx.util.*;
 
 public class CompanyDetailsController implements Initializable {
+    private static CompanyDetailsController instance;
     @FXML
     public BorderPane contentPane;
     @FXML
-    public MFXButton cancelBtn;
+    public MFXButton cancelBtn,
+            saveBtn;
     @FXML
-    public MFXButton saveBtn;
+    public Circle companyLogo,
+            currentCompanyLogo;
     @FXML
-    public Circle companyLogo;
+    public Label companyName,
+            companyWeblink,
+            fileLabel;
     @FXML
-    public Label companyName;
+    public HBox linkIcon,
+            uploadIcon,
+            heroImage;
     @FXML
-    public Label companyWeblink;
+    public MFXTextField companyNameTxt,
+            companyWebLinkTxt,
+            companyPhoneTxt,
+            companyEmailTxt,
+            companyPostalAddressTxt,
+            companyAddressTxt,
+            companyTwitter,
+            companyFacebook,
+            companyLinkedin;
     @FXML
-    public HBox linkIcon;
+    public TextArea CompanyTagLine;
     @FXML
-    public MFXTextField companyNameTxt;
+    public VBox companyLogoBtn,
+            content;
     @FXML
-    public MFXTextField companyWebLinkTxt;
-    @FXML
-    public MFXTextField companyPhoneTxt;
-    @FXML
-    public MFXTextField companyEmailTxt;
-    @FXML
-    public MFXTextField companyPostalAddressTxt;
-    @FXML
-    public MFXTextField companyAddressTxt;
-    @FXML
-    public MFXTextField CompanyTagLine;
-    @FXML
-    public Circle currentCompanyLogo;
-    @FXML
-    public VBox companyLogoBtn;
-    @FXML
-    public HBox uploadIcon;
-    @FXML
-    public MFXCheckbox reportsCheck;
-    @FXML
-    public MFXCheckbox emailsCheck;
-    @FXML
-    public MFXCheckbox receiptsCheck;
-    @FXML
-    public MFXTextField companyTwitter;
-    @FXML
-    public MFXTextField companyFacebook;
-    @FXML
-    public MFXTextField companyLinkedin;
+    public MFXCheckbox reportsCheck,
+            emailsCheck,
+            receiptsCheck;
     @FXML
     public MFXScrollPane scrollPane;
     @FXML
-    public VBox content;
-    @FXML
-    public HBox heroImage;
-    @FXML
     public MFXFilterComboBox<Currency> defaultCurrencyPicker;
+    private FileChooser fileChooser;
+
+    public static CompanyDetailsController getInstance() {
+        if (instance == null) instance = new CompanyDetailsController();
+        return instance;
+    }
 
     private void setIcons() {
         var link = new MFXFontIcon("fas-link", Color.web("#00AEFF"));
-        var upload = new MFXFontIcon("fas-cloud-arrow-up", 60, Color.web("#C2C2C2"));
         linkIcon.getChildren().add(link);
-        uploadIcon.getChildren().add(upload);
     }
 
     private void componentSizing() {
@@ -109,6 +93,7 @@ public class CompanyDetailsController implements Initializable {
         setupComboBoxes();
         prefillForms();
         showData();
+        addDocument();
     }
 
     private void prefillForms() {
@@ -211,5 +196,50 @@ public class CompanyDetailsController implements Initializable {
                     .textProperty()
                     .bindBidirectional(CompanyDetailsViewModel.websiteProperty());
         }
+    }
+
+    private void addDocument() {
+        var upload = new MFXFontIcon();
+        upload.setIconsProvider(IconsProviders.FONTAWESOME_REGULAR);
+        upload.setDescription("far-file-image");
+        upload.setSize(60);
+        upload.setColor(Color.web("#C2C2C2"));
+        uploadIcon.getChildren().add(upload);
+
+        if (Objects.equals(fileChooser, null)) {
+            FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Image files (*.png, *.jpeg)", "*.*.png", "*.jpeg");
+            fileChooser = new FileChooser();
+            fileChooser.getExtensionFilters().add(extFilter);
+        }
+        companyLogoBtn.setOnMouseClicked(event -> {
+            var file = fileChooser.showOpenDialog(new Stage());
+            if (Objects.nonNull(file)) {
+                fileLabel.setText(file.getName());
+            }
+        });
+
+
+        companyLogoBtn.setOnDragOver(event -> {
+            if (event.getGestureSource() != companyLogoBtn
+                    && event.getDragboard().hasFiles()) {
+                /* allow for both copying and moving, whatever user chooses */
+                event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+            }
+            event.consume();
+        });
+
+        companyLogoBtn.setOnDragDropped(event -> {
+            Dragboard db = event.getDragboard();
+            boolean success = false;
+            if (db.hasFiles()) {
+                fileLabel.setText(db.getFiles().getFirst().getName());
+                System.out.println("Dropped: " + db.getString() + " " + db.getFiles().toString());
+                success = true;
+            }
+            /* let the source know whether the string was successfully
+             * transferred and used */
+            event.setDropCompleted(success);
+            event.consume();
+        });
     }
 }

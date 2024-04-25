@@ -90,13 +90,8 @@ public class Navigation {
         map.put("CALENDAR", NavTree.NavTreeItem.page("Calendar", Pages.getCalendarPane()));
         // PayRoll
         map.put("PAY_SLIPS", NavTree.NavTreeItem.page("Pay Slips", Pages.getPaySlipsPane()));
-        map.put("SALARIES", NavTree.NavTreeItem.page("Salaries", Pages.getSalariesPane()));  // TODO: Get Salaries from payslips
-        map.put("SALARY_ADVANCES", NavTree.NavTreeItem.page("Salary Advances", Pages.getSalaryAdvancesPane()));
         map.put("BENEFICIARY_BADGE", NavTree.NavTreeItem.page("Beneficiary Badge", Pages.getBeneficiaryBadgePane()));
         map.put("BENEFICIARY_TYPE", NavTree.NavTreeItem.page("Beneficiary Type", Pages.getBeneficiaryTypePane()));
-        // Tax
-        map.put("TAXES", NavTree.NavTreeItem.page("Taxes", Pages.getTaxesPane()));
-        map.put("TAX_SETTINGS", NavTree.NavTreeItem.page("Tax Settings", Pages.getTaxSettingsPane()));
         // Purchases
         map.put("PURCHASES", NavTree.NavTreeItem.page("Purchases", Pages.getPurchasePane()));
         map.put("PURCHASE_RETURNS", NavTree.NavTreeItem.page("Purchases Returns", Pages.getPurchaseReturnPane()));
@@ -105,17 +100,11 @@ public class Navigation {
                 "EXPENSE_CATEGORY", NavTree.NavTreeItem.page("Category", Pages.getExpenseCategoryPane()));
         map.put("EXPENSE", NavTree.NavTreeItem.page("Expenses", Pages.getExpensePane()));
         // SETTINGS
-        // Data Synchronizer
-        map.put("EXPORT", NavTree.NavTreeItem.page("Export", Pages.getExportPane()));
-        map.put("IMPORT", NavTree.NavTreeItem.page("Import", Pages.getImportPane()));
-        // Role Permission
-        map.put("ASSIGN_USER_ROLE", NavTree.NavTreeItem.page("Users & roles", Pages.getAssignUserRolePane()));
-        map.put("ROLES", NavTree.NavTreeItem.page("Roles", Pages.getRolesPane()));
-        // System Settings
         map.put("APP_SETTINGS", NavTree.NavTreeItem.page("App Settings", Pages.getAppSettingsPane()));
         map.put("BRANCHES", NavTree.NavTreeItem.page("Branches", Pages.getBranchesPane()));
         map.put("COMPANY", NavTree.NavTreeItem.page("Company Details", Pages.getCompanySettingsPane()));
         map.put("CURRENCIES", NavTree.NavTreeItem.page("Currencies", Pages.getCurrencyPane()));
+        map.put("ROLES", NavTree.NavTreeItem.page("Roles", Pages.getRolesPane()));
 
         return map;
     }
@@ -250,7 +239,6 @@ public class Navigation {
                 .getChildren()
                 .setAll(
                         NAV_TREE.get("PAY_SLIPS"),
-                        NAV_TREE.get("SALARY_ADVANCES"),
                         NAV_TREE.get("BENEFICIARY_BADGE"),
                         NAV_TREE.get("BENEFICIARY_TYPE"));
         var humanResource = NavTree.NavTreeItem.group("Human Resource", "fas-user-tie");
@@ -266,11 +254,7 @@ public class Navigation {
 
         var quotation = NavTree.NavTreeItem.mainPage("Quotations", "fas-receipt", Pages.getQuotationPane());
 
-        var tax = NavTree.NavTreeItem.group("Tax", "fas-money-bill-wheat");
-        tax.getChildren()
-                .setAll(
-                        NAV_TREE.get("TAXES"),
-                        NAV_TREE.get("TAX_SETTINGS"));
+        var tax = NavTree.NavTreeItem.mainPage("Tax", "fas-money-bill-wheat", Pages.getTaxesPane());
 
         var requisition =
                 NavTree.NavTreeItem.mainPage(
@@ -283,35 +267,15 @@ public class Navigation {
 
         var expense = NavTree.NavTreeItem.group("Expenses", "fas-wallet");
         expense.getChildren().setAll(NAV_TREE.get("EXPENSE_CATEGORY"), NAV_TREE.get("EXPENSE"));
-
-        var dataSynchronizer = NavTree.NavTreeItem.group("Data Synchronizer");
-        dataSynchronizer
-                .getChildren()
-                .setAll(
-                        NAV_TREE.get("EXPORT"),
-                        NAV_TREE.get("IMPORT"));
-        var rolePermission = NavTree.NavTreeItem.group("Role Permission");
-        rolePermission
-                .getChildren()
-                .setAll(
-                        NAV_TREE.get("ASSIGN_USER_ROLE"),
-                        NAV_TREE.get("ROLES"));
-        var systemSettings = NavTree.NavTreeItem.group("System Settings");
-        systemSettings
-                .getChildren()
-                .setAll(
-                        NAV_TREE.get("APP_SETTINGS"),
-                        NAV_TREE.get("BRANCHES"),
-                        NAV_TREE.get("COMPANY"),
-                        NAV_TREE.get("CURRENCIES"),
-                        NAV_TREE.get("SYSTEM"));
         var settings = NavTree.NavTreeItem.group("Settings", "fas-gears");
         settings
                 .getChildren()
                 .setAll(
-                        systemSettings,
-                        rolePermission,
-                        dataSynchronizer);
+                        NAV_TREE.get("APP_SETTINGS"),
+                        NAV_TREE.get("BRANCHES"),
+                        NAV_TREE.get("CURRENCIES"),
+                        NAV_TREE.get("COMPANY"),
+                        NAV_TREE.get("ROLES"));
 
         var root = NavTree.NavTreeItem.root();
         root.getChildren()

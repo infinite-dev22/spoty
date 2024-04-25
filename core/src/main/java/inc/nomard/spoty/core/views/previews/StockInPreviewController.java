@@ -21,6 +21,9 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 
 public class StockInPreviewController implements Initializable {
+    static final ObservableList<StockInDetail> stockInDetailsList = FXCollections.observableArrayList();
+    private static final ListProperty<StockInDetail> stockInDetails =
+            new SimpleListProperty<>(stockInDetailsList);
     @FXML
     public Label stockInDate;
     @FXML
@@ -31,9 +34,6 @@ public class StockInPreviewController implements Initializable {
     public Label stockInNote;
     @FXML
     public Label doneBy;
-    static final ObservableList<StockInDetail> stockInDetailsList = FXCollections.observableArrayList();
-    private static final ListProperty<StockInDetail> stockInDetails =
-            new SimpleListProperty<>(stockInDetailsList);
 
     public static ObservableList<StockInDetail> getStockInDetails() {
         return stockInDetails.get();

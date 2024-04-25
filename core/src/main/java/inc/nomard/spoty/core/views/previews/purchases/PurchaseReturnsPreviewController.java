@@ -1,7 +1,6 @@
 package inc.nomard.spoty.core.views.previews.purchases;
 
 import inc.nomard.spoty.network_bridge.dtos.purchases.PurchaseDetail;
-import inc.nomard.spoty.network_bridge.dtos.purchases.PurchaseMaster;
 import inc.nomard.spoty.network_bridge.dtos.returns.purchase_returns.PurchaseReturnMaster;
 import io.github.palexdev.materialfx.controls.MFXTableColumn;
 import io.github.palexdev.materialfx.controls.MFXTableView;
@@ -22,6 +21,9 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 
 public class PurchaseReturnsPreviewController implements Initializable {
+    static final ObservableList<PurchaseDetail> purchaseDetailsList = FXCollections.observableArrayList();
+    private static final ListProperty<PurchaseDetail> purchaseDetails =
+            new SimpleListProperty<>(purchaseDetailsList);
     @FXML
     public Label purchaseDate;
     @FXML
@@ -54,9 +56,6 @@ public class PurchaseReturnsPreviewController implements Initializable {
     public Label purchaseNote;
     @FXML
     public Label doneBy;
-    static final ObservableList<PurchaseDetail> purchaseDetailsList = FXCollections.observableArrayList();
-    private static final ListProperty<PurchaseDetail> purchaseDetails =
-            new SimpleListProperty<>(purchaseDetailsList);
 
     public static ObservableList<PurchaseDetail> getPurchaseDetails() {
         return purchaseDetails.get();
