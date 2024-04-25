@@ -1,8 +1,6 @@
 rootProject.name = 'spoty'
 include ':core'
-include ':accounting'
 include ':network_bridge'
-include ':reporting'
 include ':utils'
 include ':responsive_fx'
 include 'seamless_updater'
