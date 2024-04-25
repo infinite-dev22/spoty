@@ -8,12 +8,8 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/accounting" />
             <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/network_bridge" />
-            <option value="$PROJECT_DIR$/reporting" />
-            <option value="$PROJECT_DIR$/responsive_fx" />
-            <option value="$PROJECT_DIR$/seamless_updater" />
             <option value="$PROJECT_DIR$/utils" />
           </set>
         </option>

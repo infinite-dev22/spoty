@@ -1,37 +1,37 @@
 plugins {
-    id 'java'
-    id 'org.javamodularity.moduleplugin' version '1.8.12'
-    id 'application'
-    id 'org.openjfx.javafxplugin' version '0.1.0'
-    id 'org.beryx.jlink' version '3.0.0'
-    id 'org.graalvm.buildtools.native' version '0.9.28'
-    id 'io.freefair.lombok' version '8.4'
+    id "java"
+    id "org.javamodularity.moduleplugin" version "$modulePlugin"
+    id "application"
+    id "org.openjfx.javafxplugin" version "$jfxPlugin"
+    id "org.beryx.jlink" version "$jlink"
+    id "org.graalvm.buildtools.native" version "$nativeBuildTool"
+    id "io.freefair.lombok" version "$lombokPlugin"
     id "com.github.mrcjkb.module-finder" version "0.0.7"
 }
 
-apply plugin: 'java'
+apply plugin: "java"
 
-project.description = 'Zenmart ERP - Fintech Software.'
+project.description = "Zenmart ERP - Fintech Software."
 project.ext.buildDate = LocalDate.now()
-project.version = '0.0.18z'
+project.version = "$spoty"
 
 repositories {
     mavenLocal()
     mavenCentral()
     gradlePluginPortal()
-    maven { url 'https://jitpack.io' }
+    maven { url "https://jitpack.io" }
     maven {
         url "https://sandec.jfrog.io/artifactory/repo"
     }
 }
 
 tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8'
+    options.encoding = "UTF-8"
 }
 
 application {
-    mainModule = 'spoty.core'
-    mainClass = 'inc.nomard.spoty.core.Main'
+    mainModule = "spoty.core"
+    mainClass = "inc.nomard.spoty.core.Main"
 }
 
 //graalvmNative {
@@ -40,7 +40,7 @@ application {
 //        main {
 //            javaLauncher = javaToolchains.launcherFor {
 //                languageVersion = JavaLanguageVersion.of(17)
-//                vendor = JvmVendorSpec.matching('Oracle Corporation')
+//                vendor = JvmVendorSpec.matching("Oracle Corporation")
 //            }
 //        }
 //    }
@@ -52,74 +52,83 @@ test {
 
 run {
     jvmArgs = [
-            '-XX:NewRatio=1',
-            '-Xms256m',
-            '-Xmx2G',
-            '-XX:ReservedCodeCacheSize=512m',
-            '-XX:+UseG1GC',
-            '-XX:SoftRefLRUPolicyMSPerMB=50',
-            '-XX:CICompilerCount=2',
-            '-XX:+HeapDumpOnOutOfMemoryError',
-            '-Dsun.io.useCanonCaches=false',
-            '-Djbr.catch.SIGABRT=true',
-            '-Djdk.attach.allowAttachSelf=true',
+            "-XX:NewRatio=1",
+            "-Xms256m",
+            "-Xmx2G",
+            "-XX:ReservedCodeCacheSize=512m",
+            "-XX:+UseG1GC",
+            "-XX:SoftRefLRUPolicyMSPerMB=50",
+            "-XX:CICompilerCount=2",
+            "-XX:+HeapDumpOnOutOfMemoryError",
+            "-Dsun.io.useCanonCaches=false",
+            "-Djbr.catch.SIGABRT=true",
+            "-Djdk.attach.allowAttachSelf=true",
     ]
 }
 
 jar {
     manifest {
         attributes(
-                'Main-Class': 'inc.nomard.spoty.Main'
+                "Main-Class": "inc.nomard.spoty.Main"
         )
     }
 }
 
 jlink {
-    imageZip = project.file('${buildDir}/distributions/app-${javafx.platform.classifier}.zip')
-    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
+    addExtraDependencies(
+            "javafx",
+            "jakarta.inject",
+            "org.jetbrains.annotations",
+            "com.dlsc.gemsfx:gemsfx",
+            "eu.hansolo.fx:charts",
+            "com.calendarfx:view",
+            ":utils"
+    )
+    imageZip = project.file("${buildDir}/distributions/app-${javafx.platform.classifier}.zip")
+    options = ["--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages"]
     launcher {
-        name = 'Zenmart ERP'
+        name = "Zenmart ERP"
         jvmArgs = [
-                '-XX:NewRatio=1',
-                '-Xms256m',
-                '-Xmx2G',
-                '-XX:ReservedCodeCacheSize=512m',
-                '-XX:+UseG1GC',
-                '-XX:SoftRefLRUPolicyMSPerMB=50',
-                '-XX:CICompilerCount=2',
-                '-XX:+HeapDumpOnOutOfMemoryError',
-                '-Dsun.io.useCanonCaches=false',
-                '-Djbr.catch.SIGABRT=true',
-                '-Djdk.attach.allowAttachSelf=true',
-                '-XX:ErrorFile=/home/infinite-dev/IdeaProjects/spoty/error%p.log',
+                "-XX:NewRatio=1",
+                "-Xms256m",
+                "-Xmx2G",
+                "-XX:ReservedCodeCacheSize=512m",
+                "-XX:+UseG1GC",
+                "-XX:SoftRefLRUPolicyMSPerMB=50",
+                "-XX:CICompilerCount=2",
+                "-XX:+HeapDumpOnOutOfMemoryError",
+                "-Dsun.io.useCanonCaches=false",
+                "-Djbr.catch.SIGABRT=true",
+                "-Djdk.attach.allowAttachSelf=true",
+                "-XX:ErrorFile=/home/infinite-dev/IdeaProjects/spoty/error%p.log",
         ]
     }
 
     jpackage {
         installerOptions = [
-                '--name', 'Zenmart-ERP',
-                '--description', project.description,
-                '--copyright', 'Copyright 2023 nomard io',
-                '--vendor', 'Nomard IO',
-                '--icon', 'src/main/resources/icon.png',
-                '--type', 'rpm',
+                "--name", "Zenmart-ERP",
+                "--description", project.description,
+                "--app-version", project.version,
+                "--copyright", "Copyright 2024 nomard inc",
+                "--vendor", "Nomard Inc",
+                "--icon", "src/main/resources/icon.png",
+                "--type", "rpm",
                 // Windows Only
-//                '--win-dir-chooser',
-//                '--win-menu', '--win-shortcut',
-//                '--win-dir-chooser', '--win-menu',
-//                '--win-per-user-install', '--win-shortcut-prompt',
+//                "--win-dir-chooser",
+//                "--win-menu", "--win-shortcut",
+//                "--win-dir-chooser", "--win-menu",
+//                "--win-per-user-install", "--win-shortcut-prompt",
         ]
     }
-    addExtraDependencies('javafx')
 }
 
-tasks.register('doPackageAll') {
+tasks.register("doPackageAll") {
     doLast {
         if (Os.isFamily(Os.FAMILY_UNIX)) {
             exec {
-                mkdir('$buildDir/distributions')
-                executable '$projectDir/scripts/JLinkPackage.sh'
-                args = ['$buildDir']
+                mkdir("$buildDir/distributions")
+                executable "$projectDir/scripts/JLinkPackage.sh"
+                args = ["$buildDir"]
             }
         }
     }
@@ -130,31 +139,29 @@ jlinkZip.doLast {
 }
 
 dependencies {
-    implementation project(':network_bridge')
-    implementation project(':utils')
-    implementation 'org.controlsfx:controlsfx:11.2.1'
-    implementation('com.dlsc.gemsfx:gemsfx:2.6.7')
-    implementation 'net.synedra:validatorfx:0.5.0'
-    implementation 'com.github.iAmGio:froxty:1.4.0'
-    implementation 'com.calendarfx:view:11.12.7'
-    implementation 'eu.hansolo.fx:charts:21.0.7'
-    implementation 'net.datafaker:datafaker:2.0.2'
-    implementation 'io.soabase.record-builder:record-builder-core:39'
-    implementation 'io.github.mkpaz:atlantafx-parent:2.0.1'
-    implementation 'io.github.mkpaz:atlantafx-styles:2.0.1'
-    implementation 'io.github.mkpaz:atlantafx-base:2.0.1'
-    implementation 'com.google.code.gson:gson:2.10.1'
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
-    implementation 'org.projectlombok:lombok:1.18.30'
-    implementation 'org.jetbrains:annotations:24.0.1'
-    implementation 'io.github.palexdev:materialfx:11.17.0'
-    implementation 'org.kordamp.ikonli:ikonli-javafx:12.3.1'
-    implementation 'org.kordamp.ikonli:ikonli-core:12.3.1'
-    implementation 'org.kordamp.ikonli:ikonli-fontawesome5-pack:12.3.1'
-    implementation 'fr.brouillard.oss:cssfx:11.5.1'
-    implementation 'io.github.palexdev:virtualizedfx:11.9.6' // update to version -> 21.1.0 breaks the system.
-    implementation 'io.github.palexdev:mfxcomponents:11.24.1'
-    implementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
-    implementation 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
+    implementation project(":network_bridge")
+    implementation project(":utils")
+    implementation 'jakarta.inject:jakarta.inject-api:2.0.1'
+    implementation('javax.measure:unit-api:2.1.2')
+    implementation "com.dlsc.gemsfx:gemsfx:$gemsfx"
+//    implementation "com.github.iAmGio:froxty:1.4.0"
+    implementation "com.calendarfx:view:11.12.7"
+    implementation "eu.hansolo.fx:charts:21.0.7"
+//    implementation "io.soabase.record-builder:record-builder-core:39"
+    implementation "io.github.mkpaz:atlantafx-parent:2.0.1"
+    implementation "io.github.mkpaz:atlantafx-styles:2.0.1"
+    implementation "io.github.mkpaz:atlantafx-base:2.0.1"
+    implementation "com.google.code.gson:gson:2.10.1"
+    compileOnly "org.projectlombok:lombok"
+    annotationProcessor "org.projectlombok:lombok"
+    implementation "org.projectlombok:lombok:$lombok"
+    implementation "io.github.palexdev:materialfx:$materialfx"
+    implementation "org.kordamp.ikonli:ikonli-javafx:$ikonLi"
+    implementation "org.kordamp.ikonli:ikonli-core:$ikonLi"
+    implementation "org.kordamp.ikonli:ikonli-fontawesome5-pack:$ikonLi"
+    implementation "fr.brouillard.oss:cssfx:$cssfx"
+    implementation "io.github.palexdev:virtualizedfx:$virtualizedFX" // update to version -> 21.1.0 breaks the system.
+    implementation "io.github.palexdev:mfxcomponents:$mfxComponents"
+    implementation "org.junit.jupiter:junit-jupiter-api:$junit"
+    implementation "org.junit.jupiter:junit-jupiter-engine:$junit"
 }
