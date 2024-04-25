@@ -35,6 +35,9 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 
 public class QuotationPreviewController implements Initializable {
+    static final ObservableList<QuotationDetail> quotationDetailsList = FXCollections.observableArrayList();
+    private static final ListProperty<QuotationDetail> quotationDetails =
+            new SimpleListProperty<>(quotationDetailsList);
     @FXML
     public Label quotationDate;
     @FXML
@@ -65,9 +68,6 @@ public class QuotationPreviewController implements Initializable {
     public Label balance;
     @FXML
     public Label doneBy;
-    static final ObservableList<QuotationDetail> quotationDetailsList = FXCollections.observableArrayList();
-    private static final ListProperty<QuotationDetail> quotationDetails =
-            new SimpleListProperty<>(quotationDetailsList);
 
     public static ObservableList<QuotationDetail> getQuotationDetails() {
         return quotationDetails.get();

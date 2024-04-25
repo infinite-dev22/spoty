@@ -61,8 +61,6 @@ public class QuotationController implements Initializable {
     @FXML
     public HBox actionsPane;
     @FXML
-    public MFXButton importBtn;
-    @FXML
     public BorderPane contentPane;
     @FXML
     public MFXButton createBtn;
@@ -74,11 +72,6 @@ public class QuotationController implements Initializable {
     private FXMLLoader viewFxmlLoader;
     private MFXStageDialog viewDialog;
 
-    public static QuotationController getInstance(Stage stage) {
-        if (instance == null) instance = new QuotationController(stage);
-        return instance;
-    }
-
     public QuotationController(Stage stage) {
         Platform.runLater(() ->
         {
@@ -88,6 +81,11 @@ public class QuotationController implements Initializable {
                 throw new RuntimeException(e);
             }
         });
+    }
+
+    public static QuotationController getInstance(Stage stage) {
+        if (instance == null) instance = new QuotationController(stage);
+        return instance;
     }
 
     @Override

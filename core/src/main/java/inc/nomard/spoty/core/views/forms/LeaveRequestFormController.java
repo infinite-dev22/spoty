@@ -71,15 +71,14 @@ public class LeaveRequestFormController implements Initializable {
             fromTimeValidationLabel,
             toDateValidationLabel,
             toTimeValidationLabel,
-            reasonValidationLabel;
+            reasonValidationLabel,
+            fileLabel;
     @FXML
     public TextArea reason;
     @FXML
     public VBox documentBtn;
     @FXML
     public HBox uploadIcon;
-    @FXML
-    public Label fileLabel;
     private FileChooser fileChooser;
     private List<Constraint> employeeConstraints,
             leaveTypeConstraints,
@@ -268,7 +267,9 @@ public class LeaveRequestFormController implements Initializable {
         }
         documentBtn.setOnMouseClicked(event -> {
             var file = fileChooser.showOpenDialog(new Stage());
-            fileLabel.setText(file.getName());
+            if (Objects.nonNull(file)) {
+                fileLabel.setText(file.getName());
+            }
         });
 
 

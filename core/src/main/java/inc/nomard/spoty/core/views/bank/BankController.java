@@ -5,7 +5,13 @@ import inc.nomard.spoty.core.viewModels.BankViewModel;
 import inc.nomard.spoty.core.views.forms.BankFormController;
 import inc.nomard.spoty.network_bridge.dtos.Bank;
 import inc.nomard.spoty.utils.SpotyThreader;
-import io.github.palexdev.materialfx.controls.*;
+import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+import io.github.palexdev.materialfx.controls.MFXContextMenu;
+import io.github.palexdev.materialfx.controls.MFXContextMenuItem;
+import io.github.palexdev.materialfx.controls.MFXTableColumn;
+import io.github.palexdev.materialfx.controls.MFXTableRow;
+import io.github.palexdev.materialfx.controls.MFXTableView;
+import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
@@ -43,8 +49,6 @@ public class BankController implements Initializable {
     public MFXTextField searchBar;
     @FXML
     public HBox actionsPane;
-    @FXML
-    public MFXButton importBtn;
     @FXML
     public MFXButton createBtn;
     @FXML

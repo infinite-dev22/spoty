@@ -1,5 +1,7 @@
 package inc.nomard.spoty.core.views.human_resource.pay_roll.pay_slip;
 
+import inc.nomard.spoty.core.components.navigation.Pages;
+import inc.nomard.spoty.core.views.BaseController;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXIconButton;
 import io.github.palexdev.mfxcore.controls.Label;
@@ -8,8 +10,6 @@ import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.HBox;
-import inc.nomard.spoty.core.components.navigation.Pages;
-import inc.nomard.spoty.core.views.BaseController;
 
 import java.net.URL;
 import java.util.ResourceBundle;

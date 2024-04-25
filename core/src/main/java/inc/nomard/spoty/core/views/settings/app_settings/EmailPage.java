@@ -1,4 +1,4 @@
-package inc.nomard.spoty.core.views.settings.system_settings.app_settings;
+package inc.nomard.spoty.core.views.settings.app_settings;
 
 import inc.nomard.spoty.core.components.animations.SpotyAnimations;
 import inc.nomard.spoty.core.viewModels.EmailViewModel;

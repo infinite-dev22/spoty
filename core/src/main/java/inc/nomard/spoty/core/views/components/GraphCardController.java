@@ -41,8 +41,6 @@ public class GraphCardController implements Initializable {
     private final Color expenseColor = Color.web("#00AEF5");
     private final Color incomeColor = Color.web("#4EE29B");
     private final Color strokeSymbolColor = Color.web("#293C47");
-    private Axis xAxisBottom, yAxisLeft;
-    private XYChart lineChart;
     @FXML
     public Circle incomeColorIndicator;
     @FXML
@@ -53,6 +51,8 @@ public class GraphCardController implements Initializable {
     public Label cardTitle;
     @FXML
     public AnchorPane lineChartHolder;
+    private Axis xAxisBottom, yAxisLeft;
+    private XYChart lineChart;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {

@@ -181,7 +181,7 @@ public class LoginController implements Initializable {
         }
 
         addMessage(loginSuccess);
-        Duration delay = Duration.seconds(7);
+        Duration delay = Duration.millis(3500);
 
         KeyFrame keyFrame = new KeyFrame(delay, event -> {
             stage.hide();
@@ -297,7 +297,7 @@ public class LoginController implements Initializable {
     }
 
     private void delay(SpotyMessage message) {
-        Duration delay = Duration.seconds(5);
+        Duration delay = Duration.seconds(3);
 
         KeyFrame keyFrame = new KeyFrame(delay, event -> {
             var out = Animations.slideOutUp(message, Duration.millis(250));

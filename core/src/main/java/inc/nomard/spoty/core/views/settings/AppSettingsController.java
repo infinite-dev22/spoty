@@ -1,30 +1,35 @@
-package inc.nomard.spoty.core.views.settings.data_synchronizer;
+package inc.nomard.spoty.core.views.settings;
 
-import io.github.palexdev.materialfx.controls.MFXButton;
-import io.github.palexdev.materialfx.controls.MFXTableView;
 import io.github.palexdev.materialfx.controls.MFXTextField;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.TabPane;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class BackupController implements Initializable {
-
+public class AppSettingsController implements Initializable {
+    @FXML
     public BorderPane contentPane;
+    @FXML
     public MFXTextField searchBar;
-    public HBox actionsPane;
-    public MFXButton importBtn;
-    public MFXButton createBtn;
-    public MFXTableView masterTable;
+    @FXML
+    public TabPane tabbedPane;
+    @FXML
+    public AnchorPane emailTabContent;
 
     public void createBtnClicked(MouseEvent mouseEvent) {
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        initTabbedPane();
+    }
 
+    private void initTabbedPane() {
+        tabbedPane.setMinWidth(450);
     }
 }

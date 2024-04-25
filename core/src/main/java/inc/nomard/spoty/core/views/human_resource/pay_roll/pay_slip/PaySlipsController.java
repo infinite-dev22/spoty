@@ -2,7 +2,8 @@ package inc.nomard.spoty.core.views.human_resource.pay_roll.pay_slip;
 
 import inc.nomard.spoty.core.components.animations.SpotyAnimations;
 import inc.nomard.spoty.core.viewModels.hrm.employee.EmploymentStatusViewModel;
-import io.github.palexdev.materialfx.controls.MFXButton;
+import inc.nomard.spoty.utils.SpotyLogger;
+import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXScrollPane;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
@@ -16,7 +17,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import inc.nomard.spoty.utils.SpotyLogger;
 import javafx.util.Duration;
 
 import java.io.IOException;
@@ -32,8 +32,6 @@ public class PaySlipsController implements Initializable {
     public MFXTextField searchBar;
     @FXML
     public HBox actionsPane;
-    @FXML
-    public MFXButton importBtn;
     @FXML
     public MFXButton createBtn;
     @FXML

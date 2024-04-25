@@ -17,9 +17,8 @@ package inc.nomard.spoty.core.viewModels.hrm.pay_roll;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import javafx.beans.property.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import inc.nomard.spoty.core.viewModels.BankViewModel;
+import inc.nomard.spoty.core.viewModels.adapters.UnixEpochDateTypeAdapter;
 import inc.nomard.spoty.network_bridge.dtos.Branch;
 import inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll.BeneficiaryType;
 import inc.nomard.spoty.network_bridge.models.FindModel;
@@ -28,8 +27,9 @@ import inc.nomard.spoty.network_bridge.repositories.implementations.BeneficiaryT
 import inc.nomard.spoty.utils.ParameterlessConsumer;
 import inc.nomard.spoty.utils.SpotyLogger;
 import inc.nomard.spoty.utils.SpotyThreader;
-import inc.nomard.spoty.core.viewModels.BankViewModel;
-import inc.nomard.spoty.core.viewModels.adapters.UnixEpochDateTypeAdapter;
+import javafx.beans.property.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;

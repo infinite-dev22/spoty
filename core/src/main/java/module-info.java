@@ -48,10 +48,8 @@ module spoty.core {
     opens inc.nomard.spoty.core.views.expenses.category;
     opens inc.nomard.spoty.core.views.customers;
     opens inc.nomard.spoty.core.views.suppliers;
-    opens inc.nomard.spoty.core.views.settings.system_settings;
-    opens inc.nomard.spoty.core.views.settings.system_settings.app_settings;
-    opens inc.nomard.spoty.core.views.settings.data_synchronizer;
-    opens inc.nomard.spoty.core.views.settings.role_permission;
+    opens inc.nomard.spoty.core.views.settings.app_settings;
+    opens inc.nomard.spoty.core.views.settings;
     opens inc.nomard.spoty.core.views.forms;
     opens inc.nomard.spoty.core.views.splash;
     opens inc.nomard.spoty.core.components.navigation;
@@ -67,7 +65,7 @@ module spoty.core {
     opens inc.nomard.spoty.core.views.previews.purchases;
     opens inc.nomard.spoty.core.views.previews.sales;
     opens inc.nomard.spoty.core.views.previews.people;
+    opens inc.nomard.spoty.core.views.previews.hrm.pay_roll;
 
     exports inc.nomard.spoty.core;
-    opens inc.nomard.spoty.core.views.previews.hrm.pay_roll;
 }

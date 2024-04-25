@@ -21,6 +21,9 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 
 public class SaleReturnsPreviewController implements Initializable {
+    static final ObservableList<SaleReturnDetail> saleReturnDetailsList = FXCollections.observableArrayList();
+    private static final ListProperty<SaleReturnDetail> saleReturnDetails =
+            new SimpleListProperty<>(saleReturnDetailsList);
     @FXML
     public Label orderDate;
     @FXML
@@ -51,9 +54,6 @@ public class SaleReturnsPreviewController implements Initializable {
     public Label balance;
     @FXML
     public Label userName;
-    static final ObservableList<SaleReturnDetail> saleReturnDetailsList = FXCollections.observableArrayList();
-    private static final ListProperty<SaleReturnDetail> saleReturnDetails =
-            new SimpleListProperty<>(saleReturnDetailsList);
 
     public static ObservableList<SaleReturnDetail> getSaleReturnDetails() {
         return saleReturnDetails.get();

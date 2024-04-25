@@ -19,7 +19,12 @@ import inc.nomard.spoty.core.viewModels.ExpenseCategoryViewModel;
 import inc.nomard.spoty.core.views.forms.ExpenseCategoryFormController;
 import inc.nomard.spoty.network_bridge.dtos.ExpenseCategory;
 import inc.nomard.spoty.utils.SpotyThreader;
-import io.github.palexdev.materialfx.controls.*;
+import io.github.palexdev.materialfx.controls.MFXContextMenu;
+import io.github.palexdev.materialfx.controls.MFXContextMenuItem;
+import io.github.palexdev.materialfx.controls.MFXTableColumn;
+import io.github.palexdev.materialfx.controls.MFXTableRow;
+import io.github.palexdev.materialfx.controls.MFXTableView;
+import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
@@ -54,8 +59,6 @@ public class ExpenseCategoryController implements Initializable {
     private static ExpenseCategoryController instance;
     @FXML
     public HBox categoryExpenseActionsPane;
-    @FXML
-    public MFXButton categoryExpenseImportBtn;
     @FXML
     public BorderPane categoryContentPane;
     @FXML

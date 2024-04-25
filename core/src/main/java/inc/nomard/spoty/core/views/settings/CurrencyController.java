@@ -12,16 +12,19 @@
  * Jonathan Mark Mwigo makes no warranties, express or implied, with respect to the computer system code. Jonathan Mark Mwigo shall not be liable for any damages, including, but not limited to, direct, indirect, incidental, special, consequential, or punitive damages, arising out of or in connection with the use of the computer system code.
  */
 
-package inc.nomard.spoty.core.views.settings.role_permission;
+package inc.nomard.spoty.core.views.settings;
 
 import inc.nomard.spoty.core.components.animations.SpotyAnimations;
-import inc.nomard.spoty.core.components.navigation.Navigation;
-import inc.nomard.spoty.core.components.navigation.Pages;
-import inc.nomard.spoty.core.viewModels.RoleViewModel;
-import inc.nomard.spoty.network_bridge.dtos.Role;
+import inc.nomard.spoty.core.viewModels.CurrencyViewModel;
+import inc.nomard.spoty.core.views.forms.CurrencyFormController;
+import inc.nomard.spoty.network_bridge.dtos.Currency;
 import inc.nomard.spoty.utils.SpotyThreader;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
+import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
+import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
+import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
+import io.github.palexdev.materialfx.enums.ScrimPriority;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
 import javafx.animation.RotateTransition;
@@ -30,39 +33,53 @@ import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.Comparator;
-import java.util.Objects;
 import java.util.ResourceBundle;
 
+import static inc.nomard.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
+
 @SuppressWarnings("unchecked")
-public class RolesController implements Initializable {
-    private static RolesController instance;
+public class CurrencyController implements Initializable {
+    private static CurrencyController instance;
     @FXML
-    public MFXButton importBtn;
+    public MFXTextField searchBar;
     @FXML
     public HBox actionsPane;
     @FXML
-    public MFXTextField searchBar;
+    public MFXTableView<Currency> masterTable;
     @FXML
     public BorderPane contentPane;
     @FXML
     public MFXButton createBtn;
     @FXML
     public HBox refresh;
-    @FXML
-    private MFXTableView<Role> masterTable;
+    private MFXStageDialog dialog;
     private RotateTransition transition;
 
-    public static RolesController getInstance() {
-        if (Objects.equals(instance, null)) instance = new RolesController();
+    private CurrencyController(Stage stage) {
+        Platform.runLater(
+                () -> {
+                    try {
+                        currencyFormDialogPane(stage);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                });
+    }
+
+    public static CurrencyController getInstance(Stage stage) {
+        if (instance == null) instance = new CurrencyController(stage);
         return instance;
     }
 
@@ -73,49 +90,52 @@ public class RolesController implements Initializable {
     }
 
     private void setupTable() {
-        MFXTableColumn<Role> roleMasterRole =
-                new MFXTableColumn<>("Name", true, Comparator.comparing(Role::getName));
-        MFXTableColumn<Role> roleMasterDescription =
-                new MFXTableColumn<>("Description", true, Comparator.comparing(Role::getDescription));
+        MFXTableColumn<Currency> currencyName =
+                new MFXTableColumn<>("Name", false, Comparator.comparing(Currency::getName));
+        MFXTableColumn<Currency> currencyCode =
+                new MFXTableColumn<>("Code", false, Comparator.comparing(Currency::getCode));
+        MFXTableColumn<Currency> currencySymbol =
+                new MFXTableColumn<>("Symbol", false, Comparator.comparing(Currency::getSymbol));
 
-        roleMasterRole.setRowCellFactory(roleMaster -> new MFXTableRowCell<>(Role::getName));
-        roleMasterDescription.setRowCellFactory(
-                roleMaster -> new MFXTableRowCell<>(Role::getDescription));
+        currencyName.setRowCellFactory(currency -> new MFXTableRowCell<>(Currency::getName));
+        currencyCode.setRowCellFactory(currency -> new MFXTableRowCell<>(Currency::getCode));
+        currencySymbol.setRowCellFactory(currency -> new MFXTableRowCell<>(Currency::getSymbol));
 
-        roleMasterRole.prefWidthProperty().bind(masterTable.widthProperty().multiply(.5));
-        roleMasterDescription.prefWidthProperty().bind(masterTable.widthProperty().multiply(.5));
+        currencyName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.34));
+        currencyCode.prefWidthProperty().bind(masterTable.widthProperty().multiply(.34));
+        currencySymbol.prefWidthProperty().bind(masterTable.widthProperty().multiply(.34));
 
-        masterTable.getTableColumns().addAll(roleMasterRole, roleMasterDescription);
-
+        masterTable.getTableColumns().addAll(currencyName, currencyCode, currencySymbol);
         masterTable
                 .getFilters()
                 .addAll(
-                        new StringFilter<>("Name", Role::getName),
-                        new StringFilter<>("Description", Role::getDescription));
+                        new StringFilter<>("Name", Currency::getName),
+                        new StringFilter<>("Code", Currency::getCode),
+                        new StringFilter<>("Symbol", Currency::getSymbol));
 
-        getRoleTable();
+        getCurrencyTable();
 
-        if (RoleViewModel.getRoles().isEmpty()) {
-            RoleViewModel.getRoles()
+        if (CurrencyViewModel.getCurrencies().isEmpty()) {
+            CurrencyViewModel.getCurrencies()
                     .addListener(
-                            (ListChangeListener<Role>) c -> masterTable.setItems(RoleViewModel.getRoles()));
+                            (ListChangeListener<Currency>)
+                                    c -> masterTable.setItems(CurrencyViewModel.getCurrencies()));
         } else {
-            masterTable.itemsProperty().bindBidirectional(RoleViewModel.rolesProperty());
+            masterTable.itemsProperty().bindBidirectional(CurrencyViewModel.currencyProperty());
         }
     }
 
-    private void getRoleTable() {
+    private void getCurrencyTable() {
         masterTable.setPrefSize(1200, 1000);
         masterTable.features().enableBounceEffect();
-        masterTable.autosizeColumnsOnInitialization();
         masterTable.features().enableSmoothScrolling(0.5);
 
         masterTable.setTableRowFactory(
                 t -> {
-                    MFXTableRow<Role> row = new MFXTableRow<>(masterTable, t);
+                    MFXTableRow<Currency> row = new MFXTableRow<>(masterTable, t);
                     EventHandler<ContextMenuEvent> eventHandler =
                             event ->
-                                    showContextMenu((MFXTableRow<Role>) event.getSource())
+                                    showContextMenu((MFXTableRow<Currency>) event.getSource())
                                             .show(
                                                     contentPane.getScene().getWindow(),
                                                     event.getScreenX(),
@@ -125,7 +145,7 @@ public class RolesController implements Initializable {
                 });
     }
 
-    private MFXContextMenu showContextMenu(MFXTableRow<Role> obj) {
+    private MFXContextMenu showContextMenu(MFXTableRow<Currency> obj) {
         MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
 
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
@@ -137,7 +157,7 @@ public class RolesController implements Initializable {
                 e -> {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
-                            RoleViewModel.deleteItem(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
+                            CurrencyViewModel.deleteItem(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
@@ -149,7 +169,7 @@ public class RolesController implements Initializable {
                 e -> {
                     SpotyThreader.spotyThreadPool(() -> {
                         try {
-                            RoleViewModel.getItem(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
+                            CurrencyViewModel.getItem(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
@@ -163,8 +183,31 @@ public class RolesController implements Initializable {
         return contextMenu;
     }
 
-    public void createBtnClicked() {
-        Navigation.navigate(Pages.getRoleSettingsFormPane(), (StackPane) contentPane.getParent());
+    @FXML
+    private void createBtnClicked() {
+        dialog.showAndWait();
+    }
+
+    private void currencyFormDialogPane(Stage stage) throws IOException {
+        FXMLLoader fxmlLoader = fxmlLoader("views/forms/CurrencyForm.fxml");
+        fxmlLoader.setControllerFactory(c -> CurrencyFormController.getInstance());
+
+        MFXGenericDialog dialogContent = fxmlLoader.load();
+
+        dialogContent.setShowMinimize(false);
+        dialogContent.setShowAlwaysOnTop(false);
+
+        dialog =
+                MFXGenericDialogBuilder.build(dialogContent)
+                        .toStageDialogBuilder()
+                        .initOwner(stage)
+                        .initModality(Modality.WINDOW_MODAL)
+                        .setOwnerNode(contentPane)
+                        .setScrimPriority(ScrimPriority.WINDOW)
+                        .setScrimOwner(true)
+                        .get();
+
+        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
     }
 
     private void onAction() {
@@ -186,6 +229,6 @@ public class RolesController implements Initializable {
 
         transition = SpotyAnimations.rotateTransition(refreshIcon, Duration.millis(1000), 360);
 
-        refreshIcon.setOnMouseClicked(mouseEvent -> RoleViewModel.getAllRoles(this::onAction, this::onSuccess, this::onFailed));
+        refreshIcon.setOnMouseClicked(mouseEvent -> CurrencyViewModel.getAllCurrencies(this::onAction, this::onSuccess, this::onFailed));
     }
 }

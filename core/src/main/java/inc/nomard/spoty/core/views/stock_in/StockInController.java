@@ -61,8 +61,6 @@ public class StockInController implements Initializable {
     @FXML
     public HBox actionsPane;
     @FXML
-    public MFXButton importBtn;
-    @FXML
     public MFXTableView<StockInMaster> masterTable;
     @FXML
     public BorderPane contentPane;
@@ -74,11 +72,6 @@ public class StockInController implements Initializable {
     private FXMLLoader viewFxmlLoader;
     private MFXStageDialog viewDialog;
 
-    public static StockInController getInstance(Stage stage) {
-        if (instance == null) instance = new StockInController(stage);
-        return instance;
-    }
-
     public StockInController(Stage stage) {
         Platform.runLater(() ->
         {
@@ -88,6 +81,11 @@ public class StockInController implements Initializable {
                 throw new RuntimeException(e);
             }
         });
+    }
+
+    public static StockInController getInstance(Stage stage) {
+        if (instance == null) instance = new StockInController(stage);
+        return instance;
     }
 
     @Override

@@ -40,7 +40,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.controlsfx.control.PopOver;
@@ -61,6 +60,7 @@ public class BaseController implements Initializable {
     private final NotificationGroup<Object, CalendarNotification> calendarGroup = new NotificationGroup<>("Calendar");
     private final MFXContextMenuItem viewProfile = new MFXContextMenuItem("View profile");
     private final MFXContextMenuItem logOut = new MFXContextMenuItem("Log out");
+    private final PopOver popOver = new PopOver();
     @FXML
     public MFXFontIcon closeIcon;
     @FXML
@@ -89,7 +89,6 @@ public class BaseController implements Initializable {
     public MFXCircleToggleNode sidebarToggle;
     @FXML
     public MFXFontIcon moreActions;
-    private final PopOver popOver = new PopOver();;
     private double xOffset;
     private double yOffset;
 
