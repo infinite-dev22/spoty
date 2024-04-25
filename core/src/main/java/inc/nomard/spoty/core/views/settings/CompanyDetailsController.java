@@ -8,12 +8,14 @@ import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+import io.github.palexdev.mfxcore.controls.*;
 import io.github.palexdev.mfxcore.controls.Label;
 import io.github.palexdev.mfxresources.fonts.*;
 import java.net.*;
 import java.util.*;
 import java.util.function.*;
 import javafx.fxml.*;
+import javafx.scene.control.*;
 import javafx.scene.image.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
@@ -23,6 +25,7 @@ import javafx.stage.*;
 import javafx.util.*;
 
 public class CompanyDetailsController implements Initializable {
+    private static CompanyDetailsController instance;
     @FXML
     public BorderPane contentPane;
     @FXML
@@ -46,10 +49,11 @@ public class CompanyDetailsController implements Initializable {
             companyEmailTxt,
             companyPostalAddressTxt,
             companyAddressTxt,
-            CompanyTagLine,
             companyTwitter,
             companyFacebook,
             companyLinkedin;
+    @FXML
+    public TextArea CompanyTagLine;
     @FXML
     public VBox companyLogoBtn,
             content;
@@ -62,6 +66,11 @@ public class CompanyDetailsController implements Initializable {
     @FXML
     public MFXFilterComboBox<Currency> defaultCurrencyPicker;
     private FileChooser fileChooser;
+
+    public static CompanyDetailsController getInstance() {
+        if (instance == null) instance = new CompanyDetailsController();
+        return instance;
+    }
 
     private void setIcons() {
         var link = new MFXFontIcon("fas-link", Color.web("#00AEFF"));

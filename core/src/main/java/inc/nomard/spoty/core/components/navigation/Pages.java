@@ -14,50 +14,40 @@
 
 package inc.nomard.spoty.core.components.navigation;
 
-import inc.nomard.spoty.core.views.bank.BankController;
-import inc.nomard.spoty.core.views.customers.CustomerController;
-import inc.nomard.spoty.core.views.dashboard.DashboardController;
-import inc.nomard.spoty.core.views.expenses.category.ExpenseCategoryController;
-import inc.nomard.spoty.core.views.expenses.expense.ExpenseController;
+import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
+import inc.nomard.spoty.core.views.bank.*;
+import inc.nomard.spoty.core.views.customers.*;
+import inc.nomard.spoty.core.views.dashboard.*;
+import inc.nomard.spoty.core.views.expenses.category.*;
+import inc.nomard.spoty.core.views.expenses.expense.*;
 import inc.nomard.spoty.core.views.forms.*;
-import inc.nomard.spoty.core.views.human_resource.hrm.DesignationsController;
-import inc.nomard.spoty.core.views.human_resource.hrm.EmployeesController;
-import inc.nomard.spoty.core.views.human_resource.hrm.EmploymentStatusController;
-import inc.nomard.spoty.core.views.human_resource.leave.CalendarController;
-import inc.nomard.spoty.core.views.human_resource.leave.LeaveRequestController;
-import inc.nomard.spoty.core.views.human_resource.pay_roll.BeneficiaryBadgeController;
-import inc.nomard.spoty.core.views.human_resource.pay_roll.BeneficiaryTypeController;
-import inc.nomard.spoty.core.views.human_resource.pay_roll.SalariesController;
-import inc.nomard.spoty.core.views.human_resource.pay_roll.pay_slip.PaySlipsController;
-import inc.nomard.spoty.core.views.inventory.adjustment.AdjustmentController;
-import inc.nomard.spoty.core.views.inventory.brand.BrandController;
-import inc.nomard.spoty.core.views.inventory.category.ProductCategoryController;
-import inc.nomard.spoty.core.views.inventory.products.ProductController;
-import inc.nomard.spoty.core.views.inventory.unit_of_measure.UnitOfMeasureController;
-import inc.nomard.spoty.core.views.login.LoginController;
-import inc.nomard.spoty.core.views.previews.people.UserPreviewController;
-import inc.nomard.spoty.core.views.purchases.PurchaseReturnController;
-import inc.nomard.spoty.core.views.purchases.PurchasesController;
-import inc.nomard.spoty.core.views.quotation.QuotationController;
+import inc.nomard.spoty.core.views.human_resource.hrm.*;
+import inc.nomard.spoty.core.views.human_resource.leave.*;
+import inc.nomard.spoty.core.views.human_resource.pay_roll.*;
+import inc.nomard.spoty.core.views.human_resource.pay_roll.pay_slip.*;
+import inc.nomard.spoty.core.views.inventory.adjustment.*;
+import inc.nomard.spoty.core.views.inventory.brand.*;
+import inc.nomard.spoty.core.views.inventory.category.*;
+import inc.nomard.spoty.core.views.inventory.products.*;
+import inc.nomard.spoty.core.views.inventory.unit_of_measure.*;
+import inc.nomard.spoty.core.views.login.*;
+import inc.nomard.spoty.core.views.previews.people.*;
+import inc.nomard.spoty.core.views.purchases.*;
+import inc.nomard.spoty.core.views.quotation.*;
 import inc.nomard.spoty.core.views.report.*;
-import inc.nomard.spoty.core.views.requisition.RequisitionController;
-import inc.nomard.spoty.core.views.sales.OrdersController;
-import inc.nomard.spoty.core.views.sales.SaleReturnsController;
-import inc.nomard.spoty.core.views.sales.SaleTermsController;
-import inc.nomard.spoty.core.views.sales.pos.PointOfSaleController;
+import inc.nomard.spoty.core.views.requisition.*;
+import inc.nomard.spoty.core.views.sales.*;
+import inc.nomard.spoty.core.views.sales.pos.*;
 import inc.nomard.spoty.core.views.settings.*;
-import inc.nomard.spoty.core.views.stock_in.StockInController;
-import inc.nomard.spoty.core.views.suppliers.SupplierController;
-import inc.nomard.spoty.core.views.tax.TaxesController;
-import inc.nomard.spoty.core.views.transfer.TransferController;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.layout.BorderPane;
-import javafx.stage.Stage;
-import lombok.Getter;
-
-import java.io.IOException;
-
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
+import inc.nomard.spoty.core.views.stock_in.*;
+import inc.nomard.spoty.core.views.suppliers.*;
+import inc.nomard.spoty.core.views.tax.*;
+import inc.nomard.spoty.core.views.transfer.*;
+import java.io.*;
+import javafx.fxml.*;
+import javafx.scene.layout.*;
+import javafx.stage.*;
+import lombok.*;
 
 public class Pages {
     //Login
@@ -432,7 +422,7 @@ public class Pages {
     private static void setSystemSettings(Stage stage) {
         appSettingsLoader.setControllerFactory(c -> new AppSettingsController());
         branchesLoader.setControllerFactory(c -> BranchController.getInstance(stage));
-        companySettingsLoader.setControllerFactory(c -> new CompanyDetailsController());
+        companySettingsLoader.setControllerFactory(c -> CompanyDetailsController.getInstance());
         currencyLoader.setControllerFactory(c -> CurrencyController.getInstance(stage));
         rolesLoader.setControllerFactory(c -> RolesController.getInstance(stage));
     }
