@@ -2,6 +2,7 @@ module spoty.utils {
     requires javafx.controls;
     requires java.logging;
     requires lombok;
+    requires java.xml;
 
     opens inc.nomard.spoty.utils;
 
