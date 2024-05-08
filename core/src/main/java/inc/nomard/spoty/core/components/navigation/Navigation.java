@@ -14,19 +14,13 @@
 
 package inc.nomard.spoty.core.components.navigation;
 
-import inc.nomard.spoty.utils.SpotyLogger;
-import javafx.animation.FadeTransition;
-import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.scene.control.TreeView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
-import javafx.util.Duration;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import inc.nomard.spoty.utils.*;
+import java.util.*;
+import javafx.animation.*;
+import javafx.beans.property.*;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.util.*;
 
 public class Navigation {
     static final int PAGE_TRANSITION_DURATION = 300;
@@ -58,13 +52,20 @@ public class Navigation {
         map.put("ORDERS", NavTree.NavTreeItem.page("Orders", Pages.getSalePane()));
         map.put("SALE_RETURN", NavTree.NavTreeItem.page("Sales Returns", Pages.getSaleReturnPane()));
         map.put("SALE_TERMS", NavTree.NavTreeItem.page("Sale Terms", Pages.getSalesTermPane()));
-        // Purchases
         // Inventory
         map.put("CATEGORY", NavTree.NavTreeItem.page("Category", Pages.getProductCategoryPane()));
         map.put("BRAND", NavTree.NavTreeItem.page("Brand", Pages.getBrandPane()));
         map.put("UNIT", NavTree.NavTreeItem.page("Unit", Pages.getUnitPane()));
         map.put("PRODUCTS", NavTree.NavTreeItem.page("Products", Pages.getProductPane()));
+        map.put("REQUISITIONS", NavTree.NavTreeItem.page("Requisitions", Pages.getRequisitionPane()));
+        map.put("STOCK_INS", NavTree.NavTreeItem.page("Stock Ins", Pages.getStockInPane()));
+        map.put("TRANSFERS", NavTree.NavTreeItem.page("Transfers", Pages.getTransferPane()));
         map.put("ADJUSTMENTS", NavTree.NavTreeItem.page("Adjustments", Pages.getAdjustmentPane()));
+        // Accounting
+        map.put("BANK_ACCOUNTS", NavTree.NavTreeItem.page("Bank Accounts", Pages.getBankPane()));
+        map.put(
+                "EXPENSE_CATEGORY", NavTree.NavTreeItem.page("Expense   Category", Pages.getExpenseCategoryPane()));
+        map.put("EXPENSE", NavTree.NavTreeItem.page("Expenses", Pages.getExpensePane()));
         // Reports
         map.put("STOCK_REPORT", NavTree.NavTreeItem.page("Stock Report", Pages.getStockReportPane()));
         map.put("CLOSING", NavTree.NavTreeItem.page("Closing", Pages.getClosingPane()));
@@ -80,7 +81,7 @@ public class Navigation {
         map.put("TAX_REPORT", NavTree.NavTreeItem.page("Tax Report", Pages.getTaxReportPane()));
         map.put("USER_SALES_REPORT", NavTree.NavTreeItem.page("User Sales Report", Pages.getUserSalesReportPane()));
         // HUMAN RESOURCE
-        // Human Resource Management
+        // HRM
         map.put("DESIGNATION", NavTree.NavTreeItem.page("Designation", Pages.getDesignationsPane()));
         map.put("EMPLOYEES", NavTree.NavTreeItem.page("Employees", Pages.getEmployeesPane()));
         map.put("EMPLOYMENT_STATUS", NavTree.NavTreeItem.page("Employment Statuses", Pages.getEmploymentStatusPane()));
@@ -94,10 +95,6 @@ public class Navigation {
         // Purchases
         map.put("PURCHASES", NavTree.NavTreeItem.page("Purchases", Pages.getPurchasePane()));
         map.put("PURCHASE_RETURNS", NavTree.NavTreeItem.page("Purchases Returns", Pages.getPurchaseReturnPane()));
-        // Expenses
-        map.put(
-                "EXPENSE_CATEGORY", NavTree.NavTreeItem.page("Category", Pages.getExpenseCategoryPane()));
-        map.put("EXPENSE", NavTree.NavTreeItem.page("Expenses", Pages.getExpensePane()));
         // SETTINGS
         map.put("APP_SETTINGS", NavTree.NavTreeItem.page("App Settings", Pages.getAppSettingsPane()));
         map.put("BRANCHES", NavTree.NavTreeItem.page("Branches", Pages.getBranchesPane()));
@@ -191,6 +188,9 @@ public class Navigation {
                         NAV_TREE.get("BRAND"),
                         NAV_TREE.get("UNIT"),
                         NAV_TREE.get("PRODUCTS"),
+                        NAV_TREE.get("REQUISITIONS"),
+                        NAV_TREE.get("STOCK_INS"),
+                        NAV_TREE.get("TRANSFERS"),
                         NAV_TREE.get("ADJUSTMENTS"));
 
         var purchase = NavTree.NavTreeItem.group("Purchase", "fas-cart-plus");
@@ -223,8 +223,8 @@ public class Navigation {
                 .getChildren()
                 .setAll(
                         NAV_TREE.get("DESIGNATION"),
-                        NAV_TREE.get("EMPLOYEES"),
-                        NAV_TREE.get("EMPLOYMENT_STATUS"));
+                        NAV_TREE.get("EMPLOYMENT_STATUS"),
+                        NAV_TREE.get("EMPLOYEES"));
 
         var leave = NavTree.NavTreeItem.group("Leave");
         leave
@@ -247,25 +247,15 @@ public class Navigation {
                         leave,
                         payRoll);
 
-        var bank =
-                NavTree.NavTreeItem.mainPage(
-                        "Banks", "fas-building-columns", Pages.getBankPane());
+        var accounts = NavTree.NavTreeItem.group("Accounting", "fas-coins");
+        accounts.getChildren().setAll(
+                NAV_TREE.get("BANK_ACCOUNTS"),
+                NAV_TREE.get("EXPENSE_CATEGORY"),
+                NAV_TREE.get("EXPENSE"));
 
         var quotation = NavTree.NavTreeItem.mainPage("Quotations", "fas-receipt", Pages.getQuotationPane());
 
         var tax = NavTree.NavTreeItem.mainPage("Tax", "fas-money-bill-wheat", Pages.getTaxesPane());
-
-        var requisition =
-                NavTree.NavTreeItem.mainPage(
-                        "Requisitions", "fas-hand-holding", Pages.getRequisitionPane());
-        var transfer =
-                NavTree.NavTreeItem.mainPage(
-                        "Transfers", "fas-arrow-right-arrow-left", Pages.getTransferPane());
-        var stockIn =
-                NavTree.NavTreeItem.mainPage("Stock In", "fas-cart-arrow-down", Pages.getStockInPane());
-
-        var expense = NavTree.NavTreeItem.group("Expenses", "fas-wallet");
-        expense.getChildren().setAll(NAV_TREE.get("EXPENSE_CATEGORY"), NAV_TREE.get("EXPENSE"));
         var settings = NavTree.NavTreeItem.group("Settings", "fas-gears");
         settings
                 .getChildren()
@@ -283,15 +273,11 @@ public class Navigation {
                         humanResource,
                         people,
                         inventory,
-                        requisition,
                         purchase,
-                        stockIn,
                         quotation,
                         sale,
-                        transfer,
-                        bank,
+                        accounts,
                         tax,
-                        expense,
                         reports,
                         settings);
         return root;

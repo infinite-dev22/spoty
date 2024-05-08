@@ -18,9 +18,9 @@ import inc.nomard.spoty.core.components.message.SpotyMessage;
 import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
 import inc.nomard.spoty.core.components.message.enums.MessageDuration;
 import inc.nomard.spoty.core.components.message.enums.MessageVariants;
-import inc.nomard.spoty.core.viewModels.ProductViewModel;
+import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.requisitions.RequisitionDetailViewModel;
-import inc.nomard.spoty.network_bridge.dtos.Product;
+import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.utils.SpotyLogger;
 import inc.nomard.spoty.utils.SpotyThreader;
 import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
@@ -31,6 +31,7 @@ import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.materialfx.validation.Constraint;
 import io.github.palexdev.materialfx.validation.Severity;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+import javafx.collections.*;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -90,9 +91,16 @@ public class RequisitionDetailFormController implements Initializable {
                                         productVariantConverter.toString(productDetail), searchStr);
 
         // ComboBox properties.
-        product.setItems(ProductViewModel.getProducts());
         product.setConverter(productVariantConverter);
         product.setFilterFunction(productVariantFilterFunction);
+        if (ProductViewModel.getProducts().isEmpty()) {
+            ProductViewModel.getProducts()
+                    .addListener(
+                            (ListChangeListener<Product>)
+                                    c -> product.setItems(ProductViewModel.getProducts()));
+        } else {
+            product.itemsProperty().bindBidirectional(ProductViewModel.productsProperty());
+        }
 
         // Input validators.
         requiredValidator();

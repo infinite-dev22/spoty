@@ -60,7 +60,7 @@
                 </VBox>
             </GridPane>
             <MFXTableView fx:id="stockInDetailTable" AnchorPane.bottomAnchor="70.0" AnchorPane.leftAnchor="0.0"
-                          AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="150.0"/>
+                          AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="160.0"/>
             <HBox alignment="CENTER_RIGHT" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                   AnchorPane.rightAnchor="0.0">
                 <MFXButton fx:id="saveBtn" onMouseClicked="#stockInMasterSaveBtnClicked" styleClass="filled"

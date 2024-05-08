@@ -98,8 +98,6 @@ public class CustomerController implements Initializable {
     }
 
     private void setupTable() {
-        MFXTableColumn<Customer> customerCode =
-                new MFXTableColumn<>("Code", false, Comparator.comparing(Customer::getCode));
         MFXTableColumn<Customer> customerName =
                 new MFXTableColumn<>("Name", false, Comparator.comparing(Customer::getName));
         MFXTableColumn<Customer> customerPhone =
@@ -109,25 +107,22 @@ public class CustomerController implements Initializable {
         MFXTableColumn<Customer> customerTax =
                 new MFXTableColumn<>("Tax No.", false, Comparator.comparing(Customer::getTaxNumber));
 
-        customerCode.setRowCellFactory(customer -> new MFXTableRowCell<>(Customer::getCode));
         customerName.setRowCellFactory(customer -> new MFXTableRowCell<>(Customer::getName));
         customerPhone.setRowCellFactory(customer -> new MFXTableRowCell<>(Customer::getPhone));
         customerEmail.setRowCellFactory(customer -> new MFXTableRowCell<>(Customer::getEmail));
         customerTax.setRowCellFactory(customer -> new MFXTableRowCell<>(Customer::getTaxNumber));
 
-        customerCode.prefWidthProperty().bind(customersTable.widthProperty().multiply(.1));
         customerName.prefWidthProperty().bind(customersTable.widthProperty().multiply(.3));
         customerPhone.prefWidthProperty().bind(customersTable.widthProperty().multiply(.2));
-        customerEmail.prefWidthProperty().bind(customersTable.widthProperty().multiply(.2));
+        customerEmail.prefWidthProperty().bind(customersTable.widthProperty().multiply(.3));
         customerTax.prefWidthProperty().bind(customersTable.widthProperty().multiply(.2));
 
         customersTable
                 .getTableColumns()
-                .addAll(customerCode, customerName, customerPhone, customerEmail, customerTax);
+                .addAll(customerName, customerPhone, customerEmail, customerTax);
         customersTable
                 .getFilters()
                 .addAll(
-                        new StringFilter<>("Code", Customer::getCode),
                         new StringFilter<>("Name", Customer::getName),
                         new StringFilter<>("Phone", Customer::getPhone),
                         new StringFilter<>("Email", Customer::getEmail),

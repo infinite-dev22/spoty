@@ -14,31 +14,25 @@
 
 package inc.nomard.spoty.core;
 
-import inc.nomard.spoty.core.views.splash.LaunchPreloader;
-import inc.nomard.spoty.core.views.splash.SplashScreenController;
-import inc.nomard.spoty.utils.SeamlessUpdater;
-import javafx.application.Application;
-import javafx.stage.Stage;
-
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import inc.nomard.spoty.core.views.splash.*;
+import javafx.application.*;
+import javafx.stage.*;
 
 public class Main extends Application {
 
     public static Stage primaryStage = null;
-    private static ScheduledExecutorService scheduler;
+//    private static ScheduledExecutorService scheduler;
 
     public static void main(String... args) {
         System.setProperty("javafx.preloader", LaunchPreloader.class.getCanonicalName());
 
-        if (SeamlessUpdater.checkForPendingUpdate()) {
-            SeamlessUpdater.launchInstallerAndExit();
-        }
+//        if (SeamlessUpdater.checkForPendingUpdate()) {
+//            SeamlessUpdater.launchInstallerAndExit();
+//        }
 
         // Schedule periodic checks
-        scheduler = Executors.newSingleThreadScheduledExecutor();
-        scheduler.scheduleAtFixedRate(SeamlessUpdater::checkForUpdates, 0, 3, TimeUnit.HOURS);
+//        scheduler = Executors.newSingleThreadScheduledExecutor();
+//        scheduler.scheduleAtFixedRate(SeamlessUpdater::checkForUpdates, 0, 3, TimeUnit.HOURS);
 
         Application.launch(Main.class, args);
     }
@@ -56,6 +50,6 @@ public class Main extends Application {
     @Override
     public void stop() throws Exception {
         super.stop();
-        scheduler.shutdown(); // Shutdown the scheduler on application exit
+//        scheduler.shutdown(); // Shutdown the scheduler on application exit
     }
 }

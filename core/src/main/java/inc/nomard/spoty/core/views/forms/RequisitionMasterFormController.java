@@ -20,11 +20,11 @@ import inc.nomard.spoty.core.components.message.enums.MessageDuration;
 import inc.nomard.spoty.core.components.message.enums.MessageVariants;
 import inc.nomard.spoty.core.components.navigation.Pages;
 import inc.nomard.spoty.core.values.strings.Values;
-import inc.nomard.spoty.core.viewModels.SupplierViewModel;
+import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.requisitions.RequisitionDetailViewModel;
 import inc.nomard.spoty.core.viewModels.requisitions.RequisitionMasterViewModel;
 import inc.nomard.spoty.core.views.BaseController;
-import inc.nomard.spoty.network_bridge.dtos.Supplier;
+import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.requisitions.RequisitionDetail;
 import inc.nomard.spoty.utils.SpotyLogger;
 import inc.nomard.spoty.utils.SpotyThreader;
@@ -123,9 +123,16 @@ public class RequisitionMasterFormController implements Initializable {
                                 StringUtils.containsIgnoreCase(supplierConverter.toString(supplier), searchStr);
 
         // Set items to combo boxes and display custom text.
-        supplier.setItems(SupplierViewModel.getSuppliers());
         supplier.setConverter(supplierConverter);
         supplier.setFilterFunction(supplierFilterFunction);
+        if (SupplierViewModel.getSuppliers().isEmpty()) {
+            SupplierViewModel.getSuppliers()
+                    .addListener(
+                            (ListChangeListener<Supplier>)
+                                    c -> supplier.setItems(SupplierViewModel.getSuppliers()));
+        } else {
+            supplier.itemsProperty().bindBidirectional(SupplierViewModel.suppliersProperty());
+        }
 
         status.setItems(FXCollections.observableArrayList(Values.PURCHASE_STATUSES));
 

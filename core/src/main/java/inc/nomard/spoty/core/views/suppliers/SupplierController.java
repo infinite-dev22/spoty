@@ -101,8 +101,6 @@ public class SupplierController implements Initializable {
     }
 
     private void setupTable() {
-        MFXTableColumn<Supplier> supplierCode =
-                new MFXTableColumn<>("Code", false, Comparator.comparing(Supplier::getCode));
         MFXTableColumn<Supplier> supplierName =
                 new MFXTableColumn<>("Name", false, Comparator.comparing(Supplier::getName));
         MFXTableColumn<Supplier> supplierPhone =
@@ -112,25 +110,22 @@ public class SupplierController implements Initializable {
         MFXTableColumn<Supplier> supplierTax =
                 new MFXTableColumn<>("Tax No.", false, Comparator.comparing(Supplier::getTaxNumber));
 
-        supplierCode.setRowCellFactory(supplier -> new MFXTableRowCell<>(Supplier::getCode));
         supplierName.setRowCellFactory(supplier -> new MFXTableRowCell<>(Supplier::getName));
         supplierPhone.setRowCellFactory(supplier -> new MFXTableRowCell<>(Supplier::getPhone));
         supplierEmail.setRowCellFactory(supplier -> new MFXTableRowCell<>(Supplier::getEmail));
         supplierTax.setRowCellFactory(supplier -> new MFXTableRowCell<>(Supplier::getTaxNumber));
 
-        supplierCode.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
         supplierName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.3));
         supplierPhone.prefWidthProperty().bind(masterTable.widthProperty().multiply(.2));
-        supplierEmail.prefWidthProperty().bind(masterTable.widthProperty().multiply(.2));
+        supplierEmail.prefWidthProperty().bind(masterTable.widthProperty().multiply(.3));
         supplierTax.prefWidthProperty().bind(masterTable.widthProperty().multiply(.2));
 
         masterTable
                 .getTableColumns()
-                .addAll(supplierCode, supplierName, supplierPhone, supplierEmail, supplierTax);
+                .addAll(supplierName, supplierPhone, supplierEmail, supplierTax);
         masterTable
                 .getFilters()
                 .addAll(
-                        new StringFilter<>("Code", Supplier::getCode),
                         new StringFilter<>("Name", Supplier::getName),
                         new StringFilter<>("Phone", Supplier::getPhone),
                         new StringFilter<>("Email", Supplier::getEmail),

@@ -31,6 +31,7 @@ import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
 import io.github.palexdev.materialfx.validation.Constraint;
 import io.github.palexdev.materialfx.validation.Severity;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+import javafx.collections.*;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -90,9 +91,16 @@ public class TransferDetailFormController implements Initializable {
                                         productVariantConverter.toString(productDetail), searchStr);
 
         // Combo box properties.
-        product.setItems(ProductViewModel.getProducts());
         product.setConverter(productVariantConverter);
         product.setFilterFunction(productVariantFilterFunction);
+        if (ProductViewModel.getProducts().isEmpty()) {
+            ProductViewModel.getProducts()
+                    .addListener(
+                            (ListChangeListener<Product>)
+                                    c -> product.setItems(ProductViewModel.getProducts()));
+        } else {
+            product.itemsProperty().bindBidirectional(ProductViewModel.productsProperty());
+        }
 
         // Input validators.
         requiredValidator();

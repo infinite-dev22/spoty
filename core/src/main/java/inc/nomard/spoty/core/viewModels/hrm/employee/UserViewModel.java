@@ -54,7 +54,6 @@ public class UserViewModel {
     private static final StringProperty lastName = new SimpleStringProperty("");
     private static final StringProperty otherName = new SimpleStringProperty("");
     private static final ObjectProperty<Role> role = new SimpleObjectProperty<>(null);
-    private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>(null);
     private static final StringProperty email = new SimpleStringProperty("");
     private static final StringProperty phone = new SimpleStringProperty("");
     private static final StringProperty city = new SimpleStringProperty("");
@@ -148,18 +147,6 @@ public class UserViewModel {
 
     public static ObjectProperty<Role> roleProperty() {
         return role;
-    }
-
-    public static Branch getBranch() {
-        return branch.get();
-    }
-
-    public static void setBranch(Branch branch) {
-        UserViewModel.branch.set(branch);
-    }
-
-    public static ObjectProperty<Branch> branchProperty() {
-        return branch;
     }
 
     public static String getEmail() {

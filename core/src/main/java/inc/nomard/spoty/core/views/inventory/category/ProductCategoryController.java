@@ -88,23 +88,23 @@ public class ProductCategoryController implements Initializable {
     }
 
     private void setupTable() {
-        MFXTableColumn<ProductCategory> categoryCode =
-                new MFXTableColumn<>("Code", false, Comparator.comparing(ProductCategory::getCode));
-        MFXTableColumn<ProductCategory> categoryName =
-                new MFXTableColumn<>("Name", false, Comparator.comparing(ProductCategory::getName));
+        MFXTableColumn<ProductCategory> name =
+                new MFXTableColumn<>("Name", false, Comparator.comparing(ProductCategory::getDescription));
+        MFXTableColumn<ProductCategory> description =
+                new MFXTableColumn<>("Description", false, Comparator.comparing(ProductCategory::getName));
 
-        categoryCode.setRowCellFactory(category -> new MFXTableRowCell<>(ProductCategory::getCode));
-        categoryName.setRowCellFactory(category -> new MFXTableRowCell<>(ProductCategory::getName));
+        name.setRowCellFactory(category -> new MFXTableRowCell<>(ProductCategory::getDescription));
+        description.setRowCellFactory(category -> new MFXTableRowCell<>(ProductCategory::getName));
 
-        categoryCode.prefWidthProperty().bind(masterTable.widthProperty().multiply(.5));
-        categoryName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.5));
+        name.prefWidthProperty().bind(masterTable.widthProperty().multiply(.5));
+        description.prefWidthProperty().bind(masterTable.widthProperty().multiply(.5));
 
-        masterTable.getTableColumns().addAll(categoryCode, categoryName);
+        masterTable.getTableColumns().addAll(name, description);
         masterTable
                 .getFilters()
                 .addAll(
-                        new StringFilter<>("Code", ProductCategory::getCode),
-                        new StringFilter<>("Name", ProductCategory::getName));
+                        new StringFilter<>("Name", ProductCategory::getDescription),
+                        new StringFilter<>("Description", ProductCategory::getName));
         getProductCategoryTable();
 
         if (ProductCategoryViewModel.getCategories().isEmpty()) {

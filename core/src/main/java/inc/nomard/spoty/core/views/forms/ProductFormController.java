@@ -14,50 +14,37 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import inc.nomard.spoty.core.SpotyCoreResourceLoader;
-import inc.nomard.spoty.core.components.message.SpotyMessage;
-import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
-import inc.nomard.spoty.core.components.message.enums.MessageDuration;
-import inc.nomard.spoty.core.components.message.enums.MessageVariants;
-import inc.nomard.spoty.core.values.strings.Values;
-import inc.nomard.spoty.core.viewModels.BrandViewModel;
-import inc.nomard.spoty.core.viewModels.ProductCategoryViewModel;
-import inc.nomard.spoty.core.viewModels.ProductViewModel;
-import inc.nomard.spoty.core.viewModels.UOMViewModel;
-import inc.nomard.spoty.network_bridge.dtos.Brand;
-import inc.nomard.spoty.network_bridge.dtos.ProductCategory;
-import inc.nomard.spoty.network_bridge.dtos.UnitOfMeasure;
-import inc.nomard.spoty.utils.SpotyLogger;
-import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
-import io.github.palexdev.materialfx.controls.MFXTextField;
-import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
-import io.github.palexdev.materialfx.utils.StringUtils;
-import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
-import io.github.palexdev.materialfx.validation.Constraint;
-import io.github.palexdev.materialfx.validation.Severity;
+import static inc.nomard.spoty.core.GlobalActions.*;
+import inc.nomard.spoty.core.*;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.*;
+import inc.nomard.spoty.core.values.strings.*;
+import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.utils.*;
+import io.github.palexdev.materialfx.controls.*;
+import io.github.palexdev.materialfx.dialogs.*;
+import io.github.palexdev.materialfx.utils.*;
+import io.github.palexdev.materialfx.utils.others.*;
+import io.github.palexdev.materialfx.validation.*;
+import static io.github.palexdev.materialfx.validation.Validated.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import io.github.palexdev.mfxcore.controls.Label;
-import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.TextArea;
-import javafx.scene.image.Image;
-import javafx.scene.paint.ImagePattern;
-import javafx.scene.shape.Rectangle;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
-import javafx.util.StringConverter;
-
-import java.net.URL;
-import java.util.List;
-import java.util.Objects;
-import java.util.ResourceBundle;
-import java.util.function.Function;
-import java.util.function.Predicate;
-
-import static inc.nomard.spoty.core.GlobalActions.closeDialog;
-import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
+import io.github.palexdev.mfxresources.fonts.*;
+import java.net.*;
+import java.util.*;
+import java.util.function.*;
+import javafx.collections.*;
+import javafx.event.*;
+import javafx.fxml.*;
+import javafx.scene.control.*;
+import javafx.scene.image.*;
+import javafx.scene.input.*;
+import javafx.scene.layout.*;
+import javafx.scene.paint.*;
+import javafx.scene.shape.*;
+import javafx.stage.*;
+import javafx.util.*;
 
 public class ProductFormController implements Initializable {
     private static ProductFormController instance;
@@ -95,6 +82,11 @@ public class ProductFormController implements Initializable {
             brandValidationLabel,
             priceValidationLabel,
             nameValidationLabel;
+    @FXML
+    public HBox imageIcon;
+    @FXML
+    public VBox uploadImageBtn,
+            placeHolder;
     private FileChooser fileChooser;
     private List<Constraint> nameConstraints,
             priceConstraints,
@@ -127,19 +119,6 @@ public class ProductFormController implements Initializable {
         productImageView.setHeight(productImage.getHeight());
         productImageView.setWidth(productImage.getWidth());
         productImageView.setFill(new ImagePattern(productImage));
-    }
-
-    private void addImage() {
-        if (Objects.equals(fileChooser, null)) {
-            fileChooser = new FileChooser();
-        }
-
-        productImageView.setOnMouseClicked(event -> {
-            var file = fileChooser.showOpenDialog(new Stage());
-//            Platform.runLater(() -> setProductImage(file.getPath()));
-            setProductImage(file.getPath());
-            System.out.println(file.getPath());
-        });
     }
 
     private void getFieldBindings() {
@@ -187,17 +166,38 @@ public class ProductFormController implements Initializable {
                         brand -> StringUtils.containsIgnoreCase(brandConverter.toString(brand), searchStr);
 
         // ProductType combo box properties.
-        unitOfMeasure.setItems(UOMViewModel.getUnitsOfMeasure());
         unitOfMeasure.setConverter(uomConverter);
         unitOfMeasure.setFilterFunction(uomFilterFunction);
+        if (UOMViewModel.getUnitsOfMeasure().isEmpty()) {
+            UOMViewModel.getUnitsOfMeasure()
+                    .addListener(
+                            (ListChangeListener<UnitOfMeasure>)
+                                    c -> unitOfMeasure.setItems(UOMViewModel.getUnitsOfMeasure()));
+        } else {
+            unitOfMeasure.itemsProperty().bindBidirectional(UOMViewModel.unitsOfMeasureProperty());
+        }
 
-        category.setItems(ProductCategoryViewModel.getCategories());
         category.setConverter(productCategoryConverter);
         category.setFilterFunction(productCategoryFilterFunction);
+        if (ProductCategoryViewModel.getCategories().isEmpty()) {
+            ProductCategoryViewModel.getCategories()
+                    .addListener(
+                            (ListChangeListener<ProductCategory>)
+                                    c -> category.setItems(ProductCategoryViewModel.getCategories()));
+        } else {
+            category.itemsProperty().bindBidirectional(ProductCategoryViewModel.categoriesProperty());
+        }
 
-        brand.setItems(BrandViewModel.getBrands());
         brand.setConverter(brandConverter);
         brand.setFilterFunction(brandFilterFunction);
+        if (BrandViewModel.getBrands().isEmpty()) {
+            BrandViewModel.getBrands()
+                    .addListener(
+                            (ListChangeListener<Brand>)
+                                    c -> brand.setItems(BrandViewModel.getBrands()));
+        } else {
+            brand.itemsProperty().bindBidirectional(BrandViewModel.brandsProperty());
+        }
 
         barcodeType.setItems(FXCollections.observableArrayList(Values.BARCODE_TYPES));
 
@@ -237,6 +237,11 @@ public class ProductFormController implements Initializable {
                     category.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                     unitOfMeasure.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                     barcodeType.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+
+                    placeHolder.setVisible(true);
+                    placeHolder.setManaged(true);
+                    productImageView.setVisible(false);
+                    productImageView.setManaged(false);
                 });
         saveBtn.setOnAction(
                 (event) -> {
@@ -319,6 +324,60 @@ public class ProductFormController implements Initializable {
                 });
     }
 
+    private void addImage() {
+        var upload = new MFXFontIcon();
+        upload.setIconsProvider(IconsProviders.FONTAWESOME_REGULAR);
+        upload.setDescription("far-file-image");
+        upload.setSize(60);
+        upload.setColor(Color.web("#C2C2C2"));
+        imageIcon.getChildren().add(upload);
+
+        if (Objects.equals(fileChooser, null)) {
+            FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Image files (*.png, *.jpeg)", "*.*.png", "*.jpeg");
+            fileChooser = new FileChooser();
+            fileChooser.getExtensionFilters().add(extFilter);
+        }
+        uploadImageBtn.setOnMouseClicked(event -> {
+            var file = fileChooser.showOpenDialog(new Stage());
+            if (Objects.nonNull(file)) {
+                setProductImage(file.getPath());
+                placeHolder.setVisible(false);
+                placeHolder.setManaged(false);
+                productImageView.setVisible(true);
+                productImageView.setManaged(true);
+                System.out.println("Added: " + file.getName());
+            }
+        });
+
+
+        uploadImageBtn.setOnDragOver(event -> {
+            if (event.getGestureSource() != uploadImageBtn
+                    && event.getDragboard().hasFiles()) {
+                /* allow for both copying and moving, whatever user chooses */
+                event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+            }
+            event.consume();
+        });
+
+        uploadImageBtn.setOnDragDropped(event -> {
+            Dragboard db = event.getDragboard();
+            boolean success = false;
+            if (db.hasFiles()) {
+                setProductImage(db.getFiles().getFirst().getPath());
+                placeHolder.setVisible(false);
+                placeHolder.setManaged(false);
+                productImageView.setVisible(true);
+                productImageView.setManaged(true);
+                System.out.println("Dropped: " + db.getString() + " " + db.getFiles().toString());
+                success = true;
+            }
+            /* let the source know whether the string was successfully
+             * transferred and used */
+            event.setDropCompleted(success);
+            event.consume();
+        });
+    }
+
     private void onAction() {
         cancelBtn.setDisable(true);
         saveBtn.setDisable(true);
@@ -340,6 +399,10 @@ public class ProductFormController implements Initializable {
 
         closeDialog(actionEvent);
         ProductViewModel.resetProperties();
+        placeHolder.setVisible(true);
+        placeHolder.setManaged(true);
+        productImageView.setVisible(false);
+        productImageView.setManaged(false);
         ProductViewModel.getAllProducts(null, null, null);
     }
 
@@ -357,6 +420,10 @@ public class ProductFormController implements Initializable {
 
         closeDialog(actionEvent);
         ProductViewModel.resetProperties();
+        placeHolder.setVisible(true);
+        placeHolder.setManaged(true);
+        productImageView.setVisible(false);
+        productImageView.setManaged(false);
         ProductViewModel.getAllProducts(null, null, null);
     }
 
@@ -372,6 +439,10 @@ public class ProductFormController implements Initializable {
         cancelBtn.setDisable(false);
         saveBtn.setDisable(false);
 
+        placeHolder.setVisible(true);
+        placeHolder.setManaged(true);
+        productImageView.setVisible(false);
+        productImageView.setManaged(false);
         ProductViewModel.getAllProducts(null, null, null);
     }
 

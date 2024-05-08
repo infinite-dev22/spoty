@@ -14,39 +14,33 @@
 
 package inc.nomard.spoty.core.views.sales.pos.components;
 
-import inc.nomard.spoty.core.SpotyCoreResourceLoader;
-import inc.nomard.spoty.network_bridge.dtos.Product;
-import io.github.palexdev.mfxcore.controls.Label;
-import javafx.geometry.Pos;
-import javafx.scene.CacheHint;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
-import lombok.Getter;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
+import inc.nomard.spoty.core.*;
+import inc.nomard.spoty.network_bridge.dtos.*;
+import io.github.palexdev.mfxcore.controls.*;
+import java.util.*;
+import javafx.geometry.*;
+import javafx.scene.*;
+import javafx.scene.image.*;
+import javafx.scene.layout.*;
+import lombok.*;
 
 public class ProductCard extends VBox {
     private static final Random RND = new Random();
     private final ArrayList<String> images = new ArrayList<>(List.of(
             SpotyCoreResourceLoader.load("images/dark.png"),
             SpotyCoreResourceLoader.load("images/dark_or_light.png"),
-            SpotyCoreResourceLoader.load("light.png"),
-            SpotyCoreResourceLoader.load("product-image-place-holder.png"),
-            SpotyCoreResourceLoader.load("user-place-holder.png"),
+            SpotyCoreResourceLoader.load("images/light.png"),
+            SpotyCoreResourceLoader.load("images/product-image-place-holder.png"),
+            SpotyCoreResourceLoader.load("images/user-place-holder.png"),
             SpotyCoreResourceLoader.load("images/no-image-available-icon.png")));
     private final String imageSrc = SpotyCoreResourceLoader.load("images/no-image-available-icon.png");
     private final ImageView productImageView = new ImageView();
+    @Getter
+    private final Product product;
     private Image productImage;
     private Label productNameLbl;
     private Label productPriceLbl;
     private Label productQuantityLbl;
-    @Getter
-    private final Product product;
 
     public ProductCard(Product product) {
         this.product = product;
@@ -79,7 +73,12 @@ public class ProductCard extends VBox {
         setAlignment(Pos.CENTER);
         setSpacing(10);
         getChildren()
-                .addAll(getProductImage(images.get(RND.nextInt())), productNameLbl, productPriceLbl, productQuantityLbl, space);
+                .addAll(
+                        getProductImage(images.get(RND.nextInt((images.size()) - 1) + 1)),
+                        productNameLbl,
+                        productPriceLbl,
+                        productQuantityLbl,
+                        space);
     }
 
     private ImageView getProductImage(String image) {

@@ -118,8 +118,8 @@ public class ProductCategoryViewModel {
             ParameterlessConsumer onSuccess,
             ParameterlessConsumer onFailed) {
         var productCategory = ProductCategory.builder()
-                .code(getDescription())
-                .name(getName())
+                .name(getDescription())
+                .description(getName())
                 .build();
 
         var task = productCategoriesRepository.post(productCategory);
@@ -184,7 +184,7 @@ public class ProductCategoryViewModel {
                 var productCategory = gson.fromJson(task.get().body(), ProductCategory.class);
 
                 setId(productCategory.getId());
-                setDescription(productCategory.getCode());
+                setDescription(productCategory.getDescription());
                 setName(productCategory.getName());
 
                 if (Objects.nonNull(onSuccess)) {
@@ -235,8 +235,8 @@ public class ProductCategoryViewModel {
             ParameterlessConsumer onFailed) {
         var productCategory = ProductCategory.builder()
                 .id(getId())
-                .code(getDescription())
                 .name(getName())
+                .description(getDescription())
                 .build();
 
         var task = productCategoriesRepository.put(productCategory);

@@ -14,37 +14,28 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import inc.nomard.spoty.core.components.message.SpotyMessage;
-import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
-import inc.nomard.spoty.core.components.message.enums.MessageDuration;
-import inc.nomard.spoty.core.components.message.enums.MessageVariants;
-import inc.nomard.spoty.core.viewModels.UOMViewModel;
-import inc.nomard.spoty.network_bridge.dtos.UnitOfMeasure;
-import inc.nomard.spoty.utils.SpotyLogger;
-import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
-import io.github.palexdev.materialfx.controls.MFXTextField;
-import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
-import io.github.palexdev.materialfx.utils.StringUtils;
-import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
-import io.github.palexdev.materialfx.validation.Constraint;
-import io.github.palexdev.materialfx.validation.Severity;
+import static inc.nomard.spoty.core.GlobalActions.*;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.*;
+import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.utils.*;
+import io.github.palexdev.materialfx.controls.*;
+import io.github.palexdev.materialfx.dialogs.*;
+import io.github.palexdev.materialfx.utils.*;
+import io.github.palexdev.materialfx.utils.others.*;
+import io.github.palexdev.materialfx.validation.*;
+import static io.github.palexdev.materialfx.validation.Validated.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.scene.layout.VBox;
-import javafx.util.StringConverter;
-
-import java.net.URL;
-import java.util.List;
-import java.util.Objects;
-import java.util.ResourceBundle;
-import java.util.function.Function;
-import java.util.function.Predicate;
-
-import static inc.nomard.spoty.core.GlobalActions.closeDialog;
-import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
+import java.net.*;
+import java.util.*;
+import java.util.function.*;
+import javafx.collections.*;
+import javafx.event.*;
+import javafx.fxml.*;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.util.*;
 
 public class UOMFormController implements Initializable {
     /**
@@ -120,9 +111,16 @@ public class UOMFormController implements Initializable {
                                 StringUtils.containsIgnoreCase(uomConverter.toString(unitOfMeasure), searchStr);
 
         // ComboBox properties.
-        baseUnit.setItems(UOMViewModel.getUnitsOfMeasure());
         baseUnit.setConverter(uomConverter);
         baseUnit.setFilterFunction(uomFilterFunction);
+        if (UOMViewModel.getUnitsOfMeasure().isEmpty()) {
+            UOMViewModel.getUnitsOfMeasure()
+                    .addListener(
+                            (ListChangeListener<UnitOfMeasure>)
+                                    c -> baseUnit.setItems(UOMViewModel.getUnitsOfMeasure()));
+        } else {
+            baseUnit.itemsProperty().bindBidirectional(UOMViewModel.unitsOfMeasureProperty());
+        }
 
         // Input validators.
         requiredValidator();
@@ -153,8 +151,10 @@ public class UOMFormController implements Initializable {
         saveBtn.setOnAction(
                 (event) -> {
                     nameConstraints = name.validate();
-                    operatorConstraints = operator.validate();
-                    operatorValueConstraints = operatorValue.validate();
+                    if (Objects.nonNull(baseUnit.getSelectedItem())) {
+                        operatorConstraints = operator.validate();
+                        operatorValueConstraints = operatorValue.validate();
+                    }
                     if (!nameConstraints.isEmpty()) {
                         nameValidationLabel.setManaged(true);
                         nameValidationLabel.setVisible(true);
@@ -181,9 +181,13 @@ public class UOMFormController implements Initializable {
                             dialog.sizeToScene();
                         }
                     }
-                    if (nameConstraints.isEmpty()
-                            && operatorConstraints.isEmpty()
-                            && operatorValueConstraints.isEmpty()) {
+                    if (nameConstraints.isEmpty()) {
+                        if (Objects.nonNull(baseUnit.getSelectedItem())) {
+                            if (!operatorConstraints.isEmpty()
+                                    && !operatorValueConstraints.isEmpty()) {
+                                return;
+                            }
+                        }
                         if (UOMViewModel.getId() > 0) {
                             try {
                                 UOMViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
@@ -294,6 +298,7 @@ public class UOMFormController implements Initializable {
                                 name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                             }
                         });
+
         operatorValue
                 .getValidator()
                 .validProperty()

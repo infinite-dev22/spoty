@@ -14,42 +14,28 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import inc.nomard.spoty.core.components.message.SpotyMessage;
-import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
-import inc.nomard.spoty.core.components.message.enums.MessageDuration;
-import inc.nomard.spoty.core.components.message.enums.MessageVariants;
-import inc.nomard.spoty.core.viewModels.BranchViewModel;
-import inc.nomard.spoty.core.viewModels.RoleViewModel;
-import inc.nomard.spoty.core.viewModels.hrm.employee.UserViewModel;
-import inc.nomard.spoty.network_bridge.dtos.Branch;
-import inc.nomard.spoty.network_bridge.dtos.Role;
-import inc.nomard.spoty.utils.SpotyLogger;
-import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
-import io.github.palexdev.materialfx.controls.MFXTextField;
-import io.github.palexdev.materialfx.controls.MFXToggleButton;
-import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
-import io.github.palexdev.materialfx.utils.StringUtils;
-import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
-import io.github.palexdev.materialfx.validation.Constraint;
-import io.github.palexdev.materialfx.validation.Severity;
+import static inc.nomard.spoty.core.GlobalActions.*;
+import static inc.nomard.spoty.core.Validators.*;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.*;
+import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.core.viewModels.hrm.employee.*;
+import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.utils.*;
+import io.github.palexdev.materialfx.controls.*;
+import io.github.palexdev.materialfx.dialogs.*;
+import io.github.palexdev.materialfx.utils.*;
+import io.github.palexdev.materialfx.utils.others.*;
+import io.github.palexdev.materialfx.validation.*;
+import static io.github.palexdev.materialfx.validation.Validated.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.util.StringConverter;
-
-import java.net.URL;
-import java.util.List;
-import java.util.Objects;
-import java.util.ResourceBundle;
-import java.util.function.Function;
-import java.util.function.Predicate;
-
-import static inc.nomard.spoty.core.GlobalActions.closeDialog;
-import static inc.nomard.spoty.core.Validators.emailValidator;
-import static inc.nomard.spoty.core.Validators.lengthValidator;
-import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
+import java.net.*;
+import java.util.*;
+import java.util.function.*;
+import javafx.event.*;
+import javafx.fxml.*;
+import javafx.scene.control.*;
+import javafx.util.*;
 
 public class UserFormController implements Initializable {
     public static UserFormController instance;
@@ -65,8 +51,6 @@ public class UserFormController implements Initializable {
     @FXML
     public MFXFilterComboBox<Role> role;
     @FXML
-    public MFXFilterComboBox<Branch> branch;
-    @FXML
     public MFXToggleButton status;
     @FXML
     public Label firstNameValidationLabel,
@@ -74,12 +58,10 @@ public class UserFormController implements Initializable {
             phoneValidationLabel,
             lastNameValidationLabel,
             userNameValidationLabel,
-            branchValidationLabel,
             roleValidationLabel;
     private List<Constraint> firstNameConstraints,
             lastNameConstraints,
             userNameConstraints,
-            userBranchConstraints,
             userRoleConstraints;
     private ActionEvent actionEvent = null;
 
@@ -112,33 +94,21 @@ public class UserFormController implements Initializable {
         email.textProperty().bindBidirectional(UserViewModel.emailProperty());
         phone.textProperty().bindBidirectional(UserViewModel.phoneProperty());
         role.valueProperty().bindBidirectional(UserViewModel.roleProperty());
-        branch.valueProperty().bindBidirectional(UserViewModel.branchProperty());
         status.selectedProperty().bindBidirectional(UserViewModel.activeProperty());
 
         // ComboBox Converters.
         StringConverter<Role> roleConverter =
                 FunctionalStringConverter.to(role -> (role == null) ? "" : role.getName());
 
-        StringConverter<Branch> branchConverter =
-                FunctionalStringConverter.to(branch -> (branch == null) ? "" : branch.getName());
-
         // ComboBox Filter Functions.
         Function<String, Predicate<Role>> roleFilterFunction =
                 searchStr ->
                         role -> StringUtils.containsIgnoreCase(roleConverter.toString(role), searchStr);
 
-        Function<String, Predicate<Branch>> branchFilterFunction =
-                searchStr ->
-                        branch -> StringUtils.containsIgnoreCase(branchConverter.toString(branch), searchStr);
-
         // Combo box properties.
         role.setItems(RoleViewModel.getRoles());
         role.setConverter(roleConverter);
         role.setFilterFunction(roleFilterFunction);
-
-        branch.setItems(BranchViewModel.getBranches());
-        branch.setConverter(branchConverter);
-        branch.setFilterFunction(branchFilterFunction);
 
         // Input validations.
         requiredValidator();
@@ -157,12 +127,10 @@ public class UserFormController implements Initializable {
                     UserViewModel.resetProperties();
 
                     role.clearSelection();
-                    branch.clearSelection();
 
                     firstNameValidationLabel.setVisible(false);
                     lastNameValidationLabel.setVisible(false);
                     userNameValidationLabel.setVisible(false);
-                    branchValidationLabel.setVisible(false);
                     roleValidationLabel.setVisible(false);
                     emailValidationLabel.setVisible(false);
                     phoneValidationLabel.setVisible(false);
@@ -170,7 +138,6 @@ public class UserFormController implements Initializable {
                     firstNameValidationLabel.setManaged(false);
                     lastNameValidationLabel.setManaged(false);
                     userNameValidationLabel.setManaged(false);
-                    branchValidationLabel.setManaged(false);
                     roleValidationLabel.setManaged(false);
                     emailValidationLabel.setManaged(false);
                     phoneValidationLabel.setManaged(false);
@@ -179,7 +146,6 @@ public class UserFormController implements Initializable {
                     lastname.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                     username.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                     username.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                    branch.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                     role.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                 });
         saveBtn.setOnAction(
@@ -187,7 +153,6 @@ public class UserFormController implements Initializable {
                     firstNameConstraints = firstname.validate();
                     lastNameConstraints = lastname.validate();
                     userNameConstraints = username.validate();
-                    userBranchConstraints = branch.validate();
                     userRoleConstraints = role.validate();
                     if (!firstNameConstraints.isEmpty()) {
                         firstNameValidationLabel.setManaged(true);
@@ -213,14 +178,6 @@ public class UserFormController implements Initializable {
                         MFXStageDialog dialog = (MFXStageDialog) username.getScene().getWindow();
                         dialog.sizeToScene();
                     }
-                    if (!userBranchConstraints.isEmpty()) {
-                        branchValidationLabel.setManaged(true);
-                        branchValidationLabel.setVisible(true);
-                        branchValidationLabel.setText(userBranchConstraints.getFirst().getMessage());
-                        branch.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                        MFXStageDialog dialog = (MFXStageDialog) branch.getScene().getWindow();
-                        dialog.sizeToScene();
-                    }
                     if (!userRoleConstraints.isEmpty()) {
                         roleValidationLabel.setManaged(true);
                         roleValidationLabel.setVisible(true);
@@ -232,7 +189,6 @@ public class UserFormController implements Initializable {
                     if (firstNameConstraints.isEmpty() &
                             lastNameConstraints.isEmpty() &
                             userNameConstraints.isEmpty() &
-                            userBranchConstraints.isEmpty() &
                             userRoleConstraints.isEmpty()
                             && !emailValidationLabel.isVisible()
                             && !phoneValidationLabel.isVisible()) {
@@ -334,13 +290,6 @@ public class UserFormController implements Initializable {
                         .setCondition(username.textProperty().length().greaterThan(0))
                         .get();
         username.getValidator().constraint(userName);
-        Constraint userBranch =
-                Constraint.Builder.build()
-                        .setSeverity(Severity.ERROR)
-                        .setMessage("Branch is required")
-                        .setCondition(branch.textProperty().length().greaterThan(0))
-                        .get();
-        branch.getValidator().constraint(userBranch);
         Constraint userRole =
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
@@ -380,17 +329,6 @@ public class UserFormController implements Initializable {
                                 userNameValidationLabel.setManaged(false);
                                 userNameValidationLabel.setVisible(false);
                                 username.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                            }
-                        });
-        branch
-                .getValidator()
-                .validProperty()
-                .addListener(
-                        (observable, oldValue, newValue) -> {
-                            if (newValue) {
-                                branchValidationLabel.setManaged(false);
-                                branchValidationLabel.setVisible(false);
-                                branch.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                             }
                         });
         role
