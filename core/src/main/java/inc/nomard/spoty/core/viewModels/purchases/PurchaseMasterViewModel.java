@@ -14,35 +14,23 @@
 
 package inc.nomard.spoty.core.viewModels.purchases;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import inc.nomard.spoty.core.viewModels.adapters.UnixEpochDateTypeAdapter;
-import inc.nomard.spoty.core.viewModels.adjustments.AdjustmentMasterViewModel;
-import inc.nomard.spoty.network_bridge.dtos.Branch;
-import inc.nomard.spoty.network_bridge.dtos.Supplier;
-import inc.nomard.spoty.network_bridge.dtos.purchases.PurchaseMaster;
-import inc.nomard.spoty.network_bridge.models.FindModel;
-import inc.nomard.spoty.network_bridge.models.SearchModel;
-import inc.nomard.spoty.network_bridge.repositories.implementations.PurchasesRepositoryImpl;
-import inc.nomard.spoty.utils.ParameterlessConsumer;
-import inc.nomard.spoty.utils.SpotyLogger;
-import inc.nomard.spoty.utils.SpotyThreader;
-import javafx.application.Platform;
+import com.google.gson.*;
+import com.google.gson.reflect.*;
+import static inc.nomard.spoty.core.values.SharedResources.*;
+import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.network_bridge.dtos.purchases.*;
+import inc.nomard.spoty.network_bridge.models.*;
+import inc.nomard.spoty.network_bridge.repositories.implementations.*;
+import inc.nomard.spoty.utils.*;
+import inc.nomard.spoty.utils.adapters.*;
+import java.lang.reflect.*;
+import java.text.*;
+import java.util.*;
+import java.util.concurrent.*;
+import javafx.application.*;
 import javafx.beans.property.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import lombok.Getter;
-
-import java.lang.reflect.Type;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Objects;
-import java.util.concurrent.ExecutionException;
-
-import static inc.nomard.spoty.core.values.SharedResources.PENDING_DELETES;
+import javafx.collections.*;
+import lombok.*;
 
 public class PurchaseMasterViewModel {
     @Getter
@@ -161,6 +149,7 @@ public class PurchaseMasterViewModel {
                     setStatus("");
                     setNote("");
                     PENDING_DELETES.clear();
+                    PurchaseDetailViewModel.getPurchaseDetails().clear();
                 });
     }
 
@@ -169,39 +158,32 @@ public class PurchaseMasterViewModel {
             ParameterlessConsumer onSuccess,
             ParameterlessConsumer onFailed) {
         var purchaseMaster = PurchaseMaster.builder()
-//                .ref(getReference())
                 .date(getDate())
                 .supplier(getSupplier())
-//                .taxRate(getTaxRate())
-//                .netTax(getNetTax())
-//                .discount(getDiscount())
-//                .shipping(getShipping())
-//                .paid(getAmountPaid())
-//                .total(getTotalAmount())
-//                .due(getDueAmount())
-                .status(getStatus())
-//                .paymentStatus(getPaymentStatus())
+                .taxRate(0)
+                .netTax(0)
+                .discount(0)
+                .amountPaid(0)
+                .total(0)
+                .amountDue(0)
+                .paymentStatus("")
+                .purchaseStatus(getStatus())
                 .notes(getNotes())
                 .build();
 
         if (!PurchaseDetailViewModel.purchaseDetailsList.isEmpty()) {
-            PurchaseDetailViewModel.purchaseDetailsList.forEach(
-                    purchaseDetail -> purchaseDetail.setPurchase(purchaseMaster));
             purchaseMaster.setPurchaseDetails(PurchaseDetailViewModel.purchaseDetailsList);
         }
 
         var task = purchasesRepository.postMaster(purchaseMaster);
         task.setOnRunning(workerStateEvent -> onActivity.run());
-        task.setOnSucceeded(workerStateEvent -> {
-            PurchaseDetailViewModel.savePurchaseDetails(onActivity, null, onFailed);
-            onSuccess.run();
+        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+        task.setOnFailed(workerStateEvent -> {
+            onFailed.run();
+            System.err.println("The task failed with the following exception:");
+            task.getException().printStackTrace(System.err);
         });
-        task.setOnFailed(workerStateEvent -> onFailed.run());
         SpotyThreader.spotyThreadPool(task);
-        Platform.runLater(AdjustmentMasterViewModel::resetProperties);
-
-        // resetProperties();
-        // getPurchaseMasters();
     }
 
     public static void getAllPurchaseMasters(
@@ -270,7 +252,6 @@ public class PurchaseMasterViewModel {
             task.setOnFailed(workerStateEvent -> onFailed.run());
         }
         SpotyThreader.spotyThreadPool(task);
-        // getPurchaseMasters();
     }
 
     public static void searchItem(
@@ -315,18 +296,16 @@ public class PurchaseMasterViewModel {
             ParameterlessConsumer onFailed) {
         var purchaseMaster = PurchaseMaster.builder()
                 .id(getId())
-//                .ref(getReference())
                 .date(getDate())
                 .supplier(getSupplier())
-//                .taxRate(getTaxRate())
-//                .netTax(getNetTax())
-//                .discount(getDiscount())
-//                .shipping(getShipping())
-//                .paid(getAmountPaid())
-//                .total(getTotalAmount())
-//                .due(getDueAmount())
-                .status(getStatus())
-//                .paymentStatus(getPaymentStatus())
+                .taxRate(0)
+                .netTax(0)
+                .discount(0)
+                .amountPaid(0)
+                .total(0)
+                .amountDue(0)
+                .paymentStatus("")
+                .purchaseStatus(getStatus())
                 .notes(getNotes())
                 .build();
 
@@ -335,9 +314,6 @@ public class PurchaseMasterViewModel {
         }
 
         if (!PurchaseDetailViewModel.getPurchaseDetailsList().isEmpty()) {
-            PurchaseDetailViewModel.getPurchaseDetailsList()
-                    .forEach(adjustmentDetail -> adjustmentDetail.setPurchase(purchaseMaster));
-
             purchaseMaster.setPurchaseDetails(PurchaseDetailViewModel.getPurchaseDetails());
         }
 
@@ -362,6 +338,5 @@ public class PurchaseMasterViewModel {
         task.setOnSucceeded(workerStateEvent -> onSuccess.run());
         task.setOnFailed(workerStateEvent -> onFailed.run());
         SpotyThreader.spotyThreadPool(task);
-        // getPurchaseMasters();
     }
 }

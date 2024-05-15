@@ -16,7 +16,7 @@ package inc.nomard.spoty.core.viewModels.returns.sales;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import inc.nomard.spoty.core.viewModels.adapters.UnixEpochDateTypeAdapter;
+import inc.nomard.spoty.utils.adapters.UnixEpochDateTypeAdapter;
 import inc.nomard.spoty.network_bridge.dtos.Product;
 import inc.nomard.spoty.network_bridge.dtos.returns.sale_returns.SaleReturnDetail;
 import inc.nomard.spoty.network_bridge.dtos.returns.sale_returns.SaleReturnMaster;

@@ -20,7 +20,7 @@ public class LeaveStatusRepositoryImpl extends ProtectedGlobals implements Simpl
     public Task<HttpResponse<String>> fetchAll() {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws Exception {
+            protected HttpResponse<String> call() throws IOException, InterruptedException {
                 return taskCreate();
             }
 
@@ -42,7 +42,7 @@ public class LeaveStatusRepositoryImpl extends ProtectedGlobals implements Simpl
     public Task<HttpResponse<String>> fetch(FindModel findModel) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws Exception {
+            protected HttpResponse<String> call() throws IOException, InterruptedException {
                 return taskCreate();
             }
 

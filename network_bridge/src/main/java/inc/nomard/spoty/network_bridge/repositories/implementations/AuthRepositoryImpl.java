@@ -18,7 +18,7 @@ public class AuthRepositoryImpl implements AuthRepository {
     public Task<HttpResponse<String>> login(LoginModel loginModel) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws Exception {
+            protected HttpResponse<String> call() throws IOException, InterruptedException {
                 return taskCreate();
             }
 
@@ -39,7 +39,7 @@ public class AuthRepositoryImpl implements AuthRepository {
     public Task<HttpResponse<String>> signup(SignUpModel signUpModel) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws Exception {
+            protected HttpResponse<String> call() throws IOException, InterruptedException {
                 return taskCreate();
             }
 

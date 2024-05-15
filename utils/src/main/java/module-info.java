@@ -3,6 +3,7 @@ module spoty.utils {
     requires java.logging;
     requires lombok;
     requires java.xml;
+    requires com.google.gson;
 
     opens inc.nomard.spoty.utils;
 
@@ -13,4 +14,5 @@ module spoty.utils {
     exports inc.nomard.spoty.utils.responsiveness.math;
     exports inc.nomard.spoty.utils;
     exports inc.nomard.spoty.utils.navigation;
+    exports inc.nomard.spoty.utils.adapters;
 }

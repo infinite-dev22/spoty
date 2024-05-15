@@ -14,13 +14,10 @@
 
 package inc.nomard.spoty.network_bridge.dtos.purchases;
 
-import inc.nomard.spoty.network_bridge.dtos.Branch;
 import inc.nomard.spoty.network_bridge.dtos.Supplier;
-import inc.nomard.spoty.network_bridge.dtos.hrm.employee.User;
 import lombok.*;
 
 import java.text.DateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -34,23 +31,17 @@ public class PurchaseMaster {
     private String ref;
     private Date date;
     private Supplier supplier;
-    private ArrayList<Branch> branches;
     private List<PurchaseDetail> purchaseDetails;
     private double taxRate;
     private double netTax;
     private double discount;
-    private String shipping;
     private double amountPaid;
     private double total;
     private double amountDue;
-    private double changeAmount;
-    private double balanceAmount;
-    private double shippingFee;
     private double subTotal;
-    private String status;
+    private String purchaseStatus;
     private String paymentStatus;
     private String notes;
-    private User createdBy;
 
     public String getSupplierName() {
         return supplier.getName();
@@ -58,9 +49,5 @@ public class PurchaseMaster {
 
     public String getLocaleDate() {
         return DateFormat.getDateInstance().format(date);
-    }
-
-    public String doneBy() {
-        return createdBy.getUserProfile().getName();
     }
 }

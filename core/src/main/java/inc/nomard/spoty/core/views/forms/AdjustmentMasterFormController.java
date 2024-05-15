@@ -14,44 +14,31 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import inc.nomard.spoty.core.components.message.SpotyMessage;
-import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
-import inc.nomard.spoty.core.components.message.enums.MessageDuration;
-import inc.nomard.spoty.core.components.message.enums.MessageVariants;
-import inc.nomard.spoty.core.components.navigation.Pages;
-import inc.nomard.spoty.core.viewModels.adjustments.AdjustmentDetailViewModel;
-import inc.nomard.spoty.core.viewModels.adjustments.AdjustmentMasterViewModel;
-import inc.nomard.spoty.core.views.BaseController;
-import inc.nomard.spoty.network_bridge.dtos.adjustments.AdjustmentDetail;
-import inc.nomard.spoty.utils.SpotyLogger;
-import inc.nomard.spoty.utils.SpotyThreader;
+import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.*;
+import inc.nomard.spoty.core.components.navigation.*;
+import inc.nomard.spoty.core.viewModels.adjustments.*;
+import inc.nomard.spoty.core.views.*;
+import inc.nomard.spoty.network_bridge.dtos.adjustments.*;
+import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
-import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
-import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
-import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
-import io.github.palexdev.materialfx.enums.ScrimPriority;
-import io.github.palexdev.materialfx.filter.LongFilter;
-import io.github.palexdev.materialfx.filter.StringFilter;
+import io.github.palexdev.materialfx.controls.cell.*;
+import io.github.palexdev.materialfx.dialogs.*;
+import io.github.palexdev.materialfx.enums.*;
+import io.github.palexdev.materialfx.filter.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import javafx.application.Platform;
-import javafx.collections.ListChangeListener;
-import javafx.event.EventHandler;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.scene.input.ContextMenuEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.Comparator;
-import java.util.ResourceBundle;
-
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
+import java.io.*;
+import java.net.*;
+import java.util.*;
+import javafx.application.*;
+import javafx.collections.*;
+import javafx.event.*;
+import javafx.fxml.*;
+import javafx.scene.control.*;
+import javafx.scene.input.*;
+import javafx.scene.layout.*;
+import javafx.stage.*;
 
 @SuppressWarnings("unchecked")
 public class AdjustmentMasterFormController implements Initializable {
@@ -63,7 +50,7 @@ public class AdjustmentMasterFormController implements Initializable {
     @FXML
     public BorderPane adjustmentFormContentPane;
     @FXML
-    public Label adjustmentFormTitle, adjustmentDateValidationLabel;
+    public Label adjustmentFormTitle;
     @FXML
     public MFXButton adjustmentProductAddBtn, saveBtn, cancelBtn;
     private MFXStageDialog dialog;
@@ -232,21 +219,18 @@ public class AdjustmentMasterFormController implements Initializable {
             notificationHolder.addMessage(notification);
             return;
         }
-        if (!adjustmentDateValidationLabel.isVisible()) {
-            if (AdjustmentMasterViewModel.getId() > 0) {
-                try {
-                    AdjustmentMasterViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
-                } catch (Exception e) {
-                    SpotyLogger.writeToFile(e, this.getClass());
-                }
-                return;
-            }
+        if (AdjustmentMasterViewModel.getId() > 0) {
             try {
-                AdjustmentMasterViewModel.saveAdjustmentMaster(this::onAction, this::onAddSuccess, this::onFailed);
+                AdjustmentMasterViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
             } catch (Exception e) {
                 SpotyLogger.writeToFile(e, this.getClass());
             }
             return;
+        }
+        try {
+            AdjustmentMasterViewModel.saveAdjustmentMaster(this::onAction, this::onAddSuccess, this::onFailed);
+        } catch (Exception e) {
+            SpotyLogger.writeToFile(e, this.getClass());
         }
         onRequiredFieldsMissing();
     }
@@ -255,8 +239,6 @@ public class AdjustmentMasterFormController implements Initializable {
         BaseController.navigation.navigate(Pages.getAdjustmentPane());
 
         AdjustmentMasterViewModel.resetProperties();
-
-        adjustmentDateValidationLabel.setVisible(false);
     }
 
     private void onAction() {

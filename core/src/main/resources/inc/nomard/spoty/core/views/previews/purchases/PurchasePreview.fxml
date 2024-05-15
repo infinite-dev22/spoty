@@ -85,7 +85,7 @@
                                 <Label styleClass="preview-header" text="Shipping:"/>
                             </VBox>
                             <VBox minWidth="100" prefWidth="150" maxWidth="200" alignment="CENTER_RIGHT" spacing="8.0">
-                                <Label fx:id="subTotal" layoutX="10.0" layoutY="10.0"/>
+                                <Label fx:id="grandTotal" layoutX="10.0" layoutY="10.0"/>
                                 <Label fx:id="discount" layoutX="10.0" layoutY="10.0"/>
                                 <Label fx:id="tax" layoutX="10.0" layoutY="10.0"/>
                                 <Label fx:id="shipping" layoutX="10.0" layoutY="10.0"/>

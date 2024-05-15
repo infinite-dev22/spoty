@@ -17,7 +17,7 @@ package inc.nomard.spoty.core.viewModels.hrm.employee;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import inc.nomard.spoty.core.viewModels.adapters.UnixEpochDateTypeAdapter;
+import inc.nomard.spoty.utils.adapters.UnixEpochDateTypeAdapter;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.EmploymentStatus;
 import inc.nomard.spoty.network_bridge.models.FindModel;
 import inc.nomard.spoty.network_bridge.models.SearchModel;

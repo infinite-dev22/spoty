@@ -14,25 +14,17 @@
 
 package inc.nomard.spoty.core.views.previews.purchases;
 
-import inc.nomard.spoty.network_bridge.dtos.purchases.PurchaseDetail;
-import inc.nomard.spoty.network_bridge.dtos.purchases.PurchaseMaster;
-import io.github.palexdev.materialfx.controls.MFXTableColumn;
-import io.github.palexdev.materialfx.controls.MFXTableView;
-import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
-import javafx.application.Platform;
-import javafx.beans.property.ListProperty;
-import javafx.beans.property.SimpleListProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
-import javafx.scene.control.Label;
-
-import java.net.URL;
-import java.util.Comparator;
-import java.util.ResourceBundle;
+import inc.nomard.spoty.network_bridge.dtos.purchases.*;
+import io.github.palexdev.materialfx.controls.*;
+import io.github.palexdev.materialfx.controls.cell.*;
+import java.net.*;
+import java.util.*;
+import javafx.application.*;
+import javafx.beans.property.*;
+import javafx.collections.*;
+import javafx.fxml.*;
+import javafx.geometry.*;
+import javafx.scene.control.*;
 
 public class PurchasePreviewController implements Initializable {
     static final ObservableList<PurchaseDetail> purchaseDetailsList = FXCollections.observableArrayList();
@@ -51,7 +43,7 @@ public class PurchasePreviewController implements Initializable {
     @FXML
     public MFXTableView<PurchaseDetail> itemsTable;
     @FXML
-    public Label subTotal;
+    public Label grandTotal;
     @FXML
     public Label discount;
     @FXML
@@ -89,12 +81,12 @@ public class PurchasePreviewController implements Initializable {
         MFXTableColumn<PurchaseDetail> product =
                 new MFXTableColumn<>("Name", false, Comparator.comparing(PurchaseDetail::getProductName));
         MFXTableColumn<PurchaseDetail> quantity =
-                new MFXTableColumn<>("Qnty", false, Comparator.comparing(PurchaseDetail::getQuantity));
+                new MFXTableColumn<>("Qty", false, Comparator.comparing(PurchaseDetail::getQuantity));
         MFXTableColumn<PurchaseDetail> price =
-                new MFXTableColumn<>("Price", false, Comparator.comparing(PurchaseDetail::getPrice));
+                new MFXTableColumn<>("Unit Cost", false, Comparator.comparing(PurchaseDetail::getCost));
         MFXTableColumn<PurchaseDetail> totalPrice =
                 new MFXTableColumn<>(
-                        "Total Price", false, Comparator.comparing(PurchaseDetail::getSubTotalPrice));
+                        "Cost", false, Comparator.comparing(PurchaseDetail::getSubTotalCost));
 
         // Set table column data.
         product.setRowCellFactory(purchaseDetail -> {
@@ -110,14 +102,14 @@ public class PurchasePreviewController implements Initializable {
             return cell;
         });
         price.setRowCellFactory(purchaseDetail -> {
-            var cell = new MFXTableRowCell<>(PurchaseDetail::getPrice);
+            var cell = new MFXTableRowCell<>(PurchaseDetail::getCost);
             cell.setAlignment(Pos.CENTER_RIGHT);
             cell.getStyleClass().add("table-cell-border");
             return cell;
         });
         totalPrice.setRowCellFactory(
                 purchaseDetail -> {
-                    var cell = new MFXTableRowCell<>(PurchaseDetail::getSubTotalPrice);
+                    var cell = new MFXTableRowCell<>(PurchaseDetail::getSubTotalCost);
                     cell.setAlignment(Pos.CENTER_RIGHT);
                     cell.getStyleClass().add("table-cell-border");
                     return cell;
@@ -162,14 +154,11 @@ public class PurchasePreviewController implements Initializable {
         supplierNumber.setText(purchase.getSupplier().getPhone());
         supplierEmail.setText(purchase.getSupplier().getEmail());
         purchaseDetailsList.addAll(purchase.getPurchaseDetails());
-        subTotal.setText(String.valueOf(purchase.getSubTotal()));
+        grandTotal.setText(String.valueOf(purchase.getSubTotal()));
         discount.setText(String.valueOf(purchase.getDiscount()));
         tax.setText(String.valueOf(purchase.getTaxRate()));
-        shipping.setText(String.valueOf(purchase.getShippingFee()));
         netCost.setText(String.valueOf(purchase.getTotal()));
         paidAmount.setText(String.valueOf(purchase.getAmountPaid()));
-        changeDue.setText(String.valueOf(purchase.getChangeAmount()));
-        balance.setText(String.valueOf(purchase.getBalanceAmount()));
         purchaseNote.setText(purchase.getNotes());
 //        doneBy.setText(purchase.doneBy());
     }

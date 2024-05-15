@@ -1,4 +1,4 @@
-package inc.nomard.spoty.core.viewModels.adapters;
+package inc.nomard.spoty.utils.adapters;
 
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;

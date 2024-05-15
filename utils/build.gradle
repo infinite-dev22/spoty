@@ -30,6 +30,7 @@ dependencies {
     compileOnly "org.projectlombok:lombok"
     annotationProcessor "org.projectlombok:lombok"
     implementation "org.projectlombok:lombok:$lombok"
+    implementation "com.google.code.gson:gson:2.10.1"
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junit")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit")

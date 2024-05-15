@@ -20,7 +20,7 @@ public class SaleTermsAndConditionsRepositoryImpl extends ProtectedGlobals imple
     public Task<HttpResponse<String>> fetchAll() {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws Exception {
+            protected HttpResponse<String> call() throws IOException, InterruptedException {
                 return taskCreate();
             }
 
@@ -42,7 +42,7 @@ public class SaleTermsAndConditionsRepositoryImpl extends ProtectedGlobals imple
     public Task<HttpResponse<String>> fetch(FindModel findModel) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws Exception {
+            protected HttpResponse<String> call() throws IOException, InterruptedException {
                 return taskCreate();
             }
 
@@ -64,7 +64,7 @@ public class SaleTermsAndConditionsRepositoryImpl extends ProtectedGlobals imple
     public Task<HttpResponse<String>> search(SearchModel searchModel) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws Exception {
+            protected HttpResponse<String> call() throws IOException, InterruptedException {
                 return taskCreate();
             }
 
@@ -86,7 +86,7 @@ public class SaleTermsAndConditionsRepositoryImpl extends ProtectedGlobals imple
     public Task<HttpResponse<String>> post(Object object) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws Exception {
+            protected HttpResponse<String> call() throws IOException, InterruptedException {
                 return taskCreate();
             }
 
@@ -108,7 +108,7 @@ public class SaleTermsAndConditionsRepositoryImpl extends ProtectedGlobals imple
     public Task<HttpResponse<String>> put(Object object) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws Exception {
+            protected HttpResponse<String> call() throws IOException, InterruptedException {
                 return taskCreate();
             }
 
@@ -130,7 +130,7 @@ public class SaleTermsAndConditionsRepositoryImpl extends ProtectedGlobals imple
     public Task<HttpResponse<String>> delete(FindModel findModel) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws Exception {
+            protected HttpResponse<String> call() throws IOException, InterruptedException {
                 return taskCreate();
             }
 
@@ -152,7 +152,7 @@ public class SaleTermsAndConditionsRepositoryImpl extends ProtectedGlobals imple
     public Task<HttpResponse<String>> deleteMultiple(ArrayList<FindModel> findModelList) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws Exception {
+            protected HttpResponse<String> call() throws IOException, InterruptedException {
                 return taskCreate();
             }
 

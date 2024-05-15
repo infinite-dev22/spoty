@@ -14,33 +14,22 @@
 
 package inc.nomard.spoty.core.viewModels.purchases;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import inc.nomard.spoty.core.viewModels.adapters.UnixEpochDateTypeAdapter;
-import inc.nomard.spoty.network_bridge.dtos.Product;
-import inc.nomard.spoty.network_bridge.dtos.purchases.PurchaseDetail;
-import inc.nomard.spoty.network_bridge.dtos.purchases.PurchaseMaster;
-import inc.nomard.spoty.network_bridge.models.FindModel;
-import inc.nomard.spoty.network_bridge.models.SearchModel;
-import inc.nomard.spoty.network_bridge.repositories.implementations.PurchasesRepositoryImpl;
-import inc.nomard.spoty.utils.ParameterlessConsumer;
-import inc.nomard.spoty.utils.SpotyLogger;
-import inc.nomard.spoty.utils.SpotyThreader;
-import javafx.application.Platform;
-import javafx.beans.property.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import lombok.Getter;
-
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.Objects;
-import java.util.concurrent.ExecutionException;
-
+import com.google.gson.*;
+import com.google.gson.reflect.*;
 import static inc.nomard.spoty.core.values.SharedResources.*;
+import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.network_bridge.dtos.purchases.*;
+import inc.nomard.spoty.network_bridge.models.*;
+import inc.nomard.spoty.network_bridge.repositories.implementations.*;
+import inc.nomard.spoty.utils.*;
+import inc.nomard.spoty.utils.adapters.*;
+import java.lang.reflect.*;
+import java.util.*;
+import java.util.concurrent.*;
+import javafx.application.*;
+import javafx.beans.property.*;
+import javafx.collections.*;
+import lombok.*;
 
 public class PurchaseDetailViewModel {
     @Getter
@@ -55,14 +44,8 @@ public class PurchaseDetailViewModel {
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final ObjectProperty<PurchaseMaster> purchase = new SimpleObjectProperty<>(null);
     private static final StringProperty cost = new SimpleStringProperty("");
-    private static final StringProperty netTax = new SimpleStringProperty("");
-    private static final StringProperty taxType = new SimpleStringProperty("");
-    private static final StringProperty discount = new SimpleStringProperty("");
-    private static final StringProperty discountType = new SimpleStringProperty("");
+    private static final StringProperty subTotalCost = new SimpleStringProperty("");
     private static final ObjectProperty<Product> product = new SimpleObjectProperty<>(null);
-    private static final StringProperty serial = new SimpleStringProperty("");
-    private static final StringProperty price = new SimpleStringProperty("");
-    private static final StringProperty totalPrice = new SimpleStringProperty("");
     private static final StringProperty quantity = new SimpleStringProperty("");
     private static final PurchasesRepositoryImpl purchasesRepository = new PurchasesRepositoryImpl();
 
@@ -114,64 +97,16 @@ public class PurchaseDetailViewModel {
         return cost;
     }
 
-    public static Double getNetTax() {
-        return Double.parseDouble(netTax.get());
+    public static Double getSubTotalCost() {
+        return Double.parseDouble(subTotalCost.get());
     }
 
-    public static void setNetTax(String netTax) {
-        PurchaseDetailViewModel.netTax.set(netTax);
+    public static void setSubTotalCost(String cost) {
+        PurchaseDetailViewModel.subTotalCost.set(cost);
     }
 
-    public static StringProperty netTaxProperty() {
-        return netTax;
-    }
-
-    public static String getTaxType() {
-        return taxType.get();
-    }
-
-    public static void setTaxType(String taxType) {
-        PurchaseDetailViewModel.taxType.set(taxType);
-    }
-
-    public static StringProperty taxTypeProperty() {
-        return taxType;
-    }
-
-    public static String getSerial() {
-        return serial.get();
-    }
-
-    public static void setSerial(String serial) {
-        PurchaseDetailViewModel.serial.set(serial);
-    }
-
-    public static StringProperty serialProperty() {
-        return serial;
-    }
-
-    public static Double getDiscount() {
-        return Double.parseDouble(discount.get());
-    }
-
-    public static void setDiscount(String discount) {
-        PurchaseDetailViewModel.discount.set(discount);
-    }
-
-    public static StringProperty discountProperty() {
-        return discount;
-    }
-
-    public static String getDiscountType() {
-        return discountType.get();
-    }
-
-    public static void setDiscountType(String discountType) {
-        PurchaseDetailViewModel.discountType.set(discountType);
-    }
-
-    public static StringProperty discountTypeProperty() {
-        return discountType;
+    public static StringProperty subTotalCostProperty() {
+        return subTotalCost;
     }
 
     public static Product getProduct() {
@@ -184,34 +119,6 @@ public class PurchaseDetailViewModel {
 
     public static ObjectProperty<Product> productProperty() {
         return product;
-    }
-
-    public static Double getTotalPrice() {
-        return Double.parseDouble(totalPrice.get());
-    }
-
-    public static void setTotalPrice(String totalPrice) {
-        PurchaseDetailViewModel.totalPrice.set(totalPrice);
-    }
-
-    public static StringProperty totalPriceProperty() {
-        return totalPrice;
-    }
-
-    public static Double getPrice() {
-        return Double.parseDouble(price.get());
-    }
-
-    public static void setPrice(String price) {
-        PurchaseDetailViewModel.price.set(price);
-    }
-
-    public static StringProperty priceProperty() {
-        return price;
-    }
-
-    public static StringProperty totalProperty() {
-        return totalPrice;
     }
 
     public static ObservableList<PurchaseDetail> getPurchaseDetails() {
@@ -229,15 +136,7 @@ public class PurchaseDetailViewModel {
     public static void addPurchaseDetail() {
         var purchaseDetail = PurchaseDetail.builder()
                 .cost(getCost())
-                .purchase(getPurchase())
-                .netTax(getNetTax())
-                .taxType(getTaxType())
-                .discount(getDiscount())
-                .discountType(getDiscountType())
                 .product(getProduct())
-                .serialNumber(getSerial())
-                .price(getPrice())
-                .total(getTotalPrice())
                 .quantity(getQuantity())
                 .build();
 
@@ -274,12 +173,7 @@ public class PurchaseDetailViewModel {
         setPurchase(null);
         setProduct(null);
         setCost("");
-        setNetTax("");
-        setTaxType(null);
-        setDiscount("");
-        setDiscountType(null);
-        setSerial(null);
-        setTotalPrice("");
+        setSubTotalCost("");
         setQuantity("");
     }
 
@@ -310,15 +204,7 @@ public class PurchaseDetailViewModel {
         var newPurchaseDetail = PurchaseDetail.builder()
                 .id(oldPurchaseDetail.getId())
                 .cost(getCost())
-                .purchase(getPurchase())
-                .netTax(getNetTax())
-                .taxType(getTaxType())
-                .discount(getDiscount())
-                .discountType(getDiscountType())
                 .product(getProduct())
-                .serialNumber(getSerial())
-                .price(getPrice())
-                .total(getTotalPrice())
                 .quantity(getQuantity())
                 .build();
 
@@ -326,8 +212,6 @@ public class PurchaseDetailViewModel {
                 () -> {
                     purchaseDetailsList.remove(getTempId());
                     purchaseDetailsList.add(getTempId(), newPurchaseDetail);
-
-
                 });
     }
 
@@ -357,13 +241,7 @@ public class PurchaseDetailViewModel {
             setId(purchaseDetail.getId());
             setPurchase(purchaseDetail.getPurchase());
             setCost(String.valueOf(purchaseDetail.getCost()));
-            setNetTax(String.valueOf(purchaseDetail.getNetTax()));
-            setTaxType(purchaseDetail.getTaxType());
-            setDiscount(String.valueOf(purchaseDetail.getDiscount()));
-            setDiscountType(purchaseDetail.getDiscountType());
             setProduct(purchaseDetail.getProduct());
-            setSerial(purchaseDetail.getSerialNumber());
-            setTotalPrice(String.valueOf(purchaseDetail.getTotal()));
             setQuantity(String.valueOf(purchaseDetail.getQuantity()));
         });
         SpotyThreader.spotyThreadPool(task);
@@ -375,15 +253,9 @@ public class PurchaseDetailViewModel {
         var newPurchaseDetail = PurchaseDetail.builder()
                 .id(oldPurchaseDetail.getId())
                 .cost(getCost())
+                .subTotalCost(getSubTotalCost())
                 .purchase(getPurchase())
-                .netTax(getNetTax())
-                .taxType(getTaxType())
-                .discount(getDiscount())
-                .discountType(getDiscountType())
                 .product(getProduct())
-                .serialNumber(getSerial())
-                .price(getPrice())
-                .total(getTotalPrice())
                 .quantity(getQuantity())
                 .build();
 

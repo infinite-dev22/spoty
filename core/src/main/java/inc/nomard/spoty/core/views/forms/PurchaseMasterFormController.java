@@ -14,58 +14,40 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import inc.nomard.spoty.core.components.message.SpotyMessage;
-import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
-import inc.nomard.spoty.core.components.message.enums.MessageDuration;
-import inc.nomard.spoty.core.components.message.enums.MessageVariants;
-import inc.nomard.spoty.core.components.navigation.Pages;
-import inc.nomard.spoty.core.values.strings.Values;
-import inc.nomard.spoty.core.viewModels.SupplierViewModel;
-import inc.nomard.spoty.core.viewModels.purchases.PurchaseDetailViewModel;
-import inc.nomard.spoty.core.viewModels.purchases.PurchaseMasterViewModel;
-import inc.nomard.spoty.core.views.BaseController;
+import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.*;
+import inc.nomard.spoty.core.components.navigation.*;
+import inc.nomard.spoty.core.values.strings.*;
+import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.core.viewModels.purchases.*;
+import inc.nomard.spoty.core.views.*;
 import inc.nomard.spoty.network_bridge.dtos.Supplier;
-import inc.nomard.spoty.network_bridge.dtos.purchases.PurchaseDetail;
-import inc.nomard.spoty.utils.SpotyLogger;
-import inc.nomard.spoty.utils.SpotyThreader;
+import inc.nomard.spoty.network_bridge.dtos.purchases.*;
+import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
-import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
-import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
-import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
-import io.github.palexdev.materialfx.enums.ScrimPriority;
-import io.github.palexdev.materialfx.filter.DoubleFilter;
-import io.github.palexdev.materialfx.filter.IntegerFilter;
-import io.github.palexdev.materialfx.filter.StringFilter;
-import io.github.palexdev.materialfx.utils.StringUtils;
-import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
-import io.github.palexdev.materialfx.validation.Constraint;
-import io.github.palexdev.materialfx.validation.Severity;
+import io.github.palexdev.materialfx.controls.cell.*;
+import io.github.palexdev.materialfx.dialogs.*;
+import io.github.palexdev.materialfx.enums.*;
+import io.github.palexdev.materialfx.filter.*;
+import io.github.palexdev.materialfx.utils.*;
+import io.github.palexdev.materialfx.utils.others.*;
+import io.github.palexdev.materialfx.validation.*;
+import static io.github.palexdev.materialfx.validation.Validated.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
-import javafx.event.EventHandler;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.scene.input.ContextMenuEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.util.StringConverter;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.Comparator;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.function.Function;
-import java.util.function.Predicate;
-
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
-import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
+import java.io.*;
+import java.net.*;
+import java.util.*;
+import java.util.function.*;
+import javafx.application.*;
+import javafx.collections.*;
+import javafx.event.*;
+import javafx.fxml.*;
+import javafx.scene.control.*;
+import javafx.scene.input.*;
+import javafx.scene.layout.*;
+import javafx.stage.*;
+import javafx.util.*;
 
 @SuppressWarnings("unchecked")
 public class PurchaseMasterFormController implements Initializable {
@@ -86,7 +68,7 @@ public class PurchaseMasterFormController implements Initializable {
     @FXML
     public BorderPane purchaseFormContentPane;
     @FXML
-    public MFXFilterComboBox<String> status;
+    public MFXFilterComboBox<String> purchaseStatus;
     @FXML
     public MFXButton saveBtn,
             cancelBtn;
@@ -113,7 +95,7 @@ public class PurchaseMasterFormController implements Initializable {
         // Bi~Directional Binding.
         date.textProperty().bindBidirectional(PurchaseMasterViewModel.dateProperty());
         supplier.valueProperty().bindBidirectional(PurchaseMasterViewModel.supplierProperty());
-        status.textProperty().bindBidirectional(PurchaseMasterViewModel.statusProperty());
+        purchaseStatus.textProperty().bindBidirectional(PurchaseMasterViewModel.statusProperty());
         note.textProperty().bindBidirectional(PurchaseMasterViewModel.noteProperty());
 
         // ComboBox Converters.
@@ -127,11 +109,18 @@ public class PurchaseMasterFormController implements Initializable {
                                 StringUtils.containsIgnoreCase(supplierConverter.toString(supplier), searchStr);
 
         // Set items to combo boxes and display custom text.
-        supplier.setItems(SupplierViewModel.getSuppliers());
         supplier.setConverter(supplierConverter);
         supplier.setFilterFunction(supplierFilterFunction);
+        if (SupplierViewModel.getSuppliers().isEmpty()) {
+            SupplierViewModel.getSuppliers()
+                    .addListener(
+                            (ListChangeListener<Supplier>)
+                                    c -> supplier.setItems(SupplierViewModel.getSuppliers()));
+        } else {
+            supplier.itemsProperty().bindBidirectional(SupplierViewModel.suppliersProperty());
+        }
 
-        status.setItems(FXCollections.observableArrayList(Values.PURCHASE_STATUSES));
+        purchaseStatus.setItems(FXCollections.observableArrayList(Values.PURCHASE_STATUSES));
 
         requiredValidator();
 
@@ -174,7 +163,7 @@ public class PurchaseMasterFormController implements Initializable {
         }
         List<Constraint> supplierConstraints = supplier.validate();
         List<Constraint> dateConstraints = date.validate();
-        List<Constraint> statusConstraints = status.validate();
+        List<Constraint> statusConstraints = purchaseStatus.validate();
         if (!supplierConstraints.isEmpty()) {
             supplierValidationLabel.setManaged(true);
             supplierValidationLabel.setVisible(true);
@@ -191,12 +180,21 @@ public class PurchaseMasterFormController implements Initializable {
             statusValidationLabel.setManaged(true);
             statusValidationLabel.setVisible(true);
             statusValidationLabel.setText(statusConstraints.getFirst().getMessage());
-            status.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+            purchaseStatus.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+        }
+        if (!supplierConstraints.isEmpty()
+                && !dateConstraints.isEmpty()
+                && !statusConstraints.isEmpty()
+                && detailTable.isDisabled()
+                && PurchaseDetailViewModel.purchaseDetailsList.isEmpty()) {
+            cancelBtn.setDisable(false);
+            saveBtn.setDisable(false);
         }
         if (supplierConstraints.isEmpty()
                 && dateConstraints.isEmpty()
                 && statusConstraints.isEmpty()
-                && !detailTable.isDisabled() && PurchaseDetailViewModel.purchaseDetailsList.isEmpty()) {
+                && !detailTable.isDisabled()
+                && !PurchaseDetailViewModel.purchaseDetailsList.isEmpty()) {
             if (PurchaseMasterViewModel.getId() > 0) {
                 try {
                     PurchaseMasterViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
@@ -220,50 +218,32 @@ public class PurchaseMasterFormController implements Initializable {
                         "Product", false, Comparator.comparing(PurchaseDetail::getProductName));
         MFXTableColumn<PurchaseDetail> quantity =
                 new MFXTableColumn<>("Quantity", false, Comparator.comparing(PurchaseDetail::getQuantity));
-        MFXTableColumn<PurchaseDetail> tax =
-                new MFXTableColumn<>("Tax", false, Comparator.comparing(PurchaseDetail::getNetTax));
-        MFXTableColumn<PurchaseDetail> discount =
-                new MFXTableColumn<>("Discount", false, Comparator.comparing(PurchaseDetail::getDiscount));
-        MFXTableColumn<PurchaseDetail> price =
-                new MFXTableColumn<>("Price", false, Comparator.comparing(PurchaseDetail::getPrice));
-        MFXTableColumn<PurchaseDetail> totalPrice =
-                new MFXTableColumn<>(
-                        "Total Price", false, Comparator.comparing(PurchaseDetail::getTotal));
+        MFXTableColumn<PurchaseDetail> cost =
+                new MFXTableColumn<>("Unit Cost", false, Comparator.comparing(PurchaseDetail::getCost));
 
         // Set table column data.
         product.setRowCellFactory(
                 purchaseDetail -> new MFXTableRowCell<>(PurchaseDetail::getProductName));
         quantity.setRowCellFactory(
                 purchaseDetail -> new MFXTableRowCell<>(PurchaseDetail::getQuantity));
-        tax.setRowCellFactory(purchaseDetail -> new MFXTableRowCell<>(PurchaseDetail::getNetTax));
-        discount.setRowCellFactory(
-                purchaseDetail -> new MFXTableRowCell<>(PurchaseDetail::getDiscount));
-        price.setRowCellFactory(purchaseDetail -> new MFXTableRowCell<>(PurchaseDetail::getPrice));
-        totalPrice.setRowCellFactory(
-                purchaseDetail -> new MFXTableRowCell<>(PurchaseDetail::getTotal));
+        cost.setRowCellFactory(purchaseDetail -> new MFXTableRowCell<>(PurchaseDetail::getCost));
 
         // Set table column width.
-        product.prefWidthProperty().bind(detailTable.widthProperty().multiply(.25));
-        quantity.prefWidthProperty().bind(detailTable.widthProperty().multiply(.25));
-        tax.prefWidthProperty().bind(detailTable.widthProperty().multiply(.25));
-        discount.prefWidthProperty().bind(detailTable.widthProperty().multiply(.25));
-        price.prefWidthProperty().bind(detailTable.widthProperty().multiply(.25));
-        totalPrice.prefWidthProperty().bind(detailTable.widthProperty().multiply(.25));
+        product.prefWidthProperty().bind(detailTable.widthProperty().multiply(.34));
+        quantity.prefWidthProperty().bind(detailTable.widthProperty().multiply(.34));
+        cost.prefWidthProperty().bind(detailTable.widthProperty().multiply(.34));
 
         // Set table filter.
         detailTable
                 .getTableColumns()
-                .addAll(product, quantity, tax, discount, price, totalPrice);
+                .addAll(product, quantity, cost);
 
         detailTable
                 .getFilters()
                 .addAll(
                         new StringFilter<>("Product", PurchaseDetail::getProductName),
                         new IntegerFilter<>("Quantity", PurchaseDetail::getQuantity),
-                        new DoubleFilter<>("Tax", PurchaseDetail::getNetTax),
-                        new DoubleFilter<>("Discount", PurchaseDetail::getDiscount),
-                        new DoubleFilter<>("Price", PurchaseDetail::getPrice),
-                        new DoubleFilter<>("Total Price", PurchaseDetail::getTotal));
+                        new DoubleFilter<>("Cost", PurchaseDetail::getCost));
 
         styleTable();
 
@@ -352,10 +332,10 @@ public class PurchaseMasterFormController implements Initializable {
 
         supplier.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
         date.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-        status.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+        purchaseStatus.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
 
         supplier.clearSelection();
-        status.clearSelection();
+        purchaseStatus.clearSelection();
     }
 
     public void addBtnClicked() {
@@ -429,9 +409,9 @@ public class PurchaseMasterFormController implements Initializable {
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
                         .setMessage("Beneficiary Type is required")
-                        .setCondition(status.textProperty().length().greaterThan(0))
+                        .setCondition(purchaseStatus.textProperty().length().greaterThan(0))
                         .get();
-        status.getValidator().constraint(statusConstraint);
+        purchaseStatus.getValidator().constraint(statusConstraint);
         Constraint dateConstraint =
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
@@ -451,7 +431,7 @@ public class PurchaseMasterFormController implements Initializable {
                                 supplier.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                             }
                         });
-        status
+        purchaseStatus
                 .getValidator()
                 .validProperty()
                 .addListener(
@@ -459,7 +439,7 @@ public class PurchaseMasterFormController implements Initializable {
                             if (newValue) {
                                 statusValidationLabel.setManaged(false);
                                 statusValidationLabel.setVisible(false);
-                                status.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                                purchaseStatus.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                             }
                         });
         date

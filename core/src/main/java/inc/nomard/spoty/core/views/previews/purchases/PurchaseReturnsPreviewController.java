@@ -75,12 +75,12 @@ public class PurchaseReturnsPreviewController implements Initializable {
         MFXTableColumn<PurchaseDetail> product =
                 new MFXTableColumn<>("Name", false, Comparator.comparing(PurchaseDetail::getProductName));
         MFXTableColumn<PurchaseDetail> quantity =
-                new MFXTableColumn<>("Qnty", false, Comparator.comparing(PurchaseDetail::getQuantity));
-        MFXTableColumn<PurchaseDetail> price =
-                new MFXTableColumn<>("Price", false, Comparator.comparing(PurchaseDetail::getPrice));
-        MFXTableColumn<PurchaseDetail> totalPrice =
+                new MFXTableColumn<>("Qty", false, Comparator.comparing(PurchaseDetail::getQuantity));
+        MFXTableColumn<PurchaseDetail> cost =
+                new MFXTableColumn<>("Unit Cost", false, Comparator.comparing(PurchaseDetail::getCost));
+        MFXTableColumn<PurchaseDetail> subTotalCost =
                 new MFXTableColumn<>(
-                        "Total Price", false, Comparator.comparing(PurchaseDetail::getSubTotalPrice));
+                        "Total", false, Comparator.comparing(PurchaseDetail::getSubTotalCost));
 
         // Set table column data.
         product.setRowCellFactory(purchaseDetail -> {
@@ -95,15 +95,15 @@ public class PurchaseReturnsPreviewController implements Initializable {
             cell.getStyleClass().add("table-cell-border");
             return cell;
         });
-        price.setRowCellFactory(purchaseDetail -> {
-            var cell = new MFXTableRowCell<>(PurchaseDetail::getPrice);
+        cost.setRowCellFactory(purchaseDetail -> {
+            var cell = new MFXTableRowCell<>(PurchaseDetail::getCost);
             cell.setAlignment(Pos.CENTER_RIGHT);
             cell.getStyleClass().add("table-cell-border");
             return cell;
         });
-        totalPrice.setRowCellFactory(
+        subTotalCost.setRowCellFactory(
                 purchaseDetail -> {
-                    var cell = new MFXTableRowCell<>(PurchaseDetail::getSubTotalPrice);
+                    var cell = new MFXTableRowCell<>(PurchaseDetail::getSubTotalCost);
                     cell.setAlignment(Pos.CENTER_RIGHT);
                     cell.getStyleClass().add("table-cell-border");
                     return cell;
@@ -112,13 +112,13 @@ public class PurchaseReturnsPreviewController implements Initializable {
         // Set table column width.
         product.prefWidthProperty().bind(itemsTable.widthProperty().multiply(.25));
         quantity.prefWidthProperty().bind(itemsTable.widthProperty().multiply(.25));
-        price.prefWidthProperty().bind(itemsTable.widthProperty().multiply(.25));
-        totalPrice.prefWidthProperty().bind(itemsTable.widthProperty().multiply(.25));
+        cost.prefWidthProperty().bind(itemsTable.widthProperty().multiply(.25));
+        subTotalCost.prefWidthProperty().bind(itemsTable.widthProperty().multiply(.25));
 
         // Set table filter.
         itemsTable
                 .getTableColumns()
-                .addAll(product, quantity, price, totalPrice);
+                .addAll(product, quantity, cost, subTotalCost);
 
         styleTable();
 

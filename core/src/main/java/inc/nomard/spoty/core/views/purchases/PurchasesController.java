@@ -99,7 +99,7 @@ public class PurchasesController implements Initializable {
                 new MFXTableColumn<>(
                         "Supplier", false, Comparator.comparing(PurchaseMaster::getSupplierName));
         MFXTableColumn<PurchaseMaster> masterStatus =
-                new MFXTableColumn<>("Status", false, Comparator.comparing(PurchaseMaster::getStatus));
+                new MFXTableColumn<>("Status", false, Comparator.comparing(PurchaseMaster::getPurchaseStatus));
         MFXTableColumn<PurchaseMaster> masterPaymentStatus =
                 new MFXTableColumn<>(
                         "Pay Status", false, Comparator.comparing(PurchaseMaster::getPaymentStatus));
@@ -115,7 +115,7 @@ public class PurchasesController implements Initializable {
         masterSupplier.setRowCellFactory(
                 master -> new MFXTableRowCell<>(PurchaseMaster::getSupplierName));
         masterStatus.setRowCellFactory(
-                master -> new MFXTableRowCell<>(PurchaseMaster::getStatus));
+                master -> new MFXTableRowCell<>(PurchaseMaster::getPurchaseStatus));
         masterPaymentStatus.setRowCellFactory(
                 master -> new MFXTableRowCell<>(PurchaseMaster::getPaymentStatus));
         masterDate.setRowCellFactory(
@@ -162,7 +162,7 @@ public class PurchasesController implements Initializable {
                 .addAll(
                         new StringFilter<>("Reference", PurchaseMaster::getRef),
                         new StringFilter<>("Supplier", PurchaseMaster::getSupplierName),
-                        new StringFilter<>("Status", PurchaseMaster::getStatus),
+                        new StringFilter<>("Status", PurchaseMaster::getPurchaseStatus),
                         new StringFilter<>("Pay Status", PurchaseMaster::getPaymentStatus),
                         new DoubleFilter<>("Total", PurchaseMaster::getTotal),
                         new DoubleFilter<>("Paid", PurchaseMaster::getAmountPaid),

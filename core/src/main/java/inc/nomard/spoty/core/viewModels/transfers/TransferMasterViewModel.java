@@ -17,7 +17,7 @@ package inc.nomard.spoty.core.viewModels.transfers;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import inc.nomard.spoty.core.viewModels.adapters.UnixEpochDateTypeAdapter;
+import inc.nomard.spoty.utils.adapters.UnixEpochDateTypeAdapter;
 import inc.nomard.spoty.network_bridge.dtos.Branch;
 import inc.nomard.spoty.network_bridge.dtos.transfers.TransferMaster;
 import inc.nomard.spoty.network_bridge.models.FindModel;

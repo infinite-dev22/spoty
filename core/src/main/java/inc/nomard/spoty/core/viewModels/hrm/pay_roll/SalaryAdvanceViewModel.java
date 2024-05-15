@@ -3,7 +3,7 @@ package inc.nomard.spoty.core.viewModels.hrm.pay_roll;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import inc.nomard.spoty.core.viewModels.adapters.UnixEpochDateTypeAdapter;
+import inc.nomard.spoty.utils.adapters.UnixEpochDateTypeAdapter;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.User;
 import inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll.PaySlip;
 import inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll.SalaryAdvance;

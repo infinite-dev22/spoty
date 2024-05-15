@@ -73,8 +73,8 @@
                     <padding>
                         <Insets top="5.0"/>
                     </padding>
-                    <MFXFilterComboBox fx:id="status" allowEdit="true" floatMode="BORDER" floatingText="Status"
-                                       prefWidth="10000.0" VBox.vgrow="ALWAYS"/>
+                    <MFXFilterComboBox fx:id="purchaseStatus" allowEdit="true" floatMode="BORDER"
+                                       floatingText="Purchase Status" prefWidth="10000.0" VBox.vgrow="ALWAYS"/>
                     <Label id="validationLabel" fx:id="statusValidationLabel" maxWidth="1.7976931348623157E308"
                            minHeight="-Infinity" styleClass="input-validation-error" visible="false" managed="false"
                            wrapText="true"/>

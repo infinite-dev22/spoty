@@ -64,7 +64,7 @@ public class Navigation {
         // Accounting
         map.put("BANK_ACCOUNTS", NavTree.NavTreeItem.page("Bank Accounts", Pages.getBankPane()));
         map.put(
-                "EXPENSE_CATEGORY", NavTree.NavTreeItem.page("Expense   Category", Pages.getExpenseCategoryPane()));
+                "EXPENSE_CATEGORY", NavTree.NavTreeItem.page("Expense Category", Pages.getExpenseCategoryPane()));
         map.put("EXPENSE", NavTree.NavTreeItem.page("Expenses", Pages.getExpensePane()));
         // Reports
         map.put("STOCK_REPORT", NavTree.NavTreeItem.page("Stock Report", Pages.getStockReportPane()));
@@ -180,6 +180,13 @@ public class Navigation {
                         NAV_TREE.get("SUPPLIERS"),
                         NAV_TREE.get("CUSTOMERS"));
 
+        var purchase = NavTree.NavTreeItem.group("Purchase");
+        purchase
+                .getChildren()
+                .setAll(
+                        NAV_TREE.get("PURCHASES"),
+                        NAV_TREE.get("PURCHASE_RETURNS"));
+
         var inventory = NavTree.NavTreeItem.group("Inventory", "fas-cubes");
         inventory
                 .getChildren()
@@ -188,17 +195,11 @@ public class Navigation {
                         NAV_TREE.get("BRAND"),
                         NAV_TREE.get("UNIT"),
                         NAV_TREE.get("PRODUCTS"),
-                        NAV_TREE.get("REQUISITIONS"),
+                        // NAV_TREE.get("REQUISITIONS"), Will be added if gains traction.
+                        purchase,
                         NAV_TREE.get("STOCK_INS"),
                         NAV_TREE.get("TRANSFERS"),
                         NAV_TREE.get("ADJUSTMENTS"));
-
-        var purchase = NavTree.NavTreeItem.group("Purchase", "fas-cart-plus");
-        purchase
-                .getChildren()
-                .setAll(
-                        NAV_TREE.get("PURCHASES"),
-                        NAV_TREE.get("PURCHASE_RETURNS"));
 
         var reports = NavTree.NavTreeItem.group("Reports", "fas-clipboard-list");
         reports
@@ -273,7 +274,6 @@ public class Navigation {
                         humanResource,
                         people,
                         inventory,
-                        purchase,
                         quotation,
                         sale,
                         accounts,

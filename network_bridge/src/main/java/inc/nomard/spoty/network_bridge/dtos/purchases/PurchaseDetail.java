@@ -28,16 +28,9 @@ public class PurchaseDetail {
     private Long id;
     private double cost;
     private PurchaseMaster purchase;
-    private double netTax;
-    private String taxType;
-    private double discount;
-    private String discountType;
     private Product product;
-    private String serialNumber;
-    private double subTotalPrice;
-    private double price;
-    private double total;
     private int quantity;
+    private double subTotalCost;
 
     public String getProductName() {
         return product.getName();
