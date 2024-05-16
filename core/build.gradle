@@ -142,11 +142,11 @@ dependencies {
     implementation project(":network_bridge")
     implementation project(":utils")
     implementation 'jakarta.inject:jakarta.inject-api:2.0.1'
-    implementation('javax.measure:unit-api:2.1.2')
+    implementation "javax.measure:unit-api:$measure_unit_api"
     implementation "com.dlsc.gemsfx:gemsfx:$gemsfx"
 //    implementation "com.github.iAmGio:froxty:1.4.0"
     implementation "com.calendarfx:view:11.12.7"
-    implementation "eu.hansolo.fx:charts:21.0.7"
+    implementation "eu.hansolo.fx:charts:$fx_charts"
 //    implementation "io.soabase.record-builder:record-builder-core:39"
     implementation "io.github.mkpaz:atlantafx-parent:2.0.1"
     implementation "io.github.mkpaz:atlantafx-styles:2.0.1"
