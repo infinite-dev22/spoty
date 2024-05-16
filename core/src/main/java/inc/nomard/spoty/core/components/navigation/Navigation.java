@@ -261,9 +261,9 @@ public class Navigation {
         settings
                 .getChildren()
                 .setAll(
-                        NAV_TREE.get("APP_SETTINGS"),
                         NAV_TREE.get("BRANCHES"),
                         NAV_TREE.get("CURRENCIES"),
+                        NAV_TREE.get("APP_SETTINGS"),
                         NAV_TREE.get("COMPANY"),
                         NAV_TREE.get("ROLES"));
 
