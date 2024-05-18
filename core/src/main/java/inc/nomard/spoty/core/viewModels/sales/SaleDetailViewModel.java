@@ -14,34 +14,23 @@
 
 package inc.nomard.spoty.core.viewModels.sales;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import inc.nomard.spoty.core.viewModels.ProductViewModel;
-import inc.nomard.spoty.utils.adapters.UnixEpochDateTypeAdapter;
-import inc.nomard.spoty.network_bridge.dtos.Product;
-import inc.nomard.spoty.network_bridge.dtos.sales.SaleDetail;
-import inc.nomard.spoty.network_bridge.dtos.sales.SaleTransaction;
-import inc.nomard.spoty.network_bridge.models.FindModel;
-import inc.nomard.spoty.network_bridge.models.SearchModel;
-import inc.nomard.spoty.network_bridge.repositories.implementations.SalesRepositoryImpl;
-import inc.nomard.spoty.utils.ParameterlessConsumer;
-import inc.nomard.spoty.utils.SpotyLogger;
-import inc.nomard.spoty.utils.SpotyThreader;
-import javafx.application.Platform;
-import javafx.beans.property.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import lombok.Getter;
-
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.Objects;
-import java.util.concurrent.ExecutionException;
-
+import com.google.gson.*;
+import com.google.gson.reflect.*;
 import static inc.nomard.spoty.core.values.SharedResources.*;
+import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.network_bridge.dtos.sales.*;
+import inc.nomard.spoty.network_bridge.models.*;
+import inc.nomard.spoty.network_bridge.repositories.implementations.*;
+import inc.nomard.spoty.utils.*;
+import inc.nomard.spoty.utils.adapters.*;
+import java.lang.reflect.*;
+import java.util.*;
+import java.util.concurrent.*;
+import javafx.application.*;
+import javafx.beans.property.*;
+import javafx.collections.*;
+import lombok.*;
 
 public class SaleDetailViewModel {
     @Getter
@@ -258,7 +247,11 @@ public class SaleDetailViewModel {
                 task.setOnFailed(workerStateEvent -> onSuccess.run());
             }
             if (Objects.nonNull(onFailed)) {
-                task.setOnFailed(workerStateEvent -> onFailed.run());
+                task.setOnFailed(workerStateEvent -> {
+                    onFailed.run();
+                    System.err.println("The task failed with the following exception:");
+                    task.getException().printStackTrace(System.err);
+                });
             }
             SpotyThreader.spotyThreadPool(task);
         });
@@ -364,7 +357,11 @@ public class SaleDetailViewModel {
             task.setOnFailed(workerStateEvent -> onSuccess.run());
         }
         if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> onFailed.run());
+            task.setOnFailed(workerStateEvent -> {
+                onFailed.run();
+                System.err.println("The task failed with the following exception:");
+                task.getException().printStackTrace(System.err);
+            });
         }
         SpotyThreader.spotyThreadPool(task);
         // getAllSaleDetails();
@@ -385,7 +382,11 @@ public class SaleDetailViewModel {
                         task.setOnSucceeded(workerStateEvent -> onSuccess.run());
                     }
                     if (Objects.nonNull(onFailed)) {
-                        task.setOnFailed(workerStateEvent -> onFailed.run());
+                        task.setOnFailed(workerStateEvent -> {
+                            onFailed.run();
+                            System.err.println("The task failed with the following exception:");
+                            task.getException().printStackTrace(System.err);
+                        });
                     }
                     SpotyThreader.spotyThreadPool(task);
                 });
@@ -418,7 +419,11 @@ public class SaleDetailViewModel {
                 saleDetailsList.addAll(saleDetailList);
             });
             if (Objects.nonNull(onFailed)) {
-                task.setOnFailed(workerStateEvent -> onFailed.run());
+                task.setOnFailed(workerStateEvent -> {
+                    onFailed.run();
+                    System.err.println("The task failed with the following exception:");
+                    task.getException().printStackTrace(System.err);
+                });
             }
             SpotyThreader.spotyThreadPool(task);
         }
@@ -435,7 +440,11 @@ public class SaleDetailViewModel {
             task.setOnRunning(workerStateEvent -> onActivity.run());
         }
         if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> onFailed.run());
+            task.setOnFailed(workerStateEvent -> {
+                onFailed.run();
+                System.err.println("The task failed with the following exception:");
+                task.getException().printStackTrace(System.err);
+            });
         }
         task.setOnSucceeded(workerStateEvent -> {
             Type listType = new TypeToken<ArrayList<SaleDetail>>() {

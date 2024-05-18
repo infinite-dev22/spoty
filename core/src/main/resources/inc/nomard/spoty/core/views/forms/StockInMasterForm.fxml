@@ -44,14 +44,7 @@
                     <RowConstraints vgrow="SOMETIMES"/>
                     <RowConstraints vgrow="SOMETIMES"/>
                 </rowConstraints>
-                <VBox spacing="5.0" GridPane.rowIndex="0" GridPane.columnIndex="0">
-                    <MFXDatePicker fx:id="date" floatMode="BORDER" floatingText="Date"
-                                   prefWidth="10000.0"/>
-                    <Label id="validationLabel" fx:id="dateValidationLabel"
-                           maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="input-validation-error"
-                           visible="false" wrapText="true"/>
-                </VBox>
-                <VBox spacing="5.0" GridPane.rowIndex="0" GridPane.columnIndex="1">
+                <VBox spacing="5.0" GridPane.rowIndex="0" GridPane.columnIndex="0" GridPane.columnSpan="2">
                     <MFXTextField fx:id="note" floatMode="BORDER" floatingText="Note" prefWidth="10000.0"
                                   GridPane.rowIndex="0" GridPane.columnIndex="1"/>
                 </VBox>

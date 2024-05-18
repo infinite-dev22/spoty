@@ -14,10 +14,8 @@
 
 package inc.nomard.spoty.core.values;
 
-import javafx.beans.property.LongProperty;
-import javafx.beans.property.SimpleLongProperty;
-
-import java.util.LinkedList;
+import java.util.*;
+import javafx.beans.property.*;
 
 public class SharedResources {
     public static final LinkedList<Long> PENDING_DELETES = new LinkedList<>();

@@ -13,8 +13,10 @@
                   fx:controller="inc.nomard.spoty.core.views.forms.TaxFormController"
                   prefHeight="400.0" prefWidth="600.0">
     <stylesheets>
-        <URL value="@../../styles/Common.css"/>
-        <URL value="@../../styles/TextFields.css"/>
+        <URL value="@../../styles/Common.css" />
+        <URL value="@../../styles/TextFields.css" />
+        <URL value="@../../styles/base.css" />
+        <URL value="@../../styles/theming/Default.css" />
     </stylesheets>
     <center>
         <VBox spacing="8.0">

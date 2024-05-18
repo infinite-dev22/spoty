@@ -15,18 +15,15 @@
 package inc.nomard.spoty.core.views.human_resource.leave;
 
 import com.calendarfx.model.Calendar;
-import com.calendarfx.model.Calendar.Style;
-import com.calendarfx.model.CalendarSource;
-import com.calendarfx.view.CalendarView;
-import javafx.application.Platform;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.layout.BorderPane;
-
-import java.net.URL;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.ResourceBundle;
+import com.calendarfx.model.Calendar.*;
+import com.calendarfx.model.*;
+import com.calendarfx.view.*;
+import java.net.*;
+import java.time.*;
+import java.util.*;
+import javafx.application.*;
+import javafx.fxml.*;
+import javafx.scene.layout.*;
 
 @SuppressWarnings("unchecked")
 public class CalendarController implements Initializable {

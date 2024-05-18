@@ -1,42 +1,30 @@
 package inc.nomard.spoty.core.views.human_resource.pay_roll;
 
-import inc.nomard.spoty.core.components.animations.SpotyAnimations;
-import inc.nomard.spoty.core.viewModels.hrm.pay_roll.SalaryAdvanceViewModel;
-import inc.nomard.spoty.core.views.forms.SalaryAdvanceFormController;
-import inc.nomard.spoty.core.views.previews.hrm.pay_roll.SalaryAdvancePreviewController;
-import inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll.SalaryAdvance;
-import inc.nomard.spoty.utils.SpotyThreader;
+import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
+import inc.nomard.spoty.core.components.animations.*;
+import inc.nomard.spoty.core.viewModels.hrm.pay_roll.*;
+import inc.nomard.spoty.core.views.forms.*;
+import inc.nomard.spoty.core.views.previews.hrm.pay_roll.*;
+import inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll.*;
+import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
-import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
-import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
-import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
-import io.github.palexdev.materialfx.enums.ScrimPriority;
-import io.github.palexdev.materialfx.filter.DoubleFilter;
-import io.github.palexdev.materialfx.filter.StringFilter;
-import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
-import javafx.animation.RotateTransition;
-import javafx.application.Platform;
-import javafx.collections.ListChangeListener;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
-import javafx.scene.input.ContextMenuEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.stage.Modality;
-import javafx.stage.Screen;
-import javafx.stage.Stage;
-import javafx.util.Duration;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.Comparator;
-import java.util.ResourceBundle;
-
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
+import io.github.palexdev.materialfx.controls.cell.*;
+import io.github.palexdev.materialfx.dialogs.*;
+import io.github.palexdev.materialfx.enums.*;
+import io.github.palexdev.materialfx.filter.*;
+import io.github.palexdev.mfxresources.fonts.*;
+import java.io.*;
+import java.net.*;
+import java.util.*;
+import javafx.animation.*;
+import javafx.application.*;
+import javafx.collections.*;
+import javafx.event.*;
+import javafx.fxml.*;
+import javafx.scene.input.*;
+import javafx.scene.layout.*;
+import javafx.stage.*;
+import javafx.util.*;
 
 public class SalariesController implements Initializable {
     private static SalariesController instance;
@@ -75,9 +63,11 @@ public class SalariesController implements Initializable {
         double screenHeight = Screen.getPrimary().getBounds().getHeight();
         viewFxmlLoader = fxmlLoader("views/previews/hrm/pay_roll/SalaryAdvancePreview.fxml");
         viewFxmlLoader.setControllerFactory(c -> new SalaryAdvancePreviewController());
+
         MFXGenericDialog genericDialog = viewFxmlLoader.load();
         genericDialog.setShowMinimize(false);
         genericDialog.setShowAlwaysOnTop(false);
+        genericDialog.setShowClose(false);
 
         genericDialog.setPrefHeight(screenHeight * .98);
         genericDialog.setPrefWidth(700);

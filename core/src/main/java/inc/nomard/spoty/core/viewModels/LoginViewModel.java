@@ -14,20 +14,15 @@
 
 package inc.nomard.spoty.core.viewModels;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import inc.nomard.spoty.utils.adapters.UnixEpochDateTypeAdapter;
-import inc.nomard.spoty.network_bridge.auth.ProtectedGlobals;
-import inc.nomard.spoty.network_bridge.models.APIResponseModel;
-import inc.nomard.spoty.network_bridge.models.LoginModel;
-import inc.nomard.spoty.network_bridge.repositories.implementations.AuthRepositoryImpl;
-import inc.nomard.spoty.utils.ParameterlessConsumer;
-import inc.nomard.spoty.utils.SpotyThreader;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-
-import java.util.Date;
-import java.util.concurrent.ExecutionException;
+import com.google.gson.*;
+import inc.nomard.spoty.network_bridge.auth.*;
+import inc.nomard.spoty.network_bridge.models.*;
+import inc.nomard.spoty.network_bridge.repositories.implementations.*;
+import inc.nomard.spoty.utils.*;
+import inc.nomard.spoty.utils.adapters.*;
+import java.util.*;
+import java.util.concurrent.*;
+import javafx.beans.property.*;
 
 
 public class LoginViewModel {
@@ -86,13 +81,21 @@ public class LoginViewModel {
                 } else if (response.getMessage().toLowerCase().contains("bad credentials")) {
                     onBadCredentials.run();
                 } else {
-                    onFailed.run();
+                    {
+                        onFailed.run();
+                        System.err.println("The task failed with the following exception:");
+                        task.getException().printStackTrace(System.err);
+                    }
                 }
             } catch (InterruptedException | ExecutionException e) {
                 throw new RuntimeException(e);
             }
         });
-        task.setOnFailed(workerStateEvent -> onFailed.run());
+        task.setOnFailed(workerStateEvent -> {
+            onFailed.run();
+            System.err.println("The task failed with the following exception:");
+            task.getException().printStackTrace(System.err);
+        });
         SpotyThreader.spotyThreadPool(task);
     }
 }

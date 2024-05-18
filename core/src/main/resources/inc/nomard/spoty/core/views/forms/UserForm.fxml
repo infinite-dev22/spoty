@@ -59,50 +59,50 @@
             </VBox>
             <VBox spacing="5.0" GridPane.columnIndex="1">
                 <padding>
-                    <Insets top="2.5"/>
+                    <Insets bottom="2.5"/>
                 </padding>
                 <MFXTextField fx:id="lastname" floatMode="BORDER" floatingText="Last name" layoutX="10.0"
                               layoutY="6.0" prefWidth="300.0"/>
                 <Label id="validationLabel" fx:id="lastNameValidationLabel"
-                       maxWidth="1.7976931348623157E308"
-                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true"/>
+                       maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="input-validation-error"
+                       visible="false" managed="false" wrapText="true"/>
             </VBox>
             <VBox spacing="5.0" GridPane.rowIndex="1">
                 <padding>
-                    <Insets top="2.5"/>
+                    <Insets bottom="2.5"/>
                 </padding>
                 <MFXTextField fx:id="username" floatMode="BORDER" floatingText="Username" layoutX="10.0"
                               prefWidth="300.0" layoutY="6.0"/>
                 <Label id="validationLabel" fx:id="userNameValidationLabel"
-                       maxWidth="1.7976931348623157E308"
-                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true"/>
+                       maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="input-validation-error"
+                       visible="false" managed="false" wrapText="true"/>
             </VBox>
             <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                 <padding>
-                    <Insets top="2.5"/>
+                    <Insets bottom="2.5"/>
                 </padding>
                 <MFXTextField fx:id="phone" floatMode="BORDER" floatingText="Phone" prefWidth="300.0"/>
                 <Label id="validationLabel" fx:id="phoneValidationLabel"
-                       maxWidth="1.7976931348623157E308"
-                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true"/>
+                       maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="input-validation-error"
+                       visible="false" managed="false" wrapText="true"/>
             </VBox>
             <VBox spacing="5.0" GridPane.rowIndex="2">
                 <padding>
-                    <Insets top="2.5"/>
+                    <Insets bottom="2.5"/>
                 </padding>
                 <MFXTextField fx:id="email" floatMode="BORDER" floatingText="Email" prefWidth="300.0"/>
                 <Label id="validationLabel" fx:id="emailValidationLabel"
-                       maxWidth="1.7976931348623157E308"
-                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true"/>
+                       maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="input-validation-error"
+                       visible="false" managed="false" wrapText="true"/>
             </VBox>
             <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                 <padding>
-                    <Insets top="2.5"/>
+                    <Insets bottom="2.5"/>
                 </padding>
                 <MFXFilterComboBox fx:id="role" floatMode="BORDER" floatingText="Role" prefWidth="300.0"/>
                 <Label id="validationLabel" fx:id="roleValidationLabel"
-                       maxWidth="1.7976931348623157E308"
-                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true"/>
+                       maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="input-validation-error"
+                       visible="false" managed="false" wrapText="true"/>
             </VBox>
             <MFXToggleButton GridPane.rowIndex="3" fx:id="status" text="Active"/>
         </GridPane>

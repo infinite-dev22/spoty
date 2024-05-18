@@ -1,8 +1,8 @@
 package inc.nomard.spoty.core.components;
 
-import io.github.palexdev.mfxcore.controls.Label;
-import javafx.scene.Cursor;
-import javafx.scene.layout.VBox;
+import io.github.palexdev.mfxcore.controls.*;
+import javafx.scene.*;
+import javafx.scene.layout.*;
 
 public class ViewAll extends VBox {
     public ViewAll() {

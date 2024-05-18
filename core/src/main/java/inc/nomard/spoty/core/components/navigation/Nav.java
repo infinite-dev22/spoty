@@ -14,12 +14,9 @@
 
 package inc.nomard.spoty.core.components.navigation;
 
-import javafx.scene.Node;
-import javafx.scene.layout.BorderPane;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import javafx.scene.*;
+import javafx.scene.layout.*;
 
 record Nav(
         String title, String tag, Node graphic, BorderPane view, List<String> searchKeywords) {

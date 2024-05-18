@@ -14,10 +14,9 @@
 
 package inc.nomard.spoty.core;
 
-import javafx.fxml.FXMLLoader;
-
-import java.io.InputStream;
-import java.net.URL;
+import java.io.*;
+import java.net.*;
+import javafx.fxml.*;
 
 public class SpotyCoreResourceLoader {
     public SpotyCoreResourceLoader() {

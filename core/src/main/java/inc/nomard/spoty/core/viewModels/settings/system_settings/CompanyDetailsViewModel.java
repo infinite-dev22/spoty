@@ -1,20 +1,15 @@
 package inc.nomard.spoty.core.viewModels.settings.system_settings;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import inc.nomard.spoty.utils.adapters.UnixEpochDateTypeAdapter;
-import inc.nomard.spoty.network_bridge.dtos.Company;
+import com.google.gson.*;
 import inc.nomard.spoty.network_bridge.dtos.Currency;
-import inc.nomard.spoty.network_bridge.models.FindModel;
-import inc.nomard.spoty.network_bridge.repositories.implementations.CompanyRepositoryImpl;
-import inc.nomard.spoty.utils.ParameterlessConsumer;
-import inc.nomard.spoty.utils.SpotyLogger;
-import inc.nomard.spoty.utils.SpotyThreader;
+import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.network_bridge.models.*;
+import inc.nomard.spoty.network_bridge.repositories.implementations.*;
+import inc.nomard.spoty.utils.*;
+import inc.nomard.spoty.utils.adapters.*;
+import java.util.*;
+import java.util.concurrent.*;
 import javafx.beans.property.*;
-
-import java.util.Date;
-import java.util.Objects;
-import java.util.concurrent.ExecutionException;
 
 public class CompanyDetailsViewModel {
     private static final Gson gson = new GsonBuilder()

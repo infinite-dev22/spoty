@@ -148,7 +148,7 @@
                         </padding>
                         <VBox fx:id="placeHolder">
                             <HBox fx:id="imageIcon" alignment="CENTER"/>
-                            <Label text="Click to upload or Drag and drop png, jpg or gif. (max. size 800 x 400 px)"
+                            <Label text="Click to upload or Drag and drop png or jpg. (max. size 800 x 400 px)"
                                    textAlignment="CENTER" wrapText="true"/>
                         </VBox>
                         <Rectangle fx:id="productImageView" arcHeight="25.0" arcWidth="25.0" cache="true" cacheHint="SPEED" managed="false" pickOnBounds="true" strokeLineJoin="ROUND" strokeType="INSIDE" strokeWidth="0.0" visible="false" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" />

@@ -15,7 +15,7 @@
 package inc.nomard.spoty.core.values.strings;
 
 public class Labels {
-    public static final String APP_NAME = "Zenmart ERP";
+    public static final String APP_NAME = "OpenSale ERP";
     public static final String COMPANY_NAME = "nomard Inc.";
     public static final String CREATE = "Create";
     public static final String EDIT = "Edit";

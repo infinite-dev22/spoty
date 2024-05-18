@@ -14,8 +14,7 @@
 
 package inc.nomard.spoty.core.values.strings;
 
-import java.util.Arrays;
-import java.util.LinkedList;
+import java.util.*;
 
 public class Values {
     public static final LinkedList<String> BARCODE_TYPES =

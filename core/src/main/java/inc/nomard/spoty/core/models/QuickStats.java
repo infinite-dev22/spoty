@@ -14,7 +14,7 @@
 
 package inc.nomard.spoty.core.models;
 
-import java.util.Objects;
+import java.util.*;
 
 @Deprecated
 public class QuickStats {

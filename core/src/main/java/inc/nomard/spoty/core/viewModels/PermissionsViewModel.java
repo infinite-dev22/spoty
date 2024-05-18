@@ -14,17 +14,13 @@
 
 package inc.nomard.spoty.core.viewModels;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import inc.nomard.spoty.utils.adapters.UnixEpochDateTypeAdapter;
-import inc.nomard.spoty.core.views.forms.RoleFormController;
-import inc.nomard.spoty.network_bridge.dtos.Permission;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-
-import java.util.Date;
+import com.google.gson.*;
+import inc.nomard.spoty.core.views.forms.*;
+import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.utils.adapters.*;
+import java.util.*;
+import javafx.beans.property.*;
+import javafx.collections.*;
 
 // TODO: Transfer to backend.
 public class PermissionsViewModel {

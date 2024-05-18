@@ -14,33 +14,29 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import inc.nomard.spoty.core.components.message.SpotyMessage;
-import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
-import inc.nomard.spoty.core.components.message.enums.MessageDuration;
-import inc.nomard.spoty.core.components.message.enums.MessageVariants;
-import inc.nomard.spoty.core.viewModels.hrm.pay_roll.BeneficiaryBadgeViewModel;
-import inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll.BeneficiaryType;
-import inc.nomard.spoty.utils.SpotyLogger;
-import io.github.palexdev.materialfx.controls.MFXComboBox;
-import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
-import io.github.palexdev.materialfx.controls.MFXTextField;
-import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
-import io.github.palexdev.materialfx.validation.Constraint;
-import io.github.palexdev.materialfx.validation.Severity;
+import static inc.nomard.spoty.core.GlobalActions.*;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.*;
+import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.core.viewModels.hrm.pay_roll.*;
+import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll.*;
+import inc.nomard.spoty.utils.*;
+import io.github.palexdev.materialfx.controls.*;
+import io.github.palexdev.materialfx.dialogs.*;
+import io.github.palexdev.materialfx.utils.*;
+import io.github.palexdev.materialfx.utils.others.*;
+import io.github.palexdev.materialfx.validation.*;
+import static io.github.palexdev.materialfx.validation.Validated.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-
-import java.net.URL;
-import java.util.List;
-import java.util.Objects;
-import java.util.ResourceBundle;
-
-import static inc.nomard.spoty.core.GlobalActions.closeDialog;
-import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
+import java.net.*;
+import java.util.*;
+import java.util.function.*;
+import javafx.collections.*;
+import javafx.event.*;
+import javafx.fxml.*;
+import javafx.scene.control.*;
+import javafx.util.*;
 
 public class BeneficiaryBadgeFormController implements Initializable {
     private static BeneficiaryBadgeFormController instance;
@@ -75,6 +71,33 @@ public class BeneficiaryBadgeFormController implements Initializable {
         name.textProperty().bindBidirectional(BeneficiaryBadgeViewModel.nameProperty());
         description.textProperty().bindBidirectional(BeneficiaryBadgeViewModel.descriptionProperty());
         colorPicker.textProperty().bindBidirectional(BeneficiaryBadgeViewModel.colorProperty());
+
+
+        // ComboBox Converters.
+        StringConverter<BeneficiaryType> beneficiaryTypeConverter =
+                FunctionalStringConverter.to(
+                        beneficiaryType -> (beneficiaryType == null) ? "" : beneficiaryType.getName());
+
+        // ComboBox Filter Functions.
+        Function<String, Predicate<BeneficiaryType>> beneficiaryTypeFilterFunction =
+                searchStr ->
+                        beneficiaryType ->
+                                StringUtils.containsIgnoreCase(beneficiaryTypeConverter.toString(beneficiaryType), searchStr);
+
+        // ProductType combo box properties.
+        beneficiaryType.setConverter(beneficiaryTypeConverter);
+        beneficiaryType.setFilterFunction(beneficiaryTypeFilterFunction);
+        if (BeneficiaryTypeViewModel.getBeneficiaryTypes().isEmpty()) {
+            BeneficiaryTypeViewModel.getBeneficiaryTypes()
+                    .addListener(
+                            (ListChangeListener<BeneficiaryType>)
+                                    c -> beneficiaryType.setItems(BeneficiaryTypeViewModel.getBeneficiaryTypes()));
+        } else {
+            beneficiaryType.itemsProperty().bindBidirectional(BeneficiaryTypeViewModel.beneficiaryTypesProperty());
+        }
+
+        colorPicker.setItems(BeneficiaryBadgeViewModel.getColorsList());
+
         // Input listeners.
         requiredValidator();
         dialogOnActions();
@@ -89,10 +112,15 @@ public class BeneficiaryBadgeFormController implements Initializable {
                     nameValidationLabel.setVisible(false);
                     descriptionValidationLabel.setVisible(false);
                     colorPickerValidationLabel.setVisible(false);
+                    beneficiaryTypeValidationLabel.setVisible(false);
 
                     nameValidationLabel.setManaged(false);
                     descriptionValidationLabel.setManaged(false);
                     colorPickerValidationLabel.setManaged(false);
+                    beneficiaryTypeValidationLabel.setManaged(false);
+
+                    beneficiaryType.clearSelection();
+                    colorPicker.clearSelection();
 
                     name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                     colorPicker.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
@@ -169,6 +197,9 @@ public class BeneficiaryBadgeFormController implements Initializable {
         cancelBtn.setDisable(false);
         saveBtn.setDisable(false);
 
+        beneficiaryType.clearSelection();
+        colorPicker.clearSelection();
+
         closeDialog(actionEvent);
         BeneficiaryBadgeViewModel.resetProperties();
         BeneficiaryBadgeViewModel.getAllBeneficiaryBadges(null, null, null);
@@ -185,6 +216,9 @@ public class BeneficiaryBadgeFormController implements Initializable {
         notificationHolder.addMessage(notification);
         cancelBtn.setDisable(false);
         saveBtn.setDisable(false);
+
+        beneficiaryType.clearSelection();
+        colorPicker.clearSelection();
 
         closeDialog(actionEvent);
         BeneficiaryBadgeViewModel.resetProperties();

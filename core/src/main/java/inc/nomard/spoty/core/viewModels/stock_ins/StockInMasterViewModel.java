@@ -14,33 +14,23 @@
 
 package inc.nomard.spoty.core.viewModels.stock_ins;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import inc.nomard.spoty.utils.adapters.UnixEpochDateTypeAdapter;
-import inc.nomard.spoty.network_bridge.dtos.Branch;
-import inc.nomard.spoty.network_bridge.dtos.stock_ins.StockInMaster;
-import inc.nomard.spoty.network_bridge.models.FindModel;
-import inc.nomard.spoty.network_bridge.models.SearchModel;
-import inc.nomard.spoty.network_bridge.repositories.implementations.StockInsRepositoryImpl;
-import inc.nomard.spoty.utils.ParameterlessConsumer;
-import inc.nomard.spoty.utils.SpotyLogger;
-import inc.nomard.spoty.utils.SpotyThreader;
-import javafx.application.Platform;
+import com.google.gson.*;
+import com.google.gson.reflect.*;
+import static inc.nomard.spoty.core.values.SharedResources.*;
+import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.network_bridge.dtos.stock_ins.*;
+import inc.nomard.spoty.network_bridge.models.*;
+import inc.nomard.spoty.network_bridge.repositories.implementations.*;
+import inc.nomard.spoty.utils.*;
+import inc.nomard.spoty.utils.adapters.*;
+import java.lang.reflect.*;
+import java.text.*;
+import java.util.*;
+import java.util.concurrent.*;
+import javafx.application.*;
 import javafx.beans.property.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import lombok.Getter;
-
-import java.lang.reflect.Type;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Objects;
-import java.util.concurrent.ExecutionException;
-
-import static inc.nomard.spoty.core.values.SharedResources.PENDING_DELETES;
+import javafx.collections.*;
+import lombok.*;
 
 public class StockInMasterViewModel {
     @Getter
@@ -53,7 +43,6 @@ public class StockInMasterViewModel {
     private static final ListProperty<StockInMaster> stockIns =
             new SimpleListProperty<>(stockInMastersList);
     private static final LongProperty id = new SimpleLongProperty(0);
-    private static final StringProperty date = new SimpleStringProperty("");
     private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>(null);
     private static final StringProperty totalCost = new SimpleStringProperty("");
     private static final StringProperty status = new SimpleStringProperty("");
@@ -70,23 +59,6 @@ public class StockInMasterViewModel {
 
     public static LongProperty idProperty() {
         return id;
-    }
-
-    public static Date getDate() {
-        try {
-            return new SimpleDateFormat("MMM dd, yyyy").parse(date.get());
-        } catch (ParseException e) {
-            SpotyLogger.writeToFile(e, StockInMasterViewModel.class);
-        }
-        return null;
-    }
-
-    public static void setDate(String date) {
-        StockInMasterViewModel.date.set(date);
-    }
-
-    public static StringProperty dateProperty() {
-        return date;
     }
 
     public static Branch getBranch() {
@@ -153,7 +125,6 @@ public class StockInMasterViewModel {
         Platform.runLater(
                 () -> {
                     setId(0L);
-                    setDate("");
                     setBranch(null);
                     setNote("");
                     setStatus("");
@@ -167,14 +138,11 @@ public class StockInMasterViewModel {
             ParameterlessConsumer onSuccess,
             ParameterlessConsumer onFailed) {
         var stockInMaster = StockInMaster.builder()
-                .date(getDate())
                 .status(getStatus())
                 .notes(getNote())
                 .build();
 
         if (!StockInDetailViewModel.stockInDetailsList.isEmpty()) {
-            StockInDetailViewModel.stockInDetailsList.forEach(
-                    stockInDetail -> stockInDetail.setStockIn(stockInMaster));
             stockInMaster.setStockInDetails(StockInDetailViewModel.stockInDetailsList);
         }
 
@@ -184,7 +152,11 @@ public class StockInMasterViewModel {
             StockInDetailViewModel.createStockInDetails(onActivity, null, onFailed);
             onSuccess.run();
         });
-        task.setOnFailed(workerStateEvent -> onFailed.run());
+        task.setOnFailed(workerStateEvent -> {
+            onFailed.run();
+            System.err.println("The task failed with the following exception:");
+            task.getException().printStackTrace(System.err);
+        });
         SpotyThreader.spotyThreadPool(task);
     }
 
@@ -197,7 +169,11 @@ public class StockInMasterViewModel {
             task.setOnRunning(workerStateEvent -> onActivity.run());
         }
         if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> onFailed.run());
+            task.setOnFailed(workerStateEvent -> {
+                onFailed.run();
+                System.err.println("The task failed with the following exception:");
+                task.getException().printStackTrace(System.err);
+            });
         }
         task.setOnSucceeded(workerStateEvent -> {
             Type listType = new TypeToken<ArrayList<StockInMaster>>() {
@@ -230,14 +206,17 @@ public class StockInMasterViewModel {
             task.setOnRunning(workerStateEvent -> onActivity.run());
         }
         if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> onFailed.run());
+            task.setOnFailed(workerStateEvent -> {
+                onFailed.run();
+                System.err.println("The task failed with the following exception:");
+                task.getException().printStackTrace(System.err);
+            });
         }
         task.setOnSucceeded(workerStateEvent -> {
             try {
                 StockInMaster stockInMaster = gson.fromJson(task.get().body(), StockInMaster.class);
 
                 setId(stockInMaster.getId());
-                setDate(stockInMaster.getLocaleDate());
                 setStatus(stockInMaster.getStatus());
                 setNote(stockInMaster.getNotes());
 
@@ -265,7 +244,11 @@ public class StockInMasterViewModel {
             task.setOnRunning(workerStateEvent -> onActivity.run());
         }
         if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> onFailed.run());
+            task.setOnFailed(workerStateEvent -> {
+                onFailed.run();
+                System.err.println("The task failed with the following exception:");
+                task.getException().printStackTrace(System.err);
+            });
         }
         task.setOnSucceeded(workerStateEvent -> {
             Type listType = new TypeToken<ArrayList<StockInMaster>>() {
@@ -292,7 +275,6 @@ public class StockInMasterViewModel {
             ParameterlessConsumer onFailed) {
         var stockInMaster = StockInMaster.builder()
                 .id(getId())
-                .date(getDate())
                 .status(getStatus())
                 .notes(getNote())
                 .build();
@@ -302,16 +284,17 @@ public class StockInMasterViewModel {
         }
 
         if (!StockInDetailViewModel.stockInDetailsList.isEmpty()) {
-            StockInDetailViewModel.stockInDetailsList
-                    .forEach(stockInDetail -> stockInDetail.setStockIn(stockInMaster));
-
             stockInMaster.setStockInDetails(StockInDetailViewModel.stockInDetailsList);
         }
 
         var task = stockInsRepository.putDetail(stockInMaster);
         task.setOnRunning(workerStateEvent -> onActivity.run());
         task.setOnSucceeded(workerStateEvent -> StockInDetailViewModel.updateStockInDetails(onActivity, onSuccess, onFailed));
-        task.setOnFailed(workerStateEvent -> onFailed.run());
+        task.setOnFailed(workerStateEvent -> {
+            onFailed.run();
+            System.err.println("The task failed with the following exception:");
+            task.getException().printStackTrace(System.err);
+        });
         SpotyThreader.spotyThreadPool(task);
         // getStockInMasters();
     }
@@ -326,7 +309,11 @@ public class StockInMasterViewModel {
         var task = stockInsRepository.deleteMaster(findModel);
         task.setOnRunning(workerStateEvent -> onActivity.run());
         task.setOnSucceeded(workerStateEvent -> onSuccess.run());
-        task.setOnFailed(workerStateEvent -> onFailed.run());
+        task.setOnFailed(workerStateEvent -> {
+            onFailed.run();
+            System.err.println("The task failed with the following exception:");
+            task.getException().printStackTrace(System.err);
+        });
         SpotyThreader.spotyThreadPool(task);
         // getStockInMasters();
     }

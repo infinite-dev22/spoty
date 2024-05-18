@@ -14,43 +14,29 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import com.dlsc.gemsfx.TimePicker;
-import inc.nomard.spoty.core.components.message.SpotyMessage;
-import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
-import inc.nomard.spoty.core.components.message.enums.MessageDuration;
-import inc.nomard.spoty.core.components.message.enums.MessageVariants;
-import inc.nomard.spoty.core.viewModels.hrm.leave.LeaveStatusViewModel;
-import inc.nomard.spoty.network_bridge.dtos.hrm.employee.User;
-import inc.nomard.spoty.network_bridge.dtos.hrm.leave.LeaveType;
-import inc.nomard.spoty.utils.SpotyLogger;
-import io.github.palexdev.materialfx.controls.MFXDatePicker;
-import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
-import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
-import io.github.palexdev.materialfx.validation.Constraint;
-import io.github.palexdev.materialfx.validation.Severity;
+import com.dlsc.gemsfx.*;
+import static inc.nomard.spoty.core.GlobalActions.*;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.*;
+import inc.nomard.spoty.core.viewModels.hrm.leave.*;
+import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
+import inc.nomard.spoty.network_bridge.dtos.hrm.leave.*;
+import inc.nomard.spoty.utils.*;
+import io.github.palexdev.materialfx.controls.*;
+import io.github.palexdev.materialfx.dialogs.*;
+import io.github.palexdev.materialfx.validation.*;
+import static io.github.palexdev.materialfx.validation.Validated.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import io.github.palexdev.mfxresources.fonts.IconsProviders;
-import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
-
-import java.net.URL;
-import java.util.List;
-import java.util.Objects;
-import java.util.ResourceBundle;
-
-import static inc.nomard.spoty.core.GlobalActions.closeDialog;
-import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
+import io.github.palexdev.mfxresources.fonts.*;
+import java.net.*;
+import java.util.*;
+import javafx.event.*;
+import javafx.fxml.*;
+import javafx.scene.control.*;
+import javafx.scene.input.*;
+import javafx.scene.layout.*;
+import javafx.scene.paint.*;
+import javafx.stage.*;
 
 public class LeaveRequestFormController implements Initializable {
     private static LeaveRequestFormController instance;
@@ -128,6 +114,11 @@ public class LeaveRequestFormController implements Initializable {
                     toDateValidationLabel.setManaged(false);
                     toTimeValidationLabel.setManaged(false);
                     reasonValidationLabel.setManaged(false);
+
+                    employee.clearSelection();
+                    leaveType.clearSelection();
+                    fromDate.setValue(null);
+                    toDate.setValue(null);
 
                     employee.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                     leaveType.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
@@ -215,6 +206,11 @@ public class LeaveRequestFormController implements Initializable {
         cancelBtn.setDisable(false);
         saveBtn.setDisable(false);
 
+        employee.clearSelection();
+        leaveType.clearSelection();
+        fromDate.setValue(null);
+        toDate.setValue(null);
+
         closeDialog(actionEvent);
         LeaveStatusViewModel.resetProperties();
         LeaveStatusViewModel.getAllLeaveStatuses(null, null, null);
@@ -231,6 +227,11 @@ public class LeaveRequestFormController implements Initializable {
         notificationHolder.addMessage(notification);
         cancelBtn.setDisable(false);
         saveBtn.setDisable(false);
+
+        employee.clearSelection();
+        leaveType.clearSelection();
+        fromDate.setValue(null);
+        toDate.setValue(null);
 
         closeDialog(actionEvent);
         LeaveStatusViewModel.resetProperties();

@@ -24,8 +24,10 @@
 <MFXGenericDialog xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/19"
                   fx:controller="inc.nomard.spoty.core.views.forms.CustomerFormController">
     <stylesheets>
-        <URL value="@../../styles/Common.css"/>
-        <URL value="@../../styles/TextFields.css"/>
+        <URL value="@../../styles/Common.css" />
+        <URL value="@../../styles/TextFields.css" />
+        <URL value="@../../styles/base.css" />
+        <URL value="@../../styles/theming/Default.css" />
     </stylesheets>
     <center>
         <GridPane layoutY="10.0" hgap="20.0" vgap="10.0">
@@ -98,7 +100,7 @@
             </VBox>
             <VBox spacing="5.0" GridPane.rowIndex="3">
                 <padding>
-                    <Insets bottom="2.5" top="15.0"/>
+                    <Insets bottom="2.5" top="2.5"/>
                 </padding>
                 <MFXTextField fx:id="taxNumber" textLimit="15" floatMode="BORDER" floatingText="Tax No."
                               prefWidth="300.0"

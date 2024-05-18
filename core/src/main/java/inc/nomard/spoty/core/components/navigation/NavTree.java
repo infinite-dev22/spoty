@@ -14,26 +14,18 @@
 
 package inc.nomard.spoty.core.components.navigation;
 
-import inc.nomard.spoty.utils.navigation.Spacer;
-import io.github.palexdev.materialfx.controls.MFXIconWrapper;
-import javafx.beans.property.ReadOnlyProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.css.PseudoClass;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Cursor;
-import javafx.scene.Node;
-import javafx.scene.control.Label;
-import javafx.scene.control.TreeCell;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
-import javafx.scene.input.MouseButton;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import org.kordamp.ikonli.javafx.FontIcon;
-
-import java.util.List;
-import java.util.Objects;
+import inc.nomard.spoty.utils.navigation.*;
+import io.github.palexdev.materialfx.controls.*;
+import java.util.*;
+import javafx.beans.property.*;
+import javafx.beans.value.*;
+import javafx.css.*;
+import javafx.geometry.*;
+import javafx.scene.*;
+import javafx.scene.control.*;
+import javafx.scene.input.*;
+import javafx.scene.layout.*;
+import org.kordamp.ikonli.javafx.*;
 
 public class NavTree extends TreeView<Nav> {
     public static final double SIDEBAR_WIDTH = 250.0;

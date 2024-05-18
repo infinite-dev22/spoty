@@ -1,29 +1,22 @@
 package inc.nomard.spoty.core.views.human_resource.pay_roll.pay_slip;
 
-import inc.nomard.spoty.core.components.animations.SpotyAnimations;
-import inc.nomard.spoty.core.viewModels.hrm.employee.EmploymentStatusViewModel;
-import inc.nomard.spoty.utils.SpotyLogger;
+import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
+import inc.nomard.spoty.core.components.animations.*;
+import inc.nomard.spoty.core.viewModels.hrm.employee.*;
+import inc.nomard.spoty.utils.*;
+import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import io.github.palexdev.materialfx.controls.MFXScrollPane;
-import io.github.palexdev.materialfx.controls.MFXTextField;
-import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
-import javafx.animation.RotateTransition;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
-import javafx.geometry.NodeOrientation;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.util.Duration;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.ResourceBundle;
-
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
+import io.github.palexdev.mfxresources.fonts.*;
+import java.io.*;
+import java.net.*;
+import java.util.*;
+import javafx.animation.*;
+import javafx.event.*;
+import javafx.fxml.*;
+import javafx.geometry.*;
+import javafx.scene.input.*;
+import javafx.scene.layout.*;
+import javafx.util.*;
 
 public class PaySlipsController implements Initializable {
     @FXML

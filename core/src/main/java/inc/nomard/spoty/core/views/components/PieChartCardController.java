@@ -14,12 +14,10 @@
 
 package inc.nomard.spoty.core.views.components;
 
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.chart.PieChart;
-
-import java.net.URL;
-import java.util.ResourceBundle;
+import java.net.*;
+import java.util.*;
+import javafx.fxml.*;
+import javafx.scene.chart.*;
 
 public class PieChartCardController implements Initializable {
 

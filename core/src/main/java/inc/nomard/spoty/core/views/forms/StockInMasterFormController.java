@@ -14,52 +14,35 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import inc.nomard.spoty.core.components.message.SpotyMessage;
-import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
-import inc.nomard.spoty.core.components.message.enums.MessageDuration;
-import inc.nomard.spoty.core.components.message.enums.MessageVariants;
-import inc.nomard.spoty.core.components.navigation.Pages;
-import inc.nomard.spoty.core.viewModels.stock_ins.StockInDetailViewModel;
-import inc.nomard.spoty.core.viewModels.stock_ins.StockInMasterViewModel;
-import inc.nomard.spoty.core.views.BaseController;
-import inc.nomard.spoty.network_bridge.dtos.stock_ins.StockInDetail;
-import inc.nomard.spoty.utils.SpotyLogger;
-import inc.nomard.spoty.utils.SpotyThreader;
+import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.*;
+import inc.nomard.spoty.core.components.navigation.*;
+import inc.nomard.spoty.core.viewModels.stock_ins.*;
+import inc.nomard.spoty.core.views.*;
+import inc.nomard.spoty.network_bridge.dtos.stock_ins.*;
+import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
-import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
-import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
-import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
-import io.github.palexdev.materialfx.enums.ScrimPriority;
-import io.github.palexdev.materialfx.filter.IntegerFilter;
-import io.github.palexdev.materialfx.filter.StringFilter;
+import io.github.palexdev.materialfx.controls.cell.*;
+import io.github.palexdev.materialfx.dialogs.*;
+import io.github.palexdev.materialfx.enums.*;
+import io.github.palexdev.materialfx.filter.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import javafx.application.Platform;
-import javafx.collections.ListChangeListener;
-import javafx.event.EventHandler;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.scene.input.ContextMenuEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.Comparator;
-import java.util.ResourceBundle;
-
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
-import static inc.nomard.spoty.core.Validators.requiredValidator;
-import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
+import java.io.*;
+import java.net.*;
+import java.util.*;
+import javafx.application.*;
+import javafx.collections.*;
+import javafx.event.*;
+import javafx.fxml.*;
+import javafx.scene.control.*;
+import javafx.scene.input.*;
+import javafx.scene.layout.*;
+import javafx.stage.*;
 
 @SuppressWarnings("unchecked")
 public class StockInMasterFormController implements Initializable {
     private static StockInMasterFormController instance;
-    @FXML
-    public MFXDatePicker date;
     @FXML
     public MFXTableView<StockInDetail> stockInDetailTable;
     @FXML
@@ -67,7 +50,7 @@ public class StockInMasterFormController implements Initializable {
     @FXML
     public BorderPane contentPane;
     @FXML
-    public Label title, dateValidationLabel;
+    public Label title;
     @FXML
     public MFXButton stockInMasterProductAddBtn, saveBtn,
             cancelBtn;
@@ -92,15 +75,7 @@ public class StockInMasterFormController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Input binding.
-        date.textProperty().bindBidirectional(StockInMasterViewModel.dateProperty());
         note.textProperty().bindBidirectional(StockInMasterViewModel.noteProperty());
-
-        // input validators.
-        requiredValidator(
-                date,
-                "Date is required.",
-                dateValidationLabel,
-                saveBtn);
 
         stockInMasterAddProductBtnClicked();
 
@@ -218,6 +193,7 @@ public class StockInMasterFormController implements Initializable {
 
         dialogContent.setShowMinimize(false);
         dialogContent.setShowAlwaysOnTop(false);
+        dialogContent.setShowClose(false);
 
         dialog =
                 MFXGenericDialogBuilder.build(dialogContent)
@@ -245,29 +221,24 @@ public class StockInMasterFormController implements Initializable {
             notificationHolder.addMessage(notification);
             return;
         }
-        if (!dateValidationLabel.isVisible()) {
-            if (StockInMasterViewModel.getId() > 0) {
-                try {
-                    StockInMasterViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
-                } catch (Exception e) {
-                    SpotyLogger.writeToFile(e, this.getClass());
-                }
-                return;
-            }
+        if (StockInMasterViewModel.getId() > 0) {
             try {
-                StockInMasterViewModel.saveStockInMaster(this::onAction, this::onAddSuccess, this::onFailed);
+                StockInMasterViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
             } catch (Exception e) {
                 SpotyLogger.writeToFile(e, this.getClass());
             }
+            return;
+        }
+        try {
+            StockInMasterViewModel.saveStockInMaster(this::onAction, this::onAddSuccess, this::onFailed);
+        } catch (Exception e) {
+            SpotyLogger.writeToFile(e, this.getClass());
         }
     }
 
     public void cancelBtnClicked() {
         BaseController.navigation.navigate(Pages.getStockInPane());
         StockInMasterViewModel.resetProperties();
-        dateValidationLabel.setVisible(false);
-        dateValidationLabel.setManaged(false);
-        date.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
     }
 
     private void onAction() {

@@ -47,13 +47,14 @@ public class UOMFormController implements Initializable {
     @FXML
     public MFXTextField name,
             shortName,
-            operator,
             operatorValue;
     @FXML
     public MFXButton saveBtn,
             cancelBtn;
     @FXML
     public MFXFilterComboBox<UnitOfMeasure> baseUnit;
+    @FXML
+    public MFXComboBox<String> operator;
     @FXML
     public VBox formsHolder;
     @FXML
@@ -111,6 +112,7 @@ public class UOMFormController implements Initializable {
                                 StringUtils.containsIgnoreCase(uomConverter.toString(unitOfMeasure), searchStr);
 
         // ComboBox properties.
+        operator.setItems(UOMViewModel.operatorList);
         baseUnit.setConverter(uomConverter);
         baseUnit.setFilterFunction(uomFilterFunction);
         if (UOMViewModel.getUnitsOfMeasure().isEmpty()) {

@@ -14,36 +14,23 @@
 
 package inc.nomard.spoty.core.viewModels.sales;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import inc.nomard.spoty.utils.adapters.UnixEpochDateTypeAdapter;
-import inc.nomard.spoty.network_bridge.dtos.Branch;
-import inc.nomard.spoty.network_bridge.dtos.Customer;
-import inc.nomard.spoty.network_bridge.dtos.sales.SaleMaster;
-import inc.nomard.spoty.network_bridge.models.FindModel;
-import inc.nomard.spoty.network_bridge.models.SearchModel;
-import inc.nomard.spoty.network_bridge.repositories.implementations.SalesRepositoryImpl;
-import inc.nomard.spoty.utils.ParameterlessConsumer;
-import inc.nomard.spoty.utils.SpotyLogger;
-import inc.nomard.spoty.utils.SpotyThreader;
-import javafx.application.Platform;
+import com.google.gson.*;
+import com.google.gson.reflect.*;
+import static inc.nomard.spoty.core.values.SharedResources.*;
+import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.network_bridge.dtos.sales.*;
+import inc.nomard.spoty.network_bridge.models.*;
+import inc.nomard.spoty.network_bridge.repositories.implementations.*;
+import inc.nomard.spoty.utils.*;
+import inc.nomard.spoty.utils.adapters.*;
+import java.lang.reflect.*;
+import java.text.*;
+import java.util.*;
+import java.util.concurrent.*;
+import javafx.application.*;
 import javafx.beans.property.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import lombok.Getter;
-
-import java.lang.reflect.Type;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.concurrent.ExecutionException;
-
-import static inc.nomard.spoty.core.values.SharedResources.PENDING_DELETES;
+import javafx.collections.*;
+import lombok.*;
 
 public class SaleMasterViewModel {
     @Getter
@@ -228,9 +215,6 @@ public class SaleMasterViewModel {
                 .build();
 
         if (!SaleDetailViewModel.saleDetailsList.isEmpty()) {
-            SaleDetailViewModel.saleDetailsList.forEach(
-                    saleDetail -> saleDetail.setSale(saleMaster));
-
             saleMaster.setSaleDetails(SaleDetailViewModel.saleDetailsList);
         }
 
@@ -240,7 +224,11 @@ public class SaleMasterViewModel {
             SaleDetailViewModel.saveSaleDetails(onActivity, null, onFailed);
             onSuccess.run();
         });
-        task.setOnFailed(workerStateEvent -> onFailed.run());
+        task.setOnFailed(workerStateEvent -> {
+            onFailed.run();
+            System.err.println("The task failed with the following exception:");
+            task.getException().printStackTrace(System.err);
+        });
         SpotyThreader.spotyThreadPool(task);
     }
 
@@ -253,7 +241,11 @@ public class SaleMasterViewModel {
             task.setOnRunning(workerStateEvent -> onActivity.run());
         }
         if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> onFailed.run());
+            task.setOnFailed(workerStateEvent -> {
+                onFailed.run();
+                System.err.println("The task failed with the following exception:");
+                task.getException().printStackTrace(System.err);
+            });
         }
         task.setOnSucceeded(workerStateEvent -> {
             Type listType = new TypeToken<ArrayList<SaleMaster>>() {
@@ -265,6 +257,8 @@ public class SaleMasterViewModel {
             } catch (InterruptedException | ExecutionException e) {
                 if (Objects.nonNull(onFailed)) {
                     onFailed.run();
+                    System.err.println("The task failed with the following exception:");
+                    task.getException().printStackTrace(System.err);
                 }
                 SpotyLogger.writeToFile(e, SaleMasterViewModel.class);
             }
@@ -291,7 +285,11 @@ public class SaleMasterViewModel {
             task.setOnRunning(workerStateEvent -> onActivity.run());
         }
         if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> onFailed.run());
+            task.setOnFailed(workerStateEvent -> {
+                onFailed.run();
+                System.err.println("The task failed with the following exception:");
+                task.getException().printStackTrace(System.err);
+            });
         }
         task.setOnSucceeded(workerStateEvent -> {
             SaleMaster saleMaster = new SaleMaster();
@@ -328,7 +326,11 @@ public class SaleMasterViewModel {
             task.setOnRunning(workerStateEvent -> onActivity.run());
         }
         if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> onFailed.run());
+            task.setOnFailed(workerStateEvent -> {
+                onFailed.run();
+                System.err.println("The task failed with the following exception:");
+                task.getException().printStackTrace(System.err);
+            });
         }
         task.setOnSucceeded(workerStateEvent -> {
             Type listType = new TypeToken<ArrayList<SaleMaster>>() {
@@ -371,16 +373,17 @@ public class SaleMasterViewModel {
         }
 
         if (!SaleDetailViewModel.getSaleDetailsList().isEmpty()) {
-            SaleDetailViewModel.getSaleDetailsList()
-                    .forEach(saleDetail -> saleDetail.setSale(saleMaster));
-
             saleMaster.setSaleDetails(SaleDetailViewModel.getSaleDetailsList());
         }
 
         var task = salesRepository.putMaster(saleMaster);
         task.setOnRunning(workerStateEvent -> onActivity.run());
         task.setOnSucceeded(workerStateEvent -> SaleDetailViewModel.updateSaleDetails(onActivity, onSuccess, onFailed));
-        task.setOnFailed(workerStateEvent -> onFailed.run());
+        task.setOnFailed(workerStateEvent -> {
+            onFailed.run();
+            System.err.println("The task failed with the following exception:");
+            task.getException().printStackTrace(System.err);
+        });
         SpotyThreader.spotyThreadPool(task);
     }
 
@@ -394,7 +397,11 @@ public class SaleMasterViewModel {
         var task = salesRepository.deleteMaster(findModel);
         task.setOnRunning(workerStateEvent -> onActivity.run());
         task.setOnSucceeded(workerStateEvent -> onSuccess.run());
-        task.setOnFailed(workerStateEvent -> onFailed.run());
+        task.setOnFailed(workerStateEvent -> {
+            onFailed.run();
+            System.err.println("The task failed with the following exception:");
+            task.getException().printStackTrace(System.err);
+        });
         SpotyThreader.spotyThreadPool(task);
     }
 }

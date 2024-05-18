@@ -14,31 +14,26 @@
 
 package inc.nomard.spoty.core.viewModels.hrm.pay_roll;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import inc.nomard.spoty.core.viewModels.BankViewModel;
-import inc.nomard.spoty.utils.adapters.UnixEpochDateTypeAdapter;
-import inc.nomard.spoty.network_bridge.dtos.Branch;
-import inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll.BeneficiaryType;
-import inc.nomard.spoty.network_bridge.models.FindModel;
-import inc.nomard.spoty.network_bridge.models.SearchModel;
-import inc.nomard.spoty.network_bridge.repositories.implementations.BeneficiaryTypeRepositoryImpl;
-import inc.nomard.spoty.utils.ParameterlessConsumer;
-import inc.nomard.spoty.utils.SpotyLogger;
-import inc.nomard.spoty.utils.SpotyThreader;
+import com.google.gson.*;
+import com.google.gson.reflect.*;
+import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll.*;
+import inc.nomard.spoty.network_bridge.models.*;
+import inc.nomard.spoty.network_bridge.repositories.implementations.*;
+import inc.nomard.spoty.utils.*;
+import inc.nomard.spoty.utils.adapters.*;
+import java.lang.reflect.*;
+import java.util.*;
+import java.util.concurrent.*;
 import javafx.beans.property.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Objects;
-import java.util.concurrent.ExecutionException;
+import javafx.collections.*;
+import lombok.*;
 
 
 public class BeneficiaryTypeViewModel {
+    @Getter
+    private static final ObservableList<String> colorsList = FXCollections.observableArrayList("Red", "Blue", "Green", "Orange", "Purple", "Brown");
     public static final ObservableList<BeneficiaryType> beneficiaryTypesList = FXCollections.observableArrayList();
     public static final ListProperty<BeneficiaryType> beneficiaryTypes = new SimpleListProperty<>(beneficiaryTypesList);
     public static final ObservableList<Branch> branchesList = FXCollections.observableArrayList();

@@ -1,21 +1,17 @@
 package inc.nomard.spoty.core.views.tax;
 
-import inc.nomard.spoty.core.components.animations.SpotyAnimations;
+import inc.nomard.spoty.core.components.animations.*;
+import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import io.github.palexdev.materialfx.controls.MFXTableView;
-import io.github.palexdev.materialfx.controls.MFXTextField;
-import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
-import javafx.animation.RotateTransition;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.util.Duration;
-
-import java.net.URL;
-import java.util.ResourceBundle;
+import io.github.palexdev.mfxresources.fonts.*;
+import java.net.*;
+import java.util.*;
+import javafx.animation.*;
+import javafx.event.*;
+import javafx.fxml.*;
+import javafx.scene.input.*;
+import javafx.scene.layout.*;
+import javafx.util.*;
 
 public class TaxSettingsController implements Initializable {
     @FXML

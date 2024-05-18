@@ -1,39 +1,30 @@
 package inc.nomard.spoty.core.views.settings.app_settings;
 
-import inc.nomard.spoty.core.components.animations.SpotyAnimations;
-import inc.nomard.spoty.core.viewModels.EmailViewModel;
-import inc.nomard.spoty.core.views.forms.EmailFormController;
-import inc.nomard.spoty.network_bridge.dtos.Email;
-import inc.nomard.spoty.utils.SpotyThreader;
+import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
+import inc.nomard.spoty.core.components.animations.*;
+import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.core.views.forms.*;
+import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
-import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
-import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
-import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
-import io.github.palexdev.materialfx.enums.FloatMode;
-import io.github.palexdev.materialfx.enums.ScrimPriority;
-import io.github.palexdev.materialfx.filter.StringFilter;
+import io.github.palexdev.materialfx.controls.cell.*;
+import io.github.palexdev.materialfx.dialogs.*;
+import io.github.palexdev.materialfx.enums.*;
+import io.github.palexdev.materialfx.filter.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import io.github.palexdev.mfxcomponents.theming.enums.ButtonVariants;
-import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
-import javafx.animation.RotateTransition;
-import javafx.collections.ListChangeListener;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.input.ContextMenuEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.stage.Modality;
-import javafx.util.Duration;
-
-import java.io.IOException;
-import java.util.Comparator;
-
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
+import io.github.palexdev.mfxcomponents.theming.enums.*;
+import io.github.palexdev.mfxresources.fonts.*;
+import java.io.*;
+import java.util.*;
+import javafx.animation.*;
+import javafx.collections.*;
+import javafx.event.*;
+import javafx.fxml.*;
+import javafx.geometry.*;
+import javafx.scene.input.*;
+import javafx.scene.layout.*;
+import javafx.stage.*;
+import javafx.util.*;
 
 public class EmailPage extends BorderPane {
     private MFXStageDialog dialog;

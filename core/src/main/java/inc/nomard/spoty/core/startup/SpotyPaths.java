@@ -12,14 +12,11 @@
  * Jonathan Mark Mwigo makes no warranties, express or implied, with respect to the computer system code. Jonathan Mark Mwigo shall not be liable for any damages, including, but not limited to, direct, indirect, incidental, special, consequential, or punitive damages, arising out of or in connection with the use of the computer system code.
  */
 
-package inc.nomard.spoty.startup;
+package inc.nomard.spoty.core.startup;
 
-import inc.nomard.spoty.utils.SpotyLogger;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import inc.nomard.spoty.utils.*;
+import java.io.*;
+import java.nio.file.*;
 
 public class SpotyPaths {
     public static void createPaths() {

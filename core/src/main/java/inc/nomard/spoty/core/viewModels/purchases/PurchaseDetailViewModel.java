@@ -160,7 +160,11 @@ public class PurchaseDetailViewModel {
                 task.setOnFailed(workerStateEvent -> onSuccess.run());
             }
             if (Objects.nonNull(onFailed)) {
-                task.setOnFailed(workerStateEvent -> onFailed.run());
+                task.setOnFailed(workerStateEvent -> {
+                    onFailed.run();
+                    System.err.println("The task failed with the following exception:");
+                    task.getException().printStackTrace(System.err);
+                });
             }
             SpotyThreader.spotyThreadPool(task);
         });

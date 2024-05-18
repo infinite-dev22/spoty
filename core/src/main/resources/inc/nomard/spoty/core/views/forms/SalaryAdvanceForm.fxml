@@ -7,8 +7,10 @@
                   fx:controller="inc.nomard.spoty.core.views.forms.SalaryAdvanceFormController"
                   prefHeight="400.0" prefWidth="600.0">
     <stylesheets>
-        <URL value="@../../styles/Common.css"/>
-        <URL value="@../../styles/TextFields.css"/>
+        <URL value="@../../styles/Common.css" />
+        <URL value="@../../styles/TextFields.css" />
+        <URL value="@../../styles/base.css" />
+        <URL value="@../../styles/theming/Default.css" />
     </stylesheets>
     <center>
     </center>

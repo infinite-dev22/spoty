@@ -22,11 +22,14 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import java.net.URL?>
+<?import javafx.scene.control.TextArea?>
 <MFXGenericDialog xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/19"
                   fx:controller="inc.nomard.spoty.core.views.forms.BrandFormController">
     <stylesheets>
-        <URL value="@../../styles/Common.css"/>
-        <URL value="@../../styles/TextFields.css"/>
+        <URL value="@../../styles/Common.css" />
+        <URL value="@../../styles/TextFields.css" />
+        <URL value="@../../styles/base.css" />
+        <URL value="@../../styles/theming/Default.css" />
     </stylesheets>
     <center>
         <VBox layoutY="10.0" spacing="20.0">
@@ -45,8 +48,7 @@
                 <padding>
                     <Insets bottom="2.5" top="2.5"/>
                 </padding>
-                <MFXTextField fx:id="brandFormDescription" floatMode="BORDER" floatingText="Brand Description"
-                              prefWidth="400.0"/>
+                <TextArea fx:id="description" promptText="Description" prefWidth="400"/>
             </VBox>
         </VBox>
     </center>

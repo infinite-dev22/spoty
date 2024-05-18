@@ -24,8 +24,10 @@
 <MFXGenericDialog xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/19"
                   fx:controller="inc.nomard.spoty.core.views.forms.SupplierFormController">
     <stylesheets>
-        <URL value="@../../styles/Common.css"/>
-        <URL value="@../../styles/TextFields.css"/>
+        <URL value="@../../styles/Common.css" />
+        <URL value="@../../styles/TextFields.css" />
+        <URL value="@../../styles/base.css" />
+        <URL value="@../../styles/theming/Default.css" />
     </stylesheets>
     <center>
         <GridPane layoutY="10.0" hgap="20.0" vgap="10.0">
@@ -75,19 +77,18 @@
                        minHeight="-Infinity" styleClass="input-validation-error" visible="false" managed="false"
                        wrapText="true"/>
             </VBox>
-
             <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                <padding>
-                    <Insets bottom="2.5" top="2.5"/>
-                </padding>
-                <MFXTextField fx:id="city" floatMode="BORDER" floatingText="City" prefWidth="300.0"/>
-            </VBox>
-            <VBox spacing="5.0" GridPane.rowIndex="2">
                 <padding>
                     <Insets bottom="2.5" top="2.5"/>
                 </padding>
                 <MFXTextField fx:id="country" floatMode="BORDER" floatingText="Country"
                               prefWidth="300.0"/>
+            </VBox>
+            <VBox spacing="5.0" GridPane.rowIndex="2">
+                <padding>
+                    <Insets bottom="2.5" top="2.5"/>
+                </padding>
+                <MFXTextField fx:id="city" floatMode="BORDER" floatingText="City" prefWidth="300.0"/>
             </VBox>
             <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                 <padding>

@@ -32,6 +32,7 @@ import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import java.net.*;
 import java.util.*;
 import java.util.function.*;
+import javafx.collections.*;
 import javafx.event.*;
 import javafx.fxml.*;
 import javafx.scene.control.*;
@@ -106,9 +107,16 @@ public class UserFormController implements Initializable {
                         role -> StringUtils.containsIgnoreCase(roleConverter.toString(role), searchStr);
 
         // Combo box properties.
-        role.setItems(RoleViewModel.getRoles());
         role.setConverter(roleConverter);
         role.setFilterFunction(roleFilterFunction);
+        if (RoleViewModel.getRoles().isEmpty()) {
+            RoleViewModel.getRoles()
+                    .addListener(
+                            (ListChangeListener<Role>)
+                                    c -> role.setItems(RoleViewModel.getRoles()));
+        } else {
+            role.itemsProperty().bindBidirectional(RoleViewModel.rolesProperty());
+        }
 
         // Input validations.
         requiredValidator();
@@ -141,6 +149,8 @@ public class UserFormController implements Initializable {
                     roleValidationLabel.setManaged(false);
                     emailValidationLabel.setManaged(false);
                     phoneValidationLabel.setManaged(false);
+
+                    role.clearSelection();
 
                     firstname.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                     lastname.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
@@ -230,6 +240,8 @@ public class UserFormController implements Initializable {
         cancelBtn.setDisable(false);
         saveBtn.setDisable(false);
 
+        role.clearSelection();
+
         closeDialog(actionEvent);
         UserViewModel.resetProperties();
         UserViewModel.getAllUserProfiles(null, null, null);
@@ -246,6 +258,8 @@ public class UserFormController implements Initializable {
         notificationHolder.addMessage(notification);
         cancelBtn.setDisable(false);
         saveBtn.setDisable(false);
+
+        role.clearSelection();
 
         closeDialog(actionEvent);
         UserViewModel.resetProperties();

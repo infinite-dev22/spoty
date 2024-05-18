@@ -239,8 +239,8 @@ public class Navigation {
                 .getChildren()
                 .setAll(
                         NAV_TREE.get("PAY_SLIPS"),
-                        NAV_TREE.get("BENEFICIARY_BADGE"),
-                        NAV_TREE.get("BENEFICIARY_TYPE"));
+                        NAV_TREE.get("BENEFICIARY_TYPE"),
+                        NAV_TREE.get("BENEFICIARY_BADGE"));
         var humanResource = NavTree.NavTreeItem.group("Human Resource", "fas-user-tie");
         humanResource
                 .getChildren()

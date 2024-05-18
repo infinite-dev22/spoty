@@ -14,44 +14,31 @@
 
 package inc.nomard.spoty.core.views.inventory.products;
 
-import inc.nomard.spoty.core.components.animations.SpotyAnimations;
-import inc.nomard.spoty.core.viewModels.ProductViewModel;
-import inc.nomard.spoty.core.views.forms.ProductFormController;
-import inc.nomard.spoty.core.views.previews.ProductPreviewController;
-import inc.nomard.spoty.network_bridge.dtos.Product;
-import inc.nomard.spoty.utils.SpotyThreader;
+import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
+import inc.nomard.spoty.core.components.animations.*;
+import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.core.views.forms.*;
+import inc.nomard.spoty.core.views.previews.*;
+import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
-import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
-import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
-import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
-import io.github.palexdev.materialfx.enums.ScrimPriority;
-import io.github.palexdev.materialfx.filter.DoubleFilter;
-import io.github.palexdev.materialfx.filter.LongFilter;
-import io.github.palexdev.materialfx.filter.StringFilter;
-import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
-import javafx.animation.RotateTransition;
-import javafx.application.Platform;
-import javafx.collections.ListChangeListener;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
-import javafx.scene.input.ContextMenuEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.stage.Modality;
-import javafx.stage.Screen;
-import javafx.stage.Stage;
-import javafx.util.Duration;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.Comparator;
-import java.util.ResourceBundle;
-
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
+import io.github.palexdev.materialfx.controls.cell.*;
+import io.github.palexdev.materialfx.dialogs.*;
+import io.github.palexdev.materialfx.enums.*;
+import io.github.palexdev.materialfx.filter.*;
+import io.github.palexdev.mfxresources.fonts.*;
+import java.io.*;
+import java.net.*;
+import java.util.*;
+import javafx.animation.*;
+import javafx.application.*;
+import javafx.collections.*;
+import javafx.event.*;
+import javafx.fxml.*;
+import javafx.scene.input.*;
+import javafx.scene.layout.*;
+import javafx.stage.*;
+import javafx.util.*;
 
 @SuppressWarnings("unchecked")
 public class ProductController implements Initializable {
@@ -96,8 +83,10 @@ public class ProductController implements Initializable {
         viewFxmlLoader = fxmlLoader("views/previews/ProductPreview.fxml");
         viewFxmlLoader.setControllerFactory(c -> new ProductPreviewController());
         MFXGenericDialog genericDialog = viewFxmlLoader.load();
+
         genericDialog.setShowMinimize(false);
         genericDialog.setShowAlwaysOnTop(false);
+        genericDialog.setShowClose(false);
 
         genericDialog.setPrefHeight(screenHeight * .98);
         genericDialog.setPrefWidth(700);

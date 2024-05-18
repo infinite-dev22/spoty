@@ -1,23 +1,19 @@
 package inc.nomard.spoty.core.views.components;
 
-import inc.nomard.spoty.core.components.ViewAll;
-import inc.nomard.spoty.core.values.strings.Labels;
-import inc.nomard.spoty.core.viewModels.ProductViewModel;
-import inc.nomard.spoty.network_bridge.dtos.Product;
-import io.github.palexdev.materialfx.controls.MFXTableColumn;
-import io.github.palexdev.materialfx.controls.MFXTableRow;
-import io.github.palexdev.materialfx.controls.MFXTableView;
-import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
-import javafx.application.Platform;
-import javafx.collections.ListChangeListener;
-import javafx.event.EventHandler;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.scene.input.ContextMenuEvent;
-
-import java.net.URL;
-import java.util.Comparator;
-import java.util.ResourceBundle;
+import inc.nomard.spoty.core.components.*;
+import inc.nomard.spoty.core.values.strings.*;
+import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.network_bridge.dtos.*;
+import io.github.palexdev.materialfx.controls.*;
+import io.github.palexdev.materialfx.controls.cell.*;
+import java.net.*;
+import java.util.*;
+import javafx.application.*;
+import javafx.collections.*;
+import javafx.event.*;
+import javafx.fxml.*;
+import javafx.scene.control.*;
+import javafx.scene.input.*;
 
 public class TopProductsController implements Initializable {
     public ViewAll viewAll;

@@ -1,18 +1,14 @@
 package inc.nomard.spoty.core.views.human_resource.pay_roll.pay_slip;
 
-import inc.nomard.spoty.core.components.navigation.Pages;
-import inc.nomard.spoty.core.views.BaseController;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXIconButton;
-import io.github.palexdev.mfxcore.controls.Label;
-import io.github.palexdev.mfxresources.fonts.IconsProviders;
-import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.layout.HBox;
-
-import java.net.URL;
-import java.util.ResourceBundle;
+import inc.nomard.spoty.core.components.navigation.*;
+import inc.nomard.spoty.core.views.*;
+import io.github.palexdev.mfxcomponents.controls.buttons.*;
+import io.github.palexdev.mfxcore.controls.*;
+import io.github.palexdev.mfxresources.fonts.*;
+import java.net.*;
+import java.util.*;
+import javafx.fxml.*;
+import javafx.scene.layout.*;
 
 public class PaySlipItemController implements Initializable {
     @FXML

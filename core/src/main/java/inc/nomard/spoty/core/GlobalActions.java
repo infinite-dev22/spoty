@@ -14,14 +14,12 @@
 
 package inc.nomard.spoty.core;
 
-import inc.nomard.spoty.utils.SpotyLogger;
-import javafx.event.ActionEvent;
-import javafx.scene.Node;
-import javafx.stage.Stage;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import inc.nomard.spoty.utils.*;
+import java.text.*;
+import java.util.*;
+import javafx.event.*;
+import javafx.scene.*;
+import javafx.stage.*;
 
 public class GlobalActions {
     public static void closeDialog(ActionEvent e) {

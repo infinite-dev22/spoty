@@ -31,7 +31,6 @@ import java.util.List;
 public class StockInMaster {
     private Long id;
     private String ref;
-    private Date date;
     private ArrayList<Branch> branches;
     private List<StockInDetail> stockInDetails;
     private String shipping;
@@ -42,8 +41,4 @@ public class StockInMaster {
     private Date approvalDate;
     private Date recordDate;
     private String notes;
-
-    public String getLocaleDate() {
-        return DateFormat.getDateInstance().format(date);
-    }
 }

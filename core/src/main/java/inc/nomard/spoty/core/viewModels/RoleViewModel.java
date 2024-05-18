@@ -14,12 +14,11 @@
 
 package inc.nomard.spoty.core.viewModels;
 
-import inc.nomard.spoty.network_bridge.dtos.Role;
-import inc.nomard.spoty.utils.ParameterlessConsumer;
+import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.utils.*;
 import javafx.beans.property.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import lombok.Getter;
+import javafx.collections.*;
+import lombok.*;
 
 
 public class RoleViewModel {

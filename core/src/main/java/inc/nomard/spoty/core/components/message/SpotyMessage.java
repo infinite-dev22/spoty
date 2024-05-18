@@ -14,17 +14,13 @@
 
 package inc.nomard.spoty.core.components.message;
 
-import inc.nomard.spoty.core.components.message.enums.MessageDuration;
-import inc.nomard.spoty.core.components.message.enums.MessageVariants;
-import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.util.Duration;
-import lombok.Getter;
-import lombok.Setter;
+import inc.nomard.spoty.core.components.message.enums.*;
+import io.github.palexdev.mfxresources.fonts.*;
+import javafx.geometry.*;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.util.*;
+import lombok.*;
 
 @Setter
 @Getter

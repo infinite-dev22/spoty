@@ -14,21 +14,15 @@
 
 package inc.nomard.spoty.core;
 
-import io.github.palexdev.materialfx.controls.MFXTextField;
-import io.github.palexdev.materialfx.validation.Constraint;
-import io.github.palexdev.materialfx.validation.MFXValidator;
-import io.github.palexdev.materialfx.validation.Severity;
+import static inc.nomard.spoty.core.values.strings.Values.*;
+import io.github.palexdev.materialfx.controls.*;
+import static io.github.palexdev.materialfx.utils.StringUtils.*;
+import io.github.palexdev.materialfx.validation.*;
+import static io.github.palexdev.materialfx.validation.Validated.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import javafx.beans.binding.Bindings;
-import javafx.scene.control.Label;
-
-import java.util.List;
-
-import static inc.nomard.spoty.core.values.strings.Values.ALPHANUMERIC;
-import static inc.nomard.spoty.core.values.strings.Values.SPECIALS;
-import static io.github.palexdev.materialfx.utils.StringUtils.containsAll;
-import static io.github.palexdev.materialfx.utils.StringUtils.containsAny;
-import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
+import java.util.*;
+import javafx.beans.binding.*;
+import javafx.scene.control.*;
 
 public class Validators {
     static MFXValidator validator;

@@ -14,13 +14,11 @@
 
 package inc.nomard.spoty.core.views.components;
 
-import inc.nomard.spoty.core.models.QuickStats;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-
-import java.net.URL;
-import java.util.ResourceBundle;
+import inc.nomard.spoty.core.models.*;
+import java.net.*;
+import java.util.*;
+import javafx.fxml.*;
+import javafx.scene.control.*;
 
 public class SmallCardController implements Initializable {
 

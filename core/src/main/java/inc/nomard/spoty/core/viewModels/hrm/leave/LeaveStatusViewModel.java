@@ -14,38 +14,24 @@
 
 package inc.nomard.spoty.core.viewModels.hrm.leave;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import inc.nomard.spoty.core.viewModels.BankViewModel;
-import inc.nomard.spoty.utils.adapters.DurationTypeAdapter;
-import inc.nomard.spoty.utils.adapters.LocalTimeTypeAdapter;
-import inc.nomard.spoty.utils.adapters.UnixEpochDateTypeAdapter;
-import inc.nomard.spoty.core.viewModels.requisitions.RequisitionMasterViewModel;
-import inc.nomard.spoty.network_bridge.dtos.hrm.employee.Designation;
-import inc.nomard.spoty.network_bridge.dtos.hrm.employee.User;
-import inc.nomard.spoty.network_bridge.dtos.hrm.leave.LeaveStatus;
-import inc.nomard.spoty.network_bridge.dtos.hrm.leave.LeaveType;
-import inc.nomard.spoty.network_bridge.models.FindModel;
-import inc.nomard.spoty.network_bridge.models.SearchModel;
-import inc.nomard.spoty.network_bridge.repositories.implementations.LeaveStatusRepositoryImpl;
-import inc.nomard.spoty.utils.ParameterlessConsumer;
-import inc.nomard.spoty.utils.SpotyLogger;
-import inc.nomard.spoty.utils.SpotyThreader;
-import io.github.palexdev.mfxcore.base.properties.CharProperty;
+import com.google.gson.*;
+import com.google.gson.reflect.*;
+import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.core.viewModels.requisitions.*;
+import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
+import inc.nomard.spoty.network_bridge.dtos.hrm.leave.*;
+import inc.nomard.spoty.network_bridge.models.*;
+import inc.nomard.spoty.network_bridge.repositories.implementations.*;
+import inc.nomard.spoty.utils.*;
+import inc.nomard.spoty.utils.adapters.*;
+import io.github.palexdev.mfxcore.base.properties.*;
+import java.lang.reflect.*;
+import java.text.*;
+import java.time.*;
+import java.util.*;
+import java.util.concurrent.*;
 import javafx.beans.property.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-
-import java.lang.reflect.Type;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.Duration;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Objects;
-import java.util.concurrent.ExecutionException;
+import javafx.collections.*;
 
 
 public class LeaveStatusViewModel {

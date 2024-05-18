@@ -14,27 +14,19 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import inc.nomard.spoty.core.components.message.SpotyMessage;
-import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
-import inc.nomard.spoty.core.components.message.enums.MessageDuration;
-import inc.nomard.spoty.core.components.message.enums.MessageVariants;
-import inc.nomard.spoty.core.viewModels.BankViewModel;
-import inc.nomard.spoty.core.viewModels.EmailViewModel;
-import inc.nomard.spoty.utils.SpotyLogger;
-import io.github.palexdev.materialfx.controls.MFXTextField;
+import static inc.nomard.spoty.core.GlobalActions.*;
+import static inc.nomard.spoty.core.Validators.*;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.*;
+import inc.nomard.spoty.core.viewModels.*;
+import static inc.nomard.spoty.core.viewModels.BankViewModel.*;
+import inc.nomard.spoty.utils.*;
+import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-
-import java.net.URL;
-import java.util.Objects;
-import java.util.ResourceBundle;
-
-import static inc.nomard.spoty.core.GlobalActions.closeDialog;
-import static inc.nomard.spoty.core.Validators.requiredValidator;
-import static inc.nomard.spoty.core.viewModels.BankViewModel.clearBankData;
-import static inc.nomard.spoty.core.viewModels.BankViewModel.saveBank;
+import java.net.*;
+import java.util.*;
+import javafx.fxml.*;
+import javafx.scene.control.*;
 
 public class EmailFormController implements Initializable {
     private static EmailFormController instance;

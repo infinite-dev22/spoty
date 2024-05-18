@@ -14,22 +14,17 @@
 
 package inc.nomard.spoty.core.viewModels.returns.sales;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import inc.nomard.spoty.utils.adapters.UnixEpochDateTypeAdapter;
-import inc.nomard.spoty.network_bridge.dtos.Branch;
-import inc.nomard.spoty.network_bridge.dtos.returns.sale_returns.SaleReturnMaster;
-import inc.nomard.spoty.network_bridge.models.FindModel;
-import inc.nomard.spoty.utils.ParameterlessConsumer;
-import inc.nomard.spoty.utils.SpotyLogger;
+import com.google.gson.*;
+import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.network_bridge.dtos.returns.sale_returns.*;
+import inc.nomard.spoty.network_bridge.models.*;
+import inc.nomard.spoty.utils.*;
+import inc.nomard.spoty.utils.adapters.*;
+import java.text.*;
+import java.util.*;
 import javafx.beans.property.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import lombok.Getter;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import javafx.collections.*;
+import lombok.*;
 
 public class SaleReturnMasterViewModel {
     @Getter

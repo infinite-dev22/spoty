@@ -14,35 +14,23 @@
 
 package inc.nomard.spoty.core.viewModels.stock_ins;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import inc.nomard.spoty.core.viewModels.ProductViewModel;
-import inc.nomard.spoty.utils.adapters.UnixEpochDateTypeAdapter;
-import inc.nomard.spoty.core.viewModels.adjustments.AdjustmentDetailViewModel;
-import inc.nomard.spoty.network_bridge.dtos.Product;
-import inc.nomard.spoty.network_bridge.dtos.stock_ins.StockInDetail;
-import inc.nomard.spoty.network_bridge.dtos.stock_ins.StockInMaster;
-import inc.nomard.spoty.network_bridge.dtos.stock_ins.StockInTransaction;
-import inc.nomard.spoty.network_bridge.models.FindModel;
-import inc.nomard.spoty.network_bridge.models.SearchModel;
-import inc.nomard.spoty.network_bridge.repositories.implementations.StockInsRepositoryImpl;
-import inc.nomard.spoty.utils.ParameterlessConsumer;
-import inc.nomard.spoty.utils.SpotyLogger;
-import inc.nomard.spoty.utils.SpotyThreader;
-import javafx.application.Platform;
-import javafx.beans.property.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.Objects;
-import java.util.concurrent.ExecutionException;
-
+import com.google.gson.*;
+import com.google.gson.reflect.*;
 import static inc.nomard.spoty.core.values.SharedResources.*;
+import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.core.viewModels.adjustments.*;
+import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.network_bridge.dtos.stock_ins.*;
+import inc.nomard.spoty.network_bridge.models.*;
+import inc.nomard.spoty.network_bridge.repositories.implementations.*;
+import inc.nomard.spoty.utils.*;
+import inc.nomard.spoty.utils.adapters.*;
+import java.lang.reflect.*;
+import java.util.*;
+import java.util.concurrent.*;
+import javafx.application.*;
+import javafx.beans.property.*;
+import javafx.collections.*;
 
 public class StockInDetailViewModel {
     public static final ObservableList<StockInDetail> stockInDetailsList =
@@ -178,6 +166,7 @@ public class StockInDetailViewModel {
                 .build();
 
         stockInDetailsList.add(stockInDetail);
+        resetProperties();
     }
 
     public static void createStockInDetails(
@@ -193,7 +182,11 @@ public class StockInDetailViewModel {
                 task.setOnFailed(workerStateEvent -> onSuccess.run());
             }
             if (Objects.nonNull(onFailed)) {
-                task.setOnFailed(workerStateEvent -> onFailed.run());
+                task.setOnFailed(workerStateEvent -> {
+                    onFailed.run();
+                    System.err.println("The task failed with the following exception:");
+                    task.getException().printStackTrace(System.err);
+                });
             }
             SpotyThreader.spotyThreadPool(task);
         });

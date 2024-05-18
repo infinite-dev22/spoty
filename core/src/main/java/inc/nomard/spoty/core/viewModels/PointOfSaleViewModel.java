@@ -14,15 +14,12 @@
 
 package inc.nomard.spoty.core.viewModels;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import inc.nomard.spoty.utils.adapters.UnixEpochDateTypeAdapter;
-import inc.nomard.spoty.network_bridge.dtos.Product;
+import com.google.gson.*;
+import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.utils.adapters.*;
+import java.util.*;
 import javafx.beans.property.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-
-import java.util.Date;
+import javafx.collections.*;
 
 public class PointOfSaleViewModel {
     public static final LongProperty itemQuantity = new SimpleLongProperty(1);

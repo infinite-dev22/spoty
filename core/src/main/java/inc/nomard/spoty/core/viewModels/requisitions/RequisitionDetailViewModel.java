@@ -14,33 +14,22 @@
 
 package inc.nomard.spoty.core.viewModels.requisitions;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import inc.nomard.spoty.utils.adapters.UnixEpochDateTypeAdapter;
-import inc.nomard.spoty.network_bridge.dtos.Product;
-import inc.nomard.spoty.network_bridge.dtos.requisitions.RequisitionDetail;
-import inc.nomard.spoty.network_bridge.dtos.requisitions.RequisitionMaster;
-import inc.nomard.spoty.network_bridge.models.FindModel;
-import inc.nomard.spoty.network_bridge.models.SearchModel;
-import inc.nomard.spoty.network_bridge.repositories.implementations.RequisitionsRepositoryImpl;
-import inc.nomard.spoty.utils.ParameterlessConsumer;
-import inc.nomard.spoty.utils.SpotyLogger;
-import inc.nomard.spoty.utils.SpotyThreader;
-import javafx.application.Platform;
-import javafx.beans.property.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import lombok.Getter;
-
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.Objects;
-import java.util.concurrent.ExecutionException;
-
+import com.google.gson.*;
+import com.google.gson.reflect.*;
 import static inc.nomard.spoty.core.values.SharedResources.*;
+import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.network_bridge.dtos.requisitions.*;
+import inc.nomard.spoty.network_bridge.models.*;
+import inc.nomard.spoty.network_bridge.repositories.implementations.*;
+import inc.nomard.spoty.utils.*;
+import inc.nomard.spoty.utils.adapters.*;
+import java.lang.reflect.*;
+import java.util.*;
+import java.util.concurrent.*;
+import javafx.application.*;
+import javafx.beans.property.*;
+import javafx.collections.*;
+import lombok.*;
 
 public class RequisitionDetailViewModel {
     @Getter

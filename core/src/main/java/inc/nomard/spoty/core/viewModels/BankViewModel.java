@@ -14,27 +14,18 @@
 
 package inc.nomard.spoty.core.viewModels;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import inc.nomard.spoty.utils.adapters.UnixEpochDateTypeAdapter;
-import inc.nomard.spoty.network_bridge.dtos.Bank;
-import inc.nomard.spoty.network_bridge.dtos.Branch;
-import inc.nomard.spoty.network_bridge.models.FindModel;
-import inc.nomard.spoty.network_bridge.models.SearchModel;
-import inc.nomard.spoty.network_bridge.repositories.implementations.BanksRepositoryImpl;
-import inc.nomard.spoty.utils.ParameterlessConsumer;
-import inc.nomard.spoty.utils.SpotyLogger;
-import inc.nomard.spoty.utils.SpotyThreader;
+import com.google.gson.*;
+import com.google.gson.reflect.*;
+import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.network_bridge.models.*;
+import inc.nomard.spoty.network_bridge.repositories.implementations.*;
+import inc.nomard.spoty.utils.*;
+import inc.nomard.spoty.utils.adapters.*;
+import java.lang.reflect.*;
+import java.util.*;
+import java.util.concurrent.*;
 import javafx.beans.property.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Objects;
-import java.util.concurrent.ExecutionException;
+import javafx.collections.*;
 
 
 public class BankViewModel {
@@ -165,7 +156,11 @@ public class BankViewModel {
         var task = banksRepository.post(bank);
         task.setOnRunning(workerStateEvent -> onActivity.run());
         task.setOnSucceeded(workerStateEvent -> onSuccess.run());
-        task.setOnFailed(workerStateEvent -> onFailed.run());
+        task.setOnFailed(workerStateEvent -> {
+            onFailed.run();
+            System.err.println("The task failed with the following exception:");
+            task.getException().printStackTrace(System.err);
+        });
         SpotyThreader.spotyThreadPool(task);
     }
 
@@ -187,7 +182,11 @@ public class BankViewModel {
             task.setOnRunning(workerStateEvent -> onActivity.run());
         }
         if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> onFailed.run());
+            task.setOnFailed(workerStateEvent -> {
+                onFailed.run();
+                System.err.println("The task failed with the following exception:");
+                task.getException().printStackTrace(System.err);
+            });
         }
         task.setOnSucceeded(workerStateEvent -> {
             try {
@@ -220,7 +219,11 @@ public class BankViewModel {
             task.setOnRunning(workerStateEvent -> onActivity.run());
         }
         if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> onFailed.run());
+            task.setOnFailed(workerStateEvent -> {
+                onFailed.run();
+                System.err.println("The task failed with the following exception:");
+                task.getException().printStackTrace(System.err);
+            });
         }
         task.setOnSucceeded(workerStateEvent -> {
             try {
@@ -254,7 +257,11 @@ public class BankViewModel {
             task.setOnRunning(workerStateEvent -> onActivity.run());
         }
         if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> onFailed.run());
+            task.setOnFailed(workerStateEvent -> {
+                onFailed.run();
+                System.err.println("The task failed with the following exception:");
+                task.getException().printStackTrace(System.err);
+            });
         }
         task.setOnSucceeded(workerStateEvent -> {
             try {
@@ -291,7 +298,11 @@ public class BankViewModel {
         var task = banksRepository.put(bank);
         task.setOnRunning(workerStateEvent -> onActivity.run());
         task.setOnSucceeded(workerStateEvent -> onSuccess.run());
-        task.setOnFailed(workerStateEvent -> onFailed.run());
+        task.setOnFailed(workerStateEvent -> {
+            onFailed.run();
+            System.err.println("The task failed with the following exception:");
+            task.getException().printStackTrace(System.err);
+        });
         SpotyThreader.spotyThreadPool(task);
     }
 
@@ -305,7 +316,11 @@ public class BankViewModel {
         var task = banksRepository.delete(findModel);
         task.setOnRunning(workerStateEvent -> onActivity.run());
         task.setOnSucceeded(workerStateEvent -> onSuccess.run());
-        task.setOnFailed(workerStateEvent -> onFailed.run());
+        task.setOnFailed(workerStateEvent -> {
+            onFailed.run();
+            System.err.println("The task failed with the following exception:");
+            task.getException().printStackTrace(System.err);
+        });
         SpotyThreader.spotyThreadPool(task);
     }
 }

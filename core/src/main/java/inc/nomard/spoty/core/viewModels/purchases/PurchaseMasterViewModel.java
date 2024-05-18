@@ -197,7 +197,11 @@ public class PurchaseMasterViewModel {
             task.setOnRunning(workerStateEvent -> onActivity.run());
         }
         if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> onFailed.run());
+            task.setOnFailed(workerStateEvent -> {
+                onFailed.run();
+                System.err.println("The task failed with the following exception:");
+                task.getException().printStackTrace(System.err);
+            });
         }
         task.setOnSucceeded(workerStateEvent -> {
             purchaseMastersList.clear();
@@ -249,7 +253,11 @@ public class PurchaseMasterViewModel {
             });
         }
         if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> onFailed.run());
+            task.setOnFailed(workerStateEvent -> {
+                onFailed.run();
+                System.err.println("The task failed with the following exception:");
+                task.getException().printStackTrace(System.err);
+            });
         }
         SpotyThreader.spotyThreadPool(task);
     }
@@ -267,7 +275,11 @@ public class PurchaseMasterViewModel {
             task.setOnRunning(workerStateEvent -> onActivity.run());
         }
         if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> onFailed.run());
+            task.setOnFailed(workerStateEvent -> {
+                onFailed.run();
+                System.err.println("The task failed with the following exception:");
+                task.getException().printStackTrace(System.err);
+            });
         }
         task.setOnSucceeded(workerStateEvent -> {
             Type listType = new TypeToken<ArrayList<PurchaseMaster>>() {
@@ -320,7 +332,11 @@ public class PurchaseMasterViewModel {
         var task = purchasesRepository.putMaster(purchaseMaster);
         task.setOnRunning(workerStateEvent -> onActivity.run());
         task.setOnSucceeded(workerStateEvent -> PurchaseDetailViewModel.updatePurchaseDetails(onActivity, onSuccess, onFailed));
-        task.setOnFailed(workerStateEvent -> onFailed.run());
+        task.setOnFailed(workerStateEvent -> {
+            onFailed.run();
+            System.err.println("The task failed with the following exception:");
+            task.getException().printStackTrace(System.err);
+        });
         SpotyThreader.spotyThreadPool(task);
         // getPurchaseMasters();
     }
@@ -336,7 +352,11 @@ public class PurchaseMasterViewModel {
         var task = purchasesRepository.deleteMaster(findModel);
         task.setOnRunning(workerStateEvent -> onActivity.run());
         task.setOnSucceeded(workerStateEvent -> onSuccess.run());
-        task.setOnFailed(workerStateEvent -> onFailed.run());
+        task.setOnFailed(workerStateEvent -> {
+            onFailed.run();
+            System.err.println("The task failed with the following exception:");
+            task.getException().printStackTrace(System.err);
+        });
         SpotyThreader.spotyThreadPool(task);
     }
 }

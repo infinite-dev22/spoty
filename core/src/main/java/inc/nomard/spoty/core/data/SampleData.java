@@ -14,13 +14,10 @@
 
 package inc.nomard.spoty.core.data;
 
-import inc.nomard.spoty.core.models.QuickStats;
-import inc.nomard.spoty.network_bridge.dtos.Role;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-
-import java.util.ArrayList;
-import java.util.List;
+import inc.nomard.spoty.core.models.*;
+import inc.nomard.spoty.network_bridge.dtos.*;
+import java.util.*;
+import javafx.collections.*;
 
 public class SampleData {
     public static List<QuickStats> quickStatsSampleData() {

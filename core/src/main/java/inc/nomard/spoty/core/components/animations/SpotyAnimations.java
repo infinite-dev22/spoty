@@ -1,10 +1,8 @@
 package inc.nomard.spoty.core.components.animations;
 
-import javafx.animation.Interpolator;
-import javafx.animation.RotateTransition;
-import javafx.animation.ScaleTransition;
-import javafx.scene.Node;
-import javafx.util.Duration;
+import javafx.animation.*;
+import javafx.scene.*;
+import javafx.util.*;
 
 public class SpotyAnimations {
     public static void pulsate(Node node, Duration duration, double size, int cycleCount) {

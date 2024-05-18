@@ -14,58 +14,40 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import inc.nomard.spoty.core.components.message.SpotyMessage;
-import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
-import inc.nomard.spoty.core.components.message.enums.MessageDuration;
-import inc.nomard.spoty.core.components.message.enums.MessageVariants;
-import inc.nomard.spoty.core.components.navigation.Pages;
-import inc.nomard.spoty.core.values.strings.Values;
+import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.*;
+import inc.nomard.spoty.core.components.navigation.*;
+import inc.nomard.spoty.core.values.strings.*;
 import inc.nomard.spoty.core.viewModels.*;
-import inc.nomard.spoty.core.viewModels.requisitions.RequisitionDetailViewModel;
-import inc.nomard.spoty.core.viewModels.requisitions.RequisitionMasterViewModel;
-import inc.nomard.spoty.core.views.BaseController;
-import inc.nomard.spoty.network_bridge.dtos.*;
-import inc.nomard.spoty.network_bridge.dtos.requisitions.RequisitionDetail;
-import inc.nomard.spoty.utils.SpotyLogger;
-import inc.nomard.spoty.utils.SpotyThreader;
+import inc.nomard.spoty.core.viewModels.requisitions.*;
+import inc.nomard.spoty.core.views.*;
+import inc.nomard.spoty.network_bridge.dtos.Supplier;
+import inc.nomard.spoty.network_bridge.dtos.requisitions.*;
+import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
-import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
-import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
-import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
-import io.github.palexdev.materialfx.enums.ScrimPriority;
-import io.github.palexdev.materialfx.filter.DoubleFilter;
-import io.github.palexdev.materialfx.filter.IntegerFilter;
-import io.github.palexdev.materialfx.filter.StringFilter;
-import io.github.palexdev.materialfx.utils.StringUtils;
-import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
-import io.github.palexdev.materialfx.validation.Constraint;
-import io.github.palexdev.materialfx.validation.Severity;
+import io.github.palexdev.materialfx.controls.cell.*;
+import io.github.palexdev.materialfx.dialogs.*;
+import io.github.palexdev.materialfx.enums.*;
+import io.github.palexdev.materialfx.filter.*;
+import io.github.palexdev.materialfx.utils.*;
+import io.github.palexdev.materialfx.utils.others.*;
+import io.github.palexdev.materialfx.validation.*;
+import static io.github.palexdev.materialfx.validation.Validated.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
-import javafx.event.EventHandler;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.scene.input.ContextMenuEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.util.StringConverter;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.Comparator;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.function.Function;
-import java.util.function.Predicate;
-
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
-import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
+import java.io.*;
+import java.net.*;
+import java.util.*;
+import java.util.function.*;
+import javafx.application.*;
+import javafx.collections.*;
+import javafx.event.*;
+import javafx.fxml.*;
+import javafx.scene.control.*;
+import javafx.scene.input.*;
+import javafx.scene.layout.*;
+import javafx.stage.*;
+import javafx.util.*;
 
 @SuppressWarnings("unchecked")
 public class RequisitionMasterFormController implements Initializable {
@@ -150,6 +132,7 @@ public class RequisitionMasterFormController implements Initializable {
 
         dialogContent.setShowMinimize(false);
         dialogContent.setShowAlwaysOnTop(false);
+        dialogContent.setShowClose(false);
 
         dialog =
                 MFXGenericDialogBuilder.build(dialogContent)
@@ -341,6 +324,9 @@ public class RequisitionMasterFormController implements Initializable {
 
         supplierValidationLabel.setManaged(false);
         statusValidationLabel.setManaged(false);
+
+        supplier.clearSelection();
+        status.clearSelection();
 
         supplier.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
         status.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);

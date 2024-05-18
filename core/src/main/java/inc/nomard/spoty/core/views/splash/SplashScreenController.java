@@ -14,34 +14,25 @@
 
 package inc.nomard.spoty.core.views.splash;
 
-import fr.brouillard.oss.cssfx.CSSFX;
-import inc.nomard.spoty.core.SpotyCoreResourceLoader;
-import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
-import inc.nomard.spoty.core.components.navigation.Pages;
-import inc.nomard.spoty.core.startup.Dialogs;
-import inc.nomard.spoty.core.values.strings.Labels;
-import inc.nomard.spoty.startup.SpotyPaths;
-import inc.nomard.spoty.utils.SpotyLogger;
-import inc.nomard.spoty.utils.SpotyThreader;
-import io.github.palexdev.materialfx.theming.JavaFXThemes;
-import io.github.palexdev.materialfx.theming.MaterialFXStylesheets;
-import io.github.palexdev.materialfx.theming.UserAgentBuilder;
-import javafx.application.Platform;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.layout.AnchorPane;
-import javafx.stage.Screen;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.ResourceBundle;
+import fr.brouillard.oss.cssfx.*;
+import inc.nomard.spoty.core.*;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.navigation.*;
+import inc.nomard.spoty.core.startup.*;
+import inc.nomard.spoty.core.values.strings.*;
+import inc.nomard.spoty.utils.*;
+import io.github.palexdev.materialfx.theming.*;
+import java.io.*;
+import java.net.*;
+import java.util.*;
+import javafx.application.*;
+import javafx.fxml.*;
+import javafx.geometry.*;
+import javafx.scene.*;
+import javafx.scene.control.*;
+import javafx.scene.image.*;
+import javafx.scene.layout.*;
+import javafx.stage.*;
 
 public class SplashScreenController implements Initializable {
     @FXML

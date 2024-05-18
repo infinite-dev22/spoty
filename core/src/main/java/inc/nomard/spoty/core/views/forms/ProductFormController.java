@@ -397,6 +397,12 @@ public class ProductFormController implements Initializable {
         cancelBtn.setDisable(false);
         saveBtn.setDisable(false);
 
+        brand.clearSelection();
+        category.clearSelection();
+        unitOfMeasure.clearSelection();
+        barcodeType.clearSelection();
+        type.clearSelection();
+
         closeDialog(actionEvent);
         ProductViewModel.resetProperties();
         placeHolder.setVisible(true);
@@ -417,6 +423,12 @@ public class ProductFormController implements Initializable {
         notificationHolder.addMessage(notification);
         cancelBtn.setDisable(false);
         saveBtn.setDisable(false);
+
+        brand.clearSelection();
+        category.clearSelection();
+        unitOfMeasure.clearSelection();
+        barcodeType.clearSelection();
+        type.clearSelection();
 
         closeDialog(actionEvent);
         ProductViewModel.resetProperties();

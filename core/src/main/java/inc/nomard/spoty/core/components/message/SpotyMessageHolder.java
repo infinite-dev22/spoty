@@ -14,24 +14,16 @@
 
 package inc.nomard.spoty.core.components.message;
 
-import inc.nomard.spoty.core.SpotyCoreResourceLoader;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.geometry.Orientation;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-import javafx.util.Duration;
-
-import java.util.Objects;
+import inc.nomard.spoty.core.*;
+import java.util.*;
+import javafx.animation.*;
+import javafx.collections.*;
+import javafx.geometry.*;
+import javafx.scene.*;
+import javafx.scene.layout.*;
+import javafx.scene.paint.*;
+import javafx.stage.*;
+import javafx.util.*;
 
 public class SpotyMessageHolder {
     private static FlowPane root;

@@ -1,14 +1,12 @@
 package inc.nomard.spoty.core.views.previews;
 
-import inc.nomard.spoty.network_bridge.dtos.Product;
-import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.scene.image.ImageView;
-
-import java.net.URL;
-import java.util.ResourceBundle;
+import inc.nomard.spoty.network_bridge.dtos.*;
+import io.github.palexdev.materialfx.dialogs.*;
+import java.net.*;
+import java.util.*;
+import javafx.fxml.*;
+import javafx.scene.control.*;
+import javafx.scene.image.*;
 
 public class ProductPreviewController implements Initializable {
     @FXML

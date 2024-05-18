@@ -135,6 +135,7 @@ public class PurchaseMasterFormController implements Initializable {
 
         dialogContent.setShowMinimize(false);
         dialogContent.setShowAlwaysOnTop(false);
+        dialogContent.setShowClose(false);
 
         dialog =
                 MFXGenericDialogBuilder.build(dialogContent)
@@ -330,6 +331,10 @@ public class PurchaseMasterFormController implements Initializable {
         dateValidationLabel.setManaged(false);
         statusValidationLabel.setManaged(false);
 
+        supplier.clearSelection();
+        purchaseStatus.clearSelection();
+        date.setValue(null);
+
         supplier.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
         date.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
         purchaseStatus.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
@@ -362,6 +367,10 @@ public class PurchaseMasterFormController implements Initializable {
         saveBtn.setDisable(false);
         cancelBtnClicked();
 
+        supplier.clearSelection();
+        purchaseStatus.clearSelection();
+        date.setValue(null);
+
         PurchaseMasterViewModel.getAllPurchaseMasters(null, null, null);
     }
 
@@ -377,6 +386,10 @@ public class PurchaseMasterFormController implements Initializable {
         cancelBtn.setDisable(false);
         saveBtn.setDisable(false);
         cancelBtnClicked();
+
+        supplier.clearSelection();
+        purchaseStatus.clearSelection();
+        date.setValue(null);
 
         PurchaseMasterViewModel.getAllPurchaseMasters(null, null, null);
     }

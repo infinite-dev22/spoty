@@ -14,20 +14,16 @@
 
 package inc.nomard.spoty.core.views.components;
 
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXSegmentedButton;
-import io.github.palexdev.mfxcomponents.skins.MFXSegmentedButtonSkin;
+import io.github.palexdev.mfxcomponents.controls.buttons.*;
+import io.github.palexdev.mfxcomponents.skins.*;
 import io.github.palexdev.mfxcore.controls.Label;
-import javafx.application.Platform;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.chart.BarChart;
-import javafx.scene.chart.XYChart;
-import javafx.scene.control.Tooltip;
-import javafx.scene.layout.HBox;
-
-import java.net.URL;
-import java.util.Random;
-import java.util.ResourceBundle;
+import java.net.*;
+import java.util.*;
+import javafx.application.*;
+import javafx.fxml.*;
+import javafx.scene.chart.*;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
 
 public class TotalRevenueController implements Initializable {
     private static final Random RND = new Random();

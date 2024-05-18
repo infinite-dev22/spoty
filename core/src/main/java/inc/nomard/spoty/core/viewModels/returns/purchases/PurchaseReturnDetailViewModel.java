@@ -14,18 +14,14 @@
 
 package inc.nomard.spoty.core.viewModels.returns.purchases;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import inc.nomard.spoty.utils.adapters.UnixEpochDateTypeAdapter;
-import inc.nomard.spoty.network_bridge.dtos.Product;
-import inc.nomard.spoty.network_bridge.dtos.returns.purchase_returns.PurchaseReturnDetail;
-import inc.nomard.spoty.network_bridge.dtos.returns.purchase_returns.PurchaseReturnMaster;
+import com.google.gson.*;
+import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.network_bridge.dtos.returns.purchase_returns.*;
+import inc.nomard.spoty.utils.adapters.*;
+import java.util.*;
 import javafx.beans.property.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import lombok.Getter;
-
-import java.util.Date;
+import javafx.collections.*;
+import lombok.*;
 
 
 public class PurchaseReturnDetailViewModel {

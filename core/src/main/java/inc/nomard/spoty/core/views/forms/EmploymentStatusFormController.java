@@ -14,33 +14,24 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import atlantafx.base.theme.Styles;
-import inc.nomard.spoty.core.components.message.SpotyMessage;
-import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
-import inc.nomard.spoty.core.components.message.enums.MessageDuration;
-import inc.nomard.spoty.core.components.message.enums.MessageVariants;
-import inc.nomard.spoty.core.viewModels.hrm.employee.EmploymentStatusViewModel;
-import inc.nomard.spoty.utils.SpotyLogger;
-import io.github.palexdev.materialfx.controls.MFXComboBox;
-import io.github.palexdev.materialfx.controls.MFXTextField;
-import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
-import io.github.palexdev.materialfx.validation.Constraint;
-import io.github.palexdev.materialfx.validation.Severity;
+import atlantafx.base.theme.*;
+import static inc.nomard.spoty.core.GlobalActions.*;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.*;
+import inc.nomard.spoty.core.viewModels.hrm.employee.*;
+import inc.nomard.spoty.core.viewModels.hrm.pay_roll.*;
+import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
+import inc.nomard.spoty.utils.*;
+import io.github.palexdev.materialfx.controls.*;
+import io.github.palexdev.materialfx.dialogs.*;
+import io.github.palexdev.materialfx.validation.*;
+import static io.github.palexdev.materialfx.validation.Validated.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.ColorPicker;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-
-import java.net.URL;
-import java.util.List;
-import java.util.Objects;
-import java.util.ResourceBundle;
-
-import static inc.nomard.spoty.core.GlobalActions.closeDialog;
-import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
+import java.net.*;
+import java.util.*;
+import javafx.event.*;
+import javafx.fxml.*;
+import javafx.scene.control.*;
 
 public class EmploymentStatusFormController implements Initializable {
     private static EmploymentStatusFormController instance;
@@ -77,6 +68,7 @@ public class EmploymentStatusFormController implements Initializable {
         // Color Picker
         colorPicker.getStyleClass().add(ColorPicker.STYLE_CLASS_BUTTON);
         colorPicker.getStyleClass().add(Styles.BUTTON_OUTLINED);
+        colorPicker.setItems(EmploymentStatusViewModel.getColorsList());
     }
 
     private void dialogOnActions() {
@@ -90,6 +82,8 @@ public class EmploymentStatusFormController implements Initializable {
 
                     nameValidationLabel.setManaged(false);
                     colorPickerValidationLabel.setManaged(false);
+
+                    colorPicker.clearSelection();
 
                     name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                     colorPicker.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
@@ -155,6 +149,8 @@ public class EmploymentStatusFormController implements Initializable {
         cancelBtn.setDisable(false);
         saveBtn.setDisable(false);
 
+        colorPicker.clearSelection();
+
         closeDialog(actionEvent);
         EmploymentStatusViewModel.clearEmploymentStatusData();
         EmploymentStatusViewModel.getAllEmploymentStatuses(null, null, null);
@@ -171,6 +167,8 @@ public class EmploymentStatusFormController implements Initializable {
         notificationHolder.addMessage(notification);
         cancelBtn.setDisable(false);
         saveBtn.setDisable(false);
+
+        colorPicker.clearSelection();
 
         closeDialog(actionEvent);
         EmploymentStatusViewModel.clearEmploymentStatusData();

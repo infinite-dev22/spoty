@@ -14,14 +14,12 @@
 
 package inc.nomard.spoty.core.components.title;
 
-import inc.nomard.spoty.core.SpotyCoreResourceLoader;
-import javafx.beans.property.StringProperty;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
-
-import java.io.IOException;
+import inc.nomard.spoty.core.*;
+import java.io.*;
+import javafx.beans.property.*;
+import javafx.fxml.*;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
 
 public class Title extends HBox {
     @FXML
