@@ -15,10 +15,17 @@
 package inc.nomard.spoty.core.viewModels;
 
 import com.google.gson.*;
-import inc.nomard.spoty.core.views.forms.*;
+import com.google.gson.reflect.*;
+import inc.nomard.spoty.core.viewModels.adjustments.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.network_bridge.dtos.adjustments.*;
+import inc.nomard.spoty.network_bridge.repositories.implementations.*;
+import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.adapters.*;
+import inc.nomard.spoty.utils.exceptions.*;
+import java.lang.reflect.*;
 import java.util.*;
+import java.util.concurrent.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
 
@@ -159,13 +166,18 @@ public class PermissionsViewModel {
             new SimpleObjectProperty<>();
     private static final ObservableList<Permission> permissionsList =
             FXCollections.observableArrayList();
+    private static final RolesRepositoryImpl rolesRepository = new RolesRepositoryImpl();
 
     public static Permission getDashboardAccess() {
         return dashboardAccess.get();
     }
 
     public static void addPermission(Permission permission) {
-        permissionsList.addAll(permission);
+        permissionsList.add(permission);
+    }
+
+    public static void addPermissions(List<Permission> permissions) {
+        permissionsList.addAll(permissions);
     }
 
     public static void removePermission(Permission permission) {
@@ -994,26 +1006,47 @@ public class PermissionsViewModel {
         PermissionsViewModel.deleteRequisition.set(selectWhere("delete_requisitions"));
     }
 
-    public static Permission selectWhere(String itemIs) {
-//        if (connection == null) {
-//            connection = SQLiteConnection.getInstance();
-//        }
-//        if (connectionSource == null) {
-//            connectionSource = connection.getConnection();
-//        }
-//
-//        try {
-//            if (dao == null) {
-//                dao = DaoManager.createDao(connectionSource, Permission.class);
-//            }
-//            return dao.queryBuilder().where().eq("name", itemIs).queryForFirst();
-//        } catch (Exception e) {
-//            SpotyLogger.writeToFile(e, PermissionsViewModel.class);
-//        }
-        return null;
+    public static Permission selectWhere(String permissionName) {
+        Objects.requireNonNull(permissionName, "Item name cannot be null");
+
+        return permissionsList.stream()
+                .filter(permission -> permission.getName().equals(permissionName))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("Permission with name '" + permissionName + "' not found"));
     }
 
-    public static void resetPermissionsProperties() {
-        RoleFormController.getInstance().resetCheckboxes();
+    public static void getAllPermissions(ParameterlessConsumer onActivity,
+                                         ParameterlessConsumer onSuccess,
+                                         ParameterlessConsumer onFailed) {
+        var task = rolesRepository.fetchAllPermissions();
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> {
+                onFailed.run();
+                System.err.println("The task failed with the following exception:");
+                task.getException().printStackTrace(System.err);
+            });
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            Type listType = new TypeToken<ArrayList<Permission>>() {
+            }.getType();
+            ArrayList<Permission> permissionList = new ArrayList<>();
+            try {
+                permissionList = gson.fromJson(
+                        task.get().body(), listType);
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, PermissionsViewModel.class);
+            }
+
+            permissionsList.clear();
+            permissionsList.addAll(permissionList);
+
+            if (Objects.nonNull(onSuccess)) {
+                onSuccess.run();
+            }
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 }

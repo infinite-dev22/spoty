@@ -239,21 +239,20 @@ public class QuotationMasterViewModel {
             });
         }
         task.setOnSucceeded(workerStateEvent -> {
-            QuotationMaster quotationMaster = new QuotationMaster();
             try {
-                quotationMaster = gson.fromJson(task.get().body(), QuotationMaster.class);
+                var quotationMaster = gson.fromJson(task.get().body(), QuotationMaster.class);
+
+                setId(quotationMaster.getId());
+                setNote(quotationMaster.getNotes());
+                setDate(quotationMaster.getLocaleDate());
+                QuotationDetailViewModel.quotationDetailsList.clear();
+                QuotationDetailViewModel.quotationDetailsList.addAll(quotationMaster.getQuotationDetails());
+
+                if (Objects.nonNull(onSuccess)) {
+                    onSuccess.run();
+                }
             } catch (InterruptedException | ExecutionException e) {
                 SpotyLogger.writeToFile(e, QuotationMasterViewModel.class);
-            }
-
-            setId(quotationMaster.getId());
-            setNote(quotationMaster.getNotes());
-            setDate(quotationMaster.getLocaleDate());
-            QuotationDetailViewModel.quotationDetailsList.clear();
-            QuotationDetailViewModel.quotationDetailsList.addAll(quotationMaster.getQuotationDetails());
-
-            if (Objects.nonNull(onSuccess)) {
-                onSuccess.run();
             }
         });
         SpotyThreader.spotyThreadPool(task);

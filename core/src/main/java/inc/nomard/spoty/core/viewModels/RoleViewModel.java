@@ -14,8 +14,15 @@
 
 package inc.nomard.spoty.core.viewModels;
 
+import com.google.gson.*;
+import com.google.gson.reflect.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.network_bridge.models.*;
+import inc.nomard.spoty.network_bridge.repositories.implementations.*;
 import inc.nomard.spoty.utils.*;
+import java.lang.reflect.*;
+import java.util.*;
+import java.util.concurrent.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
 import lombok.*;
@@ -29,9 +36,14 @@ public class RoleViewModel {
     @Getter
     private static final ObservableList<Role> rolesList = FXCollections.observableArrayList();
     private static final ListProperty<Role> roles = new SimpleListProperty<>(rolesList);
+    @Getter
+    private static final ObservableList<Permission> permissionsList = FXCollections.observableArrayList();
+    private static final ListProperty<Permission> permissions = new SimpleListProperty<>(permissionsList);
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final StringProperty name = new SimpleStringProperty();
+    private static final StringProperty label = new SimpleStringProperty();
     private static final StringProperty description = new SimpleStringProperty();
+    private static final RolesRepositoryImpl rolesRepository = new RolesRepositoryImpl();
 
     public static long getId() {
         return id.get();
@@ -57,6 +69,18 @@ public class RoleViewModel {
         return name;
     }
 
+    public static String getLabel() {
+        return label.get();
+    }
+
+    public static void setLabel(String label) {
+        RoleViewModel.label.set(label);
+    }
+
+    public static StringProperty labelProperty() {
+        return label;
+    }
+
     public static String getDescription() {
         return description.get();
     }
@@ -67,41 +91,6 @@ public class RoleViewModel {
 
     public static StringProperty descriptionProperty() {
         return description;
-    }
-
-    public static void saveRole(
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
-//        Dao<Role, Long> roleDao = DaoManager.createDao(connectionSource, Role.class);
-//        Dao<RolePermission, Long> rolePermissionDao =
-//                DaoManager.createDao(connectionSource, RolePermission.class);
-//
-//        Role role = new Role(getName(), getDescription());
-//
-//        roleDao.create(role);
-//
-//        Platform.runLater(
-//                () ->
-//                        PermissionsViewModel.getPermissionsList()
-//                                .forEach(
-//                                        permission -> {
-//                                            try {
-//                                                rolePermissionDao.create(new RolePermission(role, permission));
-//                                            } catch (Exception e) {
-//                                                SpotyLogger.writeToFile(e, RoleViewModel.class);
-//                                            }
-//                                        }));
-
-        resetRoleProperties();
-        PermissionsViewModel.getPermissionsList().clear();
-    }
-
-    public static void resetRoleProperties() {
-        setId(0);
-        setName("");
-        setDescription("");
-        PermissionsViewModel.resetPermissionsProperties();
     }
 
     public static ObservableList<Role> getRoles() {
@@ -116,22 +105,86 @@ public class RoleViewModel {
         return roles;
     }
 
+    public static ObservableList<Permission> getPermissions() {
+        return permissions.get();
+    }
+
+    public static void setPermissions(ObservableList<Permission> permissions) {
+        RoleViewModel.permissions.set(permissions);
+    }
+
+    public static ListProperty<Permission> permissionsProperty() {
+        return permissions;
+    }
+
+    public static void saveRole(
+            ParameterlessConsumer onActivity,
+            ParameterlessConsumer onSuccess,
+            ParameterlessConsumer onFailed) {
+        var role = Role.builder()
+                .name(getName())
+                .label(getLabel())
+                .description(getDescription())
+                .permissions(getPermissions())
+                .build();
+
+        if (!RoleViewModel.rolesList.isEmpty()) {
+            role.setPermissions(PermissionsViewModel.getPermissionsList());
+        }
+
+        System.out.println(new Gson().toJson(role));
+
+        var task = rolesRepository.postRole(role);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+        task.setOnFailed(workerStateEvent -> {
+            onFailed.run();
+            System.err.println("The task failed with the following exception:");
+            task.getException().printStackTrace(System.err);
+        });
+        SpotyThreader.spotyThreadPool(task);
+    }
+
+    public static void resetRoleProperties() {
+        setId(0);
+        setName("");
+        setDescription("");
+    }
+
     public static void getAllRoles(
             ParameterlessConsumer onActivity,
             ParameterlessConsumer onSuccess,
             ParameterlessConsumer onFailed) {
-//        Dao<Role, Long> roleDao = DaoManager.createDao(connectionSource, Role.class);
-//
-//        Platform.runLater(
-//                () -> {
-//                    rolesList.clear();
-//
-//                    try {
-//                        rolesList.addAll(roleDao.queryForAll());
-//                    } catch (Exception e) {
-//                        SpotyLogger.writeToFile(e, RoleViewModel.class);
-//                    }
-//                });
+        var task = rolesRepository.fetchAllRoles();
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> {
+                onFailed.run();
+                System.err.println("The task failed with the following exception:");
+                task.getException().printStackTrace(System.err);
+            });
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            Type listType = new TypeToken<ArrayList<Role>>() {
+            }.getType();
+            ArrayList<Role> rolesRolesList = new ArrayList<>();
+            try {
+                rolesRolesList = new Gson().fromJson(
+                        task.get().body(), listType);
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, RoleViewModel.class);
+            }
+
+            rolesList.clear();
+            rolesList.addAll(rolesRolesList);
+
+            if (Objects.nonNull(onSuccess)) {
+                onSuccess.run();
+            }
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
     public static void getItem(
@@ -139,30 +192,66 @@ public class RoleViewModel {
             ParameterlessConsumer onActivity,
             ParameterlessConsumer onSuccess,
             ParameterlessConsumer onFailed) {
-//        Dao<Role, Long> roleDao = DaoManager.createDao(connectionSource, Role.class);
-//
-//        Role role = roleDao.queryForId(index);
-//
-//        setId(role.getId());
-//        setName(role.getName());
-//        setDescription(role.getDescription());
+        var findModel = new FindModel();
+        findModel.setId(index);
+
+        var task = rolesRepository.fetchRole(findModel);
+        if (Objects.nonNull(onActivity)) {
+            task.setOnRunning(workerStateEvent -> onActivity.run());
+        }
+        if (Objects.nonNull(onFailed)) {
+            task.setOnFailed(workerStateEvent -> {
+                onFailed.run();
+                System.err.println("The task failed with the following exception:");
+                task.getException().printStackTrace(System.err);
+            });
+        }
+        task.setOnSucceeded(workerStateEvent -> {
+            try {
+                var role = new Gson().fromJson(task.get().body(), Role.class);
+
+                setId(role.getId());
+                setName(role.getName());
+                setLabel(role.getLabel());
+                setDescription(role.getDescription());
+                setPermissions(FXCollections.observableArrayList(role.getPermissions()));
+                PermissionsViewModel.getPermissionsList().clear();
+                PermissionsViewModel.addPermissions(role.getPermissions());
+
+                if (Objects.nonNull(onSuccess)) {
+                    onSuccess.run();
+                }
+            } catch (InterruptedException | ExecutionException e) {
+                SpotyLogger.writeToFile(e, RoleViewModel.class);
+            }
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
     public static void updateItem(
-            long index,
             ParameterlessConsumer onActivity,
             ParameterlessConsumer onSuccess,
             ParameterlessConsumer onFailed) {
-//        Dao<Role, Long> roleDao = DaoManager.createDao(connectionSource, Role.class);
-//
-//        Role role = roleDao.queryForId(index);
-//
-//        role.setName(getName());
-//        role.setDescription(getDescription());
-//
-//        roleDao.update(role);
+        var role = Role.builder()
+                .id(getId())
+                .name(getName())
+                .label(getLabel())
+                .description(getDescription())
+                .permissions(getPermissions())
+                .build();
 
-        resetRoleProperties();
+        if (!PermissionsViewModel.getPermissionsList().isEmpty()) {
+            role.setPermissions(PermissionsViewModel.getPermissionsList());
+        }
+        var task = rolesRepository.putRole(role);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+        task.setOnFailed(workerStateEvent -> {
+            onFailed.run();
+            System.err.println("The task failed with the following exception:");
+            task.getException().printStackTrace(System.err);
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 
     public static void deleteItem(
@@ -170,8 +259,17 @@ public class RoleViewModel {
             ParameterlessConsumer onActivity,
             ParameterlessConsumer onSuccess,
             ParameterlessConsumer onFailed) {
-//        Dao<Role, Long> roleDao = DaoManager.createDao(connectionSource, Role.class);
-//
-//        roleDao.deleteById(index);
+        var findModel = new FindModel();
+        findModel.setId(index);
+
+        var task = rolesRepository.deleteRole(findModel);
+        task.setOnRunning(workerStateEvent -> onActivity.run());
+        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
+        task.setOnFailed(workerStateEvent -> {
+            onFailed.run();
+            System.err.println("The task failed with the following exception:");
+            task.getException().printStackTrace(System.err);
+        });
+        SpotyThreader.spotyThreadPool(task);
     }
 }

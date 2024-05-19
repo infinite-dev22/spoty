@@ -28,5 +28,5 @@ public class Permission {
     private String name;
     private String label;
     private String description;
-    private List<Role> roles;
+    private Role roles;
 }

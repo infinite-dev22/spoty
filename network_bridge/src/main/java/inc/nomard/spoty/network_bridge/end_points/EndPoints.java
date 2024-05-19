@@ -436,4 +436,20 @@ public class EndPoints {
         public static final String deleteTax = taxUrl + "/single/delete";
         public static final String deleteTaxes = taxUrl + "/multiple/delete";
     }
+
+    public static final class Roles {
+        public static final String rolesUrl = apiUrl + "/roles";
+        // Roles
+        public static final String allRoles = rolesUrl + "/all";
+        public static final String roleById = rolesUrl + "/single";
+        public static final String addRole = rolesUrl + "/add";
+        public static final String updateRole = rolesUrl + "/update";
+        public static final String deleteRole = rolesUrl + "/delete";
+        // Permissions
+        public static final String allPermissions = rolesUrl + "/permissions";
+        public static final String permissionById = rolesUrl + "/permission";
+        public static final String addPermission = rolesUrl + "/permission/add";
+        public static final String updatePermission = rolesUrl + "/permission/update";
+        public static final String deletePermission = rolesUrl + "/permission/delete";
+    }
 }

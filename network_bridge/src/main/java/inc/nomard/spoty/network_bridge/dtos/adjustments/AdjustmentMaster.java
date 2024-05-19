@@ -30,7 +30,6 @@ import java.util.List;
 @Builder
 public class AdjustmentMaster {
     private Long id;
-    private Date date;
     private String ref;
     private ArrayList<Branch> branches;
     private List<AdjustmentDetail> adjustmentDetails;
@@ -38,8 +37,4 @@ public class AdjustmentMaster {
     private String status;
     private Double Total;
     private User createdBy;
-
-    public String getLocaleDate() {
-        return DateFormat.getDateInstance().format(date);
-    }
 }

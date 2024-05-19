@@ -105,7 +105,6 @@ public class AdjustmentPreviewController implements Initializable {
 
     public void init(AdjustmentMaster adjustment) {
         adjustmentDetailsList.clear();
-        adjustmentDate.setText(adjustment.getLocaleDate());
         adjustmentRef.setText(adjustment.getRef());
         adjustmentNote.setText(adjustment.getNotes());
 //        doneBy.setText(adjustment.getCreatedBy().getName());

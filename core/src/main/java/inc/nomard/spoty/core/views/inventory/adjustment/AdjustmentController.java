@@ -81,22 +81,17 @@ public class AdjustmentController implements Initializable {
     }
 
     private void setupTable() {
-        MFXTableColumn<AdjustmentMaster> adjustmentDate =
-                new MFXTableColumn<>("Date", false, Comparator.comparing(AdjustmentMaster::getDate));
         MFXTableColumn<AdjustmentMaster> adjustmentStatus =
                 new MFXTableColumn<>("Status", false, Comparator.comparing(AdjustmentMaster::getStatus));
         MFXTableColumn<AdjustmentMaster> adjustmentTotalAmount =
                 new MFXTableColumn<>(
                         "Total Amount", false, Comparator.comparing(AdjustmentMaster::getTotal));
 
-        adjustmentDate.setRowCellFactory(
-                adjustment -> new MFXTableRowCell<>(AdjustmentMaster::getLocaleDate));
         adjustmentStatus.setRowCellFactory(
                 adjustment -> new MFXTableRowCell<>(AdjustmentMaster::getStatus));
         adjustmentTotalAmount.setRowCellFactory(
                 adjustment -> new MFXTableRowCell<>(AdjustmentMaster::getTotal));
 
-        adjustmentDate.prefWidthProperty().bind(masterTable.widthProperty().multiply(.5));
         adjustmentStatus.prefWidthProperty().bind(masterTable.widthProperty().multiply(.5));
         adjustmentTotalAmount
                 .prefWidthProperty()
@@ -104,11 +99,10 @@ public class AdjustmentController implements Initializable {
 
         masterTable
                 .getTableColumns()
-                .addAll(adjustmentDate, adjustmentStatus, adjustmentTotalAmount);
+                .addAll(adjustmentStatus, adjustmentTotalAmount);
         masterTable
                 .getFilters()
                 .addAll(
-                        new StringFilter<>("Reference", AdjustmentMaster::getRef),
                         new StringFilter<>("Status", AdjustmentMaster::getStatus),
                         new DoubleFilter<>("Total Amount", AdjustmentMaster::getTotal));
         getAdjustmentMasterTable();

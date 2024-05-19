@@ -28,8 +28,6 @@ public class Role {
     private Long id;
     private String name;
     private String label;
-    private boolean status;
     private String description;
-    private List<User> users;
     private List<Permission> permissions;
 }

@@ -102,6 +102,7 @@ public class LoginController implements Initializable {
                         UOMViewModel.getAllUOMs(this::onActivity, null, this::onFailed);
                         UserViewModel.getAllUserProfiles(this::onActivity, null, this::onFailed);
                         RoleViewModel.getAllRoles(this::onActivity, null, this::onFailed);
+                        PermissionsViewModel.getAllPermissions(this::onActivity, null, this::onFailed);
                     } catch (Exception e) {
                         SpotyLogger.writeToFile(e, SplashScreenController.class);
                     }

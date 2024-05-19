@@ -15,4 +15,5 @@ module spoty.utils {
     exports inc.nomard.spoty.utils;
     exports inc.nomard.spoty.utils.navigation;
     exports inc.nomard.spoty.utils.adapters;
+    exports inc.nomard.spoty.utils.exceptions;
 }

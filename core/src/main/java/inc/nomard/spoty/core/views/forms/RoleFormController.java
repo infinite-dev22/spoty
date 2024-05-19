@@ -340,7 +340,7 @@ public class RoleFormController implements Initializable {
                         if (RoleViewModel.getId() > 0) {
                             SpotyThreader.spotyThreadPool(() -> {
                                 try {
-                                    RoleViewModel.updateItem(RoleViewModel.getId(), this::onAction, this::onUpdatedSuccess, this::onFailed);
+                                    RoleViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
                                 } catch (Exception e) {
                                     SpotyLogger.writeToFile(e, this.getClass());
                                 }
@@ -1817,6 +1817,8 @@ public class RoleFormController implements Initializable {
         cancelBtn.setDisable(false);
         saveBtn.setDisable(false);
 
+        resetCheckboxes();
+
         closeDialog(actionEvent);
         RoleViewModel.resetRoleProperties();
         RoleViewModel.getAllRoles(null, null, null);
@@ -1833,6 +1835,8 @@ public class RoleFormController implements Initializable {
         notificationHolder.addMessage(notification);
         cancelBtn.setDisable(false);
         saveBtn.setDisable(false);
+
+        resetCheckboxes();
 
         closeDialog(actionEvent);
         RoleViewModel.resetRoleProperties();

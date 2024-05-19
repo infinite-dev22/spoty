@@ -41,7 +41,6 @@ public class AdjustmentMasterViewModel {
     private static final ListProperty<AdjustmentMaster> adjustmentMasters =
             new SimpleListProperty<>(adjustmentMastersList);
     private static final LongProperty id = new SimpleLongProperty(0);
-    private static final StringProperty date = new SimpleStringProperty("");
     private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>(null);
     private static final StringProperty note = new SimpleStringProperty("");
     private static final StringProperty status = new SimpleStringProperty("");
@@ -58,23 +57,6 @@ public class AdjustmentMasterViewModel {
 
     public static LongProperty idProperty() {
         return id;
-    }
-
-    public static Date getDate() {
-        try {
-            return new SimpleDateFormat("MMM dd, yyyy").parse(date.get());
-        } catch (ParseException e) {
-            SpotyLogger.writeToFile(e, AdjustmentMasterViewModel.class);
-        }
-        return null;
-    }
-
-    public static void setDate(String date) {
-        AdjustmentMasterViewModel.date.set(date);
-    }
-
-    public static StringProperty dateProperty() {
-        return date;
     }
 
     public static Branch getBranch() {
@@ -141,7 +123,6 @@ public class AdjustmentMasterViewModel {
         Platform.runLater(
                 () -> {
                     setId(0);
-                    setDate("");
                     setBranch(null);
                     setNote("");
                     PENDING_DELETES.clear();
@@ -159,6 +140,9 @@ public class AdjustmentMasterViewModel {
         if (!AdjustmentDetailViewModel.getAdjustmentDetailsList().isEmpty()) {
             adjustmentMaster.setAdjustmentDetails(AdjustmentDetailViewModel.getAdjustmentDetailsList());
         }
+
+
+        System.out.println(new Gson().toJson(adjustmentMaster));
 
         var task = adjustmentRepository.postMaster(adjustmentMaster);
         task.setOnRunning(workerStateEvent -> onActivity.run());
@@ -237,7 +221,6 @@ public class AdjustmentMasterViewModel {
 
             setId(adjustmentMaster.getId());
             setNote(adjustmentMaster.getNotes());
-            setDate(adjustmentMaster.getLocaleDate());
             AdjustmentDetailViewModel.adjustmentDetailsList.clear();
             AdjustmentDetailViewModel.adjustmentDetailsList.addAll(adjustmentMaster.getAdjustmentDetails());
 
@@ -293,7 +276,6 @@ public class AdjustmentMasterViewModel {
         var adjustmentMaster = AdjustmentMaster.builder()
                 .id(getId())
                 .notes(getNote())
-                .date(getDate())
                 .build();
 
         if (!PENDING_DELETES.isEmpty()) {
