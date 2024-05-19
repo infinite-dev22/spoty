@@ -61,6 +61,7 @@ public class EmploymentStatusFormController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         // Input bindings.
         name.textProperty().bindBidirectional(EmploymentStatusViewModel.nameProperty());
+        colorPicker.textProperty().bindBidirectional(EmploymentStatusViewModel.colorProperty());
         description.textProperty().bindBidirectional(EmploymentStatusViewModel.descriptionProperty());
         // Input listeners.
         requiredValidator();

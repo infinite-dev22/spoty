@@ -21,8 +21,11 @@ import javafx.application.*;
 import javafx.collections.*;
 import javafx.event.*;
 import javafx.fxml.*;
+import javafx.geometry.*;
+import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
+import javafx.scene.paint.*;
 import javafx.stage.*;
 import javafx.util.*;
 
@@ -88,10 +91,30 @@ public class EmploymentStatusController implements Initializable {
         MFXTableColumn<EmploymentStatus> appearance =
                 new MFXTableColumn<>("Appearance", false, Comparator.comparing(EmploymentStatus::getName));
         MFXTableColumn<EmploymentStatus> description =
-                new MFXTableColumn<>("EmploymentStatus", false, Comparator.comparing(EmploymentStatus::getDescription));
+                new MFXTableColumn<>("Description", false, Comparator.comparing(EmploymentStatus::getDescription));
 
-        name.setRowCellFactory(employee -> new MFXTableRowCell<>(EmploymentStatus::getName));
-        description.setRowCellFactory(employee -> new MFXTableRowCell<>(EmploymentStatus::getDescription));
+        name.setRowCellFactory(employmentStatus -> new MFXTableRowCell<>(EmploymentStatus::getName));
+        appearance.setRowCellFactory(employmentStatus -> {
+            var col = Color.valueOf(employmentStatus.getColor());
+            var color = Color.rgb((int) col.getRed(), (int) col.getGreen(), (int) col.getBlue(), .3);
+
+            var cell = new MFXTableRowCell<>(EmploymentStatus::getName);
+
+            var label = new Label(employmentStatus.getName());
+            label.setTextFill(Color.valueOf(employmentStatus.getColor()).darker());
+            label.setPadding(new Insets(5, 10, 5, 10));
+            label.setBorder(new Border(new BorderStroke(Color.valueOf(employmentStatus.getColor()).darker(), BorderStrokeStyle.SOLID, new CornerRadii(50), BorderWidths.DEFAULT)));
+            label.setBackground(new Background(new BackgroundFill(color, new CornerRadii(50), Insets.EMPTY)));
+
+            var hBox = new VBox(label);
+            hBox.setAlignment(Pos.CENTER);
+
+            cell.setGraphic(hBox);
+            cell.setAlignment(Pos.CENTER);
+            cell.setText(null);
+            return cell;
+        });
+        description.setRowCellFactory(employmentStatus -> new MFXTableRowCell<>(EmploymentStatus::getDescription));
 
         name.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
         appearance.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
@@ -134,6 +157,7 @@ public class EmploymentStatusController implements Initializable {
                                 event.consume();
                             };
                     row.setOnContextMenuRequested(eventHandler);
+                    row.setPrefHeight(50);
                     return row;
                 });
     }

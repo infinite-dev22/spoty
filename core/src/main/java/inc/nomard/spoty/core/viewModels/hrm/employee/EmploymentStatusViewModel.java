@@ -38,6 +38,7 @@ public class EmploymentStatusViewModel {
             .create();
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final StringProperty name = new SimpleStringProperty("");
+    private static final StringProperty color = new SimpleStringProperty("");
     private static final StringProperty description = new SimpleStringProperty("");
     public static ObservableList<EmploymentStatus> employmentStatusesList = FXCollections.observableArrayList();
     private static final ListProperty<EmploymentStatus> employmentStatuses = new SimpleListProperty<>(employmentStatusesList);
@@ -66,6 +67,18 @@ public class EmploymentStatusViewModel {
 
     public static StringProperty nameProperty() {
         return name;
+    }
+
+    public static String getColor() {
+        return color.get();
+    }
+
+    public static void setColor(String color) {
+        EmploymentStatusViewModel.color.set(color);
+    }
+
+    public static StringProperty colorProperty() {
+        return color;
     }
 
     public static String getDescription() {
@@ -99,6 +112,7 @@ public class EmploymentStatusViewModel {
         var employmentStatus =
                 EmploymentStatus.builder()
                         .name(getName())
+                        .color(getColor())
                         .description(getDescription())
                         .build();
 
@@ -216,6 +230,7 @@ public class EmploymentStatusViewModel {
         var employmentStatus = EmploymentStatus.builder()
                 .id(getId())
                 .name(getName())
+                .color(getColor())
                 .description(getDescription())
                 .build();
 

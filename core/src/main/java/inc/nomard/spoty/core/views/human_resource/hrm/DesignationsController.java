@@ -87,7 +87,7 @@ public class DesignationsController implements Initializable {
         MFXTableColumn<Designation> name =
                 new MFXTableColumn<>("Name", false, Comparator.comparing(Designation::getName));
         MFXTableColumn<Designation> description =
-                new MFXTableColumn<>("Designation", false, Comparator.comparing(Designation::getDescription));
+                new MFXTableColumn<>("Description", false, Comparator.comparing(Designation::getDescription));
 
         name.setRowCellFactory(employee -> new MFXTableRowCell<>(Designation::getName));
         description.setRowCellFactory(employee -> new MFXTableRowCell<>(Designation::getDescription));

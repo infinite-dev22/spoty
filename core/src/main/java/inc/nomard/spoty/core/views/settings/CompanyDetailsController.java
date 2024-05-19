@@ -13,6 +13,7 @@ import io.github.palexdev.mfxresources.fonts.*;
 import java.net.*;
 import java.util.*;
 import java.util.function.*;
+import javafx.collections.*;
 import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.image.*;
@@ -157,6 +158,14 @@ public class CompanyDetailsController implements Initializable {
         defaultCurrencyPicker.setItems(CurrencyViewModel.getCurrencies());
         defaultCurrencyPicker.setConverter(currencyConverter);
         defaultCurrencyPicker.setFilterFunction(currencyFilterFunction);
+        if (CurrencyViewModel.getCurrencies().isEmpty()) {
+            CurrencyViewModel.getCurrencies()
+                    .addListener(
+                            (ListChangeListener<Currency>)
+                                    c -> defaultCurrencyPicker.setItems(CurrencyViewModel.getCurrencies()));
+        } else {
+            defaultCurrencyPicker.itemsProperty().bindBidirectional(CurrencyViewModel.currencyProperty());
+        }
     }
 
     private void showData() {
