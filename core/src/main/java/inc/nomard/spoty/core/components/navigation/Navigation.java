@@ -15,6 +15,7 @@
 package inc.nomard.spoty.core.components.navigation;
 
 import inc.nomard.spoty.utils.*;
+import inc.nomard.spoty.utils.flavouring.*;
 import java.util.*;
 import javafx.animation.*;
 import javafx.beans.property.*;
@@ -27,6 +28,7 @@ public class Navigation {
     private static final Map<String, NavTree.NavTreeItem> NAV_TREE = createNavItems();
     private static StackPane viewWindow;
     private static Navigation instance;
+    private final AppFlavor flavor = AppConfig.getActiveFlavor();
     private final ReadOnlyObjectWrapper<NavTree.NavTreeItem> navTree =
             new ReadOnlyObjectWrapper<>(createTree());
 
@@ -268,18 +270,27 @@ public class Navigation {
                         NAV_TREE.get("ROLES"));
 
         var root = NavTree.NavTreeItem.root();
-        root.getChildren()
-                .addAll(
-                        dashboard,
-                        humanResource,
-                        people,
-                        inventory,
-                        quotation,
-                        sale,
-                        accounts,
-                        tax,
-                        reports,
-                        settings);
+        if (flavor == AppFlavor.DEV) {
+            root.getChildren()
+                    .addAll(
+                            dashboard,
+                            humanResource,
+                            people,
+                            inventory,
+                            quotation,
+                            sale,
+                            accounts,
+                            tax,
+                            reports,
+                            settings);
+        } else if (flavor == AppFlavor.MVP) {
+            root.getChildren()
+                    .addAll(
+                            people,
+                            inventory,
+                            quotation,
+                            sale);
+        }
         return root;
     }
 
