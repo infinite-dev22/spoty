@@ -166,14 +166,24 @@ public class Navigation {
         var dashboard =
                 NavTree.NavTreeItem.mainPage("Dashboard", "fas-chart-simple", Pages.getDashboardPane());
 
-        var sale = NavTree.NavTreeItem.group("Sale", "fas-scale-balanced");
-        sale
-                .getChildren()
-                .setAll(
-                        NAV_TREE.get("POINT_OF_SALE"),
-                        NAV_TREE.get("ORDERS"),
-                        NAV_TREE.get("SALE_RETURN"),
-                        NAV_TREE.get("SALE_TERMS"));
+        NavTree.NavTreeItem sale;
+        if (flavor == AppFlavor.TRACTION) {
+            sale = NavTree.NavTreeItem.group("Sale", "fas-scale-balanced");
+            sale
+                    .getChildren()
+                    .setAll(
+                            NAV_TREE.get("POINT_OF_SALE"),
+                            NAV_TREE.get("ORDERS"),
+                            NAV_TREE.get("SALE_RETURN"),
+                            NAV_TREE.get("SALE_TERMS"));
+        } else {
+            sale = NavTree.NavTreeItem.group("Sale", "fas-scale-balanced");
+            sale
+                    .getChildren()
+                    .setAll(
+                            NAV_TREE.get("POINT_OF_SALE"),
+                            NAV_TREE.get("ORDERS"));
+        }
 
         var people = NavTree.NavTreeItem.group("People", "fas-users");
         people
@@ -182,26 +192,44 @@ public class Navigation {
                         NAV_TREE.get("SUPPLIERS"),
                         NAV_TREE.get("CUSTOMERS"));
 
-        var purchase = NavTree.NavTreeItem.group("Purchase");
-        purchase
-                .getChildren()
-                .setAll(
-                        NAV_TREE.get("PURCHASES"),
-                        NAV_TREE.get("PURCHASE_RETURNS"));
+        NavTree.NavTreeItem purchase;
+        if (flavor == AppFlavor.TRACTION) {
+            purchase = NavTree.NavTreeItem.group("Purchase");
+            purchase
+                    .getChildren()
+                    .setAll(
+                            NAV_TREE.get("PURCHASES"),
+                            NAV_TREE.get("PURCHASE_RETURNS"));
+        } else {
+            purchase = NavTree.NavTreeItem.page("Purchases", Pages.getPurchasePane());
+        }
 
         var inventory = NavTree.NavTreeItem.group("Inventory", "fas-cubes");
-        inventory
-                .getChildren()
-                .setAll(
-                        NAV_TREE.get("CATEGORY"),
-                        NAV_TREE.get("BRAND"),
-                        NAV_TREE.get("UNIT"),
-                        NAV_TREE.get("PRODUCTS"),
-                        // NAV_TREE.get("REQUISITIONS"), Will be added if gains traction.
-                        purchase,
-                        NAV_TREE.get("STOCK_INS"),
-                        NAV_TREE.get("TRANSFERS"),
-                        NAV_TREE.get("ADJUSTMENTS"));
+        if (flavor == AppFlavor.TRACTION) {
+            inventory
+                    .getChildren()
+                    .setAll(
+                            NAV_TREE.get("CATEGORY"),
+                            NAV_TREE.get("BRAND"),
+                            NAV_TREE.get("UNIT"),
+                            NAV_TREE.get("PRODUCTS"),
+                            NAV_TREE.get("REQUISITIONS"),
+                            purchase,
+                            NAV_TREE.get("STOCK_INS"),
+                            NAV_TREE.get("TRANSFERS"),
+                            NAV_TREE.get("ADJUSTMENTS"));
+        } else {
+            inventory
+                    .getChildren()
+                    .setAll(
+                            NAV_TREE.get("CATEGORY"),
+                            NAV_TREE.get("BRAND"),
+                            NAV_TREE.get("UNIT"),
+                            NAV_TREE.get("PRODUCTS"),
+                            purchase,
+                            NAV_TREE.get("STOCK_INS"),
+                            NAV_TREE.get("ADJUSTMENTS"));
+        }
 
         var reports = NavTree.NavTreeItem.group("Reports", "fas-clipboard-list");
         reports
@@ -243,37 +271,73 @@ public class Navigation {
                         NAV_TREE.get("PAY_SLIPS"),
                         NAV_TREE.get("BENEFICIARY_TYPE"),
                         NAV_TREE.get("BENEFICIARY_BADGE"));
+
         var humanResource = NavTree.NavTreeItem.group("Human Resource", "fas-user-tie");
-        humanResource
-                .getChildren()
-                .setAll(humanResourceManagement,
-                        leave,
-                        payRoll);
+        if (flavor == AppFlavor.TRACTION) {
+            humanResource
+                    .getChildren()
+                    .setAll(humanResourceManagement,
+                            leave,
+                            payRoll);
+        } else {
+            humanResource
+                    .getChildren()
+                    .setAll(
+                            NAV_TREE.get("DESIGNATION"),
+                            NAV_TREE.get("EMPLOYMENT_STATUS"),
+                            NAV_TREE.get("EMPLOYEES"));
+        }
 
         var accounts = NavTree.NavTreeItem.group("Accounting", "fas-coins");
-        accounts.getChildren().setAll(
-                NAV_TREE.get("BANK_ACCOUNTS"),
-                NAV_TREE.get("EXPENSE_CATEGORY"),
-                NAV_TREE.get("EXPENSE"));
+        if (flavor == AppFlavor.TRACTION) {
+            accounts.getChildren().setAll(
+                    NAV_TREE.get("BANK_ACCOUNTS"),
+                    NAV_TREE.get("EXPENSE_CATEGORY"),
+                    NAV_TREE.get("EXPENSE"));
+        } else {
+            accounts.getChildren().setAll(
+                    NAV_TREE.get("EXPENSE_CATEGORY"),
+                    NAV_TREE.get("EXPENSE"));
+        }
 
         var quotation = NavTree.NavTreeItem.mainPage("Quotations", "fas-receipt", Pages.getQuotationPane());
 
         var tax = NavTree.NavTreeItem.mainPage("Tax", "fas-money-bill-wheat", Pages.getTaxesPane());
         var settings = NavTree.NavTreeItem.group("Settings", "fas-gears");
-        settings
-                .getChildren()
-                .setAll(
-                        NAV_TREE.get("BRANCHES"),
-                        NAV_TREE.get("CURRENCIES"),
-                        NAV_TREE.get("APP_SETTINGS"),
-                        NAV_TREE.get("COMPANY"),
-                        NAV_TREE.get("ROLES"));
+
+        if (flavor == AppFlavor.TRACTION) {
+            settings
+                    .getChildren()
+                    .setAll(
+                            NAV_TREE.get("BRANCHES"),
+                            NAV_TREE.get("CURRENCIES"),
+                            NAV_TREE.get("APP_SETTINGS"),
+                            NAV_TREE.get("COMPANY"),
+                            NAV_TREE.get("ROLES"));
+        } else {
+            settings
+                    .getChildren()
+                    .setAll(
+                            NAV_TREE.get("APP_SETTINGS"),
+                            NAV_TREE.get("COMPANY"));
+        }
 
         var root = NavTree.NavTreeItem.root();
         if (flavor == AppFlavor.DEV) {
             root.getChildren()
                     .addAll(
                             dashboard,
+                            humanResource,
+                            people,
+                            inventory,
+                            quotation,
+                            sale,
+                            accounts,
+                            reports,
+                            settings);
+        } else if (flavor == AppFlavor.TRACTION) {
+            root.getChildren()
+                    .addAll(dashboard,
                             humanResource,
                             people,
                             inventory,

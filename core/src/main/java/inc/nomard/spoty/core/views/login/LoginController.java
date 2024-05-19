@@ -3,11 +3,11 @@ package inc.nomard.spoty.core.views.login;
 import atlantafx.base.util.*;
 import inc.nomard.spoty.core.*;
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
-import static inc.nomard.spoty.core.Validators.*;
 import inc.nomard.spoty.core.components.animations.*;
 import inc.nomard.spoty.core.components.message.*;
 import inc.nomard.spoty.core.components.message.enums.*;
 import inc.nomard.spoty.core.values.strings.*;
+import static inc.nomard.spoty.core.values.strings.Values.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.adjustments.*;
 import inc.nomard.spoty.core.viewModels.hrm.employee.*;
@@ -24,6 +24,7 @@ import inc.nomard.spoty.core.views.splash.*;
 import inc.nomard.spoty.utils.*;
 import static inc.nomard.spoty.utils.SpotyThreader.*;
 import io.github.palexdev.materialfx.controls.*;
+import static io.github.palexdev.materialfx.utils.StringUtils.*;
 import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
@@ -33,11 +34,13 @@ import java.net.*;
 import java.util.*;
 import javafx.animation.*;
 import javafx.application.*;
+import javafx.beans.binding.*;
 import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.image.*;
+import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.shape.*;
 import javafx.stage.*;
@@ -115,8 +118,8 @@ public class LoginController implements Initializable {
         email.textProperty().bindBidirectional(LoginViewModel.usernameProperty());
         password.textProperty().bindBidirectional(LoginViewModel.passwordProperty());
         // Input listeners.
-        emailValidator(email, emailValidationLabel, loginBtn);
         requiredValidator();
+        focusControl();
 
         loginBtn.setOnAction(actionEvent -> onLoginPressed());
         Rectangle clipRect = new Rectangle(contentPane.getPrefWidth(), contentPane.getPrefHeight());
@@ -127,7 +130,7 @@ public class LoginController implements Initializable {
         poweredByLbl.setText("Powered by " + Labels.COMPANY_NAME);
     }
 
-    public void onLoginPressed() {
+    private void onLoginPressed() {
         List<Constraint> emailConstraints = email.validate();
         List<Constraint> passwordConstraints = password.validate();
         if (!emailConstraints.isEmpty()) {
@@ -293,7 +296,7 @@ public class LoginController implements Initializable {
         timeline.play();
     }
 
-    public void requiredValidator() {
+    private void requiredValidator() {
         // Name input validation.
         Constraint eamilConstraint =
                 Constraint.Builder.build()
@@ -301,7 +304,24 @@ public class LoginController implements Initializable {
                         .setMessage("Email can't be empty")
                         .setCondition(email.textProperty().length().greaterThan(0))
                         .get();
-        email.getValidator().constraint(eamilConstraint);
+        Constraint alphaCharsConstraint =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Invalid email")
+                        .setCondition(
+                                Bindings.createBooleanBinding(
+                                        () -> containsAny(email.getText(), "", ALPHANUMERIC),
+                                        email.textProperty()))
+                        .get();
+        Constraint specialCharsConstraint =
+                Constraint.Builder.build()
+                        .setSeverity(Severity.ERROR)
+                        .setMessage("Invalid email")
+                        .setCondition(
+                                Bindings.createBooleanBinding(
+                                        () -> containsAll(email.getText(), "", SPECIALS), email.textProperty()))
+                        .get();
+        email.getValidator().constraint(eamilConstraint).constraint(alphaCharsConstraint).constraint(specialCharsConstraint);
         Constraint passwordConstraint =
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
@@ -332,5 +352,39 @@ public class LoginController implements Initializable {
                                 password.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                             }
                         });
+    }
+
+    private void focusControl() {
+        email.setOnKeyPressed(event -> {
+            if (event.getCode().equals(KeyCode.ENTER)) {
+                if (!email.getText().isEmpty() && !email.getText().isBlank() && password.getText().isEmpty() && password.getText().isBlank()) {
+                    List<Constraint> emailConstraints = email.validate();
+                    if (!emailConstraints.isEmpty()) {
+                        emailValidationLabel.setManaged(true);
+                        emailValidationLabel.setVisible(true);
+                        emailValidationLabel.setText(emailConstraints.getFirst().getMessage());
+                        email.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                    }
+                    if (emailConstraints.isEmpty()) {
+                        password.requestFocus();
+                    }
+                } else if (email.getText().isEmpty() && email.getText().isBlank() && !password.getText().isEmpty() && !password.getText().isBlank()) {
+                    email.requestFocus();
+                } else if (!email.getText().isEmpty() && !email.getText().isBlank() && !password.getText().isEmpty() && !password.getText().isBlank()) {
+                    loginBtn.fire();
+                }
+            }
+        });
+        password.setOnKeyPressed(event -> {
+            if (event.getCode().equals(KeyCode.ENTER)) {
+                if (!password.getText().isEmpty() && !password.getText().isBlank() && email.getText().isEmpty() && email.getText().isBlank()) {
+                    email.requestFocus();
+                } else if (!email.getText().isEmpty() && !email.getText().isBlank() && password.getText().isEmpty() && password.getText().isBlank()) {
+                    password.requestFocus();
+                } else if (!password.getText().isEmpty() && !password.getText().isBlank() && !email.getText().isEmpty() && !email.getText().isBlank()) {
+                    loginBtn.fire();
+                }
+            }
+        });
     }
 }

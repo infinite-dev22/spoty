@@ -4,5 +4,6 @@ public enum AppFlavor {
     MVP,
     FULL,
     DEV,
-    PROD
+    PROD,
+    TRACTION
 }
