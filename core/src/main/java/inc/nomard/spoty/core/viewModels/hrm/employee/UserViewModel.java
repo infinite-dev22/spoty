@@ -31,8 +31,6 @@ import javafx.collections.*;
 
 
 public class UserViewModel {
-    public static final ObservableList<UserProfile> userProfilesList = FXCollections.observableArrayList();
-    public static final ListProperty<UserProfile> userProfiles = new SimpleListProperty<>(userProfilesList);
     public static final ObservableList<User> usersList = FXCollections.observableArrayList();
     public static final ListProperty<User> users = new SimpleListProperty<>(usersList);
     private static final Gson gson = new GsonBuilder()
@@ -53,7 +51,7 @@ public class UserViewModel {
     private static final BooleanProperty active = new SimpleBooleanProperty(true);
     private static final BooleanProperty accessAllBranches = new SimpleBooleanProperty(false);
     private static final StringProperty avatar = new SimpleStringProperty("");
-    private static final UserProfilesRepositoryImpl userProfilesRepository = new UserProfilesRepositoryImpl();
+    private static final UsersRepositoryImpl usersRepository = new UsersRepositoryImpl();
 
     public static long getId() {
         return id.get();
@@ -211,18 +209,6 @@ public class UserViewModel {
         return country;
     }
 
-    public static ObservableList<UserProfile> getUserProfiles() {
-        return userProfiles.get();
-    }
-
-    public static void setUserProfiles(ObservableList<UserProfile> userProfiles) {
-        UserViewModel.userProfiles.set(userProfiles);
-    }
-
-    public static ListProperty<UserProfile> userProfilesProperty() {
-        return userProfiles;
-    }
-
     public static ObservableList<User> getUsers() {
         return users.get();
     }
@@ -263,7 +249,7 @@ public class UserViewModel {
             ParameterlessConsumer onActivity,
             ParameterlessConsumer onSuccess,
             ParameterlessConsumer onFailed) {
-        var userProfile = UserProfile.builder()
+        var user = UserModel.builder()
                 .firstName(getFirstName())
                 .lastName(getLastName())
                 .otherName(getOtherName())
@@ -272,18 +258,18 @@ public class UserViewModel {
                 .avatar(getAvatar())
                 .build();
 
-        var task = userProfilesRepository.post(userProfile);
+        var task = usersRepository.post(user);
         task.setOnRunning(workerStateEvent -> onActivity.run());
         task.setOnSucceeded(workerStateEvent -> onSuccess.run());
         task.setOnFailed(workerStateEvent -> onFailed.run());
         SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void getAllUserProfiles(
+    public static void getAllUsers(
             ParameterlessConsumer onActivity,
             ParameterlessConsumer onSuccess,
             ParameterlessConsumer onFailed) {
-        var task = userProfilesRepository.fetchAll();
+        var task = usersRepository.fetchAll();
         if (Objects.nonNull(onActivity)) {
             task.setOnRunning(workerStateEvent -> onActivity.run());
         }
@@ -292,12 +278,12 @@ public class UserViewModel {
         }
         task.setOnSucceeded(workerStateEvent -> {
             try {
-                Type listType = new TypeToken<ArrayList<UserProfile>>() {
+                Type listType = new TypeToken<ArrayList<User>>() {
                 }.getType();
-                ArrayList<UserProfile> userList = gson.fromJson(task.get().body(), listType);
+                ArrayList<User> userList = gson.fromJson(task.get().body(), listType);
 
-                userProfilesList.clear();
-                userProfilesList.addAll(userList);
+                usersList.clear();
+                usersList.addAll(userList);
 
                 if (Objects.nonNull(onSuccess)) {
                     onSuccess.run();
@@ -316,7 +302,7 @@ public class UserViewModel {
             ParameterlessConsumer onFailed) {
         var findModel = FindModel.builder().id(index).build();
 
-        var task = userProfilesRepository.fetch(findModel);
+        var task = usersRepository.fetch(findModel);
         if (Objects.nonNull(onActivity)) {
             task.setOnRunning(workerStateEvent -> onActivity.run());
         }
@@ -325,15 +311,15 @@ public class UserViewModel {
         }
         task.setOnSucceeded(workerStateEvent -> {
             try {
-                var userProfile = gson.fromJson(task.get().body(), UserProfile.class);
+                var user = gson.fromJson(task.get().body(), UserModel.class);
 
-                setId(userProfile.getId());
-                setFirstName(userProfile.getFirstName());
-                setLastName(userProfile.getLastName());
-                setOtherName(userProfile.getOtherName());
-                setActive(userProfile.isActive());
-                setPhone(userProfile.getPhone());
-                setEmail(userProfile.getEmail());
+                setId(user.getId());
+                setFirstName(user.getFirstName());
+                setLastName(user.getLastName());
+                setOtherName(user.getOtherName());
+                setActive(user.isActive());
+                setPhone(user.getPhone());
+                setEmail(user.getEmail());
 
                 if (Objects.nonNull(onSuccess)) {
                     onSuccess.run();
@@ -350,7 +336,7 @@ public class UserViewModel {
             ParameterlessConsumer onActivity,
             ParameterlessConsumer onFailed) {
         var searchModel = SearchModel.builder().search(search).build();
-        var task = userProfilesRepository.search(searchModel);
+        var task = usersRepository.search(searchModel);
         if (Objects.nonNull(onActivity)) {
             task.setOnRunning(workerStateEvent -> onActivity.run());
         }
@@ -359,12 +345,12 @@ public class UserViewModel {
         }
         task.setOnSucceeded(workerStateEvent -> {
             try {
-                Type listType = new TypeToken<ArrayList<UserProfile>>() {
+                Type listType = new TypeToken<ArrayList<User>>() {
                 }.getType();
-                ArrayList<UserProfile> userList = gson.fromJson(task.get().body(), listType);
+                ArrayList<User> userList = gson.fromJson(task.get().body(), listType);
 
-                userProfilesList.clear();
-                userProfilesList.addAll(userList);
+                usersList.clear();
+                usersList.addAll(userList);
             } catch (InterruptedException | ExecutionException e) {
                 SpotyLogger.writeToFile(e, UserViewModel.class);
             }
@@ -376,7 +362,7 @@ public class UserViewModel {
             ParameterlessConsumer onActivity,
             ParameterlessConsumer onSuccess,
             ParameterlessConsumer onFailed) {
-        var userProfile = UserProfile.builder()
+        var user = UserModel.builder()
                 .id(getId())
                 .firstName(getFirstName())
                 .lastName(getLastName())
@@ -386,7 +372,7 @@ public class UserViewModel {
                 .avatar(getAvatar())
                 .build();
 
-        var task = userProfilesRepository.put(userProfile);
+        var task = usersRepository.put(user);
         task.setOnRunning(workerStateEvent -> onActivity.run());
         task.setOnSucceeded(workerStateEvent -> onSuccess.run());
         task.setOnFailed(workerStateEvent -> onFailed.run());
@@ -400,7 +386,7 @@ public class UserViewModel {
             ParameterlessConsumer onFailed) {
         var findModel = FindModel.builder().id(index).build();
 
-        var task = userProfilesRepository.delete(findModel);
+        var task = usersRepository.delete(findModel);
         task.setOnRunning(workerStateEvent -> onActivity.run());
         task.setOnSucceeded(workerStateEvent -> onSuccess.run());
         task.setOnFailed(workerStateEvent -> onFailed.run());

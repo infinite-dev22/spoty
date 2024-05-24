@@ -460,6 +460,9 @@
     -fx-bar-fill: darkgreen;
     -fx-border-color: #4EE29B;
 }
+.link {
+    -fx-text-fill: blue;
+}
 .card-title{}
 .card-sub-title{}
 .username-label{}

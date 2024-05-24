@@ -25,25 +25,66 @@ import java.util.concurrent.*;
 import javafx.beans.property.*;
 
 
-public class LoginViewModel {
+public class SignupViewModel {
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
                     UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
             .create();
+    private static final StringProperty firstName = new SimpleStringProperty("");
+    private static final StringProperty lastName = new SimpleStringProperty("");
+    private static final StringProperty otherName = new SimpleStringProperty("");
+    private static final StringProperty phone = new SimpleStringProperty("");
     private static final StringProperty email = new SimpleStringProperty("");
     private static final StringProperty password = new SimpleStringProperty("");
+    private static final StringProperty confirmPassword = new SimpleStringProperty("");
     private static final AuthRepositoryImpl authRepository = new AuthRepositoryImpl();
 
-    public static String getPassword() {
-        return password.get();
+    public static String getFirstName() {
+        return firstName.get();
     }
 
-    public static void setPassword(String password) {
-        LoginViewModel.password.set(password);
+    public static void setFirstName(String firstName) {
+        SignupViewModel.firstName.set(firstName);
     }
 
-    public static StringProperty passwordProperty() {
-        return password;
+    public static StringProperty firstNameProperty() {
+        return firstName;
+    }
+
+    public static String getLastName() {
+        return lastName.get();
+    }
+
+    public static void setLastName(String lastName) {
+        SignupViewModel.lastName.set(lastName);
+    }
+
+    public static StringProperty lastNameProperty() {
+        return lastName;
+    }
+
+    public static String getOtherName() {
+        return otherName.get();
+    }
+
+    public static void setOtherName(String otherName) {
+        SignupViewModel.otherName.set(otherName);
+    }
+
+    public static StringProperty otherNameProperty() {
+        return otherName;
+    }
+
+    public static String getPhone() {
+        return phone.get();
+    }
+
+    public static void setPhone(String phone) {
+        SignupViewModel.phone.set(phone);
+    }
+
+    public static StringProperty phoneProperty() {
+        return phone;
     }
 
     public static String getEmail() {
@@ -51,71 +92,75 @@ public class LoginViewModel {
     }
 
     public static void setEmail(String email) {
-        LoginViewModel.email.set(email);
+        SignupViewModel.email.set(email);
     }
 
     public static StringProperty emailProperty() {
         return email;
     }
 
-    public static void resetProperties() {
-        setEmail("");
-        setPassword("");
+    public static String getPassword() {
+        return password.get();
     }
 
-    public static void login(
+    public static void setPassword(String password) {
+        SignupViewModel.password.set(password);
+    }
+
+    public static StringProperty passwordProperty() {
+        return password;
+    }
+
+    public static String getConfirmPassword() {
+        return confirmPassword.get();
+    }
+
+    public static void setConfirmPassword(String confirmPassword) {
+        SignupViewModel.confirmPassword.set(confirmPassword);
+    }
+
+    public static StringProperty confirmPasswordProperty() {
+        return confirmPassword;
+    }
+
+    public static void resetProperties() {
+        setFirstName("");
+        setLastName("");
+        setOtherName("");
+        setPhone("");
+        setEmail("");
+        setPassword("");
+        setConfirmPassword("");
+    }
+
+    public static void registerUser(
             ParameterlessConsumer onActivity,
             ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed,
-            ParameterlessConsumer onBadCredentials) {
+            ParameterlessConsumer onFailed) {
 
-        var loginDetails =
-                LoginModel.builder()
+        var signupDetails =
+                SignupModel.builder()
+                        .firstName(getFirstName())
+                        .lastName(getLastName())
+                        .otherName(getOtherName())
+                        .phone(getPhone())
                         .email(getEmail())
                         .password(getPassword())
+                        .confirmPassword(getConfirmPassword())
                         .build();
 
-        var task = authRepository.login(loginDetails);
+        System.out.println(new Gson().toJson(signupDetails));
+
+        var task = authRepository.signup(signupDetails);
         task.setOnRunning(workerStateEvent -> onActivity.run());
         task.setOnSucceeded(workerStateEvent -> {
             try {
-                var response = gson.fromJson(task.get().body(), LoginResponseModel.class);
-                if (response.getStatus() == 200) {
+                var response = gson.fromJson(task.get().body(), APIResponseModel.class);
+                if (response.getStatus() == 201) {
                     ProtectedGlobals.authToken = response.getToken();
-                    ProtectedGlobals.trial = response.isTrial();
-                    ProtectedGlobals.newTenancy = response.isNewTenancy();
-                    ProtectedGlobals.activeTenancy = response.isActiveTenancy();
-                    ProtectedGlobals.message = response.getMessage();
-                    ProtectedGlobals.user = response.getUser();
-                    ProtectedGlobals.role = response.getRole();
                     onSuccess.run();
-                } else if (response.getStatus() == 401) {
-                    ProtectedGlobals.trial = response.isTrial();
-                    ProtectedGlobals.newTenancy = response.isNewTenancy();
-                    ProtectedGlobals.activeTenancy = response.isActiveTenancy();
-                    ProtectedGlobals.message = response.getMessage();
-                    ProtectedGlobals.user = response.getUser();
-                    ProtectedGlobals.role = response.getRole();
-                    onSuccess.run();
-                } else if (response.getStatus() == 404) {
-                    ProtectedGlobals.trial = response.isTrial();
-                    ProtectedGlobals.newTenancy = response.isNewTenancy();
-                    ProtectedGlobals.activeTenancy = response.isActiveTenancy();
-                    ProtectedGlobals.message = response.getMessage();
-                    ProtectedGlobals.user = response.getUser();
-                    ProtectedGlobals.role = response.getRole();
-                    onSuccess.run();
-                } else if (response.getMessage().toLowerCase().contains("bad credentials")) {
-                    ProtectedGlobals.trial = response.isTrial();
-                    ProtectedGlobals.newTenancy = response.isNewTenancy();
-                    ProtectedGlobals.activeTenancy = response.isActiveTenancy();
-                    ProtectedGlobals.message = response.getMessage();
-                    ProtectedGlobals.user = response.getUser();
-                    ProtectedGlobals.role = response.getRole();
-                    onBadCredentials.run();
                 } else {
                     {
-                        ProtectedGlobals.message = response.getMessage();
                         onFailed.run();
                         System.err.println("The task failed with the following exception:");
                         task.getException().printStackTrace(System.err);
@@ -126,13 +171,6 @@ public class LoginViewModel {
             }
         });
         task.setOnFailed(workerStateEvent -> {
-            LoginResponseModel response;
-            try {
-                response = gson.fromJson(task.get().body(), LoginResponseModel.class);
-            } catch (InterruptedException | ExecutionException e) {
-                throw new RuntimeException(e);
-            }
-            ProtectedGlobals.message = response.getMessage();
             onFailed.run();
             System.err.println("The task failed with the following exception:");
             task.getException().printStackTrace(System.err);

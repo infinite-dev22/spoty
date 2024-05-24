@@ -30,7 +30,7 @@ import inc.nomard.spoty.core.views.inventory.brand.*;
 import inc.nomard.spoty.core.views.inventory.category.*;
 import inc.nomard.spoty.core.views.inventory.products.*;
 import inc.nomard.spoty.core.views.inventory.unit_of_measure.*;
-import inc.nomard.spoty.core.views.login.*;
+import inc.nomard.spoty.core.views.auth.*;
 import inc.nomard.spoty.core.views.previews.people.*;
 import inc.nomard.spoty.core.views.purchases.*;
 import inc.nomard.spoty.core.views.quotation.*;
@@ -51,7 +51,7 @@ import lombok.*;
 
 public class Pages {
     //Login
-    private static final FXMLLoader loginLoader = fxmlLoader("views/login/Login.fxml");
+    private static final FXMLLoader loginLoader = fxmlLoader("views/auth/AuthScreen.fxml");
     //Dashboard
     private static final FXMLLoader dashboardLoader = fxmlLoader("views/dashboard/Dashboard.fxml");
     // Sale
@@ -331,7 +331,7 @@ public class Pages {
     private static BorderPane transferMasterFormPane;
 
     private static void setLogin(Stage stage) {
-        loginLoader.setControllerFactory(e -> new LoginController(stage));
+        loginLoader.setControllerFactory(e -> new AuthScreenController(stage));
     }
 
     private static void setDashboard() {

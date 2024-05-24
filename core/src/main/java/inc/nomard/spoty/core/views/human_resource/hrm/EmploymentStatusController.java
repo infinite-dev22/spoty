@@ -96,7 +96,7 @@ public class EmploymentStatusController implements Initializable {
         name.setRowCellFactory(employmentStatus -> new MFXTableRowCell<>(EmploymentStatus::getName));
         appearance.setRowCellFactory(employmentStatus -> {
             var col = Color.valueOf(employmentStatus.getColor());
-            var color = Color.rgb((int) col.getRed(), (int) col.getGreen(), (int) col.getBlue(), .3);
+            var color = Color.rgb((int) col.getRed() * 255, (int) col.getGreen() * 255, (int) col.getBlue() * 255, .2);
 
             var cell = new MFXTableRowCell<>(EmploymentStatus::getName);
 
@@ -114,6 +114,7 @@ public class EmploymentStatusController implements Initializable {
             cell.setText(null);
             return cell;
         });
+        appearance.setAlignment(Pos.CENTER);
         description.setRowCellFactory(employmentStatus -> new MFXTableRowCell<>(EmploymentStatus::getDescription));
 
         name.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));

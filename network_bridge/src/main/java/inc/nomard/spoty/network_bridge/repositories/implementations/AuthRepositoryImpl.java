@@ -3,7 +3,7 @@ package inc.nomard.spoty.network_bridge.repositories.implementations;
 import com.google.gson.Gson;
 import inc.nomard.spoty.network_bridge.end_points.EndPoints;
 import inc.nomard.spoty.network_bridge.models.LoginModel;
-import inc.nomard.spoty.network_bridge.models.SignUpModel;
+import inc.nomard.spoty.network_bridge.models.SignupModel;
 import inc.nomard.spoty.network_bridge.repositories.interfaces.AuthRepository;
 import javafx.concurrent.Task;
 
@@ -36,7 +36,7 @@ public class AuthRepositoryImpl implements AuthRepository {
     }
 
     @Override
-    public Task<HttpResponse<String>> signup(SignUpModel signUpModel) {
+    public Task<HttpResponse<String>> signup(SignupModel signUpModel) {
         return new Task<>() {
             @Override
             protected HttpResponse<String> call() throws IOException, InterruptedException {

@@ -14,35 +14,22 @@
 
 package inc.nomard.spoty.network_bridge.models;
 
-import inc.nomard.spoty.network_bridge.dtos.Branch;
-import inc.nomard.spoty.network_bridge.dtos.Role;
 import lombok.*;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserModel implements Serializable {
+public class SignupModel implements Serializable {
     private Long id;
     private String firstName;
     private String lastName;
     private String otherName;
     private String email;
     private String phone;
-    private Role role;
-    private Branch branch;
-    @Builder.Default
-    private boolean active = true;
-    @Builder.Default
-    private boolean locked = false;
-    @Builder.Default
-    private boolean accessAllBranches = false;
-    private String avatar;
     private String password;
     private String confirmPassword;
 }

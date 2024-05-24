@@ -1,5 +1,7 @@
 package inc.nomard.spoty.network_bridge.models;
 
+import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
 import lombok.*;
 
 @Getter
@@ -7,7 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class APIResponseModel {
+public class LoginResponseModel {
     @Builder.Default
     private int status = 0;
     @Builder.Default
@@ -19,4 +21,6 @@ public class APIResponseModel {
     private boolean trial;
     private boolean newTenancy;
     private boolean activeTenancy;
+    private User user;
+    private Role role;
 }

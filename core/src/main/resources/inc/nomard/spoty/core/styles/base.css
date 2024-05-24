@@ -610,3 +610,31 @@
     -fx-border-width: 2px;
     -fx-pref-width: 20;
 }
+
+.plan-card{
+    -fx-background-color: #D9DCD6;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-width: 5;
+}
+
+.plan-name {
+    -fx-font-family: 'Roboto Bold';
+    -fx-font-size: 25;
+}
+.plan-sub-name {
+    -fx-font-family: 'Comfortaa Light';
+    -fx-font-size: 13;
+}
+.plan-highlight {
+    -fx-font-family: 'Open Sans LightItalic';
+    -fx-font-size: 13;
+}
+.plan-price {
+    -fx-font-family: 'Open Sans ExtraBold';
+    -fx-font-size: 40;
+}
+.plan-details {
+    -fx-font-family: 'Comfortaa Medium';
+    -fx-font-size: 13;
+}

@@ -221,7 +221,7 @@ public class EmployeesController implements Initializable {
 
         transition = SpotyAnimations.rotateTransition(refreshIcon, Duration.millis(1000), 360);
 
-        refreshIcon.setOnMouseClicked(mouseEvent -> UserViewModel.getAllUserProfiles(this::onAction, this::onSuccess, this::onFailed));
+        refreshIcon.setOnMouseClicked(mouseEvent -> UserViewModel.getAllUsers(this::onAction, this::onSuccess, this::onFailed));
     }
 
     @Override

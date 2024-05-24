@@ -16,9 +16,15 @@ package inc.nomard.spoty.core.views;
 
 import com.dlsc.gemsfx.infocenter.*;
 import inc.nomard.spoty.core.*;
+import inc.nomard.spoty.core.components.glass_morphism.*;
 import inc.nomard.spoty.core.components.navigation.*;
+import inc.nomard.spoty.core.components.payment_plan_card.*;
+import inc.nomard.spoty.network_bridge.auth.*;
 import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
+import io.github.palexdev.materialfx.dialogs.*;
+import io.github.palexdev.materialfx.enums.*;
+import io.github.palexdev.mfxcomponents.theming.enums.*;
 import io.github.palexdev.mfxcore.controls.Label;
 import io.github.palexdev.mfxresources.fonts.*;
 import java.net.*;
@@ -51,6 +57,7 @@ public class BaseController implements Initializable {
     private final MFXContextMenuItem viewProfile = new MFXContextMenuItem("View profile");
     private final MFXContextMenuItem logOut = new MFXContextMenuItem("Log out");
     private final PopOver popOver = new PopOver();
+    private final VBox vBox = new VBox();
     @FXML
     public MFXFontIcon closeIcon;
     @FXML
@@ -62,7 +69,7 @@ public class BaseController implements Initializable {
     @FXML
     public HBox windowHeader;
     @FXML
-    public AnchorPane rootPane;
+    public StackPane rootPane;
     @FXML
     public MFXButton notificationsBtn;
     @FXML
@@ -79,6 +86,8 @@ public class BaseController implements Initializable {
     public MFXCircleToggleNode sidebarToggle;
     @FXML
     public MFXFontIcon moreActions;
+    @FXML
+    public GlassPane morphPane;
     private double xOffset;
     private double yOffset;
 
@@ -173,10 +182,18 @@ public class BaseController implements Initializable {
         sidebarToggle.setGraphic(arrowIcon);
         sidebarToggle.setText("");
 
-        designationLbl.setText("Super Administrator");
-        userNameLbl.setText("John Doe");
+        designationLbl.setText(ProtectedGlobals.role.getLabel());
+        designationLbl.setWrapText(true);
+        designationLbl.setForceDisableTextEllipsis(true);
+
+        userNameLbl.setText(ProtectedGlobals.user.getName());
+        userNameLbl.setWrapText(true);
+        userNameLbl.setForceDisableTextEllipsis(true);
+
+        clubBouncer();
 
         viewProfile.setOnAction(actionEvent -> navigation.navigate(Pages.getUserProfilePane()));
+        // logOut.setOnAction(actionEvent -> {});
     }
 
     public void moreActionsClicked(MouseEvent event) {
@@ -264,24 +281,120 @@ public class BaseController implements Initializable {
     }
 
     private Notification<?> createNotification(boolean randomizeTimeStamp) {
-        Notification notification;
-        switch ((int) (Math.random() * 3)) {
-            case 0:
-                notification = createMailNotification();
-                break;
-            case 1:
-                notification = new SlackNotification("DLSC GmbH\nDirk Lemmermann", "Please send the material I requested.");
-                break;
-            case 2:
-            default:
-                notification = new CalendarNotification("Calendar", "Meeting with shareholders");
-        }
+        Notification notification = switch ((int) (Math.random() * 3)) {
+            case 0 -> createMailNotification();
+            case 1 -> new SlackNotification("DLSC GmbH\nDirk Lemmermann", "Please send the material I requested.");
+            default -> new CalendarNotification("Calendar", "Meeting with shareholders");
+        };
 
         if (randomizeTimeStamp) {
             notification.setDateTime(createTimeStamp());
         }
 
         return notification;
+    }
+
+    private void clubBouncer() {
+        if (ProtectedGlobals.activeTenancy) {
+            morphPane.morph(true);
+            var hBox1 = new HBox();
+            var hBox2 = new HBox();
+            var close = new io.github.palexdev.mfxcomponents.controls.buttons.MFXButton("Close");
+            var trialPlanDetails = new ArrayList<String>();
+            var regularPlanDetails = new ArrayList<String>();
+            var goldenPlanDetails = new ArrayList<String>();
+
+            trialPlanDetails.add("Unleash powerful sales automation features.");
+            trialPlanDetails.add("Gain real-time insights into your sales pipeline.");
+            trialPlanDetails.add("Manage your customer relationships effectively.");
+            var trialPlan = new PaymentPlanCard(SpotyCoreResourceLoader.load("images/cabin.png"),
+                    "Free Trial",
+                    "Try It Free (7-Day Trial)",
+                    "Unlock the potential of OpenSale ERP system with a no-obligation trial.",
+                    "0",
+                    trialPlanDetails,
+                    "Try It Now",
+                    Color.web("#C44900"));
+
+            regularPlanDetails.add("Comprehensive reporting and analytics.");
+            regularPlanDetails.add("Dedicated customer support.");
+            regularPlanDetails.add("Start growing today!");
+            var monthlyPlan = new PaymentPlanCard(SpotyCoreResourceLoader.load("images/home.png"),
+                    "Pay as You Go",
+                    "Boost Your Business (Monthly)",
+                    "Maximize your sales efficiency and accelerate growth with our monthly subscription.",
+                    "38.0/month",
+                    regularPlanDetails,
+                    "Proceed Now",
+                    Color.web("#0D21A1"));
+
+
+            goldenPlanDetails.add("Discounted annual pricing (save 10%+).");
+            goldenPlanDetails.add("Unwavering commitment to your success.");
+            goldenPlanDetails.add("Peace of mind knowing your sales platform scales with your business.");
+            var yearlyPlan = new PaymentPlanCard(SpotyCoreResourceLoader.load("images/house.png"),
+                    "Save Now",
+                    "Scale with Certainty (Yearly)",
+                    "Lock in guaranteed savings and long-term growth!",
+                    "400.0/year",
+                    goldenPlanDetails,
+                    "Proceed Now",
+                    Color.web("#0E7C7B"));
+
+            hBox1.setAlignment(Pos.CENTER);
+            hBox1.setSpacing(50);
+            hBox1.getChildren().addAll(trialPlan, monthlyPlan, yearlyPlan);
+
+            hBox2.setAlignment(Pos.CENTER);
+            hBox2.getChildren().add(close);
+
+            vBox.setAlignment(Pos.CENTER);
+            vBox.getChildren().addAll(hBox1, hBox2);
+            vBox.setSpacing(100);
+
+            var closeIcon = new MFXFontIcon("fas-xmark");
+            closeIcon.setColor(Color.RED);
+            close.setGraphic(closeIcon);
+            close.setVariants(ButtonVariants.OUTLINED);
+            close.setOnAction(actionEvent1 -> buildDialog().showAndWait());
+            StackPane.setAlignment(hBox1, Pos.CENTER);
+            StackPane.setAlignment(hBox2, Pos.BOTTOM_CENTER);
+            rootPane.getChildren().addAll(vBox);
+        }
+    }
+
+    private MFXStageDialog buildDialog() {
+        var cancel = new io.github.palexdev.mfxcomponents.controls.buttons.MFXButton("Cancel");
+        var proceed = new io.github.palexdev.mfxcomponents.controls.buttons.MFXButton("Proceed");
+
+        var dialogContent = new MFXGenericDialog("Confirm exit!", "Are you sure you want to exit and close this app?");
+        dialogContent.addActions(proceed, cancel);
+
+        cancel.setVariants(ButtonVariants.FILLED);
+        proceed.setVariants(ButtonVariants.OUTLINED);
+        cancel.setOnAction(GlobalActions::closeDialog);
+        proceed.setOnAction(actionEvent -> {
+            GlobalActions.closeDialog(actionEvent);
+            morphPane.morph(false);
+            rootPane.getChildren().removeAll(vBox);
+            primaryStage.hide();
+            primaryStage.close();
+            SpotyThreader.disposeSpotyThreadPool();
+            Platform.exit();
+        });
+
+
+        var dialog = MFXGenericDialogBuilder.build(dialogContent)
+                .toStageDialogBuilder()
+                .initOwner(primaryStage)
+                .initModality(Modality.WINDOW_MODAL)
+                .setOwnerNode(contentPane)
+                .setScrimPriority(ScrimPriority.WINDOW)
+                .setScrimOwner(true)
+                .get();
+
+        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
+        return dialog;
     }
 
     private MailNotification createMailNotification() {

@@ -244,7 +244,7 @@ public class UserFormController implements Initializable {
 
         closeDialog(actionEvent);
         UserViewModel.resetProperties();
-        UserViewModel.getAllUserProfiles(null, null, null);
+        UserViewModel.getAllUsers(null, null, null);
     }
 
     private void onUpdatedSuccess() {
@@ -263,7 +263,7 @@ public class UserFormController implements Initializable {
 
         closeDialog(actionEvent);
         UserViewModel.resetProperties();
-        UserViewModel.getAllUserProfiles(null, null, null);
+        UserViewModel.getAllUsers(null, null, null);
     }
 
     private void onFailed() {
@@ -278,7 +278,7 @@ public class UserFormController implements Initializable {
         cancelBtn.setDisable(false);
         saveBtn.setDisable(false);
 
-        UserViewModel.getAllUserProfiles(null, null, null);
+        UserViewModel.getAllUsers(null, null, null);
     }
 
     public void requiredValidator() {

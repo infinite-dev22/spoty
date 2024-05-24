@@ -21,7 +21,7 @@ module spoty.core {
     requires com.dlsc.gemsfx;
 
     opens inc.nomard.spoty.core.views;
-    opens inc.nomard.spoty.core.views.login;
+    opens inc.nomard.spoty.core.views.auth;
     opens inc.nomard.spoty.core.views.components;
     opens inc.nomard.spoty.core.views.dashboard;
     opens inc.nomard.spoty.core.views.purchases;
@@ -53,6 +53,7 @@ module spoty.core {
     opens inc.nomard.spoty.core.components.navigation;
     opens inc.nomard.spoty.core.components.message;
     opens inc.nomard.spoty.core.components.animations;
+    opens inc.nomard.spoty.core.components.glass_morphism;
     opens inc.nomard.spoty.core.components;
     opens inc.nomard.spoty.core;
     opens inc.nomard.spoty.core.components.message.enums;
