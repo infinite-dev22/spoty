@@ -155,7 +155,6 @@ public class CompanyDetailsController implements Initializable {
                                 StringUtils.containsIgnoreCase(currencyConverter.toString(currency), searchStr);
 
         // Combo box properties.
-        defaultCurrencyPicker.setItems(CurrencyViewModel.getCurrencies());
         defaultCurrencyPicker.setConverter(currencyConverter);
         defaultCurrencyPicker.setFilterFunction(currencyFilterFunction);
         if (CurrencyViewModel.getCurrencies().isEmpty()) {

@@ -14,9 +14,7 @@
 
 package inc.nomard.spoty.network_bridge.dtos.hrm.employee;
 
-import inc.nomard.spoty.network_bridge.dtos.Branch;
-import inc.nomard.spoty.network_bridge.dtos.Role;
-import inc.nomard.spoty.network_bridge.dtos.UserProfile;
+import inc.nomard.spoty.network_bridge.dtos.*;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -30,6 +28,7 @@ import java.util.Date;
 public class User {
     private Long id;
     private UserProfile userProfile;
+    private Tenant tenant;
     private EmploymentStatus employmentStatus;
     private Designation designation;
     private Department department;

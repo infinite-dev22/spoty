@@ -149,8 +149,6 @@ public class SignupViewModel {
                         .confirmPassword(getConfirmPassword())
                         .build();
 
-        System.out.println(new Gson().toJson(signupDetails));
-
         var task = authRepository.signup(signupDetails);
         task.setOnRunning(workerStateEvent -> onActivity.run());
         task.setOnSucceeded(workerStateEvent -> {

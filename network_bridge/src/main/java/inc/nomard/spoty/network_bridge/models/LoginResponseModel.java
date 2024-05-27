@@ -19,6 +19,7 @@ public class LoginResponseModel {
     @Builder.Default
     private String body = "";
     private boolean trial;
+    private boolean canTry;
     private boolean newTenancy;
     private boolean activeTenancy;
     private User user;

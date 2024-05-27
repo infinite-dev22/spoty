@@ -12,9 +12,9 @@
  * Jonathan Mark Mwigo makes no warranties, express or implied, with respect to the computer system code. Jonathan Mark Mwigo shall not be liable for any damages, including, but not limited to, direct, indirect, incidental, special, consequential, or punitive damages, arising out of or in connection with the use of the computer system code.
  */
 
-package inc.nomard.spoty.network_bridge.dtos;
+package inc.nomard.spoty.network_bridge.dtos.hrm.employee;
 
-import inc.nomard.spoty.network_bridge.dtos.hrm.employee.User;
+import inc.nomard.spoty.network_bridge.dtos.*;
 import lombok.*;
 
 import java.util.Objects;
@@ -35,6 +35,7 @@ public class UserProfile {
     private String gender;
     private String dob;
     private String avatar;
+    private Tenant tenant;
 
     public boolean isActive() {
         if (Objects.nonNull(user))

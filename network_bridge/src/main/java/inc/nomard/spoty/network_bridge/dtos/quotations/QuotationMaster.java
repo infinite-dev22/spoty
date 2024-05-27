@@ -30,7 +30,6 @@ import java.util.List;
 @Builder
 public class QuotationMaster {
     private Long id;
-    private Date date;
     private String ref;
     private Customer customer;
     private ArrayList<Branch> branches;
@@ -50,9 +49,5 @@ public class QuotationMaster {
 
     public String getCustomerName() {
         return customer.getName();
-    }
-
-    public String getLocaleDate() {
-        return DateFormat.getDateInstance().format(date);
     }
 }

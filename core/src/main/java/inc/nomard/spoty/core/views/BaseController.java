@@ -19,6 +19,7 @@ import inc.nomard.spoty.core.*;
 import inc.nomard.spoty.core.components.glass_morphism.*;
 import inc.nomard.spoty.core.components.navigation.*;
 import inc.nomard.spoty.core.components.payment_plan_card.*;
+import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.network_bridge.auth.*;
 import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
@@ -295,7 +296,7 @@ public class BaseController implements Initializable {
     }
 
     private void clubBouncer() {
-        if (ProtectedGlobals.activeTenancy) {
+        if (!ProtectedGlobals.activeTenancy) {
             morphPane.morph(true);
             var hBox1 = new HBox();
             var hBox2 = new HBox();
@@ -314,7 +315,9 @@ public class BaseController implements Initializable {
                     "0",
                     trialPlanDetails,
                     "Try It Now",
-                    Color.web("#C44900"));
+                    Color.web("#C44900"),
+                    ProtectedGlobals.canTry,
+                    () -> PaymentsViewModel.startTrial(this::onActivity, this::onSuccess, this::onFailed));
 
             regularPlanDetails.add("Comprehensive reporting and analytics.");
             regularPlanDetails.add("Dedicated customer support.");
@@ -326,8 +329,10 @@ public class BaseController implements Initializable {
                     "38.0/month",
                     regularPlanDetails,
                     "Proceed Now",
-                    Color.web("#0D21A1"));
-
+                    Color.web("#0D21A1"),
+                    true,
+                    () -> {
+                    });
 
             goldenPlanDetails.add("Discounted annual pricing (save 10%+).");
             goldenPlanDetails.add("Unwavering commitment to your success.");
@@ -339,7 +344,10 @@ public class BaseController implements Initializable {
                     "400.0/year",
                     goldenPlanDetails,
                     "Proceed Now",
-                    Color.web("#0E7C7B"));
+                    Color.web("#0E7C7B"),
+                    true,
+                    () -> {
+                    });
 
             hBox1.setAlignment(Pos.CENTER);
             hBox1.setSpacing(50);
@@ -395,6 +403,25 @@ public class BaseController implements Initializable {
 
         io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
         return dialog;
+    }
+
+    private void onActivity() {
+//        loginBtn.setDisable(true);
+//        loginBtn.setManaged(false);
+//        activityIndicator.setVisible(true);
+//        activityIndicator.setManaged(true);
+    }
+
+    private void onSuccess() {
+        morphPane.morph(false);
+        rootPane.getChildren().removeAll(vBox);
+    }
+
+    private void onFailed() {
+//        loginBtn.setDisable(false);
+//        loginBtn.setManaged(true);
+//        activityIndicator.setVisible(false);
+//        activityIndicator.setManaged(false);
     }
 
     private MailNotification createMailNotification() {

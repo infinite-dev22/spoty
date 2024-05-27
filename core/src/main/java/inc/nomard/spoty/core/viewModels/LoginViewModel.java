@@ -80,17 +80,24 @@ public class LoginViewModel {
         task.setOnSucceeded(workerStateEvent -> {
             try {
                 var response = gson.fromJson(task.get().body(), LoginResponseModel.class);
+
+                System.out.println(new Gson().toJson(response));
+
                 if (response.getStatus() == 200) {
                     ProtectedGlobals.authToken = response.getToken();
-                    ProtectedGlobals.trial = response.isTrial();
-                    ProtectedGlobals.newTenancy = response.isNewTenancy();
+                    ProtectedGlobals.trial = response.getUser().getUserProfile().getTenant().isTrial();
+                    ProtectedGlobals.canTry = response.getUser().getUserProfile().getTenant().isCanTry();
+                    ProtectedGlobals.newTenancy = response.getUser().getUserProfile().getTenant().isNewTenancy();
                     ProtectedGlobals.activeTenancy = response.isActiveTenancy();
                     ProtectedGlobals.message = response.getMessage();
                     ProtectedGlobals.user = response.getUser();
                     ProtectedGlobals.role = response.getRole();
                     onSuccess.run();
                 } else if (response.getStatus() == 401) {
-                    ProtectedGlobals.trial = response.isTrial();
+                    ProtectedGlobals.authToken = response.getToken();
+                    ProtectedGlobals.trial = response.getUser().getUserProfile().getTenant().isTrial();
+                    ProtectedGlobals.canTry = response.getUser().getUserProfile().getTenant().isCanTry();
+                    ProtectedGlobals.newTenancy = response.getUser().getUserProfile().getTenant().isNewTenancy();
                     ProtectedGlobals.newTenancy = response.isNewTenancy();
                     ProtectedGlobals.activeTenancy = response.isActiveTenancy();
                     ProtectedGlobals.message = response.getMessage();
@@ -98,20 +105,17 @@ public class LoginViewModel {
                     ProtectedGlobals.role = response.getRole();
                     onSuccess.run();
                 } else if (response.getStatus() == 404) {
-                    ProtectedGlobals.trial = response.isTrial();
-                    ProtectedGlobals.newTenancy = response.isNewTenancy();
+                    ProtectedGlobals.authToken = response.getToken();
+                    ProtectedGlobals.trial = response.getUser().getUserProfile().getTenant().isTrial();
+                    ProtectedGlobals.canTry = response.getUser().getUserProfile().getTenant().isCanTry();
+                    ProtectedGlobals.newTenancy = response.getUser().getUserProfile().getTenant().isNewTenancy();
                     ProtectedGlobals.activeTenancy = response.isActiveTenancy();
                     ProtectedGlobals.message = response.getMessage();
                     ProtectedGlobals.user = response.getUser();
                     ProtectedGlobals.role = response.getRole();
                     onSuccess.run();
                 } else if (response.getMessage().toLowerCase().contains("bad credentials")) {
-                    ProtectedGlobals.trial = response.isTrial();
-                    ProtectedGlobals.newTenancy = response.isNewTenancy();
-                    ProtectedGlobals.activeTenancy = response.isActiveTenancy();
                     ProtectedGlobals.message = response.getMessage();
-                    ProtectedGlobals.user = response.getUser();
-                    ProtectedGlobals.role = response.getRole();
                     onBadCredentials.run();
                 } else {
                     {

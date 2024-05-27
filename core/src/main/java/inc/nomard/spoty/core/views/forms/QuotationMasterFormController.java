@@ -108,9 +108,16 @@ public class QuotationMasterFormController implements Initializable {
                                 StringUtils.containsIgnoreCase(customerConverter.toString(customer), searchStr);
 
         // Combo box properties.
-        customer.setItems(CustomerViewModel.getCustomers());
         customer.setConverter(customerConverter);
         customer.setFilterFunction(customerFilterFunction);
+        if (CustomerViewModel.getCustomers().isEmpty()) {
+            CustomerViewModel.getCustomers()
+                    .addListener(
+                            (ListChangeListener<Customer>)
+                                    c -> customer.setItems(CustomerViewModel.getCustomers()));
+        } else {
+            customer.itemsProperty().bindBidirectional(CustomerViewModel.customersProperty());
+        }
 
         status.setItems(FXCollections.observableArrayList(Values.QUOTATION_TYPE));
 

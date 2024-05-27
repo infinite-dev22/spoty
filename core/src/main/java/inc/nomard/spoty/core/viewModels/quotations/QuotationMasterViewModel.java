@@ -25,7 +25,6 @@ import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.adapters.*;
 import java.io.*;
 import java.lang.reflect.*;
-import java.text.*;
 import java.util.*;
 import java.util.concurrent.*;
 import javafx.application.*;
@@ -44,7 +43,6 @@ public class QuotationMasterViewModel {
     private static final ListProperty<QuotationMaster> quotations =
             new SimpleListProperty<>(quotationMastersList);
     private static final LongProperty id = new SimpleLongProperty(0);
-    private static final StringProperty date = new SimpleStringProperty("");
     private static final ObjectProperty<Customer> customer = new SimpleObjectProperty<>(null);
     private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>(null);
     private static final StringProperty status = new SimpleStringProperty("");
@@ -61,23 +59,6 @@ public class QuotationMasterViewModel {
 
     public static LongProperty idProperty() {
         return id;
-    }
-
-    public static Date getDate() {
-        try {
-            return new SimpleDateFormat("MMM dd, yyyy").parse(date.get());
-        } catch (ParseException e) {
-            SpotyLogger.writeToFile(e, QuotationMasterViewModel.class);
-        }
-        return null;
-    }
-
-    public static void setDate(String date) {
-        QuotationMasterViewModel.date.set(date);
-    }
-
-    public static StringProperty dateProperty() {
-        return date;
     }
 
     public static Branch getBranch() {
@@ -144,7 +125,6 @@ public class QuotationMasterViewModel {
         Platform.runLater(
                 () -> {
                     setId(0L);
-                    setDate("");
                     setCustomer(null);
                     setBranch(null);
                     setStatus("");
@@ -158,7 +138,6 @@ public class QuotationMasterViewModel {
             ParameterlessConsumer onSuccess,
             ParameterlessConsumer onFailed) {
         var quotationMaster = QuotationMaster.builder()
-                .date(getDate())
                 .customer(getCustomer())
                 .status(getStatus())
                 .notes(getNote())
@@ -244,7 +223,6 @@ public class QuotationMasterViewModel {
 
                 setId(quotationMaster.getId());
                 setNote(quotationMaster.getNotes());
-                setDate(quotationMaster.getLocaleDate());
                 QuotationDetailViewModel.quotationDetailsList.clear();
                 QuotationDetailViewModel.quotationDetailsList.addAll(quotationMaster.getQuotationDetails());
 
@@ -305,7 +283,6 @@ public class QuotationMasterViewModel {
             ParameterlessConsumer onFailed) {
         var quotationMaster = QuotationMaster.builder()
                 .id(getId())
-                .date(getDate())
                 .customer(getCustomer())
                 .status(getStatus())
                 .notes(getNote())

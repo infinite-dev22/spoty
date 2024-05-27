@@ -452,4 +452,12 @@ public class EndPoints {
         public static final String updatePermission = rolesUrl + "/permission/update";
         public static final String deletePermission = rolesUrl + "/permission/delete";
     }
+
+    public static final class Payments {
+        public static final String paymentsUrl = apiUrl + "/payments";
+        public static final String cardPay = paymentsUrl + "/pay/card";
+        public static final String mtnMomoPay = paymentsUrl + "/pay/mtn";
+        public static final String airtelMoPay = paymentsUrl + "/pay/airtel";
+        public static final String trial = apiUrl + "/tenants/start/trial";
+    }
 }

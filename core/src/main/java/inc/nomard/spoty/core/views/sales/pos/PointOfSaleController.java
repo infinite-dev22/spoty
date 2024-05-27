@@ -28,7 +28,6 @@ import io.github.palexdev.materialfx.controls.legacy.*;
 import io.github.palexdev.materialfx.utils.*;
 import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import io.github.palexdev.mfxcore.controls.Label;
 import io.github.palexdev.mfxresources.fonts.*;
 import java.net.*;
 import java.util.*;
@@ -48,21 +47,19 @@ import javafx.util.*;
 public class PointOfSaleController implements Initializable {
     private final ToggleGroup toggleGroup = new ToggleGroup();
     @FXML
-    public MFXFilterComboBox<Customer> posCustomerComboBox;
+    public MFXFilterComboBox<Customer> customer;
     @FXML
-    public MFXFilterComboBox<Branch> posBranchComboBox;
+    public MFXLegacyTableView<SaleDetail> cart;
     @FXML
-    public MFXLegacyTableView<SaleDetail> posItemsTable;
+    public MFXTextField discount, search;
+
+    public String total;
     @FXML
-    public MFXTextField posDiscountTextField, posProductSearch;
+    public MFXButton checkOutBtn, emptyCartBtn;
     @FXML
-    public Label posTotalLabel;
+    public HBox filterPane;
     @FXML
-    public MFXButton posCheckOutBtn, posEmptyCartBtn;
-    @FXML
-    public HBox posFilterPane;
-    @FXML
-    public MFXScrollPane posProductHolder;
+    public MFXScrollPane productHolder;
     @FXML
     public HBox refresh;
     public TableColumn<SaleDetail, SaleDetail> cartName;
@@ -74,6 +71,7 @@ public class PointOfSaleController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        checkOutBtn.setText("CheckOut $0.00");
         setIcons();
         setPOSComboBoxes();
         getCategoryFilters();
@@ -84,8 +82,7 @@ public class PointOfSaleController implements Initializable {
 
     private void setPOSComboBoxes() {
         // Bi~Directional Binding.
-        posCustomerComboBox.valueProperty().bindBidirectional(SaleMasterViewModel.customerProperty());
-        posBranchComboBox.valueProperty().bindBidirectional(SaleMasterViewModel.branchProperty());
+        customer.valueProperty().bindBidirectional(SaleMasterViewModel.customerProperty());
 
         // ComboBox Converters.
         StringConverter<Customer> customerConverter =
@@ -100,18 +97,17 @@ public class PointOfSaleController implements Initializable {
                         customer ->
                                 StringUtils.containsIgnoreCase(customerConverter.toString(customer), searchStr);
 
-        Function<String, Predicate<Branch>> branchFilterFunction =
-                searchStr ->
-                        branch -> StringUtils.containsIgnoreCase(branchConverter.toString(branch), searchStr);
-
         // Set items to combo boxes and display custom text.
-        posCustomerComboBox.setItems(CustomerViewModel.getCustomers());
-        posCustomerComboBox.setConverter(customerConverter);
-        posCustomerComboBox.setFilterFunction(customerFilterFunction);
-
-        posBranchComboBox.setItems(BranchViewModel.getBranches());
-        posBranchComboBox.setConverter(branchConverter);
-        posBranchComboBox.setFilterFunction(branchFilterFunction);
+        customer.setConverter(customerConverter);
+        customer.setFilterFunction(customerFilterFunction);
+        if (CustomerViewModel.getCustomers().isEmpty()) {
+            CustomerViewModel.getCustomers()
+                    .addListener(
+                            (ListChangeListener<Customer>)
+                                    c -> customer.setItems(CustomerViewModel.getCustomers()));
+        } else {
+            customer.itemsProperty().bindBidirectional(CustomerViewModel.customersProperty());
+        }
     }
 
     private void getProductsGridView() {
@@ -151,7 +147,7 @@ public class PointOfSaleController implements Initializable {
             GridPane.setMargin(productsGridView, new Insets(10));
         }
 
-        posProductHolder.setContent(productsGridView);
+        productHolder.setContent(productsGridView);
     }
 
     private void productCardOnAction(ProductCard productCard) {
@@ -221,7 +217,7 @@ public class PointOfSaleController implements Initializable {
                 .forEach(
                         productCategory -> {
                             ToggleButton toggleButton = createToggle(productCategory.getName(), toggleGroup);
-                            posFilterPane.getChildren().addAll(toggleButton);
+                            filterPane.getChildren().addAll(toggleButton);
                         });
     }
 
@@ -230,13 +226,13 @@ public class PointOfSaleController implements Initializable {
                 .addListener(
                         (ListChangeListener<ProductCategory>)
                                 c -> {
-                                    posFilterPane.getChildren().clear();
+                                    filterPane.getChildren().clear();
                                     ProductCategoryViewModel.getCategories()
                                             .forEach(
                                                     productCategory -> {
                                                         ToggleButton toggleButton =
                                                                 createToggle(productCategory.getName(), toggleGroup);
-                                                        posFilterPane.getChildren().addAll(toggleButton);
+                                                        filterPane.getChildren().addAll(toggleButton);
                                                     });
                                 });
     }
@@ -297,14 +293,14 @@ public class PointOfSaleController implements Initializable {
         SaleDetailViewModel.getSaleDetails()
                 .addListener(
                         (ListChangeListener<SaleDetail>)
-                                c -> posItemsTable.setItems(SaleDetailViewModel.getSaleDetails()));
+                                c -> cart.setItems(SaleDetailViewModel.getSaleDetails()));
     }
 
     private void getTotalLabels() {
         SaleDetailViewModel.getSaleDetails()
                 .addListener(
                         (ListChangeListener<SaleDetail>)
-                                listener -> posTotalLabel.setText("Total: $" + calculateTotal(SaleDetailViewModel.getSaleDetails())));
+                                listener -> checkOutBtn.setText("CheckOut $" + calculateTotal(SaleDetailViewModel.getSaleDetails())));
     }
 
     public void clearCart() {

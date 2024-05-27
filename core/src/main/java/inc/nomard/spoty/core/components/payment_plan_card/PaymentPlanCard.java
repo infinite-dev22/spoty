@@ -1,6 +1,7 @@
 package inc.nomard.spoty.core.components.payment_plan_card;
 
 import inc.nomard.spoty.core.*;
+import inc.nomard.spoty.utils.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.*;
 import io.github.palexdev.mfxcomponents.theming.enums.*;
 import io.github.palexdev.mfxcore.controls.*;
@@ -24,6 +25,8 @@ public class PaymentPlanCard extends VBox {
     private ArrayList<String> planDetails;
     private String actionName;
     private Color planColor;
+    private boolean canTry;
+    private ParameterlessConsumer onAction;
 
     public PaymentPlanCard() {
         buildUI();
@@ -36,7 +39,9 @@ public class PaymentPlanCard extends VBox {
                            String planPrice,
                            ArrayList<String> planDetails,
                            String actionName,
-                           Color planColor) {
+                           Color planColor,
+                           boolean canTry,
+                           ParameterlessConsumer onAction) {
         this.imageUrl = imageUrl;
         this.planName = planName;
         this.planSubName = planSubName;
@@ -45,6 +50,8 @@ public class PaymentPlanCard extends VBox {
         this.planDetails = planDetails;
         this.actionName = actionName;
         this.planColor = planColor;
+        this.canTry = canTry;
+        this.onAction = onAction;
         buildUI();
     }
 
@@ -58,11 +65,20 @@ public class PaymentPlanCard extends VBox {
                 buildPlanProceedAction()
         );
         setSpacing(40);
-        setStyle("-fx-border-color: rgb("
-                + planColor.getRed() * 255 + ", "
-                + planColor.getGreen() * 255 + ", "
-                + planColor.getBlue() * 255 +
-                ");");
+        if (canTry) {
+            setStyle("-fx-border-color: rgb("
+                    + planColor.getRed() * 255 + ", "
+                    + planColor.getGreen() * 255 + ", "
+                    + planColor.getBlue() * 255 +
+                    ");");
+        } else {
+            setStyle("-fx-border-color: rgba("
+                    + planColor.getRed() * 255 + ", "
+                    + planColor.getGreen() * 255 + ", "
+                    + planColor.getBlue() * 255 + ", "
+                    + .5
+                    + ");");
+        }
         setMinSize(400, 700);
         setPrefSize(400, 700);
         setMaxSize(400, 700);
@@ -97,11 +113,20 @@ public class PaymentPlanCard extends VBox {
         subNameLabel.setAlignment(Pos.CENTER);
         subNameLabel.setWrapText(true);
         subNameLabel.setForceDisableTextEllipsis(true);
-        subNameLabel.setStyle("-fx-text-fill: rgb("
-                + planColor.getRed() * 255 + ", "
-                + planColor.getGreen() * 255 + ", "
-                + planColor.getBlue() * 255 +
-                ");");
+        if (canTry) {
+            subNameLabel.setStyle("-fx-text-fill: rgb("
+                    + planColor.getRed() * 255 + ", "
+                    + planColor.getGreen() * 255 + ", "
+                    + planColor.getBlue() * 255 +
+                    ");");
+        } else {
+            subNameLabel.setStyle("-fx-text-fill: rgba("
+                    + planColor.getRed() * 255 + ", "
+                    + planColor.getGreen() * 255 + ", "
+                    + planColor.getBlue() * 255 + ", "
+                    + .5
+                    + ");");
+        }
 
         var vBox = new VBox(nameLabel, subNameLabel);
         vBox.setSpacing(5);
@@ -151,6 +176,22 @@ public class PaymentPlanCard extends VBox {
                 + planColor.getGreen() * 255 + ", "
                 + planColor.getBlue() * 255 +
                 ");");
-        return button;
+        button.setOnAction(actionEvent -> onAction.run());
+
+        if (canTry) {
+            return button;
+        } else {
+            var disabledBtn = new MFXButton("Free trial no longer available");
+            disabledBtn.setVariants(ButtonVariants.FILLED);
+            disabledBtn.setStyle("-fx-background-color: rgba("
+                    + planColor.getRed() * 255 + ", "
+                    + planColor.getGreen() * 255 + ", "
+                    + planColor.getBlue() * 255 + ", "
+                    + .5
+                    + ");" +
+                    "-fx-text-fill: white;");
+            disabledBtn.setDisable(true);
+            return disabledBtn;
+        }
     }
 }

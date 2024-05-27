@@ -88,8 +88,8 @@ public class QuotationController implements Initializable {
                         "Customer", false, Comparator.comparing(QuotationMaster::getCustomerName));
         MFXTableColumn<QuotationMaster> quotationStatus =
                 new MFXTableColumn<>("Status", false, Comparator.comparing(QuotationMaster::getStatus));
-        MFXTableColumn<QuotationMaster> quotationDate =
-                new MFXTableColumn<>("Date", false, Comparator.comparing(QuotationMaster::getDate));
+//        MFXTableColumn<QuotationMaster> quotationDate =
+//                new MFXTableColumn<>("Date", false, Comparator.comparing(QuotationMaster::getDate));
         MFXTableColumn<QuotationMaster> quotationTotalAmount =
                 new MFXTableColumn<>(
                         "Total Amount", false, Comparator.comparing(QuotationMaster::getTotal));
@@ -98,14 +98,14 @@ public class QuotationController implements Initializable {
                 quotation -> new MFXTableRowCell<>(QuotationMaster::getCustomerName));
         quotationStatus.setRowCellFactory(
                 quotation -> new MFXTableRowCell<>(QuotationMaster::getStatus));
-        quotationDate.setRowCellFactory(
-                quotation -> new MFXTableRowCell<>(QuotationMaster::getLocaleDate));
+//        quotationDate.setRowCellFactory(
+//                quotation -> new MFXTableRowCell<>(QuotationMaster::getLocaleDate));
         quotationTotalAmount.setRowCellFactory(
                 quotation -> new MFXTableRowCell<>(QuotationMaster::getTotal));
 
         quotationCustomer.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
         quotationStatus.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
-        quotationDate.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+//        quotationDate.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
         quotationTotalAmount.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
 
         masterTable
@@ -113,7 +113,7 @@ public class QuotationController implements Initializable {
                 .addAll(
                         quotationCustomer,
                         quotationStatus,
-                        quotationDate,
+//                        quotationDate,
                         quotationTotalAmount);
         masterTable
                 .getFilters()

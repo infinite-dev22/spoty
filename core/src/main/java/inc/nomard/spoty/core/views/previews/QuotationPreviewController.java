@@ -146,7 +146,6 @@ public class QuotationPreviewController implements Initializable {
 
     public void init(QuotationMaster quotation) {
         quotationDetailsList.clear();
-        quotationDate.setText(quotation.getLocaleDate());
         quotationRef.setText(quotation.getRef());
         customerName.setText(quotation.getCustomer().getName());
         customerNumber.setText(quotation.getCustomer().getPhone());

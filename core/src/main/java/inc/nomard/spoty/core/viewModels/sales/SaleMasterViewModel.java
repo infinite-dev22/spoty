@@ -45,7 +45,6 @@ public class SaleMasterViewModel {
     private static final StringProperty date = new SimpleStringProperty("");
     private static final StringProperty ref = new SimpleStringProperty("");
     private static final ObjectProperty<Customer> customer = new SimpleObjectProperty<>(null);
-    private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>(null);
     private static final StringProperty saleStatus = new SimpleStringProperty("");
     private static final DoubleProperty total = new SimpleDoubleProperty();
     private static final DoubleProperty paid = new SimpleDoubleProperty();
@@ -98,18 +97,6 @@ public class SaleMasterViewModel {
 
     public static ObjectProperty<Customer> customerProperty() {
         return customer;
-    }
-
-    public static Branch getBranch() {
-        return branch.get();
-    }
-
-    public static void setBranch(Branch branch) {
-        SaleMasterViewModel.branch.set(branch);
-    }
-
-    public static ObjectProperty<Branch> branchProperty() {
-        return branch;
     }
 
     public static String getSaleStatus() {
@@ -190,7 +177,6 @@ public class SaleMasterViewModel {
                     setId(0L);
                     setDate("");
                     setCustomer(null);
-                    setBranch(null);
                     setSaleStatus("");
                     setNote("");
                     setTotal(0);

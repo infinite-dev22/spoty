@@ -158,6 +158,7 @@ public class QuotationDetailFormController implements Initializable {
                             notificationHolder.addMessage(notification);
 
                             product.clearSelection();
+                            QuotationDetailViewModel.resetProperties();
 
                             closeDialog(event);
                             return;
@@ -174,6 +175,7 @@ public class QuotationDetailFormController implements Initializable {
                         notificationHolder.addMessage(notification);
 
                         product.clearSelection();
+                        QuotationDetailViewModel.resetProperties();
 
                         closeDialog(event);
                     }

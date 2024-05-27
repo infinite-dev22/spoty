@@ -15,7 +15,7 @@
 package inc.nomard.spoty.core.views.previews.people;
 
 import inc.nomard.spoty.core.*;
-import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
 import io.github.palexdev.mfxcore.controls.*;
 import java.net.*;
 import java.util.*;

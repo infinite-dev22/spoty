@@ -103,7 +103,6 @@ public class SaleMasterFormController implements Initializable {
         // Bi~Directional Binding.
         date.textProperty().bindBidirectional(SaleMasterViewModel.dateProperty());
         customer.valueProperty().bindBidirectional(SaleMasterViewModel.customerProperty());
-        branch.valueProperty().bindBidirectional(SaleMasterViewModel.branchProperty());
         saleStatus.textProperty().bindBidirectional(SaleMasterViewModel.saleStatusProperty());
         paymentStatus.textProperty().bindBidirectional(SaleMasterViewModel.payStatusProperty());
 
