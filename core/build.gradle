@@ -48,13 +48,14 @@ application {
 
 test {
     useJUnitPlatform()
+    jvmArgs '-agentlib:native-image-agent=access-filter-file=access-filter.json,config-output-dir=target/classes/META-INF/native-image'
 }
 
 run {
     jvmArgs = [
             "-XX:NewRatio=1",
             "-Xms256m",
-            "-Xmx2G",
+            "-Xmx1G",
             "-XX:ReservedCodeCacheSize=512m",
             "-XX:+UseG1GC",
             "-XX:SoftRefLRUPolicyMSPerMB=50",
@@ -63,6 +64,7 @@ run {
             "-Dsun.io.useCanonCaches=false",
             "-Djbr.catch.SIGABRT=true",
             "-Djdk.attach.allowAttachSelf=true",
+            "-agentlib:native-image-agent=config-output-dir=target/classes/META-INF/native-image",
     ]
 }
 
@@ -91,7 +93,7 @@ jlink {
         jvmArgs = [
                 "-XX:NewRatio=1",
                 "-Xms256m",
-                "-Xmx2G",
+                "-Xmx1G",
                 "-XX:ReservedCodeCacheSize=512m",
                 "-XX:+UseG1GC",
                 "-XX:SoftRefLRUPolicyMSPerMB=50",
@@ -101,6 +103,7 @@ jlink {
                 "-Djbr.catch.SIGABRT=true",
                 "-Djdk.attach.allowAttachSelf=true",
                 "-XX:ErrorFile=/home/infinite-dev/IdeaProjects/spoty/error%p.log",
+                "-agentlib:native-image-agent=config-output-dir=target/classes/META-INF/native-image",
         ]
     }
 
