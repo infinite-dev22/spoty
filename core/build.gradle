@@ -4,9 +4,10 @@ plugins {
     id "application"
     id "org.openjfx.javafxplugin" version "$jfxPlugin"
     id "org.beryx.jlink" version "$jlink"
-    id "org.graalvm.buildtools.native" version "$nativeBuildTool"
+//    id "org.graalvm.buildtools.native" version "$nativeBuildTool"
     id "io.freefair.lombok" version "$lombokPlugin"
     id "com.github.mrcjkb.module-finder" version "0.0.7"
+    id "com.gluonhq.gluonfx-gradle-plugin" version "1.0.22"
 }
 
 apply plugin: "java"
@@ -25,10 +26,17 @@ repositories {
     }
 }
 
-graalvmNative {
-    binaries.all {
-        resources.autodetect()
-    }
+//graalvmNative {
+//    binaries.configureEach {
+//        resources.autodetect()
+//    }
+//}
+
+gluonfx {
+    target = "$target"
+//    verbose = false
+//    enableSwRendering = false
+    graalvmHome="/home/infinite/.sdkman/candidates/java/21.0.2-graalce"
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -40,21 +48,11 @@ application {
     mainClass = "inc.nomard.spoty.core.Main"
 }
 
-//graalvmNative {
-//    toolchainDetection = true
-//    binaries {
-//        main {
-//            javaLauncher = javaToolchains.launcherFor {
-//                languageVersion = JavaLanguageVersion.of(17)
-//                vendor = JvmVendorSpec.matching("Oracle Corporation")
-//            }
-//        }
-//    }
-//}
+mainClassName = 'inc.nomard.spoty.core.Main'
 
 test {
     useJUnitPlatform()
-    jvmArgs '-agentlib:native-image-agent=access-filter-file=access-filter.json,config-output-dir=target/classes/META-INF/native-image'
+//    jvmArgs '-agentlib:native-image-agent=access-filter-file=access-filter.json,config-output-dir=target/classes/META-INF/native-image'
 }
 
 run {
@@ -92,8 +90,7 @@ jlink {
             "com.calendarfx:view",
             ":utils"
     )
-    imageZip = project.file("${buildDir}/distributions/app-${javafx.platform.classifier}.zip")
-    options = ["--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages"]
+    options = ["--strip-debug", "--no-header-files", "--no-man-pages"]
     launcher {
         name = "Zenmart ERP"
         jvmArgs = [
@@ -109,7 +106,7 @@ jlink {
                 "-Djbr.catch.SIGABRT=true",
                 "-Djdk.attach.allowAttachSelf=true",
                 "-XX:ErrorFile=/home/infinite-dev/IdeaProjects/spoty/error%p.log",
-                "-agentlib:native-image-agent=config-output-dir=target/classes/META-INF/native-image",
+//                "-agentlib:native-image-agent=config-output-dir=target/classes/META-INF/native-image",
         ]
     }
 
@@ -127,19 +124,7 @@ jlink {
 //                "--win-menu", "--win-shortcut",
 //                "--win-dir-chooser", "--win-menu",
 //                "--win-per-user-install", "--win-shortcut-prompt",
-        ]
-    }
-}
-
-tasks.register("doPackageAll") {
-    doLast {
-        if (Os.isFamily(Os.FAMILY_UNIX)) {
-            exec {
-                mkdir("$buildDir/distributions")
-                executable "$projectDir/scripts/JLinkPackage.sh"
-                args = ["$buildDir"]
-            }
-        }
+        ] as List<String>
     }
 }
 

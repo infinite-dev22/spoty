@@ -19,47 +19,6 @@ subprojects {
 
     javafx {
         version = "$jfx"
-        modules = ['javafx.controls', 'javafx.fxml', 'javafx.media', 'javafx.swing', 'javafx.web']
+        modules = ['javafx.controls', 'javafx.fxml']
     }
-
-    /*dependencies {
-        implementation "org.slf4j:slf4j-api:2.1.0-alpha1"
-
-        implementation "jakarta.inject:jakarta.inject-api:2.0.1"
-
-        implementation "javax.measure:unit-api:$measure_unit_api"
-
-        implementation "com.dlsc.gemsfx:gemsfx:$gemsfx"
-
-//    implementation "com.github.iAmGio:froxty:1.4.0"
-
-        implementation "com.calendarfx:view:11.12.7"
-
-        implementation "eu.hansolo.fx:charts:$fx_charts"
-
-//    implementation "io.soabase.record-builder:record-builder-core:39"
-
-        implementation "io.github.mkpaz:atlantafx-parent:2.0.1"
-        implementation "io.github.mkpaz:atlantafx-styles:2.0.1"
-        implementation "io.github.mkpaz:atlantafx-base:2.0.1"
-
-        implementation "com.google.code.gson:gson:$gson"
-
-        compileOnly "org.projectlombok:lombok"
-        annotationProcessor "org.projectlombok:lombok"
-        implementation "org.projectlombok:lombok:$lombok"
-
-        implementation "org.kordamp.ikonli:ikonli-javafx:$ikonLi"
-        implementation "org.kordamp.ikonli:ikonli-core:$ikonLi"
-        implementation "org.kordamp.ikonli:ikonli-fontawesome5-pack:$ikonLi"
-
-        implementation "fr.brouillard.oss:cssfx:$cssfx"
-
-        implementation "io.github.palexdev:materialfx:$materialfx"
-        implementation "io.github.palexdev:virtualizedfx:$virtualizedFX" // update to version -> 21.1.0 breaks the system.
-        implementation "io.github.palexdev:mfxcomponents:$mfxComponents"
-
-        testImplementation("org.junit.jupiter:junit-jupiter-api:$junit")
-        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit")
-    }*/
 }
