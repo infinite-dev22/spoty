@@ -259,6 +259,7 @@ public class SaleMasterViewModel {
             }
         });
         SpotyThreader.spotyThreadPool(task);
+        setDefaultCustomer();
     }
 
     public static void getItem(

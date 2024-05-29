@@ -54,8 +54,7 @@ public class ProductCard extends VBox {
             productPriceLbl = new Label(String.valueOf(product.getPrice()));
         }
         if (Objects.equals(productQuantityLbl, null)) {
-            productQuantityLbl = new Label(product.getQuantity() + " " + product.getUnit().getShortName()
-                    + " available");
+            productQuantityLbl = new Label(product.getQuantity() + " Pcs available");
         }
 
         productNameLbl.setWrappingWidth(200);

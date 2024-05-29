@@ -101,7 +101,7 @@ public class DiscountsController implements Initializable {
                             (ListChangeListener<Discount>)
                                     c -> masterTable.setItems(DiscountViewModel.getDiscounts()));
         } else {
-            masterTable.itemsProperty().bindBidirectional(DiscountViewModel.DiscountsProperty());
+            masterTable.itemsProperty().bindBidirectional(DiscountViewModel.discountsProperty());
         }
     }
 

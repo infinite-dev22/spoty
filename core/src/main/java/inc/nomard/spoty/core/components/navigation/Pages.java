@@ -106,9 +106,9 @@ public class Pages {
             fxmlLoader("views/quotation/Quotation.fxml");
     // Deductions
     private static final FXMLLoader taxesLoader =
-            fxmlLoader("views/tax/Taxes.fxml");
+            fxmlLoader("views/deductions/Taxes.fxml");
     private static final FXMLLoader discountsLoader =
-            fxmlLoader("views/tax/Discounts.fxml");
+            fxmlLoader("views/deductions/Discounts.fxml");
     // SETTINGS
     private static final FXMLLoader rolesLoader = fxmlLoader("views/settings/Roles.fxml");
     private static final FXMLLoader appSettingsLoader = fxmlLoader("views/settings/AppSettings.fxml");

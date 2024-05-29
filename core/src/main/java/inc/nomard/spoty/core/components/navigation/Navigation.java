@@ -52,8 +52,8 @@ public class Navigation {
         map.put("SUPPLIERS", NavTree.NavTreeItem.page("Suppliers", Pages.getSupplierPane()));
         map.put("CUSTOMERS", NavTree.NavTreeItem.page("Customers", Pages.getCustomerPane()));
         // Deductions
-        map.put("TAXES", NavTree.NavTreeItem.page("Suppliers", Pages.getTaxesPane()));
-        map.put("DISCOUNTS", NavTree.NavTreeItem.page("Customers", Pages.getDiscountsPane()));
+        map.put("TAXES", NavTree.NavTreeItem.page("Taxes", Pages.getTaxesPane()));
+        map.put("DISCOUNTS", NavTree.NavTreeItem.page("Discounts", Pages.getDiscountsPane()));
         // Sales
         map.put("POINT_OF_SALE", NavTree.NavTreeItem.page("Point Of Sale", Pages.getPosPane()));
         map.put("ORDERS", NavTree.NavTreeItem.page("Orders", Pages.getSalePane()));

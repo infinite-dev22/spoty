@@ -98,7 +98,7 @@ public class DiscountFormController implements Initializable {
                         }
 
                         try {
-                            saveDiscount(this::onAction, this::onAddSuccess, this::onFailed);
+                            DiscountViewModel.saveDiscount(this::onAction, this::onAddSuccess, this::onFailed);
                             actionEvent = event;
                         } catch (Exception e) {
                             SpotyLogger.writeToFile(e, this.getClass());
