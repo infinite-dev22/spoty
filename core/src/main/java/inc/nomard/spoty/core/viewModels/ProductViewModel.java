@@ -29,6 +29,9 @@ import javafx.application.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class ProductViewModel {
     public static final ObservableList<Product> productsList = FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()

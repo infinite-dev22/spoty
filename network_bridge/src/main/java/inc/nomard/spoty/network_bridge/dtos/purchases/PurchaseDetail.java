@@ -16,6 +16,7 @@ package inc.nomard.spoty.network_bridge.dtos.purchases;
 
 import inc.nomard.spoty.network_bridge.dtos.Product;
 import lombok.*;
+import lombok.extern.slf4j.*;
 
 // TODO: Remove total and Quantity and add them to PurchaseMaster.
 // TODO: In place of total create purchasePrice.
@@ -24,6 +25,8 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+
+@Slf4j
 public class PurchaseDetail {
     private Long id;
     private double cost;

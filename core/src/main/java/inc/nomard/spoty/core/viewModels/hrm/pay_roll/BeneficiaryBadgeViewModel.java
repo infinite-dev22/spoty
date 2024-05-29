@@ -31,15 +31,18 @@ import javafx.collections.*;
 import lombok.*;
 
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class BeneficiaryBadgeViewModel {
-    @Getter
-    private static final ObservableList<String> colorsList = FXCollections.observableArrayList("Red", "Blue", "Green", "Orange", "Purple", "Brown");
     public static final ObservableList<BeneficiaryBadge> beneficiaryBadgesList = FXCollections.observableArrayList();
     public static final ListProperty<BeneficiaryBadge> beneficiaryBadges = new SimpleListProperty<>(beneficiaryBadgesList);
     public static final ObservableList<BeneficiaryType> beneficiaryTypesList = FXCollections.observableArrayList();
     public static final ListProperty<BeneficiaryType> beneficiaryTypes = new SimpleListProperty<>(beneficiaryTypesList);
     public static final ObservableList<Branch> branchesList = FXCollections.observableArrayList();
     public static final ListProperty<Branch> branches = new SimpleListProperty<>(branchesList);
+    @Getter
+    private static final ObservableList<String> colorsList = FXCollections.observableArrayList("Red", "Blue", "Green", "Orange", "Purple", "Brown");
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
                     UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())

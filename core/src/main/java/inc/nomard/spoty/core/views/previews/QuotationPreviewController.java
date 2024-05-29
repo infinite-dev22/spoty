@@ -25,7 +25,9 @@ import javafx.collections.*;
 import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
+import lombok.extern.slf4j.*;
 
+@Slf4j
 public class QuotationPreviewController implements Initializable {
     static final ObservableList<QuotationDetail> quotationDetailsList = FXCollections.observableArrayList();
     private static final ListProperty<QuotationDetail> quotationDetails =
@@ -158,6 +160,5 @@ public class QuotationPreviewController implements Initializable {
         netPrice.setText(String.valueOf(quotation.getTotal()));
         paidAmount.setText(String.valueOf(quotation.getAmountPaid()));
         changeDue.setText(String.valueOf(quotation.getChangeAmount()));
-        balance.setText(String.valueOf(quotation.getBalanceAmount()));
     }
 }

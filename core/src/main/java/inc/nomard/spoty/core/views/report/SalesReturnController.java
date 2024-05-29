@@ -7,7 +7,9 @@ import java.util.*;
 import javafx.fxml.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
+import lombok.extern.slf4j.*;
 
+@Slf4j
 public class SalesReturnController implements Initializable {
 
     public BorderPane contentPane;

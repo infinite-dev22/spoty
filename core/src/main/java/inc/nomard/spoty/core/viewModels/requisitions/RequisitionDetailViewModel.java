@@ -31,6 +31,9 @@ import javafx.beans.property.*;
 import javafx.collections.*;
 import lombok.*;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class RequisitionDetailViewModel {
     @Getter
     public static final ObservableList<RequisitionDetail> requisitionDetailsList =
@@ -484,7 +487,7 @@ public class RequisitionDetailViewModel {
 //        requisitionTransaction.setProduct(requisitionDetail.getProduct());
 //        requisitionTransaction.setAdjustQuantity(requisitionDetail.getQuantity());
 //        requisitionTransaction.setRequisitionType(requisitionDetail.getRequisitionType());
-//        requisitionTransaction.setDate(new Date());
+//        requisitionTransaction.setCreatedAt(new Date());
 //
 ////        requisitionTransactionDao.create(requisitionTransaction);
 //        // TODO: Create requisition transaction.
@@ -498,7 +501,7 @@ public class RequisitionDetailViewModel {
 //        requisitionTransaction.setProduct(requisitionDetail.getProduct());
 //        requisitionTransaction.setAdjustQuantity(requisitionDetail.getQuantity());
 //        requisitionTransaction.setRequisitionType(requisitionDetail.getRequisitionType());
-//        requisitionTransaction.setDate(new Date());
+//        requisitionTransaction.setCreatedAt(new Date());
 //
 ////        requisitionTransactionDao.update(requisitionTransaction);
 //        // TODO: Update requisition transaction.

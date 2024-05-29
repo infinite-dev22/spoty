@@ -29,6 +29,9 @@ import javafx.collections.*;
 import lombok.*;
 
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class UOMViewModel {
     @Getter
     public static final ObservableList<String> operatorList = FXCollections.observableArrayList("Multiply(*)", "Divide(/)");

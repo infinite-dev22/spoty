@@ -17,9 +17,7 @@ package inc.nomard.spoty.core.views.forms;
 import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.components.message.*;
 import inc.nomard.spoty.core.components.message.enums.*;
-import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.hrm.pay_roll.*;
-import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll.*;
 import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
@@ -37,7 +35,9 @@ import javafx.event.*;
 import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.util.*;
+import lombok.extern.slf4j.*;
 
+@Slf4j
 public class BeneficiaryBadgeFormController implements Initializable {
     private static BeneficiaryBadgeFormController instance;
     @FXML

@@ -41,8 +41,10 @@ import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
 import javafx.util.*;
+import lombok.extern.slf4j.*;
 
 @SuppressWarnings("unchecked")
+@Slf4j
 public class OrdersController implements Initializable {
     private static OrdersController instance;
     @FXML
@@ -92,7 +94,7 @@ public class OrdersController implements Initializable {
                 new MFXTableColumn<>(
                         "Pay Status", false, Comparator.comparing(SaleMaster::getPaymentStatus));
         MFXTableColumn<SaleMaster> saleDate =
-                new MFXTableColumn<>("Date", false, Comparator.comparing(SaleMaster::getDate));
+                new MFXTableColumn<>("Date", false, Comparator.comparing(SaleMaster::getCreatedAt));
         MFXTableColumn<SaleMaster> saleGrandTotal =
                 new MFXTableColumn<>("Total Amount", false, Comparator.comparing(SaleMaster::getTotal));
         MFXTableColumn<SaleMaster> saleAmountPaid =
@@ -174,7 +176,6 @@ public class OrdersController implements Initializable {
     private MFXContextMenu showContextMenu(MFXTableRow<SaleMaster> obj) {
         MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
-        MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
         MFXContextMenuItem view = new MFXContextMenuItem("View");
 
         // Actions
@@ -192,21 +193,6 @@ public class OrdersController implements Initializable {
 
                     e.consume();
                 });
-        // Edit
-        edit.setOnAction(
-                e -> {
-                    SpotyThreader.spotyThreadPool(
-                            () -> {
-                                try {
-                                    SaleMasterViewModel.getItem(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
-                                } catch (Exception ex) {
-                                    throw new RuntimeException(ex);
-                                }
-                            });
-
-                    createBtnClicked();
-                    e.consume();
-                });
         // View
         view.setOnAction(
                 event -> {
@@ -218,7 +204,7 @@ public class OrdersController implements Initializable {
                     event.consume();
                 });
 
-        contextMenu.addItems(view, edit, delete);
+        contextMenu.addItems(view, delete);
 
         return contextMenu;
     }

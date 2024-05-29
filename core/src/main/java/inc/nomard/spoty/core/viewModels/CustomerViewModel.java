@@ -28,6 +28,9 @@ import javafx.beans.property.*;
 import javafx.collections.*;
 
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class CustomerViewModel {
     public static final ObservableList<Customer> customersList = FXCollections.observableArrayList();
     public static final ObservableList<Customer> customersComboBoxList =

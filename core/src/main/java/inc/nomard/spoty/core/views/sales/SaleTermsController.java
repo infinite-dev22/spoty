@@ -20,7 +20,9 @@ import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
 import javafx.util.*;
+import lombok.extern.slf4j.*;
 
+@Slf4j
 public class SaleTermsController implements Initializable {
     private static SaleTermsController instance;
     @FXML

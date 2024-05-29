@@ -17,12 +17,15 @@ package inc.nomard.spoty.network_bridge.dtos;
 import lombok.*;
 
 import java.io.Serializable;
+import lombok.extern.slf4j.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+
+@Slf4j
 public class RolePermission implements Serializable {
     private long id;
     private Role role;

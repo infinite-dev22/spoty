@@ -30,7 +30,9 @@ import java.util.*;
 import javafx.event.*;
 import javafx.fxml.*;
 import javafx.scene.control.*;
+import lombok.extern.slf4j.*;
 
+@Slf4j
 public class ExpenseCategoryFormController implements Initializable {
     private static ExpenseCategoryFormController instance;
     @FXML

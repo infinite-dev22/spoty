@@ -1,24 +1,24 @@
 package inc.nomard.spoty.network_bridge.repositories.implementations;
 
-import com.google.gson.Gson;
-import inc.nomard.spoty.network_bridge.end_points.EndPoints;
-import inc.nomard.spoty.network_bridge.models.LoginModel;
-import inc.nomard.spoty.network_bridge.models.SignupModel;
-import inc.nomard.spoty.network_bridge.repositories.interfaces.AuthRepository;
-import javafx.concurrent.Task;
+import com.google.gson.*;
+import inc.nomard.spoty.network_bridge.end_points.*;
+import inc.nomard.spoty.network_bridge.models.*;
+import inc.nomard.spoty.network_bridge.repositories.interfaces.*;
+import java.io.*;
+import java.net.*;
+import java.net.http.*;
+import javafx.concurrent.*;
+import lombok.*;
+import lombok.extern.slf4j.*;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-
+@Slf4j
 public class AuthRepositoryImpl implements AuthRepository {
     @Override
     public Task<HttpResponse<String>> login(LoginModel loginModel) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws IOException, InterruptedException {
+            @SneakyThrows
+            protected HttpResponse<String> call() {
                 return taskCreate();
             }
 
@@ -39,7 +39,8 @@ public class AuthRepositoryImpl implements AuthRepository {
     public Task<HttpResponse<String>> signup(SignupModel signUpModel) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws IOException, InterruptedException {
+            @SneakyThrows
+            protected HttpResponse<String> call() {
                 return taskCreate();
             }
 

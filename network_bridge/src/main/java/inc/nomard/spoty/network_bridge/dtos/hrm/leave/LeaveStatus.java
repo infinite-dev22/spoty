@@ -8,12 +8,15 @@ import java.text.DateFormat;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.Date;
+import lombok.extern.slf4j.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+
+@Slf4j
 public class LeaveStatus {
     private Long id;
     private User employee;

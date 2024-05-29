@@ -25,6 +25,9 @@ import java.util.concurrent.*;
 import javafx.beans.property.*;
 
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class SignupViewModel {
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,

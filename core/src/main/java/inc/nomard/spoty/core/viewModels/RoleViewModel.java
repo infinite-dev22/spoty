@@ -28,6 +28,9 @@ import javafx.collections.*;
 import lombok.*;
 
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class RoleViewModel {
     //    private static final Gson gson = new GsonBuilder()
 //            .registerTypeAdapter(Date.class,

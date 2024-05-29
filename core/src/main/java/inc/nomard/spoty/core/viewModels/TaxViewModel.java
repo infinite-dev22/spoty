@@ -13,6 +13,9 @@ import java.util.concurrent.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class TaxViewModel {
     public static final ObservableList<Tax> taxesList = FXCollections.observableArrayList();
     public static final ObservableList<Tax> taxesComboBoxList =

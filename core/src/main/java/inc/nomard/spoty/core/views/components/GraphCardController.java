@@ -29,6 +29,9 @@ import javafx.scene.paint.*;
 import javafx.scene.shape.*;
 import javafx.util.*;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class GraphCardController implements Initializable {
     private static final Random RND = new Random();
     private static final Double AXIS_WIDTH = 25d;

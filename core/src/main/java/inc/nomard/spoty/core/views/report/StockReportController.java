@@ -16,7 +16,9 @@ import javafx.fxml.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
+import lombok.extern.slf4j.*;
 
+@Slf4j
 public class StockReportController implements Initializable {
     public MFXTextField searchBar;
     public HBox actionsPane;

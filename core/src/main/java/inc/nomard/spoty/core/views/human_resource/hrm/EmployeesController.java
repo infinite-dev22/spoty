@@ -26,6 +26,9 @@ import javafx.scene.layout.*;
 import javafx.stage.*;
 import javafx.util.*;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class EmployeesController implements Initializable {
     private static EmployeesController instance;
     @FXML
@@ -85,47 +88,43 @@ public class EmployeesController implements Initializable {
     private void setupTable() {
         MFXTableColumn<User> employeeName =
                 new MFXTableColumn<>("Name", false, Comparator.comparing(User::getName));
-        MFXTableColumn<User> designation =
-                new MFXTableColumn<>("Designation", false, Comparator.comparing(User::getDesignationName));
+        MFXTableColumn<User> phone =
+                new MFXTableColumn<>("Phone", false, Comparator.comparing(User::getPhone));
+        MFXTableColumn<User> email =
+                new MFXTableColumn<>("Email", false, Comparator.comparing(User::getEmail));
         MFXTableColumn<User> employmentStatus =
                 new MFXTableColumn<>("Employment Status", false, Comparator.comparing(User::getEmploymentStatusName));
-        MFXTableColumn<User> department =
-                new MFXTableColumn<>("Department", false, Comparator.comparing(User::getDepartmentName));
+        MFXTableColumn<User> status =
+                new MFXTableColumn<>("Status", false, Comparator.comparing(User::getActive));
         MFXTableColumn<User> workShift =
                 new MFXTableColumn<>(
                         "Work Shift", false, Comparator.comparing(User::getWorkShift));
-        MFXTableColumn<User> joiningDate =
-                new MFXTableColumn<>("Joining Date", false, Comparator.comparing(User::getJoiningDate));
-        MFXTableColumn<User> salary =
-                new MFXTableColumn<>("Salary", false, Comparator.comparing(User::getSalary));
 
         employeeName.setRowCellFactory(employee -> new MFXTableRowCell<>(User::getName));
-        designation.setRowCellFactory(employee -> new MFXTableRowCell<>(User::getDesignationName));
+        email.setRowCellFactory(employee -> new MFXTableRowCell<>(User::getEmail));
+        phone.setRowCellFactory(employee -> new MFXTableRowCell<>(User::getPhone));
         employmentStatus.setRowCellFactory(employee -> new MFXTableRowCell<>(User::getEmploymentStatusName));
-        department.setRowCellFactory(
-                employee -> new MFXTableRowCell<>(User::getDepartmentName));
+        status.setRowCellFactory(
+                employee -> new MFXTableRowCell<>(User::getActive));
         workShift.setRowCellFactory(employee -> new MFXTableRowCell<>(User::getWorkShift));
-        joiningDate.setRowCellFactory(employee -> new MFXTableRowCell<>(User::getJoiningDate));
-        salary.setRowCellFactory(employee -> new MFXTableRowCell<>(User::getSalary));
 
-        employeeName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
-        designation.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
-        employmentStatus.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
-        department.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
-        workShift.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
-        joiningDate.prefWidthProperty().bind(masterTable.widthProperty().multiply(.15));
-        salary.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        employeeName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.35));
+        email.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        phone.prefWidthProperty().bind(masterTable.widthProperty().multiply(.2));
+        employmentStatus.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
+        status.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
+        workShift.prefWidthProperty().bind(masterTable.widthProperty().multiply(.1));
 
         masterTable
                 .getTableColumns()
-                .addAll(employeeName, designation, employmentStatus, department, workShift, joiningDate, salary);
+                .addAll(employeeName, phone, email, employmentStatus, status, workShift);
         masterTable
                 .getFilters()
                 .addAll(
                         new StringFilter<>("Name", User::getName),
-                        new StringFilter<>("Designation", User::getDesignationName),
+                        new StringFilter<>("Phone", User::getPhone),
+                        new StringFilter<>("Email", User::getEmail),
                         new StringFilter<>("Employment Status", User::getEmploymentStatusName),
-                        new StringFilter<>("Department", User::getDepartmentName),
                         new StringFilter<>("Work Shift", User::getWorkShift));
         styleUserTable();
 

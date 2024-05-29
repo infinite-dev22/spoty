@@ -47,6 +47,9 @@ import javafx.util.Duration;
 import org.controlsfx.control.*;
 import org.kordamp.ikonli.javafx.*;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class BaseController implements Initializable {
     public static Navigation navigation;
     private static BaseController instance;
@@ -183,7 +186,7 @@ public class BaseController implements Initializable {
         sidebarToggle.setGraphic(arrowIcon);
         sidebarToggle.setText("");
 
-        designationLbl.setText(ProtectedGlobals.role.getLabel());
+        designationLbl.setText(ProtectedGlobals.user.getRole().getLabel());
         designationLbl.setWrapText(true);
         designationLbl.setForceDisableTextEllipsis(true);
 

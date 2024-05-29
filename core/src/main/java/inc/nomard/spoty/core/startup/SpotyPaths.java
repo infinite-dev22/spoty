@@ -18,6 +18,9 @@ import inc.nomard.spoty.utils.*;
 import java.io.*;
 import java.nio.file.*;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class SpotyPaths {
     public static void createPaths() {
         // Create DB Location path on system.

@@ -30,6 +30,9 @@ import java.util.concurrent.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class TransferDetailViewModel {
     public static final ObservableList<TransferDetail> transferDetailsList =
             FXCollections.observableArrayList();
@@ -389,7 +392,7 @@ public class TransferDetailViewModel {
 //        transferTransaction.setTransferDetail(transferDetails);
 //        transferTransaction.setProduct(transferDetails.getProduct());
 //        transferTransaction.setTransferQuantity(transferDetails.getQuantity());
-//        transferTransaction.setDate(new Date());
+//        transferTransaction.setCreatedAt(new Date());
 //
 //        transferTransactionDao.create(transferTransaction);
     }
@@ -404,7 +407,7 @@ public class TransferDetailViewModel {
 //        transferTransaction.setTransferDetail(transferDetails);
 //        transferTransaction.setProduct(transferDetails.getProduct());
 //        transferTransaction.setTransferQuantity(transferDetails.getQuantity());
-//        transferTransaction.setDate(new Date());
+//        transferTransaction.setCreatedAt(new Date());
 //
 //        transferTransactionDao.update(transferTransaction);
     }

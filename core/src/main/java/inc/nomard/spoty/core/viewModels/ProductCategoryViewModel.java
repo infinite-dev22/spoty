@@ -28,6 +28,9 @@ import javafx.beans.property.*;
 import javafx.collections.*;
 
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class ProductCategoryViewModel {
     public static final ProductCategoriesRepositoryImpl productCategoriesRepository = new ProductCategoriesRepositoryImpl();
     private static final Gson gson = new GsonBuilder()

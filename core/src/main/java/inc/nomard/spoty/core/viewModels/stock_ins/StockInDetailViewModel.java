@@ -32,7 +32,12 @@ import javafx.application.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
 
+import lombok.*;
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class StockInDetailViewModel {
+    @Getter
     public static final ObservableList<StockInDetail> stockInDetailsList =
             FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()
@@ -389,7 +394,7 @@ public class StockInDetailViewModel {
 //        stockInTransaction.setStockInDetail(stockInDetail);
 //        stockInTransaction.setProduct(stockInDetail.getProduct());
 //        stockInTransaction.setStockInQuantity(stockInDetail.getQuantity());
-//        stockInTransaction.setDate(new Date());
+//        stockInTransaction.setCreatedAt(new Date());
 //
 //        stockInTransactionDao.create(stockInTransaction);
     }
@@ -403,7 +408,7 @@ public class StockInDetailViewModel {
 //        stockInTransaction.setStockInDetail(stockInDetail);
 //        stockInTransaction.setProduct(stockInDetail.getProduct());
 //        stockInTransaction.setStockInQuantity(stockInDetail.getQuantity());
-//        stockInTransaction.setDate(new Date());
+//        stockInTransaction.setCreatedAt(new Date());
 //
 //        stockInTransactionDao.update(stockInTransaction);
     }

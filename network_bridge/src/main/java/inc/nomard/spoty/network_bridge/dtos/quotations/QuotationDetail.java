@@ -17,12 +17,15 @@ package inc.nomard.spoty.network_bridge.dtos.quotations;
 import inc.nomard.spoty.network_bridge.dtos.Product;
 import inc.nomard.spoty.network_bridge.dtos.UnitOfMeasure;
 import lombok.*;
+import lombok.extern.slf4j.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+
+@Slf4j
 public class QuotationDetail {
     private Long id;
     private double price;

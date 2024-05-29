@@ -16,6 +16,9 @@ import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class TopSuppliersController implements Initializable {
     public Label cardTitle;
     public ViewAll viewAll;

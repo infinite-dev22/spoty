@@ -31,6 +31,9 @@ import javafx.application.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class AdjustmentMasterViewModel {
     public static final ObservableList<AdjustmentMaster> adjustmentMastersList =
             FXCollections.observableArrayList();
@@ -140,7 +143,6 @@ public class AdjustmentMasterViewModel {
         if (!AdjustmentDetailViewModel.getAdjustmentDetailsList().isEmpty()) {
             adjustmentMaster.setAdjustmentDetails(AdjustmentDetailViewModel.getAdjustmentDetailsList());
         }
-
 
         System.out.println(new Gson().toJson(adjustmentMaster));
 

@@ -16,12 +16,15 @@ package inc.nomard.spoty.network_bridge.dtos.stock_ins;
 
 import inc.nomard.spoty.network_bridge.dtos.Product;
 import lombok.*;
+import lombok.extern.slf4j.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+
+@Slf4j
 public class StockInDetail {
     private Long id;
     private StockInMaster stockIn;

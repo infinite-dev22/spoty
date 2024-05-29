@@ -39,7 +39,7 @@
                     </padding>
                 </HBox>
                 <MFXTextField fx:id="searchBar" floatMode="DISABLED" prefWidth="300.0"
-                              promptText="Search expense category" AnchorPane.bottomAnchor="0.0"
+                              promptText="Search expense categories" AnchorPane.bottomAnchor="0.0"
                               AnchorPane.leftAnchor="50.0"
                               AnchorPane.topAnchor="0.0"/>
                 <HBox fx:id="categoryExpenseActionsPane" alignment="CENTER_RIGHT" spacing="20.0"

@@ -24,6 +24,9 @@ import java.util.*;
 import javafx.beans.binding.*;
 import javafx.scene.control.*;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class Validators {
     static MFXValidator validator;
     static List<Constraint> validate;

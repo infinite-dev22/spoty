@@ -29,6 +29,9 @@ import javafx.scene.paint.*;
 import javafx.stage.*;
 import javafx.util.*;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class EmploymentStatusController implements Initializable {
     private static EmploymentStatusController instance;
     @FXML

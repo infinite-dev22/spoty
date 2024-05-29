@@ -16,6 +16,9 @@ import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class QuotationsRepositoryImpl extends ProtectedGlobals implements MasterDetailRepository {
     @Override
     public Task<HttpResponse<String>> fetchAllMaster() {

@@ -17,7 +17,9 @@ import javafx.scene.image.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.*;
 import javafx.scene.shape.*;
+import lombok.extern.slf4j.*;
 
+@Slf4j
 public class Appearance extends VBox {
     private final String darkTheme = SpotyCoreResourceLoader.load("images/dark.png");
     private final String lightTheme = SpotyCoreResourceLoader.load("images/light.png");

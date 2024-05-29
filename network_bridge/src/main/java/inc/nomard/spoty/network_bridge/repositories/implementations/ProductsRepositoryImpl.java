@@ -15,6 +15,9 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class ProductsRepositoryImpl extends ProtectedGlobals implements ProductRepository {
     @Override
     public Task<HttpResponse<String>> fetchAll() {

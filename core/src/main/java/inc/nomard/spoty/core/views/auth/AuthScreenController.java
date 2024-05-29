@@ -44,7 +44,9 @@ import javafx.scene.layout.*;
 import javafx.scene.shape.*;
 import javafx.stage.*;
 import javafx.util.*;
+import lombok.extern.slf4j.*;
 
+@Slf4j
 public class AuthScreenController implements Initializable {
     private final Stage stage;
     @FXML

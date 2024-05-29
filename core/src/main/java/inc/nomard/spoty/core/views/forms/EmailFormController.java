@@ -27,7 +27,9 @@ import java.net.*;
 import java.util.*;
 import javafx.fxml.*;
 import javafx.scene.control.*;
+import lombok.extern.slf4j.*;
 
+@Slf4j
 public class EmailFormController implements Initializable {
     private static EmailFormController instance;
     @FXML

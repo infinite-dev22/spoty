@@ -22,6 +22,9 @@ import inc.nomard.spoty.utils.*;
 import javafx.beans.property.*;
 
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class PaymentsViewModel {
     private static final StringProperty cardNumber = new SimpleStringProperty("");
     private static final StringProperty cvv = new SimpleStringProperty("");

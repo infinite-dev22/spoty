@@ -15,6 +15,7 @@
 package inc.nomard.spoty.core.components.navigation;
 
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
+import inc.nomard.spoty.core.views.auth.*;
 import inc.nomard.spoty.core.views.bank.*;
 import inc.nomard.spoty.core.views.customers.*;
 import inc.nomard.spoty.core.views.dashboard.*;
@@ -30,7 +31,6 @@ import inc.nomard.spoty.core.views.inventory.brand.*;
 import inc.nomard.spoty.core.views.inventory.category.*;
 import inc.nomard.spoty.core.views.inventory.products.*;
 import inc.nomard.spoty.core.views.inventory.unit_of_measure.*;
-import inc.nomard.spoty.core.views.auth.*;
 import inc.nomard.spoty.core.views.previews.people.*;
 import inc.nomard.spoty.core.views.purchases.*;
 import inc.nomard.spoty.core.views.quotation.*;
@@ -41,14 +41,16 @@ import inc.nomard.spoty.core.views.sales.pos.*;
 import inc.nomard.spoty.core.views.settings.*;
 import inc.nomard.spoty.core.views.stock_in.*;
 import inc.nomard.spoty.core.views.suppliers.*;
-import inc.nomard.spoty.core.views.tax.*;
+import inc.nomard.spoty.core.views.deductions.*;
 import inc.nomard.spoty.core.views.transfer.*;
 import java.io.*;
 import javafx.fxml.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
 import lombok.*;
+import lombok.extern.slf4j.*;
 
+@Slf4j
 public class Pages {
     //Login
     private static final FXMLLoader loginLoader = fxmlLoader("views/auth/AuthScreen.fxml");
@@ -102,9 +104,11 @@ public class Pages {
     // Quotation
     private static final FXMLLoader quotationLoader =
             fxmlLoader("views/quotation/Quotation.fxml");
-    // Tax
+    // Deductions
     private static final FXMLLoader taxesLoader =
             fxmlLoader("views/tax/Taxes.fxml");
+    private static final FXMLLoader discountsLoader =
+            fxmlLoader("views/tax/Discounts.fxml");
     // SETTINGS
     private static final FXMLLoader rolesLoader = fxmlLoader("views/settings/Roles.fxml");
     private static final FXMLLoader appSettingsLoader = fxmlLoader("views/settings/AppSettings.fxml");
@@ -249,9 +253,11 @@ public class Pages {
     // Quotation
     private static BorderPane quotationPane;
 
+    // Deductions
     @Getter
-    // Quotation
     private static BorderPane taxesPane;
+    @Getter
+    private static BorderPane discountsPane;
 
     // SETTINGS
 
@@ -403,8 +409,9 @@ public class Pages {
         quotationLoader.setControllerFactory(e -> QuotationController.getInstance(stage));
     }
 
-    private static void setTax(Stage stage) {
+    private static void setDeductions(Stage stage) {
         taxesLoader.setControllerFactory(e -> TaxesController.getInstance(stage));
+        discountsLoader.setControllerFactory(e -> DiscountsController.getInstance(stage));
     }
 
     private static void setSingleItems(Stage stage) {
@@ -500,8 +507,9 @@ public class Pages {
         bankPane = banksLoader.load();
         // Quotation
         quotationPane = quotationLoader.load();
-        // Tax
+        // Deductions
         taxesPane = taxesLoader.load();
+        discountsPane = discountsLoader.load();
         // SETTINGS
         rolesPane = rolesLoader.load();
         appSettingsPane = appSettingsLoader.load();
@@ -544,7 +552,7 @@ public class Pages {
         setPayRoll(stage);
         setBank(stage);
         setQuotation(stage);
-        setTax(stage);
+        setDeductions(stage);
         setSingleItems(stage);
         setReturns(stage);
         setExpenses(stage);

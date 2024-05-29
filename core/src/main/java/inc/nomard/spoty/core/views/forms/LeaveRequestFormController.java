@@ -37,7 +37,9 @@ import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.*;
 import javafx.stage.*;
+import lombok.extern.slf4j.*;
 
+@Slf4j
 public class LeaveRequestFormController implements Initializable {
     private static LeaveRequestFormController instance;
     @FXML

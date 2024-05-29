@@ -25,7 +25,9 @@ import javafx.collections.*;
 import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
+import lombok.extern.slf4j.*;
 
+@Slf4j
 public class AdjustmentPreviewController implements Initializable {
     static final ObservableList<AdjustmentDetail> adjustmentDetailsList = FXCollections.observableArrayList();
     private static final ListProperty<AdjustmentDetail> adjustmentDetails =

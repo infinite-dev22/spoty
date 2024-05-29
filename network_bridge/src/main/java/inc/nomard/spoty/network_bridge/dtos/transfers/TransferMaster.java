@@ -21,12 +21,15 @@ import lombok.*;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
+import lombok.extern.slf4j.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+
+@Slf4j
 public class TransferMaster {
     private Long id;
     private String ref;

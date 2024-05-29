@@ -17,12 +17,15 @@ package inc.nomard.spoty.network_bridge.dtos.requisitions;
 import inc.nomard.spoty.network_bridge.dtos.Product;
 import inc.nomard.spoty.network_bridge.dtos.purchases.PurchaseMaster;
 import lombok.*;
+import lombok.extern.slf4j.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+
+@Slf4j
 public class RequisitionDetail {
     private Long id;
     private double cost;

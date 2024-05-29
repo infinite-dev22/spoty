@@ -15,12 +15,17 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 
+import lombok.*;
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class LeaveStatusRepositoryImpl extends ProtectedGlobals implements SimpleRepository {
     @Override
     public Task<HttpResponse<String>> fetchAll() {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws IOException, InterruptedException {
+            @SneakyThrows
+            protected HttpResponse<String> call() {
                 return taskCreate();
             }
 
@@ -42,7 +47,8 @@ public class LeaveStatusRepositoryImpl extends ProtectedGlobals implements Simpl
     public Task<HttpResponse<String>> fetch(FindModel findModel) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws IOException, InterruptedException {
+            @SneakyThrows
+            protected HttpResponse<String> call() {
                 return taskCreate();
             }
 

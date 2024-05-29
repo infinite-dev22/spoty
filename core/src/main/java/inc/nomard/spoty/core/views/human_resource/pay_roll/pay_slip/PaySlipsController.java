@@ -18,6 +18,9 @@ import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.util.*;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class PaySlipsController implements Initializable {
     @FXML
     public BorderPane contentPane;

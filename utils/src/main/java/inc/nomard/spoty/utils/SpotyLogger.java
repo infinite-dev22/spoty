@@ -27,6 +27,9 @@ import java.util.logging.SimpleFormatter;
  * Logger to write <b>spoty</b> application logs to file.
  * Contains a single function <code>writeToFile</code> taking two parameters <b>exception</b> and <b>currentClass</b>
  */
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class SpotyLogger {
     static SimpleFormatter formatter = new SimpleFormatter();
 

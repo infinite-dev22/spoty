@@ -21,12 +21,17 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
+import lombok.*;
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class CompanyRepositoryImpl extends ProtectedGlobals implements CompanyRepository {
     @Override
     public Task<HttpResponse<String>> fetchAll() {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws IOException, InterruptedException {
+            @SneakyThrows
+            protected HttpResponse<String> call() {
                 return taskCreate();
             }
 
@@ -48,7 +53,8 @@ public class CompanyRepositoryImpl extends ProtectedGlobals implements CompanyRe
     public Task<HttpResponse<String>> fetch(FindModel findModel) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws IOException, InterruptedException {
+            @SneakyThrows
+            protected HttpResponse<String> call() {
                 return taskCreate();
             }
 
@@ -70,7 +76,8 @@ public class CompanyRepositoryImpl extends ProtectedGlobals implements CompanyRe
     public Task<HttpResponse<String>> search(SearchModel searchModel) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws IOException, InterruptedException {
+            @SneakyThrows
+            protected HttpResponse<String> call() {
                 return taskCreate();
             }
 
@@ -92,7 +99,8 @@ public class CompanyRepositoryImpl extends ProtectedGlobals implements CompanyRe
     public Task<HttpResponse<String>> post(Object object) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws IOException, InterruptedException {
+            @SneakyThrows
+            protected HttpResponse<String> call() {
                 return taskCreate();
             }
 
@@ -114,7 +122,8 @@ public class CompanyRepositoryImpl extends ProtectedGlobals implements CompanyRe
     public Task<HttpResponse<String>> put(Object object) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws IOException, InterruptedException {
+            @SneakyThrows
+            protected HttpResponse<String> call() {
                 return taskCreate();
             }
 
@@ -136,7 +145,8 @@ public class CompanyRepositoryImpl extends ProtectedGlobals implements CompanyRe
     public Task<HttpResponse<String>> delete(FindModel findModel) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws IOException, InterruptedException {
+            @SneakyThrows
+            protected HttpResponse<String> call() {
                 return taskCreate();
             }
 
@@ -158,7 +168,8 @@ public class CompanyRepositoryImpl extends ProtectedGlobals implements CompanyRe
     public Task<HttpResponse<String>> deleteMultiple(ArrayList<FindModel> findModelList) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws IOException, InterruptedException {
+            @SneakyThrows
+            protected HttpResponse<String> call() {
                 return taskCreate();
             }
 

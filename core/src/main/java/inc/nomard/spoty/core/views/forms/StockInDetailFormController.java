@@ -36,7 +36,9 @@ import javafx.collections.*;
 import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.util.*;
+import lombok.extern.slf4j.*;
 
+@Slf4j
 public class StockInDetailFormController implements Initializable {
     private static StockInDetailFormController instance;
     @FXML

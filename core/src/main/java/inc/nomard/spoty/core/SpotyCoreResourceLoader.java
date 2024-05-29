@@ -18,6 +18,9 @@ import java.io.*;
 import java.net.*;
 import javafx.fxml.*;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class SpotyCoreResourceLoader {
     public SpotyCoreResourceLoader() {
     }

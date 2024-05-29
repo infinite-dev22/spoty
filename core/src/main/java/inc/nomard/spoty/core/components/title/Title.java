@@ -21,6 +21,9 @@ import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class Title extends HBox {
     @FXML
     private Label label;

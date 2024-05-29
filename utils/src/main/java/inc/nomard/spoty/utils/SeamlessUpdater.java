@@ -11,6 +11,9 @@ import javax.xml.parsers.*;
 import org.w3c.dom.*;
 import org.xml.sax.*;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class SeamlessUpdater {
 
     private static final String UPDATE_URL = "https://your-server.com/version_info.xml";
@@ -91,7 +94,7 @@ public class SeamlessUpdater {
                 downloadUpdate();
                 createUpdatePendingFlag();
             } else {
-                System.out.println("Your application is up to date.");
+                System.out.println("Your application is up to createdAt.");
             }
 
         } catch (IOException | ParserConfigurationException | SAXException e) {

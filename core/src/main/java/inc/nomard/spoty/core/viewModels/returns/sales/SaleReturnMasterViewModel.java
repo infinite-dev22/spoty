@@ -26,6 +26,9 @@ import javafx.beans.property.*;
 import javafx.collections.*;
 import lombok.*;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class SaleReturnMasterViewModel {
     @Getter
     public static final ObservableList<SaleReturnMaster> saleReturnMasterList =
@@ -152,7 +155,7 @@ public class SaleReturnMasterViewModel {
 //                .SaleReturnsStatus(getSaleReturnStatus())
 //                .paymentStatus(getPayStatus())
 //                .notes(getNote())
-//                .date(getDate())
+//                .createdAt(getCreatedAt())
 //                .build();
 //
 //        if (!SaleReturnDetailViewModel.SaleReturnsDetailsList.isEmpty()) {
@@ -214,7 +217,7 @@ public class SaleReturnMasterViewModel {
 //            }
 //
 //            setId(SaleReturnsMaster.getId());
-//            setDate(SaleReturnsMaster.getLocaleDate());
+//            setCreatedAt(SaleReturnsMaster.getLocaleDate());
 //            setCustomer(SaleReturnsMaster.getCustomer());
 //            setNote(SaleReturnsMaster.getNotes());
 //            setSaleReturnStatus(SaleReturnsMaster.getSaleReturnStatus());
@@ -275,7 +278,7 @@ public class SaleReturnMasterViewModel {
 //                .SaleReturnsStatus(getSaleReturnStatus())
 //                .paymentStatus(getPayStatus())
 //                .notes(getNote())
-//                .date(getDate())
+//                .createdAt(getCreatedAt())
 //                .build();
 //
 //        if (!PENDING_DELETES.isEmpty()) {

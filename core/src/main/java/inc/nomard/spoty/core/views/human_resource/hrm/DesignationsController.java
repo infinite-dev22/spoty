@@ -26,6 +26,9 @@ import javafx.scene.layout.*;
 import javafx.stage.*;
 import javafx.util.*;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class DesignationsController implements Initializable {
     private static DesignationsController instance;
     @FXML

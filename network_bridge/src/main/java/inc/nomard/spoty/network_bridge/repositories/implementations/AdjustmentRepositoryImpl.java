@@ -16,12 +16,17 @@ import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import lombok.*;
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class AdjustmentRepositoryImpl extends ProtectedGlobals implements MasterDetailRepository {
     @Override
     public Task<HttpResponse<String>> fetchAllMaster() {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws IOException, InterruptedException {
+            @SneakyThrows
+            protected HttpResponse<String> call() {
                 return taskCreate();
             }
 
@@ -43,7 +48,8 @@ public class AdjustmentRepositoryImpl extends ProtectedGlobals implements Master
     public Task<HttpResponse<String>> fetchMaster(FindModel findModel) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws IOException, InterruptedException {
+            @SneakyThrows
+            protected HttpResponse<String> call() {
                 return taskCreate();
             }
 
@@ -65,7 +71,8 @@ public class AdjustmentRepositoryImpl extends ProtectedGlobals implements Master
     public Task<HttpResponse<String>> searchMaster(SearchModel searchModel) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws IOException, InterruptedException {
+            @SneakyThrows
+            protected HttpResponse<String> call() {
                 return taskCreate();
             }
 
@@ -87,7 +94,8 @@ public class AdjustmentRepositoryImpl extends ProtectedGlobals implements Master
     public Task<HttpResponse<String>> postMaster(Object object) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws IOException, InterruptedException {
+            @SneakyThrows
+            protected HttpResponse<String> call() {
                 return taskCreate();
             }
 
@@ -109,7 +117,8 @@ public class AdjustmentRepositoryImpl extends ProtectedGlobals implements Master
     public Task<HttpResponse<String>> putMaster(Object object) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws IOException, InterruptedException {
+            @SneakyThrows
+            protected HttpResponse<String> call() {
                 return taskCreate();
             }
 
@@ -131,7 +140,8 @@ public class AdjustmentRepositoryImpl extends ProtectedGlobals implements Master
     public Task<HttpResponse<String>> deleteMaster(FindModel findModel) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws IOException, InterruptedException {
+            @SneakyThrows
+            protected HttpResponse<String> call() {
                 return taskCreate();
             }
 
@@ -153,7 +163,8 @@ public class AdjustmentRepositoryImpl extends ProtectedGlobals implements Master
     public Task<HttpResponse<String>> deleteMultipleMasters(ArrayList<FindModel> findModelList) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws IOException, InterruptedException {
+            @SneakyThrows
+            protected HttpResponse<String> call() {
                 return taskCreate();
             }
 
@@ -175,7 +186,8 @@ public class AdjustmentRepositoryImpl extends ProtectedGlobals implements Master
     public Task<HttpResponse<String>> fetchAllDetail() {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws IOException, InterruptedException {
+            @SneakyThrows
+            protected HttpResponse<String> call() {
                 return taskCreate();
             }
 
@@ -197,7 +209,8 @@ public class AdjustmentRepositoryImpl extends ProtectedGlobals implements Master
     public Task<HttpResponse<String>> fetchDetail(FindModel findModel) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws IOException, InterruptedException {
+            @SneakyThrows
+            protected HttpResponse<String> call() {
                 return taskCreate();
             }
 
@@ -219,7 +232,8 @@ public class AdjustmentRepositoryImpl extends ProtectedGlobals implements Master
     public Task<HttpResponse<String>> searchDetail(SearchModel searchModel) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws IOException, InterruptedException {
+            @SneakyThrows
+            protected HttpResponse<String> call() {
                 return taskCreate();
             }
 
@@ -241,7 +255,8 @@ public class AdjustmentRepositoryImpl extends ProtectedGlobals implements Master
     public Task<HttpResponse<String>> postDetail(Object object) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws IOException, InterruptedException {
+            @SneakyThrows
+            protected HttpResponse<String> call() {
                 return taskCreate();
             }
 
@@ -263,7 +278,8 @@ public class AdjustmentRepositoryImpl extends ProtectedGlobals implements Master
     public Task<HttpResponse<String>> putDetail(Object object) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws IOException, InterruptedException {
+            @SneakyThrows
+            protected HttpResponse<String> call() {
                 return taskCreate();
             }
 

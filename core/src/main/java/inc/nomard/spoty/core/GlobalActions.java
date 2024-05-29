@@ -21,6 +21,9 @@ import javafx.event.*;
 import javafx.scene.*;
 import javafx.stage.*;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class GlobalActions {
     public static void closeDialog(ActionEvent e) {
         final var source = (Node) e.getSource();

@@ -24,8 +24,10 @@ import java.util.*;
 import javafx.application.*;
 import javafx.fxml.*;
 import javafx.scene.layout.*;
+import lombok.extern.slf4j .*;
 
 @SuppressWarnings("unchecked")
+@Slf4j
 public class CalendarController implements Initializable {
     private static CalendarController instance;
     @FXML

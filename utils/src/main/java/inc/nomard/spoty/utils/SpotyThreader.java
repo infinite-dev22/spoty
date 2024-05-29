@@ -17,6 +17,9 @@ package inc.nomard.spoty.utils;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class SpotyThreader {
     private static final ExecutorService executorService = Executors.newFixedThreadPool(5);
 

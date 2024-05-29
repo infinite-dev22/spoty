@@ -30,7 +30,9 @@ import javafx.event.*;
 import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import lombok.extern.slf4j.*;
 
+@Slf4j
 public class DesignationFormController implements Initializable {
     private static final PseudoClass INVALID_PSEUDO_CLASS = PseudoClass.getPseudoClass("invalid");
     private static DesignationFormController instance;

@@ -16,6 +16,9 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class ExpensesRepositoryImpl extends ProtectedGlobals implements SimpleRepository {
     Gson gson = new GsonBuilder()
             .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX").create();

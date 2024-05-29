@@ -26,6 +26,9 @@ import javafx.scene.layout.*;
 import javafx.stage.*;
 import javafx.util.*;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class SalariesController implements Initializable {
     private static SalariesController instance;
     @FXML

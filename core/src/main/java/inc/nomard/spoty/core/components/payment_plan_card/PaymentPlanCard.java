@@ -12,10 +12,13 @@ import javafx.scene.image.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.*;
 import lombok.*;
+import lombok.extern.slf4j .*;
 
-@Getter
 @Setter
+@Getter
 @Builder
+
+@Slf4j
 public class PaymentPlanCard extends VBox {
     private String imageUrl;
     private String planName;

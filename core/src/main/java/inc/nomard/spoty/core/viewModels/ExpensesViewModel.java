@@ -28,6 +28,9 @@ import java.util.concurrent.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class ExpensesViewModel {
     public static final ObservableList<Expense> expensesList = FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()

@@ -18,12 +18,16 @@ import inc.nomard.spoty.network_bridge.dtos.*;
 import lombok.*;
 
 import java.util.Objects;
+import lombok.extern.slf4j.*;
+import lombok.extern.slf4j.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+
+@Slf4j
 public class UserProfile {
     private Long id;
     private User user;
@@ -36,12 +40,6 @@ public class UserProfile {
     private String dob;
     private String avatar;
     private Tenant tenant;
-
-    public boolean isActive() {
-        if (Objects.nonNull(user))
-            return user.isActive();
-        else return false;
-    }
 
     public String getName() {
         var name = "";

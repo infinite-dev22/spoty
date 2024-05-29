@@ -17,12 +17,15 @@ package inc.nomard.spoty.network_bridge.dtos;
 import lombok.*;
 
 import java.util.Date;
+import lombok.extern.slf4j.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+
+@Slf4j
 public class Holiday {
     private long id;
     private String title;

@@ -31,6 +31,9 @@ import javafx.beans.property.*;
 import javafx.collections.*;
 import lombok.*;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class PurchaseDetailViewModel {
     @Getter
     public static final ObservableList<PurchaseDetail> purchaseDetailsList =
@@ -371,7 +374,7 @@ public class PurchaseDetailViewModel {
 //        purchaseTransaction.setProduct(purchaseDetail.getProduct());
 //        purchaseTransaction.setAdjustQuantity(purchaseDetail.getQuantity());
 //        purchaseTransaction.setPurchaseType(purchaseDetail.getPurchaseType());
-//        purchaseTransaction.setDate(new Date());
+//        purchaseTransaction.setCreatedAt(new Date());
 //
 ////        purchaseTransactionDao.create(purchaseTransaction);
 //        // TODO: Create purchase transaction.
@@ -385,7 +388,7 @@ public class PurchaseDetailViewModel {
 //        purchaseTransaction.setProduct(purchaseDetail.getProduct());
 //        purchaseTransaction.setAdjustQuantity(purchaseDetail.getQuantity());
 //        purchaseTransaction.setPurchaseType(purchaseDetail.getPurchaseType());
-//        purchaseTransaction.setDate(new Date());
+//        purchaseTransaction.setCreatedAt(new Date());
 //
 ////        purchaseTransactionDao.update(purchaseTransaction);
 //        // TODO: Update purchase transaction.

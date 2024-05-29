@@ -17,7 +17,9 @@ import java.util.*;
 import javafx.event.*;
 import javafx.fxml.*;
 import javafx.util.converter.*;
+import lombok.extern.slf4j.*;
 
+@Slf4j
 public class TaxFormController implements Initializable {
     private static TaxFormController instance;
     @FXML

@@ -17,18 +17,20 @@ package inc.nomard.spoty.network_bridge.dtos;
 import lombok.*;
 
 import java.util.List;
+import lombok.extern.slf4j.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+
+@Slf4j
 public class Product {
     private long id;
     private UnitOfMeasure unit;
     private ProductCategory category;
     private Brand brand;
-    private List<Branch> branch;
     private String barcodeType;
     private String productType;
     private String name;

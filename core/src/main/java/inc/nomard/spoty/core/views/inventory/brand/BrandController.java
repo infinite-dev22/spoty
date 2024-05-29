@@ -38,8 +38,10 @@ import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
 import javafx.util.*;
+import lombok.extern.slf4j .*;
 
 @SuppressWarnings("unchecked")
+@Slf4j
 public class BrandController implements Initializable {
     private static BrandController instance;
     @FXML

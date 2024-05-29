@@ -25,7 +25,9 @@ import javafx.collections.*;
 import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
+import lombok.extern.slf4j.*;
 
+@Slf4j
 public class PurchasePreviewController implements Initializable {
     static final ObservableList<PurchaseDetail> purchaseDetailsList = FXCollections.observableArrayList();
     private static final ListProperty<PurchaseDetail> purchaseDetails =

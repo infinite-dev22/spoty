@@ -25,7 +25,9 @@ import javafx.collections.*;
 import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
+import lombok.extern.slf4j.*;
 
+@Slf4j
 public class SalePreviewController implements Initializable {
     static final ObservableList<SaleDetail> saleDetailsList = FXCollections.observableArrayList();
     private static final ListProperty<SaleDetail> saleDetails =
@@ -159,6 +161,5 @@ public class SalePreviewController implements Initializable {
         netCost.setText(String.valueOf(sale.getTotal()));
         paidAmount.setText(String.valueOf(sale.getAmountPaid()));
         changeDue.setText(String.valueOf(sale.getChangeAmount()));
-        balance.setText(String.valueOf(sale.getBalanceAmount()));
     }
 }

@@ -3,12 +3,15 @@ package inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.Designation;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.User;
 import lombok.*;
+import lombok.extern.slf4j.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+
+@Slf4j
 public class Salary {
     private Long id;
     private User employee;

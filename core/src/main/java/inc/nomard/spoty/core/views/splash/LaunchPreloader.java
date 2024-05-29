@@ -22,7 +22,9 @@ import javafx.application.*;
 import javafx.scene.*;
 import javafx.scene.image.*;
 import javafx.stage.*;
+import lombok.extern.slf4j.*;
 
+@Slf4j
 public class LaunchPreloader extends Preloader {
     private Stage preloadStage;
 

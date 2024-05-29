@@ -11,6 +11,10 @@ import java.net.http.*;
 import java.util.*;
 import javafx.concurrent.*;
 
+import lombok.*;
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class PaymentsRepositoryImpl extends ProtectedGlobals implements PaymentsRepository {
     // Trylla, Trilla, Trylli.
     // Freilla.
@@ -18,7 +22,8 @@ public class PaymentsRepositoryImpl extends ProtectedGlobals implements Payments
     public Task<HttpResponse<String>> cardPay(Object object) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws IOException, InterruptedException {
+            @SneakyThrows
+            protected HttpResponse<String> call() {
                 return taskCreate();
             }
 
@@ -40,7 +45,8 @@ public class PaymentsRepositoryImpl extends ProtectedGlobals implements Payments
     public Task<HttpResponse<String>> mtnMomoPay(Object object) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws IOException, InterruptedException {
+            @SneakyThrows
+            protected HttpResponse<String> call() {
                 return taskCreate();
             }
 
@@ -62,7 +68,8 @@ public class PaymentsRepositoryImpl extends ProtectedGlobals implements Payments
     public Task<HttpResponse<String>> airtelMomoPay(Object object) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws IOException, InterruptedException {
+            @SneakyThrows
+            protected HttpResponse<String> call() {
                 return taskCreate();
             }
 
@@ -84,7 +91,8 @@ public class PaymentsRepositoryImpl extends ProtectedGlobals implements Payments
     public Task<HttpResponse<String>> startTrial(FindModel findModel) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws IOException, InterruptedException {
+            @SneakyThrows
+            protected HttpResponse<String> call() {
                 return taskCreate();
             }
 

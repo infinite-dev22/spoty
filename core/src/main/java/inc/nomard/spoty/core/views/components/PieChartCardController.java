@@ -19,6 +19,9 @@ import java.util.*;
 import javafx.fxml.*;
 import javafx.scene.chart.*;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class PieChartCardController implements Initializable {
 
     @FXML

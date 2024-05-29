@@ -17,6 +17,9 @@ package inc.nomard.spoty.utils;
 import java.io.*;
 import java.net.*;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class SpotyUtilsResourceLoader {
     public SpotyUtilsResourceLoader() {
     }

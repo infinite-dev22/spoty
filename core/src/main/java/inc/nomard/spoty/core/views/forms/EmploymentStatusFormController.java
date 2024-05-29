@@ -19,8 +19,6 @@ import static inc.nomard.spoty.core.GlobalActions.*;
 import inc.nomard.spoty.core.components.message.*;
 import inc.nomard.spoty.core.components.message.enums.*;
 import inc.nomard.spoty.core.viewModels.hrm.employee.*;
-import inc.nomard.spoty.core.viewModels.hrm.pay_roll.*;
-import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
 import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
@@ -32,7 +30,9 @@ import java.util.*;
 import javafx.event.*;
 import javafx.fxml.*;
 import javafx.scene.control.*;
+import lombok.extern.slf4j.*;
 
+@Slf4j
 public class EmploymentStatusFormController implements Initializable {
     private static EmploymentStatusFormController instance;
     @FXML

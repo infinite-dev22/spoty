@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class BootstrapRow {
 
     private final List<BootstrapColumn> columns = new ArrayList<>();

@@ -19,6 +19,7 @@ module spoty.core {
     requires com.calendarfx.view;
 //    requires froxty;
     requires com.dlsc.gemsfx;
+    requires org.slf4j;
 
     opens inc.nomard.spoty.core.views;
     opens inc.nomard.spoty.core.views.auth;
@@ -41,7 +42,7 @@ module spoty.core {
     opens inc.nomard.spoty.core.views.human_resource.pay_roll.pay_slip;
     opens inc.nomard.spoty.core.views.bank;
     opens inc.nomard.spoty.core.views.quotation;
-    opens inc.nomard.spoty.core.views.tax;
+    opens inc.nomard.spoty.core.views.deductions;
     opens inc.nomard.spoty.core.views.expenses.expense;
     opens inc.nomard.spoty.core.views.expenses.category;
     opens inc.nomard.spoty.core.views.customers;

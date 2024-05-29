@@ -34,6 +34,9 @@ import javafx.beans.property.*;
 import javafx.collections.*;
 
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class LeaveStatusViewModel {
     public static final ObservableList<LeaveStatus> leaveStatusesList = FXCollections.observableArrayList();
     public static final ListProperty<LeaveStatus> leaveStatuses = new SimpleListProperty<>(leaveStatusesList);

@@ -31,7 +31,9 @@ import javafx.application.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
 import lombok.*;
+import lombok.extern.slf4j.*;
 
+@Slf4j
 public class SaleMasterViewModel {
     @Getter
     public static final ObservableList<SaleMaster> saleMastersList =
@@ -183,6 +185,7 @@ public class SaleMasterViewModel {
                     setPaid(0);
                     PENDING_DELETES.clear();
                     SaleDetailViewModel.resetProperties();
+                    setDefaultCustomer();
                 });
     }
 
@@ -197,7 +200,6 @@ public class SaleMasterViewModel {
                 .saleStatus(getSaleStatus())
                 .paymentStatus(getPayStatus())
                 .notes(getNote())
-                .date(getDate())
                 .build();
 
         if (!SaleDetailViewModel.saleDetailsList.isEmpty()) {
@@ -351,7 +353,6 @@ public class SaleMasterViewModel {
                 .saleStatus(getSaleStatus())
                 .paymentStatus(getPayStatus())
                 .notes(getNote())
-                .date(getDate())
                 .build();
 
         if (!PENDING_DELETES.isEmpty()) {
@@ -389,5 +390,12 @@ public class SaleMasterViewModel {
             task.getException().printStackTrace(System.err);
         });
         SpotyThreader.spotyThreadPool(task);
+    }
+
+    public static void setDefaultCustomer() {
+        var customer = new Customer();
+        customer.setId(1L);
+        customer.setName("Walk In Customer");
+        setCustomer(customer);
     }
 }

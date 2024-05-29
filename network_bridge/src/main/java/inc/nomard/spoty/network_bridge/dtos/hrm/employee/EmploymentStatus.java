@@ -18,12 +18,15 @@ import inc.nomard.spoty.network_bridge.dtos.Branch;
 import lombok.*;
 
 import java.util.ArrayList;
+import lombok.extern.slf4j.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+
+@Slf4j
 public class EmploymentStatus {
     private Long id;
     private String name;

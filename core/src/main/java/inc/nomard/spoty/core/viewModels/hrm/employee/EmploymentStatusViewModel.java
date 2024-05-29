@@ -29,6 +29,9 @@ import javafx.collections.*;
 import lombok.*;
 
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class EmploymentStatusViewModel {
     @Getter
     private static final ObservableList<String> colorsList = FXCollections.observableArrayList("Red", "Blue", "Green", "Orange", "Purple", "Brown");

@@ -33,6 +33,9 @@ import javafx.beans.property.*;
 import javafx.collections.*;
 
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class PaySlipViewModel {
     public static final ObservableList<PaySlip> paySlipsList = FXCollections.observableArrayList();
     public static final ListProperty<PaySlip> paySlips = new SimpleListProperty<>(paySlipsList);

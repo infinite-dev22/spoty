@@ -25,6 +25,9 @@ import javafx.scene.layout.*;
 import javafx.stage.*;
 import javafx.util.*;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class BeneficiaryTypeController implements Initializable {
     private static BeneficiaryTypeController instance;
     @FXML

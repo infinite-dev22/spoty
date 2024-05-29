@@ -8,6 +8,9 @@ import lombok.Getter;
 import java.io.IOException;
 import java.util.Date;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class UnixEpochDateTypeAdapter
         extends TypeAdapter<Date> {
 

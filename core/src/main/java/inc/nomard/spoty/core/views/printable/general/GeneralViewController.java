@@ -4,7 +4,9 @@ import java.net.*;
 import java.util.*;
 import javafx.fxml.*;
 import javafx.scene.control.*;
+import lombok.extern.slf4j.*;
 
+@Slf4j
 public class GeneralViewController implements Initializable {
     private static GeneralViewController instance;
     public Label dateLabel;

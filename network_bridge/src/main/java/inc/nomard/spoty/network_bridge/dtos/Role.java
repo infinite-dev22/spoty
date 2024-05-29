@@ -14,16 +14,17 @@
 
 package inc.nomard.spoty.network_bridge.dtos;
 
-import inc.nomard.spoty.network_bridge.dtos.hrm.employee.User;
+import java.util.*;
 import lombok.*;
-
-import java.util.List;
+import lombok.extern.slf4j .*;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+
+@Slf4j
 public class Role {
     private Long id;
     private String name;

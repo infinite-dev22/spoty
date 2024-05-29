@@ -4,6 +4,9 @@ import javafx.animation.*;
 import javafx.scene.*;
 import javafx.util.*;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class SpotyAnimations {
     public static void pulsate(Node node, Duration duration, double size, int cycleCount) {
         var transition = new ScaleTransition(duration);

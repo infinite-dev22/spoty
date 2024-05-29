@@ -70,7 +70,7 @@ run {
             "-Dsun.io.useCanonCaches=false",
             "-Djbr.catch.SIGABRT=true",
             "-Djdk.attach.allowAttachSelf=true",
-            "-agentlib:native-image-agent=config-output-dir=target/classes/META-INF/native-image",
+//            "-agentlib:native-image-agent=config-output-dir=target/classes/META-INF/native-image",
     ]
 }
 
@@ -150,6 +150,7 @@ jlinkZip.doLast {
 dependencies {
     implementation project(":network_bridge")
     implementation project(":utils")
+    implementation "org.slf4j:slf4j-api:2.1.0-alpha1"
     implementation 'jakarta.inject:jakarta.inject-api:2.0.1'
     implementation "javax.measure:unit-api:$measure_unit_api"
     implementation "com.dlsc.gemsfx:gemsfx:$gemsfx"

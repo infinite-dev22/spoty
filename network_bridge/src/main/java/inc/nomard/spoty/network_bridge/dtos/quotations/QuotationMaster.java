@@ -22,12 +22,15 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import lombok.extern.slf4j.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+
+@Slf4j
 public class QuotationMaster {
     private Long id;
     private String ref;
@@ -41,7 +44,6 @@ public class QuotationMaster {
     private double amountPaid;
     private double amountDue;
     private double changeAmount;
-    private double balanceAmount;
     private double shippingFee;
     private double total;
     private String status;

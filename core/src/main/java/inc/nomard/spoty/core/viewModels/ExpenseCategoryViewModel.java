@@ -28,6 +28,9 @@ import javafx.beans.property.*;
 import javafx.collections.*;
 
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class ExpenseCategoryViewModel {
     public static final ObservableList<ExpenseCategory> categoryList =
             FXCollections.observableArrayList();

@@ -30,6 +30,9 @@ import javafx.beans.property.*;
 import javafx.collections.*;
 
 // TODO: Transfer to backend.
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class PermissionsViewModel {
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,

@@ -3,6 +3,7 @@ package inc.nomard.spoty.core.views.sales.pos.components;
 import inc.nomard.spoty.core.*;
 import inc.nomard.spoty.utils.navigation.*;
 import io.github.palexdev.materialfx.controls.*;
+import io.github.palexdev.materialfx.controls.models.spinner.*;
 import io.github.palexdev.mfxcore.controls.*;
 import io.github.palexdev.mfxresources.fonts.*;
 import java.util.*;
@@ -13,8 +14,10 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.*;
 import javafx.scene.shape.*;
 import lombok.*;
+import lombok.extern.slf4j.*;
 
 @Setter
+@Slf4j
 public class CartItem extends HBox {
     private static String logo;
     private static String productName;
@@ -89,7 +92,7 @@ public class CartItem extends HBox {
         label2.getStyleClass().add("product-price");
         spinner.setEditable(true);
         spinner.setGraphicTextGap(0);
-        spinner.setValue(productQuantity);
+        spinner.setSpinnerModel(new IntegerSpinnerModel(1));
         hBox2.getChildren().setAll(label2, new Spacer(), spinner);
         hBox2.setAlignment(Pos.CENTER);
         // Body component.

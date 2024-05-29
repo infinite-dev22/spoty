@@ -36,7 +36,9 @@ import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.util.*;
+import lombok.extern.slf4j.*;
 
+@Slf4j
 public class UOMFormController implements Initializable {
     /**
      * =>When editing a row, the extra fields won't display even though the row clearly has a BaseUnit

@@ -14,6 +14,9 @@
 
 package inc.nomard.spoty.core.values.numbers;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class Constants {
     public static final int GRID_HGAP = 20;
     public static final int GRID_VGAP = 10;

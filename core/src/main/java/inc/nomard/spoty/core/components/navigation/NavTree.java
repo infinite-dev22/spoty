@@ -27,6 +27,9 @@ import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import org.kordamp.ikonli.javafx.*;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class NavTree extends TreeView<Nav> {
     public static final double SIDEBAR_WIDTH = 250.0;
 

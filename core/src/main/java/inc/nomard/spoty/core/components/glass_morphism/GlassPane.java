@@ -6,6 +6,9 @@ import javafx.scene.effect.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.*;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class GlassPane extends AnchorPane {
     private boolean isGlassMorphismEnabled; // Flag to control effect
 

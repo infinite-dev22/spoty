@@ -48,8 +48,10 @@ import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
 import javafx.util.*;
+import lombok.extern.slf4j .*;
 
 @SuppressWarnings("unchecked")
+@Slf4j
 public class QuotationMasterFormController implements Initializable {
     private static QuotationMasterFormController instance;
     @FXML
@@ -332,8 +334,8 @@ public class QuotationMasterFormController implements Initializable {
     }
 
     private void onAction() {
-        cancelBtn.setDisable(true);
-        saveBtn.setDisable(true);
+//        cancelBtn.setDisable(true);
+//        saveBtn.setDisable(true);
 //        cancelBtn.setManaged(true);
 //        saveBtn.setManaged(true);
     }
@@ -347,8 +349,6 @@ public class QuotationMasterFormController implements Initializable {
                         .type(MessageVariants.SUCCESS)
                         .build();
         notificationHolder.addMessage(notification);
-        cancelBtn.setDisable(false);
-        saveBtn.setDisable(false);
         cancelBtnClicked();
 
         QuotationMasterViewModel.getAllQuotationMasters(null, null, null);
@@ -363,8 +363,6 @@ public class QuotationMasterFormController implements Initializable {
                         .type(MessageVariants.SUCCESS)
                         .build();
         notificationHolder.addMessage(notification);
-        cancelBtn.setDisable(false);
-        saveBtn.setDisable(false);
         cancelBtnClicked();
 
         QuotationMasterViewModel.getAllQuotationMasters(null, null, null);
@@ -379,8 +377,6 @@ public class QuotationMasterFormController implements Initializable {
                         .type(MessageVariants.ERROR)
                         .build();
         notificationHolder.addMessage(notification);
-        cancelBtn.setDisable(false);
-        saveBtn.setDisable(false);
 
         QuotationMasterViewModel.getAllQuotationMasters(null, null, null);
     }

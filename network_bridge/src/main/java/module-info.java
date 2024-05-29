@@ -4,6 +4,7 @@ module spoty.network_bridge {
     requires com.google.gson;
     requires spoty.utils;
     requires javafx.graphics;
+    requires org.slf4j;
 
 
     opens inc.nomard.spoty.network_bridge.auth;

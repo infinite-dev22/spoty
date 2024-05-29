@@ -14,19 +14,21 @@
 
 package inc.nomard.spoty.network_bridge.models;
 
-import inc.nomard.spoty.network_bridge.dtos.Branch;
-import inc.nomard.spoty.network_bridge.dtos.Role;
+import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
+import java.io.*;
+import java.time.*;
+import java.util.*;
 import lombok.*;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import lombok.extern.slf4j.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+
+@Slf4j
 public class UserModel implements Serializable {
     private Long id;
     private String firstName;
@@ -35,14 +37,16 @@ public class UserModel implements Serializable {
     private String email;
     private String phone;
     private Role role;
+    private LocalDate dateOfBirth;
     private Branch branch;
     @Builder.Default
     private boolean active = true;
     @Builder.Default
     private boolean locked = false;
-    @Builder.Default
-    private boolean accessAllBranches = false;
     private String avatar;
     private String password;
     private String confirmPassword;
+    private Department department;
+    private Designation designation;
+    private EmploymentStatus employmentStatus;
 }

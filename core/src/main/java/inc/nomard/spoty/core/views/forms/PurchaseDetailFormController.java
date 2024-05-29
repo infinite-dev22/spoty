@@ -36,7 +36,9 @@ import javafx.collections.*;
 import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.util.*;
+import lombok.extern.slf4j.*;
 
+@Slf4j
 public class PurchaseDetailFormController implements Initializable {
     private static PurchaseDetailFormController instance;
     @FXML

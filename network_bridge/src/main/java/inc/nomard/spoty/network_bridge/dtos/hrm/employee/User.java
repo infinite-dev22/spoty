@@ -15,16 +15,17 @@
 package inc.nomard.spoty.network_bridge.dtos.hrm.employee;
 
 import inc.nomard.spoty.network_bridge.dtos.*;
+import java.util.*;
 import lombok.*;
-
-import java.util.ArrayList;
-import java.util.Date;
+import lombok.extern.slf4j.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+
+@Slf4j
 public class User {
     private Long id;
     private UserProfile userProfile;
@@ -32,10 +33,10 @@ public class User {
     private EmploymentStatus employmentStatus;
     private Designation designation;
     private Department department;
+    private Role role;
     private String workShift;
-    private Date joiningDate;
+    private Date dateOfBirth;
     private String salary;
-    private ArrayList<Role> roles;
     private String email;
     private ArrayList<Branch> branches;
     private boolean active;
@@ -47,18 +48,59 @@ public class User {
     }
 
     public String getEmploymentStatusName() {
-        return employmentStatus.getName();
+        if (Objects.nonNull(employmentStatus)) {
+            return employmentStatus.getName();
+        } else {
+            return "N/A";
+        }
     }
 
     public String getEmploymentStatusColor() {
-        return employmentStatus.getColor();
+        if (Objects.nonNull(employmentStatus)) {
+            return employmentStatus.getColor();
+        } else {
+            return "N/A";
+        }
     }
 
     public String getDepartmentName() {
-        return department.getName();
+        if (Objects.nonNull(department)) {
+            return department.getName();
+        } else {
+            return "N/A";
+        }
     }
 
     public String getDesignationName() {
-        return designation.getName();
+        if (Objects.nonNull(designation)) {
+            return designation.getName();
+        } else {
+            return "N/A";
+        }
+    }
+
+    public String getPhone() {
+        return userProfile.getPhone();
+    }
+
+    public String getActive() {
+        if (active) {
+            return "Active";
+        }
+        return "Not Active";
+    }
+
+    public String getWorkShift() {
+        if (Objects.nonNull(workShift)) {
+            return workShift;
+        }
+        return "N/A";
+    }
+
+    public String getEmail() {
+        if (Objects.nonNull(email)) {
+            return email;
+        }
+        return "N/A";
     }
 }

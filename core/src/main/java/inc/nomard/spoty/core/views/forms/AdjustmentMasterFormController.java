@@ -39,8 +39,10 @@ import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
+import lombok.extern.slf4j .*;
 
 @SuppressWarnings("unchecked")
+@Slf4j
 public class AdjustmentMasterFormController implements Initializable {
     private static AdjustmentMasterFormController instance;
     @FXML

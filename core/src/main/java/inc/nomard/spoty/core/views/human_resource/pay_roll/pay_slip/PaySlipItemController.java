@@ -10,6 +10,9 @@ import java.util.*;
 import javafx.fxml.*;
 import javafx.scene.layout.*;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class PaySlipItemController implements Initializable {
     @FXML
     public HBox contentPane;

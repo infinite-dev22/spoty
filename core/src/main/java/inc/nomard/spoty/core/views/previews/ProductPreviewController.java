@@ -7,7 +7,9 @@ import java.util.*;
 import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.image.*;
+import lombok.extern.slf4j.*;
 
+@Slf4j
 public class ProductPreviewController implements Initializable {
     @FXML
     public Label productName,

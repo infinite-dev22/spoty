@@ -1,5 +1,8 @@
 package inc.nomard.spoty.network_bridge.end_points;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class EndPoints {
     public static final String appDNS = "http://localhost:8080";
     public static final String apiUrl = appDNS + "/api/v1";
@@ -94,6 +97,17 @@ public class EndPoints {
         public static final String updateCustomer = customersUrl + "/update";
         public static final String deleteCustomer = customersUrl + "/single/delete";
         public static final String deleteCustomers = customersUrl + "/multiple/delete";
+    }
+
+    public static final class Departments {
+        public static final String departmentsUrl = apiUrl + "/departments";
+        public static final String allDepartments = departmentsUrl + "/all";
+        public static final String departmentById = departmentsUrl + "/single";
+        public static final String searchDepartments = departmentsUrl + "/search";
+        public static final String addDepartment = departmentsUrl + "/add";
+        public static final String updateDepartment = departmentsUrl + "/update";
+        public static final String deleteDepartment = departmentsUrl + "/single/delete";
+        public static final String deleteDepartments = departmentsUrl + "/multiple/delete";
     }
 
     public static final class Designations {
@@ -435,6 +449,17 @@ public class EndPoints {
         public static final String updateTax = taxUrl + "/update";
         public static final String deleteTax = taxUrl + "/single/delete";
         public static final String deleteTaxes = taxUrl + "/multiple/delete";
+    }
+
+    public static final class Discount {
+        public static final String discountUrl = apiUrl + "/discount";
+        public static final String allDiscounts = discountUrl + "/all";
+        public static final String discountById = discountUrl + "/single";
+        public static final String searchDiscounts = discountUrl + "/search";
+        public static final String addDiscount = discountUrl + "/add";
+        public static final String updateDiscount = discountUrl + "/update";
+        public static final String deleteDiscount = discountUrl + "/single/delete";
+        public static final String deleteDiscounts = discountUrl + "/multiple/delete";
     }
 
     public static final class Roles {

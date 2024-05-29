@@ -23,8 +23,9 @@ import inc.nomard.spoty.utils.adapters.*;
 import java.util.*;
 import java.util.concurrent.*;
 import javafx.beans.property.*;
+import lombok.extern.slf4j.*;
 
-
+@Slf4j
 public class LoginViewModel {
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
@@ -33,31 +34,24 @@ public class LoginViewModel {
     private static final StringProperty email = new SimpleStringProperty("");
     private static final StringProperty password = new SimpleStringProperty("");
     private static final AuthRepositoryImpl authRepository = new AuthRepositoryImpl();
-
     public static String getPassword() {
         return password.get();
     }
-
     public static void setPassword(String password) {
         LoginViewModel.password.set(password);
     }
-
     public static StringProperty passwordProperty() {
         return password;
     }
-
     public static String getEmail() {
         return email.get();
     }
-
     public static void setEmail(String email) {
         LoginViewModel.email.set(email);
     }
-
     public static StringProperty emailProperty() {
         return email;
     }
-
     public static void resetProperties() {
         setEmail("");
         setPassword("");
@@ -68,21 +62,16 @@ public class LoginViewModel {
             ParameterlessConsumer onSuccess,
             ParameterlessConsumer onFailed,
             ParameterlessConsumer onBadCredentials) {
-
         var loginDetails =
                 LoginModel.builder()
                         .email(getEmail())
                         .password(getPassword())
                         .build();
-
         var task = authRepository.login(loginDetails);
         task.setOnRunning(workerStateEvent -> onActivity.run());
         task.setOnSucceeded(workerStateEvent -> {
             try {
                 var response = gson.fromJson(task.get().body(), LoginResponseModel.class);
-
-                System.out.println(new Gson().toJson(response));
-
                 if (response.getStatus() == 200) {
                     ProtectedGlobals.authToken = response.getToken();
                     ProtectedGlobals.trial = response.getUser().getUserProfile().getTenant().isTrial();
@@ -91,7 +80,6 @@ public class LoginViewModel {
                     ProtectedGlobals.activeTenancy = response.isActiveTenancy();
                     ProtectedGlobals.message = response.getMessage();
                     ProtectedGlobals.user = response.getUser();
-                    ProtectedGlobals.role = response.getRole();
                     onSuccess.run();
                 } else if (response.getStatus() == 401) {
                     ProtectedGlobals.authToken = response.getToken();
@@ -102,7 +90,6 @@ public class LoginViewModel {
                     ProtectedGlobals.activeTenancy = response.isActiveTenancy();
                     ProtectedGlobals.message = response.getMessage();
                     ProtectedGlobals.user = response.getUser();
-                    ProtectedGlobals.role = response.getRole();
                     onSuccess.run();
                 } else if (response.getStatus() == 404) {
                     ProtectedGlobals.authToken = response.getToken();
@@ -112,7 +99,6 @@ public class LoginViewModel {
                     ProtectedGlobals.activeTenancy = response.isActiveTenancy();
                     ProtectedGlobals.message = response.getMessage();
                     ProtectedGlobals.user = response.getUser();
-                    ProtectedGlobals.role = response.getRole();
                     onSuccess.run();
                 } else if (response.getMessage().toLowerCase().contains("bad credentials")) {
                     ProtectedGlobals.message = response.getMessage();

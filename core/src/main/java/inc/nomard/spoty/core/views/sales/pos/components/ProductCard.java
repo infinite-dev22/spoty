@@ -23,7 +23,9 @@ import javafx.scene.*;
 import javafx.scene.image.*;
 import javafx.scene.layout.*;
 import lombok.*;
+import lombok.extern.slf4j.*;
 
+@Slf4j
 public class ProductCard extends VBox {
     private static final Random RND = new Random();
     private final ArrayList<String> images = new ArrayList<>(List.of(

@@ -11,7 +11,9 @@ import javafx.collections.*;
 import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
+import lombok.extern.slf4j.*;
 
+@Slf4j
 public class SaleReturnsPreviewController implements Initializable {
     static final ObservableList<SaleReturnDetail> saleReturnDetailsList = FXCollections.observableArrayList();
     private static final ListProperty<SaleReturnDetail> saleReturnDetails =

@@ -48,8 +48,10 @@ import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
 import javafx.util.*;
+import lombok.extern.slf4j.*;
 
 @SuppressWarnings("unchecked")
+@Slf4j
 public class SaleMasterFormController implements Initializable {
     private static SaleMasterFormController instance;
     @FXML
@@ -356,8 +358,8 @@ public class SaleMasterFormController implements Initializable {
     }
 
     private void onAction() {
-        cancelBtn.setDisable(true);
-        saveBtn.setDisable(true);
+//        cancelBtn.setDisable(true);
+//        saveBtn.setDisable(true);
 //        cancelBtn.setManaged(true);
 //        saveBtn.setManaged(true);
     }
@@ -371,8 +373,6 @@ public class SaleMasterFormController implements Initializable {
                         .type(MessageVariants.SUCCESS)
                         .build();
         notificationHolder.addMessage(notification);
-        cancelBtn.setDisable(false);
-        saveBtn.setDisable(false);
         cancelBtnClicked();
 
         SaleMasterViewModel.getAllSaleMasters(null, null, null);
@@ -387,8 +387,6 @@ public class SaleMasterFormController implements Initializable {
                         .type(MessageVariants.SUCCESS)
                         .build();
         notificationHolder.addMessage(notification);
-        cancelBtn.setDisable(false);
-        saveBtn.setDisable(false);
         cancelBtnClicked();
 
         SaleMasterViewModel.getAllSaleMasters(null, null, null);
@@ -403,8 +401,6 @@ public class SaleMasterFormController implements Initializable {
                         .type(MessageVariants.ERROR)
                         .build();
         notificationHolder.addMessage(notification);
-        cancelBtn.setDisable(false);
-        saveBtn.setDisable(false);
 
         SaleMasterViewModel.getAllSaleMasters(null, null, null);
     }
@@ -418,8 +414,6 @@ public class SaleMasterFormController implements Initializable {
                         .type(MessageVariants.ERROR)
                         .build();
         notificationHolder.addMessage(notification);
-        cancelBtn.setDisable(false);
-        saveBtn.setDisable(false);
 
         SaleMasterViewModel.getAllSaleMasters(null, null, null);
     }

@@ -11,7 +11,9 @@ import javafx.collections.*;
 import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
+import lombok.extern.slf4j.*;
 
+@Slf4j
 public class StockInPreviewController implements Initializable {
     static final ObservableList<StockInDetail> stockInDetailsList = FXCollections.observableArrayList();
     private static final ListProperty<StockInDetail> stockInDetails =

@@ -28,7 +28,9 @@ import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
+import lombok.extern.slf4j.*;
 
+@Slf4j
 public class DashboardController implements Initializable {
     @FXML
     public MFXScrollPane scrollPane;

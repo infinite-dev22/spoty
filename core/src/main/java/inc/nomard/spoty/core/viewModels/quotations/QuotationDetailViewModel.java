@@ -32,6 +32,9 @@ import javafx.beans.property.*;
 import javafx.collections.*;
 import lombok.*;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class QuotationDetailViewModel {
     // TODO: Add more fields according to DB design and necessity.
     @Getter

@@ -25,7 +25,9 @@ import javafx.collections.*;
 import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
+import lombok.extern.slf4j.*;
 
+@Slf4j
 public class RequisitionPreviewController implements Initializable {
     static final ObservableList<RequisitionDetail> requisitionDetailsList = FXCollections.observableArrayList();
     private static final ListProperty<RequisitionDetail> requisitionDetails =

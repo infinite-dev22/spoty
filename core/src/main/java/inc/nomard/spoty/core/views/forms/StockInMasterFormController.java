@@ -39,8 +39,10 @@ import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
+import lombok.extern.slf4j .*;
 
 @SuppressWarnings("unchecked")
+@Slf4j
 public class StockInMasterFormController implements Initializable {
     private static StockInMasterFormController instance;
     @FXML

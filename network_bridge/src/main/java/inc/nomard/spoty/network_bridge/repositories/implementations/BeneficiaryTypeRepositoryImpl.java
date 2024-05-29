@@ -15,12 +15,17 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 
+import lombok.*;
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class BeneficiaryTypeRepositoryImpl extends ProtectedGlobals implements SimpleRepository {
     @Override
     public Task<HttpResponse<String>> fetchAll() {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws IOException, InterruptedException {
+            @SneakyThrows
+            protected HttpResponse<String> call() {
                 return taskCreate();
             }
 
@@ -42,7 +47,8 @@ public class BeneficiaryTypeRepositoryImpl extends ProtectedGlobals implements S
     public Task<HttpResponse<String>> fetch(FindModel findModel) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws IOException, InterruptedException {
+            @SneakyThrows
+            protected HttpResponse<String> call() {
                 return taskCreate();
             }
 
@@ -64,7 +70,8 @@ public class BeneficiaryTypeRepositoryImpl extends ProtectedGlobals implements S
     public Task<HttpResponse<String>> search(SearchModel searchModel) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws IOException, InterruptedException {
+            @SneakyThrows
+            protected HttpResponse<String> call() {
                 return taskCreate();
             }
 
@@ -86,7 +93,8 @@ public class BeneficiaryTypeRepositoryImpl extends ProtectedGlobals implements S
     public Task<HttpResponse<String>> post(Object object) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws IOException, InterruptedException {
+            @SneakyThrows
+            protected HttpResponse<String> call() {
                 return taskCreate();
             }
 
@@ -108,7 +116,8 @@ public class BeneficiaryTypeRepositoryImpl extends ProtectedGlobals implements S
     public Task<HttpResponse<String>> put(Object object) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws IOException, InterruptedException {
+            @SneakyThrows
+            protected HttpResponse<String> call() {
                 return taskCreate();
             }
 
@@ -130,7 +139,8 @@ public class BeneficiaryTypeRepositoryImpl extends ProtectedGlobals implements S
     public Task<HttpResponse<String>> delete(FindModel findModel) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws IOException, InterruptedException {
+            @SneakyThrows
+            protected HttpResponse<String> call() {
                 return taskCreate();
             }
 
@@ -152,7 +162,8 @@ public class BeneficiaryTypeRepositoryImpl extends ProtectedGlobals implements S
     public Task<HttpResponse<String>> deleteMultiple(ArrayList<FindModel> findModelList) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws IOException, InterruptedException {
+            @SneakyThrows
+            protected HttpResponse<String> call() {
                 return taskCreate();
             }
 

@@ -15,6 +15,9 @@ import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class TopCustomersController implements Initializable {
     public MFXTableView<Customer> customers;
     public Label cardTitle;

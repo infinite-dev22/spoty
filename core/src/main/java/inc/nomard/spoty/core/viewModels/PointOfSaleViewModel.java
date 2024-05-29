@@ -21,6 +21,9 @@ import java.util.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class PointOfSaleViewModel {
     public static final LongProperty itemQuantity = new SimpleLongProperty(1);
     private static final Gson gson = new GsonBuilder()

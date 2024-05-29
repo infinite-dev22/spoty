@@ -22,7 +22,9 @@ import javafx.beans.property.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.util.*;
+import lombok.extern.slf4j.*;
 
+@Slf4j
 public class Navigation {
     static final int PAGE_TRANSITION_DURATION = 300;
     private static final Map<String, NavTree.NavTreeItem> NAV_TREE = createNavItems();
@@ -49,6 +51,9 @@ public class Navigation {
         // People
         map.put("SUPPLIERS", NavTree.NavTreeItem.page("Suppliers", Pages.getSupplierPane()));
         map.put("CUSTOMERS", NavTree.NavTreeItem.page("Customers", Pages.getCustomerPane()));
+        // Deductions
+        map.put("TAXES", NavTree.NavTreeItem.page("Suppliers", Pages.getTaxesPane()));
+        map.put("DISCOUNTS", NavTree.NavTreeItem.page("Customers", Pages.getDiscountsPane()));
         // Sales
         map.put("POINT_OF_SALE", NavTree.NavTreeItem.page("Point Of Sale", Pages.getPosPane()));
         map.put("ORDERS", NavTree.NavTreeItem.page("Orders", Pages.getSalePane()));
@@ -303,6 +308,12 @@ public class Navigation {
         var quotation = NavTree.NavTreeItem.mainPage("Quotations", "fas-receipt", Pages.getQuotationPane());
 
         var tax = NavTree.NavTreeItem.mainPage("Tax", "fas-money-bill-wheat", Pages.getTaxesPane());
+
+        var deductions = NavTree.NavTreeItem.group("Deductions", "fas-coins");
+        deductions.getChildren().setAll(
+                NAV_TREE.get("TAXES"),
+                NAV_TREE.get("DISCOUNTS"));
+
         var settings = NavTree.NavTreeItem.group("Settings", "fas-gears");
 
         if (flavor == AppFlavor.TRACTION) {
@@ -323,7 +334,17 @@ public class Navigation {
         }
 
         var root = NavTree.NavTreeItem.root();
-        if (flavor == AppFlavor.DEV) {
+        if (flavor == AppFlavor.PROD) {
+            root.getChildren()
+                    .addAll(
+                            dashboard,
+                            people,
+                            deductions,
+                            inventory,
+                            quotation,
+                            sale,
+                            accounts);
+        } else if (flavor == AppFlavor.DEV) {
             root.getChildren()
                     .addAll(
                             dashboard,

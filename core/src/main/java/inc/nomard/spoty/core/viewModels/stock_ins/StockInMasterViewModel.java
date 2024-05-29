@@ -24,14 +24,15 @@ import inc.nomard.spoty.network_bridge.repositories.implementations.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.adapters.*;
 import java.lang.reflect.*;
-import java.text.*;
 import java.util.*;
 import java.util.concurrent.*;
 import javafx.application.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
 import lombok.*;
+import lombok.extern.slf4j.*;
 
+@Slf4j
 public class StockInMasterViewModel {
     @Getter
     public static final ObservableList<StockInMaster> stockInMastersList =
@@ -138,13 +139,14 @@ public class StockInMasterViewModel {
             ParameterlessConsumer onSuccess,
             ParameterlessConsumer onFailed) {
         var stockInMaster = StockInMaster.builder()
-                .status(getStatus())
                 .notes(getNote())
                 .build();
 
         if (!StockInDetailViewModel.stockInDetailsList.isEmpty()) {
-            stockInMaster.setStockInDetails(StockInDetailViewModel.stockInDetailsList);
+            stockInMaster.setStockInDetails(StockInDetailViewModel.getStockInDetailsList());
         }
+
+        System.out.println(new Gson().toJson(stockInMaster));
 
         var task = stockInsRepository.postMaster(stockInMaster);
         task.setOnRunning(workerStateEvent -> onActivity.run());
@@ -217,7 +219,6 @@ public class StockInMasterViewModel {
                 StockInMaster stockInMaster = gson.fromJson(task.get().body(), StockInMaster.class);
 
                 setId(stockInMaster.getId());
-                setStatus(stockInMaster.getStatus());
                 setNote(stockInMaster.getNotes());
 
                 StockInDetailViewModel.stockInDetailsList.clear();
@@ -275,7 +276,6 @@ public class StockInMasterViewModel {
             ParameterlessConsumer onFailed) {
         var stockInMaster = StockInMaster.builder()
                 .id(getId())
-                .status(getStatus())
                 .notes(getNote())
                 .build();
 

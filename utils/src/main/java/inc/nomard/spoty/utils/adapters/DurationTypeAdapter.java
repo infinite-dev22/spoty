@@ -7,6 +7,9 @@ import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.time.Duration;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class DurationTypeAdapter extends TypeAdapter<Duration> {
 
     @Override

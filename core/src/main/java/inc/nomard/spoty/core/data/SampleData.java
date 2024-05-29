@@ -18,7 +18,9 @@ import inc.nomard.spoty.core.models.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import java.util.*;
 import javafx.collections.*;
+import lombok.extern.slf4j.*;
 
+@Slf4j
 public class SampleData {
     public static List<QuickStats> quickStatsSampleData() {
         List<QuickStats> samples = new ArrayList<>();

@@ -24,15 +24,23 @@ import inc.nomard.spoty.network_bridge.repositories.implementations.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.adapters.*;
 import java.lang.reflect.*;
+import java.time.*;
+import java.time.format.*;
 import java.util.*;
 import java.util.concurrent.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
+import lombok.*;
 
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class UserViewModel {
     public static final ObservableList<User> usersList = FXCollections.observableArrayList();
     public static final ListProperty<User> users = new SimpleListProperty<>(usersList);
+    @Getter
+    private static final ObservableList<String> workShiftsList = FXCollections.observableArrayList("Day", "Evening", "Full");
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
                     UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
@@ -44,13 +52,13 @@ public class UserViewModel {
     private static final ObjectProperty<Role> role = new SimpleObjectProperty<>(null);
     private static final StringProperty email = new SimpleStringProperty("");
     private static final StringProperty phone = new SimpleStringProperty("");
-    private static final StringProperty city = new SimpleStringProperty("");
-    private static final StringProperty address = new SimpleStringProperty("");
-    private static final StringProperty taxNumber = new SimpleStringProperty("");
-    private static final StringProperty country = new SimpleStringProperty("");
     private static final BooleanProperty active = new SimpleBooleanProperty(true);
-    private static final BooleanProperty accessAllBranches = new SimpleBooleanProperty(false);
     private static final StringProperty avatar = new SimpleStringProperty("");
+    private static final StringProperty dateOfBirth = new SimpleStringProperty("");
+    private static final ObjectProperty<Department> department = new SimpleObjectProperty<>(null);
+    private static final ObjectProperty<Designation> designation = new SimpleObjectProperty<>(null);
+    private static final ObjectProperty<EmploymentStatus> employmentStatus = new SimpleObjectProperty<>(null);
+    private static final StringProperty workShift = new SimpleStringProperty("");
     private static final UsersRepositoryImpl usersRepository = new UsersRepositoryImpl();
 
     public static long getId() {
@@ -101,18 +109,6 @@ public class UserViewModel {
         return active;
     }
 
-    public static boolean canAccessAllBranches() {
-        return accessAllBranches.get();
-    }
-
-    public static void setAccessAllBranches(boolean accessAllBranches) {
-        UserViewModel.accessAllBranches.set(accessAllBranches);
-    }
-
-    public static BooleanProperty accessAllBranchesProperty() {
-        return accessAllBranches;
-    }
-
     public static String getOtherName() {
         return otherName.get();
     }
@@ -161,54 +157,6 @@ public class UserViewModel {
         return phone;
     }
 
-    public static String getCity() {
-        return city.get();
-    }
-
-    public static void setCity(String city) {
-        UserViewModel.city.set(city);
-    }
-
-    public static StringProperty cityProperty() {
-        return city;
-    }
-
-    public static String getAddress() {
-        return address.get();
-    }
-
-    public static void setAddress(String address) {
-        UserViewModel.address.set(address);
-    }
-
-    public static StringProperty addressProperty() {
-        return address;
-    }
-
-    public static String getTaxNumber() {
-        return taxNumber.get();
-    }
-
-    public static void setTaxNumber(String taxNumber) {
-        UserViewModel.taxNumber.set(taxNumber);
-    }
-
-    public static StringProperty taxNumberProperty() {
-        return taxNumber;
-    }
-
-    public static String getCountry() {
-        return country.get();
-    }
-
-    public static void setCountry(String country) {
-        UserViewModel.country.set(country);
-    }
-
-    public static StringProperty countryProperty() {
-        return country;
-    }
-
     public static ObservableList<User> getUsers() {
         return users.get();
     }
@@ -233,6 +181,68 @@ public class UserViewModel {
         return avatar;
     }
 
+    public static LocalDate getDateOfBirth() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE, d MMM yyyy", Locale.ENGLISH);
+        LocalDate dateTime = LocalDate.parse(dateOfBirth.get(), formatter);
+        return dateTime;
+    }
+
+    public static void setDateOfBirth(String dateOfBirth) {
+        UserViewModel.dateOfBirth.set(dateOfBirth);
+    }
+
+    public static StringProperty dateOfBirthProperty() {
+        return dateOfBirth;
+    }
+
+    public static Department getDepartment() {
+        return department.get();
+    }
+
+    public static void setDepartment(Department department) {
+        UserViewModel.department.set(department);
+    }
+
+    public static ObjectProperty<Department> departmentProperty() {
+        return department;
+    }
+
+    public static Designation getDesignation() {
+        return designation.get();
+    }
+
+    public static void setDesignation(Designation designation) {
+        UserViewModel.designation.set(designation);
+    }
+
+    public static ObjectProperty<Designation> designationProperty() {
+        return designation;
+    }
+
+    public static EmploymentStatus getEmploymentStatus() {
+        return employmentStatus.get();
+    }
+
+    public static void setEmploymentStatus(EmploymentStatus employmentStatus) {
+        UserViewModel.employmentStatus.set(employmentStatus);
+    }
+
+    public static ObjectProperty<EmploymentStatus> employmentStatusProperty() {
+        return employmentStatus;
+    }
+
+    public static String getWorkShift() {
+        return workShift.get();
+    }
+
+    public static void setWorkShift(String workShift) {
+        UserViewModel.workShift.set(workShift);
+    }
+
+    public static StringProperty workShiftProperty() {
+        return workShift;
+    }
+
     public static void resetProperties() {
         setId(0);
         setFirstName("");
@@ -240,9 +250,13 @@ public class UserViewModel {
         setOtherName("");
         setEmail("");
         setPhone("");
-        setCity("");
-        setAddress("");
-        setCountry("");
+        setActive(true);
+        setDateOfBirth("");
+        setRole(null);
+        setDepartment(null);
+        setDesignation(null);
+        setEmploymentStatus(null);
+        setWorkShift("");
     }
 
     public static void saveUser(
@@ -255,7 +269,13 @@ public class UserViewModel {
                 .otherName(getOtherName())
                 .phone(getPhone())
                 .email(getEmail())
+                .dateOfBirth(getDateOfBirth())
                 .avatar(getAvatar())
+                .active(isActive())
+                .role(getRole())
+                .department(getDepartment())
+                .designation(getDesignation())
+                .employmentStatus(getEmploymentStatus())
                 .build();
 
         var task = usersRepository.post(user);
@@ -369,7 +389,13 @@ public class UserViewModel {
                 .otherName(getOtherName())
                 .phone(getPhone())
                 .email(getEmail())
+                .dateOfBirth(getDateOfBirth())
                 .avatar(getAvatar())
+                .active(isActive())
+                .role(getRole())
+                .department(getDepartment())
+                .designation(getDesignation())
+                .employmentStatus(getEmploymentStatus())
                 .build();
 
         var task = usersRepository.put(user);

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import io.github.palexdev.materialfx.controls.MFXTextField?>
+<?import io.github.palexdev.materialfx.dialogs.MFXGenericDialog?>
+<?import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton?>
+<?import io.github.palexdev.mfxcore.controls.Label?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import java.net.URL?>
+<MFXGenericDialog xmlns="http://javafx.com/javafx"
+                  xmlns:fx="http://javafx.com/fxml"
+                  fx:controller="inc.nomard.spoty.core.views.forms.DiscountFormController"
+                  prefHeight="400.0" prefWidth="600.0">
+    <stylesheets>
+        <URL value="@../../styles/Common.css" />
+        <URL value="@../../styles/TextFields.css" />
+        <URL value="@../../styles/base.css" />
+        <URL value="@../../styles/theming/Default.css" />
+    </stylesheets>
+    <center>
+        <VBox spacing="8.0">
+            <padding>
+                <Insets left="10.0" right="10.0" top="10.0" bottom="10.0"/>
+            </padding>
+            <VBox spacing="2.0">
+                <padding>
+                    <Insets top="2.5"/>
+                </padding>
+                <MFXTextField fx:id="name" floatMode="BORDER" floatingText="Name" prefWidth="400.0"/>
+                <Label id="validationLabel" fx:id="nameValidationLabel" maxWidth="1.7976931348623157E308"
+                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" managed="false"
+                       wrapText="true"/>
+            </VBox>
+            <VBox spacing="2.0">
+                <padding>
+                    <Insets bottom="2.5" top="2.5"/>
+                </padding>
+                <MFXTextField fx:id="percentage" floatMode="BORDER" floatingText="Percentage" prefWidth="400.0"/>
+                <Label id="validationLabel" fx:id="percentageValidationLabel" maxWidth="1.7976931348623157E308"
+                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" managed="false"
+                       wrapText="true"/>
+            </VBox>
+        </VBox>
+    </center>
+    <bottom>
+        <HBox alignment="CENTER_RIGHT" spacing="20.0">
+            <padding>
+                <Insets left="10.0" right="10.0" top="10.0"/>
+            </padding>
+            <MFXButton styleClass="filled" fx:id="saveBtn" text="Save"/>
+            <MFXButton styleClass="outlined" fx:id="cancelBtn" text="Cancel"/>
+        </HBox>
+    </bottom>
+</MFXGenericDialog>

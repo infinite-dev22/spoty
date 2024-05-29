@@ -28,6 +28,9 @@ import javafx.beans.property.*;
 import javafx.collections.*;
 
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class CurrencyViewModel {
     public static final CurrenciesRepositoryImpl currenciesRepository = new CurrenciesRepositoryImpl();
     private static final Gson gson = new GsonBuilder()

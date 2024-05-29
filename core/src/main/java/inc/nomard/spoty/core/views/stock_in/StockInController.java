@@ -40,8 +40,10 @@ import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
 import javafx.util.*;
+import lombok.extern.slf4j.*;
 
 @SuppressWarnings("unchecked")
+@Slf4j
 public class StockInController implements Initializable {
     private static StockInController instance;
     @FXML
@@ -83,29 +85,28 @@ public class StockInController implements Initializable {
     }
 
     private void setupTable() {
-        MFXTableColumn<StockInMaster> status =
-                new MFXTableColumn<>("Status", false, Comparator.comparing(StockInMaster::getStatus));
+        MFXTableColumn<StockInMaster> note =
+                new MFXTableColumn<>("Note", false, Comparator.comparing(StockInMaster::getNotes));
 //        MFXTableColumn<StockInMaster> stockInDate =
-//                new MFXTableColumn<>("Date", false, Comparator.comparing(StockInMaster::getDate));
+//                new MFXTableColumn<>("Date", false, Comparator.comparing(StockInMaster::getCreatedAt));
         MFXTableColumn<StockInMaster> stockInTotalCost =
                 new MFXTableColumn<>("Total Amount", false, Comparator.comparing(StockInMaster::getTotal));
 
-        status.setRowCellFactory(stockIn -> new MFXTableRowCell<>(StockInMaster::getStatus));
+        note.setRowCellFactory(stockIn -> new MFXTableRowCell<>(StockInMaster::getNotes));
         stockInTotalCost.setRowCellFactory(stockIn -> new MFXTableRowCell<>(StockInMaster::getTotal));
 //        stockInDate.setRowCellFactory(stockIn -> new MFXTableRowCell<>(StockInMaster::getLocaleDate));
 
-        status.prefWidthProperty().bind(masterTable.widthProperty().multiply(.3));
+        note.prefWidthProperty().bind(masterTable.widthProperty().multiply(.3));
         stockInTotalCost.prefWidthProperty().bind(masterTable.widthProperty().multiply(.3));
 //        stockInDate.prefWidthProperty().bind(masterTable.widthProperty().multiply(.3));
 
         masterTable
                 .getTableColumns()
-                .addAll(status, /*stockInDate,*/ stockInTotalCost);
+                .addAll(note, stockInTotalCost);
         masterTable
                 .getFilters()
                 .addAll(
                         new StringFilter<>("Reference", StockInMaster::getRef),
-                        new StringFilter<>("Status", StockInMaster::getStatus),
                         new DoubleFilter<>("Total Amount", StockInMaster::getTotal));
         getStockInMasterTable();
 

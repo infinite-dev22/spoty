@@ -25,6 +25,9 @@ import java.util.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class PurchaseReturnMasterViewModel {
     public static final ObservableList<PurchaseReturnMaster> purchaseReturnMasterList =
             FXCollections.observableArrayList();
@@ -151,7 +154,7 @@ public class PurchaseReturnMasterViewModel {
 //                .PurchaseReturnsStatus(getPurchaseReturnStatus())
 //                .paymentStatus(getPayStatus())
 //                .notes(getNote())
-//                .date(getDate())
+//                .createdAt(getCreatedAt())
 //                .build();
 //
 //        if (!PurchaseReturnDetailViewModel.PurchaseReturnsDetailsList.isEmpty()) {
@@ -217,7 +220,7 @@ public class PurchaseReturnMasterViewModel {
 //            }
 //
 //            setId(PurchaseReturnsMaster.getId());
-//            setDate(PurchaseReturnsMaster.getLocaleDate());
+//            setCreatedAt(PurchaseReturnsMaster.getLocaleDate());
 //            setCustomer(PurchaseReturnsMaster.getCustomer());
 //            setNote(PurchaseReturnsMaster.getNotes());
 //            setPurchaseReturnStatus(PurchaseReturnsMaster.getPurchaseReturnStatus());
@@ -278,7 +281,7 @@ public class PurchaseReturnMasterViewModel {
 //                .PurchaseReturnsStatus(getPurchaseReturnStatus())
 //                .paymentStatus(getPayStatus())
 //                .notes(getNote())
-//                .date(getDate())
+//                .createdAt(getCreatedAt())
 //                .build();
 //
 //        if (!PENDING_DELETES.isEmpty()) {

@@ -24,7 +24,9 @@ import javafx.scene.image.*;
 import javafx.scene.paint.*;
 import javafx.scene.shape.*;
 import javafx.stage.*;
+import lombok.extern.slf4j.*;
 
+@Slf4j
 public class UserPreviewController implements Initializable {
     private static UserPreviewController instance;
     @FXML

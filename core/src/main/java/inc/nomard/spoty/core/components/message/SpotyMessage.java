@@ -21,15 +21,18 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.util.*;
 import lombok.*;
+import lombok.extern.slf4j .*;
 
 @Setter
 @Getter
+
+@Slf4j
 public class SpotyMessage extends StackPane {
     @Getter
     private static int layoutHeight;
     @Getter
     private static int layoutWidth;
-    private Duration messageDuration;
+    private final Duration messageDuration;
 
     public SpotyMessage(MessageBuilder messageBuilder) {
         this.messageDuration = messageBuilder.messageDuration;

@@ -22,15 +22,17 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import lombok.extern.slf4j.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+
+@Slf4j
 public class SaleMaster {
     private Long id;
-    private Date date;
     private String ref;
     private Customer customer;
     private ArrayList<Branch> branches;
@@ -43,17 +45,17 @@ public class SaleMaster {
     private double amountPaid;
     private double amountDue;
     private double changeAmount;
-    private double balanceAmount;
     private double shippingFee;
     private String paymentStatus;
     private String saleStatus;
     private String notes;
+    private Date createdAt;
 
     public String getCustomerName() {
         return customer.getName();
     }
 
     public String getLocaleDate() {
-        return DateFormat.getDateInstance().format(date);
+        return DateFormat.getDateInstance().format(createdAt);
     }
 }

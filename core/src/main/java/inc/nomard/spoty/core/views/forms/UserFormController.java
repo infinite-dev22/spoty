@@ -21,6 +21,7 @@ import inc.nomard.spoty.core.components.message.enums.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.hrm.employee.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
 import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
@@ -37,7 +38,9 @@ import javafx.event.*;
 import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.util.*;
+import lombok.extern.slf4j.*;
 
+@Slf4j
 public class UserFormController implements Initializable {
     public static UserFormController instance;
     @FXML
@@ -59,7 +62,16 @@ public class UserFormController implements Initializable {
             phoneValidationLabel,
             lastNameValidationLabel,
             userNameValidationLabel,
-            roleValidationLabel;
+            roleValidationLabel,
+            departmentValidationLabel,
+            designationValidationLabel,
+            employmentStatusValidationLabel,
+            workShiftValidationLabel;
+    public MFXDatePicker dateOfBirth;
+    public MFXFilterComboBox<Department> department;
+    public MFXFilterComboBox<Designation> designation;
+    public MFXFilterComboBox<EmploymentStatus> employmentStatus;
+    public MFXComboBox<String> workShift;
     private List<Constraint> firstNameConstraints,
             lastNameConstraints,
             userNameConstraints,
@@ -96,17 +108,37 @@ public class UserFormController implements Initializable {
         phone.textProperty().bindBidirectional(UserViewModel.phoneProperty());
         role.valueProperty().bindBidirectional(UserViewModel.roleProperty());
         status.selectedProperty().bindBidirectional(UserViewModel.activeProperty());
+        department.valueProperty().bindBidirectional(UserViewModel.departmentProperty());
+        designation.valueProperty().bindBidirectional(UserViewModel.designationProperty());
+        employmentStatus.valueProperty().bindBidirectional(UserViewModel.employmentStatusProperty());
+        workShift.valueProperty().bindBidirectional(UserViewModel.workShiftProperty());
 
         // ComboBox Converters.
         StringConverter<Role> roleConverter =
                 FunctionalStringConverter.to(role -> (role == null) ? "" : role.getName());
+        StringConverter<Department> departmentConverter =
+                FunctionalStringConverter.to(department -> (department == null) ? "" : department.getName());
+        StringConverter<Designation> designationConverter =
+                FunctionalStringConverter.to(designation -> (designation == null) ? "" : designation.getName());
+        StringConverter<EmploymentStatus> employmentStatusConverter =
+                FunctionalStringConverter.to(employmentStatus -> (employmentStatus == null) ? "" : employmentStatus.getName());
 
         // ComboBox Filter Functions.
         Function<String, Predicate<Role>> roleFilterFunction =
                 searchStr ->
                         role -> StringUtils.containsIgnoreCase(roleConverter.toString(role), searchStr);
+        Function<String, Predicate<Department>> departmentFilterFunction =
+                searchStr ->
+                        department -> StringUtils.containsIgnoreCase(departmentConverter.toString(department), searchStr);
+        Function<String, Predicate<Designation>> designationFilterFunction =
+                searchStr ->
+                        designation -> StringUtils.containsIgnoreCase(designationConverter.toString(designation), searchStr);
+        Function<String, Predicate<EmploymentStatus>> employmentStatusFilterFunction =
+                searchStr ->
+                        employmentStatus -> StringUtils.containsIgnoreCase(employmentStatusConverter.toString(employmentStatus), searchStr);
 
         // Combo box properties.
+        workShift.setItems(UserViewModel.getWorkShiftsList());
         role.setConverter(roleConverter);
         role.setFilterFunction(roleFilterFunction);
         if (RoleViewModel.getRoles().isEmpty()) {
@@ -116,6 +148,36 @@ public class UserFormController implements Initializable {
                                     c -> role.setItems(RoleViewModel.getRoles()));
         } else {
             role.itemsProperty().bindBidirectional(RoleViewModel.rolesProperty());
+        }
+        department.setConverter(departmentConverter);
+        department.setFilterFunction(departmentFilterFunction);
+        if (DepartmentViewModel.getDepartments().isEmpty()) {
+            DepartmentViewModel.getDepartments()
+                    .addListener(
+                            (ListChangeListener<Department>)
+                                    c -> department.setItems(DepartmentViewModel.getDepartments()));
+        } else {
+            department.itemsProperty().bindBidirectional(DepartmentViewModel.departmentsProperty());
+        }
+        designation.setConverter(designationConverter);
+        designation.setFilterFunction(designationFilterFunction);
+        if (DesignationViewModel.getDesignations().isEmpty()) {
+            DesignationViewModel.getDesignations()
+                    .addListener(
+                            (ListChangeListener<Designation>)
+                                    c -> designation.setItems(DesignationViewModel.getDesignations()));
+        } else {
+            designation.itemsProperty().bindBidirectional(DesignationViewModel.designationsProperty());
+        }
+        employmentStatus.setConverter(employmentStatusConverter);
+        employmentStatus.setFilterFunction(employmentStatusFilterFunction);
+        if (EmploymentStatusViewModel.getEmploymentStatuses().isEmpty()) {
+            EmploymentStatusViewModel.getEmploymentStatuses()
+                    .addListener(
+                            (ListChangeListener<EmploymentStatus>)
+                                    c -> employmentStatus.setItems(EmploymentStatusViewModel.getEmploymentStatuses()));
+        } else {
+            employmentStatus.itemsProperty().bindBidirectional(EmploymentStatusViewModel.employmentStatusesProperty());
         }
 
         // Input validations.

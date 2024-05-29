@@ -32,6 +32,9 @@ import javafx.beans.property.*;
 import javafx.collections.*;
 import lombok.*;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class QuotationMasterViewModel {
     @Getter
     public static final ObservableList<QuotationMaster> quotationMastersList =
@@ -147,6 +150,8 @@ public class QuotationMasterViewModel {
             quotationMaster.setQuotationDetails(
                     QuotationDetailViewModel.getQuotationDetailsList());
         }
+
+        System.out.println(new Gson().toJson(quotationMaster));
 
         var task = quotationRepository.postMaster(quotationMaster);
         task.setOnRunning(workerStateEvent -> onActivity.run());

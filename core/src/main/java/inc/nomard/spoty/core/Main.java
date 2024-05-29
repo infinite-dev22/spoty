@@ -18,6 +18,9 @@ import inc.nomard.spoty.core.views.splash.*;
 import javafx.application.*;
 import javafx.stage.*;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class Main extends Application {
 
     public static Stage primaryStage = null;

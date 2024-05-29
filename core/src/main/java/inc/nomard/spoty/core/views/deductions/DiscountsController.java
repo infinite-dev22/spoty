@@ -1,4 +1,4 @@
-package inc.nomard.spoty.core.views.tax;
+package inc.nomard.spoty.core.views.deductions;
 
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.components.animations.*;
@@ -24,9 +24,11 @@ import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
 import javafx.util.*;
+import lombok.extern.slf4j.*;
 
-public class TaxesController implements Initializable {
-    private static TaxesController instance;
+@Slf4j
+public class DiscountsController implements Initializable {
+    private static DiscountsController instance;
     @FXML
     public BorderPane contentPane;
     @FXML
@@ -36,7 +38,7 @@ public class TaxesController implements Initializable {
     @FXML
     public MFXButton createBtn;
     @FXML
-    public MFXTableView<Tax> masterTable;
+    public MFXTableView<Discount> masterTable;
     @FXML
     public HBox refresh;
     private RotateTransition transition;
@@ -45,7 +47,7 @@ public class TaxesController implements Initializable {
     private FXMLLoader formFxmlLoader;
     private FXMLLoader viewFxmlLoader;
 
-    public TaxesController(Stage stage) {
+    public DiscountsController(Stage stage) {
         Platform.runLater(
                 () -> {
                     try {
@@ -56,8 +58,8 @@ public class TaxesController implements Initializable {
                 });
     }
 
-    public static TaxesController getInstance(Stage stage) {
-        if (instance == null) instance = new TaxesController(stage);
+    public static DiscountsController getInstance(Stage stage) {
+        if (instance == null) instance = new DiscountsController(stage);
         return instance;
     }
 
@@ -72,13 +74,13 @@ public class TaxesController implements Initializable {
     }
 
     private void setupTable() {
-        MFXTableColumn<Tax> name =
-                new MFXTableColumn<>("Name", false, Comparator.comparing(Tax::getName));
-        MFXTableColumn<Tax> percentage =
-                new MFXTableColumn<>("Percentage", false, Comparator.comparing(Tax::getPercentage));
+        MFXTableColumn<Discount> name =
+                new MFXTableColumn<>("Name", false, Comparator.comparing(Discount::getName));
+        MFXTableColumn<Discount> percentage =
+                new MFXTableColumn<>("Percentage", false, Comparator.comparing(Discount::getPercentage));
 
-        name.setRowCellFactory(product -> new MFXTableRowCell<>(Tax::getName));
-        percentage.setRowCellFactory(product -> new MFXTableRowCell<>(Tax::getPercentage));
+        name.setRowCellFactory(product -> new MFXTableRowCell<>(Discount::getName));
+        percentage.setRowCellFactory(product -> new MFXTableRowCell<>(Discount::getPercentage));
 
         name.prefWidthProperty().bind(masterTable.widthProperty().multiply(.5));
         percentage.prefWidthProperty().bind(masterTable.widthProperty().multiply(.5));
@@ -89,17 +91,17 @@ public class TaxesController implements Initializable {
         masterTable
                 .getFilters()
                 .addAll(
-                        new StringFilter<>("Name", Tax::getName),
-                        new DoubleFilter<>("Percentage", Tax::getPercentage));
+                        new StringFilter<>("Name", Discount::getName),
+                        new DoubleFilter<>("Percentage", Discount::getPercentage));
         styleTable();
 
-        if (TaxViewModel.getTaxes().isEmpty()) {
-            TaxViewModel.getTaxes()
+        if (DiscountViewModel.getDiscounts().isEmpty()) {
+            DiscountViewModel.getDiscounts()
                     .addListener(
-                            (ListChangeListener<Tax>)
-                                    c -> masterTable.setItems(TaxViewModel.getTaxes()));
+                            (ListChangeListener<Discount>)
+                                    c -> masterTable.setItems(DiscountViewModel.getDiscounts()));
         } else {
-            masterTable.itemsProperty().bindBidirectional(TaxViewModel.taxesProperty());
+            masterTable.itemsProperty().bindBidirectional(DiscountViewModel.DiscountsProperty());
         }
     }
 
@@ -110,10 +112,10 @@ public class TaxesController implements Initializable {
 
         masterTable.setTableRowFactory(
                 t -> {
-                    MFXTableRow<Tax> row = new MFXTableRow<>(masterTable, t);
+                    MFXTableRow<Discount> row = new MFXTableRow<>(masterTable, t);
                     EventHandler<ContextMenuEvent> eventHandler =
                             event -> {
-                                showContextMenu((MFXTableRow<Tax>) event.getSource())
+                                showContextMenu((MFXTableRow<Discount>) event.getSource())
                                         .show(
                                                 masterTable.getScene().getWindow(),
                                                 event.getScreenX(),
@@ -125,7 +127,7 @@ public class TaxesController implements Initializable {
                 });
     }
 
-    private MFXContextMenu showContextMenu(MFXTableRow<Tax> obj) {
+    private MFXContextMenu showContextMenu(MFXTableRow<Discount> obj) {
         MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
         MFXContextMenuItem delete = getDeleteContextMenuItem(obj);
@@ -135,7 +137,7 @@ public class TaxesController implements Initializable {
                     SpotyThreader.spotyThreadPool(
                             () -> {
                                 try {
-                                    TaxViewModel.getTax(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
+                                    DiscountViewModel.getDiscount(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
                                 } catch (Exception ex) {
                                     throw new RuntimeException(ex);
                                 }
@@ -149,7 +151,7 @@ public class TaxesController implements Initializable {
         return contextMenu;
     }
 
-    private MFXContextMenuItem getDeleteContextMenuItem(MFXTableRow<Tax> obj) {
+    private MFXContextMenuItem getDeleteContextMenuItem(MFXTableRow<Discount> obj) {
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
 
         // Actions
@@ -159,7 +161,7 @@ public class TaxesController implements Initializable {
                     SpotyThreader.spotyThreadPool(
                             () -> {
                                 try {
-                                    TaxViewModel.deleteTax(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
+                                    DiscountViewModel.deleteDiscount(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
                                 } catch (Exception ex) {
                                     throw new RuntimeException(ex);
                                 }
@@ -171,8 +173,8 @@ public class TaxesController implements Initializable {
     }
 
     private void productFormDialogPane(Stage stage) throws IOException {
-        formFxmlLoader = fxmlLoader("views/forms/TaxForm.fxml");
-        formFxmlLoader.setControllerFactory(c -> TaxFormController.getInstance());
+        formFxmlLoader = fxmlLoader("views/forms/DiscountForm.fxml");
+        formFxmlLoader.setControllerFactory(c -> DiscountFormController.getInstance());
 
         MFXGenericDialog dialogContent = formFxmlLoader.load();
 
@@ -212,6 +214,6 @@ public class TaxesController implements Initializable {
 
         transition = SpotyAnimations.rotateTransition(refreshIcon, Duration.millis(1000), 360);
 
-        refreshIcon.setOnMouseClicked(mouseEvent -> TaxViewModel.getTaxes(this::onAction, this::onSuccess, this::onFailed));
+        refreshIcon.setOnMouseClicked(mouseEvent -> DiscountViewModel.getDiscounts(this::onAction, this::onSuccess, this::onFailed));
     }
 }

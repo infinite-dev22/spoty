@@ -17,6 +17,9 @@ package inc.nomard.spoty.core.values;
 import java.util.*;
 import javafx.beans.property.*;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class SharedResources {
     public static final LinkedList<Long> PENDING_DELETES = new LinkedList<>();
     private static final LongProperty TEMP_ID = new SimpleLongProperty(-1);

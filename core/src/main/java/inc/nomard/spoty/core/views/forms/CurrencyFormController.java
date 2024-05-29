@@ -29,7 +29,9 @@ import java.util.*;
 import javafx.event.*;
 import javafx.fxml.*;
 import javafx.scene.control.*;
+import lombok.extern.slf4j.*;
 
+@Slf4j
 public class CurrencyFormController implements Initializable {
     private static CurrencyFormController instance;
     @FXML

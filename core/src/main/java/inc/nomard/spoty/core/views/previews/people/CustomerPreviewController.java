@@ -23,7 +23,9 @@ import javafx.fxml.*;
 import javafx.scene.image.*;
 import javafx.scene.paint.*;
 import javafx.scene.shape.*;
+import lombok.extern.slf4j.*;
 
+@Slf4j
 public class CustomerPreviewController implements Initializable {
     @FXML
     public Circle imageHolder;

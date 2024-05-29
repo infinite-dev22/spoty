@@ -6,6 +6,9 @@ import java.lang.reflect.Type;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class LocalTimeTypeAdapter implements JsonSerializer<LocalTime>, JsonDeserializer<LocalTime> {
     // Consider using a configurable formatter if needed
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_LOCAL_TIME;

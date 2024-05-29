@@ -3,6 +3,9 @@ package inc.nomard.spoty.utils.flavouring;
 import java.io.*;
 import java.util.*;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class AppConfig {
 
   private static final String CONFIG_FILE = "config.properties";

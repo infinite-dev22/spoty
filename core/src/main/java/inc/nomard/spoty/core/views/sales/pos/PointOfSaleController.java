@@ -14,7 +14,6 @@
 
 package inc.nomard.spoty.core.views.sales.pos;
 
-import inc.nomard.spoty.core.components.animations.*;
 import inc.nomard.spoty.core.components.message.*;
 import inc.nomard.spoty.core.components.message.enums.*;
 import inc.nomard.spoty.core.viewModels.*;
@@ -32,10 +31,8 @@ import io.github.palexdev.mfxresources.fonts.*;
 import java.net.*;
 import java.util.*;
 import java.util.function.*;
-import javafx.animation.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
-import javafx.event.*;
 import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
@@ -43,7 +40,9 @@ import javafx.scene.control.cell.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.*;
 import javafx.util.*;
+import lombok.extern.slf4j.*;
 
+@Slf4j
 public class PointOfSaleController implements Initializable {
     private final ToggleGroup toggleGroup = new ToggleGroup();
     @FXML
@@ -52,7 +51,6 @@ public class PointOfSaleController implements Initializable {
     public MFXLegacyTableView<SaleDetail> cart;
     @FXML
     public MFXTextField discount, search;
-
     public String total;
     @FXML
     public MFXButton checkOutBtn, emptyCartBtn;
@@ -67,12 +65,19 @@ public class PointOfSaleController implements Initializable {
     public TableColumn<SaleDetail, Double> cartPrice;
     public TableColumn<SaleDetail, Double> cartSubTotal;
     public TableColumn<SaleDetail, SaleDetail> cartActions;
-    private RotateTransition transition;
+    @FXML
+    public MFXScrollPane scrollPane;
+    @FXML
+    public VBox cartItemHolder;
+    @FXML
+    public MFXFilterComboBox<Tax> tax;
+    @FXML
+    public BorderPane contentPane;
+    private Long availableProductQuantity = 0L;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         checkOutBtn.setText("CheckOut $0.00");
-        setIcons();
         setPOSComboBoxes();
         getCategoryFilters();
         getProductsGridView();
@@ -87,9 +92,6 @@ public class PointOfSaleController implements Initializable {
         // ComboBox Converters.
         StringConverter<Customer> customerConverter =
                 FunctionalStringConverter.to(customer -> (customer == null) ? "" : customer.getName());
-
-        StringConverter<Branch> branchConverter =
-                FunctionalStringConverter.to(branch -> (branch == null) ? "" : branch.getName());
 
         // ComboBox Filter Functions.
         Function<String, Predicate<Customer>> customerFilterFunction =
@@ -153,41 +155,67 @@ public class PointOfSaleController implements Initializable {
     private void productCardOnAction(ProductCard productCard) {
         productCard.setOnMouseClicked(
                 event -> {
+                    // Check if a sale detail with currently clicked product already exists else create new sale detail.
+                    // Useful to update sale detail product quantity.
                     if (SaleDetailViewModel.getSaleDetails().stream()
                             .anyMatch(saleDetail -> saleDetail.getProduct() == productCard.getProduct())) {
+                        // Get existing sale detail into an optional... just to cater for null safety but looks like it
+                        // ain't required.
                         Optional<SaleDetail> optionalSaleDetail =
                                 SaleDetailViewModel.getSaleDetails().stream()
                                         .filter(saleDetail -> saleDetail.getProduct() == productCard.getProduct())
                                         .findAny();
-
+                        // If optional(sale detail that's already proved present, duh...) is present else tap out.
                         if (optionalSaleDetail.isPresent()) {
                             SaleDetail saleDetail = optionalSaleDetail.get();
                             try {
-                                SpotyThreader.spotyThreadPool(() -> {
-                                    try {
-                                        SaleDetailViewModel.getSaleDetail(saleDetail);
-                                    } catch (Exception e) {
-                                        SpotyLogger.writeToFile(e, this.getClass());
-                                    }
-                                });
-                                SaleDetailViewModel.setProduct(productCard.getProduct());
-                                SaleDetailViewModel.setPrice(productCard.getProduct().getPrice());
-                                SaleDetailViewModel.setQuantity(calculateQuantity(saleDetail));
-                                SaleDetailViewModel.setSubTotalPrice(calculateSubTotal(productCard.getProduct()));
+                                // Get product quantity in existing sale detail.
+                                var quantity = calculateQuantity(saleDetail);
+                                availableProductQuantity = quantity;
+                                // If actual product quantity is greater or equal to existing sale detail's product
+                                // quantity then increment by 1 else out of stock.
+                                if (productCard.getProduct().getQuantity() >= availableProductQuantity) {
+                                    SaleDetailViewModel.getPosSale(saleDetail);
+                                    SaleDetailViewModel.setProduct(productCard.getProduct());
+                                    SaleDetailViewModel.setPrice(productCard.getProduct().getPrice());
+                                    SaleDetailViewModel.setQuantity(quantity);
+                                    SaleDetailViewModel.setSubTotalPrice(calculateSubTotal(productCard.getProduct()));
 
-                                SaleDetailViewModel.updateSaleDetail(
-                                        (long) SaleDetailViewModel.getSaleDetails().indexOf(saleDetail));
-
+                                    SaleDetailViewModel.updatePosSale(
+                                            (long) SaleDetailViewModel.getSaleDetails().indexOf(saleDetail));
+                                } else {
+                                    SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+                                    SpotyMessage notification =
+                                            new SpotyMessage.MessageBuilder("Product out of stock")
+                                                    .duration(MessageDuration.SHORT)
+                                                    .icon("fas-triangle-exclamation")
+                                                    .type(MessageVariants.ERROR)
+                                                    .build();
+                                    notificationHolder.addMessage(notification);
+                                }
                             } catch (Exception e) {
                                 SpotyLogger.writeToFile(e, this.getClass());
                             }
                         }
                     } else {
-                        SaleDetailViewModel.setProduct(productCard.getProduct());
-                        SaleDetailViewModel.setPrice(productCard.getProduct().getPrice());
-                        SaleDetailViewModel.setQuantity(1L);
-                        SaleDetailViewModel.setSubTotalPrice(calculateSubTotal(productCard.getProduct()));
-                        SaleDetailViewModel.addSaleDetail();
+                        // Check if actual product quantity greater than zero(0) else out of stock.
+                        if (productCard.getProduct().getQuantity() > 0) {
+                            SaleDetailViewModel.setProduct(productCard.getProduct());
+                            SaleDetailViewModel.setPrice(productCard.getProduct().getPrice());
+                            SaleDetailViewModel.setQuantity(1L);
+                            availableProductQuantity = 1L;
+                            SaleDetailViewModel.setSubTotalPrice(calculateSubTotal(productCard.getProduct()));
+                            SaleDetailViewModel.addSaleDetail();
+                        } else {
+                            SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+                            SpotyMessage notification =
+                                    new SpotyMessage.MessageBuilder("Product out of stock")
+                                            .duration(MessageDuration.SHORT)
+                                            .icon("fas-triangle-exclamation")
+                                            .type(MessageVariants.ERROR)
+                                            .build();
+                            notificationHolder.addMessage(notification);
+                        }
                     }
                 });
     }
@@ -286,7 +314,10 @@ public class PointOfSaleController implements Initializable {
 
                                 setGraphic(delete);
 
-                                delete.setOnMouseClicked(event -> getTableView().getItems().remove(item));
+                                delete.setOnMouseClicked(event -> {
+                                    getTableView().getItems().remove(item);
+                                    availableProductQuantity = 0L;
+                                });
                             }
                         });
 
@@ -294,6 +325,19 @@ public class PointOfSaleController implements Initializable {
                 .addListener(
                         (ListChangeListener<SaleDetail>)
                                 c -> cart.setItems(SaleDetailViewModel.getSaleDetails()));
+
+//        SaleDetailViewModel.getSaleDetails()
+//                .addListener(
+//                        (ListChangeListener<SaleDetail>)
+//                                c -> SaleDetailViewModel.getSaleDetails().forEach(saleDetail -> {
+//                                    var cartItem = new CartItem(
+//                                            saleDetail.getProduct().getImage(),
+//                                            saleDetail.getProductName(),
+//                                            String.valueOf(saleDetail.getProduct().getPrice()),
+//                                            saleDetail.getQuantity()
+//                                    );
+//                                    cartItemHolder.getChildren().add(cartItem);
+//                                }));
     }
 
     private void getTotalLabels() {
@@ -305,6 +349,7 @@ public class PointOfSaleController implements Initializable {
 
     public void clearCart() {
         SaleDetailViewModel.getSaleDetails().clear();
+        availableProductQuantity = 0L;
     }
 
     public void savePOSSale() {
@@ -313,8 +358,6 @@ public class PointOfSaleController implements Initializable {
         SaleMasterViewModel.setTotal(calculateTotal(SaleDetailViewModel.getSaleDetails()));
         SaleMasterViewModel.setPaid(calculateTotal(SaleDetailViewModel.getSaleDetails()));
         SaleMasterViewModel.setNote("Approved.");
-
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
         SpotyThreader.spotyThreadPool(
                 () -> {
                     try {
@@ -323,36 +366,17 @@ public class PointOfSaleController implements Initializable {
                         SpotyLogger.writeToFile(e, this.getClass());
                     }
                 });
-
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder("Sale saved successfully")
-                        .duration(MessageDuration.MEDIUM)
-                        .icon("fas-circle-check")
-                        .type(MessageVariants.SUCCESS)
-                        .build();
-        notificationHolder.addMessage(notification);
     }
 
-
     private void onAction() {
-        transition.playFromStart();
-        transition.setOnFinished((ActionEvent event) -> transition.playFromStart());
     }
 
     private void onSuccess() {
-        transition.setOnFinished(null);
+        availableProductQuantity = 0L;
+        ProductViewModel.getAllProducts(null, null, null);
     }
 
     private void onFailed() {
-        transition.setOnFinished(null);
-    }
-
-    private void setIcons() {
-        var refreshIcon = new MFXFontIcon("fas-arrows-rotate", 24);
-        refresh.getChildren().addFirst(refreshIcon);
-
-        transition = SpotyAnimations.rotateTransition(refreshIcon, Duration.millis(1000), 360);
-
-        refreshIcon.setOnMouseClicked(mouseEvent -> SaleDetailViewModel.getAllSaleDetails(this::onAction, this::onSuccess, this::onFailed));
+        ProductViewModel.getAllProducts(null, null, null);
     }
 }

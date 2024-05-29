@@ -33,7 +33,9 @@ import javafx.scene.control.*;
 import javafx.scene.image.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
+import lombok.extern.slf4j.*;
 
+@Slf4j
 public class SplashScreenController implements Initializable {
     @FXML
     public Label applicationName;

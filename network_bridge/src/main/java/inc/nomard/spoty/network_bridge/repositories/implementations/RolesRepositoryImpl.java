@@ -11,6 +11,9 @@ import java.net.http.*;
 import java.util.*;
 import javafx.concurrent.*;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class RolesRepositoryImpl extends ProtectedGlobals implements RoleRepository {
     @Override
     public Task<HttpResponse<String>> fetchAllRoles() {

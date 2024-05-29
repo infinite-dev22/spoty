@@ -22,12 +22,15 @@ import java.util.ArrayList;
 import java.util.Date;
 
 // TODO: Remove User Property.
+import lombok.extern.slf4j.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+
+@Slf4j
 public class Expense implements Serializable {
     private Long id;
     private Date date;

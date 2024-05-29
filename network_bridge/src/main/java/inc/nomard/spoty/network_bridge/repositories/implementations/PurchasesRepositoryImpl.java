@@ -16,6 +16,10 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
+import lombok.*;
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class PurchasesRepositoryImpl extends ProtectedGlobals implements MasterDetailRepository {
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
@@ -25,7 +29,8 @@ public class PurchasesRepositoryImpl extends ProtectedGlobals implements MasterD
     public Task<HttpResponse<String>> fetchAllMaster() {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws IOException, InterruptedException {
+            @SneakyThrows
+            protected HttpResponse<String> call() {
                 return taskCreate();
             }
 
@@ -47,7 +52,8 @@ public class PurchasesRepositoryImpl extends ProtectedGlobals implements MasterD
     public Task<HttpResponse<String>> fetchMaster(FindModel findModel) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws IOException, InterruptedException {
+            @SneakyThrows
+            protected HttpResponse<String> call() {
                 return taskCreate();
             }
 
@@ -69,7 +75,8 @@ public class PurchasesRepositoryImpl extends ProtectedGlobals implements MasterD
     public Task<HttpResponse<String>> searchMaster(SearchModel searchModel) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws IOException, InterruptedException {
+            @SneakyThrows
+            protected HttpResponse<String> call() {
                 return taskCreate();
             }
 
@@ -91,7 +98,8 @@ public class PurchasesRepositoryImpl extends ProtectedGlobals implements MasterD
     public Task<HttpResponse<String>> postMaster(Object object) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws IOException, InterruptedException {
+            @SneakyThrows
+            protected HttpResponse<String> call() {
                 return taskCreate();
             }
 
@@ -113,7 +121,8 @@ public class PurchasesRepositoryImpl extends ProtectedGlobals implements MasterD
     public Task<HttpResponse<String>> putMaster(Object object) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws IOException, InterruptedException {
+            @SneakyThrows
+            protected HttpResponse<String> call() {
                 return taskCreate();
             }
 
@@ -135,7 +144,8 @@ public class PurchasesRepositoryImpl extends ProtectedGlobals implements MasterD
     public Task<HttpResponse<String>> deleteMaster(FindModel findModel) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws IOException, InterruptedException {
+            @SneakyThrows
+            protected HttpResponse<String> call() {
                 return taskCreate();
             }
 
@@ -157,7 +167,8 @@ public class PurchasesRepositoryImpl extends ProtectedGlobals implements MasterD
     public Task<HttpResponse<String>> deleteMultipleMasters(ArrayList<FindModel> findModelList) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws IOException, InterruptedException {
+            @SneakyThrows
+            protected HttpResponse<String> call() {
                 return taskCreate();
             }
 
@@ -179,7 +190,8 @@ public class PurchasesRepositoryImpl extends ProtectedGlobals implements MasterD
     public Task<HttpResponse<String>> fetchAllDetail() {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws IOException, InterruptedException {
+            @SneakyThrows
+            protected HttpResponse<String> call() {
                 return taskCreate();
             }
 
@@ -201,7 +213,8 @@ public class PurchasesRepositoryImpl extends ProtectedGlobals implements MasterD
     public Task<HttpResponse<String>> fetchDetail(FindModel findModel) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws IOException, InterruptedException {
+            @SneakyThrows
+            protected HttpResponse<String> call() {
                 return taskCreate();
             }
 
@@ -223,7 +236,8 @@ public class PurchasesRepositoryImpl extends ProtectedGlobals implements MasterD
     public Task<HttpResponse<String>> searchDetail(SearchModel searchModel) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws IOException, InterruptedException {
+            @SneakyThrows
+            protected HttpResponse<String> call() {
                 return taskCreate();
             }
 
@@ -245,7 +259,8 @@ public class PurchasesRepositoryImpl extends ProtectedGlobals implements MasterD
     public Task<HttpResponse<String>> postDetail(Object object) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws IOException, InterruptedException {
+            @SneakyThrows
+            protected HttpResponse<String> call() {
                 return taskCreate();
             }
 
@@ -267,7 +282,8 @@ public class PurchasesRepositoryImpl extends ProtectedGlobals implements MasterD
     public Task<HttpResponse<String>> putDetail(Object object) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws IOException, InterruptedException {
+            @SneakyThrows
+            protected HttpResponse<String> call() {
                 return taskCreate();
             }
 
@@ -289,7 +305,8 @@ public class PurchasesRepositoryImpl extends ProtectedGlobals implements MasterD
     public Task<HttpResponse<String>> deleteDetail(FindModel findModel) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws IOException, InterruptedException {
+            @SneakyThrows
+            protected HttpResponse<String> call() {
                 return taskCreate();
             }
 
@@ -311,7 +328,8 @@ public class PurchasesRepositoryImpl extends ProtectedGlobals implements MasterD
     public Task<HttpResponse<String>> deleteMultipleDetails(LinkedList<FindModel> findModelList) {
         return new Task<>() {
             @Override
-            protected HttpResponse<String> call() throws IOException, InterruptedException {
+            @SneakyThrows
+            protected HttpResponse<String> call() {
                 return taskCreate();
             }
 

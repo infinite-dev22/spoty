@@ -40,8 +40,10 @@ import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
 import javafx.util.*;
+import lombok.extern.slf4j .*;
 
 @SuppressWarnings("unchecked")
+@Slf4j
 public class QuotationController implements Initializable {
     private static QuotationController instance;
     @FXML
@@ -89,7 +91,7 @@ public class QuotationController implements Initializable {
         MFXTableColumn<QuotationMaster> quotationStatus =
                 new MFXTableColumn<>("Status", false, Comparator.comparing(QuotationMaster::getStatus));
 //        MFXTableColumn<QuotationMaster> quotationDate =
-//                new MFXTableColumn<>("Date", false, Comparator.comparing(QuotationMaster::getDate));
+//                new MFXTableColumn<>("Date", false, Comparator.comparing(QuotationMaster::getCreatedAt));
         MFXTableColumn<QuotationMaster> quotationTotalAmount =
                 new MFXTableColumn<>(
                         "Total Amount", false, Comparator.comparing(QuotationMaster::getTotal));

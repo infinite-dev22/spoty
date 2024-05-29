@@ -11,6 +11,9 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.*;
 import javafx.util.*;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class HanSoloLineChart extends AnchorPane {
     private static final Random RND = new Random();
     private static final Double AXIS_WIDTH = 25d;

@@ -16,6 +16,9 @@ import javafx.application.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class SalaryAdvanceViewModel {
     public static final ObservableList<SalaryAdvance> salaryAdvancesList = FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()

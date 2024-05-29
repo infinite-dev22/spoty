@@ -25,6 +25,9 @@ import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class TotalRevenueController implements Initializable {
     private static final Random RND = new Random();
     @FXML

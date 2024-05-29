@@ -7,6 +7,9 @@ import javafx.scene.layout.GridPane;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.extern.slf4j.*;
+
+@Slf4j
 public class BootstrapPane extends GridPane {
 
     private final List<BootstrapRow> rows = new ArrayList<>();

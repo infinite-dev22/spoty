@@ -31,7 +31,9 @@ import javafx.application.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
 import lombok.*;
+import lombok.extern.slf4j.*;
 
+@Slf4j
 public class SaleDetailViewModel {
     @Getter
     public static final ObservableList<SaleDetail> saleDetailsList =
@@ -255,48 +257,7 @@ public class SaleDetailViewModel {
             }
             SpotyThreader.spotyThreadPool(task);
         });
-
-        setProductQuantity();
         saleDetailsList.clear();
-    }
-
-    private static void setProductQuantity() {
-        saleDetailsList.forEach(
-                saleDetail -> {
-                    long productDetailQuantity =
-                            saleDetail.getProduct().getQuantity() - saleDetail.getQuantity();
-
-                    ProductViewModel.setQuantity(productDetailQuantity);
-
-                    try {
-                        ProductViewModel.updateProduct(null, null, null);
-                        createSaleTransaction(saleDetail);
-                    } catch (Exception e) {
-                        SpotyLogger.writeToFile(e, SaleDetailViewModel.class);
-                    }
-                });
-    }
-
-    private static void updateProductQuantity() {
-        saleDetailsList.forEach(
-                saleDetail -> {
-                    try {
-                        SaleTransaction saleTransaction = getSaleTransaction(saleDetail.getId());
-
-                        Long adjustQuantity = saleTransaction.getSaleQuantity();
-                        Long currentProductQuantity = saleDetail.getProduct().getQuantity();
-                        long productQuantity =
-                                (currentProductQuantity + adjustQuantity) - saleDetail.getQuantity();
-
-                        ProductViewModel.setQuantity(productQuantity);
-
-                        ProductViewModel.updateProduct(null, null, null);
-
-                        updateSaleTransaction(saleDetail);
-                    } catch (Exception e) {
-                        SpotyLogger.writeToFile(e, SaleDetailViewModel.class);
-                    }
-                });
     }
 
     public static void updateSaleDetail(Long index) {
@@ -316,9 +277,38 @@ public class SaleDetailViewModel {
         getSaleDetails().add(getTempId(), saleDetail);
     }
 
+    public static void updatePosSale(Long index) {
+        var saleDetail = getSaleDetails().get(Math.toIntExact(index));
+
+        saleDetail.setProduct(getProduct());
+        saleDetail.setQuantity(getQuantity());
+        saleDetail.setSerialNumber(getSerial());
+        saleDetail.setPrice(getPrice());
+        saleDetail.setNetTax(getNetTax());
+        saleDetail.setTaxType(getTaxType());
+        saleDetail.setSubTotalPrice(getSubTotalPrice());
+        saleDetail.setDiscount(getDiscount());
+        saleDetail.setDiscountType(getDiscountType());
+
+        getSaleDetails().set(Math.toIntExact(index), saleDetail);
+    }
+
     public static void getSaleDetail(SaleDetail saleDetail) {
         setTempId(getSaleDetails().indexOf(saleDetail));
         setId(saleDetail.getId());
+        setProduct(saleDetail.getProduct());
+        setSerial(saleDetail.getSerialNumber());
+        setNetTax(String.valueOf(saleDetail.getNetTax()));
+        setTaxType(saleDetail.getTaxType());
+        setDiscount(String.valueOf(saleDetail.getDiscount()));
+        setDiscountType(saleDetail.getDiscountType());
+        setQuantity((long) saleDetail.getQuantity());
+        setProduct(saleDetail.getProduct());
+        setPrice(saleDetail.getPrice());
+        setSubTotalPrice(saleDetail.getSubTotalPrice());
+    }
+
+    public static void getPosSale(SaleDetail saleDetail) {
         setProduct(saleDetail.getProduct());
         setSerial(saleDetail.getSerialNumber());
         setNetTax(String.valueOf(saleDetail.getNetTax()));
@@ -364,7 +354,6 @@ public class SaleDetailViewModel {
             });
         }
         SpotyThreader.spotyThreadPool(task);
-        // getAllSaleDetails();
     }
 
     public static void updateSaleDetails(
@@ -390,8 +379,6 @@ public class SaleDetailViewModel {
                     }
                     SpotyThreader.spotyThreadPool(task);
                 });
-        updateProductQuantity();
-        // getAllSaleDetails();
     }
 
     public static void getAllSaleDetails(
@@ -486,48 +473,5 @@ public class SaleDetailViewModel {
             task.setOnFailed(workerStateEvent -> onFailed.run());
         }
         SpotyThreader.spotyThreadPool(task);
-    }
-
-    private static SaleTransaction getSaleTransaction(Long saleIndex) {
-//        Dao<SaleTransaction, Long> saleTransactionDao =
-//                DaoManager.createDao(connectionSource, SaleTransaction.class);
-//
-//        PreparedQuery<SaleTransaction> preparedQuery =
-//                saleTransactionDao
-//                        .queryBuilder()
-//                        .where()
-//                        .eq("sale_detail_id", saleIndex)
-//                        .prepare();
-//
-//        return saleTransactionDao.queryForFirst(preparedQuery);
-        return new SaleTransaction();
-    }
-
-    private static void createSaleTransaction(SaleDetail saleDetail) {
-//        Dao<SaleTransaction, Long> saleTransactionDao =
-//                DaoManager.createDao(connectionSource, SaleTransaction.class);
-//
-//        SaleTransaction saleTransaction = new SaleTransaction();
-//        saleTransaction.setBranch(saleDetail.getSaleMaster().getBranch());
-//        saleTransaction.setSaleDetail(saleDetail);
-//        saleTransaction.setProduct(saleDetail.getProduct());
-//        saleTransaction.setSaleQuantity(saleDetail.getQuantity());
-//        saleTransaction.setDate(new Date());
-//
-//        saleTransactionDao.create(saleTransaction);
-    }
-
-    private static void updateSaleTransaction(SaleDetail saleDetail) {
-//        Dao<SaleTransaction, Long> saleTransactionDao =
-//                DaoManager.createDao(connectionSource, SaleTransaction.class);
-//
-//        SaleTransaction saleTransaction = getSaleTransaction(saleDetail.getId());
-//        saleTransaction.setBranch(saleDetail.getSaleMaster().getBranch());
-//        saleTransaction.setSaleDetail(saleDetail);
-//        saleTransaction.setProduct(saleDetail.getProduct());
-//        saleTransaction.setSaleQuantity(saleDetail.getQuantity());
-//        saleTransaction.setDate(new Date());
-//
-//        saleTransactionDao.update(saleTransaction);
     }
 }
