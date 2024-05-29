@@ -56,10 +56,10 @@ public class SpotyLogger {
 //        try {
 //            if (System.getProperty("os.name").contains("Windows")) {
 //                path = Paths.get(System.getProperty("user.home")
-//                        + "\\AppData\\Local\\ZenmartERP\\sys-log-data\\logs\\stack\\spoty_log.log");
+//                        + "\\AppData\\Local\\OpenSaleERP\\sys-log-data\\logs\\stack\\spoty_log.log");
 //            } else {
 //                path = Paths.get(System.getProperty("user.home")
-//                        + "/.config/ZenmartERP/sys-log-data/logs/stack/spoty_log.log");
+//                        + "/.config/OpenSaleERP/sys-log-data/logs/stack/spoty_log.log");
 //            }
 //            if (Objects.isNull(fileHandler)) fileHandler =
 //                    new FileHandler(

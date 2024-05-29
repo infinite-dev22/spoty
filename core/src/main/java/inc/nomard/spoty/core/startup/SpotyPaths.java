@@ -31,16 +31,16 @@ public class SpotyPaths {
         try {
             if (System.getProperty("os.name").contains("Windows")) {
                 dbPath = Paths.get(System.getProperty("user.home")
-                        + "\\AppData\\Local\\ZenmartERP\\data\\datastores\\databases\\offline\\sync\\sqlite\\db");
+                        + "\\AppData\\Local\\OpenSaleERP\\data\\datastores\\databases\\offline\\sync\\sqlite\\db");
                 logPath = Paths.get(System.getProperty("user.home")
-                        + "\\AppData\\Local\\ZenmartERP\\sys-log-data\\logs\\stack");
-                imagesPath = Paths.get(System.getProperty("user.home") + "\\AppData\\Local\\ZenmartERP\\system\\caches\\images");
+                        + "\\AppData\\Local\\OpenSaleERP\\sys-log-data\\logs\\stack");
+                imagesPath = Paths.get(System.getProperty("user.home") + "\\AppData\\Local\\OpenSaleERP\\system\\caches\\images");
             } else {
                 dbPath = Paths.get(
-                        System.getProperty("user.home") + "/.config/ZenmartERP/data/datastores/databases/offline/sync/sqlite/db");
+                        System.getProperty("user.home") + "/.config/OpenSaleERP/data/datastores/databases/offline/sync/sqlite/db");
                 logPath = Paths.get(
-                        System.getProperty("user.home") + "/.config/ZenmartERP/sys-log-data/logs/stack");
-                imagesPath = Paths.get(System.getProperty("user.home") + "/.config/ZenmartERP/system/caches/images");
+                        System.getProperty("user.home") + "/.config/OpenSaleERP/sys-log-data/logs/stack");
+                imagesPath = Paths.get(System.getProperty("user.home") + "/.config/OpenSaleERP/system/caches/images");
             }
 
             Files.createDirectories(dbPath);

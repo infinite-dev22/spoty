@@ -1,17 +1,20 @@
+import java.time.LocalDate
+
 plugins {
     id "java"
     id "org.javamodularity.moduleplugin" version "$modulePlugin"
     id "application"
     id "org.openjfx.javafxplugin" version "$jfxPlugin"
     id "org.beryx.jlink" version "$jlink"
-    id "org.graalvm.buildtools.native" version "$nativeBuildTool"
+//    id "org.graalvm.buildtools.native" version "$nativeBuildTool"
     id "io.freefair.lombok" version "$lombokPlugin"
     id "com.github.mrcjkb.module-finder" version "0.0.7"
+    id "com.gluonhq.gluonfx-gradle-plugin" version "1.0.22"
 }
 
 apply plugin: "java"
 
-project.description = "Zenmart ERP - Fintech Software."
+project.description = "OpenSale ERP - Fintech Software."
 project.ext.buildDate = LocalDate.now()
 project.version = "$spoty"
 
@@ -25,10 +28,56 @@ repositories {
     }
 }
 
-graalvmNative {
-    binaries.all {
-        resources.autodetect()
+//graalvmNative {
+//    binaries.all {
+//        resources.autodetect()
+//    }
+//}
+
+gluonfx {
+    target = "$target"
+    attachConfig {
+        version = "$version"
+        configuration = "implementation";
+//        services "lifecycle"
     }
+
+//    bundlesList = []
+//    resourcesList = []
+//    reflectionList = []
+//    jniList = []
+
+//    compilerArgs = []
+//    linkerArgs = []
+//    runtimeArgs = []
+
+    javaStaticSdkVersion = "22"
+    javafxStaticSdkVersion = "22"
+    graalvmHome = "C:/Program Files/BellSoft/LibericaNIK-23-OpenJDK-21"
+
+    verbose = false
+    enableSwRendering = false
+
+//    remoteHostName = ""
+//    remoteDir = ""
+
+//    release {
+//        // Android
+//        appLabel = ""
+//        versionCode = "1"
+//        versionName = "1.0"
+//        providedKeyStorePath = ""
+//        providedKeyStorePassword = ""
+//        providedKeyAlias = ""
+//        providedKeyAliasPassword = ""
+//        // iOS
+//        bundleName = ""
+//        bundleVersion = ""
+//        bundleShortVersion = ""
+//        providedSigningIdentity = ""
+//        providedProvisioningProfile = ""
+//        skipSigning = false
+//    }
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -70,7 +119,8 @@ run {
             "-Dsun.io.useCanonCaches=false",
             "-Djbr.catch.SIGABRT=true",
             "-Djdk.attach.allowAttachSelf=true",
-//            "-agentlib:native-image-agent=config-output-dir=target/classes/META-INF/native-image",
+            "-agentlib:native-image-agent=config-output-dir=target/classes/META-INF/native-image",
+            "--add-exports=javafx.graphics/com.sun.glass.ui=ALL-UNNAMED",
     ]
 }
 
@@ -95,7 +145,7 @@ jlink {
     imageZip = project.file("${buildDir}/distributions/app-${javafx.platform.classifier}.zip")
     options = ["--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages"]
     launcher {
-        name = "Zenmart ERP"
+        name = "OpenSale ERP"
         jvmArgs = [
                 "-XX:NewRatio=1",
                 "-Xms256m",
@@ -110,23 +160,25 @@ jlink {
                 "-Djdk.attach.allowAttachSelf=true",
                 "-XX:ErrorFile=/home/infinite-dev/IdeaProjects/spoty/error%p.log",
                 "-agentlib:native-image-agent=config-output-dir=target/classes/META-INF/native-image",
+                "--add-exports=javafx.graphics/com.sun.glass.ui=ALL-UNNAMED",
         ]
     }
 
     jpackage {
         installerOptions = [
-                "--name", "Zenmart-ERP",
+                "--name", "OpenSale-ERP",
                 "--description", project.description,
                 "--app-version", project.version,
-                "--copyright", "Copyright 2024 nomard inc",
-                "--vendor", "Nomard Inc",
-                "--icon", "src/main/resources/icon.png",
-                "--type", "rpm",
-                // Windows Only
-//                "--win-dir-chooser",
-//                "--win-menu", "--win-shortcut",
-//                "--win-dir-chooser", "--win-menu",
-//                "--win-per-user-install", "--win-shortcut-prompt",
+                "--copyright", "Copyright " + LocalDate.now().getYear() + " nomard inc.",
+                "--vendor", "nomard inc.",
+//                "--icon", "src/main/resources/icon.ico",
+//                "--type", "msi",
+//                 Windows Only
+                "--win-dir-chooser",
+                "--win-menu", "--win-shortcut",
+                "--win-dir-chooser", "--win-menu",
+                "--win-per-user-install", "--win-shortcut-prompt",
+                /*"--win-console",*/ /*"--verbose"*/
         ]
     }
 }
