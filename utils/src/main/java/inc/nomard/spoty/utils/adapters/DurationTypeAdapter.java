@@ -3,13 +3,12 @@ package inc.nomard.spoty.utils.adapters;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
+import lombok.extern.java.Log;
 
 import java.io.IOException;
 import java.time.Duration;
 
-import lombok.extern.slf4j.*;
-
-@Slf4j
+@Log
 public class DurationTypeAdapter extends TypeAdapter<Duration> {
 
     @Override

@@ -17,10 +17,10 @@ package inc.nomard.spoty.network_bridge.dtos.stock_ins;
 import inc.nomard.spoty.network_bridge.dtos.Branch;
 import inc.nomard.spoty.network_bridge.dtos.Product;
 import lombok.*;
+import lombok.extern.java.Log;
 
 import java.util.ArrayList;
 import java.util.Date;
-import lombok.extern.slf4j.*;
 
 @Getter
 @Setter
@@ -28,7 +28,7 @@ import lombok.extern.slf4j.*;
 @NoArgsConstructor
 @Builder
 
-@Slf4j
+@Log
 public class StockInTransaction {
     private Long id;
     private ArrayList<Branch> branches;

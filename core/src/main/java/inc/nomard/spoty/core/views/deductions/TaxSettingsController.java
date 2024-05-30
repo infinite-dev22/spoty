@@ -4,17 +4,19 @@ import inc.nomard.spoty.core.components.animations.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import io.github.palexdev.mfxresources.fonts.*;
+
 import java.net.*;
 import java.util.*;
+
 import javafx.animation.*;
 import javafx.event.*;
 import javafx.fxml.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.util.*;
-import lombok.extern.slf4j.*;
+import lombok.extern.java.Log;
 
-@Slf4j
+@Log
 public class TaxSettingsController implements Initializable {
     @FXML
     public BorderPane contentPane;

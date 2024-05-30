@@ -20,12 +20,14 @@ import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.network_bridge.repositories.implementations.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.adapters.*;
+
 import java.util.*;
 import java.util.concurrent.*;
-import javafx.beans.property.*;
-import lombok.extern.slf4j.*;
 
-@Slf4j
+import javafx.beans.property.*;
+import lombok.extern.java.Log;
+
+@Log
 public class LoginViewModel {
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
@@ -34,24 +36,31 @@ public class LoginViewModel {
     private static final StringProperty email = new SimpleStringProperty("");
     private static final StringProperty password = new SimpleStringProperty("");
     private static final AuthRepositoryImpl authRepository = new AuthRepositoryImpl();
+
     public static String getPassword() {
         return password.get();
     }
+
     public static void setPassword(String password) {
         LoginViewModel.password.set(password);
     }
+
     public static StringProperty passwordProperty() {
         return password;
     }
+
     public static String getEmail() {
         return email.get();
     }
+
     public static void setEmail(String email) {
         LoginViewModel.email.set(email);
     }
+
     public static StringProperty emailProperty() {
         return email;
     }
+
     public static void resetProperties() {
         setEmail("");
         setPassword("");

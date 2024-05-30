@@ -23,19 +23,21 @@ import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.network_bridge.repositories.implementations.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.adapters.*;
+
 import java.lang.reflect.*;
 import java.time.*;
 import java.time.format.*;
 import java.util.*;
 import java.util.concurrent.*;
+
 import javafx.beans.property.*;
 import javafx.collections.*;
 import lombok.*;
 
 
-import lombok.extern.slf4j.*;
+import lombok.extern.java.Log;
 
-@Slf4j
+@Log
 public class UserViewModel {
     public static final ObservableList<User> usersList = FXCollections.observableArrayList();
     public static final ListProperty<User> users = new SimpleListProperty<>(usersList);

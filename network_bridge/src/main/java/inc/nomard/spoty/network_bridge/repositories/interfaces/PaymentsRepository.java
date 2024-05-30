@@ -1,9 +1,9 @@
 package inc.nomard.spoty.network_bridge.repositories.interfaces;
 
-import inc.nomard.spoty.network_bridge.models.*;
-import java.net.http.*;
-import java.util.*;
-import javafx.concurrent.*;
+import inc.nomard.spoty.network_bridge.models.FindModel;
+import javafx.concurrent.Task;
+
+import java.net.http.HttpResponse;
 
 public interface PaymentsRepository {
     Task<HttpResponse<String>> cardPay(Object object);

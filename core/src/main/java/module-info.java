@@ -19,7 +19,6 @@ module spoty.core {
     requires com.calendarfx.view;
 //    requires froxty;
     requires com.dlsc.gemsfx;
-    requires org.slf4j;
 
     opens inc.nomard.spoty.core.views;
     opens inc.nomard.spoty.core.views.auth;

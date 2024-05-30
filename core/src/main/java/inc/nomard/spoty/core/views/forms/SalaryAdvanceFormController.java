@@ -1,11 +1,13 @@
 package inc.nomard.spoty.core.views.forms;
 
-import java.net.*;
-import java.util.*;
-import javafx.fxml.*;
-import lombok.extern.slf4j.*;
+import javafx.fxml.Initializable;
+import lombok.extern.java.Log;
 
-@Slf4j
+import java.net.URL;
+import java.util.Objects;
+import java.util.ResourceBundle;
+
+@Log
 public class SalaryAdvanceFormController implements Initializable {
     private static SalaryAdvanceFormController instance;
 

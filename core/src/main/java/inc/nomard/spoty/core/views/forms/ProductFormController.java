@@ -14,40 +14,61 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import static inc.nomard.spoty.core.GlobalActions.*;
-import inc.nomard.spoty.core.*;
-import inc.nomard.spoty.core.components.message.*;
-import inc.nomard.spoty.core.components.message.enums.*;
-import inc.nomard.spoty.core.values.strings.*;
-import inc.nomard.spoty.core.viewModels.*;
-import inc.nomard.spoty.network_bridge.dtos.*;
-import inc.nomard.spoty.utils.*;
-import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.dialogs.*;
-import io.github.palexdev.materialfx.utils.*;
-import io.github.palexdev.materialfx.utils.others.*;
-import io.github.palexdev.materialfx.validation.*;
-import static io.github.palexdev.materialfx.validation.Validated.*;
+import inc.nomard.spoty.core.SpotyCoreResourceLoader;
+import inc.nomard.spoty.core.components.message.SpotyMessage;
+import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
+import inc.nomard.spoty.core.components.message.enums.MessageDuration;
+import inc.nomard.spoty.core.components.message.enums.MessageVariants;
+import inc.nomard.spoty.core.values.strings.Values;
+import inc.nomard.spoty.core.viewModels.BrandViewModel;
+import inc.nomard.spoty.core.viewModels.ProductCategoryViewModel;
+import inc.nomard.spoty.core.viewModels.ProductViewModel;
+import inc.nomard.spoty.core.viewModels.UOMViewModel;
+import inc.nomard.spoty.network_bridge.dtos.Brand;
+import inc.nomard.spoty.network_bridge.dtos.ProductCategory;
+import inc.nomard.spoty.network_bridge.dtos.UnitOfMeasure;
+import inc.nomard.spoty.utils.SpotyLogger;
+import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
+import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
+import io.github.palexdev.materialfx.utils.StringUtils;
+import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
+import io.github.palexdev.materialfx.validation.Constraint;
+import io.github.palexdev.materialfx.validation.Severity;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import io.github.palexdev.mfxcore.controls.Label;
-import io.github.palexdev.mfxresources.fonts.*;
-import java.net.*;
-import java.util.*;
-import java.util.function.*;
-import javafx.collections.*;
-import javafx.event.*;
-import javafx.fxml.*;
-import javafx.scene.control.*;
-import javafx.scene.image.*;
-import javafx.scene.input.*;
-import javafx.scene.layout.*;
-import javafx.scene.paint.*;
-import javafx.scene.shape.*;
-import javafx.stage.*;
-import javafx.util.*;
-import lombok.extern.slf4j.*;
+import io.github.palexdev.mfxresources.fonts.IconsProviders;
+import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.TextArea;
+import javafx.scene.image.Image;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Rectangle;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import javafx.util.StringConverter;
+import lombok.extern.java.Log;
 
-@Slf4j
+import java.net.URL;
+import java.util.List;
+import java.util.Objects;
+import java.util.ResourceBundle;
+import java.util.function.Function;
+import java.util.function.Predicate;
+
+import static inc.nomard.spoty.core.GlobalActions.closeDialog;
+import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
+
+@Log
 public class ProductFormController implements Initializable {
     private static ProductFormController instance;
     private final String placeholderImage =

@@ -21,17 +21,19 @@ import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.network_bridge.repositories.implementations.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.adapters.*;
+
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.*;
+
 import javafx.beans.property.*;
 import javafx.collections.*;
 import lombok.*;
 
 
-import lombok.extern.slf4j.*;
+import lombok.extern.java.Log;
 
-@Slf4j
+@Log
 public class UOMViewModel {
     @Getter
     public static final ObservableList<String> operatorList = FXCollections.observableArrayList("Multiply(*)", "Divide(/)");

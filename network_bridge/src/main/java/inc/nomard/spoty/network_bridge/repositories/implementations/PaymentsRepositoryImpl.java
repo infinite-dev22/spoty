@@ -1,20 +1,21 @@
 package inc.nomard.spoty.network_bridge.repositories.implementations;
 
-import com.google.gson.*;
-import inc.nomard.spoty.network_bridge.auth.*;
-import inc.nomard.spoty.network_bridge.end_points.*;
-import inc.nomard.spoty.network_bridge.models.*;
-import inc.nomard.spoty.network_bridge.repositories.interfaces.*;
-import java.io.*;
-import java.net.*;
-import java.net.http.*;
-import java.util.*;
-import javafx.concurrent.*;
+import com.google.gson.Gson;
+import inc.nomard.spoty.network_bridge.auth.ProtectedGlobals;
+import inc.nomard.spoty.network_bridge.end_points.EndPoints;
+import inc.nomard.spoty.network_bridge.models.FindModel;
+import inc.nomard.spoty.network_bridge.repositories.interfaces.PaymentsRepository;
+import javafx.concurrent.Task;
+import lombok.SneakyThrows;
+import lombok.extern.java.Log;
 
-import lombok.*;
-import lombok.extern.slf4j.*;
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 
-@Slf4j
+@Log
 public class PaymentsRepositoryImpl extends ProtectedGlobals implements PaymentsRepository {
     // Trylla, Trilla, Trylli.
     // Freilla.

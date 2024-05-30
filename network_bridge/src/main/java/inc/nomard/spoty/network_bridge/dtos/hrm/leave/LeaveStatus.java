@@ -3,12 +3,12 @@ package inc.nomard.spoty.network_bridge.dtos.hrm.leave;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.Designation;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.User;
 import lombok.*;
+import lombok.extern.java.Log;
 
 import java.text.DateFormat;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.Date;
-import lombok.extern.slf4j.*;
 
 @Getter
 @Setter
@@ -16,7 +16,7 @@ import lombok.extern.slf4j.*;
 @NoArgsConstructor
 @Builder
 
-@Slf4j
+@Log
 public class LeaveStatus {
     private Long id;
     private User employee;

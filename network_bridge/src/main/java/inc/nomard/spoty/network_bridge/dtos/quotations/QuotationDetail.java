@@ -17,7 +17,7 @@ package inc.nomard.spoty.network_bridge.dtos.quotations;
 import inc.nomard.spoty.network_bridge.dtos.Product;
 import inc.nomard.spoty.network_bridge.dtos.UnitOfMeasure;
 import lombok.*;
-import lombok.extern.slf4j.*;
+import lombok.extern.java.Log;
 
 @Getter
 @Setter
@@ -25,7 +25,7 @@ import lombok.extern.slf4j.*;
 @NoArgsConstructor
 @Builder
 
-@Slf4j
+@Log
 public class QuotationDetail {
     private Long id;
     private double price;

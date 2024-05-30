@@ -19,12 +19,12 @@ import inc.nomard.spoty.network_bridge.dtos.Supplier;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.User;
 import inc.nomard.spoty.network_bridge.dtos.purchases.PurchaseDetail;
 import lombok.*;
+import lombok.extern.java.Log;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import lombok.extern.slf4j.*;
 
 @Getter
 @Setter
@@ -32,7 +32,7 @@ import lombok.extern.slf4j.*;
 @NoArgsConstructor
 @Builder
 
-@Slf4j
+@Log
 public class PurchaseReturnMaster {
     private Long id;
     private String ref;

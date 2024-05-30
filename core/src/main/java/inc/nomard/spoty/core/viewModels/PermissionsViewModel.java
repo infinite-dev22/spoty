@@ -23,16 +23,18 @@ import inc.nomard.spoty.network_bridge.repositories.implementations.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.adapters.*;
 import inc.nomard.spoty.utils.exceptions.*;
+
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.*;
+
 import javafx.beans.property.*;
 import javafx.collections.*;
 
 // TODO: Transfer to backend.
-import lombok.extern.slf4j.*;
+import lombok.extern.java.Log;
 
-@Slf4j
+@Log
 public class PermissionsViewModel {
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,

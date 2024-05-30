@@ -14,18 +14,21 @@
 
 package inc.nomard.spoty.core.views.previews.people;
 
-import inc.nomard.spoty.core.*;
-import inc.nomard.spoty.network_bridge.dtos.*;
-import io.github.palexdev.mfxcore.controls.*;
-import java.net.*;
-import java.util.*;
-import javafx.fxml.*;
-import javafx.scene.image.*;
-import javafx.scene.paint.*;
-import javafx.scene.shape.*;
-import lombok.extern.slf4j.*;
+import inc.nomard.spoty.core.SpotyCoreResourceLoader;
+import inc.nomard.spoty.network_bridge.dtos.Supplier;
+import io.github.palexdev.mfxcore.controls.Label;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.image.Image;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Circle;
+import lombok.extern.java.Log;
 
-@Slf4j
+import java.net.URL;
+import java.util.Objects;
+import java.util.ResourceBundle;
+
+@Log
 public class SupplierPreviewController implements Initializable {
     @FXML
     public Circle imageHolder;

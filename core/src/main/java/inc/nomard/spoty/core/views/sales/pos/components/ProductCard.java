@@ -14,18 +14,24 @@
 
 package inc.nomard.spoty.core.views.sales.pos.components;
 
-import inc.nomard.spoty.core.*;
-import inc.nomard.spoty.network_bridge.dtos.*;
-import io.github.palexdev.mfxcore.controls.*;
-import java.util.*;
-import javafx.geometry.*;
-import javafx.scene.*;
-import javafx.scene.image.*;
-import javafx.scene.layout.*;
-import lombok.*;
-import lombok.extern.slf4j.*;
+import inc.nomard.spoty.core.SpotyCoreResourceLoader;
+import inc.nomard.spoty.network_bridge.dtos.Product;
+import io.github.palexdev.mfxcore.controls.Label;
+import javafx.geometry.Pos;
+import javafx.scene.CacheHint;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
+import lombok.Getter;
+import lombok.extern.java.Log;
 
-@Slf4j
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Random;
+
+@Log
 public class ProductCard extends VBox {
     private static final Random RND = new Random();
     private final ArrayList<String> images = new ArrayList<>(List.of(

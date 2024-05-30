@@ -1,8 +1,8 @@
 package inc.nomard.spoty.utils.responsiveness.math;
 
-import lombok.extern.slf4j.*;
+import lombok.extern.java.Log;
 
-@Slf4j
+@Log
 public class MathUtils {
 
     /**

@@ -4,7 +4,6 @@ module spoty.utils {
     requires lombok;
     requires java.xml;
     requires com.google.gson;
-    requires org.slf4j;
 
     opens inc.nomard.spoty.utils;
 

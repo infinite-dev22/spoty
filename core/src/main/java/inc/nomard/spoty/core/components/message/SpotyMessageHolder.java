@@ -15,7 +15,9 @@
 package inc.nomard.spoty.core.components.message;
 
 import inc.nomard.spoty.core.*;
+
 import java.util.*;
+
 import javafx.animation.*;
 import javafx.collections.*;
 import javafx.geometry.*;
@@ -25,9 +27,9 @@ import javafx.scene.paint.*;
 import javafx.stage.*;
 import javafx.util.*;
 
-import lombok.extern.slf4j.*;
+import lombok.extern.java.Log;
 
-@Slf4j
+@Log
 public class SpotyMessageHolder {
     private static FlowPane root;
     private static Stage stage;

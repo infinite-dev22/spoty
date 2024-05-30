@@ -1,12 +1,16 @@
 package inc.nomard.spoty.core.views.printable.general;
 
-import java.net.*;
-import java.util.*;
-import javafx.fxml.*;
-import javafx.scene.control.*;
-import lombok.extern.slf4j.*;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import lombok.extern.java.Log;
 
-@Slf4j
+import java.net.URL;
+import java.util.Objects;
+import java.util.ResourceBundle;
+
+@Log
 public class GeneralViewController implements Initializable {
     private static GeneralViewController instance;
     public Label dateLabel;

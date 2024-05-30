@@ -7,8 +7,10 @@ import inc.nomard.spoty.network_bridge.dtos.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.*;
 import io.github.palexdev.materialfx.filter.*;
+
 import java.net.*;
 import java.util.*;
+
 import javafx.application.*;
 import javafx.collections.*;
 import javafx.event.*;
@@ -16,9 +18,9 @@ import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
 
-import lombok.extern.slf4j.*;
+import lombok.extern.java.Log;
 
-@Slf4j
+@Log
 public class TopSuppliersController implements Initializable {
     public Label cardTitle;
     public ViewAll viewAll;

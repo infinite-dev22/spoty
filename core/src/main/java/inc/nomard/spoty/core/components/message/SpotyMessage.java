@@ -21,12 +21,12 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.util.*;
 import lombok.*;
-import lombok.extern.slf4j .*;
+import lombok.extern.java.Log;
 
 @Setter
 @Getter
 
-@Slf4j
+@Log
 public class SpotyMessage extends StackPane {
     @Getter
     private static int layoutHeight;

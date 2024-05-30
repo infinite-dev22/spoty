@@ -15,14 +15,12 @@
 package inc.nomard.spoty.network_bridge.dtos;
 
 import lombok.*;
+import lombok.extern.java.Log;
 
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-
-// TODO: Remove User Property.
-import lombok.extern.slf4j.*;
 
 @Getter
 @Setter
@@ -30,7 +28,7 @@ import lombok.extern.slf4j.*;
 @NoArgsConstructor
 @Builder
 
-@Slf4j
+@Log
 public class Expense implements Serializable {
     private Long id;
     private Date date;

@@ -1,6 +1,7 @@
 package inc.nomard.spoty.network_bridge.repositories.interfaces;
 
-import inc.nomard.spoty.network_bridge.models.*;
+import inc.nomard.spoty.network_bridge.models.LoginModel;
+import inc.nomard.spoty.network_bridge.models.SignupModel;
 import javafx.concurrent.Task;
 
 import java.io.IOException;

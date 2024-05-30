@@ -15,9 +15,9 @@
 package inc.nomard.spoty.network_bridge.models;
 
 import lombok.*;
+import lombok.extern.java.Log;
 
 import java.io.Serializable;
-import lombok.extern.slf4j.*;
 
 @Getter
 @Setter
@@ -25,7 +25,7 @@ import lombok.extern.slf4j.*;
 @NoArgsConstructor
 @Builder
 
-@Slf4j
+@Log
 public class SignupModel implements Serializable {
     private Long id;
     private String firstName;

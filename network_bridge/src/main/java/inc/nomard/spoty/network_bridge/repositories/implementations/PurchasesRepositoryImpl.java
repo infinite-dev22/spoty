@@ -1,30 +1,33 @@
 package inc.nomard.spoty.network_bridge.repositories.implementations;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import inc.nomard.spoty.network_bridge.auth.ProtectedGlobals;
 import inc.nomard.spoty.network_bridge.end_points.EndPoints;
 import inc.nomard.spoty.network_bridge.models.FindModel;
 import inc.nomard.spoty.network_bridge.models.SearchModel;
 import inc.nomard.spoty.network_bridge.repositories.interfaces.MasterDetailRepository;
-import inc.nomard.spoty.utils.adapters.*;
-import java.util.*;
+import inc.nomard.spoty.utils.adapters.UnixEpochDateTypeAdapter;
 import javafx.concurrent.Task;
+import lombok.SneakyThrows;
+import lombok.extern.java.Log;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedList;
 
-import lombok.*;
-import lombok.extern.slf4j.*;
-
-@Slf4j
+@Log
 public class PurchasesRepositoryImpl extends ProtectedGlobals implements MasterDetailRepository {
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
                     UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
             .create();
+
     @Override
     public Task<HttpResponse<String>> fetchAllMaster() {
         return new Task<>() {

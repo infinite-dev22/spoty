@@ -7,6 +7,7 @@ import inc.nomard.spoty.network_bridge.models.FindModel;
 import inc.nomard.spoty.network_bridge.models.SearchModel;
 import inc.nomard.spoty.network_bridge.repositories.interfaces.MasterDetailRepository;
 import javafx.concurrent.Task;
+import lombok.extern.java.Log;
 
 import java.io.IOException;
 import java.net.URI;
@@ -16,9 +17,7 @@ import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-import lombok.extern.slf4j.*;
-
-@Slf4j
+@Log
 public class StockInsRepositoryImpl extends ProtectedGlobals implements MasterDetailRepository {
     @Override
     public Task<HttpResponse<String>> fetchAllMaster() {

@@ -2,9 +2,9 @@ package inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll;
 
 import inc.nomard.spoty.network_bridge.dtos.Branch;
 import lombok.*;
+import lombok.extern.java.Log;
 
 import java.util.ArrayList;
-import lombok.extern.slf4j.*;
 
 @Getter
 @Setter
@@ -12,7 +12,7 @@ import lombok.extern.slf4j.*;
 @NoArgsConstructor
 @Builder
 
-@Slf4j
+@Log
 public class BeneficiaryBadge {
     private Long id;
     private ArrayList<Branch> branches;

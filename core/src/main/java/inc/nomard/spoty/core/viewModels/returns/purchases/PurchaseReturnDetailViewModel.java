@@ -18,15 +18,17 @@ import com.google.gson.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.returns.purchase_returns.*;
 import inc.nomard.spoty.utils.adapters.*;
+
 import java.util.*;
+
 import javafx.beans.property.*;
 import javafx.collections.*;
 import lombok.*;
 
 
-import lombok.extern.slf4j.*;
+import lombok.extern.java.Log;
 
-@Slf4j
+@Log
 public class PurchaseReturnDetailViewModel {
     @Getter
     public static final ObservableList<PurchaseReturnDetail> purchaseReturnDetailsList =

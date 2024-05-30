@@ -1,10 +1,10 @@
 package inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll;
 
 import lombok.*;
+import lombok.extern.java.Log;
 
 import java.text.DateFormat;
 import java.util.Date;
-import lombok.extern.slf4j.*;
 
 @Getter
 @Setter
@@ -12,7 +12,7 @@ import lombok.extern.slf4j.*;
 @NoArgsConstructor
 @Builder
 
-@Slf4j
+@Log
 public class PaySlip {
     private Long id;
     private Date startDate;

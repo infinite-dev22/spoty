@@ -16,11 +16,12 @@ package inc.nomard.spoty.core;
 
 import java.io.*;
 import java.net.*;
+
 import javafx.fxml.*;
 
-import lombok.extern.slf4j.*;
+import lombok.extern.java.Log;
 
-@Slf4j
+@Log
 public class SpotyCoreResourceLoader {
     public SpotyCoreResourceLoader() {
     }

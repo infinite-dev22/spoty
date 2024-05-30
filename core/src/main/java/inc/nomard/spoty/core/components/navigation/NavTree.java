@@ -16,7 +16,9 @@ package inc.nomard.spoty.core.components.navigation;
 
 import inc.nomard.spoty.utils.navigation.*;
 import io.github.palexdev.materialfx.controls.*;
+
 import java.util.*;
+
 import javafx.beans.property.*;
 import javafx.beans.value.*;
 import javafx.css.*;
@@ -27,9 +29,9 @@ import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import org.kordamp.ikonli.javafx.*;
 
-import lombok.extern.slf4j.*;
+import lombok.extern.java.Log;
 
-@Slf4j
+@Log
 public class NavTree extends TreeView<Nav> {
     public static final double SIDEBAR_WIDTH = 250.0;
 

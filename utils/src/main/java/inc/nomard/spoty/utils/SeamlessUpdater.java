@@ -1,19 +1,23 @@
 package inc.nomard.spoty.utils;
 
+import lombok.extern.java.Log;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.BufferedInputStream;
-import java.io.FileOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.*;
-import javax.xml.parsers.*;
-import org.w3c.dom.*;
-import org.xml.sax.*;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
-import lombok.extern.slf4j.*;
-
-@Slf4j
+@Log
 public class SeamlessUpdater {
 
     private static final String UPDATE_URL = "https://your-server.com/version_info.xml";
@@ -154,7 +158,6 @@ public class SeamlessUpdater {
             * New feature Y added
       </releaseNotes>
     </versionInfo>*/
-
 
 
     private static void downloadUpdate() throws IOException {

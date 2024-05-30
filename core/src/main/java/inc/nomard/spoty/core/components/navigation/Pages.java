@@ -15,6 +15,7 @@
 package inc.nomard.spoty.core.components.navigation;
 
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
+
 import inc.nomard.spoty.core.views.auth.*;
 import inc.nomard.spoty.core.views.bank.*;
 import inc.nomard.spoty.core.views.customers.*;
@@ -43,14 +44,16 @@ import inc.nomard.spoty.core.views.stock_in.*;
 import inc.nomard.spoty.core.views.suppliers.*;
 import inc.nomard.spoty.core.views.deductions.*;
 import inc.nomard.spoty.core.views.transfer.*;
+
 import java.io.*;
+
 import javafx.fxml.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
 import lombok.*;
-import lombok.extern.slf4j.*;
+import lombok.extern.java.Log;
 
-@Slf4j
+@Log
 public class Pages {
     //Login
     private static final FXMLLoader loginLoader = fxmlLoader("views/auth/AuthScreen.fxml");

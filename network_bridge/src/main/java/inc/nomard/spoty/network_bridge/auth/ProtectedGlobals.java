@@ -1,9 +1,9 @@
 package inc.nomard.spoty.network_bridge.auth;
 
-import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
-import lombok.extern.slf4j.*;
+import inc.nomard.spoty.network_bridge.dtos.hrm.employee.User;
+import lombok.extern.java.Log;
 
-@Slf4j
+@Log
 public class ProtectedGlobals {
     public static String authToken = "";
     public static boolean trial;

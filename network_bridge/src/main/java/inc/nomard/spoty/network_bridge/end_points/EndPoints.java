@@ -1,8 +1,8 @@
 package inc.nomard.spoty.network_bridge.end_points;
 
-import lombok.extern.slf4j.*;
+import lombok.extern.java.Log;
 
-@Slf4j
+@Log
 public class EndPoints {
     public static final String appDNS = "http://localhost:8080";
     public static final String apiUrl = appDNS + "/api/v1";

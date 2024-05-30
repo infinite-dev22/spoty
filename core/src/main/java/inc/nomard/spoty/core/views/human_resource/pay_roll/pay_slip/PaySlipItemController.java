@@ -5,14 +5,16 @@ import inc.nomard.spoty.core.views.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.*;
 import io.github.palexdev.mfxcore.controls.*;
 import io.github.palexdev.mfxresources.fonts.*;
+
 import java.net.*;
 import java.util.*;
+
 import javafx.fxml.*;
 import javafx.scene.layout.*;
 
-import lombok.extern.slf4j.*;
+import lombok.extern.java.Log;
 
-@Slf4j
+@Log
 public class PaySlipItemController implements Initializable {
     @FXML
     public HBox contentPane;

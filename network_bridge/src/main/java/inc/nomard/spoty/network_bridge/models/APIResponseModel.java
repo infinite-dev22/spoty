@@ -1,7 +1,7 @@
 package inc.nomard.spoty.network_bridge.models;
 
 import lombok.*;
-import lombok.extern.slf4j.*;
+import lombok.extern.java.Log;
 
 @Getter
 @Setter
@@ -9,7 +9,7 @@ import lombok.extern.slf4j.*;
 @NoArgsConstructor
 @Builder
 
-@Slf4j
+@Log
 public class APIResponseModel {
     @Builder.Default
     private int status = 0;

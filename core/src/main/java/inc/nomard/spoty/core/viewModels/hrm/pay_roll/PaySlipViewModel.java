@@ -25,17 +25,19 @@ import inc.nomard.spoty.network_bridge.repositories.implementations.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.adapters.*;
 import io.github.palexdev.mfxcore.base.properties.*;
+
 import java.lang.reflect.*;
 import java.text.*;
 import java.util.*;
 import java.util.concurrent.*;
+
 import javafx.beans.property.*;
 import javafx.collections.*;
 
 
-import lombok.extern.slf4j.*;
+import lombok.extern.java.Log;
 
-@Slf4j
+@Log
 public class PaySlipViewModel {
     public static final ObservableList<PaySlip> paySlipsList = FXCollections.observableArrayList();
     public static final ListProperty<PaySlip> paySlips = new SimpleListProperty<>(paySlipsList);

@@ -15,9 +15,8 @@
 package inc.nomard.spoty.network_bridge.dtos.requisitions;
 
 import inc.nomard.spoty.network_bridge.dtos.Product;
-import inc.nomard.spoty.network_bridge.dtos.purchases.PurchaseMaster;
 import lombok.*;
-import lombok.extern.slf4j.*;
+import lombok.extern.java.Log;
 
 @Getter
 @Setter
@@ -25,7 +24,7 @@ import lombok.extern.slf4j.*;
 @NoArgsConstructor
 @Builder
 
-@Slf4j
+@Log
 public class RequisitionDetail {
     private Long id;
     private double cost;

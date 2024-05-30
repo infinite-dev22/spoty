@@ -14,20 +14,28 @@
 
 package inc.nomard.spoty.core.views.previews.sales;
 
-import inc.nomard.spoty.network_bridge.dtos.sales.*;
-import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.*;
-import java.net.*;
-import java.util.*;
-import javafx.application.*;
-import javafx.beans.property.*;
-import javafx.collections.*;
-import javafx.fxml.*;
-import javafx.geometry.*;
-import javafx.scene.control.*;
-import lombok.extern.slf4j.*;
+import inc.nomard.spoty.network_bridge.dtos.sales.SaleDetail;
+import inc.nomard.spoty.network_bridge.dtos.sales.SaleMaster;
+import io.github.palexdev.materialfx.controls.MFXTableColumn;
+import io.github.palexdev.materialfx.controls.MFXTableView;
+import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
+import javafx.application.Platform;
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.SimpleListProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
+import lombok.extern.java.Log;
 
-@Slf4j
+import java.net.URL;
+import java.util.Comparator;
+import java.util.ResourceBundle;
+
+@Log
 public class SalePreviewController implements Initializable {
     static final ObservableList<SaleDetail> saleDetailsList = FXCollections.observableArrayList();
     private static final ListProperty<SaleDetail> saleDetails =

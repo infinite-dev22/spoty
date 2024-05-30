@@ -14,12 +14,12 @@
 
 package inc.nomard.spoty.utils;
 
-import java.io.*;
-import java.net.*;
+import lombok.extern.java.Log;
 
-import lombok.extern.slf4j.*;
+import java.io.InputStream;
+import java.net.URL;
 
-@Slf4j
+@Log
 public class SpotyUtilsResourceLoader {
     public SpotyUtilsResourceLoader() {
     }

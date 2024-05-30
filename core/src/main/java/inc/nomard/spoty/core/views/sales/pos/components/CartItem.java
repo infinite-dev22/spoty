@@ -1,23 +1,27 @@
 package inc.nomard.spoty.core.views.sales.pos.components;
 
-import inc.nomard.spoty.core.*;
-import inc.nomard.spoty.utils.navigation.*;
-import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.models.spinner.*;
-import io.github.palexdev.mfxcore.controls.*;
-import io.github.palexdev.mfxresources.fonts.*;
-import java.util.*;
-import javafx.geometry.*;
-import javafx.scene.*;
-import javafx.scene.image.*;
-import javafx.scene.layout.*;
-import javafx.scene.paint.*;
-import javafx.scene.shape.*;
-import lombok.*;
-import lombok.extern.slf4j.*;
+import inc.nomard.spoty.core.SpotyCoreResourceLoader;
+import inc.nomard.spoty.utils.navigation.Spacer;
+import io.github.palexdev.materialfx.controls.MFXSpinner;
+import io.github.palexdev.materialfx.controls.models.spinner.IntegerSpinnerModel;
+import io.github.palexdev.mfxcore.controls.Label;
+import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.CacheHint;
+import javafx.scene.image.Image;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Rectangle;
+import lombok.Setter;
+import lombok.extern.java.Log;
+
+import java.util.Objects;
 
 @Setter
-@Slf4j
+@Log
 public class CartItem extends HBox {
     private static String logo;
     private static String productName;

@@ -14,10 +14,15 @@
 
 package inc.nomard.spoty.network_bridge.dtos.hrm.employee;
 
-import inc.nomard.spoty.network_bridge.dtos.*;
-import java.util.*;
+import inc.nomard.spoty.network_bridge.dtos.Branch;
+import inc.nomard.spoty.network_bridge.dtos.Role;
+import inc.nomard.spoty.network_bridge.dtos.Tenant;
 import lombok.*;
-import lombok.extern.slf4j.*;
+import lombok.extern.java.Log;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -25,7 +30,7 @@ import lombok.extern.slf4j.*;
 @NoArgsConstructor
 @Builder
 
-@Slf4j
+@Log
 public class User {
     private Long id;
     private UserProfile userProfile;

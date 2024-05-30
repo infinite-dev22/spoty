@@ -16,12 +16,13 @@ package inc.nomard.spoty.core.views.components;
 
 import java.net.*;
 import java.util.*;
+
 import javafx.fxml.*;
 import javafx.scene.chart.*;
 
-import lombok.extern.slf4j.*;
+import lombok.extern.java.Log;
 
-@Slf4j
+@Log
 public class PieChartCardController implements Initializable {
 
     @FXML

@@ -5,20 +5,22 @@ import inc.nomard.spoty.utils.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.*;
 import io.github.palexdev.mfxcomponents.theming.enums.*;
 import io.github.palexdev.mfxcore.controls.*;
+
 import java.util.*;
+
 import javafx.geometry.*;
 import javafx.scene.*;
 import javafx.scene.image.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.*;
 import lombok.*;
-import lombok.extern.slf4j .*;
+import lombok.extern.java.Log;
 
 @Setter
 @Getter
 @Builder
 
-@Slf4j
+@Log
 public class PaymentPlanCard extends VBox {
     private String imageUrl;
     private String planName;

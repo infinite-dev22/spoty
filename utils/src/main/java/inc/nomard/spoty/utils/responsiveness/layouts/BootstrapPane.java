@@ -3,13 +3,12 @@ package inc.nomard.spoty.utils.responsiveness.layouts;
 import javafx.geometry.Pos;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import lombok.extern.java.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import lombok.extern.slf4j.*;
-
-@Slf4j
+@Log
 public class BootstrapPane extends GridPane {
 
     private final List<BootstrapRow> rows = new ArrayList<>();

@@ -16,7 +16,7 @@ package inc.nomard.spoty.network_bridge.dtos.stock_ins;
 
 import inc.nomard.spoty.network_bridge.dtos.Product;
 import lombok.*;
-import lombok.extern.slf4j.*;
+import lombok.extern.java.Log;
 
 @Getter
 @Setter
@@ -24,7 +24,7 @@ import lombok.extern.slf4j.*;
 @NoArgsConstructor
 @Builder
 
-@Slf4j
+@Log
 public class StockInDetail {
     private Long id;
     private StockInMaster stockIn;

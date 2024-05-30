@@ -15,18 +15,25 @@
 package inc.nomard.spoty.core;
 
 import static inc.nomard.spoty.core.values.strings.Values.*;
+
 import io.github.palexdev.materialfx.controls.*;
+
 import static io.github.palexdev.materialfx.utils.StringUtils.*;
+
 import io.github.palexdev.materialfx.validation.*;
+
 import static io.github.palexdev.materialfx.validation.Validated.*;
+
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
+
 import java.util.*;
+
 import javafx.beans.binding.*;
 import javafx.scene.control.*;
 
-import lombok.extern.slf4j.*;
+import lombok.extern.java.Log;
 
-@Slf4j
+@Log
 public class Validators {
     static MFXValidator validator;
     static List<Constraint> validate;

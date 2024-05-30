@@ -14,13 +14,16 @@
 
 package inc.nomard.spoty.core.data;
 
-import inc.nomard.spoty.core.models.*;
-import inc.nomard.spoty.network_bridge.dtos.*;
-import java.util.*;
-import javafx.collections.*;
-import lombok.extern.slf4j.*;
+import inc.nomard.spoty.core.models.QuickStats;
+import inc.nomard.spoty.network_bridge.dtos.Role;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import lombok.extern.java.Log;
 
-@Slf4j
+import java.util.ArrayList;
+import java.util.List;
+
+@Log
 public class SampleData {
     public static List<QuickStats> quickStatsSampleData() {
         List<QuickStats> samples = new ArrayList<>();

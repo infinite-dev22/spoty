@@ -25,18 +25,20 @@ import inc.nomard.spoty.network_bridge.repositories.implementations.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.adapters.*;
 import io.github.palexdev.mfxcore.base.properties.*;
+
 import java.lang.reflect.*;
 import java.text.*;
 import java.time.*;
 import java.util.*;
 import java.util.concurrent.*;
+
 import javafx.beans.property.*;
 import javafx.collections.*;
 
 
-import lombok.extern.slf4j.*;
+import lombok.extern.java.Log;
 
-@Slf4j
+@Log
 public class LeaveStatusViewModel {
     public static final ObservableList<LeaveStatus> leaveStatusesList = FXCollections.observableArrayList();
     public static final ListProperty<LeaveStatus> leaveStatuses = new SimpleListProperty<>(leaveStatusesList);

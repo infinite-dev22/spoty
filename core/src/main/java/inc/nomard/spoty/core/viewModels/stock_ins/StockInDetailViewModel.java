@@ -16,7 +16,9 @@ package inc.nomard.spoty.core.viewModels.stock_ins;
 
 import com.google.gson.*;
 import com.google.gson.reflect.*;
+
 import static inc.nomard.spoty.core.values.SharedResources.*;
+
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.adjustments.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
@@ -25,17 +27,19 @@ import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.network_bridge.repositories.implementations.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.adapters.*;
+
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.*;
+
 import javafx.application.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
 
 import lombok.*;
-import lombok.extern.slf4j.*;
+import lombok.extern.java.Log;
 
-@Slf4j
+@Log
 public class StockInDetailViewModel {
     @Getter
     public static final ObservableList<StockInDetail> stockInDetailsList =

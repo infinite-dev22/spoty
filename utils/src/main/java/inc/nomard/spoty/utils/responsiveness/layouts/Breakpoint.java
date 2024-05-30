@@ -7,7 +7,7 @@ public enum Breakpoint {
     LARGE(3),
     XLARGE(4);
 
-    private int value;
+    private final int value;
 
     Breakpoint(int value) {
         this.value = value;

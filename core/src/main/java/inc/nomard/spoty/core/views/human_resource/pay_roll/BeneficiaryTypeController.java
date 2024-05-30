@@ -1,6 +1,7 @@
 package inc.nomard.spoty.core.views.human_resource.pay_roll;
 
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
+
 import inc.nomard.spoty.core.components.animations.*;
 import inc.nomard.spoty.core.viewModels.hrm.pay_roll.*;
 import inc.nomard.spoty.core.views.forms.*;
@@ -12,9 +13,11 @@ import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.filter.*;
 import io.github.palexdev.mfxresources.fonts.*;
+
 import java.io.*;
 import java.net.*;
 import java.util.*;
+
 import javafx.animation.*;
 import javafx.application.*;
 import javafx.collections.*;
@@ -25,9 +28,9 @@ import javafx.scene.layout.*;
 import javafx.stage.*;
 import javafx.util.*;
 
-import lombok.extern.slf4j.*;
+import lombok.extern.java.Log;
 
-@Slf4j
+@Log
 public class BeneficiaryTypeController implements Initializable {
     private static BeneficiaryTypeController instance;
     @FXML

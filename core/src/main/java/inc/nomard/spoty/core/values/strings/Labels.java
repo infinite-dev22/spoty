@@ -14,9 +14,9 @@
 
 package inc.nomard.spoty.core.values.strings;
 
-import lombok.extern.slf4j.*;
+import lombok.extern.java.Log;
 
-@Slf4j
+@Log
 public class Labels {
     public static final String APP_NAME = "OpenSale ERP";
     public static final String COMPANY_NAME = "nomard Inc.";

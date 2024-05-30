@@ -20,14 +20,16 @@ import inc.nomard.spoty.network_bridge.dtos.returns.purchase_returns.*;
 import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.adapters.*;
+
 import java.text.*;
 import java.util.*;
+
 import javafx.beans.property.*;
 import javafx.collections.*;
 
-import lombok.extern.slf4j.*;
+import lombok.extern.java.Log;
 
-@Slf4j
+@Log
 public class PurchaseReturnMasterViewModel {
     public static final ObservableList<PurchaseReturnMaster> purchaseReturnMasterList =
             FXCollections.observableArrayList();

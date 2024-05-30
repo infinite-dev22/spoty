@@ -15,10 +15,11 @@
 package inc.nomard.spoty.core.models;
 
 import java.util.*;
-import lombok.extern.slf4j .*;
+
+import lombok.extern.java.Log;
 
 @Deprecated
-@Slf4j
+@Log
 public class QuickStats {
     private String title;
     private String subtitle;

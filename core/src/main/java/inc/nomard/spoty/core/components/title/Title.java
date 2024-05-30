@@ -15,15 +15,17 @@
 package inc.nomard.spoty.core.components.title;
 
 import inc.nomard.spoty.core.*;
+
 import java.io.*;
+
 import javafx.beans.property.*;
 import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
-import lombok.extern.slf4j.*;
+import lombok.extern.java.Log;
 
-@Slf4j
+@Log
 public class Title extends HBox {
     @FXML
     private Label label;

@@ -18,16 +18,19 @@ import com.calendarfx.model.Calendar;
 import com.calendarfx.model.Calendar.*;
 import com.calendarfx.model.*;
 import com.calendarfx.view.*;
+
 import java.net.*;
 import java.time.*;
 import java.util.*;
+
 import javafx.application.*;
 import javafx.fxml.*;
 import javafx.scene.layout.*;
-import lombok.extern.slf4j .*;
+import lombok.extern.java.Log;
+import lombok.extern.java.Log;
 
 @SuppressWarnings("unchecked")
-@Slf4j
+@Log
 public class CalendarController implements Initializable {
     private static CalendarController instance;
     @FXML

@@ -28,9 +28,11 @@ import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.mfxcomponents.theming.enums.*;
 import io.github.palexdev.mfxcore.controls.Label;
 import io.github.palexdev.mfxresources.fonts.*;
+
 import java.net.*;
 import java.time.*;
 import java.util.*;
+
 import javafx.application.*;
 import javafx.beans.binding.*;
 import javafx.fxml.*;
@@ -47,9 +49,9 @@ import javafx.util.Duration;
 import org.controlsfx.control.*;
 import org.kordamp.ikonli.javafx.*;
 
-import lombok.extern.slf4j.*;
+import lombok.extern.java.Log;
 
-@Slf4j
+@Log
 public class BaseController implements Initializable {
     public static Navigation navigation;
     private static BaseController instance;

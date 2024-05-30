@@ -17,12 +17,12 @@ package inc.nomard.spoty.network_bridge.dtos.sales;
 import inc.nomard.spoty.network_bridge.dtos.Branch;
 import inc.nomard.spoty.network_bridge.dtos.Customer;
 import lombok.*;
+import lombok.extern.java.Log;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import lombok.extern.slf4j.*;
 
 @Getter
 @Setter
@@ -30,7 +30,7 @@ import lombok.extern.slf4j.*;
 @NoArgsConstructor
 @Builder
 
-@Slf4j
+@Log
 public class SaleMaster {
     private Long id;
     private String ref;

@@ -1,15 +1,18 @@
 package inc.nomard.spoty.core.views.settings;
 
-import io.github.palexdev.materialfx.controls.*;
-import java.net.*;
-import java.util.*;
-import javafx.fxml.*;
-import javafx.scene.control.*;
-import javafx.scene.input.*;
-import javafx.scene.layout.*;
-import lombok.extern.slf4j.*;
+import io.github.palexdev.materialfx.controls.MFXTextField;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.TabPane;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
+import lombok.extern.java.Log;
 
-@Slf4j
+import java.net.URL;
+import java.util.ResourceBundle;
+
+@Log
 public class AppSettingsController implements Initializable {
     @FXML
     public BorderPane contentPane;

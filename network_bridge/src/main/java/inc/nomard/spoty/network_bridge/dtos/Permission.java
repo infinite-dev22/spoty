@@ -15,9 +15,7 @@
 package inc.nomard.spoty.network_bridge.dtos;
 
 import lombok.*;
-
-import java.util.List;
-import lombok.extern.slf4j.*;
+import lombok.extern.java.Log;
 
 @Getter
 @Setter
@@ -25,7 +23,7 @@ import lombok.extern.slf4j.*;
 @NoArgsConstructor
 @Builder
 
-@Slf4j
+@Log
 public class Permission {
     private Long id;
     private String name;

@@ -7,6 +7,7 @@ import inc.nomard.spoty.network_bridge.models.FindModel;
 import inc.nomard.spoty.network_bridge.models.SearchModel;
 import inc.nomard.spoty.network_bridge.repositories.interfaces.SimpleRepository;
 import javafx.concurrent.Task;
+import lombok.extern.java.Log;
 
 import java.io.IOException;
 import java.net.URI;
@@ -15,9 +16,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 
-import lombok.extern.slf4j.*;
-
-@Slf4j
+@Log
 public class PaySlipRepositoryImpl extends ProtectedGlobals implements SimpleRepository {
     @Override
     public Task<HttpResponse<String>> fetchAll() {

@@ -16,7 +16,7 @@ package inc.nomard.spoty.network_bridge.dtos.adjustments;
 
 import inc.nomard.spoty.network_bridge.dtos.Product;
 import lombok.*;
-import lombok.extern.slf4j.*;
+import lombok.extern.java.Log;
 
 @Getter
 @Setter
@@ -24,7 +24,7 @@ import lombok.extern.slf4j.*;
 @NoArgsConstructor
 @Builder
 
-@Slf4j
+@Log
 public class AdjustmentDetail {
     private Long id;
     private Product product;

@@ -17,13 +17,15 @@ package inc.nomard.spoty.core.viewModels;
 import com.google.gson.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.utils.adapters.*;
+
 import java.util.*;
+
 import javafx.beans.property.*;
 import javafx.collections.*;
 
-import lombok.extern.slf4j.*;
+import lombok.extern.java.Log;
 
-@Slf4j
+@Log
 public class PointOfSaleViewModel {
     public static final LongProperty itemQuantity = new SimpleLongProperty(1);
     private static final Gson gson = new GsonBuilder()

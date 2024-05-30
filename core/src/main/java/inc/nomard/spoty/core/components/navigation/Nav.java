@@ -15,6 +15,7 @@
 package inc.nomard.spoty.core.components.navigation;
 
 import java.util.*;
+
 import javafx.scene.*;
 import javafx.scene.layout.*;
 

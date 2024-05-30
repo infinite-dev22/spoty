@@ -6,25 +6,18 @@ import inc.nomard.spoty.network_bridge.end_points.EndPoints;
 import inc.nomard.spoty.network_bridge.models.FindModel;
 import inc.nomard.spoty.network_bridge.models.SearchModel;
 import inc.nomard.spoty.network_bridge.repositories.interfaces.CompanyRepository;
-import inc.nomard.spoty.utils.SpotyLogger;
 import javafx.concurrent.Task;
-import javafx.scene.image.Image;
-import javafx.scene.paint.ImagePattern;
+import lombok.SneakyThrows;
+import lombok.extern.java.Log;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 
-import lombok.*;
-import lombok.extern.slf4j.*;
-
-@Slf4j
+@Log
 public class CompanyRepositoryImpl extends ProtectedGlobals implements CompanyRepository {
     @Override
     public Task<HttpResponse<String>> fetchAll() {

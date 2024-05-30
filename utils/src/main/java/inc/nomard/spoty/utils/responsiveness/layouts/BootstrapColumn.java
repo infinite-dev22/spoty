@@ -2,10 +2,9 @@ package inc.nomard.spoty.utils.responsiveness.layouts;
 
 import inc.nomard.spoty.utils.responsiveness.math.MathUtils;
 import javafx.scene.Node;
+import lombok.extern.java.Log;
 
-import lombok.extern.slf4j.*;
-
-@Slf4j
+@Log
 public class BootstrapColumn {
 
     private final Node content;

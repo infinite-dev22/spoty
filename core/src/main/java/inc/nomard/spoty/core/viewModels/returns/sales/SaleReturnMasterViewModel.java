@@ -20,15 +20,17 @@ import inc.nomard.spoty.network_bridge.dtos.returns.sale_returns.*;
 import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.adapters.*;
+
 import java.text.*;
 import java.util.*;
+
 import javafx.beans.property.*;
 import javafx.collections.*;
 import lombok.*;
 
-import lombok.extern.slf4j.*;
+import lombok.extern.java.Log;
 
-@Slf4j
+@Log
 public class SaleReturnMasterViewModel {
     @Getter
     public static final ObservableList<SaleReturnMaster> saleReturnMasterList =

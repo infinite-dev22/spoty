@@ -14,12 +14,11 @@
 
 package inc.nomard.spoty.network_bridge.dtos.hrm.employee;
 
-import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.network_bridge.dtos.Tenant;
 import lombok.*;
+import lombok.extern.java.Log;
 
 import java.util.Objects;
-import lombok.extern.slf4j.*;
-import lombok.extern.slf4j.*;
 
 @Getter
 @Setter
@@ -27,7 +26,7 @@ import lombok.extern.slf4j.*;
 @NoArgsConstructor
 @Builder
 
-@Slf4j
+@Log
 public class UserProfile {
     private Long id;
     private User user;

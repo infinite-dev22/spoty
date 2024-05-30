@@ -4,13 +4,12 @@ import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import lombok.Getter;
+import lombok.extern.java.Log;
 
 import java.io.IOException;
 import java.util.Date;
 
-import lombok.extern.slf4j.*;
-
-@Slf4j
+@Log
 public class UnixEpochDateTypeAdapter
         extends TypeAdapter<Date> {
 

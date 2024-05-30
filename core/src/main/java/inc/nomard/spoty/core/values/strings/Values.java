@@ -16,9 +16,9 @@ package inc.nomard.spoty.core.values.strings;
 
 import java.util.*;
 
-import lombok.extern.slf4j.*;
+import lombok.extern.java.Log;
 
-@Slf4j
+@Log
 public class Values {
     public static final LinkedList<String> BARCODE_TYPES =
             new LinkedList<>(

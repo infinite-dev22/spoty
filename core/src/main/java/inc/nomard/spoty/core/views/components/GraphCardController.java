@@ -15,23 +15,28 @@
 package inc.nomard.spoty.core.views.components;
 
 import eu.hansolo.fx.charts.*;
-import eu.hansolo.fx.charts.data.*;
-import eu.hansolo.fx.charts.series.*;
-import inc.nomard.spoty.core.components.*;
-import java.net.*;
-import java.text.*;
-import java.util.*;
-import javafx.fxml.*;
-import javafx.geometry.*;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.scene.paint.*;
-import javafx.scene.shape.*;
-import javafx.util.*;
+import eu.hansolo.fx.charts.data.XYChartItem;
+import eu.hansolo.fx.charts.series.XYSeries;
+import eu.hansolo.fx.charts.series.XYSeriesBuilder;
+import inc.nomard.spoty.core.components.ViewAll;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
+import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.util.StringConverter;
+import lombok.extern.java.Log;
 
-import lombok.extern.slf4j.*;
+import java.net.URL;
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.util.Random;
+import java.util.ResourceBundle;
 
-@Slf4j
+@Log
 public class GraphCardController implements Initializable {
     private static final Random RND = new Random();
     private static final Double AXIS_WIDTH = 25d;
