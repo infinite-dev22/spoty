@@ -1,3 +1,2 @@
 rootProject.name = 'spoty'
 include ':core', ':network_bridge', ':utils'
-
