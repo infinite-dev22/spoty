@@ -17,6 +17,8 @@ package inc.nomard.spoty.core.views;
 import com.dlsc.gemsfx.infocenter.*;
 import inc.nomard.spoty.core.*;
 import inc.nomard.spoty.core.components.glass_morphism.*;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.*;
 import inc.nomard.spoty.core.components.navigation.*;
 import inc.nomard.spoty.core.components.payment_plan_card.*;
 import inc.nomard.spoty.core.viewModels.*;
@@ -28,11 +30,9 @@ import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.mfxcomponents.theming.enums.*;
 import io.github.palexdev.mfxcore.controls.Label;
 import io.github.palexdev.mfxresources.fonts.*;
-
 import java.net.*;
 import java.time.*;
 import java.util.*;
-
 import javafx.application.*;
 import javafx.beans.binding.*;
 import javafx.fxml.*;
@@ -46,10 +46,9 @@ import javafx.scene.paint.*;
 import javafx.scene.shape.*;
 import javafx.stage.*;
 import javafx.util.Duration;
+import lombok.extern.java.*;
 import org.controlsfx.control.*;
 import org.kordamp.ikonli.javafx.*;
-
-import lombok.extern.java.Log;
 
 @Log
 public class BaseController implements Initializable {
@@ -130,7 +129,11 @@ public class BaseController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         var image = new Image(
-                SpotyCoreResourceLoader.load("images/user-place-holder.png"),
+                SpotyCoreResourceLoader.load((
+                        Objects.nonNull(ProtectedGlobals.user.getAvatar())
+                                && !ProtectedGlobals.user.getAvatar().isEmpty()
+                                && !ProtectedGlobals.user.getAvatar().isBlank()) ? ProtectedGlobals.user.getAvatar()
+                        : "images/user-place-holder.png"),
                 10000,
                 10000,
                 true,
@@ -322,7 +325,7 @@ public class BaseController implements Initializable {
                     "Try It Now",
                     Color.web("#C44900"),
                     ProtectedGlobals.canTry,
-                    () -> PaymentsViewModel.startTrial(this::onActivity, this::onSuccess, this::onFailed));
+                    () -> PaymentsViewModel.startTrial(this::onSuccess, this::successMessage, this::errorMessage));
 
             regularPlanDetails.add("Comprehensive reporting and analytics.");
             regularPlanDetails.add("Dedicated customer support.");
@@ -410,11 +413,15 @@ public class BaseController implements Initializable {
         return dialog;
     }
 
-    private void onActivity() {
-//        loginBtn.setDisable(true);
-//        loginBtn.setManaged(false);
-//        activityIndicator.setVisible(true);
-//        activityIndicator.setManaged(true);
+    private void successMessage(String message) {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder(message)
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
     }
 
     private void onSuccess() {
@@ -422,11 +429,15 @@ public class BaseController implements Initializable {
         rootPane.getChildren().removeAll(vBox);
     }
 
-    private void onFailed() {
-//        loginBtn.setDisable(false);
-//        loginBtn.setManaged(true);
-//        activityIndicator.setVisible(false);
-//        activityIndicator.setManaged(false);
+    private void errorMessage(String message) {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder(message)
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
     }
 
     private MailNotification createMailNotification() {

@@ -16,46 +16,48 @@ package inc.nomard.spoty.core.viewModels.sales;
 
 import com.google.gson.*;
 import com.google.gson.reflect.*;
-
 import static inc.nomard.spoty.core.values.SharedResources.*;
-
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.sales.*;
 import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.network_bridge.repositories.implementations.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.adapters.*;
-
+import inc.nomard.spoty.utils.functional_paradigm.*;
 import java.lang.reflect.*;
-import java.text.*;
+import java.net.http.*;
 import java.util.*;
 import java.util.concurrent.*;
-
 import javafx.application.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
 import lombok.*;
-import lombok.extern.java.Log;
+import lombok.extern.java.*;
 
 @Log
 public class SaleMasterViewModel {
     @Getter
-    public static final ObservableList<SaleMaster> saleMastersList =
+    public static final ObservableList<SaleMaster> salesList =
             FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
                     UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
             .create();
-    private static final ListProperty<SaleMaster> sales = new SimpleListProperty<>(saleMastersList);
+    private static final ListProperty<SaleMaster> sales = new SimpleListProperty<>(salesList);
     private static final LongProperty id = new SimpleLongProperty(0);
-    private static final StringProperty date = new SimpleStringProperty("");
-    private static final StringProperty ref = new SimpleStringProperty("");
     private static final ObjectProperty<Customer> customer = new SimpleObjectProperty<>(null);
     private static final StringProperty saleStatus = new SimpleStringProperty("");
     private static final DoubleProperty total = new SimpleDoubleProperty();
-    private static final DoubleProperty paid = new SimpleDoubleProperty();
-    private static final StringProperty payStatus = new SimpleStringProperty("");
-    private static final StringProperty note = new SimpleStringProperty("");
+    private static final DoubleProperty amountPaid = new SimpleDoubleProperty();
+    private static final DoubleProperty taxRate = new SimpleDoubleProperty();
+    private static final DoubleProperty netTax = new SimpleDoubleProperty();
+    private static final DoubleProperty discount = new SimpleDoubleProperty();
+    private static final DoubleProperty subTotal = new SimpleDoubleProperty();
+    private static final DoubleProperty amountDue = new SimpleDoubleProperty();
+    private static final DoubleProperty changeAmount = new SimpleDoubleProperty();
+    private static final DoubleProperty shippingFee = new SimpleDoubleProperty();
+    private static final StringProperty paymentStatus = new SimpleStringProperty("");
+    private static final StringProperty notes = new SimpleStringProperty("");
     private static final SalesRepositoryImpl salesRepository = new SalesRepositoryImpl();
 
     public static Long getId() {
@@ -68,29 +70,6 @@ public class SaleMasterViewModel {
 
     public static LongProperty idProperty() {
         return id;
-    }
-
-    public static Date getDate() {
-        try {
-            DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.DEFAULT, Locale.getDefault());
-
-            if (Objects.equals(date.get(), "")) {
-                setDate(dateFormat.format(new Date()));
-            }
-
-            return new SimpleDateFormat("MMM dd, yyyy").parse(date.get());
-        } catch (ParseException e) {
-            SpotyLogger.writeToFile(e, SaleMasterViewModel.class);
-        }
-        return null;
-    }
-
-    public static void setDate(String date) {
-        SaleMasterViewModel.date.set(date);
-    }
-
-    public static StringProperty dateProperty() {
-        return date;
     }
 
     public static Customer getCustomer() {
@@ -117,28 +96,28 @@ public class SaleMasterViewModel {
         return saleStatus;
     }
 
-    public static String getPayStatus() {
-        return payStatus.get();
+    public static String getPaymentStatus() {
+        return paymentStatus.get();
     }
 
-    public static void setPayStatus(String payStatus) {
-        SaleMasterViewModel.payStatus.set(payStatus);
+    public static void setPaymentStatus(String paymentStatus) {
+        SaleMasterViewModel.paymentStatus.set(paymentStatus);
     }
 
-    public static StringProperty payStatusProperty() {
-        return payStatus;
+    public static StringProperty paymentStatusProperty() {
+        return paymentStatus;
     }
 
-    public static String getNote() {
-        return note.get();
+    public static String getNotes() {
+        return notes.get();
     }
 
-    public static void setNote(String note) {
-        SaleMasterViewModel.note.set(note);
+    public static void setNotes(String notes) {
+        SaleMasterViewModel.notes.set(notes);
     }
 
-    public static StringProperty noteProperty() {
-        return note;
+    public static StringProperty notesProperty() {
+        return notes;
     }
 
     public static ObservableList<SaleMaster> getSales() {
@@ -165,236 +144,360 @@ public class SaleMasterViewModel {
         return total;
     }
 
-    public static double getPaid() {
-        return paid.get();
+    public static double getAmountPaid() {
+        return amountPaid.get();
     }
 
-    public static void setPaid(double paid) {
-        SaleMasterViewModel.paid.set(paid);
+    public static void setAmountPaid(double amountPaid) {
+        SaleMasterViewModel.amountPaid.set(amountPaid);
     }
 
-    public static DoubleProperty paidProperty() {
-        return paid;
+    public static DoubleProperty amountPaidProperty() {
+        return amountPaid;
+    }
+
+    public static double getTaxRate() {
+        return taxRate.get();
+    }
+
+    public static void setTaxRate(double taxRate) {
+        SaleMasterViewModel.taxRate.set(taxRate);
+    }
+
+    public static DoubleProperty taxRateProperty() {
+        return taxRate;
+    }
+
+    public static double getNetTax() {
+        return netTax.get();
+    }
+
+    public static void setNetTax(double netTax) {
+        SaleMasterViewModel.netTax.set(netTax);
+    }
+
+    public static DoubleProperty netTaxProperty() {
+        return netTax;
+    }
+
+    public static double getDiscount() {
+        return discount.get();
+    }
+
+    public static void setDiscount(double discount) {
+        SaleMasterViewModel.discount.set(discount);
+    }
+
+    public static DoubleProperty discountProperty() {
+        return discount;
+    }
+
+    public static double getSubTotal() {
+        return subTotal.get();
+    }
+
+    public static void setSubTotal(double subTotal) {
+        SaleMasterViewModel.subTotal.set(subTotal);
+    }
+
+    public static DoubleProperty subTotalProperty() {
+        return subTotal;
+    }
+
+    public static double getAmountDue() {
+        return amountDue.get();
+    }
+
+    public static void setAmountDue(double amountDue) {
+        SaleMasterViewModel.amountDue.set(amountDue);
+    }
+
+    public static DoubleProperty amountDueProperty() {
+        return amountDue;
+    }
+
+    public static double getChangeAmount() {
+        return changeAmount.get();
+    }
+
+    public static void setChangeAmount(double changeAmount) {
+        SaleMasterViewModel.changeAmount.set(changeAmount);
+    }
+
+    public static DoubleProperty changeAmountProperty() {
+        return changeAmount;
+    }
+
+    public static double getShippingFee() {
+        return shippingFee.get();
+    }
+
+    public static void setShippingFee(double shippingFee) {
+        SaleMasterViewModel.shippingFee.set(shippingFee);
+    }
+
+    public static DoubleProperty shippingFeeProperty() {
+        return shippingFee;
     }
 
     public static void resetProperties() {
         Platform.runLater(
                 () -> {
                     setId(0L);
-                    setDate("");
                     setCustomer(null);
                     setSaleStatus("");
-                    setNote("");
+                    setPaymentStatus("");
+                    setNotes("");
                     setTotal(0);
-                    setPaid(0);
+                    setAmountPaid(0);
+                    setTaxRate(0);
+                    setNetTax(0);
+                    setDiscount(0);
+                    setSubTotal(0);
+                    setAmountDue(0);
+                    setChangeAmount(0);
+                    setShippingFee(0);
                     PENDING_DELETES.clear();
                     SaleDetailViewModel.resetProperties();
                     setDefaultCustomer();
                 });
     }
 
-    public static void saveSaleMaster(
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
-        var saleMaster = SaleMaster.builder()
+    public static void saveSaleMaster(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                      SpotyGotFunctional.MessageConsumer successMessage,
+                                      SpotyGotFunctional.MessageConsumer errorMessage) {
+        var sale = SaleMaster.builder()
                 .customer(getCustomer())
                 .total(getTotal())
-                .amountPaid(getPaid())
+                .amountPaid(getAmountPaid())
+                .taxRate(0)
+                .netTax(0)
+                .discount(0)
+                .subTotal(0)
+                .amountDue(0)
+                .changeAmount(0)
+                .shippingFee(0)
                 .saleStatus(getSaleStatus())
-                .paymentStatus(getPayStatus())
-                .notes(getNote())
+                .paymentStatus(getPaymentStatus())
+                .notes(getNotes())
                 .build();
-
         if (!SaleDetailViewModel.saleDetailsList.isEmpty()) {
-            saleMaster.setSaleDetails(SaleDetailViewModel.saleDetailsList);
+            sale.setSaleDetails(SaleDetailViewModel.saleDetailsList);
         }
-
-        var task = salesRepository.postMaster(saleMaster);
-        task.setOnRunning(workerStateEvent -> onActivity.run());
-        task.setOnSucceeded(workerStateEvent -> {
-            SaleDetailViewModel.saveSaleDetails(onActivity, null, onFailed);
-            onSuccess.run();
+        CompletableFuture<HttpResponse<String>> responseFuture = salesRepository.post(sale);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 201) {
+                // Process the successful response
+                successMessage.showMessage("Sale created successfully");
+                onSuccess.run();
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
+            }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, SaleMasterViewModel.class);
+            return null;
         });
-        task.setOnFailed(workerStateEvent -> {
-            onFailed.run();
-            System.err.println("The task failed with the following exception:");
-            task.getException().printStackTrace(System.err);
-        });
-        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void getAllSaleMasters(
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
-        var task = salesRepository.fetchAllMaster();
-        if (Objects.nonNull(onActivity)) {
-            task.setOnRunning(workerStateEvent -> onActivity.run());
-        }
-        if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> {
-                onFailed.run();
-                System.err.println("The task failed with the following exception:");
-                task.getException().printStackTrace(System.err);
-            });
-        }
-        task.setOnSucceeded(workerStateEvent -> {
-            Type listType = new TypeToken<ArrayList<SaleMaster>>() {
-            }.getType();
-            ArrayList<SaleMaster> saleMasterList = new ArrayList<>();
-            try {
-                saleMasterList = gson.fromJson(
-                        task.get().body(), listType);
-            } catch (InterruptedException | ExecutionException e) {
-                if (Objects.nonNull(onFailed)) {
-                    onFailed.run();
-                    System.err.println("The task failed with the following exception:");
-                    task.getException().printStackTrace(System.err);
-                }
-                SpotyLogger.writeToFile(e, SaleMasterViewModel.class);
-            }
-
-            saleMastersList.clear();
-            saleMastersList.addAll(saleMasterList);
-
-            if (Objects.nonNull(onSuccess)) {
-                onSuccess.run();
-            }
-        });
-        SpotyThreader.spotyThreadPool(task);
+    public static void getAllSaleMasters(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                         SpotyGotFunctional.MessageConsumer errorMessage) {
         setDefaultCustomer();
+        CompletableFuture<HttpResponse<String>> responseFuture = salesRepository.fetchAll();
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 200) {
+                // Process the successful response
+                Type listType = new TypeToken<ArrayList<SaleMaster>>() {
+                }.getType();
+                ArrayList<SaleMaster> saleList = gson.fromJson(response.body(), listType);
+                salesList.clear();
+                salesList.addAll(saleList);
+                if (Objects.nonNull(onSuccess)) {
+                    onSuccess.run();
+                }
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
+            }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, SaleMasterViewModel.class);
+            return null;
+        });
     }
 
-    public static void getItem(
-            Long index,
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
+    public static void getSaleMaster(
+            Long index, SpotyGotFunctional.ParameterlessConsumer onSuccess,
+            SpotyGotFunctional.MessageConsumer errorMessage) {
         var findModel = FindModel.builder().id(index).build();
-        var task = salesRepository.fetchMaster(findModel);
-
-        if (Objects.nonNull(onActivity)) {
-            task.setOnRunning(workerStateEvent -> onActivity.run());
-        }
-        if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> {
-                onFailed.run();
-                System.err.println("The task failed with the following exception:");
-                task.getException().printStackTrace(System.err);
-            });
-        }
-        task.setOnSucceeded(workerStateEvent -> {
-            SaleMaster saleMaster = new SaleMaster();
-            try {
-                saleMaster = gson.fromJson(task.get().body(), SaleMaster.class);
-            } catch (InterruptedException | ExecutionException e) {
-                SpotyLogger.writeToFile(e, SaleMasterViewModel.class);
+        CompletableFuture<HttpResponse<String>> responseFuture = salesRepository.fetch(findModel);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 200) {
+                // Process the successful response
+                var saleMaster = gson.fromJson(response.body(), SaleMaster.class);
+                setId(saleMaster.getId());
+                setCustomer(saleMaster.getCustomer());
+                setNotes(saleMaster.getNotes());
+                setSaleStatus(saleMaster.getSaleStatus());
+                setPaymentStatus(saleMaster.getPaymentStatus());
+                setTotal(saleMaster.getTotal());
+                setAmountPaid(saleMaster.getAmountPaid());
+                setTaxRate(saleMaster.getTaxRate());
+                setNetTax(saleMaster.getNetTax());
+                setDiscount(saleMaster.getDiscount());
+                setSubTotal(saleMaster.getSubTotal());
+                setAmountDue(saleMaster.getAmountDue());
+                setChangeAmount(saleMaster.getChangeAmount());
+                setShippingFee(saleMaster.getShippingFee());
+                SaleDetailViewModel.saleDetailsList.clear();
+                SaleDetailViewModel.saleDetailsList.addAll(saleMaster.getSaleDetails());
+                if (Objects.nonNull(onSuccess)) {
+                    onSuccess.run();
+                }
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
             }
-
-            setId(saleMaster.getId());
-            setDate(saleMaster.getLocaleDate());
-            setCustomer(saleMaster.getCustomer());
-            setNote(saleMaster.getNotes());
-            setSaleStatus(saleMaster.getSaleStatus());
-            setPayStatus(saleMaster.getPaymentStatus());
-            SaleDetailViewModel.saleDetailsList.clear();
-            SaleDetailViewModel.saleDetailsList.addAll(saleMaster.getSaleDetails());
-
-            if (Objects.nonNull(onSuccess)) {
-                onSuccess.run();
-            }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, SaleMasterViewModel.class);
+            return null;
         });
-        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void searchItem(
-            String search,
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
+    public static void searchSaleMaster(
+            String search, SpotyGotFunctional.ParameterlessConsumer onSuccess,
+            SpotyGotFunctional.MessageConsumer successMessage,
+            SpotyGotFunctional.MessageConsumer errorMessage) {
         var searchModel = SearchModel.builder().search(search).build();
-        var task = salesRepository.searchMaster(searchModel);
-        if (Objects.nonNull(onActivity)) {
-            task.setOnRunning(workerStateEvent -> onActivity.run());
-        }
-        if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> {
-                onFailed.run();
-                System.err.println("The task failed with the following exception:");
-                task.getException().printStackTrace(System.err);
-            });
-        }
-        task.setOnSucceeded(workerStateEvent -> {
-            Type listType = new TypeToken<ArrayList<SaleMaster>>() {
-            }.getType();
-            ArrayList<SaleMaster> saleMasterList = new ArrayList<>();
-            try {
-                saleMasterList = gson.fromJson(
-                        task.get().body(), listType);
-            } catch (InterruptedException | ExecutionException e) {
-                SpotyLogger.writeToFile(e, SaleMasterViewModel.class);
+        CompletableFuture<HttpResponse<String>> responseFuture = salesRepository.search(searchModel);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 200) {
+                // Process the successful response
+                Type listType = new TypeToken<ArrayList<SaleMaster>>() {
+                }.getType();
+                ArrayList<SaleMaster> saleList = gson.fromJson(
+                        response.body(), listType);
+                salesList.clear();
+                salesList.addAll(saleList);
+                if (Objects.nonNull(onSuccess)) {
+                    onSuccess.run();
+                }
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
             }
-
-            saleMastersList.clear();
-            saleMastersList.addAll(saleMasterList);
-
-            if (Objects.nonNull(onSuccess)) {
-                onSuccess.run();
-            }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, SaleMasterViewModel.class);
+            return null;
         });
-        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void updateItem(
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
-        var saleMaster = SaleMaster.builder()
+    public static void updateSaleMaster(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                        SpotyGotFunctional.MessageConsumer successMessage,
+                                        SpotyGotFunctional.MessageConsumer errorMessage) {
+        var sale = SaleMaster.builder()
                 .id(getId())
                 .customer(getCustomer())
                 .total(getTotal())
-                .amountPaid(getPaid())
+                .amountPaid(getAmountPaid())
                 .saleStatus(getSaleStatus())
-                .paymentStatus(getPayStatus())
-                .notes(getNote())
+                .paymentStatus(getPaymentStatus())
+                .notes(getNotes())
                 .build();
-
         if (!PENDING_DELETES.isEmpty()) {
-            SaleDetailViewModel.deleteSaleDetails(PENDING_DELETES, onActivity, null, onFailed);
+            sale.setChildrenToDelete(PENDING_DELETES);
         }
-
         if (!SaleDetailViewModel.getSaleDetailsList().isEmpty()) {
-            saleMaster.setSaleDetails(SaleDetailViewModel.getSaleDetailsList());
+            sale.setSaleDetails(SaleDetailViewModel.getSaleDetailsList());
         }
-
-        var task = salesRepository.putMaster(saleMaster);
-        task.setOnRunning(workerStateEvent -> onActivity.run());
-        task.setOnSucceeded(workerStateEvent -> SaleDetailViewModel.updateSaleDetails(onActivity, onSuccess, onFailed));
-        task.setOnFailed(workerStateEvent -> {
-            onFailed.run();
-            System.err.println("The task failed with the following exception:");
-            task.getException().printStackTrace(System.err);
+        CompletableFuture<HttpResponse<String>> responseFuture = salesRepository.put(sale);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 200 || response.statusCode() == 201 || response.statusCode() == 204) {
+                // Process the successful response
+                successMessage.showMessage("Sale updated successfully");
+                onSuccess.run();
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
+            }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, SaleMasterViewModel.class);
+            return null;
         });
-        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void deleteItem(
-            Long index,
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
+    public static void deleteSaleMaster(
+            Long index, SpotyGotFunctional.ParameterlessConsumer onSuccess,
+            SpotyGotFunctional.MessageConsumer successMessage,
+            SpotyGotFunctional.MessageConsumer errorMessage) {
         var findModel = FindModel.builder().id(index).build();
-
-        var task = salesRepository.deleteMaster(findModel);
-        task.setOnRunning(workerStateEvent -> onActivity.run());
-        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
-        task.setOnFailed(workerStateEvent -> {
-            onFailed.run();
-            System.err.println("The task failed with the following exception:");
-            task.getException().printStackTrace(System.err);
+        CompletableFuture<HttpResponse<String>> responseFuture = salesRepository.delete(findModel);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 200 || response.statusCode() == 204) {
+                // Process the successful response
+                successMessage.showMessage("Sale deleted successfully");
+                onSuccess.run();
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
+            }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, SaleMasterViewModel.class);
+            return null;
         });
-        SpotyThreader.spotyThreadPool(task);
     }
 
     public static void setDefaultCustomer() {

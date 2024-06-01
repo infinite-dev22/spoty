@@ -16,37 +16,35 @@ package inc.nomard.spoty.core.viewModels.stock_ins;
 
 import com.google.gson.*;
 import com.google.gson.reflect.*;
-
 import static inc.nomard.spoty.core.values.SharedResources.*;
-
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.stock_ins.*;
 import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.network_bridge.repositories.implementations.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.adapters.*;
-
+import inc.nomard.spoty.utils.functional_paradigm.*;
 import java.lang.reflect.*;
+import java.net.http.*;
 import java.util.*;
 import java.util.concurrent.*;
-
 import javafx.application.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
 import lombok.*;
-import lombok.extern.java.Log;
+import lombok.extern.java.*;
 
 @Log
 public class StockInMasterViewModel {
     @Getter
-    public static final ObservableList<StockInMaster> stockInMastersList =
+    public static final ObservableList<StockInMaster> stockInsList =
             FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
                     UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
             .create();
     private static final ListProperty<StockInMaster> stockIns =
-            new SimpleListProperty<>(stockInMastersList);
+            new SimpleListProperty<>(stockInsList);
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>(null);
     private static final StringProperty totalCost = new SimpleStringProperty("");
@@ -138,187 +136,209 @@ public class StockInMasterViewModel {
                 });
     }
 
-    public static void saveStockInMaster(
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
+    public static void saveStockInMaster(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                         SpotyGotFunctional.MessageConsumer successMessage,
+                                         SpotyGotFunctional.MessageConsumer errorMessage) {
         var stockInMaster = StockInMaster.builder()
                 .notes(getNote())
                 .build();
-
         if (!StockInDetailViewModel.stockInDetailsList.isEmpty()) {
             stockInMaster.setStockInDetails(StockInDetailViewModel.getStockInDetailsList());
         }
-
-        System.out.println(new Gson().toJson(stockInMaster));
-
-        var task = stockInsRepository.postMaster(stockInMaster);
-        task.setOnRunning(workerStateEvent -> onActivity.run());
-        task.setOnSucceeded(workerStateEvent -> {
-            StockInDetailViewModel.createStockInDetails(onActivity, null, onFailed);
-            onSuccess.run();
+        CompletableFuture<HttpResponse<String>> responseFuture = stockInsRepository.post(stockInMaster);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 201) {
+                // Process the successful response
+                successMessage.showMessage("Stock in created successfully");
+                onSuccess.run();
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
+            }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, StockInMasterViewModel.class);
+            return null;
         });
-        task.setOnFailed(workerStateEvent -> {
-            onFailed.run();
-            System.err.println("The task failed with the following exception:");
-            task.getException().printStackTrace(System.err);
-        });
-        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void getAllStockInMasters(
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
-        var task = stockInsRepository.fetchAllMaster();
-        if (Objects.nonNull(onActivity)) {
-            task.setOnRunning(workerStateEvent -> onActivity.run());
-        }
-        if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> {
-                onFailed.run();
-                System.err.println("The task failed with the following exception:");
-                task.getException().printStackTrace(System.err);
-            });
-        }
-        task.setOnSucceeded(workerStateEvent -> {
-            Type listType = new TypeToken<ArrayList<StockInMaster>>() {
-            }.getType();
-
-            try {
-                ArrayList<StockInMaster> stockInMasterList = gson.fromJson(
-                        task.get().body(), listType);
-                stockInMastersList.clear();
-                stockInMastersList.addAll(stockInMasterList);
-
+    public static void getAllStockInMasters(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                            SpotyGotFunctional.MessageConsumer errorMessage) {
+        CompletableFuture<HttpResponse<String>> responseFuture = stockInsRepository.fetchAll();
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 200) {
+                // Process the successful response
+                Type listType = new TypeToken<ArrayList<StockInMaster>>() {
+                }.getType();
+                ArrayList<StockInMaster> stockInList = gson.fromJson(response.body(), listType);
+                stockInsList.clear();
+                stockInsList.addAll(stockInList);
                 if (Objects.nonNull(onSuccess)) {
                     onSuccess.run();
                 }
-            } catch (InterruptedException | ExecutionException e) {
-                SpotyLogger.writeToFile(e, StockInDetailViewModel.class);
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
             }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, StockInMasterViewModel.class);
+            return null;
         });
-        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void getItem(
-            Long index,
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
+    public static void getStockInMaster(Long index,
+                                        SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                        SpotyGotFunctional.MessageConsumer errorMessage) {
         var findModel = FindModel.builder().id(index).build();
-        var task = stockInsRepository.fetchMaster(findModel);
-        if (Objects.nonNull(onActivity)) {
-            task.setOnRunning(workerStateEvent -> onActivity.run());
-        }
-        if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> {
-                onFailed.run();
-                System.err.println("The task failed with the following exception:");
-                task.getException().printStackTrace(System.err);
-            });
-        }
-        task.setOnSucceeded(workerStateEvent -> {
-            try {
-                StockInMaster stockInMaster = gson.fromJson(task.get().body(), StockInMaster.class);
-
+        CompletableFuture<HttpResponse<String>> responseFuture = stockInsRepository.fetch(findModel);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 200) {
+                // Process the successful response
+                StockInMaster stockInMaster = gson.fromJson(response.body(), StockInMaster.class);
                 setId(stockInMaster.getId());
                 setNote(stockInMaster.getNotes());
-
                 StockInDetailViewModel.stockInDetailsList.clear();
                 StockInDetailViewModel.stockInDetailsList.addAll(stockInMaster.getStockInDetails());
-
                 if (Objects.nonNull(onSuccess)) {
                     onSuccess.run();
                 }
-            } catch (InterruptedException | ExecutionException e) {
-                SpotyLogger.writeToFile(e, StockInDetailViewModel.class);
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
             }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, StockInMasterViewModel.class);
+            return null;
         });
-        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void searchItem(
-            String search,
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
+    public static void searchStockInMaster(String search,
+                                           SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                           SpotyGotFunctional.MessageConsumer errorMessage) {
         var searchModel = SearchModel.builder().search(search).build();
-        var task = stockInsRepository.searchMaster(searchModel);
-        if (Objects.nonNull(onActivity)) {
-            task.setOnRunning(workerStateEvent -> onActivity.run());
-        }
-        if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> {
-                onFailed.run();
-                System.err.println("The task failed with the following exception:");
-                task.getException().printStackTrace(System.err);
-            });
-        }
-        task.setOnSucceeded(workerStateEvent -> {
-            Type listType = new TypeToken<ArrayList<StockInMaster>>() {
-            }.getType();
-            try {
-                ArrayList<StockInMaster> stockInMasterList = gson.fromJson(
-                        task.get().body(), listType);
-                stockInMastersList.clear();
-                stockInMastersList.addAll(stockInMasterList);
-
+        CompletableFuture<HttpResponse<String>> responseFuture = stockInsRepository.search(searchModel);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 200) {
+                // Process the successful response
+                Type listType = new TypeToken<ArrayList<StockInMaster>>() {
+                }.getType();
+                ArrayList<StockInMaster> stockInList = gson.fromJson(
+                        response.body(), listType);
+                stockInsList.clear();
+                stockInsList.addAll(stockInList);
                 if (Objects.nonNull(onSuccess)) {
                     onSuccess.run();
                 }
-            } catch (InterruptedException | ExecutionException e) {
-                SpotyLogger.writeToFile(e, StockInMasterViewModel.class);
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
             }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, StockInMaster.class);
+            return null;
         });
-        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void updateItem(
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
+    public static void updateStockInMaster(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                           SpotyGotFunctional.MessageConsumer successMessage,
+                                           SpotyGotFunctional.MessageConsumer errorMessage) {
         var stockInMaster = StockInMaster.builder()
                 .id(getId())
                 .notes(getNote())
                 .build();
-
         if (!PENDING_DELETES.isEmpty()) {
-            StockInDetailViewModel.deleteStockInDetails(PENDING_DELETES, onActivity, null, onFailed);
+            stockInMaster.setChildrenToDelete(PENDING_DELETES);
         }
-
         if (!StockInDetailViewModel.stockInDetailsList.isEmpty()) {
             stockInMaster.setStockInDetails(StockInDetailViewModel.stockInDetailsList);
         }
-
-        var task = stockInsRepository.putDetail(stockInMaster);
-        task.setOnRunning(workerStateEvent -> onActivity.run());
-        task.setOnSucceeded(workerStateEvent -> StockInDetailViewModel.updateStockInDetails(onActivity, onSuccess, onFailed));
-        task.setOnFailed(workerStateEvent -> {
-            onFailed.run();
-            System.err.println("The task failed with the following exception:");
-            task.getException().printStackTrace(System.err);
+        CompletableFuture<HttpResponse<String>> responseFuture = stockInsRepository.put(stockInMaster);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 200 || response.statusCode() == 201 || response.statusCode() == 204) {
+                // Process the successful response
+                successMessage.showMessage("Stock in updated successfully");
+                onSuccess.run();
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
+            }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, StockInMasterViewModel.class);
+            return null;
         });
-        SpotyThreader.spotyThreadPool(task);
-        // getStockInMasters();
     }
 
-    public static void deleteItem(
-            Long index,
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
+    public static void deleteStockInMaster(
+            Long index, SpotyGotFunctional.ParameterlessConsumer onSuccess,
+            SpotyGotFunctional.MessageConsumer successMessage,
+            SpotyGotFunctional.MessageConsumer errorMessage) {
         var findModel = FindModel.builder().id(index).build();
-
-        var task = stockInsRepository.deleteMaster(findModel);
-        task.setOnRunning(workerStateEvent -> onActivity.run());
-        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
-        task.setOnFailed(workerStateEvent -> {
-            onFailed.run();
-            System.err.println("The task failed with the following exception:");
-            task.getException().printStackTrace(System.err);
+        CompletableFuture<HttpResponse<String>> responseFuture = stockInsRepository.delete(findModel);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 200 || response.statusCode() == 204) {
+                // Process the successful response
+                successMessage.showMessage("Stock in deleted successfully");
+                onSuccess.run();
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
+            }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, StockInMasterViewModel.class);
+            return null;
         });
-        SpotyThreader.spotyThreadPool(task);
-        // getStockInMasters();
     }
 }

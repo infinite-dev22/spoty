@@ -1,23 +1,21 @@
 package inc.nomard.spoty.core.views.deductions;
 
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
-
 import inc.nomard.spoty.core.components.animations.*;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.views.forms.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
-import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.filter.*;
 import io.github.palexdev.mfxresources.fonts.*;
-
 import java.io.*;
 import java.net.*;
 import java.util.*;
-
 import javafx.animation.*;
 import javafx.application.*;
 import javafx.collections.*;
@@ -27,7 +25,7 @@ import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
 import javafx.util.*;
-import lombok.extern.java.Log;
+import lombok.extern.java.*;
 
 @Log
 public class TaxesController implements Initializable {
@@ -45,10 +43,7 @@ public class TaxesController implements Initializable {
     @FXML
     public HBox refresh;
     private RotateTransition transition;
-    private MFXStageDialog formDialog;
-    private MFXStageDialog viewDialog;
-    private FXMLLoader formFxmlLoader;
-    private FXMLLoader viewFxmlLoader;
+    private MFXStageDialog dialog;
 
     public TaxesController(Stage stage) {
         Platform.runLater(
@@ -67,7 +62,7 @@ public class TaxesController implements Initializable {
     }
 
     public void createBtnClicked() {
-        formDialog.showAndWait();
+        dialog.showAndWait();
     }
 
     @Override
@@ -81,13 +76,10 @@ public class TaxesController implements Initializable {
                 new MFXTableColumn<>("Name", false, Comparator.comparing(Tax::getName));
         MFXTableColumn<Tax> percentage =
                 new MFXTableColumn<>("Percentage", false, Comparator.comparing(Tax::getPercentage));
-
         name.setRowCellFactory(product -> new MFXTableRowCell<>(Tax::getName));
         percentage.setRowCellFactory(product -> new MFXTableRowCell<>(Tax::getPercentage));
-
         name.prefWidthProperty().bind(masterTable.widthProperty().multiply(.5));
         percentage.prefWidthProperty().bind(masterTable.widthProperty().multiply(.5));
-
         masterTable
                 .getTableColumns()
                 .addAll(name, percentage);
@@ -97,7 +89,6 @@ public class TaxesController implements Initializable {
                         new StringFilter<>("Name", Tax::getName),
                         new DoubleFilter<>("Percentage", Tax::getPercentage));
         styleTable();
-
         if (TaxViewModel.getTaxes().isEmpty()) {
             TaxViewModel.getTaxes()
                     .addListener(
@@ -112,7 +103,6 @@ public class TaxesController implements Initializable {
         masterTable.setPrefSize(1000, 1000);
         masterTable.features().enableBounceEffect();
         masterTable.features().enableSmoothScrolling(0.5);
-
         masterTable.setTableRowFactory(
                 t -> {
                     MFXTableRow<Tax> row = new MFXTableRow<>(masterTable, t);
@@ -133,59 +123,31 @@ public class TaxesController implements Initializable {
     private MFXContextMenu showContextMenu(MFXTableRow<Tax> obj) {
         MFXContextMenu contextMenu = new MFXContextMenu(masterTable);
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
-        MFXContextMenuItem delete = getDeleteContextMenuItem(obj);
+        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         // Edit
         edit.setOnAction(
                 event -> {
-                    SpotyThreader.spotyThreadPool(
-                            () -> {
-                                try {
-                                    TaxViewModel.getTax(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
-                                } catch (Exception ex) {
-                                    throw new RuntimeException(ex);
-                                }
-                            });
-                    formDialog.showAndWait();
+                    TaxViewModel.getTax(obj.getData().getId(), this::onSuccess, this::errorMessage);
                     event.consume();
                 });
-
-        contextMenu.addItems(edit, delete);
-
-        return contextMenu;
-    }
-
-    private MFXContextMenuItem getDeleteContextMenuItem(MFXTableRow<Tax> obj) {
-        MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
-
-        // Actions
         // Delete
         delete.setOnAction(
                 event -> {
-                    SpotyThreader.spotyThreadPool(
-                            () -> {
-                                try {
-                                    TaxViewModel.deleteTax(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
-                                } catch (Exception ex) {
-                                    throw new RuntimeException(ex);
-                                }
-                            });
-
+                    TaxViewModel.deleteTax(obj.getData().getId(), () -> dialog.showAndWait(), this::successMessage, this::errorMessage);
                     event.consume();
                 });
-        return delete;
+        contextMenu.addItems(edit, delete);
+        return contextMenu;
     }
 
     private void productFormDialogPane(Stage stage) throws IOException {
-        formFxmlLoader = fxmlLoader("views/forms/TaxForm.fxml");
+        FXMLLoader formFxmlLoader = fxmlLoader("views/forms/TaxForm.fxml");
         formFxmlLoader.setControllerFactory(c -> TaxFormController.getInstance());
-
         MFXGenericDialog dialogContent = formFxmlLoader.load();
-
         dialogContent.setShowMinimize(false);
         dialogContent.setShowAlwaysOnTop(false);
         dialogContent.setShowClose(false);
-
-        formDialog =
+        dialog =
                 MFXGenericDialogBuilder.build(dialogContent)
                         .toStageDialogBuilder()
                         .initOwner(stage)
@@ -194,29 +156,43 @@ public class TaxesController implements Initializable {
                         .setScrimPriority(ScrimPriority.WINDOW)
                         .setScrimOwner(true)
                         .get();
-
-        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(formDialog.getScene());
-    }
-
-    private void onAction() {
-        transition.playFromStart();
-        transition.setOnFinished((ActionEvent event) -> transition.playFromStart());
+        io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
     }
 
     private void onSuccess() {
         transition.setOnFinished(null);
     }
 
-    private void onFailed() {
-        transition.setOnFinished(null);
-    }
-
     private void setIcons() {
         var refreshIcon = new MFXFontIcon("fas-arrows-rotate", 24);
         refresh.getChildren().addFirst(refreshIcon);
-
         transition = SpotyAnimations.rotateTransition(refreshIcon, Duration.millis(1000), 360);
+        refreshIcon.setOnMouseClicked(mouseEvent -> TaxViewModel.getTaxes(this::onSuccess, this::errorMessage));
+    }
 
-        refreshIcon.setOnMouseClicked(mouseEvent -> TaxViewModel.getTaxes(this::onAction, this::onSuccess, this::onFailed));
+    private void successMessage(String message) {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder(message)
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        AnchorPane.setRightAnchor(notification, 40.0);
+        AnchorPane.setTopAnchor(notification, 10.0);
+    }
+
+    private void errorMessage(String message) {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder(message)
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        AnchorPane.setRightAnchor(notification, 40.0);
+        AnchorPane.setTopAnchor(notification, 10.0);
     }
 }

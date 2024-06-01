@@ -1,8 +1,8 @@
 package inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll;
 
-import inc.nomard.spoty.network_bridge.dtos.hrm.employee.User;
+import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
 import lombok.*;
-import lombok.extern.java.Log;
+import lombok.extern.java.*;
 
 @Getter
 @Setter

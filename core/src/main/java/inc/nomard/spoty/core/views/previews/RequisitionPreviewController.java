@@ -14,26 +14,18 @@
 
 package inc.nomard.spoty.core.views.previews;
 
-import inc.nomard.spoty.network_bridge.dtos.requisitions.RequisitionDetail;
-import inc.nomard.spoty.network_bridge.dtos.requisitions.RequisitionMaster;
-import io.github.palexdev.materialfx.controls.MFXTableColumn;
-import io.github.palexdev.materialfx.controls.MFXTableView;
-import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
-import javafx.application.Platform;
-import javafx.beans.property.ListProperty;
-import javafx.beans.property.SimpleListProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
-import javafx.scene.control.Label;
-import lombok.extern.java.Log;
-
-import java.net.URL;
-import java.util.Comparator;
-import java.util.ResourceBundle;
+import inc.nomard.spoty.network_bridge.dtos.requisitions.*;
+import io.github.palexdev.materialfx.controls.*;
+import io.github.palexdev.materialfx.controls.cell.*;
+import java.net.*;
+import java.util.*;
+import javafx.application.*;
+import javafx.beans.property.*;
+import javafx.collections.*;
+import javafx.fxml.*;
+import javafx.geometry.*;
+import javafx.scene.control.*;
+import lombok.extern.java.*;
 
 @Log
 public class RequisitionPreviewController implements Initializable {
@@ -92,11 +84,6 @@ public class RequisitionPreviewController implements Initializable {
                 new MFXTableColumn<>("Name", false, Comparator.comparing(RequisitionDetail::getProductName));
         MFXTableColumn<RequisitionDetail> quantity =
                 new MFXTableColumn<>("Qnty", false, Comparator.comparing(RequisitionDetail::getQuantity));
-        MFXTableColumn<RequisitionDetail> price =
-                new MFXTableColumn<>("Price", false, Comparator.comparing(RequisitionDetail::getPrice));
-        MFXTableColumn<RequisitionDetail> totalPrice =
-                new MFXTableColumn<>(
-                        "Total Price", false, Comparator.comparing(RequisitionDetail::getSubTotalPrice));
 
         // Set table column data.
         product.setRowCellFactory(requisitionDetail -> {
@@ -111,30 +98,15 @@ public class RequisitionPreviewController implements Initializable {
             cell.getStyleClass().add("table-cell-border");
             return cell;
         });
-        price.setRowCellFactory(requisitionDetail -> {
-            var cell = new MFXTableRowCell<>(RequisitionDetail::getPrice);
-            cell.setAlignment(Pos.CENTER_RIGHT);
-            cell.getStyleClass().add("table-cell-border");
-            return cell;
-        });
-        totalPrice.setRowCellFactory(
-                requisitionDetail -> {
-                    var cell = new MFXTableRowCell<>(RequisitionDetail::getSubTotalPrice);
-                    cell.setAlignment(Pos.CENTER_RIGHT);
-                    cell.getStyleClass().add("table-cell-border");
-                    return cell;
-                });
 
         // Set table column width.
-        product.prefWidthProperty().bind(itemsTable.widthProperty().multiply(.25));
-        quantity.prefWidthProperty().bind(itemsTable.widthProperty().multiply(.25));
-        price.prefWidthProperty().bind(itemsTable.widthProperty().multiply(.25));
-        totalPrice.prefWidthProperty().bind(itemsTable.widthProperty().multiply(.25));
+        product.prefWidthProperty().bind(itemsTable.widthProperty().multiply(.5));
+        quantity.prefWidthProperty().bind(itemsTable.widthProperty().multiply(.5));
 
         // Set table filter.
         itemsTable
                 .getTableColumns()
-                .addAll(product, quantity, price, totalPrice);
+                .addAll(product, quantity);
 
         styleTable();
 
@@ -157,22 +129,22 @@ public class RequisitionPreviewController implements Initializable {
     }
 
     public void init(RequisitionMaster requisition) {
-        requisitionDetailsList.clear();
-        purchaseDate.setText(requisition.getLocaleDate());
-        purchaseRef.setText(requisition.getRef());
-        supplierName.setText(requisition.getSupplier().getName());
-        supplierNumber.setText(requisition.getSupplier().getPhone());
-        supplierEmail.setText(requisition.getSupplier().getEmail());
-        requisitionDetailsList.addAll(requisition.getRequisitionDetails());
-        subTotal.setText(String.valueOf(requisition.getSubTotal()));
-        discount.setText(String.valueOf(requisition.getDiscount()));
-        tax.setText(String.valueOf(requisition.getTaxRate()));
-        shipping.setText(String.valueOf(requisition.getShippingFee()));
-        netCost.setText(String.valueOf(requisition.getTotal()));
-        paidAmount.setText(String.valueOf(requisition.getAmountPaid()));
-        changeDue.setText(String.valueOf(requisition.getChangeAmount()));
-        balance.setText(String.valueOf(requisition.getBalanceAmount()));
-        purchaseNote.setText(requisition.getNotes());
+//        requisitionDetailsList.clear();
+//        purchaseDate.setText(requisition.getLocaleDate());
+//        purchaseRef.setText(requisition.getRef());
+//        supplierName.setText(requisition.getSupplier().getName());
+//        supplierNumber.setText(requisition.getSupplier().getPhone());
+//        supplierEmail.setText(requisition.getSupplier().getEmail());
+//        requisitionDetailsList.addAll(requisition.getRequisitionDetails());
+//        subTotal.setText(String.valueOf(requisition.getSubTotal()));
+//        discount.setText(String.valueOf(requisition.getDiscount()));
+//        tax.setText(String.valueOf(requisition.getTaxRate()));
+//        shipping.setText(String.valueOf(requisition.getShippingFee()));
+//        netCost.setText(String.valueOf(requisition.getTotal()));
+//        paidAmount.setText(String.valueOf(requisition.getAmountPaid()));
+//        changeDue.setText(String.valueOf(requisition.getChangeAmount()));
+//        balance.setText(String.valueOf(requisition.getBalanceAmount()));
+//        purchaseNote.setText(requisition.getNotes());
 //        doneBy.setText(purchase.doneBy());
     }
 }

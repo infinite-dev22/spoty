@@ -14,10 +14,10 @@
 
 package inc.nomard.spoty.network_bridge.dtos.returns.purchase_returns;
 
-import inc.nomard.spoty.network_bridge.dtos.Product;
-import inc.nomard.spoty.network_bridge.dtos.purchases.PurchaseMaster;
+import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.network_bridge.dtos.purchases.*;
 import lombok.*;
-import lombok.extern.java.Log;
+import lombok.extern.java.*;
 
 @Getter
 @Setter

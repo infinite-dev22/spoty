@@ -14,10 +14,9 @@
 
 package inc.nomard.spoty.network_bridge.dtos;
 
+import java.io.*;
 import lombok.*;
-import lombok.extern.java.Log;
-
-import java.io.Serializable;
+import lombok.extern.java.*;
 
 @Getter
 @Setter

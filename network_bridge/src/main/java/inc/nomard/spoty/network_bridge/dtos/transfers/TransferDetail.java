@@ -14,9 +14,9 @@
 
 package inc.nomard.spoty.network_bridge.dtos.transfers;
 
-import inc.nomard.spoty.network_bridge.dtos.Product;
+import inc.nomard.spoty.network_bridge.dtos.*;
 import lombok.*;
-import lombok.extern.java.Log;
+import lombok.extern.java.*;
 
 @Getter
 @Setter
@@ -27,15 +27,14 @@ import lombok.extern.java.Log;
 @Log
 public class TransferDetail {
     private Long id;
-    private TransferMaster transfer;
     private Product product;
     private int quantity;
-    private String serialNo;
-    private String description;
-    private double price;
-    private double total;
 
     public String getProductName() {
         return product.getName();
+    }
+
+    public Long getProductQuantity() {
+        return product.getQuantity();
     }
 }

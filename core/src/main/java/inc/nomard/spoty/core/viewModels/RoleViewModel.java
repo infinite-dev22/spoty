@@ -16,12 +16,17 @@ package inc.nomard.spoty.core.viewModels;
 
 import com.google.gson.*;
 import com.google.gson.reflect.*;
+import inc.nomard.spoty.core.viewModels.hrm.employee.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
 import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.network_bridge.repositories.implementations.*;
 import inc.nomard.spoty.utils.*;
 
+import inc.nomard.spoty.utils.adapters.*;
+import inc.nomard.spoty.utils.functional_paradigm.*;
 import java.lang.reflect.*;
+import java.net.http.*;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -34,10 +39,10 @@ import lombok.extern.java.Log;
 
 @Log
 public class RoleViewModel {
-    //    private static final Gson gson = new GsonBuilder()
-//            .registerTypeAdapter(Date.class,
-//                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
-//            .create();
+        private static final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(Date.class,
+                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+            .create();
     @Getter
     private static final ObservableList<Role> rolesList = FXCollections.observableArrayList();
     private static final ListProperty<Role> roles = new SimpleListProperty<>(rolesList);
@@ -122,32 +127,41 @@ public class RoleViewModel {
         return permissions;
     }
 
-    public static void saveRole(
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
+    public static void saveRole(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                         SpotyGotFunctional.MessageConsumer successMessage,
+                                         SpotyGotFunctional.MessageConsumer errorMessage) {
         var role = Role.builder()
                 .name(getName())
                 .label(getLabel())
                 .description(getDescription())
                 .permissions(getPermissions())
                 .build();
-
         if (!RoleViewModel.rolesList.isEmpty()) {
             role.setPermissions(PermissionsViewModel.getPermissionsList());
         }
-
-        System.out.println(new Gson().toJson(role));
-
-        var task = rolesRepository.postRole(role);
-        task.setOnRunning(workerStateEvent -> onActivity.run());
-        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
-        task.setOnFailed(workerStateEvent -> {
-            onFailed.run();
-            System.err.println("The task failed with the following exception:");
-            task.getException().printStackTrace(System.err);
+        CompletableFuture<HttpResponse<String>> responseFuture = rolesRepository.postRole(role);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 201 || response.statusCode() == 204) {
+                // Process the successful response
+                successMessage.showMessage("Role created successfully");
+                onSuccess.run();
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
+            }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, RoleViewModel.class);
+            return null;
         });
-        SpotyThreader.spotyThreadPool(task);
     }
 
     public static void resetRoleProperties() {
@@ -156,65 +170,50 @@ public class RoleViewModel {
         setDescription("");
     }
 
-    public static void getAllRoles(
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
-        var task = rolesRepository.fetchAllRoles();
-        if (Objects.nonNull(onActivity)) {
-            task.setOnRunning(workerStateEvent -> onActivity.run());
-        }
-        if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> {
-                onFailed.run();
-                System.err.println("The task failed with the following exception:");
-                task.getException().printStackTrace(System.err);
-            });
-        }
-        task.setOnSucceeded(workerStateEvent -> {
-            Type listType = new TypeToken<ArrayList<Role>>() {
-            }.getType();
-            ArrayList<Role> rolesRolesList = new ArrayList<>();
-            try {
-                rolesRolesList = new Gson().fromJson(
-                        task.get().body(), listType);
-            } catch (InterruptedException | ExecutionException e) {
-                SpotyLogger.writeToFile(e, RoleViewModel.class);
-            }
-
-            rolesList.clear();
-            rolesList.addAll(rolesRolesList);
-
-            if (Objects.nonNull(onSuccess)) {
+    public static void getAllRoles(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                         SpotyGotFunctional.MessageConsumer errorMessage) {
+        CompletableFuture<HttpResponse<String>> responseFuture = rolesRepository.fetchAllRoles();
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 201) {
+                // Process the successful response
+                Type listType = new TypeToken<ArrayList<Role>>() {
+                }.getType();
+                ArrayList<Role> roleList = gson.fromJson(response.body(), listType);
+                rolesList.clear();
+                rolesList.addAll(roleList);
+                if (Objects.nonNull(onSuccess)) {
+                    onSuccess.run();
+                }
                 onSuccess.run();
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
             }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, RoleViewModel.class);
+            return null;
         });
-        SpotyThreader.spotyThreadPool(task);
     }
 
     public static void getItem(
-            long index,
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
-        var findModel = new FindModel();
-        findModel.setId(index);
-
-        var task = rolesRepository.fetchRole(findModel);
-        if (Objects.nonNull(onActivity)) {
-            task.setOnRunning(workerStateEvent -> onActivity.run());
-        }
-        if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> {
-                onFailed.run();
-                System.err.println("The task failed with the following exception:");
-                task.getException().printStackTrace(System.err);
-            });
-        }
-        task.setOnSucceeded(workerStateEvent -> {
-            try {
-                var role = new Gson().fromJson(task.get().body(), Role.class);
-
+            long index,SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                         SpotyGotFunctional.MessageConsumer errorMessage) {
+        var findModel = FindModel.builder().id(index).build();
+        CompletableFuture<HttpResponse<String>> responseFuture = rolesRepository.fetchRole(findModel);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 200) {
+                // Process the successful response
+                var role = new Gson().fromJson(response.body(), Role.class);
                 setId(role.getId());
                 setName(role.getName());
                 setLabel(role.getLabel());
@@ -222,21 +221,30 @@ public class RoleViewModel {
                 setPermissions(FXCollections.observableArrayList(role.getPermissions()));
                 PermissionsViewModel.getPermissionsList().clear();
                 PermissionsViewModel.addPermissions(role.getPermissions());
-
                 if (Objects.nonNull(onSuccess)) {
                     onSuccess.run();
                 }
-            } catch (InterruptedException | ExecutionException e) {
-                SpotyLogger.writeToFile(e, RoleViewModel.class);
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
             }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, RoleViewModel.class);
+            return null;
         });
-        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void updateItem(
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
+    public static void updateItem(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                         SpotyGotFunctional.MessageConsumer successMessage,
+                                         SpotyGotFunctional.MessageConsumer errorMessage) {
         var role = Role.builder()
                 .id(getId())
                 .name(getName())
@@ -244,37 +252,58 @@ public class RoleViewModel {
                 .description(getDescription())
                 .permissions(getPermissions())
                 .build();
-
-        if (!PermissionsViewModel.getPermissionsList().isEmpty()) {
-            role.setPermissions(PermissionsViewModel.getPermissionsList());
-        }
-        var task = rolesRepository.putRole(role);
-        task.setOnRunning(workerStateEvent -> onActivity.run());
-        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
-        task.setOnFailed(workerStateEvent -> {
-            onFailed.run();
-            System.err.println("The task failed with the following exception:");
-            task.getException().printStackTrace(System.err);
+        CompletableFuture<HttpResponse<String>> responseFuture = rolesRepository.putRole(role);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 200 || response.statusCode() == 204) {
+                // Process the successful response
+                successMessage.showMessage("Role updated successfully");
+                onSuccess.run();
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
+            }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, RoleViewModel.class);
+            return null;
         });
-        SpotyThreader.spotyThreadPool(task);
     }
 
     public static void deleteItem(
-            long index,
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
-        var findModel = new FindModel();
-        findModel.setId(index);
-
-        var task = rolesRepository.deleteRole(findModel);
-        task.setOnRunning(workerStateEvent -> onActivity.run());
-        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
-        task.setOnFailed(workerStateEvent -> {
-            onFailed.run();
-            System.err.println("The task failed with the following exception:");
-            task.getException().printStackTrace(System.err);
+            long index,SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                         SpotyGotFunctional.MessageConsumer successMessage,
+                                         SpotyGotFunctional.MessageConsumer errorMessage) {
+        var findModel = FindModel.builder().id(index).build();
+        CompletableFuture<HttpResponse<String>> responseFuture = rolesRepository.deleteRole(findModel);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 200 || response.statusCode() == 204) {
+                // Process the successful response
+                successMessage.showMessage("Role deleted successfully");
+                onSuccess.run();
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
+            }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, RoleViewModel.class);
+            return null;
         });
-        SpotyThreader.spotyThreadPool(task);
     }
 }

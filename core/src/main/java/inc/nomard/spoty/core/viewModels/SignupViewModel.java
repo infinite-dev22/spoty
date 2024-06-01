@@ -15,19 +15,17 @@
 package inc.nomard.spoty.core.viewModels;
 
 import com.google.gson.*;
-import inc.nomard.spoty.network_bridge.auth.*;
+import inc.nomard.spoty.core.viewModels.hrm.employee.*;
 import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.network_bridge.repositories.implementations.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.adapters.*;
-
+import inc.nomard.spoty.utils.functional_paradigm.*;
+import java.net.http.*;
 import java.util.*;
 import java.util.concurrent.*;
-
 import javafx.beans.property.*;
-
-
-import lombok.extern.java.Log;
+import lombok.extern.java.*;
 
 @Log
 public class SignupViewModel {
@@ -138,11 +136,9 @@ public class SignupViewModel {
         setConfirmPassword("");
     }
 
-    public static void registerUser(
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
-
+    public static void registerUser(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                    SpotyGotFunctional.MessageConsumer successMessage,
+                                    SpotyGotFunctional.MessageConsumer errorMessage) {
         var signupDetails =
                 SignupModel.builder()
                         .firstName(getFirstName())
@@ -153,31 +149,28 @@ public class SignupViewModel {
                         .password(getPassword())
                         .confirmPassword(getConfirmPassword())
                         .build();
-
-        var task = authRepository.signup(signupDetails);
-        task.setOnRunning(workerStateEvent -> onActivity.run());
-        task.setOnSucceeded(workerStateEvent -> {
-            try {
-                var response = gson.fromJson(task.get().body(), APIResponseModel.class);
-                if (response.getStatus() == 201) {
-                    ProtectedGlobals.authToken = response.getToken();
-                    onSuccess.run();
-                } else {
-                    {
-                        onFailed.run();
-                        System.err.println("The task failed with the following exception:");
-                        task.getException().printStackTrace(System.err);
-                    }
-                }
-            } catch (InterruptedException | ExecutionException e) {
-                throw new RuntimeException(e);
+        CompletableFuture<HttpResponse<String>> responseFuture = authRepository.signup(signupDetails);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 201 || response.statusCode() == 204) {
+                // Process the successful response
+                successMessage.showMessage("Account created successfully");
+                onSuccess.run();
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
             }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, DepartmentViewModel.class);
+            return null;
         });
-        task.setOnFailed(workerStateEvent -> {
-            onFailed.run();
-            System.err.println("The task failed with the following exception:");
-            task.getException().printStackTrace(System.err);
-        });
-        SpotyThreader.spotyThreadPool(task);
     }
 }

@@ -14,42 +14,32 @@
 
 package inc.nomard.spoty.core.views.expenses.expense;
 
-import inc.nomard.spoty.core.components.animations.SpotyAnimations;
-import inc.nomard.spoty.core.viewModels.ExpensesViewModel;
-import inc.nomard.spoty.core.views.forms.ExpenseFormController;
-import inc.nomard.spoty.network_bridge.dtos.Expense;
-import inc.nomard.spoty.utils.SpotyThreader;
+import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
+import inc.nomard.spoty.core.components.animations.*;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.*;
+import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.core.views.forms.*;
+import inc.nomard.spoty.network_bridge.dtos.*;
 import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
-import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
-import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
-import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
-import io.github.palexdev.materialfx.enums.ScrimPriority;
-import io.github.palexdev.materialfx.filter.DoubleFilter;
-import io.github.palexdev.materialfx.filter.StringFilter;
-import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
-import javafx.animation.RotateTransition;
-import javafx.application.Platform;
-import javafx.collections.ListChangeListener;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
-import javafx.scene.input.ContextMenuEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.util.Duration;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.Comparator;
-import java.util.ResourceBundle;
-
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
-import lombok.extern.java.Log;
+import io.github.palexdev.materialfx.controls.cell.*;
+import io.github.palexdev.materialfx.dialogs.*;
+import io.github.palexdev.materialfx.enums.*;
+import io.github.palexdev.materialfx.filter.*;
+import io.github.palexdev.mfxresources.fonts.*;
+import java.io.*;
+import java.net.*;
+import java.util.*;
+import javafx.animation.*;
+import javafx.application.*;
+import javafx.collections.*;
+import javafx.event.*;
+import javafx.fxml.*;
+import javafx.scene.input.*;
+import javafx.scene.layout.*;
+import javafx.stage.*;
+import javafx.util.*;
+import lombok.extern.java.*;
 
 @SuppressWarnings("unchecked")
 @Log
@@ -100,18 +90,15 @@ public class ExpenseController implements Initializable {
         MFXTableColumn<Expense> expenseCategory =
                 new MFXTableColumn<>(
                         "Category", false, Comparator.comparing(Expense::getExpenseCategoryName));
-
         expenseDate.setRowCellFactory(expense -> new MFXTableRowCell<>(Expense::getLocaleDate));
         expenseName.setRowCellFactory(expense -> new MFXTableRowCell<>(Expense::getName));
         expenseAmount.setRowCellFactory(expense -> new MFXTableRowCell<>(Expense::getAmount));
         expenseCategory.setRowCellFactory(
                 expense -> new MFXTableRowCell<>(Expense::getExpenseCategoryName));
-
         expenseDate.prefWidthProperty().bind(expenseTable.widthProperty().multiply(.25));
         expenseName.prefWidthProperty().bind(expenseTable.widthProperty().multiply(.25));
         expenseAmount.prefWidthProperty().bind(expenseTable.widthProperty().multiply(.25));
         expenseCategory.prefWidthProperty().bind(expenseTable.widthProperty().multiply(.25));
-
         expenseTable
                 .getTableColumns()
                 .addAll(expenseName, expenseCategory, expenseDate, expenseAmount);
@@ -123,7 +110,6 @@ public class ExpenseController implements Initializable {
                         new DoubleFilter<>("Amount", Expense::getAmount),
                         new StringFilter<>("Category", Expense::getExpenseCategoryName));
         styleExpenseTable();
-
         if (ExpensesViewModel.getExpenses().isEmpty()) {
             ExpensesViewModel.getExpenses()
                     .addListener(
@@ -138,7 +124,6 @@ public class ExpenseController implements Initializable {
         expenseTable.setPrefSize(1200, 1000);
         expenseTable.features().enableBounceEffect();
         expenseTable.features().enableSmoothScrolling(0.5);
-
         expenseTable.setTableRowFactory(
                 t -> {
                     MFXTableRow<Expense> row = new MFXTableRow<>(expenseTable, t);
@@ -160,49 +145,30 @@ public class ExpenseController implements Initializable {
         MFXContextMenu contextMenu = new MFXContextMenu(expenseTable);
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
-
         // Actions
         // Delete
         delete.setOnAction(
                 e -> {
-                    SpotyThreader.spotyThreadPool(() -> {
-                        try {
-                            ExpensesViewModel.deleteItem(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
-                        } catch (Exception ex) {
-                            throw new RuntimeException(ex);
-                        }
-                    });
+                    ExpensesViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
                     e.consume();
                 });
         // Edit
         edit.setOnAction(
                 e -> {
-                    SpotyThreader.spotyThreadPool(() -> {
-                        try {
-                            ExpensesViewModel.getItem(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
-                        } catch (Exception ex) {
-                            throw new RuntimeException(ex);
-                        }
-                    });
-                    dialog.showAndWait();
+                    ExpensesViewModel.getItem(obj.getData().getId(), () -> dialog.showAndWait(), this::errorMessage);
                     e.consume();
                 });
-
         contextMenu.addItems(edit, delete);
-
         return contextMenu;
     }
 
     private void expenseFormDialogPane(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = fxmlLoader("views/forms/ExpenseForm.fxml");
         fxmlLoader.setControllerFactory(c -> ExpenseFormController.getInstance());
-
         MFXGenericDialog dialogContent = fxmlLoader.load();
-
         dialogContent.setShowMinimize(false);
         dialogContent.setShowAlwaysOnTop(false);
         dialogContent.setShowClose(false);
-
         dialog =
                 MFXGenericDialogBuilder.build(dialogContent)
                         .toStageDialogBuilder()
@@ -212,7 +178,6 @@ public class ExpenseController implements Initializable {
                         .setScrimPriority(ScrimPriority.WINDOW)
                         .setScrimOwner(true)
                         .get();
-
         io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
     }
 
@@ -220,25 +185,40 @@ public class ExpenseController implements Initializable {
         dialog.showAndWait();
     }
 
-    private void onAction() {
-        transition.playFromStart();
-        transition.setOnFinished((ActionEvent event) -> transition.playFromStart());
-    }
-
     private void onSuccess() {
-        transition.setOnFinished(null);
-    }
-
-    private void onFailed() {
         transition.setOnFinished(null);
     }
 
     private void setIcons() {
         var refreshIcon = new MFXFontIcon("fas-arrows-rotate", 24);
         refresh.getChildren().addFirst(refreshIcon);
-
         transition = SpotyAnimations.rotateTransition(refreshIcon, Duration.millis(1000), 360);
+        refreshIcon.setOnMouseClicked(mouseEvent -> ExpensesViewModel.getAllExpenses(this::onSuccess, this::errorMessage));
+    }
 
-        refreshIcon.setOnMouseClicked(mouseEvent -> ExpensesViewModel.getAllExpenses(this::onAction, this::onSuccess, this::onFailed));
+    private void successMessage(String message) {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder(message)
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        AnchorPane.setRightAnchor(notification, 40.0);
+        AnchorPane.setTopAnchor(notification, 10.0);
+    }
+
+    private void errorMessage(String message) {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder(message)
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        AnchorPane.setRightAnchor(notification, 40.0);
+        AnchorPane.setTopAnchor(notification, 10.0);
     }
 }

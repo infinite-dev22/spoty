@@ -16,21 +16,20 @@ package inc.nomard.spoty.core.viewModels.hrm.employee;
 
 import com.google.gson.*;
 import com.google.gson.reflect.*;
+import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
 import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.network_bridge.repositories.implementations.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.adapters.*;
-
+import inc.nomard.spoty.utils.functional_paradigm.*;
 import java.lang.reflect.*;
+import java.net.http.*;
 import java.util.*;
 import java.util.concurrent.*;
-
 import javafx.beans.property.*;
 import javafx.collections.*;
-
-
-import lombok.extern.java.Log;
+import lombok.extern.java.*;
 
 @Log
 public class DesignationViewModel {
@@ -94,21 +93,37 @@ public class DesignationViewModel {
         return designations;
     }
 
-    public static void saveDesignation(
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
+    public static void saveDesignation(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                       SpotyGotFunctional.MessageConsumer successMessage,
+                                       SpotyGotFunctional.MessageConsumer errorMessage) {
         var designation =
                 Designation.builder()
                         .name(getName())
                         .description(getDescription())
                         .build();
-
-        var task = designationsRepository.post(designation);
-        task.setOnRunning(workerStateEvent -> onActivity.run());
-        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
-        task.setOnFailed(workerStateEvent -> onFailed.run());
-        SpotyThreader.spotyThreadPool(task);
+        CompletableFuture<HttpResponse<String>> responseFuture = designationsRepository.post(designation);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 201 || response.statusCode() == 204) {
+                // Process the successful response
+                successMessage.showMessage("Designation created successfully");
+                onSuccess.run();
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
+            }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, PaymentsViewModel.class);
+            return null;
+        });
     }
 
     public static void clearDesignationData() {
@@ -117,128 +132,171 @@ public class DesignationViewModel {
         setDescription("");
     }
 
-    public static void getAllDesignations(
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
-        var task = designationsRepository.fetchAll();
-        if (Objects.nonNull(onActivity)) {
-            task.setOnRunning(workerStateEvent -> onActivity.run());
-        }
-        if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> onFailed.run());
-        }
-        task.setOnSucceeded(workerStateEvent -> {
-            try {
+    public static void getAllDesignations(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                          SpotyGotFunctional.MessageConsumer errorMessage) {
+
+        CompletableFuture<HttpResponse<String>> responseFuture = designationsRepository.fetchAll();
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 201) {
+                // Process the successful response
                 Type listType = new TypeToken<ArrayList<Designation>>() {
                 }.getType();
-                ArrayList<Designation> designationList = gson.fromJson(task.get().body(), listType);
-
+                ArrayList<Designation> designationList = gson.fromJson(response.body(), listType);
                 designationsList.clear();
                 designationsList.addAll(designationList);
-
                 if (Objects.nonNull(onSuccess)) {
                     onSuccess.run();
                 }
-            } catch (InterruptedException | ExecutionException e) {
-                SpotyLogger.writeToFile(e, DesignationViewModel.class);
+                onSuccess.run();
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
             }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, DesignationViewModel.class);
+            return null;
         });
-        SpotyThreader.spotyThreadPool(task);
     }
 
     public static void getItem(
-            Long index,
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
+            Long index, SpotyGotFunctional.ParameterlessConsumer onSuccess,
+            SpotyGotFunctional.MessageConsumer errorMessage) {
         var findModel = FindModel.builder().id(index).build();
-
-        var task = designationsRepository.fetch(findModel);
-        if (Objects.nonNull(onActivity)) {
-            task.setOnRunning(workerStateEvent -> onActivity.run());
-        }
-        if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> onFailed.run());
-        }
-        task.setOnSucceeded(workerStateEvent -> {
-            try {
-                var designation = gson.fromJson(task.get().body(), Designation.class);
-
-                setId(designation.getId());
-                setName(designation.getName());
-                setDescription(designation.getDescription());
-
+        CompletableFuture<HttpResponse<String>> responseFuture = designationsRepository.fetch(findModel);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 200) {
+                // Process the successful response
+                var department = gson.fromJson(response.body(), Designation.class);
+                setId(department.getId());
+                setName(department.getName());
+                setDescription(department.getDescription());
                 if (Objects.nonNull(onSuccess)) {
                     onSuccess.run();
                 }
-            } catch (InterruptedException | ExecutionException e) {
-                SpotyLogger.writeToFile(e, DesignationViewModel.class);
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
             }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, DesignationViewModel.class);
+            return null;
         });
-        SpotyThreader.spotyThreadPool(task);
     }
 
     public static void searchItem(
-            String search,
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
+            String search, SpotyGotFunctional.ParameterlessConsumer onSuccess,
+            SpotyGotFunctional.MessageConsumer errorMessage) {
         var searchModel = SearchModel.builder().search(search).build();
-        var task = designationsRepository.search(searchModel);
-        if (Objects.nonNull(onActivity)) {
-            task.setOnRunning(workerStateEvent -> onActivity.run());
-        }
-        if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> onFailed.run());
-        }
-        task.setOnSucceeded(workerStateEvent -> {
-            try {
+        CompletableFuture<HttpResponse<String>> responseFuture = designationsRepository.search(searchModel);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 200) {
+                // Process the successful response
                 Type listType = new TypeToken<ArrayList<Designation>>() {
                 }.getType();
-                ArrayList<Designation> designationList = gson.fromJson(task.get().body(), listType);
-
+                ArrayList<Designation> departmentList = gson.fromJson(
+                        response.body(), listType);
                 designationsList.clear();
-                designationsList.addAll(designationList);
-
+                designationsList.addAll(departmentList);
                 if (Objects.nonNull(onSuccess)) {
                     onSuccess.run();
                 }
-            } catch (InterruptedException | ExecutionException e) {
-                SpotyLogger.writeToFile(e, DesignationViewModel.class);
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
             }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, DesignationViewModel.class);
+            return null;
         });
-        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void updateItem(
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
+    public static void updateItem(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                  SpotyGotFunctional.MessageConsumer successMessage,
+                                  SpotyGotFunctional.MessageConsumer errorMessage) {
         var designation = Designation.builder()
                 .id(getId())
                 .name(getName())
                 .description(getDescription())
                 .build();
-
-        var task = designationsRepository.put(designation);
-        task.setOnRunning(workerStateEvent -> onActivity.run());
-        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
-        task.setOnFailed(workerStateEvent -> onFailed.run());
-        SpotyThreader.spotyThreadPool(task);
+        CompletableFuture<HttpResponse<String>> responseFuture = designationsRepository.put(designation);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 200 || response.statusCode() == 201 || response.statusCode() == 204) {
+                // Process the successful response
+                successMessage.showMessage("Designation updated successfully");
+                onSuccess.run();
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
+            }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, DesignationViewModel.class);
+            return null;
+        });
     }
 
     public static void deleteItem(
-            Long index,
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
+            Long index, SpotyGotFunctional.ParameterlessConsumer onSuccess,
+            SpotyGotFunctional.MessageConsumer successMessage,
+            SpotyGotFunctional.MessageConsumer errorMessage) {
         var findModel = FindModel.builder().id(index).build();
-
-        var task = designationsRepository.delete(findModel);
-        task.setOnRunning(workerStateEvent -> onActivity.run());
-        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
-        task.setOnFailed(workerStateEvent -> onFailed.run());
-        SpotyThreader.spotyThreadPool(task);
+        CompletableFuture<HttpResponse<String>> responseFuture = designationsRepository.delete(findModel);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 200 || response.statusCode() == 204) {
+                // Process the successful response
+                successMessage.showMessage("Designation deleted successfully");
+                onSuccess.run();
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
+            }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, DesignationViewModel.class);
+            return null;
+        });
     }
 }

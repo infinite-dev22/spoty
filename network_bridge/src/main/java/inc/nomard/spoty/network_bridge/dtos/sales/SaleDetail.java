@@ -14,9 +14,9 @@
 
 package inc.nomard.spoty.network_bridge.dtos.sales;
 
-import inc.nomard.spoty.network_bridge.dtos.Product;
+import inc.nomard.spoty.network_bridge.dtos.*;
 import lombok.*;
-import lombok.extern.java.Log;
+import lombok.extern.java.*;
 
 @Getter
 @Setter
@@ -27,17 +27,10 @@ import lombok.extern.java.Log;
 @Log
 public class SaleDetail {
     private Long id;
-    private String ref;
-    private SaleMaster sale;
     private Product product;
-    private String serialNumber;
     private double price;
-    private double netTax;
-    private String taxType;
-    private double discount;
-    private String discountType;
-    private double subTotalPrice;
     private int quantity;
+    private double subTotalPrice;
 
     public String getProductName() {
         return product.getName();

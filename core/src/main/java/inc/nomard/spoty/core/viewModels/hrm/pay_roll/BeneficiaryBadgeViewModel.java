@@ -16,24 +16,22 @@ package inc.nomard.spoty.core.viewModels.hrm.pay_roll;
 
 import com.google.gson.*;
 import com.google.gson.reflect.*;
-import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.core.viewModels.hrm.employee.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll.*;
 import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.network_bridge.repositories.implementations.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.adapters.*;
-
+import inc.nomard.spoty.utils.functional_paradigm.*;
 import java.lang.reflect.*;
+import java.net.http.*;
 import java.util.*;
 import java.util.concurrent.*;
-
 import javafx.beans.property.*;
 import javafx.collections.*;
 import lombok.*;
-
-
-import lombok.extern.java.Log;
+import lombok.extern.java.*;
 
 @Log
 public class BeneficiaryBadgeViewModel {
@@ -136,125 +134,149 @@ public class BeneficiaryBadgeViewModel {
         setBeneficiaryType(null);
     }
 
-    public static void saveBeneficiaryBadge(
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
+    public static void saveBeneficiaryBadge(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                            SpotyGotFunctional.MessageConsumer successMessage,
+                                            SpotyGotFunctional.MessageConsumer errorMessage) {
         var beneficiaryBadge = BeneficiaryBadge.builder()
                 .name(getName())
                 .beneficiaryType(getBeneficiaryType())
                 .color(getColor())
                 .description(getDescription())
                 .build();
-
-        var task = beneficiaryBadgeRepository.post(beneficiaryBadge);
-        task.setOnRunning(workerStateEvent -> onActivity.run());
-        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
-        task.setOnFailed(workerStateEvent -> onFailed.run());
-        SpotyThreader.spotyThreadPool(task);
+        CompletableFuture<HttpResponse<String>> responseFuture = beneficiaryBadgeRepository.post(beneficiaryBadge);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 201 || response.statusCode() == 204) {
+                // Process the successful response
+                successMessage.showMessage("Beneficiary badge created successfully");
+                onSuccess.run();
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
+            }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, BeneficiaryBadgeViewModel.class);
+            return null;
+        });
     }
 
-    public static void getAllBeneficiaryBadges(
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
-        var task = beneficiaryBadgeRepository.fetchAll();
-        if (Objects.nonNull(onActivity)) {
-            task.setOnRunning(workerStateEvent -> onActivity.run());
-        }
-        if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> onFailed.run());
-        }
-        task.setOnSucceeded(workerStateEvent -> {
-            try {
+    public static void getAllBeneficiaryBadges(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                               SpotyGotFunctional.MessageConsumer errorMessage) {
+        CompletableFuture<HttpResponse<String>> responseFuture = beneficiaryBadgeRepository.fetchAll();
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 201) {
+                // Process the successful response
                 Type listType = new TypeToken<ArrayList<BeneficiaryBadge>>() {
                 }.getType();
-                ArrayList<BeneficiaryBadge> beneficiaryBadgeList = gson.fromJson(task.get().body(), listType);
-
+                ArrayList<BeneficiaryBadge> beneficiaryBadgeList = gson.fromJson(response.body(), listType);
                 beneficiaryBadgesList.clear();
                 beneficiaryBadgesList.addAll(beneficiaryBadgeList);
-
                 if (Objects.nonNull(onSuccess)) {
                     onSuccess.run();
                 }
-            } catch (InterruptedException | ExecutionException e) {
-                SpotyLogger.writeToFile(e, BeneficiaryBadgeViewModel.class);
+                onSuccess.run();
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
             }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, BeneficiaryBadgeViewModel.class);
+            return null;
         });
-        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void getItem(
-            Long index,
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
+    public static void getItem(Long index,
+                               SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                               SpotyGotFunctional.MessageConsumer errorMessage) {
         var findModel = FindModel.builder().id(index).build();
-
-        var task = beneficiaryBadgeRepository.fetch(findModel);
-        if (Objects.nonNull(onActivity)) {
-            task.setOnRunning(workerStateEvent -> onActivity.run());
-        }
-        if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> onFailed.run());
-        }
-        task.setOnSucceeded(workerStateEvent -> {
-            try {
-                var beneficiaryBadge = gson.fromJson(task.get().body(), BeneficiaryBadge.class);
-
+        CompletableFuture<HttpResponse<String>> responseFuture = beneficiaryBadgeRepository.fetch(findModel);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 200) {
+                // Process the successful response
+                var beneficiaryBadge = gson.fromJson(response.body(), BeneficiaryBadge.class);
                 setId(beneficiaryBadge.getId());
-
                 setName(beneficiaryBadge.getName());
                 setBeneficiaryType(beneficiaryBadge.getBeneficiaryType());
                 setColor(beneficiaryBadge.getColor());
                 setDescription(beneficiaryBadge.getDescription());
-
                 if (Objects.nonNull(onSuccess)) {
                     onSuccess.run();
                 }
-            } catch (InterruptedException | ExecutionException e) {
-                SpotyLogger.writeToFile(e, BankViewModel.class);
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
             }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, DepartmentViewModel.class);
+            return null;
         });
-        SpotyThreader.spotyThreadPool(task);
     }
 
     public static void searchItem(
-            String search,
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
+            String search, SpotyGotFunctional.ParameterlessConsumer onSuccess,
+            SpotyGotFunctional.MessageConsumer errorMessage) {
         var searchModel = SearchModel.builder().search(search).build();
-        var task = beneficiaryBadgeRepository.search(searchModel);
-        if (Objects.nonNull(onActivity)) {
-            task.setOnRunning(workerStateEvent -> onActivity.run());
-        }
-        if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> onFailed.run());
-        }
-        task.setOnSucceeded(workerStateEvent -> {
-            try {
+        CompletableFuture<HttpResponse<String>> responseFuture = beneficiaryBadgeRepository.search(searchModel);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 200) {
+                // Process the successful response
                 Type listType = new TypeToken<ArrayList<BeneficiaryBadge>>() {
                 }.getType();
-                ArrayList<BeneficiaryBadge> beneficiaryBadgeList = gson.fromJson(task.get().body(), listType);
-
+                ArrayList<BeneficiaryBadge> beneficiaryBadgeList = gson.fromJson(
+                        response.body(), listType);
                 beneficiaryBadgesList.clear();
                 beneficiaryBadgesList.addAll(beneficiaryBadgeList);
-
                 if (Objects.nonNull(onSuccess)) {
                     onSuccess.run();
                 }
-            } catch (InterruptedException | ExecutionException e) {
-                SpotyLogger.writeToFile(e, BeneficiaryBadgeViewModel.class);
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
             }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, BeneficiaryBadgeViewModel.class);
+            return null;
         });
-        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void updateItem(
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
+    public static void updateItem(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                  SpotyGotFunctional.MessageConsumer successMessage,
+                                  SpotyGotFunctional.MessageConsumer errorMessage) {
         var beneficiaryBadge = BeneficiaryBadge.builder()
                 .id(getId())
                 .name(getName())
@@ -262,25 +284,58 @@ public class BeneficiaryBadgeViewModel {
                 .color(getColor())
                 .description(getDescription())
                 .build();
-
-        var task = beneficiaryBadgeRepository.put(beneficiaryBadge);
-        task.setOnRunning(workerStateEvent -> onActivity.run());
-        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
-        task.setOnFailed(workerStateEvent -> onFailed.run());
-        SpotyThreader.spotyThreadPool(task);
+        CompletableFuture<HttpResponse<String>> responseFuture = beneficiaryBadgeRepository.put(beneficiaryBadge);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 200 || response.statusCode() == 204) {
+                // Process the successful response
+                successMessage.showMessage("Beneficiary badge updated successfully");
+                onSuccess.run();
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
+            }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, BeneficiaryBadgeViewModel.class);
+            return null;
+        });
     }
 
     public static void deleteItem(
-            Long index,
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
+            Long index, SpotyGotFunctional.ParameterlessConsumer onSuccess,
+            SpotyGotFunctional.MessageConsumer successMessage,
+            SpotyGotFunctional.MessageConsumer errorMessage) {
         var findModel = FindModel.builder().id(index).build();
-
-        var task = beneficiaryBadgeRepository.delete(findModel);
-        task.setOnRunning(workerStateEvent -> onActivity.run());
-        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
-        task.setOnFailed(workerStateEvent -> onFailed.run());
-        SpotyThreader.spotyThreadPool(task);
+        CompletableFuture<HttpResponse<String>> responseFuture = beneficiaryBadgeRepository.delete(findModel);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 200 || response.statusCode() == 204) {
+                // Process the successful response
+                successMessage.showMessage("Beneficiary badge deleted successfully");
+                onSuccess.run();
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
+            }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, BeneficiaryBadgeViewModel.class);
+            return null;
+        });
     }
 }

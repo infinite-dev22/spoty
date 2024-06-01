@@ -21,16 +21,14 @@ import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.network_bridge.repositories.implementations.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.adapters.*;
-
+import inc.nomard.spoty.utils.functional_paradigm.*;
 import java.lang.reflect.*;
+import java.net.http.*;
 import java.util.*;
 import java.util.concurrent.*;
-
 import javafx.beans.property.*;
 import javafx.collections.*;
-
-
-import lombok.extern.java.Log;
+import lombok.extern.java.*;
 
 @Log
 public class BrandViewModel {
@@ -40,10 +38,10 @@ public class BrandViewModel {
             .create();
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final StringProperty name = new SimpleStringProperty("");
+    private static final StringProperty image = new SimpleStringProperty("");
     private static final StringProperty description = new SimpleStringProperty("");
     public static ObservableList<Brand> brandsList = FXCollections.observableArrayList();
     private static final ListProperty<Brand> brands = new SimpleListProperty<>(brandsList);
-    public static ObservableList<Brand> brandsComboBoxList = FXCollections.observableArrayList();
     public static BrandsRepositoryImpl brandsRepository = new BrandsRepositoryImpl();
 
     public static long getId() {
@@ -70,6 +68,18 @@ public class BrandViewModel {
         return name;
     }
 
+    public static String getImage() {
+        return image.get();
+    }
+
+    public static void setImage(String image) {
+        BrandViewModel.image.set(image);
+    }
+
+    public static StringProperty imageProperty() {
+        return image;
+    }
+
     public static String getDescription() {
         return description.get();
     }
@@ -94,25 +104,37 @@ public class BrandViewModel {
         return brands;
     }
 
-    public static void saveBrand(
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
+    public static void saveBrand(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                 SpotyGotFunctional.MessageConsumer successMessage,
+                                 SpotyGotFunctional.MessageConsumer errorMessage) {
         var brand = Brand.builder()
                 .name(getName())
                 .description(getDescription())
-                // .image(getImage)
+                .image(getImage())
                 .build();
-
-        var task = brandsRepository.post(brand);
-        task.setOnRunning(workerStateEvent -> onActivity.run());
-        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
-        task.setOnFailed(workerStateEvent -> {
-            onFailed.run();
-            System.err.println("The task failed with the following exception:");
-            task.getException().printStackTrace(System.err);
+        CompletableFuture<HttpResponse<String>> responseFuture = brandsRepository.post(brand);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 201 || response.statusCode() == 204) {
+                // Process the successful response
+                successMessage.showMessage("Brand created successfully");
+                onSuccess.run();
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
+            }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, BrandViewModel.class);
+            return null;
         });
-        SpotyThreader.spotyThreadPool(task);
     }
 
     public static void clearBrandData() {
@@ -121,147 +143,171 @@ public class BrandViewModel {
         setDescription("");
     }
 
-    public static void getAllBrands(
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
-        var task = brandsRepository.fetchAll();
-        if (Objects.nonNull(onActivity)) {
-            task.setOnRunning(workerStateEvent -> onActivity.run());
-        }
-        if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> {
-                System.out.println(workerStateEvent);
-                {
-                    onFailed.run();
-                    System.err.println("The task failed with the following exception:");
-                    task.getException().printStackTrace(System.err);
-                }
-            });
-        }
-        task.setOnSucceeded(workerStateEvent -> {
-            try {
+    public static void getAllBrands(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                    SpotyGotFunctional.MessageConsumer errorMessage) {
+        CompletableFuture<HttpResponse<String>> responseFuture = brandsRepository.fetchAll();
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 201) {
+                // Process the successful response
                 Type listType = new TypeToken<ArrayList<Brand>>() {
                 }.getType();
-
-                ArrayList<Brand> brandList = gson.fromJson(task.get().body(), listType);
+                ArrayList<Brand> brandList = gson.fromJson(response.body(), listType);
                 brandsList.clear();
                 brandsList.addAll(brandList);
-
                 if (Objects.nonNull(onSuccess)) {
                     onSuccess.run();
                 }
-            } catch (InterruptedException | ExecutionException e) {
-                SpotyLogger.writeToFile(e, BrandViewModel.class);
+                onSuccess.run();
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
             }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, BrandViewModel.class);
+            return null;
         });
-        SpotyThreader.spotyThreadPool(task);
     }
 
     public static void getItem(
-            Long index,
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
+            Long index, SpotyGotFunctional.ParameterlessConsumer onSuccess,
+            SpotyGotFunctional.MessageConsumer errorMessage) {
         var findModel = FindModel.builder().id(index).build();
-
-        var task = brandsRepository.fetch(findModel);
-        if (Objects.nonNull(onActivity)) {
-            task.setOnRunning(workerStateEvent -> onActivity.run());
-        }
-        if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> {
-                onFailed.run();
-                System.err.println("The task failed with the following exception:");
-                task.getException().printStackTrace(System.err);
-            });
-        }
-        task.setOnSucceeded(workerStateEvent -> {
-            try {
-                var brand = gson.fromJson(task.get().body(), Brand.class);
-
+        CompletableFuture<HttpResponse<String>> responseFuture = brandsRepository.fetch(findModel);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 200) {
+                // Process the successful response
+                var brand = gson.fromJson(response.body(), Brand.class);
                 setId(brand.getId());
                 setName(brand.getName());
                 setDescription(brand.getDescription());
-
                 if (Objects.nonNull(onSuccess)) {
                     onSuccess.run();
                 }
-            } catch (InterruptedException | ExecutionException e) {
-                SpotyLogger.writeToFile(e, BankViewModel.class);
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
             }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, BrandViewModel.class);
+            return null;
         });
-        SpotyThreader.spotyThreadPool(task);
     }
 
     public static void searchItem(
-            String search,
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
+            String search, SpotyGotFunctional.ParameterlessConsumer onSuccess,
+            SpotyGotFunctional.MessageConsumer errorMessage) {
         var searchModel = SearchModel.builder().search(search).build();
-        var task = brandsRepository.search(searchModel);
-        if (Objects.nonNull(onActivity)) {
-            task.setOnRunning(workerStateEvent -> onActivity.run());
-        }
-        if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> {
-                onFailed.run();
-                System.err.println("The task failed with the following exception:");
-                task.getException().printStackTrace(System.err);
-            });
-        }
-        task.setOnSucceeded(workerStateEvent -> {
-            try {
+        CompletableFuture<HttpResponse<String>> responseFuture = brandsRepository.search(searchModel);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 200) {
+                // Process the successful response
                 Type listType = new TypeToken<ArrayList<Brand>>() {
                 }.getType();
-                ArrayList<Brand> brandList = gson.fromJson(task.get().body(), listType);
+                ArrayList<Brand> brandList = gson.fromJson(
+                        response.body(), listType);
                 brandsList.clear();
                 brandsList.addAll(brandList);
-            } catch (InterruptedException | ExecutionException e) {
-                SpotyLogger.writeToFile(e, BranchViewModel.class);
+                if (Objects.nonNull(onSuccess)) {
+                    onSuccess.run();
+                }
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
             }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, BrandViewModel.class);
+            return null;
         });
-        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void updateItem(
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
+    public static void updateItem(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                  SpotyGotFunctional.MessageConsumer successMessage,
+                                  SpotyGotFunctional.MessageConsumer errorMessage) {
         var brand = Brand.builder()
                 .id(getId())
                 .name(getName())
                 .description(getDescription())
-                // .image(getImage)
+                .image(getImage())
                 .build();
-
-        var task = brandsRepository.put(brand);
-        task.setOnRunning(workerStateEvent -> onActivity.run());
-        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
-        task.setOnFailed(workerStateEvent -> {
-            onFailed.run();
-            System.err.println("The task failed with the following exception:");
-            task.getException().printStackTrace(System.err);
+        CompletableFuture<HttpResponse<String>> responseFuture = brandsRepository.put(brand);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 200 || response.statusCode() == 204) {
+                // Process the successful response
+                successMessage.showMessage("Brand updated successfully");
+                onSuccess.run();
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
+            }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, BrandViewModel.class);
+            return null;
         });
-        SpotyThreader.spotyThreadPool(task);
     }
 
     public static void deleteItem(
-            Long index,
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
+            Long index, SpotyGotFunctional.ParameterlessConsumer onSuccess,
+            SpotyGotFunctional.MessageConsumer successMessage,
+            SpotyGotFunctional.MessageConsumer errorMessage) {
         var findModel = FindModel.builder().id(index).build();
-
-        var task = brandsRepository.delete(findModel);
-        task.setOnRunning(workerStateEvent -> onActivity.run());
-        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
-        task.setOnFailed(workerStateEvent -> {
-            onFailed.run();
-            System.err.println("The task failed with the following exception:");
-            task.getException().printStackTrace(System.err);
+        CompletableFuture<HttpResponse<String>> responseFuture = brandsRepository.delete(findModel);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 200 || response.statusCode() == 204) {
+                // Process the successful response
+                successMessage.showMessage("Brand deleted successfully");
+                onSuccess.run();
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
+            }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, BrandViewModel.class);
+            return null;
         });
-        SpotyThreader.spotyThreadPool(task);
     }
 }

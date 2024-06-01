@@ -14,33 +14,22 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import inc.nomard.spoty.core.components.message.SpotyMessage;
-import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
-import inc.nomard.spoty.core.components.message.enums.MessageDuration;
-import inc.nomard.spoty.core.components.message.enums.MessageVariants;
-import inc.nomard.spoty.core.viewModels.hrm.employee.DesignationViewModel;
-import inc.nomard.spoty.utils.SpotyLogger;
-import inc.nomard.spoty.utils.SpotyThreader;
-import io.github.palexdev.materialfx.controls.MFXTextField;
-import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
-import io.github.palexdev.materialfx.validation.Constraint;
-import io.github.palexdev.materialfx.validation.Severity;
+import static inc.nomard.spoty.core.GlobalActions.*;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.*;
+import inc.nomard.spoty.core.viewModels.hrm.employee.*;
+import io.github.palexdev.materialfx.controls.*;
+import io.github.palexdev.materialfx.dialogs.*;
+import io.github.palexdev.materialfx.validation.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import javafx.css.PseudoClass;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.layout.StackPane;
-import lombok.extern.java.Log;
-
-import java.net.URL;
-import java.util.List;
-import java.util.Objects;
-import java.util.ResourceBundle;
-
-import static inc.nomard.spoty.core.GlobalActions.closeDialog;
+import java.net.*;
+import java.util.*;
+import javafx.css.*;
+import javafx.event.*;
+import javafx.fxml.*;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import lombok.extern.java.*;
 
 @Log
 public class DesignationFormController implements Initializable {
@@ -80,7 +69,6 @@ public class DesignationFormController implements Initializable {
                 (event) -> {
                     DesignationViewModel.clearDesignationData();
                     closeDialog(event);
-
                     nameValidationLabel.setVisible(false);
                     nameValidationLabel.setManaged(false);
                     name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
@@ -98,80 +86,18 @@ public class DesignationFormController implements Initializable {
                     }
                     if (constraints.isEmpty()) {
                         if (DesignationViewModel.getId() > 0) {
-                            SpotyThreader.spotyThreadPool(() -> {
-                                try {
-                                    DesignationViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
-                                } catch (Exception e) {
-                                    SpotyLogger.writeToFile(e, this.getClass());
-                                }
-                            });
+                            DesignationViewModel.updateItem(this::onSuccess, this::successMessage, this::errorMessage);
                             actionEvent = event;
                             return;
                         }
-                        try {
-                            DesignationViewModel.saveDesignation(this::onAction, this::onAddSuccess, this::onFailed);
-                            actionEvent = event;
-                        } catch (Exception e) {
-                            SpotyLogger.writeToFile(e, this.getClass());
-                        }
+                        DesignationViewModel.saveDesignation(this::onSuccess, this::successMessage, this::errorMessage);
+                        actionEvent = event;
                     }
                 });
     }
 
-    private void onAction() {
-        cancelBtn.setDisable(true);
-        saveBtn.setDisable(true);
-//        cancelBtn.setManaged(true);
-//        saveBtn.setManaged(true);
-    }
-
-    private void onAddSuccess() {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder("Designation added successfully")
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-circle-check")
-                        .type(MessageVariants.SUCCESS)
-                        .build();
-        notificationHolder.addMessage(notification);
-        cancelBtn.setDisable(false);
-        saveBtn.setDisable(false);
-
+    private void onSuccess() {
         closeDialog(actionEvent);
-        DesignationViewModel.clearDesignationData();
-        DesignationViewModel.getAllDesignations(null, null, null);
-    }
-
-    private void onUpdatedSuccess() {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder("Designation updated successfully")
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-circle-check")
-                        .type(MessageVariants.SUCCESS)
-                        .build();
-        notificationHolder.addMessage(notification);
-        cancelBtn.setDisable(false);
-        saveBtn.setDisable(false);
-
-        closeDialog(actionEvent);
-        DesignationViewModel.clearDesignationData();
-        DesignationViewModel.getAllDesignations(null, null, null);
-    }
-
-    private void onFailed() {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder("An error occurred")
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
-                        .build();
-        notificationHolder.addMessage(notification);
-        cancelBtn.setDisable(false);
-        saveBtn.setDisable(false);
-
-        DesignationViewModel.getAllDesignations(null, null, null);
     }
 
     public void requiredValidator() {
@@ -195,5 +121,31 @@ public class DesignationFormController implements Initializable {
                                 name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                             }
                         });
+    }
+
+    private void successMessage(String message) {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder(message)
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        AnchorPane.setRightAnchor(notification, 40.0);
+        AnchorPane.setTopAnchor(notification, 10.0);
+    }
+
+    private void errorMessage(String message) {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder(message)
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        AnchorPane.setRightAnchor(notification, 40.0);
+        AnchorPane.setTopAnchor(notification, 10.0);
     }
 }

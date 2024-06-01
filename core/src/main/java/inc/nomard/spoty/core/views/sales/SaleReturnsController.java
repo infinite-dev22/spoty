@@ -14,46 +14,30 @@
 
 package inc.nomard.spoty.core.views.sales;
 
-import inc.nomard.spoty.core.components.animations.SpotyAnimations;
-import inc.nomard.spoty.core.viewModels.returns.sales.SaleReturnMasterViewModel;
-import inc.nomard.spoty.core.views.previews.sales.SaleReturnsPreviewController;
-import inc.nomard.spoty.network_bridge.dtos.returns.sale_returns.SaleReturnMaster;
-import inc.nomard.spoty.utils.SpotyThreader;
+import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.*;
+import inc.nomard.spoty.core.viewModels.returns.sales.*;
+import inc.nomard.spoty.core.views.previews.sales.*;
+import inc.nomard.spoty.network_bridge.dtos.returns.sale_returns.*;
 import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
-import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
-import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
-import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
-import io.github.palexdev.materialfx.enums.ScrimPriority;
-import io.github.palexdev.materialfx.filter.DoubleFilter;
-import io.github.palexdev.materialfx.filter.StringFilter;
+import io.github.palexdev.materialfx.controls.cell.*;
+import io.github.palexdev.materialfx.dialogs.*;
+import io.github.palexdev.materialfx.enums.*;
+import io.github.palexdev.materialfx.filter.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
-import javafx.animation.RotateTransition;
-import javafx.application.Platform;
-import javafx.collections.ListChangeListener;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Tooltip;
-import javafx.scene.input.ContextMenuEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.stage.Modality;
-import javafx.stage.Screen;
-import javafx.stage.Stage;
-import javafx.util.Duration;
-import lombok.extern.java.Log;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.Comparator;
-import java.util.ResourceBundle;
-
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
-import lombok.extern.java.Log;
+import java.io.*;
+import java.net.*;
+import java.util.*;
+import javafx.application.*;
+import javafx.collections.*;
+import javafx.event.*;
+import javafx.fxml.*;
+import javafx.scene.control.*;
+import javafx.scene.input.*;
+import javafx.scene.layout.*;
+import javafx.stage.*;
+import lombok.extern.java.*;
 
 @SuppressWarnings("unchecked")
 @Log
@@ -68,10 +52,7 @@ public class SaleReturnsController implements Initializable {
     @FXML
     public MFXButton createBtn;
     @FXML
-    public HBox refresh;
-    @FXML
     private MFXTableView<SaleReturnMaster> masterTable;
-    private RotateTransition transition;
     private FXMLLoader viewFxmlLoader;
     private MFXStageDialog viewDialog;
 
@@ -93,7 +74,6 @@ public class SaleReturnsController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        setIcons();
         Platform.runLater(this::setupTable);
     }
 
@@ -195,26 +175,7 @@ public class SaleReturnsController implements Initializable {
     public void createBtnClicked() {
     }
 
-    private void onAction() {
-        transition.playFromStart();
-        transition.setOnFinished((ActionEvent event) -> transition.playFromStart());
-    }
-
     private void onSuccess() {
-        transition.setOnFinished(null);
-    }
-
-    private void onFailed() {
-        transition.setOnFinished(null);
-    }
-
-    private void setIcons() {
-        var refreshIcon = new MFXFontIcon("fas-arrows-rotate", 24);
-        refresh.getChildren().addFirst(refreshIcon);
-
-        transition = SpotyAnimations.rotateTransition(refreshIcon, Duration.millis(1000), 360);
-
-        refreshIcon.setOnMouseClicked(mouseEvent -> SaleReturnMasterViewModel.getSaleReturnMasters(this::onAction, this::onSuccess, this::onFailed));
     }
 
     private MFXContextMenu showContextMenu(MFXTableRow<SaleReturnMaster> obj) {
@@ -227,40 +188,20 @@ public class SaleReturnsController implements Initializable {
         // Delete
         delete.setOnAction(
                 e -> {
-                    SpotyThreader.spotyThreadPool(
-                            () -> {
-                                try {
-                                    SaleReturnMasterViewModel.deleteItem(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
-                                } catch (Exception ex) {
-                                    throw new RuntimeException(ex);
-                                }
-                            });
-
+                    SaleReturnMasterViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
                     e.consume();
                 });
         // Edit
         edit.setOnAction(
                 e -> {
-                    SpotyThreader.spotyThreadPool(
-                            () -> {
-                                try {
-                                    SaleReturnMasterViewModel.getItem(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
-                                } catch (Exception ex) {
-                                    throw new RuntimeException(ex);
-                                }
-                            });
-
+                    SaleReturnMasterViewModel.getItem(obj.getData().getId(), this::createBtnClicked, this::errorMessage);
                     createBtnClicked();
                     e.consume();
                 });
         // View
         view.setOnAction(
                 event -> {
-                    try {
-                        viewShow(obj.getData());
-                    } catch (Exception ex) {
-                        throw new RuntimeException(ex);
-                    }
+                    viewShow(obj.getData());
                     event.consume();
                 });
 
@@ -299,5 +240,31 @@ public class SaleReturnsController implements Initializable {
         SaleReturnsPreviewController controller = viewFxmlLoader.getController();
         controller.init(saleReturnsMaster);
         viewDialog.showAndWait();
+    }
+
+    private void successMessage(String message) {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder(message)
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        AnchorPane.setRightAnchor(notification, 40.0);
+        AnchorPane.setTopAnchor(notification, 10.0);
+    }
+
+    private void errorMessage(String message) {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder(message)
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        AnchorPane.setRightAnchor(notification, 40.0);
+        AnchorPane.setTopAnchor(notification, 10.0);
     }
 }

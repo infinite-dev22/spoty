@@ -1,25 +1,20 @@
 package inc.nomard.spoty.core.views.human_resource.pay_roll;
 
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
-
-import inc.nomard.spoty.core.components.animations.*;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.*;
 import inc.nomard.spoty.core.viewModels.hrm.pay_roll.*;
 import inc.nomard.spoty.core.views.forms.*;
 import inc.nomard.spoty.core.views.previews.hrm.pay_roll.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll.*;
-import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.filter.*;
-import io.github.palexdev.mfxresources.fonts.*;
-
 import java.io.*;
 import java.net.*;
 import java.util.*;
-
-import javafx.animation.*;
 import javafx.application.*;
 import javafx.collections.*;
 import javafx.event.*;
@@ -27,9 +22,7 @@ import javafx.fxml.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
-import javafx.util.*;
-
-import lombok.extern.java.Log;
+import lombok.extern.java.*;
 
 @Log
 public class SalariesController implements Initializable {
@@ -40,12 +33,8 @@ public class SalariesController implements Initializable {
     public MFXTextField searchBar;
     @FXML
     public MFXTableView<SalaryAdvance> masterTable;
-    @FXML
-    public HBox refresh;
-    private RotateTransition transition;
     private MFXStageDialog formDialog;
     private MFXStageDialog viewDialog;
-    private FXMLLoader formFxmlLoader;
     private FXMLLoader viewFxmlLoader;
 
     public SalariesController(Stage stage) {
@@ -95,7 +84,6 @@ public class SalariesController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        setIcons();
         Platform.runLater(this::setupTable);
     }
 
@@ -202,29 +190,13 @@ public class SalariesController implements Initializable {
         // Delete
         delete.setOnAction(
                 event -> {
-                    SpotyThreader.spotyThreadPool(
-                            () -> {
-                                try {
-                                    SalaryAdvanceViewModel.deleteSalaryAdvance(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
-                                } catch (Exception ex) {
-                                    throw new RuntimeException(ex);
-                                }
-                            });
-
+                    SalaryAdvanceViewModel.deleteSalaryAdvance(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
                     event.consume();
                 });
         // Edit
         edit.setOnAction(
                 event -> {
-                    SpotyThreader.spotyThreadPool(
-                            () -> {
-                                try {
-                                    SalaryAdvanceViewModel.getSalaryAdvance(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
-                                } catch (Exception ex) {
-                                    throw new RuntimeException(ex);
-                                }
-                            });
-                    formDialog.showAndWait();
+                    SalaryAdvanceViewModel.getSalaryAdvance(obj.getData().getId(), () -> formDialog.showAndWait(), this::errorMessage);
                     event.consume();
                 });
 
@@ -234,7 +206,7 @@ public class SalariesController implements Initializable {
     }
 
     private void productFormDialogPane(Stage stage) throws IOException {
-        formFxmlLoader = fxmlLoader("views/forms/SalaryAdvanceForm.fxml");
+        FXMLLoader formFxmlLoader = fxmlLoader("views/forms/SalaryAdvanceForm.fxml");
         formFxmlLoader.setControllerFactory(c -> SalaryAdvanceFormController.getInstance());
 
         MFXGenericDialog dialogContent = formFxmlLoader.load();
@@ -255,31 +227,38 @@ public class SalariesController implements Initializable {
         io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(formDialog.getScene());
     }
 
-    private void onAction() {
-        transition.playFromStart();
-        transition.setOnFinished((ActionEvent event) -> transition.playFromStart());
-    }
-
     private void onSuccess() {
-        transition.setOnFinished(null);
-    }
-
-    private void onFailed() {
-        transition.setOnFinished(null);
-    }
-
-    private void setIcons() {
-        var refreshIcon = new MFXFontIcon("fas-arrows-rotate", 24);
-        refresh.getChildren().addFirst(refreshIcon);
-
-        transition = SpotyAnimations.rotateTransition(refreshIcon, Duration.millis(1000), 360);
-
-        refreshIcon.setOnMouseClicked(mouseEvent -> SalaryAdvanceViewModel.getAllSalaryAdvances(this::onAction, this::onSuccess, this::onFailed));
     }
 
     public void productViewShow(SalaryAdvance product) {
         SalaryAdvancePreviewController controller = viewFxmlLoader.getController();
         controller.init(product);
         viewDialog.showAndWait();
+    }
+
+    private void successMessage(String message) {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder(message)
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        AnchorPane.setRightAnchor(notification, 40.0);
+        AnchorPane.setTopAnchor(notification, 10.0);
+    }
+
+    private void errorMessage(String message) {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder(message)
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        AnchorPane.setRightAnchor(notification, 40.0);
+        AnchorPane.setTopAnchor(notification, 10.0);
     }
 }

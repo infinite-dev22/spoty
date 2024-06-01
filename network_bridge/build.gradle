@@ -28,7 +28,6 @@ test {
 
 dependencies {
     implementation project(':utils')
-//    implementation "org.slf4j:slf4j-api:2.1.0-alpha1"
     implementation "com.google.code.gson:gson:$gson"
     compileOnly "org.projectlombok:lombok"
     annotationProcessor "org.projectlombok:lombok"

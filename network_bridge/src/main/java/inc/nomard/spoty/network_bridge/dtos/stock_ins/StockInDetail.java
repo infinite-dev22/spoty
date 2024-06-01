@@ -14,9 +14,9 @@
 
 package inc.nomard.spoty.network_bridge.dtos.stock_ins;
 
-import inc.nomard.spoty.network_bridge.dtos.Product;
+import inc.nomard.spoty.network_bridge.dtos.*;
 import lombok.*;
-import lombok.extern.java.Log;
+import lombok.extern.java.*;
 
 @Getter
 @Setter
@@ -27,12 +27,9 @@ import lombok.extern.java.Log;
 @Log
 public class StockInDetail {
     private Long id;
-    private StockInMaster stockIn;
     private Product product;
     private int quantity;
-    private String serialNo;
     private String description;
-    private String location;
 
     public String getProductName() {
         return product.getName();

@@ -14,34 +14,23 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import inc.nomard.spoty.core.components.message.SpotyMessage;
-import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
-import inc.nomard.spoty.core.components.message.enums.MessageDuration;
-import inc.nomard.spoty.core.components.message.enums.MessageVariants;
-import inc.nomard.spoty.core.viewModels.PermissionsViewModel;
-import inc.nomard.spoty.core.viewModels.RoleViewModel;
-import inc.nomard.spoty.utils.SpotyLogger;
-import inc.nomard.spoty.utils.SpotyThreader;
-import io.github.palexdev.materialfx.controls.MFXTextField;
-import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
-import io.github.palexdev.materialfx.validation.Constraint;
-import io.github.palexdev.materialfx.validation.Severity;
+import static inc.nomard.spoty.core.GlobalActions.*;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.*;
+import inc.nomard.spoty.core.viewModels.*;
+import io.github.palexdev.materialfx.controls.*;
+import io.github.palexdev.materialfx.dialogs.*;
+import io.github.palexdev.materialfx.validation.*;
+import static io.github.palexdev.materialfx.validation.Validated.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import io.github.palexdev.mfxcomponents.controls.checkbox.MFXCheckbox;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import lombok.extern.java.Log;
-
-import java.net.URL;
-import java.util.List;
-import java.util.Objects;
-import java.util.ResourceBundle;
-
-import static inc.nomard.spoty.core.GlobalActions.closeDialog;
-import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
+import java.net.*;
+import java.util.*;
+import javafx.event.*;
+import javafx.fxml.*;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import lombok.extern.java.*;
 
 @Log
 public class RoleFormController implements Initializable {
@@ -351,22 +340,12 @@ public class RoleFormController implements Initializable {
                     }
                     if (constraints.isEmpty()) {
                         if (RoleViewModel.getId() > 0) {
-                            SpotyThreader.spotyThreadPool(() -> {
-                                try {
-                                    RoleViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
-                                } catch (Exception e) {
-                                    SpotyLogger.writeToFile(e, this.getClass());
-                                }
-                            });
+                            RoleViewModel.updateItem(this::onSuccess, this::successMessage, this::errorMessage);
                             actionEvent = event;
                             return;
                         }
-                        try {
-                            RoleViewModel.saveRole(this::onAction, this::onAddSuccess, this::onFailed);
-                            actionEvent = event;
-                        } catch (Exception e) {
-                            SpotyLogger.writeToFile(e, this.getClass());
-                        }
+                        RoleViewModel.saveRole(this::onSuccess, this::successMessage, this::errorMessage);
+                        actionEvent = event;
                     }
                 });
     }
@@ -1818,57 +1797,9 @@ public class RoleFormController implements Initializable {
 //        saveBtn.setManaged(true);
     }
 
-    private void onAddSuccess() {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder("Role added successfully")
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-circle-check")
-                        .type(MessageVariants.SUCCESS)
-                        .build();
-        notificationHolder.addMessage(notification);
-        cancelBtn.setDisable(false);
-        saveBtn.setDisable(false);
-
+    private void onSuccess() {
         resetCheckboxes();
-
         closeDialog(actionEvent);
-        RoleViewModel.resetRoleProperties();
-        RoleViewModel.getAllRoles(null, null, null);
-    }
-
-    private void onUpdatedSuccess() {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder("Role updated successfully")
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-circle-check")
-                        .type(MessageVariants.SUCCESS)
-                        .build();
-        notificationHolder.addMessage(notification);
-        cancelBtn.setDisable(false);
-        saveBtn.setDisable(false);
-
-        resetCheckboxes();
-
-        closeDialog(actionEvent);
-        RoleViewModel.resetRoleProperties();
-        RoleViewModel.getAllRoles(null, null, null);
-    }
-
-    private void onFailed() {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder("An error occurred")
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
-                        .build();
-        notificationHolder.addMessage(notification);
-        cancelBtn.setDisable(false);
-        saveBtn.setDisable(false);
-
-        RoleViewModel.getAllRoles(null, null, null);
     }
 
     public void requiredValidator() {
@@ -1898,5 +1829,31 @@ public class RoleFormController implements Initializable {
                                 name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                             }
                         });
+    }
+
+    private void successMessage(String message) {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder(message)
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        AnchorPane.setRightAnchor(notification, 40.0);
+        AnchorPane.setTopAnchor(notification, 10.0);
+    }
+
+    private void errorMessage(String message) {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder(message)
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        AnchorPane.setRightAnchor(notification, 40.0);
+        AnchorPane.setTopAnchor(notification, 10.0);
     }
 }

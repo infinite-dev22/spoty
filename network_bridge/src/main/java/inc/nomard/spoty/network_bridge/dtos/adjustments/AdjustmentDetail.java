@@ -14,9 +14,9 @@
 
 package inc.nomard.spoty.network_bridge.dtos.adjustments;
 
-import inc.nomard.spoty.network_bridge.dtos.Product;
+import inc.nomard.spoty.network_bridge.dtos.*;
 import lombok.*;
-import lombok.extern.java.Log;
+import lombok.extern.java.*;
 
 @Getter
 @Setter
@@ -28,7 +28,6 @@ import lombok.extern.java.Log;
 public class AdjustmentDetail {
     private Long id;
     private Product product;
-    private AdjustmentMaster adjustment;
     private Long quantity;
     private String adjustmentType;
 

@@ -16,45 +16,40 @@ package inc.nomard.spoty.core.viewModels.transfers;
 
 import com.google.gson.*;
 import com.google.gson.reflect.*;
-
 import static inc.nomard.spoty.core.values.SharedResources.*;
-
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.transfers.*;
 import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.network_bridge.repositories.implementations.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.adapters.*;
-
+import inc.nomard.spoty.utils.functional_paradigm.*;
 import java.lang.reflect.*;
+import java.net.http.*;
 import java.text.*;
 import java.util.*;
 import java.util.concurrent.*;
-
 import javafx.application.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
 import lombok.*;
-
-import lombok.extern.java.Log;
+import lombok.extern.java.*;
 
 @Log
 public class TransferMasterViewModel {
     @Getter
-    public static final ObservableList<TransferMaster> transferMastersList =
+    public static final ObservableList<TransferMaster> transfersList =
             FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
                     UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
             .create();
     private static final ListProperty<TransferMaster> transfers =
-            new SimpleListProperty<>(transferMastersList);
+            new SimpleListProperty<>(transfersList);
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final StringProperty date = new SimpleStringProperty("");
     private static final ObjectProperty<Branch> fromBranch = new SimpleObjectProperty<>(null);
     private static final ObjectProperty<Branch> toBranch = new SimpleObjectProperty<>(null);
-    private static final StringProperty totalCost = new SimpleStringProperty("");
-    private static final StringProperty status = new SimpleStringProperty("");
     private static final StringProperty note = new SimpleStringProperty("");
     private static final TransfersRepositoryImpl transfersRepository = new TransfersRepositoryImpl();
 
@@ -123,30 +118,6 @@ public class TransferMasterViewModel {
         return note;
     }
 
-    public static String getStatus() {
-        return status.get();
-    }
-
-    public static void setStatus(String status) {
-        TransferMasterViewModel.status.set(status);
-    }
-
-    public static StringProperty statusProperty() {
-        return status;
-    }
-
-    public static double getTotalCost() {
-        return Double.parseDouble(!totalCost.get().isEmpty() ? totalCost.get() : "0");
-    }
-
-    public static void setTotalCost(String totalCost) {
-        TransferMasterViewModel.totalCost.set(totalCost);
-    }
-
-    public static StringProperty totalCostProperty() {
-        return totalCost;
-    }
-
     public static ObservableList<TransferMaster> getTransfers() {
         return transfers.get();
     }
@@ -167,207 +138,222 @@ public class TransferMasterViewModel {
                     setFromBranch(null);
                     setToBranch(null);
                     setNote("");
-                    setStatus("");
-                    setTotalCost("");
                     PENDING_DELETES.clear();
                 });
     }
 
-    public static void saveTransferMaster(
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
-        var transferMaster = TransferMaster.builder()
+    public static void saveTransferMaster(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                          SpotyGotFunctional.MessageConsumer successMessage,
+                                          SpotyGotFunctional.MessageConsumer errorMessage) {
+        var transfer = TransferMaster.builder()
                 .date(getDate())
                 .fromBranch(getFromBranch())
                 .toBranch(getToBranch())
-                .total(getTotalCost())
-                .status(getStatus())
                 .notes(getNote())
                 .build();
-
         if (!TransferDetailViewModel.transferDetailsList.isEmpty()) {
-            transferMaster.setTransferDetails(TransferDetailViewModel.getTransferDetails());
+            transfer.setTransferDetails(TransferDetailViewModel.getTransferDetails());
         }
-
-        var task = transfersRepository.postMaster(transferMaster);
-        task.setOnRunning(workerStateEvent -> onActivity.run());
-        task.setOnSucceeded(workerStateEvent -> {
-            TransferDetailViewModel.saveTransferDetails(onActivity, null, onFailed);
-            onSuccess.run();
+        CompletableFuture<HttpResponse<String>> responseFuture = transfersRepository.post(transfer);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 201) {
+                // Process the successful response
+                successMessage.showMessage("Transfer created successfully");
+                onSuccess.run();
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
+            }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, TransferMasterViewModel.class);
+            return null;
         });
-        task.setOnFailed(workerStateEvent -> {
-            onFailed.run();
-            System.err.println("The task failed with the following exception:");
-            task.getException().printStackTrace(System.err);
-        });
-        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void getTransferMasters(
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
-        var task = transfersRepository.fetchAllMaster();
-        if (Objects.nonNull(onActivity)) {
-            task.setOnRunning(workerStateEvent -> onActivity.run());
-        }
-        if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> {
-                onFailed.run();
-                System.err.println("The task failed with the following exception:");
-                task.getException().printStackTrace(System.err);
-            });
-        }
-        task.setOnSucceeded(workerStateEvent -> {
-            Type listType = new TypeToken<ArrayList<TransferMaster>>() {
-            }.getType();
-
-            try {
-                ArrayList<TransferMaster> transferMasterList = gson.fromJson(
-                        task.get().body(), listType);
-
-                transferMastersList.clear();
-                transferMastersList.addAll(transferMasterList);
-
+    public static void getAllTransferMasters(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                             SpotyGotFunctional.MessageConsumer errorMessage) {
+        CompletableFuture<HttpResponse<String>> responseFuture = transfersRepository.fetchAll();
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 200) {
+                // Process the successful response
+                Type listType = new TypeToken<ArrayList<TransferMaster>>() {
+                }.getType();
+                ArrayList<TransferMaster> transferList = gson.fromJson(response.body(), listType);
+                transfersList.clear();
+                transfersList.addAll(transferList);
                 if (Objects.nonNull(onSuccess)) {
                     onSuccess.run();
                 }
-            } catch (InterruptedException | ExecutionException e) {
-                throw new RuntimeException(e);
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
             }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, TransferMasterViewModel.class);
+            return null;
         });
-        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void getItem(
-            Long index,
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
+    public static void getTransfer(
+            Long index, SpotyGotFunctional.ParameterlessConsumer onSuccess,
+            SpotyGotFunctional.MessageConsumer errorMessage) {
         var findModel = FindModel.builder().id(index).build();
-        var task = transfersRepository.fetchMaster(findModel);
-        if (Objects.nonNull(onActivity)) {
-            task.setOnRunning(workerStateEvent -> onActivity.run());
-        }
-        if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> {
-                onFailed.run();
-                System.err.println("The task failed with the following exception:");
-                task.getException().printStackTrace(System.err);
-            });
-        }
-        task.setOnSucceeded(workerStateEvent -> {
-            try {
-                TransferMaster transferMaster = gson.fromJson(task.get().body(), TransferMaster.class);
-
+        CompletableFuture<HttpResponse<String>> responseFuture = transfersRepository.fetch(findModel);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 200) {
+                // Process the successful response
+                var transferMaster = gson.fromJson(response.body(), TransferMaster.class);
                 setId(transferMaster.getId());
                 setDate(transferMaster.getLocaleDate());
                 setFromBranch(transferMaster.getFromBranch());
                 setToBranch(transferMaster.getToBranch());
-                setTotalCost(String.valueOf(transferMaster.getTotal()));
                 setNote(transferMaster.getNotes());
-                setStatus(transferMaster.getStatus());
-
                 TransferDetailViewModel.transferDetailsList.clear();
                 TransferDetailViewModel.transferDetailsList.addAll(transferMaster.getTransferDetails());
-
                 if (Objects.nonNull(onSuccess)) {
                     onSuccess.run();
                 }
-            } catch (InterruptedException | ExecutionException e) {
-                SpotyLogger.writeToFile(e, TransferMasterViewModel.class);
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
             }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, TransferMasterViewModel.class);
+            return null;
         });
-        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void searchItem(
-            String search,
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
+    public static void searchTransfer(
+            String search, SpotyGotFunctional.ParameterlessConsumer onSuccess,
+            SpotyGotFunctional.MessageConsumer errorMessage) {
         var searchModel = SearchModel.builder().search(search).build();
-        var task = transfersRepository.searchMaster(searchModel);
-        if (Objects.nonNull(onActivity)) {
-            task.setOnRunning(workerStateEvent -> onActivity.run());
-        }
-        if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> {
-                onFailed.run();
-                System.err.println("The task failed with the following exception:");
-                task.getException().printStackTrace(System.err);
-            });
-        }
-        task.setOnSucceeded(workerStateEvent -> {
-            Type listType = new TypeToken<ArrayList<TransferMaster>>() {
-            }.getType();
-
-            try {
-                ArrayList<TransferMaster> transferMasterList = gson.fromJson(
-                        task.get().body(), listType);
-
-                transferMastersList.clear();
-                transferMastersList.addAll(transferMasterList);
-
+        CompletableFuture<HttpResponse<String>> responseFuture = transfersRepository.search(searchModel);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 200) {
+                // Process the successful response
+                Type listType = new TypeToken<ArrayList<TransferMaster>>() {
+                }.getType();
+                ArrayList<TransferMaster> transferList = gson.fromJson(
+                        response.body(), listType);
+                transfersList.clear();
+                transfersList.addAll(transferList);
                 if (Objects.nonNull(onSuccess)) {
                     onSuccess.run();
                 }
-            } catch (InterruptedException | ExecutionException e) {
-                SpotyLogger.writeToFile(e, TransferMasterViewModel.class);
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
             }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, TransferMasterViewModel.class);
+            return null;
         });
-        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void updateItem(
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
+    public static void updateTransfer(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                      SpotyGotFunctional.MessageConsumer successMessage,
+                                      SpotyGotFunctional.MessageConsumer errorMessage) {
         var transferMaster = TransferMaster.builder()
                 .id(getId())
                 .date(getDate())
                 .fromBranch(getFromBranch())
                 .toBranch(getToBranch())
-                .total(getTotalCost())
-                .status(getStatus())
                 .notes(getNote())
                 .build();
-
         if (!PENDING_DELETES.isEmpty()) {
-            TransferDetailViewModel.deleteTransferDetails(PENDING_DELETES, onActivity, null, onFailed);
+            transferMaster.setChildrenToDelete(PENDING_DELETES);
         }
-
         if (!TransferDetailViewModel.getTransferDetails().isEmpty()) {
             transferMaster.setTransferDetails(TransferDetailViewModel.getTransferDetails());
         }
-
-        var task = transfersRepository.putMaster(transferMaster);
-        task.setOnRunning(workerStateEvent -> onActivity.run());
-        task.setOnSucceeded(workerStateEvent -> TransferDetailViewModel.updateTransferDetails(onActivity, onSuccess, onFailed));
-        task.setOnFailed(workerStateEvent -> {
-            onFailed.run();
-            System.err.println("The task failed with the following exception:");
-            task.getException().printStackTrace(System.err);
+        CompletableFuture<HttpResponse<String>> responseFuture = transfersRepository.put(transferMaster);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 200 || response.statusCode() == 201 || response.statusCode() == 204) {
+                // Process the successful response
+                successMessage.showMessage("Transfer updated successfully");
+                onSuccess.run();
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
+            }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, TransferMasterViewModel.class);
+            return null;
         });
-        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void deleteItem(
-            Long index,
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
+    public static void deleteTransfer(Long index,
+                                      SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                      SpotyGotFunctional.MessageConsumer successMessage,
+                                      SpotyGotFunctional.MessageConsumer errorMessage) {
         var findModel = FindModel.builder().id(index).build();
-
-        var task = transfersRepository.deleteMaster(findModel);
-        task.setOnRunning(workerStateEvent -> onActivity.run());
-        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
-        task.setOnFailed(workerStateEvent -> {
-            onFailed.run();
-            System.err.println("The task failed with the following exception:");
-            task.getException().printStackTrace(System.err);
+        CompletableFuture<HttpResponse<String>> responseFuture = transfersRepository.delete(findModel);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 200 || response.statusCode() == 204) {
+                // Process the successful response
+                successMessage.showMessage("Transfer deleted successfully");
+                onSuccess.run();
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
+            }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, TransferMasterViewModel.class);
+            return null;
         });
-        SpotyThreader.spotyThreadPool(task);
     }
 }

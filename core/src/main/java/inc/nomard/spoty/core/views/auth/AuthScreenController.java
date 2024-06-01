@@ -1,69 +1,50 @@
 package inc.nomard.spoty.core.views.auth;
 
-import atlantafx.base.util.Animations;
-import inc.nomard.spoty.core.SpotyCoreResourceLoader;
-import inc.nomard.spoty.core.components.message.SpotyMessage;
-import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
-import inc.nomard.spoty.core.components.message.enums.MessageVariants;
-import inc.nomard.spoty.core.values.strings.Labels;
+import atlantafx.base.util.*;
+import inc.nomard.spoty.core.*;
+import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.*;
+import inc.nomard.spoty.core.values.strings.*;
+import static inc.nomard.spoty.core.values.strings.Values.*;
 import inc.nomard.spoty.core.viewModels.*;
-import inc.nomard.spoty.core.viewModels.adjustments.AdjustmentMasterViewModel;
-import inc.nomard.spoty.core.viewModels.hrm.employee.DesignationViewModel;
-import inc.nomard.spoty.core.viewModels.hrm.employee.EmploymentStatusViewModel;
-import inc.nomard.spoty.core.viewModels.hrm.employee.UserViewModel;
-import inc.nomard.spoty.core.viewModels.purchases.PurchaseMasterViewModel;
-import inc.nomard.spoty.core.viewModels.quotations.QuotationMasterViewModel;
-import inc.nomard.spoty.core.viewModels.requisitions.RequisitionMasterViewModel;
-import inc.nomard.spoty.core.viewModels.returns.purchases.PurchaseReturnMasterViewModel;
-import inc.nomard.spoty.core.viewModels.returns.sales.SaleReturnMasterViewModel;
-import inc.nomard.spoty.core.viewModels.sales.SaleMasterViewModel;
-import inc.nomard.spoty.core.viewModels.stock_ins.StockInMasterViewModel;
-import inc.nomard.spoty.core.viewModels.transfers.TransferMasterViewModel;
-import inc.nomard.spoty.core.views.BaseController;
-import inc.nomard.spoty.core.views.splash.SplashScreenController;
-import inc.nomard.spoty.utils.SpotyLogger;
-import inc.nomard.spoty.utils.SpotyThreader;
-import io.github.palexdev.materialfx.controls.MFXPasswordField;
-import io.github.palexdev.materialfx.controls.MFXTextField;
-import io.github.palexdev.materialfx.validation.Constraint;
-import io.github.palexdev.materialfx.validation.Severity;
+import inc.nomard.spoty.core.viewModels.adjustments.*;
+import inc.nomard.spoty.core.viewModels.hrm.employee.*;
+import inc.nomard.spoty.core.viewModels.purchases.*;
+import inc.nomard.spoty.core.viewModels.quotations.*;
+import inc.nomard.spoty.core.viewModels.requisitions.*;
+import inc.nomard.spoty.core.viewModels.returns.purchases.*;
+import inc.nomard.spoty.core.viewModels.returns.sales.*;
+import inc.nomard.spoty.core.viewModels.sales.*;
+import inc.nomard.spoty.core.viewModels.stock_ins.*;
+import inc.nomard.spoty.core.viewModels.transfers.*;
+import inc.nomard.spoty.core.views.*;
+import inc.nomard.spoty.core.views.splash.*;
+import inc.nomard.spoty.utils.*;
+import static inc.nomard.spoty.utils.SpotyThreader.*;
+import io.github.palexdev.materialfx.controls.*;
+import static io.github.palexdev.materialfx.utils.StringUtils.*;
+import io.github.palexdev.materialfx.validation.*;
+import static io.github.palexdev.materialfx.validation.Validated.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.input.KeyCode;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
-import javafx.scene.shape.Rectangle;
-import javafx.stage.Screen;
-import javafx.stage.Stage;
-import javafx.util.Duration;
-import lombok.extern.java.Log;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.List;
-import java.util.ResourceBundle;
-
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
-import static inc.nomard.spoty.core.values.strings.Values.ALPHANUMERIC;
-import static inc.nomard.spoty.core.values.strings.Values.SPECIALS;
-import static inc.nomard.spoty.utils.SpotyThreader.singleThreadCreator;
-import static io.github.palexdev.materialfx.utils.StringUtils.containsAll;
-import static io.github.palexdev.materialfx.utils.StringUtils.containsAny;
-import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
+import io.github.palexdev.mfxresources.fonts.*;
+import java.io.*;
+import java.net.*;
+import java.util.*;
+import javafx.animation.*;
+import javafx.application.*;
+import javafx.beans.binding.*;
+import javafx.fxml.*;
+import javafx.geometry.*;
+import javafx.scene.*;
+import javafx.scene.control.*;
+import javafx.scene.image.*;
+import javafx.scene.input.*;
+import javafx.scene.layout.*;
+import javafx.scene.shape.*;
+import javafx.stage.*;
+import javafx.util.*;
+import lombok.extern.java.*;
 
 @Log
 public class AuthScreenController implements Initializable {
@@ -116,10 +97,6 @@ public class AuthScreenController implements Initializable {
             authCreateScreen;
     @FXML
     public HBox registerScreen;
-    private SpotyMessage loginSuccess,
-            signUpSuccess,
-            badCredentialsMessage,
-            errorOccurredMessage;
 
     public AuthScreenController(Stage primaryStage) {
         stage = primaryStage;
@@ -130,31 +107,31 @@ public class AuthScreenController implements Initializable {
                 "data-tracker",
                 () -> {
                     try {
-                        AdjustmentMasterViewModel.getAllAdjustmentMasters(this::onActivity, null, this::onFailed);
-                        BranchViewModel.getAllBranches(this::onActivity, null, this::onFailed);
-                        BrandViewModel.getAllBrands(this::onActivity, null, this::onFailed);
-                        BankViewModel.getAllBanks(this::onActivity, null, this::onFailed);
-                        CurrencyViewModel.getAllCurrencies(this::onActivity, null, this::onFailed);
-                        CustomerViewModel.getAllCustomers(this::onActivity, null, this::onFailed);
-                        DesignationViewModel.getAllDesignations(this::onActivity, null, this::onFailed);
-                        EmploymentStatusViewModel.getAllEmploymentStatuses(this::onActivity, null, this::onFailed);
-                        ExpenseCategoryViewModel.getAllCategories(this::onActivity, null, this::onFailed);
-                        ExpensesViewModel.getAllExpenses(this::onActivity, null, this::onFailed);
-                        ProductCategoryViewModel.getAllProductCategories(this::onActivity, null, this::onFailed);
-                        ProductViewModel.getAllProducts(this::onActivity, null, this::onFailed);
-                        PurchaseMasterViewModel.getAllPurchaseMasters(this::onActivity, null, this::onFailed);
-                        PurchaseReturnMasterViewModel.getPurchaseReturnMasters(this::onActivity, null, this::onFailed);
-                        QuotationMasterViewModel.getAllQuotationMasters(this::onActivity, null, this::onFailed);
-                        RequisitionMasterViewModel.getAllRequisitionMasters(this::onActivity, null, this::onFailed);
-                        SaleMasterViewModel.getAllSaleMasters(this::onActivity, null, this::onFailed);
-                        SaleReturnMasterViewModel.getSaleReturnMasters(this::onActivity, null, this::onFailed);
-                        StockInMasterViewModel.getAllStockInMasters(this::onActivity, null, this::onFailed);
-                        SupplierViewModel.getAllSuppliers(this::onActivity, null, this::onFailed);
-                        TransferMasterViewModel.getTransferMasters(this::onActivity, null, this::onFailed);
-                        UOMViewModel.getAllUOMs(this::onActivity, null, this::onFailed);
-                        UserViewModel.getAllUsers(this::onActivity, null, this::onFailed);
-                        RoleViewModel.getAllRoles(this::onActivity, null, this::onFailed);
-                        PermissionsViewModel.getAllPermissions(this::onActivity, null, this::onFailed);
+                        AdjustmentMasterViewModel.getAllAdjustmentMasters(this::onActivity, null);
+                        BranchViewModel.getAllBranches(this::onActivity, null);
+                        BrandViewModel.getAllBrands(this::onActivity, null);
+                        BankViewModel.getAllBanks(this::onActivity, null);
+                        CurrencyViewModel.getAllCurrencies(this::onActivity, null);
+                        CustomerViewModel.getAllCustomers(this::onActivity, null);
+                        DesignationViewModel.getAllDesignations(this::onActivity, null);
+                        EmploymentStatusViewModel.getAllEmploymentStatuses(this::onActivity, null);
+                        ExpenseCategoryViewModel.getAllCategories(this::onActivity, null);
+                        ExpensesViewModel.getAllExpenses(this::onActivity, null);
+                        ProductCategoryViewModel.getAllProductCategories(this::onActivity, null);
+                        ProductViewModel.getAllProducts(this::onActivity, null);
+                        PurchaseMasterViewModel.getAllPurchaseMasters(this::onActivity, null);
+                        PurchaseReturnMasterViewModel.getPurchaseReturnMasters(this::onActivity, null);
+                        QuotationMasterViewModel.getAllQuotationMasters(this::onActivity, null);
+                        RequisitionMasterViewModel.getAllRequisitionMasters(this::onActivity, null);
+                        SaleMasterViewModel.getAllSaleMasters(this::onActivity, null);
+                        SaleReturnMasterViewModel.getSaleReturnMasters(this::onActivity, null);
+                        StockInMasterViewModel.getAllStockInMasters(this::onActivity, null);
+                        SupplierViewModel.getAllSuppliers(this::onActivity, null);
+                        TransferMasterViewModel.getAllTransferMasters(this::onActivity, null);
+                        UOMViewModel.getAllUOMs(this::onActivity, null);
+                        UserViewModel.getAllUsers(this::onActivity, null);
+                        RoleViewModel.getAllRoles(this::onActivity, null);
+                        PermissionsViewModel.getAllPermissions(this::onActivity, null);
                     } catch (Exception e) {
                         SpotyLogger.writeToFile(e, SplashScreenController.class);
                     }
@@ -163,7 +140,6 @@ public class AuthScreenController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        initLoginMessages();
         signUpEmail.textProperty().bindBidirectional(SignupViewModel.emailProperty());
         phoneNumber.textProperty().bindBidirectional(SignupViewModel.phoneProperty());
         otherName.textProperty().bindBidirectional(SignupViewModel.otherNameProperty());
@@ -205,7 +181,7 @@ public class AuthScreenController implements Initializable {
         }
         if (emailConstraints.isEmpty()
                 && passwordConstraints.isEmpty()) {
-            LoginViewModel.login(this::onActivity, this::onLoginSuccess, this::onLoginError, this::onBadCredentials);
+            LoginViewModel.login(this::onLoginSuccess, this::successMessage, this::errorMessage, this::onBadCredentials);
         }
     }
 
@@ -216,6 +192,46 @@ public class AuthScreenController implements Initializable {
 //        activityIndicator.setManaged(true);
     }
 
+    private void successMessage(String message) {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder(message)
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        AnchorPane.setRightAnchor(notification, 40.0);
+        AnchorPane.setTopAnchor(notification, 10.0);
+
+        var in = Animations.slideInDown(notification, Duration.millis(250));
+        if (!actualContentPane.getChildren().contains(notification)) {
+            actualContentPane.getChildren().add(notification);
+            in.playFromStart();
+            in.setOnFinished(actionEvent -> delay(notification));
+        }
+    }
+
+    private void errorMessage(String message) {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder(message)
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        AnchorPane.setRightAnchor(notification, 40.0);
+        AnchorPane.setTopAnchor(notification, 10.0);
+
+        var in = Animations.slideInDown(notification, Duration.millis(250));
+        if (!actualContentPane.getChildren().contains(notification)) {
+            actualContentPane.getChildren().add(notification);
+            in.playFromStart();
+            in.setOnFinished(actionEvent -> delay(notification));
+        }
+    }
+
     private void onLoginSuccess() {
         var dataInit = dataInit();
 
@@ -224,8 +240,6 @@ public class AuthScreenController implements Initializable {
         } catch (InterruptedException e) {
             SpotyLogger.writeToFile(e, AuthScreenController.class);
         }
-
-        addMessage(loginSuccess);
         Duration delay = Duration.millis(3500);
 
         KeyFrame keyFrame = new KeyFrame(delay, event -> {
@@ -270,28 +284,11 @@ public class AuthScreenController implements Initializable {
     }
 
     private void onSignupSuccess() {
-        addMessage(signUpSuccess);
         SignupViewModel.resetProperties();
         backToLogin();
     }
 
     private void onBadCredentials() {
-        loginBtn.setDisable(false);
-//        loginBtn.setManaged(true);
-//        activityIndicator.setVisible(false);
-//        activityIndicator.setManaged(false);
-        addMessage(badCredentialsMessage);
-    }
-
-    private void onLoginError() {
-        loginBtn.setDisable(false);
-//        loginBtn.setManaged(true);
-//        activityIndicator.setVisible(false);
-//        activityIndicator.setManaged(false);
-        addMessage(errorOccurredMessage);
-    }
-
-    private void onFailed() {
         loginBtn.setDisable(false);
 //        loginBtn.setManaged(true);
 //        activityIndicator.setVisible(false);
@@ -304,58 +301,6 @@ public class AuthScreenController implements Initializable {
         SpotyThreader.disposeSpotyThreadPool();
         Platform.exit();
         System.exit(0);
-    }
-
-    private void initLoginMessages() {
-        loginSuccess =
-                new SpotyMessage.MessageBuilder("Authentication successful")
-                        .height(60)
-                        .width(300)
-                        .icon("fas-circle-check")
-                        .type(MessageVariants.SUCCESS)
-                        .build();
-
-        signUpSuccess =
-                new SpotyMessage.MessageBuilder("Account created successfully")
-                        .height(60)
-                        .width(300)
-                        .icon("fas-circle-check")
-                        .type(MessageVariants.SUCCESS)
-                        .build();
-
-        badCredentialsMessage =
-                new SpotyMessage.MessageBuilder("Wrong email or password")
-                        .height(60)
-                        .width(300)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
-                        .build();
-
-        errorOccurredMessage =
-                new SpotyMessage.MessageBuilder("An error occurred")
-                        .height(60)
-                        .width(300)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
-                        .build();
-
-        AnchorPane.setRightAnchor(loginSuccess, 40.0);
-        AnchorPane.setTopAnchor(loginSuccess, 10.0);
-        AnchorPane.setRightAnchor(signUpSuccess, 40.0);
-        AnchorPane.setTopAnchor(signUpSuccess, 10.0);
-        AnchorPane.setRightAnchor(badCredentialsMessage, 40.0);
-        AnchorPane.setTopAnchor(badCredentialsMessage, 10.0);
-        AnchorPane.setRightAnchor(errorOccurredMessage, 40.0);
-        AnchorPane.setTopAnchor(errorOccurredMessage, 10.0);
-    }
-
-    private void addMessage(SpotyMessage message) {
-        var in = Animations.slideInDown(message, Duration.millis(250));
-        if (!actualContentPane.getChildren().contains(message)) {
-            actualContentPane.getChildren().add(message);
-            in.playFromStart();
-            in.setOnFinished(actionEvent -> delay(message));
-        }
     }
 
     private void delay(SpotyMessage message) {
@@ -811,7 +756,7 @@ public class AuthScreenController implements Initializable {
         }
         if (signUpPasswordConstraints.isEmpty()
                 && confirmPasswordConstraints.isEmpty()) {
-            SignupViewModel.registerUser(this::onActivity, this::onSignupSuccess, this::onLoginError);
+            SignupViewModel.registerUser(this::onSignupSuccess, this::successMessage, this::errorMessage);
         }
     }
 }

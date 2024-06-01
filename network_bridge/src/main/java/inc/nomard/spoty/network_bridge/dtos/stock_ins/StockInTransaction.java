@@ -14,13 +14,10 @@
 
 package inc.nomard.spoty.network_bridge.dtos.stock_ins;
 
-import inc.nomard.spoty.network_bridge.dtos.Branch;
-import inc.nomard.spoty.network_bridge.dtos.Product;
+import inc.nomard.spoty.network_bridge.dtos.*;
+import java.util.*;
 import lombok.*;
-import lombok.extern.java.Log;
-
-import java.util.ArrayList;
-import java.util.Date;
+import lombok.extern.java.*;
 
 @Getter
 @Setter

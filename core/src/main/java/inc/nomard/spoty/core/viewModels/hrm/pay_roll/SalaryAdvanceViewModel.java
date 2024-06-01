@@ -2,25 +2,22 @@ package inc.nomard.spoty.core.viewModels.hrm.pay_roll;
 
 import com.google.gson.*;
 import com.google.gson.reflect.*;
-
 import static inc.nomard.spoty.core.values.SharedResources.*;
-
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll.*;
 import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.network_bridge.repositories.implementations.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.adapters.*;
-
+import inc.nomard.spoty.utils.functional_paradigm.*;
 import java.lang.reflect.*;
+import java.net.http.*;
 import java.util.*;
 import java.util.concurrent.*;
-
 import javafx.application.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
-
-import lombok.extern.java.Log;
+import lombok.extern.java.*;
 
 @Log
 public class SalaryAdvanceViewModel {
@@ -122,10 +119,9 @@ public class SalaryAdvanceViewModel {
         return salaryAdvances;
     }
 
-    public static void saveSalaryAdvance(
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
+    public static void saveSalaryAdvance(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                         SpotyGotFunctional.MessageConsumer successMessage,
+                                         SpotyGotFunctional.MessageConsumer errorMessage) {
         var salaryAdvance = SalaryAdvance.builder()
                 .employee(getEmployee())
                 .paySlip(getPaySlip())
@@ -133,12 +129,29 @@ public class SalaryAdvanceViewModel {
                 .salary(getSalary())
                 .netSalary(getNetSalary())
                 .build();
-
-        var task = salaryAdvancesRepository.post(salaryAdvance);
-        task.setOnRunning(workerStateEvent -> onActivity.run());
-        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
-        task.setOnFailed(workerStateEvent -> onFailed.run());
-        SpotyThreader.spotyThreadPool(task);
+        CompletableFuture<HttpResponse<String>> responseFuture = salaryAdvancesRepository.post(salaryAdvance);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 201 || response.statusCode() == 204) {
+                // Process the successful response
+                successMessage.showMessage("Salary advance created successfully");
+                onSuccess.run();
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
+            }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, SalaryAdvanceViewModel.class);
+            return null;
+        });
     }
 
     public static void resetProperties() {
@@ -154,108 +167,116 @@ public class SalaryAdvanceViewModel {
                 });
     }
 
-    public static void getAllSalaryAdvances(
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
-        var task = salaryAdvancesRepository.fetchAll();
-        if (Objects.nonNull(onActivity)) {
-            task.setOnRunning(workerStateEvent -> onActivity.run());
-        }
-        if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> onFailed.run());
-        }
-        task.setOnSucceeded(workerStateEvent -> {
-            try {
+    public static void getAllSalaryAdvances(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                            SpotyGotFunctional.MessageConsumer errorMessage) {
+        CompletableFuture<HttpResponse<String>> responseFuture = salaryAdvancesRepository.fetchAll();
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 201) {
+                // Process the successful response
                 Type listType = new TypeToken<ArrayList<SalaryAdvance>>() {
                 }.getType();
-                ArrayList<SalaryAdvance> salaryAdvanceList = gson.fromJson(task.get().body(), listType);
-
+                ArrayList<SalaryAdvance> salaryAdvanceList = gson.fromJson(response.body(), listType);
                 salaryAdvancesList.clear();
                 salaryAdvancesList.addAll(salaryAdvanceList);
-
                 if (Objects.nonNull(onSuccess)) {
                     onSuccess.run();
                 }
-            } catch (InterruptedException | ExecutionException e) {
-                SpotyLogger.writeToFile(e, SalaryAdvanceViewModel.class);
+                onSuccess.run();
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
             }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, SalaryAdvanceViewModel.class);
+            return null;
         });
-        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void getSalaryAdvance(
-            Long index,
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
+    public static void getSalaryAdvance(Long index,
+                                        SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                        SpotyGotFunctional.MessageConsumer errorMessage) {
         var findModel = FindModel.builder().id(index).build();
-
-        var task = salaryAdvancesRepository.fetch(findModel);
-        if (Objects.nonNull(onActivity)) {
-            task.setOnRunning(workerStateEvent -> onActivity.run());
-        }
-        if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> onFailed.run());
-        }
-        task.setOnSucceeded(workerStateEvent -> {
-            try {
-                var salaryAdvance = gson.fromJson(task.get().body(), SalaryAdvance.class);
-
+        CompletableFuture<HttpResponse<String>> responseFuture = salaryAdvancesRepository.fetch(findModel);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 200) {
+                // Process the successful response
+                var salaryAdvance = gson.fromJson(response.body(), SalaryAdvance.class);
                 setId(salaryAdvance.getId());
                 setEmployee(salaryAdvance.getEmployee());
                 setPaySlip(salaryAdvance.getPaySlip());
                 setStatus(salaryAdvance.getStatus());
                 setSalary(salaryAdvance.getSalary());
                 setNetSalary(salaryAdvance.getNetSalary());
-
                 if (Objects.nonNull(onSuccess)) {
                     onSuccess.run();
                 }
-            } catch (InterruptedException | ExecutionException e) {
-                SpotyLogger.writeToFile(e, SalaryAdvanceViewModel.class);
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
             }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, SalaryAdvanceViewModel.class);
+            return null;
         });
-        SpotyThreader.spotyThreadPool(task);
     }
 
     public static void searchItem(
-            String search,
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
+            String search, SpotyGotFunctional.ParameterlessConsumer onSuccess,
+            SpotyGotFunctional.MessageConsumer errorMessage) {
         var searchModel = SearchModel.builder().search(search).build();
-        var task = salaryAdvancesRepository.search(searchModel);
-        if (Objects.nonNull(onActivity)) {
-            task.setOnRunning(workerStateEvent -> onActivity.run());
-        }
-        if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> onFailed.run());
-        }
-        task.setOnSucceeded(workerStateEvent -> {
-            try {
+        CompletableFuture<HttpResponse<String>> responseFuture = salaryAdvancesRepository.search(searchModel);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 200) {
+                // Process the successful response
                 Type listType = new TypeToken<ArrayList<SalaryAdvance>>() {
                 }.getType();
-                ArrayList<SalaryAdvance> salaryAdvanceList = gson.fromJson(task.get()
-                        .body(), listType);
-
+                ArrayList<SalaryAdvance> salaryAdvanceList = gson.fromJson(
+                        response.body(), listType);
                 salaryAdvancesList.clear();
                 salaryAdvancesList.addAll(salaryAdvanceList);
-
                 if (Objects.nonNull(onSuccess)) {
                     onSuccess.run();
                 }
-            } catch (InterruptedException | ExecutionException e) {
-                SpotyLogger.writeToFile(e, SalaryAdvanceViewModel.class);
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
             }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, SalaryAdvanceViewModel.class);
+            return null;
         });
-        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void updateSalaryAdvance(
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
+    public static void updateSalaryAdvance(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                           SpotyGotFunctional.MessageConsumer successMessage,
+                                           SpotyGotFunctional.MessageConsumer errorMessage) {
         var salaryAdvance = SalaryAdvance.builder()
                 .id(getId())
                 .employee(getEmployee())
@@ -264,48 +285,58 @@ public class SalaryAdvanceViewModel {
                 .salary(getSalary())
                 .netSalary(getNetSalary())
                 .build();
-
-        var task = salaryAdvancesRepository.put(salaryAdvance);
-        if (Objects.nonNull(onActivity)) {
-            task.setOnRunning(workerStateEvent -> onActivity.run());
-        }
-        if (Objects.nonNull(onSuccess)) {
-            task.setOnSucceeded(workerStateEvent -> onSuccess.run());
-        }
-        if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> onFailed.run());
-        }
-        SpotyThreader.spotyThreadPool(task);
+        CompletableFuture<HttpResponse<String>> responseFuture = salaryAdvancesRepository.put(salaryAdvance);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 200 || response.statusCode() == 204) {
+                // Process the successful response
+                successMessage.showMessage("Salary advance updated successfully");
+                onSuccess.run();
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
+            }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, SalaryAdvanceViewModel.class);
+            return null;
+        });
     }
 
-//    public static void updateSalaryAdvance(long index) {
-//        var salaryAdvancesRepository = new SalaryAdvancesRepositoryImpl();
-////        Dao<SalaryAdvance, Long> salaryAdvanceDao = DaoManager.createDao(connectionSource, SalaryAdvance.class);
-////
-////        SalaryAdvance salaryAdvance = salaryAdvanceDao.queryForId(index);
-////
-////        salaryAdvance.setQuantity(getQuantity());
-////        salaryAdvance.setUpdatedBy(getName());
-////        salaryAdvance.setUpdatedAt(Date.now());
-////
-////        salaryAdvanceDao.update(salaryAdvance);
-//
-//        Platform.runLater(SalaryAdvanceViewModel::resetProperties);
-//
-//        getAllSalaryAdvances();
-//    }
-
     public static void deleteSalaryAdvance(
-            Long index,
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
+            Long index, SpotyGotFunctional.ParameterlessConsumer onSuccess,
+            SpotyGotFunctional.MessageConsumer successMessage,
+            SpotyGotFunctional.MessageConsumer errorMessage) {
         var findModel = FindModel.builder().id(index).build();
-
-        var task = salaryAdvancesRepository.delete(findModel);
-        task.setOnRunning(workerStateEvent -> onActivity.run());
-        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
-        task.setOnFailed(workerStateEvent -> onFailed.run());
-        SpotyThreader.spotyThreadPool(task);
+        CompletableFuture<HttpResponse<String>> responseFuture = salaryAdvancesRepository.delete(findModel);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 200 || response.statusCode() == 204) {
+                // Process the successful response
+                successMessage.showMessage("Salary advance deleted successfully");
+                onSuccess.run();
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
+            }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, SalaryAdvanceViewModel.class);
+            return null;
+        });
     }
 }

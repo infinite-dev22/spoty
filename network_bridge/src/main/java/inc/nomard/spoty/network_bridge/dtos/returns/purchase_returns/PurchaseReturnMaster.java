@@ -14,17 +14,13 @@
 
 package inc.nomard.spoty.network_bridge.dtos.returns.purchase_returns;
 
-import inc.nomard.spoty.network_bridge.dtos.Branch;
-import inc.nomard.spoty.network_bridge.dtos.Supplier;
-import inc.nomard.spoty.network_bridge.dtos.hrm.employee.User;
-import inc.nomard.spoty.network_bridge.dtos.purchases.PurchaseDetail;
+import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
+import inc.nomard.spoty.network_bridge.dtos.purchases.*;
+import java.text.*;
+import java.util.*;
 import lombok.*;
-import lombok.extern.java.Log;
-
-import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import lombok.extern.java.*;
 
 @Getter
 @Setter

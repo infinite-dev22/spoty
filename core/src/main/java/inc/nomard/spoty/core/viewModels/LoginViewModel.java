@@ -15,17 +15,18 @@
 package inc.nomard.spoty.core.viewModels;
 
 import com.google.gson.*;
+import inc.nomard.spoty.core.viewModels.hrm.employee.*;
 import inc.nomard.spoty.network_bridge.auth.*;
 import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.network_bridge.repositories.implementations.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.adapters.*;
-
+import inc.nomard.spoty.utils.functional_paradigm.*;
+import java.net.http.*;
 import java.util.*;
 import java.util.concurrent.*;
-
 import javafx.beans.property.*;
-import lombok.extern.java.Log;
+import lombok.extern.java.*;
 
 @Log
 public class LoginViewModel {
@@ -66,76 +67,62 @@ public class LoginViewModel {
         setPassword("");
     }
 
-    public static void login(
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed,
-            ParameterlessConsumer onBadCredentials) {
+    public static void login(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                             SpotyGotFunctional.MessageConsumer successMessage,
+                             SpotyGotFunctional.MessageConsumer errorMessage,
+                             SpotyGotFunctional.ParameterlessConsumer onBadCredentials) {
         var loginDetails =
                 LoginModel.builder()
                         .email(getEmail())
                         .password(getPassword())
                         .build();
-        var task = authRepository.login(loginDetails);
-        task.setOnRunning(workerStateEvent -> onActivity.run());
-        task.setOnSucceeded(workerStateEvent -> {
-            try {
-                var response = gson.fromJson(task.get().body(), LoginResponseModel.class);
-                if (response.getStatus() == 200) {
-                    ProtectedGlobals.authToken = response.getToken();
-                    ProtectedGlobals.trial = response.getUser().getUserProfile().getTenant().isTrial();
-                    ProtectedGlobals.canTry = response.getUser().getUserProfile().getTenant().isCanTry();
-                    ProtectedGlobals.newTenancy = response.getUser().getUserProfile().getTenant().isNewTenancy();
-                    ProtectedGlobals.activeTenancy = response.isActiveTenancy();
-                    ProtectedGlobals.message = response.getMessage();
-                    ProtectedGlobals.user = response.getUser();
-                    onSuccess.run();
-                } else if (response.getStatus() == 401) {
-                    ProtectedGlobals.authToken = response.getToken();
-                    ProtectedGlobals.trial = response.getUser().getUserProfile().getTenant().isTrial();
-                    ProtectedGlobals.canTry = response.getUser().getUserProfile().getTenant().isCanTry();
-                    ProtectedGlobals.newTenancy = response.getUser().getUserProfile().getTenant().isNewTenancy();
-                    ProtectedGlobals.newTenancy = response.isNewTenancy();
-                    ProtectedGlobals.activeTenancy = response.isActiveTenancy();
-                    ProtectedGlobals.message = response.getMessage();
-                    ProtectedGlobals.user = response.getUser();
-                    onSuccess.run();
-                } else if (response.getStatus() == 404) {
-                    ProtectedGlobals.authToken = response.getToken();
-                    ProtectedGlobals.trial = response.getUser().getUserProfile().getTenant().isTrial();
-                    ProtectedGlobals.canTry = response.getUser().getUserProfile().getTenant().isCanTry();
-                    ProtectedGlobals.newTenancy = response.getUser().getUserProfile().getTenant().isNewTenancy();
-                    ProtectedGlobals.activeTenancy = response.isActiveTenancy();
-                    ProtectedGlobals.message = response.getMessage();
-                    ProtectedGlobals.user = response.getUser();
-                    onSuccess.run();
-                } else if (response.getMessage().toLowerCase().contains("bad credentials")) {
-                    ProtectedGlobals.message = response.getMessage();
-                    onBadCredentials.run();
-                } else {
-                    {
-                        ProtectedGlobals.message = response.getMessage();
-                        onFailed.run();
-                        System.err.println("The task failed with the following exception:");
-                        task.getException().printStackTrace(System.err);
-                    }
-                }
-            } catch (InterruptedException | ExecutionException e) {
-                throw new RuntimeException(e);
+        CompletableFuture<HttpResponse<String>> responseFuture = authRepository.login(loginDetails);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            var loginResponse = gson.fromJson(response.body(), LoginResponseModel.class);
+            if (loginResponse.getStatus() == 200) {
+                successMessage.showMessage("Authentication successful");
+                ProtectedGlobals.authToken = loginResponse.getToken();
+                ProtectedGlobals.trial = loginResponse.getUser().getUserProfile().getTenant().isTrial();
+                ProtectedGlobals.canTry = loginResponse.getUser().getUserProfile().getTenant().isCanTry();
+                ProtectedGlobals.newTenancy = loginResponse.getUser().getUserProfile().getTenant().isNewTenancy();
+                ProtectedGlobals.activeTenancy = loginResponse.isActiveTenancy();
+                ProtectedGlobals.message = loginResponse.getMessage();
+                ProtectedGlobals.user = loginResponse.getUser();
+                onSuccess.run();
+            } else if (loginResponse.getStatus() == 401) {
+                errorMessage.showMessage("An error occurred, access denied");
+                ProtectedGlobals.authToken = loginResponse.getToken();
+                ProtectedGlobals.trial = loginResponse.getUser().getUserProfile().getTenant().isTrial();
+                ProtectedGlobals.canTry = loginResponse.getUser().getUserProfile().getTenant().isCanTry();
+                ProtectedGlobals.newTenancy = loginResponse.getUser().getUserProfile().getTenant().isNewTenancy();
+                ProtectedGlobals.newTenancy = loginResponse.isNewTenancy();
+                ProtectedGlobals.activeTenancy = loginResponse.isActiveTenancy();
+                ProtectedGlobals.message = loginResponse.getMessage();
+                ProtectedGlobals.user = loginResponse.getUser();
+                onSuccess.run();
+            } else if (loginResponse.getStatus() == 404) {
+                errorMessage.showMessage("An error occurred, resource not found");
+                ProtectedGlobals.authToken = loginResponse.getToken();
+                ProtectedGlobals.trial = loginResponse.getUser().getUserProfile().getTenant().isTrial();
+                ProtectedGlobals.canTry = loginResponse.getUser().getUserProfile().getTenant().isCanTry();
+                ProtectedGlobals.newTenancy = loginResponse.getUser().getUserProfile().getTenant().isNewTenancy();
+                ProtectedGlobals.activeTenancy = loginResponse.isActiveTenancy();
+                ProtectedGlobals.message = loginResponse.getMessage();
+                ProtectedGlobals.user = loginResponse.getUser();
+                onSuccess.run();
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
+            } else if (loginResponse.getMessage().toLowerCase().contains("bad credentials")) {
+                ProtectedGlobals.message = loginResponse.getMessage();
+                onBadCredentials.run();
             }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, DepartmentViewModel.class);
+            return null;
         });
-        task.setOnFailed(workerStateEvent -> {
-            LoginResponseModel response;
-            try {
-                response = gson.fromJson(task.get().body(), LoginResponseModel.class);
-            } catch (InterruptedException | ExecutionException e) {
-                throw new RuntimeException(e);
-            }
-            ProtectedGlobals.message = response.getMessage();
-            onFailed.run();
-            System.err.println("The task failed with the following exception:");
-            task.getException().printStackTrace(System.err);
-        });
-        SpotyThreader.spotyThreadPool(task);
     }
 }

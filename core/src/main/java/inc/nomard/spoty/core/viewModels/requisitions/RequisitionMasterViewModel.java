@@ -16,45 +16,36 @@ package inc.nomard.spoty.core.viewModels.requisitions;
 
 import com.google.gson.*;
 import com.google.gson.reflect.*;
-
 import static inc.nomard.spoty.core.values.SharedResources.*;
-
-import inc.nomard.spoty.core.viewModels.adjustments.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.requisitions.*;
 import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.network_bridge.repositories.implementations.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.adapters.*;
-
+import inc.nomard.spoty.utils.functional_paradigm.*;
 import java.lang.reflect.*;
-import java.text.*;
+import java.net.http.*;
 import java.util.*;
 import java.util.concurrent.*;
-
-import javafx.application.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
 import lombok.*;
-
-import lombok.extern.java.Log;
+import lombok.extern.java.*;
 
 @Log
 public class RequisitionMasterViewModel {
     @Getter
-    public static final ObservableList<RequisitionMaster> requisitionMastersList =
+    public static final ObservableList<RequisitionMaster> requisitionsList =
             FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
                     UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
             .create();
     private static final ListProperty<RequisitionMaster> requisitions =
-            new SimpleListProperty<>(requisitionMastersList);
+            new SimpleListProperty<>(requisitionsList);
     private static final LongProperty id = new SimpleLongProperty(0);
-    private static final StringProperty date = new SimpleStringProperty("");
     private static final ObjectProperty<Supplier> supplier = new SimpleObjectProperty<>(null);
-    private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>(null);
-    private static final StringProperty status = new SimpleStringProperty("");
     private static final StringProperty note = new SimpleStringProperty("");
     private static final RequisitionsRepositoryImpl requisitionsRepository = new RequisitionsRepositoryImpl();
 
@@ -70,23 +61,6 @@ public class RequisitionMasterViewModel {
         return id;
     }
 
-    public static Date getDate() {
-        try {
-            return new SimpleDateFormat("MMM dd, yyyy").parse(date.get());
-        } catch (ParseException e) {
-            SpotyLogger.writeToFile(e, RequisitionMasterViewModel.class);
-        }
-        return null;
-    }
-
-    public static void setDate(String date) {
-        RequisitionMasterViewModel.date.set(date);
-    }
-
-    public static StringProperty dateProperty() {
-        return date;
-    }
-
     public static Supplier getSupplier() {
         return supplier.get();
     }
@@ -97,30 +71,6 @@ public class RequisitionMasterViewModel {
 
     public static ObjectProperty<Supplier> supplierProperty() {
         return supplier;
-    }
-
-    public static Branch getBranch() {
-        return branch.get();
-    }
-
-    public static void setBranch(Branch branch) {
-        RequisitionMasterViewModel.branch.set(branch);
-    }
-
-    public static ObjectProperty<Branch> branchProperty() {
-        return branch;
-    }
-
-    public static String getStatus() {
-        return status.get();
-    }
-
-    public static void setStatus(String status) {
-        RequisitionMasterViewModel.status.set(status);
-    }
-
-    public static StringProperty statusProperty() {
-        return status;
     }
 
     public static String getNotes() {
@@ -148,235 +98,219 @@ public class RequisitionMasterViewModel {
     }
 
     public static void resetProperties() {
-        Platform.runLater(
-                () -> {
-                    setId(0L);
-                    setDate("");
-                    setSupplier(null);
-                    setBranch(null);
-                    setStatus("");
-                    setNote("");
-                    PENDING_DELETES.clear();
-                });
+        setId(0L);
+        setSupplier(null);
+        setNote("");
+        PENDING_DELETES.clear();
     }
 
-    public static void saveRequisitionMaster(
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
-        var requisitionMaster = RequisitionMaster.builder()
-//                .ref(getReference())
-                .date(getDate())
+    public static void saveRequisitionMaster(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                             SpotyGotFunctional.MessageConsumer successMessage,
+                                             SpotyGotFunctional.MessageConsumer errorMessage) {
+        var requisition = RequisitionMaster.builder()
                 .supplier(getSupplier())
-//                .taxRate(getTaxRate())
-//                .netTax(getNetTax())
-//                .discount(getDiscount())
-//                .shipping(getShipping())
-//                .paid(getAmountPaid())
-//                .total(getTotalAmount())
-//                .due(getDueAmount())
-                .status(getStatus())
-//                .paymentStatus(getPaymentStatus())
                 .notes(getNotes())
                 .build();
-
         if (!RequisitionDetailViewModel.requisitionDetailsList.isEmpty()) {
-            requisitionMaster.setRequisitionDetails(RequisitionDetailViewModel.requisitionDetailsList);
+            requisition.setRequisitionDetails(RequisitionDetailViewModel.requisitionDetailsList);
         }
-
-        var task = requisitionsRepository.postMaster(requisitionMaster);
-        task.setOnRunning(workerStateEvent -> onActivity.run());
-        task.setOnSucceeded(workerStateEvent -> {
-            RequisitionDetailViewModel.saveRequisitionDetails(onActivity, null, onFailed);
-            onSuccess.run();
+        CompletableFuture<HttpResponse<String>> responseFuture = requisitionsRepository.post(requisition);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 201) {
+                // Process the successful response
+                successMessage.showMessage("Requisition created successfully");
+                onSuccess.run();
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
+            }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, RequisitionMasterViewModel.class);
+            return null;
         });
-        task.setOnFailed(workerStateEvent -> {
-            onFailed.run();
-            System.err.println("The task failed with the following exception:");
-            task.getException().printStackTrace(System.err);
-        });
-        SpotyThreader.spotyThreadPool(task);
-        Platform.runLater(AdjustmentMasterViewModel::resetProperties);
-
-        // resetProperties();
-        // getRequisitionMasters();
     }
 
-    public static void getAllRequisitionMasters(
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
-        Type listType = new TypeToken<ArrayList<RequisitionMaster>>() {
-        }.getType();
-        var task = requisitionsRepository.fetchAllMaster();
-        if (Objects.nonNull(onActivity)) {
-            task.setOnRunning(workerStateEvent -> onActivity.run());
-        }
-        if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> {
-                onFailed.run();
-                System.err.println("The task failed with the following exception:");
-                task.getException().printStackTrace(System.err);
-            });
-        }
-        task.setOnSucceeded(workerStateEvent -> {
-            requisitionMastersList.clear();
-            ArrayList<RequisitionMaster> requisitionMasterList = new ArrayList<>();
-            try {
-                requisitionMasterList = gson.fromJson(
-                        task.get().body(), listType);
-            } catch (InterruptedException | ExecutionException e) {
-                SpotyLogger.writeToFile(e, RequisitionMasterViewModel.class);
+    public static void getAllRequisitionMasters(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                                SpotyGotFunctional.MessageConsumer errorMessage) {
+        CompletableFuture<HttpResponse<String>> responseFuture = requisitionsRepository.fetchAll();
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 200) {
+                // Process the successful response
+                Type listType = new TypeToken<ArrayList<RequisitionMaster>>() {
+                }.getType();
+                ArrayList<RequisitionMaster> requisitionList = gson.fromJson(response.body(), listType);
+                requisitionsList.clear();
+                requisitionsList.addAll(requisitionList);
+                if (Objects.nonNull(onSuccess)) {
+                    onSuccess.run();
+                }
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
             }
-            requisitionMastersList.addAll(requisitionMasterList);
-
-
-            if (Objects.nonNull(onSuccess)) {
-                onSuccess.run();
-            }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, RequisitionMasterViewModel.class);
+            return null;
         });
-        SpotyThreader.spotyThreadPool(task);
     }
 
     public static void getRequisitionMaster(
-            Long index,
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
-        var findModel = new FindModel();
-        findModel.setId(index);
-
-        var task = requisitionsRepository.fetchMaster(findModel);
-        if (Objects.nonNull(onActivity)) {
-            task.setOnRunning(workerStateEvent -> onActivity.run());
-        }
-        if (Objects.nonNull(onSuccess)) {
-            task.setOnSucceeded(workerStateEvent -> {
-                RequisitionMaster requisitionMaster = new RequisitionMaster();
-                try {
-                    requisitionMaster = gson.fromJson(task.get().body(), RequisitionMaster.class);
-                } catch (InterruptedException | ExecutionException e) {
-                    SpotyLogger.writeToFile(e, RequisitionMasterViewModel.class);
-                }
-
-                setId(requisitionMaster.getId());
-                setNote(requisitionMaster.getNotes());
-                setDate(requisitionMaster.getLocaleDate());
+            Long index, SpotyGotFunctional.ParameterlessConsumer onSuccess,
+            SpotyGotFunctional.MessageConsumer errorMessage) {
+        var findModel = FindModel.builder().id(index).build();
+        CompletableFuture<HttpResponse<String>> responseFuture = requisitionsRepository.fetch(findModel);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 200) {
+                // Process the successful response
+                var requisition = gson.fromJson(response.body(), RequisitionMaster.class);
+                setId(requisition.getId());
+                setSupplier(requisition.getSupplier());
+                setNote(requisition.getNotes());
                 RequisitionDetailViewModel.requisitionDetailsList.clear();
-                RequisitionDetailViewModel.requisitionDetailsList.addAll(requisitionMaster.getRequisitionDetails());
-
-                onSuccess.run();
-            });
-        }
-        if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> {
-                onFailed.run();
-                System.err.println("The task failed with the following exception:");
-                task.getException().printStackTrace(System.err);
-            });
-        }
-        SpotyThreader.spotyThreadPool(task);
-        // getRequisitionMasters();
+                RequisitionDetailViewModel.requisitionDetailsList.addAll(requisition.getRequisitionDetails());
+                if (Objects.nonNull(onSuccess)) {
+                    onSuccess.run();
+                }
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
+            }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, RequisitionMasterViewModel.class);
+            return null;
+        });
     }
 
     public static void searchItem(
-            String search,
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) throws Exception {
-        var searchModel = new SearchModel();
-        searchModel.setSearch(search);
-
-        var task = requisitionsRepository.searchMaster(searchModel);
-        if (Objects.nonNull(onActivity)) {
-            task.setOnRunning(workerStateEvent -> onActivity.run());
-        }
-        if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> {
-                onFailed.run();
-                System.err.println("The task failed with the following exception:");
-                task.getException().printStackTrace(System.err);
-            });
-        }
-        task.setOnSucceeded(workerStateEvent -> {
-            Type listType = new TypeToken<ArrayList<RequisitionMaster>>() {
-            }.getType();
-            ArrayList<RequisitionMaster> requisitionMasterList = new ArrayList<>();
-            try {
-                requisitionMasterList = gson.fromJson(
-                        task.get().body(), listType);
-            } catch (InterruptedException | ExecutionException e) {
-                SpotyLogger.writeToFile(e, RequisitionMasterViewModel.class);
+            String search, SpotyGotFunctional.ParameterlessConsumer onSuccess,
+            SpotyGotFunctional.MessageConsumer successMessage,
+            SpotyGotFunctional.MessageConsumer errorMessage) throws Exception {
+        var searchModel = SearchModel.builder().search(search).build();
+        CompletableFuture<HttpResponse<String>> responseFuture = requisitionsRepository.search(searchModel);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 200) {
+                // Process the successful response
+                Type listType = new TypeToken<ArrayList<RequisitionMaster>>() {
+                }.getType();
+                ArrayList<RequisitionMaster> requisitionList = gson.fromJson(
+                        response.body(), listType);
+                requisitionsList.clear();
+                requisitionsList.addAll(requisitionList);
+                if (Objects.nonNull(onSuccess)) {
+                    onSuccess.run();
+                }
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
             }
-
-            requisitionMastersList.clear();
-            requisitionMastersList.addAll(requisitionMasterList);
-
-            if (Objects.nonNull(onSuccess)) {
-                onSuccess.run();
-            }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, RequisitionMasterViewModel.class);
+            return null;
         });
-        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void updateItem(
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
-        var requisitionMaster = RequisitionMaster.builder()
+    public static void updateItem(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                  SpotyGotFunctional.MessageConsumer successMessage,
+                                  SpotyGotFunctional.MessageConsumer errorMessage) {
+        var requisition = RequisitionMaster.builder()
                 .id(getId())
-//                .ref(getReference())
-                .date(getDate())
                 .supplier(getSupplier())
-//                .taxRate(getTaxRate())
-//                .netTax(getNetTax())
-//                .discount(getDiscount())
-//                .shipping(getShipping())
-//                .paid(getAmountPaid())
-//                .total(getTotalAmount())
-//                .due(getDueAmount())
-                .status(getStatus())
-//                .paymentStatus(getPaymentStatus())
                 .notes(getNotes())
                 .build();
-
         if (!PENDING_DELETES.isEmpty()) {
-            RequisitionDetailViewModel.deleteRequisitionDetails(PENDING_DELETES, onActivity, null, onFailed);
+            requisition.setChildrenToDelete(PENDING_DELETES);
         }
-
         if (!RequisitionDetailViewModel.getRequisitionDetailsList().isEmpty()) {
-            requisitionMaster.setRequisitionDetails(RequisitionDetailViewModel.getRequisitionDetails());
+            requisition.setRequisitionDetails(RequisitionDetailViewModel.getRequisitionDetails());
         }
-
-        var task = requisitionsRepository.putMaster(requisitionMaster);
-        task.setOnRunning(workerStateEvent -> onActivity.run());
-        task.setOnSucceeded(workerStateEvent -> RequisitionDetailViewModel.updateRequisitionDetails(onActivity, onSuccess, onFailed));
-        task.setOnFailed(workerStateEvent -> {
-            onFailed.run();
-            System.err.println("The task failed with the following exception:");
-            task.getException().printStackTrace(System.err);
+        CompletableFuture<HttpResponse<String>> responseFuture = requisitionsRepository.put(requisition);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 200 || response.statusCode() == 201 || response.statusCode() == 204) {
+                // Process the successful response
+                successMessage.showMessage("Requisition updated successfully");
+                onSuccess.run();
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
+            }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, RequisitionMasterViewModel.class);
+            return null;
         });
-        SpotyThreader.spotyThreadPool(task);
-        // getRequisitionMasters();
     }
 
     public static void deleteItem(
-            Long index,
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
-        var findModel = new FindModel();
-        findModel.setId(index);
-
-        var task = requisitionsRepository.deleteMaster(findModel);
-        task.setOnRunning(workerStateEvent -> onActivity.run());
-        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
-        task.setOnFailed(workerStateEvent -> {
-            onFailed.run();
-            System.err.println("The task failed with the following exception:");
-            task.getException().printStackTrace(System.err);
+            Long index, SpotyGotFunctional.ParameterlessConsumer onSuccess,
+            SpotyGotFunctional.MessageConsumer successMessage,
+            SpotyGotFunctional.MessageConsumer errorMessage) {
+        var findModel = FindModel.builder().id(index).build();
+        CompletableFuture<HttpResponse<String>> responseFuture = requisitionsRepository.delete(findModel);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 200 || response.statusCode() == 204) {
+                // Process the successful response
+                successMessage.showMessage("Requisition deleted successfully");
+                onSuccess.run();
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
+            }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, RequisitionMasterViewModel.class);
+            return null;
         });
-        SpotyThreader.spotyThreadPool(task);
-        // getRequisitionMasters();
     }
 }

@@ -1,7 +1,7 @@
 package inc.nomard.spoty.core.components.payment_plan_card;
 
 import inc.nomard.spoty.core.*;
-import inc.nomard.spoty.utils.*;
+import inc.nomard.spoty.utils.functional_paradigm.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.*;
 import io.github.palexdev.mfxcomponents.theming.enums.*;
 import io.github.palexdev.mfxcore.controls.*;
@@ -31,7 +31,7 @@ public class PaymentPlanCard extends VBox {
     private String actionName;
     private Color planColor;
     private boolean canTry;
-    private ParameterlessConsumer onAction;
+    private SpotyGotFunctional.ParameterlessConsumer onAction;
 
     public PaymentPlanCard() {
         buildUI();
@@ -46,7 +46,7 @@ public class PaymentPlanCard extends VBox {
                            String actionName,
                            Color planColor,
                            boolean canTry,
-                           ParameterlessConsumer onAction) {
+                           SpotyGotFunctional.ParameterlessConsumer onAction) {
         this.imageUrl = imageUrl;
         this.planName = planName;
         this.planSubName = planSubName;

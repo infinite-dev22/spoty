@@ -14,15 +14,11 @@
 
 package inc.nomard.spoty.network_bridge.dtos.sales;
 
-import inc.nomard.spoty.network_bridge.dtos.Branch;
-import inc.nomard.spoty.network_bridge.dtos.Customer;
+import inc.nomard.spoty.network_bridge.dtos.*;
+import java.text.*;
+import java.util.*;
 import lombok.*;
-import lombok.extern.java.Log;
-
-import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import lombok.extern.java.*;
 
 @Getter
 @Setter
@@ -35,8 +31,8 @@ public class SaleMaster {
     private Long id;
     private String ref;
     private Customer customer;
-    private ArrayList<Branch> branches;
     private List<SaleDetail> saleDetails;
+    private LinkedList<Long> childrenToDelete;
     private double taxRate;
     private double netTax;
     private double discount;

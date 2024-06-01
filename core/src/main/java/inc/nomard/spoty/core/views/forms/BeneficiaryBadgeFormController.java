@@ -14,41 +14,28 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import inc.nomard.spoty.core.components.message.SpotyMessage;
-import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
-import inc.nomard.spoty.core.components.message.enums.MessageDuration;
-import inc.nomard.spoty.core.components.message.enums.MessageVariants;
-import inc.nomard.spoty.core.viewModels.hrm.pay_roll.BeneficiaryBadgeViewModel;
-import inc.nomard.spoty.core.viewModels.hrm.pay_roll.BeneficiaryTypeViewModel;
-import inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll.BeneficiaryType;
-import inc.nomard.spoty.utils.SpotyLogger;
-import io.github.palexdev.materialfx.controls.MFXComboBox;
-import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
-import io.github.palexdev.materialfx.controls.MFXTextField;
-import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
-import io.github.palexdev.materialfx.utils.StringUtils;
-import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
-import io.github.palexdev.materialfx.validation.Constraint;
-import io.github.palexdev.materialfx.validation.Severity;
+import static inc.nomard.spoty.core.GlobalActions.*;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.*;
+import inc.nomard.spoty.core.viewModels.hrm.pay_roll.*;
+import inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll.*;
+import io.github.palexdev.materialfx.controls.*;
+import io.github.palexdev.materialfx.dialogs.*;
+import io.github.palexdev.materialfx.utils.*;
+import io.github.palexdev.materialfx.utils.others.*;
+import io.github.palexdev.materialfx.validation.*;
+import static io.github.palexdev.materialfx.validation.Validated.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import javafx.collections.ListChangeListener;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.util.StringConverter;
-import lombok.extern.java.Log;
-
-import java.net.URL;
-import java.util.List;
-import java.util.Objects;
-import java.util.ResourceBundle;
-import java.util.function.Function;
-import java.util.function.Predicate;
-
-import static inc.nomard.spoty.core.GlobalActions.closeDialog;
-import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
+import java.net.*;
+import java.util.*;
+import java.util.function.*;
+import javafx.collections.*;
+import javafx.event.*;
+import javafx.fxml.*;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.util.*;
+import lombok.extern.java.*;
 
 @Log
 public class BeneficiaryBadgeFormController implements Initializable {
@@ -172,85 +159,20 @@ public class BeneficiaryBadgeFormController implements Initializable {
                             && colorConstraints.isEmpty()
                             && beneficiaryTypeConstraints.isEmpty()) {
                         if (BeneficiaryBadgeViewModel.getId() > 0) {
-                            try {
-                                BeneficiaryBadgeViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
-                                actionEvent = event;
-                            } catch (Exception e) {
-                                SpotyLogger.writeToFile(e, this.getClass());
-                            }
+                            BeneficiaryBadgeViewModel.updateItem(this::onSuccess, this::successMessage, this::errorMessage);
+                            actionEvent = event;
                             return;
                         }
-
-                        try {
-                            BeneficiaryBadgeViewModel.saveBeneficiaryBadge(this::onAction, this::onAddSuccess, this::onFailed);
-                            actionEvent = event;
-                        } catch (Exception e) {
-                            SpotyLogger.writeToFile(e, this.getClass());
-                        }
+                        BeneficiaryBadgeViewModel.saveBeneficiaryBadge(this::onSuccess, this::successMessage, this::errorMessage);
+                        actionEvent = event;
                     }
                 });
     }
 
-    private void onAction() {
-        cancelBtn.setDisable(true);
-        saveBtn.setDisable(true);
-//        cancelBtn.setManaged(true);
-//        saveBtn.setManaged(true);
-    }
-
-    private void onAddSuccess() {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder("Beneficiary badge added successfully")
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-circle-check")
-                        .type(MessageVariants.SUCCESS)
-                        .build();
-        notificationHolder.addMessage(notification);
-        cancelBtn.setDisable(false);
-        saveBtn.setDisable(false);
-
+    private void onSuccess() {
         beneficiaryType.clearSelection();
         colorPicker.clearSelection();
-
         closeDialog(actionEvent);
-        BeneficiaryBadgeViewModel.resetProperties();
-        BeneficiaryBadgeViewModel.getAllBeneficiaryBadges(null, null, null);
-    }
-
-    private void onUpdatedSuccess() {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder("Beneficiary badge updated successfully")
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-circle-check")
-                        .type(MessageVariants.SUCCESS)
-                        .build();
-        notificationHolder.addMessage(notification);
-        cancelBtn.setDisable(false);
-        saveBtn.setDisable(false);
-
-        beneficiaryType.clearSelection();
-        colorPicker.clearSelection();
-
-        closeDialog(actionEvent);
-        BeneficiaryBadgeViewModel.resetProperties();
-        BeneficiaryBadgeViewModel.getAllBeneficiaryBadges(null, null, null);
-    }
-
-    private void onFailed() {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder("An error occurred")
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
-                        .build();
-        notificationHolder.addMessage(notification);
-        cancelBtn.setDisable(false);
-        saveBtn.setDisable(false);
-
-        BeneficiaryBadgeViewModel.getAllBeneficiaryBadges(null, null, null);
     }
 
     public void requiredValidator() {
@@ -310,5 +232,31 @@ public class BeneficiaryBadgeFormController implements Initializable {
                                 colorPicker.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                             }
                         });
+    }
+
+    private void successMessage(String message) {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder(message)
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        AnchorPane.setRightAnchor(notification, 40.0);
+        AnchorPane.setTopAnchor(notification, 10.0);
+    }
+
+    private void errorMessage(String message) {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder(message)
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        AnchorPane.setRightAnchor(notification, 40.0);
+        AnchorPane.setTopAnchor(notification, 10.0);
     }
 }

@@ -14,58 +14,33 @@
 
 package inc.nomard.spoty.core.views.sales.pos;
 
-import inc.nomard.spoty.core.components.message.SpotyMessage;
-import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
-import inc.nomard.spoty.core.components.message.enums.MessageDuration;
-import inc.nomard.spoty.core.components.message.enums.MessageVariants;
-import inc.nomard.spoty.core.viewModels.CustomerViewModel;
-import inc.nomard.spoty.core.viewModels.ProductCategoryViewModel;
-import inc.nomard.spoty.core.viewModels.ProductViewModel;
-import inc.nomard.spoty.core.viewModels.sales.SaleDetailViewModel;
-import inc.nomard.spoty.core.viewModels.sales.SaleMasterViewModel;
-import inc.nomard.spoty.core.views.sales.pos.components.ProductCard;
-import inc.nomard.spoty.network_bridge.dtos.Customer;
-import inc.nomard.spoty.network_bridge.dtos.Product;
-import inc.nomard.spoty.network_bridge.dtos.ProductCategory;
-import inc.nomard.spoty.network_bridge.dtos.Tax;
-import inc.nomard.spoty.network_bridge.dtos.sales.SaleDetail;
-import inc.nomard.spoty.utils.SpotyLogger;
-import inc.nomard.spoty.utils.SpotyThreader;
-import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
-import io.github.palexdev.materialfx.controls.MFXRectangleToggleNode;
-import io.github.palexdev.materialfx.controls.MFXScrollPane;
-import io.github.palexdev.materialfx.controls.MFXTextField;
-import io.github.palexdev.materialfx.controls.legacy.MFXLegacyTableView;
-import io.github.palexdev.materialfx.utils.StringUtils;
-import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.*;
+import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.core.viewModels.sales.*;
+import inc.nomard.spoty.core.views.sales.pos.components.*;
+import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.network_bridge.dtos.sales.*;
+import inc.nomard.spoty.utils.*;
+import io.github.palexdev.materialfx.controls.*;
+import io.github.palexdev.materialfx.controls.legacy.*;
+import io.github.palexdev.materialfx.utils.*;
+import io.github.palexdev.materialfx.utils.others.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
-import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.util.StringConverter;
-import lombok.extern.java.Log;
-
-import java.net.URL;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.ResourceBundle;
-import java.util.function.Function;
-import java.util.function.Predicate;
+import io.github.palexdev.mfxresources.fonts.*;
+import java.net.*;
+import java.util.*;
+import java.util.function.*;
+import javafx.beans.property.*;
+import javafx.collections.*;
+import javafx.fxml.*;
+import javafx.geometry.*;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.*;
+import javafx.scene.layout.*;
+import javafx.scene.paint.*;
+import javafx.util.*;
+import lombok.extern.java.*;
 
 @Log
 public class PointOfSaleController implements Initializable {
@@ -83,8 +58,6 @@ public class PointOfSaleController implements Initializable {
     public HBox filterPane;
     @FXML
     public MFXScrollPane productHolder;
-    @FXML
-    public HBox refresh;
     public TableColumn<SaleDetail, SaleDetail> cartName;
     public TableColumn<SaleDetail, Long> cartQuantity;
     public TableColumn<SaleDetail, Double> cartPrice;
@@ -200,13 +173,13 @@ public class PointOfSaleController implements Initializable {
                                 // If actual product quantity is greater or equal to existing sale detail's product
                                 // quantity then increment by 1 else out of stock.
                                 if (productCard.getProduct().getQuantity() >= availableProductQuantity) {
-                                    SaleDetailViewModel.getPosSale(saleDetail);
+                                    SaleDetailViewModel.getCartSale(saleDetail);
                                     SaleDetailViewModel.setProduct(productCard.getProduct());
                                     SaleDetailViewModel.setPrice(productCard.getProduct().getPrice());
                                     SaleDetailViewModel.setQuantity(quantity);
                                     SaleDetailViewModel.setSubTotalPrice(calculateSubTotal(productCard.getProduct()));
 
-                                    SaleDetailViewModel.updatePosSale(
+                                    SaleDetailViewModel.updateCartSale(
                                             (long) SaleDetailViewModel.getSaleDetails().indexOf(saleDetail));
                                 } else {
                                     SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
@@ -379,29 +352,47 @@ public class PointOfSaleController implements Initializable {
 
     public void savePOSSale() {
         SaleMasterViewModel.setSaleStatus("Complete");
-        SaleMasterViewModel.setPayStatus("Paid");
+        SaleMasterViewModel.setPaymentStatus("Paid");
         SaleMasterViewModel.setTotal(calculateTotal(SaleDetailViewModel.getSaleDetails()));
-        SaleMasterViewModel.setPaid(calculateTotal(SaleDetailViewModel.getSaleDetails()));
-        SaleMasterViewModel.setNote("Approved.");
+        SaleMasterViewModel.setAmountPaid(calculateTotal(SaleDetailViewModel.getSaleDetails()));
+        SaleMasterViewModel.setNotes("Approved.");
         SpotyThreader.spotyThreadPool(
                 () -> {
                     try {
-                        SaleMasterViewModel.saveSaleMaster(this::onAction, this::onSuccess, this::onFailed);
+                        SaleMasterViewModel.saveSaleMaster(this::onSuccess, this::successMessage, this::errorMessage);
                     } catch (Exception e) {
                         SpotyLogger.writeToFile(e, this.getClass());
                     }
                 });
     }
 
-    private void onAction() {
-    }
-
     private void onSuccess() {
         availableProductQuantity = 0L;
-        ProductViewModel.getAllProducts(null, null, null);
     }
 
-    private void onFailed() {
-        ProductViewModel.getAllProducts(null, null, null);
+    private void successMessage(String message) {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder(message)
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        AnchorPane.setRightAnchor(notification, 40.0);
+        AnchorPane.setTopAnchor(notification, 10.0);
+    }
+
+    private void errorMessage(String message) {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder(message)
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        AnchorPane.setRightAnchor(notification, 40.0);
+        AnchorPane.setTopAnchor(notification, 10.0);
     }
 }

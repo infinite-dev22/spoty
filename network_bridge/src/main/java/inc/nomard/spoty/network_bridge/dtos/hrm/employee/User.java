@@ -14,15 +14,10 @@
 
 package inc.nomard.spoty.network_bridge.dtos.hrm.employee;
 
-import inc.nomard.spoty.network_bridge.dtos.Branch;
-import inc.nomard.spoty.network_bridge.dtos.Role;
-import inc.nomard.spoty.network_bridge.dtos.Tenant;
+import inc.nomard.spoty.network_bridge.dtos.*;
+import java.util.*;
 import lombok.*;
-import lombok.extern.java.Log;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Objects;
+import lombok.extern.java.*;
 
 @Getter
 @Setter
@@ -43,6 +38,7 @@ public class User {
     private Date dateOfBirth;
     private String salary;
     private String email;
+    private String avatar;
     private ArrayList<Branch> branches;
     private boolean active;
     private boolean locked;

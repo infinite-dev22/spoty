@@ -1,9 +1,8 @@
 package inc.nomard.spoty.network_bridge.dtos;
 
+import java.util.*;
 import lombok.*;
-import lombok.extern.java.Log;
-
-import java.util.ArrayList;
+import lombok.extern.java.*;
 
 @Getter
 @Setter
@@ -14,7 +13,6 @@ import java.util.ArrayList;
 @Log
 public class Bank {
     private Long id;
-    private ArrayList<Branch> branches;
     private String bankName;
     private String accountName;
     private String accountNumber;

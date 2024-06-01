@@ -1,6 +1,7 @@
 package inc.nomard.spoty.core.views.deductions;
 
 import inc.nomard.spoty.core.components.animations.*;
+import inc.nomard.spoty.network_bridge.dtos.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import io.github.palexdev.mfxresources.fonts.*;
@@ -27,7 +28,7 @@ public class TaxSettingsController implements Initializable {
     @FXML
     public MFXButton createBtn;
     @FXML
-    public MFXTableView masterTable;
+    public MFXTableView<Tax> masterTable;
     @FXML
     public HBox refresh;
     private RotateTransition transition;
@@ -56,9 +57,7 @@ public class TaxSettingsController implements Initializable {
     private void setIcons() {
         var refreshIcon = new MFXFontIcon("fas-arrows-rotate", 24);
         refresh.getChildren().addFirst(refreshIcon);
-
         transition = SpotyAnimations.rotateTransition(refreshIcon, Duration.millis(1000), 360);
-
 //        refreshIcon.setOnMouseClicked(mouseEvent -> TaxSettingViewModel.getAllTaxSettings(this::onAction, this::onSuccess, this::onFailed));
     }
 }

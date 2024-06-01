@@ -14,59 +14,37 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import inc.nomard.spoty.core.SpotyCoreResourceLoader;
-import inc.nomard.spoty.core.components.message.SpotyMessage;
-import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
-import inc.nomard.spoty.core.components.message.enums.MessageDuration;
-import inc.nomard.spoty.core.components.message.enums.MessageVariants;
-import inc.nomard.spoty.core.values.strings.Values;
-import inc.nomard.spoty.core.viewModels.BrandViewModel;
-import inc.nomard.spoty.core.viewModels.ProductCategoryViewModel;
-import inc.nomard.spoty.core.viewModels.ProductViewModel;
-import inc.nomard.spoty.core.viewModels.UOMViewModel;
-import inc.nomard.spoty.network_bridge.dtos.Brand;
-import inc.nomard.spoty.network_bridge.dtos.ProductCategory;
-import inc.nomard.spoty.network_bridge.dtos.UnitOfMeasure;
-import inc.nomard.spoty.utils.SpotyLogger;
-import io.github.palexdev.materialfx.controls.MFXFilterComboBox;
-import io.github.palexdev.materialfx.controls.MFXTextField;
-import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
-import io.github.palexdev.materialfx.utils.StringUtils;
-import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
-import io.github.palexdev.materialfx.validation.Constraint;
-import io.github.palexdev.materialfx.validation.Severity;
+import static inc.nomard.spoty.core.GlobalActions.*;
+import inc.nomard.spoty.core.*;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.*;
+import inc.nomard.spoty.core.values.strings.*;
+import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.network_bridge.dtos.*;
+import io.github.palexdev.materialfx.controls.*;
+import io.github.palexdev.materialfx.dialogs.*;
+import io.github.palexdev.materialfx.utils.*;
+import io.github.palexdev.materialfx.utils.others.*;
+import io.github.palexdev.materialfx.validation.*;
+import static io.github.palexdev.materialfx.validation.Validated.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import io.github.palexdev.mfxcore.controls.Label;
-import io.github.palexdev.mfxresources.fonts.IconsProviders;
-import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
-import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.TextArea;
-import javafx.scene.image.Image;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.ImagePattern;
-import javafx.scene.shape.Rectangle;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
-import javafx.util.StringConverter;
-import lombok.extern.java.Log;
-
-import java.net.URL;
-import java.util.List;
-import java.util.Objects;
-import java.util.ResourceBundle;
-import java.util.function.Function;
-import java.util.function.Predicate;
-
-import static inc.nomard.spoty.core.GlobalActions.closeDialog;
-import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
+import io.github.palexdev.mfxresources.fonts.*;
+import java.net.*;
+import java.util.*;
+import java.util.function.*;
+import javafx.collections.*;
+import javafx.event.*;
+import javafx.fxml.*;
+import javafx.scene.control.*;
+import javafx.scene.image.*;
+import javafx.scene.input.*;
+import javafx.scene.layout.*;
+import javafx.scene.paint.*;
+import javafx.scene.shape.*;
+import javafx.stage.*;
+import javafx.util.*;
+import lombok.extern.java.*;
 
 @Log
 public class ProductFormController implements Initializable {
@@ -329,20 +307,12 @@ public class ProductFormController implements Initializable {
                             && unitOfMeasureConstraints.isEmpty()
                             && barcodeTypeConstraints.isEmpty()) {
                         if (ProductViewModel.getId() > 0) {
-                            try {
-                                ProductViewModel.updateProduct(this::onAction, this::onUpdatedSuccess, this::onFailed);
-                                actionEvent = event;
-                            } catch (Exception e) {
-                                SpotyLogger.writeToFile(e, this.getClass());
-                            }
+                            ProductViewModel.updateProduct(this::onSuccess, this::successMessage, this::errorMessage);
+                            actionEvent = event;
                             return;
                         }
-                        try {
-                            ProductViewModel.saveProduct(this::onAction, this::onAddSuccess, this::onFailed);
-                            actionEvent = event;
-                        } catch (Exception e) {
-                            SpotyLogger.writeToFile(e, this.getClass());
-                        }
+                        ProductViewModel.saveProduct(this::onSuccess, this::successMessage, this::errorMessage);
+                        actionEvent = event;
                     }
                 });
     }
@@ -401,84 +371,18 @@ public class ProductFormController implements Initializable {
         });
     }
 
-    private void onAction() {
-        cancelBtn.setDisable(true);
-        saveBtn.setDisable(true);
-//        cancelBtn.setManaged(true);
-//        saveBtn.setManaged(true);
-    }
-
-    private void onAddSuccess() {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder("Designation added successfully")
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-circle-check")
-                        .type(MessageVariants.SUCCESS)
-                        .build();
-        notificationHolder.addMessage(notification);
-        cancelBtn.setDisable(false);
-        saveBtn.setDisable(false);
-
+    private void onSuccess() {
         brand.clearSelection();
         category.clearSelection();
         unitOfMeasure.clearSelection();
         barcodeType.clearSelection();
         type.clearSelection();
-
         closeDialog(actionEvent);
         ProductViewModel.resetProperties();
         placeHolder.setVisible(true);
         placeHolder.setManaged(true);
         productImageView.setVisible(false);
         productImageView.setManaged(false);
-        ProductViewModel.getAllProducts(null, null, null);
-    }
-
-    private void onUpdatedSuccess() {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder("Product updated successfully")
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-circle-check")
-                        .type(MessageVariants.SUCCESS)
-                        .build();
-        notificationHolder.addMessage(notification);
-        cancelBtn.setDisable(false);
-        saveBtn.setDisable(false);
-
-        brand.clearSelection();
-        category.clearSelection();
-        unitOfMeasure.clearSelection();
-        barcodeType.clearSelection();
-        type.clearSelection();
-
-        closeDialog(actionEvent);
-        ProductViewModel.resetProperties();
-        placeHolder.setVisible(true);
-        placeHolder.setManaged(true);
-        productImageView.setVisible(false);
-        productImageView.setManaged(false);
-        ProductViewModel.getAllProducts(null, null, null);
-    }
-
-    private void onFailed() {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder("An error occurred")
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
-                        .build();
-        notificationHolder.addMessage(notification);
-        cancelBtn.setDisable(false);
-        saveBtn.setDisable(false);
-
-        placeHolder.setVisible(true);
-        placeHolder.setManaged(true);
-        productImageView.setVisible(false);
-        productImageView.setManaged(false);
-        ProductViewModel.getAllProducts(null, null, null);
     }
 
     public void requiredValidator() {
@@ -592,5 +496,31 @@ public class ProductFormController implements Initializable {
                                 barcodeType.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                             }
                         });
+    }
+
+    private void successMessage(String message) {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder(message)
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        AnchorPane.setRightAnchor(notification, 40.0);
+        AnchorPane.setTopAnchor(notification, 10.0);
+    }
+
+    private void errorMessage(String message) {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder(message)
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        AnchorPane.setRightAnchor(notification, 40.0);
+        AnchorPane.setTopAnchor(notification, 10.0);
     }
 }

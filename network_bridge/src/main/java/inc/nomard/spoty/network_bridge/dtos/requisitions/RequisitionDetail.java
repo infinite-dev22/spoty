@@ -14,9 +14,9 @@
 
 package inc.nomard.spoty.network_bridge.dtos.requisitions;
 
-import inc.nomard.spoty.network_bridge.dtos.Product;
+import inc.nomard.spoty.network_bridge.dtos.*;
 import lombok.*;
-import lombok.extern.java.Log;
+import lombok.extern.java.*;
 
 @Getter
 @Setter
@@ -27,17 +27,7 @@ import lombok.extern.java.Log;
 @Log
 public class RequisitionDetail {
     private Long id;
-    private double cost;
-    private RequisitionMaster requisition;
-    private double netTax;
-    private String taxType;
-    private double discount;
-    private String discountType;
     private Product product;
-    private String serialNumber;
-    private double subTotalPrice;
-    private double price;
-    private double total;
     private int quantity;
 
     public String getProductName() {

@@ -14,56 +14,41 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import inc.nomard.spoty.core.components.message.SpotyMessage;
-import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
-import inc.nomard.spoty.core.components.message.enums.MessageDuration;
-import inc.nomard.spoty.core.components.message.enums.MessageVariants;
-import inc.nomard.spoty.core.components.navigation.Pages;
-import inc.nomard.spoty.core.startup.Dialogs;
-import inc.nomard.spoty.core.values.strings.Values;
-import inc.nomard.spoty.core.viewModels.CustomerViewModel;
-import inc.nomard.spoty.core.viewModels.quotations.QuotationDetailViewModel;
-import inc.nomard.spoty.core.viewModels.quotations.QuotationMasterViewModel;
-import inc.nomard.spoty.core.views.BaseController;
-import inc.nomard.spoty.network_bridge.dtos.Customer;
-import inc.nomard.spoty.network_bridge.dtos.quotations.QuotationDetail;
-import inc.nomard.spoty.utils.SpotyLogger;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.*;
+import inc.nomard.spoty.core.components.navigation.*;
+import inc.nomard.spoty.core.startup.*;
+import inc.nomard.spoty.core.values.strings.*;
+import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.core.viewModels.quotations.*;
+import inc.nomard.spoty.core.views.*;
+import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.network_bridge.dtos.quotations.*;
+import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
-import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
-import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
-import io.github.palexdev.materialfx.enums.ScrimPriority;
-import io.github.palexdev.materialfx.filter.DoubleFilter;
-import io.github.palexdev.materialfx.filter.IntegerFilter;
-import io.github.palexdev.materialfx.filter.StringFilter;
-import io.github.palexdev.materialfx.utils.StringUtils;
-import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
-import io.github.palexdev.materialfx.validation.Constraint;
-import io.github.palexdev.materialfx.validation.Severity;
+import io.github.palexdev.materialfx.controls.cell.*;
+import io.github.palexdev.materialfx.dialogs.*;
+import io.github.palexdev.materialfx.enums.*;
+import io.github.palexdev.materialfx.filter.*;
+import io.github.palexdev.materialfx.utils.*;
+import io.github.palexdev.materialfx.utils.others.*;
+import io.github.palexdev.materialfx.validation.*;
+import static io.github.palexdev.materialfx.validation.Validated.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
-import javafx.event.EventHandler;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.scene.input.ContextMenuEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.util.StringConverter;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.Comparator;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.function.Function;
-import java.util.function.Predicate;
-
-import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
-import lombok.extern.java.Log;
+import java.io.*;
+import java.net.*;
+import java.util.*;
+import java.util.function.*;
+import javafx.application.*;
+import javafx.collections.*;
+import javafx.event.*;
+import javafx.fxml.*;
+import javafx.scene.control.*;
+import javafx.scene.input.*;
+import javafx.scene.layout.*;
+import javafx.stage.*;
+import javafx.util.*;
+import lombok.extern.java.*;
 
 @SuppressWarnings("unchecked")
 @Log
@@ -111,7 +96,6 @@ public class QuotationMasterFormController implements Initializable {
         customer
                 .valueProperty()
                 .bindBidirectional(QuotationMasterViewModel.customerProperty());
-        status.textProperty().bindBidirectional(QuotationMasterViewModel.statusProperty());
         quotationNote.textProperty().bindBidirectional(QuotationMasterViewModel.noteProperty());
 
         // ComboBox Converters.
@@ -147,49 +131,31 @@ public class QuotationMasterFormController implements Initializable {
         MFXTableColumn<QuotationDetail> productName =
                 new MFXTableColumn<>(
                         "Product", false, Comparator.comparing(QuotationDetail::getProductName));
+        MFXTableColumn<QuotationDetail> productPrice =
+                new MFXTableColumn<>("Price", false, Comparator.comparing(QuotationDetail::getProductPrice));
         MFXTableColumn<QuotationDetail> productQuantity =
                 new MFXTableColumn<>("Quantity", false, Comparator.comparing(QuotationDetail::getQuantity));
-        MFXTableColumn<QuotationDetail> productDiscount =
-                new MFXTableColumn<>("Discount", false, Comparator.comparing(QuotationDetail::getDiscount));
-        MFXTableColumn<QuotationDetail> productTax =
-                new MFXTableColumn<>("Tax", false, Comparator.comparing(QuotationDetail::getNetTax));
-        MFXTableColumn<QuotationDetail> productPrice =
-                new MFXTableColumn<>("Price", false, Comparator.comparing(QuotationDetail::getPrice));
-        MFXTableColumn<QuotationDetail> totalPrice =
-                new MFXTableColumn<>(
-                        "Total Price", false, Comparator.comparing(QuotationDetail::getTotal));
 
         productName.setRowCellFactory(
                 product -> new MFXTableRowCell<>(QuotationDetail::getProductName));
+        productPrice.setRowCellFactory(product -> new MFXTableRowCell<>(QuotationDetail::getProductPrice));
         productQuantity.setRowCellFactory(
                 product -> new MFXTableRowCell<>(QuotationDetail::getQuantity));
-        productDiscount.setRowCellFactory(
-                product -> new MFXTableRowCell<>(QuotationDetail::getDiscount));
-        productTax.setRowCellFactory(product -> new MFXTableRowCell<>(QuotationDetail::getNetTax));
-        productPrice.setRowCellFactory(product -> new MFXTableRowCell<>(QuotationDetail::getPrice));
-        totalPrice.setRowCellFactory(product -> new MFXTableRowCell<>(QuotationDetail::getTotal));
 
         productName.prefWidthProperty().bind(quotationDetailTable.widthProperty().multiply(.25));
-        productQuantity.prefWidthProperty().bind(quotationDetailTable.widthProperty().multiply(.25));
-        productDiscount.prefWidthProperty().bind(quotationDetailTable.widthProperty().multiply(.25));
-        productTax.prefWidthProperty().bind(quotationDetailTable.widthProperty().multiply(.25));
         productPrice.prefWidthProperty().bind(quotationDetailTable.widthProperty().multiply(.25));
-        totalPrice.prefWidthProperty().bind(quotationDetailTable.widthProperty().multiply(.25));
+        productQuantity.prefWidthProperty().bind(quotationDetailTable.widthProperty().multiply(.25));
 
         quotationDetailTable
                 .getTableColumns()
-                .addAll(
-                        productName, productQuantity, productDiscount, productTax, productPrice, totalPrice);
+                .addAll(productName, productPrice, productQuantity);
 
         quotationDetailTable
                 .getFilters()
                 .addAll(
                         new StringFilter<>("Product", QuotationDetail::getProductName),
                         new IntegerFilter<>("Quantity", QuotationDetail::getQuantity),
-                        new DoubleFilter<>("Discount", QuotationDetail::getDiscount),
-                        new DoubleFilter<>("Tax", QuotationDetail::getNetTax),
-                        new DoubleFilter<>("Price", QuotationDetail::getPrice),
-                        new DoubleFilter<>("Total Price", QuotationDetail::getTotal));
+                        new DoubleFilter<>("Price", QuotationDetail::getProductPrice));
 
         getQuotationDetailTable();
 
@@ -304,18 +270,10 @@ public class QuotationMasterFormController implements Initializable {
         if (customerConstraints.isEmpty()
                 && statusConstraints.isEmpty()) {
             if (QuotationMasterViewModel.getId() > 0) {
-                try {
-                    QuotationMasterViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
-                } catch (Exception e) {
-                    SpotyLogger.writeToFile(e, this.getClass());
-                }
+                QuotationMasterViewModel.updateItem(this::onSuccess, this::successMessage, this::errorMessage);
                 return;
             }
-            try {
-                QuotationMasterViewModel.saveQuotationMaster(this::onAction, this::onAddSuccess, this::onFailed);
-            } catch (Exception e) {
-                SpotyLogger.writeToFile(e, this.getClass());
-            }
+            QuotationMasterViewModel.saveQuotationMaster(this::onSuccess, this::successMessage, this::errorMessage);
         }
     }
 
@@ -348,52 +306,8 @@ public class QuotationMasterFormController implements Initializable {
         }
     }
 
-    private void onAction() {
-//        cancelBtn.setDisable(true);
-//        saveBtn.setDisable(true);
-//        cancelBtn.setManaged(true);
-//        saveBtn.setManaged(true);
-    }
-
-    private void onAddSuccess() {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder("Quotation added successfully")
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-circle-check")
-                        .type(MessageVariants.SUCCESS)
-                        .build();
-        notificationHolder.addMessage(notification);
+    private void onSuccess() {
         cancelBtnClicked();
-
-        QuotationMasterViewModel.getAllQuotationMasters(null, null, null);
-    }
-
-    private void onUpdatedSuccess() {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder("Quotation updated successfully")
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-circle-check")
-                        .type(MessageVariants.SUCCESS)
-                        .build();
-        notificationHolder.addMessage(notification);
-        cancelBtnClicked();
-
-        QuotationMasterViewModel.getAllQuotationMasters(null, null, null);
-    }
-
-    private void onFailed() {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder("An error occurred")
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
-                        .build();
-        notificationHolder.addMessage(notification);
-
-        QuotationMasterViewModel.getAllQuotationMasters(null, null, null);
     }
 
     public void requiredValidator() {
@@ -435,5 +349,31 @@ public class QuotationMasterFormController implements Initializable {
                                 status.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                             }
                         });
+    }
+
+    private void successMessage(String message) {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder(message)
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        AnchorPane.setRightAnchor(notification, 40.0);
+        AnchorPane.setTopAnchor(notification, 10.0);
+    }
+
+    private void errorMessage(String message) {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder(message)
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        AnchorPane.setRightAnchor(notification, 40.0);
+        AnchorPane.setTopAnchor(notification, 10.0);
     }
 }

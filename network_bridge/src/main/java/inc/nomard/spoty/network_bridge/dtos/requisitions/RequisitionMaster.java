@@ -14,16 +14,12 @@
 
 package inc.nomard.spoty.network_bridge.dtos.requisitions;
 
-import inc.nomard.spoty.network_bridge.dtos.Branch;
-import inc.nomard.spoty.network_bridge.dtos.Supplier;
-import inc.nomard.spoty.network_bridge.dtos.hrm.employee.User;
+import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
+import java.text.*;
+import java.util.*;
 import lombok.*;
-import lombok.extern.java.Log;
-
-import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import lombok.extern.java.*;
 
 @Getter
 @Setter
@@ -35,32 +31,14 @@ import java.util.List;
 public class RequisitionMaster {
     private Long id;
     private String ref;
-    private Date date;
     private Supplier supplier;
-    private ArrayList<Branch> branches;
     private List<RequisitionDetail> requisitionDetails;
-    private double taxRate;
-    private double netTax;
-    private double discount;
-    private String shipping;
-    private double amountPaid;
-    private double total;
-    private double amountDue;
-    private double changeAmount;
-    private double balanceAmount;
-    private double shippingFee;
-    private double subTotal;
-    private String status;
-    private String paymentStatus;
+    private LinkedList<Long> childrenToDelete;
     private String notes;
     private User createdBy;
 
     public String getSupplierName() {
         return supplier.getName();
-    }
-
-    public String getLocaleDate() {
-        return DateFormat.getDateInstance().format(date);
     }
 
     public String doneBy() {

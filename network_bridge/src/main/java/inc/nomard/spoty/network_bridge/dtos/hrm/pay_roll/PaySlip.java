@@ -1,10 +1,9 @@
 package inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll;
 
+import java.text.*;
+import java.util.*;
 import lombok.*;
-import lombok.extern.java.Log;
-
-import java.text.DateFormat;
-import java.util.Date;
+import lombok.extern.java.*;
 
 @Getter
 @Setter

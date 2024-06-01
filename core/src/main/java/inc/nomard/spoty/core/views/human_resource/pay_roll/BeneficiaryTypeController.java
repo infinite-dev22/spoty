@@ -1,24 +1,19 @@
 package inc.nomard.spoty.core.views.human_resource.pay_roll;
 
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
-
-import inc.nomard.spoty.core.components.animations.*;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.*;
 import inc.nomard.spoty.core.viewModels.hrm.pay_roll.*;
 import inc.nomard.spoty.core.views.forms.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll.*;
-import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.filter.*;
-import io.github.palexdev.mfxresources.fonts.*;
-
 import java.io.*;
 import java.net.*;
 import java.util.*;
-
-import javafx.animation.*;
 import javafx.application.*;
 import javafx.collections.*;
 import javafx.event.*;
@@ -26,9 +21,7 @@ import javafx.fxml.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
-import javafx.util.*;
-
-import lombok.extern.java.Log;
+import lombok.extern.java.*;
 
 @Log
 public class BeneficiaryTypeController implements Initializable {
@@ -43,10 +36,7 @@ public class BeneficiaryTypeController implements Initializable {
     public MFXButton createBtn;
     @FXML
     public MFXTableView<BeneficiaryType> masterTable;
-    @FXML
-    public HBox refresh;
     private MFXStageDialog dialog;
-    private RotateTransition transition;
 
     private BeneficiaryTypeController(Stage stage) {
         Platform.runLater(
@@ -154,26 +144,13 @@ public class BeneficiaryTypeController implements Initializable {
         // Delete
         delete.setOnAction(
                 e -> {
-                    SpotyThreader.spotyThreadPool(() -> {
-                        try {
-                            BeneficiaryTypeViewModel.deleteItem(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
-                        } catch (Exception ex) {
-                            throw new RuntimeException(ex);
-                        }
-                    });
+                    BeneficiaryTypeViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
                     e.consume();
                 });
         // Edit
         edit.setOnAction(
                 e -> {
-                    SpotyThreader.spotyThreadPool(() -> {
-                        try {
-                            BeneficiaryTypeViewModel.getItem(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
-                        } catch (Exception ex) {
-                            throw new RuntimeException(ex);
-                        }
-                    });
-                    dialog.showAndWait();
+                    BeneficiaryTypeViewModel.getItem(obj.getData().getId(), () -> dialog.showAndWait(), this::errorMessage);
                     e.consume();
                 });
 
@@ -186,31 +163,37 @@ public class BeneficiaryTypeController implements Initializable {
         dialog.showAndWait();
     }
 
-    private void onAction() {
-        transition.playFromStart();
-        transition.setOnFinished((ActionEvent event) -> transition.playFromStart());
-    }
-
     private void onSuccess() {
-        transition.setOnFinished(null);
-    }
-
-    private void onFailed() {
-        transition.setOnFinished(null);
-    }
-
-    private void setIcons() {
-        var refreshIcon = new MFXFontIcon("fas-arrows-rotate", 24);
-        refresh.getChildren().addFirst(refreshIcon);
-
-        transition = SpotyAnimations.rotateTransition(refreshIcon, Duration.millis(1000), 360);
-
-        refreshIcon.setOnMouseClicked(mouseEvent -> BeneficiaryTypeViewModel.getAllBeneficiaryTypes(this::onAction, this::onSuccess, this::onFailed));
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        setIcons();
         Platform.runLater(this::setupTable);
+    }
+
+    private void successMessage(String message) {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder(message)
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        AnchorPane.setRightAnchor(notification, 40.0);
+        AnchorPane.setTopAnchor(notification, 10.0);
+    }
+
+    private void errorMessage(String message) {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder(message)
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        AnchorPane.setRightAnchor(notification, 40.0);
+        AnchorPane.setTopAnchor(notification, 10.0);
     }
 }

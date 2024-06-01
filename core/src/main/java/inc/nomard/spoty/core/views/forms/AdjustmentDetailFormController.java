@@ -70,7 +70,6 @@ public class AdjustmentDetailFormController implements Initializable {
     private List<Constraint> productConstraints,
             quantityConstraints,
             typeConstraints;
-
     public static AdjustmentDetailFormController getInstance() {
         if (Objects.equals(instance, null)) instance = new AdjustmentDetailFormController();
         return instance;
@@ -88,19 +87,16 @@ public class AdjustmentDetailFormController implements Initializable {
         type
                 .textProperty()
                 .bindBidirectional(AdjustmentDetailViewModel.adjustmentTypeProperty());
-
         // Combo box Converter.
         StringConverter<Product> productVariantConverter =
                 FunctionalStringConverter.to(
                         productDetail -> (productDetail == null) ? "" : productDetail.getName());
-
         // Combo box Filter Function.
         Function<String, Predicate<Product>> productVariantFilterFunction =
                 searchStr ->
                         productDetail ->
                                 StringUtils.containsIgnoreCase(
                                         productVariantConverter.toString(productDetail), searchStr);
-
         // AdjustmentType combo box properties.
         product.setConverter(productVariantConverter);
         product.setFilterFunction(productVariantFilterFunction);
@@ -112,12 +108,9 @@ public class AdjustmentDetailFormController implements Initializable {
         } else {
             product.itemsProperty().bindBidirectional(ProductViewModel.productsProperty());
         }
-
         type.setItems(FXCollections.observableArrayList(Values.ADJUSTMENT_TYPE));
-
         // Input validators.
         requiredValidator();
-
         dialogOnActions();
     }
 
@@ -177,8 +170,7 @@ public class AdjustmentDetailFormController implements Initializable {
                             && quantityConstraints.isEmpty()
                             && typeConstraints.isEmpty()) {
                         if (tempIdProperty().get() > -1) {
-                            AdjustmentDetailViewModel.updateAdjustmentDetail(
-                                    SharedResources.getTempId());
+                            AdjustmentDetailViewModel.updateAdjustmentDetail((long) SharedResources.getTempId());
 
                             SpotyMessage notification =
                                     new SpotyMessage.MessageBuilder("Entry updated successfully")

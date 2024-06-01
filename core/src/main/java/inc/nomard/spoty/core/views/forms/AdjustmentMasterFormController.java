@@ -14,45 +14,32 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import inc.nomard.spoty.core.components.message.SpotyMessage;
-import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
-import inc.nomard.spoty.core.components.message.enums.MessageDuration;
-import inc.nomard.spoty.core.components.message.enums.MessageVariants;
-import inc.nomard.spoty.core.components.navigation.Pages;
-import inc.nomard.spoty.core.viewModels.adjustments.AdjustmentDetailViewModel;
-import inc.nomard.spoty.core.viewModels.adjustments.AdjustmentMasterViewModel;
-import inc.nomard.spoty.core.views.BaseController;
-import inc.nomard.spoty.network_bridge.dtos.adjustments.AdjustmentDetail;
-import inc.nomard.spoty.utils.SpotyLogger;
-import inc.nomard.spoty.utils.SpotyThreader;
+import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.*;
+import inc.nomard.spoty.core.components.navigation.*;
+import inc.nomard.spoty.core.viewModels.adjustments.*;
+import inc.nomard.spoty.core.views.*;
+import inc.nomard.spoty.network_bridge.dtos.adjustments.*;
+import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
-import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
-import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
-import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
-import io.github.palexdev.materialfx.enums.ScrimPriority;
-import io.github.palexdev.materialfx.filter.LongFilter;
-import io.github.palexdev.materialfx.filter.StringFilter;
+import io.github.palexdev.materialfx.controls.cell.*;
+import io.github.palexdev.materialfx.dialogs.*;
+import io.github.palexdev.materialfx.enums.*;
+import io.github.palexdev.materialfx.filter.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import javafx.application.Platform;
-import javafx.collections.ListChangeListener;
-import javafx.event.EventHandler;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.scene.input.ContextMenuEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.Comparator;
-import java.util.ResourceBundle;
-
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
-import lombok.extern.java.Log;
+import java.io.*;
+import java.net.*;
+import java.util.*;
+import javafx.application.*;
+import javafx.collections.*;
+import javafx.event.*;
+import javafx.fxml.*;
+import javafx.scene.control.*;
+import javafx.scene.input.*;
+import javafx.scene.layout.*;
+import javafx.stage.*;
+import lombok.extern.java.*;
 
 @SuppressWarnings("unchecked")
 @Log
@@ -182,13 +169,7 @@ public class AdjustmentMasterFormController implements Initializable {
         edit.setOnAction(
                 event -> {
                     SpotyThreader.spotyThreadPool(
-                            () -> {
-                                try {
-                                    AdjustmentDetailViewModel.getAdjustmentDetail(obj.getData());
-                                } catch (Exception e) {
-                                    SpotyLogger.writeToFile(e, this.getClass());
-                                }
-                            });
+                            () -> AdjustmentDetailViewModel.getAdjustmentDetail(obj.getData()));
                     dialog.showAndWait();
                     event.consume();
                 });
@@ -237,14 +218,14 @@ public class AdjustmentMasterFormController implements Initializable {
         }
         if (AdjustmentMasterViewModel.getId() > 0) {
             try {
-                AdjustmentMasterViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
+                AdjustmentMasterViewModel.updateItem(this::onSuccess, this::successMessage, this::errorMessage);
             } catch (Exception e) {
                 SpotyLogger.writeToFile(e, this.getClass());
             }
             return;
         }
         try {
-            AdjustmentMasterViewModel.saveAdjustmentMaster(this::onAction, this::onAddSuccess, this::onFailed);
+            AdjustmentMasterViewModel.saveAdjustmentMaster(this::onSuccess, this::successMessage, this::errorMessage);
         } catch (Exception e) {
             SpotyLogger.writeToFile(e, this.getClass());
         }
@@ -257,56 +238,8 @@ public class AdjustmentMasterFormController implements Initializable {
         AdjustmentMasterViewModel.resetProperties();
     }
 
-    private void onAction() {
-        cancelBtn.setDisable(true);
-        saveBtn.setDisable(true);
-//        cancelBtn.setManaged(true);
-//        saveBtn.setManaged(true);
-    }
-
-    private void onAddSuccess() {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder("Adjustment added successfully")
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-circle-check")
-                        .type(MessageVariants.SUCCESS)
-                        .build();
-        notificationHolder.addMessage(notification);
-        cancelBtn.setDisable(false);
-        saveBtn.setDisable(false);
+    private void onSuccess() {
         adjustmentCancelBtnClicked();
-        AdjustmentMasterViewModel.getAllAdjustmentMasters(null, null, null);
-    }
-
-    private void onUpdatedSuccess() {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder("Adjustment updated successfully")
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-circle-check")
-                        .type(MessageVariants.SUCCESS)
-                        .build();
-        notificationHolder.addMessage(notification);
-        cancelBtn.setDisable(false);
-        saveBtn.setDisable(false);
-        adjustmentCancelBtnClicked();
-        AdjustmentMasterViewModel.getAllAdjustmentMasters(null, null, null);
-    }
-
-    private void onFailed() {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder("An error occurred")
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
-                        .build();
-        notificationHolder.addMessage(notification);
-        cancelBtn.setDisable(false);
-        saveBtn.setDisable(false);
-
-        AdjustmentMasterViewModel.getAllAdjustmentMasters(null, null, null);
     }
 
     private void onRequiredFieldsMissing() {
@@ -321,6 +254,32 @@ public class AdjustmentMasterFormController implements Initializable {
         cancelBtn.setDisable(false);
         saveBtn.setDisable(false);
 
-        AdjustmentMasterViewModel.getAllAdjustmentMasters(null, null, null);
+        AdjustmentMasterViewModel.getAllAdjustmentMasters(null, null);
+    }
+
+    private void successMessage(String message) {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder(message)
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        AnchorPane.setRightAnchor(notification, 40.0);
+        AnchorPane.setTopAnchor(notification, 10.0);
+    }
+
+    private void errorMessage(String message) {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder(message)
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        AnchorPane.setRightAnchor(notification, 40.0);
+        AnchorPane.setTopAnchor(notification, 10.0);
     }
 }

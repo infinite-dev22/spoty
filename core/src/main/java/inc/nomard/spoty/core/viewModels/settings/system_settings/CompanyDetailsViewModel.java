@@ -7,13 +7,12 @@ import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.network_bridge.repositories.implementations.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.adapters.*;
-
+import inc.nomard.spoty.utils.functional_paradigm.*;
+import java.net.http.*;
 import java.util.*;
 import java.util.concurrent.*;
-
 import javafx.beans.property.*;
-
-import lombok.extern.java.Log;
+import lombok.extern.java.*;
 
 @Log
 public class CompanyDetailsViewModel {
@@ -231,10 +230,9 @@ public class CompanyDetailsViewModel {
         return defaultCurrency;
     }
 
-    public static void saveCompany(
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
+    public static void saveCompany(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                   SpotyGotFunctional.MessageConsumer successMessage,
+                                   SpotyGotFunctional.MessageConsumer errorMessage) {
 
         var company =
                 Company.builder()
@@ -254,17 +252,29 @@ public class CompanyDetailsViewModel {
                         .linkedin(getLinkedin())
                         .defaultCurrency(getDefaultCurrency())
                         .build();
-
-        var task = companyRepository.post(company);
-        task.setOnRunning(workerStateEvent -> onActivity.run());
-        task.setOnSucceeded(workerStateEvent -> {
-            onSuccess.run();
-            getCompany(company.getId(), onActivity, null, onFailed);
+        CompletableFuture<HttpResponse<String>> responseFuture = companyRepository.post(company);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 201 || response.statusCode() == 204) {
+                // Process the successful response
+                successMessage.showMessage("Company created successfully");
+                onSuccess.run();
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
+            }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, CompanyDetailsViewModel.class);
+            return null;
         });
-        task.setOnFailed(workerStateEvent -> onFailed.run());
-        SpotyThreader.spotyThreadPool(task);
-
-        clearCompanyData();
     }
 
     public static void clearCompanyData() {
@@ -286,18 +296,16 @@ public class CompanyDetailsViewModel {
         setDefaultCurrency(null);
     }
 
-    public static void getCompany(
-            Long index,
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
-        var findModel = new FindModel();
-        findModel.setId(index);
-        var task = companyRepository.fetch(findModel);
-        task.setOnRunning(workerStateEvent -> onActivity.run());
-        task.setOnSucceeded(workerStateEvent -> {
-            try {
-                Company company = gson.fromJson(task.get().body(), Company.class);
+    public static void getCompany(Long index,
+                                  SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                  SpotyGotFunctional.MessageConsumer errorMessage) {
+        var findModel = FindModel.builder().id(index).build();
+        CompletableFuture<HttpResponse<String>> responseFuture = companyRepository.fetch(findModel);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 200) {
+                // Process the successful response
+                Company company = gson.fromJson(response.body(), Company.class);
                 setId(company.getId());
                 setName(company.getName());
                 setWebsite(company.getWebsite());
@@ -314,22 +322,30 @@ public class CompanyDetailsViewModel {
                 setFacebook(company.getFacebook());
                 setLinkedin(company.getLinkedin());
                 setDefaultCurrency(company.getDefaultCurrency());
-            } catch (InterruptedException | ExecutionException e) {
-                SpotyLogger.writeToFile(e, CompanyDetailsViewModel.class);
+                if (Objects.nonNull(onSuccess)) {
+                    onSuccess.run();
+                }
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
             }
-
-            if (Objects.nonNull(onSuccess)) {
-                onSuccess.run();
-            }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, CompanyDetailsViewModel.class);
+            return null;
         });
-        task.setOnFailed(workerStateEvent -> onFailed.run());
-        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void updateItem(
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
+    public static void updateItem(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                  SpotyGotFunctional.MessageConsumer successMessage,
+                                  SpotyGotFunctional.MessageConsumer errorMessage) {
         var company = Company.builder()
                 .id(getId())
                 .name(getName())
@@ -348,30 +364,28 @@ public class CompanyDetailsViewModel {
                 .linkedin(getLinkedin())
                 .defaultCurrency(getDefaultCurrency())
                 .build();
-
-        var task = companyRepository.put(company);
-        task.setOnRunning(workerStateEvent -> onActivity.run());
-        task.setOnSucceeded(workerStateEvent -> {
-            clearCompanyData();
-            getCompany(company.getId(), onActivity, null, onFailed);
-
-            onSuccess.run();
+        CompletableFuture<HttpResponse<String>> responseFuture = companyRepository.put(company);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 200 || response.statusCode() == 204) {
+                // Process the successful response
+                successMessage.showMessage("Company details updated successfully");
+                onSuccess.run();
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
+            }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, CompanyDetailsViewModel.class);
+            return null;
         });
-        task.setOnFailed(workerStateEvent -> onFailed.run());
-        SpotyThreader.spotyThreadPool(task);
-    }
-
-    public static void deleteItem(
-            Long index,
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
-        var findModel = FindModel.builder().id(index).build();
-
-        var task = companyRepository.delete(findModel);
-        task.setOnRunning(workerStateEvent -> onActivity.run());
-        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
-        task.setOnFailed(workerStateEvent -> onFailed.run());
-        SpotyThreader.spotyThreadPool(task);
     }
 }

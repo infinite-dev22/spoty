@@ -14,13 +14,11 @@
 
 package inc.nomard.spoty.network_bridge.dtos.purchases;
 
-import inc.nomard.spoty.network_bridge.dtos.Supplier;
+import inc.nomard.spoty.network_bridge.dtos.*;
+import java.text.*;
+import java.util.*;
 import lombok.*;
-import lombok.extern.java.Log;
-
-import java.text.DateFormat;
-import java.util.Date;
-import java.util.List;
+import lombok.extern.java.*;
 
 @Getter
 @Setter
@@ -35,6 +33,7 @@ public class PurchaseMaster {
     private Date date;
     private Supplier supplier;
     private List<PurchaseDetail> purchaseDetails;
+    private LinkedList<Long> childrenToDelete;
     private double taxRate;
     private double netTax;
     private double discount;

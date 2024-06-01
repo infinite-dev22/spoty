@@ -14,13 +14,11 @@
 
 package inc.nomard.spoty.network_bridge.dtos;
 
+import java.io.*;
+import java.text.*;
+import java.util.*;
 import lombok.*;
-import lombok.extern.java.Log;
-
-import java.io.Serializable;
-import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Date;
+import lombok.extern.java.*;
 
 @Getter
 @Setter

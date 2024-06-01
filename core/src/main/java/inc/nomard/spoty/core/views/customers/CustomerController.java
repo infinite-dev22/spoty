@@ -14,43 +14,33 @@
 
 package inc.nomard.spoty.core.views.customers;
 
-import inc.nomard.spoty.core.components.animations.SpotyAnimations;
-import inc.nomard.spoty.core.viewModels.CustomerViewModel;
-import inc.nomard.spoty.core.views.forms.CustomerFormController;
-import inc.nomard.spoty.core.views.previews.people.CustomerPreviewController;
-import inc.nomard.spoty.network_bridge.dtos.Customer;
-import inc.nomard.spoty.utils.SpotyThreader;
+import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
+import inc.nomard.spoty.core.components.animations.*;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.*;
+import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.core.views.forms.*;
+import inc.nomard.spoty.core.views.previews.people.*;
+import inc.nomard.spoty.network_bridge.dtos.*;
 import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
-import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
-import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
-import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
-import io.github.palexdev.materialfx.enums.ScrimPriority;
-import io.github.palexdev.materialfx.filter.StringFilter;
-import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
-import javafx.animation.RotateTransition;
-import javafx.application.Platform;
-import javafx.collections.ListChangeListener;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
-import javafx.scene.input.ContextMenuEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.stage.Modality;
-import javafx.stage.Screen;
-import javafx.stage.Stage;
-import javafx.util.Duration;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.Comparator;
-import java.util.ResourceBundle;
-
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
-import lombok.extern.java.Log;
+import io.github.palexdev.materialfx.controls.cell.*;
+import io.github.palexdev.materialfx.dialogs.*;
+import io.github.palexdev.materialfx.enums.*;
+import io.github.palexdev.materialfx.filter.*;
+import io.github.palexdev.mfxresources.fonts.*;
+import java.io.*;
+import java.net.*;
+import java.util.*;
+import javafx.animation.*;
+import javafx.application.*;
+import javafx.collections.*;
+import javafx.event.*;
+import javafx.fxml.*;
+import javafx.scene.input.*;
+import javafx.scene.layout.*;
+import javafx.stage.*;
+import javafx.util.*;
+import lombok.extern.java.*;
 
 @SuppressWarnings("unchecked")
 @Log
@@ -103,17 +93,14 @@ public class CustomerController implements Initializable {
                 new MFXTableColumn<>("Email", false, Comparator.comparing(Customer::getEmail));
         MFXTableColumn<Customer> customerTax =
                 new MFXTableColumn<>("Tax No.", false, Comparator.comparing(Customer::getTaxNumber));
-
         customerName.setRowCellFactory(customer -> new MFXTableRowCell<>(Customer::getName));
         customerPhone.setRowCellFactory(customer -> new MFXTableRowCell<>(Customer::getPhone));
         customerEmail.setRowCellFactory(customer -> new MFXTableRowCell<>(Customer::getEmail));
         customerTax.setRowCellFactory(customer -> new MFXTableRowCell<>(Customer::getTaxNumber));
-
         customerName.prefWidthProperty().bind(customersTable.widthProperty().multiply(.3));
         customerPhone.prefWidthProperty().bind(customersTable.widthProperty().multiply(.2));
         customerEmail.prefWidthProperty().bind(customersTable.widthProperty().multiply(.3));
         customerTax.prefWidthProperty().bind(customersTable.widthProperty().multiply(.2));
-
         customersTable
                 .getTableColumns()
                 .addAll(customerName, customerPhone, customerEmail, customerTax);
@@ -125,7 +112,6 @@ public class CustomerController implements Initializable {
                         new StringFilter<>("Email", Customer::getEmail),
                         new StringFilter<>("Tax No.", Customer::getTaxNumber));
         styleCustomerTable();
-
         if (CustomerViewModel.getCustomers().isEmpty()) {
             CustomerViewModel.getCustomers().addListener(
                     (ListChangeListener<Customer>)
@@ -139,7 +125,6 @@ public class CustomerController implements Initializable {
         customersTable.setPrefSize(1000, 1000);
         customersTable.features().enableBounceEffect();
         customersTable.features().enableSmoothScrolling(0.5);
-
         customersTable.setTableRowFactory(
                 t -> {
                     MFXTableRow<Customer> row = new MFXTableRow<>(customersTable, t);
@@ -162,46 +147,27 @@ public class CustomerController implements Initializable {
         MFXContextMenuItem delete = new MFXContextMenuItem("Delete");
         MFXContextMenuItem edit = new MFXContextMenuItem("Edit");
         MFXContextMenuItem view = new MFXContextMenuItem("View");
-
         // Actions
         // Delete
         delete.setOnAction(
                 e -> {
-                    SpotyThreader.spotyThreadPool(() -> {
-                        try {
-                            CustomerViewModel.deleteItem(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
-                        } catch (Exception ex) {
-                            throw new RuntimeException(ex);
-                        }
-                    });
+                    CustomerViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
                     e.consume();
                 });
         // Edit
         edit.setOnAction(
                 e -> {
-                    SpotyThreader.spotyThreadPool(() -> {
-                        try {
-                            CustomerViewModel.getItem(obj.getData().getId(), this::onAction, this::onFailed);
-                        } catch (Exception ex) {
-                            throw new RuntimeException(ex);
-                        }
-                    });
+                    CustomerViewModel.getItem(obj.getData().getId(), () -> dialog.showAndWait(), this::errorMessage);
                     dialog.showAndWait();
                     e.consume();
                 });
         // View
         view.setOnAction(
                 event -> {
-                    try {
-                        viewShow(obj.getData());
-                    } catch (Exception ex) {
-                        throw new RuntimeException(ex);
-                    }
+                    viewShow(obj.getData());
                     event.consume();
                 });
-
         contextMenu.addItems(view, edit, delete);
-
         if (contextMenu.isShowing()) contextMenu.hide();
         return contextMenu;
     }
@@ -209,13 +175,10 @@ public class CustomerController implements Initializable {
     private void customerFormDialogPane(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = fxmlLoader("views/forms/CustomerForm.fxml");
         fxmlLoader.setControllerFactory(c -> CustomerFormController.getInstance());
-
         MFXGenericDialog dialogContent = fxmlLoader.load();
-
         dialogContent.setShowMinimize(false);
         dialogContent.setShowAlwaysOnTop(false);
         dialogContent.setShowClose(false);
-
         dialog =
                 MFXGenericDialogBuilder.build(dialogContent)
                         .toStageDialogBuilder()
@@ -225,7 +188,6 @@ public class CustomerController implements Initializable {
                         .setScrimPriority(ScrimPriority.WINDOW)
                         .setScrimOwner(true)
                         .get();
-
         io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
     }
 
@@ -233,26 +195,15 @@ public class CustomerController implements Initializable {
         dialog.showAndWait();
     }
 
-    private void onAction() {
-        transition.playFromStart();
-        transition.setOnFinished((ActionEvent event) -> transition.playFromStart());
-    }
-
     private void onSuccess() {
-        transition.setOnFinished(null);
-    }
-
-    private void onFailed() {
         transition.setOnFinished(null);
     }
 
     private void setIcons() {
         var refreshIcon = new MFXFontIcon("fas-arrows-rotate", 24);
         refresh.getChildren().addFirst(refreshIcon);
-
         transition = SpotyAnimations.rotateTransition(refreshIcon, Duration.millis(1000), 360);
-
-        refreshIcon.setOnMouseClicked(mouseEvent -> CustomerViewModel.getAllCustomers(this::onAction, this::onSuccess, this::onFailed));
+        refreshIcon.setOnMouseClicked(mouseEvent -> CustomerViewModel.getAllCustomers(this::onSuccess, this::errorMessage));
     }
 
     private void viewDialogPane(Stage stage) throws IOException {
@@ -263,10 +214,8 @@ public class CustomerController implements Initializable {
         genericDialog.setShowMinimize(false);
         genericDialog.setShowAlwaysOnTop(false);
         genericDialog.setHeaderText("Customer Details View");
-
         genericDialog.setPrefHeight(screenHeight * .98);
         genericDialog.setPrefWidth(700);
-
         viewDialog =
                 MFXGenericDialogBuilder.build(genericDialog)
                         .toStageDialogBuilder()
@@ -278,7 +227,6 @@ public class CustomerController implements Initializable {
                         .setCenterInOwnerNode(false)
                         .setOverlayClose(true)
                         .get();
-
         io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(viewDialog.getScene());
     }
 
@@ -286,5 +234,31 @@ public class CustomerController implements Initializable {
         CustomerPreviewController controller = viewFxmlLoader.getController();
         controller.init(customer);
         viewDialog.showAndWait();
+    }
+
+    private void successMessage(String message) {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder(message)
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        AnchorPane.setRightAnchor(notification, 40.0);
+        AnchorPane.setTopAnchor(notification, 10.0);
+    }
+
+    private void errorMessage(String message) {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder(message)
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        AnchorPane.setRightAnchor(notification, 40.0);
+        AnchorPane.setTopAnchor(notification, 10.0);
     }
 }

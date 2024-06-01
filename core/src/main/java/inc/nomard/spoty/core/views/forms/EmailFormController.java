@@ -14,28 +14,21 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import inc.nomard.spoty.core.components.message.SpotyMessage;
-import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
-import inc.nomard.spoty.core.components.message.enums.MessageDuration;
-import inc.nomard.spoty.core.components.message.enums.MessageVariants;
-import inc.nomard.spoty.core.viewModels.BankViewModel;
-import inc.nomard.spoty.core.viewModels.EmailViewModel;
-import inc.nomard.spoty.utils.SpotyLogger;
-import io.github.palexdev.materialfx.controls.MFXTextField;
+import static inc.nomard.spoty.core.GlobalActions.*;
+import static inc.nomard.spoty.core.Validators.*;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.*;
+import inc.nomard.spoty.core.viewModels.*;
+import static inc.nomard.spoty.core.viewModels.EmailViewModel.*;
+import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import lombok.extern.java.Log;
-
-import java.net.URL;
-import java.util.Objects;
-import java.util.ResourceBundle;
-
-import static inc.nomard.spoty.core.GlobalActions.closeDialog;
-import static inc.nomard.spoty.core.Validators.requiredValidator;
-import static inc.nomard.spoty.core.viewModels.BankViewModel.clearBankData;
-import static inc.nomard.spoty.core.viewModels.BankViewModel.saveBank;
+import java.net.*;
+import java.util.*;
+import javafx.event.*;
+import javafx.fxml.*;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import lombok.extern.java.*;
 
 @Log
 public class EmailFormController implements Initializable {
@@ -62,6 +55,7 @@ public class EmailFormController implements Initializable {
     public MFXButton saveBtn;
     @FXML
     public MFXButton cancelBtn;
+    private ActionEvent actionEvent = null;
 
     public static EmailFormController getInstance() {
         if (Objects.equals(instance, null)) instance = new EmailFormController();
@@ -71,10 +65,10 @@ public class EmailFormController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Input bindings.
-        bankName.textProperty().bindBidirectional(BankViewModel.nameProperty());
-        accountName.textProperty().bindBidirectional(BankViewModel.emailProperty());
-        accountNumber.textProperty().bindBidirectional(BankViewModel.phoneProperty());
-        branch.textProperty().bindBidirectional(BankViewModel.townProperty());
+        bankName.textProperty().bindBidirectional(EmailViewModel.nameProperty());
+        accountName.textProperty().bindBidirectional(EmailViewModel.emailProperty());
+        accountNumber.textProperty().bindBidirectional(EmailViewModel.phoneProperty());
+//        branch.textProperty().bindBidirectional(EmailViewModel.townProperty());
         // Input listeners.
         requiredValidator(
                 bankName, "Name is required.", bankNameValidationLabel, saveBtn);
@@ -90,7 +84,7 @@ public class EmailFormController implements Initializable {
     private void dialogOnActions() {
         cancelBtn.setOnAction(
                 (event) -> {
-                    clearBankData();
+                    clearEmailData();
 
                     closeDialog(event);
 
@@ -105,78 +99,21 @@ public class EmailFormController implements Initializable {
                             && !accountNameValidationLabel.isVisible()
                             && !accountNumberValidationLabel.isVisible()
                             && !branchValidationLabel.isVisible()) {
-                        if (BankViewModel.getId() > 0) {
-                            try {
-                                BankViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
-                                closeDialog(event);
-                            } catch (Exception e) {
-                                SpotyLogger.writeToFile(e, this.getClass());
-                            }
+                        if (EmailViewModel.getId() > 0) {
+                            EmailViewModel.updateItem(this::onSuccess, this::successMessage, this::errorMessage);
+                            actionEvent = event;
                             return;
                         }
-
-                        try {
-                            saveBank(this::onAction, this::onAddSuccess, this::onFailed);
-                            closeDialog(event);
-                        } catch (Exception e) {
-                            SpotyLogger.writeToFile(e, this.getClass());
-                        }
+                        EmailViewModel.saveEmail(this::onSuccess, this::successMessage, this::errorMessage);
+                        actionEvent = event;
                         return;
                     }
                     onRequiredFieldsMissing();
                 });
     }
 
-    private void onAction() {
-        cancelBtn.setDisable(true);
-        saveBtn.setDisable(true);
-//        cancelBtn.setManaged(true);
-//        saveBtn.setManaged(true);
-    }
-
-    private void onAddSuccess() {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder("Email template added successfully")
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-circle-check")
-                        .type(MessageVariants.SUCCESS)
-                        .build();
-        notificationHolder.addMessage(notification);
-        cancelBtn.setDisable(false);
-        saveBtn.setDisable(false);
-
-        EmailViewModel.getAllEmails(null, null, null);
-    }
-
-    private void onUpdatedSuccess() {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder("Email template updated successfully")
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-circle-check")
-                        .type(MessageVariants.SUCCESS)
-                        .build();
-        notificationHolder.addMessage(notification);
-        cancelBtn.setDisable(false);
-        saveBtn.setDisable(false);
-
-        EmailViewModel.getAllEmails(null, null, null);
-    }
-
-    private void onFailed() {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder("An error occurred")
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
-                        .build();
-        notificationHolder.addMessage(notification);
-        cancelBtn.setDisable(false);
-        saveBtn.setDisable(false);
-
-        EmailViewModel.getAllEmails(null, null, null);
+    private void onSuccess() {
+        closeDialog(actionEvent);
     }
 
     private void onRequiredFieldsMissing() {
@@ -188,9 +125,31 @@ public class EmailFormController implements Initializable {
                         .type(MessageVariants.ERROR)
                         .build();
         notificationHolder.addMessage(notification);
-        cancelBtn.setDisable(false);
-        saveBtn.setDisable(false);
+    }
 
-        EmailViewModel.getAllEmails(null, null, null);
+    private void successMessage(String message) {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder(message)
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        AnchorPane.setRightAnchor(notification, 40.0);
+        AnchorPane.setTopAnchor(notification, 10.0);
+    }
+
+    private void errorMessage(String message) {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder(message)
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        AnchorPane.setRightAnchor(notification, 40.0);
+        AnchorPane.setTopAnchor(notification, 10.0);
     }
 }

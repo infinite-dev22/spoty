@@ -14,14 +14,12 @@
 
 package inc.nomard.spoty.network_bridge.dtos.transfers;
 
-import inc.nomard.spoty.network_bridge.dtos.Branch;
-import inc.nomard.spoty.network_bridge.dtos.hrm.employee.User;
+import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
+import java.text.*;
+import java.util.*;
 import lombok.*;
-import lombok.extern.java.Log;
-
-import java.text.DateFormat;
-import java.util.Date;
-import java.util.List;
+import lombok.extern.java.*;
 
 @Getter
 @Setter
@@ -37,13 +35,7 @@ public class TransferMaster {
     private Branch fromBranch;
     private Branch toBranch;
     private List<TransferDetail> transferDetails;
-    private String shipping;
-    private double total;
-    private String status;
-    private User approvedBy;
-    private User receivedBy;
-    private Date approvalDate;
-    private Date receiveDate;
+    private LinkedList<Long> childrenToDelete;
     private String notes;
 
     public String getToBranchName() {

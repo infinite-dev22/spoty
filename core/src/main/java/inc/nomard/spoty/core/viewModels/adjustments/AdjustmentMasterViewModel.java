@@ -16,37 +16,33 @@ package inc.nomard.spoty.core.viewModels.adjustments;
 
 import com.google.gson.*;
 import com.google.gson.reflect.*;
-
 import static inc.nomard.spoty.core.values.SharedResources.*;
-
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.adjustments.*;
 import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.network_bridge.repositories.implementations.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.adapters.*;
-
+import inc.nomard.spoty.utils.functional_paradigm.*;
 import java.lang.reflect.*;
-import java.text.*;
+import java.net.http.*;
 import java.util.*;
 import java.util.concurrent.*;
-
 import javafx.application.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
-
-import lombok.extern.java.Log;
+import lombok.extern.java.*;
 
 @Log
 public class AdjustmentMasterViewModel {
-    public static final ObservableList<AdjustmentMaster> adjustmentMastersList =
+    public static final ObservableList<AdjustmentMaster> adjustmentsList =
             FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
                     UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
             .create();
-    private static final ListProperty<AdjustmentMaster> adjustmentMasters =
-            new SimpleListProperty<>(adjustmentMastersList);
+    private static final ListProperty<AdjustmentMaster> adjustments =
+            new SimpleListProperty<>(adjustmentsList);
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>(null);
     private static final StringProperty note = new SimpleStringProperty("");
@@ -91,15 +87,15 @@ public class AdjustmentMasterViewModel {
     }
 
     public static ObservableList<AdjustmentMaster> getAdjustmentMasters() {
-        return adjustmentMasters.get();
+        return adjustments.get();
     }
 
-    public static void setAdjustmentMasters(ObservableList<AdjustmentMaster> adjustmentMasters) {
-        AdjustmentMasterViewModel.adjustmentMasters.set(adjustmentMasters);
+    public static void setAdjustmentMasters(ObservableList<AdjustmentMaster> adjustments) {
+        AdjustmentMasterViewModel.adjustments.set(adjustments);
     }
 
-    public static ListProperty<AdjustmentMaster> adjustmentMastersProperty() {
-        return adjustmentMasters;
+    public static ListProperty<AdjustmentMaster> adjustmentsProperty() {
+        return adjustments;
     }
 
     public static String getStatus() {
@@ -130,194 +126,214 @@ public class AdjustmentMasterViewModel {
         Platform.runLater(
                 () -> {
                     setId(0);
-                    setBranch(null);
                     setNote("");
                     PENDING_DELETES.clear();
                 });
     }
 
-    public static void saveAdjustmentMaster(
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
+    public static void saveAdjustmentMaster(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                            SpotyGotFunctional.MessageConsumer successMessage,
+                                            SpotyGotFunctional.MessageConsumer errorMessage) {
         var adjustmentMaster = AdjustmentMaster.builder()
                 .notes(getNote())
                 .build();
-
         if (!AdjustmentDetailViewModel.getAdjustmentDetailsList().isEmpty()) {
             adjustmentMaster.setAdjustmentDetails(AdjustmentDetailViewModel.getAdjustmentDetailsList());
         }
-
-        System.out.println(new Gson().toJson(adjustmentMaster));
-
-        var task = adjustmentRepository.postMaster(adjustmentMaster);
-        task.setOnRunning(workerStateEvent -> onActivity.run());
-        task.setOnSucceeded(workerStateEvent -> {
-            AdjustmentDetailViewModel.saveAdjustmentDetails(onActivity, null, onFailed);
-            onSuccess.run();
-        });
-        task.setOnFailed(workerStateEvent -> {
-            onFailed.run();
-            System.err.println("The task failed with the following exception:");
-            task.getException().printStackTrace(System.err);
-        });
-        SpotyThreader.spotyThreadPool(task);
-    }
-
-    public static void getAllAdjustmentMasters(
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
-        var task = adjustmentRepository.fetchAllMaster();
-        if (Objects.nonNull(onActivity)) {
-            task.setOnRunning(workerStateEvent -> onActivity.run());
-        }
-        if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> {
-                onFailed.run();
-                System.err.println("The task failed with the following exception:");
-                task.getException().printStackTrace(System.err);
-            });
-        }
-        task.setOnSucceeded(workerStateEvent -> {
-            Type listType = new TypeToken<ArrayList<AdjustmentMaster>>() {
-            }.getType();
-            ArrayList<AdjustmentMaster> adjustmentMasterList = new ArrayList<>();
-            try {
-                adjustmentMasterList = gson.fromJson(
-                        task.get().body(), listType);
-            } catch (InterruptedException | ExecutionException e) {
-                SpotyLogger.writeToFile(e, AdjustmentMasterViewModel.class);
-            }
-
-            adjustmentMastersList.clear();
-            adjustmentMastersList.addAll(adjustmentMasterList);
-
-            if (Objects.nonNull(onSuccess)) {
+        CompletableFuture<HttpResponse<String>> responseFuture = adjustmentRepository.post(adjustmentMaster);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 201) {
+                // Process the successful response
+                successMessage.showMessage("Adjustment created successfully");
                 onSuccess.run();
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
             }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, AdjustmentMasterViewModel.class);
+            return null;
         });
-        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void getAdjustmentMaster(
-            Long index,
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
+    public static void getAllAdjustmentMasters(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                               SpotyGotFunctional.MessageConsumer errorMessage) {
+        CompletableFuture<HttpResponse<String>> responseFuture = adjustmentRepository.fetchAll();
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 200) {
+                // Process the successful response
+                Type listType = new TypeToken<ArrayList<AdjustmentMaster>>() {
+                }.getType();
+                ArrayList<AdjustmentMaster> adjustmentMasterList = gson.fromJson(response.body(), listType);
+                adjustmentsList.clear();
+                adjustmentsList.addAll(adjustmentMasterList);
+                if (Objects.nonNull(onSuccess)) {
+                    onSuccess.run();
+                }
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
+            }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, AdjustmentMasterViewModel.class);
+            return null;
+        });
+    }
+
+    public static void getAdjustmentMaster(Long index,
+                                           SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                           SpotyGotFunctional.MessageConsumer errorMessage) {
         var findModel = FindModel.builder().id(index).build();
-        var task = adjustmentRepository.fetchMaster(findModel);
-        if (Objects.nonNull(onActivity)) {
-            task.setOnRunning(workerStateEvent -> onActivity.run());
-        }
-        if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> {
-                onFailed.run();
-                System.err.println("The task failed with the following exception:");
-                task.getException().printStackTrace(System.err);
-            });
-        }
-        task.setOnSucceeded(workerStateEvent -> {
-            AdjustmentMaster adjustmentMaster = new AdjustmentMaster();
-            try {
-                adjustmentMaster = gson.fromJson(task.get().body(), AdjustmentMaster.class);
-            } catch (InterruptedException | ExecutionException e) {
-                SpotyLogger.writeToFile(e, AdjustmentMasterViewModel.class);
+        CompletableFuture<HttpResponse<String>> responseFuture = adjustmentRepository.fetch(findModel);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 200) {
+                // Process the successful response
+                AdjustmentMaster adjustmentMaster = gson.fromJson(response.body(), AdjustmentMaster.class);
+                setId(adjustmentMaster.getId());
+                setNote(adjustmentMaster.getNotes());
+                AdjustmentDetailViewModel.adjustmentDetailsList.clear();
+                AdjustmentDetailViewModel.adjustmentDetailsList.addAll(adjustmentMaster.getAdjustmentDetails());
+                if (Objects.nonNull(onSuccess)) {
+                    onSuccess.run();
+                }
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
             }
-
-            setId(adjustmentMaster.getId());
-            setNote(adjustmentMaster.getNotes());
-            AdjustmentDetailViewModel.adjustmentDetailsList.clear();
-            AdjustmentDetailViewModel.adjustmentDetailsList.addAll(adjustmentMaster.getAdjustmentDetails());
-
-            if (Objects.nonNull(onSuccess)) {
-                onSuccess.run();
-            }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, AdjustmentMasterViewModel.class);
+            return null;
         });
-        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void searchItem(
-            String search,
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
+    public static void searchItem(String search,
+                                  SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                  SpotyGotFunctional.MessageConsumer errorMessage) {
         var searchModel = SearchModel.builder().search(search).build();
-        var task = adjustmentRepository.searchMaster(searchModel);
-        if (Objects.nonNull(onActivity)) {
-            task.setOnRunning(workerStateEvent -> onActivity.run());
-        }
-        if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> {
-                onFailed.run();
-                System.err.println("The task failed with the following exception:");
-                task.getException().printStackTrace(System.err);
-            });
-        }
-        task.setOnSucceeded(workerStateEvent -> {
-            Type listType = new TypeToken<ArrayList<AdjustmentMaster>>() {
-            }.getType();
-            ArrayList<AdjustmentMaster> adjustmentMasterList = new ArrayList<>();
-            try {
-                adjustmentMasterList = gson.fromJson(
-                        task.get().body(), listType);
-            } catch (InterruptedException | ExecutionException e) {
-                SpotyLogger.writeToFile(e, AdjustmentMasterViewModel.class);
+        CompletableFuture<HttpResponse<String>> responseFuture = adjustmentRepository.search(searchModel);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 200) {
+                // Process the successful response
+                Type listType = new TypeToken<ArrayList<AdjustmentMaster>>() {
+                }.getType();
+                ArrayList<AdjustmentMaster> adjustmentMasterList = gson.fromJson(
+                        response.body(), listType);
+                adjustmentsList.clear();
+                adjustmentsList.addAll(adjustmentMasterList);
+                if (Objects.nonNull(onSuccess)) {
+                    onSuccess.run();
+                }
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
             }
-
-            adjustmentMastersList.clear();
-            adjustmentMastersList.addAll(adjustmentMasterList);
-
-            if (Objects.nonNull(onSuccess)) {
-                onSuccess.run();
-            }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, AdjustmentMasterViewModel.class);
+            return null;
         });
-        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void updateItem(
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
+    public static void updateItem(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                  SpotyGotFunctional.MessageConsumer successMessage,
+                                  SpotyGotFunctional.MessageConsumer errorMessage) {
         var adjustmentMaster = AdjustmentMaster.builder()
                 .id(getId())
                 .notes(getNote())
                 .build();
-
         if (!PENDING_DELETES.isEmpty()) {
-            AdjustmentDetailViewModel.deleteAdjustmentDetails(PENDING_DELETES, onActivity, null, onFailed);
+            adjustmentMaster.setChildrenToDelete(PENDING_DELETES);
         }
-
         if (!AdjustmentDetailViewModel.getAdjustmentDetailsList().isEmpty()) {
             adjustmentMaster.setAdjustmentDetails(AdjustmentDetailViewModel.getAdjustmentDetailsList());
         }
-
-        var task = adjustmentRepository.putMaster(adjustmentMaster);
-        task.setOnRunning(workerStateEvent -> onActivity.run());
-        task.setOnSucceeded(workerStateEvent -> AdjustmentDetailViewModel.updateAdjustmentDetails(onActivity, onSuccess, onFailed));
-        task.setOnFailed(workerStateEvent -> {
-            onFailed.run();
-            System.err.println("The task failed with the following exception:");
-            task.getException().printStackTrace(System.err);
+        CompletableFuture<HttpResponse<String>> responseFuture = adjustmentRepository.put(adjustmentMaster);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 200 || response.statusCode() == 201 || response.statusCode() == 204) {
+                // Process the successful response
+                successMessage.showMessage("Adjustment updated successfully");
+                onSuccess.run();
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
+            }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, AdjustmentMasterViewModel.class);
+            return null;
         });
-        SpotyThreader.spotyThreadPool(task);
     }
 
     public static void deleteItem(
-            Long index,
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
+            Long index, SpotyGotFunctional.ParameterlessConsumer onSuccess,
+            SpotyGotFunctional.MessageConsumer successMessage,
+            SpotyGotFunctional.MessageConsumer errorMessage) {
         var findModel = FindModel.builder().id(index).build();
-
-        var task = adjustmentRepository.deleteMaster(findModel);
-        task.setOnRunning(workerStateEvent -> onActivity.run());
-        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
-        task.setOnFailed(workerStateEvent -> {
-            onFailed.run();
-            System.err.println("The task failed with the following exception:");
-            task.getException().printStackTrace(System.err);
+        CompletableFuture<HttpResponse<String>> responseFuture = adjustmentRepository.delete(findModel);
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 200 || response.statusCode() == 204) {
+                // Process the successful response
+                successMessage.showMessage("Adjustment deleted successfully");
+                onSuccess.run();
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
+            }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, AdjustmentMasterViewModel.class);
+            return null;
         });
-        SpotyThreader.spotyThreadPool(task);
     }
 }

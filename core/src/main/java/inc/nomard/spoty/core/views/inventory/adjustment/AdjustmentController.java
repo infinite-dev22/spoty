@@ -14,45 +14,30 @@
 
 package inc.nomard.spoty.core.views.inventory.adjustment;
 
-import inc.nomard.spoty.core.components.animations.SpotyAnimations;
-import inc.nomard.spoty.core.components.navigation.Pages;
-import inc.nomard.spoty.core.viewModels.adjustments.AdjustmentMasterViewModel;
-import inc.nomard.spoty.core.views.BaseController;
-import inc.nomard.spoty.core.views.previews.AdjustmentPreviewController;
-import inc.nomard.spoty.network_bridge.dtos.adjustments.AdjustmentMaster;
-import inc.nomard.spoty.utils.SpotyThreader;
+import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.*;
+import inc.nomard.spoty.core.components.navigation.*;
+import inc.nomard.spoty.core.viewModels.adjustments.*;
+import inc.nomard.spoty.core.views.*;
+import inc.nomard.spoty.core.views.previews.*;
+import inc.nomard.spoty.network_bridge.dtos.adjustments.*;
 import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
-import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
-import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
-import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
-import io.github.palexdev.materialfx.enums.ScrimPriority;
-import io.github.palexdev.materialfx.filter.DoubleFilter;
-import io.github.palexdev.materialfx.filter.StringFilter;
-import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
-import javafx.animation.RotateTransition;
-import javafx.application.Platform;
-import javafx.collections.ListChangeListener;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
-import javafx.scene.input.ContextMenuEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.stage.Modality;
-import javafx.stage.Screen;
-import javafx.stage.Stage;
-import javafx.util.Duration;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.Comparator;
-import java.util.ResourceBundle;
-
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
-import lombok.extern.java.Log;
+import io.github.palexdev.materialfx.controls.cell.*;
+import io.github.palexdev.materialfx.dialogs.*;
+import io.github.palexdev.materialfx.enums.*;
+import io.github.palexdev.materialfx.filter.*;
+import java.io.*;
+import java.net.*;
+import java.util.*;
+import javafx.application.*;
+import javafx.collections.*;
+import javafx.event.*;
+import javafx.fxml.*;
+import javafx.scene.input.*;
+import javafx.scene.layout.*;
+import javafx.stage.*;
+import lombok.extern.java.*;
 
 @SuppressWarnings("unchecked")
 @Log
@@ -65,10 +50,7 @@ public class AdjustmentController implements Initializable {
     @FXML
     public HBox actionsPane;
     @FXML
-    public HBox refresh;
-    @FXML
     private MFXTableView<AdjustmentMaster> masterTable;
-    private RotateTransition transition;
     private FXMLLoader viewFxmlLoader;
     private MFXStageDialog viewDialog;
 
@@ -90,7 +72,6 @@ public class AdjustmentController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        setIcons();
         Platform.runLater(this::setupTable);
     }
 
@@ -100,17 +81,14 @@ public class AdjustmentController implements Initializable {
         MFXTableColumn<AdjustmentMaster> adjustmentTotalAmount =
                 new MFXTableColumn<>(
                         "Total Amount", false, Comparator.comparing(AdjustmentMaster::getTotal));
-
         adjustmentStatus.setRowCellFactory(
                 adjustment -> new MFXTableRowCell<>(AdjustmentMaster::getStatus));
         adjustmentTotalAmount.setRowCellFactory(
                 adjustment -> new MFXTableRowCell<>(AdjustmentMaster::getTotal));
-
         adjustmentStatus.prefWidthProperty().bind(masterTable.widthProperty().multiply(.5));
         adjustmentTotalAmount
                 .prefWidthProperty()
                 .bind(masterTable.widthProperty().multiply(.5));
-
         masterTable
                 .getTableColumns()
                 .addAll(adjustmentStatus, adjustmentTotalAmount);
@@ -120,7 +98,6 @@ public class AdjustmentController implements Initializable {
                         new StringFilter<>("Status", AdjustmentMaster::getStatus),
                         new DoubleFilter<>("Total Amount", AdjustmentMaster::getTotal));
         getAdjustmentMasterTable();
-
         if (AdjustmentMasterViewModel.getAdjustmentMasters().isEmpty()) {
             AdjustmentMasterViewModel.getAdjustmentMasters()
                     .addListener(
@@ -131,7 +108,7 @@ public class AdjustmentController implements Initializable {
         } else {
             masterTable
                     .itemsProperty()
-                    .bindBidirectional(AdjustmentMasterViewModel.adjustmentMastersProperty());
+                    .bindBidirectional(AdjustmentMasterViewModel.adjustmentsProperty());
         }
     }
 
@@ -167,40 +144,19 @@ public class AdjustmentController implements Initializable {
         // Delete
         delete.setOnAction(
                 e -> {
-                    SpotyThreader.spotyThreadPool(
-                            () -> {
-                                try {
-                                    AdjustmentMasterViewModel.deleteItem(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
-                                } catch (Exception ex) {
-                                    throw new RuntimeException(ex);
-                                }
-                            });
-
+                    AdjustmentMasterViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
                     e.consume();
                 });
         // Edit
         edit.setOnAction(
                 e -> {
-                    SpotyThreader.spotyThreadPool(
-                            () -> {
-                                try {
-                                    AdjustmentMasterViewModel.getAdjustmentMaster(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
-                                } catch (Exception ex) {
-                                    throw new RuntimeException(ex);
-                                }
-                            });
-
-                    createBtnClicked();
+                    AdjustmentMasterViewModel.getAdjustmentMaster(obj.getData().getId(), this::createBtnClicked, this::errorMessage);
                     e.consume();
                 });
         // View
         view.setOnAction(
                 event -> {
-                    try {
-                        viewShow(obj.getData());
-                    } catch (Exception ex) {
-                        throw new RuntimeException(ex);
-                    }
+                    viewShow(obj.getData());
                     event.consume();
                 });
 
@@ -213,26 +169,7 @@ public class AdjustmentController implements Initializable {
         BaseController.navigation.navigate(Pages.getAdjustmentMasterFormPane());
     }
 
-    private void onAction() {
-        transition.playFromStart();
-        transition.setOnFinished((ActionEvent event) -> transition.playFromStart());
-    }
-
     private void onSuccess() {
-        transition.setOnFinished(null);
-    }
-
-    private void onFailed() {
-        transition.setOnFinished(null);
-    }
-
-    private void setIcons() {
-        var refreshIcon = new MFXFontIcon("fas-arrows-rotate", 24);
-        refresh.getChildren().addFirst(refreshIcon);
-
-        transition = SpotyAnimations.rotateTransition(refreshIcon, Duration.millis(1000), 360);
-
-        refreshIcon.setOnMouseClicked(mouseEvent -> AdjustmentMasterViewModel.getAllAdjustmentMasters(this::onAction, this::onSuccess, this::onFailed));
     }
 
     private void viewDialogPane(Stage stage) throws IOException {
@@ -242,10 +179,8 @@ public class AdjustmentController implements Initializable {
         MFXGenericDialog genericDialog = viewFxmlLoader.load();
         genericDialog.setShowMinimize(false);
         genericDialog.setShowAlwaysOnTop(false);
-
         genericDialog.setPrefHeight(screenHeight * .98);
         genericDialog.setPrefWidth(700);
-
         viewDialog =
                 MFXGenericDialogBuilder.build(genericDialog)
                         .toStageDialogBuilder()
@@ -257,7 +192,6 @@ public class AdjustmentController implements Initializable {
                         .setCenterInOwnerNode(false)
                         .setOverlayClose(true)
                         .get();
-
         io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(viewDialog.getScene());
     }
 
@@ -265,5 +199,31 @@ public class AdjustmentController implements Initializable {
         AdjustmentPreviewController controller = viewFxmlLoader.getController();
         controller.init(adjustmentMaster);
         viewDialog.showAndWait();
+    }
+
+    private void successMessage(String message) {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder(message)
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        AnchorPane.setRightAnchor(notification, 40.0);
+        AnchorPane.setTopAnchor(notification, 10.0);
+    }
+
+    private void errorMessage(String message) {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder(message)
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        AnchorPane.setRightAnchor(notification, 40.0);
+        AnchorPane.setTopAnchor(notification, 10.0);
     }
 }

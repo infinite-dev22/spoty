@@ -53,8 +53,7 @@ import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_
 public class TransferDetailFormController implements Initializable {
     private static TransferDetailFormController instance;
     @FXML
-    public MFXTextField quantity,
-            description;
+    public MFXTextField quantity;
     @FXML
     public MFXFilterComboBox<Product> product;
     @FXML
@@ -76,9 +75,6 @@ public class TransferDetailFormController implements Initializable {
         // Form input binding.
         product.valueProperty().bindBidirectional(TransferDetailViewModel.productProperty());
         quantity.textProperty().bindBidirectional(TransferDetailViewModel.quantityProperty());
-        description
-                .textProperty()
-                .bindBidirectional(TransferDetailViewModel.descriptionProperty());
 
         // Combo box Converter.
         StringConverter<Product> productVariantConverter =

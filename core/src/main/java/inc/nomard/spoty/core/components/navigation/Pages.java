@@ -15,11 +15,11 @@
 package inc.nomard.spoty.core.components.navigation;
 
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
-
 import inc.nomard.spoty.core.views.auth.*;
 import inc.nomard.spoty.core.views.bank.*;
 import inc.nomard.spoty.core.views.customers.*;
 import inc.nomard.spoty.core.views.dashboard.*;
+import inc.nomard.spoty.core.views.deductions.*;
 import inc.nomard.spoty.core.views.expenses.category.*;
 import inc.nomard.spoty.core.views.expenses.expense.*;
 import inc.nomard.spoty.core.views.forms.*;
@@ -42,16 +42,13 @@ import inc.nomard.spoty.core.views.sales.pos.*;
 import inc.nomard.spoty.core.views.settings.*;
 import inc.nomard.spoty.core.views.stock_in.*;
 import inc.nomard.spoty.core.views.suppliers.*;
-import inc.nomard.spoty.core.views.deductions.*;
 import inc.nomard.spoty.core.views.transfer.*;
-
 import java.io.*;
-
 import javafx.fxml.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
 import lombok.*;
-import lombok.extern.java.Log;
+import lombok.extern.java.*;
 
 @Log
 public class Pages {
@@ -119,7 +116,6 @@ public class Pages {
     private static final FXMLLoader companySettingsLoader = fxmlLoader("views/settings/CompanyDetails.fxml");
     private static final FXMLLoader currencyLoader = fxmlLoader("views/settings/Currency.fxml");
 
-    private static final FXMLLoader saleMasterFormLoader = fxmlLoader("views/forms/SaleMasterForm.fxml");
     private static final FXMLLoader productCategoryLoader =
             fxmlLoader("views/inventory/category/ProductCategory.fxml");
     private static final FXMLLoader brandLoader = fxmlLoader("views/inventory/brand/Brand.fxml");
@@ -331,9 +327,6 @@ public class Pages {
     private static BorderPane requisitionMasterFormPane;
 
     @Getter
-    private static BorderPane saleMasterFormPane;
-
-    @Getter
     private static BorderPane stockInMasterFormPane;
 
     @Getter
@@ -451,7 +444,6 @@ public class Pages {
                 c -> PurchaseMasterFormController.getInstance(stage));
         requisitionMasterFormLoader.setControllerFactory(
                 c -> RequisitionMasterFormController.getInstance(stage));
-        saleMasterFormLoader.setControllerFactory(c -> SaleMasterFormController.getInstance(stage));
         stockInMasterFormLoader.setControllerFactory(
                 c -> StockInMasterFormController.getInstance(stage));
         transferMasterFormLoader.setControllerFactory(
@@ -537,7 +529,6 @@ public class Pages {
         quotationMasterFormPane = quotationMasterFormLoader.load();
         purchaseMasterFormPane = purchaseMasterFormLoader.load();
         requisitionMasterFormPane = requisitionMasterFormLoader.load();
-        saleMasterFormPane = saleMasterFormLoader.load();
         stockInMasterFormPane = stockInMasterFormLoader.load();
         transferMasterFormPane = transferMasterFormLoader.load();
     }

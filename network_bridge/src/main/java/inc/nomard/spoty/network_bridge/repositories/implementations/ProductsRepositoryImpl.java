@@ -1,196 +1,119 @@
 package inc.nomard.spoty.network_bridge.repositories.implementations;
 
-import com.google.gson.Gson;
-import inc.nomard.spoty.network_bridge.auth.ProtectedGlobals;
-import inc.nomard.spoty.network_bridge.end_points.EndPoints;
-import inc.nomard.spoty.network_bridge.models.FindModel;
-import inc.nomard.spoty.network_bridge.models.SearchModel;
-import inc.nomard.spoty.network_bridge.repositories.interfaces.ProductRepository;
-import javafx.concurrent.Task;
-import lombok.extern.java.Log;
-
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.util.ArrayList;
+import com.google.gson.*;
+import inc.nomard.spoty.network_bridge.auth.*;
+import inc.nomard.spoty.network_bridge.end_points.*;
+import inc.nomard.spoty.network_bridge.models.*;
+import inc.nomard.spoty.network_bridge.repositories.interfaces.*;
+import java.net.*;
+import java.net.http.*;
+import java.util.*;
+import java.util.concurrent.*;
+import lombok.extern.java.*;
 
 @Log
 public class ProductsRepositoryImpl extends ProtectedGlobals implements ProductRepository {
     @Override
-    public Task<HttpResponse<String>> fetchAll() {
-        return new Task<>() {
-            @Override
-            protected HttpResponse<String> call() throws Exception {
-                return taskCreate();
-            }
+    public CompletableFuture<HttpResponse<String>> fetchAll() {
+        var request = HttpRequest.newBuilder()
+                .uri(URI.create(EndPoints.Products.allProducts))
+                .header("Authorization", authToken)
+                .header("Accept", "application/json")
+                .header("Content-Type", "application/json")
+                .method("GET", HttpRequest.BodyPublishers.noBody())
+                .build();
 
-            private HttpResponse<String> taskCreate() throws IOException, InterruptedException {
-                var request = HttpRequest.newBuilder()
-                        .uri(URI.create(EndPoints.Products.allProducts))
-                        .header("Authorization", authToken)
-                        .header("Accept", "application/json")
-                        .header("Content-Type", "application/json")
-                        .method("GET", HttpRequest.BodyPublishers.noBody())
-                        .build();
-
-                return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-            }
-        };
+        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public Task<HttpResponse<String>> fetch(FindModel findModel) {
-        return new Task<>() {
-            @Override
-            protected HttpResponse<String> call() throws Exception {
-                return taskCreate();
-            }
+    public CompletableFuture<HttpResponse<String>> fetch(FindModel findModel) {
+        var request = HttpRequest.newBuilder()
+                .uri(URI.create(EndPoints.Products.productById))
+                .header("Authorization", authToken)
+                .header("Accept", "application/json")
+                .header("Content-Type", "application/json")
+                .method("GET", HttpRequest.BodyPublishers.ofString(new Gson().toJson(findModel)))
+                .build();
 
-            private HttpResponse<String> taskCreate() throws IOException, InterruptedException {
-                var request = HttpRequest.newBuilder()
-                        .uri(URI.create(EndPoints.Products.productById))
-                        .header("Authorization", authToken)
-                        .header("Accept", "application/json")
-                        .header("Content-Type", "application/json")
-                        .method("GET", HttpRequest.BodyPublishers.ofString(new Gson().toJson(findModel)))
-                        .build();
-
-                return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-            }
-        };
+        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public Task<HttpResponse<String>> search(SearchModel searchModel) {
-        return new Task<>() {
-            @Override
-            protected HttpResponse<String> call() throws Exception {
-                return taskCreate();
-            }
+    public CompletableFuture<HttpResponse<String>> search(SearchModel searchModel) {
+        var request = HttpRequest.newBuilder()
+                .uri(URI.create(EndPoints.Products.searchProducts))
+                .header("Authorization", authToken)
+                .header("Accept", "application/json")
+                .header("Content-Type", "application/json")
+                .method("GET", HttpRequest.BodyPublishers.ofString(new Gson().toJson(searchModel)))
+                .build();
 
-            private HttpResponse<String> taskCreate() throws IOException, InterruptedException {
-                var request = HttpRequest.newBuilder()
-                        .uri(URI.create(EndPoints.Products.searchProducts))
-                        .header("Authorization", authToken)
-                        .header("Accept", "application/json")
-                        .header("Content-Type", "application/json")
-                        .method("GET", HttpRequest.BodyPublishers.ofString(new Gson().toJson(searchModel)))
-                        .build();
-
-                return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-            }
-        };
+        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public Task<HttpResponse<String>> stockAlert() {
-        return new Task<>() {
-            @Override
-            protected HttpResponse<String> call() throws Exception {
-                return taskCreate();
-            }
+    public CompletableFuture<HttpResponse<String>> stockAlert() {
+        var request = HttpRequest.newBuilder()
+                .uri(URI.create(EndPoints.Products.productsStockAlert))
+                .header("Authorization", authToken)
+                .header("Accept", "application/json")
+                .header("Content-Type", "application/json")
+                .method("GET", HttpRequest.BodyPublishers.noBody())
+                .build();
 
-            private HttpResponse<String> taskCreate() throws IOException, InterruptedException {
-                var request = HttpRequest.newBuilder()
-                        .uri(URI.create(EndPoints.Products.productsStockAlert))
-                        .header("Authorization", authToken)
-                        .header("Accept", "application/json")
-                        .header("Content-Type", "application/json")
-                        .method("GET", HttpRequest.BodyPublishers.noBody())
-                        .build();
-
-                return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-            }
-        };
+        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public Task<HttpResponse<String>> post(Object object) {
-        return new Task<>() {
-            @Override
-            protected HttpResponse<String> call() throws Exception {
-                return taskCreate();
-            }
+    public CompletableFuture<HttpResponse<String>> post(Object object) {
+        var request = HttpRequest.newBuilder()
+                .uri(URI.create(EndPoints.Products.addProduct))
+                .header("Authorization", authToken)
+                .header("Accept", "application/json")
+                .header("Content-Type", "application/json")
+                .method("POST", HttpRequest.BodyPublishers.ofString(new Gson().toJson(object)))
+                .build();
 
-            private HttpResponse<String> taskCreate() throws IOException, InterruptedException {
-                var request = HttpRequest.newBuilder()
-                        .uri(URI.create(EndPoints.Products.addProduct))
-                        .header("Authorization", authToken)
-                        .header("Accept", "application/json")
-                        .header("Content-Type", "application/json")
-                        .method("POST", HttpRequest.BodyPublishers.ofString(new Gson().toJson(object)))
-                        .build();
-
-                return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-            }
-        };
+        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public Task<HttpResponse<String>> put(Object object) {
-        return new Task<>() {
-            @Override
-            protected HttpResponse<String> call() throws Exception {
-                return taskCreate();
-            }
+    public CompletableFuture<HttpResponse<String>> put(Object object) {
+        var request = HttpRequest.newBuilder()
+                .uri(URI.create(EndPoints.Products.updateProduct))
+                .header("Authorization", authToken)
+                .header("Accept", "application/json")
+                .header("Content-Type", "application/json")
+                .method("PUT", HttpRequest.BodyPublishers.ofString(new Gson().toJson(object)))
+                .build();
 
-            private HttpResponse<String> taskCreate() throws IOException, InterruptedException {
-                var request = HttpRequest.newBuilder()
-                        .uri(URI.create(EndPoints.Products.updateProduct))
-                        .header("Authorization", authToken)
-                        .header("Accept", "application/json")
-                        .header("Content-Type", "application/json")
-                        .method("PUT", HttpRequest.BodyPublishers.ofString(new Gson().toJson(object)))
-                        .build();
-
-                return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-            }
-        };
+        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public Task<HttpResponse<String>> delete(FindModel findModel) {
-        return new Task<>() {
-            @Override
-            protected HttpResponse<String> call() throws Exception {
-                return taskCreate();
-            }
+    public CompletableFuture<HttpResponse<String>> delete(FindModel findModel) {
+        var request = HttpRequest.newBuilder()
+                .uri(URI.create(EndPoints.Products.deleteProduct))
+                .header("Authorization", authToken)
+                .header("Accept", "application/json")
+                .header("Content-Type", "application/json")
+                .method("DELETE", HttpRequest.BodyPublishers.ofString(new Gson().toJson(findModel)))
+                .build();
 
-            private HttpResponse<String> taskCreate() throws IOException, InterruptedException {
-                var request = HttpRequest.newBuilder()
-                        .uri(URI.create(EndPoints.Products.deleteProduct))
-                        .header("Authorization", authToken)
-                        .header("Accept", "application/json")
-                        .header("Content-Type", "application/json")
-                        .method("DELETE", HttpRequest.BodyPublishers.ofString(new Gson().toJson(findModel)))
-                        .build();
-
-                return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-            }
-        };
+        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @Override
-    public Task<HttpResponse<String>> deleteMultiple(ArrayList<FindModel> findModelList) {
-        return new Task<>() {
-            @Override
-            protected HttpResponse<String> call() throws Exception {
-                return taskCreate();
-            }
+    public CompletableFuture<HttpResponse<String>> deleteMultiple(ArrayList<FindModel> findModelList) {
+        var request = HttpRequest.newBuilder()
+                .uri(URI.create(EndPoints.Products.deleteProducts))
+                .header("Authorization", authToken)
+                .header("Accept", "application/json")
+                .header("Content-Type", "application/json")
+                .method("DELETE", HttpRequest.BodyPublishers.ofString(new Gson().toJson(findModelList)))
+                .build();
 
-            private HttpResponse<String> taskCreate() throws IOException, InterruptedException {
-                var request = HttpRequest.newBuilder()
-                        .uri(URI.create(EndPoints.Products.deleteProducts))
-                        .header("Authorization", authToken)
-                        .header("Accept", "application/json")
-                        .header("Content-Type", "application/json")
-                        .method("DELETE", HttpRequest.BodyPublishers.ofString(new Gson().toJson(findModelList)))
-                        .build();
-
-                return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-            }
-        };
+        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
 }

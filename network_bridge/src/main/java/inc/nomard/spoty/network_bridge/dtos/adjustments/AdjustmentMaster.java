@@ -14,13 +14,11 @@
 
 package inc.nomard.spoty.network_bridge.dtos.adjustments;
 
-import inc.nomard.spoty.network_bridge.dtos.Branch;
-import inc.nomard.spoty.network_bridge.dtos.hrm.employee.User;
+import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
+import java.util.*;
 import lombok.*;
-import lombok.extern.java.Log;
-
-import java.util.ArrayList;
-import java.util.List;
+import lombok.extern.java.*;
 
 @Getter
 @Setter
@@ -34,6 +32,7 @@ public class AdjustmentMaster {
     private String ref;
     private ArrayList<Branch> branches;
     private List<AdjustmentDetail> adjustmentDetails;
+    private LinkedList<Long> childrenToDelete;
     private String notes;
     private String status;
     private Double Total;

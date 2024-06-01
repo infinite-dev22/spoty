@@ -14,14 +14,11 @@
 
 package inc.nomard.spoty.network_bridge.dtos.stock_ins;
 
-import inc.nomard.spoty.network_bridge.dtos.Branch;
-import inc.nomard.spoty.network_bridge.dtos.hrm.employee.User;
+import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
+import java.util.*;
 import lombok.*;
-import lombok.extern.java.Log;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import lombok.extern.java.*;
 
 @Getter
 @Setter
@@ -35,6 +32,7 @@ public class StockInMaster {
     private String ref;
     private ArrayList<Branch> branches;
     private List<StockInDetail> stockInDetails;
+    private LinkedList<Long> childrenToDelete;
     private String shipping;
     private Double total;
     private User approvedBy;

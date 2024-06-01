@@ -15,26 +15,21 @@
 package inc.nomard.spoty.core.views.requisition;
 
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
-
-import inc.nomard.spoty.core.components.animations.*;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.*;
 import inc.nomard.spoty.core.components.navigation.*;
 import inc.nomard.spoty.core.viewModels.requisitions.*;
 import inc.nomard.spoty.core.views.*;
 import inc.nomard.spoty.core.views.previews.*;
 import inc.nomard.spoty.network_bridge.dtos.requisitions.*;
-import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.filter.*;
-import io.github.palexdev.mfxresources.fonts.*;
-
 import java.io.*;
 import java.net.*;
 import java.util.*;
-
-import javafx.animation.*;
 import javafx.application.*;
 import javafx.collections.*;
 import javafx.event.*;
@@ -42,9 +37,7 @@ import javafx.fxml.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
-import javafx.util.*;
-import lombok.extern.java.Log;
-import lombok.extern.java.Log;
+import lombok.extern.java.*;
 
 @SuppressWarnings("unchecked")
 @Log
@@ -59,10 +52,7 @@ public class RequisitionController implements Initializable {
     @FXML
     public MFXButton createBtn;
     @FXML
-    public HBox refresh;
-    @FXML
     private MFXTableView<RequisitionMaster> masterTable;
-    private RotateTransition transition;
     private FXMLLoader viewFxmlLoader;
     private MFXStageDialog viewDialog;
 
@@ -84,7 +74,6 @@ public class RequisitionController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        setIcons();
         Platform.runLater(this::setupTable);
     }
 
@@ -92,75 +81,21 @@ public class RequisitionController implements Initializable {
         MFXTableColumn<RequisitionMaster> masterSupplier =
                 new MFXTableColumn<>(
                         "Supplier", false, Comparator.comparing(RequisitionMaster::getSupplierName));
-        MFXTableColumn<RequisitionMaster> masterStatus =
-                new MFXTableColumn<>("Status", false, Comparator.comparing(RequisitionMaster::getStatus));
-        MFXTableColumn<RequisitionMaster> masterPaymentStatus =
-                new MFXTableColumn<>(
-                        "Pay Status", false, Comparator.comparing(RequisitionMaster::getPaymentStatus));
-        MFXTableColumn<RequisitionMaster> masterDate =
-                new MFXTableColumn<>("Date", false, Comparator.comparing(RequisitionMaster::getDate));
-        MFXTableColumn<RequisitionMaster> masterGrandTotal =
-                new MFXTableColumn<>("Total Amount", false, Comparator.comparing(RequisitionMaster::getTotal));
-        MFXTableColumn<RequisitionMaster> masterAmountPaid =
-                new MFXTableColumn<>("Paid Amount", false, Comparator.comparing(RequisitionMaster::getAmountPaid));
-        MFXTableColumn<RequisitionMaster> masterAmountDue =
-                new MFXTableColumn<>("Due Amount", false, Comparator.comparing(RequisitionMaster::getAmountDue));
 
         masterSupplier.setRowCellFactory(
                 master -> new MFXTableRowCell<>(RequisitionMaster::getSupplierName));
-        masterStatus.setRowCellFactory(
-                master -> new MFXTableRowCell<>(RequisitionMaster::getStatus));
-        masterPaymentStatus.setRowCellFactory(
-                master -> new MFXTableRowCell<>(RequisitionMaster::getPaymentStatus));
-        masterDate.setRowCellFactory(
-                master -> new MFXTableRowCell<>(RequisitionMaster::getLocaleDate));
-        masterGrandTotal.setRowCellFactory(
-                master -> new MFXTableRowCell<>(RequisitionMaster::getTotal));
-        masterAmountPaid.setRowCellFactory(
-                master -> new MFXTableRowCell<>(RequisitionMaster::getAmountPaid));
-        masterAmountDue.setRowCellFactory(
-                master -> new MFXTableRowCell<>(RequisitionMaster::getAmountDue));
 
         masterSupplier
-                .prefWidthProperty()
-                .bind(masterTable.widthProperty().multiply(.25));
-        masterStatus
-                .prefWidthProperty()
-                .bind(masterTable.widthProperty().multiply(.25));
-        masterPaymentStatus
-                .prefWidthProperty()
-                .bind(masterTable.widthProperty().multiply(.25));
-        masterDate.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
-        masterGrandTotal
-                .prefWidthProperty()
-                .bind(masterTable.widthProperty().multiply(.25));
-        masterAmountPaid
-                .prefWidthProperty()
-                .bind(masterTable.widthProperty().multiply(.25));
-        masterAmountDue
                 .prefWidthProperty()
                 .bind(masterTable.widthProperty().multiply(.25));
 
         masterTable
                 .getTableColumns()
-                .addAll(
-                        masterSupplier,
-                        masterStatus,
-                        masterPaymentStatus,
-                        masterDate,
-                        masterGrandTotal,
-                        masterAmountPaid,
-                        masterAmountDue);
+                .addAll(masterSupplier);
         masterTable
                 .getFilters()
-                .addAll(
-                        new StringFilter<>("Reference", RequisitionMaster::getRef),
-                        new StringFilter<>("Supplier", RequisitionMaster::getSupplierName),
-                        new StringFilter<>("Status", RequisitionMaster::getStatus),
-                        new StringFilter<>("Pay Status", RequisitionMaster::getPaymentStatus),
-                        new DoubleFilter<>("Total", RequisitionMaster::getTotal),
-                        new DoubleFilter<>("Paid", RequisitionMaster::getAmountPaid),
-                        new DoubleFilter<>("Due", RequisitionMaster::getAmountDue));
+                .addAll(new StringFilter<>("Reference", RequisitionMaster::getRef),
+                        new StringFilter<>("Supplier", RequisitionMaster::getSupplierName));
         getTable();
 
         if (RequisitionMasterViewModel.getRequisitions().isEmpty()) {
@@ -207,36 +142,19 @@ public class RequisitionController implements Initializable {
         // Delete
         delete.setOnAction(
                 e -> {
-                    SpotyThreader.spotyThreadPool(() -> {
-                        try {
-                            RequisitionMasterViewModel.deleteItem(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
-                        } catch (Exception ex) {
-                            throw new RuntimeException(ex);
-                        }
-                    });
+                    RequisitionMasterViewModel.deleteItem(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
                     e.consume();
                 });
         // Edit
         edit.setOnAction(
                 e -> {
-                    SpotyThreader.spotyThreadPool(() -> {
-                        try {
-                            RequisitionMasterViewModel.getRequisitionMaster(obj.getData().getId(), this::onAction, this::onSuccess, this::onFailed);
-                        } catch (Exception ex) {
-                            throw new RuntimeException(ex);
-                        }
-                    });
-                    createBtnClicked();
+                    RequisitionMasterViewModel.getRequisitionMaster(obj.getData().getId(), this::createBtnClicked, this::errorMessage);
                     e.consume();
                 });
         // View
         view.setOnAction(
                 event -> {
-                    try {
-                        viewShow(obj.getData());
-                    } catch (Exception ex) {
-                        throw new RuntimeException(ex);
-                    }
+                    viewShow(obj.getData());
                     event.consume();
                 });
 
@@ -249,26 +167,7 @@ public class RequisitionController implements Initializable {
         BaseController.navigation.navigate(Pages.getRequisitionMasterFormPane());
     }
 
-    private void onAction() {
-        transition.playFromStart();
-        transition.setOnFinished((ActionEvent event) -> transition.playFromStart());
-    }
-
     private void onSuccess() {
-        transition.setOnFinished(null);
-    }
-
-    private void onFailed() {
-        transition.setOnFinished(null);
-    }
-
-    private void setIcons() {
-        var refreshIcon = new MFXFontIcon("fas-arrows-rotate", 24);
-        refresh.getChildren().addFirst(refreshIcon);
-
-        transition = SpotyAnimations.rotateTransition(refreshIcon, Duration.millis(1000), 360);
-
-        refreshIcon.setOnMouseClicked(mouseEvent -> RequisitionMasterViewModel.getAllRequisitionMasters(this::onAction, this::onSuccess, this::onFailed));
     }
 
     private void viewDialogPane(Stage stage) throws IOException {
@@ -301,5 +200,31 @@ public class RequisitionController implements Initializable {
         RequisitionPreviewController controller = viewFxmlLoader.getController();
         controller.init(requisitionMaster);
         viewDialog.showAndWait();
+    }
+
+    private void successMessage(String message) {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder(message)
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        AnchorPane.setRightAnchor(notification, 40.0);
+        AnchorPane.setTopAnchor(notification, 10.0);
+    }
+
+    private void errorMessage(String message) {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder(message)
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        AnchorPane.setRightAnchor(notification, 40.0);
+        AnchorPane.setTopAnchor(notification, 10.0);
     }
 }

@@ -1,5 +1,3 @@
 rootProject.name = 'spoty'
-include ':core'
-include ':network_bridge'
-include ':utils'
+include ':core', ':network_bridge', ':utils'
 

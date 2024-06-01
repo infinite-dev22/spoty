@@ -14,10 +14,9 @@
 
 package inc.nomard.spoty.network_bridge.dtos.quotations;
 
-import inc.nomard.spoty.network_bridge.dtos.Product;
-import inc.nomard.spoty.network_bridge.dtos.UnitOfMeasure;
+import inc.nomard.spoty.network_bridge.dtos.*;
 import lombok.*;
-import lombok.extern.java.Log;
+import lombok.extern.java.*;
 
 @Getter
 @Setter
@@ -28,20 +27,15 @@ import lombok.extern.java.Log;
 @Log
 public class QuotationDetail {
     private Long id;
-    private double price;
-    private UnitOfMeasure saleUnit;
     private Product product;
     private QuotationMaster quotation;
-    private double netTax;
-    private String taxType;
-    private double discount;
-    private String discountType;
-    private double total;
-    private double subTotalPrice;
     private int quantity;
-    private String serialNumber;
+    private double subTotal;
 
     public String getProductName() {
         return product.getName();
+    }
+    public Double getProductPrice() {
+        return product.getPrice();
     }
 }

@@ -51,9 +51,7 @@ import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_
 public class QuotationDetailFormController implements Initializable {
     private static QuotationDetailFormController instance;
     @FXML
-    public MFXTextField quantity,
-            orderTax,
-            discount;
+    public MFXTextField quantity;
     @FXML
     public MFXFilterComboBox<Product> product;
     @FXML
@@ -79,12 +77,6 @@ public class QuotationDetailFormController implements Initializable {
         product
                 .valueProperty()
                 .bindBidirectional(QuotationDetailViewModel.productProperty());
-        orderTax
-                .textProperty()
-                .bindBidirectional(QuotationDetailViewModel.taxProperty());
-        discount
-                .textProperty()
-                .bindBidirectional(QuotationDetailViewModel.discountProperty());
 
         // Combo box Converter.
         StringConverter<Product> productVariantConverter =

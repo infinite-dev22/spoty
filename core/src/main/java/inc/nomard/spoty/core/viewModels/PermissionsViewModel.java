@@ -16,23 +16,19 @@ package inc.nomard.spoty.core.viewModels;
 
 import com.google.gson.*;
 import com.google.gson.reflect.*;
-import inc.nomard.spoty.core.viewModels.adjustments.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
-import inc.nomard.spoty.network_bridge.dtos.adjustments.*;
 import inc.nomard.spoty.network_bridge.repositories.implementations.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.adapters.*;
 import inc.nomard.spoty.utils.exceptions.*;
-
+import inc.nomard.spoty.utils.functional_paradigm.*;
 import java.lang.reflect.*;
+import java.net.http.*;
 import java.util.*;
 import java.util.concurrent.*;
-
 import javafx.beans.property.*;
 import javafx.collections.*;
-
-// TODO: Transfer to backend.
-import lombok.extern.java.Log;
+import lombok.extern.java.*;
 
 @Log
 public class PermissionsViewModel {
@@ -1020,38 +1016,37 @@ public class PermissionsViewModel {
                 .orElseThrow(() -> new NotFoundException("Permission with name '" + permissionName + "' not found"));
     }
 
-    public static void getAllPermissions(ParameterlessConsumer onActivity,
-                                         ParameterlessConsumer onSuccess,
-                                         ParameterlessConsumer onFailed) {
-        var task = rolesRepository.fetchAllPermissions();
-        if (Objects.nonNull(onActivity)) {
-            task.setOnRunning(workerStateEvent -> onActivity.run());
-        }
-        if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> {
-                onFailed.run();
-                System.err.println("The task failed with the following exception:");
-                task.getException().printStackTrace(System.err);
-            });
-        }
-        task.setOnSucceeded(workerStateEvent -> {
-            Type listType = new TypeToken<ArrayList<Permission>>() {
-            }.getType();
-            ArrayList<Permission> permissionList = new ArrayList<>();
-            try {
-                permissionList = gson.fromJson(
-                        task.get().body(), listType);
-            } catch (InterruptedException | ExecutionException e) {
-                SpotyLogger.writeToFile(e, PermissionsViewModel.class);
-            }
-
-            permissionsList.clear();
-            permissionsList.addAll(permissionList);
-
-            if (Objects.nonNull(onSuccess)) {
+    public static void getAllPermissions(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                         SpotyGotFunctional.MessageConsumer errorMessage) {
+        CompletableFuture<HttpResponse<String>> responseFuture = rolesRepository.fetchAllPermissions();
+        responseFuture.thenAccept(response -> {
+            // Handle successful response
+            if (response.statusCode() == 201) {
+                // Process the successful response
+                Type listType = new TypeToken<ArrayList<Permission>>() {
+                }.getType();
+                ArrayList<Permission> permissionList = gson.fromJson(response.body(), listType);
+                permissionsList.clear();
+                permissionsList.addAll(permissionList);
+                if (Objects.nonNull(onSuccess)) {
+                    onSuccess.run();
+                }
                 onSuccess.run();
+            } else if (response.statusCode() == 401) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, access denied");
+            } else if (response.statusCode() == 404) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, resource not found");
+            } else if (response.statusCode() == 500) {
+                // Handle non-200 status codes
+                errorMessage.showMessage("An error occurred, this is definitely on our side");
             }
+        }).exceptionally(throwable -> {
+            // Handle exceptions during the request (e.g., network issues)
+            errorMessage.showMessage("An error occurred, this is on your side");
+            SpotyLogger.writeToFile(throwable, PermissionsViewModel.class);
+            return null;
         });
-        SpotyThreader.spotyThreadPool(task);
     }
 }

@@ -14,39 +14,20 @@
 
 package inc.nomard.spoty.core.viewModels.adjustments;
 
-import com.google.gson.*;
-import com.google.gson.reflect.*;
-
 import static inc.nomard.spoty.core.values.SharedResources.*;
-
-import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.adjustments.*;
-import inc.nomard.spoty.network_bridge.models.*;
-import inc.nomard.spoty.network_bridge.repositories.implementations.*;
-import inc.nomard.spoty.utils.*;
-import inc.nomard.spoty.utils.adapters.*;
-
-import java.lang.reflect.*;
-import java.util.*;
-import java.util.concurrent.*;
-
 import javafx.application.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
 import lombok.*;
-
-import lombok.extern.java.Log;
+import lombok.extern.java.*;
 
 @Log
 public class AdjustmentDetailViewModel {
     @Getter
     public static final ObservableList<AdjustmentDetail> adjustmentDetailsList =
             FXCollections.observableArrayList();
-    private static final Gson gson = new GsonBuilder()
-            .registerTypeAdapter(Date.class,
-                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
-            .create();
     private static final ListProperty<AdjustmentDetail> adjustmentDetails =
             new SimpleListProperty<>(adjustmentDetailsList);
     private static final LongProperty id = new SimpleLongProperty();
@@ -54,13 +35,12 @@ public class AdjustmentDetailViewModel {
     private static final ObjectProperty<AdjustmentMaster> adjustment = new SimpleObjectProperty<>();
     private static final StringProperty quantity = new SimpleStringProperty();
     private static final StringProperty adjustmentType = new SimpleStringProperty();
-    private static final AdjustmentRepositoryImpl adjustmentRepository = new AdjustmentRepositoryImpl();
 
-    public static long getId() {
+    public static Long getId() {
         return id.get();
     }
 
-    public static void setId(long id) {
+    public static void setId(Long id) {
         AdjustmentDetailViewModel.id.set(id);
     }
 
@@ -92,7 +72,7 @@ public class AdjustmentDetailViewModel {
         return adjustment;
     }
 
-    public static long getQuantity() {
+    public static Long getQuantity() {
         return Long.parseLong(quantity.get());
     }
 
@@ -129,7 +109,7 @@ public class AdjustmentDetailViewModel {
     }
 
     public static void resetProperties() {
-        setId(0);
+        setId(0L);
         setTempId(-1);
         setProduct(null);
         setAdjustment(null);
@@ -143,128 +123,15 @@ public class AdjustmentDetailViewModel {
                 .quantity(getQuantity())
                 .adjustmentType(getAdjustmentType())
                 .build();
-
         adjustmentDetailsList.add(adjustmentDetail);
     }
 
-    public static void saveAdjustmentDetails(
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
-        adjustmentDetailsList.forEach(adjustmentDetail -> {
-            var task = adjustmentRepository.postDetail(adjustmentDetail);
-            if (Objects.nonNull(onActivity)) {
-                task.setOnRunning(workerStateEvent -> onActivity.run());
-            }
-            if (Objects.nonNull(onSuccess)) {
-                task.setOnFailed(workerStateEvent -> onSuccess.run());
-            }
-            if (Objects.nonNull(onFailed)) {
-                task.setOnFailed(workerStateEvent -> onFailed.run());
-            }
-            SpotyThreader.spotyThreadPool(task);
-        });
-    }
-
-    private static void setProductQuantity() {
-        adjustmentDetailsList.forEach(
-                adjustmentDetail -> {
-                    long productQuantity = 0;
-
-                    try {
-
-                        if (adjustmentDetail.getAdjustmentType().equalsIgnoreCase("INCREMENT")) {
-                            productQuantity =
-                                    adjustmentDetail.getProduct().getQuantity() + adjustmentDetail.getQuantity();
-                        } else if (adjustmentDetail.getAdjustmentType().equalsIgnoreCase("DECREMENT")) {
-                            productQuantity =
-                                    adjustmentDetail.getProduct().getQuantity() - adjustmentDetail.getQuantity();
-                        }
-
-                        createAdjustmentTransaction(adjustmentDetail);
-
-                        ProductViewModel.setQuantity(productQuantity);
-
-                        ProductViewModel.updateProduct(null, null, null);
-                    } catch (Exception e) {
-                        SpotyLogger.writeToFile(e, AdjustmentDetailViewModel.class);
-                    }
-                });
-    }
-
-    private static void updateProductQuantity() {
-        adjustmentDetailsList.forEach(
-                adjustmentDetail -> {
-                    long productQuantity = 0;
-                    long currentProductQuantity = adjustmentDetail.getProduct().getQuantity();
-
-                    try {
-                        AdjustmentTransaction adjustmentTransaction =
-                                getAdjustmentTransaction(adjustmentDetail.getId());
-
-                        long adjustQuantity = adjustmentTransaction.getAdjustQuantity();
-
-                        if (adjustmentDetail.getAdjustmentType().equalsIgnoreCase("INCREMENT")) {
-                            productQuantity =
-                                    (currentProductQuantity - adjustQuantity) + adjustmentDetail.getQuantity();
-
-                            adjustmentTransaction.setAdjustmentType(adjustmentDetail.getAdjustmentType());
-                        } else if (adjustmentDetail.getAdjustmentType().equalsIgnoreCase("DECREMENT")) {
-                            productQuantity =
-                                    (currentProductQuantity + adjustQuantity) - adjustmentDetail.getQuantity();
-
-                            adjustmentTransaction.setAdjustmentType(adjustmentDetail.getAdjustmentType());
-                        }
-
-                        ProductViewModel.setQuantity(productQuantity);
-                        ProductViewModel.updateProduct(null, null, null);
-
-                        updateAdjustmentTransaction(adjustmentDetail);
-                    } catch (Exception e) {
-                        SpotyLogger.writeToFile(e, AdjustmentDetailViewModel.class);
-                    }
-                });
-    }
-
-    public static void updateAdjustmentDetail(long index) {
-        var adjustmentDetail = adjustmentDetailsList.get((int) index);
+    public static void updateAdjustmentDetail(Long index) {
+        var adjustmentDetail = adjustmentDetailsList.get(Math.toIntExact(index));
         adjustmentDetail.setProduct(getProduct());
         adjustmentDetail.setQuantity(getQuantity());
         adjustmentDetail.setAdjustmentType(getAdjustmentType());
-        adjustmentDetailsList.remove(getTempId());
-        adjustmentDetailsList.add(getTempId(), adjustmentDetail);
-    }
-
-    public static void getAllAdjustmentDetails(
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
-        var task = adjustmentRepository.fetchAllDetail();
-        if (Objects.nonNull(onActivity)) {
-            task.setOnRunning(workerStateEvent -> onActivity.run());
-        }
-        if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> onFailed.run());
-        }
-        task.setOnSucceeded(workerStateEvent -> {
-            Type listType = new TypeToken<ArrayList<AdjustmentDetail>>() {
-            }.getType();
-            ArrayList<AdjustmentDetail> adjustmentDetailList = new ArrayList<>();
-            try {
-                adjustmentDetailList = gson.fromJson(
-                        task.get().body(), listType);
-            } catch (InterruptedException | ExecutionException e) {
-                SpotyLogger.writeToFile(e, AdjustmentDetailViewModel.class);
-            }
-
-            adjustmentDetailsList.clear();
-            adjustmentDetailsList.addAll(adjustmentDetailList);
-
-            if (Objects.nonNull(onSuccess)) {
-                onSuccess.run();
-            }
-        });
-        SpotyThreader.spotyThreadPool(task);
+        adjustmentDetailsList.set(getTempId(), adjustmentDetail);
     }
 
     public static void getAdjustmentDetail(AdjustmentDetail adjustmentDetail) {
@@ -274,126 +141,8 @@ public class AdjustmentDetailViewModel {
         setAdjustmentType(adjustmentDetail.getAdjustmentType());
     }
 
-    public static void searchItem(
-            String search,
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
-        var searchModel = SearchModel.builder().search(search).build();
-
-        var task = adjustmentRepository.searchDetail(searchModel);
-        if (Objects.nonNull(onActivity)) {
-            task.setOnRunning(workerStateEvent -> onActivity.run());
-        }
-        if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> onFailed.run());
-        }
-        task.setOnSucceeded(workerStateEvent -> {
-            Type listType = new TypeToken<ArrayList<AdjustmentDetail>>() {
-            }.getType();
-            ArrayList<AdjustmentDetail> adjustmentDetailList = new ArrayList<>();
-            try {
-                adjustmentDetailList = gson.fromJson(
-                        task.get().body(), listType);
-            } catch (Exception e) {
-                SpotyLogger.writeToFile(e, AdjustmentDetailViewModel.class);
-            }
-
-            adjustmentDetailsList.clear();
-            adjustmentDetailsList.addAll(adjustmentDetailList);
-
-            if (Objects.nonNull(onSuccess)) {
-                onSuccess.run();
-            }
-        });
-        SpotyThreader.spotyThreadPool(task);
-    }
-
-    public static void updateAdjustmentDetails(
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
-        // TODO: Add save multiple on API.
-        adjustmentDetailsList.forEach(
-                adjustmentDetail -> {
-                    var task = adjustmentRepository.putDetail(adjustmentDetail);
-                    if (Objects.nonNull(onActivity)) {
-                        task.setOnRunning(workerStateEvent -> onActivity.run());
-                    }
-                    if (Objects.nonNull(onSuccess)) {
-                        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
-                    }
-                    if (Objects.nonNull(onFailed)) {
-                        task.setOnFailed(workerStateEvent -> onFailed.run());
-                    }
-                    SpotyThreader.spotyThreadPool(task);
-                });
-        updateProductQuantity();
-//        getAllAdjustmentDetails(null);
-    }
-
-    public static void removeAdjustmentDetail(long index, int tempIndex) {
+    public static void removeAdjustmentDetail(Long index, int tempIndex) {
         Platform.runLater(() -> adjustmentDetailsList.remove(tempIndex));
         PENDING_DELETES.add(index);
-    }
-
-    public static void deleteAdjustmentDetails(LinkedList<Long> indexes,
-                                               ParameterlessConsumer onActivity,
-                                               ParameterlessConsumer onSuccess,
-                                               ParameterlessConsumer onFailed) {
-        LinkedList<FindModel> findModelList = new LinkedList<>();
-        indexes.forEach(index -> findModelList.add(new FindModel(index)));
-
-        var task = adjustmentRepository.deleteMultipleDetails(findModelList);
-        if (Objects.nonNull(onActivity)) {
-            task.setOnRunning(workerStateEvent -> onActivity.run());
-        }
-        if (Objects.nonNull(onSuccess)) {
-            task.setOnSucceeded(workerStateEvent -> onSuccess.run());
-        }
-        if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> onFailed.run());
-        }
-        SpotyThreader.spotyThreadPool(task);
-    }
-
-    private static AdjustmentTransaction getAdjustmentTransaction(long adjustmentIndex) {
-//        PreparedQuery<AdjustmentTransaction> preparedQuery =
-//                adjustmentTransactionDao
-//                        .queryBuilder()
-//                        .where()
-//                        .eq("adjustment_detail_id", adjustmentIndex)
-//                        .prepare();
-
-        // TODO: Query for adjustment transaction by adjustment detail id.
-
-//        return adjustmentTransactionDao.queryForFirst(preparedQuery);
-        return new AdjustmentTransaction();
-    }
-
-    private static void createAdjustmentTransaction(AdjustmentDetail adjustmentDetail) {
-
-        AdjustmentTransaction adjustmentTransaction = new AdjustmentTransaction();
-        adjustmentTransaction.setAdjustmentDetail(adjustmentDetail);
-        adjustmentTransaction.setProduct(adjustmentDetail.getProduct());
-        adjustmentTransaction.setAdjustQuantity(adjustmentDetail.getQuantity());
-        adjustmentTransaction.setAdjustmentType(adjustmentDetail.getAdjustmentType());
-        adjustmentTransaction.setDate(new Date());
-
-//        adjustmentTransactionDao.create(adjustmentTransaction);
-        // TODO: Create adjustment transaction.
-    }
-
-    private static void updateAdjustmentTransaction(AdjustmentDetail adjustmentDetail) {
-        AdjustmentTransaction adjustmentTransaction =
-                getAdjustmentTransaction(adjustmentDetail.getId());
-        adjustmentTransaction.setAdjustmentDetail(adjustmentDetail);
-        adjustmentTransaction.setProduct(adjustmentDetail.getProduct());
-        adjustmentTransaction.setAdjustQuantity(adjustmentDetail.getQuantity());
-        adjustmentTransaction.setAdjustmentType(adjustmentDetail.getAdjustmentType());
-        adjustmentTransaction.setDate(new Date());
-
-//        adjustmentTransactionDao.update(adjustmentTransaction);
-        // TODO: Update adjustment transaction.
     }
 }

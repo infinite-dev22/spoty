@@ -14,16 +14,12 @@
 
 package inc.nomard.spoty.network_bridge.models;
 
-import inc.nomard.spoty.network_bridge.dtos.Branch;
-import inc.nomard.spoty.network_bridge.dtos.Role;
-import inc.nomard.spoty.network_bridge.dtos.hrm.employee.Department;
-import inc.nomard.spoty.network_bridge.dtos.hrm.employee.Designation;
-import inc.nomard.spoty.network_bridge.dtos.hrm.employee.EmploymentStatus;
+import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
+import java.io.*;
+import java.time.*;
 import lombok.*;
-import lombok.extern.java.Log;
-
-import java.io.Serializable;
-import java.time.LocalDate;
+import lombok.extern.java.*;
 
 @Getter
 @Setter

@@ -91,10 +91,10 @@ public class QuotationPreviewController implements Initializable {
         MFXTableColumn<QuotationDetail> quantity =
                 new MFXTableColumn<>("Qnty", false, Comparator.comparing(QuotationDetail::getQuantity));
         MFXTableColumn<QuotationDetail> price =
-                new MFXTableColumn<>("Price", false, Comparator.comparing(QuotationDetail::getPrice));
+                new MFXTableColumn<>("Price", false, Comparator.comparing(QuotationDetail::getProductPrice));
         MFXTableColumn<QuotationDetail> totalPrice =
                 new MFXTableColumn<>(
-                        "Total Price", false, Comparator.comparing(QuotationDetail::getSubTotalPrice));
+                        "Total Price", false, Comparator.comparing(QuotationDetail::getSubTotal));
 
         // Set table column data.
         product.setRowCellFactory(quotationDetail -> {
@@ -110,14 +110,14 @@ public class QuotationPreviewController implements Initializable {
             return cell;
         });
         price.setRowCellFactory(quotationDetail -> {
-            var cell = new MFXTableRowCell<>(QuotationDetail::getPrice);
+            var cell = new MFXTableRowCell<>(QuotationDetail::getProductPrice);
             cell.setAlignment(Pos.CENTER_RIGHT);
             cell.getStyleClass().add("table-cell-border");
             return cell;
         });
         totalPrice.setRowCellFactory(
                 quotationDetail -> {
-                    var cell = new MFXTableRowCell<>(QuotationDetail::getSubTotalPrice);
+                    var cell = new MFXTableRowCell<>(QuotationDetail::getSubTotal);
                     cell.setAlignment(Pos.CENTER_RIGHT);
                     cell.getStyleClass().add("table-cell-border");
                     return cell;

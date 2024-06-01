@@ -21,6 +21,7 @@ import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.adapters.*;
 
+import inc.nomard.spoty.utils.functional_paradigm.*;
 import java.text.*;
 import java.util.*;
 
@@ -145,10 +146,9 @@ public class PurchaseReturnMasterViewModel {
         setTotalCost("");
     }
 
-    public static void savePurchaseReturnMaster(
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
+    public static void savePurchaseReturnMaster(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                         SpotyGotFunctional.MessageConsumer successMessage,
+                                         SpotyGotFunctional.MessageConsumer errorMessage) {
 //        var PurchaseReturnsMaster = PurchaseReturnMaster.builder()
 //                .customer(getCustomer())
 //                .total(getTotal())
@@ -166,7 +166,7 @@ public class PurchaseReturnMasterViewModel {
 //            PurchaseReturnsMaster.setPurchaseReturnDetails(PurchaseReturnDetailViewModel.PurchaseReturnsDetailsList);
 //        }
 //
-//        var task = PurchaseReturnsRepository.postMaster(PurchaseReturnsMaster);
+//        var task = PurchaseReturnsRepository.post(PurchaseReturnsMaster);
 //        task.setOnRunning(workerStateEvent -> onActivity.run());
 //        task.setOnSucceeded(workerStateEvent -> {
 //            PurchaseReturnDetailViewModel.savePurchaseReturnDetails(onActivity, null, onFailed);
@@ -176,10 +176,8 @@ public class PurchaseReturnMasterViewModel {
 //        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void getPurchaseReturnMasters(
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
+    public static void getPurchaseReturnMasters(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                         SpotyGotFunctional.MessageConsumer errorMessage) {
 //        Dao<PurchaseReturnMaster, Long> purchaseReturnMasterDao =
 //                DaoManager.createDao(connectionSource, PurchaseReturnMaster.class);
 //
@@ -200,12 +198,10 @@ public class PurchaseReturnMasterViewModel {
     }
 
     public static void getItem(
-            Long index,
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
+            Long index,SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                         SpotyGotFunctional.MessageConsumer errorMessage) {
 //        var findModel = FindModel.builder().id(index).build();
-//        var task = PurchaseReturnsRepository.fetchMaster(findModel);
+//        var task = PurchaseReturnsRepository.fetch(findModel);
 //
 //        if (Objects.nonNull(onActivity)) {
 //            task.setOnRunning(workerStateEvent -> onActivity.run());
@@ -238,12 +234,11 @@ public class PurchaseReturnMasterViewModel {
     }
 
     public static void searchItem(
-            String search,
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
+            String search,SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                         SpotyGotFunctional.MessageConsumer successMessage,
+                                         SpotyGotFunctional.MessageConsumer errorMessage) {
 //        var searchModel = SearchModel.builder().search(search).build();
-//        var task = PurchaseReturnsRepository.searchMaster(searchModel);
+//        var task = PurchaseReturnsRepository.search(searchModel);
 //        if (Objects.nonNull(onActivity)) {
 //            task.setOnRunning(workerStateEvent -> onActivity.run());
 //        }
@@ -271,10 +266,9 @@ public class PurchaseReturnMasterViewModel {
 //        SpotyThreader.spotyThreadPool(task);
     }
 
-    public static void updateItem(
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
+    public static void updateItem(SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                         SpotyGotFunctional.MessageConsumer successMessage,
+                                         SpotyGotFunctional.MessageConsumer errorMessage) {
 //        var PurchaseReturnsMaster = PurchaseReturnMaster.builder()
 //                .id(getId())
 //                .customer(getCustomer())
@@ -297,7 +291,7 @@ public class PurchaseReturnMasterViewModel {
 //            PurchaseReturnsMaster.setPurchaseReturnDetails(PurchaseReturnDetailViewModel.getPurchaseReturnDetailsList());
 //        }
 //
-//        var task = PurchaseReturnsRepository.putMaster(PurchaseReturnsMaster);
+//        var task = PurchaseReturnsRepository.put(PurchaseReturnsMaster);
 //        task.setOnRunning(workerStateEvent -> onActivity.run());
 //        task.setOnSucceeded(workerStateEvent -> PurchaseReturnDetailViewModel.updatePurchaseReturnDetails(onActivity, onSuccess, onFailed));
 //        task.setOnFailed(workerStateEvent -> onFailed.run());
@@ -305,13 +299,12 @@ public class PurchaseReturnMasterViewModel {
     }
 
     public static void deleteItem(
-            Long index,
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
+            Long index,SpotyGotFunctional.ParameterlessConsumer onSuccess,
+                                         SpotyGotFunctional.MessageConsumer successMessage,
+                                         SpotyGotFunctional.MessageConsumer errorMessage) {
         var findModel = FindModel.builder().id(index).build();
 
-//        var task = PurchaseReturnsRepository.deleteMaster(findModel);
+//        var task = PurchaseReturnsRepository.delete(findModel);
 //        task.setOnRunning(workerStateEvent -> onActivity.run());
 //        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
 //        task.setOnFailed(workerStateEvent -> onFailed.run());

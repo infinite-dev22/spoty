@@ -53,8 +53,7 @@ import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_
 public class RequisitionDetailFormController implements Initializable {
     private static RequisitionDetailFormController instance;
     @FXML
-    public MFXTextField quantity,
-            cost;
+    public MFXTextField quantity;
     @FXML
     public MFXFilterComboBox<Product> product;
     @FXML
@@ -65,8 +64,7 @@ public class RequisitionDetailFormController implements Initializable {
             productValidationLabel,
             costValidationLabel;
     private List<Constraint> productConstraints,
-            quantityConstraints,
-            costConstraints;
+            quantityConstraints;
 
     public static RequisitionDetailFormController getInstance() {
         if (Objects.equals(instance, null)) instance = new RequisitionDetailFormController();
@@ -78,7 +76,6 @@ public class RequisitionDetailFormController implements Initializable {
         // Input bindings.
         quantity.textProperty().bindBidirectional(RequisitionDetailViewModel.quantityProperty());
         product.valueProperty().bindBidirectional(RequisitionDetailViewModel.productProperty());
-        cost.textProperty().bindBidirectional(RequisitionDetailViewModel.costProperty());
 
         // Combo box Converter.
         StringConverter<Product> productVariantConverter =
@@ -127,7 +124,6 @@ public class RequisitionDetailFormController implements Initializable {
 
                     product.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                     quantity.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                    cost.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                 });
         saveBtn.setOnAction(
                 (event) -> {
@@ -135,7 +131,6 @@ public class RequisitionDetailFormController implements Initializable {
 
                     productConstraints = product.validate();
                     quantityConstraints = quantity.validate();
-                    costConstraints = cost.validate();
                     if (!productConstraints.isEmpty()) {
                         productValidationLabel.setManaged(true);
                         productValidationLabel.setVisible(true);
@@ -152,17 +147,8 @@ public class RequisitionDetailFormController implements Initializable {
                         MFXStageDialog dialog = (MFXStageDialog) quantity.getScene().getWindow();
                         dialog.sizeToScene();
                     }
-                    if (!costConstraints.isEmpty()) {
-                        costValidationLabel.setManaged(true);
-                        costValidationLabel.setVisible(true);
-                        costValidationLabel.setText(costConstraints.getFirst().getMessage());
-                        cost.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                        MFXStageDialog dialog = (MFXStageDialog) cost.getScene().getWindow();
-                        dialog.sizeToScene();
-                    }
                     if (productConstraints.isEmpty()
-                            && quantityConstraints.isEmpty()
-                            && costConstraints.isEmpty()) {
+                            && quantityConstraints.isEmpty()) {
                         if (tempIdProperty().get() > -1) {
                             SpotyThreader.spotyThreadPool(() -> {
                                 try {
@@ -211,13 +197,6 @@ public class RequisitionDetailFormController implements Initializable {
                         .setCondition(product.textProperty().length().greaterThan(0))
                         .get();
         product.getValidator().constraint(productConstraint);
-        Constraint costConstraint =
-                Constraint.Builder.build()
-                        .setSeverity(Severity.ERROR)
-                        .setMessage("Cost is required")
-                        .setCondition(cost.textProperty().length().greaterThan(0))
-                        .get();
-        cost.getValidator().constraint(costConstraint);
         Constraint quantityConstraint =
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
@@ -235,17 +214,6 @@ public class RequisitionDetailFormController implements Initializable {
                                 productValidationLabel.setManaged(false);
                                 productValidationLabel.setVisible(false);
                                 product.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                            }
-                        });
-        cost
-                .getValidator()
-                .validProperty()
-                .addListener(
-                        (observable, oldValue, newValue) -> {
-                            if (newValue) {
-                                costValidationLabel.setManaged(false);
-                                costValidationLabel.setVisible(false);
-                                cost.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                             }
                         });
         quantity

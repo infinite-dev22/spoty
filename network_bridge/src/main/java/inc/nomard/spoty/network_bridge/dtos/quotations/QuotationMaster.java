@@ -14,13 +14,10 @@
 
 package inc.nomard.spoty.network_bridge.dtos.quotations;
 
-import inc.nomard.spoty.network_bridge.dtos.Branch;
-import inc.nomard.spoty.network_bridge.dtos.Customer;
+import inc.nomard.spoty.network_bridge.dtos.*;
+import java.util.*;
 import lombok.*;
-import lombok.extern.java.Log;
-
-import java.util.ArrayList;
-import java.util.List;
+import lombok.extern.java.*;
 
 @Getter
 @Setter
@@ -35,6 +32,7 @@ public class QuotationMaster {
     private Customer customer;
     private ArrayList<Branch> branches;
     private List<QuotationDetail> quotationDetails;
+    private LinkedList<Long> childrenToDelete;
     private double taxRate;
     private double netTax;
     private double discount;
@@ -44,7 +42,6 @@ public class QuotationMaster {
     private double changeAmount;
     private double shippingFee;
     private double total;
-    private String status;
     private String notes;
 
     public String getCustomerName() {

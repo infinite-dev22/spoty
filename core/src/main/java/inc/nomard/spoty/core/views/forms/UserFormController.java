@@ -14,46 +14,31 @@
 
 package inc.nomard.spoty.core.views.forms;
 
-import inc.nomard.spoty.core.components.message.SpotyMessage;
-import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
-import inc.nomard.spoty.core.components.message.enums.MessageDuration;
-import inc.nomard.spoty.core.components.message.enums.MessageVariants;
-import inc.nomard.spoty.core.viewModels.RoleViewModel;
-import inc.nomard.spoty.core.viewModels.hrm.employee.DepartmentViewModel;
-import inc.nomard.spoty.core.viewModels.hrm.employee.DesignationViewModel;
-import inc.nomard.spoty.core.viewModels.hrm.employee.EmploymentStatusViewModel;
-import inc.nomard.spoty.core.viewModels.hrm.employee.UserViewModel;
-import inc.nomard.spoty.network_bridge.dtos.Role;
-import inc.nomard.spoty.network_bridge.dtos.hrm.employee.Department;
-import inc.nomard.spoty.network_bridge.dtos.hrm.employee.Designation;
-import inc.nomard.spoty.network_bridge.dtos.hrm.employee.EmploymentStatus;
-import inc.nomard.spoty.utils.SpotyLogger;
+import static inc.nomard.spoty.core.GlobalActions.*;
+import static inc.nomard.spoty.core.Validators.*;
+import inc.nomard.spoty.core.components.message.*;
+import inc.nomard.spoty.core.components.message.enums.*;
+import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.core.viewModels.hrm.employee.*;
+import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
 import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
-import io.github.palexdev.materialfx.utils.StringUtils;
-import io.github.palexdev.materialfx.utils.others.FunctionalStringConverter;
-import io.github.palexdev.materialfx.validation.Constraint;
-import io.github.palexdev.materialfx.validation.Severity;
+import io.github.palexdev.materialfx.dialogs.*;
+import io.github.palexdev.materialfx.utils.*;
+import io.github.palexdev.materialfx.utils.others.*;
+import io.github.palexdev.materialfx.validation.*;
+import static io.github.palexdev.materialfx.validation.Validated.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
-import javafx.collections.ListChangeListener;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.util.StringConverter;
-import lombok.extern.java.Log;
-
-import java.net.URL;
-import java.util.List;
-import java.util.Objects;
-import java.util.ResourceBundle;
-import java.util.function.Function;
-import java.util.function.Predicate;
-
-import static inc.nomard.spoty.core.GlobalActions.closeDialog;
-import static inc.nomard.spoty.core.Validators.emailValidator;
-import static inc.nomard.spoty.core.Validators.lengthValidator;
-import static io.github.palexdev.materialfx.validation.Validated.INVALID_PSEUDO_CLASS;
+import java.net.*;
+import java.util.*;
+import java.util.function.*;
+import javafx.collections.*;
+import javafx.event.*;
+import javafx.fxml.*;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.util.*;
+import lombok.extern.java.*;
 
 @Log
 public class UserFormController implements Initializable {
@@ -280,82 +265,19 @@ public class UserFormController implements Initializable {
                             && !emailValidationLabel.isVisible()
                             && !phoneValidationLabel.isVisible()) {
                         if (UserViewModel.getId() > 0) {
-                            try {
-                                UserViewModel.updateItem(this::onAction, this::onUpdatedSuccess, this::onFailed);
-                                actionEvent = event;
-                            } catch (Exception e) {
-                                SpotyLogger.writeToFile(e, this.getClass());
-                            }
+                            UserViewModel.updateItem(this::onSuccess, this::successMessage, this::errorMessage);
+                            actionEvent = event;
                             return;
                         }
-                        try {
-                            UserViewModel.saveUser(this::onAction, this::onAddSuccess, this::onFailed);
-                            actionEvent = event;
-                        } catch (Exception e) {
-                            SpotyLogger.writeToFile(e, this.getClass());
-                        }
+                        UserViewModel.saveUser(this::onSuccess, this::successMessage, this::errorMessage);
+                        actionEvent = event;
                     }
                 });
     }
 
-    private void onAction() {
-        cancelBtn.setDisable(true);
-        saveBtn.setDisable(true);
-//        cancelBtn.setManaged(true);
-//        saveBtn.setManaged(true);
-    }
-
-    private void onAddSuccess() {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder("User added successfully")
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-circle-check")
-                        .type(MessageVariants.SUCCESS)
-                        .build();
-        notificationHolder.addMessage(notification);
-        cancelBtn.setDisable(false);
-        saveBtn.setDisable(false);
-
+    private void onSuccess() {
         role.clearSelection();
-
         closeDialog(actionEvent);
-        UserViewModel.resetProperties();
-        UserViewModel.getAllUsers(null, null, null);
-    }
-
-    private void onUpdatedSuccess() {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder("User profile updated successfully")
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-circle-check")
-                        .type(MessageVariants.SUCCESS)
-                        .build();
-        notificationHolder.addMessage(notification);
-        cancelBtn.setDisable(false);
-        saveBtn.setDisable(false);
-
-        role.clearSelection();
-
-        closeDialog(actionEvent);
-        UserViewModel.resetProperties();
-        UserViewModel.getAllUsers(null, null, null);
-    }
-
-    private void onFailed() {
-        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
-        SpotyMessage notification =
-                new SpotyMessage.MessageBuilder("An error occurred")
-                        .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
-                        .build();
-        notificationHolder.addMessage(notification);
-        cancelBtn.setDisable(false);
-        saveBtn.setDisable(false);
-
-        UserViewModel.getAllUsers(null, null, null);
     }
 
     public void requiredValidator() {
@@ -433,5 +355,31 @@ public class UserFormController implements Initializable {
                                 role.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                             }
                         });
+    }
+
+    private void successMessage(String message) {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder(message)
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        AnchorPane.setRightAnchor(notification, 40.0);
+        AnchorPane.setTopAnchor(notification, 10.0);
+    }
+
+    private void errorMessage(String message) {
+        SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
+        SpotyMessage notification =
+                new SpotyMessage.MessageBuilder(message)
+                        .duration(MessageDuration.SHORT)
+                        .icon("fas-triangle-exclamation")
+                        .type(MessageVariants.ERROR)
+                        .build();
+        notificationHolder.addMessage(notification);
+        AnchorPane.setRightAnchor(notification, 40.0);
+        AnchorPane.setTopAnchor(notification, 10.0);
     }
 }

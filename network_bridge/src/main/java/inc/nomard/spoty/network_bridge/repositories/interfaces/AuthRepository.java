@@ -1,15 +1,13 @@
 package inc.nomard.spoty.network_bridge.repositories.interfaces;
 
-import inc.nomard.spoty.network_bridge.models.LoginModel;
-import inc.nomard.spoty.network_bridge.models.SignupModel;
-import javafx.concurrent.Task;
-
-import java.io.IOException;
-import java.net.http.HttpResponse;
+import inc.nomard.spoty.network_bridge.models.*;
+import java.io.*;
+import java.net.http.*;
+import java.util.concurrent.*;
 
 public interface AuthRepository {
 
-    Task<HttpResponse<String>> login(LoginModel loginModel) throws IOException, InterruptedException;
+    CompletableFuture<HttpResponse<String>> login(LoginModel loginModel) throws IOException, InterruptedException;
 
-    Task<HttpResponse<String>> signup(SignupModel signUpModel) throws IOException, InterruptedException;
+    CompletableFuture<HttpResponse<String>> signup(SignupModel signUpModel) throws IOException, InterruptedException;
 }

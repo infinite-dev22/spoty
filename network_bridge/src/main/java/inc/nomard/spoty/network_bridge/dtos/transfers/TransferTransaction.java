@@ -14,12 +14,10 @@
 
 package inc.nomard.spoty.network_bridge.dtos.transfers;
 
-import inc.nomard.spoty.network_bridge.dtos.Branch;
-import inc.nomard.spoty.network_bridge.dtos.Product;
+import inc.nomard.spoty.network_bridge.dtos.*;
+import java.util.*;
 import lombok.*;
-import lombok.extern.java.Log;
-
-import java.util.Date;
+import lombok.extern.java.*;
 
 @Getter
 @Setter

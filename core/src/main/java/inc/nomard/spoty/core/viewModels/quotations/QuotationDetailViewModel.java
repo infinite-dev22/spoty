@@ -14,29 +14,15 @@
 
 package inc.nomard.spoty.core.viewModels.quotations;
 
-import com.google.gson.*;
-import com.google.gson.reflect.*;
-
 import static inc.nomard.spoty.core.values.SharedResources.*;
-
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.quotations.*;
-import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.network_bridge.repositories.implementations.*;
-import inc.nomard.spoty.utils.*;
-import inc.nomard.spoty.utils.adapters.*;
-
-import java.io.*;
-import java.lang.reflect.*;
-import java.util.*;
-import java.util.concurrent.*;
-
 import javafx.application.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
 import lombok.*;
-
-import lombok.extern.java.Log;
+import lombok.extern.java.*;
 
 @Log
 public class QuotationDetailViewModel {
@@ -44,19 +30,11 @@ public class QuotationDetailViewModel {
     @Getter
     public static final ObservableList<QuotationDetail> quotationDetailsList =
             FXCollections.observableArrayList();
-    private static final Gson gson = new GsonBuilder()
-            .registerTypeAdapter(Date.class,
-                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
-            .create();
     private static final ListProperty<QuotationDetail> quotationDetails =
             new SimpleListProperty<>(quotationDetailsList);
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final ObjectProperty<Product> product = new SimpleObjectProperty<>();
-    private static final ObjectProperty<UnitOfMeasure> saleUnit = new SimpleObjectProperty<>();
-    private static final ObjectProperty<QuotationMaster> quotation = new SimpleObjectProperty<>();
     private static final StringProperty quantity = new SimpleStringProperty();
-    private static final StringProperty netTax = new SimpleStringProperty();
-    private static final StringProperty discount = new SimpleStringProperty();
     private static final QuotationsRepositoryImpl quotationsRepository = new QuotationsRepositoryImpl();
 
     public static Long getId() {
@@ -83,30 +61,6 @@ public class QuotationDetailViewModel {
         return product;
     }
 
-    public static UnitOfMeasure getSaleUnit() {
-        return saleUnit.get();
-    }
-
-    public static void setUnit(UnitOfMeasure saleUnit) {
-        QuotationDetailViewModel.saleUnit.set(saleUnit);
-    }
-
-    public static ObjectProperty<UnitOfMeasure> saleUnitProperty() {
-        return saleUnit;
-    }
-
-    public static QuotationMaster getQuotation() {
-        return quotation.get();
-    }
-
-    public static void setQuotation(QuotationMaster quotation) {
-        QuotationDetailViewModel.quotation.set(quotation);
-    }
-
-    public static ObjectProperty<QuotationMaster> quotationProperty() {
-        return quotation;
-    }
-
     public static int getQuantity() {
         return Integer.parseInt(quantity.get());
     }
@@ -117,34 +71,6 @@ public class QuotationDetailViewModel {
 
     public static StringProperty quantityProperty() {
         return quantity;
-    }
-
-    public static double getNetTax() {
-        return (Objects.equals(netTax.get(), null) || netTax.get().isBlank())
-                ? 0.0
-                : Double.parseDouble(netTax.get());
-    }
-
-    public static void setNetTax(String netTax) {
-        QuotationDetailViewModel.netTax.set(netTax);
-    }
-
-    public static StringProperty taxProperty() {
-        return netTax;
-    }
-
-    public static double getDiscount() {
-        return (Objects.equals(discount.get(), null) || discount.get().isBlank())
-                ? 0.0
-                : Double.parseDouble(discount.get());
-    }
-
-    public static void setDiscount(String discount) {
-        QuotationDetailViewModel.discount.set(discount);
-    }
-
-    public static StringProperty discountProperty() {
-        return discount;
     }
 
     public static ObservableList<QuotationDetail> getQuotationDetails() {
@@ -163,168 +89,34 @@ public class QuotationDetailViewModel {
         setId(0L);
         setTempId(-1);
         setProduct(null);
-        setNetTax("");
-        setDiscount("");
         setQuantity("");
     }
 
     public static void addQuotationDetails() {
         var quotationDetail = QuotationDetail.builder()
-//                .price(getPrice())
-                .saleUnit(getSaleUnit())
                 .product(getProduct())
-                .quotation(getQuotation())
-                .netTax(getNetTax())
-                .taxType(getProduct().getTaxType())
-                .discount(getDiscount())
-//                .discountType(getDiscountType())
-//                .total(getTotalAmount())
                 .quantity(getQuantity())
-                .serialNumber(getProduct().getSerialNumber()) //TODO: Remove, not needed.
                 .build();
-
         quotationDetailsList.add(quotationDetail);
-    }
-
-    public static void saveQuotationDetails(ParameterlessConsumer onActivity, ParameterlessConsumer onSuccess, ParameterlessConsumer onFailed) {
-        quotationDetailsList.forEach(quotationDetail -> {
-            var task = quotationsRepository.postDetail(quotationDetail);  // TODO: Add post multiple details.
-            if (Objects.nonNull(onActivity)) {
-                task.setOnRunning(workerStateEvent -> onActivity.run());
-            }
-            if (Objects.nonNull(onSuccess)) {
-                task.setOnFailed(workerStateEvent -> onSuccess.run());
-            }
-            if (Objects.nonNull(onFailed)) {
-                task.setOnFailed(workerStateEvent -> onFailed.run());
-            }
-            SpotyThreader.spotyThreadPool(task);
-        });
-
-        quotationDetailsList.clear();
-    }
-
-    public static void searchItem(String search, ParameterlessConsumer onActivity, ParameterlessConsumer onFailed) throws IOException, InterruptedException {
-        var searchModel = new SearchModel();
-        searchModel.setSearch(search);
-
-        var task = quotationsRepository.searchDetail(searchModel);
-        if (Objects.nonNull(onActivity)) {
-            task.setOnRunning(workerStateEvent -> onActivity.run());
-        }
-        if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> onFailed.run());
-        }
-        task.setOnSucceeded(workerStateEvent -> {
-            Type listType = new TypeToken<ArrayList<QuotationDetail>>() {
-            }.getType();
-            ArrayList<QuotationDetail> adjustmentDetailList = new ArrayList<>();
-            try {
-                adjustmentDetailList = gson.fromJson(
-                        task.get().body(), listType);
-            } catch (InterruptedException | ExecutionException e) {
-                SpotyLogger.writeToFile(e, QuotationDetailViewModel.class);
-            }
-
-            quotationDetailsList.clear();
-            quotationDetailsList.addAll(adjustmentDetailList);
-        });
-        SpotyThreader.spotyThreadPool(task);
     }
 
     public static void updateQuotationDetail(Long index) {
         QuotationDetail quotationDetail = quotationDetailsList.get(Math.toIntExact(index));
-        quotationDetail.setProduct(getProduct());
-        quotationDetail.setSaleUnit(getSaleUnit());
-        quotationDetail.setNetTax(getNetTax());
-        quotationDetail.setDiscount(getDiscount());
-        quotationDetail.setQuantity(getQuantity());
         quotationDetail.setId(getId());
-        quotationDetail.setQuotation(getQuotation());
-        quotationDetailsList.remove(getTempId());
-        quotationDetailsList.add(getTempId(), quotationDetail);
-    }
-
-    public static void getAllQuotationDetails(ParameterlessConsumer onActivity) {
-        Type listType = new TypeToken<ArrayList<QuotationDetail>>() {
-        }.getType();
-        var task = quotationsRepository.fetchAllDetail();
-        if (Objects.nonNull(onActivity)) {
-            task.setOnRunning(workerStateEvent -> onActivity.run());
-        }
-        task.setOnSucceeded(workerStateEvent -> {
-            ArrayList<QuotationDetail> quotationDetailList = new ArrayList<>();
-            try {
-                quotationDetailList = gson.fromJson(
-                        task.get().body(), listType);
-            } catch (InterruptedException | ExecutionException e) {
-                SpotyLogger.writeToFile(e, QuotationDetailViewModel.class);
-            }
-
-            quotationDetailsList.clear();
-            quotationDetailsList.addAll(quotationDetailList);
-        });
-        SpotyThreader.spotyThreadPool(task);
+        quotationDetail.setProduct(getProduct());
+        quotationDetail.setQuantity(getQuantity());
+        quotationDetailsList.set(getTempId(), quotationDetail);
     }
 
     public static void getQuotationDetail(QuotationDetail quotationDetail) {
-        Platform.runLater(
-                () -> {
-                    setTempId(getQuotationDetails().indexOf(quotationDetail));
-                    setId(quotationDetail.getId());
-                    setProduct(quotationDetail.getProduct());
-                    setUnit(quotationDetail.getProduct().getUnit());
-                    setNetTax(String.valueOf(quotationDetail.getNetTax()));
-                    setDiscount(String.valueOf(quotationDetail.getDiscount()));
-                    setQuantity(String.valueOf(quotationDetail.getQuantity()));
-                    setQuotation(quotationDetail.getQuotation());
-                });
-    }
-
-    public static void updateQuotationDetails(
-            ParameterlessConsumer onActivity,
-            ParameterlessConsumer onSuccess,
-            ParameterlessConsumer onFailed) {
-        // TODO: Add save multiple on API.
-        quotationDetailsList.forEach(
-                adjustmentDetail -> {
-                    var task = quotationsRepository.putDetail(adjustmentDetail);
-                    if (Objects.nonNull(onActivity)) {
-                        task.setOnRunning(workerStateEvent -> onActivity.run());
-                    }
-                    if (Objects.nonNull(onSuccess)) {
-                        task.setOnSucceeded(workerStateEvent -> onSuccess.run());
-                    }
-                    if (Objects.nonNull(onFailed)) {
-                        task.setOnFailed(workerStateEvent -> onFailed.run());
-                    }
-                    SpotyThreader.spotyThreadPool(task);
-                });
-//        getAllQuotationDetails();
+        setTempId(getQuotationDetails().indexOf(quotationDetail));
+        setId(quotationDetail.getId());
+        setProduct(quotationDetail.getProduct());
+        setQuantity(String.valueOf(quotationDetail.getQuantity()));
     }
 
     public static void removeQuotationDetail(Long index, int tempIndex) {
         Platform.runLater(() -> quotationDetailsList.remove(tempIndex));
         PENDING_DELETES.add(index);
-    }
-
-    public static void deleteQuotationDetails(LinkedList<Long> indexes,
-                                              ParameterlessConsumer onActivity,
-                                              ParameterlessConsumer onSuccess,
-                                              ParameterlessConsumer onFailed) {
-        LinkedList<FindModel> findModelList = new LinkedList<>();
-        indexes.forEach(index -> findModelList.add(new FindModel(index)));
-
-        var task = quotationsRepository.deleteMultipleDetails(findModelList);
-        if (Objects.nonNull(onActivity)) {
-            task.setOnRunning(workerStateEvent -> onActivity.run());
-        }
-        if (Objects.nonNull(onSuccess)) {
-            task.setOnSucceeded(workerStateEvent -> onSuccess.run());
-        }
-        if (Objects.nonNull(onFailed)) {
-            task.setOnFailed(workerStateEvent -> onFailed.run());
-        }
-        SpotyThreader.spotyThreadPool(task);
     }
 }
