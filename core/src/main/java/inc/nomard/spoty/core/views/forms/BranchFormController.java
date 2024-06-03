@@ -128,18 +128,20 @@ public class BranchFormController implements Initializable {
                     if (nameConstraints.isEmpty()
                             && townConstraints.isEmpty()
                             && cityConstraints.isEmpty()) {
+                        actionEvent = event;
                         if (BranchViewModel.getId() > 0) {
                             BranchViewModel.updateItem(this::onSuccess, this::successMessage, this::errorMessage);
                             return;
                         }
                         BranchViewModel.saveBranch(this::onSuccess, this::successMessage, this::errorMessage);
-                        actionEvent = event;
                     }
                 });
     }
 
     private void onSuccess() {
         closeDialog(actionEvent);
+        BranchViewModel.clearBranchData();
+        BranchViewModel.getAllBranches(null, null);
     }
 
     public void requiredValidator() {
@@ -206,8 +208,8 @@ public class BranchFormController implements Initializable {
         SpotyMessage notification =
                 new SpotyMessage.MessageBuilder(message)
                         .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
                         .build();
         notificationHolder.addMessage(notification);
         AnchorPane.setRightAnchor(notification, 40.0);

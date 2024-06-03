@@ -178,7 +178,7 @@ public class DiscountsController implements Initializable {
     }
 
     private void onSuccess() {
-        transition.setOnFinished(null);
+        DiscountViewModel.getDiscounts(null, null);
     }
 
     private void setIcons() {
@@ -195,8 +195,8 @@ public class DiscountsController implements Initializable {
         SpotyMessage notification =
                 new SpotyMessage.MessageBuilder(message)
                         .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
                         .build();
         notificationHolder.addMessage(notification);
         AnchorPane.setRightAnchor(notification, 40.0);

@@ -85,19 +85,20 @@ public class DesignationFormController implements Initializable {
                         dialog.sizeToScene();
                     }
                     if (constraints.isEmpty()) {
+                        actionEvent = event;
                         if (DesignationViewModel.getId() > 0) {
                             DesignationViewModel.updateItem(this::onSuccess, this::successMessage, this::errorMessage);
-                            actionEvent = event;
                             return;
                         }
                         DesignationViewModel.saveDesignation(this::onSuccess, this::successMessage, this::errorMessage);
-                        actionEvent = event;
                     }
                 });
     }
 
     private void onSuccess() {
         closeDialog(actionEvent);
+        DesignationViewModel.clearDesignationData();
+        DesignationViewModel.getAllDesignations(null, null);
     }
 
     public void requiredValidator() {
@@ -128,8 +129,8 @@ public class DesignationFormController implements Initializable {
         SpotyMessage notification =
                 new SpotyMessage.MessageBuilder(message)
                         .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
                         .build();
         notificationHolder.addMessage(notification);
         AnchorPane.setRightAnchor(notification, 40.0);

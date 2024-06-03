@@ -3,6 +3,7 @@ package inc.nomard.spoty.core.views.human_resource.pay_roll;
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.components.message.*;
 import inc.nomard.spoty.core.components.message.enums.*;
+import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.hrm.pay_roll.*;
 import inc.nomard.spoty.core.views.forms.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.pay_roll.*;
@@ -169,6 +170,7 @@ public class BeneficiaryBadgeController implements Initializable {
     }
 
     private void onSuccess() {
+        BeneficiaryBadgeViewModel.getAllBeneficiaryBadges(null, null);
     }
 
     @Override
@@ -181,8 +183,8 @@ public class BeneficiaryBadgeController implements Initializable {
         SpotyMessage notification =
                 new SpotyMessage.MessageBuilder(message)
                         .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
                         .build();
         notificationHolder.addMessage(notification);
         AnchorPane.setRightAnchor(notification, 40.0);

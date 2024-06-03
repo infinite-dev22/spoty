@@ -6,18 +6,15 @@ import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.controls.cell.*;
-
 import java.net.*;
 import java.util.*;
-
 import javafx.application.*;
 import javafx.collections.*;
 import javafx.event.*;
 import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
-
-import lombok.extern.java.Log;
+import lombok.extern.java.*;
 
 @Log
 public class TopProductsController implements Initializable {
@@ -37,13 +34,13 @@ public class TopProductsController implements Initializable {
         MFXTableColumn<Product> productName =
                 new MFXTableColumn<>("Name", false, Comparator.comparing(Product::getName));
         MFXTableColumn<Product> productPrice =
-                new MFXTableColumn<>("Price", false, Comparator.comparing(Product::getPrice));
+                new MFXTableColumn<>("Price", false, Comparator.comparing(Product::getSalePrice));
         MFXTableColumn<Product> productType =
-                new MFXTableColumn<>("Total Sales", false, Comparator.comparing(Product::getProductType));
+                new MFXTableColumn<>("Total Sales", false, Comparator.comparing(Product::getQuantity));
 
         productName.setRowCellFactory(product -> new MFXTableRowCell<>(Product::getName));
-        productPrice.setRowCellFactory(product -> new MFXTableRowCell<>(Product::getPrice));
-        productType.setRowCellFactory(product -> new MFXTableRowCell<>(Product::getProductType));
+        productPrice.setRowCellFactory(product -> new MFXTableRowCell<>(Product::getSalePrice));
+        productType.setRowCellFactory(product -> new MFXTableRowCell<>(Product::getQuantity));
 
         productName.prefWidthProperty().bind(products.widthProperty().multiply(.4));
         productPrice.prefWidthProperty().bind(products.widthProperty().multiply(.4));

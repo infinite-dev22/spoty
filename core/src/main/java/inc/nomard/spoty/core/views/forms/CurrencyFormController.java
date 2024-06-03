@@ -110,19 +110,20 @@ public class CurrencyFormController implements Initializable {
                     if (currencyFormNameConstraints.isEmpty()
                             && colorConstraints.isEmpty()
                             && currencyFormCodeConstraints.isEmpty()) {
+                        actionEvent = event;
                         if (CurrencyViewModel.getId() > 0) {
                             CurrencyViewModel.updateItem(this::onSuccess, this::successMessage, this::errorMessage);
-                            actionEvent = event;
                             return;
                         }
                         CurrencyViewModel.saveCurrency(this::onSuccess, this::successMessage, this::errorMessage);
-                        actionEvent = event;
                     }
                 });
     }
 
     private void onSuccess() {
         closeDialog(actionEvent);
+        CurrencyViewModel.clearCurrencyData();
+        CurrencyViewModel.getAllCurrencies(null, null);
     }
 
     public void requiredValidator() {
@@ -189,8 +190,8 @@ public class CurrencyFormController implements Initializable {
         SpotyMessage notification =
                 new SpotyMessage.MessageBuilder(message)
                         .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
                         .build();
         notificationHolder.addMessage(notification);
         AnchorPane.setRightAnchor(notification, 40.0);

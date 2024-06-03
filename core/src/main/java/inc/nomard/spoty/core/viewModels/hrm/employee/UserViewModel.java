@@ -16,14 +16,13 @@ package inc.nomard.spoty.core.viewModels.hrm.employee;
 
 import com.google.gson.*;
 import com.google.gson.reflect.*;
-import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.employee.*;
 import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.network_bridge.repositories.implementations.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.adapters.*;
-
+import inc.nomard.spoty.utils.connectivity.*;
 import inc.nomard.spoty.utils.functional_paradigm.*;
 import java.lang.reflect.*;
 import java.net.http.*;
@@ -31,13 +30,11 @@ import java.time.*;
 import java.time.format.*;
 import java.util.*;
 import java.util.concurrent.*;
-
+import javafx.application.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
 import lombok.*;
-
-
-import lombok.extern.java.Log;
+import lombok.extern.java.*;
 
 @Log
 public class UserViewModel {
@@ -265,8 +262,8 @@ public class UserViewModel {
     }
 
     public static void saveUser(SpotyGotFunctional.ParameterlessConsumer onSuccess,
-                                         SpotyGotFunctional.MessageConsumer successMessage,
-                                         SpotyGotFunctional.MessageConsumer errorMessage) {
+                                SpotyGotFunctional.MessageConsumer successMessage,
+                                SpotyGotFunctional.MessageConsumer errorMessage) {
         var user = UserModel.builder()
                 .firstName(getFirstName())
                 .lastName(getLastName())
@@ -286,93 +283,138 @@ public class UserViewModel {
             // Handle successful response
             if (response.statusCode() == 201 || response.statusCode() == 204) {
                 // Process the successful response
-                successMessage.showMessage("User created successfully");
-                onSuccess.run();
+                Platform.runLater(() -> {
+                    onSuccess.run();
+                    successMessage.showMessage("User created successfully");
+                });
             } else if (response.statusCode() == 401) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, access denied");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Access denied"));
+                }
             } else if (response.statusCode() == 404) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, resource not found");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
+                }
             } else if (response.statusCode() == 500) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, this is definitely on our side");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
+                }
             }
         }).exceptionally(throwable -> {
             // Handle exceptions during the request (e.g., network issues)
-            errorMessage.showMessage("An error occurred, this is on your side");
+            if (Connectivity.isConnectedToInternet()) {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
+                }
+            } else {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
+                }
+            }
             SpotyLogger.writeToFile(throwable, UserViewModel.class);
             return null;
         });
     }
 
     public static void getAllUsers(SpotyGotFunctional.ParameterlessConsumer onSuccess,
-                                         SpotyGotFunctional.MessageConsumer errorMessage) {
+                                   SpotyGotFunctional.MessageConsumer errorMessage) {
         CompletableFuture<HttpResponse<String>> responseFuture = usersRepository.fetchAll();
         responseFuture.thenAccept(response -> {
             // Handle successful response
-            if (response.statusCode() == 201) {
+            if (response.statusCode() == 200) {
                 // Process the successful response
-                Type listType = new TypeToken<ArrayList<User>>() {
-                }.getType();
-                ArrayList<User> userList = gson.fromJson(response.body(), listType);
-                usersList.clear();
-                usersList.addAll(userList);
-                if (Objects.nonNull(onSuccess)) {
-                    onSuccess.run();
-                }
-                onSuccess.run();
+                Platform.runLater(() -> {
+                    Type listType = new TypeToken<ArrayList<User>>() {
+                    }.getType();
+                    ArrayList<User> userList = gson.fromJson(response.body(), listType);
+                    usersList.clear();
+                    usersList.addAll(userList);
+                    if (Objects.nonNull(onSuccess)) {
+                        onSuccess.run();
+                    }
+                });
             } else if (response.statusCode() == 401) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, access denied");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Access denied"));
+                }
             } else if (response.statusCode() == 404) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, resource not found");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
+                }
             } else if (response.statusCode() == 500) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, this is definitely on our side");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
+                }
             }
         }).exceptionally(throwable -> {
             // Handle exceptions during the request (e.g., network issues)
-            errorMessage.showMessage("An error occurred, this is on your side");
+            if (Connectivity.isConnectedToInternet()) {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
+                }
+            } else {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
+                }
+            }
             SpotyLogger.writeToFile(throwable, UserViewModel.class);
             return null;
         });
     }
 
     public static void getItem(
-            Long index,SpotyGotFunctional.ParameterlessConsumer onSuccess,
-                                         SpotyGotFunctional.MessageConsumer errorMessage) {
+            Long index, SpotyGotFunctional.ParameterlessConsumer onSuccess,
+            SpotyGotFunctional.MessageConsumer errorMessage) {
         var findModel = FindModel.builder().id(index).build();
         CompletableFuture<HttpResponse<String>> responseFuture = usersRepository.fetch(findModel);
         responseFuture.thenAccept(response -> {
             // Handle successful response
             if (response.statusCode() == 200) {
                 // Process the successful response
-                var user = gson.fromJson(response.body(), UserModel.class);
-                setId(user.getId());
-                setFirstName(user.getFirstName());
-                setLastName(user.getLastName());
-                setOtherName(user.getOtherName());
-                setActive(user.isActive());
-                setPhone(user.getPhone());
-                setEmail(user.getEmail());
-                if (Objects.nonNull(onSuccess)) {
+                Platform.runLater(() -> {
+                    var user = gson.fromJson(response.body(), UserModel.class);
+                    setId(user.getId());
+                    setFirstName(user.getFirstName());
+                    setLastName(user.getLastName());
+                    setOtherName(user.getOtherName());
+                    setActive(user.isActive());
+                    setPhone(user.getPhone());
+                    setEmail(user.getEmail());
                     onSuccess.run();
-                }
+                });
             } else if (response.statusCode() == 401) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, access denied");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Access denied"));
+                }
             } else if (response.statusCode() == 404) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, resource not found");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
+                }
             } else if (response.statusCode() == 500) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, this is definitely on our side");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
+                }
             }
         }).exceptionally(throwable -> {
             // Handle exceptions during the request (e.g., network issues)
-            errorMessage.showMessage("An error occurred, this is on your side");
+            if (Connectivity.isConnectedToInternet()) {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
+                }
+            } else {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
+                }
+            }
             SpotyLogger.writeToFile(throwable, DepartmentViewModel.class);
             return null;
         });
@@ -387,36 +429,50 @@ public class UserViewModel {
             // Handle successful response
             if (response.statusCode() == 200) {
                 // Process the successful response
-                Type listType = new TypeToken<ArrayList<User>>() {
-                }.getType();
-                ArrayList<User> userList = gson.fromJson(
-                        response.body(), listType);
-                usersList.clear();
-                usersList.addAll(userList);
-                if (Objects.nonNull(onSuccess)) {
+                Platform.runLater(() -> {
+                    Type listType = new TypeToken<ArrayList<User>>() {
+                    }.getType();
+                    ArrayList<User> userList = gson.fromJson(
+                            response.body(), listType);
+                    usersList.clear();
+                    usersList.addAll(userList);
                     onSuccess.run();
-                }
+                });
             } else if (response.statusCode() == 401) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, access denied");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Access denied"));
+                }
             } else if (response.statusCode() == 404) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, resource not found");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
+                }
             } else if (response.statusCode() == 500) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, this is definitely on our side");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
+                }
             }
         }).exceptionally(throwable -> {
             // Handle exceptions during the request (e.g., network issues)
-            errorMessage.showMessage("An error occurred, this is on your side");
+            if (Connectivity.isConnectedToInternet()) {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
+                }
+            } else {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
+                }
+            }
             SpotyLogger.writeToFile(throwable, UserViewModel.class);
             return null;
         });
     }
 
     public static void updateItem(SpotyGotFunctional.ParameterlessConsumer onSuccess,
-                                         SpotyGotFunctional.MessageConsumer successMessage,
-                                         SpotyGotFunctional.MessageConsumer errorMessage) {
+                                  SpotyGotFunctional.MessageConsumer successMessage,
+                                  SpotyGotFunctional.MessageConsumer errorMessage) {
         var user = UserModel.builder()
                 .id(getId())
                 .firstName(getFirstName())
@@ -437,51 +493,83 @@ public class UserViewModel {
             // Handle successful response
             if (response.statusCode() == 200 || response.statusCode() == 201 || response.statusCode() == 204) {
                 // Process the successful response
-                successMessage.showMessage("User updated successfully");
-                onSuccess.run();
+                Platform.runLater(() -> {
+                    onSuccess.run();
+                    successMessage.showMessage("User updated successfully");
+                });
             } else if (response.statusCode() == 401) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, access denied");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Access denied"));
+                }
             } else if (response.statusCode() == 404) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, resource not found");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
+                }
             } else if (response.statusCode() == 500) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, this is definitely on our side");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
+                }
             }
         }).exceptionally(throwable -> {
             // Handle exceptions during the request (e.g., network issues)
-            errorMessage.showMessage("An error occurred, this is on your side");
+            if (Connectivity.isConnectedToInternet()) {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
+                }
+            } else {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
+                }
+            }
             SpotyLogger.writeToFile(throwable, UserViewModel.class);
             return null;
         });
     }
 
     public static void deleteItem(
-            Long index,SpotyGotFunctional.ParameterlessConsumer onSuccess,
-                                         SpotyGotFunctional.MessageConsumer successMessage,
-                                         SpotyGotFunctional.MessageConsumer errorMessage) {
+            Long index, SpotyGotFunctional.ParameterlessConsumer onSuccess,
+            SpotyGotFunctional.MessageConsumer successMessage,
+            SpotyGotFunctional.MessageConsumer errorMessage) {
         var findModel = FindModel.builder().id(index).build();
         CompletableFuture<HttpResponse<String>> responseFuture = usersRepository.delete(findModel);
         responseFuture.thenAccept(response -> {
             // Handle successful response
             if (response.statusCode() == 200 || response.statusCode() == 204) {
                 // Process the successful response
-                successMessage.showMessage("User deleted successfully");
-                onSuccess.run();
+                Platform.runLater(() -> {
+                    onSuccess.run();
+                    successMessage.showMessage("User deleted successfully");
+                });
             } else if (response.statusCode() == 401) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, access denied");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Access denied"));
+                }
             } else if (response.statusCode() == 404) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, resource not found");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
+                }
             } else if (response.statusCode() == 500) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, this is definitely on our side");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
+                }
             }
         }).exceptionally(throwable -> {
             // Handle exceptions during the request (e.g., network issues)
-            errorMessage.showMessage("An error occurred, this is on your side");
+            if (Connectivity.isConnectedToInternet()) {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
+                }
+            } else {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
+                }
+            }
             SpotyLogger.writeToFile(throwable, UserViewModel.class);
             return null;
         });

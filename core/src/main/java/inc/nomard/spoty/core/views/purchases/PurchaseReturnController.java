@@ -17,6 +17,7 @@ package inc.nomard.spoty.core.views.purchases;
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.components.message.*;
 import inc.nomard.spoty.core.components.message.enums.*;
+import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.returns.purchases.*;
 import inc.nomard.spoty.core.views.previews.purchases.*;
 import inc.nomard.spoty.network_bridge.dtos.returns.purchase_returns.*;
@@ -191,6 +192,7 @@ public class PurchaseReturnController implements Initializable {
     }
 
     private void onSuccess() {
+        PurchaseReturnMasterViewModel.getPurchaseReturnMasters(null, null);
     }
 
     private MFXContextMenu showContextMenu(MFXTableRow<PurchaseReturnMaster> obj) {
@@ -280,8 +282,8 @@ public class PurchaseReturnController implements Initializable {
         SpotyMessage notification =
                 new SpotyMessage.MessageBuilder(message)
                         .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
                         .build();
         notificationHolder.addMessage(notification);
         AnchorPane.setRightAnchor(notification, 40.0);

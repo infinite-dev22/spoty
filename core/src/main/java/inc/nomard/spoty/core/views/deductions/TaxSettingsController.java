@@ -5,17 +5,15 @@ import inc.nomard.spoty.network_bridge.dtos.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import io.github.palexdev.mfxresources.fonts.*;
-
 import java.net.*;
 import java.util.*;
-
 import javafx.animation.*;
 import javafx.event.*;
 import javafx.fxml.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.util.*;
-import lombok.extern.java.Log;
+import lombok.extern.java.*;
 
 @Log
 public class TaxSettingsController implements Initializable {
@@ -47,11 +45,9 @@ public class TaxSettingsController implements Initializable {
     }
 
     private void onSuccess() {
-        transition.setOnFinished(null);
     }
 
     private void onFailed() {
-        transition.setOnFinished(null);
     }
 
     private void setIcons() {

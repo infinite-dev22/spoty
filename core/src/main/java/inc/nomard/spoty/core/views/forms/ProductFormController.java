@@ -54,9 +54,7 @@ public class ProductFormController implements Initializable {
     @FXML
     public MFXTextField name,
             serialNumber,
-            price,
-            discount,
-            tax,
+            salePrice,
             stockAlert;
     @FXML
     public TextArea description;
@@ -67,9 +65,13 @@ public class ProductFormController implements Initializable {
     @FXML
     public MFXFilterComboBox<UnitOfMeasure> unitOfMeasure;
     @FXML
-    public MFXFilterComboBox<String> barcodeType;
+    public MFXComboBox<String> barcodeType;
     @FXML
-    public MFXFilterComboBox<String> type;
+    public MFXTextField costPrice;
+    @FXML
+    public MFXComboBox<Discount> discount;
+    @FXML
+    public MFXComboBox<Tax> tax;
     @FXML
     public Rectangle productImageView;
     @FXML
@@ -125,16 +127,16 @@ public class ProductFormController implements Initializable {
     private void getFieldBindings() {
         name.textProperty().bindBidirectional(ProductViewModel.nameProperty());
         serialNumber.textProperty().bindBidirectional(ProductViewModel.serialProperty());
-        price.textProperty().bindBidirectional(ProductViewModel.priceProperty());
-        discount.textProperty().bindBidirectional(ProductViewModel.discountProperty());
+        salePrice.textProperty().bindBidirectional(ProductViewModel.priceProperty());
         description.textProperty().bindBidirectional(ProductViewModel.descriptionProperty());
-        tax.textProperty().bindBidirectional(ProductViewModel.netTaxProperty());
         stockAlert.textProperty().bindBidirectional(ProductViewModel.stockAlertProperty());
         brand.valueProperty().bindBidirectional(ProductViewModel.brandProperty());
         category.valueProperty().bindBidirectional(ProductViewModel.categoryProperty());
         unitOfMeasure.valueProperty().bindBidirectional(ProductViewModel.unitProperty());
         barcodeType.valueProperty().bindBidirectional(ProductViewModel.barcodeTypeProperty());
-        type.valueProperty().bindBidirectional(ProductViewModel.productTypeProperty());
+        costPrice.textProperty().bindBidirectional(ProductViewModel.costProperty());
+        discount.valueProperty().bindBidirectional(ProductViewModel.discountProperty());
+        tax.valueProperty().bindBidirectional(ProductViewModel.taxProperty());
     }
 
     private void getComboBoxProperties() {
@@ -142,31 +144,29 @@ public class ProductFormController implements Initializable {
         StringConverter<UnitOfMeasure> uomConverter =
                 FunctionalStringConverter.to(
                         unitOfMeasure -> (unitOfMeasure == null) ? "" : unitOfMeasure.getName());
-
         StringConverter<ProductCategory> productCategoryConverter =
                 FunctionalStringConverter.to(
                         productCategory -> (productCategory == null) ? "" : productCategory.getName());
-
         StringConverter<Brand> brandConverter =
                 FunctionalStringConverter.to(brand -> (brand == null) ? "" : brand.getName());
-
+        StringConverter<Discount> discountConverter =
+                FunctionalStringConverter.to(discount -> (discount == null) ? "" : discount.getName() + "(" + discount.getPercentage() + ")");
+        StringConverter<Tax> taxConverter =
+                FunctionalStringConverter.to(tax -> (tax == null) ? "" : tax.getName() + "(" + tax.getPercentage() + ")");
         // ComboBox Filter Functions.
         Function<String, Predicate<UnitOfMeasure>> uomFilterFunction =
                 searchStr ->
                         unitOfMeasure ->
                                 StringUtils.containsIgnoreCase(uomConverter.toString(unitOfMeasure), searchStr);
-
         Function<String, Predicate<ProductCategory>> productCategoryFilterFunction =
                 searchStr ->
                         productCategory ->
                                 StringUtils.containsIgnoreCase(
                                         productCategoryConverter.toString(productCategory), searchStr);
-
         Function<String, Predicate<Brand>> brandFilterFunction =
                 searchStr ->
                         brand -> StringUtils.containsIgnoreCase(brandConverter.toString(brand), searchStr);
-
-        // ProductType combo box properties.
+        // Unit of measure combo box
         unitOfMeasure.setConverter(uomConverter);
         unitOfMeasure.setFilterFunction(uomFilterFunction);
         if (UOMViewModel.getUnitsOfMeasure().isEmpty()) {
@@ -177,7 +177,7 @@ public class ProductFormController implements Initializable {
         } else {
             unitOfMeasure.itemsProperty().bindBidirectional(UOMViewModel.unitsOfMeasureProperty());
         }
-
+        // Product category combo box
         category.setConverter(productCategoryConverter);
         category.setFilterFunction(productCategoryFilterFunction);
         if (ProductCategoryViewModel.getCategories().isEmpty()) {
@@ -188,7 +188,7 @@ public class ProductFormController implements Initializable {
         } else {
             category.itemsProperty().bindBidirectional(ProductCategoryViewModel.categoriesProperty());
         }
-
+        // Brand combo box
         brand.setConverter(brandConverter);
         brand.setFilterFunction(brandFilterFunction);
         if (BrandViewModel.getBrands().isEmpty()) {
@@ -199,10 +199,28 @@ public class ProductFormController implements Initializable {
         } else {
             brand.itemsProperty().bindBidirectional(BrandViewModel.brandsProperty());
         }
+        // Discount combo box
+        discount.setConverter(discountConverter);
+        if (DiscountViewModel.getDiscounts().isEmpty()) {
+            DiscountViewModel.getDiscounts()
+                    .addListener(
+                            (ListChangeListener<Discount>)
+                                    c -> discount.setItems(DiscountViewModel.getDiscounts()));
+        } else {
+            discount.itemsProperty().bindBidirectional(DiscountViewModel.discountsProperty());
+        }
+        // Tax combo box
+        tax.setConverter(taxConverter);
+        if (TaxViewModel.getTaxes().isEmpty()) {
+            TaxViewModel.getTaxes()
+                    .addListener(
+                            (ListChangeListener<Tax>)
+                                    c -> tax.setItems(TaxViewModel.getTaxes()));
+        } else {
+            tax.itemsProperty().bindBidirectional(TaxViewModel.taxesProperty());
+        }
 
         barcodeType.setItems(FXCollections.observableArrayList(Values.BARCODE_TYPES));
-
-        type.setItems(FXCollections.observableArrayList(Values.PRODUCT_TYPES));
     }
 
     private void dialogOnActions() {
@@ -216,7 +234,6 @@ public class ProductFormController implements Initializable {
                     category.clearSelection();
                     unitOfMeasure.clearSelection();
                     barcodeType.clearSelection();
-                    type.clearSelection();
 
                     barcodeTypeValidationLabel.setVisible(false);
                     unitOfMeasureValidationLabel.setVisible(false);
@@ -233,7 +250,7 @@ public class ProductFormController implements Initializable {
                     nameValidationLabel.setManaged(false);
 
                     name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                    price.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                    salePrice.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                     brand.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                     category.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                     unitOfMeasure.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
@@ -247,7 +264,7 @@ public class ProductFormController implements Initializable {
         saveBtn.setOnAction(
                 (event) -> {
                     nameConstraints = name.validate();
-                    priceConstraints = price.validate();
+                    priceConstraints = salePrice.validate();
                     brandConstraints = brand.validate();
                     categoryConstraints = category.validate();
                     unitOfMeasureConstraints = unitOfMeasure.validate();
@@ -264,8 +281,8 @@ public class ProductFormController implements Initializable {
                         priceValidationLabel.setManaged(true);
                         priceValidationLabel.setVisible(true);
                         priceValidationLabel.setText(priceConstraints.getFirst().getMessage());
-                        price.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                        MFXStageDialog dialog = (MFXStageDialog) price.getScene().getWindow();
+                        salePrice.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
+                        MFXStageDialog dialog = (MFXStageDialog) salePrice.getScene().getWindow();
                         dialog.sizeToScene();
                     }
                     if (!brandConstraints.isEmpty()) {
@@ -306,13 +323,12 @@ public class ProductFormController implements Initializable {
                             && categoryConstraints.isEmpty()
                             && unitOfMeasureConstraints.isEmpty()
                             && barcodeTypeConstraints.isEmpty()) {
+                        actionEvent = event;
                         if (ProductViewModel.getId() > 0) {
                             ProductViewModel.updateProduct(this::onSuccess, this::successMessage, this::errorMessage);
-                            actionEvent = event;
                             return;
                         }
                         ProductViewModel.saveProduct(this::onSuccess, this::successMessage, this::errorMessage);
-                        actionEvent = event;
                     }
                 });
     }
@@ -376,13 +392,13 @@ public class ProductFormController implements Initializable {
         category.clearSelection();
         unitOfMeasure.clearSelection();
         barcodeType.clearSelection();
-        type.clearSelection();
-        closeDialog(actionEvent);
-        ProductViewModel.resetProperties();
         placeHolder.setVisible(true);
         placeHolder.setManaged(true);
         productImageView.setVisible(false);
         productImageView.setManaged(false);
+        closeDialog(actionEvent);
+        ProductViewModel.resetProperties();
+        ProductViewModel.getAllProducts(null, null);
     }
 
     public void requiredValidator() {
@@ -398,9 +414,9 @@ public class ProductFormController implements Initializable {
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
                         .setMessage("Price is required")
-                        .setCondition(price.textProperty().length().greaterThan(0))
+                        .setCondition(salePrice.textProperty().length().greaterThan(0))
                         .get();
-        price.getValidator().constraint(priceConstraint);
+        salePrice.getValidator().constraint(priceConstraint);
         Constraint brandConstraint =
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
@@ -441,7 +457,7 @@ public class ProductFormController implements Initializable {
                                 name.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                             }
                         });
-        price
+        salePrice
                 .getValidator()
                 .validProperty()
                 .addListener(
@@ -449,7 +465,7 @@ public class ProductFormController implements Initializable {
                             if (newValue) {
                                 priceValidationLabel.setManaged(false);
                                 priceValidationLabel.setVisible(false);
-                                price.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
+                                salePrice.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                             }
                         });
         brand
@@ -503,8 +519,8 @@ public class ProductFormController implements Initializable {
         SpotyMessage notification =
                 new SpotyMessage.MessageBuilder(message)
                         .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
                         .build();
         notificationHolder.addMessage(notification);
         AnchorPane.setRightAnchor(notification, 40.0);

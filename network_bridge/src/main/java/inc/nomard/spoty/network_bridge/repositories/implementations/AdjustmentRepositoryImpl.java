@@ -16,7 +16,7 @@ public class AdjustmentRepositoryImpl extends ProtectedGlobals implements Simple
     @Override
     public CompletableFuture<HttpResponse<String>> fetchAll() {
         var request = HttpRequest.newBuilder()
-                .uri(URI.create(EndPoints.Payments.cardPay))
+                .uri(URI.create(EndPoints.Adjustments.allAdjustments))
                 .header("Authorization", authToken)
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")

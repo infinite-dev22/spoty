@@ -17,13 +17,10 @@ package inc.nomard.spoty.core.viewModels;
 import com.google.gson.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.utils.adapters.*;
-
 import java.util.*;
-
 import javafx.beans.property.*;
 import javafx.collections.*;
-
-import lombok.extern.java.Log;
+import lombok.extern.java.*;
 
 @Log
 public class PointOfSaleViewModel {

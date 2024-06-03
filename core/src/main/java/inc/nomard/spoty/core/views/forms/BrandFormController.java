@@ -84,19 +84,20 @@ public class BrandFormController implements Initializable {
                         dialog.sizeToScene();
                     }
                     if (nameConstraints.isEmpty()) {
+                        actionEvent = event;
                         if (BrandViewModel.getId() > 0) {
                             BrandViewModel.updateItem(this::onSuccess, this::successMessage, this::errorMessage);
-                            actionEvent = event;
                             return;
                         }
                         BrandViewModel.saveBrand(this::onSuccess, this::successMessage, this::errorMessage);
-                        actionEvent = event;
                     }
                 });
     }
 
     private void onSuccess() {
         closeDialog(actionEvent);
+        BrandViewModel.clearBrandData();
+        BrandViewModel.getAllBrands(null, null);
     }
 
     public void requiredValidator() {
@@ -127,8 +128,8 @@ public class BrandFormController implements Initializable {
         SpotyMessage notification =
                 new SpotyMessage.MessageBuilder(message)
                         .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
                         .build();
         notificationHolder.addMessage(notification);
         AnchorPane.setRightAnchor(notification, 40.0);

@@ -101,6 +101,8 @@ public class ExpenseCategoryFormController implements Initializable {
 
     private void onSuccess() {
         closeDialog(actionEvent);
+        ExpenseCategoryViewModel.resetProperties();
+        ExpenseCategoryViewModel.getAllCategories(null, null);
     }
 
     public void requiredValidator() {
@@ -131,8 +133,8 @@ public class ExpenseCategoryFormController implements Initializable {
         SpotyMessage notification =
                 new SpotyMessage.MessageBuilder(message)
                         .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
                         .build();
         notificationHolder.addMessage(notification);
         AnchorPane.setRightAnchor(notification, 40.0);

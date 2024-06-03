@@ -3,8 +3,7 @@ package inc.nomard.spoty.core.components;
 import io.github.palexdev.mfxcore.controls.*;
 import javafx.scene.*;
 import javafx.scene.layout.*;
-
-import lombok.extern.java.Log;
+import lombok.extern.java.*;
 
 @Log
 public class ViewAll extends VBox {

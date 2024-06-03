@@ -15,14 +15,11 @@
 package inc.nomard.spoty.core.views.components;
 
 import inc.nomard.spoty.core.models.*;
-
 import java.net.*;
 import java.util.*;
-
 import javafx.fxml.*;
 import javafx.scene.control.*;
-
-import lombok.extern.java.Log;
+import lombok.extern.java.*;
 
 @Log
 public class SmallCardController implements Initializable {

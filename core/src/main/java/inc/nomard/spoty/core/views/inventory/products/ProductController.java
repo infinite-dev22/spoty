@@ -113,39 +113,36 @@ public class ProductController implements Initializable {
                 new MFXTableColumn<>("Category", false, Comparator.comparing(Product::getCategoryName));
         MFXTableColumn<Product> productBrand =
                 new MFXTableColumn<>("Brand", false, Comparator.comparing(Product::getBrandName));
+        MFXTableColumn<Product> costPrice =
+                new MFXTableColumn<>("Cost Price", false, Comparator.comparing(Product::getCostPrice));
+        MFXTableColumn<Product> salePrice =
+                new MFXTableColumn<>("Sale Price", false, Comparator.comparing(Product::getSalePrice));
         MFXTableColumn<Product> productQuantity =
                 new MFXTableColumn<>("Quantity", false, Comparator.comparing(Product::getQuantity));
-        MFXTableColumn<Product> productPrice =
-                new MFXTableColumn<>("Price", false, Comparator.comparing(Product::getPrice));
-        MFXTableColumn<Product> productType =
-                new MFXTableColumn<>("Type", false, Comparator.comparing(Product::getProductType));
 
         productName.setRowCellFactory(product -> new MFXTableRowCell<>(Product::getName));
         productCategory.setRowCellFactory(product -> new MFXTableRowCell<>(Product::getCategoryName));
         productBrand.setRowCellFactory(product -> new MFXTableRowCell<>(Product::getBrandName));
+        costPrice.setRowCellFactory(product -> new MFXTableRowCell<>(Product::getCostPrice));
+        salePrice.setRowCellFactory(product -> new MFXTableRowCell<>(Product::getSalePrice));
         productQuantity.setRowCellFactory(product -> new MFXTableRowCell<>(Product::getQuantity));
-        productPrice.setRowCellFactory(product -> new MFXTableRowCell<>(Product::getPrice));
-        productType.setRowCellFactory(product -> new MFXTableRowCell<>(Product::getProductType));
 
         productName.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
         productCategory.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
         productBrand.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        costPrice.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
+        salePrice.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
         productQuantity.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
-        productPrice.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
-        productType.prefWidthProperty().bind(masterTable.widthProperty().multiply(.25));
 
         masterTable
                 .getTableColumns()
-                .addAll(productName, productCategory, productBrand, productQuantity, productPrice, productType);
+                .addAll(productName, productCategory, productBrand, productQuantity, costPrice, salePrice, productQuantity);
         masterTable
                 .getFilters()
                 .addAll(
                         new StringFilter<>("Name", Product::getName),
                         new StringFilter<>("Category", Product::getCategoryName),
-                        new StringFilter<>("Brand", Product::getBrandName),
-                        new LongFilter<>("Quantity", Product::getQuantity),
-                        new DoubleFilter<>("Price", Product::getPrice),
-                        new StringFilter<>("Product Type", Product::getProductType));
+                        new StringFilter<>("Brand", Product::getBrandName));
         styleTable();
 
         if (ProductViewModel.getProducts().isEmpty()) {
@@ -245,6 +242,7 @@ public class ProductController implements Initializable {
     }
 
     private void onSuccess() {
+        ProductViewModel.getAllProducts(null, null);
     }
 
     private void successMessage(String message) {
@@ -252,8 +250,8 @@ public class ProductController implements Initializable {
         SpotyMessage notification =
                 new SpotyMessage.MessageBuilder(message)
                         .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
                         .build();
         notificationHolder.addMessage(notification);
         AnchorPane.setRightAnchor(notification, 40.0);

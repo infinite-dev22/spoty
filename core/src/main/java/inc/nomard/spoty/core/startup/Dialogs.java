@@ -15,16 +15,12 @@
 package inc.nomard.spoty.core.startup;
 
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
-
 import inc.nomard.spoty.core.views.forms.*;
 import inc.nomard.spoty.core.views.printable.general.*;
 import io.github.palexdev.materialfx.dialogs.*;
-
 import java.io.*;
-
 import javafx.fxml.*;
-
-import lombok.extern.java.Log;
+import lombok.extern.java.*;
 
 @Log
 public class Dialogs {

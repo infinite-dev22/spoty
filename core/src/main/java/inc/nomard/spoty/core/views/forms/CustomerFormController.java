@@ -150,19 +150,20 @@ public class CustomerFormController implements Initializable {
                     if (nameConstraints.isEmpty()
                             && emailConstraints.isEmpty()
                             && phoneConstraints.isEmpty()) {
+                        actionEvent = event;
                         if (CustomerViewModel.getId() > 0) {
                             CustomerViewModel.updateItem(this::onSuccess, this::successMessage, this::errorMessage);
-                            actionEvent = event;
                             return;
                         }
                         CustomerViewModel.saveCustomer(this::onSuccess, this::successMessage, this::errorMessage);
-                        actionEvent = event;
                     }
                 });
     }
 
     private void onSuccess() {
         closeDialog(actionEvent);
+        CustomerViewModel.resetProperties();
+        CustomerViewModel.getAllCustomers(null, null);
     }
 
     public void requiredValidator() {
@@ -229,8 +230,8 @@ public class CustomerFormController implements Initializable {
         SpotyMessage notification =
                 new SpotyMessage.MessageBuilder(message)
                         .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
                         .build();
         notificationHolder.addMessage(notification);
         AnchorPane.setRightAnchor(notification, 40.0);

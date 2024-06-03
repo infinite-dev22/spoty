@@ -194,6 +194,7 @@ public class UnitOfMeasureController implements Initializable {
     }
 
     private void onSuccess() {
+        UOMViewModel.getAllUOMs(null, null);
     }
 
     private void successMessage(String message) {
@@ -201,8 +202,8 @@ public class UnitOfMeasureController implements Initializable {
         SpotyMessage notification =
                 new SpotyMessage.MessageBuilder(message)
                         .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
                         .build();
         notificationHolder.addMessage(notification);
         AnchorPane.setRightAnchor(notification, 40.0);

@@ -60,7 +60,7 @@ public class PaymentsRepositoryImpl extends ProtectedGlobals implements Payments
                 .header("Authorization", authToken)
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
-                .method("POST", HttpRequest.BodyPublishers.ofString(new Gson().toJson(findModel)))
+                .method("PUT", HttpRequest.BodyPublishers.ofString(new Gson().toJson(findModel)))
                 .build();
 
         return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString());

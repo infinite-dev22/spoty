@@ -22,6 +22,7 @@ import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.network_bridge.repositories.implementations.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.adapters.*;
+import inc.nomard.spoty.utils.connectivity.*;
 import inc.nomard.spoty.utils.functional_paradigm.*;
 import java.lang.reflect.*;
 import java.net.http.*;
@@ -45,14 +46,13 @@ public class ProductViewModel {
     private static final ObjectProperty<ProductCategory> category = new SimpleObjectProperty<>(null);
     private static final ObjectProperty<UnitOfMeasure> unit = new SimpleObjectProperty<>(null);
     private static final StringProperty name = new SimpleStringProperty("");
-    private static final StringProperty productType = new SimpleStringProperty("");
     private static final StringProperty barcodeType = new SimpleStringProperty("");
     private static final StringProperty image = new SimpleStringProperty("");
     private static final LongProperty quantity = new SimpleLongProperty(0);
-    private static final DoubleProperty cost = new SimpleDoubleProperty(0);
+    private static final StringProperty cost = new SimpleStringProperty();
     private static final StringProperty price = new SimpleStringProperty();
-    private static final StringProperty discount = new SimpleStringProperty();
-    private static final StringProperty netTax = new SimpleStringProperty();
+    private static final ObjectProperty<Discount> discount = new SimpleObjectProperty<>();
+    private static final ObjectProperty<Tax> tax = new SimpleObjectProperty<>();
     private static final StringProperty taxType = new SimpleStringProperty("");
     private static final StringProperty stockAlert = new SimpleStringProperty();
     private static final StringProperty serial = new SimpleStringProperty("");
@@ -108,14 +108,16 @@ public class ProductViewModel {
     }
 
     public static double getCost() {
-        return cost.get();
+        return (Objects.equals(cost.get(), null) || cost.get().isEmpty())
+                ? 0.0
+                : Double.parseDouble(cost.get());
     }
 
     public static void setCost(double cost) {
-        ProductViewModel.cost.set(cost);
+        ProductViewModel.cost.set((cost == 0) ? "" : String.valueOf(cost));
     }
 
-    public static DoubleProperty costProperty() {
+    public static StringProperty costProperty() {
         return cost;
     }
 
@@ -133,32 +135,28 @@ public class ProductViewModel {
         return price;
     }
 
-    public static double getDiscount() {
-        return (Objects.equals(discount.get(), null) || discount.get().isEmpty())
-                ? 0.0
-                : Double.parseDouble(discount.get());
+    public static Discount getDiscount() {
+        return discount.get();
     }
 
-    public static void setDiscount(double discount) {
-        ProductViewModel.discount.set((discount == 0) ? "" : String.valueOf(discount));
+    public static void setDiscount(Discount discount) {
+        ProductViewModel.discount.set(discount);
     }
 
-    public static StringProperty discountProperty() {
+    public static ObjectProperty<Discount> discountProperty() {
         return discount;
     }
 
-    public static double getNetTax() {
-        return (Objects.equals(netTax.get(), null) || netTax.get().isEmpty())
-                ? 0.0
-                : Double.parseDouble(netTax.get());
+    public static Tax getTax() {
+        return tax.get();
     }
 
-    public static void setNetTax(double netTax) {
-        ProductViewModel.netTax.set((netTax == 0) ? "" : String.valueOf(netTax));
+    public static void setTax(Tax tax) {
+        ProductViewModel.tax.set(tax);
     }
 
-    public static StringProperty netTaxProperty() {
-        return netTax;
+    public static ObjectProperty<Tax> taxProperty() {
+        return tax;
     }
 
     public static String getTaxType() {
@@ -227,18 +225,6 @@ public class ProductViewModel {
         return category;
     }
 
-    public static String getProductType() {
-        return productType.get();
-    }
-
-    public static void setProductType(String productType) {
-        ProductViewModel.productType.set(productType);
-    }
-
-    public static StringProperty productTypeProperty() {
-        return productType;
-    }
-
     public static String getBarcodeType() {
         return barcodeType.get();
     }
@@ -295,14 +281,12 @@ public class ProductViewModel {
                 .brand(getBrand())
                 .category(getCategory())
                 .unit(getUnit())
-                .productType(getProductType())
                 .barcodeType(getBarcodeType())
-                .price(getPrice())
-                .cost(getCost())
+                .salePrice(getPrice())
+                .costPrice(getCost())
                 .quantity(getQuantity())
-                .netTax(getNetTax())
+                .tax(getTax())
                 .discount(getDiscount())
-                .taxType(getTaxType())
                 .stockAlert(getStockAlert())
                 .serialNumber(getSerialNumber())
                 .image(getImage())
@@ -312,21 +296,37 @@ public class ProductViewModel {
             // Handle successful response
             if (response.statusCode() == 201 || response.statusCode() == 204) {
                 // Process the successful response
-                successMessage.showMessage("Product created successfully");
-                onSuccess.run();
+                Platform.runLater(() -> {
+                    successMessage.showMessage("Product created successfully");
+                    onSuccess.run();
+                });
             } else if (response.statusCode() == 401) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, access denied");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Access denied"));
+                }
             } else if (response.statusCode() == 404) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, resource not found");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
+                }
             } else if (response.statusCode() == 500) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, this is definitely on our side");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
+                }
             }
         }).exceptionally(throwable -> {
             // Handle exceptions during the request (e.g., network issues)
-            errorMessage.showMessage("An error occurred, this is on your side");
+            if (Connectivity.isConnectedToInternet()) {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
+                }
+            } else {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
+                }
+            }
             SpotyLogger.writeToFile(throwable, ProductViewModel.class);
             return null;
         });
@@ -341,14 +341,13 @@ public class ProductViewModel {
                     setCategory(null);
                     setUnit(null);
                     setName("");
-                    setProductType("");
                     setBarcodeType("");
                     setImage("");
                     setQuantity(0);
                     setCost(0);
                     setPrice(0);
-                    setNetTax(0);
-                    setDiscount(0);
+                    setTax(null);
+                    setDiscount(null);
                     setTaxType("");
                     setStockAlert(0);
                     setSerial("");
@@ -360,30 +359,45 @@ public class ProductViewModel {
         CompletableFuture<HttpResponse<String>> responseFuture = productsRepository.fetchAll();
         responseFuture.thenAccept(response -> {
             // Handle successful response
-            if (response.statusCode() == 201) {
+            if (response.statusCode() == 200) {
                 // Process the successful response
-                Type listType = new TypeToken<ArrayList<Product>>() {
-                }.getType();
-                ArrayList<Product> productList = gson.fromJson(response.body(), listType);
-                productsList.clear();
-                productsList.addAll(productList);
-                if (Objects.nonNull(onSuccess)) {
-                    onSuccess.run();
-                }
-                onSuccess.run();
+                Platform.runLater(() -> {
+                    Type listType = new TypeToken<ArrayList<Product>>() {
+                    }.getType();
+                    ArrayList<Product> productList = gson.fromJson(response.body(), listType);
+                    productsList.clear();
+                    productsList.addAll(productList);
+                    if (Objects.nonNull(onSuccess)) {
+                        onSuccess.run();
+                    }
+                });
             } else if (response.statusCode() == 401) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, access denied");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Access denied"));
+                }
             } else if (response.statusCode() == 404) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, resource not found");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
+                }
             } else if (response.statusCode() == 500) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, this is definitely on our side");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
+                }
             }
         }).exceptionally(throwable -> {
             // Handle exceptions during the request (e.g., network issues)
-            errorMessage.showMessage("An error occurred, this is on your side");
+            if (Connectivity.isConnectedToInternet()) {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
+                }
+            } else {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
+                }
+            }
             SpotyLogger.writeToFile(throwable, ProductViewModel.class);
             return null;
         });
@@ -398,39 +412,51 @@ public class ProductViewModel {
             // Handle successful response
             if (response.statusCode() == 200) {
                 // Process the successful response
-                var product = gson.fromJson(response.body(), Product.class);
-                setId(product.getId());
-                setName(product.getName());
-                setBrand(product.getBrand());
-                setCategory(product.getCategory());
-                setUnit(product.getUnit());
-                setProductType(product.getProductType());
-                setBarcodeType(product.getBarcodeType());
-                setPrice(product.getPrice());
-                setCost(product.getCost());
-                setQuantity(product.getQuantity());
-                setDiscount(product.getDiscount());
-                setNetTax(product.getNetTax());
-                setTaxType(product.getTaxType());
-                setStockAlert(product.getStockAlert());
-                setSerial(product.getSerialNumber());
-                setImage(product.getImage());
-                if (Objects.nonNull(onSuccess)) {
+                Platform.runLater(() -> {
+                    var product = gson.fromJson(response.body(), Product.class);
+                    setId(product.getId());
+                    setName(product.getName());
+                    setBrand(product.getBrand());
+                    setCategory(product.getCategory());
+                    setUnit(product.getUnit());
+                    setBarcodeType(product.getBarcodeType());
+                    setPrice(product.getSalePrice());
+                    setCost(product.getCostPrice());
+                    setQuantity(product.getQuantity());
+                    setDiscount(product.getDiscount());
+                    setTax(product.getTax());
+                    setStockAlert(product.getStockAlert());
+                    setSerial(product.getSerialNumber());
+                    setImage(product.getImage());
                     onSuccess.run();
-                }
+                });
             } else if (response.statusCode() == 401) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, access denied");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Access denied"));
+                }
             } else if (response.statusCode() == 404) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, resource not found");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
+                }
             } else if (response.statusCode() == 500) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, this is definitely on our side");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
+                }
             }
         }).exceptionally(throwable -> {
             // Handle exceptions during the request (e.g., network issues)
-            errorMessage.showMessage("An error occurred, this is on your side");
+            if (Connectivity.isConnectedToInternet()) {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
+                }
+            } else {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
+                }
+            }
             SpotyLogger.writeToFile(throwable, ProductViewModel.class);
             return null;
         });
@@ -445,28 +471,42 @@ public class ProductViewModel {
             // Handle successful response
             if (response.statusCode() == 200) {
                 // Process the successful response
-                Type listType = new TypeToken<ArrayList<Product>>() {
-                }.getType();
-                ArrayList<Product> productList = gson.fromJson(
-                        response.body(), listType);
-                productsList.clear();
-                productsList.addAll(productList);
-                if (Objects.nonNull(onSuccess)) {
+                Platform.runLater(() -> {
+                    Type listType = new TypeToken<ArrayList<Product>>() {
+                    }.getType();
+                    ArrayList<Product> productList = gson.fromJson(
+                            response.body(), listType);
+                    productsList.clear();
+                    productsList.addAll(productList);
                     onSuccess.run();
-                }
+                });
             } else if (response.statusCode() == 401) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, access denied");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Access denied"));
+                }
             } else if (response.statusCode() == 404) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, resource not found");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
+                }
             } else if (response.statusCode() == 500) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, this is definitely on our side");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
+                }
             }
         }).exceptionally(throwable -> {
             // Handle exceptions during the request (e.g., network issues)
-            errorMessage.showMessage("An error occurred, this is on your side");
+            if (Connectivity.isConnectedToInternet()) {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
+                }
+            } else {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
+                }
+            }
             SpotyLogger.writeToFile(throwable, ProductViewModel.class);
             return null;
         });
@@ -481,14 +521,12 @@ public class ProductViewModel {
                 .brand(getBrand())
                 .category(getCategory())
                 .unit(getUnit())
-                .productType(getProductType())
                 .barcodeType(getBarcodeType())
-                .price(getPrice())
-                .cost(getCost())
+                .salePrice(getPrice())
+                .costPrice(getCost())
                 .quantity(getQuantity())
-                .netTax(getNetTax())
+                .tax(getTax())
                 .discount(getDiscount())
-                .taxType(getTaxType())
                 .stockAlert(getStockAlert())
                 .serialNumber(getSerialNumber())
                 .image(getImage())
@@ -498,21 +536,37 @@ public class ProductViewModel {
             // Handle successful response
             if (response.statusCode() == 200 || response.statusCode() == 204) {
                 // Process the successful response
-                successMessage.showMessage("Product updated successfully");
-                onSuccess.run();
+                Platform.runLater(() -> {
+                    onSuccess.run();
+                    successMessage.showMessage("Product updated successfully");
+                });
             } else if (response.statusCode() == 401) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, access denied");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Access denied"));
+                }
             } else if (response.statusCode() == 404) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, resource not found");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
+                }
             } else if (response.statusCode() == 500) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, this is definitely on our side");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
+                }
             }
         }).exceptionally(throwable -> {
             // Handle exceptions during the request (e.g., network issues)
-            errorMessage.showMessage("An error occurred, this is on your side");
+            if (Connectivity.isConnectedToInternet()) {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
+                }
+            } else {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
+                }
+            }
             SpotyLogger.writeToFile(throwable, ProductViewModel.class);
             return null;
         });
@@ -528,21 +582,37 @@ public class ProductViewModel {
             // Handle successful response
             if (response.statusCode() == 200 || response.statusCode() == 204) {
                 // Process the successful response
-                successMessage.showMessage("Product deleted successfully");
-                onSuccess.run();
+                Platform.runLater(() -> {
+                    onSuccess.run();
+                    successMessage.showMessage("Product deleted successfully");
+                });
             } else if (response.statusCode() == 401) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, access denied");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Access denied"));
+                }
             } else if (response.statusCode() == 404) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, resource not found");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
+                }
             } else if (response.statusCode() == 500) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, this is definitely on our side");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
+                }
             }
         }).exceptionally(throwable -> {
             // Handle exceptions during the request (e.g., network issues)
-            errorMessage.showMessage("An error occurred, this is on your side");
+            if (Connectivity.isConnectedToInternet()) {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
+                }
+            } else {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
+                }
+            }
             SpotyLogger.writeToFile(throwable, ProductViewModel.class);
             return null;
         });

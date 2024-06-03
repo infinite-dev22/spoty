@@ -1,19 +1,16 @@
 package inc.nomard.spoty.core.views.components;
 
 import eu.hansolo.fx.charts.*;
-import eu.hansolo.fx.charts.data.XYChartItem;
-import eu.hansolo.fx.charts.series.XYSeries;
-import eu.hansolo.fx.charts.series.XYSeriesBuilder;
-import javafx.animation.AnimationTimer;
-import javafx.geometry.Orientation;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.paint.Color;
-import javafx.util.StringConverter;
-import lombok.extern.java.Log;
-
-import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.util.Random;
+import eu.hansolo.fx.charts.data.*;
+import eu.hansolo.fx.charts.series.*;
+import java.text.*;
+import java.util.*;
+import javafx.animation.*;
+import javafx.geometry.*;
+import javafx.scene.layout.*;
+import javafx.scene.paint.*;
+import javafx.util.*;
+import lombok.extern.java.*;
 
 @Log
 public class HanSoloLineChart extends AnchorPane {

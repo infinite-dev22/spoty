@@ -1,15 +1,13 @@
 package inc.nomard.spoty.core.components.animations;
 
 import java.util.*;
-
 import javafx.animation.*;
 import javafx.geometry.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.*;
 import javafx.scene.shape.*;
 import javafx.util.*;
-
-import lombok.extern.java.Log;
+import lombok.extern.java.*;
 
 @Log
 public class ActivityIndicator extends HBox {

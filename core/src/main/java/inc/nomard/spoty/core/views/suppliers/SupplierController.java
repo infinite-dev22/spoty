@@ -202,6 +202,7 @@ public class SupplierController implements Initializable {
     }
 
     private void onSuccess() {
+        SupplierViewModel.getAllSuppliers(null, null);
     }
 
     private void viewDialogPane(Stage stage) throws IOException {
@@ -242,8 +243,8 @@ public class SupplierController implements Initializable {
         SpotyMessage notification =
                 new SpotyMessage.MessageBuilder(message)
                         .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
                         .build();
         notificationHolder.addMessage(notification);
         AnchorPane.setRightAnchor(notification, 40.0);

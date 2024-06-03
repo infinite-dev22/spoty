@@ -18,4 +18,5 @@ module spoty.utils {
     exports inc.nomard.spoty.utils.exceptions;
     exports inc.nomard.spoty.utils.flavouring;
     exports inc.nomard.spoty.utils.functional_paradigm;
+    exports inc.nomard.spoty.utils.connectivity;
 }

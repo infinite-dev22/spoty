@@ -16,11 +16,9 @@ package inc.nomard.spoty.core.views.components;
 
 import java.net.*;
 import java.util.*;
-
 import javafx.fxml.*;
 import javafx.scene.chart.*;
-
-import lombok.extern.java.Log;
+import lombok.extern.java.*;
 
 @Log
 public class PieChartCardController implements Initializable {

@@ -14,31 +14,21 @@
 
 package inc.nomard.spoty.core.views.dashboard;
 
-import inc.nomard.spoty.core.data.SampleData;
-import inc.nomard.spoty.core.models.QuickStats;
-import inc.nomard.spoty.core.views.components.SmallCardController;
-import inc.nomard.spoty.utils.SpotyLogger;
-import inc.nomard.spoty.utils.responsiveness.layouts.BootstrapColumn;
-import inc.nomard.spoty.utils.responsiveness.layouts.BootstrapPane;
-import inc.nomard.spoty.utils.responsiveness.layouts.BootstrapRow;
-import inc.nomard.spoty.utils.responsiveness.layouts.Breakpoint;
-import io.github.palexdev.materialfx.controls.MFXScrollPane;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.AnchorPane;
-import lombok.extern.java.Log;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
-
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
+import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
+import inc.nomard.spoty.core.data.*;
+import inc.nomard.spoty.core.models.*;
+import inc.nomard.spoty.core.views.components.*;
+import inc.nomard.spoty.utils.*;
+import inc.nomard.spoty.utils.responsiveness.layouts.*;
+import io.github.palexdev.materialfx.controls.*;
+import java.io.*;
+import java.net.*;
+import java.util.*;
+import javafx.fxml.*;
+import javafx.geometry.*;
+import javafx.scene.input.*;
+import javafx.scene.layout.*;
+import lombok.extern.java.*;
 
 @Log
 public class DashboardController implements Initializable {

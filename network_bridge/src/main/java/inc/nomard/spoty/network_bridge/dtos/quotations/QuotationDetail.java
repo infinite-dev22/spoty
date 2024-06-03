@@ -36,6 +36,6 @@ public class QuotationDetail {
         return product.getName();
     }
     public Double getProductPrice() {
-        return product.getPrice();
+        return product.getSalePrice();
     }
 }

@@ -185,6 +185,8 @@ public class LeaveRequestFormController implements Initializable {
         fromDate.setValue(null);
         toDate.setValue(null);
         closeDialog(actionEvent);
+        LeaveStatusViewModel.resetProperties();
+        LeaveStatusViewModel.getAllLeaveStatuses(null, null);
     }
 
     private void addDocument() {
@@ -314,8 +316,8 @@ public class LeaveRequestFormController implements Initializable {
         SpotyMessage notification =
                 new SpotyMessage.MessageBuilder(message)
                         .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
                         .build();
         notificationHolder.addMessage(notification);
         AnchorPane.setRightAnchor(notification, 40.0);

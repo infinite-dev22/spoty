@@ -14,7 +14,7 @@
 
 package inc.nomard.spoty.core.values.numbers;
 
-import lombok.extern.java.Log;
+import lombok.extern.java.*;
 
 @Log
 public class Constants {

@@ -127,13 +127,13 @@ public class TaxesController implements Initializable {
         // Edit
         edit.setOnAction(
                 event -> {
-                    TaxViewModel.getTax(obj.getData().getId(), this::onSuccess, this::errorMessage);
+                    TaxViewModel.getTax(obj.getData().getId(), () -> dialog.showAndWait(), this::errorMessage);
                     event.consume();
                 });
         // Delete
         delete.setOnAction(
                 event -> {
-                    TaxViewModel.deleteTax(obj.getData().getId(), () -> dialog.showAndWait(), this::successMessage, this::errorMessage);
+                    TaxViewModel.deleteTax(obj.getData().getId(), this::onSuccess, this::successMessage, this::errorMessage);
                     event.consume();
                 });
         contextMenu.addItems(edit, delete);
@@ -160,7 +160,7 @@ public class TaxesController implements Initializable {
     }
 
     private void onSuccess() {
-        transition.setOnFinished(null);
+        TaxViewModel.getTaxes(null, null);
     }
 
     private void setIcons() {
@@ -175,8 +175,8 @@ public class TaxesController implements Initializable {
         SpotyMessage notification =
                 new SpotyMessage.MessageBuilder(message)
                         .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
                         .build();
         notificationHolder.addMessage(notification);
         AnchorPane.setRightAnchor(notification, 40.0);

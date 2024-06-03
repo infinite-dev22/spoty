@@ -15,8 +15,7 @@
 package inc.nomard.spoty.core.models;
 
 import java.util.*;
-
-import lombok.extern.java.Log;
+import lombok.extern.java.*;
 
 @Deprecated
 @Log

@@ -20,15 +20,12 @@ import inc.nomard.spoty.network_bridge.dtos.returns.purchase_returns.*;
 import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.adapters.*;
-
 import inc.nomard.spoty.utils.functional_paradigm.*;
 import java.text.*;
 import java.util.*;
-
 import javafx.beans.property.*;
 import javafx.collections.*;
-
-import lombok.extern.java.Log;
+import lombok.extern.java.*;
 
 @Log
 public class PurchaseReturnMasterViewModel {
@@ -147,8 +144,8 @@ public class PurchaseReturnMasterViewModel {
     }
 
     public static void savePurchaseReturnMaster(SpotyGotFunctional.ParameterlessConsumer onSuccess,
-                                         SpotyGotFunctional.MessageConsumer successMessage,
-                                         SpotyGotFunctional.MessageConsumer errorMessage) {
+                                                SpotyGotFunctional.MessageConsumer successMessage,
+                                                SpotyGotFunctional.MessageConsumer errorMessage) {
 //        var PurchaseReturnsMaster = PurchaseReturnMaster.builder()
 //                .customer(getCustomer())
 //                .total(getTotal())
@@ -170,14 +167,17 @@ public class PurchaseReturnMasterViewModel {
 //        task.setOnRunning(workerStateEvent -> onActivity.run());
 //        task.setOnSucceeded(workerStateEvent -> {
 //            PurchaseReturnDetailViewModel.savePurchaseReturnDetails(onActivity, null, onFailed);
-//            onSuccess.run();
+//
+//        if (Objects.nonNull(onSuccess)) {
+//            Platform.runLater(onSuccess::run);
+//        }
 //        });
 //        task.setOnFailed(workerStateEvent -> onFailed.run());
 //        SpotyThreader.spotyThreadPool(task);
     }
 
     public static void getPurchaseReturnMasters(SpotyGotFunctional.ParameterlessConsumer onSuccess,
-                                         SpotyGotFunctional.MessageConsumer errorMessage) {
+                                                SpotyGotFunctional.MessageConsumer errorMessage) {
 //        Dao<PurchaseReturnMaster, Long> purchaseReturnMasterDao =
 //                DaoManager.createDao(connectionSource, PurchaseReturnMaster.class);
 //
@@ -198,8 +198,8 @@ public class PurchaseReturnMasterViewModel {
     }
 
     public static void getItem(
-            Long index,SpotyGotFunctional.ParameterlessConsumer onSuccess,
-                                         SpotyGotFunctional.MessageConsumer errorMessage) {
+            Long index, SpotyGotFunctional.ParameterlessConsumer onSuccess,
+            SpotyGotFunctional.MessageConsumer errorMessage) {
 //        var findModel = FindModel.builder().id(index).build();
 //        var task = PurchaseReturnsRepository.fetch(findModel);
 //
@@ -227,16 +227,19 @@ public class PurchaseReturnMasterViewModel {
 //            PurchaseReturnDetailViewModel.PurchaseReturnsDetailsList.addAll(PurchaseReturnsMaster.getPurchaseReturnDetails());
 //
 //            if (Objects.nonNull(onSuccess)) {
-//                onSuccess.run();
+//
+//        if (Objects.nonNull(onSuccess)) {
+//            Platform.runLater(onSuccess::run);
+//        }
 //            }
 //        });
 //        SpotyThreader.spotyThreadPool(task);
     }
 
     public static void searchItem(
-            String search,SpotyGotFunctional.ParameterlessConsumer onSuccess,
-                                         SpotyGotFunctional.MessageConsumer successMessage,
-                                         SpotyGotFunctional.MessageConsumer errorMessage) {
+            String search, SpotyGotFunctional.ParameterlessConsumer onSuccess,
+            SpotyGotFunctional.MessageConsumer successMessage,
+            SpotyGotFunctional.MessageConsumer errorMessage) {
 //        var searchModel = SearchModel.builder().search(search).build();
 //        var task = PurchaseReturnsRepository.search(searchModel);
 //        if (Objects.nonNull(onActivity)) {
@@ -260,15 +263,18 @@ public class PurchaseReturnMasterViewModel {
 //            PurchaseReturnsMastersList.addAll(PurchaseReturnsMasterList);
 //
 //            if (Objects.nonNull(onSuccess)) {
-//                onSuccess.run();
+//
+//        if (Objects.nonNull(onSuccess)) {
+//            Platform.runLater(onSuccess::run);
+//        }
 //            }
 //        });
 //        SpotyThreader.spotyThreadPool(task);
     }
 
     public static void updateItem(SpotyGotFunctional.ParameterlessConsumer onSuccess,
-                                         SpotyGotFunctional.MessageConsumer successMessage,
-                                         SpotyGotFunctional.MessageConsumer errorMessage) {
+                                  SpotyGotFunctional.MessageConsumer successMessage,
+                                  SpotyGotFunctional.MessageConsumer errorMessage) {
 //        var PurchaseReturnsMaster = PurchaseReturnMaster.builder()
 //                .id(getId())
 //                .customer(getCustomer())
@@ -299,9 +305,9 @@ public class PurchaseReturnMasterViewModel {
     }
 
     public static void deleteItem(
-            Long index,SpotyGotFunctional.ParameterlessConsumer onSuccess,
-                                         SpotyGotFunctional.MessageConsumer successMessage,
-                                         SpotyGotFunctional.MessageConsumer errorMessage) {
+            Long index, SpotyGotFunctional.ParameterlessConsumer onSuccess,
+            SpotyGotFunctional.MessageConsumer successMessage,
+            SpotyGotFunctional.MessageConsumer errorMessage) {
         var findModel = FindModel.builder().id(index).build();
 
 //        var task = PurchaseReturnsRepository.delete(findModel);

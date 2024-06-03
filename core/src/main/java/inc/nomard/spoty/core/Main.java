@@ -17,8 +17,7 @@ package inc.nomard.spoty.core;
 import inc.nomard.spoty.core.views.splash.*;
 import javafx.application.*;
 import javafx.stage.*;
-
-import lombok.extern.java.Log;
+import lombok.extern.java.*;
 
 @Log
 public class Main extends Application {

@@ -15,15 +15,12 @@
 package inc.nomard.spoty.core;
 
 import inc.nomard.spoty.utils.*;
-
 import java.text.*;
 import java.util.*;
-
 import javafx.event.*;
 import javafx.scene.*;
 import javafx.stage.*;
-
-import lombok.extern.java.Log;
+import lombok.extern.java.*;
 
 @Log
 public class GlobalActions {

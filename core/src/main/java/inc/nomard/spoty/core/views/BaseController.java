@@ -46,6 +46,7 @@ import javafx.scene.paint.*;
 import javafx.scene.shape.*;
 import javafx.stage.*;
 import javafx.util.Duration;
+import lombok.*;
 import lombok.extern.java.*;
 import org.controlsfx.control.*;
 import org.kordamp.ikonli.javafx.*;
@@ -130,7 +131,8 @@ public class BaseController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         var image = new Image(
                 SpotyCoreResourceLoader.load((
-                        Objects.nonNull(ProtectedGlobals.user.getAvatar())
+                        Objects.nonNull(ProtectedGlobals.user)
+                                && Objects.nonNull(ProtectedGlobals.user.getAvatar())
                                 && !ProtectedGlobals.user.getAvatar().isEmpty()
                                 && !ProtectedGlobals.user.getAvatar().isBlank()) ? ProtectedGlobals.user.getAvatar()
                         : "images/user-place-holder.png"),
@@ -140,7 +142,6 @@ public class BaseController implements Initializable {
                 true
         );
         imageHolder.setFill(new ImagePattern(image));
-
         initializeLoader();
         initAppBar();
         initNotifications();
@@ -162,17 +163,13 @@ public class BaseController implements Initializable {
         notificationIcon.setDescription("far-bell");
         feedbackIcon.setDescription("far-comment");
         helpIcon.setDescription("far-circle-question");
-
         notificationsBtn.setText("");
-
         notificationsBtn.setGraphic(notificationIcon);
         feedbackBtn.setGraphic(feedbackIcon);
         helpBtn.setGraphic(helpIcon);
-
         notificationsBtn.setTooltip(new Tooltip("Notification"));
         feedbackBtn.setTooltip(new Tooltip("Feedback"));
         helpBtn.setTooltip(new Tooltip("Help"));
-
         windowHeader.setOnMousePressed(
                 event -> {
                     xOffset = primaryStage.getX() - event.getScreenX();
@@ -190,27 +187,26 @@ public class BaseController implements Initializable {
         arrowIcon.getStyleClass().add("nav-toggle-arrow");
         sidebarToggle.setGraphic(arrowIcon);
         sidebarToggle.setText("");
-
         designationLbl.setText(ProtectedGlobals.user.getRole().getLabel());
         designationLbl.setWrapText(true);
         designationLbl.setForceDisableTextEllipsis(true);
-
         userNameLbl.setText(ProtectedGlobals.user.getName());
         userNameLbl.setWrapText(true);
         userNameLbl.setForceDisableTextEllipsis(true);
-
         clubBouncer();
-
         viewProfile.setOnAction(actionEvent -> navigation.navigate(Pages.getUserProfilePane()));
-        // logOut.setOnAction(actionEvent -> {});
+        logOut.setOnAction(actionEvent -> {
+//            morphPane.morph(true);
+//            // Base view parent.
+//            navigation.navigate(Pages.getLoginPane());
+        });
     }
 
     public void moreActionsClicked(MouseEvent event) {
         var contextMenu = new MFXContextMenu(moreActions);
         contextMenu.getItems().addAll(viewProfile, logOut);
         moreActions.setCursor(Cursor.HAND);
-        contextMenu.show(
-                moreActions.getScene().getWindow(),
+        contextMenu.show(moreActions.getScene().getWindow(),
                 event.getScreenX(),
                 event.getScreenY());
     }
@@ -220,17 +216,14 @@ public class BaseController implements Initializable {
         slackGroup.setSortOrder(0);
         calendarGroup.setSortOrder(1);
         mailGroup.setSortOrder(2);
-
         slackGroup.maximumNumberOfNotificationsProperty().bind(Bindings.createIntegerBinding(() -> slackGroup.isPinned() ? 3 : 10, slackGroup.pinnedProperty()));
         calendarGroup.maximumNumberOfNotificationsProperty().bind(Bindings.createIntegerBinding(() -> calendarGroup.isPinned() ? 3 : 10, calendarGroup.pinnedProperty()));
         mailGroup.maximumNumberOfNotificationsProperty().bind(Bindings.createIntegerBinding(() -> mailGroup.isPinned() ? 3 : 10, mailGroup.pinnedProperty()));
-
         slackGroup.setViewFactory(n -> {
             NotificationView<Object, SlackNotification> view = new NotificationView<>(n);
             view.setGraphic(createImageView(new Image(Objects.requireNonNull(SpotyCoreResourceLoader.load("notification/slack.png")))));
             return view;
         });
-
         calendarGroup.setViewFactory(n -> {
             NotificationView<Object, CalendarNotification> view = new NotificationView<>(n);
             view.setGraphic(createImageView(new Image(Objects.requireNonNull(SpotyCoreResourceLoader.load("notification/calendar.png")))));
@@ -242,20 +235,16 @@ public class BaseController implements Initializable {
             view.setContent(stackPane);
             return view;
         });
-
         mailGroup.setViewFactory(n -> {
             NotificationView<Mail, MailNotification> view = new NotificationView<>(n);
             view.setGraphic(createImageView(new Image(Objects.requireNonNull(SpotyCoreResourceLoader.load("notification/mail.png")))));
             return view;
         });
-
         infoCenterView.getGroups().setAll(mailGroup, slackGroup, calendarGroup);
         infoCenterView.setPadding(new Insets(0));
-
         for (int i = 0; i < 10; i++) {
             assignNotification(createNotification(true));
         }
-
         notificationsBtn.setOnAction(evt -> {
             if (popOver.isShowing()) {
                 popOver.hide(Duration.millis(300));
@@ -264,7 +253,6 @@ public class BaseController implements Initializable {
                 popOver.show(notificationsBtn);
             }
         });
-
         infoCenterView.getStylesheets().add(Objects.requireNonNull(SpotyCoreResourceLoader.load("notification/scene.css")));
         popOver.setAnimated(true);
         popOver.setTitle("Notifications");
@@ -295,11 +283,9 @@ public class BaseController implements Initializable {
             case 1 -> new SlackNotification("DLSC GmbH\nDirk Lemmermann", "Please send the material I requested.");
             default -> new CalendarNotification("Calendar", "Meeting with shareholders");
         };
-
         if (randomizeTimeStamp) {
             notification.setDateTime(createTimeStamp());
         }
-
         return notification;
     }
 
@@ -312,7 +298,6 @@ public class BaseController implements Initializable {
             var trialPlanDetails = new ArrayList<String>();
             var regularPlanDetails = new ArrayList<String>();
             var goldenPlanDetails = new ArrayList<String>();
-
             trialPlanDetails.add("Unleash powerful sales automation features.");
             trialPlanDetails.add("Gain real-time insights into your sales pipeline.");
             trialPlanDetails.add("Manage your customer relationships effectively.");
@@ -326,7 +311,6 @@ public class BaseController implements Initializable {
                     Color.web("#C44900"),
                     ProtectedGlobals.canTry,
                     () -> PaymentsViewModel.startTrial(this::onSuccess, this::successMessage, this::errorMessage));
-
             regularPlanDetails.add("Comprehensive reporting and analytics.");
             regularPlanDetails.add("Dedicated customer support.");
             regularPlanDetails.add("Start growing today!");
@@ -341,7 +325,6 @@ public class BaseController implements Initializable {
                     true,
                     () -> {
                     });
-
             goldenPlanDetails.add("Discounted annual pricing (save 10%+).");
             goldenPlanDetails.add("Unwavering commitment to your success.");
             goldenPlanDetails.add("Peace of mind knowing your sales platform scales with your business.");
@@ -356,18 +339,14 @@ public class BaseController implements Initializable {
                     true,
                     () -> {
                     });
-
             hBox1.setAlignment(Pos.CENTER);
             hBox1.setSpacing(50);
             hBox1.getChildren().addAll(trialPlan, monthlyPlan, yearlyPlan);
-
             hBox2.setAlignment(Pos.CENTER);
             hBox2.getChildren().add(close);
-
             vBox.setAlignment(Pos.CENTER);
             vBox.getChildren().addAll(hBox1, hBox2);
             vBox.setSpacing(100);
-
             var closeIcon = new MFXFontIcon("fas-xmark");
             closeIcon.setColor(Color.RED);
             close.setGraphic(closeIcon);
@@ -382,10 +361,8 @@ public class BaseController implements Initializable {
     private MFXStageDialog buildDialog() {
         var cancel = new io.github.palexdev.mfxcomponents.controls.buttons.MFXButton("Cancel");
         var proceed = new io.github.palexdev.mfxcomponents.controls.buttons.MFXButton("Proceed");
-
         var dialogContent = new MFXGenericDialog("Confirm exit!", "Are you sure you want to exit and close this app?");
         dialogContent.addActions(proceed, cancel);
-
         cancel.setVariants(ButtonVariants.FILLED);
         proceed.setVariants(ButtonVariants.OUTLINED);
         cancel.setOnAction(GlobalActions::closeDialog);
@@ -398,8 +375,6 @@ public class BaseController implements Initializable {
             SpotyThreader.disposeSpotyThreadPool();
             Platform.exit();
         });
-
-
         var dialog = MFXGenericDialogBuilder.build(dialogContent)
                 .toStageDialogBuilder()
                 .initOwner(primaryStage)
@@ -408,7 +383,6 @@ public class BaseController implements Initializable {
                 .setScrimPriority(ScrimPriority.WINDOW)
                 .setScrimOwner(true)
                 .get();
-
         io.github.palexdev.mfxcomponents.theming.MaterialThemes.PURPLE_LIGHT.applyOn(dialog.getScene());
         return dialog;
     }
@@ -443,24 +417,20 @@ public class BaseController implements Initializable {
     private MailNotification createMailNotification() {
         Mail mail = new Mail("Purchase Order #8774911", "Dear Mr. Smith, the following order has been received by our service counter.", ZonedDateTime.now());
         MailNotification mailNotification = new MailNotification(mail);
-
         NotificationAction<Mail> openMailAction = new NotificationAction<>("Open", (notification) -> {
             Alert alert = new Alert(Alert.AlertType.INFORMATION, "Opening Mail ...");
             alert.initOwner(infoCenterView.getScene().getWindow());
             alert.show();
             return Notification.OnClickBehaviour.HIDE_AND_REMOVE;
         });
-
         NotificationAction<Mail> deleteMailAction = new NotificationAction<>("Delete", (notification) -> {
             Alert alert = new Alert(Alert.AlertType.INFORMATION, "Deleting Mail ...");
             alert.initOwner(infoCenterView.getScene().getWindow());
             alert.show();
             return Notification.OnClickBehaviour.HIDE_AND_REMOVE;
         });
-
         mailNotification.getActions().add(openMailAction);
         mailNotification.getActions().add(deleteMailAction);
-
         return mailNotification;
     }
 
@@ -473,7 +443,6 @@ public class BaseController implements Initializable {
     }
 
     public static class CalendarNotification extends Notification<Object> {
-
         public CalendarNotification(String title, String description) {
             super(title, description);
             setOnClick(notification -> OnClickBehaviour.HIDE_AND_REMOVE);
@@ -481,7 +450,6 @@ public class BaseController implements Initializable {
     }
 
     public static class SlackNotification extends Notification<Object> {
-
         public SlackNotification(String title, String description) {
             super(title, description);
             setOnClick(notification -> OnClickBehaviour.REMOVE);
@@ -489,7 +457,6 @@ public class BaseController implements Initializable {
     }
 
     public static class MailNotification extends Notification<Mail> {
-
         public MailNotification(Mail mail) {
             super(mail.getTitle(), mail.getDescription(), mail.getDateTime());
             setUserObject(mail);
@@ -497,8 +464,9 @@ public class BaseController implements Initializable {
         }
     }
 
+    @Setter
+    @Getter
     public static class Mail {
-
         private String title;
         private String description;
         private ZonedDateTime dateTime;
@@ -509,28 +477,5 @@ public class BaseController implements Initializable {
             this.dateTime = dateTime;
         }
 
-        public String getTitle() {
-            return title;
-        }
-
-        public void setTitle(String title) {
-            this.title = title;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public void setDescription(String description) {
-            this.description = description;
-        }
-
-        public ZonedDateTime getDateTime() {
-            return dateTime;
-        }
-
-        public void setDateTime(ZonedDateTime dateTime) {
-            this.dateTime = dateTime;
-        }
     }
 }

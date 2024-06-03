@@ -3,6 +3,7 @@ package inc.nomard.spoty.core.views.human_resource.leave;
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.components.message.*;
 import inc.nomard.spoty.core.components.message.enums.*;
+import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.hrm.leave.*;
 import inc.nomard.spoty.core.views.forms.*;
 import inc.nomard.spoty.network_bridge.dtos.hrm.leave.*;
@@ -184,6 +185,7 @@ public class LeaveRequestController implements Initializable {
     }
 
     private void onSuccess() {
+        LeaveStatusViewModel.getAllLeaveStatuses(null, null);
     }
 
     @Override
@@ -196,8 +198,8 @@ public class LeaveRequestController implements Initializable {
         SpotyMessage notification =
                 new SpotyMessage.MessageBuilder(message)
                         .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
                         .build();
         notificationHolder.addMessage(notification);
         AnchorPane.setRightAnchor(notification, 40.0);

@@ -177,7 +177,7 @@ public class ExpenseCategoryController implements Initializable {
     }
 
     private void onSuccess() {
-        transition.setOnFinished(null);
+        ExpenseCategoryViewModel.getAllCategories(null, null);
     }
 
     private void setIcons() {
@@ -192,8 +192,8 @@ public class ExpenseCategoryController implements Initializable {
         SpotyMessage notification =
                 new SpotyMessage.MessageBuilder(message)
                         .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
                         .build();
         notificationHolder.addMessage(notification);
         AnchorPane.setRightAnchor(notification, 40.0);

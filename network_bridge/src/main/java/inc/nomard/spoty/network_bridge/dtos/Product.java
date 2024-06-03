@@ -30,14 +30,12 @@ public class Product {
     private ProductCategory category;
     private Brand brand;
     private String barcodeType;
-    private String productType;
     private String name;
     private long quantity;
-    private double cost;
-    private double price;
-    private double discount;
-    private double netTax;
-    private String taxType;
+    private double costPrice;
+    private double salePrice;
+    private Discount discount;
+    private Tax tax;
     private long stockAlert;
     private String serialNumber;
     private String image;

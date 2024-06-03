@@ -17,17 +17,14 @@ package inc.nomard.spoty.core.views.components;
 import io.github.palexdev.mfxcomponents.controls.buttons.*;
 import io.github.palexdev.mfxcomponents.skins.*;
 import io.github.palexdev.mfxcore.controls.Label;
-
 import java.net.*;
 import java.util.*;
-
 import javafx.application.*;
 import javafx.fxml.*;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-
-import lombok.extern.java.Log;
+import lombok.extern.java.*;
 
 @Log
 public class TotalRevenueController implements Initializable {

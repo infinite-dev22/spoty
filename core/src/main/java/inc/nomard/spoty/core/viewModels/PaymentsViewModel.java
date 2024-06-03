@@ -19,9 +19,12 @@ import inc.nomard.spoty.network_bridge.dtos.payments.*;
 import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.network_bridge.repositories.implementations.*;
 import inc.nomard.spoty.utils.*;
+import inc.nomard.spoty.utils.connectivity.*;
 import inc.nomard.spoty.utils.functional_paradigm.*;
 import java.net.http.*;
+import java.util.*;
 import java.util.concurrent.*;
+import javafx.application.*;
 import javafx.beans.property.*;
 import lombok.extern.java.*;
 
@@ -357,15 +360,21 @@ public class PaymentsViewModel {
             // Handle successful response
             if (response.statusCode() == 201) {
                 // Process the successful response
-                successMessage.showMessage("Payment created successfully");
-                onSuccess.run();
+                Platform.runLater(() -> {
+                    onSuccess.run();
+                    successMessage.showMessage("Payment created successfully");
+                });
             } else if (response.statusCode() == 200) {
                 // Process the successful response
-                successMessage.showMessage("Payment processed successfully");
-                onSuccess.run();
+                Platform.runLater(() -> {
+                    onSuccess.run();
+                    successMessage.showMessage("Payment processed successfully");
+                });
             } else if (response.statusCode() == 401) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, resource not found");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
+                }
             } else if (response.statusCode() == 404) {
                 // Handle non-200 status codes
                 errorMessage.showMessage("An error occurred, this is on our side");
@@ -375,7 +384,15 @@ public class PaymentsViewModel {
             }
         }).exceptionally(throwable -> {
             // Handle exceptions during the request (e.g., network issues)
-            errorMessage.showMessage("An error occurred, this is on your side");
+            if (Connectivity.isConnectedToInternet()) {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
+                }
+            } else {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
+                }
+            }
             SpotyLogger.writeToFile(throwable, PaymentsViewModel.class);
             return null;
         });
@@ -399,15 +416,21 @@ public class PaymentsViewModel {
             // Handle successful response
             if (response.statusCode() == 201) {
                 // Process the successful response
-                successMessage.showMessage("Payment created successfully");
-                onSuccess.run();
+                Platform.runLater(() -> {
+                    onSuccess.run();
+                    successMessage.showMessage("Payment created successfully");
+                });
             } else if (response.statusCode() == 200) {
                 // Process the successful response
-                successMessage.showMessage("Payment processed successfully");
-                onSuccess.run();
+                Platform.runLater(() -> {
+                    onSuccess.run();
+                    successMessage.showMessage("Payment processed successfully");
+                });
             } else if (response.statusCode() == 401) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, resource not found");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
+                }
             } else if (response.statusCode() == 404) {
                 // Handle non-200 status codes
                 errorMessage.showMessage("An error occurred, this is on our side");
@@ -417,7 +440,15 @@ public class PaymentsViewModel {
             }
         }).exceptionally(throwable -> {
             // Handle exceptions during the request (e.g., network issues)
-            errorMessage.showMessage("An error occurred, this is on your side");
+            if (Connectivity.isConnectedToInternet()) {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
+                }
+            } else {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
+                }
+            }
             SpotyLogger.writeToFile(throwable, PaymentsViewModel.class);
             return null;
         });
@@ -441,15 +472,21 @@ public class PaymentsViewModel {
             // Handle successful response
             if (response.statusCode() == 201) {
                 // Process the successful response
-                successMessage.showMessage("Payment created successfully");
-                onSuccess.run();
+                Platform.runLater(() -> {
+                    onSuccess.run();
+                    successMessage.showMessage("Payment created successfully");
+                });
             } else if (response.statusCode() == 200) {
                 // Process the successful response
-                successMessage.showMessage("Payment processed successfully");
-                onSuccess.run();
+                Platform.runLater(() -> {
+                    onSuccess.run();
+                    successMessage.showMessage("Payment processed successfully");
+                });
             } else if (response.statusCode() == 401) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, resource not found");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
+                }
             } else if (response.statusCode() == 404) {
                 // Handle non-200 status codes
                 errorMessage.showMessage("An error occurred, this is on our side");
@@ -459,7 +496,15 @@ public class PaymentsViewModel {
             }
         }).exceptionally(throwable -> {
             // Handle exceptions during the request (e.g., network issues)
-            errorMessage.showMessage("An error occurred, this is on your side");
+            if (Connectivity.isConnectedToInternet()) {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
+                }
+            } else {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
+                }
+            }
             SpotyLogger.writeToFile(throwable, PaymentsViewModel.class);
             return null;
         });
@@ -469,19 +514,19 @@ public class PaymentsViewModel {
                                   SpotyGotFunctional.MessageConsumer successMessage,
                                   SpotyGotFunctional.MessageConsumer errorMessage) {
         var findModel = new FindModel(ProtectedGlobals.user.getUserProfile().getTenant().getId());
-        CompletableFuture<HttpResponse<String>> responseFuture = paymentsRepository.cardPay(findModel);
+        CompletableFuture<HttpResponse<String>> responseFuture = paymentsRepository.startTrial(findModel);
         responseFuture.thenAccept(response -> {
-            if (response.statusCode() == 201) {
+            if (response.statusCode() == 200) {
                 // Process the successful response
-                successMessage.showMessage("Payment created successfully");
-                onSuccess.run();
-            } else if (response.statusCode() == 200) {
-                // Process the successful response
-                successMessage.showMessage("Action processed successfully");
-                onSuccess.run();
+                Platform.runLater(() -> {
+                    onSuccess.run();
+                    successMessage.showMessage("Action processed successfully");
+                });
             } else if (response.statusCode() == 401) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, resource not found");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
+                }
             } else if (response.statusCode() == 404) {
                 // Handle non-200 status codes
                 errorMessage.showMessage("An error occurred, this is on our side");
@@ -491,7 +536,15 @@ public class PaymentsViewModel {
             }
         }).exceptionally(throwable -> {
             // Handle exceptions during the request (e.g., network issues)
-            errorMessage.showMessage("An error occurred, this is on your side");
+            if (Connectivity.isConnectedToInternet()) {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
+                }
+            } else {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
+                }
+            }
             SpotyLogger.writeToFile(throwable, PaymentsViewModel.class);
             return null;
         });

@@ -1,15 +1,13 @@
 package inc.nomard.spoty.core.views.previews;
 
-import inc.nomard.spoty.network_bridge.dtos.Product;
-import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.scene.image.ImageView;
-import lombok.extern.java.Log;
-
-import java.net.URL;
-import java.util.ResourceBundle;
+import inc.nomard.spoty.network_bridge.dtos.*;
+import io.github.palexdev.materialfx.dialogs.*;
+import java.net.*;
+import java.util.*;
+import javafx.fxml.*;
+import javafx.scene.control.*;
+import javafx.scene.image.*;
+import lombok.extern.java.*;
 
 @Log
 public class ProductPreviewController implements Initializable {
@@ -39,11 +37,10 @@ public class ProductPreviewController implements Initializable {
         productName.setText(product.getName());
         productCategory.setText(product.getCategory().getName());
         productBrand.setText(product.getBrand().getName());
-        productType.setText(product.getProductType());
-        productCost.setText(String.valueOf(product.getCost()));
-        productPrice.setText(String.valueOf(product.getPrice()));
+        productCost.setText(String.valueOf(product.getCostPrice()));
+        productPrice.setText(String.valueOf(product.getSalePrice()));
         productUnit.setText(product.getUnit().getName());
-        productTax.setText(String.valueOf(product.getNetTax()));
+        productTax.setText(String.valueOf(product.getTax()));
         stockQuantity.setText(String.valueOf(product.getQuantity()));
         alertQuantity.setText(String.valueOf(product.getStockAlert()));
 //        productDescription.setText(product.getDescription());

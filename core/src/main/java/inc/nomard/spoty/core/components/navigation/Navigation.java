@@ -16,15 +16,13 @@ package inc.nomard.spoty.core.components.navigation;
 
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.flavouring.*;
-
 import java.util.*;
-
 import javafx.animation.*;
 import javafx.beans.property.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.util.*;
-import lombok.extern.java.Log;
+import lombok.extern.java.*;
 
 @Log
 public class Navigation {

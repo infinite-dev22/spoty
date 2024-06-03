@@ -21,11 +21,13 @@ import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.network_bridge.repositories.implementations.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.adapters.*;
+import inc.nomard.spoty.utils.connectivity.*;
 import inc.nomard.spoty.utils.functional_paradigm.*;
 import java.lang.reflect.*;
 import java.net.http.*;
 import java.util.*;
 import java.util.concurrent.*;
+import javafx.application.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
 import lombok.*;
@@ -155,21 +157,37 @@ public class UOMViewModel {
             // Handle successful response
             if (response.statusCode() == 201 || response.statusCode() == 204) {
                 // Process the successful response
-                successMessage.showMessage("Unity Of Measure created successfully");
-                onSuccess.run();
+                Platform.runLater(() -> {
+                    onSuccess.run();
+                    successMessage.showMessage("Unity Of Measure created successfully");
+                });
             } else if (response.statusCode() == 401) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, access denied");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Access denied"));
+                }
             } else if (response.statusCode() == 404) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, resource not found");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
+                }
             } else if (response.statusCode() == 500) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, this is definitely on our side");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
+                }
             }
         }).exceptionally(throwable -> {
             // Handle exceptions during the request (e.g., network issues)
-            errorMessage.showMessage("An error occurred, this is on your side");
+            if (Connectivity.isConnectedToInternet()) {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
+                }
+            } else {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
+                }
+            }
             SpotyLogger.writeToFile(throwable, UOMViewModel.class);
             return null;
         });
@@ -189,30 +207,45 @@ public class UOMViewModel {
         CompletableFuture<HttpResponse<String>> responseFuture = uomRepository.fetchAll();
         responseFuture.thenAccept(response -> {
             // Handle successful response
-            if (response.statusCode() == 201) {
+            if (response.statusCode() == 200) {
                 // Process the successful response
-                Type listType = new TypeToken<ArrayList<UnitOfMeasure>>() {
-                }.getType();
-                ArrayList<UnitOfMeasure> uomList = gson.fromJson(response.body(), listType);
-                uomsList.clear();
-                uomsList.addAll(uomList);
-                if (Objects.nonNull(onSuccess)) {
-                    onSuccess.run();
-                }
-                onSuccess.run();
+                Platform.runLater(() -> {
+                    Type listType = new TypeToken<ArrayList<UnitOfMeasure>>() {
+                    }.getType();
+                    ArrayList<UnitOfMeasure> uomList = gson.fromJson(response.body(), listType);
+                    uomsList.clear();
+                    uomsList.addAll(uomList);
+                    if (Objects.nonNull(onSuccess)) {
+                        onSuccess.run();
+                    }
+                });
             } else if (response.statusCode() == 401) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, access denied");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Access denied"));
+                }
             } else if (response.statusCode() == 404) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, resource not found");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
+                }
             } else if (response.statusCode() == 500) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, this is definitely on our side");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
+                }
             }
         }).exceptionally(throwable -> {
             // Handle exceptions during the request (e.g., network issues)
-            errorMessage.showMessage("An error occurred, this is on your side");
+            if (Connectivity.isConnectedToInternet()) {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
+                }
+            } else {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
+                }
+            }
             SpotyLogger.writeToFile(throwable, UOMViewModel.class);
             return null;
         });
@@ -227,30 +260,44 @@ public class UOMViewModel {
             // Handle successful response
             if (response.statusCode() == 200) {
                 // Process the successful response
-                var uom = gson.fromJson(response.body(), UnitOfMeasure.class);
-                setId(uom.getId());
-                setName(uom.getName());
-                setShortName(uom.getShortName());
-                setBaseUnit(uom.getBaseUnit());
-                setOperator(uom.getOperator());
-                setOperatorValue(
-                        String.valueOf(uom.getOperatorValue() == 0 ? "" : uom.getOperatorValue()));
-                if (Objects.nonNull(onSuccess)) {
+                Platform.runLater(() -> {
+                    var uom = gson.fromJson(response.body(), UnitOfMeasure.class);
+                    setId(uom.getId());
+                    setName(uom.getName());
+                    setShortName(uom.getShortName());
+                    setBaseUnit(uom.getBaseUnit());
+                    setOperator(uom.getOperator());
+                    setOperatorValue(
+                            String.valueOf(uom.getOperatorValue() == 0 ? "" : uom.getOperatorValue()));
                     onSuccess.run();
-                }
+                });
             } else if (response.statusCode() == 401) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, access denied");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Access denied"));
+                }
             } else if (response.statusCode() == 404) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, resource not found");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
+                }
             } else if (response.statusCode() == 500) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, this is definitely on our side");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
+                }
             }
         }).exceptionally(throwable -> {
             // Handle exceptions during the request (e.g., network issues)
-            errorMessage.showMessage("An error occurred, this is on your side");
+            if (Connectivity.isConnectedToInternet()) {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
+                }
+            } else {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
+                }
+            }
             SpotyLogger.writeToFile(throwable, UOMViewModel.class);
             return null;
         });
@@ -265,28 +312,42 @@ public class UOMViewModel {
             // Handle successful response
             if (response.statusCode() == 200) {
                 // Process the successful response
-                Type listType = new TypeToken<ArrayList<UnitOfMeasure>>() {
-                }.getType();
-                ArrayList<UnitOfMeasure> uomList = gson.fromJson(
-                        response.body(), listType);
-                uomsList.clear();
-                uomsList.addAll(uomList);
-                if (Objects.nonNull(onSuccess)) {
+                Platform.runLater(() -> {
+                    Type listType = new TypeToken<ArrayList<UnitOfMeasure>>() {
+                    }.getType();
+                    ArrayList<UnitOfMeasure> uomList = gson.fromJson(
+                            response.body(), listType);
+                    uomsList.clear();
+                    uomsList.addAll(uomList);
                     onSuccess.run();
-                }
+                });
             } else if (response.statusCode() == 401) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, access denied");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Access denied"));
+                }
             } else if (response.statusCode() == 404) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, resource not found");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
+                }
             } else if (response.statusCode() == 500) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, this is definitely on our side");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
+                }
             }
         }).exceptionally(throwable -> {
             // Handle exceptions during the request (e.g., network issues)
-            errorMessage.showMessage("An error occurred, this is on your side");
+            if (Connectivity.isConnectedToInternet()) {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
+                }
+            } else {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
+                }
+            }
             SpotyLogger.writeToFile(throwable, UOMViewModel.class);
             return null;
         });
@@ -308,21 +369,37 @@ public class UOMViewModel {
             // Handle successful response
             if (response.statusCode() == 200 || response.statusCode() == 204) {
                 // Process the successful response
-                successMessage.showMessage("Unity Of Measure updated successfully");
-                onSuccess.run();
+                Platform.runLater(() -> {
+                    onSuccess.run();
+                    successMessage.showMessage("Unity Of Measure updated successfully");
+                });
             } else if (response.statusCode() == 401) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, access denied");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Access denied"));
+                }
             } else if (response.statusCode() == 404) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, resource not found");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
+                }
             } else if (response.statusCode() == 500) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, this is definitely on our side");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
+                }
             }
         }).exceptionally(throwable -> {
             // Handle exceptions during the request (e.g., network issues)
-            errorMessage.showMessage("An error occurred, this is on your side");
+            if (Connectivity.isConnectedToInternet()) {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
+                }
+            } else {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
+                }
+            }
             SpotyLogger.writeToFile(throwable, UOMViewModel.class);
             return null;
         });
@@ -338,21 +415,37 @@ public class UOMViewModel {
             // Handle successful response
             if (response.statusCode() == 200 || response.statusCode() == 204) {
                 // Process the successful response
-                successMessage.showMessage("Unity Of Measure deleted successfully");
-                onSuccess.run();
+                Platform.runLater(() -> {
+                    onSuccess.run();
+                    successMessage.showMessage("Unity Of Measure deleted successfully");
+                });
             } else if (response.statusCode() == 401) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, access denied");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Access denied"));
+                }
             } else if (response.statusCode() == 404) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, resource not found");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
+                }
             } else if (response.statusCode() == 500) {
                 // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, this is definitely on our side");
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
+                }
             }
         }).exceptionally(throwable -> {
             // Handle exceptions during the request (e.g., network issues)
-            errorMessage.showMessage("An error occurred, this is on your side");
+            if (Connectivity.isConnectedToInternet()) {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
+                }
+            } else {
+                if (Objects.nonNull(errorMessage)) {
+                    Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
+                }
+            }
             SpotyLogger.writeToFile(throwable, UOMViewModel.class);
             return null;
         });

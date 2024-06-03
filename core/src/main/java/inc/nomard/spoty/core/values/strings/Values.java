@@ -15,14 +15,13 @@
 package inc.nomard.spoty.core.values.strings;
 
 import java.util.*;
-
-import lombok.extern.java.Log;
+import lombok.extern.java.*;
 
 @Log
 public class Values {
     public static final LinkedList<String> BARCODE_TYPES =
             new LinkedList<>(
-                    Arrays.stream(new String[]{"Type 01", "Type 02", "Type 03", "Type 04"}).toList());
+                    Arrays.stream(new String[]{"Code128", "Code39", "EAN8", "EAN13", "UPC A", "UPC E"}).toList());
     public static final LinkedList<String> PRODUCT_TYPES =
             new LinkedList<>(
                     Arrays.stream(new String[]{"Product", "Service"}).toList());

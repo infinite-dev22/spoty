@@ -11,6 +11,7 @@ import io.github.palexdev.materialfx.validation.*;
 import static io.github.palexdev.materialfx.validation.Validated.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import io.github.palexdev.mfxcore.controls.*;
+import io.github.palexdev.mfxresources.fonts.*;
 import java.net.*;
 import java.util.*;
 import javafx.event.*;
@@ -45,6 +46,7 @@ public class TaxFormController implements Initializable {
         // Input bindings.
         name.textProperty().bindBidirectional(TaxViewModel.nameProperty());
         percentage.textProperty().bindBidirectional(TaxViewModel.percentageProperty(), new NumberStringConverter());
+        percentage.setTrailingIcon(new MFXFontIcon("fas-percent"));
         // Input listeners.
         requiredValidator();
         dialogOnActions();
@@ -100,6 +102,8 @@ public class TaxFormController implements Initializable {
 
     private void onSuccess() {
         closeDialog(actionEvent);
+        TaxViewModel.resetProperties();
+        TaxViewModel.getTaxes(null, null);
     }
 
     public void requiredValidator() {
@@ -148,8 +152,8 @@ public class TaxFormController implements Initializable {
         SpotyMessage notification =
                 new SpotyMessage.MessageBuilder(message)
                         .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
                         .build();
         notificationHolder.addMessage(notification);
         AnchorPane.setRightAnchor(notification, 40.0);

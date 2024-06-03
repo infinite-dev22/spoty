@@ -14,22 +14,16 @@
 
 package inc.nomard.spoty.core.views.sales.pos.components;
 
-import inc.nomard.spoty.core.SpotyCoreResourceLoader;
-import inc.nomard.spoty.network_bridge.dtos.Product;
-import io.github.palexdev.mfxcore.controls.Label;
-import javafx.geometry.Pos;
-import javafx.scene.CacheHint;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
-import lombok.Getter;
-import lombok.extern.java.Log;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
+import inc.nomard.spoty.core.*;
+import inc.nomard.spoty.network_bridge.dtos.*;
+import io.github.palexdev.mfxcore.controls.*;
+import java.util.*;
+import javafx.geometry.*;
+import javafx.scene.*;
+import javafx.scene.image.*;
+import javafx.scene.layout.*;
+import lombok.*;
+import lombok.extern.java.*;
 
 @Log
 public class ProductCard extends VBox {
@@ -57,7 +51,7 @@ public class ProductCard extends VBox {
             productNameLbl = new Label(product.getName());
         }
         if (Objects.equals(productPriceLbl, null)) {
-            productPriceLbl = new Label(String.valueOf(product.getPrice()));
+            productPriceLbl = new Label(String.valueOf(product.getSalePrice()));
         }
         if (Objects.equals(productQuantityLbl, null)) {
             productQuantityLbl = new Label(product.getQuantity() + " Pcs available");

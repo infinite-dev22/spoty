@@ -158,13 +158,12 @@ public class BeneficiaryBadgeFormController implements Initializable {
                     if (nameConstraints.isEmpty()
                             && colorConstraints.isEmpty()
                             && beneficiaryTypeConstraints.isEmpty()) {
+                        actionEvent = event;
                         if (BeneficiaryBadgeViewModel.getId() > 0) {
                             BeneficiaryBadgeViewModel.updateItem(this::onSuccess, this::successMessage, this::errorMessage);
-                            actionEvent = event;
                             return;
                         }
                         BeneficiaryBadgeViewModel.saveBeneficiaryBadge(this::onSuccess, this::successMessage, this::errorMessage);
-                        actionEvent = event;
                     }
                 });
     }
@@ -173,6 +172,8 @@ public class BeneficiaryBadgeFormController implements Initializable {
         beneficiaryType.clearSelection();
         colorPicker.clearSelection();
         closeDialog(actionEvent);
+        BeneficiaryBadgeViewModel.resetProperties();
+        BeneficiaryBadgeViewModel.getAllBeneficiaryBadges(null, null);
     }
 
     public void requiredValidator() {
@@ -239,8 +240,8 @@ public class BeneficiaryBadgeFormController implements Initializable {
         SpotyMessage notification =
                 new SpotyMessage.MessageBuilder(message)
                         .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
                         .build();
         notificationHolder.addMessage(notification);
         AnchorPane.setRightAnchor(notification, 40.0);

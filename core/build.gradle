@@ -37,18 +37,18 @@ repositories {
 //            standard {
 //            }
 //            // The conditional agent mode generates metadata with conditions.
-//            conditional {
-//                userCodeFilterPath = "path-to-filter.json"
-//                // Path to a filter file that determines classes which will be used in the metadata conditions.
-//                extraFilterPath = "path-to-another-filter.json"
-//                // Optional, extra filter used to further filter the collected metadata.
-//            }
+//            // conditional {
+//            //     userCodeFilterPath = "path-to-filter.json"
+//            //     // Path to a filter file that determines classes which will be used in the metadata conditions.
+//            //     extraFilterPath = "path-to-another-filter.json"
+//            //     // Optional, extra filter used to further filter the collected metadata.
+//            // }
 //            // The direct agent mode allows users to directly pass options to the agent.
-//            direct {
-//                // {output_dir} is a special string expanded by the plugin to where the agent files would usually be output.
-//                options.add("config-output-dir={output_dir}")
-//                options.add("experimental-configuration-with-origins")
-//            }
+//            // direct {
+//            //     // {output_dir} is a special string expanded by the plugin to where the agent files would usually be output.
+//            //     options.add("config-output-dir={output_dir}")
+//            //     options.add("experimental-configuration-with-origins")
+//            // }
 //        }
 //
 //        callerFilterFiles.from("filter.json")
@@ -96,7 +96,7 @@ repositories {
 //            // excludeConfig.put(file("path/to/artifact.jar"), listOf("^/META-INF/native-image/.*", "^/config/.*"))
 //
 //            // Advanced options
-//            buildArgs.add('--link-at-build-time')
+//            // buildArgs.add('--link-at-build-time')
 //            // Passes '--link-at-build-time' to the native image builder options. This can be used to pass parameters which are not directly supported by this extension
 //            buildArgs.add("-O4")
 //            // jvmArgs.add('flag') // Passes 'flag' directly to the JVM running the native image builder

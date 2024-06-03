@@ -175,7 +175,7 @@ public class PointOfSaleController implements Initializable {
                                 if (productCard.getProduct().getQuantity() >= availableProductQuantity) {
                                     SaleDetailViewModel.getCartSale(saleDetail);
                                     SaleDetailViewModel.setProduct(productCard.getProduct());
-                                    SaleDetailViewModel.setPrice(productCard.getProduct().getPrice());
+                                    SaleDetailViewModel.setPrice(productCard.getProduct().getSalePrice());
                                     SaleDetailViewModel.setQuantity(quantity);
                                     SaleDetailViewModel.setSubTotalPrice(calculateSubTotal(productCard.getProduct()));
 
@@ -199,7 +199,7 @@ public class PointOfSaleController implements Initializable {
                         // Check if actual product quantity greater than zero(0) else out of stock.
                         if (productCard.getProduct().getQuantity() > 0) {
                             SaleDetailViewModel.setProduct(productCard.getProduct());
-                            SaleDetailViewModel.setPrice(productCard.getProduct().getPrice());
+                            SaleDetailViewModel.setPrice(productCard.getProduct().getSalePrice());
                             SaleDetailViewModel.setQuantity(1L);
                             availableProductQuantity = 1L;
                             SaleDetailViewModel.setSubTotalPrice(calculateSubTotal(productCard.getProduct()));
@@ -220,8 +220,8 @@ public class PointOfSaleController implements Initializable {
 
     private double calculateSubTotal(Product product) {
         return (SaleDetailViewModel.getQuantity()
-                * ((product.getNetTax() > 0) ? (product.getNetTax() / 100) : 1.0))
-                * product.getPrice();
+                * ((product.getTax().getPercentage() > 0) ? (product.getTax().getPercentage() / 100) : 1.0))
+                * product.getSalePrice();
     }
 
     private double calculateTotal(ObservableList<SaleDetail> saleDetails) {
@@ -368,6 +368,8 @@ public class PointOfSaleController implements Initializable {
 
     private void onSuccess() {
         availableProductQuantity = 0L;
+        SaleMasterViewModel.setDefaultCustomer();
+        ProductViewModel.getAllProducts(null, null);
     }
 
     private void successMessage(String message) {
@@ -375,8 +377,8 @@ public class PointOfSaleController implements Initializable {
         SpotyMessage notification =
                 new SpotyMessage.MessageBuilder(message)
                         .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
                         .build();
         notificationHolder.addMessage(notification);
         AnchorPane.setRightAnchor(notification, 40.0);

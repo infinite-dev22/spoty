@@ -14,7 +14,7 @@ public class EndPoints {
         public static final String searchAdjustments = adjustmentsUrl + "/search";
         public static final String addAdjustment = adjustmentsUrl + "/master/add";
         public static final String updateAdjustment = adjustmentsUrl + "/master/update";
-        public static final String deleteAdjustment = adjustmentsUrl + "/delete";
+        public static final String deleteAdjustment = adjustmentsUrl + "/delete/single";
         public static final String deleteAdjustments = adjustmentsUrl + "/delete/multiple";
     }
 
@@ -25,7 +25,7 @@ public class EndPoints {
         public static final String searchAttendances = attendancesUrl + "/search";
         public static final String addAttendance = attendancesUrl + "/add";
         public static final String updateAttendance = attendancesUrl + "/update";
-        public static final String deleteAttendance = attendancesUrl + "/delete";
+        public static final String deleteAttendance = attendancesUrl + "/delete/single";
         public static final String deleteAttendances = attendancesUrl + "/delete/multiple";
     }
 
@@ -42,7 +42,7 @@ public class EndPoints {
         public static final String searchBanks = banksUrl + "/search";
         public static final String addBank = banksUrl + "/add";
         public static final String updateBank = banksUrl + "/update";
-        public static final String deleteBank = banksUrl + "/delete";
+        public static final String deleteBank = banksUrl + "/delete/single";
         public static final String deleteBanks = banksUrl + "/delete/multiple";
     }
 
@@ -53,7 +53,7 @@ public class EndPoints {
         public static final String searchBranches = branchesUrl + "/search";
         public static final String addBranch = branchesUrl + "/add";
         public static final String updateBranch = branchesUrl + "/update";
-        public static final String deleteBranch = branchesUrl + "/delete";
+        public static final String deleteBranch = branchesUrl + "/delete/single";
         public static final String deleteBranches = branchesUrl + "/delete/multiple";
     }
 
@@ -64,7 +64,7 @@ public class EndPoints {
         public static final String searchBrands = brandsUrl + "/search";
         public static final String addBrand = brandsUrl + "/add";
         public static final String updateBrand = brandsUrl + "/update";
-        public static final String deleteBrand = brandsUrl + "/delete";
+        public static final String deleteBrand = brandsUrl + "/delete/single";
         public static final String deleteBrands = brandsUrl + "/delete/multiple";
     }
 
@@ -75,7 +75,7 @@ public class EndPoints {
         public static final String searchCurrencies = currenciesUrl + "/search";
         public static final String addCurrency = currenciesUrl + "/add";
         public static final String updateCurrency = currenciesUrl + "/update";
-        public static final String deleteCurrency = currenciesUrl + "/delete";
+        public static final String deleteCurrency = currenciesUrl + "/delete/single";
         public static final String deleteCurrencies = currenciesUrl + "/delete/multiple";
     }
 
@@ -86,7 +86,7 @@ public class EndPoints {
         public static final String searchCustomers = customersUrl + "/search";
         public static final String addCustomer = customersUrl + "/add";
         public static final String updateCustomer = customersUrl + "/update";
-        public static final String deleteCustomer = customersUrl + "/delete";
+        public static final String deleteCustomer = customersUrl + "/delete/single";
         public static final String deleteCustomers = customersUrl + "/delete/multiple";
     }
 
@@ -97,7 +97,7 @@ public class EndPoints {
         public static final String searchDepartments = departmentsUrl + "/search";
         public static final String addDepartment = departmentsUrl + "/add";
         public static final String updateDepartment = departmentsUrl + "/update";
-        public static final String deleteDepartment = departmentsUrl + "/delete";
+        public static final String deleteDepartment = departmentsUrl + "/delete/single";
         public static final String deleteDepartments = departmentsUrl + "/delete/multiple";
     }
 
@@ -108,7 +108,7 @@ public class EndPoints {
         public static final String searchDesignations = designationsUrl + "/search";
         public static final String addDesignation = designationsUrl + "/add";
         public static final String updateDesignation = designationsUrl + "/update";
-        public static final String deleteDesignation = designationsUrl + "/delete";
+        public static final String deleteDesignation = designationsUrl + "/delete/single";
         public static final String deleteDesignations = designationsUrl + "/delete/multiple";
     }
 
@@ -119,7 +119,7 @@ public class EndPoints {
         public static final String searchExpense = expenseUrl + "/search";
         public static final String addExpense = expenseUrl + "/add";
         public static final String updateExpense = expenseUrl + "/update";
-        public static final String deleteExpense = expenseUrl + "/delete";
+        public static final String deleteExpense = expenseUrl + "/delete/single";
         public static final String deleteExpenses = expenseUrl + "/delete/multiple";
     }
 
@@ -130,7 +130,7 @@ public class EndPoints {
         public static final String searchExpenseCategories = expenseCategoriesUrl + "/search";
         public static final String addExpenseCategory = expenseCategoriesUrl + "/add";
         public static final String updateExpenseCategory = expenseCategoriesUrl + "/update";
-        public static final String deleteExpenseCategory = expenseCategoriesUrl + "/delete";
+        public static final String deleteExpenseCategory = expenseCategoriesUrl + "/delete/single";
         public static final String deleteExpenseCategories = expenseCategoriesUrl + "/delete/multiple";
     }
 
@@ -141,7 +141,7 @@ public class EndPoints {
         public static final String searchOrganisations = organisationsUrl + "/search";
         public static final String addOrganisation = organisationsUrl + "/add";
         public static final String updateOrganisation = organisationsUrl + "/update";
-        public static final String deleteOrganisation = organisationsUrl + "/delete";
+        public static final String deleteOrganisation = organisationsUrl + "/delete/single";
         public static final String deleteOrganisations = organisationsUrl + "/delete/multiple";
     }
 
@@ -152,7 +152,7 @@ public class EndPoints {
         public static final String searchProductCategories = productCategoryUrl + "/search";
         public static final String addProductCategory = productCategoryUrl + "/add";
         public static final String updateProductCategory = productCategoryUrl + "/update";
-        public static final String deleteProductCategory = productCategoryUrl + "/delete";
+        public static final String deleteProductCategory = productCategoryUrl + "/delete/single";
         public static final String deleteProductCategories = productCategoryUrl + "/delete/multiple";
     }
 
@@ -164,7 +164,7 @@ public class EndPoints {
         public static final String productsStockAlert = productsUrl + "/stock_alert";
         public static final String addProduct = productsUrl + "/add";
         public static final String updateProduct = productsUrl + "/update";
-        public static final String deleteProduct = productsUrl + "/delete";
+        public static final String deleteProduct = productsUrl + "/delete/single";
         public static final String deleteProducts = productsUrl + "/delete/multiple";
     }
 
@@ -175,7 +175,7 @@ public class EndPoints {
         public static final String searchPurchases = purchasesUrl + "/search";
         public static final String addPurchase = purchasesUrl + "/master/add";
         public static final String updatePurchase = purchasesUrl + "/master/update";
-        public static final String deletePurchase = purchasesUrl + "/delete";
+        public static final String deletePurchase = purchasesUrl + "/delete/single";
         public static final String deletePurchases = purchasesUrl + "/delete/multiple";
     }
 
@@ -186,7 +186,7 @@ public class EndPoints {
         public static final String searchQuotations = quotationsUrl + "/search";
         public static final String addQuotation = quotationsUrl + "/master/add";
         public static final String updateQuotation = quotationsUrl + "/master/update";
-        public static final String deleteQuotation = quotationsUrl + "/delete";
+        public static final String deleteQuotation = quotationsUrl + "/delete/single";
         public static final String deleteQuotations = quotationsUrl + "/delete/multiple";
     }
 
@@ -197,7 +197,7 @@ public class EndPoints {
         public static final String searchRequisitions = requisitionsUrl + "/search";
         public static final String addRequisition = requisitionsUrl + "/master/add";
         public static final String updateRequisition = requisitionsUrl + "/master/update";
-        public static final String deleteRequisition = requisitionsUrl + "/delete";
+        public static final String deleteRequisition = requisitionsUrl + "/delete/single";
         public static final String deleteRequisitions = requisitionsUrl + "/delete/multiple";
     }
 
@@ -208,7 +208,7 @@ public class EndPoints {
         public static final String searchSalaryAdvances = salaryAdvancesUrl + "/search";
         public static final String addSalaryAdvance = salaryAdvancesUrl + "/add";
         public static final String updateSalaryAdvance = salaryAdvancesUrl + "/update";
-        public static final String deleteSalaryAdvance = salaryAdvancesUrl + "/delete";
+        public static final String deleteSalaryAdvance = salaryAdvancesUrl + "/delete/single";
         public static final String deleteSalaryAdvances = salaryAdvancesUrl + "/delete/multiple";
     }
 
@@ -219,7 +219,7 @@ public class EndPoints {
         public static final String searchSalaries = salariesUrl + "/search";
         public static final String addSalary = salariesUrl + "/add";
         public static final String updateSalary = salariesUrl + "/update";
-        public static final String deleteSalary = salariesUrl + "/delete";
+        public static final String deleteSalary = salariesUrl + "/delete/single";
         public static final String deleteSalaries = salariesUrl + "/delete/multiple";
     }
 
@@ -230,7 +230,7 @@ public class EndPoints {
         public static final String searchSales = salesUrl + "/search";
         public static final String addSale = salesUrl + "/master/add";
         public static final String updateSale = salesUrl + "/master/update";
-        public static final String deleteSale = salesUrl + "/delete";
+        public static final String deleteSale = salesUrl + "/delete/single";
         public static final String deleteSales = salesUrl + "/delete/multiple";
     }
 
@@ -241,7 +241,7 @@ public class EndPoints {
         public static final String searchSaleTermsAndConditions = saleTermsAndConditionsUrl + "/search";
         public static final String addSaleTermAndCondition = saleTermsAndConditionsUrl + "/add";
         public static final String updateSaleTermAndCondition = saleTermsAndConditionsUrl + "/update";
-        public static final String deleteSaleTermAndCondition = saleTermsAndConditionsUrl + "/delete";
+        public static final String deleteSaleTermAndCondition = saleTermsAndConditionsUrl + "/delete/single";
         public static final String deleteSaleTermsAndConditions = saleTermsAndConditionsUrl + "/delete/multiple";
     }
 
@@ -252,7 +252,7 @@ public class EndPoints {
         public static final String searchStockIns = stockInsUrl + "/search";
         public static final String addStockIn = stockInsUrl + "/master/add";
         public static final String updateStockIn = stockInsUrl + "/master/update";
-        public static final String deleteStockIn = stockInsUrl + "/delete";
+        public static final String deleteStockIn = stockInsUrl + "/delete/single";
         public static final String deleteStockIns = stockInsUrl + "/delete/multiple";
     }
 
@@ -263,7 +263,7 @@ public class EndPoints {
         public static final String searchSuppliers = suppliersUrl + "/search";
         public static final String addSupplier = suppliersUrl + "/add";
         public static final String updateSupplier = suppliersUrl + "/update";
-        public static final String deleteSupplier = suppliersUrl + "/delete";
+        public static final String deleteSupplier = suppliersUrl + "/delete/single";
         public static final String deleteSuppliers = suppliersUrl + "/delete/multiple";
     }
 
@@ -274,7 +274,7 @@ public class EndPoints {
         public static final String searchTransfers = transfersUrl + "/search";
         public static final String addTransfer = transfersUrl + "/master/add";
         public static final String updateTransfer = transfersUrl + "/master/update";
-        public static final String deleteTransfer = transfersUrl + "/delete";
+        public static final String deleteTransfer = transfersUrl + "/delete/single";
         public static final String deleteTransfers = transfersUrl + "/delete/multiple";
     }
 
@@ -285,7 +285,7 @@ public class EndPoints {
         public static final String searchUnitsOfMeasure = unitsOfMeasureUrl + "/search";
         public static final String addUnitOfMeasure = unitsOfMeasureUrl + "/add";
         public static final String updateUnitOfMeasure = unitsOfMeasureUrl + "/update";
-        public static final String deleteUnitOfMeasure = unitsOfMeasureUrl + "/delete";
+        public static final String deleteUnitOfMeasure = unitsOfMeasureUrl + "/delete/single";
         public static final String deleteUnitsOfMeasure = unitsOfMeasureUrl + "/delete/multiple";
     }
 
@@ -296,7 +296,7 @@ public class EndPoints {
         public static final String searchUsers = usersUrl + "/search";
         public static final String addUser = usersUrl + "/add";
         public static final String updateUser = usersUrl + "/update";
-        public static final String deleteUser = usersUrl + "/delete";
+        public static final String deleteUser = usersUrl + "/delete/single";
         public static final String deleteUsers = usersUrl + "/delete/multiple";
     }
 
@@ -307,7 +307,7 @@ public class EndPoints {
         public static final String searchUserProfiles = userProfilesUrl + "/search";
         public static final String addUserProfile = userProfilesUrl + "/add";
         public static final String updateUserProfile = userProfilesUrl + "/update";
-        public static final String deleteUserProfile = userProfilesUrl + "/delete";
+        public static final String deleteUserProfile = userProfilesUrl + "/delete/single";
         public static final String deleteUserProfiles = userProfilesUrl + "/delete/multiple";
     }
 
@@ -318,7 +318,7 @@ public class EndPoints {
         public static final String searchEmploymentStatuses = employmentStatusesUrl + "/search";
         public static final String addEmploymentStatus = employmentStatusesUrl + "/add";
         public static final String updateEmploymentStatus = employmentStatusesUrl + "/update";
-        public static final String deleteEmploymentStatus = employmentStatusesUrl + "/delete";
+        public static final String deleteEmploymentStatus = employmentStatusesUrl + "/delete/single";
         public static final String deleteEmploymentStatuses = employmentStatusesUrl + "/delete/multiple";
     }
 
@@ -329,7 +329,7 @@ public class EndPoints {
         public static final String searchLeaveStatuses = leaveStatusesUrl + "/search";
         public static final String addLeaveStatus = leaveStatusesUrl + "/add";
         public static final String updateLeaveStatus = leaveStatusesUrl + "/update";
-        public static final String deleteLeaveStatus = leaveStatusesUrl + "/delete";
+        public static final String deleteLeaveStatus = leaveStatusesUrl + "/delete/single";
         public static final String deleteLeaveStatuses = leaveStatusesUrl + "/delete/multiple";
     }
 
@@ -340,7 +340,7 @@ public class EndPoints {
         public static final String searchPaySlips = paySlipUrl + "/search";
         public static final String addPaySlip = paySlipUrl + "/add";
         public static final String updatePaySlip = paySlipUrl + "/update";
-        public static final String deletePaySlip = paySlipUrl + "/delete";
+        public static final String deletePaySlip = paySlipUrl + "/delete/single";
         public static final String deletePaySlips = paySlipUrl + "/delete/multiple";
     }
 
@@ -351,7 +351,7 @@ public class EndPoints {
         public static final String searchBeneficiaryBadges = beneficiaryBadgeUrl + "/search";
         public static final String addBeneficiaryBadge = beneficiaryBadgeUrl + "/add";
         public static final String updateBeneficiaryBadge = beneficiaryBadgeUrl + "/update";
-        public static final String deleteBeneficiaryBadge = beneficiaryBadgeUrl + "/delete";
+        public static final String deleteBeneficiaryBadge = beneficiaryBadgeUrl + "/delete/single";
         public static final String deleteBeneficiaryBadges = beneficiaryBadgeUrl + "/delete/multiple";
     }
 
@@ -362,7 +362,7 @@ public class EndPoints {
         public static final String searchBeneficiaryTypes = beneficiaryTypeUrl + "/search";
         public static final String addBeneficiaryType = beneficiaryTypeUrl + "/add";
         public static final String updateBeneficiaryType = beneficiaryTypeUrl + "/update";
-        public static final String deleteBeneficiaryType = beneficiaryTypeUrl + "/delete";
+        public static final String deleteBeneficiaryType = beneficiaryTypeUrl + "/delete/single";
         public static final String deleteBeneficiaryTypes = beneficiaryTypeUrl + "/delete/multiple";
     }
 
@@ -373,29 +373,29 @@ public class EndPoints {
         public static final String searchEmails = emailUrl + "/search";
         public static final String addEmail = emailUrl + "/add";
         public static final String updateEmail = emailUrl + "/update";
-        public static final String deleteEmail = emailUrl + "/delete";
+        public static final String deleteEmail = emailUrl + "/delete/single";
         public static final String deleteEmails = emailUrl + "/delete/multiple";
     }
 
     public static final class Tax {
-        public static final String taxUrl = apiUrl + "/tax";
+        public static final String taxUrl = apiUrl + "/taxes";
         public static final String allTaxes = taxUrl + "/all";
         public static final String taxById = taxUrl + "/single";
         public static final String searchTaxes = taxUrl + "/search";
         public static final String addTax = taxUrl + "/add";
         public static final String updateTax = taxUrl + "/update";
-        public static final String deleteTax = taxUrl + "/delete";
+        public static final String deleteTax = taxUrl + "/delete/single";
         public static final String deleteTaxes = taxUrl + "/delete/multiple";
     }
 
     public static final class Discount {
-        public static final String discountUrl = apiUrl + "/discount";
+        public static final String discountUrl = apiUrl + "/discounts";
         public static final String allDiscounts = discountUrl + "/all";
         public static final String discountById = discountUrl + "/single";
         public static final String searchDiscounts = discountUrl + "/search";
         public static final String addDiscount = discountUrl + "/add";
         public static final String updateDiscount = discountUrl + "/update";
-        public static final String deleteDiscount = discountUrl + "/delete";
+        public static final String deleteDiscount = discountUrl + "/delete/single";
         public static final String deleteDiscounts = discountUrl + "/delete/multiple";
     }
 
@@ -406,7 +406,7 @@ public class EndPoints {
         public static final String roleById = rolesUrl + "/single";
         public static final String addRole = rolesUrl + "/add";
         public static final String updateRole = rolesUrl + "/update";
-        public static final String deleteRole = rolesUrl + "/delete";
+        public static final String deleteRole = rolesUrl + "/delete/single";
         // Permissions
         public static final String allPermissions = rolesUrl + "/permissions";
         public static final String permissionById = rolesUrl + "/permission";
@@ -416,7 +416,7 @@ public class EndPoints {
     }
 
     public static final class Payments {
-        public static final String paymentsUrl = apiUrl + "/payments";
+        public static final String paymentsUrl = apiUrl + "/payment/transactions";
         public static final String cardPay = paymentsUrl + "/pay/card";
         public static final String mtnMomoPay = paymentsUrl + "/pay/mtn";
         public static final String airtelMoPay = paymentsUrl + "/pay/airtel";

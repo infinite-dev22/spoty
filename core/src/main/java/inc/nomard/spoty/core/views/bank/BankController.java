@@ -12,7 +12,6 @@ import io.github.palexdev.materialfx.controls.cell.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.filter.*;
-import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
 import io.github.palexdev.mfxresources.fonts.*;
 import java.io.*;
 import java.net.*;
@@ -181,7 +180,7 @@ public class BankController implements Initializable {
     }
 
     private void onSuccess() {
-        transition.setOnFinished(null);
+        BankViewModel.getAllBanks(null, null);
     }
 
     private void setIcons() {
@@ -196,8 +195,8 @@ public class BankController implements Initializable {
         SpotyMessage notification =
                 new SpotyMessage.MessageBuilder(message)
                         .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
                         .build();
         notificationHolder.addMessage(notification);
         AnchorPane.setRightAnchor(notification, 40.0);

@@ -18,6 +18,7 @@ import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.components.message.*;
 import inc.nomard.spoty.core.components.message.enums.*;
 import inc.nomard.spoty.core.components.navigation.*;
+import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.purchases.*;
 import inc.nomard.spoty.core.views.*;
 import inc.nomard.spoty.core.views.previews.purchases.*;
@@ -222,6 +223,7 @@ public class PurchasesController implements Initializable {
     }
 
     private void onSuccess() {
+        PurchaseMasterViewModel.getAllPurchaseMasters(null, null);
     }
 
     private void viewDialogPane(Stage stage) throws IOException {
@@ -261,8 +263,8 @@ public class PurchasesController implements Initializable {
         SpotyMessage notification =
                 new SpotyMessage.MessageBuilder(message)
                         .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
                         .build();
         notificationHolder.addMessage(notification);
         AnchorPane.setRightAnchor(notification, 40.0);

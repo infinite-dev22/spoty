@@ -338,6 +338,8 @@ public class PurchaseMasterFormController implements Initializable {
         supplier.clearSelection();
         purchaseStatus.clearSelection();
         date.setValue(null);
+        PurchaseMasterViewModel.resetProperties();
+        PurchaseMasterViewModel.getAllPurchaseMasters(null, null);
     }
 
     public void requiredValidator() {
@@ -404,8 +406,8 @@ public class PurchaseMasterFormController implements Initializable {
         SpotyMessage notification =
                 new SpotyMessage.MessageBuilder(message)
                         .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
                         .build();
         notificationHolder.addMessage(notification);
         AnchorPane.setRightAnchor(notification, 40.0);

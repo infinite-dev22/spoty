@@ -5,8 +5,7 @@ import javafx.scene.*;
 import javafx.scene.effect.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.*;
-
-import lombok.extern.java.Log;
+import lombok.extern.java.*;
 
 @Log
 public class GlassPane extends AnchorPane {

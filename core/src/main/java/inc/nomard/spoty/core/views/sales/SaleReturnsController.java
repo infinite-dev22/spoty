@@ -17,6 +17,7 @@ package inc.nomard.spoty.core.views.sales;
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.components.message.*;
 import inc.nomard.spoty.core.components.message.enums.*;
+import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.returns.sales.*;
 import inc.nomard.spoty.core.views.previews.sales.*;
 import inc.nomard.spoty.network_bridge.dtos.returns.sale_returns.*;
@@ -176,6 +177,7 @@ public class SaleReturnsController implements Initializable {
     }
 
     private void onSuccess() {
+        SaleReturnMasterViewModel.getSaleReturnMasters(null, null);
     }
 
     private MFXContextMenu showContextMenu(MFXTableRow<SaleReturnMaster> obj) {
@@ -247,8 +249,8 @@ public class SaleReturnsController implements Initializable {
         SpotyMessage notification =
                 new SpotyMessage.MessageBuilder(message)
                         .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
                         .build();
         notificationHolder.addMessage(notification);
         AnchorPane.setRightAnchor(notification, 40.0);

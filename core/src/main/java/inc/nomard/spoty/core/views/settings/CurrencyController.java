@@ -178,6 +178,7 @@ public class CurrencyController implements Initializable {
     }
 
     private void onSuccess() {
+        CurrencyViewModel.getAllCurrencies(null, null);
     }
 
     private void successMessage(String message) {
@@ -185,8 +186,8 @@ public class CurrencyController implements Initializable {
         SpotyMessage notification =
                 new SpotyMessage.MessageBuilder(message)
                         .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
                         .build();
         notificationHolder.addMessage(notification);
         AnchorPane.setRightAnchor(notification, 40.0);

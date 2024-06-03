@@ -14,19 +14,15 @@
 
 package inc.nomard.spoty.core.views.splash;
 
-import inc.nomard.spoty.core.SpotyCoreResourceLoader;
-import inc.nomard.spoty.core.values.strings.Labels;
-import io.github.palexdev.materialfx.theming.JavaFXThemes;
-import io.github.palexdev.materialfx.theming.MaterialFXStylesheets;
-import io.github.palexdev.materialfx.theming.UserAgentBuilder;
-import javafx.application.Preloader;
-import javafx.scene.Scene;
-import javafx.scene.image.Image;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-import lombok.extern.java.Log;
-
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
+import inc.nomard.spoty.core.*;
+import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
+import inc.nomard.spoty.core.values.strings.*;
+import io.github.palexdev.materialfx.theming.*;
+import javafx.application.*;
+import javafx.scene.*;
+import javafx.scene.image.*;
+import javafx.stage.*;
+import lombok.extern.java.*;
 
 @Log
 public class LaunchPreloader extends Preloader {

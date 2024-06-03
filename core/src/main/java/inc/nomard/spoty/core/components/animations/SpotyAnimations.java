@@ -3,8 +3,7 @@ package inc.nomard.spoty.core.components.animations;
 import javafx.animation.*;
 import javafx.scene.*;
 import javafx.util.*;
-
-import lombok.extern.java.Log;
+import lombok.extern.java.*;
 
 @Log
 public class SpotyAnimations {

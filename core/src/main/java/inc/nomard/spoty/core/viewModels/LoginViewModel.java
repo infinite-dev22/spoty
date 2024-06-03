@@ -21,10 +21,12 @@ import inc.nomard.spoty.network_bridge.models.*;
 import inc.nomard.spoty.network_bridge.repositories.implementations.*;
 import inc.nomard.spoty.utils.*;
 import inc.nomard.spoty.utils.adapters.*;
+import inc.nomard.spoty.utils.connectivity.*;
 import inc.nomard.spoty.utils.functional_paradigm.*;
 import java.net.http.*;
 import java.util.*;
 import java.util.concurrent.*;
+import javafx.application.*;
 import javafx.beans.property.*;
 import lombok.extern.java.*;
 
@@ -69,8 +71,7 @@ public class LoginViewModel {
 
     public static void login(SpotyGotFunctional.ParameterlessConsumer onSuccess,
                              SpotyGotFunctional.MessageConsumer successMessage,
-                             SpotyGotFunctional.MessageConsumer errorMessage,
-                             SpotyGotFunctional.ParameterlessConsumer onBadCredentials) {
+                             SpotyGotFunctional.MessageConsumer errorMessage) {
         var loginDetails =
                 LoginModel.builder()
                         .email(getEmail())
@@ -78,49 +79,34 @@ public class LoginViewModel {
                         .build();
         CompletableFuture<HttpResponse<String>> responseFuture = authRepository.login(loginDetails);
         responseFuture.thenAccept(response -> {
-            // Handle successful response
             var loginResponse = gson.fromJson(response.body(), LoginResponseModel.class);
             if (loginResponse.getStatus() == 200) {
-                successMessage.showMessage("Authentication successful");
-                ProtectedGlobals.authToken = loginResponse.getToken();
-                ProtectedGlobals.trial = loginResponse.getUser().getUserProfile().getTenant().isTrial();
-                ProtectedGlobals.canTry = loginResponse.getUser().getUserProfile().getTenant().isCanTry();
-                ProtectedGlobals.newTenancy = loginResponse.getUser().getUserProfile().getTenant().isNewTenancy();
-                ProtectedGlobals.activeTenancy = loginResponse.isActiveTenancy();
-                ProtectedGlobals.message = loginResponse.getMessage();
-                ProtectedGlobals.user = loginResponse.getUser();
-                onSuccess.run();
+                Platform.runLater(() -> {
+                    ProtectedGlobals.authToken = loginResponse.getToken();
+                    ProtectedGlobals.trial = loginResponse.getUser().getUserProfile().getTenant().isTrial();
+                    ProtectedGlobals.canTry = loginResponse.getUser().getUserProfile().getTenant().isCanTry();
+                    ProtectedGlobals.newTenancy = loginResponse.getUser().getUserProfile().getTenant().isNewTenancy();
+                    ProtectedGlobals.activeTenancy = loginResponse.isActiveTenancy();
+                    ProtectedGlobals.message = loginResponse.getMessage();
+                    ProtectedGlobals.user = loginResponse.getUser();
+                    successMessage.showMessage("Authentication successful");
+                    onSuccess.run();
+                });
             } else if (loginResponse.getStatus() == 401) {
-                errorMessage.showMessage("An error occurred, access denied");
-                ProtectedGlobals.authToken = loginResponse.getToken();
-                ProtectedGlobals.trial = loginResponse.getUser().getUserProfile().getTenant().isTrial();
-                ProtectedGlobals.canTry = loginResponse.getUser().getUserProfile().getTenant().isCanTry();
-                ProtectedGlobals.newTenancy = loginResponse.getUser().getUserProfile().getTenant().isNewTenancy();
-                ProtectedGlobals.newTenancy = loginResponse.isNewTenancy();
-                ProtectedGlobals.activeTenancy = loginResponse.isActiveTenancy();
-                ProtectedGlobals.message = loginResponse.getMessage();
-                ProtectedGlobals.user = loginResponse.getUser();
-                onSuccess.run();
+                Platform.runLater(() -> errorMessage.showMessage("Access denied"));
             } else if (loginResponse.getStatus() == 404) {
-                errorMessage.showMessage("An error occurred, resource not found");
-                ProtectedGlobals.authToken = loginResponse.getToken();
-                ProtectedGlobals.trial = loginResponse.getUser().getUserProfile().getTenant().isTrial();
-                ProtectedGlobals.canTry = loginResponse.getUser().getUserProfile().getTenant().isCanTry();
-                ProtectedGlobals.newTenancy = loginResponse.getUser().getUserProfile().getTenant().isNewTenancy();
-                ProtectedGlobals.activeTenancy = loginResponse.isActiveTenancy();
-                ProtectedGlobals.message = loginResponse.getMessage();
-                ProtectedGlobals.user = loginResponse.getUser();
-                onSuccess.run();
+                Platform.runLater(() -> errorMessage.showMessage("Resource not found"));
+            } else if (response.statusCode() == 500 && loginResponse.getMessage().toLowerCase().contains("bad credentials")) {
+                Platform.runLater(() -> errorMessage.showMessage("Wrong email or password"));
             } else if (response.statusCode() == 500) {
-                // Handle non-200 status codes
-                errorMessage.showMessage("An error occurred, this is definitely on our side");
-            } else if (loginResponse.getMessage().toLowerCase().contains("bad credentials")) {
-                ProtectedGlobals.message = loginResponse.getMessage();
-                onBadCredentials.run();
+                Platform.runLater(() -> errorMessage.showMessage("An error occurred"));
             }
         }).exceptionally(throwable -> {
-            // Handle exceptions during the request (e.g., network issues)
-            errorMessage.showMessage("An error occurred, this is on your side");
+            if (Connectivity.isConnectedToInternet()) {
+                Platform.runLater(() -> errorMessage.showMessage("An in app error occurred"));
+            } else {
+                Platform.runLater(() -> errorMessage.showMessage("No Internet Connection"));
+            }
             SpotyLogger.writeToFile(throwable, DepartmentViewModel.class);
             return null;
         });

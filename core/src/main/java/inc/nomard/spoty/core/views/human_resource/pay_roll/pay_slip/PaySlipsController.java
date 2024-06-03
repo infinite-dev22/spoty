@@ -3,6 +3,8 @@ package inc.nomard.spoty.core.views.human_resource.pay_roll.pay_slip;
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.components.message.*;
 import inc.nomard.spoty.core.components.message.enums.*;
+import inc.nomard.spoty.core.viewModels.*;
+import inc.nomard.spoty.core.viewModels.hrm.pay_roll.*;
 import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton;
@@ -51,6 +53,7 @@ public class PaySlipsController implements Initializable {
     }
 
     private void onSuccess() {
+        PaySlipViewModel.getAllPaySlips(null, null);
     }
 
     private void errorMessage(String message) {

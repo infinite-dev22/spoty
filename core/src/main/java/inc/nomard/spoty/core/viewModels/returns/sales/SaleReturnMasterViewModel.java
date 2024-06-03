@@ -168,7 +168,10 @@ public class SaleReturnMasterViewModel {
 //        task.setOnRunning(workerStateEvent -> onActivity.run());
 //        task.setOnSucceeded(workerStateEvent -> {
 //            SaleReturnDetailViewModel.saveSaleReturnDetails(onActivity, null, onFailed);
-//            onSuccess.run();
+//
+//        if (Objects.nonNull(onSuccess)) {
+//            Platform.runLater(onSuccess::run);
+//        }
 //        });
 //        task.setOnFailed(workerStateEvent -> onFailed.run());
 //        SpotyThreader.spotyThreadPool(task);
@@ -221,7 +224,10 @@ public class SaleReturnMasterViewModel {
 //            SaleReturnDetailViewModel.SaleReturnsDetailsList.addAll(SaleReturnsMaster.getSaleReturnDetails());
 //
 //            if (Objects.nonNull(onSuccess)) {
-//                onSuccess.run();
+//
+//        if (Objects.nonNull(onSuccess)) {
+//            Platform.runLater(onSuccess::run);
+//        }
 //            }
 //        });
 //        SpotyThreader.spotyThreadPool(task);
@@ -254,7 +260,10 @@ public class SaleReturnMasterViewModel {
 //            SaleReturnsMastersList.addAll(SaleReturnsMasterList);
 //
 //            if (Objects.nonNull(onSuccess)) {
-//                onSuccess.run();
+//
+//        if (Objects.nonNull(onSuccess)) {
+//            Platform.runLater(onSuccess::run);
+//        }
 //            }
 //        });
 //        SpotyThreader.spotyThreadPool(task);

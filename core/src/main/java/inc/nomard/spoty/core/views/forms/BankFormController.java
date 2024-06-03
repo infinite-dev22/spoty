@@ -135,19 +135,20 @@ public class BankFormController implements Initializable {
                             && accountNameConstraints.isEmpty()
                             && accountNumberConstraints.isEmpty()
                             && branchConstraints.isEmpty()) {
+                        actionEvent = event;
                         if (BankViewModel.getId() > 0) {
                             BankViewModel.updateItem(this::onSuccess, this::successMessage, this::errorMessage);
-                            actionEvent = event;
                             return;
                         }
                         BankViewModel.saveBank(this::onSuccess, this::successMessage, this::errorMessage);
-                        actionEvent = event;
                     }
                 });
     }
 
     private void onSuccess() {
         closeDialog(actionEvent);
+        BankViewModel.clearBankData();
+        BankViewModel.getAllBanks(null, null);
     }
 
     public void requiredValidator() {
@@ -232,8 +233,8 @@ public class BankFormController implements Initializable {
         SpotyMessage notification =
                 new SpotyMessage.MessageBuilder(message)
                         .duration(MessageDuration.SHORT)
-                        .icon("fas-triangle-exclamation")
-                        .type(MessageVariants.ERROR)
+                        .icon("fas-circle-check")
+                        .type(MessageVariants.SUCCESS)
                         .build();
         notificationHolder.addMessage(notification);
         AnchorPane.setRightAnchor(notification, 40.0);
