@@ -42,7 +42,7 @@ public class SaleMasterViewModel {
             FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
-                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+                    new UnixEpochDateTypeAdapter())
             .create();
     private static final ListProperty<SaleMaster> sales = new SimpleListProperty<>(salesList);
     private static final LongProperty id = new SimpleLongProperty(0);
@@ -439,7 +439,6 @@ public class SaleMasterViewModel {
 
     public static void searchSaleMaster(
             String search, SpotyGotFunctional.ParameterlessConsumer onSuccess,
-            SpotyGotFunctional.MessageConsumer successMessage,
             SpotyGotFunctional.MessageConsumer errorMessage) {
         var searchModel = SearchModel.builder().search(search).build();
         CompletableFuture<HttpResponse<String>> responseFuture = salesRepository.search(searchModel);

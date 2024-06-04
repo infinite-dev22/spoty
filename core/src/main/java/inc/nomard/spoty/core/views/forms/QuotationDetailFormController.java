@@ -21,6 +21,7 @@ import static inc.nomard.spoty.core.values.SharedResources.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.quotations.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
+import inc.nomard.spoty.network_bridge.dtos.quotations.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.utils.*;
@@ -50,6 +51,10 @@ public class QuotationDetailFormController implements Initializable {
     @FXML
     public Label productValidationLabel,
             quantityValidationLabel;
+    @FXML
+    public MFXComboBox<Discount> discount;
+    @FXML
+    public MFXComboBox<Tax> tax;
     private List<Constraint> productConstraints,
             quantityConstraints;
 
@@ -67,11 +72,17 @@ public class QuotationDetailFormController implements Initializable {
         product
                 .valueProperty()
                 .bindBidirectional(QuotationDetailViewModel.productProperty());
+        discount.valueProperty().bindBidirectional(QuotationDetailViewModel.discountProperty());
+        tax.valueProperty().bindBidirectional(QuotationDetailViewModel.taxProperty());
 
         // Combo box Converter.
         StringConverter<Product> productVariantConverter =
                 FunctionalStringConverter.to(
                         productDetail -> (productDetail == null) ? "" : productDetail.getName());
+        StringConverter<Discount> discountConverter =
+                FunctionalStringConverter.to(discount -> (discount == null) ? "" : discount.getName() + "(" + discount.getPercentage() + ")");
+        StringConverter<Tax> taxConverter =
+                FunctionalStringConverter.to(tax -> (tax == null) ? "" : tax.getName() + "(" + tax.getPercentage() + ")");
 
         // Combo box Filter Function.
         Function<String, Predicate<Product>> productVariantFilterFunction =
@@ -90,6 +101,26 @@ public class QuotationDetailFormController implements Initializable {
                                     c -> product.setItems(ProductViewModel.getProducts()));
         } else {
             product.itemsProperty().bindBidirectional(ProductViewModel.productsProperty());
+        }
+        // Discount combo box
+        discount.setConverter(discountConverter);
+        if (DiscountViewModel.getDiscounts().isEmpty()) {
+            DiscountViewModel.getDiscounts()
+                    .addListener(
+                            (ListChangeListener<Discount>)
+                                    c -> discount.setItems(DiscountViewModel.getDiscounts()));
+        } else {
+            discount.itemsProperty().bindBidirectional(DiscountViewModel.discountsProperty());
+        }
+        // Tax combo box
+        tax.setConverter(taxConverter);
+        if (TaxViewModel.getTaxes().isEmpty()) {
+            TaxViewModel.getTaxes()
+                    .addListener(
+                            (ListChangeListener<Tax>)
+                                    c -> tax.setItems(TaxViewModel.getTaxes()));
+        } else {
+            tax.itemsProperty().bindBidirectional(TaxViewModel.taxesProperty());
         }
 
         // Input validators.

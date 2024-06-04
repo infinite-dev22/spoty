@@ -39,7 +39,7 @@ public class CustomerViewModel {
             FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
-                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+                    new UnixEpochDateTypeAdapter())
             .create();
     private static final ListProperty<Customer> customers = new SimpleListProperty<>(customersList);
     private static final LongProperty id = new SimpleLongProperty(0);

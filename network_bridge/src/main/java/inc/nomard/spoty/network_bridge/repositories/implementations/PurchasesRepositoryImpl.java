@@ -16,7 +16,7 @@ import lombok.extern.java.*;
 public class PurchasesRepositoryImpl extends ProtectedGlobals implements SimpleRepository {
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
-                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+                    new UnixEpochDateTypeAdapter())
             .create();
 
     @Override

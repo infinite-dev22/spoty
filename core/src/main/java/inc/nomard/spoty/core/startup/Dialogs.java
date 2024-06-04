@@ -16,7 +16,6 @@ package inc.nomard.spoty.core.startup;
 
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.views.forms.*;
-import inc.nomard.spoty.core.views.printable.general.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import java.io.*;
 import javafx.fxml.*;
@@ -52,7 +51,6 @@ public class Dialogs {
     private static final FXMLLoader taxFormLoader = fxmlLoader("views/forms/TaxForm.fxml");
     private static final FXMLLoader uomFormLoader = fxmlLoader("views/forms/UOMForm.fxml");
     private static final FXMLLoader userFormLoader = fxmlLoader("views/forms/UserForm.fxml");
-    private static final FXMLLoader printableLoader = fxmlLoader("views/printable/general/General.fxml");
 
     private static MFXGenericDialog quotationDialogContent;
     private static MFXGenericDialog printableDialogContent;
@@ -60,7 +58,6 @@ public class Dialogs {
     public static void setControllers() {
         quotationDetailFormLoader.setControllerFactory(c -> QuotationDetailFormController.getInstance());
         purchaseDetailFormLoader.setControllerFactory(c -> PurchaseDetailFormController.getInstance());
-        printableLoader.setControllerFactory(c -> GeneralViewController.getInstance());
     }
 
     public static void setDialogContent() throws IOException {
@@ -68,8 +65,6 @@ public class Dialogs {
         quotationDialogContent.setShowMinimize(false);
         quotationDialogContent.setShowAlwaysOnTop(false);
         quotationDialogContent.setShowClose(false);
-
-        printableDialogContent = printableLoader.load();
     }
 
     public static MFXGenericDialog getQuotationDialogContent() {

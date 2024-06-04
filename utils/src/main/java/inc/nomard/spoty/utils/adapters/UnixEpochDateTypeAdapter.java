@@ -13,12 +13,6 @@ import java.util.Date;
 public class UnixEpochDateTypeAdapter
         extends TypeAdapter<Date> {
 
-    @Getter
-    private static final TypeAdapter<Date> unixEpochDateTypeAdapter = new UnixEpochDateTypeAdapter();
-
-    private UnixEpochDateTypeAdapter() {
-    }
-
     @Override
     public Date read(final JsonReader in)
             throws IOException {

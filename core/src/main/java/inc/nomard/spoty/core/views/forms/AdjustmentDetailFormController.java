@@ -79,7 +79,7 @@ public class AdjustmentDetailFormController implements Initializable {
         // Combo box Converter.
         StringConverter<Product> productVariantConverter =
                 FunctionalStringConverter.to(
-                        productDetail -> (productDetail == null) ? "" : productDetail.getName());
+                        productDetail -> (productDetail == null) ? "" : productDetail.getName() + " - (" + productDetail.getQuantity() + " Pcs)");
         // Combo box Filter Function.
         Function<String, Predicate<Product>> productVariantFilterFunction =
                 searchStr ->
@@ -160,7 +160,6 @@ public class AdjustmentDetailFormController implements Initializable {
                             && typeConstraints.isEmpty()) {
                         if (tempIdProperty().get() > -1) {
                             AdjustmentDetailViewModel.updateAdjustmentDetail((long) SharedResources.getTempId());
-
                             SpotyMessage notification =
                                     new SpotyMessage.MessageBuilder("Entry updated successfully")
                                             .duration(MessageDuration.MEDIUM)
@@ -168,28 +167,22 @@ public class AdjustmentDetailFormController implements Initializable {
                                             .type(MessageVariants.SUCCESS)
                                             .build();
                             notificationHolder.addMessage(notification);
-
                             product.clearSelection();
                             type.clearSelection();
-
                             closeDialog(event);
                             return;
                         }
                         AdjustmentDetailViewModel.addAdjustmentDetails();
-
                         SpotyMessage notification =
                                 new SpotyMessage.MessageBuilder("Entry added successfully")
                                         .duration(MessageDuration.SHORT)
                                         .icon("fas-circle-check")
                                         .type(MessageVariants.SUCCESS)
                                         .build();
-
                         notificationHolder.addMessage(notification);
                         AdjustmentDetailViewModel.resetProperties();
-
                         product.clearSelection();
                         type.clearSelection();
-
                         closeDialog(event);
                     }
                 });

@@ -25,6 +25,7 @@ import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.theming.*;
 import java.io.*;
 import java.net.*;
+import java.time.*;
 import java.util.*;
 import javafx.application.*;
 import javafx.fxml.*;
@@ -39,11 +40,12 @@ import lombok.extern.java.*;
 @Log
 public class SplashScreenController implements Initializable {
     @FXML
-    public Label applicationName;
+    public Label applicationName,
+            companyName,
+            copyRight;
+    ;
     @FXML
     public AnchorPane splashScreenPane;
-    @FXML
-    public Label companyName;
 
     public static void checkFunctions() {
         var sysPathCreator = sysPathCreater();
@@ -122,6 +124,7 @@ public class SplashScreenController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         companyName.setText("Powered by " + Labels.COMPANY_NAME);
+        copyRight.setText("©" + Year.now() + " nomard® Labs");
         applicationName.setText(Labels.APP_NAME);
     }
 }

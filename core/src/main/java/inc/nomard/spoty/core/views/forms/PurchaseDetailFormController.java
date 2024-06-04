@@ -21,7 +21,6 @@ import static inc.nomard.spoty.core.values.SharedResources.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.purchases.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
-import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.utils.*;
@@ -42,8 +41,7 @@ import lombok.extern.java.*;
 public class PurchaseDetailFormController implements Initializable {
     private static PurchaseDetailFormController instance;
     @FXML
-    public MFXTextField quantity,
-            cost;
+    public MFXTextField quantity;
     @FXML
     public MFXFilterComboBox<Product> product;
     @FXML
@@ -51,11 +49,9 @@ public class PurchaseDetailFormController implements Initializable {
             cancelBtn;
     @FXML
     public Label quantityValidationLabel,
-            productValidationLabel,
-            costValidationLabel;
+            productValidationLabel;
     private List<Constraint> productConstraints,
-            quantityConstraints,
-            costConstraints;
+            quantityConstraints;
 
     public static PurchaseDetailFormController getInstance() {
         if (Objects.equals(instance, null)) instance = new PurchaseDetailFormController();
@@ -67,7 +63,6 @@ public class PurchaseDetailFormController implements Initializable {
         // Input bindings.
         quantity.textProperty().bindBidirectional(PurchaseDetailViewModel.quantityProperty());
         product.valueProperty().bindBidirectional(PurchaseDetailViewModel.productProperty());
-        cost.textProperty().bindBidirectional(PurchaseDetailViewModel.costProperty());
 
         // Combo box Converter.
         StringConverter<Product> productVariantConverter =
@@ -106,17 +101,14 @@ public class PurchaseDetailFormController implements Initializable {
                     product.clearSelection();
                     productValidationLabel.setVisible(false);
                     quantityValidationLabel.setVisible(false);
-                    costValidationLabel.setVisible(false);
 
                     productValidationLabel.setManaged(false);
                     quantityValidationLabel.setManaged(false);
-                    costValidationLabel.setManaged(false);
 
                     product.clearSelection();
 
                     product.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                     quantity.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                    cost.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                 });
         saveBtn.setOnAction(
                 (event) -> {
@@ -124,7 +116,6 @@ public class PurchaseDetailFormController implements Initializable {
 
                     productConstraints = product.validate();
                     quantityConstraints = quantity.validate();
-                    costConstraints = cost.validate();
                     if (!productConstraints.isEmpty()) {
                         productValidationLabel.setManaged(true);
                         productValidationLabel.setVisible(true);
@@ -141,26 +132,10 @@ public class PurchaseDetailFormController implements Initializable {
                         MFXStageDialog dialog = (MFXStageDialog) quantity.getScene().getWindow();
                         dialog.sizeToScene();
                     }
-                    if (!costConstraints.isEmpty()) {
-                        costValidationLabel.setManaged(true);
-                        costValidationLabel.setVisible(true);
-                        costValidationLabel.setText(costConstraints.getFirst().getMessage());
-                        cost.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, true);
-                        MFXStageDialog dialog = (MFXStageDialog) cost.getScene().getWindow();
-                        dialog.sizeToScene();
-                    }
                     if (productConstraints.isEmpty()
-                            && quantityConstraints.isEmpty()
-                            && costConstraints.isEmpty()) {
+                            && quantityConstraints.isEmpty()) {
                         if (tempIdProperty().get() > -1) {
-                            SpotyThreader.spotyThreadPool(() -> {
-                                try {
-                                    PurchaseDetailViewModel.updatePurchaseDetail(PurchaseDetailViewModel.getId());
-                                } catch (Exception e) {
-                                    SpotyLogger.writeToFile(e, this.getClass());
-                                }
-                            });
-
+                            PurchaseDetailViewModel.updatePurchaseDetail(PurchaseDetailViewModel.getId());
                             SpotyMessage notification =
                                     new SpotyMessage.MessageBuilder("Product changed successfully")
                                             .duration(MessageDuration.SHORT)
@@ -168,14 +143,12 @@ public class PurchaseDetailFormController implements Initializable {
                                             .type(MessageVariants.SUCCESS)
                                             .build();
                             notificationHolder.addMessage(notification);
-
                             product.clearSelection();
                             PurchaseDetailViewModel.resetProperties();
                             closeDialog(event);
                             return;
                         }
                         PurchaseDetailViewModel.addPurchaseDetail();
-
                         SpotyMessage notification =
                                 new SpotyMessage.MessageBuilder("Product added successfully")
                                         .duration(MessageDuration.SHORT)
@@ -183,7 +156,6 @@ public class PurchaseDetailFormController implements Initializable {
                                         .type(MessageVariants.SUCCESS)
                                         .build();
                         notificationHolder.addMessage(notification);
-
                         product.clearSelection();
                         PurchaseDetailViewModel.resetProperties();
                         closeDialog(event);
@@ -200,13 +172,6 @@ public class PurchaseDetailFormController implements Initializable {
                         .setCondition(product.textProperty().length().greaterThan(0))
                         .get();
         product.getValidator().constraint(productConstraint);
-        Constraint costConstraint =
-                Constraint.Builder.build()
-                        .setSeverity(Severity.ERROR)
-                        .setMessage("Cost is required")
-                        .setCondition(cost.textProperty().length().greaterThan(0))
-                        .get();
-        cost.getValidator().constraint(costConstraint);
         Constraint quantityConstraint =
                 Constraint.Builder.build()
                         .setSeverity(Severity.ERROR)
@@ -224,17 +189,6 @@ public class PurchaseDetailFormController implements Initializable {
                                 productValidationLabel.setManaged(false);
                                 productValidationLabel.setVisible(false);
                                 product.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
-                            }
-                        });
-        cost
-                .getValidator()
-                .validProperty()
-                .addListener(
-                        (observable, oldValue, newValue) -> {
-                            if (newValue) {
-                                costValidationLabel.setManaged(false);
-                                costValidationLabel.setVisible(false);
-                                cost.pseudoClassStateChanged(INVALID_PSEUDO_CLASS, false);
                             }
                         });
         quantity

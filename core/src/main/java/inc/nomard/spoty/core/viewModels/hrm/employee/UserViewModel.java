@@ -44,7 +44,7 @@ public class UserViewModel {
     private static final ObservableList<String> workShiftsList = FXCollections.observableArrayList("Day", "Evening", "Full");
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
-                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+                    new UnixEpochDateTypeAdapter())
             .create();
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final StringProperty firstName = new SimpleStringProperty("");

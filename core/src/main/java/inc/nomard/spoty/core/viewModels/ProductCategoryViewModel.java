@@ -37,7 +37,7 @@ public class ProductCategoryViewModel {
     public static final ProductCategoriesRepositoryImpl productCategoriesRepository = new ProductCategoriesRepositoryImpl();
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
-                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+                    new UnixEpochDateTypeAdapter())
             .create();
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final StringProperty description = new SimpleStringProperty("");

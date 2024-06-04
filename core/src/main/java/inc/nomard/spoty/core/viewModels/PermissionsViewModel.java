@@ -36,7 +36,7 @@ import lombok.extern.java.*;
 public class PermissionsViewModel {
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
-                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+                    new UnixEpochDateTypeAdapter())
             .create();
     private static final ObjectProperty<Permission> dashboardAccess = new SimpleObjectProperty<>();
     private static final ObjectProperty<Permission> posAccess = new SimpleObjectProperty<>();

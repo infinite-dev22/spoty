@@ -34,7 +34,7 @@ import lombok.extern.java.*;
 public class LoginViewModel {
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
-                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+                    new UnixEpochDateTypeAdapter())
             .create();
     private static final StringProperty email = new SimpleStringProperty("");
     private static final StringProperty password = new SimpleStringProperty("");

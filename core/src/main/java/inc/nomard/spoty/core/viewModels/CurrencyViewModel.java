@@ -37,7 +37,7 @@ public class CurrencyViewModel {
     public static final CurrenciesRepositoryImpl currenciesRepository = new CurrenciesRepositoryImpl();
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
-                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+                    new UnixEpochDateTypeAdapter())
             .create();
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final StringProperty code = new SimpleStringProperty("");

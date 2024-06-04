@@ -136,14 +136,7 @@ public class TransferDetailFormController implements Initializable {
                     if (productConstraints.isEmpty()
                             && quantityConstraints.isEmpty()) {
                         if (tempIdProperty().get() > -1) {
-                            SpotyThreader.spotyThreadPool(() -> {
-                                try {
                                     TransferDetailViewModel.updateTransferDetail();
-                                } catch (Exception e) {
-                                    SpotyLogger.writeToFile(e, this.getClass());
-                                }
-                            });
-
                             SpotyMessage notification =
                                     new SpotyMessage.MessageBuilder("Product changed successfully")
                                             .duration(MessageDuration.SHORT)
@@ -151,14 +144,11 @@ public class TransferDetailFormController implements Initializable {
                                             .type(MessageVariants.SUCCESS)
                                             .build();
                             notificationHolder.addMessage(notification);
-
                             product.clearSelection();
-
                             closeDialog(event);
                             return;
                         }
                         TransferDetailViewModel.addTransferDetails();
-
                         SpotyMessage notification =
                                 new SpotyMessage.MessageBuilder("Product added successfully")
                                         .duration(MessageDuration.SHORT)
@@ -166,9 +156,7 @@ public class TransferDetailFormController implements Initializable {
                                         .type(MessageVariants.SUCCESS)
                                         .build();
                         notificationHolder.addMessage(notification);
-
                         product.clearSelection();
-
                         closeDialog(event);
                     }
                 });

@@ -34,14 +34,12 @@ public class PurchaseDetailViewModel {
             FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
-                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+                    new UnixEpochDateTypeAdapter())
             .create();
     private static final ListProperty<PurchaseDetail> purchaseDetails =
             new SimpleListProperty<>(purchaseDetailsList);
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final ObjectProperty<PurchaseMaster> purchase = new SimpleObjectProperty<>(null);
-    private static final StringProperty cost = new SimpleStringProperty("");
-    private static final StringProperty subTotalCost = new SimpleStringProperty("");
     private static final ObjectProperty<Product> product = new SimpleObjectProperty<>(null);
     private static final StringProperty quantity = new SimpleStringProperty("");
     private static final PurchasesRepositoryImpl purchasesRepository = new PurchasesRepositoryImpl();
@@ -82,30 +80,6 @@ public class PurchaseDetailViewModel {
         return quantity;
     }
 
-    public static Double getCost() {
-        return Double.parseDouble(cost.get());
-    }
-
-    public static void setCost(String cost) {
-        PurchaseDetailViewModel.cost.set(cost);
-    }
-
-    public static StringProperty costProperty() {
-        return cost;
-    }
-
-    public static Double getSubTotalCost() {
-        return Double.parseDouble(subTotalCost.get());
-    }
-
-    public static void setSubTotalCost(String cost) {
-        PurchaseDetailViewModel.subTotalCost.set(cost);
-    }
-
-    public static StringProperty subTotalCostProperty() {
-        return subTotalCost;
-    }
-
     public static Product getProduct() {
         return product.get();
     }
@@ -135,15 +109,11 @@ public class PurchaseDetailViewModel {
         setTempId(-1);
         setPurchase(null);
         setProduct(null);
-        setCost("");
-        setSubTotalCost("");
         setQuantity("");
     }
 
     public static void addPurchaseDetail() {
         var purchaseDetail = PurchaseDetail.builder()
-                .cost(getCost())
-                .subTotalCost(getSubTotalCost())
                 .product(getProduct())
                 .quantity(getQuantity())
                 .build();
@@ -152,8 +122,6 @@ public class PurchaseDetailViewModel {
 
     public static void updatePurchaseDetail(Long index) {
         var purchaseDetail = purchaseDetailsList.get(Math.toIntExact(index));
-        purchaseDetail.setCost(getCost());
-        purchaseDetail.setSubTotalCost(getSubTotalCost());
         purchaseDetail.setProduct(getProduct());
         purchaseDetail.setQuantity(getQuantity());
         purchaseDetailsList.set(getTempId(), purchaseDetail);
@@ -161,8 +129,6 @@ public class PurchaseDetailViewModel {
 
     public static void getPurchaseDetail(PurchaseDetail purchaseDetail) {
         setTempId(getPurchaseDetails().indexOf(purchaseDetail));
-        setCost(String.valueOf(purchaseDetail.getCost()));
-        setSubTotalCost(String.valueOf(purchaseDetail.getSubTotalCost()));
         setProduct(purchaseDetail.getProduct());
         setQuantity(String.valueOf(purchaseDetail.getQuantity()));
     }

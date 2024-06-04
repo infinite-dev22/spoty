@@ -44,7 +44,7 @@ public class PaySlipViewModel {
     public static final ListProperty<User> users = new SimpleListProperty<>(usersList);
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
-                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+                    new UnixEpochDateTypeAdapter())
             .create();
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final StringProperty startDate = new SimpleStringProperty("");

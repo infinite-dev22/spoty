@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~ Copyright (c) 2023, Jonathan Mark Mwigo. All rights reserved.
+  ~
+  ~ The computer system code contained in this file is the property of Jonathan Mark Mwigo and is protected by copyright law. Any unauthorized use of this code is prohibited.
+  ~
+  ~ This copyright notice applies to all parts of the computer system code, including the source code, object code, and any other related materials.
+  ~
+  ~ The computer system code may not be modified, translated, or reverse-engineered without the express written permission of Jonathan Mark Mwigo.
+  ~
+  ~ Jonathan Mark Mwigo reserves the right to update, modify, or discontinue the computer system code at any time.
+  ~
+  ~ Jonathan Mark Mwigo makes no warranties, express or implied, with respect to the computer system code. Jonathan Mark Mwigo shall not be liable for any damages, including, but not limited to, direct, indirect, incidental, special, consequential, or punitive damages, arising out of or in connection with the use of the computer system code.
+  -->
+
+<?import inc.nomard.spoty.utils.navigation.Spacer?>
+<?import io.github.palexdev.materialfx.controls.MFXScrollPane?>
+<?import io.github.palexdev.materialfx.dialogs.MFXGenericDialog?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import io.github.palexdev.materialfx.controls.MFXTableView?>
+<MFXGenericDialog xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/20.0.1"
+                  fx:controller="inc.nomard.spoty.core.views.previews.PurchaseReturnsPreviewController">
+    <padding>
+        <Insets left="10.0" right="10"/>
+    </padding>
+    <center>
+        <MFXScrollPane fitToHeight="true" fitToWidth="true">
+            <VBox maxHeight="900.0" maxWidth="1000.0" minHeight="600.0" minWidth="500.0" prefHeight="800.0"
+                  prefWidth="700.0">
+                <padding>
+                    <Insets bottom="20.0" left="10.0" right="10.0" top="20.0"/>
+                </padding>
+                <HBox maxHeight="150.0" minHeight="50.0" prefHeight="100.0">
+                    <VBox alignment="BOTTOM_LEFT" prefHeight="80.0">
+                        <Label styleClass="preview-header" text="Purchase Invoice"/>
+                    </VBox>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <HBox alignment="TOP_RIGHT" layoutX="10.0" layoutY="10.0" prefHeight="80.0">
+                        <Label styleClass="preview-header" text="Date"/>
+                        <Label fx:id="purchaseDate"/>
+                    </HBox>
+                </HBox>
+                <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="10.0" prefHeight="50.0" spacing="20.0">
+                    <Label styleClass="preview-header" text="Invoice ID"/>
+                    <Label fx:id="purchaseRef" layoutX="10.0" layoutY="10.0"/>
+                </HBox>
+                <VBox spacing="10.0">
+                    <VBox.margin>
+                        <Insets bottom="30.0" top="10.0"/>
+                    </VBox.margin>
+                    <HBox spacing="70.0">
+                        <Label styleClass="preview-header" text="Supplier's Name:"/>
+                        <Spacer/>
+                        <Label fx:id="supplierName" layoutX="10.0" layoutY="10.0"/>
+                    </HBox>
+                    <HBox layoutX="10.0" layoutY="10.0" spacing="70.0">
+                        <Label styleClass="preview-header" text="Supplier's Phone No:"/>
+                        <Spacer/>
+                        <Label fx:id="supplierNumber" layoutX="10.0" layoutY="10.0"/>
+                    </HBox>
+                    <HBox layoutX="10.0" layoutY="10.0" spacing="140.0">
+                        <Label styleClass="preview-header" text="Supplier's Email:"/>
+                        <Spacer/>
+                        <Label fx:id="supplierEmail" layoutX="10.0" layoutY="10.0"/>
+                    </HBox>
+                </VBox>
+                <Separator/>
+                <VBox>
+                    <VBox.margin>
+                        <Insets bottom="10.0" top="30.0"/>
+                    </VBox.margin>
+                    <MFXTableView fx:id="itemsTable" prefWidth="200.0"/>
+                    <VBox alignment="CENTER_LEFT">
+                        <HBox alignment="CENTER_RIGHT">
+                            <VBox.margin>
+                                <Insets top="10.0" bottom="10.0"/>
+                            </VBox.margin>
+                            <VBox minWidth="100" prefWidth="150" maxWidth="200" alignment="CENTER_LEFT" spacing="8.0">
+                                <Label styleClass="preview-header" text="Sub Total:"/>
+                                <Label styleClass="preview-header" text="Discount(3%):"/>
+                                <Label styleClass="preview-header" text="Tax:"/>
+                                <Label styleClass="preview-header" text="Shipping:"/>
+                            </VBox>
+                            <VBox minWidth="100" prefWidth="150" maxWidth="200" alignment="CENTER_RIGHT" spacing="8.0">
+                                <Label fx:id="subTotal" layoutX="10.0" layoutY="10.0"/>
+                                <Label fx:id="discount" layoutX="10.0" layoutY="10.0"/>
+                                <Label fx:id="tax" layoutX="10.0" layoutY="10.0"/>
+                                <Label fx:id="shipping" layoutX="10.0" layoutY="10.0"/>
+                            </VBox>
+                        </HBox>
+                        <Separator/>
+                        <HBox alignment="CENTER_RIGHT">
+                            <VBox.margin>
+                                <Insets top="10.0" bottom="10.0"/>
+                            </VBox.margin>
+                            <VBox minWidth="100" prefWidth="150" maxWidth="200" alignment="CENTER_LEFT">
+                                <Label styleClass="preview-header" text="Net Cost:"/>
+                            </VBox>
+                            <VBox minWidth="100" prefWidth="150" maxWidth="200" alignment="CENTER_RIGHT">
+                                <Label fx:id="netCost" layoutX="10.0" layoutY="10.0"/>
+                            </VBox>
+                        </HBox>
+                    </VBox>
+                    <Separator/>
+                    <HBox alignment="CENTER_RIGHT">
+                        <VBox.margin>
+                            <Insets top="10.0"/>
+                        </VBox.margin>
+                        <VBox minWidth="100" prefWidth="150" maxWidth="200" alignment="CENTER_LEFT" spacing="8.0">
+                            <Label styleClass="preview-header" text="Paid Amount:"/>
+                            <Label styleClass="preview-header" text="Change:"/>
+                            <Label styleClass="preview-header" text="Balance:"/>
+                        </VBox>
+                        <VBox minWidth="100" prefWidth="150" maxWidth="200" alignment="CENTER_RIGHT" spacing="8.0">
+                            <Label fx:id="paidAmount" layoutX="10.0" layoutY="10.0"/>
+                            <Label fx:id="changeDue" layoutX="10.0" layoutY="10.0"/>
+                            <Label fx:id="balance" layoutX="10.0" layoutY="10.0"/>
+                        </VBox>
+                    </HBox>
+                </VBox>
+                <Separator/>
+                <VBox>
+                    <padding>
+                        <Insets right="50.0"/>
+                    </padding>
+                    <VBox.margin>
+                        <Insets bottom="30.0" top="30.0"/>
+                    </VBox.margin>
+                    <VBox spacing="20.0">
+                        <Label styleClass="preview-header" text="Note:"/>
+                        <Label fx:id="purchaseNote"/>
+                    </VBox>
+                    <HBox spacing="20.0">
+                        <Label styleClass="preview-header" text="Done By:"/>
+                        <Label fx:id="doneBy"/>
+                    </HBox>
+                </VBox>
+            </VBox>
+        </MFXScrollPane>
+    </center>
+</MFXGenericDialog>

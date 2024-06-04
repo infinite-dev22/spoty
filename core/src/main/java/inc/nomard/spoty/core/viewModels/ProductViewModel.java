@@ -38,7 +38,7 @@ public class ProductViewModel {
     public static final ObservableList<Product> productsList = FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
-                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+                    new UnixEpochDateTypeAdapter())
             .create();
     private static final ListProperty<Product> products = new SimpleListProperty<>(productsList);
     private static final LongProperty id = new SimpleLongProperty(0);

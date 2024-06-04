@@ -33,7 +33,7 @@ import lombok.extern.java.*;
 public class SignupViewModel {
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
-                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+                    new UnixEpochDateTypeAdapter())
             .create();
     private static final StringProperty firstName = new SimpleStringProperty("");
     private static final StringProperty lastName = new SimpleStringProperty("");

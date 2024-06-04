@@ -42,7 +42,7 @@ public class RequisitionMasterViewModel {
             FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
-                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+                    new UnixEpochDateTypeAdapter())
             .create();
     private static final ListProperty<RequisitionMaster> requisitions =
             new SimpleListProperty<>(requisitionsList);
@@ -258,8 +258,7 @@ public class RequisitionMasterViewModel {
 
     public static void searchItem(
             String search, SpotyGotFunctional.ParameterlessConsumer onSuccess,
-            SpotyGotFunctional.MessageConsumer successMessage,
-            SpotyGotFunctional.MessageConsumer errorMessage) throws Exception {
+            SpotyGotFunctional.MessageConsumer errorMessage) {
         var searchModel = SearchModel.builder().search(search).build();
         CompletableFuture<HttpResponse<String>> responseFuture = requisitionsRepository.search(searchModel);
         responseFuture.thenAccept(response -> {

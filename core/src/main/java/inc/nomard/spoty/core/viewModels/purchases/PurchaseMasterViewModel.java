@@ -44,14 +44,13 @@ public class PurchaseMasterViewModel {
             FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
-                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+                    new UnixEpochDateTypeAdapter())
             .create();
     private static final ListProperty<PurchaseMaster> purchases =
             new SimpleListProperty<>(purchasesList);
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final StringProperty date = new SimpleStringProperty("");
     private static final ObjectProperty<Supplier> supplier = new SimpleObjectProperty<>(null);
-    private static final ObjectProperty<Branch> branch = new SimpleObjectProperty<>(null);
     private static final StringProperty status = new SimpleStringProperty("");
     private static final StringProperty note = new SimpleStringProperty("");
     private static final PurchasesRepositoryImpl purchasesRepository = new PurchasesRepositoryImpl();
@@ -95,18 +94,6 @@ public class PurchaseMasterViewModel {
 
     public static ObjectProperty<Supplier> supplierProperty() {
         return supplier;
-    }
-
-    public static Branch getBranch() {
-        return branch.get();
-    }
-
-    public static void setBranch(Branch branch) {
-        PurchaseMasterViewModel.branch.set(branch);
-    }
-
-    public static ObjectProperty<Branch> branchProperty() {
-        return branch;
     }
 
     public static String getStatus() {
@@ -319,7 +306,7 @@ public class PurchaseMasterViewModel {
 
     public static void searchItem(String search,
                                   SpotyGotFunctional.ParameterlessConsumer onSuccess,
-                                  SpotyGotFunctional.MessageConsumer errorMessage) throws Exception {
+                                  SpotyGotFunctional.MessageConsumer errorMessage) {
         var searchModel = SearchModel.builder().search(search).build();
         CompletableFuture<HttpResponse<String>> responseFuture = purchasesRepository.search(searchModel);
         responseFuture.thenAccept(response -> {

@@ -33,7 +33,7 @@ public class SaleDetailViewModel {
             FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
-                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+                    new UnixEpochDateTypeAdapter())
             .create();
     private static final ListProperty<SaleDetail> saleDetails =
             new SimpleListProperty<>(saleDetailsList);

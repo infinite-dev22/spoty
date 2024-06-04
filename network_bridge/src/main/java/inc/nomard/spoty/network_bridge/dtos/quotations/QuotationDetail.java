@@ -30,6 +30,8 @@ public class QuotationDetail {
     private Product product;
     private QuotationMaster quotation;
     private int quantity;
+    private Discount discount;
+    private Tax tax;
     private double subTotal;
 
     public String getProductName() {

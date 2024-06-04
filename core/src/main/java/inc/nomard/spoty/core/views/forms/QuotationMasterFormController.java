@@ -310,6 +310,7 @@ public class QuotationMasterFormController implements Initializable {
         cancelBtnClicked();
         QuotationMasterViewModel.resetProperties();
         QuotationMasterViewModel.getAllQuotationMasters(null, null);
+        ProductViewModel.getAllProducts(null, null);
     }
 
     public void requiredValidator() {

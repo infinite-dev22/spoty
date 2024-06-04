@@ -42,7 +42,7 @@ public class StockInMasterViewModel {
             FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
-                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+                    new UnixEpochDateTypeAdapter())
             .create();
     private static final ListProperty<StockInMaster> stockIns =
             new SimpleListProperty<>(stockInsList);

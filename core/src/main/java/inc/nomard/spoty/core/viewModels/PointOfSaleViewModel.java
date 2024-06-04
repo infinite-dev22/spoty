@@ -27,7 +27,7 @@ public class PointOfSaleViewModel {
     public static final LongProperty itemQuantity = new SimpleLongProperty(1);
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
-                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+                    new UnixEpochDateTypeAdapter())
             .create();
     private static final ObjectProperty<Product> product = new SimpleObjectProperty<>();
     private static final ObjectProperty<Product> customer = new SimpleObjectProperty<>();

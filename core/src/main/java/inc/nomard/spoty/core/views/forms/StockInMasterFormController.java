@@ -18,6 +18,7 @@ import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.components.message.*;
 import inc.nomard.spoty.core.components.message.enums.*;
 import inc.nomard.spoty.core.components.navigation.*;
+import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.stock_ins.*;
 import inc.nomard.spoty.core.views.*;
 import inc.nomard.spoty.network_bridge.dtos.stock_ins.*;
@@ -239,6 +240,7 @@ public class StockInMasterFormController implements Initializable {
         cancelBtnClicked();
         StockInMasterViewModel.resetProperties();
         StockInMasterViewModel.getAllStockInMasters(null, null);
+        ProductViewModel.getAllProducts(null, null);
     }
 
     private void successMessage(String message) {

@@ -25,6 +25,7 @@ import io.github.palexdev.materialfx.controls.cell.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.filter.*;
+import io.github.palexdev.mfxresources.fonts.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -51,6 +52,10 @@ public class CurrencyController implements Initializable {
     public BorderPane contentPane;
     @FXML
     public MFXButton createBtn;
+    @FXML
+    public MFXProgressSpinner progress;
+    @FXML
+    public HBox leftHeaderPane;
     private MFXStageDialog dialog;
 
     private CurrencyController(Stage stage) {
@@ -71,6 +76,8 @@ public class CurrencyController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        setIcons();
+        setSearchBar();
         Platform.runLater(this::setupTable);
     }
 
@@ -205,5 +212,24 @@ public class CurrencyController implements Initializable {
         notificationHolder.addMessage(notification);
         AnchorPane.setRightAnchor(notification, 40.0);
         AnchorPane.setTopAnchor(notification, 10.0);
+    }
+
+    private void setIcons() {
+        searchBar.setTrailingIcon(new MFXFontIcon("fas-magnifying-glass"));
+    }
+
+    public void setSearchBar() {
+        searchBar.textProperty().addListener((observableValue, ov, nv) -> {
+            if (Objects.equals(ov, nv)) {
+                return;
+            }
+            if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
+                CurrencyViewModel.getAllCurrencies(null, null);
+            }
+            progress.setVisible(true);
+            CurrencyViewModel.searchItem(nv, () -> {
+                progress.setVisible(false);
+            }, this::errorMessage);
+        });
     }
 }

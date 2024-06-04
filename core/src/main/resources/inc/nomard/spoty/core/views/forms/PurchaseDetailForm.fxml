@@ -57,17 +57,6 @@
                        minHeight="-Infinity" styleClass="input-validation-error" visible="false" managed="false"
                        wrapText="true"/>
             </VBox>
-            <VBox spacing="2.0">
-                <padding>
-                    <Insets top="2.5"/>
-                </padding>
-                <MFXTextField fx:id="cost" floatMode="BORDER" floatingText="Cost"
-                              prefWidth="400.0"/>
-                <Label id="validationLabel" fx:id="costValidationLabel"
-                       maxWidth="1.7976931348623157E308"
-                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" managed="false"
-                       wrapText="true"/>
-            </VBox>
         </VBox>
     </center>
     <bottom>

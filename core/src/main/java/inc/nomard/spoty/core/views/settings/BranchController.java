@@ -26,6 +26,7 @@ import io.github.palexdev.materialfx.controls.cell.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.enums.*;
 import io.github.palexdev.materialfx.filter.*;
+import io.github.palexdev.mfxresources.fonts.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -52,6 +53,10 @@ public class BranchController implements Initializable {
     public BorderPane contentPane;
     @FXML
     public MFXButton createBtn;
+    @FXML
+    public HBox leftHeaderPane;
+    @FXML
+    public MFXProgressSpinner progress;
     private MFXStageDialog dialog;
 
     private BranchController(Stage stage) {
@@ -72,6 +77,8 @@ public class BranchController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        setIcons();
+        setSearchBar();
         Platform.runLater(this::setupTable);
     }
 
@@ -219,5 +226,24 @@ public class BranchController implements Initializable {
         notificationHolder.addMessage(notification);
         AnchorPane.setRightAnchor(notification, 40.0);
         AnchorPane.setTopAnchor(notification, 10.0);
+    }
+
+    private void setIcons() {
+        searchBar.setTrailingIcon(new MFXFontIcon("fas-magnifying-glass"));
+    }
+
+    public void setSearchBar() {
+        searchBar.textProperty().addListener((observableValue, ov, nv) -> {
+            if (Objects.equals(ov, nv)) {
+                return;
+            }
+            if (ov.isBlank() && ov.isEmpty() && nv.isBlank() && nv.isEmpty()) {
+                BranchViewModel.getAllBranches(null, null);
+            }
+            progress.setVisible(true);
+            BranchViewModel.searchItem(nv, () -> {
+                progress.setVisible(false);
+            }, this::errorMessage);
+        });
     }
 }

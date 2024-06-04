@@ -40,7 +40,7 @@ public class AdjustmentMasterViewModel {
             FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
-                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+                    new UnixEpochDateTypeAdapter())
             .create();
     private static final ListProperty<AdjustmentMaster> adjustments =
             new SimpleListProperty<>(adjustmentsList);

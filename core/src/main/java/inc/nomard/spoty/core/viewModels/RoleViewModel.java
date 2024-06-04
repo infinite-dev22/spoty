@@ -37,7 +37,7 @@ import lombok.extern.java.*;
 public class RoleViewModel {
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
-                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+                    new UnixEpochDateTypeAdapter())
             .create();
     @Getter
     private static final ObservableList<Role> rolesList = FXCollections.observableArrayList();

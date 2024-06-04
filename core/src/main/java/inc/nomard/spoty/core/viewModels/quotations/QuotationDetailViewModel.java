@@ -15,6 +15,7 @@
 package inc.nomard.spoty.core.viewModels.quotations;
 
 import static inc.nomard.spoty.core.values.SharedResources.*;
+import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
 import inc.nomard.spoty.network_bridge.dtos.quotations.*;
 import inc.nomard.spoty.network_bridge.repositories.implementations.*;
@@ -35,6 +36,8 @@ public class QuotationDetailViewModel {
     private static final LongProperty id = new SimpleLongProperty(0);
     private static final ObjectProperty<Product> product = new SimpleObjectProperty<>();
     private static final StringProperty quantity = new SimpleStringProperty();
+    private static final ObjectProperty<Discount> discount = new SimpleObjectProperty<>();
+    private static final ObjectProperty<Tax> tax = new SimpleObjectProperty<>();
     private static final QuotationsRepositoryImpl quotationsRepository = new QuotationsRepositoryImpl();
 
     public static Long getId() {
@@ -73,6 +76,30 @@ public class QuotationDetailViewModel {
         return quantity;
     }
 
+    public static Discount getDiscount() {
+        return discount.get();
+    }
+
+    public static void setDiscount(Discount discount) {
+        QuotationDetailViewModel.discount.set(discount);
+    }
+
+    public static ObjectProperty<Discount> discountProperty() {
+        return discount;
+    }
+
+    public static Tax getTax() {
+        return tax.get();
+    }
+
+    public static void setTax(Tax tax) {
+        QuotationDetailViewModel.tax.set(tax);
+    }
+
+    public static ObjectProperty<Tax> taxProperty() {
+        return tax;
+    }
+
     public static ObservableList<QuotationDetail> getQuotationDetails() {
         return quotationDetails.get();
     }
@@ -96,6 +123,8 @@ public class QuotationDetailViewModel {
         var quotationDetail = QuotationDetail.builder()
                 .product(getProduct())
                 .quantity(getQuantity())
+                .discount(getDiscount())
+                .tax(getTax())
                 .build();
         quotationDetailsList.add(quotationDetail);
     }

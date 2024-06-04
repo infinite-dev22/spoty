@@ -15,34 +15,13 @@
 package inc.nomard.spoty.core.components.navigation;
 
 import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
-import inc.nomard.spoty.core.views.auth.*;
-import inc.nomard.spoty.core.views.bank.*;
-import inc.nomard.spoty.core.views.customers.*;
+import inc.nomard.spoty.core.views.*;
 import inc.nomard.spoty.core.views.dashboard.*;
-import inc.nomard.spoty.core.views.deductions.*;
-import inc.nomard.spoty.core.views.expenses.category.*;
-import inc.nomard.spoty.core.views.expenses.expense.*;
 import inc.nomard.spoty.core.views.forms.*;
-import inc.nomard.spoty.core.views.human_resource.hrm.*;
-import inc.nomard.spoty.core.views.human_resource.leave.*;
-import inc.nomard.spoty.core.views.human_resource.pay_roll.*;
-import inc.nomard.spoty.core.views.human_resource.pay_roll.pay_slip.*;
-import inc.nomard.spoty.core.views.inventory.adjustment.*;
-import inc.nomard.spoty.core.views.inventory.brand.*;
-import inc.nomard.spoty.core.views.inventory.category.*;
-import inc.nomard.spoty.core.views.inventory.products.*;
-import inc.nomard.spoty.core.views.inventory.unit_of_measure.*;
-import inc.nomard.spoty.core.views.previews.people.*;
-import inc.nomard.spoty.core.views.purchases.*;
-import inc.nomard.spoty.core.views.quotation.*;
+import inc.nomard.spoty.core.views.pos.*;
+import inc.nomard.spoty.core.views.previews.*;
 import inc.nomard.spoty.core.views.report.*;
-import inc.nomard.spoty.core.views.requisition.*;
-import inc.nomard.spoty.core.views.sales.*;
-import inc.nomard.spoty.core.views.sales.pos.*;
 import inc.nomard.spoty.core.views.settings.*;
-import inc.nomard.spoty.core.views.stock_in.*;
-import inc.nomard.spoty.core.views.suppliers.*;
-import inc.nomard.spoty.core.views.transfer.*;
 import java.io.*;
 import javafx.fxml.*;
 import javafx.scene.layout.*;
@@ -53,24 +32,24 @@ import lombok.extern.java.*;
 @Log
 public class Pages {
     //Login
-    private static final FXMLLoader loginLoader = fxmlLoader("views/auth/AuthScreen.fxml");
+    private static final FXMLLoader loginLoader = fxmlLoader("views/AuthScreen.fxml");
     //Dashboard
     private static final FXMLLoader dashboardLoader = fxmlLoader("views/dashboard/Dashboard.fxml");
     // Sale
-    private static final FXMLLoader posLoader = fxmlLoader("views/sales/PointOfSale.fxml");
-    private static final FXMLLoader saleLoader = fxmlLoader("views/sales/Orders.fxml");
-    private static final FXMLLoader saleReturnLoader = fxmlLoader("views/sales/SaleReturns.fxml");
-    private static final FXMLLoader salesTermLoader = fxmlLoader("views/sales/SaleTerms.fxml");
+    private static final FXMLLoader posLoader = fxmlLoader("views/PointOfSale.fxml");
+    private static final FXMLLoader saleLoader = fxmlLoader("views/Orders.fxml");
+    private static final FXMLLoader saleReturnLoader = fxmlLoader("views/SaleReturns.fxml");
+    private static final FXMLLoader salesTermLoader = fxmlLoader("views/SaleTerms.fxml");
     // Customer
     private static final FXMLLoader customerLoader =
-            fxmlLoader("views/customers/Customers.fxml");
+            fxmlLoader("views/Customers.fxml");
     // Supplier
     private static final FXMLLoader supplierLoader =
-            fxmlLoader("views/suppliers/Suppliers.fxml");
+            fxmlLoader("views/Suppliers.fxml");
     // Purchases
-    private static final FXMLLoader purchaseLoader = fxmlLoader("views/purchases/Purchases.fxml");
+    private static final FXMLLoader purchaseLoader = fxmlLoader("views/Purchases.fxml");
     private static final FXMLLoader purchaseReturnLoader =
-            fxmlLoader("views/purchases/PurchaseReturns.fxml");
+            fxmlLoader("views/PurchaseReturns.fxml");
     // Reports
     private static final FXMLLoader stockReportLoader = fxmlLoader("views/report/StockReport.fxml");
     private static final FXMLLoader closingLoader = fxmlLoader("views/report/Closing.fxml");
@@ -87,51 +66,51 @@ public class Pages {
     private static final FXMLLoader userSalesReportLoader = fxmlLoader("views/report/UserSalesReport.fxml");
     // HUMAN RESOURCE
     // Human Resource Management
-    private static final FXMLLoader designationsLoader = fxmlLoader("views/human_resource/hrm/Designations.fxml");
-    private static final FXMLLoader userProfileLoader = fxmlLoader("views/previews/people/UserPreview.fxml");
-    private static final FXMLLoader employeesLoader = fxmlLoader("views/human_resource/hrm/Employees.fxml");
-    private static final FXMLLoader employmentStatusLoader = fxmlLoader("views/human_resource/hrm/EmploymentStatus.fxml");
+    private static final FXMLLoader designationsLoader = fxmlLoader("views/Designations.fxml");
+    private static final FXMLLoader userProfileLoader = fxmlLoader("views/previews/UserPreview.fxml");
+    private static final FXMLLoader employeesLoader = fxmlLoader("views/Employees.fxml");
+    private static final FXMLLoader employmentStatusLoader = fxmlLoader("views/EmploymentStatus.fxml");
     // Leave
-    private static final FXMLLoader leaveRequestLoader = fxmlLoader("views/human_resource/leave/LeaveRequest.fxml");
-    private static final FXMLLoader calendarLoader = fxmlLoader("views/human_resource/leave/Calendar.fxml");
+    private static final FXMLLoader leaveRequestLoader = fxmlLoader("views/LeaveRequest.fxml");
+    private static final FXMLLoader calendarLoader = fxmlLoader("views/Calendar.fxml");
     // PayRoll
-    private static final FXMLLoader paySlipsLoader = fxmlLoader("views/human_resource/pay_roll/pay_slip/PaySlips.fxml");
-    private static final FXMLLoader salariesLoader = fxmlLoader("views/human_resource/pay_roll/Salaries.fxml");
-    private static final FXMLLoader beneficiaryBadgeLoader = fxmlLoader("views/human_resource/pay_roll/BeneficiaryBadge.fxml");
-    private static final FXMLLoader beneficiaryTypeLoader = fxmlLoader("views/human_resource/pay_roll/BeneficiaryType.fxml");
+    private static final FXMLLoader paySlipsLoader = fxmlLoader("views/PaySlips.fxml");
+    private static final FXMLLoader salariesLoader = fxmlLoader("views/Salaries.fxml");
+    private static final FXMLLoader beneficiaryBadgeLoader = fxmlLoader("views/BeneficiaryBadge.fxml");
+    private static final FXMLLoader beneficiaryTypeLoader = fxmlLoader("views/BeneficiaryType.fxml");
     // Bank
-    private static final FXMLLoader banksLoader = fxmlLoader("views/bank/Bank.fxml");
+    private static final FXMLLoader banksLoader = fxmlLoader("views/Bank.fxml");
     // Quotation
     private static final FXMLLoader quotationLoader =
-            fxmlLoader("views/quotation/Quotation.fxml");
+            fxmlLoader("views/Quotation.fxml");
     // Deductions
     private static final FXMLLoader taxesLoader =
-            fxmlLoader("views/deductions/Taxes.fxml");
+            fxmlLoader("views/Taxes.fxml");
     private static final FXMLLoader discountsLoader =
-            fxmlLoader("views/deductions/Discounts.fxml");
+            fxmlLoader("views/Discounts.fxml");
     // SETTINGS
-    private static final FXMLLoader rolesLoader = fxmlLoader("views/settings/Roles.fxml");
-    private static final FXMLLoader appSettingsLoader = fxmlLoader("views/settings/AppSettings.fxml");
-    private static final FXMLLoader branchesLoader = fxmlLoader("views/settings/Branches.fxml");
-    private static final FXMLLoader companySettingsLoader = fxmlLoader("views/settings/CompanyDetails.fxml");
-    private static final FXMLLoader currencyLoader = fxmlLoader("views/settings/Currency.fxml");
+    private static final FXMLLoader rolesLoader = fxmlLoader("views/Roles.fxml");
+    private static final FXMLLoader appSettingsLoader = fxmlLoader("views/AppSettings.fxml");
+    private static final FXMLLoader branchesLoader = fxmlLoader("views/Branches.fxml");
+    private static final FXMLLoader companySettingsLoader = fxmlLoader("views/CompanyDetails.fxml");
+    private static final FXMLLoader currencyLoader = fxmlLoader("views/Currency.fxml");
 
     private static final FXMLLoader productCategoryLoader =
-            fxmlLoader("views/inventory/category/ProductCategory.fxml");
-    private static final FXMLLoader brandLoader = fxmlLoader("views/inventory/brand/Brand.fxml");
+            fxmlLoader("views/ProductCategory.fxml");
+    private static final FXMLLoader brandLoader = fxmlLoader("views/Brand.fxml");
     private static final FXMLLoader unitLoader =
-            fxmlLoader("views/inventory/unit_of_measure/UnitOfMeasure.fxml");
+            fxmlLoader("views/UnitOfMeasure.fxml");
     private static final FXMLLoader productLoader =
-            fxmlLoader("views/inventory/products/Products.fxml");
+            fxmlLoader("views/Products.fxml");
     private static final FXMLLoader adjustmentLoader =
-            fxmlLoader("views/inventory/adjustment/Adjustment.fxml");
+            fxmlLoader("views/Adjustment.fxml");
     private static final FXMLLoader requisitionLoader =
-            fxmlLoader("views/requisition/Requisition.fxml");
-    private static final FXMLLoader transferLoader = fxmlLoader("views/transfer/Transfer.fxml");
-    private static final FXMLLoader stockInLoader = fxmlLoader("views/stock_in/StockIn.fxml");
+            fxmlLoader("views/Requisition.fxml");
+    private static final FXMLLoader transferLoader = fxmlLoader("views/Transfer.fxml");
+    private static final FXMLLoader stockInLoader = fxmlLoader("views/StockIn.fxml");
     private static final FXMLLoader expenseCategoryLoader =
-            fxmlLoader("views/expenses/category/Category.fxml");
-    private static final FXMLLoader expenseLoader = fxmlLoader("views/expenses/expense/Expense.fxml");
+            fxmlLoader("views/Category.fxml");
+    private static final FXMLLoader expenseLoader = fxmlLoader("views/Expense.fxml");
     private static final FXMLLoader quotationMasterFormLoader =
             fxmlLoader("views/forms/QuotationMasterForm.fxml");
     private static final FXMLLoader purchaseMasterFormLoader =

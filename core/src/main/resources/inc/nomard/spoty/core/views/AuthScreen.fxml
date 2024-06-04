@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import io.github.palexdev.materialfx.controls.MFXPasswordField?>
+<?import io.github.palexdev.materialfx.controls.MFXTextField?>
+<?import io.github.palexdev.mfxcomponents.controls.buttons.MFXButton?>
+<?import io.github.palexdev.mfxresources.fonts.MFXFontIcon?>
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.geometry.Point3D?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.paint.LinearGradient?>
+<?import javafx.scene.paint.Stop?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="500.0" maxWidth="983.0" minHeight="500.0" prefHeight="500.0" prefWidth="983.0" styleClass="card" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="inc.nomard.spoty.core.views.AuthScreenController">
+    <stylesheets>
+        <URL value="@../styles/Common.css" />
+        <URL value="@../styles/base.css" />
+        <URL value="@../styles/TextFields.css" />
+        <URL value="@../styles/theming/Default.css" />
+        <URL value="@../styles/toolitip.css" />
+    </stylesheets>
+    <center>
+        <Pane fx:id="contentPane" maxHeight="500.0" maxWidth="983.0" minHeight="500.0" minWidth="983.0" prefHeight="500.0" prefWidth="983.0" styleClass="card" BorderPane.alignment="TOP_LEFT">
+            <AnchorPane fx:id="actualContentPane" cache="true" cacheHint="SPEED" maxHeight="500.0" maxWidth="983.0" minHeight="500.0" minWidth="983.0" prefHeight="500.0" prefWidth="983.0">
+                <Rectangle arcHeight="50.0" arcWidth="50.0" height="400.0" layoutX="35.0" layoutY="-186.0" rotate="-59.0" stroke="TRANSPARENT" strokeLineCap="ROUND" strokeLineJoin="ROUND" strokeType="INSIDE" strokeWidth="0.0" styleClass="card" width="306.0">
+                    <fill>
+                        <LinearGradient>
+                            <stops>
+                                <Stop>
+                                    <color>
+                                        <Color red="0.125490203499794" blue="0.2235294133424759" />
+                                    </color>
+                                </Stop>
+                                <Stop offset="1.0">
+                                    <color>
+                                        <Color red="0.33725491166114807" blue="0.6000000238418579" />
+                                    </color>
+                                </Stop>
+                            </stops>
+                        </LinearGradient>
+                    </fill>
+                </Rectangle>
+                <Rectangle arcHeight="50.0" arcWidth="50.0" height="400.0" layoutX="234.0" layoutY="249.0" rotate="121.0" stroke="TRANSPARENT" strokeLineCap="ROUND" strokeLineJoin="ROUND" strokeType="INSIDE" strokeWidth="0.0" styleClass="card" width="370.0" y="30.0">
+                    <fill>
+                        <LinearGradient>
+                            <stops>
+                                <Stop>
+                                    <color>
+                                        <Color red="0.33725491166114807" blue="0.6000000238418579" />
+                                    </color>
+                                </Stop>
+                                <Stop offset="1.0">
+                                    <color>
+                                        <Color red="1.0" blue="0.9019607901573181" />
+                                    </color>
+                                </Stop>
+                            </stops>
+                        </LinearGradient>
+                    </fill>
+                </Rectangle>
+                <Rectangle arcHeight="50.0" arcWidth="50.0" height="400.0" layoutX="-161.0" layoutY="118.0" rotate="59.0" stroke="TRANSPARENT" strokeLineCap="ROUND" strokeLineJoin="ROUND" strokeType="INSIDE" strokeWidth="0.0" styleClass="card" width="339.0">
+                    <fill>
+                        <LinearGradient>
+                            <stops>
+                                <Stop>
+                                    <color>
+                                        <Color red="0.125490203499794" blue="0.2235294133424759" />
+                                    </color>
+                                </Stop>
+                                <Stop offset="1.0">
+                                    <color>
+                                        <Color red="1.0" blue="0.9019607901573181" />
+                                    </color>
+                                </Stop>
+                            </stops>
+                        </LinearGradient>
+                    </fill>
+                    <rotationAxis>
+                        <Point3D z="-37.0" />
+                    </rotationAxis>
+                </Rectangle>
+                <Rectangle arcHeight="50.0" arcWidth="50.0" height="400.0" layoutX="454.0" layoutY="-42.0" rotate="-59.0" stroke="TRANSPARENT" strokeLineCap="ROUND" strokeLineJoin="ROUND" strokeType="INSIDE" strokeWidth="0.0" styleClass="card" width="306.0">
+                    <fill>
+                        <LinearGradient>
+                            <stops>
+                                <Stop>
+                                    <color>
+                                        <Color red="0.125490203499794" blue="0.2235294133424759" />
+                                    </color>
+                                </Stop>
+                                <Stop offset="1.0">
+                                    <color>
+                                        <Color red="1.0" blue="0.9019607901573181" />
+                                    </color>
+                                </Stop>
+                            </stops>
+                        </LinearGradient>
+                    </fill>
+                </Rectangle>
+                <Rectangle arcHeight="50.0" arcWidth="50.0" height="400.0" layoutX="625.0" layoutY="-343.0" rotate="-60.0" stroke="TRANSPARENT" strokeLineCap="ROUND" strokeLineJoin="ROUND" strokeType="INSIDE" strokeWidth="0.0" styleClass="card" width="306.0" y="17.0">
+                    <fill>
+                        <LinearGradient>
+                            <stops>
+                                <Stop>
+                                    <color>
+                                        <Color red="0.125490203499794" blue="0.2235294133424759" />
+                                    </color>
+                                </Stop>
+                                <Stop offset="1.0">
+                                    <color>
+                                        <Color red="0.33725491166114807" blue="0.6000000238418579" />
+                                    </color>
+                                </Stop>
+                            </stops>
+                        </LinearGradient>
+                    </fill>
+                </Rectangle>
+                <Rectangle arcHeight="50.0" arcWidth="50.0" height="400.0" layoutX="938.0" layoutY="-27.0" rotate="-60.0" stroke="TRANSPARENT" strokeLineCap="ROUND" strokeLineJoin="ROUND" strokeType="INSIDE" strokeWidth="0.0" styleClass="card" width="339.0">
+                    <fill>
+                        <LinearGradient>
+                            <stops>
+                                <Stop>
+                                    <color>
+                                        <Color red="0.125490203499794" blue="0.2235294133424759" />
+                                    </color>
+                                </Stop>
+                                <Stop offset="1.0">
+                                    <color>
+                                        <Color red="1.0" blue="0.9019607901573181" />
+                                    </color>
+                                </Stop>
+                            </stops>
+                        </LinearGradient>
+                    </fill>
+                </Rectangle>
+                <Rectangle arcHeight="50.0" arcWidth="50.0" height="400.0" layoutX="770.0" layoutY="254.0" rotate="-60.0" stroke="TRANSPARENT" strokeLineCap="ROUND" strokeLineJoin="ROUND" strokeType="INSIDE" strokeWidth="0.0" styleClass="card" width="306.0" y="30.0">
+                    <fill>
+                        <LinearGradient>
+                            <stops>
+                                <Stop>
+                                    <color>
+                                        <Color red="0.33725491166114807" blue="0.6000000238418579" />
+                                    </color>
+                                </Stop>
+                                <Stop offset="1.0">
+                                    <color>
+                                        <Color red="1.0" blue="0.9019607901573181" />
+                                    </color>
+                                </Stop>
+                            </stops>
+                        </LinearGradient>
+                    </fill>
+                </Rectangle>
+                <VBox fx:id="loginScreen" alignment="CENTER" prefHeight="500.0" prefWidth="540.0" spacing="20.0" style="-fx-background-color: white;" styleClass="card" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="599.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <padding>
+                        <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
+                    </padding>
+                    <Region VBox.vgrow="ALWAYS" />
+                    <Label styleClass="login-title" text="Login" />
+                    <VBox spacing="2.0">
+                        <padding>
+                            <Insets top="2.5" />
+                        </padding>
+                        <MFXTextField fx:id="email" floatMode="BORDER" floatingText="Email" prefWidth="350.0" />
+                        <Label id="validationLabel" fx:id="emailValidationLabel" managed="false" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true" />
+                    </VBox>
+                    <VBox spacing="2.0">
+                        <padding>
+                            <Insets bottom="2.5" />
+                        </padding>
+                        <MFXPasswordField fx:id="password" floatMode="BORDER" floatingText="Password" prefWidth="350.0" />
+                        <Label id="validationLabel" fx:id="passwordValidationLabel" managed="false" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true" />
+                    </VBox>
+                    <HBox alignment="CENTER_RIGHT">
+                        <Label fx:id="forgotPassword" styleClass="link" text="Forgot Password?" underline="true">
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor>
+                        </Label>
+                    </HBox>
+                    <HBox alignment="CENTER">
+                        <MFXButton fx:id="loginBtn" prefWidth="352.0" styleClass="filled" text="Login" />
+                    </HBox>
+                    <HBox alignment="TOP_CENTER" VBox.vgrow="ALWAYS">
+                        <Label alignment="CENTER" contentDisplay="CENTER" text="Don't have an account? ">
+                            <font>
+                                <Font name="Droid Sans" size="13.0" />
+                            </font>
+                        </Label>
+                        <Label fx:id="signUpLink" styleClass="link" text="Create one" underline="true">
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor>
+                        </Label>
+                    </HBox>
+                    <VBox alignment="BOTTOM_CENTER" layoutX="26.0" layoutY="389.0" spacing="5.0">
+                        <Label fx:id="loginAppNameLbl" alignment="CENTER" contentDisplay="CENTER" styleClass="app-label" VBox.vgrow="ALWAYS" />
+                        <Label fx:id="loginPoweredByLbl" alignment="CENTER" contentDisplay="CENTER" styleClass="company-label" VBox.vgrow="ALWAYS" />
+                    </VBox>
+                </VBox>
+                <MFXFontIcon fx:id="closeLoginIcon" description="fas-circle" onMouseClicked="#closeIconClicked" size="15.0" styleClass="close-icon" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
+                <HBox fx:id="registerScreen" layoutX="-5.0" layoutY="-3.0" managed="false" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="599.0" AnchorPane.topAnchor="0.0">
+                    <VBox fx:id="kycScreen" alignment="CENTER" prefWidth="390.0" spacing="20.0" style="-fx-background-color: white;" styleClass="card">
+                        <padding>
+                            <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
+                        </padding>
+                        <Region VBox.vgrow="ALWAYS" />
+                        <Label styleClass="login-title" text="Register (User Details)" />
+                        <HBox spacing="10.0">
+                            <VBox spacing="2.0">
+                                <padding>
+                                    <Insets top="2.5" />
+                                </padding>
+                                <MFXTextField fx:id="firstName" floatMode="BORDER" floatingText="First name" prefWidth="350.0" />
+                                <Label id="validationLabel" fx:id="firstNameValidationLabel" managed="false" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true" />
+                            </VBox>
+                            <VBox spacing="2.0">
+                                <padding>
+                                    <Insets top="2.5" />
+                                </padding>
+                                <MFXTextField fx:id="lastName" floatMode="BORDER" floatingText="Last name" prefWidth="350.0" />
+                                <Label id="validationLabel" fx:id="lastNameValidationLabel" managed="false" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true" />
+                            </VBox>
+                        </HBox>
+                        <VBox layoutX="26.0" layoutY="452.0" spacing="2.0">
+                            <padding>
+                                <Insets top="2.5" />
+                            </padding>
+                            <MFXTextField fx:id="otherName" floatMode="BORDER" floatingText="Other name (Optional)" prefWidth="350.0" />
+                        </VBox>
+                        <VBox spacing="2.0">
+                            <padding>
+                                <Insets top="2.5" />
+                            </padding>
+                            <MFXTextField fx:id="phoneNumber" floatMode="BORDER" floatingText="Phone number" prefWidth="350.0" />
+                            <Label id="validationLabel" fx:id="phoneNumberValidationLabel" managed="false" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true" />
+                        </VBox>
+                        <VBox spacing="2.0">
+                            <padding>
+                                <Insets top="2.5" />
+                            </padding>
+                            <MFXTextField fx:id="signUpEmail" floatMode="BORDER" floatingText="Email" prefWidth="350.0" />
+                            <Label id="validationLabel" fx:id="signUpEmailValidationLabel" managed="false" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true" />
+                        </VBox>
+                        <HBox alignment="CENTER_LEFT">
+                            <HBox alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                                <MFXButton fx:id="backBtn" onAction="#backToLogin" prefWidth="150.0" styleClass="outlined" text="Back to Login" />
+                            </HBox>
+                            <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+                                <MFXButton fx:id="nextBtn" onAction="#goNext" prefWidth="120.0" styleClass="filled" text="Proceed" />
+                            </HBox>
+                        </HBox>
+                        <HBox alignment="TOP_CENTER" VBox.vgrow="ALWAYS" />
+                        <VBox alignment="BOTTOM_CENTER" layoutX="26.0" layoutY="389.0" spacing="5.0">
+                            <Label fx:id="kycAppNameLbl" alignment="CENTER" contentDisplay="CENTER" styleClass="app-label" VBox.vgrow="ALWAYS" />
+                            <Label fx:id="kycPoweredByLbl" alignment="CENTER" contentDisplay="CENTER" styleClass="company-label" VBox.vgrow="ALWAYS" />
+                        </VBox>
+                    </VBox>
+                    <VBox fx:id="authCreateScreen" alignment="CENTER" managed="false" prefWidth="390.0" spacing="20.0" style="-fx-background-color: white;" styleClass="card" visible="false">
+                        <padding>
+                            <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
+                        </padding>
+                        <Region VBox.vgrow="ALWAYS" />
+                        <Label styleClass="login-title" text="Register (Authentication)" />
+                        <VBox spacing="2.0">
+                            <padding>
+                                <Insets bottom="2.5" />
+                            </padding>
+                            <MFXPasswordField fx:id="signUpPassword" floatMode="BORDER" floatingText="Password" prefWidth="350.0" />
+                            <Label id="validationLabel" fx:id="signUpPasswordValidationLabel" managed="false" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true" />
+                        </VBox>
+                        <VBox layoutX="26.0" layoutY="211.0" spacing="2.0">
+                            <padding>
+                                <Insets bottom="2.5" />
+                            </padding>
+                            <MFXPasswordField fx:id="confirmPassword" floatMode="BORDER" floatingText="Confirm Password" prefWidth="350.0" />
+                            <Label id="validationLabel" fx:id="confirmPasswordValidationLabel" managed="false" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true" />
+                        </VBox>
+                        <HBox alignment="CENTER_LEFT">
+                            <HBox alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                                <MFXButton fx:id="signUpBack" onAction="#signUpBack" prefWidth="150.0" styleClass="outlined" text="Back" />
+                            </HBox>
+                            <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+                                <MFXButton fx:id="registerBtn" onAction="#registerUser" prefWidth="120.0" styleClass="filled" text="Register" />
+                            </HBox>
+                        </HBox>
+                        <HBox alignment="TOP_CENTER" VBox.vgrow="ALWAYS">
+                            <Label alignment="CENTER" contentDisplay="CENTER" text="Already have an account? ">
+                                <font>
+                                    <Font name="Droid Sans" size="13.0" />
+                                </font>
+                            </Label>
+                            <Label fx:id="loginLink" alignment="CENTER" contentDisplay="CENTER" styleClass="link" text="Log In">
+                                <font>
+                                    <Font name="Droid Sans" size="13.0" />
+                                </font>
+                                <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                </cursor>
+                            </Label>
+                        </HBox>
+                        <VBox alignment="BOTTOM_CENTER" layoutX="26.0" layoutY="389.0" spacing="5.0">
+                            <Label fx:id="signUpAppNameLbl" alignment="CENTER" contentDisplay="CENTER" styleClass="app-label" VBox.vgrow="ALWAYS" />
+                            <Label fx:id="signUpPoweredByLbl" alignment="CENTER" contentDisplay="CENTER" styleClass="company-label" VBox.vgrow="ALWAYS" />
+                        </VBox>
+                    </VBox>
+                </HBox>
+                <MFXFontIcon fx:id="closeSignupIcon" description="fas-circle" layoutX="-7.0" layoutY="6.0" managed="false" onMouseClicked="#closeIconClicked" size="15.0" styleClass="close-icon" visible="false" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
+            </AnchorPane>
+        </Pane>
+    </center>
+</BorderPane>

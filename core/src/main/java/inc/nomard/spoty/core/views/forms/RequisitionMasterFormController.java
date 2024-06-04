@@ -306,6 +306,7 @@ public class RequisitionMasterFormController implements Initializable {
         cancelBtnClicked();
         RequisitionMasterViewModel.resetProperties();
         RequisitionMasterViewModel.getAllRequisitionMasters(null, null);
+        ProductViewModel.getAllProducts(null, null);
     }
 
     public void requiredValidator() {

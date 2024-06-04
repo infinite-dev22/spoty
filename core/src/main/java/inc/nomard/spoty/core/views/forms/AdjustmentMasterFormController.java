@@ -18,6 +18,7 @@ import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
 import inc.nomard.spoty.core.components.message.*;
 import inc.nomard.spoty.core.components.message.enums.*;
 import inc.nomard.spoty.core.components.navigation.*;
+import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.adjustments.*;
 import inc.nomard.spoty.core.views.*;
 import inc.nomard.spoty.network_bridge.dtos.adjustments.*;
@@ -61,7 +62,7 @@ public class AdjustmentMasterFormController implements Initializable {
         Platform.runLater(
                 () -> {
                     try {
-                        quotationProductDialogPane(stage);
+                        adjustmentProductDialogPane(stage);
                     } catch (IOException e) {
                         SpotyLogger.writeToFile(e, this.getClass());
                     }
@@ -181,7 +182,7 @@ public class AdjustmentMasterFormController implements Initializable {
         adjustmentProductAddBtn.setOnAction(e -> dialog.showAndWait());
     }
 
-    private void quotationProductDialogPane(Stage stage) throws IOException {
+    private void adjustmentProductDialogPane(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = fxmlLoader("views/forms/AdjustmentDetailForm.fxml");
         fxmlLoader.setControllerFactory(c -> AdjustmentDetailFormController.getInstance());
 
@@ -217,18 +218,10 @@ public class AdjustmentMasterFormController implements Initializable {
             return;
         }
         if (AdjustmentMasterViewModel.getId() > 0) {
-            try {
-                AdjustmentMasterViewModel.updateItem(this::onSuccess, this::successMessage, this::errorMessage);
-            } catch (Exception e) {
-                SpotyLogger.writeToFile(e, this.getClass());
-            }
+            AdjustmentMasterViewModel.updateItem(this::onSuccess, this::successMessage, this::errorMessage);
             return;
         }
-        try {
-            AdjustmentMasterViewModel.saveAdjustmentMaster(this::onSuccess, this::successMessage, this::errorMessage);
-        } catch (Exception e) {
-            SpotyLogger.writeToFile(e, this.getClass());
-        }
+        AdjustmentMasterViewModel.saveAdjustmentMaster(this::onSuccess, this::successMessage, this::errorMessage);
         onRequiredFieldsMissing();
     }
 
@@ -242,6 +235,7 @@ public class AdjustmentMasterFormController implements Initializable {
         adjustmentCancelBtnClicked();
         AdjustmentMasterViewModel.resetProperties();
         AdjustmentMasterViewModel.getAllAdjustmentMasters(null, null);
+        ProductViewModel.getAllProducts(null, null);
     }
 
     private void onRequiredFieldsMissing() {

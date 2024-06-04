@@ -31,7 +31,7 @@ public class PurchaseReturnDetailViewModel {
             FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
-                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+                    new UnixEpochDateTypeAdapter())
             .create();
     private static final LongProperty id = new SimpleLongProperty();
     private static final ObjectProperty<Product> product = new SimpleObjectProperty<>();

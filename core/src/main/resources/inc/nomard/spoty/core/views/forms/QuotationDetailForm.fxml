@@ -22,6 +22,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.*?>
 <?import java.net.URL?>
+<?import io.github.palexdev.materialfx.controls.MFXComboBox?>
 <MFXGenericDialog xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/19"
                   fx:controller="inc.nomard.spoty.core.views.forms.QuotationDetailFormController">
     <stylesheets>
@@ -43,7 +44,7 @@
                                    prefWidth="400.0"/>
                 <Label id="validationLabel" fx:id="productValidationLabel"
                        maxWidth="1.7976931348623157E308"
-                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true"/>
+                       minHeight="-Infinity" styleClass="input-validation-error" managed="false" visible="false" wrapText="true"/>
             </VBox>
             <VBox spacing="2.0">
                 <padding>
@@ -53,21 +54,19 @@
                               prefWidth="400.0"/>
                 <Label id="validationLabel" fx:id="quantityValidationLabel"
                        maxWidth="1.7976931348623157E308"
-                       minHeight="-Infinity" styleClass="input-validation-error" visible="false" wrapText="true"/>
+                       minHeight="-Infinity" styleClass="input-validation-error" managed="false" visible="false" wrapText="true"/>
             </VBox>
             <VBox spacing="2.0">
                 <padding>
                     <Insets bottom="2.5" top="2.5"/>
                 </padding>
-                <MFXTextField fx:id="orderTax" floatMode="BORDER" floatingText="Order Tax"
-                              prefWidth="400.0"/>
+                <MFXComboBox fx:id="tax" floatMode="BORDER" floatingText="Tax" layoutX="20.0" layoutY="197.0" prefWidth="400.0" />
             </VBox>
             <VBox spacing="2.0">
                 <padding>
                     <Insets top="2.5"/>
                 </padding>
-                <MFXTextField fx:id="discount" floatMode="BORDER" floatingText="Discount"
-                              prefWidth="400.0"/>
+                <MFXComboBox fx:id="discount" floatMode="BORDER" floatingText="Discount" prefWidth="400.0" />
             </VBox>
         </VBox>
     </center>

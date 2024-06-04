@@ -141,15 +141,7 @@ public class StockInDetailFormController implements Initializable {
                     if (productConstraints.isEmpty()
                             && quantityConstraints.isEmpty()) {
                         if (tempIdProperty().get() > -1) {
-                            SpotyThreader.spotyThreadPool(
-                                    () -> {
-                                        try {
                                             StockInDetailViewModel.updateStockInDetail();
-                                        } catch (Exception e) {
-                                            SpotyLogger.writeToFile(e, this.getClass());
-                                        }
-                                    });
-
                             SpotyMessage notification =
                                     new SpotyMessage.MessageBuilder("Product changed successfully")
                                             .duration(MessageDuration.SHORT)
@@ -157,14 +149,11 @@ public class StockInDetailFormController implements Initializable {
                                             .type(MessageVariants.SUCCESS)
                                             .build();
                             notificationHolder.addMessage(notification);
-
                             product.clearSelection();
-
                             closeDialog(event);
                             return;
                         }
                         StockInDetailViewModel.addStockInDetails();
-
                         SpotyMessage notification =
                                 new SpotyMessage.MessageBuilder("Product added successfully")
                                         .duration(MessageDuration.SHORT)
@@ -172,9 +161,7 @@ public class StockInDetailFormController implements Initializable {
                                         .type(MessageVariants.SUCCESS)
                                         .build();
                         notificationHolder.addMessage(notification);
-
                         product.clearSelection();
-
                         closeDialog(event);
                     }
                 });

@@ -25,7 +25,7 @@ public class SalaryAdvanceViewModel {
     public static final ObservableList<SalaryAdvance> salaryAdvancesList = FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
-                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+                    new UnixEpochDateTypeAdapter())
             .create();
     private static final ListProperty<SalaryAdvance> salaryAdvances = new SimpleListProperty<>(salaryAdvancesList);
     private static final LongProperty id = new SimpleLongProperty(0);

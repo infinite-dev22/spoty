@@ -40,7 +40,7 @@ public class UOMViewModel {
     public static final ObservableList<UnitOfMeasure> uomsList = FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
-                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+                    new UnixEpochDateTypeAdapter())
             .create();
     private static final ListProperty<UnitOfMeasure> unitsOfMeasure =
             new SimpleListProperty<>(uomsList);

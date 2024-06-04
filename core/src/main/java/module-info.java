@@ -21,31 +21,9 @@ module spoty.core {
     requires com.dlsc.gemsfx;
 
     opens inc.nomard.spoty.core.views;
-    opens inc.nomard.spoty.core.views.auth;
     opens inc.nomard.spoty.core.views.components;
     opens inc.nomard.spoty.core.views.dashboard;
-    opens inc.nomard.spoty.core.views.purchases;
-    opens inc.nomard.spoty.core.views.sales;
-    opens inc.nomard.spoty.core.views.requisition;
-    opens inc.nomard.spoty.core.views.stock_in;
-    opens inc.nomard.spoty.core.views.transfer;
-    opens inc.nomard.spoty.core.views.inventory.category;
-    opens inc.nomard.spoty.core.views.inventory.brand;
-    opens inc.nomard.spoty.core.views.inventory.unit_of_measure;
-    opens inc.nomard.spoty.core.views.inventory.products;
-    opens inc.nomard.spoty.core.views.inventory.adjustment;
     opens inc.nomard.spoty.core.views.report;
-    opens inc.nomard.spoty.core.views.human_resource.hrm;
-    opens inc.nomard.spoty.core.views.human_resource.leave;
-    opens inc.nomard.spoty.core.views.human_resource.pay_roll;
-    opens inc.nomard.spoty.core.views.human_resource.pay_roll.pay_slip;
-    opens inc.nomard.spoty.core.views.bank;
-    opens inc.nomard.spoty.core.views.quotation;
-    opens inc.nomard.spoty.core.views.deductions;
-    opens inc.nomard.spoty.core.views.expenses.expense;
-    opens inc.nomard.spoty.core.views.expenses.category;
-    opens inc.nomard.spoty.core.views.customers;
-    opens inc.nomard.spoty.core.views.suppliers;
     opens inc.nomard.spoty.core.views.settings.app_settings;
     opens inc.nomard.spoty.core.views.settings;
     opens inc.nomard.spoty.core.views.forms;
@@ -58,13 +36,8 @@ module spoty.core {
     opens inc.nomard.spoty.core;
     opens inc.nomard.spoty.core.components.message.enums;
     opens inc.nomard.spoty.core.components.title;
-    opens inc.nomard.spoty.core.views.sales.pos;
-    opens inc.nomard.spoty.core.views.printable.general;
+    opens inc.nomard.spoty.core.views.pos;
     opens inc.nomard.spoty.core.views.previews;
-    opens inc.nomard.spoty.core.views.previews.purchases;
-    opens inc.nomard.spoty.core.views.previews.sales;
-    opens inc.nomard.spoty.core.views.previews.people;
-    opens inc.nomard.spoty.core.views.previews.hrm.pay_roll;
 
     exports inc.nomard.spoty.core;
 }

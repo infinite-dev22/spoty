@@ -25,7 +25,7 @@ public class DiscountViewModel {
             FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
-                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+                    new UnixEpochDateTypeAdapter())
             .create();
     private static final ListProperty<Discount> discounts = new SimpleListProperty<>(discountsList);
     private static final LongProperty id = new SimpleLongProperty(0);

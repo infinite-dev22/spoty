@@ -37,7 +37,7 @@ public class SupplierViewModel {
     public static final ObservableList<Supplier> suppliersList = FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
-                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+                    new UnixEpochDateTypeAdapter())
             .create();
     private static final ListProperty<Supplier> suppliers = new SimpleListProperty<>(suppliersList);
     private static final LongProperty id = new SimpleLongProperty(0);

@@ -321,6 +321,7 @@ public class TransferMasterFormController implements Initializable {
         cancelBtnClicked();
         TransferMasterViewModel.resetProperties();
         TransferMasterViewModel.getAllTransferMasters(null, null);
+        ProductViewModel.getAllProducts(null, null);
     }
 
     public void requiredValidator() {

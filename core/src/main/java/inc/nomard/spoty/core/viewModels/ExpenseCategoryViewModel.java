@@ -38,7 +38,7 @@ public class ExpenseCategoryViewModel {
             FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
-                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+                    new UnixEpochDateTypeAdapter())
             .create();
     private static final ListProperty<ExpenseCategory> categories =
             new SimpleListProperty<>(categoriesList);

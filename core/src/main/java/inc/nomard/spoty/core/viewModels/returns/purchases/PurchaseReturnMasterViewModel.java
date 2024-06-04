@@ -33,7 +33,7 @@ public class PurchaseReturnMasterViewModel {
             FXCollections.observableArrayList();
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class,
-                    UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter())
+                    new UnixEpochDateTypeAdapter())
             .create();
     private static final ListProperty<PurchaseReturnMaster> purchaseReturns =
             new SimpleListProperty<>(purchaseReturnMasterList);
@@ -238,7 +238,6 @@ public class PurchaseReturnMasterViewModel {
 
     public static void searchItem(
             String search, SpotyGotFunctional.ParameterlessConsumer onSuccess,
-            SpotyGotFunctional.MessageConsumer successMessage,
             SpotyGotFunctional.MessageConsumer errorMessage) {
 //        var searchModel = SearchModel.builder().search(search).build();
 //        var task = PurchaseReturnsRepository.search(searchModel);

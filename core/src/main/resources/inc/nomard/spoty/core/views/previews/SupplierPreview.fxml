@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import io.github.palexdev.materialfx.controls.MFXScrollPane?>
+<?import io.github.palexdev.materialfx.dialogs.MFXGenericDialog?>
+<?import io.github.palexdev.mfxcore.controls.Label?>
+<?import java.lang.String?>
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+
+<MFXGenericDialog xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="inc.nomard.spoty.core.views.previews.SupplierPreviewController">
+    <stylesheets>
+        <URL value="@../../styles/base.css" />
+        <URL value="@../../styles/Common.css" />
+        <URL value="@../../styles/TextFields.css" />
+        <URL value="@../../styles/theming/Default.css" />
+    </stylesheets>
+    <padding>
+        <Insets left="10.0" right="10" />
+    </padding>
+    <center>
+        <MFXScrollPane fitToHeight="true" fitToWidth="true">
+            <HBox maxHeight="900.0" maxWidth="1000.0" minHeight="600.0" minWidth="500.0" prefHeight="600.0" prefWidth="700.0" spacing="20.0">
+                <VBox alignment="CENTER" spacing="30.0" styleClass="card-raised" HBox.hgrow="ALWAYS">
+                    <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                    </padding>
+                    <Circle fx:id="imageHolder" cache="true" cacheHint="SPEED" fill="#ffffff00" radius="100.0" stroke="#ffffff00" strokeType="INSIDE" strokeWidth="0.0" />
+                    <VBox spacing="20.0" VBox.vgrow="ALWAYS">
+                        <HBox>
+                            <Label text="Name:" />
+                            <Region HBox.hgrow="ALWAYS" />
+                            <Label fx:id="nameLbl" layoutX="10.0" layoutY="10.0" />
+                        </HBox>
+                        <HBox layoutX="10.0" layoutY="10.0">
+                            <Label text="Email:" />
+                            <Region HBox.hgrow="ALWAYS" />
+                            <Label fx:id="emailLbl" layoutX="10.0" layoutY="10.0" />
+                        </HBox>
+                        <HBox layoutX="10.0" layoutY="25.0">
+                            <Label text="Phone Number:" />
+                            <Region HBox.hgrow="ALWAYS" />
+                            <Label fx:id="phoneLbl" layoutX="10.0" layoutY="10.0" />
+                        </HBox>
+                        <HBox layoutX="10.0" layoutY="70.0">
+                            <Label text="Country:" />
+                            <Region HBox.hgrow="ALWAYS" />
+                            <Label fx:id="countryLbl" layoutX="10.0" layoutY="10.0" />
+                        </HBox>
+                        <HBox layoutX="10.0" layoutY="85.0">
+                            <Label text="City:" />
+                            <Region HBox.hgrow="ALWAYS" />
+                            <Label fx:id="cityLbl" layoutX="10.0" layoutY="10.0" />
+                        </HBox>
+                        <HBox layoutX="10.0" layoutY="40.0">
+                            <Label text="Address:" />
+                            <Region HBox.hgrow="ALWAYS" />
+                            <Label fx:id="addressLbl" layoutX="10.0" layoutY="10.0" />
+                        </HBox>
+                        <HBox layoutX="10.0" layoutY="55.0">
+                            <Label text="Tax Number(TIN):" />
+                            <Region HBox.hgrow="ALWAYS" />
+                            <Label fx:id="tinLbl" layoutX="10.0" layoutY="10.0" />
+                        </HBox>
+                    </VBox>
+                </VBox>
+                <VBox spacing="10.0" HBox.hgrow="ALWAYS">
+                    <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="card-raised">
+                        <Region prefWidth="5.0">
+                            <styleClass>
+                                <String fx:value="green-bg" />
+                                <String fx:value="card-color-decor" />
+                            </styleClass>
+                        </Region>
+                        <VBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="20.0" HBox.hgrow="ALWAYS">
+                            <Label text="Total Purchases Amount" />
+                            <Label fx:id="purchasesAmountLbl" layoutX="10.0" layoutY="53.0" text="\$0.00" />
+                        </VBox>
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" spacing="10.0" styleClass="card-raised">
+                        <Region prefWidth="5.0">
+                            <styleClass>
+                                <String fx:value="red-bg" />
+                                <String fx:value="card-color-decor" />
+                            </styleClass>
+                        </Region>
+                        <VBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="20.0" HBox.hgrow="ALWAYS">
+                            <Label text="Total Returns Amount" />
+                            <Label fx:id="returnsAmountLbl" text="\$0.00" />
+                        </VBox>
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="110.0" spacing="10.0" styleClass="card-raised">
+                        <Region prefWidth="5.0">
+                            <styleClass>
+                                <String fx:value="orange-bg" />
+                                <String fx:value="card-color-decor" />
+                            </styleClass>
+                        </Region>
+                        <VBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="20.0" HBox.hgrow="ALWAYS">
+                            <Label text="Total Due Amount" />
+                            <Label fx:id="dueAmountLbl" text="\$0.00" />
+                        </VBox>
+                    </HBox>
+                </VBox>
+                <padding>
+                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                </padding>
+            </HBox>
+        </MFXScrollPane>
+    </center>
+</MFXGenericDialog>

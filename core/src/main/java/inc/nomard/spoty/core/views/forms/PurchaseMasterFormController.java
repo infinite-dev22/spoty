@@ -340,6 +340,7 @@ public class PurchaseMasterFormController implements Initializable {
         date.setValue(null);
         PurchaseMasterViewModel.resetProperties();
         PurchaseMasterViewModel.getAllPurchaseMasters(null, null);
+        ProductViewModel.getAllProducts(null, null);
     }
 
     public void requiredValidator() {
@@ -410,8 +411,8 @@ public class PurchaseMasterFormController implements Initializable {
                         .type(MessageVariants.SUCCESS)
                         .build();
         notificationHolder.addMessage(notification);
-        AnchorPane.setRightAnchor(notification, 40.0);
-        AnchorPane.setTopAnchor(notification, 10.0);
+//        AnchorPane.setRightAnchor(notification, 40.0);
+//        AnchorPane.setTopAnchor(notification, 10.0);
     }
 
     private void errorMessage(String message) {
@@ -423,7 +424,7 @@ public class PurchaseMasterFormController implements Initializable {
                         .type(MessageVariants.ERROR)
                         .build();
         notificationHolder.addMessage(notification);
-        AnchorPane.setRightAnchor(notification, 40.0);
-        AnchorPane.setTopAnchor(notification, 10.0);
+//        AnchorPane.setRightAnchor(notification, 40.0);
+//        AnchorPane.setTopAnchor(notification, 10.0);
     }
 }

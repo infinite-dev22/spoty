@@ -21,7 +21,6 @@ import static inc.nomard.spoty.core.values.SharedResources.*;
 import inc.nomard.spoty.core.viewModels.*;
 import inc.nomard.spoty.core.viewModels.requisitions.*;
 import inc.nomard.spoty.network_bridge.dtos.*;
-import inc.nomard.spoty.utils.*;
 import io.github.palexdev.materialfx.controls.*;
 import io.github.palexdev.materialfx.dialogs.*;
 import io.github.palexdev.materialfx.utils.*;
@@ -139,14 +138,7 @@ public class RequisitionDetailFormController implements Initializable {
                     if (productConstraints.isEmpty()
                             && quantityConstraints.isEmpty()) {
                         if (tempIdProperty().get() > -1) {
-                            SpotyThreader.spotyThreadPool(() -> {
-                                try {
-                                    RequisitionDetailViewModel.updateRequisitionDetail(RequisitionDetailViewModel.getId());
-                                } catch (Exception e) {
-                                    SpotyLogger.writeToFile(e, this.getClass());
-                                }
-                            });
-
+                            RequisitionDetailViewModel.updateRequisitionDetail(RequisitionDetailViewModel.getId());
                             SpotyMessage notification =
                                     new SpotyMessage.MessageBuilder("Product changed successfully")
                                             .duration(MessageDuration.SHORT)
@@ -154,14 +146,11 @@ public class RequisitionDetailFormController implements Initializable {
                                             .type(MessageVariants.SUCCESS)
                                             .build();
                             notificationHolder.addMessage(notification);
-
                             product.clearSelection();
-
                             closeDialog(event);
                             return;
                         }
                         RequisitionDetailViewModel.addRequisitionDetail();
-
                         SpotyMessage notification =
                                 new SpotyMessage.MessageBuilder("Product added successfully")
                                         .duration(MessageDuration.SHORT)
@@ -169,9 +158,7 @@ public class RequisitionDetailFormController implements Initializable {
                                         .type(MessageVariants.SUCCESS)
                                         .build();
                         notificationHolder.addMessage(notification);
-
                         product.clearSelection();
-
                         closeDialog(event);
                     }
                 });
