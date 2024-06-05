@@ -14,30 +14,45 @@
 
 package inc.nomard.spoty.core.views;
 
-import static inc.nomard.spoty.core.SpotyCoreResourceLoader.*;
-import inc.nomard.spoty.core.components.message.*;
-import inc.nomard.spoty.core.components.message.enums.*;
-import inc.nomard.spoty.core.components.navigation.*;
-import inc.nomard.spoty.core.viewModels.purchases.*;
-import inc.nomard.spoty.core.views.previews.*;
-import inc.nomard.spoty.network_bridge.dtos.purchases.*;
+import inc.nomard.spoty.core.components.message.SpotyMessage;
+import inc.nomard.spoty.core.components.message.SpotyMessageHolder;
+import inc.nomard.spoty.core.components.message.enums.MessageDuration;
+import inc.nomard.spoty.core.components.message.enums.MessageVariants;
+import inc.nomard.spoty.core.components.navigation.Pages;
+import inc.nomard.spoty.core.viewModels.purchases.PurchaseMasterViewModel;
+import inc.nomard.spoty.core.views.previews.PurchasePreviewController;
+import inc.nomard.spoty.network_bridge.dtos.purchases.PurchaseMaster;
 import io.github.palexdev.materialfx.controls.*;
-import io.github.palexdev.materialfx.controls.cell.*;
-import io.github.palexdev.materialfx.dialogs.*;
-import io.github.palexdev.materialfx.enums.*;
-import io.github.palexdev.materialfx.filter.*;
-import io.github.palexdev.mfxresources.fonts.*;
-import java.io.*;
-import java.net.*;
-import java.util.*;
-import javafx.application.*;
-import javafx.collections.*;
-import javafx.event.*;
-import javafx.fxml.*;
-import javafx.scene.input.*;
-import javafx.scene.layout.*;
-import javafx.stage.*;
-import lombok.extern.java.*;
+import io.github.palexdev.materialfx.controls.cell.MFXTableRowCell;
+import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
+import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
+import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
+import io.github.palexdev.materialfx.enums.ScrimPriority;
+import io.github.palexdev.materialfx.filter.DoubleFilter;
+import io.github.palexdev.materialfx.filter.StringFilter;
+import io.github.palexdev.mfxresources.fonts.MFXFontIcon;
+import javafx.application.Platform;
+import javafx.collections.ListChangeListener;
+import javafx.event.EventHandler;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.stage.Modality;
+import javafx.stage.Screen;
+import javafx.stage.Stage;
+import lombok.extern.java.Log;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.Comparator;
+import java.util.Objects;
+import java.util.ResourceBundle;
+
+import static inc.nomard.spoty.core.SpotyCoreResourceLoader.fxmlLoader;
 
 @SuppressWarnings("unchecked")
 @Log
@@ -208,7 +223,7 @@ public class PurchasesController implements Initializable {
         // Edit
         edit.setOnAction(
                 e -> {
-                    PurchaseMasterViewModel.getPurchaseMaster(obj.getData().getId(), this::createBtnClicked, this::errorMessage);
+                    Platform.runLater(() -> PurchaseMasterViewModel.getPurchaseMaster(obj.getData().getId(), this::createBtnClicked, this::errorMessage));
                     e.consume();
                 });
         // View

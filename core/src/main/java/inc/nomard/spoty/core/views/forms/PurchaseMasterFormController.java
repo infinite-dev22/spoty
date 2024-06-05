@@ -25,7 +25,6 @@ import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
 import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
 import io.github.palexdev.materialfx.enums.ScrimPriority;
-import io.github.palexdev.materialfx.filter.DoubleFilter;
 import io.github.palexdev.materialfx.filter.IntegerFilter;
 import io.github.palexdev.materialfx.filter.StringFilter;
 import io.github.palexdev.materialfx.utils.StringUtils;
@@ -149,7 +148,7 @@ public class PurchaseMasterFormController implements Initializable {
     public void saveBtnClicked() {
         SpotyMessageHolder notificationHolder = SpotyMessageHolder.getInstance();
 
-        if (!detailTable.isDisabled() && PurchaseDetailViewModel.purchaseDetailsList.isEmpty()) {
+        if (!detailTable.isDisabled() && PurchaseDetailViewModel.getPurchaseDetails().isEmpty()) {
             showNotification(notificationHolder, "Table can't be Empty", MessageVariants.ERROR);
         }
 
@@ -181,7 +180,7 @@ public class PurchaseMasterFormController implements Initializable {
     }
 
     private boolean isValidForm() {
-        return supplier.validate().isEmpty() && date.validate().isEmpty() && purchaseStatus.validate().isEmpty() && !detailTable.isDisabled() && !PurchaseDetailViewModel.purchaseDetailsList.isEmpty();
+        return supplier.validate().isEmpty() && date.validate().isEmpty() && purchaseStatus.validate().isEmpty() && !detailTable.isDisabled() && !PurchaseDetailViewModel.getPurchaseDetails().isEmpty();
     }
 
     private void setupTable() {
@@ -192,11 +191,10 @@ public class PurchaseMasterFormController implements Initializable {
     }
 
     private void setupTableColumns() {
-        MFXTableColumn<PurchaseDetail> product = createTableColumn("Product", PurchaseDetail::getProductName, .34);
-        MFXTableColumn<PurchaseDetail> quantity = createTableColumn("Quantity", PurchaseDetail::getQuantity, .34);
-        MFXTableColumn<PurchaseDetail> cost = createTableColumn("Unit Cost", PurchaseDetail::getCost, .34);
+        MFXTableColumn<PurchaseDetail> product = createTableColumn("Product", PurchaseDetail::getProductName, 1);
+        MFXTableColumn<PurchaseDetail> quantity = createTableColumn("Quantity", PurchaseDetail::getQuantity, 1);
 
-        detailTable.getTableColumns().addAll(product, quantity, cost);
+        detailTable.getTableColumns().addAll(product, quantity);
     }
 
     private <U extends Comparable<? super U>> MFXTableColumn<PurchaseDetail> createTableColumn(String title, Function<PurchaseDetail, U> mapper, double widthPercentage) {
@@ -209,8 +207,7 @@ public class PurchaseMasterFormController implements Initializable {
     private void setupTableFilters() {
         detailTable.getFilters().addAll(
                 new StringFilter<>("Product", PurchaseDetail::getProductName),
-                new IntegerFilter<>("Quantity", PurchaseDetail::getQuantity),
-                new DoubleFilter<>("Cost", PurchaseDetail::getCost)
+                new IntegerFilter<>("Quantity", PurchaseDetail::getQuantity)
         );
     }
 
@@ -239,11 +236,11 @@ public class PurchaseMasterFormController implements Initializable {
     }
 
     private void handleDeleteAction(MFXTableRow<PurchaseDetail> row) {
-        PurchaseDetailViewModel.removePurchaseDetail(row.getData().getId(), PurchaseDetailViewModel.purchaseDetailsList.indexOf(row.getData()));
+        PurchaseDetailViewModel.removePurchaseDetail(row.getData().getId(), PurchaseDetailViewModel.getPurchaseDetails().indexOf(row.getData()));
     }
 
     private void handleEditAction(MFXTableRow<PurchaseDetail> row) {
-        PurchaseDetailViewModel.getPurchaseDetail(row.getData());
+        Platform.runLater(() -> PurchaseDetailViewModel.getPurchaseDetail(row.getData()));
         dialog.showAndWait();
     }
 

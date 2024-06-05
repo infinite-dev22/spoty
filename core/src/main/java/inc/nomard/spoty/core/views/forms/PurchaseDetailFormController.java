@@ -195,7 +195,7 @@ public class PurchaseDetailFormController implements Initializable {
         String message;
 
         if (tempIdProperty().get() > -1) {
-            PurchaseDetailViewModel.updatePurchaseDetail(PurchaseDetailViewModel.getId());
+            PurchaseDetailViewModel.updatePurchaseDetail();
             message = "Product changed successfully";
         } else {
             PurchaseDetailViewModel.addPurchaseDetail();

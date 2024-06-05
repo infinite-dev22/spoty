@@ -14,35 +14,25 @@
 
 package inc.nomard.spoty.core.viewModels.purchases;
 
-import com.google.gson.*;
-import static inc.nomard.spoty.core.values.SharedResources.*;
-import inc.nomard.spoty.network_bridge.dtos.*;
-import inc.nomard.spoty.network_bridge.dtos.purchases.*;
-import inc.nomard.spoty.network_bridge.repositories.implementations.*;
-import inc.nomard.spoty.utils.adapters.*;
-import java.util.*;
-import javafx.application.*;
+import inc.nomard.spoty.network_bridge.dtos.Product;
+import inc.nomard.spoty.network_bridge.dtos.purchases.PurchaseDetail;
+import inc.nomard.spoty.network_bridge.dtos.purchases.PurchaseMaster;
+import javafx.application.Platform;
 import javafx.beans.property.*;
-import javafx.collections.*;
-import lombok.*;
-import lombok.extern.java.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import lombok.Getter;
+import lombok.extern.java.Log;
+
+import static inc.nomard.spoty.core.values.SharedResources.*;
 
 @Log
 public class PurchaseDetailViewModel {
-    @Getter
-    public static final ObservableList<PurchaseDetail> purchaseDetailsList =
-            FXCollections.observableArrayList();
-    private static final Gson gson = new GsonBuilder()
-            .registerTypeAdapter(Date.class,
-                    new UnixEpochDateTypeAdapter())
-            .create();
     private static final ListProperty<PurchaseDetail> purchaseDetails =
-            new SimpleListProperty<>(purchaseDetailsList);
+            new SimpleListProperty<>(FXCollections.observableArrayList());
     private static final LongProperty id = new SimpleLongProperty(0);
-    private static final ObjectProperty<PurchaseMaster> purchase = new SimpleObjectProperty<>(null);
-    private static final ObjectProperty<Product> product = new SimpleObjectProperty<>(null);
+    private static final ObjectProperty<Product> product = new SimpleObjectProperty<>();
     private static final StringProperty quantity = new SimpleStringProperty("");
-    private static final PurchasesRepositoryImpl purchasesRepository = new PurchasesRepositoryImpl();
 
     public static Long getId() {
         return id.get();
@@ -54,18 +44,6 @@ public class PurchaseDetailViewModel {
 
     public static LongProperty idProperty() {
         return id;
-    }
-
-    public static PurchaseMaster getPurchase() {
-        return purchase.get();
-    }
-
-    public static void setPurchase(PurchaseMaster purchase) {
-        PurchaseDetailViewModel.purchase.set(purchase);
-    }
-
-    public static ObjectProperty<PurchaseMaster> purchaseProperty() {
-        return purchase;
     }
 
     public static Integer getQuantity() {
@@ -107,7 +85,6 @@ public class PurchaseDetailViewModel {
     public static void resetProperties() {
         setId(0L);
         setTempId(-1);
-        setPurchase(null);
         setProduct(null);
         setQuantity("");
     }
@@ -117,14 +94,14 @@ public class PurchaseDetailViewModel {
                 .product(getProduct())
                 .quantity(getQuantity())
                 .build();
-        purchaseDetailsList.add(purchaseDetail);
+        getPurchaseDetails().add(purchaseDetail);
     }
 
-    public static void updatePurchaseDetail(Long index) {
-        var purchaseDetail = purchaseDetailsList.get(Math.toIntExact(index));
+    public static void updatePurchaseDetail() {
+        var purchaseDetail = getPurchaseDetails().get(Math.toIntExact(getTempId()));
         purchaseDetail.setProduct(getProduct());
         purchaseDetail.setQuantity(getQuantity());
-        purchaseDetailsList.set(getTempId(), purchaseDetail);
+        getPurchaseDetails().set(getTempId(), purchaseDetail);
     }
 
     public static void getPurchaseDetail(PurchaseDetail purchaseDetail) {
@@ -134,7 +111,7 @@ public class PurchaseDetailViewModel {
     }
 
     public static void removePurchaseDetail(Long index, int tempIndex) {
-        Platform.runLater(() -> purchaseDetailsList.remove(tempIndex));
+        Platform.runLater(() -> getPurchaseDetails().remove(tempIndex));
         PENDING_DELETES.add(index);
     }
 }
