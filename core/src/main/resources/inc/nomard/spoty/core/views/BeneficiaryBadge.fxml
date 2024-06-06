@@ -40,7 +40,7 @@
             </HBox>
             <HBox alignment="CENTER" HBox.hgrow="ALWAYS">
                 <MFXTextField fx:id="searchBar" floatMode="DISABLED" maxWidth="700.0" minWidth="300.0" prefWidth="500.0"
-                              promptText="Search expense categories"/>
+                              promptText="Search beneficiary badges"/>
             </HBox>
             <HBox fx:id="actionsPane" alignment="CENTER_RIGHT" spacing="20.0" HBox.hgrow="ALWAYS">
                 <MFXButton onMouseClicked="#createBtnClicked" styleClass="filled" text="Create"/>
