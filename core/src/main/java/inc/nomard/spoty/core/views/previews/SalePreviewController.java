@@ -156,7 +156,7 @@ public class SalePreviewController implements Initializable {
         saleDetailsList.addAll(sale.getSaleDetails());
         subTotal.setText(String.valueOf(sale.getSubTotal()));
         discount.setText(String.valueOf(sale.getDiscount()));
-        tax.setText(String.valueOf(sale.getNetTax()));
+        tax.setText(String.valueOf(sale.getTax()));
         shipping.setText(String.valueOf(sale.getShippingFee()));
         netCost.setText(String.valueOf(sale.getTotal()));
         paidAmount.setText(String.valueOf(sale.getAmountPaid()));

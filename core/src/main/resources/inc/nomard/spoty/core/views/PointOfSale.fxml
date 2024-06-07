@@ -29,50 +29,61 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="contentPane" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="inc.nomard.spoty.core.views.pos.PointOfSaleController">
+<?import io.github.palexdev.materialfx.controls.MFXComboBox?>
+<BorderPane fx:id="contentPane" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="inc.nomard.spoty.core.views.pos.PointOfSaleController">
     <top>
-        <HBox BorderPane.alignment="CENTER" />
+        <HBox BorderPane.alignment="CENTER"/>
     </top>
     <right>
         <VBox prefHeight="584.0" prefWidth="538.0" spacing="10.0" styleClass="card-flat" BorderPane.alignment="CENTER">
             <BorderPane.margin>
-                <Insets left="5.0" />
+                <Insets left="5.0"/>
             </BorderPane.margin>
             <padding>
-                <Insets bottom="5.0" left="5.0" right="5.0" top="10.0" />
+                <Insets bottom="5.0" left="5.0" right="5.0" top="10.0"/>
             </padding>
             <HBox prefWidth="538.0" spacing="10.0">
-                <MFXFilterComboBox fx:id="customer" allowEdit="true" floatMode="BORDER" floatingText="Customer" prefColumnCount="0" prefWidth="1000.0" selectable="true" HBox.hgrow="ALWAYS" />
+                <MFXFilterComboBox fx:id="customer" allowEdit="true" floatMode="BORDER" floatingText="Customer"
+                                   prefColumnCount="0" prefWidth="1000.0" selectable="true" HBox.hgrow="ALWAYS"/>
             </HBox>
             <AnchorPane VBox.vgrow="ALWAYS">
-                <MFXLegacyTableView fx:id="cart" layoutY="-193.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                <MFXLegacyTableView fx:id="cart" layoutY="-193.0" AnchorPane.bottomAnchor="0.0"
+                                    AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <columns>
-                        <TableColumn fx:id="cartName" editable="false" prefWidth="75.0" sortable="false" text="Name" />
-                        <TableColumn fx:id="cartQuantity" editable="false" prefWidth="50.0" sortable="false" text="Qnty" />
-                        <TableColumn fx:id="cartPrice" editable="false" prefWidth="75.0" sortable="false" text="Price" />
-                        <TableColumn fx:id="cartSubTotal" editable="false" prefWidth="75.0" sortable="false" text="Sub Total" />
-                        <TableColumn fx:id="cartActions" editable="false" prefWidth="20.0" sortable="false" />
+                        <TableColumn fx:id="cartName" editable="false" prefWidth="75.0" sortable="false" text="Name"/>
+                        <TableColumn fx:id="cartQuantity" editable="false" prefWidth="50.0" sortable="false"
+                                     text="Qnty"/>
+                        <TableColumn fx:id="cartPrice" editable="false" prefWidth="75.0" sortable="false" text="Price"/>
+                        <TableColumn fx:id="cartSubTotal" editable="false" prefWidth="75.0" sortable="false"
+                                     text="Sub Total"/>
+                        <TableColumn fx:id="cartActions" editable="false" prefWidth="20.0" sortable="false"/>
                     </columns>
                     <columnResizePolicy>
-                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
                     </columnResizePolicy>
                 </MFXLegacyTableView>
-                <MFXScrollPane fx:id="scrollPane" managed="false" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                    <VBox fx:id="cartItemHolder" prefHeight="200.0" prefWidth="100.0" />
+                <MFXScrollPane fx:id="scrollPane" managed="false" visible="false" AnchorPane.bottomAnchor="0.0"
+                               AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <VBox fx:id="cartItemHolder" prefHeight="200.0" prefWidth="100.0"/>
                 </MFXScrollPane>
             </AnchorPane>
             <VBox spacing="20.0">
                 <HBox alignment="CENTER_LEFT" spacing="10.0">
-                    <MFXFilterComboBox fx:id="discount" allowEdit="true" floatMode="BORDER" floatingText="Discount(0.00%)" prefColumnCount="0" prefWidth="500.0" selectable="true" />
-                    <MFXFilterComboBox fx:id="tax" allowEdit="true" floatMode="BORDER" floatingText="Tax(0.00%)" prefColumnCount="0" prefWidth="500.0" selectable="true" />
+                    <MFXComboBox fx:id="discount" allowEdit="true" floatMode="BORDER" floatingText="Discount(%)"
+                                 prefColumnCount="0" prefWidth="500.0" selectable="true"/>
+                    <MFXComboBox fx:id="tax" allowEdit="true" floatMode="BORDER" floatingText="Tax(%)"
+                                 prefColumnCount="0" prefWidth="500.0" selectable="true"/>
                 </HBox>
                 <HBox layoutX="10.0" layoutY="266.0" spacing="5.0">
-                    <MFXButton fx:id="checkOutBtn" layoutX="10.0" layoutY="10.0" onAction="#savePOSSale" prefWidth="650.0" styleClass="check-out-button" text="CheckOut" />
-                    <Region HBox.hgrow="ALWAYS" />
-                    <MFXButton fx:id="emptyCartBtn" layoutX="10.0" layoutY="10.0" onAction="#clearCart" prefWidth="400.0" styleClass="empty-cart-button" text="Empty Cart" />
+                    <MFXButton fx:id="checkOutBtn" layoutX="10.0" layoutY="10.0" onAction="#savePOSSale"
+                               prefWidth="650.0" styleClass="check-out-button" text="CheckOut" disable="true"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <MFXButton fx:id="emptyCartBtn" layoutX="10.0" layoutY="10.0" onAction="#clearCart"
+                               prefWidth="400.0" styleClass="empty-cart-button" text="Empty Cart"/>
                 </HBox>
                 <padding>
-                    <Insets bottom="10.0" left="10.0" right="10.0" top="5.0" />
+                    <Insets bottom="10.0" left="10.0" right="10.0" top="5.0"/>
                 </padding>
             </VBox>
         </VBox>
@@ -80,40 +91,43 @@
     <center>
         <VBox spacing="10.0" BorderPane.alignment="CENTER">
             <BorderPane.margin>
-                <Insets right="5.0" />
+                <Insets right="5.0"/>
             </BorderPane.margin>
             <HBox spacing="10.0" styleClass="card-flat">
                 <padding>
-                    <Insets topRightBottomLeft="5.0" />
+                    <Insets topRightBottomLeft="5.0"/>
                 </padding>
                 <HBox fx:id="leftHeaderPane" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
                     <padding>
-                        <Insets left="10.0" right="10.0" />
+                        <Insets left="10.0" right="10.0"/>
                     </padding>
-                    <MFXProgressSpinner fx:id="progress" maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" prefHeight="30.0" prefWidth="30.0" visible="false" />
+                    <MFXProgressSpinner fx:id="progress" maxHeight="30.0" maxWidth="30.0" minHeight="30.0"
+                                        minWidth="30.0" prefHeight="30.0" prefWidth="30.0" visible="false"/>
                 </HBox>
                 <HBox alignment="CENTER" HBox.hgrow="ALWAYS">
-                    <MFXTextField fx:id="searchBar" floatMode="DISABLED" maxWidth="700.0" minWidth="300.0" prefWidth="500.0" promptText="Search Product" />
+                    <MFXTextField fx:id="searchBar" floatMode="DISABLED" maxWidth="700.0" minWidth="300.0"
+                                  prefWidth="500.0" promptText="Search Product"/>
                 </HBox>
                 <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
                 </HBox>
             </HBox>
             <VBox spacing="5.0" styleClass="card-flat" VBox.vgrow="ALWAYS">
                 <padding>
-                    <Insets bottom="2.5" left="2.5" right="2.5" top="2.5" />
+                    <Insets bottom="2.5" left="2.5" right="2.5" top="2.5"/>
                 </padding>
-                <MFXScrollPane maxHeight="100.0" minHeight="60.0" prefHeight="80.0" vbarPolicy="NEVER" VBox.vgrow="SOMETIMES">
+                <MFXScrollPane maxHeight="100.0" minHeight="60.0" prefHeight="80.0" vbarPolicy="NEVER"
+                               VBox.vgrow="SOMETIMES">
                     <HBox fx:id="filterPane" alignment="CENTER_LEFT" spacing="10.0">
                         <padding>
-                            <Insets topRightBottomLeft="5.0" />
+                            <Insets topRightBottomLeft="5.0"/>
                         </padding>
                     </HBox>
                 </MFXScrollPane>
-                <MFXScrollPane fx:id="productHolder" hbarPolicy="NEVER" VBox.vgrow="ALWAYS" />
+                <MFXScrollPane fx:id="productHolder" hbarPolicy="NEVER" VBox.vgrow="ALWAYS"/>
             </VBox>
         </VBox>
     </center>
     <padding>
-        <Insets bottom="5.0" right="5.0" top="5.0" />
+        <Insets bottom="5.0" right="5.0" top="5.0"/>
     </padding>
 </BorderPane>
