@@ -160,22 +160,18 @@ public class StockInMasterFormController implements Initializable {
                     StockInDetailViewModel.removeStockInDetail(
                             obj.getData().getId(),
                             StockInDetailViewModel.stockInDetailsList.indexOf(obj.getData()));
-
                     event.consume();
                 });
 
         // Edit
         edit.setOnAction(
                 event -> {
-                    SpotyThreader.spotyThreadPool(() -> {
-                        try {
-                            StockInDetailViewModel.getStockInDetail(obj.getData());
-                        } catch (Exception e) {
-                            SpotyLogger.writeToFile(e, this.getClass());
-                        }
-                    });
-
-                    dialog.showAndWait();
+                    try {
+                        StockInDetailViewModel.getStockInDetail(obj.getData());
+                        dialog.showAndWait();
+                    } catch (Exception e) {
+                        SpotyLogger.writeToFile(e, this.getClass());
+                    }
                     event.consume();
                 });
 
